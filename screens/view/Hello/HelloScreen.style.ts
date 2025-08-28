@@ -16,16 +16,19 @@ export const Styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   linearGradient: {
+    display: 'flex',
     width: '95%',
     padding: 16,
-    gap: 10,
+    flexDirection: 'column',
+    gap: 12,
     height: 120,
-      borderTopLeftRadius: 16,
+    borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(0, 0, 0, 0.10) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-  },
+      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(0, 0, 0, 0.10) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',  
+  
+    },
   card_container: {
     flexDirection: 'row',
     borderRadius: 50,

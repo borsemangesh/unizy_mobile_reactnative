@@ -51,6 +51,40 @@ const languages: Language[] = [
     name: 'Portuguese',
     flag: require('../../../assets/images/Portuguese.png'),
   },
+
+
+
+
+
+  //  {
+  //   code: 'en',
+  //   name: 'English',
+  //   flag: require('../../../assets/images/English.png'),
+  // },
+  // {
+  //   code: 'es',
+  //   name: 'Spanish',
+  //   flag: require('../../../assets/images/Spanish.png'),
+  // },
+  // { code: 'fr', name: 'French', flag: require('../../../assets/images/French.png') },
+  // {
+  //   code: 'sv',
+  //   name: 'Swedish',
+  //   flag: require('../../../assets/images/Swedish.png'),
+  // },
+  // {
+  //   code: 'it',
+  //   name: 'Italian',
+  //   flag: require('../../../assets/images/Italian.png'),
+  // },
+  // { code: 'de', name: 'German', flag: require('../../../assets/images/German.png') },
+  // {
+  //   code: 'pt',
+  //   name: 'Portuguese',
+  //   flag: require('../../../assets/images/Portuguese.png'),
+  // },
+
+
 ];
 
 const SelectLanguage_Popup = ( {navigation}: LoginScreenProps) => {
@@ -63,14 +97,13 @@ const SelectLanguage_Popup = ( {navigation}: LoginScreenProps) => {
 
   return (
     <ImageBackground
-      source={require('../../../assets/images/BGImage.png')}
+      source={require('../../../assets/images/BGAnimationScreen.png')}
       style={[selectlang_styles.flex_1]}
-      resizeMode="cover"
     >
       <View style={selectlang_styles.container}>
         <Text style={selectlang_styles.title}>Select Language</Text>
 
-        <View style={selectlang_styles.search_container}>
+       <View style={selectlang_styles.search_container}>
           <Image
             source={require('../../../assets/images/SearchIcon.png')}
 

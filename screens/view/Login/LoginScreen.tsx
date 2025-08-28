@@ -28,7 +28,7 @@ const LoginScreen = () => {
 
   return (
     <ImageBackground
-      source={require('../../../assets/images/BGImage.png')}
+      source={require('../../../assets/images/BGAnimationScreen.png')}
       style={loginStyles.flex_1}
       resizeMode="cover"
     >
