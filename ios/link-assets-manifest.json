@@ -1,0 +1,13 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/MeowScript-Regular.ttf",
+      "sha1": "ac5e2720fec8fc75d9bd322dd71bb55432d1f53b"
+    },
+    {
+      "path": "assets/fonts/MonumentExtended-Regular.otf",
+      "sha1": "1e787896f58bb8ef3b6d5276f8c6d8da541150d9"
+    }
+  ]
+}
