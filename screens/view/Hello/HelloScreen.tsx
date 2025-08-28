@@ -8,6 +8,8 @@ import {
 } from 'react-native';
 import { Styles } from './HelloScreen.style'
 import MyIcon from '../../utils/MyIcon';
+import EdgeToEdgeScreen from './EdgeToEdgeScreen';
+
 
 type HelloScreenProps = {
   navigation: any;
@@ -15,6 +17,7 @@ type HelloScreenProps = {
 
 const HelloScreen = ({ navigation }: HelloScreenProps) => {
   return (
+    <EdgeToEdgeScreen>
     <ImageBackground
       source={require('../../../assets/images/BGImage.png')}
       style={{flex: 1,flexDirection: 'column'}}
@@ -57,6 +60,7 @@ const HelloScreen = ({ navigation }: HelloScreenProps) => {
         </View>
       </View>
     </ImageBackground>
+    </EdgeToEdgeScreen>
   );
 };
 
