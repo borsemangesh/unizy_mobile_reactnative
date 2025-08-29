@@ -27,9 +27,17 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
     setModalVisible(!isModalVisible);
   };
   const handleLogin = () => {
+    navigation.navigate('Reset')
     console.log(`Logging in with ${username} and ${password}`);
-    toggleModal();
+    //toggleModal();
   };
+
+   const handleSignup = () => {
+    navigation.navigate('Signup')
+    console.log(`Logging in with ${username} and ${password}`);
+    //toggleModal();
+  };
+
 
   return (
     <ImageBackground
@@ -81,9 +89,11 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
             }}
           />
         </View>
-        <Text style={loginStyles.forgetPasswordText}>Forget Password?</Text>
+        <Text  style={loginStyles.forgetPasswordText} onPress={handleLogin}>
+            Forget Password?
+          </Text>
 
-        <TouchableOpacity onPress={handleLogin} style={loginStyles.loginButton}>
+        <TouchableOpacity style={loginStyles.loginButton}>
           <Text style={loginStyles.loginText}>Login</Text>
         </TouchableOpacity>
         <View
@@ -108,14 +118,11 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           >
             Don't have an account?
           </Text>
-          <TouchableOpacity>
-            <Text
-              onPress={() => Alert.alert('Signup')}
-              style={loginStyles.signupText}
-            >
-              Signup
-            </Text>
-          </TouchableOpacity>
+         <TouchableOpacity onPress={handleSignup}>
+        <Text style={loginStyles.signupText}>
+          Signup
+        </Text>
+        </TouchableOpacity>
         </View>
       </View>
       <View
