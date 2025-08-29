@@ -23,7 +23,7 @@ const HelloScreen = ({ navigation }: HelloScreenProps) => {
         style={{flex: 1,flexDirection: 'column'}}
         resizeMode='cover'
       >
-        <StatusBar backgroundColor="transparent" barStyle="light-content" />
+        
         <View style={Styles.ScreenLayout}>
           <Text style={Styles.unizyText}>UniZy</Text>
           <Text style={Styles.hellowText}>Hello</Text>

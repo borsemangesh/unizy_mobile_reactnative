@@ -67,6 +67,7 @@ export const Styles = StyleSheet.create({
     fontStyle: 'normal',  
     display: 'flex',
     padding: 16,
+    top: 40,
     flexDirection: 'column',
     alignItems: 'flex-start',
   },

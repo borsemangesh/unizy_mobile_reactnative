@@ -9,7 +9,6 @@ import {
   Image,
 } from 'react-native';
 
-
 import { selectlang_styles } from './SelectLanguage.style';
 
 type Language = {
@@ -22,7 +21,6 @@ type LoginScreenProps = {
   navigation: any;
 };
 
-
 const languages: Language[] = [
   {
     code: 'en',
@@ -34,7 +32,11 @@ const languages: Language[] = [
     name: 'Spanish',
     flag: require('../../../assets/images/Spanish.png'),
   },
-  { code: 'fr', name: 'French', flag: require('../../../assets/images/French.png') },
+  {
+    code: 'fr',
+    name: 'French',
+    flag: require('../../../assets/images/French.png'),
+  },
   {
     code: 'sv',
     name: 'Swedish',
@@ -45,49 +47,19 @@ const languages: Language[] = [
     name: 'Italian',
     flag: require('../../../assets/images/Italian.png'),
   },
-  { code: 'de', name: 'German', flag: require('../../../assets/images/German.png') },
+  {
+    code: 'de',
+    name: 'German',
+    flag: require('../../../assets/images/German.png'),
+  },
   {
     code: 'pt',
     name: 'Portuguese',
     flag: require('../../../assets/images/Portuguese.png'),
   },
-
-
-
-
-
-  //  {
-  //   code: 'en',
-  //   name: 'English',
-  //   flag: require('../../../assets/images/English.png'),
-  // },
-  // {
-  //   code: 'es',
-  //   name: 'Spanish',
-  //   flag: require('../../../assets/images/Spanish.png'),
-  // },
-  // { code: 'fr', name: 'French', flag: require('../../../assets/images/French.png') },
-  // {
-  //   code: 'sv',
-  //   name: 'Swedish',
-  //   flag: require('../../../assets/images/Swedish.png'),
-  // },
-  // {
-  //   code: 'it',
-  //   name: 'Italian',
-  //   flag: require('../../../assets/images/Italian.png'),
-  // },
-  // { code: 'de', name: 'German', flag: require('../../../assets/images/German.png') },
-  // {
-  //   code: 'pt',
-  //   name: 'Portuguese',
-  //   flag: require('../../../assets/images/Portuguese.png'),
-  // },
-
-
 ];
 
-const SelectLanguage_Popup = ( {navigation}: LoginScreenProps) => {
+const SelectLanguage_Popup = ({ navigation }: LoginScreenProps) => {
   const [selected, setSelected] = useState<string | null>(null);
   const [search, setSearch] = useState('');
 
@@ -103,11 +75,10 @@ const SelectLanguage_Popup = ( {navigation}: LoginScreenProps) => {
       <View style={selectlang_styles.container}>
         <Text style={selectlang_styles.title}>Select Language</Text>
 
-       <View style={selectlang_styles.search_container}>
+        <View style={selectlang_styles.search_container}>
           <Image
             source={require('../../../assets/images/SearchIcon.png')}
-
-            style={{ padding: 5, margin: 10 }}
+            style={{ padding: 5, margin: 10 ,height:24,width:24}}
           />
           <TextInput
             style={selectlang_styles.searchBar}
@@ -118,30 +89,41 @@ const SelectLanguage_Popup = ( {navigation}: LoginScreenProps) => {
           />
         </View>
 
-        <FlatList
-          data={filteredLanguages}
-          keyExtractor={item => item.code}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={selectlang_styles.languageItem}
-              onPress={() => 
-                navigation.navigate('LoginScreen')||
-                setSelected(item.code)}
-            >
-              <View style={selectlang_styles.languageInfo}>
-                <Image source={item.flag} style={selectlang_styles.flag} />
-                <Text style={selectlang_styles.languageText}>{item.name}</Text>
-              </View>
-              <View
-                style={[
-                  selectlang_styles.radioButton,
-                  selected === item.code && selectlang_styles.radioButtonSelected,
-                ]}
-              />
-            </TouchableOpacity>
-          )}
-          contentContainerStyle={selectlang_styles.listContainer}
-        />
+        <View style={selectlang_styles.listContainer}>
+          <FlatList
+            contentContainerStyle={selectlang_styles.listContent}
+            style={{ width: '100%',alignSelf: 'center', }}
+            
+            data={filteredLanguages}
+            keyExtractor={item => item.code}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={selectlang_styles.languageItem}
+                onPress={() =>
+                  navigation.navigate('LoginScreen') || setSelected(item.code)
+                }
+              >
+                <View style={selectlang_styles.languageInfo}>
+                  <Image source={item.flag} style={selectlang_styles.flag} />
+                  <View style={{ flexDirection: 'row', alignItems: 'center'}}>
+                    <Text style={selectlang_styles.languageText}>
+                      {item.name}
+                    </Text>
+                  <View
+                    style={[
+                      selectlang_styles.radioButton,
+                      selected === item.code &&
+                        selectlang_styles.radioButtonSelected,
+                    ]}
+                  />
+                  </View>
+                  
+                </View>
+                
+              </TouchableOpacity>
+            )}
+          />
+        </View>
       </View>
     </ImageBackground>
   );
