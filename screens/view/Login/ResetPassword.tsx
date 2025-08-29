@@ -11,6 +11,8 @@ import {
   Image,
   Alert
 } from 'react-native';
+// import { BlurView } from '@react-native-community/blur';
+// @ts-ignore
 import { BlurView } from '@react-native-community/blur';
 
 

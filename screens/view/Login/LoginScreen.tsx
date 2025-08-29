@@ -51,7 +51,6 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
             name="keyboard-arrow-left"
             size={24}
             color="#FFFFFF"
-            style={{}}
           />
         </View>
 
@@ -143,7 +142,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
 
         <Text style={loginStyles.privacyPolicyText}>and Privacy Policy</Text>
 
-        <Modal
+        {/* This Daialog is Do further work */}
+        {/* <Modal  
           animationType="fade"
           transparent={true}
           visible={isModalVisible}
@@ -183,8 +183,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
               <Button title="Close" onPress={toggleModal} />
             </View>
           </View>
-        </Modal>
-      </View>
+        </Modal>*/}
+       </View> 
     </ImageBackground>
   );
 };
