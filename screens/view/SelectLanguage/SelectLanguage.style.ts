@@ -3,20 +3,9 @@ import { StyleSheet } from 'react-native';
 export const selectlang_styles = StyleSheet.create({
   flex_1: {
     flex: 1,
-
     paddingTop: 50,
     padding: 16,
-  },
-  search_container: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'stretch',
-    borderRadius: 50,
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  },
+  },  
   container: {
     flex: 1,
     flexDirection: 'column',
@@ -29,6 +18,7 @@ export const selectlang_styles = StyleSheet.create({
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     padding: 16,
   },
+  
   title: {
     fontFamily: 'Urbanist-Medium',
     color: '#FFF',
@@ -37,6 +27,22 @@ export const selectlang_styles = StyleSheet.create({
     fontWeight: '600',
     lineHeight: 24,
     letterSpacing: 0.5,
+  },
+  search_container: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    borderRadius: 50,
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+  },
+  searchIcon: {
+    padding: 5, 
+    margin: 10 ,
+    height:24,
+    width:24
   },
   searchBar: {
     fontFamily: 'Urbanist-Medium',
@@ -56,6 +62,9 @@ export const selectlang_styles = StyleSheet.create({
   listContent: {
     paddingLeft: 10,
     paddingRight: 10,
+  },
+  flatListStyle: {
+    width: '100%',alignSelf: 'center', 
   },
   languageItem: {
     flexDirection: 'row',
@@ -84,18 +93,40 @@ export const selectlang_styles = StyleSheet.create({
     mixBlendMode: 'normal',
     width: '83%',
   },
-  radioButton: {
-    width: 15,
-    height: 15,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#ffffff4e',
-    boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
+  radioButton_round: {
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    width: 15,
+    height: 15,
+    flexShrink: 0,
+    borderColor: '#ffffff4e',
+    right: 0,
+    alignItems: 'center',
+    borderRadius: 50,
+    justifyContent: 'center',
+    boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
+    shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25',
+  },
+  radioButton: {
+    width: 8,
+    height: 8,
+    borderRadius: 10,
+    // borderWidth: 1,
+    // borderColor: '#ffffff4e',
+    // boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
+    // backgroundColor:
+    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
   },
   radioButtonSelected: {
-    borderColor: 'white',
+    // borderColor: 'white',
     backgroundColor: 'white',
+    
+    borderRadius: 10,
+      borderWidth: 1,
+    borderColor: '#ffffff4e',
+    boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
+    // backgroundColor:
+    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+  
   },
 });

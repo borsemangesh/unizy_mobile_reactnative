@@ -20,7 +20,7 @@ const HelloScreen = ({ navigation }: HelloScreenProps) => {
     <EdgeToEdgeScreen>
       <ImageBackground
         source={require('../../../assets/images/BGAnimationScreen.png')}
-        style={{flex: 1,flexDirection: 'column'}}
+        style={{flex: 1, width: '100%', height: '100%'}}
         resizeMode='cover'
       >
         

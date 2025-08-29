@@ -78,7 +78,7 @@ const SelectLanguage_Popup = ({ navigation }: LoginScreenProps) => {
         <View style={selectlang_styles.search_container}>
           <Image
             source={require('../../../assets/images/SearchIcon.png')}
-            style={{ padding: 5, margin: 10 ,height:24,width:24}}
+            style={selectlang_styles.searchIcon}
           />
           <TextInput
             style={selectlang_styles.searchBar}
@@ -92,7 +92,7 @@ const SelectLanguage_Popup = ({ navigation }: LoginScreenProps) => {
         <View style={selectlang_styles.listContainer}>
           <FlatList
             contentContainerStyle={selectlang_styles.listContent}
-            style={{ width: '100%',alignSelf: 'center', }}
+            style={selectlang_styles.flatListStyle}
             
             data={filteredLanguages}
             keyExtractor={item => item.code}
@@ -109,13 +109,17 @@ const SelectLanguage_Popup = ({ navigation }: LoginScreenProps) => {
                     <Text style={selectlang_styles.languageText}>
                       {item.name}
                     </Text>
-                  <View
-                    style={[
-                      selectlang_styles.radioButton,
-                      selected === item.code &&
-                        selectlang_styles.radioButtonSelected,
-                    ]}
-                  />
+                    <View style= {selectlang_styles.radioButton_round}>
+                      <View
+                        style={[
+                          selectlang_styles.radioButton,
+                          selected === item.code &&
+                            selectlang_styles.radioButtonSelected,
+                        ]}
+                      />
+
+                    </View>
+                  
                   </View>
                   
                 </View>
