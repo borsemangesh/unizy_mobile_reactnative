@@ -8,6 +8,7 @@ import SelectLanguage_Popup from "./SelectLanguage/SelectLanguage_Popup";
 import ResetPassword from './Login/ResetPassword';
 import ResendPopup from './Login/ResendPopup';
 import SignupScreen from './Login/SignupScreen';
+import RevarifyStudentStatus from './revarify/RevarifyStudentStatus';
 
 
 const Stack = createNativeStackNavigator();
@@ -23,6 +24,8 @@ export const Navigation = () => {
         <Stack.Screen name="LanguagePopup" component={SelectLanguage_Popup} options={{headerShown: false}} />
         <Stack.Screen name="Reset" component={ResetPassword} options={{headerShown: false}}/>
         <Stack.Screen name="Signup" component={SignupScreen} options={{headerShown: false}}/>
+        <Stack.Screen name="RevarifyStudentStatus" component={RevarifyStudentStatus} options={{headerShown: false}} />
+
       </Stack.Navigator>
     </NavigationContainer>
     );

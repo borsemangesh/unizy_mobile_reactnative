@@ -17,6 +17,19 @@ export const selectlang_styles = StyleSheet.create({
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(0, 0, 0, 0.10) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     padding: 16,
+
+
+
+    // Outer Shadow (bottom-right)
+    // shadowColor: "#000",
+    // shadowOffset: { width: 6, height: 6 },
+    // shadowOpacity: 0.4,
+    // shadowRadius: 8,
+    // elevation: 10,
+    // borderWidth: 1,
+    // // borderColor: "rgba(255,255,255,0.1)",
+    // opacity: 0.7,
+
   },
   
   title: {

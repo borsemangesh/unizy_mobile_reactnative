@@ -2,30 +2,33 @@ import React, { useState } from 'react';
 import {
   View,
   TextInput,
-  StyleSheet,
   Text,
   ImageBackground,
   TouchableOpacity,
   Alert,
-  BackHandler,
+  Modal,
+  Button,
 } from 'react-native';
 
 import MyIcon from '../../utils/MyIcon';
 import { loginStyles } from './LoginScreen.style';
 
-type LoginScreen = {
+type LoginScreenProps = {
   navigation: any;
 };
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
 
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
   const handleLogin = () => {
-    // Handle login logic here
     console.log(`Logging in with ${username} and ${password}`);
-    // navigation.navigate('Home');
+    toggleModal();
   };
 
   return (
@@ -48,13 +51,7 @@ const LoginScreen = () => {
         <View style={loginStyles.emptyView}></View>
       </View>
 
-
-
-
-
-      <View
-        style={loginStyles.container}
-      >
+      <View style={loginStyles.container}>
         <View style={loginStyles.login_container}>
           <TextInput
             style={loginStyles.personalEmailID_TextInput}
@@ -138,6 +135,48 @@ const LoginScreen = () => {
         </View>
 
         <Text style={loginStyles.privacyPolicyText}>and Privacy Policy</Text>
+
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={isModalVisible}
+          onRequestClose={toggleModal}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: 'rgba(0,0,0,0.5)',
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: 'white',
+                borderRadius: 10,
+                padding: 20,
+                alignItems: 'center',
+                elevation: 5, // Shadow for Android
+                shadowColor: '#000', // Shadow for iOS
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+              }}
+            >
+              <Text
+                style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10 }}
+              >
+                Dialog Title
+              </Text>
+              <Text
+                style={{ fontSize: 16, marginBottom: 20, textAlign: 'center' }}
+              >
+                This is a custom dialog message.
+              </Text>
+              <Button title="Close" onPress={toggleModal} />
+            </View>
+          </View>
+        </Modal>
       </View>
     </ImageBackground>
   );
