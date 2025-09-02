@@ -35,11 +35,19 @@ const SignupScreen = () => {
       style={styles.flex_1}
       resizeMode="cover">
 
-         <TouchableOpacity style={styles.signupButton1}>
-          <Text onPress={() => Alert.alert('Signup')} style={styles.signupText}>
-            Step 1 of 3
-          </Text>
-        </TouchableOpacity>
+        <View style={styles.fullScreenContainer}>
+        <View style={styles.backIconRow}>
+          <MyIcon
+            name="keyboard-arrow-left"
+            size={24}
+            color="#FFFFFF"
+            style={{}}
+          />
+        </View>
+
+        <Text style={styles.unizyText}>UniZy</Text>
+        <View style={styles.emptyView}></View>
+      </View>
       
       <View style={styles.formContainer}>
         <View style={styles.nameRow}>
@@ -127,7 +135,7 @@ const SignupScreen = () => {
           </View>
         </View>
 
-        <TouchableOpacity onPress={handleSendOTP} style={styles.buttonWrapper}>
+        {/* <TouchableOpacity onPress={handleSendOTP} style={styles.buttonWrapper}>
           <ImageBackground
             source={require('../../../assets/images/login_button.png')}
             style={styles.buttonBackground}
@@ -135,7 +143,10 @@ const SignupScreen = () => {
           >
             <Text style={styles.buttonText}>Send OTP</Text>
           </ImageBackground>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+        <TouchableOpacity onPress={handleSendOTP} style={styles.loginButton}>
+                          <Text style={styles.loginText}>Send OTP</Text>
+                        </TouchableOpacity>
 
         <Text style={styles.signupPrompt}>Already have an account?</Text>
         <TouchableOpacity style={styles.signupButton}>
@@ -164,6 +175,29 @@ const styles = StyleSheet.create({
     padding: 16,
     color: '#FFFFFF',
   },
+    loginButton: {
+    display: 'flex',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 100,
+    paddingTop: 6,
+    paddingBottom: 8,
+    marginBottom: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.56)',
+  },
+  loginText: {
+    color: '#002050',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-regular',
+    fontSize: 17,
+    fontStyle: 'normal',
+    fontWeight: 500,
+    lineHeight: 22,
+    letterSpacing: 1,
+  },
+
 
   formContainer: {
     width: '90%',
@@ -184,6 +218,14 @@ const styles = StyleSheet.create({
 
   halfWidth: {
     width: '48%',
+  },
+
+   personalEmailID_TextInput: {
+    width: '90%',
+    fontFamily: 'Urbanist-regular',
+    fontWeight: '400',
+    lineHeight: 22,
+    fontSize: 17,
   },
 
   editText: {
@@ -314,6 +356,65 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     textDecorationLine: 'underline',
+  },
+
+  fullScreenContainer: {
+    display: 'flex',
+    paddingRight: 20,
+    paddingLeft: 16,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    flexShrink: 0,
+    flexDirection: 'row',
+  },
+  backIconRow: {
+    display: 'flex',
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 40,
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+
+
+     // Outer Shadow (bottom-right)
+    shadowColor: "#000",
+    shadowOffset: { width: 6, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 10,
+opacity: 0.5,
+    // Inner Highlight (top-left light)
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
+
+
+},
+  unizyText: {
+    color: '#FFFFFF',
+    fontFamily: 'MonumentExtended-Regular',
+    fontSize: 24,
+    fontStyle: 'normal',
+    fontWeight: '400',
+    lineHeight: 120,
+    textAlign: 'center',
+    flex: 1,
+    gap: 10,
+  },
+  emptyView: {
+    display: 'flex',
+    padding: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 8,
+    borderRadius: 40,
+    opacity: 0.01,
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
   },
 });
 
