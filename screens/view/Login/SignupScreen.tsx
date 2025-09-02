@@ -92,9 +92,12 @@ const SignupScreen = () => {
                 source={require('../../../assets/images/info_icon.png')}
                 style={{ width: 20, height: 20, marginRight: 8 }}
                 resizeMode="contain"/>
-            <Text style={{ color: 'white', fontFamily: 'Urbanist', fontSize: 14, flex: 1 }}>
+            {/* <Text style={{ color: 'white', fontFamily: 'Urbanist', fontSize: 14, flex: 1 }}>
                 Important: Use your personal email address for signup. Your university email will be requested separately for student verification.
-            </Text>
+            </Text> */}
+
+
+
             </View>
 
         <View style={styles.passwordContainer}>
@@ -148,11 +151,11 @@ const SignupScreen = () => {
                           <Text style={styles.loginText}>Send OTP</Text>
                         </TouchableOpacity>
 
-        <Text style={styles.signupPrompt}>Already have an account?</Text>
+        <Text style={styles.signupPrompt}>Already have an account? Login</Text>
         <TouchableOpacity style={styles.signupButton}>
-          <Text onPress={() => Alert.alert('Signup')} style={styles.signupText}>
+          {/* <Text onPress={() => Alert.alert('Signup')} style={styles.signupText}>
             Login
-          </Text>
+          </Text> */}
         </TouchableOpacity>
       </View>
     </ImageBackground>
@@ -190,7 +193,7 @@ const styles = StyleSheet.create({
   loginText: {
     color: '#002050',
     textAlign: 'center',
-    fontFamily: 'Urbanist-regular',
+    fontFamily: 'Urbanist-Regular',
     fontSize: 17,
     fontStyle: 'normal',
     fontWeight: 500,
@@ -222,7 +225,7 @@ const styles = StyleSheet.create({
 
    personalEmailID_TextInput: {
     width: '90%',
-    fontFamily: 'Urbanist-regular',
+    fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
     lineHeight: 22,
     fontSize: 17,
