@@ -92,9 +92,9 @@ const SignupScreen = () => {
                 source={require('../../../assets/images/info_icon.png')}
                 style={{ width: 20, height: 20, marginRight: 8 }}
                 resizeMode="contain"/>
-            {/* <Text style={{ color: 'white', fontFamily: 'Urbanist', fontSize: 14, flex: 1 }}>
+            <Text style={{ color: '#FFFFFF7A', fontFamily: 'Urbanist-Medium', fontSize: 14, flex: 1 }}>
                 Important: Use your personal email address for signup. Your university email will be requested separately for student verification.
-            </Text> */}
+            </Text>
 
 
 
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
   loginText: {
     color: '#002050',
     textAlign: 'center',
-    fontFamily: 'Urbanist-Regular',
+    fontFamily: 'Urbanist-Medium',
     fontSize: 17,
     fontStyle: 'normal',
     fontWeight: 500,
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
   editText: {
     alignItems: 'center',
     color: 'white',
-    fontFamily: 'Urbanist',
+    fontFamily: 'Urbanist-Regular',
     paddingHorizontal: 12,
     fontSize: 14,
     borderRadius: 12,
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
 
   signupPrompt: {
     color: 'rgba(255, 255, 255, 0.48)',
-    fontFamily: 'Urbanist',
+    fontFamily: 'Urbanist-Regular',
     fontSize: 14,
     fontWeight: '400',
   },

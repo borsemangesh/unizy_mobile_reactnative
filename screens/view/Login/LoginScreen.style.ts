@@ -188,7 +188,6 @@ export const loginStyles = StyleSheet.create({
     fontStyle: 'normal',
     fontWeight: 'bold',
     textDecorationStyle: 'solid',
-    marginTop: 5,
   },
   teamsandConditionText: {
     color: '#FFFFFF7A',
