@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     
   },
   text: {
-    fontFamily: 'Urbanist',
+    fontFamily: 'Urbanist-Medium',
     fontWeight: '500', // Medium
     fontSize: 17,
     letterSpacing: 1,

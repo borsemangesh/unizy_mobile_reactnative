@@ -272,6 +272,7 @@ const ResetPassword = () => {
     <ImageBackground
       source={require('../../../assets/images/BGAnimationScreen.png')}
       style={styles.flex_1}
+      //  style={{ flex: 1, width: '100%', height: '100%' }} 
       resizeMode="cover"
     >
       <View style={styles.fullScreenContainer}>
@@ -393,8 +394,7 @@ const styles = StyleSheet.create({
   // },
 
   resetTitle: {
-  fontFamily: 'Urbanist',      // font-family: Urbanist
-   fontWeight: 'bold',          // font-style: SemiBold → normal in RN
+  fontFamily: 'Urbanist-Semibold',      // font-family: Urbanist
   fontSize: 17,                 // font-size: 17px
   lineHeight: 17 * 1.4,         // line-height: 140% of font-size
   letterSpacing: -0.02 * 17,    // letter-spacing: -2% of font-size
@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
 
   termsText: {
     color: 'rgba(255,255,255,0.48)',
-    fontFamily: 'Urbanist-regular',
+    fontFamily: 'Urbanist-Regular',
     fontSize: 14,
     textAlign: 'center',
     lineHeight: 20,
@@ -420,7 +420,7 @@ const styles = StyleSheet.create({
 
   termsText1: {
     color: 'rgba(255,255,255,0.48)',
-    fontFamily: 'Urbanist-regular',
+    fontFamily: 'Urbanist-Regular',
     fontSize: 14,
     textAlign: 'center',
     lineHeight: 20,
@@ -439,14 +439,14 @@ const styles = StyleSheet.create({
 
   personalEmailID_TextInput: {
     width: '100%',
-    fontFamily: 'Urbanist-regular',
+    fontFamily: 'Urbanist-Regular',
     fontSize: 16,
     color: '#FFFFFF',
   },
 
   loginButton: {
     width: '100%',
-    marginBottom: 2, // Increased space below button
+    marginBottom: 20, // Increased space below button
   },
 
    loginButton1: {
@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
 
   goBackText: {
     color: 'rgba(255,255,255,0.48)',
-    fontFamily: 'Urbanist',
+    fontFamily: 'Urbanist-Semibold',
     fontWeight: '600',
     fontSize: 14,
     textAlign: 'center',
