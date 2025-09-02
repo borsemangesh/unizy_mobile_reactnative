@@ -9,6 +9,8 @@ import {
 import { Styles } from './HelloScreen.style'
 import MyIcon from '../../utils/MyIcon';
 import EdgeToEdgeScreen from './EdgeToEdgeScreen';
+import { BlurView } from '@react-native-community/blur';
+import LinearGradient from 'react-native-linear-gradient';
 
 
 type HelloScreenProps = {
@@ -26,9 +28,14 @@ const HelloScreen = ({ navigation }: HelloScreenProps) => {
         
         <View style={Styles.ScreenLayout}>
           <Text style={Styles.unizyText}>UniZy</Text>
-          <Text style={Styles.hellowText}>Hello</Text>
+          <Text style={Styles.hellowText}>hello</Text>
           
           <View style={Styles.linearGradient}>
+            <BlurView blurType="light" blurAmount={15} />
+
+        <LinearGradient
+          colors={['rgba(255, 255, 255, 0.11)', 'rgba(255, 255, 255, 0.04)']}
+        />
             <TouchableOpacity
               onPress={() => navigation.navigate('LanguagePopup')}
             >

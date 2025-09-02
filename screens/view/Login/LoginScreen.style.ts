@@ -2,12 +2,13 @@ import { StyleSheet } from 'react-native';
 
 export const loginStyles = StyleSheet.create({
   flex_1: {
-    flex: 1,
-    padding: 1,
+    width: '100%',
+    height: '100%',
     alignItems: 'center',
+    flex: 1,
+    
   },
   fullScreenContainer: {
-    display: 'flex',
     paddingRight: 20,
     paddingLeft: 16,
     width: '100%',
@@ -16,6 +17,27 @@ export const loginStyles = StyleSheet.create({
     gap: 10,
     flexShrink: 0,
     flexDirection: 'row',
+    // backgroundColor: '#000000',
+  },
+  cardView: {
+    //  flexDirection: 'column',
+    //       flexShrink: 0,
+    //       borderColor: '#ffffff2c',
+    //       borderRadius: 20,
+    //       backgroundColor:
+    //         'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.04) 100%)',
+    //       boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.05)',
+          padding: 10,
+          marginTop: -15,
+          width: '90%',
+          borderWidth: 0.2,
+          gap: 3,
+      borderColor: '#ffffff3d',
+    borderRadius: 16,
+    backgroundColor:
+      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.09)',
+    
   },
   backIconRow: {
     display: 'flex',
@@ -26,21 +48,9 @@ export const loginStyles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-
-
-     // Outer Shadow (bottom-right)
-    shadowColor: "#000",
-    shadowOffset: { width: 6, height: 6 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    elevation: 10,
-opacity: 0.5,
-    // Inner Highlight (top-left light)
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.1)",
-
-
-},
+    borderWidth: 0.6,
+    borderColor: '#ffffff2c',
+  },
   unizyText: {
     color: '#FFFFFF',
     fontFamily: 'MonumentExtended-Regular',
@@ -71,28 +81,22 @@ opacity: 0.5,
     flexDirection: 'column',
     alignItems: 'center',
     gap: 16,
-    borderRadius: 24,
+    borderRadius: 12,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     opacity: 0.9,
-
-
-    
-    // Outer Shadow (bottom-right)
-    shadowColor: "#000",
-    shadowOffset: { width: 6, height: 6 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    elevation: 10,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.1)",
+    overflow: 'hidden',
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    margin: 20,
   },
   login_container: {
     display: 'flex',
     width: '100%',
-    height: 44,
+    height: 40,
     gap: 10,
     alignSelf: 'stretch',
     borderRadius: 12,
+    borderWidth: 0.6,
+    borderColor: '#ffffff2c',
     flexDirection: 'row',
     justifyContent: 'center',
     alignContent: 'center',
@@ -100,30 +104,20 @@ opacity: 0.5,
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-
-
-    // Outer Shadow (bottom-right)
-    // shadowColor: "#000",
-    // shadowOffset: { width: 6, height: 6 },
-    // shadowOpacity: 0.4,
-    // shadowRadius: 8,
-    // elevation: 10,
-    // borderWidth: 1,
-    // borderColor: "rgba(255,255,255,0.1)",
-    // opacity: 0.5,
   },
   personalEmailID_TextInput: {
-    width: '90%',
+    width: '95%',
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
-    lineHeight: 22,
     fontSize: 17,
+    lineHeight: 22,
+    fontStyle: 'normal',
+
   },
   password_container: {
     display: 'flex',
     width: '100%',
-    height: 44,
-    gap: 10,
+    height: 40,
     alignSelf: 'stretch',
     borderRadius: 12,
     flexDirection: 'row',
@@ -134,20 +128,12 @@ opacity: 0.5,
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
 
-     // Outer Shadow (bottom-right)
-    // shadowColor: "#000",
-    // shadowOffset: { width: 6, height: 6 },
-    // shadowOpacity: 0.4,
-    // shadowRadius: 8,
-    // elevation: 10,
-    // borderWidth: 1,
-    // borderColor: "rgba(255,255,255,0.1)",
-    // opacity: 0.5,
-
-
-},
+    borderWidth: 0.6,
+    borderColor: '#ffffff2c',
+    marginTop: 6,
+  },
   password_TextInput: {
-    width: '80%',
+    width: '85%',
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
     fontSize: 17,
@@ -160,6 +146,7 @@ opacity: 0.5,
     fontWeight: 400,
     width: '100%',
     textAlign: 'right',
+    marginTop: 6,
   },
   loginButton: {
     display: 'flex',
@@ -171,6 +158,10 @@ opacity: 0.5,
     paddingTop: 6,
     paddingBottom: 12,
     backgroundColor: 'rgba(255, 255, 255, 0.56)',
+    marginTop: 6,
+    
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
   },
   loginText: {
     color: '#002050',
@@ -179,7 +170,6 @@ opacity: 0.5,
     fontSize: 17,
     fontStyle: 'normal',
     fontWeight: 500,
-    lineHeight: 22,
     letterSpacing: 1,
   },
   dontHaveAccountText: {
@@ -198,6 +188,7 @@ opacity: 0.5,
     fontStyle: 'normal',
     fontWeight: 'bold',
     textDecorationStyle: 'solid',
+    marginTop: 5,
   },
   teamsandConditionText: {
     color: '#FFFFFF7A',
@@ -261,5 +252,20 @@ opacity: 0.5,
     fontWeight: '400',
     width: '100%',
     textAlign: 'center',
+  },
+  eyeIcon: {
+    width: 19,
+    height: 19,
+  },
+  donthaveAccountText:{
+    color: 'rgba(255, 255, 255, 0.48)',
+              textAlign: 'center',
+              fontFamily: 'Urbanist-Regular',
+              fontSize: 14,
+              fontStyle: 'normal',
+              fontWeight: 400,
+              lineHeight: 19,
+
+              marginTop: 5,
   },
 });
