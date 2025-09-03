@@ -13,7 +13,6 @@ export const loginStyles = StyleSheet.create({
     paddingLeft: 16,
     width: '100%',
     alignItems: 'center',
-    justifyContent: 'center',
     gap: 10,
     flexShrink: 0,
     flexDirection: 'row',
@@ -146,7 +145,7 @@ export const loginStyles = StyleSheet.create({
     fontWeight: 400,
     width: '100%',
     textAlign: 'right',
-    marginTop: 6,
+    marginTop: 10,
   },
   loginButton: {
     display: 'flex',
@@ -158,7 +157,7 @@ export const loginStyles = StyleSheet.create({
     paddingTop: 6,
     paddingBottom: 12,
     backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    marginTop: 6,
+    marginTop: 10,
     
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
@@ -187,7 +186,8 @@ export const loginStyles = StyleSheet.create({
     fontSize: 16,
     fontStyle: 'normal',
     fontWeight: 'bold',
-    textDecorationStyle: 'solid',
+    textDecorationStyle: 'solid',    
+     marginTop: 10,
   },
   teamsandConditionText: {
     color: '#FFFFFF7A',

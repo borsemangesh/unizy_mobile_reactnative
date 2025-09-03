@@ -38,8 +38,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
     //toggleModal();
   };
 
-  const handleForgetPassword=()=>{
-    
+  const handleForgetPassword = () =>{    
     navigation.navigate('Reset');
   }
 
@@ -100,7 +99,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           Forgot Password?
         </Text>
 
-        <TouchableOpacity style={loginStyles.loginButton}>
+        <TouchableOpacity style={loginStyles.loginButton} onPress={handleLogin}>
           <Text style={loginStyles.loginText}>Login</Text>
         </TouchableOpacity>
         
@@ -122,6 +121,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
               fontStyle: 'normal',
               fontWeight: 400,
               lineHeight: 19,
+              marginTop: 10,
             }}
           >
             Don't have an account?
