@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, ImageBackground } from 'react-native';
+import { View, StyleSheet,Dimensions, ImageBackground } from 'react-native';
 import LottieView from 'lottie-react-native';
 
 type SplashScreenProps = {
   onFinish: () => void;
 };
+const { width, height } = Dimensions.get('window');
 
 const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
   useEffect(() => {
@@ -26,7 +27,9 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
           source={require('../../../assets/animations/Animation.json')}
           autoPlay
           loop={false}
-          style={{ width: 360, height: 800 }}
+          resizeMode="cover"  
+          style={{ width, height }}  
+        //   style={{ width: 360, height: 800 }}
           onAnimationFinish={onFinish}
         />
       </View>
