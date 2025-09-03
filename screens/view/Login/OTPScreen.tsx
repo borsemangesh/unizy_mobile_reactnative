@@ -19,11 +19,11 @@ import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-type LoginScreenProps = {
+type OTPScreenProps = {
   navigation: any;
 };
 
-const LoginScreen = ({ navigation }: LoginScreenProps) => {
+const OTPScreen = ({ navigation }: OTPScreenProps) => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -38,7 +38,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
     //toggleModal();
   };
 
-  const handleForgetPassword = () =>{    
+  const handleForgetPassword=()=>{
+    
     navigation.navigate('Reset');
   }
 
@@ -99,7 +100,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           Forgot Password?
         </Text>
 
-        <TouchableOpacity style={loginStyles.loginButton} onPress={handleLogin}>
+        <TouchableOpacity style={loginStyles.loginButton}>
           <Text style={loginStyles.loginText}>Login</Text>
         </TouchableOpacity>
         
@@ -118,9 +119,9 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
               textAlign: 'center',
               fontFamily: 'Urbanist-Regular',
               fontSize: 14,
+              fontStyle: 'normal',
               fontWeight: 400,
               lineHeight: 19,
-              marginTop: 10,
             }}
           >
             Don't have an account?
@@ -206,4 +207,4 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
   );
 };
 
-export default LoginScreen;
+export default OTPScreen;

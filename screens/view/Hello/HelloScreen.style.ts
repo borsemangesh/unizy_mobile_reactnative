@@ -62,14 +62,16 @@ export const Styles = StyleSheet.create({
     marginBottom: 20,
   },
   hellowText: {
-    fontSize: 70,
+    fontSize: 50,
     color: 'white',
     width: '100%',
     fontWeight: 'bold',
-    fontFamily: 'MeowScript-Regular',
+     //fontFamily: 'Urbanist-Semibold', 
+     fontFamily: 'NotoSans-Regular',
     textAlign: 'center',
     alignItems: 'center',
     alignContent: 'center',
+    textTransform: 'lowercase'
   },
   unizyText: {
     fontFamily: 'MonumentExtended-Regular',
@@ -120,11 +122,10 @@ export const Styles = StyleSheet.create({
   selectlanguageText: {
     flex: 1,
     color: 'rgba(255, 255, 255, 0.72)',
-    fontFamily: 'Urbanist',
-    fontStyle: 'normal',
+    fontFamily: 'Urbanist-Medium',
     fontWeight: '500',
     paddingLeft: 2,
-    fontSize: 16,
+    fontSize: 17,
     lineHeight: 19.2,
   },
 

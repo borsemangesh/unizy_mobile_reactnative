@@ -49,6 +49,7 @@ const SignupScreen = () => {
         <View style={styles.emptyView}></View>
       </View>
       
+      
       <View style={styles.formContainer}>
         <View style={styles.nameRow}>
           <TextInput
@@ -87,7 +88,7 @@ const SignupScreen = () => {
         { "Important: Use your personal email address for signup.Your university email will be requested separately for student verification."}
         </Text> */}
 
-        <View style={[styles.editText1, { flexDirection: 'row', alignItems: 'center' }]}>
+        <View style={[styles.editText1, { flexDirection: 'row'}]}>
             <Image
                 source={require('../../../assets/images/info_icon.png')}
                 style={{ width: 20, height: 20, marginRight: 8 }}
@@ -95,10 +96,7 @@ const SignupScreen = () => {
             <Text style={{ color: '#FFFFFF7A', fontFamily: 'Urbanist-Medium', fontSize: 14, flex: 1 }}>
                 Important: Use your personal email address for signup. Your university email will be requested separately for student verification.
             </Text>
-
-
-
-            </View>
+      </View>
 
         <View style={styles.passwordContainer}>
           <TextInput
@@ -151,11 +149,12 @@ const SignupScreen = () => {
                           <Text style={styles.loginText}>Send OTP</Text>
                         </TouchableOpacity>
 
-        <Text style={styles.signupPrompt}>Already have an account? Login</Text>
+        {/* <Text style={styles.signupPrompt}>Already have an account? Login</Text> */}
+        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={styles.signupPrompt}>Already have an account? </Text>
+        <Text style={styles.signupPrompt1}>Login</Text>
+      </View>
         <TouchableOpacity style={styles.signupButton}>
-          {/* <Text onPress={() => Alert.alert('Signup')} style={styles.signupText}>
-            Login
-          </Text> */}
         </TouchableOpacity>
       </View>
     </ImageBackground>
@@ -206,6 +205,7 @@ const styles = StyleSheet.create({
     width: '90%',
     padding: 16,
     gap: 10,
+    marginTop: -15,
     flexDirection: 'column',
     alignItems: 'center',
     borderRadius: 24,
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   },
 
    editText1: {
-    alignItems: 'center',
+    //alignItems: 'center',
     color: 'white',
     fontFamily: 'Urbanist',
     paddingHorizontal: 12,
@@ -312,6 +312,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-Regular',
     fontSize: 14,
     fontWeight: '400',
+  },
+   signupPrompt1: {
+    color: 'rgba(255, 255, 255, 0.48)',
+    fontFamily: 'Urbanist-Semibold',
+    fontSize: 14,
+    fontWeight: '600',
   },
 
   signupButton: {
@@ -382,14 +388,12 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
 
-
-     // Outer Shadow (bottom-right)
     shadowColor: "#000",
     shadowOffset: { width: 6, height: 6 },
     shadowOpacity: 0.4,
     shadowRadius: 8,
     elevation: 10,
-opacity: 0.5,
+    opacity: 0.5,
     // Inner Highlight (top-left light)
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
@@ -418,6 +422,20 @@ opacity: 0.5,
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+  },
+
+   cardView: {
+          padding: 10,
+          marginTop: -15,
+          width: '90%',
+          borderWidth: 0.2,
+          gap: 3,
+      borderColor: '#ffffff3d',
+    borderRadius: 16,
+    backgroundColor:
+      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.09)',
+    
   },
 });
 

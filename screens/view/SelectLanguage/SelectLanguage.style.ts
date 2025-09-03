@@ -33,10 +33,9 @@ export const selectlang_styles = StyleSheet.create({
   },
   
   title: {
-    fontFamily: 'Urbanist-Medium',
+    fontFamily: 'Urbanist-Semibold',
     color: '#FFF',
     fontSize: 20,
-    fontStyle: 'normal',
     fontWeight: '600',
     lineHeight: 24,
     letterSpacing: 0.5,
@@ -60,6 +59,8 @@ export const selectlang_styles = StyleSheet.create({
   searchBar: {
     fontFamily: 'Urbanist-Medium',
     marginLeft: -5,
+    fontWeight:500,
+    fontSize:17
   },
 
   listContainer: {
@@ -101,7 +102,6 @@ export const selectlang_styles = StyleSheet.create({
     color: 'white',
     fontSize: 17,
     fontFamily: 'Urbanist-Medium',
-    fontStyle: 'normal',
     fontWeight: '500',
     mixBlendMode: 'normal',
     width: '83%',
