@@ -9,11 +9,12 @@ export const loginStyles = StyleSheet.create({
     
   },
   fullScreenContainer: {
-    paddingRight: 20,
-    paddingLeft: 16,
+    
     width: '100%',
     alignItems: 'center',
-    gap: 10,
+    justifyContent: 'space-evenly',
+    marginVertical: 20,
+    padding: 16,   
     flexShrink: 0,
     flexDirection: 'row',
     // backgroundColor: '#000000',
@@ -26,19 +27,20 @@ export const loginStyles = StyleSheet.create({
     //       backgroundColor:
     //         'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.04) 100%)',
     //       boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.05)',
-          padding: 10,
-          marginTop: -15,
-          width: '90%',
-          borderWidth: 0.2,
-          gap: 3,
+      padding: 10,
+      marginTop: -25,
+      width: '90%',
+      borderWidth: 0.2,
+      gap: 3,
       borderColor: '#ffffff3d',
-    borderRadius: 16,
-    backgroundColor:
+      borderRadius: 16,
+      backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.09)',
+      boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.09)',
     
   },
   backIconRow: {
+    
     display: 'flex',
     padding: 5,
     justifyContent: 'center',
@@ -56,17 +58,14 @@ export const loginStyles = StyleSheet.create({
     fontSize: 24,
     fontStyle: 'normal',
     fontWeight: '400',
-    lineHeight: 120,
     textAlign: 'center',
     flex: 1,
-    gap: 10,
   },
   emptyView: {
     display: 'flex',
     padding: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
     borderRadius: 40,
     opacity: 0.01,
     backgroundColor:

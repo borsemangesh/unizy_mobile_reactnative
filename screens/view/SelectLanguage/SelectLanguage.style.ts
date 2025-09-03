@@ -13,10 +13,19 @@ export const selectlang_styles = StyleSheet.create({
     flexShrink: 0,
     borderColor: '#ffffff3d',
     borderRadius: 16,
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(0, 0, 0, 0.10) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+    // backgroundColor:
+    //   'radial-gradient(189.13% 141.42% at 0% 0%, rgba(0, 0, 0, 0.10) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.09)',
     padding: 16,
+
+
+
+         borderWidth: 0.3,
+      // borderColor: '#ffffff3d',
+    backgroundColor:
+      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+    // boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.09)',
+    
 
 
 

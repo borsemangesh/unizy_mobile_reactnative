@@ -17,18 +17,29 @@ export const Styles = StyleSheet.create({
   },
   linearGradient: {
     flexDirection: 'column',
-    height: '14%',
+    height: 'auto',
+    paddingBottom: 20,
     flexShrink: 0,
-    borderColor: '#ffffff2c',
+    borderColor: '#ffffff3d',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.04) 100%)',
-    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.05)',
+      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.09)',
     padding: 10,
     marginTop: -15,
     width: '90%',
     gap: 3,
+
+
+         borderWidth: 0.3,
+      // borderColor: '#ffffff3d',
+    // borderRadius: 16,
+    // backgroundColor:
+      // 'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+    // boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.09)',
+
+
     // display: 'flex',
     // width: '95%',
     // padding: 16,
@@ -140,5 +151,8 @@ export const Styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+
+
+          
   },
 });

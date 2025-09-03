@@ -58,7 +58,9 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
     >
       <View style={loginStyles.fullScreenContainer}>
         <View style={loginStyles.backIconRow}>
-          <MyIcon name="keyboard-arrow-left" size={24} color="#FFFFFF" />
+          <Image
+            source={require('../../../assets/images/back.png')} style={{height: 24, width: 24}}/>
+            
         </View>
 
         <Text style={loginStyles.unizyText}>UniZy</Text>
