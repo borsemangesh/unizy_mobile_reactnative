@@ -32,7 +32,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
 
 
   const handleLogin = () => {
-    // Your login logic here
+   navigation.navigate('LoginScreen')
   };
 
   return (
@@ -207,7 +207,9 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
         {/* <Text style={styles.signupPrompt}>Already have an account? Login</Text> */}
         <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
         <Text style={styles.signupPrompt}>Already have an account? </Text>
+        <TouchableOpacity onPress={handleLogin}>
         <Text style={styles.signupPrompt1}>Login</Text>
+        </TouchableOpacity>
       </View>
         <TouchableOpacity style={styles.signupButton}>
         </TouchableOpacity>
