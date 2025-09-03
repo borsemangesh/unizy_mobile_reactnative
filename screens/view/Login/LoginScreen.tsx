@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   TextInput,
@@ -6,12 +6,15 @@ import {
   ImageBackground,
   TouchableOpacity,
   Image,
+  Animated,
+  Easing,
 } from 'react-native';
 
 
 import { loginStyles } from './LoginScreen.style';
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
+import { useFocusEffect } from '@react-navigation/native';
 
 type LoginScreenProps = {
   navigation: any;
@@ -22,6 +25,67 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const [password, setPassword] = useState<string>('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
+
+
+
+  const [currentGreetingIndex, setCurrentGreetingIndex] = useState(0);
+
+   const translateY = React.useRef(new Animated.Value(-100)).current;
+   const slideUp = React.useRef(new Animated.Value(200)).current;
+
+   const greetings = [
+  'Hello', // English
+  '你好', // Chinese
+  'Hola', // Spanish
+  'Bonjour', // French
+  'Hallo', // German
+  'Ciao', // Italian
+  'Olá', // Portuguese
+  'Привет', // Russian
+  'مرحبا', // Arabic
+  'こんにちは', // Japanese
+  '안녕하세요', // Korean
+  'नमस्ते', // Hindi
+  'สวัสดี', // Thai
+  'Merhaba', // Turkish
+  'Cześć', // Polish
+  'السلام علیکم', // Urdu
+  'হ্যালো', // Bengali
+  'Shalom', // Hebrew
+  'Halo', // Malay
+];
+
+
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // reset to first greeting when screen is focused
+      setCurrentGreetingIndex(0);
+
+      const interval = setInterval(() => {
+        setCurrentGreetingIndex((prevIndex) =>
+          prevIndex + 1 < greetings.length ? prevIndex + 1 : 0
+        );
+      }, 3000);
+
+      Animated.timing(translateY, {
+        toValue: 0,
+        duration: 1000,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start();
+
+
+      Animated.timing(slideUp, {
+    toValue: 0, // final position
+    duration: 1000,
+    easing: Easing.out(Easing.ease),
+    useNativeDriver: true,
+  }).start();
+      return () => clearInterval(interval); // stop when screen unfocused
+    }, [])
+  );
+
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -52,8 +116,12 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
     >
 
 
-      <View style={{display: 'flex', flexDirection: 'column',padding: 12,gap: 20,justifyContent: 'space-between',paddingTop: 50}}>
-        <View style={{display: 'flex', flexDirection: 'row',alignItems:'center'}}>
+      <View style={{display: 'flex', flexDirection: 'column',padding: 12,gap: 20,justifyContent: 'space-between',paddingTop: 50,}}>
+        <Animated.View style={[loginStyles.topHeader, { transform: [{ translateY: translateY }] }]} >
+        
+
+                    {/* <Animated.View style={[Styles.linearGradient, { transform: [{ translateY: slideUp }] }]}
+          ></Animated.View> */}
           <TouchableOpacity onPress={() => navigation.goBack()}>
           <View  style={loginStyles.backIconRow} >
               <Image
@@ -63,7 +131,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           </TouchableOpacity>
           <Text style={loginStyles.unizyText}>UniZy</Text>
         <View style={loginStyles.emptyView}></View>
-        </View>
+        </Animated.View>
         <View style={loginStyles.cardView}>
           <BlurView blurType="light" blurAmount={15} />
 

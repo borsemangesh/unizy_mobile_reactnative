@@ -129,7 +129,7 @@ export const loginStyles = StyleSheet.create({
 
     borderWidth: 0.6,
     borderColor: '#ffffff2c',
-    marginTop: 6,
+    marginTop: 12,
   },
   password_TextInput: {
     width: '90%',
@@ -150,6 +150,7 @@ export const loginStyles = StyleSheet.create({
   loginButton: {
     display: 'flex',
     width: '100%',
+    height: 48,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 4,
@@ -170,6 +171,7 @@ export const loginStyles = StyleSheet.create({
     fontStyle: 'normal',
     fontWeight: 500,
     letterSpacing: 1,
+    width: '100%',
   },
   dontHaveAccountText: {
     color: 'rgba(255, 255, 255, 0.48)',
@@ -253,6 +255,7 @@ export const loginStyles = StyleSheet.create({
   eyeIcon: {
     width: 19,
     height: 19,
+    paddingRight: 16,
   },
   donthaveAccountText:{
     color: 'rgba(255, 255, 255, 0.48)',
@@ -263,5 +266,8 @@ export const loginStyles = StyleSheet.create({
     fontWeight: 400,
     lineHeight: 19,
     marginTop: 5,
+  },
+  topHeader: {
+    display: 'flex', flexDirection: 'row',alignItems:'center'
   },
 });
