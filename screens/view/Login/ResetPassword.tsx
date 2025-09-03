@@ -1,240 +1,3 @@
-// import React, { useState } from 'react';
-// import {
-//   View,
-//   TextInput,
-//   StyleSheet,
-//   Text,
-//   ImageBackground,
-//   TouchableOpacity,
-//   Modal,
-//   Dimensions,
-//   Image,
-//   Alert,
-// } from 'react-native';
-// import { BlurView } from '@react-native-community/blur';
-// import LinearGradient from 'react-native-linear-gradient';
-
-// import GlassButton from '../Hello/GlassButton';
-// import ResetButton from '../Hello/ResetButton';
-
-
-// const { width } = Dimensions.get('window');
-
-// const ResetPassword = () => {
-//   const [username, setUsername] = useState<string>('');
-//   const [showPopup, setShowPopup] = useState(false);
-
-//   const handleSendResetLink = () => {
-//     console.log(`Send reset link to ${username}`);
-//     setShowPopup(true);
-//   };
-
-//   const closePopup = () => setShowPopup(false);
-
-//   return (
-//     <ImageBackground
-//       source={require('../../../assets/images/BGAnimationScreen.png')}
-//       style={styles.flex_1}
-//       resizeMode="cover"
-//     >
-//       <View style={styles.fullScreenContainer}>
-//         <Text style={styles.unizyText}>UniZy</Text>
-//       </View>
-
-//       <View style={styles.formContainer}>
-//         <Text style={styles.resetTitle}>Reset Password</Text>
-
-//         <View style={styles.privacyContainer}>
-//           <Text style={styles.termsText}>
-//             Enter your personal email address and we’ll send you a link to reset
-//             your password
-//           </Text>
-//         </View>
-
-//         <LinearGradient
-//           colors={['rgba(255,255,255,0.20)', 'rgba(255,255,255,0.10)']}
-//           style={styles.login_container}
-//         >
-//           <TextInput
-//             style={styles.personalEmailID_TextInput}
-//             placeholder={'Personal Email ID'}
-//             placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
-//             value={username}
-//             onChangeText={(usernameText) => setUsername(usernameText)}
-//           />
-//         </LinearGradient>
-
-//         {/* <TouchableOpacity onPress={handleSendResetLink} style={styles.loginButton}>
-//           <Text style={styles.loginText}>Send Reset Link</Text>
-//         </TouchableOpacity> */}
-
-//         <ResetButton title="Send Reset Link" onPress={handleSendResetLink} style={styles.loginButton} />
-
-
-        
-//        <TouchableOpacity>
-//     <Text style={styles.goBackText}>Go back </Text>
-// </TouchableOpacity>
-//       </View>
-//       <Modal
-//         visible={showPopup}
-//         transparent
-//         animationType="fade"
-//         onRequestClose={closePopup}
-//       >
-//         <View style={styles.overlay}>
-//           <BlurView
-//             style={StyleSheet.absoluteFill}
-//             blurType="dark"
-//             blurAmount={15}
-//             reducedTransparencyFallbackColor="rgba(0,0,0,0.7)"
-//           />
-//           <View style={styles.popupContainer}>
-//             <Image
-//               source={require('../../../assets/images/success_icon.png')}
-//               style={styles.logo}
-//               resizeMode="contain"
-//             />
-//             <Text style={styles.termsText}>
-//               A password reset link has been sent to your university email.
-//               Please check your inbox (or spam folder) to continue.
-//             </Text>
-
-//             {/* <TouchableOpacity onPress={closePopup} style={styles.loginButton}>
-//               <Text style={styles.loginText}>Back to Login</Text>
-//             </TouchableOpacity> */}
-
-//         <GlassButton title="Back to Login" onPress={closePopup} style={styles.loginButton} />
-
-//           </View>
-//         </View>
-//       </Modal>
-//     </ImageBackground>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   flex_1: {
-//     flex: 1,
-//     alignItems: 'center',
-//     padding: 16,
-//   },
-
-//   fullScreenContainer: {
-//     width: '100%',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     marginVertical: 20,
-//   },
-//   unizyText: {
-//     color: '#FFFFFF',
-//     fontFamily: 'MonumentExtended-Regular',
-//     fontSize: 24,
-//     fontWeight: '400',
-//     textAlign: 'center',
-//   },
-
-//   formContainer: {
-//     width: '90%',
-//     padding: 20,
-//     borderRadius: 24,
-//     backgroundColor: 'rgba(255,255,255,0.06)',
-//     alignItems: 'center',
-//   },
-//   resetTitle: {
-//     fontFamily: 'Urbanist',
-//     fontSize: 18,
-//     color: '#FFF',
-//     textAlign: 'center',
-//     fontWeight: '600',
-//     marginBottom: 10,
-//   },
-//   privacyContainer: {
-//     width: '100%',
-//     alignItems: 'center',
-//     marginBottom: 10,
-//   },
-//   termsText: {
-//     color: 'rgba(255,255,255,0.48)',
-//     fontFamily: 'Urbanist',
-//     fontSize: 14,
-//     textAlign: 'center',
-//     lineHeight: 20,
-//     paddingVertical: 10,
-//   },
-
-//   login_container: {
-//     width: '100%',
-//     height: 50,
-//     borderRadius: 12,
-//     justifyContent: 'center',
-//     paddingHorizontal: 15,
-//     marginVertical: 12,
-//   },
-//   personalEmailID_TextInput: {
-//     width: '100%',
-//     fontFamily: 'Urbanist-regular',
-//     fontSize: 16,
-//     color: '#FFFFFF',
-    
-//   },
-
-//   loginButton: {
-//     width: '100%',
-
-//   },
-//   loginText: {
-//     color: '#002050',
-//     fontFamily: 'Urbanist-regular',
-//     fontSize: 17,
-//     fontWeight: '600',
-//     letterSpacing: 0.5,
-//   },
-
-//   goBackWrapper: {
-//     width: '100%',
-//     alignItems: 'center',
-//     marginTop: 10,
-//   },
-//   goBackButton: {
-   
-//   },
-//  goBackText: {
-//   color: 'rgba(255,255,255,0.48)',
-//   fontFamily: 'Urbanist',
-//   fontWeight: '600',
-//   fontSize: 14,
-//   textAlign: 'center',
-//   lineHeight: 19.6,
-//   letterSpacing: 0,
-//    marginVertical: 12,
-// },
-
-//   overlay: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     backgroundColor: 'rgba(0,0,0,0.5)',
-//   },
-//   popupContainer: {
-//     width: width * 0.85,
-//     padding: 20,
-//     borderRadius: 24,
-//     backgroundColor: 'rgba(255, 255, 255, 0.08)',
-//     borderWidth: 1,
-//     borderColor: 'rgba(255, 255, 255, 0.1)',
-//     alignItems: 'center',
-//   },
-//   logo: {
-//     width: 64,
-//     height: 64,
-//     marginBottom: 20,
-//   },
-// });
-
-// export default ResetPassword;
-
-
 import React, { useState } from 'react';
 import {
   View,
@@ -260,6 +23,8 @@ const { width } = Dimensions.get('window');
 const ResetPassword = () => {
   const [username, setUsername] = useState<string>('');
   const [showPopup, setShowPopup] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
 
   const handleSendResetLink = () => {
     console.log(`Send reset link to ${username}`);
@@ -274,28 +39,38 @@ const ResetPassword = () => {
       style={styles.flex_1}
       //  style={{ flex: 1, width: '100%', height: '100%' }} 
       resizeMode="cover"
-    >
-      <View style={styles.fullScreenContainer}>
+      onLoad={() => setImageLoaded(true)}>
+
+   <View style={styles.fullScreenContainer}>
+        <View style={styles.backIconRow}>
+        
+           <TouchableOpacity>
+                    <Image
+                      source={require('../../../assets/images/back.png')}
+                      style={{ height: 24, width: 24 }}
+                    />
+                  </TouchableOpacity>
+        </View>
+
         <Text style={styles.unizyText}>UniZy</Text>
+        <View style={styles.emptyView}></View>
       </View>
 
+  {imageLoaded && (
       <View style={styles.formContainer}>
-        {/* Reset Password */}
         <Text style={styles.resetTitle}>Reset Password</Text>
 
-        {/* Info Text */}
+      
         <View style={styles.privacyContainer}>
           <Text style={styles.termsText}>
             Enter your personal email address and we’ll send you a link to reset
             your password
           </Text>
         </View>
-
-        {/* Email Input */}
+{/* 
         <LinearGradient
           colors={['rgba(255,255,255,0.20)', 'rgba(255,255,255,0.10)']}
-          style={styles.login_container}
-        >
+          style={styles.login_container}>
           <TextInput
             style={styles.personalEmailID_TextInput}
             placeholder={'Personal Email ID'}
@@ -303,22 +78,36 @@ const ResetPassword = () => {
             value={username}
             onChangeText={(usernameText) => setUsername(usernameText)}
           />
-        </LinearGradient>
+        </LinearGradient> */}
 
-        {/* Send Reset Link */}
-        <ResetButton
+          <View style={styles.login_container}>
+                    <TextInput
+                      style={styles.personalEmailID_TextInput}
+                      placeholder={'Personal Email ID'}
+                      placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
+                      value={username}
+                      onChangeText={usernameText => setUsername(usernameText)}
+                    />
+                  </View>
+
+        {/* <ResetButton
           title="Send Reset Link"
           onPress={handleSendResetLink}
           style={styles.loginButton}
-        />
+        /> */}
 
-        {/* Go Back */}
+         <TouchableOpacity style={styles.loginButton} onPress={handleSendResetLink}>
+                    <Text style={styles.loginText}>Send Reset Link</Text>
+                  </TouchableOpacity>
+
         <TouchableOpacity>
           <Text style={styles.goBackText}>Go back</Text>
         </TouchableOpacity>
+     
       </View>
+       )}
 
-      {/* Popup */}
+
       <Modal
         visible={showPopup}
         transparent
@@ -343,15 +132,22 @@ const ResetPassword = () => {
               A password reset link has been sent to your university email.
               Please check your inbox (or spam folder) to continue.
             </Text>
-            <GlassButton
+            {/* <GlassButton
               title="Back to Login"
               onPress={closePopup}
               style={styles.loginButton1}
-            />
+            /> */}
+
+             <TouchableOpacity style={styles.loginButton} onPress={closePopup}>
+                    <Text style={styles.loginText}>Back to Login</Text>
+                  </TouchableOpacity>
+
+
           </View>
           
         </View>
       </Modal>
+      
     </ImageBackground>
   );
 };
@@ -361,31 +157,37 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     padding: 16,
-    // flex: 1,
-  width: '100%',
-  height: '100%',
-//  alignItems: 'center',
   },
-  fullScreenContainer: {
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 20,
-  },
-  unizyText: {
-    color: '#FFFFFF',
-    fontFamily: 'MonumentExtended-Regular',
-    fontSize: 24,
-    fontWeight: '400',
-    textAlign: 'center',
-  },
+  // fullScreenContainer: {
+  //   width: '100%',
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  //   marginVertical: 20,
+  // },
+  // unizyText: {
+  //   color: '#FFFFFF',
+  //   fontFamily: 'MonumentExtended-Regular',
+  //   fontSize: 24,
+  //   fontWeight: '400',
+  //   textAlign: 'center',
+  // },
 
   formContainer: {
     width: '90%',
     padding: 20,
     borderRadius: 24,
-    backgroundColor: 'rgba(255,255,255,0.06)',
     alignItems: 'center',
+    gap: 10,
+    marginTop: -15,
+    flexDirection: 'column',
+    // borderRadius: 24,
+    // backgroundColor: 'rgba(255, 255, 255, 0.06)',
+
+      borderWidth: 0.2,
+      borderColor: '#ffffff3d',
+      backgroundColor:
+      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+      boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
   },
 
   // resetTitle: {
@@ -398,19 +200,18 @@ const styles = StyleSheet.create({
   // },
 
   resetTitle: {
-  fontFamily: 'Urbanist-Semibold',      // font-family: Urbanist
-  fontSize: 17,                 // font-size: 17px
-  lineHeight: 17 * 1.4,         // line-height: 140% of font-size
-  letterSpacing: -0.02 * 17,    // letter-spacing: -2% of font-size
-  textAlign: 'center',          // text-align: center
+  fontFamily: 'Urbanist-Semibold',      
+  fontSize: 17,                
+  lineHeight: 22,        
+  letterSpacing: -0.02 * 17,    
+  textAlign: 'center',       
   color: '#FFF',
-  marginBottom: 20,
+  fontWeight:600
 },
 
   privacyContainer: {
     width: '100%',
     alignItems: 'center',
-    marginBottom: 20, // Increased space below info text
   },
 
   termsText: {
@@ -418,7 +219,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-Regular',
     fontSize: 14,
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: 22,
     paddingHorizontal: 10,
   },
 
@@ -429,29 +230,67 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 20,
     paddingHorizontal: 10,
-     marginBottom: 20, 
+     marginBottom: 12, 
   },
 
-  login_container: {
+ login_container: {
+    display: 'flex',
     width: '100%',
-    height: 50,
+    height: 40,
+    gap: 10,
+    alignSelf: 'stretch',
     borderRadius: 12,
+    borderWidth: 0.6,
+    borderColor: '#ffffff2c',
+    flexDirection: 'row',
     justifyContent: 'center',
-    paddingHorizontal: 15,
-    marginBottom: 20, // Increased space below input
+    alignContent: 'center',
+    alignItems: 'center',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
   },
-
   personalEmailID_TextInput: {
-    width: '100%',
+    width: '95%',
     fontFamily: 'Urbanist-Regular',
-    fontSize: 16,
-    color: '#FFFFFF',
+    fontWeight: '400',
+    fontSize: 17,
+    lineHeight: 22,
+    fontStyle: 'normal',
+
   },
 
-  loginButton: {
+    loginButton: {
+    display: 'flex',
     width: '100%',
-    marginBottom: 20, // Increased space below button
+    height: 'auto',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 100,
+    paddingTop: 6,
+    paddingBottom: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.56)',
+    marginTop: 5,
+    
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
   },
+  loginText: {
+    color: '#002050',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontStyle: 'normal',
+    fontWeight: 500,
+    letterSpacing: 1,
+    width: '100%',
+  },
+
+  // loginButton: {
+  //   width: '100%',
+  //   marginBottom: 20, // Increased space below button
+  // },
 
    loginButton1: {
     width: '100%',
@@ -463,6 +302,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-Semibold',
     fontWeight: '600',
     fontSize: 14,
+    marginTop:12,
     textAlign: 'center',
     lineHeight: 19.6,
     letterSpacing: 0,
@@ -489,6 +329,54 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     marginBottom: 20,
+  },
+
+
+  fullScreenContainer: {
+    display: 'flex',
+    paddingRight: 20,
+    paddingLeft: 16,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    flexShrink: 0,
+    flexDirection: 'row',
+  },
+  backIconRow: {
+  display: 'flex',
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 40,
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+    borderWidth: 0.6,
+    borderColor: '#ffffff2c',
+},
+  unizyText: {
+    color: '#FFFFFF',
+    fontFamily: 'MonumentExtended-Regular',
+    fontSize: 24,
+    fontStyle: 'normal',
+    fontWeight: '400',
+    lineHeight: 120,
+    textAlign: 'center',
+    flex: 1,
+    gap: 10,
+  },
+  emptyView: {
+    display: 'flex',
+    padding: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 8,
+    borderRadius: 40,
+    opacity: 0.01,
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
   },
 });
 

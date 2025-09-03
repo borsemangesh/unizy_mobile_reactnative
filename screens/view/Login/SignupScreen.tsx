@@ -31,9 +31,12 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
   
 
 
-  const handleLogin = () => {
-   navigation.navigate('LoginScreen')
-  };
+ const handleLogin = () => {
+  navigation.reset({
+    index: 0,
+    routes: [{ name: 'LoginScreen' }],
+  });
+};
 
   return (
     <ImageBackground
@@ -43,12 +46,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
 
         <View style={styles.fullScreenContainer}>
         <View style={styles.backIconRow}>
-          {/* <MyIcon
-            name="keyboard-arrow-left"
-            size={24}
-            color="#FFFFFF"
-            style={{}}
-          /> */}
+        
            <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Image
                       source={require('../../../assets/images/back.png')}
@@ -250,6 +248,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     marginTop: 10,
     backgroundColor: 'rgba(255, 255, 255, 0.56)',
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+  
   },
   loginText: {
     color: '#002050',
@@ -270,8 +271,16 @@ const styles = StyleSheet.create({
     marginTop: -15,
     flexDirection: 'column',
     alignItems: 'center',
-    borderRadius: 24,
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    // borderRadius: 24,
+    // backgroundColor: 'rgba(255, 255, 255, 0.06)',
+
+
+      borderWidth: 0.2,
+      borderColor: '#ffffff3d',
+      borderRadius: 16,
+      backgroundColor:
+      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+      boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
   },
 
   nameRow: {
@@ -519,6 +528,9 @@ login_container1: {
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
   },
+
+
+
   personalEmailID_TextInput: {
     width: '95%',
     fontFamily: 'Urbanist-Regular',
