@@ -103,7 +103,35 @@ const SelectLanguage_Popup = ({ navigation }: LoginScreenProps) => {
                   navigation.navigate('LoginScreen') || setSelected(item.code)
                 }
               >
-                <View style={selectlang_styles.languageInfo}>
+                
+                <View style = {{ display: 'flex',paddingTop: 10,paddingBottom: 12,flexDirection: 'row', alignItems: 'center',alignContent: 'center', width: '100%'}}>
+
+                 
+                  <View style={{display: 'flex', flexDirection: 'row',alignItems: 'center', justifyContent: 'space-between',width: '100%'}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+ <View>
+                    <Image source={item.flag} style={selectlang_styles.flag}/>
+                  </View>
+                    <Text style={selectlang_styles.languageText}>
+                      {item.name}
+                    </Text>
+
+                    </View>
+                    <View>
+                      <View style= {selectlang_styles.radioButton_round}>
+                        <View
+                            style={[
+                              selectlang_styles.radioButton,
+                              selected === item.code &&
+                                selectlang_styles.radioButtonSelected,
+                            ]}
+                          />
+                      </View>
+                    </View>
+                  </View>
+                  
+                </View>
+                {/* <View style={selectlang_styles.languageInfo}>
                   <Image source={item.flag} style={selectlang_styles.flag} />
                   <View style={{ flexDirection: 'row', alignItems: 'center'}}>
                     <Text style={selectlang_styles.languageText}>
@@ -122,7 +150,7 @@ const SelectLanguage_Popup = ({ navigation }: LoginScreenProps) => {
                   
                   </View>
                   
-                </View>
+                </View> */}
                 
               </TouchableOpacity>
             )}

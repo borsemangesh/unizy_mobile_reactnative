@@ -17,40 +17,41 @@ export const loginStyles = StyleSheet.create({
     padding: 16,   
     flexShrink: 0,
     flexDirection: 'row',
+    paddingTop: 50,
+    
     // backgroundColor: '#000000',
   },
   cardView: {
-    //  flexDirection: 'column',
-    //       flexShrink: 0,
-    //       borderColor: '#ffffff2c',
-    //       borderRadius: 20,
-    //       backgroundColor:
-    //         'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.04) 100%)',
-    //       boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.05)',
-      padding: 10,
-      marginTop: -25,
-      width: '90%',
+      padding: 12,
+      // marginTop: 0,
+      // width: '90%',
       borderWidth: 0.2,
       gap: 3,
       borderColor: '#ffffff3d',
       borderRadius: 16,
       backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-      boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.09)',
+      boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
+      
     
   },
   backIconRow: {
     
     display: 'flex',
-    padding: 5,
+    padding: 12,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 40,
+    // backgroundColor:
+    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    // boxShadow: '0 2px 8px 0 rgba(255, 255, 255, 0.04) inset',
     backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    borderWidth: 0.6,
+      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+      boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
+    borderWidth: 0.4,
     borderColor: '#ffffff2c',
+    height: 48,
+    width: 48,
   },
   unizyText: {
     color: '#FFFFFF',
@@ -131,7 +132,7 @@ export const loginStyles = StyleSheet.create({
     marginTop: 6,
   },
   password_TextInput: {
-    width: '85%',
+    width: '90%',
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
     fontSize: 17,
@@ -181,15 +182,15 @@ export const loginStyles = StyleSheet.create({
   },
   signupText: {
     color: '#FFFFFF7A',
-    fontFamily: 'Urbanist-Semibold',
-    fontSize: 16,
+    fontFamily: 'Urbanist-SemiBold',
+   fontSize: 14,
     fontWeight: '600',
     textDecorationStyle: 'solid',    
      marginTop: 10,
   },
   teamsandConditionText: {
     color: '#FFFFFF7A',
-    fontFamily: 'Urbanist-Semibold',
+    fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
     marginLeft: 5,
     fontWeight: '600',
@@ -255,13 +256,12 @@ export const loginStyles = StyleSheet.create({
   },
   donthaveAccountText:{
     color: 'rgba(255, 255, 255, 0.48)',
-              textAlign: 'center',
-              fontFamily: 'Urbanist-Regular',
-              fontSize: 14,
-              fontStyle: 'normal',
-              fontWeight: 400,
-              lineHeight: 19,
-
-              marginTop: 5,
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    fontStyle: 'normal',
+    fontWeight: 400,
+    lineHeight: 19,
+    marginTop: 5,
   },
 });

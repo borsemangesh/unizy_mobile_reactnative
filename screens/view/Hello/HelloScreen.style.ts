@@ -17,7 +17,7 @@ export const Styles = StyleSheet.create({
   },
   linearGradient: {
     flexDirection: 'column',
-    height: 'auto',
+    height: '14%',
     paddingBottom: 20,
     flexShrink: 0,
     borderColor: '#ffffff3d',
@@ -26,31 +26,11 @@ export const Styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.09)',
-    padding: 10,
-    marginTop: -15,
+    padding: 16,
     width: '90%',
     gap: 3,
-
-
-         borderWidth: 0.3,
-      // borderColor: '#ffffff3d',
-    // borderRadius: 16,
-    // backgroundColor:
-      // 'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    // boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.09)',
-
-
-    // display: 'flex',
-    // width: '95%',
-    // padding: 16,
-    // flexDirection: 'column',
-    // gap: 12,
-    // height: 120,
+    borderWidth: 0.3,
     
-    // borderTopRightRadius: 16,
-    // boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    // backgroundColor:
-    //   'radial-gradient(189.13% 141.42% at 0% 0%, rgba(0, 0, 0, 0.10) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',  
     },
   card_container: {
     flexDirection: 'row',
@@ -91,8 +71,7 @@ export const Styles = StyleSheet.create({
     fontWeight: '400',
     fontStyle: 'normal',  
     display: 'flex',
-    padding: 16,
-    top: 40,
+    paddingTop: 60,
     flexDirection: 'column',
     alignItems: 'flex-start',
   },
@@ -135,7 +114,7 @@ export const Styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.72)',
     fontFamily: 'Urbanist-Medium',
     fontWeight: '500',
-    paddingLeft: 2,
+    paddingLeft: 10,
     fontSize: 17,
     lineHeight: 19.2,
   },

@@ -5,19 +5,13 @@ import {
   Text,
   ImageBackground,
   TouchableOpacity,
-  Alert,
-  Modal,
-  Button,
   Image,
-  StyleSheet,
 } from 'react-native';
 
-import MyIcon from '../../utils/MyIcon';
+
 import { loginStyles } from './LoginScreen.style';
-import LiquidGlassCard from './LiquidGlassCard';
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 type LoginScreenProps = {
   navigation: any;
@@ -33,7 +27,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
     setModalVisible(!isModalVisible);
   };
   const handleLogin = () => {
-    navigation.navigate('Dashboard');
+    // navigation.navigate('Dashboard');
     console.log(`Logging in with ${username} and ${password}`);
     //toggleModal();
   };
@@ -56,89 +50,98 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       resizeMode="cover"
       style={[loginStyles.flex_1]}
     >
-      <View style={loginStyles.fullScreenContainer}>
-        <View style={loginStyles.backIconRow}>
-          <Image
-            source={require('../../../assets/images/back.png')} style={{height: 24, width: 24}}/>
-            
-        </View>
 
-        <Text style={loginStyles.unizyText}>UniZy</Text>
+
+      <View style={{display: 'flex', flexDirection: 'column',padding: 12,gap: 20,justifyContent: 'space-between',paddingTop: 50}}>
+        <View style={{display: 'flex', flexDirection: 'row',alignItems:'center'}}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <View  style={loginStyles.backIconRow} >
+              <Image
+              source={require('../../../assets/images/back.png')} style={{height: 24, width: 24}}/>
+              
+            </View>
+          </TouchableOpacity>
+          <Text style={loginStyles.unizyText}>UniZy</Text>
         <View style={loginStyles.emptyView}></View>
-      </View>
-
-      <View style={loginStyles.cardView}>
-        <BlurView blurType="light" blurAmount={15} />
-
-        <LinearGradient
-          colors={['rgba(255, 255, 255, 0.76)', 'rgba(255, 255, 255, 0.85)']}
-        />
-        <View style={loginStyles.login_container}>
-          <TextInput
-            style={loginStyles.personalEmailID_TextInput}
-            placeholder={'Personal Email ID'}
-            placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
-            value={username}
-            onChangeText={usernameText => setUsername(usernameText)}
-          />
         </View>
+        <View style={loginStyles.cardView}>
+          <BlurView blurType="light" blurAmount={15} />
 
-        <View style={loginStyles.password_container}>
-          <TextInput
-            style={loginStyles.password_TextInput}
-            placeholder={'Password'}
-            placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
-            value={password}
-            onChangeText={passwordText => setPassword(passwordText)}
+          <LinearGradient
+            colors={['rgba(255, 255, 255, 0.76)', 'rgba(255, 255, 255, 0.85)']}
           />
+          <View style={loginStyles.login_container}>
+            <TextInput
+              style={loginStyles.personalEmailID_TextInput}
+              placeholder={'Personal Email ID'}
+              placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
+              value={username}
+              onChangeText={usernameText => setUsername(usernameText)}
+            />
+          </View>
 
-          <Image
-            source={require('../../../assets/images/eyeopen.png')}
-            style={loginStyles.eyeIcon}
-          />
-        </View>
-        <Text style={loginStyles.forgetPasswordText} onPress={handleForgetPassword}>
-          Forgot Password?
-        </Text>
+          <View style={loginStyles.password_container}>
+            <TextInput
+              style={loginStyles.password_TextInput}
+              placeholder={'Password'}
+              placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
+              value={password}
+              onChangeText={passwordText => setPassword(passwordText)}
+            />
 
-        <TouchableOpacity style={loginStyles.loginButton} onPress={handleLogin}>
-          <Text style={loginStyles.loginText}>Login</Text>
-        </TouchableOpacity>
-        
-        <View
-          style={{
-            width: '100%',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 5,
-          }}
-        >
-          <Text
+            <Image
+              source={require('../../../assets/images/eyeopen.png')}
+              style={loginStyles.eyeIcon}
+            />
+          </View>
+          <Text style={loginStyles.forgetPasswordText} onPress={handleForgetPassword}>
+            Forgot Password?
+          </Text>
+
+          <TouchableOpacity style={loginStyles.loginButton} onPress={handleLogin}>
+            <Text style={loginStyles.loginText}>Login</Text>
+          </TouchableOpacity>
+          
+          <View
             style={{
-              color: 'rgba(255, 255, 255, 0.48)',
-              textAlign: 'center',
-              fontFamily: 'Urbanist-Regular',
-              fontSize: 14,
-              fontWeight: 400,
-              lineHeight: 19,
-              marginTop: 10,
+              width: '100%',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: 5,
             }}
           >
-            Don't have an account?
+            <Text
+              style={{
+                color: 'rgba(255, 255, 255, 0.48)',
+                textAlign: 'center',
+                fontFamily: 'Urbanist-Regular',
+                fontSize: 14,
+                fontWeight: 400,
+                lineHeight: 19,
+                marginTop: 10,
+              }}
+            >
+              Don't have an account?
+            </Text>
+          <TouchableOpacity onPress={handleSignup}>
+          <Text style={loginStyles.signupText}>
+            Sign up
           </Text>
-         <TouchableOpacity onPress={handleSignup}>
-        <Text style={loginStyles.signupText}>
-          Sign up
-        </Text>
-        </TouchableOpacity>
+          </TouchableOpacity>
+          </View>
         </View>
       </View>
+
+      
+      
+      
       <View
         style={{
-          flex: 0.9,
           alignItems: 'center',
-          justifyContent: 'flex-end',
+          justifyContent: 'flex-end',          
+          flex: 1,
+          paddingBottom: 30,
         }}
       >
         <View style={loginStyles.teamsandConditionContainer}>
