@@ -11,7 +11,11 @@ import {
 } from 'react-native';
 import MyIcon from '../../utils/MyIcon';
 
-const SignupScreen = () => {
+type SignupScreenProps = {
+  navigation: any;
+};
+
+const SignupScreen = ({ navigation }: SignupScreenProps) => {
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [postalCode, setPostalCode] = useState<string>('');
@@ -24,6 +28,8 @@ const SignupScreen = () => {
   const handleSendOTP = () => {
     Alert.alert('OTP Sent', 'An OTP has been sent to your email.');
   };
+  
+
 
   const handleLogin = () => {
     // Your login logic here
@@ -37,12 +43,18 @@ const SignupScreen = () => {
 
         <View style={styles.fullScreenContainer}>
         <View style={styles.backIconRow}>
-          <MyIcon
+          {/* <MyIcon
             name="keyboard-arrow-left"
             size={24}
             color="#FFFFFF"
             style={{}}
-          />
+          /> */}
+           <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Image
+                      source={require('../../../assets/images/back.png')}
+                      style={{ height: 24, width: 24 }}
+                    />
+                  </TouchableOpacity>
         </View>
 
         <Text style={styles.unizyText}>UniZy</Text>
@@ -52,37 +64,66 @@ const SignupScreen = () => {
       
       <View style={styles.formContainer}>
         <View style={styles.nameRow}>
-          <TextInput
+          {/* <TextInput
             style={[styles.editText, styles.halfWidth]}
             placeholder="First Name"
             placeholderTextColor="rgba(255, 255, 255, 0.48)"
             value={firstName}
             onChangeText={setFirstName}
-          />
+          /> */}
+
+      <View style={styles.login_container1}>
           <TextInput
-            style={[styles.editText, styles.halfWidth]}
-            placeholder="Last Name"
+            style={styles.personalEmailID_TextInput}
+            placeholder="First Name"
+            placeholderTextColor="rgba(255, 255, 255, 0.48)"
+            value={firstName}
+            onChangeText={setFirstName}
+          />
+        </View>
+
+
+        <View style={styles.login_container1}>
+          <TextInput
+            style={styles.personalEmailID_TextInput}
+           placeholder="Last Name"
             placeholderTextColor="rgba(255, 255, 255, 0.48)"
             value={lastName}
             onChangeText={setLastName}
           />
         </View>
 
-        <TextInput
-          style={styles.editText}
-          placeholder="Postal Code"
+          
+          {/* <TextInput
+            style={[styles.editText, styles.halfWidth]}
+            placeholder="Last Name"
+            placeholderTextColor="rgba(255, 255, 255, 0.48)"
+            value={lastName}
+            onChangeText={setLastName}
+          /> */}
+        </View>
+
+  <View style={styles.login_container}>
+          <TextInput
+            style={styles.personalEmailID_TextInput}
+            placeholder="Postal Code"
           placeholderTextColor="rgba(255, 255, 255, 0.48)"
           value={postalCode}
           onChangeText={setPostalCode}
-        />
+          />
+        </View>
 
-        <TextInput
-          style={styles.editText}
-          placeholder="Personal Email ID"
+
+          <View style={styles.login_container}>
+          <TextInput
+          style={styles.personalEmailID_TextInput}
+         placeholder="Personal Email ID"
           placeholderTextColor="rgba(255, 255, 255, 0.48)"
           value={username}
           onChangeText={setUsername}
-        />
+          />
+        </View>
+
 
        {/* <Text style={styles.editText1}>
         { "Important: Use your personal email address for signup.Your university email will be requested separately for student verification."}
@@ -98,26 +139,40 @@ const SignupScreen = () => {
             </Text>
       </View>
 
-        <View style={styles.passwordContainer}>
-          <TextInput
-            style={styles.editText}
-            placeholder="Create Password"
-            placeholderTextColor="rgba(255, 255, 255, 0.48)"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={!isPasswordVisible}
-          />
-          <View style={styles.eyeIconWrapper}>
-            <MyIcon
-              name={isPasswordVisible ? 'visibility-off' : 'visibility'}
-              size={15}
-              color="#FFFFFF"
-              onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-            />
-          </View>
-        </View>
+        <View style={styles.password_container}>
+                  <TextInput
+                    style={styles.password_TextInput}
+                     placeholder="Create Password"
+                    placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry={!isPasswordVisible}
+                  />
+        
+                  <Image
+                    source={require('../../../assets/images/eyeopen.png')}
+                    style={styles.eyeIcon}
+                  />
+                </View>
 
-        <View style={styles.passwordContainer}>
+                 <View style={styles.password_container}>
+                  <TextInput
+                    style={styles.password_TextInput}
+                    placeholder="Confirm Password"
+                    placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                    secureTextEntry={!isConfirmPasswordVisible}
+                  />
+        
+                  <Image
+                    source={require('../../../assets/images/eyeopen.png')}
+                    style={styles.eyeIcon}
+                  />
+                </View>
+
+
+        {/* <View style={styles.passwordContainer}>
           <TextInput
             style={styles.editText}
             placeholder="Confirm Password"
@@ -134,7 +189,7 @@ const SignupScreen = () => {
               onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}
             />
           </View>
-        </View>
+        </View> */}
 
         {/* <TouchableOpacity onPress={handleSendOTP} style={styles.buttonWrapper}>
           <ImageBackground
@@ -167,6 +222,10 @@ const styles = StyleSheet.create({
     padding: 1,
     alignItems: 'center',
   },
+   eyeIcon: {
+    width: 19,
+    height: 19,
+  },
 
   unizyTitle: {
     fontFamily: 'Monument Extended',
@@ -187,6 +246,7 @@ const styles = StyleSheet.create({
     paddingTop: 6,
     paddingBottom: 8,
     marginBottom: 16,
+    marginTop: 10,
     backgroundColor: 'rgba(255, 255, 255, 0.56)',
   },
   loginText: {
@@ -223,13 +283,6 @@ const styles = StyleSheet.create({
     width: '48%',
   },
 
-   personalEmailID_TextInput: {
-    width: '90%',
-    fontFamily: 'Urbanist-Regular',
-    fontWeight: '400',
-    lineHeight: 22,
-    fontSize: 17,
-  },
 
   editText: {
     alignItems: 'center',
@@ -379,7 +432,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   backIconRow: {
-    display: 'flex',
+  display: 'flex',
     padding: 5,
     justifyContent: 'center',
     alignItems: 'center',
@@ -387,18 +440,8 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-
-    shadowColor: "#000",
-    shadowOffset: { width: 6, height: 6 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    elevation: 10,
-    opacity: 0.5,
-    // Inner Highlight (top-left light)
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.1)",
-
-
+    borderWidth: 0.6,
+    borderColor: '#ffffff2c',
 },
   unizyText: {
     color: '#FFFFFF',
@@ -436,6 +479,78 @@ const styles = StyleSheet.create({
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.09)',
     
+  },
+
+login_container1: {
+    display: 'flex',
+    width: '48%',
+    height: 40,
+    gap: 10,
+    alignSelf: 'stretch',
+    borderRadius: 12,
+    borderWidth: 0.6,
+    borderColor: '#ffffff2c',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+  },
+
+
+   login_container: {
+    display: 'flex',
+    width: '100%',
+    height: 40,
+    gap: 10,
+    alignSelf: 'stretch',
+    borderRadius: 12,
+    borderWidth: 0.6,
+    borderColor: '#ffffff2c',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+  },
+  personalEmailID_TextInput: {
+    width: '95%',
+    fontFamily: 'Urbanist-Regular',
+    fontWeight: '400',
+    fontSize: 17,
+    lineHeight: 22,
+    fontStyle: 'normal',
+
+  },
+
+  password_container: {
+    display: 'flex',
+    width: '100%',
+    height: 40,
+    alignSelf: 'stretch',
+    borderRadius: 12,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+
+    borderWidth: 0.6,
+    borderColor: '#ffffff2c',
+    marginTop: 6,
+  },
+  password_TextInput: {
+    width: '85%',
+    fontFamily: 'Urbanist-Regular',
+    fontWeight: '400',
+    fontSize: 17,
+    lineHeight: 22,
   },
 });
 
