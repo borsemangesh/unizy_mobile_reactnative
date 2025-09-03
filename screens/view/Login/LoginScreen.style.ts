@@ -255,7 +255,7 @@ export const loginStyles = StyleSheet.create({
   eyeIcon: {
     width: 19,
     height: 19,
-    paddingRight: 16,
+    // paddingRight: 16,
   },
   donthaveAccountText:{
     color: 'rgba(255, 255, 255, 0.48)',

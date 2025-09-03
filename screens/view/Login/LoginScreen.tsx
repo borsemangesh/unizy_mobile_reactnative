@@ -33,41 +33,9 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
    const translateY = React.useRef(new Animated.Value(-100)).current;
    const slideUp = React.useRef(new Animated.Value(200)).current;
 
-   const greetings = [
-  'Hello', // English
-  '你好', // Chinese
-  'Hola', // Spanish
-  'Bonjour', // French
-  'Hallo', // German
-  'Ciao', // Italian
-  'Olá', // Portuguese
-  'Привет', // Russian
-  'مرحبا', // Arabic
-  'こんにちは', // Japanese
-  '안녕하세요', // Korean
-  'नमस्ते', // Hindi
-  'สวัสดี', // Thai
-  'Merhaba', // Turkish
-  'Cześć', // Polish
-  'السلام علیکم', // Urdu
-  'হ্যালো', // Bengali
-  'Shalom', // Hebrew
-  'Halo', // Malay
-];
-
-
-
   useFocusEffect(
     React.useCallback(() => {
-      // reset to first greeting when screen is focused
-      setCurrentGreetingIndex(0);
-
-      const interval = setInterval(() => {
-        setCurrentGreetingIndex((prevIndex) =>
-          prevIndex + 1 < greetings.length ? prevIndex + 1 : 0
-        );
-      }, 3000);
-
+ 
       Animated.timing(translateY, {
         toValue: 0,
         duration: 1000,
@@ -77,12 +45,13 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
 
 
       Animated.timing(slideUp, {
-    toValue: 0, // final position
+    toValue: 0, 
     duration: 1000,
     easing: Easing.out(Easing.ease),
     useNativeDriver: true,
   }).start();
-      return () => clearInterval(interval); // stop when screen unfocused
+
+      return () => {};
     }, [])
   );
 
@@ -132,7 +101,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           <Text style={loginStyles.unizyText}>UniZy</Text>
         <View style={loginStyles.emptyView}></View>
         </Animated.View>
-        <View style={loginStyles.cardView}>
+        <Animated.View style={[loginStyles.cardView, { transform: [{ translateY: slideUp }] }]}>
           <BlurView blurType="light" blurAmount={15} />
 
           <LinearGradient
@@ -198,7 +167,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           </Text>
           </TouchableOpacity>
           </View>
-        </View>
+        </Animated.View>
       </View>
 
       
@@ -229,51 +198,6 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
             Privacy Policy
           </Text>
         </View>
-
-        {/* <Text style={loginStyles.privacyPolicyText}>and Privacy Policy</Text> */}
-
-        {/* This Daialog is Do further work */}
-        {/* <Modal  
-          animationType="fade"
-          transparent={true}
-          visible={isModalVisible}
-          onRequestClose={toggleModal}
-        >
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: 'rgba(0,0,0,0.5)',
-            }}
-          >
-            <View
-              style={{
-                backgroundColor: 'white',
-                borderRadius: 10,
-                padding: 20,
-                alignItems: 'center',
-                elevation: 5, // Shadow for Android
-                shadowColor: '#000', // Shadow for iOS
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.25,
-                shadowRadius: 4,
-              }}
-            >
-              <Text
-                style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10 }}
-              >
-                Dialog Title
-              </Text>
-              <Text
-                style={{ fontSize: 16, marginBottom: 20, textAlign: 'center' }}
-              >
-                This is a custom dialog message.
-              </Text>
-              <Button title="Close" onPress={toggleModal} />
-            </View>
-          </View>
-        </Modal>*/}
        </View> 
     </ImageBackground>
   );
