@@ -115,19 +115,141 @@ const greetings = [
 
 
 
+// const HelloScreen = ({ navigation }: HelloScreenProps) => {
+//   const [currentGreetingIndex, setCurrentGreetingIndex] = useState(0);
+
+//   const greetingOpacity = React.useRef(new Animated.Value(0)).current;
+//   const greetingScale = React.useRef(new Animated.Value(0.8)).current;
+
+//   const animateGreeting = () => {
+//     // Reset for new animation
+//     greetingOpacity.setValue(0);
+//     greetingScale.setValue(0.8);
+
+//     Animated.sequence([
+//       // Fade in + scale up
+//       Animated.parallel([
+//         Animated.timing(greetingOpacity, {
+//           toValue: 1,
+//           duration: 600,
+//           easing: Easing.out(Easing.ease),
+//           useNativeDriver: true,
+//         }),
+//         Animated.timing(greetingScale, {
+//           toValue: 1,
+//           duration: 600,
+//           easing: Easing.out(Easing.ease),
+//           useNativeDriver: true,
+//         }),
+//       ]),
+//       // Visible duration
+//       Animated.delay(600),
+//       // Fade out + scale down
+//       Animated.parallel([
+//         Animated.timing(greetingOpacity, {
+//           toValue: 0,
+//           duration: 600,
+//           easing: Easing.in(Easing.ease),
+//           useNativeDriver: true,
+//         }),
+//         Animated.timing(greetingScale, {
+//           toValue: 0.8,
+//           duration: 600,
+//           easing: Easing.in(Easing.ease),
+//           useNativeDriver: true,
+//         }),
+//       ]),
+//     ]).start();
+//   };
+
+//   useFocusEffect(
+//     React.useCallback(() => {
+//       animateGreeting(); // animate first greeting
+
+//       const interval = setInterval(() => {
+//         setCurrentGreetingIndex(prevIndex =>
+//           prevIndex + 1 < greetings.length ? prevIndex + 1 : 0
+//         );
+//         animateGreeting();
+//       }, 2000); // total per greeting: 400 fadeIn + 800 visible + 400 fadeOut
+
+//       return () => clearInterval(interval);
+//     }, [])
+//   );
+
+//   return (
+//     <EdgeToEdgeScreen>
+//       <ImageBackground
+//         source={require('../../../assets/images/BGAnimationScreen.png')}
+//         style={{ flex: 1, width: '100%', height: '100%' }}
+//         resizeMode="cover"
+//       >
+//         <View style={Styles.ScreenLayout}>
+//           {/* UniZy text unchanged */}
+//           <Text style={Styles.unizyText}>UniZy</Text>
+
+//           {/* Animated greetings text */}
+//           <Animated.Text
+//             style={[
+//               Styles.hellowText,
+//               {
+//                 opacity: greetingOpacity,
+//                 transform: [{ scale: greetingScale }],
+//               },
+//             ]}
+//           >
+//             {greetings[currentGreetingIndex]}
+//           </Animated.Text>
+
+//           {/* Language selection gradient/blur */}
+//           <Animated.View style={[Styles.linearGradient]}>
+//             <BlurView blurType="light" blurAmount={15} />
+//             <LinearGradient
+//               colors={['rgba(255, 255, 255, 0.11)', 'rgba(255, 255, 255, 0.04)']}
+//             />
+//             <TouchableOpacity onPress={() => navigation.navigate('LanguagePopup')}>
+//               <View style={Styles.SelectLanguageContainer}>
+//                 <Image
+//                   source={require('../../../assets/images/language.png')}
+//                   style={{ width: 18, height: 18 }}
+//                 />
+//                 <View
+//                   style={{
+//                     flexDirection: 'row',
+//                     flex: 1,
+//                     alignItems: 'center',
+//                     justifyContent: 'space-between',
+//                   }}
+//                 >
+//                   <Text style={Styles.selectlanguageText}>Select Language</Text>
+//                   <Image
+//                     source={require('../../../assets/images/right.png')}
+//                     style={{ width: 24, height: 24 }}
+//                   />
+//                 </View>
+//               </View>
+//             </TouchableOpacity>
+//           </Animated.View>
+//         </View>
+//       </ImageBackground>
+//     </EdgeToEdgeScreen>
+//   );
+// };
+
+
 const HelloScreen = ({ navigation }: HelloScreenProps) => {
   const [currentGreetingIndex, setCurrentGreetingIndex] = useState(0);
+
+  const unizyTranslateY = React.useRef(new Animated.Value(-100)).current;
 
   const greetingOpacity = React.useRef(new Animated.Value(0)).current;
   const greetingScale = React.useRef(new Animated.Value(0.8)).current;
 
   const animateGreeting = () => {
-    // Reset for new animation
     greetingOpacity.setValue(0);
     greetingScale.setValue(0.8);
 
     Animated.sequence([
-      // Fade in + scale up
       Animated.parallel([
         Animated.timing(greetingOpacity, {
           toValue: 1,
@@ -142,9 +264,7 @@ const HelloScreen = ({ navigation }: HelloScreenProps) => {
           useNativeDriver: true,
         }),
       ]),
-      // Visible duration
       Animated.delay(600),
-      // Fade out + scale down
       Animated.parallel([
         Animated.timing(greetingOpacity, {
           toValue: 0,
@@ -164,14 +284,21 @@ const HelloScreen = ({ navigation }: HelloScreenProps) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      animateGreeting(); // animate first greeting
+      Animated.timing(unizyTranslateY, {
+        toValue: 0,
+        duration: 1200,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start();
+
+      animateGreeting();
 
       const interval = setInterval(() => {
         setCurrentGreetingIndex(prevIndex =>
           prevIndex + 1 < greetings.length ? prevIndex + 1 : 0
         );
         animateGreeting();
-      }, 2000); // total per greeting: 400 fadeIn + 800 visible + 400 fadeOut
+      }, 1800); 
 
       return () => clearInterval(interval);
     }, [])
@@ -185,10 +312,15 @@ const HelloScreen = ({ navigation }: HelloScreenProps) => {
         resizeMode="cover"
       >
         <View style={Styles.ScreenLayout}>
-          {/* UniZy text unchanged */}
-          <Text style={Styles.unizyText}>UniZy</Text>
+          <Animated.Text
+            style={[
+              Styles.unizyText,
+              { transform: [{ translateY: unizyTranslateY }] },
+            ]}
+          >
+            UniZy
+          </Animated.Text>
 
-          {/* Animated greetings text */}
           <Animated.Text
             style={[
               Styles.hellowText,
@@ -201,8 +333,7 @@ const HelloScreen = ({ navigation }: HelloScreenProps) => {
             {greetings[currentGreetingIndex]}
           </Animated.Text>
 
-          {/* Language selection gradient/blur */}
-          <Animated.View style={[Styles.linearGradient]}>
+          <Animated.View style={Styles.linearGradient}>
             <BlurView blurType="light" blurAmount={15} />
             <LinearGradient
               colors={['rgba(255, 255, 255, 0.11)', 'rgba(255, 255, 255, 0.04)']}
@@ -238,120 +369,5 @@ const HelloScreen = ({ navigation }: HelloScreenProps) => {
 
 
 
-
-
-// const HelloScreen = ({ navigation }: HelloScreenProps) => {
-//   const [currentGreetingIndex, setCurrentGreetingIndex] = useState(0);
-
-//   // Animated values for greeting "come forward" effect
-//   const greetingTranslateY = React.useRef(new Animated.Value(20)).current;
-//   const greetingOpacity = React.useRef(new Animated.Value(0)).current;
-//   const greetingScale = React.useRef(new Animated.Value(0.8)).current;
-
-//   const animateGreeting = () => {
-//     greetingTranslateY.setValue(20);
-//     greetingOpacity.setValue(0);
-//     greetingScale.setValue(0.8); // start smaller
-
-//     Animated.parallel([
-//       Animated.timing(greetingTranslateY, {
-//         toValue: 0,
-//         duration: 400,
-//         easing: Easing.out(Easing.ease),
-//         useNativeDriver: true,
-//       }),
-//       Animated.timing(greetingOpacity, {
-//         toValue: 1,
-//         duration: 400,
-//         easing: Easing.out(Easing.ease),
-//         useNativeDriver: true,
-//       }),
-//       Animated.timing(greetingScale, {
-//         toValue: 1,
-//         duration: 400,
-//         easing: Easing.out(Easing.ease),
-//         useNativeDriver: true,
-//       }),
-//     ]).start();
-//   };
-
-//   useFocusEffect(
-//     React.useCallback(() => {
-//       setCurrentGreetingIndex(0);
-//       animateGreeting();
-
-//       const interval = setInterval(() => {
-//         setCurrentGreetingIndex(prevIndex =>
-//           prevIndex + 1 < greetings.length ? prevIndex + 1 : 0
-//         );
-//         animateGreeting();
-//       }, 3000);
-
-//       return () => clearInterval(interval);
-//     }, [])
-//   );
-
-//   return (
-//     <EdgeToEdgeScreen>
-//       <ImageBackground
-//         source={require('../../../assets/images/BGAnimationScreen.png')}
-//         style={{ flex: 1, width: '100%', height: '100%' }}
-//         resizeMode="cover"
-//       >
-//         <View style={Styles.ScreenLayout}>
-//           {/* UniZy text remains unchanged */}
-//           <Text style={Styles.unizyText}>UniZy</Text>
-
-//           {/* Animated greetings text with "come forward" */}
-//           <Animated.Text
-//             style={[
-//               Styles.hellowText,
-//               {
-//                 transform: [
-//                   { translateY: greetingTranslateY },
-//                   { scale: greetingScale },
-//                 ],
-//                 opacity: greetingOpacity,
-//               },
-//             ]}
-//           >
-//             {greetings[currentGreetingIndex]}
-//           </Animated.Text>
-
-//           {/* Language selection gradient/blur */}
-//           <Animated.View style={[Styles.linearGradient]}>
-//             <BlurView blurType="light" blurAmount={15} />
-//             <LinearGradient
-//               colors={['rgba(255, 255, 255, 0.11)', 'rgba(255, 255, 255, 0.04)']}
-//             />
-
-//             <TouchableOpacity onPress={() => navigation.navigate('LanguagePopup')}>
-//               <View style={Styles.SelectLanguageContainer}>
-//                 <Image
-//                   source={require('../../../assets/images/language.png')}
-//                   style={{ width: 18, height: 18 }}
-//                 />
-//                 <View
-//                   style={{
-//                     flexDirection: 'row',
-//                     flex: 1,
-//                     alignItems: 'center',
-//                     justifyContent: 'space-between',
-//                   }}
-//                 >
-//                   <Text style={Styles.selectlanguageText}>Select Language</Text>
-//                   <Image
-//                     source={require('../../../assets/images/right.png')}
-//                     style={{ width: 24, height: 24 }}
-//                   />
-//                 </View>
-//               </View>
-//             </TouchableOpacity>
-//           </Animated.View>
-//         </View>
-//       </ImageBackground>
-//     </EdgeToEdgeScreen>
-//   );
-// };
 
 export default HelloScreen;

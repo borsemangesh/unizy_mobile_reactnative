@@ -18,9 +18,15 @@ import LinearGradient from 'react-native-linear-gradient';
 import GlassButton from '../Hello/GlassButton';
 import ResetButton from '../Hello/ResetButton';
 
+
+
 const { width } = Dimensions.get('window');
 
-const ResetPassword = () => {
+type RestPasswordScreenProps = {
+  navigation: any;
+};
+
+const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
   const [username, setUsername] = useState<string>('');
   const [showPopup, setShowPopup] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -44,7 +50,7 @@ const ResetPassword = () => {
    <View style={styles.fullScreenContainer}>
         <View style={styles.backIconRow}>
         
-           <TouchableOpacity>
+           <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Image
                       source={require('../../../assets/images/back.png')}
                       style={{ height: 24, width: 24 }}
