@@ -18,10 +18,11 @@ export const Navigation = () => {
     return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="HelloScreen">
-        <Stack.Screen name="HelloScreen" component={HelloScreen} options={{headerShown: false,presentation: 'modal' }} />
-        <Stack.Screen name="LoginScreen" component={LoginScreen}  options={{headerShown: false}}/>
+        <Stack.Screen name="HelloScreen" component={HelloScreen} options={{headerShown: false, presentation:'fullScreenModal' }} />
+        <Stack.Screen name="LoginScreen" component={LoginScreen}  options={{headerShown: false,presentation:'fullScreenModal'}}/>
         <Stack.Screen name="Dashboard" component={DashBoardScreen} options={{headerShown: false}} />
-        <Stack.Screen name="LanguagePopup" component={SelectLanguage_Popup} options={{headerShown: false}} />
+        <Stack.Screen name="LanguagePopup" component={SelectLanguage_Popup} options={{headerShown: false,
+                presentation: 'modal',animation: 'fade_from_bottom'}} />
         <Stack.Screen name="Reset" component={ResetPassword} options={{headerShown: false}}/>
         <Stack.Screen name="Signup" component={SignupScreen} options={{headerShown: false}}/>
         <Stack.Screen name="RevarifyStudentStatus" component={RevarifyStudentStatus} options={{headerShown: false}} />

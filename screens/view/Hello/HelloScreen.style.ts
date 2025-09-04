@@ -16,20 +16,19 @@ export const Styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   linearGradient: {
-    flexDirection: 'column',
+    // flexDirection: 'column',
     height: '14%',
-    paddingBottom: 20,
-    flexShrink: 0,
+    // paddingBottom: 20,
+    // // flexShrink: 0,
     borderColor: '#ffffff3d',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.09)',
+      boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
     padding: 16,
     width: '90%',
     gap: 3,
-    borderWidth: 0.3,
     
     },
   card_container: {
@@ -122,6 +121,7 @@ export const Styles = StyleSheet.create({
   SelectLanguageContainer: {
     flexDirection: 'row',
     padding: 12,
+    
     alignItems: 'center',
     textAlign: 'center',
     borderWidth: 1,
@@ -130,8 +130,5 @@ export const Styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-
-
-          
   },
 });
