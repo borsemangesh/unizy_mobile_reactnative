@@ -187,6 +187,7 @@ export const loginStyles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
    fontSize: 14,
     fontWeight: '600',
+    lineHeight:19,
     textDecorationStyle: 'solid',    
      marginTop: 10,
   },

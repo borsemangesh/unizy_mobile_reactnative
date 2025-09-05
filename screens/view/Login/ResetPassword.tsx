@@ -43,7 +43,6 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
     <ImageBackground
       source={require('../../../assets/images/BGAnimationScreen.png')}
       style={styles.flex_1}
-      //  style={{ flex: 1, width: '100%', height: '100%' }} 
       resizeMode="cover"
       onLoad={() => setImageLoaded(true)}>
 
@@ -162,7 +161,7 @@ const styles = StyleSheet.create({
   flex_1: {
     flex: 1,
     alignItems: 'center',
-    padding: 16,
+    
   },
   // fullScreenContainer: {
   //   width: '100%',
@@ -206,7 +205,7 @@ const styles = StyleSheet.create({
   // },
 
   resetTitle: {
-  fontFamily: 'Urbanist-Semibold',      
+  fontFamily: 'Urbanist-SemiBold',      
   fontSize: 17,                
   lineHeight: 22,        
   letterSpacing: -0.02 * 17,    
@@ -269,7 +268,7 @@ const styles = StyleSheet.create({
     loginButton: {
     display: 'flex',
     width: '100%',
-    height: 'auto',
+    height: 48,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 4,
@@ -305,7 +304,7 @@ const styles = StyleSheet.create({
 
   goBackText: {
     color: 'rgba(255,255,255,0.48)',
-    fontFamily: 'Urbanist-Semibold',
+    fontFamily: 'Urbanist-SemiBold',
     fontWeight: '600',
     fontSize: 14,
     marginTop:12,

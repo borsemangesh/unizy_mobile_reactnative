@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect,useRef } from 'react';
 import {
   View,
   TextInput,
@@ -8,8 +8,10 @@ import {
   TouchableOpacity,
   Alert,
   Image,
+  Animated,
+  Easing
 } from 'react-native';
-import MyIcon from '../../utils/MyIcon';
+import LinearGradient from 'react-native-linear-gradient';
 
 type SignupScreenProps = {
   navigation: any;
@@ -24,13 +26,34 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
+
+  const slideAnim = useRef(new Animated.Value(500)).current; // start off-screen (bottom)
+
+ const translateY = useRef(new Animated.Value(50)).current;
+const opacity = useRef(new Animated.Value(0)).current;
+
+useEffect(() => {
+  Animated.parallel([
+    Animated.timing(translateY, {
+      toValue: 0,
+      duration: 4000,
+      easing: Easing.out(Easing.exp), // smoother easing
+      useNativeDriver: true,
+    }),
+    Animated.timing(opacity, {
+      toValue: 1,
+      duration: 4000,
+      easing: Easing.out(Easing.exp), // smoother easing
+      useNativeDriver: true,
+    }),
+  ]).start();
+}, []);
 
   const handleSendOTP = () => {
-    Alert.alert('OTP Sent', 'An OTP has been sent to your email.');
+    navigation.navigate('OTPScreen')
   };
   
-
-
  const handleLogin = () => {
   navigation.reset({
     index: 0,
@@ -45,34 +68,25 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
       resizeMode="cover">
 
         <View style={styles.fullScreenContainer}>
-        <View style={styles.backIconRow}>
-        
-           <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Image
-                      source={require('../../../assets/images/back.png')}
-                      style={{ height: 24, width: 24 }}
-                    />
-                  </TouchableOpacity>
-        </View>
-
         <Text style={styles.unizyText}>UniZy</Text>
         <View style={styles.emptyView}></View>
       </View>
       
       
       <View style={styles.formContainer}>
+       
+      <Animated.View
+          style={{
+            transform: [{ translateY }],
+            opacity,
+            width: '100%',
+          }}
+        >
         <View style={styles.nameRow}>
-          {/* <TextInput
-            style={[styles.editText, styles.halfWidth]}
-            placeholder="First Name"
-            placeholderTextColor="rgba(255, 255, 255, 0.48)"
-            value={firstName}
-            onChangeText={setFirstName}
-          /> */}
-
+    
       <View style={styles.login_container1}>
           <TextInput
-            style={styles.personalEmailID_TextInput}
+            style={styles.personalEmailID_TextInput1}
             placeholder="First Name"
             placeholderTextColor="rgba(255, 255, 255, 0.48)"
             value={firstName}
@@ -83,25 +97,16 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
 
         <View style={styles.login_container1}>
           <TextInput
-            style={styles.personalEmailID_TextInput}
+            style={styles.personalEmailID_TextInput1}
            placeholder="Last Name"
             placeholderTextColor="rgba(255, 255, 255, 0.48)"
             value={lastName}
             onChangeText={setLastName}
           />
         </View>
-
-          
-          {/* <TextInput
-            style={[styles.editText, styles.halfWidth]}
-            placeholder="Last Name"
-            placeholderTextColor="rgba(255, 255, 255, 0.48)"
-            value={lastName}
-            onChangeText={setLastName}
-          /> */}
         </View>
 
-  <View style={styles.login_container}>
+      <View style={styles.login_container}>
           <TextInput
             style={styles.personalEmailID_TextInput}
             placeholder="Postal Code"
@@ -111,31 +116,31 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
           />
         </View>
 
-
-          <View style={styles.login_container}>
+        <View style={styles.password_container}>
           <TextInput
-          style={styles.personalEmailID_TextInput}
-         placeholder="Personal Email ID"
-          placeholderTextColor="rgba(255, 255, 255, 0.48)"
-          value={username}
-          onChangeText={setUsername}
+            style={styles.password_TextInput}
+            placeholder="Personal Email ID"
+            placeholderTextColor="rgba(255, 255, 255, 0.48)"
+            value={username}
+            onChangeText={setUsername}
           />
+
+          <TouchableOpacity onPress={() => setShowInfo(!showInfo)}>
+            <Image
+              source={require('../../../assets/images/info_icon.png')}
+              style={styles.eyeIcon}
+            />
+          </TouchableOpacity>
         </View>
 
-
-       {/* <Text style={styles.editText1}>
-        { "Important: Use your personal email address for signup.Your university email will be requested separately for student verification."}
-        </Text> */}
-
-        <View style={[styles.editText1, { flexDirection: 'row'}]}>
-            <Image
-                source={require('../../../assets/images/info_icon.png')}
-                style={{ width: 20, height: 20, marginRight: 8 }}
-                resizeMode="contain"/>
-            <Text style={{ color: '#FFFFFF7A', fontFamily: 'Urbanist-Medium', fontSize: 14, flex: 1 }}>
-                Important: Use your personal email address for signup. Your university email will be requested separately for student verification.
+        {showInfo && (
+          <View style={styles.infoContainer}>
+            <Text style={styles.infoText}>
+              Important: Use your personal email address for signup. Your university email will be requested separately for student verification.
             </Text>
-      </View>
+          </View>
+        )}
+
 
         <View style={styles.password_container}>
                   <TextInput
@@ -151,9 +156,9 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
                     source={require('../../../assets/images/eyeopen.png')}
                     style={styles.eyeIcon}
                   />
-                </View>
+        </View>
 
-                 <View style={styles.password_container}>
+       <View style={styles.password_container}>
                   <TextInput
                     style={styles.password_TextInput}
                     placeholder="Confirm Password"
@@ -167,56 +172,118 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
                     source={require('../../../assets/images/eyeopen.png')}
                     style={styles.eyeIcon}
                   />
-                </View>
+        </View>
 
-
-        {/* <View style={styles.passwordContainer}>
-          <TextInput
-            style={styles.editText}
-            placeholder="Confirm Password"
-            placeholderTextColor="rgba(255, 255, 255, 0.48)"
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            secureTextEntry={!isConfirmPasswordVisible}
-          />
-          <View style={styles.eyeIconWrapper}>
-            <MyIcon
-              name={isConfirmPasswordVisible ? 'visibility-off' : 'visibility'}
-              size={15}
-              color="#FFFFFF"
-              onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}
-            />
-          </View>
-        </View> */}
-
-        {/* <TouchableOpacity onPress={handleSendOTP} style={styles.buttonWrapper}>
-          <ImageBackground
-            source={require('../../../assets/images/login_button.png')}
-            style={styles.buttonBackground}
-            imageStyle={{ borderRadius: 24 }}
-          >
-            <Text style={styles.buttonText}>Send OTP</Text>
-          </ImageBackground>
-        </TouchableOpacity> */}
         <TouchableOpacity onPress={handleSendOTP} style={styles.loginButton}>
                           <Text style={styles.loginText}>Send OTP</Text>
-                        </TouchableOpacity>
+          </TouchableOpacity>
 
-        {/* <Text style={styles.signupPrompt}>Already have an account? Login</Text> */}
-        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center',marginTop:16 }}>
         <Text style={styles.signupPrompt}>Already have an account? </Text>
         <TouchableOpacity onPress={handleLogin}>
         <Text style={styles.signupPrompt1}>Login</Text>
         </TouchableOpacity>
       </View>
-        <TouchableOpacity style={styles.signupButton}>
-        </TouchableOpacity>
+     </Animated.View>
       </View>
+
+      <View style={styles.stepIndicatorContainer}>
+      {[0, 1, 2, 3].map((index) => (
+        <View
+          key={index}
+          style={[
+          styles.stepCircle,
+          index === 0 ? styles.activeStepCircle : styles.inactiveStepCircle,
+      ]}
+        />
+      ))}
+    </View>
+    {/* <View style={styles.stepIndicatorContainer}>
+        {[0, 1, 2, 3].map((index) => (
+          <LinearGradient
+            key={index}
+            colors={
+              index === 0
+                ? ['#FFFFFF', '#E0E0E0'] // active gradient
+                : ['rgba(255,255,255,0.2)', 'rgba(255,255,255,0.05)'] // inactive gradient
+            }
+            style={styles.stepCircle}
+          />
+        ))}
+</View> */}
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+
+  infoContainer: {
+  flexDirection: 'row',
+  marginTop: 4,
+  paddingLeft:6,
+  paddingRight:6,
+},
+infoText: {
+  color: '#FFFFFF7A',
+  fontFamily: 'Urbanist-Medium',
+  fontSize: 14,
+  lineHeight: 20,
+  flex: 1,
+},
+
+stepCircle: {
+  width: 12,
+  height: 12,
+  borderRadius: 10,
+  backgroundColor: 'rgba(255, 255, 255, 0.3)', 
+},
+
+activeStepCircle: {
+  backgroundColor: '#FFFFFF', 
+},
+
+stepIndicatorContainer: {
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginTop: 20,
+  gap: 8,
+},
+
+// stepCircle: {
+//   width: 12,
+//   height: 12,
+//   borderRadius: 6,
+//   shadowColor: '#000',
+//   shadowOffset: { width: 0, height: 1 },
+//   shadowOpacity: 0.2,
+//   shadowRadius: 1.5,
+//   elevation: 2, // Android shadow
+// },
+
+// activeStepCircle: {
+//   backgroundColor: '#FFFFFF',
+//   shadowColor: '#000',
+//   shadowOpacity: 0.25,
+//   elevation: 2,
+// },
+
+inactiveStepCircle: {
+  // width: 12,
+  // height: 12,
+  // borderRadius: 6,
+  // shadowOpacity: 0.9,
+  // elevation: 2,
+
+    borderWidth: 1,
+  borderColor: '#ffffff2c',
+  elevation: 0,
+  backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 0px 15px 1px',
+},
+
+
   flex_1: {
     flex: 1,
     padding: 1,
@@ -239,18 +306,17 @@ const styles = StyleSheet.create({
     loginButton: {
     display: 'flex',
     width: '100%',
+    height: 48,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 4,
     borderRadius: 100,
     paddingTop: 6,
-    paddingBottom: 8,
-    marginBottom: 16,
-    marginTop: 10,
+    paddingBottom: 6,
     backgroundColor: 'rgba(255, 255, 255, 0.56)',
+    marginTop: 16,
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
-  
   },
   loginText: {
     color: '#002050',
@@ -271,10 +337,6 @@ const styles = StyleSheet.create({
     marginTop: -15,
     flexDirection: 'column',
     alignItems: 'center',
-    // borderRadius: 24,
-    // backgroundColor: 'rgba(255, 255, 255, 0.06)',
-
-
       borderWidth: 0.2,
       borderColor: '#ffffff3d',
       borderRadius: 16,
@@ -290,87 +352,6 @@ const styles = StyleSheet.create({
     gap: 10,
   },
 
-  halfWidth: {
-    width: '48%',
-  },
-
-
-  editText: {
-    alignItems: 'center',
-    color: 'white',
-    fontFamily: 'Urbanist-Regular',
-    paddingHorizontal: 12,
-    fontSize: 14,
-    borderRadius: 12,
-    width: '100%',
-    height: 48,
-    backgroundColor: 'rgba(255, 255, 255, 0.20)',
-  },
-
-   editText1: {
-    //alignItems: 'center',
-    color: 'white',
-    fontFamily: 'Urbanist',
-    paddingHorizontal: 12,
-    fontSize: 14,
-    borderRadius: 12,
-    width: '100%',
-    height: 'auto',
-    backgroundColor: 'rgba(255, 255, 255, 0.20)',
-    paddingVertical:10
-  },
-
-  passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-  },
-
-  eyeIconWrapper: {
-    position: 'absolute',
-    right: 10,
-    height: 30,
-    width: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  forgetPasswordContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    width: '100%',
-  },
-
-  forgetPasswordText: {
-    color: 'rgba(255, 255, 255, 0.48)',
-    fontFamily: 'Urbanist',
-    fontSize: 14,
-    fontWeight: '400',
-  },
-
-  buttonWrapper: {
-    width: '100%',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-
-  buttonBackground: {
-    width: 320,
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 24,
-    overflow: 'hidden',
-  },
-
-  buttonText: {
-    color: '#ffffff',
-    fontFamily: 'Urbanist',
-    fontSize: 14,
-    fontWeight: '400',
-    textAlign: 'center',
-  },
-
   signupPrompt: {
     color: 'rgba(255, 255, 255, 0.48)',
     fontFamily: 'Urbanist-Regular',
@@ -379,36 +360,11 @@ const styles = StyleSheet.create({
   },
    signupPrompt1: {
     color: 'rgba(255, 255, 255, 0.48)',
-    fontFamily: 'Urbanist-Semibold',
+    fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
     fontWeight: '600',
   },
 
-  signupButton: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-
-   signupButton1: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop:40,
-    marginBottom:15
-  },
-  signupText: {
-    color: 'white',
-    borderColor: '#ffffff3d',
-    padding: 10,
-    borderWidth: 1,
-    borderRadius: 50,
-    backgroundColor: 'rgba(255, 255, 255, 0.11)',
-  },
-
-  footerContainer: {
-    flex: 0.9,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
 
   termsRow: {
     flexDirection: 'row',
@@ -416,20 +372,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  footerText: {
-    color: 'rgba(255, 255, 255, 0.48)',
-    fontFamily: 'Urbanist',
-    fontSize: 14,
-    fontWeight: '400',
-  },
-
-  linkText: {
-    color: 'rgba(255, 255, 255, 0.48)',
-    fontFamily: 'Urbanist',
-    fontSize: 14,
-    fontWeight: '600',
-    textDecorationLine: 'underline',
-  },
 
   fullScreenContainer: {
     display: 'flex',
@@ -464,6 +406,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     flex: 1,
     gap: 10,
+    paddingLeft:24
   },
   emptyView: {
     display: 'flex',
@@ -516,6 +459,7 @@ login_container1: {
     width: '100%',
     height: 40,
     gap: 10,
+    marginTop:16,
     alignSelf: 'stretch',
     borderRadius: 12,
     borderWidth: 0.6,
@@ -532,7 +476,16 @@ login_container1: {
 
 
   personalEmailID_TextInput: {
-    width: '95%',
+    width: '90%',
+    fontFamily: 'Urbanist-Regular',
+    fontWeight: '400',
+    fontSize: 17,
+    lineHeight: 22,
+    fontStyle: 'normal',
+
+  },
+    personalEmailID_TextInput1: {
+    width: '80%',
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
     fontSize: 17,
@@ -557,7 +510,7 @@ login_container1: {
 
     borderWidth: 0.6,
     borderColor: '#ffffff2c',
-    marginTop: 6,
+    marginTop: 16,
   },
   password_TextInput: {
     width: '85%',
