@@ -97,11 +97,11 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
   };
 
   const handleForgetPassword = () =>{    
-    // navigation.navigate('Reset');
+    navigation.navigate('Reset');
   }
 
   const handleSignup = () => {
-    // navigation.navigate('Signup');
+    navigation.navigate('Signup');
     console.log(`Logging in with ${username} and ${password}`);
     //toggleModal();
   };

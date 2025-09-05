@@ -90,12 +90,9 @@ function App() {
 
   return (
     <SafeAreaProvider>
-      <StatusBar backgroundColor={'#000000'} />
-      {showSplash ? (
-        <SplashScreen onFinish={() => setShowSplash(false)} /> // ✅ show splash first
-      ) : (
-        <Navigation /> // ✅ load your navigation after splash
-      )}
+     
+     
+      <Navigation /> 
     </SafeAreaProvider>
   );
 }

@@ -12,6 +12,7 @@ import DashBoardScreen from './dashboard/DashBoardScreen';
 import OTPScreen from './Login/OTPScreen';
 import VerifyScreen from './Login/VerifyScreen';
 import ProfileScreen from './Login/ProfileScreen';
+import SplashScreen from './Hello/SplashScreen';
 
 const Stack = createNativeStackNavigator();
 //const Stack = createStackNavigator();
@@ -20,14 +21,21 @@ const Stack = createNativeStackNavigator();
 export const Navigation = () => {
     return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="HelloScreen">
-        <Stack.Screen name="HelloScreen" component={HelloScreen} options={{headerShown: false, presentation:'fullScreenModal' }} />
+      <Stack.Navigator initialRouteName="Splash">
+      <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
+
+        <Stack.Screen name="HelloScreen" component={HelloScreen} options={{headerShown: false, animation: 'fade',  }} />
         <Stack.Screen name="LoginScreen" component={LoginScreen}  options={{headerShown: false,presentation:'fullScreenModal'}}/>
         <Stack.Screen name="Dashboard" component={DashBoardScreen} options={{headerShown: false}} />
-        <Stack.Screen name="LanguagePopup" component={SelectLanguage_Popup} options={{headerShown: false,
-                presentation: 'modal',animation: 'fade_from_bottom'}} />
+        <Stack.Screen name="LanguagePopup" component={SelectLanguage_Popup} options={{
+         headerShown: false,
+         presentation: 'modal',
+         animation: 'fade_from_bottom',
+         animationDuration: 700,
+       
+        }} />
         <Stack.Screen name="Reset" component={ResetPassword} options={{headerShown: false}}/>
-        <Stack.Screen name="Signup" component={SignupScreen} options={{headerShown: false,animation: 'simple_push'}}/>
+        <Stack.Screen name="Signup" component={SignupScreen} options={{headerShown: false,animation: 'fade', presentation: 'fullScreenModal'}}/>
         <Stack.Screen name="RevarifyStudentStatus" component={RevarifyStudentStatus} options={{headerShown: false}} />
         <Stack.Screen name="OTPScreen" component={OTPScreen} options={{headerShown:false}}/>
         <Stack.Screen name="VerifyScreen" component={VerifyScreen} options={{headerShown:false}}/>

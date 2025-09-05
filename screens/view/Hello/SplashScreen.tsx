@@ -1,20 +1,30 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet,Dimensions, ImageBackground } from 'react-native';
+import { View, StyleSheet, Dimensions, ImageBackground } from 'react-native';
 import LottieView from 'lottie-react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-type SplashScreenProps = {
-  onFinish: () => void;
+type RootStackParamList = {
+  Splash: undefined;
+  HelloScreen: undefined;
+  // Add other screens here if needed
 };
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Splash'>;
+
 const { width, height } = Dimensions.get('window');
 
-const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
+const SplashScreen: React.FC = () => {
+  const navigation = useNavigation<NavigationProp>();
+
+  const handleFinish = () => {
+    navigation.replace('HelloScreen');
+  };
+
   useEffect(() => {
-    // fallback timer in case onAnimationFinish doesn't trigger
-    const timer = setTimeout(() => {
-      onFinish();
-    }, 3300);
+    const timer = setTimeout(handleFinish, 4200); 
     return () => clearTimeout(timer);
-  }, [onFinish]);
+  }, []);
 
   return (
     <ImageBackground
@@ -27,10 +37,9 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
           source={require('../../../assets/animations/Animation.json')}
           autoPlay
           loop={false}
-          resizeMode="cover"  
-          style={{ width, height }}  
-        //   style={{ width: 360, height: 800 }}
-          onAnimationFinish={onFinish}
+          resizeMode="cover"
+          style={{ width, height }}
+          onAnimationFinish={handleFinish}
         />
       </View>
     </ImageBackground>
@@ -40,7 +49,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center', // centers child
+    justifyContent: 'center',
     alignItems: 'center',
   },
   centerContent: {
