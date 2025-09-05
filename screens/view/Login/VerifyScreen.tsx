@@ -192,6 +192,10 @@ const VerifyScreen = ({ navigation }: VerifyScreenProps) => {
     textAlign: 'center',
     lineHeight: 19.6,
     letterSpacing: 0,
+     opacity: 0.9,
+    textShadowColor: 'rgba(255,255,255,0.6)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 2,
   },
    stepIndicatorContainer: {
      flexDirection: 'row',
@@ -240,13 +244,13 @@ inactiveStepCircle: {
      textAlign: 'center',
      fontSize: 18,
      color: '#fff',
-     fontWeight: '600',
-     borderWidth: 0.6,
-     borderColor: '#ffffff2c',
-     elevation: 0,
-     backgroundColor:
-         'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-       boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.11) inset -1px 0px 5px 1px',
+      fontWeight: '600',
+      borderWidth: 1,
+      borderColor: '#ffffff2c',
+      elevation: 0,
+      backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 0px 15px 1px',  
    },
    
      formContainer: {
@@ -383,6 +387,10 @@ inactiveStepCircle: {
        textAlign: 'center',
        lineHeight: 19.6,
        letterSpacing: 0,
+        opacity: 0.9,
+    textShadowColor: 'rgba(255,255,255,0.6)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 2,
      },
    
        goBackText: {
@@ -405,6 +413,10 @@ inactiveStepCircle: {
        textAlign: 'center',
        lineHeight: 19.6,
        letterSpacing: 0,
+        opacity: 0.9,
+    textShadowColor: 'rgba(255,255,255,0.6)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 2,
      },
     
      fullScreenContainer: {

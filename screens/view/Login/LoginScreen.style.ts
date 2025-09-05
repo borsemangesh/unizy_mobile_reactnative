@@ -18,6 +18,10 @@ export const loginStyles = StyleSheet.create({
     flexShrink: 0,
     flexDirection: 'row',
     paddingTop: 50,
+    opacity: 0.9,
+    textShadowColor: 'rgba(255,255,255,0.6)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 2,
     
     // backgroundColor: '#000000',
   },
@@ -190,6 +194,11 @@ export const loginStyles = StyleSheet.create({
     lineHeight:19,
     textDecorationStyle: 'solid',    
      marginTop: 10,
+    opacity: 0.9,
+    textShadowColor: 'rgba(255,255,255,0.6)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 2,
+     
   },
   teamsandConditionText: {
     color: '#FFFFFF7A',
@@ -199,6 +208,11 @@ export const loginStyles = StyleSheet.create({
     fontWeight: '600',
     textDecorationLine: 'underline',
     textDecorationStyle: 'solid',
+     opacity: 0.9,
+    textShadowColor: 'rgba(255,255,255,0.6)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 2,
+    
   },
   teamsandConditionContainer: {
     flexDirection: 'row',

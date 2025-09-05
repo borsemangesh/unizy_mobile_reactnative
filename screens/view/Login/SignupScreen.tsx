@@ -234,12 +234,21 @@ infoText: {
 stepCircle: {
   width: 12,
   height: 12,
-  borderRadius: 10,
+  borderRadius: 16,
   backgroundColor: 'rgba(255, 255, 255, 0.3)', 
 },
 
 activeStepCircle: {
   backgroundColor: '#FFFFFF', 
+    width: 15,
+    height: 15,
+    flexShrink: 0,
+    borderColor: '#ffffff4e',
+    alignItems: 'center',
+    borderRadius: 50,
+    justifyContent: 'center',
+    boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
+    shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25',
 },
 
 stepIndicatorContainer: {
@@ -269,18 +278,19 @@ stepIndicatorContainer: {
 // },
 
 inactiveStepCircle: {
-  // width: 12,
-  // height: 12,
-  // borderRadius: 6,
-  // shadowOpacity: 0.9,
-  // elevation: 2,
-
-    borderWidth: 1,
-  borderColor: '#ffffff2c',
-  elevation: 0,
-  backgroundColor:
+ backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 0px 15px 1px',
+    width: 15,
+    height: 15,
+    flexShrink: 0,
+    borderColor: '#ffffff4e',
+    
+    alignItems: 'center',
+    borderRadius: 40,
+    justifyContent: 'center',
+    boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
+    shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25',
+
 },
 
 
@@ -363,6 +373,10 @@ inactiveStepCircle: {
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
     fontWeight: '600',
+    opacity: 0.9,
+    textShadowColor: 'rgba(255,255,255,0.6)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 2,
   },
 
 
@@ -491,6 +505,7 @@ login_container1: {
     fontSize: 17,
     lineHeight: 22,
     fontStyle: 'normal',
+    
 
   },
 

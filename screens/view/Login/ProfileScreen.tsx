@@ -1,3 +1,4 @@
+import { BlurView } from '@react-native-community/blur';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
@@ -28,6 +29,8 @@ const [username, setUsername] = useState<string>('');
   const [showPopup, setShowPopup] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [photo, setPhoto] = useState<string | null>(null);
+
+  const closePopup = () => setShowPopup(false);
 
    const translateY = useRef(new Animated.Value(-50)).current; // start above the screen
       const opacity = useRef(new Animated.Value(0)).current;
@@ -81,10 +84,16 @@ const [username, setUsername] = useState<string>('');
   //   );
   // };
 
-
-  const handleSendResetLink = () => {
-    //navigation.navigate('VerifyScreen')
+    const handleSendResetLink = () => {
+    console.log(`Send reset link to ${username}`);
   };
+
+ 
+    const handlePopup = () => {
+    console.log(`Send reset link to ${username}`);
+    setShowPopup(true);
+  };
+  
 
   return (
     <ImageBackground
@@ -152,7 +161,7 @@ const [username, setUsername] = useState<string>('');
 <View style={styles.avatarContainer}>
   <View style={styles.bigCircle}>
     <Image
-      source={require("../../../assets/images/add_photo.png")}
+      source={require("../../../assets/images/add1.png")}
       style={styles.logo}
       resizeMode="contain"
     />
@@ -160,7 +169,7 @@ const [username, setUsername] = useState<string>('');
     {/* ✅ Camera button inside the circle */}
     <TouchableOpacity style={styles.cameraButton} onPress={handleSendResetLink}>
       <Image
-        source={require("../../../assets/images/camera_icon.png")}
+        source={require("../../../assets/images/new_camera_icon.png")}
         style={styles.cameraIcon}
         resizeMode="contain"
       />
@@ -168,7 +177,7 @@ const [username, setUsername] = useState<string>('');
   </View>
 </View>
 
-         <TouchableOpacity style={styles.loginButton} onPress={handleSendResetLink}>
+         <TouchableOpacity style={styles.loginButton} onPress={handlePopup}>
             <Text style={styles.loginText}>Continue</Text>
           </TouchableOpacity>
           </Animated.View>
@@ -185,11 +194,115 @@ const [username, setUsername] = useState<string>('');
                />
              ))}
            </View>
+
+    <Modal
+        visible={showPopup}
+        transparent
+        animationType="fade"
+        onRequestClose={closePopup}
+      >
+        <View style={styles.overlay}>
+          <BlurView
+            //style={StyleSheet.absoluteFill}
+            //śstyle={{backgroundColor:'#0f0f0f04'}}
+            blurType="dark"
+            blurAmount={25}
+          />
+
+          {/* <BlurView
+          style={{backgroundColor:'#ffffff37'}}
+          blurType="light"
+          blurAmount={150}
+        />
+
+<View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.3)' }]} /> */}
+
+      <View
+        style={[
+          StyleSheet.absoluteFill,
+          { backgroundColor: 'rgba(0, 0, 0, 0.08)' }, // adjust alpha for more/less tint
+        ]}
+      />
+
+          <View style={styles.popupContainer}>
+            <Image
+              source={require('../../../assets/images/success_icon.png')}
+              style={styles.logo1}
+              resizeMode="contain"
+            />
+            <Text style={styles.termsText2} >
+              Account Created Successfully!
+            </Text>
+            <Text style={styles.termsText1}>
+             Welcome to Unizy! Your account has been created and your’re all set to start exploring
+            </Text>
+            {/* <GlassButton
+              title="Back to Login"
+              onPress={closePopup}
+              style={styles.loginButton1}
+            /> */}
+
+             <TouchableOpacity style={styles.loginButton} onPress={closePopup}>
+                    <Text style={styles.loginText}>Start Exploring</Text>
+                  </TouchableOpacity>
+
+
+          </View>
+
+          </View>
+          </Modal>
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+
+     overlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.57)',
+  },
+
+   logo1: {
+    width: 64,
+    height: 64,
+    marginBottom: 20,
+  },
+
+  popupContainer: {
+    width: width * 0.85,
+    padding: 20,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'center',
+  },
+  termsText1: {
+    color: 'rgba(255,255,255,0.48)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    textAlign: 'center',
+    lineHeight: 20,
+    paddingHorizontal: 10,
+     marginBottom: 12, 
+      opacity: 0.9,
+    textShadowColor: 'rgba(255,255,255,0.6)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 2,
+  },
+  termsText2: {
+    color: '#fff',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 17,
+    textAlign: 'center',
+    lineHeight: 20,
+    paddingHorizontal: 10,
+    marginBottom: 12, 
+    fontWeight:600,
+
+  },
 
  bigCircle: {
   width: 120,
@@ -197,22 +310,29 @@ const styles = StyleSheet.create({
   borderRadius: 60,
   alignItems: "center",
   justifyContent: "center",
-  position: "relative", // ✅ allows absolute children
+  position: "relative",
+   boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 0px 15px 1px',
+   borderWidth:1 ,
+    borderColor: '#ffffff2c',
+  
 },
 cameraButton: {
   position: "absolute",
-  bottom: 0, // ✅ overlap bottom edge
-  right: 0,  // ✅ overlap right edge
+  bottom: 0, 
+  right: 0, 
   width: 40,
   height: 40,
-  borderRadius: 18,
+  borderRadius: 20,
   alignItems: "center",
   justifyContent: "center",
-  elevation: 0, // small shadow for floating look (Android)
+ // elevation: 0,
+
 },
 cameraIcon: {
-  width: 36,
-  height: 36,
+  width: 40,
+  height: 40,
+  marginLeft:5,
+  marginTop:5,
 },
 
   avatarContainer: {
@@ -337,6 +457,10 @@ otpBox: {
     textAlign: 'center',
     lineHeight: 22,
     paddingHorizontal: 10,
+     opacity: 0.9,
+    textShadowColor: 'rgba(255,255,255,0.6)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 2,
   },
 
      loginButton: {

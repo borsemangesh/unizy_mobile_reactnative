@@ -21,8 +21,8 @@ const Stack = createNativeStackNavigator();
 export const Navigation = () => {
     return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Splash">
-      <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
+      <Stack.Navigator initialRouteName="HelloScreen">
+      {/* <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} /> */}
 
         <Stack.Screen name="HelloScreen" component={HelloScreen} options={{headerShown: false, animation: 'fade',  }} />
         <Stack.Screen name="LoginScreen" component={LoginScreen}  options={{headerShown: false,presentation:'fullScreenModal'}}/>
@@ -47,6 +47,12 @@ export const Navigation = () => {
     </NavigationContainer>
     );
 }
+
+
+////////////////////////////////////////////////////////////////////
+
+
+
 
 // import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // import { NavigationContainer } from "@react-navigation/native";

@@ -27,7 +27,7 @@ const [username, setUsername] = useState<string>('');
   const [showPopup, setShowPopup] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  const translateY = useRef(new Animated.Value(-50)).current; // start above the screen
+const translateY = useRef(new Animated.Value(-50)).current; // start above the screen
 const opacity = useRef(new Animated.Value(0)).current;
 
 useEffect(() => {
@@ -272,7 +272,6 @@ otpBox: {
     paddingBottom: 6,
     backgroundColor: 'rgba(255, 255, 255, 0.56)',
     marginTop: 16,
-    
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
   },
@@ -313,6 +312,10 @@ otpBox: {
     textAlign: 'center',
     lineHeight: 19.6,
     letterSpacing: 0,
+     opacity: 0.9,
+    textShadowColor: 'rgba(255,255,255,0.6)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 2,
   },
 
     resendText2: {
@@ -324,6 +327,10 @@ otpBox: {
     textAlign: 'center',
     lineHeight: 19.6,
     letterSpacing: 0,
+     opacity: 0.9,
+    textShadowColor: 'rgba(255,255,255,0.6)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 2,
   },
 
 
@@ -347,6 +354,10 @@ otpBox: {
     textAlign: 'center',
     lineHeight: 19.6,
     letterSpacing: 0,
+     opacity: 0.9,
+    textShadowColor: 'rgba(255,255,255,0.6)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 2,
   },
 
   overlay: {

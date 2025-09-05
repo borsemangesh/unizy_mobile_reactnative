@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect,useRef} from 'react';
 import {
   View,
   TextInput,
@@ -9,6 +9,8 @@ import {
   Modal,
   Dimensions,
   Image,
+   Animated,
+  Easing
 } from 'react-native';
 // import { BlurView } from '@react-native-community/blur';
 // @ts-ignore
@@ -30,6 +32,26 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
   const [username, setUsername] = useState<string>('');
   const [showPopup, setShowPopup] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+
+  const translateY = useRef(new Animated.Value(-50)).current; // start above the screen
+  const opacity = useRef(new Animated.Value(0)).current;
+  
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(translateY, {
+        toValue: 0, // move to normal position
+        duration: 2000, // slower, smoother
+        easing: Easing.out(Easing.exp),
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacity, {
+        toValue: 1, // fade in
+        duration: 2000,
+        easing: Easing.out(Easing.exp),
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
 
   const handleSendResetLink = () => {
@@ -62,7 +84,16 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
       </View>
 
   {imageLoaded && (
+    
       <View style={styles.formContainer}>
+
+        <Animated.View
+                  style={{
+                    transform: [{ translateY }],
+                    opacity,
+                    width: '100%',
+                  }}
+                >
         <Text style={styles.resetTitle}>Reset Password</Text>
 
       
@@ -72,18 +103,6 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
             your password
           </Text>
         </View>
-{/* 
-        <LinearGradient
-          colors={['rgba(255,255,255,0.20)', 'rgba(255,255,255,0.10)']}
-          style={styles.login_container}>
-          <TextInput
-            style={styles.personalEmailID_TextInput}
-            placeholder={'Personal Email ID'}
-            placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
-            value={username}
-            onChangeText={(usernameText) => setUsername(usernameText)}
-          />
-        </LinearGradient> */}
 
           <View style={styles.login_container}>
                     <TextInput
@@ -108,7 +127,7 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
         <TouchableOpacity>
           <Text style={styles.goBackText}>Go back</Text>
         </TouchableOpacity>
-     
+     </Animated.View>
       </View>
        )}
 
@@ -217,6 +236,7 @@ const styles = StyleSheet.create({
   privacyContainer: {
     width: '100%',
     alignItems: 'center',
+    marginTop:16
   },
 
   termsText: {
@@ -243,6 +263,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 40,
     gap: 10,
+    marginTop:16,
     alignSelf: 'stretch',
     borderRadius: 12,
     borderWidth: 0.6,
@@ -274,10 +295,9 @@ const styles = StyleSheet.create({
     gap: 4,
     borderRadius: 100,
     paddingTop: 6,
-    paddingBottom: 12,
+    paddingBottom: 6,
     backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    marginTop: 5,
-    
+    marginTop: 16,
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
   },
@@ -311,6 +331,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 19.6,
     letterSpacing: 0,
+    opacity: 0.9,
+    textShadowColor: 'rgba(255,255,255,0.6)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 2,
   },
 
   overlay: {
