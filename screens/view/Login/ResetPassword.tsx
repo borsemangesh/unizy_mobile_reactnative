@@ -77,7 +77,7 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
       onLoad={() => setImageLoaded(true)}>
 
    <View style={styles.fullScreenContainer}>
-        <View style={styles.backIconRow}>
+        {/* <View style={styles.backIconRow}>
         
            <TouchableOpacity onPress={handleLogin}>
                     <Image
@@ -85,7 +85,7 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
                       style={{ height: 24, width: 24 }}
                     />
                   </TouchableOpacity>
-        </View>
+        </View> */}
 
         <Text style={styles.unizyText}>UniZy</Text>
         <View style={styles.emptyView}></View>
@@ -392,6 +392,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     flex: 1,
     gap: 10,
+    paddingLeft:24
   },
   emptyView: {
     display: 'flex',

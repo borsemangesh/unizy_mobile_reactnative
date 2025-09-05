@@ -70,104 +70,24 @@ const buttonOpacity = useRef(new Animated.Value(0)).current;
       ]).start();
     }, []);
 
-//  useEffect(() => {
-//     if (photo) {
-//       setShowButton(true);
-//       Animated.timing(scaleY, {
-//         toValue: 1,
-//         duration: 400,
-//         useNativeDriver: true,
-//       }).start();
-//     } else {
-//       // hide again if no photo
-//       Animated.timing(scaleY, {
-//         toValue: 0,
-//         duration: 200,
-//         useNativeDriver: true,
-//       }).start(() => setShowButton(false));
-//     }
-//   }, [photo]);
+ useEffect(() => {
+    if (photo) {
+      setShowButton(true);
+      Animated.timing(scaleY, {
+        toValue: 1,
+        duration: 400,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      // hide again if no photo
+      Animated.timing(scaleY, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start(() => setShowButton(false));
+    }
+  }, [photo]);
 
-
-
-// useEffect(() => {
-//   if (photo) {
-//     setShowButton(true);
-//     Animated.parallel([
-//       Animated.spring(buttonTranslateY, {
-//         toValue: 0,
-//         friction: 6,
-//         tension: 80,
-//         useNativeDriver: true,
-//       }),
-//       Animated.timing(buttonScale, {
-//         toValue: 1,
-//         duration: 300,
-//         useNativeDriver: true,
-//       }),
-//       Animated.timing(buttonOpacity, {
-//         toValue: 1,
-//         duration: 250,
-//         useNativeDriver: true,
-//       }),
-//     ]).start();
-//   } else {
-//     Animated.parallel([
-//       Animated.timing(buttonTranslateY, {
-//         toValue: 100,
-//         duration: 200,
-//         useNativeDriver: true,
-//       }),
-//       Animated.timing(buttonScale, {
-//         toValue: 0.8,
-//         duration: 200,
-//         useNativeDriver: true,
-//       }),
-//       Animated.timing(buttonOpacity, {
-//         toValue: 0,
-//         duration: 200,
-//         useNativeDriver: true,
-//       }),
-//     ]).start(() => setShowButton(false));
-//   }
-// }, [photo]);
-
-
-useEffect(() => {
-  if (photo) {
-    setShowButton(true);
-
-    // animate parent expand
-    Animated.timing(parentScaleY, {
-      toValue: 1,
-      duration: 400,
-      easing: Easing.out(Easing.ease),
-      useNativeDriver: true,
-    }).start();
-
-    // fade in button after slight delay (so expansion looks natural)
-    Animated.timing(buttonOpacity, {
-      toValue: 1,
-      duration: 300,
-      delay: 200,
-      useNativeDriver: true,
-    }).start();
-  } else {
-    // fade out button
-    Animated.timing(buttonOpacity, {
-      toValue: 0,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
-
-    // collapse parent
-    Animated.timing(parentScaleY, {
-      toValue: 0,
-      duration: 200,
-      useNativeDriver: true,
-    }).start(() => setShowButton(false));
-  }
-}, [photo]);
 
 const requestCameraPermission = async () => {
   if (Platform.OS === "android") {
@@ -293,7 +213,7 @@ const requestCameraPermission = async () => {
   </View>
 </View>
 
- {showButton && (
+ {/* {showButton && (
       <Animated.View
         style={{
           transform: [{ translateY: buttonTranslateY }, { scale: buttonScale }],
@@ -304,7 +224,7 @@ const requestCameraPermission = async () => {
           <Text style={styles.loginText}>Continue</Text>
         </TouchableOpacity>
       </Animated.View>
-    )}
+    )} */}
 
 
 
@@ -313,13 +233,13 @@ const requestCameraPermission = async () => {
           </TouchableOpacity> */}
 
 
- {/* {showButton && (
+ {showButton && (
         <Animated.View style={{ transform: [{ scaleY }] }}>
           <TouchableOpacity style={styles.loginButton} onPress={handlePopup}>
             <Text style={styles.loginText}>Continue</Text>
           </TouchableOpacity>
         </Animated.View>
-      )} */}
+      )}
 
 
           </Animated.View>

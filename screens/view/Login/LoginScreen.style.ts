@@ -65,6 +65,7 @@ export const loginStyles = StyleSheet.create({
     fontWeight: '400',
     textAlign: 'center',
     flex: 1,
+    paddingRight:24
   },
   emptyView: {
     display: 'flex',
