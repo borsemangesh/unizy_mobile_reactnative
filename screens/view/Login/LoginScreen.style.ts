@@ -18,10 +18,10 @@ export const loginStyles = StyleSheet.create({
     flexShrink: 0,
     flexDirection: 'row',
     paddingTop: 50,
-    opacity: 0.9,
+    opacity: 2,
     textShadowColor: 'rgba(255,255,255,0.6)',
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 2,
+    textShadowRadius: 1,
     
     // backgroundColor: '#000000',
   },
@@ -109,7 +109,7 @@ export const loginStyles = StyleSheet.create({
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
   },
   personalEmailID_TextInput: {
-    width: '95%',
+    width: '93%',
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
     fontSize: 17,
@@ -134,9 +134,10 @@ export const loginStyles = StyleSheet.create({
     borderWidth: 0.6,
     borderColor: '#ffffff2c',
     marginTop: 12,
+    
   },
   password_TextInput: {
-    width: '90%',
+    width: '87%',
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
     fontSize: 17,
@@ -172,7 +173,6 @@ export const loginStyles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Urbanist-Medium',
     fontSize: 17,
-    fontStyle: 'normal',
     fontWeight: 500,
     letterSpacing: 1,
     width: '100%',
@@ -194,10 +194,10 @@ export const loginStyles = StyleSheet.create({
     lineHeight:19,
     textDecorationStyle: 'solid',    
      marginTop: 10,
-    opacity: 0.9,
+    opacity: 2,
     textShadowColor: 'rgba(255,255,255,0.6)',
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 2,
+    textShadowRadius: 1,
      
   },
   teamsandConditionText: {
@@ -208,10 +208,10 @@ export const loginStyles = StyleSheet.create({
     fontWeight: '600',
     textDecorationLine: 'underline',
     textDecorationStyle: 'solid',
-     opacity: 0.9,
+    opacity: 2,
     textShadowColor: 'rgba(255,255,255,0.6)',
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 2,
+    textShadowRadius: 1,
     
   },
   teamsandConditionContainer: {

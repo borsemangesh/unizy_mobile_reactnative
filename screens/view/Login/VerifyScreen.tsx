@@ -12,6 +12,7 @@ import {
 Dimensions,
 
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
 
 type VerifyScreenProps = {
@@ -28,6 +29,16 @@ const VerifyScreen = ({ navigation }: VerifyScreenProps) => {
 
     const translateY = useRef(new Animated.Value(-50)).current; // start above the screen
     const opacity = useRef(new Animated.Value(0)).current;
+
+     const inputs = useRef<Array<TextInput | null>>([]);
+    
+      const handleChange = (text: string, index: number) => {
+        if (text && index < inputs.current.length - 1) {
+          inputs.current[index + 1]?.focus(); // move to next
+        } else if (!text && index > 0) {
+          inputs.current[index - 1]?.focus(); // move back
+        }
+      };
   
   useEffect(() => {
     Animated.parallel([
@@ -131,10 +142,15 @@ const VerifyScreen = ({ navigation }: VerifyScreenProps) => {
         {[0, 1, 2, 3].map((_, index) => (
           <TextInput
             key={index}
-            style={styles.otpBox}
-            keyboardType="number-pad"
-            maxLength={1}
-            placeholder=""
+          ref={(ref) => {
+            inputs.current[index] = ref; // ✅ assign, don’t return
+          }}
+          style={styles.otpBox}
+          keyboardType="number-pad"
+          maxLength={1}
+          onChangeText={(text) => handleChange(text, index)}
+          returnKeyType="next"
+          textAlign="center"
           />
         ))}
       </View>
@@ -145,12 +161,12 @@ const VerifyScreen = ({ navigation }: VerifyScreenProps) => {
         <Text style={styles.loginText}>Verify & Continue</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={{ flexDirection: 'row' }}>
+      <TouchableOpacity style={{ flexDirection: 'row' ,marginTop:6}}>
         <Text style={styles.resendText}>Didn’t receive a code? </Text>
         <Text style={styles.resendText1}>Resend Code</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={{ flexDirection: 'row' }}>
+      <TouchableOpacity style={{ flexDirection: 'row' ,marginTop:6}}>
         <Text style={styles.goBackText}>Entered wrong email? </Text>
         <Text style={styles.goBackText1}>Go back</Text>
       </TouchableOpacity>
@@ -161,7 +177,7 @@ const VerifyScreen = ({ navigation }: VerifyScreenProps) => {
 
       
 
-      <View style={styles.stepIndicatorContainer}>
+      {/* <View style={styles.stepIndicatorContainer}>
             {[0, 1, 2, 3].map((index) => (
               <View
                 key={index}
@@ -171,7 +187,23 @@ const VerifyScreen = ({ navigation }: VerifyScreenProps) => {
             ]}
               />
             ))}
-          </View>
+          </View> */}
+
+          <View style={styles.stepIndicatorContainer}>
+                                  {[0, 1, 2, 3].map((index) =>
+                                    index === 2 ? (
+                                      <LinearGradient
+                                        key={index}
+                                        colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0.5)']}
+                                        style={styles.stepCircle}
+                                      
+                                      />
+                                    ) : (
+                                      <View key={index} style={[styles.stepCircle, styles.inactiveStepCircle]} />
+                                    )
+                                  )}
+                                </View>
+                     
 
     </ImageBackground>
   );
@@ -192,37 +224,76 @@ const VerifyScreen = ({ navigation }: VerifyScreenProps) => {
     textAlign: 'center',
     lineHeight: 19.6,
     letterSpacing: 0,
-     opacity: 0.9,
+     opacity: 2,
     textShadowColor: 'rgba(255,255,255,0.6)',
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 2,
+    textShadowRadius: 1,
   },
-   stepIndicatorContainer: {
-     flexDirection: 'row',
-     justifyContent: 'center',
-     alignItems: 'center',
-     marginTop: 20,
-     gap: 8,
-   },
-   
-   stepCircle: {
-     width: 12,
-     height: 12,
-     borderRadius: 10,
-     backgroundColor: 'rgba(255, 255, 255, 0.3)', 
-   },
-   
-   activeStepCircle: {
-     backgroundColor: '#FFFFFF', 
-   },
+
+stepCircle: {
+  width: 12,
+  height: 12,
+  borderRadius: 16,
+  backgroundColor: 'rgba(255, 255, 255, 0.3)', 
+},
+
+activeStepCircle: {
+  backgroundColor: '#FFFFFF', 
+    width: 12,
+    height: 12,
+    flexShrink: 0,
+    borderColor: '#ffffff4e',
+    alignItems: 'center',
+    borderRadius: 40,
+    justifyContent: 'center',
+     boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
+    shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25)',
+},
+
+stepIndicatorContainer: {
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginTop: 20,
+  gap: 8,
+},
 
 inactiveStepCircle: {
-  // width: 12,
-  // height: 12,
-  // borderRadius: 6,
-  // shadowOpacity: 0.9,
-  // elevation: 2,
+ backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    width: 12,
+    height: 12,
+    flexShrink: 0,
+    borderColor: '#ffffff4e',
+    alignItems: 'center',
+    borderRadius: 40,
+    justifyContent: 'center',
+    boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
+    shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25)',
+
 },
+
+
+  //  stepIndicatorContainer: {
+  //    flexDirection: 'row',
+  //    justifyContent: 'center',
+  //    alignItems: 'center',
+  //    marginTop: 20,
+  //    gap: 8,
+  //  },
+   
+  //  stepCircle: {
+  //    width: 12,
+  //    height: 12,
+  //    borderRadius: 10,
+  //    backgroundColor: 'rgba(255, 255, 255, 0.3)', 
+  //  },
+   
+  //  activeStepCircle: {
+  //    backgroundColor: '#FFFFFF', 
+  //  },
+
+
    
    otpContainer: {
      flexDirection: 'row',
@@ -283,7 +354,7 @@ inactiveStepCircle: {
      privacyContainer: {
        width: '100%',
        alignItems: 'center',
-       marginTop:12
+       marginTop:16
      },
    
      termsText: {
@@ -315,7 +386,7 @@ inactiveStepCircle: {
        boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
      },
      personalEmailID_TextInput: {
-       width: '95%',
+       width: '93%',
        fontFamily: 'Urbanist-Regular',
        fontWeight: '400',
        fontSize: 17,
@@ -344,7 +415,6 @@ inactiveStepCircle: {
        textAlign: 'center',
        fontFamily: 'Urbanist-Medium',
        fontSize: 17,
-       fontStyle: 'normal',
        fontWeight: 500,
        letterSpacing: 1,
        width: '100%',
@@ -387,10 +457,10 @@ inactiveStepCircle: {
        textAlign: 'center',
        lineHeight: 19.6,
        letterSpacing: 0,
-        opacity: 0.9,
+       opacity: 2,
     textShadowColor: 'rgba(255,255,255,0.6)',
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 2,
+    textShadowRadius: 1,
      },
    
        goBackText: {
@@ -413,10 +483,10 @@ inactiveStepCircle: {
        textAlign: 'center',
        lineHeight: 19.6,
        letterSpacing: 0,
-        opacity: 0.9,
+        opacity: 2,
     textShadowColor: 'rgba(255,255,255,0.6)',
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 2,
+    textShadowRadius: 1,
      },
     
      fullScreenContainer: {

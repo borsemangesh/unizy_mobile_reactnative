@@ -59,6 +59,14 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
     setShowPopup(true);
   };
 
+   const handleLogin = () => {
+  navigation.reset({
+    index: 0,
+    routes: [{ name: 'LoginScreen' }],
+  });
+};
+
+
   const closePopup = () => setShowPopup(false);
 
   return (
@@ -71,7 +79,7 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
    <View style={styles.fullScreenContainer}>
         <View style={styles.backIconRow}>
         
-           <TouchableOpacity onPress={() => navigation.goBack()}>
+           <TouchableOpacity onPress={handleLogin}>
                     <Image
                       source={require('../../../assets/images/back.png')}
                       style={{ height: 24, width: 24 }}
@@ -124,7 +132,7 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
                     <Text style={styles.loginText}>Send Reset Link</Text>
                   </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleLogin}>
           <Text style={styles.goBackText}>Go back</Text>
         </TouchableOpacity>
      </Animated.View>
@@ -136,15 +144,24 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
         visible={showPopup}
         transparent
         animationType="fade"
-        onRequestClose={closePopup}
-      >
+        onRequestClose={closePopup}>
         <View style={styles.overlay}>
-          <BlurView
-            style={StyleSheet.absoluteFill}
-            blurType="dark"
-            blurAmount={15}
-            reducedTransparencyFallbackColor="rgba(0,0,0,0.8)"
-          />
+
+     
+      <BlurView
+        // style={StyleSheet.absoluteFill}
+        style={{flex:1,alignContent: 'center',justifyContent: 'center',width:'100%',alignItems: 'center'}}
+        blurType="dark"              
+        blurAmount={1000}             
+        reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)" 
+      >
+
+     
+      <View
+        style={[
+          StyleSheet.absoluteFill,
+          { backgroundColor: "rgba(0, 0, 0, 0.32)" },
+        ]} />
 
           <View style={styles.popupContainer}>
             <Image
@@ -156,20 +173,15 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
               A password reset link has been sent to your university email.
               Please check your inbox (or spam folder) to continue.
             </Text>
-            {/* <GlassButton
-              title="Back to Login"
-              onPress={closePopup}
-              style={styles.loginButton1}
-            /> */}
-
-             <TouchableOpacity style={styles.loginButton} onPress={closePopup}>
-                    <Text style={styles.loginText}>Back to Login</Text>
-                  </TouchableOpacity>
-
+            
+             <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+              <Text style={styles.loginText}>Back to Login</Text>
+              </TouchableOpacity>
 
           </View>
-          
+          </BlurView>
         </View>
+        
       </Modal>
       
     </ImageBackground>
@@ -182,19 +194,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     
   },
-  // fullScreenContainer: {
-  //   width: '100%',
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  //   marginVertical: 20,
-  // },
-  // unizyText: {
-  //   color: '#FFFFFF',
-  //   fontFamily: 'MonumentExtended-Regular',
-  //   fontSize: 24,
-  //   fontWeight: '400',
-  //   textAlign: 'center',
-  // },
+  blurstyle:{
+ backgroundColor: "transparent",
+  },
+
 
   formContainer: {
     width: '90%',
@@ -277,7 +280,7 @@ const styles = StyleSheet.create({
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
   },
   personalEmailID_TextInput: {
-    width: '95%',
+    width: '93%',
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
     fontSize: 17,
@@ -306,21 +309,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Urbanist-Medium',
     fontSize: 17,
-    fontStyle: 'normal',
     fontWeight: 500,
     letterSpacing: 1,
     width: '100%',
+    //mixBlendMode:'color-burn'
   },
 
-  // loginButton: {
-  //   width: '100%',
-  //   marginBottom: 20, // Increased space below button
-  // },
-
-   loginButton1: {
-    width: '100%',
-    marginBottom: 4, // Increased space below button
-  },
 
   goBackText: {
     color: 'rgba(255,255,255,0.48)',
@@ -331,10 +325,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 19.6,
     letterSpacing: 0,
-    opacity: 0.9,
+    opacity: 2,
     textShadowColor: 'rgba(255,255,255,0.6)',
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 2,
+    textShadowRadius: 1,
   },
 
   overlay: {
@@ -348,10 +342,14 @@ const styles = StyleSheet.create({
     width: width * 0.85,
     padding: 20,
     borderRadius: 24,
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    //backgroundColor: 'rgba(255, 255, 255, 0.06)',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.1)',
     alignItems: 'center',
+        overflow: "hidden",
+
+      backgroundColor: "rgba(255,255,255,0.15)", // frosted glass
+
   },
 
   logo: {

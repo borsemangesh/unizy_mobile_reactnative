@@ -15,13 +15,19 @@ import {
   Animated,
   Easing
 } from 'react-native';
-// import { launchCamera, launchImageLibrary } from "react-native-image-picker";
+ import { launchCamera, launchImageLibrary } from "react-native-image-picker";
+ import { PermissionsAndroid, Platform } from "react-native";
+import LinearGradient from 'react-native-linear-gradient';
+
 
 const { width } = Dimensions.get('window');
 
 type ProfileScreenProps = {
   navigation: any;
 };
+
+
+
 
 const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   
@@ -30,10 +36,22 @@ const [username, setUsername] = useState<string>('');
   const [imageLoaded, setImageLoaded] = useState(false);
   const [photo, setPhoto] = useState<string | null>(null);
 
+
+  const [showButton, setShowButton] = useState(false);
+  const scaleY = useRef(new Animated.Value(0)).current;
+
   const closePopup = () => setShowPopup(false);
 
    const translateY = useRef(new Animated.Value(-50)).current; // start above the screen
-      const opacity = useRef(new Animated.Value(0)).current;
+    const opacity = useRef(new Animated.Value(0)).current;
+
+const parentScaleY = useRef(new Animated.Value(0)).current;
+
+
+const buttonTranslateY = useRef(new Animated.Value(100)).current;
+const buttonScale = useRef(new Animated.Value(0.8)).current;
+const buttonOpacity = useRef(new Animated.Value(0)).current;
+
     
     useEffect(() => {
       Animated.parallel([
@@ -51,38 +69,164 @@ const [username, setUsername] = useState<string>('');
         }),
       ]).start();
     }, []);
+
+//  useEffect(() => {
+//     if (photo) {
+//       setShowButton(true);
+//       Animated.timing(scaleY, {
+//         toValue: 1,
+//         duration: 400,
+//         useNativeDriver: true,
+//       }).start();
+//     } else {
+//       // hide again if no photo
+//       Animated.timing(scaleY, {
+//         toValue: 0,
+//         duration: 200,
+//         useNativeDriver: true,
+//       }).start(() => setShowButton(false));
+//     }
+//   }, [photo]);
+
+
+
+// useEffect(() => {
+//   if (photo) {
+//     setShowButton(true);
+//     Animated.parallel([
+//       Animated.spring(buttonTranslateY, {
+//         toValue: 0,
+//         friction: 6,
+//         tension: 80,
+//         useNativeDriver: true,
+//       }),
+//       Animated.timing(buttonScale, {
+//         toValue: 1,
+//         duration: 300,
+//         useNativeDriver: true,
+//       }),
+//       Animated.timing(buttonOpacity, {
+//         toValue: 1,
+//         duration: 250,
+//         useNativeDriver: true,
+//       }),
+//     ]).start();
+//   } else {
+//     Animated.parallel([
+//       Animated.timing(buttonTranslateY, {
+//         toValue: 100,
+//         duration: 200,
+//         useNativeDriver: true,
+//       }),
+//       Animated.timing(buttonScale, {
+//         toValue: 0.8,
+//         duration: 200,
+//         useNativeDriver: true,
+//       }),
+//       Animated.timing(buttonOpacity, {
+//         toValue: 0,
+//         duration: 200,
+//         useNativeDriver: true,
+//       }),
+//     ]).start(() => setShowButton(false));
+//   }
+// }, [photo]);
+
+
+useEffect(() => {
+  if (photo) {
+    setShowButton(true);
+
+    // animate parent expand
+    Animated.timing(parentScaleY, {
+      toValue: 1,
+      duration: 400,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: true,
+    }).start();
+
+    // fade in button after slight delay (so expansion looks natural)
+    Animated.timing(buttonOpacity, {
+      toValue: 1,
+      duration: 300,
+      delay: 200,
+      useNativeDriver: true,
+    }).start();
+  } else {
+    // fade out button
+    Animated.timing(buttonOpacity, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+
+    // collapse parent
+    Animated.timing(parentScaleY, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(() => setShowButton(false));
+  }
+}, [photo]);
+
+const requestCameraPermission = async () => {
+  if (Platform.OS === "android") {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: "Camera Permission",
+          message: "App needs access to your camera",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK",
+        }
+      );
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    } catch (err) {
+      console.warn(err);
+      return false;
+    }
+  } else {
+    return true; // iOS handled by plist
+  }
+};
     
 
-  //  const handleOpenCamera = () => {
-  //   launchCamera(
-  //     {
-  //       mediaType: "photo",
-  //       cameraType: "front",
-  //       quality: 0.8,
-  //     },
-  //     (response) => {
-  //       if (response.didCancel) return;
-  //       if (response.assets && response.assets[0].uri) {
-  //         setPhoto(response.assets[0].uri);
-  //       }
-  //     }
-  //   );
-  // };
+  const handleOpenCamera = async () => {
+  const hasPermission = await requestCameraPermission();
+  if (!hasPermission) return;
 
-  // const handleOpenGallery = () => {
-  //   launchImageLibrary(
-  //     {
-  //       mediaType: "photo",
-  //       quality: 0.8,
-  //     },
-  //     (response) => {
-  //       if (response.didCancel) return;
-  //       if (response.assets && response.assets[0].uri) {
-  //         setPhoto(response.assets[0].uri);
-  //       }
-  //     }
-  //   );
-  // };
+  launchCamera(
+    {
+      mediaType: "photo",
+      cameraType: "front",
+      quality: 0.8,
+    },
+    (response) => {
+      if (response.didCancel) return;
+      if (response.assets && response.assets[0].uri) {
+        setPhoto(response.assets[0].uri);
+      }
+    }
+  );
+};
+
+
+  const handleOpenGallery = () => {
+    launchImageLibrary(
+      {
+        mediaType: "photo",
+        quality: 0.8,
+      },
+      (response) => {
+        if (response.didCancel) return;
+        if (response.assets && response.assets[0].uri) {
+          setPhoto(response.assets[0].uri);
+        }
+      }
+    );
+  };
 
     const handleSendResetLink = () => {
     console.log(`Send reset link to ${username}`);
@@ -122,52 +266,24 @@ const [username, setUsername] = useState<string>('');
           <Text style={styles.termsText}>Personalize your account with a photo. You can always change it later.</Text>
         </View>
 
- {/* <View style={styles.avatarContainer}>
-  <View style={styles.bigCircle}>
-    <Image
-      source={require("../../../assets/images/add_photo.png")}
-      style={styles.logo}
-      resizeMode="contain"
-    />
-  </View>
-
-<TouchableOpacity style={styles.cameraButton} onPress={handleOpenCamera}>
-    <Image
-      source={require("../../../assets/images/camera_icon.png")}
-      style={styles.cameraIcon}
-      resizeMode="contain"
-    />
-  </TouchableOpacity>
-</View> */}
-
-
-
-{/* <View style={styles.avatarContainer}>
-    <Image
-      source={require("../../../assets/images/add_photo.png")}
-      style={styles.logo}
-      resizeMode="contain"
-    />
-
-  <TouchableOpacity style={styles.cameraButton} onPress={handleOpenCamera}>
-    <Image
-      source={require("../../../assets/images/camera_icon.png")}
-      style={styles.cameraIcon}
-      resizeMode="contain"
-    />
-  </TouchableOpacity>
-</View> */}
+ 
 
 <View style={styles.avatarContainer}>
   <View style={styles.bigCircle}>
-    <Image
-      source={require("../../../assets/images/add1.png")}
-      style={styles.logo}
-      resizeMode="contain"
-    />
+    <TouchableOpacity onPress={handleOpenCamera}>
+      <Image
+        source={
+          photo
+            ? { uri: photo } // clicked image
+            : require("../../../assets/images/add1.png") // placeholder
+        }
+        style={styles.logo} // ✅ use a circle style
+        resizeMode="cover"
+      />
+    </TouchableOpacity>
 
-    {/* ✅ Camera button inside the circle */}
-    <TouchableOpacity style={styles.cameraButton} onPress={handleSendResetLink}>
+    {/* Camera button inside the circle */}
+    <TouchableOpacity style={styles.cameraButton} onPress={handleOpenCamera}>
       <Image
         source={require("../../../assets/images/new_camera_icon.png")}
         style={styles.cameraIcon}
@@ -177,23 +293,55 @@ const [username, setUsername] = useState<string>('');
   </View>
 </View>
 
-         <TouchableOpacity style={styles.loginButton} onPress={handlePopup}>
+ {showButton && (
+      <Animated.View
+        style={{
+          transform: [{ translateY: buttonTranslateY }, { scale: buttonScale }],
+          opacity: buttonOpacity,
+        }}
+      >
+        <TouchableOpacity style={styles.loginButton} onPress={handlePopup}>
+          <Text style={styles.loginText}>Continue</Text>
+        </TouchableOpacity>
+      </Animated.View>
+    )}
+
+
+
+         {/* <TouchableOpacity style={styles.loginButton} onPress={handlePopup}>
+            <Text style={styles.loginText}>Continue</Text>
+          </TouchableOpacity> */}
+
+
+ {/* {showButton && (
+        <Animated.View style={{ transform: [{ scaleY }] }}>
+          <TouchableOpacity style={styles.loginButton} onPress={handlePopup}>
             <Text style={styles.loginText}>Continue</Text>
           </TouchableOpacity>
+        </Animated.View>
+      )} */}
+
+
           </Animated.View>
       </View>
        )}
-       <View style={styles.stepIndicatorContainer}>
-             {[0, 1, 2, 3].map((index) => (
-               <View
-                 key={index}
-                 style={[
-                   styles.stepCircle,
-                   index === 3 && styles.activeStepCircle, 
-                 ]}
-               />
-             ))}
-           </View>
+    
+
+             <View style={styles.stepIndicatorContainer}>
+                        {[0, 1, 2, 3].map((index) =>
+                          index === 3 ? (
+                            <LinearGradient
+                              key={index}
+                              colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0.5)']}
+                              style={styles.stepCircle}
+                            
+                            />
+                          ) : (
+                            <View key={index} style={[styles.stepCircle, styles.inactiveStepCircle]} />
+                          )
+                        )}
+                      </View>
+           
 
     <Modal
         visible={showPopup}
@@ -287,10 +435,10 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     paddingHorizontal: 10,
      marginBottom: 12, 
-      opacity: 0.9,
+      opacity: 2,
     textShadowColor: 'rgba(255,255,255,0.6)',
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 2,
+    textShadowRadius: 1,
   },
   termsText2: {
     color: '#fff',
@@ -351,72 +499,74 @@ cameraIcon: {
 logo: {
   width: 120,
   height: 120,
+  borderRadius: 60
 },
-// cameraButton: {
-//   position: "absolute",
-//   bottom: 5,
-//   right: 1,
-//   width: 36,
-//   height: 36,
-//   borderRadius: 18,
-//   alignItems: "center",
-//   justifyContent: "center",
-// },
-// cameraIcon: {
-//   width: 36,
-//   height: 36,
-// },
+
   flex_1: {
     flex: 1,
     alignItems: 'center',
   },
+
+// stepIndicatorContainer: {
+//   flexDirection: 'row',
+//   justifyContent: 'center',
+//   alignItems: 'center',
+//   marginTop: 20,
+//   gap: 8, 
+// },
+
+// stepCircle: {
+//   width: 12,
+//   height: 12,
+//   borderRadius: 10,
+//   backgroundColor: 'rgba(255, 255, 255, 0.3)', // inactive circle
+// },
+
+// activeStepCircle: {
+//   backgroundColor: '#FFFFFF', // active circle
+// },
+
+stepCircle: {
+  width: 12,
+  height: 12,
+  borderRadius: 16,
+  backgroundColor: 'rgba(255, 255, 255, 0.3)', 
+},
+
+activeStepCircle: {
+  backgroundColor: '#FFFFFF', 
+    width: 12,
+    height: 12,
+    flexShrink: 0,
+    borderColor: '#ffffff4e',
+    alignItems: 'center',
+    borderRadius: 40,
+    justifyContent: 'center',
+     boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
+    shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25)',
+},
 
 stepIndicatorContainer: {
   flexDirection: 'row',
   justifyContent: 'center',
   alignItems: 'center',
   marginTop: 20,
-  gap: 8, // if your RN version supports it
+  gap: 8,
 },
 
-stepCircle: {
-  width: 12,
-  height: 12,
-  borderRadius: 10,
-  backgroundColor: 'rgba(255, 255, 255, 0.3)', // inactive circle
-},
-
-activeStepCircle: {
-  backgroundColor: '#FFFFFF', // active circle
-},
-
-otpContainer: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  width: '80%',
-  alignSelf: 'center',
-  gap: 10, // works in RN 0.71+, otherwise use marginRight
-
-},
-
-otpBox: {
-  width: 48,
-  height: 48,
-  borderRadius: 12,
-  paddingTop: 8,
-  paddingRight: 12,
-  paddingBottom: 8,
-  paddingLeft: 12,
-  textAlign: 'center',
-  fontSize: 18,
-  color: '#fff',
-  fontWeight: '600',
-  borderWidth: 0.6,
-  borderColor: '#ffffff2c',
-  elevation: 0,
-  backgroundColor:
+inactiveStepCircle: {
+ backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.11) inset -1px 0px 5px 1px',
+    width: 12,
+    height: 12,
+    flexShrink: 0,
+    borderColor: '#ffffff4e',
+    alignItems: 'center',
+    borderRadius: 40,
+    justifyContent: 'center',
+    boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
+    shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25)',
+
 },
 
   formContainer: {
@@ -457,10 +607,10 @@ otpBox: {
     textAlign: 'center',
     lineHeight: 22,
     paddingHorizontal: 10,
-     opacity: 0.9,
+    opacity: 2,
     textShadowColor: 'rgba(255,255,255,0.6)',
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 2,
+    textShadowRadius: 1,
   },
 
      loginButton: {
@@ -484,7 +634,6 @@ otpBox: {
     textAlign: 'center',
     fontFamily: 'Urbanist-Medium',
     fontSize: 17,
-    fontStyle: 'normal',
     fontWeight: 500,
     letterSpacing: 1,
     width: '100%',

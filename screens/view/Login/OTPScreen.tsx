@@ -14,6 +14,7 @@ import {
   Dimensions,
   Easing
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
 const { width } = Dimensions.get('window');
 
@@ -29,6 +30,16 @@ const [username, setUsername] = useState<string>('');
 
 const translateY = useRef(new Animated.Value(-50)).current; // start above the screen
 const opacity = useRef(new Animated.Value(0)).current;
+
+  const inputs = useRef<Array<TextInput | null>>([]);
+
+  const handleChange = (text: string, index: number) => {
+    if (text && index < inputs.current.length - 1) {
+      inputs.current[index + 1]?.focus(); // move to next
+    } else if (!text && index > 0) {
+      inputs.current[index - 1]?.focus(); // move back
+    }
+  };
 
 useEffect(() => {
   Animated.parallel([
@@ -48,6 +59,14 @@ useEffect(() => {
 }, []);
 
 
+const handlesignup = () =>{
+
+   navigation.reset({
+    index: 0,
+    routes: [{ name: 'Signup' }],
+  });
+//  navigation.navigate('Signup')
+}
 
   const handleSendResetLink = () => {
     navigation.navigate('VerifyScreen')
@@ -86,15 +105,34 @@ useEffect(() => {
           {/* <Text style={styles.termsText}>We have sent a 4-digit code to abc@gmail.com</Text> */}
         </View>
         
- <View style={styles.otpContainer}>
+ {/* <View style={styles.otpContainer}>
      {[0, 1, 2, 3].map((_, index) => (
         <TextInput
-           key={index}
+            key={index}
             style={styles.otpBox}
+             ref={(ref) => (inputs.current[index] = ref)}
              keyboardType="number-pad"
              maxLength={1}
+              onChangeText={(text) => handleChange(text, index)}
+              returnKeyType="next"
             placeholder=""/>))}
-                </View>
+      </View> */}
+        <View style={styles.otpContainer}>
+      {[0, 1, 2, 3].map((_, index) => (
+        <TextInput
+          key={index}
+          ref={(ref) => {
+            inputs.current[index] = ref; // ✅ assign, don’t return
+          }}
+          style={styles.otpBox}
+          keyboardType="number-pad"
+          maxLength={1}
+          onChangeText={(text) => handleChange(text, index)}
+          returnKeyType="next"
+          textAlign="center"
+        />
+      ))}
+    </View>
 
          <TouchableOpacity style={styles.loginButton} onPress={handleSendResetLink}>
             <Text style={styles.loginText}>Verify & Continue</Text>
@@ -109,12 +147,16 @@ useEffect(() => {
 
         <TouchableOpacity style={{ flexDirection: 'row' ,justifyContent:"center",marginTop:16}}>
           <Text style={styles.goBackText}>Entered wrong email? </Text>
+          <TouchableOpacity onPress={handlesignup}>
            <Text style={styles.goBackText1}>Go back</Text>
+           </TouchableOpacity>
         </TouchableOpacity>
 </Animated.View>
       </View>
        )}
-       <View style={styles.stepIndicatorContainer}>
+      
+      
+       {/* <View style={styles.stepIndicatorContainer}>
              {[0, 1, 2, 3].map((index) => (
                <View
                  key={index}
@@ -124,7 +166,24 @@ useEffect(() => {
                  ]}
                />
              ))}
+           </View> */}
+
+           <View style={styles.stepIndicatorContainer}>
+             {[0, 1, 2, 3].map((index) =>
+               index === 1 ? (
+                 <LinearGradient
+                   key={index}
+                   colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0.5)']}
+                   style={styles.stepCircle}
+                 
+                 />
+               ) : (
+                 <View key={index} style={[styles.stepCircle, styles.inactiveStepCircle]} />
+               )
+             )}
            </View>
+
+
     </ImageBackground>
   );
 };
@@ -135,24 +194,50 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
+
+  stepCircle: {
+  width: 12,
+  height: 12,
+  borderRadius: 16,
+  backgroundColor: 'rgba(255, 255, 255, 0.3)', 
+},
+
+activeStepCircle: {
+  backgroundColor: '#FFFFFF', 
+    width: 12,
+    height: 12,
+    flexShrink: 0,
+    borderColor: '#ffffff4e',
+    alignItems: 'center',
+    borderRadius: 40,
+    justifyContent: 'center',
+     boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
+    shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25)',
+},
+
 stepIndicatorContainer: {
   flexDirection: 'row',
   justifyContent: 'center',
   alignItems: 'center',
   marginTop: 20,
-  gap: 8, // if your RN version supports it
+  gap: 8,
 },
 
-stepCircle: {
-  width: 12,
-  height: 12,
-  borderRadius: 10,
-  backgroundColor: 'rgba(255, 255, 255, 0.3)', // inactive circle
+inactiveStepCircle: {
+ backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    width: 12,
+    height: 12,
+    flexShrink: 0,
+    borderColor: '#ffffff4e',
+    alignItems: 'center',
+    borderRadius: 40,
+    justifyContent: 'center',
+    boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
+    shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25)',
+
 },
 
-activeStepCircle: {
-  backgroundColor: '#FFFFFF', // active circle
-},
 
 otpContainer: {
   flexDirection: 'row',
@@ -251,7 +336,7 @@ otpBox: {
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
   },
   personalEmailID_TextInput: {
-    width: '95%',
+    width: '93%',
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
     fontSize: 17,
@@ -280,8 +365,7 @@ otpBox: {
     textAlign: 'center',
     fontFamily: 'Urbanist-Medium',
     fontSize: 17,
-    fontStyle: 'normal',
-    fontWeight: 500,
+    fontWeight:500,
     letterSpacing: 1,
     width: '100%',
   },
@@ -312,10 +396,10 @@ otpBox: {
     textAlign: 'center',
     lineHeight: 19.6,
     letterSpacing: 0,
-     opacity: 0.9,
+    opacity: 2,
     textShadowColor: 'rgba(255,255,255,0.6)',
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 2,
+    textShadowRadius: 1,
   },
 
     resendText2: {
@@ -327,10 +411,10 @@ otpBox: {
     textAlign: 'center',
     lineHeight: 19.6,
     letterSpacing: 0,
-     opacity: 0.9,
+    opacity: 2,
     textShadowColor: 'rgba(255,255,255,0.6)',
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 2,
+    textShadowRadius: 1,
   },
 
 
@@ -354,10 +438,10 @@ otpBox: {
     textAlign: 'center',
     lineHeight: 19.6,
     letterSpacing: 0,
-     opacity: 0.9,
+     opacity: 2,
     textShadowColor: 'rgba(255,255,255,0.6)',
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 2,
+    textShadowRadius: 1,
   },
 
   overlay: {

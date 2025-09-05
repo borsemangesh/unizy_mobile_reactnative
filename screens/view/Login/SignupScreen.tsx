@@ -187,17 +187,20 @@ useEffect(() => {
      </Animated.View>
       </View>
 
-      <View style={styles.stepIndicatorContainer}>
-      {[0, 1, 2, 3].map((index) => (
-        <View
-          key={index}
-          style={[
-          styles.stepCircle,
-          index === 0 ? styles.activeStepCircle : styles.inactiveStepCircle,
-      ]}
-        />
-      ))}
-    </View>
+    <View style={styles.stepIndicatorContainer}>
+  {[0, 1, 2, 3].map((index) =>
+    index === 0 ? (
+      <LinearGradient
+        key={index}
+        colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0.5)']}
+        style={styles.stepCircle}
+      
+      />
+    ) : (
+      <View key={index} style={[styles.stepCircle, styles.inactiveStepCircle]} />
+    )
+  )}
+</View>
     {/* <View style={styles.stepIndicatorContainer}>
         {[0, 1, 2, 3].map((index) => (
           <LinearGradient
@@ -219,7 +222,7 @@ const styles = StyleSheet.create({
 
   infoContainer: {
   flexDirection: 'row',
-  marginTop: 4,
+  marginTop: 8,
   paddingLeft:6,
   paddingRight:6,
 },
@@ -240,15 +243,15 @@ stepCircle: {
 
 activeStepCircle: {
   backgroundColor: '#FFFFFF', 
-    width: 15,
-    height: 15,
+    width: 12,
+    height: 12,
     flexShrink: 0,
     borderColor: '#ffffff4e',
     alignItems: 'center',
-    borderRadius: 50,
+    borderRadius: 40,
     justifyContent: 'center',
-    boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
-    shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25',
+     boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
+    shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25)',
 },
 
 stepIndicatorContainer: {
@@ -275,21 +278,23 @@ stepIndicatorContainer: {
 //   shadowColor: '#000',
 //   shadowOpacity: 0.25,
 //   elevation: 2,
-// },
+// 
+  
+
+//},
 
 inactiveStepCircle: {
  backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    width: 15,
-    height: 15,
+    width: 12,
+    height: 12,
     flexShrink: 0,
     borderColor: '#ffffff4e',
-    
     alignItems: 'center',
     borderRadius: 40,
     justifyContent: 'center',
     boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
-    shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25',
+    shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25)',
 
 },
 
@@ -333,7 +338,6 @@ inactiveStepCircle: {
     textAlign: 'center',
     fontFamily: 'Urbanist-Medium',
     fontSize: 17,
-    fontStyle: 'normal',
     fontWeight: 500,
     lineHeight: 22,
     letterSpacing: 1,
@@ -373,10 +377,10 @@ inactiveStepCircle: {
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
     fontWeight: '600',
-    opacity: 0.9,
+    opacity: 2,
     textShadowColor: 'rgba(255,255,255,0.6)',
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 2,
+    textShadowRadius: 1,
   },
 
 
@@ -490,7 +494,7 @@ login_container1: {
 
 
   personalEmailID_TextInput: {
-    width: '90%',
+    width: '93%',
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
     fontSize: 17,
@@ -499,7 +503,7 @@ login_container1: {
 
   },
     personalEmailID_TextInput1: {
-    width: '80%',
+    width: '84%',
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
     fontSize: 17,
@@ -522,13 +526,13 @@ login_container1: {
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-
+    
     borderWidth: 0.6,
     borderColor: '#ffffff2c',
     marginTop: 16,
   },
   password_TextInput: {
-    width: '85%',
+    width: '87%',
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
     fontSize: 17,
