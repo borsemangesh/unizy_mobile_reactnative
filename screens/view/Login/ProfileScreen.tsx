@@ -88,6 +88,13 @@ const buttonOpacity = useRef(new Animated.Value(0)).current;
     }
   }, [photo]);
 
+   const handleLogin = () => {
+  // navigation.reset({
+  //   index: 0,
+  //   routes: [{ name: 'LoginScreen' }],
+  // });
+  navigation.navigate('LoginScreen')
+};
 
 const requestCameraPermission = async () => {
   if (Platform.OS === "android") {
@@ -310,7 +317,7 @@ const requestCameraPermission = async () => {
               style={styles.loginButton1}
             /> */}
 
-             <TouchableOpacity style={styles.loginButton} onPress={closePopup}>
+             <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
                     <Text style={styles.loginText}>Start Exploring</Text>
                   </TouchableOpacity>
 
