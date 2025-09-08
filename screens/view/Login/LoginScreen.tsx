@@ -13,7 +13,6 @@ import {
   UIManager,
 } from 'react-native';
 
-
 import { loginStyles } from './LoginScreen.style';
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
@@ -29,101 +28,67 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
 
-
-   const translateY = React.useRef(new Animated.Value(-100)).current;
-   const slideUp = React.useRef(new Animated.Value(200)).current;
-     const cardHeight = React.useRef(new Animated.Value(500)).current; // card height
-
+  const translateY = React.useRef(new Animated.Value(-100)).current;
+  const slideUp = React.useRef(new Animated.Value(200)).current;
+  const cardHeight = React.useRef(new Animated.Value(500)).current; // card height
 
   const [shrink, setShrink] = useState(false);
 
+  if (
+    Platform.OS === 'android' &&
+    UIManager.setLayoutAnimationEnabledExperimental
+  ) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
 
-if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
-
- useEffect(() => {
+  useEffect(() => {
     if (
-      Platform.OS === "android" &&
+      Platform.OS === 'android' &&
       UIManager.setLayoutAnimationEnabledExperimental
     ) {
       UIManager.setLayoutAnimationEnabledExperimental(true);
     }
   }, []);
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     // run all animations together
-  //     Animated.parallel([
-  //       Animated.timing(translateY, {
-  //         toValue: 0,
-  //         duration: 800,
-  //         easing: Easing.out(Easing.ease),
-  //         useNativeDriver: true,
-  //       }),
-  //       Animated.timing(slideUp, {
-  //         toValue: 0,
-  //         duration: 800,
-  //         easing: Easing.out(Easing.ease),
-  //         useNativeDriver: true,
-  //       }),
-  //       Animated.timing(cardHeight, {
-  //         toValue: 250, // final shrunk height
-  //         duration: 800,
-  //         easing: Easing.out(Easing.ease),
-  //         useNativeDriver: false, // ⚠️ height cannot use native driver
-  //       }),
-  //     ]).start();
+  useFocusEffect(
+    React.useCallback(() => {
+      Animated.parallel([
+        Animated.timing(translateY, {
+          toValue: 0,
+          duration: 800,
+          easing: Easing.out(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideUp, {
+          toValue: 0,
+          duration: 800,
+          easing: Easing.out(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ]).start();
 
-  //     return () => {
-  //       translateY.stopAnimation();
-  //       slideUp.stopAnimation();
-  //       cardHeight.stopAnimation();
-  //     };
-  //   }, [])
-  // );
-useFocusEffect(
-  React.useCallback(() => {
-    Animated.parallel([
-      Animated.timing(translateY, {
-        toValue: 0,
-        duration: 800,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideUp, {
-        toValue: 0,
-        duration: 800,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }),
-    ]).start();
+      Animated.sequence([
+        Animated.timing(cardHeight, {
+          toValue: 250, // shrink target
+          duration: 800,
+          easing: Easing.out(Easing.ease),
+          useNativeDriver: false,
+        }),
+        Animated.spring(cardHeight, {
+          toValue: 255, // overshoot a bit
+          friction: 4,
+          tension: 120,
+          useNativeDriver: false,
+        }),
+      ]).start();
 
-    Animated.sequence([
-      Animated.timing(cardHeight, {
-        toValue: 250, // shrink target
-        duration: 800,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: false,
-      }),
-      Animated.spring(cardHeight, {
-        toValue: 255, // overshoot a bit
-        friction: 4,
-        tension: 120,
-        useNativeDriver: false,
-      }),
-    
-    ]).start();
-
-    return () => {
-      translateY.stopAnimation();
-      slideUp.stopAnimation();
-      cardHeight.stopAnimation();
-    };
-  }, [])
-);
-
-
+      return () => {
+        translateY.stopAnimation();
+        slideUp.stopAnimation();
+        cardHeight.stopAnimation();
+      };
+    }, []),
+  );
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -132,9 +97,21 @@ useFocusEffect(
     console.log(`Logging in with ${username} and ${password}`);
   };
 
-  const handleForgetPassword = () =>{    
-    navigation.navigate('Reset');
-  }
+  const backButtonOpacity = React.useRef(new Animated.Value(200)).current;
+  const [backDisabled, setBackDisabled] = useState(false);
+
+  const handleForgetPassword = () => {
+    Animated.timing(backButtonOpacity, {
+      toValue: -20, // fade to invisible
+      duration: 0,
+      useNativeDriver: true,
+    }).start(() => {
+      setBackDisabled(true); // disable after animation
+      navigation.navigate('Reset'); // then navigate
+    });
+
+    // navigation.navigate('Reset');
+  };
 
   const handleSignup = () => {
     navigation.navigate('Signup');
@@ -150,23 +127,34 @@ useFocusEffect(
       resizeMode="cover"
       style={[loginStyles.flex_1]}
     >
-
-
-      <View style={{display: 'flex', flexDirection: 'column',padding: 12,gap: 20,justifyContent: 'space-between',paddingTop: 30,}}>
-        <Animated.View style={[loginStyles.topHeader, { transform: [{ translateY: translateY }] }]} >
- 
+      <View
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          padding: 12,
+          gap: 20,
+          justifyContent: 'space-between',
+          paddingTop: 30,
+        }}
+      >
+        <Animated.View
+          style={[
+            loginStyles.topHeader,
+            { transform: [{ translateY: translateY }] },
+          ]}
+        >
           <TouchableOpacity onPress={() => navigation.goBack()}>
-          <View  style={loginStyles.backIconRow} >
+            <View style={loginStyles.backIconRow}>
               <Image
-              source={require('../../../assets/images/back.png')} style={{height: 24, width: 24}}/>
-              
+                source={require('../../../assets/images/back.png')}
+                style={{ height: 24, width: 24 }}
+              />
             </View>
           </TouchableOpacity>
           <Text style={loginStyles.unizyText}>UniZy</Text>
-        <View style={loginStyles.emptyView}></View>
+          <View style={loginStyles.emptyView}></View>
         </Animated.View>
-           <Animated.View  style={[loginStyles.cardView, { height: cardHeight }]}>
-
+        <Animated.View style={[loginStyles.cardView, { height: cardHeight }]}>
           <BlurView blurType="light" blurAmount={15} />
 
           <LinearGradient
@@ -196,14 +184,20 @@ useFocusEffect(
               style={loginStyles.eyeIcon}
             />
           </View>
-          <Text style={loginStyles.forgetPasswordText} onPress={handleForgetPassword}>
+          <Text
+            style={loginStyles.forgetPasswordText}
+            onPress={handleForgetPassword}
+          >
             Forgot Password?
           </Text>
 
-          <TouchableOpacity style={loginStyles.loginButton} onPress={handleLogin}>
+          <TouchableOpacity
+            style={loginStyles.loginButton}
+            onPress={handleLogin}
+          >
             <Text style={loginStyles.loginText}>Login</Text>
           </TouchableOpacity>
-          
+
           <View
             style={{
               width: '100%',
@@ -226,25 +220,23 @@ useFocusEffect(
             >
               Don't have an account?
             </Text>
-          <TouchableOpacity onPress={handleSignup}>
-          <Text style={loginStyles.signupText}>
-            Sign up
-          </Text>
-          </TouchableOpacity>
+            <TouchableOpacity onPress={handleSignup}>
+              <Text style={loginStyles.signupText}>Sign up</Text>
+            </TouchableOpacity>
           </View>
         </Animated.View>
       </View>
 
-      
-      
-      
-      <View
-        style={{
-          alignItems: 'center',
-          justifyContent: 'flex-end',          
-          flex: 1,
-          paddingBottom: 30,
-        }}
+      <Animated.View
+        style={[
+          {
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            flex: 1,
+            paddingBottom: 30,
+            transform: [{ translateY: slideUp }],
+          },
+        ]}
       >
         <View style={loginStyles.teamsandConditionContainer}>
           <Text style={loginStyles.bycountuningAgreementText}>
@@ -255,15 +247,11 @@ useFocusEffect(
           </Text>
         </View>
 
-         <View style={loginStyles.teamsandConditionContainer}>
-          <Text style={loginStyles.bycountuningAgreementText}>
-            and
-          </Text>
-          <Text style={loginStyles.teamsandConditionText}>
-            Privacy Policy
-          </Text>
+        <View style={loginStyles.teamsandConditionContainer}>
+          <Text style={loginStyles.bycountuningAgreementText}>and</Text>
+          <Text style={loginStyles.teamsandConditionText}>Privacy Policy</Text>
         </View>
-       </View> 
+      </Animated.View>
     </ImageBackground>
   );
 };

@@ -68,6 +68,8 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet,Dimensions, ImageBackground } from 'react-native';
 import LottieView from 'lottie-react-native';
+import BackgroundAnimation from './BackgroundAnimation';
+
 
 type SplashScreenProps = {
   onFinish: () => void;
@@ -89,6 +91,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
       resizeMode="cover"
     >
       <View style={styles.centerContent}>
+        {/* <BackgroundAnimation /> */}
         <LottieView
           source={require('../../../assets/animations/Animation.json')}
           autoPlay
@@ -98,7 +101,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
           onAnimationFinish={onFinish}
         />
       </View>
-    </ImageBackground>
+   </ImageBackground> 
   );
 };
 

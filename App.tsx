@@ -9,6 +9,7 @@ function App() {
 
   const [showSplash, setShowSplash] = useState(true);
 
+
   return (
     <SafeAreaProvider>
       <StatusBar backgroundColor={'#000000'} />
@@ -22,30 +23,3 @@ function App() {
 }
 
 export default App;
-
-
-
-
-//for ios uncomment
-
-// import React, { useState } from 'react';
-// import { StatusBar, LogBox } from 'react-native';
-// import { SafeAreaProvider } from 'react-native-safe-area-context';
-// import { Navigation } from './screens/view/Navigation';
-// import SplashScreen from './screens/view/Hello/SplashScreen'; // ✅ import your splash
-
-// function App() {
-//   LogBox.ignoreAllLogs();
-
-//   const [showSplash, setShowSplash] = useState(true);
-
-//   return (
-//     <SafeAreaProvider>
-     
-     
-//       <Navigation /> 
-//     </SafeAreaProvider>
-//   );
-// }
-
-//export default App;

@@ -40,8 +40,8 @@ export const loginStyles = StyleSheet.create({
       backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
       boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-      
     
+      overflow: 'hidden',
   },
   backIconRow: {
     
@@ -50,9 +50,6 @@ export const loginStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 40,
-    // backgroundColor:
-    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    // boxShadow: '0 2px 8px 0 rgba(255, 255, 255, 0.04) inset',
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
       boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
@@ -69,7 +66,7 @@ export const loginStyles = StyleSheet.create({
     fontWeight: '400',
     textAlign: 'center',
     flex: 1,
-    paddingRight:24
+    paddingRight:24,
   },
   emptyView: {
     display: 'flex',
@@ -223,6 +220,13 @@ export const loginStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+
+  teamandCondition:{
+    alignItems: 'center',
+          justifyContent: 'flex-end',
+          flex: 1,
+          paddingBottom: 30,
   },
 
   bycountuningAgreementText: {

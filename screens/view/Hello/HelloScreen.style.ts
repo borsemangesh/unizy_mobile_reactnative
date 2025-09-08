@@ -18,8 +18,8 @@ export const Styles = StyleSheet.create({
   linearGradient: {
     // flexDirection: 'column',
     height: '14%',
-    // paddingBottom: 20,
-    // // flexShrink: 0,
+    paddingBottom: 20,
+    // flexShrink: 0,
     borderColor: '#ffffff3d',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -30,6 +30,10 @@ export const Styles = StyleSheet.create({
     width: '90%',
     gap: 3,
     
+    },
+    other: {
+padding: 20
+     
     },
   card_container: {
     flexDirection: 'row',
