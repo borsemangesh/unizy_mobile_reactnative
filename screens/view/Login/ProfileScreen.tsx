@@ -28,39 +28,73 @@ type ProfileScreenProps = {
 
 const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   
-const [username, setUsername] = useState<string>('');
   const [showPopup, setShowPopup] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [photo, setPhoto] = useState<string | null>(null);
-
-const { width, height } = Dimensions.get('window');
-
+  const { width, height } = Dimensions.get('window');
   const [showButton, setShowButton] = useState(false);
   const scaleY = useRef(new Animated.Value(0)).current;
-
+  const translateY = useRef(new Animated.Value(-50)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(-height)).current; 
   const closePopup = () => setShowPopup(false);
 
-   const translateY = useRef(new Animated.Value(-50)).current;
-    const opacity = useRef(new Animated.Value(0)).current;
 
-const slideAnim = useRef(new Animated.Value(-height)).current; 
+
+//added after
+const [measuredHeight, setMeasuredHeight] = useState(0);
+const [useAutoHeight, setUseAutoHeight] = useState(false);
+const cardHeight = useRef(new Animated.Value(250)).current; // initial collapsed height
+const [hasExpanded, setHasExpanded] = useState(false);
+
+  const containerHeight = useRef(new Animated.Value(400)).current; // start with 400
+
     
-    useEffect(() => {
-      Animated.parallel([
-        Animated.timing(slideAnim, {
-          toValue: 0, 
-          duration: 1000,
-          easing: Easing.out(Easing.exp),
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 1000,
-          easing: Easing.out(Easing.exp),
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }, []);
+    // useEffect(() => {
+    //   Animated.parallel([
+    //     Animated.timing(slideAnim, {
+    //       toValue: 0, 
+    //       duration: 1000,
+    //       easing: Easing.out(Easing.exp),
+    //       useNativeDriver: true,
+    //     }),
+    //     Animated.timing(opacity, {
+    //       toValue: 1,
+    //       duration: 1000,
+    //       easing: Easing.out(Easing.exp),
+    //       useNativeDriver: true,
+    //     }),
+    //   ]).start();
+    // }, []);
+
+
+     useEffect(() => {
+    if (imageLoaded && !showPopup) {
+      // First: animate container height from 400 → content height
+      Animated.timing(containerHeight, {
+        toValue: 350, // we’ll interpolate this to "auto"
+        duration: 400,
+        easing: Easing.out(Easing.exp),
+        useNativeDriver: false, // height animation can't use native driver
+      }).start(() => {
+        // After height anim → run your existing content animation
+        Animated.parallel([
+          Animated.timing(slideAnim, {
+            toValue: 0,
+            duration: 600,
+            easing: Easing.out(Easing.exp),
+            useNativeDriver: true,
+          }),
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 600,
+            easing: Easing.out(Easing.exp),
+            useNativeDriver: true,
+          }),
+        ]).start();
+      });
+    }
+  }, [imageLoaded, showPopup]);
 
  useEffect(() => {
     if (photo) {
@@ -105,7 +139,6 @@ const requestCameraPermission = async () => {
     return true;
   }
 };
-
 
 
 const handleSelectImage = async () => {
@@ -160,50 +193,8 @@ const handleSelectImage = async () => {
   );
 };
 
-    
 
-  const handleOpenCamera = async () => {
-  const hasPermission = await requestCameraPermission();
-  if (!hasPermission) return;
-
-  launchCamera(
-    {
-      mediaType: "photo",
-      cameraType: "front",
-      quality: 0.8,
-    },
-    (response) => {
-      if (response.didCancel) return;
-      if (response.assets && response.assets[0].uri) {
-        setPhoto(response.assets[0].uri);
-      }
-    }
-  );
-};
-
-
-  const handleOpenGallery = () => {
-    launchImageLibrary(
-      {
-        mediaType: "photo",
-        quality: 0.8,
-      },
-      (response) => {
-        if (response.didCancel) return;
-        if (response.assets && response.assets[0].uri) {
-          setPhoto(response.assets[0].uri);
-        }
-      }
-    );
-  };
-
-    const handleSendResetLink = () => {
-    console.log(`Send reset link to ${username}`);
-  };
-
- 
-    const handlePopup = () => {
-    console.log(`Send reset link to ${username}`);
+const handlePopup = () => {
     setShowPopup(true);
   };
   
@@ -222,7 +213,15 @@ const handleSelectImage = async () => {
       </View>
 
   {imageLoaded && (
-      <View style={[styles.formContainer, { overflow: 'hidden' }]}>
+
+
+
+     <Animated.View
+        style={[
+          styles.formContainer,
+          { overflow: 'hidden', height: containerHeight },
+        ]}
+      >
         <Animated.View
                   style={[
         { width: '100%', alignItems: 'center' },
@@ -238,7 +237,7 @@ const handleSelectImage = async () => {
 
 <View style={styles.avatarContainer}>
   <View style={styles.bigCircle}>
-    <TouchableOpacity onPress={handleOpenCamera}>
+    <TouchableOpacity>
       <Image
         source={
           photo
@@ -252,7 +251,7 @@ const handleSelectImage = async () => {
 
     <TouchableOpacity style={styles.cameraButton} onPress={handleSelectImage}>
       <Image
-        source={require("../../../assets/images/camera_icon.png")}
+        source={require("../../../assets/images/new_camera_icon.png")}
         style={styles.cameraIcon}
         resizeMode="contain"
       />
@@ -271,18 +270,8 @@ const handleSelectImage = async () => {
                       </TouchableOpacity>
                     </View>
 
-
- {/* {showButton && (
-        <Animated.View style={{ transform: [{ scaleY }] }}>
-          <TouchableOpacity style={styles.loginButton} onPress={handlePopup}>
-            <Text style={styles.loginText}>Continue</Text>
-          </TouchableOpacity>
-        </Animated.View>
-      )} */}
-
-
           </Animated.View>
-      </View>
+      </Animated.View>
        )}
     
 
@@ -337,10 +326,7 @@ const handleSelectImage = async () => {
              <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
                     <Text style={styles.loginText}>Start Exploring</Text>
                   </TouchableOpacity>
-
-
           </View>
-
           </View>
           </Modal>
     </ImageBackground>
@@ -423,6 +409,7 @@ const styles = StyleSheet.create({
    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 0px 15px 1px',
    borderWidth:1 ,
     borderColor: '#ffffff2c',
+
   
 },
 cameraButton: {
@@ -484,8 +471,8 @@ stepIndicatorContainer: {
   flexDirection: 'row',
   justifyContent: 'center',
   alignItems: 'center',
-  marginTop: 20,
-  gap: 8,
+  marginTop: 12,
+  gap: 6,
 },
 
 inactiveStepCircle: {

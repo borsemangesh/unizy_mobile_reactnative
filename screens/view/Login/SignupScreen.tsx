@@ -828,8 +828,8 @@ stepIndicatorContainer: {
   flexDirection: 'row',
   justifyContent: 'center',
   alignItems: 'center',
-  marginTop: 20,
-  gap: 8,
+  marginTop: 12,
+  gap: 6,
 },
 
 
@@ -1050,6 +1050,10 @@ login_container1: {
     fontSize: 17,
     lineHeight: 22,
     fontStyle: 'normal',
+    opacity: 0.9,
+    textShadowColor: 'rgba(255,255,255,0.6)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 2,
 
   },
     personalEmailID_TextInput1: {

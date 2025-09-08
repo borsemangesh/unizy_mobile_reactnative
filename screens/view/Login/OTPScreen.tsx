@@ -21,6 +21,8 @@ const { width } = Dimensions.get('window');
 
 type OTPScreenProps = {
   navigation: any;
+
+  
 };
 
 const OTPScreen = ({ navigation }: OTPScreenProps) => {
@@ -29,7 +31,6 @@ const [username, setUsername] = useState<string>('');
 const [showPopup, setShowPopup] = useState(false);
 const [imageLoaded, setImageLoaded] = useState(false);
 const { width, height } = Dimensions.get('window');
- const [measuredHeight, setMeasuredHeight] = useState<number | null>(null);
   const [useAutoHeight, setUseAutoHeight] = useState(false);
 
   const translateY = useRef(new Animated.Value(-50)).current;
@@ -42,9 +43,13 @@ const { width, height } = Dimensions.get('window');
     }
   };
 
+const [measuredHeight, setMeasuredHeight] = useState(0);
+
+
 
 const slideAnim = useRef(new Animated.Value(-height)).current;
 const opacity = useRef(new Animated.Value(0)).current;
+const containerHeight = useRef(new Animated.Value(600)).current; // start with 400
 
 
 
@@ -58,23 +63,50 @@ const opacity = useRef(new Animated.Value(0)).current;
     }
   };
 
-useEffect(() => {
-  Animated.parallel([
-    Animated.timing(slideAnim, {
-      toValue: 0, 
-      duration: 1000, 
-      easing: Easing.out(Easing.exp),
-      useNativeDriver: true,
-    }),
-    Animated.timing(opacity, {
-      toValue: 1, 
-      duration: 1000,
-      easing: Easing.out(Easing.exp),
-      useNativeDriver: true,
-    }),
-  ]).start();
-}, []);
+// useEffect(() => {
+//   Animated.parallel([
+//     Animated.timing(slideAnim, {
+//       toValue: 0, 
+//       duration: 1000, 
+//       easing: Easing.out(Easing.exp),
+//       useNativeDriver: true,
+//     }),
+//     Animated.timing(opacity, {
+//       toValue: 1, 
+//       duration: 1000,
+//       easing: Easing.out(Easing.exp),
+//       useNativeDriver: true,
+//     }),
+//   ]).start();
+// }, []);
 
+       useEffect(() => {
+        if (imageLoaded ) {
+          // First: animate container height from 400 → content height
+          Animated.timing(containerHeight, {
+            toValue: 325, // we’ll interpolate this to "auto"
+            duration: 400,
+            easing: Easing.out(Easing.exp),
+            useNativeDriver: false, // height animation can't use native driver
+          }).start(() => {
+            // After height anim → run your existing content animation
+            Animated.parallel([
+              Animated.timing(slideAnim, {
+                toValue: 0,
+                duration: 600,
+                easing: Easing.out(Easing.exp),
+                useNativeDriver: true,
+              }),
+              Animated.timing(opacity, {
+                toValue: 1,
+                duration: 600,
+                easing: Easing.out(Easing.exp),
+                useNativeDriver: true,
+              }),
+            ]).start();
+          });
+        }
+      }, [imageLoaded]);
 
 const handlesignup = () =>{
 
@@ -105,7 +137,12 @@ return (
       </View>
 
   {imageLoaded && (
-      <View style={[styles.formContainer, { overflow: 'hidden' }]}>
+       <Animated.View
+             style={[
+               styles.formContainer,
+               { overflow: 'hidden', height: containerHeight },
+             ]}
+           >
 <Animated.View
          style={[
         { width: '100%', alignItems: 'center' },
@@ -156,7 +193,7 @@ return (
            </TouchableOpacity>
         </TouchableOpacity>
 </Animated.View>
-      </View>
+      </Animated.View>
        )}
       
     
@@ -213,8 +250,8 @@ stepIndicatorContainer: {
   flexDirection: 'row',
   justifyContent: 'center',
   alignItems: 'center',
-  marginTop: 20,
-  gap: 8,
+  marginTop: 12,
+  gap: 6,
 },
 
 inactiveStepCircle: {

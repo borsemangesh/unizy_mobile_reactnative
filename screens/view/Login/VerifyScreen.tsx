@@ -17,6 +17,7 @@ import LinearGradient from 'react-native-linear-gradient';
 
 type VerifyScreenProps = {
   navigation: any;
+  
 };
 const { width, height } = Dimensions.get('window');
 
@@ -39,11 +40,21 @@ const VerifyScreen = ({ navigation }: VerifyScreenProps) => {
 
 const slideAnim = useRef(new Animated.Value(-height)).current; 
 const opacity = useRef(new Animated.Value(0)).current;
+const containerHeight = useRef(new Animated.Value(400)).current; // start with 400
 const translateY = useRef(new Animated.Value(-height)).current
+const containerHeight1 = useRef(new Animated.Value(400)).current; // start with 400
+
 
 useEffect(() => {
   if (imageLoaded && !showOtp) {
+  
     Animated.parallel([
+        Animated.timing(containerHeight, {
+            toValue: 195, // we’ll interpolate this to "auto"
+            duration: 400,
+            easing: Easing.out(Easing.exp),
+            useNativeDriver: false, // height animation can't use native driver
+          }),
       Animated.timing(slideAnim, {
         toValue: 0,
         duration: 1000,
@@ -62,14 +73,34 @@ useEffect(() => {
 
 
 
-  const startAnimation = () => {
+  // const startAnimation = () => {
+   
+  //   Animated.timing(translateY, {
+  //     toValue: 0,
+  //     duration: 1000,
+  //     easing: Easing.out(Easing.exp),
+  //     useNativeDriver: true,
+  //   }).start();
+    
+  // };
+
+const startAnimation = () => {
+  Animated.parallel([
+    Animated.timing(containerHeight1, {
+      toValue: 325, // shrink height
+      duration: 400,
+      easing: Easing.out(Easing.exp),
+      useNativeDriver: false, // must be false for height
+    }),
     Animated.timing(translateY, {
-      toValue: 0,
+      toValue: 0, // slide in content
       duration: 1000,
       easing: Easing.out(Easing.exp),
       useNativeDriver: true,
-    }).start();
-  };
+    }),
+  ]).start();
+};
+
 
   const sendOtp = () => {
     setShowOtp(true);
@@ -91,7 +122,7 @@ useEffect(() => {
       </View>
 
       {imageLoaded && !showOtp && (
-        <View style={[styles.formContainer, { overflow: 'hidden' }]}>
+        <Animated.View style={[styles.formContainer ,{ overflow: 'hidden' ,height:containerHeight}]}>
        <Animated.View
       style={[
         { width: '100%', alignItems: 'center' },
@@ -115,11 +146,11 @@ useEffect(() => {
             <Text style={styles.loginText}>Send OTP</Text>
           </TouchableOpacity>
           </Animated.View>
-        </View>
+        </Animated.View>
       )}
 
      {showOtp && (
-<View style={[styles.formContainer, { overflow: 'hidden' }]}>
+<Animated.View style={[styles.formContainer, { overflow: 'hidden',height: containerHeight1}]}>
     <Animated.View
       style={[
         { width: '100%', alignItems: 'center' },
@@ -168,7 +199,7 @@ useEffect(() => {
         <Text style={styles.goBackText1}>Go back</Text>
       </TouchableOpacity>
     </Animated.View>
-  </View>
+  </Animated.View>
 )}
 
           <View style={styles.stepIndicatorContainer}>
@@ -236,8 +267,8 @@ stepIndicatorContainer: {
   flexDirection: 'row',
   justifyContent: 'center',
   alignItems: 'center',
-  marginTop: 20,
-  gap: 8,
+  marginTop: 12,
+  gap: 6,
 },
 
 inactiveStepCircle: {
@@ -282,6 +313,7 @@ inactiveStepCircle: {
       backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 0px 15px 1px',  
+    
    },
    
      formContainer: {

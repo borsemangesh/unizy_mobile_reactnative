@@ -12,35 +12,35 @@ import {
   Platform,
   UIManager,
 } from 'react-native';
-
+ 
 import { loginStyles } from './LoginScreen.style';
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import { useFocusEffect } from '@react-navigation/native';
-
+ 
 type LoginScreenProps = {
   navigation: any;
 };
-
+ 
 const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
-
+ 
   const translateY = React.useRef(new Animated.Value(-100)).current;
   const slideUp = React.useRef(new Animated.Value(200)).current;
   const cardHeight = React.useRef(new Animated.Value(500)).current; // card height
-
+ 
   const [shrink, setShrink] = useState(false);
-
+ 
   if (
     Platform.OS === 'android' &&
     UIManager.setLayoutAnimationEnabledExperimental
   ) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
   }
-
+ 
   useEffect(() => {
     if (
       Platform.OS === 'android' &&
@@ -49,7 +49,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       UIManager.setLayoutAnimationEnabledExperimental(true);
     }
   }, []);
-
+ 
   useFocusEffect(
     React.useCallback(() => {
       Animated.parallel([
@@ -66,7 +66,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           useNativeDriver: true,
         }),
       ]).start();
-
+ 
       Animated.sequence([
         Animated.timing(cardHeight, {
           toValue: 250, // shrink target
@@ -81,7 +81,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           useNativeDriver: false,
         }),
       ]).start();
-
+ 
       return () => {
         translateY.stopAnimation();
         slideUp.stopAnimation();
@@ -89,17 +89,17 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       };
     }, []),
   );
-
+ 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
   const handleLogin = () => {
     console.log(`Logging in with ${username} and ${password}`);
   };
-
+ 
   const backButtonOpacity = React.useRef(new Animated.Value(200)).current;
   const [backDisabled, setBackDisabled] = useState(false);
-
+ 
   const handleForgetPassword = () => {
     Animated.timing(backButtonOpacity, {
       toValue: -20, // fade to invisible
@@ -109,18 +109,18 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       setBackDisabled(true); // disable after animation
       navigation.navigate('Reset'); // then navigate
     });
-
+ 
     // navigation.navigate('Reset');
   };
-
+ 
   const handleSignup = () => {
     navigation.navigate('Signup');
     console.log(`Logging in with ${username} and ${password}`);
     //toggleModal();
   };
-
+ 
   const BGAnimationScreen = require('../../../assets/images/BGAnimationScreen.png');
-
+ 
   return (
     <ImageBackground
       source={BGAnimationScreen}
@@ -156,7 +156,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
         </Animated.View>
         <Animated.View style={[loginStyles.cardView, { height: cardHeight }]}>
           <BlurView blurType="light" blurAmount={15} />
-
+ 
           <LinearGradient
             colors={['rgba(255, 255, 255, 0.76)', 'rgba(255, 255, 255, 0.85)']}
           />
@@ -169,7 +169,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
               onChangeText={usernameText => setUsername(usernameText)}
             />
           </View>
-
+ 
           <View style={loginStyles.password_container}>
             <TextInput
               style={loginStyles.password_TextInput}
@@ -178,7 +178,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
               value={password}
               onChangeText={passwordText => setPassword(passwordText)}
             />
-
+ 
             <Image
               source={require('../../../assets/images/eyeopen.png')}
               style={loginStyles.eyeIcon}
@@ -190,14 +190,14 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           >
             Forgot Password?
           </Text>
-
+ 
           <TouchableOpacity
             style={loginStyles.loginButton}
             onPress={handleLogin}
           >
             <Text style={loginStyles.loginText}>Login</Text>
           </TouchableOpacity>
-
+ 
           <View
             style={{
               width: '100%',
@@ -226,7 +226,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           </View>
         </Animated.View>
       </View>
-
+ 
       <Animated.View
         style={[
           {
@@ -246,7 +246,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
             Terms & Conditions
           </Text>
         </View>
-
+ 
         <View style={loginStyles.teamsandConditionContainer}>
           <Text style={loginStyles.bycountuningAgreementText}>and</Text>
           <Text style={loginStyles.teamsandConditionText}>Privacy Policy</Text>
@@ -255,5 +255,5 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
     </ImageBackground>
   );
 };
-
+ 
 export default LoginScreen;

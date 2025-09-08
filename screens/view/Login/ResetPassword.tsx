@@ -16,16 +16,16 @@ import {
 // @ts-ignore
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
-
+ 
 import GlassButton from '../Hello/GlassButton';
 import ResetButton from '../Hello/ResetButton';
-
+ 
 const { width } = Dimensions.get('window');
-
+ 
 type RestPasswordScreenProps = {
   navigation: any;
 };
-
+ 
 const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
   const [username, setUsername] = useState<string>('');
   const [showPopup, setShowPopup] = useState(false);
@@ -33,13 +33,13 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
   const translateY = React.useRef(new Animated.Value(-300)).current; // small offset
   const opacity = React.useRef(new Animated.Value(1)).current;
   const slideUp = React.useRef(new Animated.Value(200)).current;
-
+ 
   React.useEffect(() => {
     Animated.parallel([
       Animated.timing(translateY, {
         toValue: 0,
         duration: 600,
-
+ 
         easing: Easing.out(Easing.ease),
         useNativeDriver: true,
       }),
@@ -51,7 +51,7 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
       }),
     ]).start();
   }, []);
-
+ 
   const animateAndGoBack = () => {
     Animated.parallel([
       Animated.timing(translateY, {
@@ -77,7 +77,7 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
     console.log(`Send reset link to ${username}`);
     setShowPopup(true);
   };
-
+ 
   const handleLogin = () => {
     navigation.navigate('LoginScreen');
     // navigation.reset({
@@ -85,9 +85,9 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
     //   routes: [{ name: 'LoginScreen' }],
     // });
   };
-
+ 
   const closePopup = () => setShowPopup(false);
-
+ 
   return (
     <ImageBackground
       source={require('../../../assets/images/BGAnimationScreen.png')}
@@ -106,11 +106,11 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
             </View>
           </TouchableOpacity>
         </Animated.View>
-
+ 
         <Text style={styles.unizyText}>UniZy</Text>
         <View style={styles.emptyView}></View>
       </View>
-
+ 
       {imageLoaded && (
         <View style={styles.formContainer}>
           <Animated.View
@@ -121,14 +121,14 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
             }}
           >
             <Text style={styles.resetTitle}>Reset Password</Text>
-
+ 
             <View style={styles.privacyContainer}>
               <Text style={styles.termsText}>
                 Enter your personal email address and we’ll send you a link to
                 reset your password
               </Text>
             </View>
-
+ 
             <View style={styles.login_container}>
               <TextInput
                 style={styles.personalEmailID_TextInput}
@@ -138,21 +138,21 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
                 onChangeText={setUsername}
               />
             </View>
-
+ 
             <TouchableOpacity
               style={styles.loginButton}
               onPress={handleSendResetLink}
             >
               <Text style={styles.loginText}>Send Reset Link</Text>
             </TouchableOpacity>
-
+ 
             <TouchableOpacity onPress={animateAndGoBack}>
               <Text style={styles.goBackText}>Go back</Text>
             </TouchableOpacity>
           </Animated.View>
         </View>
       )}
-
+ 
       <Modal
         visible={showPopup}
         transparent
@@ -178,7 +178,7 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
                 { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
               ]}
             />
-
+ 
             <View style={styles.popupContainer}>
               <Image
                 source={require('../../../assets/images/success_icon.png')}
@@ -189,7 +189,7 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
                 A password reset link has been sent to your university email.
                 Please check your inbox (or spam folder) to continue.
               </Text>
-
+ 
               <TouchableOpacity
                 style={styles.loginButton}
                 onPress={handleLogin}
@@ -203,7 +203,7 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
     </ImageBackground>
   );
 };
-
+ 
 const styles = StyleSheet.create({
   flex_1: {
     flex: 1,
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-
+ 
   formContainer: {
     width: '90%',
     padding: 20,
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
     overflow: 'hidden',
   },
-
+ 
   resetTitle: {
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 17,
@@ -243,13 +243,13 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontWeight: 600,
   },
-
+ 
   privacyContainer: {
     width: '100%',
     alignItems: 'center',
     marginTop: 16,
   },
-
+ 
   termsText: {
     color: 'rgba(255,255,255,0.48)',
     fontFamily: 'Urbanist-Regular',
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     paddingHorizontal: 10,
   },
-
+ 
   termsText1: {
     color: 'rgba(255,255,255,0.48)',
     fontFamily: 'Urbanist-Regular',
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 12,
   },
-
+ 
   login_container: {
     display: 'flex',
     width: '100%',
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     fontStyle: 'normal',
   },
-
+ 
   loginButton: {
     display: 'flex',
     width: '100%',
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     width: '100%',
   },
-
+ 
   goBackText: {
     color: 'rgba(255,255,255,0.48)',
     fontFamily: 'Urbanist-SemiBold',
@@ -335,14 +335,14 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 1,
   },
-
+ 
   overlay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
-
+ 
   popupContainer: {
     width: width * 0.85,
     padding: 20,
@@ -351,16 +351,16 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.1)',
     alignItems: 'center',
     overflow: 'hidden',
-
+ 
     backgroundColor: 'rgba(255,255,255,0.15)',
   },
-
+ 
   logo: {
     width: 64,
     height: 64,
     marginBottom: 20,
   },
-
+ 
   fullScreenContainer: {
     display: 'flex',
     paddingRight: 20,
@@ -408,5 +408,6 @@ const styles = StyleSheet.create({
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
   },
 });
-
+ 
 export default ResetPassword;
+ 

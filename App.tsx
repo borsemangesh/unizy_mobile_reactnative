@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar, LogBox } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Navigation } from './screens/view/Navigation';
@@ -8,6 +8,13 @@ function App() {
   LogBox.ignoreAllLogs();
 
   const [showSplash, setShowSplash] = useState(true);
+   useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 1000); // show splash for at least 2 seconds
+    return () => clearTimeout(timer);
+  }, []);
+
 
 
   return (

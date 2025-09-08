@@ -72,7 +72,7 @@ padding: 20
     fontWeight: '400',
     fontStyle: 'normal',  
     display: 'flex',
-    paddingTop: 72,
+    paddingTop: 50,
     flexDirection: 'column',
     alignItems: 'flex-start',
   },
