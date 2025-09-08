@@ -12,7 +12,8 @@ import {
   StyleSheet,
   Animated,
   Dimensions,
-  Easing
+  Easing,
+  LayoutChangeEvent
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -25,11 +26,27 @@ type OTPScreenProps = {
 const OTPScreen = ({ navigation }: OTPScreenProps) => {
   
 const [username, setUsername] = useState<string>('');
-  const [showPopup, setShowPopup] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
+const [showPopup, setShowPopup] = useState(false);
+const [imageLoaded, setImageLoaded] = useState(false);
+const { width, height } = Dimensions.get('window');
+ const [measuredHeight, setMeasuredHeight] = useState<number | null>(null);
+  const [useAutoHeight, setUseAutoHeight] = useState(false);
 
-const translateY = useRef(new Animated.Value(-50)).current; // start above the screen
+  const translateY = useRef(new Animated.Value(-50)).current;
+
+  const cardHeight = useRef(new Animated.Value(500)).current;
+
+  const handleLayout = (e: LayoutChangeEvent) => {
+    if (!measuredHeight) {
+      setMeasuredHeight(e.nativeEvent.layout.height);
+    }
+  };
+
+
+const slideAnim = useRef(new Animated.Value(-height)).current;
 const opacity = useRef(new Animated.Value(0)).current;
+
+
 
   const inputs = useRef<Array<TextInput | null>>([]);
 
@@ -43,15 +60,15 @@ const opacity = useRef(new Animated.Value(0)).current;
 
 useEffect(() => {
   Animated.parallel([
-    Animated.timing(translateY, {
-      toValue: 0, // move to normal position
-      duration: 2000, // slower, smoother
+    Animated.timing(slideAnim, {
+      toValue: 0, 
+      duration: 1000, 
       easing: Easing.out(Easing.exp),
       useNativeDriver: true,
     }),
     Animated.timing(opacity, {
-      toValue: 1, // fade in
-      duration: 2000,
+      toValue: 1, 
+      duration: 1000,
       easing: Easing.out(Easing.exp),
       useNativeDriver: true,
     }),
@@ -72,7 +89,8 @@ const handlesignup = () =>{
     navigation.navigate('VerifyScreen')
   };
 
-  return (
+
+return (
     <ImageBackground
       source={require('../../../assets/images/BGAnimationScreen.png')}
       style={styles.flex_1}
@@ -87,13 +105,12 @@ const handlesignup = () =>{
       </View>
 
   {imageLoaded && (
-      <View style={styles.formContainer}>
+      <View style={[styles.formContainer, { overflow: 'hidden' }]}>
 <Animated.View
-          style={{
-            transform: [{ translateY }],
-            opacity,
-            width: '100%',
-          }}
+         style={[
+        { width: '100%', alignItems: 'center' },
+        { transform: [{ translateY: slideAnim }], opacity },
+      ]}
         >
 
         <Text style={styles.resetTitle}>Verify Personal Email ID</Text>
@@ -102,27 +119,14 @@ const handlesignup = () =>{
           We have sent a 4-digit code to{' '}
           <Text style={styles.resendText2}>abc@gmail.com</Text>
         </Text>
-          {/* <Text style={styles.termsText}>We have sent a 4-digit code to abc@gmail.com</Text> */}
         </View>
-        
- {/* <View style={styles.otpContainer}>
-     {[0, 1, 2, 3].map((_, index) => (
-        <TextInput
-            key={index}
-            style={styles.otpBox}
-             ref={(ref) => (inputs.current[index] = ref)}
-             keyboardType="number-pad"
-             maxLength={1}
-              onChangeText={(text) => handleChange(text, index)}
-              returnKeyType="next"
-            placeholder=""/>))}
-      </View> */}
+     
         <View style={styles.otpContainer}>
       {[0, 1, 2, 3].map((_, index) => (
         <TextInput
           key={index}
           ref={(ref) => {
-            inputs.current[index] = ref; // ✅ assign, don’t return
+            inputs.current[index] = ref;
           }}
           style={styles.otpBox}
           keyboardType="number-pad"
@@ -155,18 +159,7 @@ const handlesignup = () =>{
       </View>
        )}
       
-      
-       {/* <View style={styles.stepIndicatorContainer}>
-             {[0, 1, 2, 3].map((index) => (
-               <View
-                 key={index}
-                 style={[
-                   styles.stepCircle,
-                   index === 1 && styles.activeStepCircle, // highlight first one statically for now
-                 ]}
-               />
-             ))}
-           </View> */}
+    
 
            <View style={styles.stepIndicatorContainer}>
              {[0, 1, 2, 3].map((index) =>
@@ -186,6 +179,7 @@ const handlesignup = () =>{
 
     </ImageBackground>
   );
+
 };
 
 const styles = StyleSheet.create({

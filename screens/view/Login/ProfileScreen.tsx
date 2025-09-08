@@ -26,9 +26,6 @@ type ProfileScreenProps = {
   navigation: any;
 };
 
-
-
-
 const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   
 const [username, setUsername] = useState<string>('');
@@ -36,34 +33,29 @@ const [username, setUsername] = useState<string>('');
   const [imageLoaded, setImageLoaded] = useState(false);
   const [photo, setPhoto] = useState<string | null>(null);
 
+const { width, height } = Dimensions.get('window');
 
   const [showButton, setShowButton] = useState(false);
   const scaleY = useRef(new Animated.Value(0)).current;
 
   const closePopup = () => setShowPopup(false);
 
-   const translateY = useRef(new Animated.Value(-50)).current; // start above the screen
+   const translateY = useRef(new Animated.Value(-50)).current;
     const opacity = useRef(new Animated.Value(0)).current;
 
-const parentScaleY = useRef(new Animated.Value(0)).current;
-
-
-const buttonTranslateY = useRef(new Animated.Value(100)).current;
-const buttonScale = useRef(new Animated.Value(0.8)).current;
-const buttonOpacity = useRef(new Animated.Value(0)).current;
-
+const slideAnim = useRef(new Animated.Value(-height)).current; 
     
     useEffect(() => {
       Animated.parallel([
-        Animated.timing(translateY, {
-          toValue: 0, // move to normal position
-          duration: 2000, // slower, smoother
+        Animated.timing(slideAnim, {
+          toValue: 0, 
+          duration: 1000,
           easing: Easing.out(Easing.exp),
           useNativeDriver: true,
         }),
         Animated.timing(opacity, {
-          toValue: 1, // fade in
-          duration: 2000,
+          toValue: 1,
+          duration: 1000,
           easing: Easing.out(Easing.exp),
           useNativeDriver: true,
         }),
@@ -79,7 +71,6 @@ const buttonOpacity = useRef(new Animated.Value(0)).current;
         useNativeDriver: true,
       }).start();
     } else {
-      // hide again if no photo
       Animated.timing(scaleY, {
         toValue: 0,
         duration: 200,
@@ -89,10 +80,6 @@ const buttonOpacity = useRef(new Animated.Value(0)).current;
   }, [photo]);
 
    const handleLogin = () => {
-  // navigation.reset({
-  //   index: 0,
-  //   routes: [{ name: 'LoginScreen' }],
-  // });
   navigation.navigate('LoginScreen')
 };
 
@@ -115,9 +102,64 @@ const requestCameraPermission = async () => {
       return false;
     }
   } else {
-    return true; // iOS handled by plist
+    return true;
   }
 };
+
+
+
+const handleSelectImage = async () => {
+  const hasPermission = await requestCameraPermission();
+  if (!hasPermission) return;
+
+  Alert.alert(
+    "Select Option",
+    "Choose a source",
+    [
+      {
+        text: "Camera",
+        onPress: () => {
+          launchCamera(
+            {
+              mediaType: "photo",
+              cameraType: "front",
+              quality: 0.8,
+            },
+            (response) => {
+              if (response.didCancel) return;
+              if (response.assets && response.assets[0].uri) {
+                setPhoto(response.assets[0].uri);
+              }
+            }
+          );
+        },
+      },
+      {
+        text: "Gallery",
+        onPress: () => {
+          launchImageLibrary(
+            {
+              mediaType: "photo",
+              quality: 0.8,
+            },
+            (response) => {
+              if (response.didCancel) return;
+              if (response.assets && response.assets[0].uri) {
+                setPhoto(response.assets[0].uri);
+              }
+            }
+          );
+        },
+      },
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+    ],
+    { cancelable: true }
+  );
+};
+
     
 
   const handleOpenCamera = async () => {
@@ -180,13 +222,12 @@ const requestCameraPermission = async () => {
       </View>
 
   {imageLoaded && (
-      <View style={styles.formContainer}>
+      <View style={[styles.formContainer, { overflow: 'hidden' }]}>
         <Animated.View
-                  style={{
-                    transform: [{ translateY }],
-                    opacity,
-                    width: '100%',
-                  }}
+                  style={[
+        { width: '100%', alignItems: 'center' },
+        { transform: [{ translateY: slideAnim }], opacity },
+      ]}
                 >
         <Text style={styles.resetTitle}>Add a photo</Text>
         <View style={styles.privacyContainer}>
@@ -201,18 +242,17 @@ const requestCameraPermission = async () => {
       <Image
         source={
           photo
-            ? { uri: photo } // clicked image
-            : require("../../../assets/images/add1.png") // placeholder
+            ? { uri: photo } 
+            : require("../../../assets/images/add1.png")
         }
-        style={styles.logo} // ✅ use a circle style
+        style={styles.logo}
         resizeMode="cover"
       />
     </TouchableOpacity>
 
-    {/* Camera button inside the circle */}
-    <TouchableOpacity style={styles.cameraButton} onPress={handleOpenCamera}>
+    <TouchableOpacity style={styles.cameraButton} onPress={handleSelectImage}>
       <Image
-        source={require("../../../assets/images/new_camera_icon.png")}
+        source={require("../../../assets/images/camera_icon.png")}
         style={styles.cameraIcon}
         resizeMode="contain"
       />
@@ -220,33 +260,25 @@ const requestCameraPermission = async () => {
   </View>
 </View>
 
- {/* {showButton && (
-      <Animated.View
-        style={{
-          transform: [{ translateY: buttonTranslateY }, { scale: buttonScale }],
-          opacity: buttonOpacity,
-        }}
-      >
-        <TouchableOpacity style={styles.loginButton} onPress={handlePopup}>
-          <Text style={styles.loginText}>Continue</Text>
-        </TouchableOpacity>
-      </Animated.View>
-    )} */}
-
-
-
-         {/* <TouchableOpacity style={styles.loginButton} onPress={handlePopup}>
+         <TouchableOpacity style={styles.loginButton} onPress={handlePopup}>
             <Text style={styles.loginText}>Continue</Text>
-          </TouchableOpacity> */}
+          </TouchableOpacity>
+
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 16 }}>
+                      <Text style={styles.signupPrompt}>Want to do it later? </Text>
+                      <TouchableOpacity onPress={handleLogin}>
+                        <Text style={styles.signupPrompt1}>Skip</Text>
+                      </TouchableOpacity>
+                    </View>
 
 
- {showButton && (
+ {/* {showButton && (
         <Animated.View style={{ transform: [{ scaleY }] }}>
           <TouchableOpacity style={styles.loginButton} onPress={handlePopup}>
             <Text style={styles.loginText}>Continue</Text>
           </TouchableOpacity>
         </Animated.View>
-      )}
+      )} */}
 
 
           </Animated.View>
@@ -278,24 +310,15 @@ const requestCameraPermission = async () => {
       >
         <View style={styles.overlay}>
           <BlurView
-            //style={StyleSheet.absoluteFill}
-            //śstyle={{backgroundColor:'#0f0f0f04'}}
+            style={StyleSheet.absoluteFill}
             blurType="dark"
             blurAmount={25}
           />
 
-          {/* <BlurView
-          style={{backgroundColor:'#ffffff37'}}
-          blurType="light"
-          blurAmount={150}
-        />
-
-<View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.3)' }]} /> */}
-
       <View
         style={[
           StyleSheet.absoluteFill,
-          { backgroundColor: 'rgba(0, 0, 0, 0.08)' }, // adjust alpha for more/less tint
+          { backgroundColor: 'rgba(0, 0, 0, 0.08)' },
         ]}
       />
 
@@ -311,12 +334,6 @@ const requestCameraPermission = async () => {
             <Text style={styles.termsText1}>
              Welcome to Unizy! Your account has been created and your’re all set to start exploring
             </Text>
-            {/* <GlassButton
-              title="Back to Login"
-              onPress={closePopup}
-              style={styles.loginButton1}
-            /> */}
-
              <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
                     <Text style={styles.loginText}>Start Exploring</Text>
                   </TouchableOpacity>
@@ -331,6 +348,23 @@ const requestCameraPermission = async () => {
 };
 
 const styles = StyleSheet.create({
+
+    signupPrompt: {
+    color: 'rgba(255, 255, 255, 0.48)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    fontWeight: '400',
+  },
+   signupPrompt1: {
+    color: 'rgba(255, 255, 255, 0.48)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 14,
+    fontWeight: '600',
+    opacity: 2,
+    textShadowColor: 'rgba(255,255,255,0.6)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 1,
+  },
 
      overlay: {
     flex: 1,
@@ -400,7 +434,6 @@ cameraButton: {
   borderRadius: 20,
   alignItems: "center",
   justifyContent: "center",
- // elevation: 0,
 
 },
 cameraIcon: {
@@ -415,14 +448,7 @@ cameraIcon: {
   justifyContent: "center",
   marginTop: 12,
 },
-// bigCircle: {
-//   width: 120,
-//   height: 120,
-//   borderRadius: 60,
-//   alignItems: "center",
-//   justifyContent: "center",
-//   position: "relative", // ✅ ensures cameraButton anchors correctly
-// },
+
 logo: {
   width: 120,
   height: 120,
@@ -433,25 +459,6 @@ logo: {
     flex: 1,
     alignItems: 'center',
   },
-
-// stepIndicatorContainer: {
-//   flexDirection: 'row',
-//   justifyContent: 'center',
-//   alignItems: 'center',
-//   marginTop: 20,
-//   gap: 8, 
-// },
-
-// stepCircle: {
-//   width: 12,
-//   height: 12,
-//   borderRadius: 10,
-//   backgroundColor: 'rgba(255, 255, 255, 0.3)', // inactive circle
-// },
-
-// activeStepCircle: {
-//   backgroundColor: '#FFFFFF', // active circle
-// },
 
 stepCircle: {
   width: 12,

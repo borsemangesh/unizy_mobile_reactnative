@@ -8,6 +8,9 @@ export const loginStyles = StyleSheet.create({
     flex: 1,
     
   },
+  autoHeight: {
+    height: 'auto', // lets content decide height
+  },
   fullScreenContainer: {
     
     width: '100%',
@@ -26,6 +29,7 @@ export const loginStyles = StyleSheet.create({
     // backgroundColor: '#000000',
   },
   cardView: {
+      height:600,
       padding: 12,
       // marginTop: 0,
       // width: '90%',

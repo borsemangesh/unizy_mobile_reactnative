@@ -8,6 +8,9 @@ import {
   Image,
   Animated,
   Easing,
+  LayoutAnimation,
+  Platform,
+  UIManager,
 } from 'react-native';
 
 
@@ -27,73 +30,106 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const [isModalVisible, setModalVisible] = useState(false);
 
 
-
-  const [currentGreetingIndex, setCurrentGreetingIndex] = useState(0);
-
    const translateY = React.useRef(new Animated.Value(-100)).current;
    const slideUp = React.useRef(new Animated.Value(200)).current;
-
-   const greetings = [
-  'Hello', // English
-  '你好', // Chinese
-  'Hola', // Spanish
-  'Bonjour', // French
-  'Hallo', // German
-  'Ciao', // Italian
-  'Olá', // Portuguese
-  'Привет', // Russian
-  'مرحبا', // Arabic
-  'こんにちは', // Japanese
-  '안녕하세요', // Korean
-  'नमस्ते', // Hindi
-  'สวัสดี', // Thai
-  'Merhaba', // Turkish
-  'Cześć', // Polish
-  'السلام علیکم', // Urdu
-  'হ্যালো', // Bengali
-  'Shalom', // Hebrew
-  'Halo', // Malay
-];
+     const cardHeight = React.useRef(new Animated.Value(500)).current; // card height
 
 
+  const [shrink, setShrink] = useState(false);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      // reset to first greeting when screen is focused
-      setCurrentGreetingIndex(0);
 
-      const interval = setInterval(() => {
-        setCurrentGreetingIndex((prevIndex) =>
-          prevIndex + 1 < greetings.length ? prevIndex + 1 : 0
-        );
-      }, 3000);
+if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
+ useEffect(() => {
+    if (
+      Platform.OS === "android" &&
+      UIManager.setLayoutAnimationEnabledExperimental
+    ) {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
+  }, []);
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     // run all animations together
+  //     Animated.parallel([
+  //       Animated.timing(translateY, {
+  //         toValue: 0,
+  //         duration: 800,
+  //         easing: Easing.out(Easing.ease),
+  //         useNativeDriver: true,
+  //       }),
+  //       Animated.timing(slideUp, {
+  //         toValue: 0,
+  //         duration: 800,
+  //         easing: Easing.out(Easing.ease),
+  //         useNativeDriver: true,
+  //       }),
+  //       Animated.timing(cardHeight, {
+  //         toValue: 250, // final shrunk height
+  //         duration: 800,
+  //         easing: Easing.out(Easing.ease),
+  //         useNativeDriver: false, // ⚠️ height cannot use native driver
+  //       }),
+  //     ]).start();
+
+  //     return () => {
+  //       translateY.stopAnimation();
+  //       slideUp.stopAnimation();
+  //       cardHeight.stopAnimation();
+  //     };
+  //   }, [])
+  // );
+useFocusEffect(
+  React.useCallback(() => {
+    Animated.parallel([
       Animated.timing(translateY, {
         toValue: 0,
-        duration: 1000,
+        duration: 800,
         easing: Easing.out(Easing.ease),
         useNativeDriver: true,
-      }).start();
-
-
+      }),
       Animated.timing(slideUp, {
-    toValue: 0, // final position
-    duration: 1000,
-    easing: Easing.out(Easing.ease),
-    useNativeDriver: true,
-  }).start();
-      return () => clearInterval(interval); // stop when screen unfocused
-    }, [])
-  );
+        toValue: 0,
+        duration: 800,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    Animated.sequence([
+      Animated.timing(cardHeight, {
+        toValue: 250, // shrink target
+        duration: 800,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: false,
+      }),
+      Animated.spring(cardHeight, {
+        toValue: 255, // overshoot a bit
+        friction: 4,
+        tension: 120,
+        useNativeDriver: false,
+      }),
+    
+    ]).start();
+
+    return () => {
+      translateY.stopAnimation();
+      slideUp.stopAnimation();
+      cardHeight.stopAnimation();
+    };
+  }, [])
+);
+
 
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
   const handleLogin = () => {
-    // navigation.navigate('Dashboard');
     console.log(`Logging in with ${username} and ${password}`);
-    //toggleModal();
   };
 
   const handleForgetPassword = () =>{    
@@ -116,12 +152,9 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
     >
 
 
-      <View style={{display: 'flex', flexDirection: 'column',padding: 12,gap: 20,justifyContent: 'space-between',paddingTop: 50,}}>
+      <View style={{display: 'flex', flexDirection: 'column',padding: 12,gap: 20,justifyContent: 'space-between',paddingTop: 30,}}>
         <Animated.View style={[loginStyles.topHeader, { transform: [{ translateY: translateY }] }]} >
-        
-
-                    {/* <Animated.View style={[Styles.linearGradient, { transform: [{ translateY: slideUp }] }]}
-          ></Animated.View> */}
+ 
           <TouchableOpacity onPress={() => navigation.goBack()}>
           <View  style={loginStyles.backIconRow} >
               <Image
@@ -132,7 +165,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           <Text style={loginStyles.unizyText}>UniZy</Text>
         <View style={loginStyles.emptyView}></View>
         </Animated.View>
-        <View style={loginStyles.cardView}>
+           <Animated.View  style={[loginStyles.cardView, { height: cardHeight }]}>
+
           <BlurView blurType="light" blurAmount={15} />
 
           <LinearGradient
@@ -198,7 +232,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           </Text>
           </TouchableOpacity>
           </View>
-        </View>
+        </Animated.View>
       </View>
 
       
@@ -229,51 +263,6 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
             Privacy Policy
           </Text>
         </View>
-
-        {/* <Text style={loginStyles.privacyPolicyText}>and Privacy Policy</Text> */}
-
-        {/* This Daialog is Do further work */}
-        {/* <Modal  
-          animationType="fade"
-          transparent={true}
-          visible={isModalVisible}
-          onRequestClose={toggleModal}
-        >
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: 'rgba(0,0,0,0.5)',
-            }}
-          >
-            <View
-              style={{
-                backgroundColor: 'white',
-                borderRadius: 10,
-                padding: 20,
-                alignItems: 'center',
-                elevation: 5, // Shadow for Android
-                shadowColor: '#000', // Shadow for iOS
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.25,
-                shadowRadius: 4,
-              }}
-            >
-              <Text
-                style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10 }}
-              >
-                Dialog Title
-              </Text>
-              <Text
-                style={{ fontSize: 16, marginBottom: 20, textAlign: 'center' }}
-              >
-                This is a custom dialog message.
-              </Text>
-              <Button title="Close" onPress={toggleModal} />
-            </View>
-          </View>
-        </Modal>*/}
        </View> 
     </ImageBackground>
   );

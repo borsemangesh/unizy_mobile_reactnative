@@ -26,45 +26,46 @@ const VerifyScreen = ({ navigation }: VerifyScreenProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
 
-
-    const translateY = useRef(new Animated.Value(-50)).current; // start above the screen
-    const opacity = useRef(new Animated.Value(0)).current;
-
      const inputs = useRef<Array<TextInput | null>>([]);
     
       const handleChange = (text: string, index: number) => {
         if (text && index < inputs.current.length - 1) {
-          inputs.current[index + 1]?.focus(); // move to next
+          inputs.current[index + 1]?.focus();
         } else if (!text && index > 0) {
-          inputs.current[index - 1]?.focus(); // move back
+          inputs.current[index - 1]?.focus(); 
         }
       };
-  
-  useEffect(() => {
+
+
+const slideAnim = useRef(new Animated.Value(-height)).current; 
+const opacity = useRef(new Animated.Value(0)).current;
+const translateY = useRef(new Animated.Value(-height)).current
+
+useEffect(() => {
+  if (imageLoaded && !showOtp) {
     Animated.parallel([
-      Animated.timing(translateY, {
-        toValue: 0, // move to normal position
-        duration: 2000, // slower, smoother
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 1000,
         easing: Easing.out(Easing.exp),
         useNativeDriver: true,
       }),
       Animated.timing(opacity, {
-        toValue: 1, // fade in
-        duration: 2000,
+        toValue: 1,
+        duration: 1000,
         easing: Easing.out(Easing.exp),
         useNativeDriver: true,
       }),
     ]).start();
-  }, []);
-  
+  }
+}, [imageLoaded, showOtp]);
 
-  // animation value
-  const slideAnim = useRef(new Animated.Value(-height)).current;
+
 
   const startAnimation = () => {
-    Animated.timing(slideAnim, {
+    Animated.timing(translateY, {
       toValue: 0,
-      duration: 1500,
+      duration: 1000,
       easing: Easing.out(Easing.exp),
       useNativeDriver: true,
     }).start();
@@ -90,21 +91,20 @@ const VerifyScreen = ({ navigation }: VerifyScreenProps) => {
       </View>
 
       {imageLoaded && !showOtp && (
-        <View style={styles.formContainer}>
-            <Animated.View
-                      style={{
-                        transform: [{ translateY }],
-                        opacity,
-                        width: '100%',
-                      }}
-                    >
+        <View style={[styles.formContainer, { overflow: 'hidden' }]}>
+       <Animated.View
+      style={[
+        { width: '100%', alignItems: 'center' },
+        { transform: [{ translateY: slideAnim }], opacity },
+      ]}
+    >
             
 
-          <Text style={styles.resetTitle}>Verify Student Email ID</Text>
+          <Text style={styles.resetTitle}>Verify University Email ID</Text>
           <View style={styles.login_container}>
             <TextInput
               style={styles.personalEmailID_TextInput}
-              placeholder={'Personal Email ID'}
+              placeholder={'University Email ID'}
               placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
               value={username}
               onChangeText={usernameText => setUsername(usernameText)}
@@ -119,19 +119,16 @@ const VerifyScreen = ({ navigation }: VerifyScreenProps) => {
       )}
 
      {showOtp && (
-  <View style={styles.formContainer}>
+<View style={[styles.formContainer, { overflow: 'hidden' }]}>
     <Animated.View
       style={[
-        { width: '100%', alignItems: 'center' }, // keep layout intact
-        { transform: [{ translateY: slideAnim }] },
+        { width: '100%', alignItems: 'center' },
+        { transform: [{ translateY: translateY }] },
       ]}>
 
-      <Text style={styles.resetTitle}>Verify Student Email ID</Text>
+      <Text style={styles.resetTitle}>Verify University Email ID</Text>
 
       <View style={styles.privacyContainer}>
-        {/* <Text style={styles.termsText}>
-          We have sent a 4-digit code to abc@gmail.com
-        </Text> */}
          <Text style={styles.termsText}>
                   We have sent a 4-digit code to{' '}
                   <Text style={styles.resendText2}>abc@gmail.com</Text>
@@ -143,7 +140,7 @@ const VerifyScreen = ({ navigation }: VerifyScreenProps) => {
           <TextInput
             key={index}
           ref={(ref) => {
-            inputs.current[index] = ref; // ✅ assign, don’t return
+            inputs.current[index] = ref; 
           }}
           style={styles.otpBox}
           keyboardType="number-pad"
@@ -173,21 +170,6 @@ const VerifyScreen = ({ navigation }: VerifyScreenProps) => {
     </Animated.View>
   </View>
 )}
-
-
-      
-
-      {/* <View style={styles.stepIndicatorContainer}>
-            {[0, 1, 2, 3].map((index) => (
-              <View
-                key={index}
-                style={[
-                styles.stepCircle,
-                index === 2 ? styles.activeStepCircle : styles.inactiveStepCircle,
-            ]}
-              />
-            ))}
-          </View> */}
 
           <View style={styles.stepIndicatorContainer}>
                                   {[0, 1, 2, 3].map((index) =>
@@ -273,28 +255,6 @@ inactiveStepCircle: {
 
 },
 
-
-  //  stepIndicatorContainer: {
-  //    flexDirection: 'row',
-  //    justifyContent: 'center',
-  //    alignItems: 'center',
-  //    marginTop: 20,
-  //    gap: 8,
-  //  },
-   
-  //  stepCircle: {
-  //    width: 12,
-  //    height: 12,
-  //    borderRadius: 10,
-  //    backgroundColor: 'rgba(255, 255, 255, 0.3)', 
-  //  },
-   
-  //  activeStepCircle: {
-  //    backgroundColor: '#FFFFFF', 
-  //  },
-
-
-   
    otpContainer: {
      flexDirection: 'row',
      justifyContent: 'space-between',
@@ -337,8 +297,7 @@ inactiveStepCircle: {
          backgroundColor:
          'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
          boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-        //  minHeight:280
-       // minHeight:'auto'
+       
      },
    
      resetTitle: {

@@ -37,9 +37,9 @@ export const Navigation = () => {
         <Stack.Screen name="Reset" component={ResetPassword} options={{headerShown: false}}/>
         <Stack.Screen name="Signup" component={SignupScreen} options={{headerShown: false,animation: 'fade', presentation: 'fullScreenModal'}}/>
         <Stack.Screen name="RevarifyStudentStatus" component={RevarifyStudentStatus} options={{headerShown: false}} />
-        <Stack.Screen name="OTPScreen" component={OTPScreen} options={{headerShown:false}}/>
-        <Stack.Screen name="VerifyScreen" component={VerifyScreen} options={{headerShown:false}}/>
-        <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{headerShown:false}}/>
+        <Stack.Screen name="OTPScreen" component={OTPScreen} options={{headerShown:false,animation: 'fade'}}/>
+        <Stack.Screen name="VerifyScreen" component={VerifyScreen} options={{headerShown:false,animation: 'fade'}}/>
+        <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{headerShown:false,animation: 'fade'}}/>
 
 
 
