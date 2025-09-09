@@ -100,7 +100,7 @@ const SelectLanguage_Popup = ({ navigation }: LoginScreenProps) => {
               <TouchableOpacity
                 style={selectlang_styles.languageItem}
                 onPress={() =>
-                  navigation.navigate('LoginScreen') || setSelected(item.code)
+                  navigation.replace('LoginScreen') || setSelected(item.code)
                 }
               >
                 

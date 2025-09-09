@@ -11,6 +11,7 @@ import {
   Image,
   Animated,
   Easing,
+  Platform,
 } from 'react-native';
 // import { BlurView } from '@react-native-community/blur';
 // @ts-ignore
@@ -38,14 +39,14 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
     Animated.parallel([
       Animated.timing(translateY, {
         toValue: 0,
-        duration: 600,
+        duration: 1000,
  
         easing: Easing.out(Easing.ease),
         useNativeDriver: true,
       }),
       Animated.timing(opacity, {
         toValue: 1,
-        duration: 600,
+        duration: 1000,
         easing: Easing.out(Easing.ease),
         useNativeDriver: true,
       }),
@@ -67,24 +68,25 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
         useNativeDriver: true,
       }),
     ]).start(() => {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'LoginScreen', params: { username } }],
-      });
+      clickLoginListner(); 
     });
   };
+
+  const clickLoginListner = () =>{
+    if (Platform.OS === 'ios') {
+      navigation.replace('LoginScreen');
+    } else {
+      navigation.navigate('LoginScreen');
+    }
+  }
   const handleSendResetLink = () => {
     console.log(`Send reset link to ${username}`);
     setShowPopup(true);
   };
  
-  const handleLogin = () => {
-    navigation.navigate('LoginScreen');
-    // navigation.reset({
-    //   index: 0,
-    //   routes: [{ name: 'LoginScreen' }],
-    // });
-  };
+  // const handleLogin = () => {
+  //   navigation.replace('LoginScreen');  
+  // };
  
   const closePopup = () => setShowPopup(false);
  
@@ -192,7 +194,7 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
  
               <TouchableOpacity
                 style={styles.loginButton}
-                onPress={handleLogin}
+                onPress={clickLoginListner}
               >
                 <Text style={styles.loginText}>Back to Login</Text>
               </TouchableOpacity>
@@ -370,6 +372,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexShrink: 0,
     flexDirection: 'row',
+    paddingTop: 20,
   },
   backIconRow: {
     display: 'flex',

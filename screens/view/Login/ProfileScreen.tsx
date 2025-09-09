@@ -49,23 +49,6 @@ const [hasExpanded, setHasExpanded] = useState(false);
 
   const containerHeight = useRef(new Animated.Value(400)).current; // start with 400
 
-    
-    // useEffect(() => {
-    //   Animated.parallel([
-    //     Animated.timing(slideAnim, {
-    //       toValue: 0, 
-    //       duration: 1000,
-    //       easing: Easing.out(Easing.exp),
-    //       useNativeDriver: true,
-    //     }),
-    //     Animated.timing(opacity, {
-    //       toValue: 1,
-    //       duration: 1000,
-    //       easing: Easing.out(Easing.exp),
-    //       useNativeDriver: true,
-    //     }),
-    //   ]).start();
-    // }, []);
 
 
      useEffect(() => {
@@ -73,7 +56,7 @@ const [hasExpanded, setHasExpanded] = useState(false);
       // First: animate container height from 400 → content height
       Animated.timing(containerHeight, {
         toValue: 350, // we’ll interpolate this to "auto"
-        duration: 400,
+        duration: 1000,
         easing: Easing.out(Easing.exp),
         useNativeDriver: false, // height animation can't use native driver
       }).start(() => {
@@ -81,13 +64,13 @@ const [hasExpanded, setHasExpanded] = useState(false);
         Animated.parallel([
           Animated.timing(slideAnim, {
             toValue: 0,
-            duration: 600,
+            duration: 1000,
             easing: Easing.out(Easing.exp),
             useNativeDriver: true,
           }),
           Animated.timing(opacity, {
             toValue: 1,
-            duration: 600,
+            duration: 1000,
             easing: Easing.out(Easing.exp),
             useNativeDriver: true,
           }),
@@ -101,20 +84,24 @@ const [hasExpanded, setHasExpanded] = useState(false);
       setShowButton(true);
       Animated.timing(scaleY, {
         toValue: 1,
-        duration: 400,
+        duration: 1000,
         useNativeDriver: true,
       }).start();
     } else {
       Animated.timing(scaleY, {
         toValue: 0,
-        duration: 200,
+        duration: 1000,
         useNativeDriver: true,
       }).start(() => setShowButton(false));
     }
   }, [photo]);
 
    const handleLogin = () => {
-  navigation.navigate('LoginScreen')
+    if (Platform.OS === 'ios') {
+      navigation.replace('LoginScreen');
+    } else {
+      navigation.navigate('LoginScreen');
+    }
 };
 
 const requestCameraPermission = async () => {
@@ -219,7 +206,7 @@ const handlePopup = () => {
      <Animated.View
         style={[
           styles.formContainer,
-          { overflow: 'hidden', height: containerHeight },
+          { overflow: 'hidden', height: 'auto',maxHeight: 'auto' },
         ]}
       >
         <Animated.View
@@ -570,6 +557,8 @@ inactiveStepCircle: {
     gap: 10,
     flexShrink: 0,
     flexDirection: 'row',
+
+    paddingTop:20,
   },
   backIconRow: {
   display: 'flex',

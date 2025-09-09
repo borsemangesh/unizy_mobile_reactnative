@@ -8,14 +8,6 @@ function App() {
   LogBox.ignoreAllLogs();
 
   const [showSplash, setShowSplash] = useState(true);
-   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSplash(false);
-    }, 1000); // show splash for at least 2 seconds
-    return () => clearTimeout(timer);
-  }, []);
-
-
 
   return (
     <SafeAreaProvider>

@@ -10,6 +10,7 @@ import {
   Easing,
   StyleSheet,
 Dimensions,
+Platform,
 
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -51,7 +52,7 @@ useEffect(() => {
     Animated.parallel([
         Animated.timing(containerHeight, {
             toValue: 195, // we’ll interpolate this to "auto"
-            duration: 400,
+            duration: 1000,
             easing: Easing.out(Easing.exp),
             useNativeDriver: false, // height animation can't use native driver
           }),
@@ -88,7 +89,7 @@ const startAnimation = () => {
   Animated.parallel([
     Animated.timing(containerHeight1, {
       toValue: 325, // shrink height
-      duration: 400,
+      duration: 1000,
       easing: Easing.out(Easing.exp),
       useNativeDriver: false, // must be false for height
     }),
@@ -107,7 +108,12 @@ const startAnimation = () => {
     startAnimation();
   };
   const handleSendResetLink = () => {
-    navigation.navigate('ProfileScreen')
+  
+    if (Platform.OS === 'ios') {
+      navigation.replace('ProfileScreen');
+    } else {
+      navigation.navigate('ProfileScreen');
+    }
   };
 
   return (
@@ -122,7 +128,7 @@ const startAnimation = () => {
       </View>
 
       {imageLoaded && !showOtp && (
-        <Animated.View style={[styles.formContainer ,{ overflow: 'hidden' ,height:containerHeight}]}>
+        <Animated.View style={[styles.formContainer ,{ overflow: 'hidden' ,height: 'auto',maxHeight: 'auto'}]}>
        <Animated.View
       style={[
         { width: '100%', alignItems: 'center' },
@@ -150,7 +156,7 @@ const startAnimation = () => {
       )}
 
      {showOtp && (
-<Animated.View style={[styles.formContainer, { overflow: 'hidden',height: containerHeight1}]}>
+<Animated.View style={[styles.formContainer, { overflow: 'hidden',height: 'auto',maxHeight: 'auto'}]}>
     <Animated.View
       style={[
         { width: '100%', alignItems: 'center' },
@@ -288,7 +294,7 @@ inactiveStepCircle: {
 
    otpContainer: {
      flexDirection: 'row',
-     justifyContent: 'space-between',
+     justifyContent: 'space-evenly',
      width: '80%',
      alignSelf: 'center',
      gap: 10, 
@@ -490,6 +496,8 @@ inactiveStepCircle: {
        gap: 10,
        flexShrink: 0,
        flexDirection: 'row',
+
+    paddingTop:20,
      },
      backIconRow: {
      display: 'flex',

@@ -13,7 +13,8 @@ import {
   Animated,
   Dimensions,
   Easing,
-  LayoutChangeEvent
+  LayoutChangeEvent,
+  Platform
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -35,7 +36,7 @@ const { width, height } = Dimensions.get('window');
 
   const translateY = useRef(new Animated.Value(-50)).current;
 
-  const cardHeight = useRef(new Animated.Value(500)).current;
+  const cardHeight = useRef(new Animated.Value(600)).current;
 
   const handleLayout = (e: LayoutChangeEvent) => {
     if (!measuredHeight) {
@@ -63,29 +64,14 @@ const containerHeight = useRef(new Animated.Value(600)).current; // start with 4
     }
   };
 
-// useEffect(() => {
-//   Animated.parallel([
-//     Animated.timing(slideAnim, {
-//       toValue: 0, 
-//       duration: 1000, 
-//       easing: Easing.out(Easing.exp),
-//       useNativeDriver: true,
-//     }),
-//     Animated.timing(opacity, {
-//       toValue: 1, 
-//       duration: 1000,
-//       easing: Easing.out(Easing.exp),
-//       useNativeDriver: true,
-//     }),
-//   ]).start();
-// }, []);
-
        useEffect(() => {
         if (imageLoaded ) {
+
+
           // First: animate container height from 400 → content height
           Animated.timing(containerHeight, {
-            toValue: 325, // we’ll interpolate this to "auto"
-            duration: 400,
+            toValue: 0, // we’ll interpolate this to "auto"
+            duration: 1000,
             easing: Easing.out(Easing.exp),
             useNativeDriver: false, // height animation can't use native driver
           }).start(() => {
@@ -93,32 +79,56 @@ const containerHeight = useRef(new Animated.Value(600)).current; // start with 4
             Animated.parallel([
               Animated.timing(slideAnim, {
                 toValue: 0,
-                duration: 600,
+                duration: 1000,
                 easing: Easing.out(Easing.exp),
                 useNativeDriver: true,
               }),
               Animated.timing(opacity, {
                 toValue: 1,
-                duration: 600,
+                duration: 1000,
                 easing: Easing.out(Easing.exp),
                 useNativeDriver: true,
               }),
             ]).start();
           });
+
+          Animated.sequence([
+                  Animated.timing(cardHeight, {
+                    toValue: 400, // shrink target
+                    duration: 1000,
+                    easing: Easing.out(Easing.ease),
+                    useNativeDriver: false,
+                  }),
+                  Animated.spring(cardHeight, {
+                    toValue: 255, // overshoot a bit
+                    friction: 4,
+                    tension: 120,
+                    useNativeDriver: false,
+                  }),
+                ]).start();
+
+              return () => {
+                cardHeight.stopAnimation();
+              };
+
         }
       }, [imageLoaded]);
 
 const handlesignup = () =>{
+  if (Platform.OS === 'ios') {
+    navigation.replace('Signup');
+  } else {
+    navigation.navigate('Signup');
+  }
 
-   navigation.reset({
-    index: 0,
-    routes: [{ name: 'Signup' }],
-  });
-//  navigation.navigate('Signup')
 }
 
   const handleSendResetLink = () => {
-    navigation.navigate('VerifyScreen')
+    if (Platform.OS === 'ios') {
+      navigation.replace('VerifyScreen');
+    } else {
+      navigation.navigate('VerifyScreen');
+    }
   };
 
 
@@ -136,11 +146,12 @@ return (
         <View style={styles.emptyView}></View>
       </View>
 
-  {imageLoaded && (
+  {/* {imageLoaded && ( */}
        <Animated.View
              style={[
                styles.formContainer,
-               { overflow: 'hidden', height: containerHeight },
+               
+               { overflow: 'hidden', height: 'auto' },
              ]}
            >
 <Animated.View
@@ -194,7 +205,7 @@ return (
         </TouchableOpacity>
 </Animated.View>
       </Animated.View>
-       )}
+       {/* )} */}
       
     
 
@@ -272,7 +283,7 @@ inactiveStepCircle: {
 
 otpContainer: {
   flexDirection: 'row',
-  justifyContent: 'space-between',
+  justifyContent: 'space-evenly',
   width: '80%',
   alignSelf: 'center',
   gap: 10, // works in RN 0.71+, otherwise use marginRight
@@ -312,6 +323,7 @@ otpBox: {
       backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
       boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
+   
   },
 
   resetTitle: {
@@ -509,6 +521,8 @@ otpBox: {
     gap: 10,
     flexShrink: 0,
     flexDirection: 'row',
+
+    paddingTop:20,
   },
   backIconRow: {
   display: 'flex',
