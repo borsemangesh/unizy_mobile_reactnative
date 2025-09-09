@@ -98,7 +98,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
           loop={false}
           resizeMode="cover"  
           style={{ width, height }}  
-         // onAnimationFinish={onFinish}
+          onAnimationFinish={onFinish}
         />
       </View>
    </ImageBackground> 

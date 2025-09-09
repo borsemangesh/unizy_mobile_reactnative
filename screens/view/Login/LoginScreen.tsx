@@ -11,13 +11,17 @@ import {
   LayoutAnimation,
   Platform,
   UIManager,
+  ToastAndroid,
+  BackHandler,
   StyleSheet,
 } from 'react-native';
  
 import { loginStyles } from './LoginScreen.style';
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import LottieView from 'lottie-react-native';
+
  
 type LoginScreenProps = {
   navigation: any;
@@ -32,8 +36,21 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const translateY = React.useRef(new Animated.Value(-100)).current;
   const slideUp = React.useRef(new Animated.Value(200)).current;
   const cardHeight = React.useRef(new Animated.Value(500)).current; // card height
- 
+  const [error, setError] = useState("");
   const [shrink, setShrink] = useState(false);
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
+      if (isFocused) {
+        BackHandler.exitApp();
+        return true; // prevent default
+      }
+      return false;
+    });
+
+    return () => backHandler.remove();
+  }, [isFocused]);
  
   if (
     Platform.OS === 'android' &&
@@ -97,6 +114,19 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const handleLogin = () => {
     console.log(`Logging in with ${username} and ${password}`);
   };
+
+  const validateEmail = (text: string) => {
+    setUsername(text);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (text.length === 0) {
+      setError("");
+    } else if (!emailRegex.test(text)) {
+      ToastAndroid.show("Please enter a valid email address", ToastAndroid.SHORT);
+    } else {
+      setError("");
+    }
+  };
  
   const backButtonOpacity = React.useRef(new Animated.Value(200)).current;
   const [backDisabled, setBackDisabled] = useState(false);
@@ -142,6 +172,172 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
  
   const BGAnimationScreen = require('../../../assets/images/BGAnimationScreen.png');
  
+  // return (
+  //   <ImageBackground
+  //     source={BGAnimationScreen}
+  //     resizeMode="cover"
+  //     style={[loginStyles.flex_1]}
+  //   >
+  //     <View
+  //       style={{
+  //         display: 'flex',
+  //         flexDirection: 'column',
+  //         padding: 12,
+  //         gap: 20,
+  //         justifyContent: 'space-between',
+  //         paddingTop: 30,
+  //       }}
+  //     >
+  //       <Animated.View
+  //         style={[
+  //           loginStyles.topHeader,
+  //           { transform: [{ translateY: translateY }] },
+  //         ]}
+  //       >
+  //         <TouchableOpacity onPress={() => navigation.replace('LanguagePopup')}>
+  //           <View style={loginStyles.backIconRow}>
+  //             <Image
+  //               source={require('../../../assets/images/back.png')}
+  //               style={{ height: 24, width: 24 }}
+  //             />
+  //           </View>
+  //         </TouchableOpacity>
+  //         <Text style={loginStyles.unizyText}>UniZy</Text>
+  //         <View style={loginStyles.emptyView}></View>
+  //       </Animated.View>
+  //       <Animated.View style={[loginStyles.cardView, { height: cardHeight }]}>
+  //         <BlurView blurType="light" blurAmount={15} />
+ 
+  //         <LinearGradient
+  //           colors={['rgba(255, 255, 255, 0.76)', 'rgba(255, 255, 255, 0.85)']}
+  //         />
+  //         <View style={loginStyles.login_container}>
+  //           {/* <TextInput
+  //             style={loginStyles.personalEmailID_TextInput}
+  //             placeholder={'Personal Email ID'}
+  //             placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
+  //             value={username}
+  //             maxLength={20}
+  //             onChangeText={usernameText => setUsername(usernameText)}
+  //           /> */}
+
+  //       <TextInput
+  //       style={[loginStyles.personalEmailID_TextInput,{color:'#fff'}]}
+  //       placeholder="Personal Email ID"
+  //       placeholderTextColor="rgba(255, 255, 255, 0.48)"
+  //       value={username}
+  //       maxLength={50}
+  //       keyboardType="email-address"
+  //       autoCapitalize="none"
+  //       autoCorrect={false}
+  //       onChangeText={validateEmail}
+  //     />
+  //     {/* {error ? (
+  //       <Text style={{ color: "red", fontSize: 12, marginTop: 4 }}>
+  //         {error}
+  //       </Text>
+  //     ) : null} */}
+    
+  //         </View>
+ 
+  //         <View style={loginStyles.password_container}>
+  //           <TextInput
+  //             style={[loginStyles.password_TextInput,{color:'#fff'}]}
+  //             placeholder={'Password'}
+  //             placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
+  //             value={password}
+  //             maxLength={20}
+  //             secureTextEntry={!isPasswordVisible}
+  //             onChangeText={passwordText => setPassword(passwordText)}
+  //           />
+
+
+  //            <TouchableOpacity
+  //           onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
+  //           <Image
+  //             source={
+  //               isPasswordVisible
+  //                 ? require("../../../assets/images/eyeopen.png")
+  //                 : require("../../../assets/images/eyecross1.png")
+  //             }
+  //             style={[
+  //               loginStyles.eyeIcon,
+  //               isPasswordVisible ? loginStyles.eyeIcon : loginStyles.eyeCross
+  //             ]}
+  //           />
+  //         </TouchableOpacity>
+  //         </View>
+  //         <Text
+  //           style={loginStyles.forgetPasswordText}
+  //           onPress={handleForgetPassword}
+  //         >
+  //           Forgot Password?
+  //         </Text>
+ 
+  //         <TouchableOpacity
+  //           style={loginStyles.loginButton}
+  //           onPress={handleLogin}
+  //         >
+  //           <Text style={loginStyles.loginText}>Login</Text>
+  //         </TouchableOpacity>
+ 
+  //         <View
+  //           style={{
+  //             width: '100%',
+  //             flexDirection: 'row',
+  //             justifyContent: 'center',
+  //             alignItems: 'center',
+  //             gap: 5,
+  //           }}
+  //         >
+  //           <Text
+  //             style={{
+  //               color: 'rgba(255, 255, 255, 0.48)',
+  //               textAlign: 'center',
+  //               fontFamily: 'Urbanist-Regular',
+  //               fontSize: 14,
+  //               fontWeight: 400,
+  //               lineHeight: 19,
+  //               marginTop: 10,
+  //             }}
+  //           >
+  //             Don't have an account?
+  //           </Text>
+  //           <TouchableOpacity onPress={handleSignup}>
+  //             <Text style={loginStyles.signupText}>Sign up</Text>
+  //           </TouchableOpacity>
+  //         </View>
+  //       </Animated.View>
+  //     </View>
+ 
+  //     <Animated.View
+  //       style={[
+  //         {
+  //           alignItems: 'center',
+  //           justifyContent: 'flex-end',
+  //           flex: 1,
+  //           paddingBottom: 30,
+  //           transform: [{ translateY: slideUp }],
+  //         },
+  //       ]}
+  //     >
+  //       <View style={loginStyles.teamsandConditionContainer}>
+  //         <Text style={loginStyles.bycountuningAgreementText}>
+  //           By continuing, you agree to our
+  //         </Text>
+  //         <Text style={loginStyles.teamsandConditionText}>
+  //           Terms & Conditions
+  //         </Text>
+  //       </View>
+ 
+  //       <View style={loginStyles.teamsandConditionContainer}>
+  //         <Text style={loginStyles.bycountuningAgreementText}>and</Text>
+  //         <Text style={loginStyles.teamsandConditionText}>Privacy Policy</Text>
+  //       </View>
+  //     </Animated.View>
+  //   </ImageBackground>
+  // );
+
   return (
     <ImageBackground
       source={BGAnimationScreen}

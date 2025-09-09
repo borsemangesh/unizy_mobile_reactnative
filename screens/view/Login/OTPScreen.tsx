@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native';
 import React, { useState,useRef,useEffect } from 'react';
 import {
   View,
@@ -22,8 +23,6 @@ const { width } = Dimensions.get('window');
 
 type OTPScreenProps = {
   navigation: any;
-
-  
 };
 
 const OTPScreen = ({ navigation }: OTPScreenProps) => {
@@ -32,11 +31,9 @@ const [username, setUsername] = useState<string>('');
 const [showPopup, setShowPopup] = useState(false);
 const [imageLoaded, setImageLoaded] = useState(false);
 const { width, height } = Dimensions.get('window');
-  const [useAutoHeight, setUseAutoHeight] = useState(false);
-
-  const translateY = useRef(new Animated.Value(-50)).current;
-
-  const cardHeight = useRef(new Animated.Value(600)).current;
+const [useAutoHeight, setUseAutoHeight] = useState(false);
+const translateY = useRef(new Animated.Value(-50)).current;
+const cardHeight = useRef(new Animated.Value(500)).current;
 
   const handleLayout = (e: LayoutChangeEvent) => {
     if (!measuredHeight) {
@@ -45,37 +42,31 @@ const { width, height } = Dimensions.get('window');
   };
 
 const [measuredHeight, setMeasuredHeight] = useState(0);
-
-
-
 const slideAnim = useRef(new Animated.Value(-height)).current;
 const opacity = useRef(new Animated.Value(0)).current;
 const containerHeight = useRef(new Animated.Value(600)).current; // start with 400
+const [isExpanded, setIsExpanded] = useState(false);
+const inputs = useRef<Array<TextInput | null>>([]);
 
-
-
-  const inputs = useRef<Array<TextInput | null>>([]);
 
   const handleChange = (text: string, index: number) => {
     if (text && index < inputs.current.length - 1) {
-      inputs.current[index + 1]?.focus(); // move to next
+      inputs.current[index + 1]?.focus(); 
     } else if (!text && index > 0) {
-      inputs.current[index - 1]?.focus(); // move back
+      inputs.current[index - 1]?.focus();
     }
   };
 
        useEffect(() => {
         if (imageLoaded ) {
-
-
-          // First: animate container height from 400 → content height
           Animated.timing(containerHeight, {
-            toValue: 0, // we’ll interpolate this to "auto"
-            duration: 1000,
+            toValue: 400, 
+            duration: 400,
             easing: Easing.out(Easing.exp),
-            useNativeDriver: false, // height animation can't use native driver
-          }).start(() => {
-            // After height anim → run your existing content animation
+            useNativeDriver: false, 
+          })
+          .start(() => {
+            setIsExpanded(true); 
             Animated.parallel([
               Animated.timing(slideAnim, {
                 toValue: 0,
@@ -146,14 +137,16 @@ return (
         <View style={styles.emptyView}></View>
       </View>
 
-  {/* {imageLoaded && ( */}
-       <Animated.View
-             style={[
-               styles.formContainer,
-               
-               { overflow: 'hidden', height: 'auto' },
-             ]}
-           >
+  {imageLoaded && (
+      <Animated.View
+  style={[
+    styles.formContainer,
+    {
+      overflow: "hidden",
+      height: isExpanded ? "auto" : containerHeight, // 👈 switch after animation
+    },
+  ]}
+>
 <Animated.View
          style={[
         { width: '100%', alignItems: 'center' },
@@ -179,9 +172,13 @@ return (
           style={styles.otpBox}
           keyboardType="number-pad"
           maxLength={1}
-          onChangeText={(text) => handleChange(text, index)}
+          onChangeText={(text) => {
+            const digit = text.replace(/[^0-9]/g, '');
+            handleChange(digit, index);
+          }}
           returnKeyType="next"
           textAlign="center"
+          secureTextEntry={true}
         />
       ))}
     </View>
@@ -205,8 +202,8 @@ return (
         </TouchableOpacity>
 </Animated.View>
       </Animated.View>
-       {/* )} */}
-      
+  )}
+
     
 
            <View style={styles.stepIndicatorContainer}>
@@ -284,9 +281,9 @@ inactiveStepCircle: {
 otpContainer: {
   flexDirection: 'row',
   justifyContent: 'space-evenly',
-  width: '80%',
+  width: '70%',
   alignSelf: 'center',
-  gap: 10, // works in RN 0.71+, otherwise use marginRight
+  gap: 6, // works in RN 0.71+, otherwise use marginRight
   marginTop:16
 },
 
@@ -563,3 +560,6 @@ otpBox: {
 });
 
 export default OTPScreen;
+
+
+

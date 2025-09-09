@@ -33,6 +33,8 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
     useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const { width, height } = Dimensions.get('window');
+  const [error, setError] = useState("");
+  
 
   // Animations
   const translateY = useRef(new Animated.Value(50)).current;
@@ -130,10 +132,11 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
   };
 
   const handleLogin = () => {
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'LoginScreen' }],
-    });
+    // navigation.reset({
+    //   index: 0,
+    //   routes: [{ name: 'LoginScreen' }],
+    // });
+    navigation.replace('LoginScreen')
   };
 
   return (
@@ -620,7 +623,8 @@ const styles = StyleSheet.create({
   },
   eyeIcon: {
     width: 19,
-    height: 19,
+    height: 15,
+    // paddingRight: 16,
   },
 
   unizyTitle: {
@@ -857,3 +861,6 @@ const styles = StyleSheet.create({
 });
 
 export default SignupScreen;
+
+
+

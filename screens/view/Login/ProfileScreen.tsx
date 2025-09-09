@@ -13,11 +13,13 @@ import {
   StyleSheet,
   Dimensions,
   Animated,
-  Easing
+  Easing,
+  BackHandler
 } from 'react-native';
  import { launchCamera, launchImageLibrary } from "react-native-image-picker";
  import { PermissionsAndroid, Platform } from "react-native";
 import LinearGradient from 'react-native-linear-gradient';
+import { useIsFocused } from '@react-navigation/native';
 
 
 const { width } = Dimensions.get('window');
@@ -48,19 +50,19 @@ const cardHeight = useRef(new Animated.Value(250)).current; // initial collapsed
 const [hasExpanded, setHasExpanded] = useState(false);
 
   const containerHeight = useRef(new Animated.Value(400)).current; // start with 400
-
+const [isExpanded, setIsExpanded] = useState(false);
 
 
      useEffect(() => {
-    if (imageLoaded && !showPopup) {
+    if (imageLoaded) {
       // First: animate container height from 400 → content height
       Animated.timing(containerHeight, {
         toValue: 350, // we’ll interpolate this to "auto"
-        duration: 1000,
+        duration: 200,
         easing: Easing.out(Easing.exp),
         useNativeDriver: false, // height animation can't use native driver
       }).start(() => {
-        // After height anim → run your existing content animation
+         setIsExpanded(true); 
         Animated.parallel([
           Animated.timing(slideAnim, {
             toValue: 0,
@@ -77,7 +79,7 @@ const [hasExpanded, setHasExpanded] = useState(false);
         ]).start();
       });
     }
-  }, [imageLoaded, showPopup]);
+  }, [imageLoaded]);
 
  useEffect(() => {
     if (photo) {
@@ -200,15 +202,15 @@ const handlePopup = () => {
       </View>
 
   {imageLoaded && (
-
-
-
-     <Animated.View
-        style={[
-          styles.formContainer,
-          { overflow: 'hidden', height: 'auto',maxHeight: 'auto' },
-        ]}
-      >
+    <Animated.View
+      style={[
+        styles.formContainer,
+        {
+          overflow: "hidden",
+          height: isExpanded ? "auto" : containerHeight, // 👈 switch after animation
+        },
+      ]}
+    >
         <Animated.View
                   style={[
         { width: '100%', alignItems: 'center' },
@@ -599,3 +601,7 @@ inactiveStepCircle: {
 });
 
 export default ProfileScreen;
+
+
+
+
