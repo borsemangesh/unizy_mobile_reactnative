@@ -1,4 +1,4 @@
-
+import { useFocusEffect } from '@react-navigation/native';
 import React, { useState,useEffect,useRef } from 'react';
 import {
   View,
@@ -36,7 +36,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
   // Animations
   const translateY = useRef(new Animated.Value(50)).current;
   const opacity = useRef(new Animated.Value(0)).current;
-  const cardHeight = useRef(new Animated.Value(300)).current;
+   const cardHeight = React.useRef(new Animated.Value(500)).current; 
 
   const [measuredHeight, setMeasuredHeight] = useState<number | null>(null);
   const [useAutoHeight, setUseAutoHeight] = useState(false);
@@ -45,11 +45,28 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
 
   const slideAnim = useRef(new Animated.Value(-height)).current; 
 
+const heightAnim = useRef(new Animated.Value(0)).current;
+  const animatedHeight = heightAnim.interpolate({
+  inputRange: [0, 0.5, 1],
+  outputRange: ['34%', '45%', '45%'],
+  extrapolate: 'clamp',
+});
+
   const handleLayout = (e: LayoutChangeEvent) => {
     if (!measuredHeight) {
       setMeasuredHeight(400);
     }
   };
+
+  useEffect(() => {
+  Animated.timing(heightAnim, {
+    toValue: 1,
+  duration: 1000,
+  easing: Easing.bezier(0.42, 0, 0.58, 1), // natural ease
+  useNativeDriver: false,
+  }).start();
+}, []);
+
 
   // Run animation once
   useEffect(() => {
@@ -63,7 +80,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
         }),
         Animated.timing(slideAnim, {
           toValue: 0,
-          duration: 1000,
+          duration: 0,
           easing: Easing.out(Easing.exp),
           useNativeDriver: true,
         }),
@@ -79,6 +96,34 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
       });
     }
   }, [measuredHeight, hasAnimated]);
+
+
+
+   useFocusEffect(
+      React.useCallback(() => {
+        
+        Animated.sequence([
+          Animated.timing(cardHeight, {
+            toValue: 1, // shrink target
+            duration: 1000,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: false,
+          }),
+          Animated.spring(cardHeight, {
+            toValue: 255, // overshoot a bit
+            friction: 4,
+            tension: 120,
+            useNativeDriver: false,
+          }),
+        ]).start();
+   
+        return () => {
+          translateY.stopAnimation();
+          // slideUp.stopAnimation();
+          cardHeight.stopAnimation();
+        };
+      }, []),
+    );
 
   const handleSendOTP = () => {  
     if (Platform.OS === 'ios') {
@@ -105,7 +150,8 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
         <Text style={styles.unizyText}>UniZy</Text>
         <View style={styles.emptyView}></View>
       </View>
-      <Animated.View style={[styles.cardView, { height: 'auto',maxHeight: cardHeight }]}>
+      {/* <Animated.View style={[styles.cardView, { height: 'auto',maxHeight: cardHeight }]}> */}
+      <Animated.View style={[styles.cardView, { height: animatedHeight }]}>
         {!useAutoHeight && (
           <View
             style={{ position: 'absolute', opacity: 0, left: 0, right: 0,bottom:20 }}
@@ -540,6 +586,8 @@ inactiveStepCircle: {
   },
 
    cardView: {
+    height:600,
+    paddingTop: 15,
           padding: 10,
           marginTop: -15,
           width: '90%',
@@ -550,7 +598,7 @@ inactiveStepCircle: {
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.09)',
-    
+    overflow: 'hidden',
   },
 
 login_container1: {
@@ -645,3 +693,4 @@ login_container1: {
 });
 
 export default SignupScreen;
+

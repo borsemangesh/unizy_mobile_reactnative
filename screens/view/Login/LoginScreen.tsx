@@ -56,13 +56,13 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       Animated.parallel([
         Animated.timing(translateY, {
           toValue: 0,
-          duration: 1000,
+          duration: 600,
           easing: Easing.out(Easing.ease),
           useNativeDriver: true,
         }),
         Animated.timing(slideUp, {
           toValue: 0,
-          duration: 1000,
+          duration: 600,
           easing: Easing.out(Easing.ease),
           useNativeDriver: true,
         }),
@@ -71,7 +71,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       Animated.sequence([
         Animated.timing(cardHeight, {
           toValue: 250, // shrink target
-          duration: 1000,
+          duration: 500,
           easing: Easing.out(Easing.ease),
           useNativeDriver: false,
         }),
