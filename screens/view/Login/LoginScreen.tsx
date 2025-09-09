@@ -134,7 +134,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           padding: 12,
           gap: 20,
           justifyContent: 'space-between',
-          paddingTop: 30,
+          paddingTop: 60,
         }}
       >
         <Animated.View

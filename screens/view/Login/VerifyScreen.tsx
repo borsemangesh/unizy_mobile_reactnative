@@ -288,7 +288,7 @@ inactiveStepCircle: {
 
    otpContainer: {
      flexDirection: 'row',
-     justifyContent: 'space-between',
+     justifyContent: 'space-evenly',
      width: '80%',
      alignSelf: 'center',
      gap: 10, 
@@ -490,6 +490,8 @@ inactiveStepCircle: {
        gap: 10,
        flexShrink: 0,
        flexDirection: 'row',
+
+    paddingTop:20,
      },
      backIconRow: {
      display: 'flex',

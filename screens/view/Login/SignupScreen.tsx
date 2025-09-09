@@ -951,6 +951,7 @@ inactiveStepCircle: {
     gap: 10,
     flexShrink: 0,
     flexDirection: 'row',
+    paddingTop:20,
   },
   backIconRow: {
   display: 'flex',

@@ -370,6 +370,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexShrink: 0,
     flexDirection: 'row',
+    paddingTop: 20,
   },
   backIconRow: {
     display: 'flex',

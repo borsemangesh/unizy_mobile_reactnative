@@ -7,6 +7,7 @@ import SplashScreen from './screens/view/Hello/SplashScreen';
 function App() {
   LogBox.ignoreAllLogs();
 
+
   const [showSplash, setShowSplash] = useState(true);
    useEffect(() => {
     const timer = setTimeout(() => {

@@ -136,7 +136,7 @@ return (
         <View style={styles.emptyView}></View>
       </View>
 
-  {imageLoaded && (
+  {/* {imageLoaded && ( */}
        <Animated.View
              style={[
                styles.formContainer,
@@ -194,7 +194,7 @@ return (
         </TouchableOpacity>
 </Animated.View>
       </Animated.View>
-       )}
+       {/* )} */}
       
     
 
@@ -272,7 +272,7 @@ inactiveStepCircle: {
 
 otpContainer: {
   flexDirection: 'row',
-  justifyContent: 'space-between',
+  justifyContent: 'space-evenly',
   width: '80%',
   alignSelf: 'center',
   gap: 10, // works in RN 0.71+, otherwise use marginRight
@@ -509,6 +509,8 @@ otpBox: {
     gap: 10,
     flexShrink: 0,
     flexDirection: 'row',
+
+    paddingTop:20,
   },
   backIconRow: {
   display: 'flex',

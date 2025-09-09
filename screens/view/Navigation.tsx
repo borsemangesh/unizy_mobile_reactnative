@@ -25,7 +25,7 @@ export const Navigation = () => {
       <Stack.Navigator initialRouteName="HelloScreen">
       <Stack.Screen name="HelloScreen" component={HelloScreen} options={{headerShown: false, animation: 'fade',  }} />
 
-        <Stack.Screen name="LoginScreen" component={LoginScreen}  options={{headerShown: false,animation: 'fade',presentation:'fullScreenModal'}}/>
+        <Stack.Screen name="LoginScreen" component={LoginScreen}  options={{headerShown: false,animation: 'fade', presentation: 'fullScreenModal' }}/>
         <Stack.Screen name="Dashboard" component={DashBoardScreen} options={{headerShown: false}} />
         <Stack.Screen name="LanguagePopup" component={SelectLanguage_Popup} options={{
          headerShown: false,
@@ -34,12 +34,12 @@ export const Navigation = () => {
          animationDuration: 700,
        
         }} />
-        <Stack.Screen name="Reset" component={ResetPassword} options={{headerShown: false}}/>
+        <Stack.Screen name="Reset" component={ResetPassword} options={{headerShown: false,animation: 'fade', presentation: 'fullScreenModal'}}/>
         <Stack.Screen name="Signup" component={SignupScreen} options={{headerShown: false,animation: 'fade', presentation: 'fullScreenModal'}}/>
         <Stack.Screen name="RevarifyStudentStatus" component={RevarifyStudentStatus} options={{headerShown: false}} />
-        <Stack.Screen name="OTPScreen" component={OTPScreen} options={{headerShown:false,animation: 'fade'}}/>
-        <Stack.Screen name="VerifyScreen" component={VerifyScreen} options={{headerShown:false,animation: 'fade'}}/>
-        <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{headerShown:false,animation: 'fade'}}/>
+        <Stack.Screen name="OTPScreen" component={OTPScreen} options={{headerShown:false,animation: 'fade', presentation: 'fullScreenModal'}}/>
+        <Stack.Screen name="VerifyScreen" component={VerifyScreen} options={{headerShown:false,animation: 'fade',presentation: 'fullScreenModal'}}/>
+        <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{headerShown:false,animation: 'fade',presentation: 'fullScreenModal'}}/>
 
 
 

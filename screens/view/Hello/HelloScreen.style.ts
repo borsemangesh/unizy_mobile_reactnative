@@ -14,6 +14,7 @@ export const Styles = StyleSheet.create({
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'space-between',
+    paddingTop: 30,
   },
   linearGradient: {
     // flexDirection: 'column',
@@ -75,6 +76,7 @@ padding: 20
     paddingTop: 50,
     flexDirection: 'column',
     alignItems: 'flex-start',
+    
   },
   selectlangvageCard: {
     borderRadius: 20,
