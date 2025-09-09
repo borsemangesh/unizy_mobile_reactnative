@@ -58,7 +58,7 @@ const [isExpanded, setIsExpanded] = useState(false);
       // First: animate container height from 400 → content height
       Animated.timing(containerHeight, {
         toValue: 350, // we’ll interpolate this to "auto"
-        duration: 200,
+        duration: 100,
         easing: Easing.out(Easing.exp),
         useNativeDriver: false, // height animation can't use native driver
       }).start(() => {

@@ -85,7 +85,7 @@ const [isExpanded, setIsExpanded] = useState(false);
        if (imageLoaded && !showOtp) {
           Animated.timing(containerHeight, {
             toValue: 400, 
-            duration: 200,
+            duration: 100,
             easing: Easing.out(Easing.exp),
             useNativeDriver: false, 
           }).start(() => {
@@ -113,25 +113,9 @@ const [isExpanded, setIsExpanded] = useState(false);
  
 const startAnimation = () => {
 
-  // setIsExpanded1(true)
-  // Animated.parallel([
-  //   Animated.timing(containerHeight1, {
-  //     toValue: 320, // shrink height
-  //     duration: 100,
-  //     easing: Easing.out(Easing.exp),
-  //     useNativeDriver: false, // must be false for height
-  //   }),
-  //   Animated.timing(translateY, {
-  //     toValue: 0, // slide in content
-  //     duration: 1000,
-  //     easing: Easing.out(Easing.exp),
-  //     useNativeDriver: true,
-  //   }),
-  // ]).start();
-
    Animated.timing(containerHeight1, {
             toValue: 320, 
-            duration: 200,
+            duration: 100,
             easing: Easing.out(Easing.exp),
             useNativeDriver: false, 
           }).start(() => {

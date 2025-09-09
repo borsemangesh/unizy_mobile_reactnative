@@ -61,7 +61,7 @@ const inputs = useRef<Array<TextInput | null>>([]);
         if (imageLoaded ) {
           Animated.timing(containerHeight, {
             toValue: 400, 
-            duration: 400,
+            duration: 100,
             easing: Easing.out(Easing.exp),
             useNativeDriver: false, 
           })
