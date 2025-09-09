@@ -13,7 +13,8 @@ import {
   Animated,
   Dimensions,
   Easing,
-  LayoutChangeEvent
+  LayoutChangeEvent,
+  Platform
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -110,15 +111,24 @@ const containerHeight = useRef(new Animated.Value(600)).current; // start with 4
 
 const handlesignup = () =>{
 
-   navigation.reset({
-    index: 0,
-    routes: [{ name: 'Signup' }],
-  });
-//  navigation.navigate('Signup')
+  //  navigation.reset({
+  //   index: 0,
+  //   routes: [{ name: 'Signup' }],
+  // });
+  if (Platform.OS === 'ios') {
+    navigation.replace('Signup');
+  } else {
+    navigation.navigate('Signup');
+  }
+
 }
 
   const handleSendResetLink = () => {
-    navigation.navigate('VerifyScreen')
+    if (Platform.OS === 'ios') {
+      navigation.replace('VerifyScreen');
+    } else {
+      navigation.navigate('VerifyScreen');
+    }
   };
 
 

@@ -529,8 +529,12 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
     }
   }, [measuredHeight, hasAnimated]);
 
-  const handleSendOTP = () => {
-    navigation.navigate('OTPScreen');
+  const handleSendOTP = () => {  
+    if (Platform.OS === 'ios') {
+      navigation.replace('OTPScreen');
+    } else {
+      navigation.navigate('OTPScreen');
+    }
   };
 
   const handleLogin = () => {

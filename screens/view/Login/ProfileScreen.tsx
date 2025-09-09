@@ -114,7 +114,11 @@ const [hasExpanded, setHasExpanded] = useState(false);
   }, [photo]);
 
    const handleLogin = () => {
-  navigation.navigate('LoginScreen')
+    if (Platform.OS === 'ios') {
+      navigation.replace('LoginScreen');
+    } else {
+      navigation.navigate('LoginScreen');
+    }
 };
 
 const requestCameraPermission = async () => {

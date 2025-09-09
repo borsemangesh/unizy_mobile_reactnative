@@ -10,6 +10,7 @@ import {
   Easing,
   StyleSheet,
 Dimensions,
+Platform,
 
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -107,7 +108,12 @@ const startAnimation = () => {
     startAnimation();
   };
   const handleSendResetLink = () => {
-    navigation.navigate('ProfileScreen')
+  
+    if (Platform.OS === 'ios') {
+      navigation.replace('ProfileScreen');
+    } else {
+      navigation.navigate('ProfileScreen');
+    }
   };
 
   return (

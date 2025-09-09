@@ -11,6 +11,7 @@ import {
   LayoutAnimation,
   Platform,
   UIManager,
+  StyleSheet,
 } from 'react-native';
  
 import { loginStyles } from './LoginScreen.style';
@@ -106,18 +107,38 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       duration: 0,
       useNativeDriver: true,
     }).start(() => {
-      setBackDisabled(true); // disable after animation
-      navigation.navigate('Reset'); // then navigate
+      // setBackDisabled(true); // disable after animation
+      // navigation.replace('Reset'); // then navigate
+      clickResetListner();
+
+      
     });
- 
-    // navigation.navigate('Reset');
   };
- 
-  const handleSignup = () => {
-    navigation.navigate('Signup');
-    console.log(`Logging in with ${username} and ${password}`);
-    //toggleModal();
-  };
+
+  const clickResetListner = () =>{
+    if (Platform.OS === 'ios') {
+      navigation.replace('Reset');
+    } else {
+      navigation.navigate('Reset');
+    }
+  }
+
+  const clickSignUpListner = () =>{
+    if (Platform.OS === 'ios') {
+      navigation.replace('Signup');
+    } else {
+      navigation.navigate('Signup');
+    }
+  }
+
+  const clickLanguageListner = () =>{
+    if (Platform.OS === 'ios') {
+      navigation.replace('LanguagePopup');
+    } else {
+      navigation.navigate('LanguagePopup');
+    }
+  }
+
  
   const BGAnimationScreen = require('../../../assets/images/BGAnimationScreen.png');
  
@@ -129,12 +150,14 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
     >
       <View
         style={{
+         
           display: 'flex',
           flexDirection: 'column',
           padding: 12,
           gap: 20,
           justifyContent: 'space-between',
           paddingTop: 60,
+          zIndex: 1
         }}
       >
         <Animated.View
@@ -143,7 +166,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
             { transform: [{ translateY: translateY }] },
           ]}
         >
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={() => clickLanguageListner}>
             <View style={loginStyles.backIconRow}>
               <Image
                 source={require('../../../assets/images/back.png')}
@@ -220,7 +243,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
             >
               Don't have an account?
             </Text>
-            <TouchableOpacity onPress={handleSignup}>
+            <TouchableOpacity onPress={clickSignUpListner}>
               <Text style={loginStyles.signupText}>Sign up</Text>
             </TouchableOpacity>
           </View>

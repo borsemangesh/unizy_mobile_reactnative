@@ -8,6 +8,7 @@ import {
   Image,
   Animated,
   Easing,
+  Platform,
 } from 'react-native';
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
@@ -183,6 +184,14 @@ const greetings = [
       return () => clearInterval(interval);
     }, [])
   );
+
+  const clickLanguageListner = () =>{
+    if (Platform.OS === 'ios') {
+      navigation.replace('LanguagePopup');
+    } else {
+      navigation.navigate('LanguagePopup');
+    }
+  }
  
   return (
     // <EdgeToEdgeScreen>
@@ -219,7 +228,7 @@ const greetings = [
             <LinearGradient
               colors={['rgba(255, 255, 255, 0.11)', 'rgba(255, 255, 255, 0.04)']}
             /> */}
-            <TouchableOpacity onPress={() => navigation.navigate('LanguagePopup')}>
+            <TouchableOpacity onPress={()=>clickLanguageListner()}>
               <View style={Styles.SelectLanguageContainer}>
                 <Image
                   source={require('../../../assets/images/language.png')}
