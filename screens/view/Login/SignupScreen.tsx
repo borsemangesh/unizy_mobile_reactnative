@@ -37,7 +37,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
   
 
   // Animations
-  const translateY = useRef(new Animated.Value(50)).current;
+  const translateY = useRef(new Animated.Value(-300)).current;
   const opacity = useRef(new Animated.Value(0)).current;
   const cardHeight = React.useRef(new Animated.Value(500)).current;
 
@@ -55,9 +55,9 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
   });
 
   const handleLayout = (e: LayoutChangeEvent) => {
-    if (!measuredHeight) {
-      setMeasuredHeight(400);
-    }
+    // if (!measuredHeight) {
+    //   setMeasuredHeight(400);
+    // }
   };
 
   useEffect(() => {
@@ -92,7 +92,6 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
           useNativeDriver: true,
         }),
       ]).start(() => {
-        setUseAutoHeight(true);
         setHasAnimated(true);
       });
     }
@@ -136,7 +135,12 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
     //   index: 0,
     //   routes: [{ name: 'LoginScreen' }],
     // });
-    navigation.replace('LoginScreen')
+    if(Platform.OS === 'ios'){
+      navigation.replace('LoginScreen')
+    } else {
+      navigation.navigate('LoginScreen')
+    }
+    
   };
 
   return (
@@ -247,7 +251,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
                     onChangeText={setPassword}
                     secureTextEntry={!isPasswordVisible}
                   />
-                  {/* <Image source={require('../../../assets/images/eyeopen.png')} style={styles.eyeIcon} /> */}
+                  
 
                   <TouchableOpacity
                     onPress={() => setIsPasswordVisible(!isPasswordVisible)}
@@ -275,7 +279,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
                     onChangeText={setConfirmPassword}
                     secureTextEntry={!isConfirmPasswordVisible}
                   />
-                  {/* <Image source={require('../../../assets/images/eyeopen.png')} style={styles.eyeIcon} /> */}
+                 
 
                   <TouchableOpacity
                     onPress={() =>
@@ -474,7 +478,9 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
             </TouchableOpacity>
           </View>
         </Animated.View>
-      </Animated.View>
+        
+</Animated.View>
+      
 
       <View style={styles.stepIndicatorContainer}>
         {[0, 1, 2, 3].map(index =>
@@ -602,6 +608,8 @@ const styles = StyleSheet.create({
     gap: 6,
   },
 
+
+  
   inactiveStepCircle: {
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
@@ -729,6 +737,7 @@ const styles = StyleSheet.create({
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     borderWidth: 0.6,
     borderColor: '#ffffff2c',
+  
   },
   unizyText: {
     color: '#FFFFFF',
@@ -844,6 +853,7 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+
 
     borderWidth: 0.6,
     borderColor: '#ffffff2c',
