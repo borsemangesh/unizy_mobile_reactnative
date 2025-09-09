@@ -167,6 +167,18 @@ const handleSendOTP = () => {
       navigation.navigate('ProfileScreen');
     }
   };
+  const validateEmail = (text: string) => {
+      setUsername(text);
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+      if (text.length === 0) {
+        setError("");
+      } else if (!emailRegex.test(text)) {
+        ToastAndroid.show("Please enter a valid email address", ToastAndroid.SHORT);
+      } else {
+        setError("");
+      }
+    };
   
   
 
@@ -211,7 +223,7 @@ const handleSendOTP = () => {
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
-             // onChangeText={validateEmail}
+              onChangeText={validateEmail}
             />
           </View>
 
