@@ -56,7 +56,8 @@ export const selectlang_styles = StyleSheet.create({
     fontFamily: 'Urbanist-Medium',
     marginLeft: -5,
     fontWeight:500,
-    fontSize:17
+    fontSize:17,
+    color:'#fff'
   },
 
   listContainer: {

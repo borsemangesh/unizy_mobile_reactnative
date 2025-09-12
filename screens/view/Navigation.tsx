@@ -15,6 +15,9 @@ import ProfileScreen from './Login/ProfileScreen';
 import SplashScreen from './Hello/SplashScreen';
 import BackgroundAnimation from './Hello/BackgroundAnimation';
 import { enableScreens } from 'react-native-screens';
+import { SignupContext } from './Login/SignupContext ';
+import SinglePage from './merge/SinglePage';
+import BackgroundWrapper from './Hello/BackgroundAnimation';
 
 const Stack = createNativeStackNavigator();
 //const Stack = createStackNavigator();
@@ -26,7 +29,9 @@ export const Navigation = () => {
     return (
       <NavigationContainer >
       <Stack.Navigator initialRouteName="HelloScreen"  screenOptions={{headerShown: false, animation: 'fade',}}>
-      <Stack.Screen name="HelloScreen" component={HelloScreen}  options={{headerShown: false, animation: 'fade'}} />
+      {/* <Stack.Screen name="HelloScreen" component={HelloScreen}  options={{headerShown: false, animation: 'fade'}} /> */}
+
+      <Stack.Screen name="HelloScreen" component={SinglePage}  options={{headerShown: false, animation: 'fade'}} />
 
         <Stack.Screen name="LoginScreen" component={LoginScreen}  options={{headerShown: false, animation: 'fade', presentation: 'fullScreenModal' }}/>
         <Stack.Screen name="Dashboard" component={DashBoardScreen} options={{headerShown: false}} />

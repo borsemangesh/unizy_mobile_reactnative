@@ -6,13 +6,21 @@ import {  StyleSheet  } from "react-native";
 const BackgroundAnimation = () => {
   return (
      <LottieView
-      source={require("../../../assets/animations/BGAnimation.json")}
+      source={require("../../../assets/animations/BGANIMATIN1.json")}
       autoPlay
       loop
       resizeMode="cover"
-      style={StyleSheet.absoluteFillObject} 
+      //style={StyleSheet.absoluteFillObject} 
+       style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '104%', // 👈 main part
+      }}
     />
   );
 };
 
 export default BackgroundAnimation;
+
