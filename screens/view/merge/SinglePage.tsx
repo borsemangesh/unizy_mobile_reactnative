@@ -1,3 +1,6 @@
+
+
+
 import { BlurView } from '@react-native-community/blur';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
@@ -22,14 +25,11 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import { Styles } from './SinglePage.style';
 import { selectlang_styles } from '../SelectLanguage/SelectLanguage.style';
-import BackgroundAnimation from '../Hello/BackgroundAnimation';
 import { getRequest } from '../../utils/API';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import BackgroundWrapper from '../Hello/BackgroundAnimation';
-import { showToast } from '../../utils/toast';
-
+import BackgroundAnimation from '../Hello/BackgroundAnimation';
 
 const greetings = [
   'Hello', // English
@@ -58,7 +58,6 @@ type Language = {
   name: string;
   flag: any;
 };
-
 const languages: Language[] = [
   {
     code: 'en',
@@ -115,15 +114,14 @@ const SinglePage = () => {
   const greetingScale = React.useRef(new Animated.Value(0.8)).current;
   const slideUp = React.useRef(new Animated.Value(200)).current;
 
-
   //Language Screen
   const [selected, setSelected] = useState<string | null>(null);
   const [search, setSearch] = useState('');
-
+ 
   const [languages, setLanguages] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-
-
+ 
+ 
    useEffect(() => {
     (async () => {
       setLoading(true)
@@ -140,7 +138,7 @@ const SinglePage = () => {
       }
     })();
   }, []);
-
+ 
   const flagMap: Record<string, any> = {
   en: require('../../../assets/images/English.png'),
   hi: require('../../../assets/images/Indian.png'),
@@ -149,7 +147,7 @@ const SinglePage = () => {
   zh: require('../../../assets/images/China.png'),
   // add others as needed
 };
-
+ 
 const filteredLanguages = languages
   .map(lang => ({
     code: lang.iso_code,
@@ -157,53 +155,33 @@ const filteredLanguages = languages
     flag: flagMap[lang.iso_code] || require('../../../assets/images/English.png'),
   }))
   .filter(lang => lang.name.toLowerCase().includes(search.toLowerCase()));
-
-
+ 
+ 
 const handleLanguageSelect = async (item:Language) => {
   try {
-    await AsyncStorage.setItem(
-      'selectedLanguage',
-      JSON.stringify({ code: item.code, name: item.name })
-    );
-    setSelected(item.code);
-    setCurrentScreen('login');
-    setcurrentScreenIninner('login');
+    // await AsyncStorage.setItem(
+    //   'selectedLanguage',
+    //   JSON.stringify({ code: item.code, name: item.name })
+    // );
+     setSelected(item.code);
+     setCurrentScreen('login');
+     setcurrentScreenIninner('login');
   } catch (err) {
     console.log('Error saving selected language', err);
   }
 };
-
-
-  //////////////////////////////////////////////////
 
   // Login Screen
   const translateY = React.useRef(new Animated.Value(-100)).current;
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isModalVisible, setModalVisible] = useState(false);
-  //   const cardHeight = React.useRef(new Animated.Value(500)).current; // card height
   const [error, setError] = useState('');
   const [shrink, setShrink] = useState(false);
   const isFocused = useIsFocused();
-  //   const ComposlideUp = React.useRef(new Animated.Value(height)).current;
-
-  const [showLanguageScreen, setShowLanguageScreen] = useState(true);
-
-  const ResettranslateY = React.useRef(new Animated.Value(-100)).current;
 
   const sendOptinputs = useRef<Array<TextInput | null>>([]);
 
-    const [resetusername, resetsetUsername] = useState<string>('');
-
-
-  // const handleChange = (text: string, index: number) => {
-  //   if (text && index < sendOptinputs.current.length - 1) {
-  //     sendOptinputs.current[index + 1]?.focus();
-  //   } else if (!text && index > 0) {
-  //     sendOptinputs.current[index - 1]?.focus();
-  //   }
-  // };
 
   const animateGreeting = () => {
     greetingOpacity.setValue(0);
@@ -242,60 +220,42 @@ const handleLanguageSelect = async (item:Language) => {
     ]).start();
   };
 
-  const clickSelectLanguage = () => {
-    setShowLanguageScreen(false);
-  };
-
-  const clickLoginScreenBack = () => {
-    setShowLanguageScreen(true);
-  };
-
-
-
-
-
+  
   //   Signup Screen
+
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [postalCode, setPostalCode] = useState('');
   const [signUpusername, setsignUpUsername] = useState('');
   const [signUppassword, setsignUpPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [signUperror, setsignUpError] = useState('');
   const [issignUpPasswordVisible, setsignUpIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);
   const [showInfo, setShowInfo] = useState(false);
-  const { width, height } = Dimensions.get('window');
-  const [signUperror, setsignUpError] = useState('');
+
+  const height = Dimensions.get('window');
+  const { width } = Dimensions.get('window');
+
+  const screenHeight = Dimensions.get('window').height;
 
   // Animations
-  const translateY1 = React.useRef(new Animated.Value(-300)).current;
   const opacity = React.useRef(new Animated.Value(0)).current;
 
-  const [measuredHeight, setMeasuredHeight] = useState<number | null>(null);
-  const [useAutoHeight, setUseAutoHeight] = useState(false);
-  const [hasAnimated, setHasAnimated] = useState(false);
 
   const slideAnim = React.useRef(new Animated.Value(-height)).current;
 
-  const signupheightAnim = useRef(new Animated.Value(0)).current;
-  const signupanimatedHeight = signupheightAnim.interpolate({
-    inputRange: [0, 0.5, 1],
-    outputRange: ['34%', '45%', '45%'],
-    extrapolate: 'clamp',
-  });
-
-  const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(screenHeight + 500));
 
   const cardHeight = useRef(new Animated.Value(0)).current; // start collapsed
-  const [contentHeight, setContentHeight] = useState(0);
+  const [contentHeight, setContentHeight] = useState(400);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [verifyimageLoaded, setverifyimageLoaded] = useState(false);
 
   const [showPopup, setShowPopup] = useState(false);
 
-  const resetPasswordopacity = React.useRef(new Animated.Value(1)).current;
   const resetPasswordtranslateY = React.useRef(
     new Animated.Value(-300),
   ).current;
@@ -309,32 +269,10 @@ const handleLanguageSelect = async (item:Language) => {
   const [photo, setPhoto] = useState<string | null>(null);
   const [showButton, setShowButton] = useState(false);
   const scaleY = useRef(new Animated.Value(0)).current;
-  const sendOtp = () => {
-    setShowOtp(true);
-    // startAnimation();
-  };
+const [resetusername, resetsetUsername] = useState<string>('');
 
-  
 
-  const animateAndGoBack = () => {
-    Animated.parallel([
-      Animated.timing(translateY, {
-        toValue: -300,
-        duration: 300,
-        easing: Easing.in(Easing.ease),
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacity, {
-        toValue: 300,
-        duration: 0,
-        easing: Easing.in(Easing.ease),
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      // clickLoginListner();
-      setCurrentScreen('login');
-    });
-  };
+  const animatedHeight = useRef(new Animated.Value(400)).current; 
 
   useEffect(() => {
     if (photo) {
@@ -365,11 +303,11 @@ const handleLanguageSelect = async (item:Language) => {
     }
 
     if (currentScreen === 'login') {
-      cardHeight.setValue(0);
-      slideUp.setValue(100);
-      translateY.setValue(-100);
-      slideUp1.setValue(screenHeight);
-      resetPasswordtranslateY.setValue(-300);
+        cardHeight.setValue(0);
+        slideUp.setValue(100);
+        translateY.setValue(-100);
+        slideUp1.setValue(screenHeight);
+        resetPasswordtranslateY.setValue(-300);
 
       Animated.timing(slideUp1, {
         toValue: 0, // move to top
@@ -403,29 +341,43 @@ const handleLanguageSelect = async (item:Language) => {
 
     if (currentScreenIninner === 'signup') {
       setImageLoaded(true);
-     
     }
     if (currentScreenIninner === 'verify') {
       setverifyimageLoaded(true);
     }
 
-    // if (currentScreen === 'forgotpassword') {
-    //   Animated.parallel([
-    //     Animated.timing(resetPasswordtranslateY, {
-    //       toValue: 0,
-    //       duration: 1000,
-    //       easing: Easing.out(Easing.ease),
-    //       useNativeDriver: true,
-    //     }),
+    if (currentScreenIninner === 'forgotpassword') {
+      Animated.parallel([
+        Animated.timing(resetPasswordtranslateY, {
+          toValue: 0,
+          duration: 1000,
+          easing: Easing.out(Easing.ease),
+          useNativeDriver: true,
+        }),
 
-    //     Animated.timing(resetPasswordopacity, {
-    //       toValue: 1,
-    //       duration: 1000,
-    //       easing: Easing.out(Easing.ease),
-    //       useNativeDriver: true,
-    //     }),
-    //   ]).start();
-    // }
+        // Animated.timing(resetPasswordopacity, {
+        //   toValue: 1,
+        //   duration: 1000,
+        //   easing: Easing.out(Easing.ease),
+        //   useNativeDriver: true,
+        // }),
+      ]).start();
+    Animated.parallel([
+        Animated.timing(animatedHeight, {
+        toValue: contentHeight,
+        duration: 600,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: false, // height animation needs false
+        }),
+        Animated.timing(slideUp, {
+        toValue: 0,
+        duration: 600,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+        }),
+    ]).start();
+      
+    }
   }, [currentScreen, contentHeight, currentScreenIninner, photo]);
 
   useFocusEffect(
@@ -446,7 +398,40 @@ const handleLanguageSelect = async (item:Language) => {
         animateGreeting();
       }
 
-      if (currentScreen === 'login') {
+      if (currentScreen === 'login' && currentScreenIninner === 'login') {
+
+        cardHeight.setValue(0);
+        slideUp.setValue(100);
+        translateY.setValue(-100);
+        Animated.parallel([
+        Animated.timing(translateY, {
+            toValue: 0,
+            duration: 600,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+        }),
+        Animated.timing(slideUp, {
+            toValue: 0,
+            duration: 1000,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+        }),
+        ]).start();
+    
+        Animated.sequence([
+        Animated.timing(cardHeight, {
+            toValue: 250, // shrink target
+            duration: 1000,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: false,
+        }),
+        Animated.spring(cardHeight, {
+            toValue: 255, // overshoot a bit
+            friction: 4,
+            tension: 120,
+            useNativeDriver: false,
+        }),
+        ]).start();
       }
 
       const interval = setInterval(() => {
@@ -480,11 +465,12 @@ const handleLanguageSelect = async (item:Language) => {
     }
   })();
 
-  //   Reset Password
+  //   API Call Reset Password
+ //   Reset Password
   const validateEmail = (text: string) => {
     resetsetUsername(text);
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
+ 
     if (text.length === 0) {
       setError('');
     } else if (!emailRegex.test(text)) {
@@ -497,22 +483,20 @@ const handleLanguageSelect = async (item:Language) => {
       setError('');
     }
   };
-
+ 
   const handleSendResetLink = () => {
     //console.log(`Send reset link to ${username}`);
     setShowPopup(true);
   };
-
+ 
 //login
-
+ 
 const loginapi = async () => {
   if (!username || !password) {
-    //ToastAndroid.show("Please fill all required fields", ToastAndroid.SHORT);
-        showToast("Please fill all required fields", 'error');
-
+    ToastAndroid.show("Please fill all required fields", ToastAndroid.SHORT);
     return;
   }
-
+ 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(username)) {
     ToastAndroid.show("Please enter a valid email address", ToastAndroid.SHORT);
@@ -530,29 +514,29 @@ const loginapi = async () => {
         password: password,
       }),
     });
-
+ 
     if (!response.ok) {
       const errorText = await response.text();
       setLoading(false)
       //throw new Error(`Login failed: ${errorText}`);
     }
-
-    const result = await response.json(); 
+ 
+    const result = await response.json();
     console.log('Login response:', JSON.stringify(result, null, 2));
-
+ 
     setLoading(false)
     const token = result?.data?.token;
     const user = result?.data?.user;
-
+ 
     if (token && user) {
       // Save token & user
       await AsyncStorage.setItem('userToken', token);
       await AsyncStorage.setItem('userData', JSON.stringify(user));
-
+ 
       ToastAndroid.show("Login successful", ToastAndroid.SHORT);
       setUsername('')
       setPassword('')
-
+ 
       // Navigate to Home or Dashboard
       //navigation.replace('HomeScreen');
     } else {
@@ -566,27 +550,27 @@ const loginapi = async () => {
     //Alert.alert('Error', error.message || 'Something went wrong');
   }
 };
-
-
+ 
+ 
   //signup
-
+ 
   const handleSendOTP = async () => {
   if (!firstName || !lastName || !signUpusername || !signUppassword || !confirmPassword) {
     ToastAndroid.show("Please fill all required fields", ToastAndroid.SHORT);
     return;
   }
-
+ 
   if (signUppassword !== confirmPassword) {
     ToastAndroid.show("Passwords do not match", ToastAndroid.SHORT);
     return;
   }
-
+ 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(signUpusername)) {
     ToastAndroid.show("Please enter a valid email address", ToastAndroid.SHORT);
     return;
   }
-
+ 
   try {
     const body = {
       firstname: firstName,
@@ -596,12 +580,12 @@ const loginapi = async () => {
       password: signUppassword,
       confirmPassword: confirmPassword,
     };
-
+ 
     console.log('Request body:', JSON.stringify(body, null, 2));
-
-
+ 
+ 
     const url = MAIN_URL.baseUrl+'user/user-signup'
-
+ 
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -609,22 +593,17 @@ const loginapi = async () => {
       },
       body: JSON.stringify(body),
     });
-
+ 
     const data = await response.json();
     console.log('API response:', data);
-
+ 
     if (response.status === 201) {
       ToastAndroid.show(data.message, ToastAndroid.SHORT);
-
+ 
       await AsyncStorage.setItem('tempUserId', data.data.temp_user_id.toString());
        await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
        await AsyncStorage.setItem('personal_mail_id',signUpusername.toString())
 
-      // if (Platform.OS === 'ios') {
-      //   navigation.replace('OTPScreen');
-      // } else {
-      //   navigation.navigate('OTPScreen');
-      // }
       setCurrentScreen('login');
       setcurrentScreenIninner('sendOTP');
     } else {
@@ -635,45 +614,45 @@ const loginapi = async () => {
     ToastAndroid.show('Failed to send OTP', ToastAndroid.SHORT);
   }
 };
-
-
-
+ 
+ 
+ 
 //otp
 const [otp, setOtp] = useState(['', '', '', '']);
 const inputs = useRef<(TextInput | null)[]>([]);
-
+ 
 const handleChange = (text: string, index: number) => {
   const newOtp = [...otp];
   newOtp[index] = text;
   setOtp(newOtp);
-
+ 
   if (text && index < inputs.current.length - 1) {
     inputs.current[index + 1]?.focus();
   } else if (!text && index > 0) {
     inputs.current[index - 1]?.focus();
   }
 };
-
-
+ 
+ 
 const otpverify = async () => {
-
+ 
  
   const otpValue = otp.join('');
-
+ 
   if (otpValue.length < 4 || otp.includes('')) {
     ToastAndroid.show("Please enter all 4 digits of the OTP", ToastAndroid.SHORT);
     return;
   }
   try {
     const otp_id = await AsyncStorage.getItem('otp_id');
-
+ 
     if (!otp_id) {
       ToastAndroid.show("OTP ID missing. Please request OTP again.", ToastAndroid.SHORT);
       return;
     }
-
+ 
     const url = MAIN_URL.baseUrl+'user/signup-otpverify'
-
+ 
     const res = await fetch(url, {
       method: 'POST',
       headers: {
@@ -684,40 +663,40 @@ const otpverify = async () => {
         otp: otpValue,
       }),
     });
-
+ 
     const data = await res.json();
     console.log('OTP Verify Response:', data);
-
+ 
     if (data?.statusCode === 200) {
       await AsyncStorage.setItem('temp_user_id', data.data.temp_user_id.toString());
-
+ 
       ToastAndroid.show(data.message, ToastAndroid.SHORT);
-
+ 
       setCurrentScreen('login');
       setcurrentScreenIninner('verify');
        setShowOtp(false);
       setverifyimageLoaded(true);
-
+ 
     } else {
       ToastAndroid.show(data?.message || 'OTP verification failed', ToastAndroid.SHORT);
     }
-  } 
+  }
   catch (err) {
     console.error(err);
     ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
   }
 };
-
-
+ 
+ 
 const handleresend = async () => {
-
-
-  setOtp(['', '', '', '']); 
+ 
+ 
+  setOtp(['', '', '', '']);
   try {
     const tempUserId = await AsyncStorage.getItem('tempUserId');
-
+ 
     const url1 = MAIN_URL.baseUrl+'user/resend-otp'
-
+ 
     const response = await fetch(url1, {
       method: 'POST',
       headers: {
@@ -727,22 +706,22 @@ const handleresend = async () => {
         temp_user_id: Number(tempUserId),
       }),
     });
-
+ 
     const data = await response.json();
     if (response.ok && data?.statusCode === 200) {
-
+ 
       ToastAndroid.show(data.message, ToastAndroid.SHORT);
-
+ 
       await AsyncStorage.setItem(
         'tempUserId',
         data.data.temp_user_id.toString()
       );
-
+ 
       await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
-
+ 
       console.log('OTP resent successfully:', data.message);
-
-
+ 
+ 
     } else {
       console.warn('Resend OTP failed:', data?.message || 'Unknown error');
     }
@@ -750,43 +729,43 @@ const handleresend = async () => {
     console.error('Error resending OTP:', err);
   }
 };
-
+ 
 //verify and otp
-
+ 
 const [verifyusername, setverifyUsername] = useState<string>('');
-
-
+ 
+ 
 const [otp1, setOtp1] = useState(['', '', '', '']);
 const verifyinputs = useRef<(TextInput | null)[]>([]);
-
+ 
 const veryfyhandleChange = (text: string, index: number) => {
   const newOtp = [...otp1];
   newOtp[index] = text;
   setOtp1(newOtp);
-
+ 
   if (text && index < verifyinputs.current.length - 1) {
     verifyinputs.current[index + 1]?.focus();
   } else if (!text && index > 0) {
     verifyinputs.current[index - 1]?.focus();
   }
 };
-
+ 
    const verifyOTP = async () => {
   if (!verifyusername) {
     ToastAndroid.show("Please fill all required fields", ToastAndroid.SHORT);
     return;
   }
-
+ 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(verifyusername)) {
     ToastAndroid.show("Please enter a valid email address", ToastAndroid.SHORT);
     return;
   }
-
+ 
   try {
-
+ 
     const url = MAIN_URL.baseUrl+'user/student-email'
-
+ 
     const res = await fetch(url, {
       method: 'POST',
       headers: {
@@ -797,15 +776,15 @@ const veryfyhandleChange = (text: string, index: number) => {
         temp_user_id: Number(await AsyncStorage.getItem('temp_user_id')) || undefined
       }),
     });
-
+ 
     const data = await res.json();
     console.log('Send OTP Response:', data);
-
+ 
     if (data?.statusCode === 200) {
       await AsyncStorage.setItem('temp_user_id', data.data.temp_user_id.toString());
       await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
       await AsyncStorage.setItem('signupUsername', verifyusername);
-
+ 
       ToastAndroid.show(data.message, ToastAndroid.SHORT);
       setShowOtp(true);
       //startAnimation();
@@ -817,25 +796,25 @@ const veryfyhandleChange = (text: string, index: number) => {
     ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
   }
 };
-
-
+ 
+ 
   const submitotp = async () => {
   const otpValue = otp1.join('');
-
+ 
   if (otpValue.length < 4 || otp1.includes('')) {
     ToastAndroid.show("Please enter all 4 digits of the OTP", ToastAndroid.SHORT);
     return;
   }
-
+ 
   try {
     const otp_id = await AsyncStorage.getItem('otp_id');
     if (!otp_id) {
       ToastAndroid.show("OTP ID missing. Please request OTP again.", ToastAndroid.SHORT);
       return;
     }
-    
+   
     const url = MAIN_URL.baseUrl+'user/student-otpverify'
-
+ 
     const res = await fetch(url, {
       method: 'POST',
       headers: {
@@ -846,27 +825,27 @@ const veryfyhandleChange = (text: string, index: number) => {
         otp: otpValue,
       }),
     });
-
+ 
     const data = await res.json();
     console.log('Student OTP Verify Response:', data);
-
+ 
     if (data?.statusCode === 200) {
       ToastAndroid.show(data.message, ToastAndroid.SHORT);
-
+ 
       if (data?.data) {
         await AsyncStorage.setItem('user_email', data.data.email || '');
         await AsyncStorage.setItem('firstname', data.data.firstname || '');
         await AsyncStorage.setItem('lastname', data.data.lastname || '');
         await AsyncStorage.setItem('student_email', data.data.student_email || '');
-
+ 
         if (data?.data?.token?.access_token) {
           await AsyncStorage.setItem('access_token', data.data.token.access_token);
         }
       }
-
+ 
       setCurrentScreen('login');
       setcurrentScreenIninner('profile');
-
+ 
      
     } else {
       ToastAndroid.show(data?.message || 'OTP verification failed', ToastAndroid.SHORT);
@@ -876,12 +855,12 @@ const veryfyhandleChange = (text: string, index: number) => {
     ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
   }
 };
-
+ 
 const resubmitotp = async () =>{
 try {
-
+ 
     const url = MAIN_URL.baseUrl+'user/student-email'
-
+ 
     const res = await fetch(url, {
       method: 'POST',
       headers: {
@@ -892,15 +871,15 @@ try {
         temp_user_id: Number(await AsyncStorage.getItem('temp_user_id')) || undefined
       }),
     });
-
+ 
     const data = await res.json();
     console.log('Send OTP Response:', data);
-
+ 
     if (data?.statusCode === 200) {
       await AsyncStorage.setItem('temp_user_id', data.data.temp_user_id.toString());
       await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
      // await AsyncStorage.setItem('signupUsername', username);
-
+ 
       ToastAndroid.show(data.message, ToastAndroid.SHORT);
       setShowOtp(true);
       //startAnimation();
@@ -913,7 +892,7 @@ try {
   }
 }
 //profile
-
+ 
 const requestCameraPermission = async () => {
   if (Platform.OS === "android") {
     try {
@@ -936,12 +915,12 @@ const requestCameraPermission = async () => {
     return true;
   }
 };
-
-
+ 
+ 
 const handleSelectImage = async () => {
   const hasPermission = await requestCameraPermission();
   if (!hasPermission) return;
-
+ 
   Alert.alert(
     "Select Option",
     "Choose a source",
@@ -991,6 +970,44 @@ const handleSelectImage = async () => {
 };
 
 
+//   End Api Call Reset Password
+
+
+
+
+
+
+// Animations
+const loginTranslateY = useRef(new Animated.Value(Dimensions.get('window').height)).current;
+const ClickFPGoBack_slideOutToTop = (onFinish?: () => void) => {
+  Animated.timing(resetPasswordtranslateY, {
+    toValue: -Dimensions.get('window').height, // slide up out of screen
+    duration: 1000,
+    easing: Easing.out(Easing.ease),
+    useNativeDriver: true,
+  }).start(() => {
+    if (onFinish) onFinish();
+  });
+
+  Animated.timing(loginTranslateY, {
+      toValue: 0, // slide into place
+      duration: 1000,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: true,
+}).start();
+};
+
+const goToForgotPassword = () => {
+  Animated.timing(loginTranslateY, {
+    toValue: Dimensions.get('window').height, // slide down off screen
+    duration: 1000,
+    easing: Easing.in(Easing.ease),
+    useNativeDriver: true,
+  }).start(() => {
+    // after animation completes, switch screen
+    setcurrentScreenIninner('forgotpassword');
+  });
+};
 
 
   return (
@@ -1089,125 +1106,55 @@ const handleSelectImage = async () => {
               </View>
 
               <View style={selectlang_styles.listContainer}>
-                {/* <FlatList
-                  contentContainerStyle={selectlang_styles.listContent}
-                  style={selectlang_styles.flatListStyle}
-                  data={filteredLanguages}
-                  keyExtractor={item => item.code}
-                  renderItem={({ item }) => (
+                  <FlatList
+                        contentContainerStyle={selectlang_styles.listContent}
+                        style={selectlang_styles.flatListStyle}
+                        data={filteredLanguages}
+                        keyExtractor={item => item.code}
+                        renderItem={({ item }) => (
+                    
                     <TouchableOpacity
-                      style={selectlang_styles.languageItem}
-                      onPress={() => {
-                        setCurrentScreen('login');
-                        setcurrentScreenIninner('login');
-                      }}
-                    >
-                      <View
+                    style={selectlang_styles.languageItem}
+                    onPress={() => 
+                    handleLanguageSelect(item)
+                    }>
+                    <View
                         style={{
-                          display: 'flex',
-                          paddingTop: 10,
-                          paddingBottom: 12,
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          alignContent: 'center',
-                          width: '100%',
+                        display: 'flex',
+                        paddingTop: 10,
+                        paddingBottom: 12,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        width: '100%',
                         }}
-                      >
+                    >
                         <View
-                          style={{
-                            display: 'flex',
+                        style={{
                             flexDirection: 'row',
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             width: '100%',
-                          }}
+                        }}
                         >
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              alignItems: 'center',
-                            }}
-                          >
-                            <View>
-                              <Image
-                                source={item.flag}
-                                style={selectlang_styles.flag}
-                              />
-                            </View>
-                            <Text style={selectlang_styles.languageText}>
-                              {item.name}
-                            </Text>
-                          </View>
-                          <View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Image source={item.flag} style={selectlang_styles.flag} />
+                            <Text style={selectlang_styles.languageText}>{item.name}</Text>
+                        </View>
+                        <View>
                             <View style={selectlang_styles.radioButton_round}>
-                              <View
+                            <View
                                 style={[
-                                  selectlang_styles.radioButton,
-                                  selected === item.code &&
-                                    selectlang_styles.radioButtonSelected,
+                                selectlang_styles.radioButton,
+                                selected === item.code && selectlang_styles.radioButtonSelected,
                                 ]}
-                              />
+                            />
                             </View>
-                          </View>
                         </View>
-                      </View>
+                        </View>
+                    </View>
                     </TouchableOpacity>
-                  )}
-                /> */}
-                   <FlatList
-                         contentContainerStyle={selectlang_styles.listContent}
-                          style={selectlang_styles.flatListStyle}
-                          data={filteredLanguages}
-                          keyExtractor={item => item.code}
-                          renderItem={({ item }) => (
-                      // <TouchableOpacity
-                      //   style={selectlang_styles.languageItem}
-                      //   onPress={() => {
-                      //     setSelected(item.code);
-                      //     navigation.replace('LoginScreen');
-                      //   }}
-                      // >
-                      <TouchableOpacity
-                        style={selectlang_styles.languageItem}
-                        onPress={() => handleLanguageSelect(item)}
-                      >
-                        <View
-                          style={{
-                            display: 'flex',
-                            paddingTop: 10,
-                            paddingBottom: 12,
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            width: '100%',
-                          }}
-                        >
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              width: '100%',
-                            }}
-                          >
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                              <Image source={item.flag} style={selectlang_styles.flag} />
-                              <Text style={selectlang_styles.languageText}>{item.name}</Text>
-                            </View>
-                            <View>
-                              <View style={selectlang_styles.radioButton_round}>
-                                <View
-                                  style={[
-                                    selectlang_styles.radioButton,
-                                    selected === item.code && selectlang_styles.radioButtonSelected,
-                                  ]}
-                                />
-                              </View>
-                            </View>
-                          </View>
-                        </View>
-                      </TouchableOpacity>
-                         )}
-                        />
+                        )}
+                    />
               </View>
             </Animated.View>
           </View>
@@ -1215,39 +1162,90 @@ const handleSelectImage = async () => {
       )}
       {currentScreen === 'login' && (
         <>
-          <Animated.View
-            style={[
-              Styles.NewtopHeader,
-              { transform: [{ translateY: translateY }] },
-            ]}
-          >
-            <TouchableOpacity
-              onPress={() => {
-                setCurrentScreen('language');
-              }}
+          {/* {currentScreenIninner === 'login' && (
+            <Animated.View
+              style={[
+                Styles.NewtopHeader,
+                { transform: [{ translateY: translateY }]},
+              ]}
             >
-              <View style={Styles.backIconRow}>
-                <Image
-                  source={require('../../../assets/images/back.png')}
-                  style={{ height: 24, width: 24 }}
-                />
-              </View>
-            </TouchableOpacity>
-            <Text style={Styles.unizyText}>UniZy</Text>
-            <View style={Styles.emptyView}></View>
-          </Animated.View>
+              <TouchableOpacity
+                onPress={() => {
+                  setCurrentScreen('language');
+                }}
+              >
+                <View style={[Styles.backIconRow,{}]}>
+                  <Image
+                    source={require('../../../assets/images/back.png')}
+                    style={{ height: 24, width: 24 }}
+                  />
+                </View>
+              </TouchableOpacity>
+              <Text style={Styles.unizyText}>UniZy</Text>
+              <View style={Styles.emptyView}></View>
+            </Animated.View>
+          )}
+
+          {currentScreenIninner !== 'login' && (
+            <Animated.View
+              style={[
+                Styles.NewtopHeader,
+                // { transform: [{ translateY: translateY }] },
+              ]}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  setCurrentScreen('language');
+                }}
+              >
+                <View style={[Styles.backIconRow, { display: 'none' }]}>
+                  <Image
+                    source={require('../../../assets/images/back.png')}
+                    style={{ height: 24, width: 24 }}
+                  />
+                </View>
+              </TouchableOpacity>
+              <Text style={Styles.notLoginScreenHeader}>UniZy</Text>
+              <View style={[Styles.emptyView, { display: 'none' }]}></View>
+            </Animated.View>
+          )} */}
+ <Animated.View
+              style={[
+                Styles.NewtopHeader,
+                { transform: [{ translateY: translateY }]},
+              ]}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  setCurrentScreen('language');
+                }}
+              >
+                <View style={[Styles.backIconRow,{}]}>
+                  <Image
+                    source={require('../../../assets/images/back.png')}
+                    style={{ height: 24, width: 24 }}
+                  />
+                </View>
+              </TouchableOpacity>
+              <Text style={Styles.unizyText}>UniZy</Text>
+              <View style={Styles.emptyView}></View>
+            </Animated.View>
           <View style={{ width: '100%', paddingLeft: 16, paddingRight: 16 }}>
             <Animated.View
               style={[Styles.cardView, { minHeight: contentHeight }]}
             >
               <View
-                onLayout={e => setContentHeight(e.nativeEvent.layout.height)}
+                // onLayout={e => {
+                //         const { height } = e.nativeEvent.layout;
+                //         setContentHeight(height); 
+                //     }}
+                
               >
                 {/* Show Login Screen */}
                 {currentScreenIninner === 'login' && (
                   <>
                     <Animated.View
-                      style={{ transform: [{ translateY: translateY }] }}
+                    //   style={{ transform: [{ translateY: loginTranslateY }] }}
                     >
                       <BlurView blurType="light" blurAmount={15} />
                       <LinearGradient
@@ -1287,6 +1285,7 @@ const handleSelectImage = async () => {
                       <Text
                         style={Styles.forgetPasswordText}
                         onPress={() => {
+                            goToForgotPassword;
                           setCurrentScreen('login');
                           setcurrentScreenIninner('forgotpassword');
                         }}
@@ -1331,7 +1330,11 @@ const handleSelectImage = async () => {
                         >
                           <Text style={Styles.signupText}>Sign up</Text>
                         </TouchableOpacity>
+                       
                       </View>
+
+                      
+                      
                     </Animated.View>
                   </>
                 )}
@@ -1340,7 +1343,7 @@ const handleSelectImage = async () => {
                   ('forgotpassword' as typeof currentScreenIninner) && (
                   <>
                     <View style={{ width: '100%' }}>
-                      <Animated.View style={{ gap: 10 }}>
+                      <Animated.View style={[{ gap: 10 }, { transform: [{ translateY: resetPasswordtranslateY }] }]}>
                         <Text style={Styles.resetTitle}>Reset Password</Text>
                         <View style={Styles.privacyContainer}>
                           <Text style={Styles.termsText}>
@@ -1378,8 +1381,11 @@ const handleSelectImage = async () => {
 
                         <TouchableOpacity
                           onPress={() => {
-                            setCurrentScreen('login');
-                            setcurrentScreenIninner('login');
+                            ClickFPGoBack_slideOutToTop(() => {
+                                setCurrentScreen('login');
+                                setcurrentScreenIninner('login');
+                                resetPasswordtranslateY.setValue(0); // reset for next time
+                            });
                           }}
                         >
                           <Text style={Styles.goBackText}>Go back</Text>
@@ -1411,7 +1417,7 @@ const handleSelectImage = async () => {
                               ]}
                             />
 
-                            <View style={Styles.popupContainer}>
+                            <View style={[Styles.popupContainer,{width: width * 0.85}]}>
                               <Image
                                 source={require('../../../assets/images/success_icon.png')}
                                 style={Styles.logo}
@@ -1859,9 +1865,6 @@ const handleSelectImage = async () => {
                           <View style={Styles.sendOtpprivacyContainer}>
                             <Text style={Styles.termsText}>
                               We have sent a 4-digit code to{' '}
-                              {/* <Text style={Styles.sendOtpresendText2}>
-                                abc@gmail.com
-                              </Text> */}
                               <Text style={Styles.sendOtpresendText2}>{signUpusername}</Text>
                             </Text>
                           </View>
@@ -1871,7 +1874,7 @@ const handleSelectImage = async () => {
                               <TextInput
                                 key={index}
                                 ref={(ref) => {
-                                  inputs.current[index] = ref; // ✅ no error
+                                  inputs.current[index] = ref; 
                                 }}
                                 style={Styles.sendOtpotpBox}
                                 keyboardType="number-pad"
@@ -1897,7 +1900,7 @@ const handleSelectImage = async () => {
                             </Text>
                           </TouchableOpacity>
 
-                          <TouchableOpacity
+                          <View
                             style={{
                               flexDirection: 'row',
                               justifyContent: 'center',
@@ -1908,13 +1911,13 @@ const handleSelectImage = async () => {
                               Didn’t receive a code?{' '}
                             </Text>
                             <TouchableOpacity onPress={handleresend}>
-                            <Text style={Styles.sendOtpresendText1}>
-                              Resend Code
-                            </Text>
+                                <Text style={Styles.sendOtpresendText1}>
+                                Resend Code
+                                </Text>
                             </TouchableOpacity>
-                          </TouchableOpacity>
+                          </View>
 
-                          <TouchableOpacity
+                          <View
                             style={{
                               flexDirection: 'row',
                               justifyContent: 'center',
@@ -1934,7 +1937,7 @@ const handleSelectImage = async () => {
                                 Go back
                               </Text>
                             </TouchableOpacity>
-                          </TouchableOpacity>
+                          </View>
                         </Animated.View>
                       </Animated.View>
                     )}
@@ -1984,7 +1987,6 @@ const handleSelectImage = async () => {
                               autoCapitalize="none"
                               autoCorrect={false}
                               onChangeText={usernameText => setverifyUsername(usernameText)}
-                              //onChangeText={validateEmail}
                             />
                           </View>
 
@@ -2020,9 +2022,6 @@ const handleSelectImage = async () => {
                           <View style={Styles.verifyprivacyContainer}>
                             <Text style={Styles.verifytermsText}>
                               We have sent a 4-digit code to{' '}
-                              {/* <Text style={Styles.resendText2}>
-                                abc@gmail.com
-                              </Text> */}
                               <Text style={Styles.resendText2}>{verifyusername}</Text>
                             </Text>
                           </View>
@@ -2057,18 +2056,18 @@ const handleSelectImage = async () => {
                             </Text>
                           </TouchableOpacity>
 
-                          <TouchableOpacity
+                          <View
                             style={{ flexDirection: 'row', marginTop: 6 }}
                           >
                             <Text style={Styles.verifyresendText}>
                               Didn’t receive a code?{' '}
                             </Text>
-                            <TouchableOpacity onPress = {resubmitotp}>
-                            <Text style={Styles.verifyresendText1}>
-                              Resend Code
-                            </Text>
+                            <TouchableOpacity onPress={resubmitotp}>
+                                <Text style={Styles.verifyresendText1}>
+                                Resend Code
+                                </Text>
                             </TouchableOpacity>
-                          </TouchableOpacity>
+                          </View>
 
                           <TouchableOpacity
                             style={{ flexDirection: 'row', marginTop: 6 }}
@@ -2149,10 +2148,7 @@ const handleSelectImage = async () => {
 
                               <TouchableOpacity
                                 style={Styles.profilecameraButton}
-                                onPress={
-                                   handleSelectImage
-                                }
-                              >
+                                onPress={handleSelectImage}>
                                 <Image
                                   source={require('../../../assets/images/new_camera_icon.png')}
                                   style={Styles.profilecameraIcon}
@@ -2218,7 +2214,7 @@ const handleSelectImage = async () => {
                           ]}
                         />
 
-                        <View style={Styles.profilepopupContainer}>
+                        <View style={[Styles.profilepopupContainer,{width: width * 0.85}]}>
                           <Image
                             source={require('../../../assets/images/success_icon.png')}
                             style={Styles.profilelogo1}
@@ -2251,7 +2247,8 @@ const handleSelectImage = async () => {
               </View>
             </Animated.View>
             {/* Indecator */}
-            {/* {currentScreenIninner && (
+            {currentScreenIninner !== ('login' as typeof currentScreenIninner) 
+            &&currentScreenIninner !== ('forgotpassword' as typeof currentScreenIninner)&& (
               <View style={Styles.stepIndicatorContainer}>
                 {[0, 1, 2, 3].map(index =>
                   index === stepIndex ? (
@@ -2268,8 +2265,42 @@ const handleSelectImage = async () => {
                   ),
                 )}
               </View>
-            )} */}
-          </View>
+            )}
+            {/* Teams and codition */}
+     
+          
+            
+        </View>
+        {currentScreenIninner === ('login' as typeof currentScreenIninner) ||
+        currentScreenIninner === ('forgotpassword' as typeof currentScreenIninner) && (
+               <Animated.View
+                    style={[
+                        {
+                        position: 'absolute',
+                        bottom: 20, // adjust spacing
+                        left: 0,
+                        right: 0,
+                        alignItems: 'center',
+                        transform: [{  translateY:  slideUp }],
+                        },
+                    ]}
+                >
+                    <View style={Styles.teamsandConditionContainer}>
+                    <Text style={Styles.bycountuningAgreementText}>
+                        By continuing, you agree to our
+                    </Text>
+                    <Text style={Styles.teamsandConditionText}>
+                        Terms & Conditions
+                    </Text>
+                    </View>
+            
+                    <View style={Styles.teamsandConditionContainer}>
+                    <Text style={Styles.bycountuningAgreementText}>and</Text>
+                    <Text style={Styles.teamsandConditionText}>Privacy Policy</Text>
+                    </View>
+                </Animated.View>
+            )}
+          
         </>
       )}
     </ImageBackground>

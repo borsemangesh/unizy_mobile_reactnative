@@ -169,7 +169,7 @@ export const Styles = StyleSheet.create({
 
     // backgroundColor: '#000000',
   },
-  cardView: {
+ cardView: {
     //  height: '100%',
     padding: 12,
     // marginTop: 0,
@@ -461,6 +461,20 @@ export const Styles = StyleSheet.create({
     alignContent: 'center',
     paddingHorizontal: 16,
    
+  },
+
+   notLoginScreenHeader:{
+    fontFamily: 'MonumentExtended-Regular',
+    fontSize: 24,
+    color: 'white',
+    fontWeight: '400',
+    fontStyle: 'normal',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    width:'100%',
+    textAlign:'center',
+    padding:16,
   },
 
   //SignUp
