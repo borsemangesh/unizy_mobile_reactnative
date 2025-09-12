@@ -82,7 +82,11 @@ export const Styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
-    paddingTop:20
+    
+    width:'100%',
+    textAlign:'center',
+    
+    
   },
   selectlangvageCard: {
     borderRadius: 20,
@@ -170,25 +174,22 @@ export const Styles = StyleSheet.create({
     // backgroundColor: '#000000',
   },
  cardView: {
-    //  height: '100%',
-    padding: 12,
-    // marginTop: 0,
-    // width: '90%',
+ 
+    paddingTop: 15,
+    padding: 10,
+    marginTop: 0,
     borderWidth: 0.2,
     gap: 3,
     borderColor: '#ffffff3d',
     borderRadius: 16,
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.09)',
     overflow: 'hidden',
+    // backgroundColor: '#fff'
   },
   backIconRow: {
-    display: 'flex',
-    padding: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
+     padding: 12,
     borderRadius: 40,
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
@@ -197,6 +198,13 @@ export const Styles = StyleSheet.create({
     borderColor: '#ffffff2c',
     height: 48,
     width: 48,
+    position: 'absolute',
+    top: -20,
+    left: 0,
+    right: 0,
+
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   backIconRowEmpty: {
@@ -211,16 +219,7 @@ export const Styles = StyleSheet.create({
     height: 48,
     width: 48,
   },
-  //   unizyText: {
-  //     color: '#FFFFFF',
-  //     fontFamily: 'MonumentExtended-Regular',
-  //     fontSize: 24,
-  //     fontStyle: 'normal',
-  //     fontWeight: '400',
-  //     textAlign: 'center',
-  //     flex: 1,
-  //     paddingRight:24,
-  //   },
+
   emptyView: {
     display: 'flex',
     padding: 12,
@@ -455,11 +454,17 @@ export const Styles = StyleSheet.create({
   },
 
   NewtopHeader: {
-    flexDirection: 'row',
+    // flexDirection: 'row',
+    // alignItems: 'center',
+    // justifyContent: 'space-between',
+    // alignContent: 'center',
+    // paddingHorizontal: 16,
+     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     alignContent: 'center',
-    paddingHorizontal: 16,
+    padding: 16,
+    paddingTop:40,
    
   },
 
@@ -991,18 +996,7 @@ export const Styles = StyleSheet.create({
   //     borderWidth: 0.6,
   //     borderColor: '#ffffff2c',
   //   },
-  //   unizyText: {
-  //     color: '#FFFFFF',
-  //     fontFamily: 'MonumentExtended-Regular',
-  //     fontSize: 24,
-  //     fontStyle: 'normal',
-  //     fontWeight: '400',
-  //     lineHeight: 120,
-  //     textAlign: 'center',
-  //     flex: 1,
-  //     gap: 10,
-  //     paddingLeft: 24,
-  //   },
+
   //   emptyView: {
   //     display: 'flex',
   //     padding: 12,
@@ -2205,5 +2199,13 @@ export const Styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+  },
+
+  mainTemsAndConditions: {
+    position: 'absolute',
+                          bottom: 20, // adjust spacing
+                          left: 0,
+                          right: 0,
+                          alignItems: 'center',
   },
 });

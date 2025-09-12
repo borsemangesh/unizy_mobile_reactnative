@@ -1,6 +1,3 @@
-
-
-
 import { BlurView } from '@react-native-community/blur';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
@@ -118,19 +115,17 @@ const SinglePage = () => {
   //Language Screen
   const [selected, setSelected] = useState<string | null>(null);
   const [search, setSearch] = useState('');
- 
+
   const [languages, setLanguages] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
- 
- 
-   useEffect(() => {
+
+  useEffect(() => {
     (async () => {
-      setLoading(true)
+      setLoading(true);
       try {
         const res = await getRequest('user/language');
         if (res?.data) {
-          //showToast(res.message,'success')
-         const sortedLanguages = [...res.data].sort((a, b) => a.id - b.id);
+          const sortedLanguages = [...res.data].sort((a, b) => a.id - b.id);
           setLanguages(sortedLanguages);
         }
       } catch (err) {
@@ -140,38 +135,38 @@ const SinglePage = () => {
       }
     })();
   }, []);
- 
+
   const flagMap: Record<string, any> = {
-  en: require('../../../assets/images/English.png'),
-  hi: require('../../../assets/images/Indian.png'),
-  es: require('../../../assets/images/Spanish.png'),
-  fr: require('../../../assets/images/French.png'),
-  zh: require('../../../assets/images/China.png'),
-  // add others as needed
-};
- 
-const filteredLanguages = languages
-  .map(lang => ({
-    code: lang.iso_code,
-    name: lang.language_name,
-    flag: flagMap[lang.iso_code] || require('../../../assets/images/English.png'),
-  }))
-  .filter(lang => lang.name.toLowerCase().includes(search.toLowerCase()));
- 
- 
-const handleLanguageSelect = async (item:Language) => {
-  try {
-    await AsyncStorage.setItem(
-      'selectedLanguage',
-      JSON.stringify({ code: item.code, name: item.name })
-    );
-     setSelected(item.code);
-     setCurrentScreen('login');
-     setcurrentScreenIninner('login');
-  } catch (err) {
-    console.log('Error saving selected language', err);
-  }
-};
+    en: require('../../../assets/images/English.png'),
+    hi: require('../../../assets/images/Indian.png'),
+    es: require('../../../assets/images/Spanish.png'),
+    fr: require('../../../assets/images/French.png'),
+    zh: require('../../../assets/images/China.png'),
+    // add others as needed
+  };
+
+  const filteredLanguages = languages
+    .map(lang => ({
+      code: lang.iso_code,
+      name: lang.language_name,
+      flag:
+        flagMap[lang.iso_code] || require('../../../assets/images/English.png'),
+    }))
+    .filter(lang => lang.name.toLowerCase().includes(search.toLowerCase()));
+
+  const handleLanguageSelect = async (item: Language) => {
+    try {
+      await AsyncStorage.setItem(
+        'selectedLanguage',
+        JSON.stringify({ code: item.code, name: item.name })
+      );
+      setSelected(item.code);
+      setCurrentScreen('login');
+      setcurrentScreenIninner('login');
+    } catch (err) {
+      console.log('Error saving selected language', err);
+    }
+  };
 
   // Login Screen
   const translateY = React.useRef(new Animated.Value(-100)).current;
@@ -183,7 +178,6 @@ const handleLanguageSelect = async (item:Language) => {
   const isFocused = useIsFocused();
 
   const sendOptinputs = useRef<Array<TextInput | null>>([]);
-
 
   const animateGreeting = () => {
     greetingOpacity.setValue(0);
@@ -252,7 +246,7 @@ const handleLanguageSelect = async (item:Language) => {
   const [slideUp1] = useState(new Animated.Value(screenHeight + 500));
 
   const cardHeight = useRef(new Animated.Value(0)).current; // start collapsed
-  const [contentHeight, setContentHeight] = useState(400);
+  const [contentHeight, setContentHeight] = useState(0);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [verifyimageLoaded, setverifyimageLoaded] = useState(false);
 
@@ -271,12 +265,15 @@ const handleLanguageSelect = async (item:Language) => {
   const [photo, setPhoto] = useState<string | null>(null);
   const [showButton, setShowButton] = useState(false);
   const scaleY = useRef(new Animated.Value(0)).current;
-const [resetusername, resetsetUsername] = useState<string>('');
+  const [resetusername, resetsetUsername] = useState<string>('');
 
-
-  const animatedHeight = useRef(new Animated.Value(400)).current; 
+  const animatedHeight = useRef(new Animated.Value(400)).current;
 
   useEffect(() => {
+    slideUp.setValue(100);
+    translateY.setValue(-100);
+    slideUp1.setValue(screenHeight);
+    resetPasswordtranslateY.setValue(-300);
     if (photo) {
       setShowButton(true);
       Animated.timing(scaleY, {
@@ -305,11 +302,7 @@ const [resetusername, resetsetUsername] = useState<string>('');
     }
 
     if (currentScreen === 'login') {
-        cardHeight.setValue(0);
-        slideUp.setValue(100);
-        translateY.setValue(-100);
-        slideUp1.setValue(screenHeight);
-        resetPasswordtranslateY.setValue(-300);
+        
 
       Animated.timing(slideUp1, {
         toValue: 0, // move to top
@@ -317,6 +310,13 @@ const [resetusername, resetsetUsername] = useState<string>('');
         easing: Easing.out(Easing.exp),
         useNativeDriver: true,
       }).start();
+
+      Animated.timing(loginTranslateY, {
+      toValue: 0, // slide into place
+      duration: 1000,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: true,
+    }).start();
 
       Animated.timing(translateY, {
         toValue: 0,
@@ -326,12 +326,7 @@ const [resetusername, resetsetUsername] = useState<string>('');
       }).start();
 
       Animated.parallel([
-        Animated.timing(cardHeight, {
-          toValue: contentHeight, // fallback until measured
-          duration: 600,
-          easing: Easing.out(Easing.ease),
-          useNativeDriver: false, // height can't use native driver
-        }),
+      
         Animated.timing(slideUp, {
           toValue: 0,
           duration: 600,
@@ -402,7 +397,7 @@ const [resetusername, resetsetUsername] = useState<string>('');
 
       if (currentScreen === 'login' && currentScreenIninner === 'login') {
 
-        cardHeight.setValue(0);
+
         slideUp.setValue(100);
         translateY.setValue(-100);
         Animated.parallel([
@@ -420,20 +415,6 @@ const [resetusername, resetsetUsername] = useState<string>('');
         }),
         ]).start();
     
-        Animated.sequence([
-        Animated.timing(cardHeight, {
-            toValue: 250, // shrink target
-            duration: 1000,
-            easing: Easing.out(Easing.ease),
-            useNativeDriver: false,
-        }),
-        Animated.spring(cardHeight, {
-            toValue: 255, // overshoot a bit
-            friction: 4,
-            tension: 120,
-            useNativeDriver: false,
-        }),
-        ]).start();
       }
 
       const interval = setInterval(() => {
@@ -447,7 +428,6 @@ const [resetusername, resetsetUsername] = useState<string>('');
         clearInterval(interval);
         unizyTranslateY.stopAnimation();
         slideUp.stopAnimation();
-        cardHeight.stopAnimation();
       };
     }, []),
   );
@@ -759,10 +739,10 @@ const otpverify = async () => {
  
   const otpValue = otp.join('');
  
-  if (otpValue.length < 4 || otp.includes('')) {
-    showToast("Please enter all 4 digits of the OTP", 'error');
-    return;
-  }
+  // if (otpValue.length < 4 || otp.includes('')) {
+  //   showToast("Please enter all 4 digits of the OTP", 'error');
+  //   return;
+  // }
   try {
     const otp_id = await AsyncStorage.getItem('otp_id');
  
@@ -920,10 +900,10 @@ const veryfyhandleChange = (text: string, index: number) => {
   const submitotp = async () => {
   const otpValue = otp1.join('');
  
-  if (otpValue.length < 4 || otp1.includes('')) {
-   showToast("Please enter all 4 digits of the OTP", 'error');
-    return;
-  }
+  // if (otpValue.length < 4 || otp1.includes('')) {
+  //  showToast("Please enter all 4 digits of the OTP", 'error');
+  //   return;
+  // }
  
   try {
     const otp_id = await AsyncStorage.getItem('otp_id');
@@ -1096,36 +1076,52 @@ const handleSelectImage = async () => {
 
 
 
-// Animations
-const loginTranslateY = useRef(new Animated.Value(Dimensions.get('window').height)).current;
-const ClickFPGoBack_slideOutToTop = (onFinish?: () => void) => {
-  Animated.timing(resetPasswordtranslateY, {
-    toValue: -Dimensions.get('window').height, // slide up out of screen
-    duration: 1000,
-    easing: Easing.out(Easing.ease),
-    useNativeDriver: true,
-  }).start(() => {
-    if (onFinish) onFinish();
-  });
+  // Animations
+  const loginTranslateY = useRef(
+    new Animated.Value(Dimensions.get('window').height),
+  ).current;
+  const ClickFPGoBack_slideOutToTop = (onFinish?: () => void) => {
+    Animated.timing(resetPasswordtranslateY, {
+      toValue: -Dimensions.get('window').height, 
+      duration: 1000,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: true,
+    }).start(() => {
+      if (onFinish) onFinish();
+    });
 
-  Animated.timing(loginTranslateY, {
+    Animated.timing(loginTranslateY, {
       toValue: 0, // slide into place
       duration: 1000,
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
-}).start();
-};
+    }).start();
+  };
 
-const goToForgotPassword = () => {
-  Animated.timing(loginTranslateY, {
-    toValue: Dimensions.get('window').height, // slide down off screen
-    duration: 1000,
-    easing: Easing.in(Easing.ease),
-    useNativeDriver: true,
-  }).start(() => {
-    // after animation completes, switch screen
-    setcurrentScreenIninner('forgotpassword');
-  });
+  const goToForgotPassword = () => {
+
+    // loginTranslateY
+
+    Animated.timing(loginTranslateY, {
+      toValue: Dimensions.get('window').height, // slide down off screen
+      duration: 1000,
+      easing: Easing.in(Easing.ease),
+      useNativeDriver: true,
+    }).start(() => {      
+      setCurrentScreen('login');
+      setcurrentScreenIninner('forgotpassword');
+    });
+  };
+
+
+
+const animateCardHeight = (toValue: number) => {
+  Animated.timing(cardHeight, {
+    toValue,
+    duration: 600,
+    easing: Easing.bezier(0.42, 0, 0.58, 1),
+    useNativeDriver: false, 
+  }).start();
 };
 
 
@@ -1225,55 +1221,64 @@ const goToForgotPassword = () => {
               </View>
 
               <View style={selectlang_styles.listContainer}>
-                  <FlatList
-                        contentContainerStyle={selectlang_styles.listContent}
-                        style={selectlang_styles.flatListStyle}
-                        data={filteredLanguages}
-                        keyExtractor={item => item.code}
-                        renderItem={({ item }) => (
-                    
+                <FlatList
+                  contentContainerStyle={selectlang_styles.listContent}
+                  style={selectlang_styles.flatListStyle}
+                  data={filteredLanguages}
+                  keyExtractor={item => item.code}
+                  renderItem={({ item }) => (
                     <TouchableOpacity
-                    style={selectlang_styles.languageItem}
-                    onPress={() => 
-                    handleLanguageSelect(item)
-                    }>
-                    <View
-                        style={{
-                        display: 'flex',
-                        paddingTop: 10,
-                        paddingBottom: 12,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        width: '100%',
-                        }}
+                      style={selectlang_styles.languageItem}
+                      onPress={() => handleLanguageSelect(item)}
                     >
-                        <View
+                      <View
                         style={{
+                          display: 'flex',
+                          paddingTop: 10,
+                          paddingBottom: 12,
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          width: '100%',
+                        }}
+                      >
+                        <View
+                          style={{
                             flexDirection: 'row',
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             width: '100%',
-                        }}
+                          }}
                         >
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Image source={item.flag} style={selectlang_styles.flag} />
-                            <Text style={selectlang_styles.languageText}>{item.name}</Text>
-                        </View>
-                        <View>
-                            <View style={selectlang_styles.radioButton_round}>
-                            <View
-                                style={[
-                                selectlang_styles.radioButton,
-                                selected === item.code && selectlang_styles.radioButtonSelected,
-                                ]}
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Image
+                              source={item.flag}
+                              style={selectlang_styles.flag}
                             />
+                            <Text style={selectlang_styles.languageText}>
+                              {item.name}
+                            </Text>
+                          </View>
+                          <View>
+                            <View style={selectlang_styles.radioButton_round}>
+                              <View
+                                style={[
+                                  selectlang_styles.radioButton,
+                                  selected === item.code &&
+                                    selectlang_styles.radioButtonSelected,
+                                ]}
+                              />
                             </View>
+                          </View>
                         </View>
-                        </View>
-                    </View>
+                      </View>
                     </TouchableOpacity>
-                        )}
-                    />
+                  )}
+                />
               </View>
             </Animated.View>
           </View>
@@ -1281,90 +1286,50 @@ const goToForgotPassword = () => {
       )}
       {currentScreen === 'login' && (
         <>
-          {/* {currentScreenIninner === 'login' && (
+          <Animated.View
+            style={[
+              Styles.NewtopHeader,
+              currentScreenIninner === 'login'
+                  ? { transform: [{ translateY: translateY }] }
+                  : {}, // no animation outside login
+              ]}  
+          >
+            {currentScreenIninner === 'login' && (
+            <TouchableOpacity
+              onPress={() => {
+                setCurrentScreen('language');
+              }}
+            >
+              <View style={[Styles.backIconRow]}>
+                <Image
+                  source={require('../../../assets/images/back.png')}
+                  style={{ height: 24, width: 24 }}
+                />
+              </View>
+            </TouchableOpacity>
+            )}
+            <Text style={Styles.unizyText}>UniZy</Text>
+          </Animated.View>
+          <View style={{ width: '100%',height: '100%', paddingLeft: 16, paddingRight: 16 ,paddingTop: 16,  }} >
             <Animated.View
-              style={[
-                Styles.NewtopHeader,
-                { transform: [{ translateY: translateY }]},
-              ]}
+              style={[Styles.cardView, { minHeight: cardHeight.interpolate({
+                inputRange: [0, 0.5, 1],
+                outputRange: ['0%', '20%', '20%'],
+                extrapolate: 'clamp',
+              }) }]}
             >
-              <TouchableOpacity
-                onPress={() => {
-                  setCurrentScreen('language');
-                }}
-              >
-                <View style={[Styles.backIconRow,{}]}>
-                  <Image
-                    source={require('../../../assets/images/back.png')}
-                    style={{ height: 24, width: 24 }}
-                  />
-                </View>
-              </TouchableOpacity>
-              <Text style={Styles.unizyText}>UniZy</Text>
-              <View style={Styles.emptyView}></View>
-            </Animated.View>
-          )}
-
-          {currentScreenIninner !== 'login' && (
-            <Animated.View
-              style={[
-                Styles.NewtopHeader,
-                // { transform: [{ translateY: translateY }] },
-              ]}
-            >
-              <TouchableOpacity
-                onPress={() => {
-                  setCurrentScreen('language');
-                }}
-              >
-                <View style={[Styles.backIconRow, { display: 'none' }]}>
-                  <Image
-                    source={require('../../../assets/images/back.png')}
-                    style={{ height: 24, width: 24 }}
-                  />
-                </View>
-              </TouchableOpacity>
-              <Text style={Styles.notLoginScreenHeader}>UniZy</Text>
-              <View style={[Styles.emptyView, { display: 'none' }]}></View>
-            </Animated.View>
-          )} */}
- <Animated.View
-              style={[
-                Styles.NewtopHeader,
-                { transform: [{ translateY: translateY }]},
-              ]}
-            >
-              <TouchableOpacity
-                onPress={() => {
-                  setCurrentScreen('language');
-                }}
-              >
-                <View style={[Styles.backIconRow,{}]}>
-                  <Image
-                    source={require('../../../assets/images/back.png')}
-                    style={{ height: 24, width: 24 }}
-                  />
-                </View>
-              </TouchableOpacity>
-              <Text style={Styles.unizyText}>UniZy</Text>
-              <View style={Styles.emptyView}></View>
-            </Animated.View>
-          <View style={{ width: '100%', paddingLeft: 16, paddingRight: 16 }}>
-            <Animated.View
-              style={[Styles.cardView, { minHeight: contentHeight }]}
-            >
-              <View
-                // onLayout={e => {
-                //         const { height } = e.nativeEvent.layout;
-                //         setContentHeight(height); 
-                //     }}
-                
-              >
+           
+               <View
+                  onLayout={e => {
+                    const { height } = e.nativeEvent.layout;
+                    animateCardHeight(height); // animate to new child height
+                  }}
+                >
                 {/* Show Login Screen */}
                 {currentScreenIninner === 'login' && (
                   <>
                     <Animated.View
-                    //   style={{ transform: [{ translateY: loginTranslateY }] }}
+                      style={{ transform: [{ translateY: loginTranslateY }] }}
                     >
                       <BlurView blurType="light" blurAmount={15} />
                       <LinearGradient
@@ -1394,36 +1359,18 @@ const goToForgotPassword = () => {
                           onChangeText={passwordText =>
                             setPassword(passwordText)
                           }
-                          secureTextEntry={!isPasswordVisible}
                         />
-
-                          <TouchableOpacity
-                          onPress={() =>
-                            setIsPasswordVisible(!isPasswordVisible)
-                          }
-                        >
-                          <Image
-                            source={
-                              isPasswordVisible
-                                ? require('../../../assets/images/eyeopen.png')
-                                : require('../../../assets/images/eyecross1.png')
-                            }
-                            style={[
-                              Styles.eyeIcon,
-                              isPasswordVisible
-                                ? Styles.eyeIcon
-                                : Styles.eyeCross,
-                            ]}
-                          />
-                        </TouchableOpacity>
+                        <Image
+                          source={require('../../../assets/images/eyeopen.png')}
+                          style={Styles.eyeIcon}
+                        />
                       </View>
 
                       <Text
                         style={Styles.forgetPasswordText}
                         onPress={() => {
-                            goToForgotPassword;
-                          setCurrentScreen('login');
-                          setcurrentScreenIninner('forgotpassword');
+                          goToForgotPassword();
+                          
                         }}
                       >
                         Forgot Password?
@@ -1466,11 +1413,7 @@ const goToForgotPassword = () => {
                         >
                           <Text style={Styles.signupText}>Sign up</Text>
                         </TouchableOpacity>
-                       
                       </View>
-
-                      
-                      
                     </Animated.View>
                   </>
                 )}
@@ -1479,7 +1422,16 @@ const goToForgotPassword = () => {
                   ('forgotpassword' as typeof currentScreenIninner) && (
                   <>
                     <View style={{ width: '100%' }}>
-                      <Animated.View style={[{ gap: 10 }, { transform: [{ translateY: resetPasswordtranslateY }] }]}>
+                      <Animated.View
+                        style={[
+                          { gap: 10 },
+                          {
+                            transform: [
+                              { translateY: resetPasswordtranslateY },
+                            ],
+                          },
+                        ]}
+                      >
                         <Text style={Styles.resetTitle}>Reset Password</Text>
                         <View style={Styles.privacyContainer}>
                           <Text style={Styles.termsText}>
@@ -1501,17 +1453,16 @@ const goToForgotPassword = () => {
                             keyboardType="email-address"
                             autoCapitalize="none"
                             autoCorrect={false}
-                             onChangeText={usernameText =>
-                            resetsetUsername(usernameText)
-                          }
+                            onChangeText={validateEmail}
                           />
                         </View>
 
                         <TouchableOpacity
                           style={Styles.loginButton}
-                          onPress={
-                            handleSendResetLink
-                        }
+                          onPress={() => {
+                            handleSendResetLink();
+                            setShowPopup(true);
+                          }}
                         >
                           <Text style={Styles.loginText}>Send Reset Link</Text>
                         </TouchableOpacity>
@@ -1519,9 +1470,12 @@ const goToForgotPassword = () => {
                         <TouchableOpacity
                           onPress={() => {
                             ClickFPGoBack_slideOutToTop(() => {
-                                setCurrentScreen('login');
-                                setcurrentScreenIninner('login');
-                                resetPasswordtranslateY.setValue(0); // reset for next time
+
+                             
+
+                              resetPasswordtranslateY.setValue(0); // reset for next time
+                              setCurrentScreen('login');
+                              setcurrentScreenIninner('login');
                             });
                           }}
                         >
@@ -1554,7 +1508,12 @@ const goToForgotPassword = () => {
                               ]}
                             />
 
-                            <View style={[Styles.popupContainer,{width: width * 0.85}]}>
+                            <View
+                              style={[
+                                Styles.popupContainer,
+                                { width: width * 0.85 },
+                              ]}
+                            >
                               <Image
                                 source={require('../../../assets/images/success_icon.png')}
                                 style={Styles.logo}
@@ -1562,8 +1521,8 @@ const goToForgotPassword = () => {
                               />
                               <Text style={Styles.termsText1}>
                                 A password reset link has been sent to your
-                                personal email. Please check your inbox (or
-                                spam folder) to continue.
+                                personal email. Please check your inbox (or spam
+                                folder) to continue.
                               </Text>
 
                               <TouchableOpacity
@@ -1593,9 +1552,9 @@ const goToForgotPassword = () => {
                       style={[
                         { width: '100%', alignItems: 'center' },
                         {
-                           // transform: [{ translateY: slideAnim }],
-                            //transform: [{ translateY: translateY }],
-                            //opacity,
+                          // transform: [{ translateY: slideAnim }],
+                          //transform: [{ translateY: translateY }],
+                          //opacity,
                         },
                       ]}
                     >
@@ -1635,7 +1594,10 @@ const goToForgotPassword = () => {
                           maxLength={6}
                           //keyboardType="numeric"
                           onChangeText={text => {
-                          const alphanumericText = text.replace(/[^a-zA-Z0-9]/g, '');
+                            const alphanumericText = text.replace(
+                              /[^a-zA-Z0-9]/g,
+                              '',
+                            );
                             setPostalCode(alphanumericText);
                           }}
                         />
@@ -1726,7 +1688,7 @@ const goToForgotPassword = () => {
                             }
                             style={[
                               Styles.eyeIcon,
-                              isConfirmPasswordVisible
+                              isPasswordVisible
                                 ? Styles.eyeIcon
                                 : Styles.eyeCross,
                             ]}
@@ -1767,205 +1729,7 @@ const goToForgotPassword = () => {
                           <Text style={Styles.signupPrompt1}>Login</Text>
                         </TouchableOpacity>
                       </View>
-                      {/* </Animated.View> */}
 
-                      <Animated.View
-                        style={[
-                          { width: '100%', alignItems: 'center' },
-                          { transform: [{ translateY: slideAnim }], opacity },
-                        ]}
-                      >
-                        <View style={Styles.nameRow}>
-                          <View style={Styles.login_container1}>
-                            <TextInput
-                              style={Styles.personalEmailID_TextInput1}
-                              placeholder="First Name"
-                              placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                              value={firstName}
-                              onChangeText={text =>
-                                /^[A-Za-z ]*$/.test(text) && setFirstName(text)
-                              }
-                              maxLength={20}
-                            />
-                          </View>
-
-                          <View style={Styles.login_container1}>
-                            <TextInput
-                              style={Styles.personalEmailID_TextInput1}
-                              placeholder="Last Name"
-                              placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                              value={lastName}
-                              onChangeText={text =>
-                                /^[A-Za-z ]*$/.test(text) && setLastName(text)
-                              }
-                            />
-                          </View>
-                        </View>
-
-                        <View style={Styles.login_container}>
-                          <TextInput
-                            style={Styles.personalEmailID_TextInput}
-                            placeholder="Postal Code"
-                            placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                            value={postalCode}
-                            maxLength={6}
-                          //keyboardType="numeric"
-                          onChangeText={text => {
-                          const alphanumericText = text.replace(/[^a-zA-Z0-9]/g, '');
-                            setPostalCode(alphanumericText);
-                          }}
-                          />
-                        </View>
-
-                        <View style={Styles.password_container}>
-                          <TextInput
-                            style={Styles.password_TextInput}
-                            placeholder="Personal Email ID"
-                            placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                            value={username}
-                            maxLength={20}
-                            onChangeText={text => setsignUpUsername(text)}
-                          />
-                          <TouchableOpacity
-                            onPress={() => setShowInfo(!showInfo)}
-                          >
-                            <Image
-                              source={require('../../../assets/images/info_icon.png')}
-                              style={Styles.eyeIcon}
-                            />
-                          </TouchableOpacity>
-                        </View>
-
-                        {showInfo && (
-                          <View style={Styles.infoContainer}>
-                            <Text style={Styles.infoText}>
-                              Important: Use your personal email address for
-                              signup. Your university email will be requested
-                              separately for student verification.
-                            </Text>
-                          </View>
-                        )}
-
-                        <View style={Styles.password_container}>
-                        <TextInput
-                          style={Styles.password_TextInput}
-                          placeholder="Create Password"
-                          placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                          value={signUppassword}
-                          onChangeText={setsignUpPassword}
-                          secureTextEntry={!issignUpPasswordVisible}
-                        />
-
-                        <TouchableOpacity
-                          onPress={() =>
-                            setsignUpIsPasswordVisible(!issignUpPasswordVisible)
-                          }
-                        >
-                          <Image
-                            source={
-                              issignUpPasswordVisible
-                                ? require('../../../assets/images/eyeopen.png')
-                                : require('../../../assets/images/eyecross1.png')
-                            }
-                            style={[
-                              Styles.eyeIcon,
-                              issignUpPasswordVisible
-                                ? Styles.eyeIcon
-                                : Styles.eyeCross,
-                            ]}
-                          />
-                        </TouchableOpacity>
-                      </View>
-
-                        <View style={Styles.password_container}>
-                          <TextInput
-                            style={[
-                              Styles.password_TextInput,
-                              { color: '#fff' },
-                            ]}
-                            placeholder="Confirm Password"
-                            placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                            value={confirmPassword}
-                            onChangeText={setConfirmPassword}
-                            secureTextEntry={!isConfirmPasswordVisible}
-                          />
-
-                          <TouchableOpacity
-                            onPress={() =>
-                              setIsConfirmPasswordVisible(
-                                !isConfirmPasswordVisible,
-                              )
-                            }
-                          >
-                            <Image
-                              source={
-                                isConfirmPasswordVisible
-                                  ? require('../../../assets/images/eyeopen.png')
-                                  : require('../../../assets/images/eyecross1.png')
-                              }
-                              style={[
-                                Styles.eyeIcon,
-                                isConfirmPasswordVisible
-                                  ? Styles.eyeIcon
-                                  : Styles.eyeCross,
-                              ]}
-                            />
-                          </TouchableOpacity>
-                        </View>
-
-                        <TouchableOpacity
-                          // onPress={handleSendOTP}
-                          style={Styles.loginButton}
-                        >
-                          <Text style={Styles.loginText}>Send OTP</Text>
-                        </TouchableOpacity>
-
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            marginTop: 16,
-                          }}
-                        >
-                          <Text style={Styles.signupPrompt}>
-                            Already have an account?{' '}
-                          </Text>
-                          <TouchableOpacity
-                          //  onPress={handleLogin}
-                          >
-                            <Text style={Styles.signupPrompt1}>Login</Text>
-                          </TouchableOpacity>
-                        </View>
-                      </Animated.View>
-
-                      <View
-                        style={{
-                          width: '90%',
-                          justifyContent: 'flex-end',
-                          alignItems: 'center',
-                          flex: 1,
-                          paddingBottom: 30,
-                        }}
-                      >
-                        <View style={Styles.teamsandConditionContainer}>
-                          <Text style={Styles.bycountuningAgreementText}>
-                            By continuing, you agree to our
-                          </Text>
-                          <Text style={Styles.teamsandConditionText}>
-                            Terms & Conditions
-                          </Text>
-                        </View>
-
-                        <View style={Styles.teamsandConditionContainer}>
-                          <Text style={Styles.bycountuningAgreementText}>
-                            and
-                          </Text>
-                          <Text style={Styles.teamsandConditionText}>
-                            Privacy Policy
-                          </Text>
-                        </View>
-                      </View>
                     </Animated.View>
                   </>
                 )}
@@ -2002,7 +1766,9 @@ const goToForgotPassword = () => {
                           <View style={Styles.sendOtpprivacyContainer}>
                             <Text style={Styles.termsText}>
                               We have sent a 4-digit code to{' '}
-                              <Text style={Styles.sendOtpresendText2}>{signUpusername}</Text>
+                              <Text style={Styles.sendOtpresendText2}>
+                                {signUpusername}
+                              </Text>
                             </Text>
                           </View>
 
@@ -2010,14 +1776,14 @@ const goToForgotPassword = () => {
                             {[0, 1, 2, 3].map((_, index) => (
                               <TextInput
                                 key={index}
-                                ref={(ref) => {
-                                  inputs.current[index] = ref; 
+                                ref={ref => {
+                                  inputs.current[index] = ref;
                                 }}
                                 style={Styles.sendOtpotpBox}
                                 keyboardType="number-pad"
                                 maxLength={1}
-                                onChangeText={(text) => {
-                                const digit = text.replace(/[^0-9]/g, '');
+                                onChangeText={text => {
+                                  const digit = text.replace(/[^0-9]/g, '');
                                   handleChange(digit, index);
                                 }}
                                 value={otp[index]}
@@ -2048,9 +1814,9 @@ const goToForgotPassword = () => {
                               Didn’t receive a code?{' '}
                             </Text>
                             <TouchableOpacity onPress={handleresend}>
-                                <Text style={Styles.sendOtpresendText1}>
+                              <Text style={Styles.sendOtpresendText1}>
                                 Resend Code
-                                </Text>
+                              </Text>
                             </TouchableOpacity>
                           </View>
 
@@ -2123,7 +1889,9 @@ const goToForgotPassword = () => {
                               keyboardType="email-address"
                               autoCapitalize="none"
                               autoCorrect={false}
-                              onChangeText={usernameText => setverifyUsername(usernameText)}
+                              onChangeText={usernameText =>
+                                setverifyUsername(usernameText)
+                              }
                             />
                           </View>
 
@@ -2159,7 +1927,9 @@ const goToForgotPassword = () => {
                           <View style={Styles.verifyprivacyContainer}>
                             <Text style={Styles.verifytermsText}>
                               We have sent a 4-digit code to{' '}
-                              <Text style={Styles.resendText2}>{verifyusername}</Text>
+                              <Text style={Styles.resendText2}>
+                                {verifyusername}
+                              </Text>
                             </Text>
                           </View>
 
@@ -2167,17 +1937,17 @@ const goToForgotPassword = () => {
                             {[0, 1, 2, 3].map((_, index) => (
                               <TextInput
                                 key={index}
-                                ref={(ref) => {
+                                ref={ref => {
                                   verifyinputs.current[index] = ref;
                                 }}
                                 style={Styles.verifyotpBox}
                                 keyboardType="number-pad"
                                 maxLength={1}
-                                onChangeText={(text) => {
+                                onChangeText={text => {
                                   const digit = text.replace(/[^0-9]/g, '');
                                   veryfyhandleChange(digit, index);
                                 }}
-                                value={otp1[index]}  
+                                value={otp1[index]}
                                 returnKeyType="next"
                                 textAlign="center"
                                 secureTextEntry={true}
@@ -2187,22 +1957,21 @@ const goToForgotPassword = () => {
 
                           <TouchableOpacity
                             style={Styles.verifyloginButton1}
-                            onPress={submitotp}>
+                            onPress={submitotp}
+                          >
                             <Text style={Styles.loginText}>
                               Verify & Continue
                             </Text>
                           </TouchableOpacity>
 
-                          <View
-                            style={{ flexDirection: 'row', marginTop: 6 }}
-                          >
+                          <View style={{ flexDirection: 'row', marginTop: 6 }}>
                             <Text style={Styles.verifyresendText}>
                               Didn’t receive a code?{' '}
                             </Text>
                             <TouchableOpacity onPress={resubmitotp}>
-                                <Text style={Styles.verifyresendText1}>
+                              <Text style={Styles.verifyresendText1}>
                                 Resend Code
-                                </Text>
+                              </Text>
                             </TouchableOpacity>
                           </View>
 
@@ -2285,7 +2054,8 @@ const goToForgotPassword = () => {
 
                               <TouchableOpacity
                                 style={Styles.profilecameraButton}
-                                onPress={handleSelectImage}>
+                                onPress={handleSelectImage}
+                              >
                                 <Image
                                   source={require('../../../assets/images/new_camera_icon.png')}
                                   style={Styles.profilecameraIcon}
@@ -2351,7 +2121,12 @@ const goToForgotPassword = () => {
                           ]}
                         />
 
-                        <View style={[Styles.profilepopupContainer,{width: width * 0.85}]}>
+                        <View
+                          style={[
+                            Styles.profilepopupContainer,
+                            { width: width * 0.85 },
+                          ]}
+                        >
                           <Image
                             source={require('../../../assets/images/success_icon.png')}
                             style={Styles.profilelogo1}
@@ -2384,60 +2159,55 @@ const goToForgotPassword = () => {
               </View>
             </Animated.View>
             {/* Indecator */}
-            {currentScreenIninner !== ('login' as typeof currentScreenIninner) 
-            &&currentScreenIninner !== ('forgotpassword' as typeof currentScreenIninner)&& (
-              <View style={Styles.stepIndicatorContainer}>
-                {[0, 1, 2, 3].map(index =>
-                  index === stepIndex ? (
-                    <LinearGradient
-                      key={index}
-                      colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0.5)']}
-                      style={Styles.stepCircle}
-                    />
-                  ) : (
-                    <View
-                      key={index}
-                      style={[Styles.stepCircle, Styles.inactiveStepCircle]}
-                    />
-                  ),
-                )}
-              </View>
-            )}
+            {currentScreenIninner !==
+              ('login' as typeof currentScreenIninner) &&
+              currentScreenIninner !==
+                ('forgotpassword' as typeof currentScreenIninner) && (
+                <View style={Styles.stepIndicatorContainer}>
+                  {[0, 1, 2, 3].map(index =>
+                    index === stepIndex ? (
+                      <LinearGradient
+                        key={index}
+                        colors={[
+                          'rgba(255,255,255,1)',
+                          'rgba(255,255,255,0.5)',
+                        ]}
+                        style={Styles.stepCircle}
+                      />
+                    ) : (
+                      <View
+                        key={index}
+                        style={[Styles.stepCircle, Styles.inactiveStepCircle]}
+                      />
+                    ),
+                  )}
+                </View>
+              )}
             {/* Teams and codition */}
-     
-          
-            
-        </View>
-        {currentScreenIninner === ('login' as typeof currentScreenIninner) ||
-        currentScreenIninner === ('forgotpassword' as typeof currentScreenIninner) && (
-               <Animated.View
-                    style={[
-                        {
-                        position: 'absolute',
-                        bottom: 20, // adjust spacing
-                        left: 0,
-                        right: 0,
-                        alignItems: 'center',
-                        transform: [{  translateY:  slideUp }],
-                        },
-                    ]}
-                >
-                    <View style={Styles.teamsandConditionContainer}>
+          </View>
+         
+
+            {(currentScreenIninner === 'login' || currentScreenIninner === 'forgotpassword' || currentScreenIninner === 'signup') && (
+                <Animated.View
+                  style={[Styles.mainTemsAndConditions,currentScreenIninner === 'login'
+                  ? { transform: [{ translateY: slideUp }] }
+                  : {}, // no animation outside login
+              ]}>
+                  <View style={Styles.teamsandConditionContainer}>
                     <Text style={Styles.bycountuningAgreementText}>
-                        By continuing, you agree to our
+                      By continuing, you agree to our
                     </Text>
                     <Text style={Styles.teamsandConditionText}>
-                        Terms & Conditions
+                      Terms & Conditions
                     </Text>
-                    </View>
-            
-                    <View style={Styles.teamsandConditionContainer}>
+                  </View>
+
+                  <View style={Styles.teamsandConditionContainer}>
                     <Text style={Styles.bycountuningAgreementText}>and</Text>
                     <Text style={Styles.teamsandConditionText}>Privacy Policy</Text>
-                    </View>
+                  </View>
                 </Animated.View>
-            )}
-          
+              )}
         </>
       )}
     </ImageBackground>
