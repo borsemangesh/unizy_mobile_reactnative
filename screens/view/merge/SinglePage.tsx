@@ -265,7 +265,10 @@ const SinglePage = () => {
   const [photo, setPhoto] = useState<string | null>(null);
   const [showButton, setShowButton] = useState(false);
   const scaleY = useRef(new Animated.Value(0)).current;
-  const [resetusername, resetsetUsername] = useState<string>('');
+const [resetusername, resetsetUsername] = useState<string>('');
+
+const [username1, setUsername1] = useState<string>('');
+
 
   const animatedHeight = useRef(new Animated.Value(400)).current;
 
@@ -466,57 +469,51 @@ const SinglePage = () => {
     }
   };
  
- const handleSendResetLink = async () => {
-    //  if (!resetusername) {
-    //      showToast("Please fill all required fields", 'error');
-    //      return;
-    //    }
-     
-    //     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    //      if (!emailRegex.test(resetusername)) {
-    //        showToast("Please enter a valid email address", 'error');
-    //        return;
-    //      }
- 
-   //   try {
- 
-   //   const url = MAIN_URL.baseUrl+'user/student-email'
- 
-   //   const res = await fetch(url, {
-   //     method: 'POST',
-   //     headers: {
-   //       'Content-Type': 'application/json',
-   //     },
-   //     body: JSON.stringify({
-   //       student_email: username,
-   //       temp_user_id: Number(await AsyncStorage.getItem('temp_user_id')) || undefined
-   //     }),
-   //   });
- 
-   //   const data = await res.json();
-   //   console.log('Send OTP Response:', data);
- 
-   //   if (data?.statusCode === 200) {
-   //     await AsyncStorage.setItem('temp_user_id', data.data.temp_user_id.toString());
-   //     await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
-   //     await AsyncStorage.setItem('signupUsername', username);
- 
-      //  showToast(data.message, 'success');
-      //resetsetUsername('')
-     
-   //   } else {
-     //  showToast(data?.message || 'Failed to send OTP', 'error');
-   //   }
-   // } 
-   // catch (err) {
-   //   console.error('Error sending OTP:', err);
-   //showToast('Something went wrong', 'error');
-   // }
- 
+const handleSendResetLink = async () => {
+  if (!username1) {
+    showToast("Please fill all required fields", 'error');
+    return;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(username1)) {
+    showToast("Please enter a valid email address", 'error');
+    return;
+  }
+
+  try {
+    const url = MAIN_URL.baseUrl + 'user/forgot-password';
+
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: username1 }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      // Show toast
+      showToast(data.message || "Password reset link sent", 'success');
+
+      // Optional: show popup after 500ms so toast appears first
+      setTimeout(() => {
+        setShowPopup(true);
+      }, 500);
+      setUsername1('')
+    } else {
+      showToast(data.message || "Something went wrong", 'error');
+    }
     
-     setShowPopup(true);
- 
-   };
+  } catch (error) {
+    console.error("Error sending reset link:", error);
+    showToast("Network error, please try again", 'error');
+  }
+};
+
+
  
 //login
  
@@ -654,6 +651,10 @@ const loginapi = async () => {
 
 
   const handleSendOTP = async () => {
+
+   // setCurrentScreen('login');
+   //   setcurrentScreenIninner('sendOTP');
+
   if (!firstName || !lastName || !signUpusername || !signUppassword || !confirmPassword) {
     showToast("Please fill all required fields", 'error');
     return;
@@ -709,7 +710,8 @@ const loginapi = async () => {
       //ToastAndroid.show(data.message || 'Signup failed', ToastAndroid.SHORT);
       showToast(data.message || 'Signup failed', 'error')
     }
-  } catch (err) {
+  } 
+  catch (err) {
     console.log('Error sending signup request:', err);
     showToast('Failed to send OTP', 'error');
   }
@@ -736,6 +738,11 @@ const handleChange = (text: string, index: number) => {
  
 const otpverify = async () => {
  
+
+   setCurrentScreen('login');
+      setcurrentScreenIninner('verify');
+       setShowOtp(false);
+      setverifyimageLoaded(true);
  
   const otpValue = otp.join('');
  
@@ -850,54 +857,61 @@ const veryfyhandleChange = (text: string, index: number) => {
 };
  
    const verifyOTP = async () => {
-  if (!verifyusername) {
-    showToast("Please fill all required fields", 'error');
-    return;
-  }
+
+  setShowOtp(true);
+
+  // if (!verifyusername) {
+  //   showToast("Please fill all required fields", 'error');
+  //   return;
+  // }
  
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(verifyusername)) {
-    showToast("Please enter a valid email address", 'error');
-    return;
-  }
+  // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  // if (!emailRegex.test(verifyusername)) {
+  //   showToast("Please enter a valid email address", 'error');
+  //   return;
+  // }
  
-  try {
+  // try {
  
-    const url = MAIN_URL.baseUrl+'user/student-email'
+  //   const url = MAIN_URL.baseUrl+'user/student-email'
  
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        student_email: verifyusername,
-        temp_user_id: Number(await AsyncStorage.getItem('temp_user_id')) || undefined
-      }),
-    });
+  //   const res = await fetch(url, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({
+  //       student_email: verifyusername,
+  //       temp_user_id: Number(await AsyncStorage.getItem('temp_user_id')) || undefined
+  //     }),
+  //   });
  
-    const data = await res.json();
-    console.log('Send OTP Response:', data);
+  //   const data = await res.json();
+  //   console.log('Send OTP Response:', data);
  
-    if (data?.statusCode === 200) {
-      await AsyncStorage.setItem('temp_user_id', data.data.temp_user_id.toString());
-      await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
-      await AsyncStorage.setItem('signupUsername', verifyusername);
+  //   if (data?.statusCode === 200) {
+  //     await AsyncStorage.setItem('temp_user_id', data.data.temp_user_id.toString());
+  //     await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
+  //     await AsyncStorage.setItem('signupUsername', verifyusername);
  
-      showToast(data.message, 'success');
-      setShowOtp(true);
-      //startAnimation();
-    } else {
-      showToast(data?.message || 'Failed to send OTP', 'error');
-    }
-  } catch (err) {
-    console.error('Error sending OTP:', err);
-    showToast('Something went wrong','error');
-  }
+  //     showToast(data.message, 'success');
+  //     setShowOtp(true);
+  //     //startAnimation();
+  //   } else {
+  //     showToast(data?.message || 'Failed to send OTP', 'error');
+  //   }
+  // } 
+  // catch (err) {
+  //   console.error('Error sending OTP:', err);
+  //   showToast('Something went wrong','error');
+  // }
 };
  
  
   const submitotp = async () => {
+
+    setCurrentScreen('login');
+    setcurrentScreenIninner('profile');
   const otpValue = otp1.join('');
  
   // if (otpValue.length < 4 || otp1.includes('')) {
@@ -905,54 +919,55 @@ const veryfyhandleChange = (text: string, index: number) => {
   //   return;
   // }
  
-  try {
-    const otp_id = await AsyncStorage.getItem('otp_id');
-    if (!otp_id) {
-      showToast("OTP ID missing. Please request OTP again.", 'error');
-      return;
-    }
+  // try {
+  //   const otp_id = await AsyncStorage.getItem('otp_id');
+  //   if (!otp_id) {
+  //     showToast("OTP ID missing. Please request OTP again.", 'error');
+  //     return;
+  //   }
    
-    const url = MAIN_URL.baseUrl+'user/student-otpverify'
+  //   const url = MAIN_URL.baseUrl+'user/student-otpverify'
  
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        otp_id: Number(otp_id),
-        otp: otpValue,
-      }),
-    });
+  //   const res = await fetch(url, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({
+  //       otp_id: Number(otp_id),
+  //       otp: otpValue,
+  //     }),
+  //   });
  
-    const data = await res.json();
-    console.log('Student OTP Verify Response:', data);
+  //   const data = await res.json();
+  //   console.log('Student OTP Verify Response:', data);
  
-    if (data?.statusCode === 200) {
-      showToast(data.message, 'success');
+  //   if (data?.statusCode === 200) {
+  //     showToast(data.message, 'success');
  
-      if (data?.data) {
-        await AsyncStorage.setItem('user_email', data.data.email || '');
-        await AsyncStorage.setItem('firstname', data.data.firstname || '');
-        await AsyncStorage.setItem('lastname', data.data.lastname || '');
-        await AsyncStorage.setItem('student_email', data.data.student_email || '');
+  //     if (data?.data) {
+  //       await AsyncStorage.setItem('user_email', data.data.email || '');
+  //       await AsyncStorage.setItem('firstname', data.data.firstname || '');
+  //       await AsyncStorage.setItem('lastname', data.data.lastname || '');
+  //       await AsyncStorage.setItem('student_email', data.data.student_email || '');
  
-        if (data?.data?.token?.access_token) {
-          await AsyncStorage.setItem('access_token', data.data.token.access_token);
-        }
-      }
+  //       if (data?.data?.token?.access_token) {
+  //         await AsyncStorage.setItem('access_token', data.data.token.access_token);
+  //       }
+  //     }
  
-      setCurrentScreen('login');
-      setcurrentScreenIninner('profile');
+  //     setCurrentScreen('login');
+  //     setcurrentScreenIninner('profile');
  
      
-    } else {
-      showToast(data?.message || 'OTP verification failed', 'error');
-    }
-  } catch (err) {
-    console.error('Error verifying OTP:', err);
-    showToast('Something went wrong', 'error');
-  }
+  //   } else {
+  //     showToast(data?.message || 'OTP verification failed', 'error');
+  //   }
+  // } 
+  // catch (err) {
+  //   console.error('Error verifying OTP:', err);
+  //   showToast('Something went wrong', 'error');
+  // }
 };
  
 const resubmitotp = async () =>{
@@ -1068,6 +1083,36 @@ const handleSelectImage = async () => {
   );
 };
 
+
+const setprofile = async () => {
+   setShowPopup(true);
+    // try {
+    //   if (photo) {
+    //     const response = await fetch(photo);
+    //     const blob = await response.blob();
+
+    //     const url = MAIN_URL.baseUrl+'YOUR_ADD_PROFILE_API_URL'
+
+    //     const uploadResponse = await fetch(url, {
+    //       method: 'POST',
+    //       headers: { 'Content-Type': blob.type },
+    //       body: blob,
+    //     });
+
+    //     const data = await uploadResponse.json();
+    //     if (uploadResponse.ok) {
+    //       console.log('Profile image uploaded:', data);
+    //     } else {
+    //       console.warn('Failed to upload profile image:', data);
+    //     }
+    //   }
+
+    //   setShowPopup(true);
+    // } catch (error) {
+    //   console.error('Error in setprofile:', error);
+    //   setShowPopup(true);
+    // }
+  };
 
 //   End Api Call Reset Password
 
@@ -1344,6 +1389,7 @@ const animateCardHeight = (toValue: number) => {
                           placeholder={'Personal Email ID'}
                           placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
                           value={username}
+                          maxLength={50}
                           onChangeText={usernameText =>
                             setUsername(usernameText)
                           }
@@ -1356,6 +1402,7 @@ const animateCardHeight = (toValue: number) => {
                           placeholder={'Password'}
                           placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
                           value={password}
+                          maxLength={20}
                           onChangeText={passwordText =>
                             setPassword(passwordText)
                           }
@@ -1448,12 +1495,14 @@ const animateCardHeight = (toValue: number) => {
                             ]}
                             placeholder="Personal Email ID"
                             placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                            value={resetusername}
+                            value={username1}
                             maxLength={50}
                             keyboardType="email-address"
                             autoCapitalize="none"
                             autoCorrect={false}
-                            onChangeText={validateEmail}
+                             onChangeText={usernameText =>
+                            setUsername1(usernameText)
+                          }
                           />
                         </View>
 
@@ -1578,6 +1627,7 @@ const animateCardHeight = (toValue: number) => {
                             placeholder="Last Name"
                             placeholderTextColor="rgba(255, 255, 255, 0.48)"
                             value={lastName}
+                            maxLength={20}
                             onChangeText={text =>
                               /^[A-Za-z ]*$/.test(text) && setLastName(text)
                             }
@@ -1609,7 +1659,7 @@ const animateCardHeight = (toValue: number) => {
                           placeholder="Personal Email ID"
                           placeholderTextColor="rgba(255, 255, 255, 0.48)"
                           value={signUpusername}
-                          maxLength={20}
+                          maxLength={50}
                           onChangeText={text => setsignUpUsername(text)}
                         />
                         <TouchableOpacity
@@ -1638,6 +1688,7 @@ const animateCardHeight = (toValue: number) => {
                           placeholder="Create Password"
                           placeholderTextColor="rgba(255, 255, 255, 0.48)"
                           value={signUppassword}
+                          maxLength={20}
                           onChangeText={setsignUpPassword}
                           secureTextEntry={!issignUpPasswordVisible}
                         />
@@ -1669,6 +1720,7 @@ const animateCardHeight = (toValue: number) => {
                           placeholder="Confirm Password"
                           placeholderTextColor="rgba(255, 255, 255, 0.48)"
                           value={confirmPassword}
+                          maxLength={20}
                           onChangeText={setConfirmPassword}
                           secureTextEntry={!isConfirmPasswordVisible}
                         />
@@ -1733,6 +1785,8 @@ const animateCardHeight = (toValue: number) => {
                     </Animated.View>
                   </>
                 )}
+
+
                 {currentScreenIninner ===
                   ('sendOTP' as typeof currentScreenIninner) && (
                   <>
@@ -2068,7 +2122,8 @@ const animateCardHeight = (toValue: number) => {
                           <TouchableOpacity
                             style={Styles.profileloginButton}
                             onPress={() => {
-                              setShowPopup(true);
+                              setprofile
+                              //setShowPopup(true);
                             }}
                           >
                             <Text style={Styles.profileloginText}>
