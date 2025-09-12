@@ -3,7 +3,7 @@ import { StatusBar, LogBox } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Navigation } from './screens/view/Navigation';
 import SplashScreen from './screens/view/Hello/SplashScreen';
-//import Toast from 'react-native-toast-message';
+import Toast from 'react-native-toast-message';
 
 
 function App() {
@@ -22,7 +22,7 @@ function App() {
         <Navigation /> 
         
       )}
-       {/* <Toast /> */}
+       <Toast />
     </SafeAreaProvider>
   );
 }

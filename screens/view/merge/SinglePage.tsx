@@ -30,6 +30,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import BackgroundAnimation from '../Hello/BackgroundAnimation';
+import { showToast } from '../../utils/toast';
 
 const greetings = [
   'Hello', // English
@@ -128,6 +129,7 @@ const SinglePage = () => {
       try {
         const res = await getRequest('user/language');
         if (res?.data) {
+          //showToast(res.message,'success')
          const sortedLanguages = [...res.data].sort((a, b) => a.id - b.id);
           setLanguages(sortedLanguages);
         }
@@ -159,10 +161,10 @@ const filteredLanguages = languages
  
 const handleLanguageSelect = async (item:Language) => {
   try {
-    // await AsyncStorage.setItem(
-    //   'selectedLanguage',
-    //   JSON.stringify({ code: item.code, name: item.name })
-    // );
+    await AsyncStorage.setItem(
+      'selectedLanguage',
+      JSON.stringify({ code: item.code, name: item.name })
+    );
      setSelected(item.code);
      setCurrentScreen('login');
      setcurrentScreenIninner('login');
@@ -491,18 +493,81 @@ const [resetusername, resetsetUsername] = useState<string>('');
  
 //login
  
+// const loginapi = async () => {
+//   if (!username || !password) {
+//     showToast('Please fill all required fields','error')
+//     return;
+//   }
+ 
+//   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+//   if (!emailRegex.test(username)) {
+//     showToast('Please enter a valid email address','error')
+//     return;
+//   }
+//   setLoading(true);
+//   try {
+//     const response = await fetch(MAIN_URL.baseUrl + 'user/login', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({
+//         email: username,
+//         password: password,
+//       }),
+//     });
+ 
+//     if (!response.ok) {
+//       const errorText = await response.text();
+//       setLoading(false)
+//       //throw new Error(`Login failed: ${errorText}`);
+//     }
+ 
+//     const result = await response.json();
+//     console.log('Login response:', JSON.stringify(result, null, 2));
+ 
+//     setLoading(false)
+//     const token = result?.data?.token;
+//     const user = result?.data?.user;
+ 
+//     if (token && user) {
+//       // Save token & user
+//       await AsyncStorage.setItem('userToken', token);
+//       await AsyncStorage.setItem('userData', JSON.stringify(user));
+ 
+//      // ToastAndroid.show("Login successful", ToastAndroid.SHORT);
+//      showToast('Login successful','success')
+//       setUsername('')
+//       setPassword('')
+ 
+//       // Navigate to Home or Dashboard
+//       //navigation.replace('HomeScreen');
+//     } else {
+//       setLoading(false)
+//       //ToastAndroid.show('Invalid user Email or Password', ToastAndroid.SHORT);
+//       showToast('Invalid user Email or Password','error')
+      
+//     }
+//   } catch (error: any) {
+//     setLoading(false)
+//     console.error('Login error:', error);
+    
+//   }
+// };
 const loginapi = async () => {
   if (!username || !password) {
-    ToastAndroid.show("Please fill all required fields", ToastAndroid.SHORT);
+    showToast('Please fill all required fields', 'error');
     return;
   }
- 
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(username)) {
-    ToastAndroid.show("Please enter a valid email address", ToastAndroid.SHORT);
+    showToast('Please enter a valid email address', 'error');
     return;
   }
+
   setLoading(true);
+
   try {
     const response = await fetch(MAIN_URL.baseUrl + 'user/login', {
       method: 'POST',
@@ -514,60 +579,67 @@ const loginapi = async () => {
         password: password,
       }),
     });
- 
-    if (!response.ok) {
-      const errorText = await response.text();
-      setLoading(false)
-      //throw new Error(`Login failed: ${errorText}`);
+
+    // ✅ Always parse JSON (even on 400)
+    let result;
+    try {
+      result = await response.json();
+    } catch (err) {
+      setLoading(false);
+      showToast('Invalid server response', 'error');
+      return;
     }
- 
-    const result = await response.json();
+
     console.log('Login response:', JSON.stringify(result, null, 2));
- 
-    setLoading(false)
+
+    // ✅ Check statusCode from API
+    if (!response.ok || result?.statusCode !== 200) {
+      setLoading(false);
+      showToast(result?.message || 'Invalid Email or Password', 'error');
+      return;
+    }
+
+    // ✅ Success flow
     const token = result?.data?.token;
     const user = result?.data?.user;
- 
+
     if (token && user) {
-      // Save token & user
       await AsyncStorage.setItem('userToken', token);
       await AsyncStorage.setItem('userData', JSON.stringify(user));
- 
-      ToastAndroid.show("Login successful", ToastAndroid.SHORT);
-      setUsername('')
-      setPassword('')
- 
-      // Navigate to Home or Dashboard
-      //navigation.replace('HomeScreen');
+
+      showToast(result?.message || 'Login successful', 'success'); // ✅ API success message
+
+      setUsername('');
+      setPassword('');
+
+      // navigation.replace('HomeScreen');
     } else {
-      setLoading(false)
-      ToastAndroid.show('Invalid user Email or Password', ToastAndroid.SHORT);
-      //Alert.alert('Login Failed', 'Invalid credentials or missing token');
+      setLoading(false);
+      showToast('Invalid user data received', 'error');
     }
-  } catch (error: any) {
-    setLoading(false)
+  } catch (error) {
     console.error('Login error:', error);
-    //Alert.alert('Error', error.message || 'Something went wrong');
+  } finally {
+    setLoading(false);
   }
 };
- 
- 
-  //signup
- 
+
+
+
   const handleSendOTP = async () => {
   if (!firstName || !lastName || !signUpusername || !signUppassword || !confirmPassword) {
-    ToastAndroid.show("Please fill all required fields", ToastAndroid.SHORT);
+    showToast("Please fill all required fields", 'error');
     return;
   }
  
   if (signUppassword !== confirmPassword) {
-    ToastAndroid.show("Passwords do not match", ToastAndroid.SHORT);
+    showToast("Passwords do not match",'error');
     return;
   }
  
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(signUpusername)) {
-    ToastAndroid.show("Please enter a valid email address", ToastAndroid.SHORT);
+    showToast("Please enter a valid email address", 'error');
     return;
   }
  
@@ -598,7 +670,7 @@ const loginapi = async () => {
     console.log('API response:', data);
  
     if (response.status === 201) {
-      ToastAndroid.show(data.message, ToastAndroid.SHORT);
+      showToast(data.message, 'success');
  
       await AsyncStorage.setItem('tempUserId', data.data.temp_user_id.toString());
        await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
@@ -607,11 +679,12 @@ const loginapi = async () => {
       setCurrentScreen('login');
       setcurrentScreenIninner('sendOTP');
     } else {
-      ToastAndroid.show(data.message || 'Signup failed', ToastAndroid.SHORT);
+      //ToastAndroid.show(data.message || 'Signup failed', ToastAndroid.SHORT);
+      showToast(data.message || 'Signup failed', 'error')
     }
   } catch (err) {
     console.log('Error sending signup request:', err);
-    ToastAndroid.show('Failed to send OTP', ToastAndroid.SHORT);
+    showToast('Failed to send OTP', 'error');
   }
 };
  
@@ -640,14 +713,14 @@ const otpverify = async () => {
   const otpValue = otp.join('');
  
   if (otpValue.length < 4 || otp.includes('')) {
-    ToastAndroid.show("Please enter all 4 digits of the OTP", ToastAndroid.SHORT);
+    showToast("Please enter all 4 digits of the OTP", 'error');
     return;
   }
   try {
     const otp_id = await AsyncStorage.getItem('otp_id');
  
     if (!otp_id) {
-      ToastAndroid.show("OTP ID missing. Please request OTP again.", ToastAndroid.SHORT);
+      showToast("OTP ID missing. Please request OTP again.", 'error');
       return;
     }
  
@@ -670,7 +743,7 @@ const otpverify = async () => {
     if (data?.statusCode === 200) {
       await AsyncStorage.setItem('temp_user_id', data.data.temp_user_id.toString());
  
-      ToastAndroid.show(data.message, ToastAndroid.SHORT);
+      showToast(data.message, 'success');
  
       setCurrentScreen('login');
       setcurrentScreenIninner('verify');
@@ -678,12 +751,12 @@ const otpverify = async () => {
       setverifyimageLoaded(true);
  
     } else {
-      ToastAndroid.show(data?.message || 'OTP verification failed', ToastAndroid.SHORT);
+      showToast(data?.message || 'OTP verification failed', 'error');
     }
   }
   catch (err) {
     console.error(err);
-    ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
+    showToast('Something went wrong', 'error');
   }
 };
  
@@ -710,7 +783,7 @@ const handleresend = async () => {
     const data = await response.json();
     if (response.ok && data?.statusCode === 200) {
  
-      ToastAndroid.show(data.message, ToastAndroid.SHORT);
+      showToast(data.message, 'success');
  
       await AsyncStorage.setItem(
         'tempUserId',
@@ -723,7 +796,7 @@ const handleresend = async () => {
  
  
     } else {
-      console.warn('Resend OTP failed:', data?.message || 'Unknown error');
+      //console.warn('Resend OTP failed:', data?.message || 'Unknown error');
     }
   } catch (err) {
     console.error('Error resending OTP:', err);
@@ -733,7 +806,6 @@ const handleresend = async () => {
 //verify and otp
  
 const [verifyusername, setverifyUsername] = useState<string>('');
- 
  
 const [otp1, setOtp1] = useState(['', '', '', '']);
 const verifyinputs = useRef<(TextInput | null)[]>([]);
@@ -752,13 +824,13 @@ const veryfyhandleChange = (text: string, index: number) => {
  
    const verifyOTP = async () => {
   if (!verifyusername) {
-    ToastAndroid.show("Please fill all required fields", ToastAndroid.SHORT);
+    showToast("Please fill all required fields", 'error');
     return;
   }
  
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(verifyusername)) {
-    ToastAndroid.show("Please enter a valid email address", ToastAndroid.SHORT);
+    showToast("Please enter a valid email address", 'error');
     return;
   }
  
@@ -785,15 +857,15 @@ const veryfyhandleChange = (text: string, index: number) => {
       await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
       await AsyncStorage.setItem('signupUsername', verifyusername);
  
-      ToastAndroid.show(data.message, ToastAndroid.SHORT);
+      showToast(data.message, 'success');
       setShowOtp(true);
       //startAnimation();
     } else {
-      ToastAndroid.show(data?.message || 'Failed to send OTP', ToastAndroid.SHORT);
+      showToast(data?.message || 'Failed to send OTP', 'error');
     }
   } catch (err) {
     console.error('Error sending OTP:', err);
-    ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
+    showToast('Something went wrong','error');
   }
 };
  
@@ -802,14 +874,14 @@ const veryfyhandleChange = (text: string, index: number) => {
   const otpValue = otp1.join('');
  
   if (otpValue.length < 4 || otp1.includes('')) {
-    ToastAndroid.show("Please enter all 4 digits of the OTP", ToastAndroid.SHORT);
+   showToast("Please enter all 4 digits of the OTP", 'error');
     return;
   }
  
   try {
     const otp_id = await AsyncStorage.getItem('otp_id');
     if (!otp_id) {
-      ToastAndroid.show("OTP ID missing. Please request OTP again.", ToastAndroid.SHORT);
+      showToast("OTP ID missing. Please request OTP again.", 'error');
       return;
     }
    
@@ -830,7 +902,7 @@ const veryfyhandleChange = (text: string, index: number) => {
     console.log('Student OTP Verify Response:', data);
  
     if (data?.statusCode === 200) {
-      ToastAndroid.show(data.message, ToastAndroid.SHORT);
+      showToast(data.message, 'success');
  
       if (data?.data) {
         await AsyncStorage.setItem('user_email', data.data.email || '');
@@ -848,11 +920,11 @@ const veryfyhandleChange = (text: string, index: number) => {
  
      
     } else {
-      ToastAndroid.show(data?.message || 'OTP verification failed', ToastAndroid.SHORT);
+      showToast(data?.message || 'OTP verification failed', 'error');
     }
   } catch (err) {
     console.error('Error verifying OTP:', err);
-    ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
+    showToast('Something went wrong', 'error');
   }
 };
  
@@ -880,15 +952,15 @@ try {
       await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
      // await AsyncStorage.setItem('signupUsername', username);
  
-      ToastAndroid.show(data.message, ToastAndroid.SHORT);
+      showToast(data.message, 'success');
       setShowOtp(true);
       //startAnimation();
     } else {
-      ToastAndroid.show(data?.message || 'Failed to send OTP', ToastAndroid.SHORT);
+      showToast(data?.message || 'Failed to send OTP', 'error');
     }
   } catch (err) {
     console.error('Error sending OTP:', err);
-    ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
+    showToast('Something went wrong','error');
   }
 }
 //profile
@@ -1275,11 +1347,28 @@ const goToForgotPassword = () => {
                           onChangeText={passwordText =>
                             setPassword(passwordText)
                           }
+                          secureTextEntry={!isPasswordVisible}
                         />
-                        <Image
-                          source={require('../../../assets/images/eyeopen.png')}
-                          style={Styles.eyeIcon}
-                        />
+
+                          <TouchableOpacity
+                          onPress={() =>
+                            setIsPasswordVisible(!isPasswordVisible)
+                          }
+                        >
+                          <Image
+                            source={
+                              isPasswordVisible
+                                ? require('../../../assets/images/eyeopen.png')
+                                : require('../../../assets/images/eyecross1.png')
+                            }
+                            style={[
+                              Styles.eyeIcon,
+                              isPasswordVisible
+                                ? Styles.eyeIcon
+                                : Styles.eyeCross,
+                            ]}
+                          />
+                        </TouchableOpacity>
                       </View>
 
                       <Text
@@ -1589,7 +1678,7 @@ const goToForgotPassword = () => {
                             }
                             style={[
                               Styles.eyeIcon,
-                              isPasswordVisible
+                              isConfirmPasswordVisible
                                 ? Styles.eyeIcon
                                 : Styles.eyeCross,
                             ]}
@@ -1768,7 +1857,7 @@ const goToForgotPassword = () => {
                               }
                               style={[
                                 Styles.eyeIcon,
-                                isPasswordVisible
+                                isConfirmPasswordVisible
                                   ? Styles.eyeIcon
                                   : Styles.eyeCross,
                               ]}
