@@ -486,10 +486,57 @@ const [resetusername, resetsetUsername] = useState<string>('');
     }
   };
  
-  const handleSendResetLink = () => {
-    //console.log(`Send reset link to ${username}`);
-    setShowPopup(true);
-  };
+ const handleSendResetLink = async () => {
+    //  if (!resetusername) {
+    //      showToast("Please fill all required fields", 'error');
+    //      return;
+    //    }
+     
+    //     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    //      if (!emailRegex.test(resetusername)) {
+    //        showToast("Please enter a valid email address", 'error');
+    //        return;
+    //      }
+ 
+   //   try {
+ 
+   //   const url = MAIN_URL.baseUrl+'user/student-email'
+ 
+   //   const res = await fetch(url, {
+   //     method: 'POST',
+   //     headers: {
+   //       'Content-Type': 'application/json',
+   //     },
+   //     body: JSON.stringify({
+   //       student_email: username,
+   //       temp_user_id: Number(await AsyncStorage.getItem('temp_user_id')) || undefined
+   //     }),
+   //   });
+ 
+   //   const data = await res.json();
+   //   console.log('Send OTP Response:', data);
+ 
+   //   if (data?.statusCode === 200) {
+   //     await AsyncStorage.setItem('temp_user_id', data.data.temp_user_id.toString());
+   //     await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
+   //     await AsyncStorage.setItem('signupUsername', username);
+ 
+      //  showToast(data.message, 'success');
+      //resetsetUsername('')
+     
+   //   } else {
+     //  showToast(data?.message || 'Failed to send OTP', 'error');
+   //   }
+   // } 
+   // catch (err) {
+   //   console.error('Error sending OTP:', err);
+   //showToast('Something went wrong', 'error');
+   // }
+ 
+    
+     setShowPopup(true);
+ 
+   };
  
 //login
  
@@ -1454,16 +1501,17 @@ const goToForgotPassword = () => {
                             keyboardType="email-address"
                             autoCapitalize="none"
                             autoCorrect={false}
-                            onChangeText={validateEmail}
+                             onChangeText={usernameText =>
+                            resetsetUsername(usernameText)
+                          }
                           />
                         </View>
 
                         <TouchableOpacity
                           style={Styles.loginButton}
-                          onPress={() => {
-                            handleSendResetLink();
-                            setShowPopup(true);
-                          }}
+                          onPress={
+                            handleSendResetLink
+                        }
                         >
                           <Text style={Styles.loginText}>Send Reset Link</Text>
                         </TouchableOpacity>
