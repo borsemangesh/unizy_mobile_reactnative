@@ -27,6 +27,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { showToast } from '../../utils/toast';
+import BackgroundAnimation from '../Hello/BackgroundAnimation';
 
 
 
@@ -427,7 +428,7 @@ const SinglePage = () => {
         animateGreeting();
       }
 
-      if (currentScreen === 'login' && currentScreenIninner === 'login') {
+      if (currentScreen === 'login' && currentScreenIninner === 'login' || currentScreenIninner === 'signup') {
 
 
         slideUp.setValue(100);
@@ -1245,7 +1246,7 @@ const SinglePage = () => {
       style={Styles.container}
       resizeMode="cover"
     >
-      {/* <BackgroundAnimation/> */}
+      {/* <BackgroundAnimation children={undefined}/> */}
       {currentScreen === 'hello' && (
         <View style={Styles.ScreenLayout}>
           <Animated.View
@@ -1400,61 +1401,24 @@ const SinglePage = () => {
       )}
       {currentScreen === 'login' && (
         <>
-
-          {/* <View style={Styles.NewtopHeader}>
-            {currentScreenIninner === 'login' && (
-                <Animated.View>
-                    <TouchableOpacity
-                        onPress={() => {
-                          setCurrentScreen('language');
-                        }}
-                      >
-                        <View style={Styles.backIconRow}>
-                          <Image
-                            source={require('../../../assets/images/back.png')}
-                            style={{ height: 24, width: 24 }}
-                          />
-                        </View>
-                      </TouchableOpacity>
-                    </Animated.View>
-                  
-                )}
-
-                <Animated.View 
-                  style={[
-                    {width: '100%'},
-                    (currentScreenIninner === 'login' ) ? {transform: [{translateY}]}: {} ]}>
-                    <Text style={Styles.unizyText}>UniZy</Text>
-                </Animated.View>
-        </View> */}
-
-          <Animated.View
-            style={[
-              Styles.NewtopHeader,
-              (currentScreenIninner === 'login' ||
-                currentScreenIninner === 'signup' ||
-                currentScreenIninner === 'forgotpassword') ? { transform: [{ translateY }] } : {},
-            ]}
-          >
-            {currentScreenIninner === 'login' && (
-              <TouchableOpacity
-                onPress={() => {
-                  setCurrentScreen('language');
-                }}
-              >
-                <View style={Styles.backIconRow}>
-                  <Image
-                    source={require('../../../assets/images/back.png')}
-                    style={{ height: 24, width: 24 }}
-                  />
-                </View>
-              </TouchableOpacity>
-            )}
-            <Text style={Styles.unizyText}>UniZy</Text>
+         <View style={{paddingTop: 80,paddingLeft: 16,paddingRight: 16}}>
+         {currentScreenIninner === 'login' && (
+            <TouchableOpacity style={{zIndex: 1}} onPress={() => setCurrentScreen('language')}>
+              <View style={Styles.backIconRow}>
+                <Image
+                  source={require('../../../assets/images/back.png')}
+                  style={{ height: 24, width: 24 }}
+                />
+              </View>
+            </TouchableOpacity>
+         )}
+         
+          <Animated.View>
+              <Text style={Styles.unizyText}>UniZy</Text>
           </Animated.View>
-
-
-
+        
+        </View> 
+        
 
           <View style={{ width: '100%', height: '100%', paddingLeft: 16, paddingRight: 16, paddingTop: 16, }} >
             <Animated.View

@@ -12,35 +12,34 @@ const BackgroundAnimation:React.FC<Mywarpter> = ({ children }) =>
  {
   return (
 
-    <View style={{flex:1,height: '100%',}}>
+  <>
     {/* Background Animation */}
-    <View style={{position:'absolute', top:0, left:0, right:0, bottom:0,height: '100%',width:'100%'}}>
-      {/* <LottieView
+    <View style={{position:'absolute', top:0, left:0, right:0, bottom:0,}}>
+      <LottieView
         source={require('../../../assets/animations/BackgroundAnimation3.json')}
         autoPlay
         renderMode="AUTOMATIC"
         resizeMode='cover'
         loop
         style={{flex:1, backgroundColor:'transparent'}}
-      /> */}
+      />
     </View>
    
     {/* Blur & color overlay above animation */}
-    {/* <BlurView
+    <BlurView
       style={[StyleSheet.absoluteFill]}
-      blurType="dark"
+      blurType="light"
       blurAmount={55}
       
       reducedTransparencyFallbackColor="white"
-    /> */}
+    />
     <View style={[StyleSheet.absoluteFill, ]} />
    
     {/* Foreground content */}
     <View style={{flex:1}}>
       {children}
     </View>
-  </View>
-     
+    </>
   );
 };
 

@@ -25,7 +25,7 @@ export const Styles = StyleSheet.create({
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'space-between',
-    
+    paddingTop: 30,
   },
   linearGradient: {
     height: '14%',
@@ -82,10 +82,10 @@ export const Styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
-    
     width:'100%',
     textAlign:'center',
-    
+    zIndex:0,
+    bottom: 10
     
   },
   selectlangvageCard: {
@@ -175,6 +175,7 @@ export const Styles = StyleSheet.create({
   },
  cardView: {
  
+
     paddingTop: 15,
     padding: 10,
     marginTop: 0,
@@ -459,12 +460,13 @@ export const Styles = StyleSheet.create({
     // justifyContent: 'space-between',
     // alignContent: 'center',
     // paddingHorizontal: 16,
+    display: 'flex',
      flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    alignContent: 'center',
-    padding: 16,
-    paddingTop:70,
+    // alignItems: 'center',
+    // justifyContent: 'space-between',
+    // alignContent: 'center',
+    // padding: 16,
+    paddingTop:60,
    
   },
 
