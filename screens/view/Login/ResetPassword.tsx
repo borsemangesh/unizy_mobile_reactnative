@@ -12,6 +12,7 @@ import {
   Animated,
   Easing,
   Platform,
+  ToastAndroid,
 } from 'react-native';
 // import { BlurView } from '@react-native-community/blur';
 // @ts-ignore
@@ -34,19 +35,21 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
   const translateY = React.useRef(new Animated.Value(-300)).current; // small offset
   const opacity = React.useRef(new Animated.Value(1)).current;
   const slideUp = React.useRef(new Animated.Value(200)).current;
+  const [error, setError] = useState("");
+  
  
   React.useEffect(() => {
     Animated.parallel([
       Animated.timing(translateY, {
         toValue: 0,
-        duration: 600,
+        duration: 1000,
  
         easing: Easing.out(Easing.ease),
         useNativeDriver: true,
       }),
       Animated.timing(opacity, {
         toValue: 1,
-        duration: 600,
+        duration: 1000,
         easing: Easing.out(Easing.ease),
         useNativeDriver: true,
       }),
@@ -84,9 +87,22 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
     setShowPopup(true);
   };
  
-  // const handleLogin = () => {
-  //   navigation.replace('LoginScreen');  
-  // };
+  const handleLogin = () => {
+    navigation.replace('LoginScreen');
+  };
+   const validateEmail = (text: string) => {
+      setUsername(text);
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+      if (text.length === 0) {
+        setError("");
+      } else if (!emailRegex.test(text)) {
+        //setError("Please enter a valid email address");
+        ToastAndroid.show("Please enter a valid email address", ToastAndroid.SHORT);
+      } else {
+        setError("");
+      }
+    };
  
   const closePopup = () => setShowPopup(false);
  
@@ -133,11 +149,15 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
  
             <View style={styles.login_container}>
               <TextInput
-                style={styles.personalEmailID_TextInput}
+                style={[styles.personalEmailID_TextInput,{color:'#fff'}]}
                 placeholder="Personal Email ID"
                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                 value={username}
-                onChangeText={setUsername}
+                maxLength={50}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+                onChangeText={validateEmail}
               />
             </View>
  
@@ -372,7 +392,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexShrink: 0,
     flexDirection: 'row',
-    paddingTop: 20,
   },
   backIconRow: {
     display: 'flex',

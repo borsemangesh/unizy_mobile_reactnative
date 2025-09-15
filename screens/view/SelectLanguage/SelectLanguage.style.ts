@@ -14,18 +14,13 @@ export const selectlang_styles = StyleSheet.create({
     borderColor: '#ffffff3d',
     borderRadius: 16,
     
-    // boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.09)',
     padding: 16,
 
          borderWidth: 0.3,
-    // backgroundColor:
-    //   'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-  backgroundColor:
+      backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
       boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-    
-
-
+     
   },
   
   title: {

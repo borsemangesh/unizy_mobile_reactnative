@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native';
 import React, { useState, useEffect,useRef  } from 'react';
 import {
   View,
@@ -10,6 +11,8 @@ import {
   Easing,
   StyleSheet,
 Dimensions,
+ToastAndroid,
+BackHandler,
 Platform,
 
 } from 'react-native';
@@ -23,10 +26,11 @@ type VerifyScreenProps = {
 const { width, height } = Dimensions.get('window');
 
 
-const VerifyScreen = ({ navigation }: VerifyScreenProps) => {
+const VerifyScreen =({ navigation }: VerifyScreenProps)=> {
   const [username, setUsername] = useState<string>('');
   const [imageLoaded, setImageLoaded] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
+  const [error, setError] = useState("");
 
      const inputs = useRef<Array<TextInput | null>>([]);
     
@@ -44,62 +48,99 @@ const opacity = useRef(new Animated.Value(0)).current;
 const containerHeight = useRef(new Animated.Value(400)).current; // start with 400
 const translateY = useRef(new Animated.Value(-height)).current
 const containerHeight1 = useRef(new Animated.Value(400)).current; // start with 400
+const [isExpanded1, setIsExpanded1] = useState(false);
+const [isExpanded, setIsExpanded] = useState(false);
 
 
-useEffect(() => {
-  if (imageLoaded && !showOtp) {
-  
-    Animated.parallel([
-        Animated.timing(containerHeight, {
-            toValue: 195, // we’ll interpolate this to "auto"
-            duration: 400,
-            easing: Easing.out(Easing.exp),
-            useNativeDriver: false, // height animation can't use native driver
-          }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 1000,
-        easing: Easing.out(Easing.exp),
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 1000,
-        easing: Easing.out(Easing.exp),
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }
-}, [imageLoaded, showOtp]);
+const heightAnim = useRef(new Animated.Value(0)).current;
+  const animatedHeight = heightAnim.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: ['34%', '29%', '29%'],
+    extrapolate: 'clamp',
+  });
+
+   useEffect(() => {
+        Animated.timing(heightAnim, {
+          toValue: 1,
+          duration: 1000,
+          easing: Easing.bezier(0.42, 0, 0.58, 1), // natural ease
+          useNativeDriver: false,
+        }).start();
+      }, []);
 
 
+      const heightAnim1 = useRef(new Animated.Value(0)).current;
+  const animatedHeight1 = heightAnim1.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: ['40%', '48%', '48%'],
+    extrapolate: 'clamp',
+  });
 
-  // const startAnimation = () => {
-   
-  //   Animated.timing(translateY, {
-  //     toValue: 0,
-  //     duration: 1000,
-  //     easing: Easing.out(Easing.exp),
-  //     useNativeDriver: true,
-  //   }).start();
+   useEffect(() => {
+    // setShowOtp(false);
     
-  // };
+    // setImageLoaded(false)
+        Animated.timing(heightAnim1, {
+          toValue: 1,
+          duration: 1000,
+          easing: Easing.bezier(0.42, 0, 0.58, 1), // natural ease
+          useNativeDriver: false,
+        }).start();
+      }, []);
 
+
+
+  useEffect(() => {
+       if (imageLoaded && !showOtp) {
+          Animated.timing(containerHeight, {
+            toValue: 400, 
+            duration: 200,
+            easing: Easing.out(Easing.exp),
+            useNativeDriver: false, 
+          }).start(() => {
+            setIsExpanded(true); 
+            Animated.parallel([
+              Animated.timing(slideAnim, {
+                toValue: 0,
+                duration: 1000,
+                easing: Easing.out(Easing.exp),
+                useNativeDriver: true,
+              }),
+              Animated.timing(opacity, {
+                toValue: 1,
+                duration: 1000,
+                easing: Easing.out(Easing.exp),
+                useNativeDriver: true,
+              }),
+            ]).start();
+          });
+        }
+      }, [imageLoaded, showOtp]);
+
+
+
+ 
 const startAnimation = () => {
-  Animated.parallel([
-    Animated.timing(containerHeight1, {
-      toValue: 325, // shrink height
-      duration: 400,
-      easing: Easing.out(Easing.exp),
-      useNativeDriver: false, // must be false for height
-    }),
-    Animated.timing(translateY, {
-      toValue: 0, // slide in content
-      duration: 1000,
-      easing: Easing.out(Easing.exp),
-      useNativeDriver: true,
-    }),
-  ]).start();
+
+
+   Animated.timing(containerHeight1, {
+            toValue: 320, 
+            duration: 200,
+            easing: Easing.out(Easing.exp),
+            useNativeDriver: false, 
+          }).start(() => {
+            setIsExpanded1(true); 
+            Animated.parallel([
+              Animated.timing(translateY, {
+                toValue: 0,
+                duration: 1000,
+                easing: Easing.out(Easing.exp),
+                useNativeDriver: true,
+              }),
+            ]).start();
+          });
+
+
 };
 
 
@@ -107,6 +148,16 @@ const startAnimation = () => {
     setShowOtp(true);
     startAnimation();
   };
+
+const handleSendOTP = () => {
+  if(Platform.OS == 'ios'){
+    navigation.replace('OTPScreen');
+  } else {
+    navigation.navigate('OTPScreen');
+  }
+    
+  };
+
   const handleSendResetLink = () => {
   
     if (Platform.OS === 'ios') {
@@ -115,6 +166,20 @@ const startAnimation = () => {
       navigation.navigate('ProfileScreen');
     }
   };
+  const validateEmail = (text: string) => {
+      setUsername(text);
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+      if (text.length === 0) {
+        setError("");
+      } else if (!emailRegex.test(text)) {
+        ToastAndroid.show("Please enter a valid email address", ToastAndroid.SHORT);
+      } else {
+        setError("");
+      }
+    };
+  
+  
 
   return (
     <ImageBackground
@@ -128,7 +193,17 @@ const startAnimation = () => {
       </View>
 
       {imageLoaded && !showOtp && (
-        <Animated.View style={[styles.formContainer ,{ overflow: 'hidden' ,height:containerHeight}]}>
+
+      // <Animated.View
+      //   style={[
+      //     styles.formContainer,
+      //     {
+      //       overflow: "hidden",
+      //       height: isExpanded ? "auto" : containerHeight, // 👈 switch after animation
+      //     },
+      //   ]}
+      // > 
+       <Animated.View style={[styles.formContainer, { height: animatedHeight }]}>     
        <Animated.View
       style={[
         { width: '100%', alignItems: 'center' },
@@ -144,7 +219,11 @@ const startAnimation = () => {
               placeholder={'University Email ID'}
               placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
               value={username}
-              onChangeText={usernameText => setUsername(usernameText)}
+              maxLength={50}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+              onChangeText={validateEmail}
             />
           </View>
 
@@ -156,7 +235,11 @@ const startAnimation = () => {
       )}
 
      {showOtp && (
-<Animated.View style={[styles.formContainer, { overflow: 'hidden',height: containerHeight1}]}>
+
+
+
+    <Animated.View style={[styles.formContainer, { height: animatedHeight1 }]}>    
+   
     <Animated.View
       style={[
         { width: '100%', alignItems: 'center' },
@@ -175,17 +258,21 @@ const startAnimation = () => {
       <View style={styles.otpContainer}>
         {[0, 1, 2, 3].map((_, index) => (
           <TextInput
-            key={index}
-          ref={(ref) => {
-            inputs.current[index] = ref; 
-          }}
-          style={styles.otpBox}
-          keyboardType="number-pad"
-          maxLength={1}
-          onChangeText={(text) => handleChange(text, index)}
-          returnKeyType="next"
-          textAlign="center"
-          />
+                   key={index}
+                   ref={(ref) => {
+                     inputs.current[index] = ref;
+                   }}
+                   style={styles.otpBox}
+                   keyboardType="number-pad"
+                   maxLength={1}
+                   onChangeText={(text) => {
+                     const digit = text.replace(/[^0-9]/g, '');
+                     handleChange(digit, index);
+                   }}
+                   returnKeyType="next"
+                   textAlign="center"
+                   secureTextEntry={true}
+                 />
         ))}
       </View>
     
@@ -202,7 +289,11 @@ const startAnimation = () => {
 
       <TouchableOpacity style={{ flexDirection: 'row' ,marginTop:6}}>
         <Text style={styles.goBackText}>Entered wrong email? </Text>
+        <TouchableOpacity onPress={handleSendOTP}>
+
         <Text style={styles.goBackText1}>Go back</Text>
+        </TouchableOpacity>
+
       </TouchableOpacity>
     </Animated.View>
   </Animated.View>
@@ -295,9 +386,9 @@ inactiveStepCircle: {
    otpContainer: {
      flexDirection: 'row',
      justifyContent: 'space-evenly',
-     width: '80%',
+     width: '70%',
      alignSelf: 'center',
-     gap: 10, 
+     gap: 8, 
     marginTop:12
    },
    
@@ -335,6 +426,7 @@ inactiveStepCircle: {
          backgroundColor:
          'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
          boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
+         overflow: 'hidden'
        
      },
    
@@ -389,7 +481,7 @@ inactiveStepCircle: {
        fontSize: 17,
        lineHeight: 22,
        fontStyle: 'normal',
-   
+      color:'#fff'
      },
    
        loginButton: {
@@ -497,7 +589,6 @@ inactiveStepCircle: {
        flexShrink: 0,
        flexDirection: 'row',
 
-    paddingTop:20,
      },
      backIconRow: {
      display: 'flex',
@@ -539,4 +630,5 @@ inactiveStepCircle: {
 
 
 export default VerifyScreen;
+
 

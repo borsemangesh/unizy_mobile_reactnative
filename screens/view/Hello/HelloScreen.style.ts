@@ -14,7 +14,6 @@ export const Styles = StyleSheet.create({
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 30,
   },
   linearGradient: {
     // flexDirection: 'column',

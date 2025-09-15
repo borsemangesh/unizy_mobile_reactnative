@@ -13,11 +13,13 @@ import {
   StyleSheet,
   Dimensions,
   Animated,
-  Easing
+  Easing,
+  BackHandler
 } from 'react-native';
  import { launchCamera, launchImageLibrary } from "react-native-image-picker";
  import { PermissionsAndroid, Platform } from "react-native";
 import LinearGradient from 'react-native-linear-gradient';
+import { useIsFocused } from '@react-navigation/native';
 
 
 const { width } = Dimensions.get('window');
@@ -48,66 +50,67 @@ const cardHeight = useRef(new Animated.Value(250)).current; // initial collapsed
 const [hasExpanded, setHasExpanded] = useState(false);
 
   const containerHeight = useRef(new Animated.Value(400)).current; // start with 400
+const [isExpanded, setIsExpanded] = useState(false);
 
-    
-    // useEffect(() => {
-    //   Animated.parallel([
-    //     Animated.timing(slideAnim, {
-    //       toValue: 0, 
-    //       duration: 1000,
-    //       easing: Easing.out(Easing.exp),
-    //       useNativeDriver: true,
-    //     }),
-    //     Animated.timing(opacity, {
-    //       toValue: 1,
-    //       duration: 1000,
-    //       easing: Easing.out(Easing.exp),
-    //       useNativeDriver: true,
-    //     }),
-    //   ]).start();
-    // }, []);
+
+ const heightAnim = useRef(new Animated.Value(0)).current;
+  const animatedHeight = heightAnim.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: ['34%', '53%', '53%'],
+    extrapolate: 'clamp',
+  });
+
+
+    useEffect(() => {
+      Animated.timing(heightAnim, {
+        toValue: 1,
+        duration: 1000,
+        easing: Easing.bezier(0.42, 0, 0.58, 1), // natural ease
+        useNativeDriver: false,
+      }).start();
+    }, []);
 
 
      useEffect(() => {
-    if (imageLoaded && !showPopup) {
+    if (imageLoaded) {
       // First: animate container height from 400 → content height
       Animated.timing(containerHeight, {
         toValue: 350, // we’ll interpolate this to "auto"
-        duration: 400,
+        duration: 200,
         easing: Easing.out(Easing.exp),
         useNativeDriver: false, // height animation can't use native driver
       }).start(() => {
-        // After height anim → run your existing content animation
+         setIsExpanded(true); 
         Animated.parallel([
           Animated.timing(slideAnim, {
             toValue: 0,
-            duration: 600,
+            duration: 1000,
             easing: Easing.out(Easing.exp),
             useNativeDriver: true,
           }),
           Animated.timing(opacity, {
             toValue: 1,
-            duration: 600,
+            duration: 1000,
             easing: Easing.out(Easing.exp),
             useNativeDriver: true,
           }),
         ]).start();
       });
     }
-  }, [imageLoaded, showPopup]);
+  }, [imageLoaded]);
 
  useEffect(() => {
     if (photo) {
       setShowButton(true);
       Animated.timing(scaleY, {
         toValue: 1,
-        duration: 400,
+        duration: 1000,
         useNativeDriver: true,
       }).start();
     } else {
       Animated.timing(scaleY, {
         toValue: 0,
-        duration: 200,
+        duration: 1000,
         useNativeDriver: true,
       }).start(() => setShowButton(false));
     }
@@ -217,15 +220,16 @@ const handlePopup = () => {
       </View>
 
   {imageLoaded && (
-
-
-
-     <Animated.View
-        style={[
-          styles.formContainer,
-          { overflow: 'hidden', height: containerHeight },
-        ]}
-      >
+    // <Animated.View
+    //   style={[
+    //     styles.formContainer,
+    //     {
+    //       overflow: "hidden",
+    //       height: isExpanded ? "auto" : containerHeight, // 👈 switch after animation
+    //     },
+    //   ]}
+    // >
+    <Animated.View style={[styles.formContainer, { height: animatedHeight }]}>
         <Animated.View
                   style={[
         { width: '100%', alignItems: 'center' },
@@ -507,6 +511,7 @@ inactiveStepCircle: {
       backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
       boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
+      overflow: 'hidden',
   },
 
   resetTitle: {
@@ -575,7 +580,6 @@ inactiveStepCircle: {
     flexShrink: 0,
     flexDirection: 'row',
 
-    paddingTop:20,
   },
   backIconRow: {
   display: 'flex',
@@ -616,3 +620,7 @@ inactiveStepCircle: {
 });
 
 export default ProfileScreen;
+
+
+
+

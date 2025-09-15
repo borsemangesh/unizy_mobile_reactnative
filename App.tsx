@@ -9,25 +9,27 @@ function App() {
   LogBox.ignoreAllLogs();
 
   enableScreens(); 
+
   const [showSplash, setShowSplash] = useState(true);
-   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSplash(false);
-    }, 1000); // show splash for at least 2 seconds
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSplash(false), 4200); // Show splash for 4.2s
     return () => clearTimeout(timer);
   }, []);
+  
 
 
 
   return (
+  
     <SafeAreaProvider>
-      <StatusBar backgroundColor={'#000000'} />
-      {showSplash ? (
-        <SplashScreen onFinish={() => setShowSplash(false)} /> 
-      ) : (
-        <Navigation /> 
-      )}
-    </SafeAreaProvider>
+    <StatusBar backgroundColor={'#000000'} />
+    {showSplash ? (
+      <SplashScreen onFinish={() => setShowSplash(false)} />
+    ) : (
+      <Navigation />
+    )}
+  </SafeAreaProvider>
   );
 }
 

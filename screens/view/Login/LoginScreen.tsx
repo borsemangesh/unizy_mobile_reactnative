@@ -11,13 +11,18 @@ import {
   LayoutAnimation,
   Platform,
   UIManager,
+  ToastAndroid,
+  BackHandler,
   StyleSheet,
 } from 'react-native';
  
 import { loginStyles } from './LoginScreen.style';
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import LottieView from 'lottie-react-native';
+import BackgroundAnimation from '../Hello/BackgroundAnimation';
+
  
 type LoginScreenProps = {
   navigation: any;
@@ -32,8 +37,21 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const translateY = React.useRef(new Animated.Value(-100)).current;
   const slideUp = React.useRef(new Animated.Value(200)).current;
   const cardHeight = React.useRef(new Animated.Value(500)).current; // card height
- 
+  const [error, setError] = useState("");
   const [shrink, setShrink] = useState(false);
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
+      if (isFocused) {
+        BackHandler.exitApp();
+        return true; // prevent default
+      }
+      return false;
+    });
+
+    return () => backHandler.remove();
+  }, [isFocused]);
  
   if (
     Platform.OS === 'android' &&
@@ -56,13 +74,13 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       Animated.parallel([
         Animated.timing(translateY, {
           toValue: 0,
-          duration: 800,
+          duration: 600,
           easing: Easing.out(Easing.ease),
           useNativeDriver: true,
         }),
         Animated.timing(slideUp, {
           toValue: 0,
-          duration: 800,
+          duration: 600,
           easing: Easing.out(Easing.ease),
           useNativeDriver: true,
         }),
@@ -71,7 +89,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       Animated.sequence([
         Animated.timing(cardHeight, {
           toValue: 250, // shrink target
-          duration: 800,
+          duration: 500,
           easing: Easing.out(Easing.ease),
           useNativeDriver: false,
         }),
@@ -97,6 +115,19 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const handleLogin = () => {
     console.log(`Logging in with ${username} and ${password}`);
   };
+
+  const validateEmail = (text: string) => {
+    setUsername(text);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (text.length === 0) {
+      setError("");
+    } else if (!emailRegex.test(text)) {
+      ToastAndroid.show("Please enter a valid email address", ToastAndroid.SHORT);
+    } else {
+      setError("");
+    }
+  };
  
   const backButtonOpacity = React.useRef(new Animated.Value(200)).current;
   const [backDisabled, setBackDisabled] = useState(false);
@@ -107,8 +138,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       duration: 0,
       useNativeDriver: true,
     }).start(() => {
-      // setBackDisabled(true); // disable after animation
-      // navigation.replace('Reset'); // then navigate
+      // setBackDisabled(true); // disable after animatio
       clickResetListner();
 
       
@@ -141,7 +171,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
 
  
   const BGAnimationScreen = require('../../../assets/images/BGAnimationScreen.png');
- 
+
+
   return (
     <ImageBackground
       source={BGAnimationScreen}
@@ -156,7 +187,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           padding: 12,
           gap: 20,
           justifyContent: 'space-between',
-          paddingTop: 60,
+          paddingTop: 30,
           zIndex: 1
         }}
       >
@@ -166,7 +197,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
             { transform: [{ translateY: translateY }] },
           ]}
         >
-          <TouchableOpacity onPress={() => clickLanguageListner}>
+          <TouchableOpacity onPress={() => clickLanguageListner()}>
             <View style={loginStyles.backIconRow}>
               <Image
                 source={require('../../../assets/images/back.png')}
@@ -207,12 +238,13 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
               style={loginStyles.eyeIcon}
             />
           </View>
+          <TouchableOpacity onPress={() => handleForgetPassword()}>
           <Text
             style={loginStyles.forgetPasswordText}
-            onPress={handleForgetPassword}
           >
             Forgot Password?
           </Text>
+          </TouchableOpacity>
  
           <TouchableOpacity
             style={loginStyles.loginButton}
