@@ -160,6 +160,7 @@ const SinglePage = () => {
   const handleLanguageSelect = async (item: Language) => {
     try {
 
+      loginTranslateY.setValue(0);
       await AsyncStorage.setItem(
         'selectedLanguage',
         JSON.stringify({ code: item.code, name: item.name })
@@ -487,8 +488,8 @@ const SinglePage = () => {
       return;
     }
    
-    //const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const emailRegex = /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;
+   
+    const emailRegex = /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;
   
     if (!emailRegex.test(username1)) {
       showToast("Please enter a valid email address", 'error');
@@ -552,7 +553,6 @@ const SinglePage = () => {
         }),
       });
   
-      // ✅ Always parse JSON (even on 400)
       let result;
       try {
         result = await response.json();
@@ -564,14 +564,12 @@ const SinglePage = () => {
   
       console.log('Login response:', JSON.stringify(result, null, 2));
   
-      // ✅ Check statusCode from API
       if (!response.ok || result?.statusCode !== 200) {
         setLoading(false);
         showToast(result?.message || 'Invalid Email or Password', 'error');
         return;
       }
-  
-      // ✅ Success flow
+ 
       const token = result?.data?.token;
       const user = result?.data?.user;
   
@@ -580,13 +578,11 @@ const SinglePage = () => {
         await AsyncStorage.setItem('userToken', token);
         await AsyncStorage.setItem('userData', JSON.stringify(user));
   
-        showToast(result?.message || 'Login successful', 'success'); // ✅ API success message
+        showToast(result?.message || 'Login successful', 'success'); 
   
         setUsername('');
         setPassword('');
         setIsPasswordVisible(false)
-  
-         //navigation.replace('Dashboard');
       } else {
         setLoading(false);
         showToast('Invalid user data received', 'error');
@@ -601,89 +597,89 @@ const SinglePage = () => {
 
   const handleSendOTP = async () => {
 
+    setOtp(['','','','']);
 
-    Animated.timing(loginTranslateY, {
-      toValue: Dimensions.get('window').height,
-      duration: 1000,
-      easing: Easing.in(Easing.ease),
-      useNativeDriver: true,
-    }).start(() => {
-      setCurrentScreen('login');
-      setcurrentScreenIninner('sendOTP');
-    });
+    if (!firstName || !lastName || !signUpusername || !signUppassword || !confirmPassword) {
+      showToast("Please fill all required fields", 'error');
+      return;
+    }
+    const passwordRegex = /^.{8,}$/;
+    if (!passwordRegex.test(signUppassword)) {
+      showToast("Password must be at least 8 characters long.", "error");
+      return;
+    }
+    if (signUppassword !== confirmPassword) {
+      showToast("Passwords do not match",'error');
+      return;
+    }
 
-    Animated.timing(signupTranslateY, {
-      toValue: Dimensions.get('window').height,
-      duration: 1000,
-      easing: Easing.in(Easing.ease),
-      useNativeDriver: true,
-    }).start(() => {
-      // setCurrentScreen('login');
-      // setcurrentScreenIninner('sendOTP');
-    });
-    // if (!firstName || !lastName || !signUpusername || !signUppassword || !confirmPassword) {
-    //   showToast("Please fill all required fields", 'error');
-    //   return;
-    // }
-    // const passwordRegex = /^.{8,}$/;
-    // if (!passwordRegex.test(signUppassword)) {
-    //   showToast("Password must be at least 8 characters long.", "error");
-    //   return;
-    // }
-    // if (signUppassword !== confirmPassword) {
-    //   showToast("Passwords do not match",'error');
-    //   return;
-    // }
+    const emailRegex = /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;    
+    if (!emailRegex.test(signUpusername)) {
+      showToast("Please enter a valid email address", 'error');
+      return;
+    }
 
-    // const emailRegex = /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;    
-    // if (!emailRegex.test(signUpusername)) {
-    //   showToast("Please enter a valid email address", 'error');
-    //   return;
-    // }
+    try {
+      const body = {
+        firstname: firstName,
+        lastname: lastName,
+        postal_code: postalCode,
+        email: signUpusername,
+        password: signUppassword,
+        confirmPassword: confirmPassword,
+      };
 
-    // try {
-    //   const body = {
-    //     firstname: firstName,
-    //     lastname: lastName,
-    //     postal_code: postalCode,
-    //     email: signUpusername,
-    //     password: signUppassword,
-    //     confirmPassword: confirmPassword,
-    //   };
-
-    //   console.log('Request body:', JSON.stringify(body, null, 2));
+      console.log('Request body:', JSON.stringify(body, null, 2));
 
 
-    //   const url = MAIN_URL.baseUrl+'user/user-signup'
+      const url = MAIN_URL.baseUrl+'user/user-signup'
 
-    //   const response = await fetch(url, {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(body),
-    //   });
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
 
-    //   const data = await response.json();
-    //   console.log('API response:', data);
+      const data = await response.json();
+      console.log('API response:', data);
 
-    //   if (response.status === 201) {
-    //     showToast(data.message, 'success');
+      if (response.status === 201) {
+        showToast(data.message, 'success');
 
-    //     await AsyncStorage.setItem('tempUserId', data.data.temp_user_id.toString());
-    //      await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
-    //      await AsyncStorage.setItem('personal_mail_id',signUpusername.toString())
+        await AsyncStorage.setItem('tempUserId', data.data.temp_user_id.toString());
+         await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
+         await AsyncStorage.setItem('personal_mail_id',signUpusername.toString())
 
-    //     setCurrentScreen('login');
-    //     setcurrentScreenIninner('sendOTP');
-    //   } else {
-    //     //ToastAndroid.show(data.message || 'Signup failed', ToastAndroid.SHORT);
-    //     showToast(data.message || 'Signup failed', 'error')
-    //   }
-    // } catch (err) {
-    //   console.log('Error sending signup request:', err);
-    //   showToast('Failed to send OTP', 'error');
-    // }
+        // setCurrentScreen('login');
+        // setcurrentScreenIninner('sendOTP');
+        Animated.timing(loginTranslateY, {
+          toValue: Dimensions.get('window').height,
+          duration: 1000,
+          easing: Easing.in(Easing.ease),
+          useNativeDriver: true,
+        }).start(() => {
+          setCurrentScreen('login');
+          setcurrentScreenIninner('sendOTP');
+        });
+    
+        Animated.timing(signupTranslateY, {
+          toValue: Dimensions.get('window').height,
+          duration: 1000,
+          easing: Easing.in(Easing.ease),
+          useNativeDriver: true,
+        }).start(() => {
+          // setCurrentScreen('login');
+          // setcurrentScreenIninner('sendOTP');
+        });
+      } else {
+        showToast(data.message || 'Signup failed', 'error')
+      }
+    } catch (err) {
+      console.log('Error sending signup request:', err);
+      showToast('Failed to send OTP', 'error');
+    }
   };
 
 
@@ -692,11 +688,11 @@ const SinglePage = () => {
   const [otp, setOtp] = useState(['', '', '', '']);
   const inputs = useRef<(TextInput | null)[]>([]);
 
-  useEffect(()=>{
-    if(inputs.current[0]){
-      inputs.current[0].focus();
-    }
-  })
+  // useEffect(()=>{
+  //   if(inputs.current[0]){
+  //     inputs.current[0].focus();
+  //   }
+  // })
 
   const handleChange = (text: string, index: number) => {
     const newOtp = [...otp];
@@ -713,83 +709,84 @@ const SinglePage = () => {
 
   const otpverify = async () => {
 
-     Animated.timing(setOTPTranslatY, {
-      toValue: Dimensions.get('window').height, // slide down off screen
-      duration: 1000,
-      easing: Easing.in(Easing.ease),
-      useNativeDriver: true,
-    }).start(() => {
-      
-    });
+   setverifyUsername('');
+    const otpValue = otp.join('');
 
-    Animated.timing(loginTranslateY, {
-      toValue: Dimensions.get('window').height, // slide down off screen
-      duration: 1000,
-      easing: Easing.in(Easing.ease),
-      useNativeDriver: true,
-    }).start(() => {
-      setCurrentScreen('login');
-      setcurrentScreenIninner('verify');
-      setShowOtp(false);
-    });
+    if (otpValue.length < 4 || otp.includes('')) {
+      showToast("Please enter all 4 digits of the OTP", 'error');
+      return;
+    }
+    try {
+      const otp_id = await AsyncStorage.getItem('otp_id');
 
-    // const otpValue = otp.join('');
+      if (!otp_id) {
+        showToast("OTP ID missing. Please request OTP again.", 'error');
+        return;
+      }
 
-    // // if (otpValue.length < 4 || otp.includes('')) {
-    // //   showToast("Please enter all 4 digits of the OTP", 'error');
-    // //   return;
-    // // }
-    // try {
-    //   const otp_id = await AsyncStorage.getItem('otp_id');
+      const url = MAIN_URL.baseUrl+'user/signup-otpverify'
 
-    //   if (!otp_id) {
-    //     showToast("OTP ID missing. Please request OTP again.", 'error');
-    //     return;
-    //   }
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          otp_id: Number(otp_id),
+          otp: otpValue,
+        }),
+      });
 
-    //   const url = MAIN_URL.baseUrl+'user/signup-otpverify'
+      const data = await res.json();
+      console.log('OTP Verify Response:', data);
 
-    //   const res = await fetch(url, {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //       otp_id: Number(otp_id),
-    //       otp: otpValue,
-    //     }),
-    //   });
+      if (data?.statusCode === 200) {
+        await AsyncStorage.setItem('temp_user_id', data.data.temp_user_id.toString());
 
-    //   const data = await res.json();
-    //   console.log('OTP Verify Response:', data);
+        showToast(data.message, 'success');
 
-    //   if (data?.statusCode === 200) {
-    //     await AsyncStorage.setItem('temp_user_id', data.data.temp_user_id.toString());
 
-    //     showToast(data.message, 'success');
+        setFirstName('')
+        setLastName('')
+        setConfirmPassword('')
+        setPostalCode('')
+        setsignUpUsername('')
+        setsignUpPassword('')
+        setsignUpIsPasswordVisible(false)
+        setIsConfirmPasswordVisible(false)
 
-    //   setFirstName('')
-    //   setLastName('')
-    //   setConfirmPassword('')
-    //   setPostalCode('')
-    //   setsignUpUsername('')
-    //   setsignUpPassword('')
-    //   setsignUpIsPasswordVisible(false)
-    //   setIsConfirmPasswordVisible(false)
+        Animated.timing(setOTPTranslatY, {
+          toValue: Dimensions.get('window').height, // slide down off screen
+          duration: 1000,
+          easing: Easing.in(Easing.ease),
+          useNativeDriver: true,
+        }).start(() => {
+          
+        });
+    
+        Animated.timing(loginTranslateY, {
+          toValue: Dimensions.get('window').height, // slide down off screen
+          duration: 1000,
+          easing: Easing.in(Easing.ease),
+          useNativeDriver: true,
+        }).start(() => {
+          // setCurrentScreen('login');
+          // setcurrentScreenIninner('verify');
+          // setShowOtp(false);
+          setCurrentScreen('login');
+          setcurrentScreenIninner('verify');
+           setShowOtp(false);
+          setverifyimageLoaded(true);
+        });
 
-    //     setCurrentScreen('login');
-    //     setcurrentScreenIninner('verify');
-    //      setShowOtp(false);
-    //     setverifyimageLoaded(true);
-
-    //   } else {
-    //     showToast(data?.message || 'OTP verification failed', 'error');
-    //   }
-    // }
-    // catch (err) {
-    //   console.error(err);
-    //   showToast('Something went wrong', 'error');
-    // }
+      } else {
+        showToast(data?.message || 'OTP verification failed', 'error');
+      }
+    }
+    catch (err) {
+      console.error(err);
+      showToast('Something went wrong', 'error');
+    }
   };
 
 
@@ -825,10 +822,7 @@ const SinglePage = () => {
         await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
 
         console.log('OTP resent successfully:', data.message);
-
-
       } else {
-        //console.warn('Resend OTP failed:', data?.message || 'Unknown error');
       }
     } catch (err) {
       console.error('Error resending OTP:', err);
@@ -842,11 +836,11 @@ const SinglePage = () => {
   const [otp1, setOtp1] = useState(['', '', '', '']);
   const verifyinputs = useRef<(TextInput | null)[]>([]);
 
-  useEffect(()=>{
-    if(verifyinputs.current[0]){
-      verifyinputs.current[0].focus();
-    }
-  })
+  // useEffect(()=>{
+  //   if(verifyinputs.current[0]){
+  //     verifyinputs.current[0].focus();
+  //   }
+  // })
 
   const veryfyhandleChange = (text: string, index: number) => {
     const newOtp = [...otp1];
@@ -861,139 +855,140 @@ const SinglePage = () => {
   };
 
   const verifyOTP = async () => {
-    Animated.timing(verifyAndContinyTranslateY1, {
-      toValue: Dimensions.get('window').height, // move down off screen
-      duration: 500,
-      easing: Easing.in(Easing.ease),
-      useNativeDriver: true,
-    }).start(() => {
-      setShowOtp(true); // now show OTP view
 
-      // Immediately reset OTP position above screen
-      verifyAndContinyTranslateY2.setValue(-100);
+    setOtp1(['','','','']);
+    if (!verifyusername) {
+      showToast("Please fill all required fields", 'error');
+      return;
+    }
 
-      // Slide in OTP form (from top to 0)
-      Animated.timing(verifyAndContinyTranslateY2, {
-        toValue: 0,
-        duration: 500,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }).start();
-    });
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(verifyusername)) {
+      showToast("Please enter a valid email address", 'error');
+      return;
+    }
 
-    // setOtp1(['','','','']);
-    // if (!verifyusername) {
-    //   showToast("Please fill all required fields", 'error');
-    //   return;
-    // }
+    try {
 
-    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    // if (!emailRegex.test(verifyusername)) {
-    //   showToast("Please enter a valid email address", 'error');
-    //   return;
-    // }
+      const url = MAIN_URL.baseUrl+'user/student-email'
 
-    // try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          student_email: verifyusername,
+          temp_user_id: Number(await AsyncStorage.getItem('temp_user_id')) || undefined
+        }),
+      });
 
-    //   const url = MAIN_URL.baseUrl+'user/student-email'
+      const data = await res.json();
+      console.log('Send OTP Response:', data);
 
-    //   const res = await fetch(url, {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //       student_email: verifyusername,
-    //       temp_user_id: Number(await AsyncStorage.getItem('temp_user_id')) || undefined
-    //     }),
-    //   });
+      if (data?.statusCode === 200) {
+        await AsyncStorage.setItem('temp_user_id', data.data.temp_user_id.toString());
+        await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
+        await AsyncStorage.setItem('signupUsername', verifyusername);
 
-    //   const data = await res.json();
-    //   console.log('Send OTP Response:', data);
+        showToast(data.message, 'success');
+        // setShowOtp(true);
+        //startAnimation();
 
-    //   if (data?.statusCode === 200) {
-    //     await AsyncStorage.setItem('temp_user_id', data.data.temp_user_id.toString());
-    //     await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
-    //     await AsyncStorage.setItem('signupUsername', verifyusername);
-
-    //     showToast(data.message, 'success');
-    //     setShowOtp(true);
-    //     //startAnimation();
-    //   } else {
-    //     showToast(data?.message || 'Failed to send OTP', 'error');
-    //   }
-    // } catch (err) {
-    //   console.error('Error sending OTP:', err);
-    //   showToast('Something went wrong','error');
-    // }
+        Animated.timing(verifyAndContinyTranslateY1, {
+          toValue: Dimensions.get('window').height, // move down off screen
+          duration: 500,
+          easing: Easing.in(Easing.ease),
+          useNativeDriver: true,
+        }).start(() => {
+          setShowOtp(true); // now show OTP view
+    
+          // Immediately reset OTP position above screen
+          verifyAndContinyTranslateY2.setValue(-100);
+    
+          // Slide in OTP form (from top to 0)
+          Animated.timing(verifyAndContinyTranslateY2, {
+            toValue: 0,
+            duration: 500,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+          }).start();
+        });
+      } else {
+        showToast(data?.message || 'Failed to send OTP', 'error');
+      }
+    } catch (err) {
+      console.error('Error sending OTP:', err);
+      showToast('Something went wrong','error');
+    }
   };
 
 
   const submitotp = async () => {
 
-    setCurrentScreen('login');
-    setcurrentScreenIninner('profile');
-    // const otpValue = otp1.join('');
+    setPhoto('');
+    const otpValue = otp1.join('');
 
-    // // if (otpValue.length < 4 || otp1.includes('')) {
-    // //  showToast("Please enter all 4 digits of the OTP", 'error');
-    // //   return;
-    // // }
+    if (otpValue.length < 4 || otp1.includes('')) {
+     showToast("Please enter all 4 digits of the OTP", 'error');
+      return;
+    }
 
-    // try {
-    //   const otp_id = await AsyncStorage.getItem('otp_id');
-    //   if (!otp_id) {
-    //     showToast("OTP ID missing. Please request OTP again.", 'error');
-    //     return;
-    //   }
+    try {
+      const otp_id = await AsyncStorage.getItem('otp_id');
+      if (!otp_id) {
+        showToast("OTP ID missing. Please request OTP again.", 'error');
+        return;
+      }
 
-    //   const url = MAIN_URL.baseUrl+'user/student-otpverify'
+      const url = MAIN_URL.baseUrl+'user/student-otpverify'
 
-    //   const res = await fetch(url, {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //       otp_id: Number(otp_id),
-    //       otp: otpValue,
-    //     }),
-    //   });
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          otp_id: Number(otp_id),
+          otp: otpValue,
+        }),
+      });
 
-    //   const data = await res.json();
-    //   console.log('Student OTP Verify Response:', data);
+      const data = await res.json();
+      console.log('Student OTP Verify Response:', data);
 
-    //   if (data?.statusCode === 200) {
-    //     showToast(data.message, 'success');
+      if (data?.statusCode === 200) {
+        showToast(data.message, 'success');
 
-    //     if (data?.data) {
-    //       await AsyncStorage.setItem('user_email', data.data.email || '');
-    //       await AsyncStorage.setItem('firstname', data.data.firstname || '');
-    //       await AsyncStorage.setItem('lastname', data.data.lastname || '');
-    //       await AsyncStorage.setItem('student_email', data.data.student_email || '');
+        if (data?.data) {
+          await AsyncStorage.setItem('user_email', data.data.email || '');
+          await AsyncStorage.setItem('firstname', data.data.firstname || '');
+          await AsyncStorage.setItem('lastname', data.data.lastname || '');
+          await AsyncStorage.setItem('student_email', data.data.student_email || '');
 
-    //       if (data?.data?.token?.access_token) {
-    //         await AsyncStorage.setItem('access_token', data.data.token.access_token);
-    //       }
-    //     }
+          if (data?.data?.token?.access_token) {
+            await AsyncStorage.setItem('access_token', data.data.token.access_token);
+          }
+        }
 
-            // setShowPopup1(false);
-    //     setCurrentScreen('login');
-    //     setcurrentScreenIninner('profile');
+            setShowPopup1(false);
+        setCurrentScreen('login');
+        setcurrentScreenIninner('profile');
 
 
-    //   } else {
-    //     showToast(data?.message || 'OTP verification failed', 'error');
-    //   }
-    // } catch (err) {
-    //   console.error('Error verifying OTP:', err);
-    //   showToast('Something went wrong', 'error');
-    // }
+      } else {
+        showToast(data?.message || 'OTP verification failed', 'error');
+      }
+    } catch (err) {
+      console.error('Error verifying OTP:', err);
+      showToast('Something went wrong', 'error');
+    }
   };
 
   const resubmitotp = async () => {
     try {
 
+      setOtp1(['','','','']);
       const url = MAIN_URL.baseUrl + 'user/student-email'
 
       const res = await fetch(url, {
@@ -1056,11 +1051,6 @@ const SinglePage = () => {
   ).current;
   const signupTranslateY = useRef(new Animated.Value(Dimensions.get('window').height)).current
 
-
-
-
-
-
   const ClickFPGoBack_slideOutToTop = (onFinish?: () => void) => {
     Animated.timing(resetPasswordtranslateY, {
       toValue: -Dimensions.get('window').height,
@@ -1086,6 +1076,9 @@ const SinglePage = () => {
       easing: Easing.in(Easing.ease),
       useNativeDriver: true,
     }).start(() => {
+      setUsername('');
+      setPassword('');
+      setIsPasswordVisible(false);
       setCurrentScreen('login');
       setcurrentScreenIninner('forgotpassword');
     });
@@ -1412,7 +1405,7 @@ const SinglePage = () => {
               </View>
             </TouchableOpacity>
          )}
-         
+
           <Animated.View>
               <Text style={Styles.unizyText}>UniZy</Text>
           </Animated.View>
@@ -1458,6 +1451,7 @@ const SinglePage = () => {
                           placeholder={'Password'}
                           placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
                           value={password}
+                          secureTextEntry={!isPasswordVisible}
                           onChangeText={passwordText =>
                             setPassword(passwordText)
                           }
@@ -1524,6 +1518,7 @@ const SinglePage = () => {
                         </Text>
                         <TouchableOpacity
                           onPress={() => {
+                            signupTranslateY.setValue(0);
                             setUsername('')
                             setPassword('')
                             setIsPasswordVisible(false)
@@ -1847,7 +1842,6 @@ const SinglePage = () => {
                               {
                                 setCurrentScreen('login');
                                 setcurrentScreenIninner('login');
-
                                 setConfirmPassword('')
                                 setFirstName('')
                                 setLastName('')
@@ -1955,10 +1949,7 @@ const SinglePage = () => {
                               </Text>
                               <TouchableOpacity
                                 onPress={() => {
-
-
                                   Click_SENDOTP_TO_SIGNUPSCREEN(() => {
-
                                     setCurrentScreen('login');
                                     setcurrentScreenIninner('signup');
                                   })
@@ -2095,7 +2086,7 @@ const SinglePage = () => {
                             <TouchableOpacity
                               style={{ flexDirection: 'row', marginTop: 6 }}
                             >
-                              <Text style={Styles.goBackText}>
+                              <Text style={Styles.verifyresendText}>
                                 Entered wrong email?{' '}
                               </Text>
                               <TouchableOpacity
@@ -2241,7 +2232,7 @@ const SinglePage = () => {
                               onPress={() => {
                                 setCurrentScreen('login');
                                 setcurrentScreenIninner('login');
-                                closePopup();
+                                closePopup1();
                               }}
                             >
                               <Text style={Styles.profileloginText}>
