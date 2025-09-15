@@ -25,7 +25,7 @@ export const Styles = StyleSheet.create({
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 30,
+    
   },
   linearGradient: {
     height: '14%',
@@ -464,7 +464,7 @@ export const Styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignContent: 'center',
     padding: 16,
-    paddingTop:40,
+    paddingTop:70,
    
   },
 

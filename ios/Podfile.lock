@@ -2577,7 +2577,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - RNSVG (15.12.1):
+  - RNSVG (15.13.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -2603,10 +2603,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNSVG/common (= 15.12.1)
+    - RNSVG/common (= 15.13.0)
     - SocketRocket
     - Yoga
-  - RNSVG/common (15.12.1):
+  - RNSVG/common (15.13.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -2662,7 +2662,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - RNWorklets (0.5.0):
+  - RNWorklets (0.5.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -2689,10 +2689,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNWorklets/worklets (= 0.5.0)
+    - RNWorklets/worklets (= 0.5.1)
     - SocketRocket
     - Yoga
-  - RNWorklets/worklets (0.5.0):
+  - RNWorklets/worklets (0.5.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -2719,10 +2719,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNWorklets/worklets/apple (= 0.5.0)
+    - RNWorklets/worklets/apple (= 0.5.1)
     - SocketRocket
     - Yoga
-  - RNWorklets/worklets/apple (0.5.0):
+  - RNWorklets/worklets/apple (0.5.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -3092,9 +3092,9 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: 302f2fac014fd450046c120567ca364632da682b
   RNReanimated: 1163d28eb3e11e5b24a932b10fb17c168ee1c9a4
   RNScreens: 74985ca8e102294a60cec7513fa84c936fa0b20b
-  RNSVG: 8d87cff016edf1b6ca409ed39804101836d75e90
+  RNSVG: eca4f6bb09bcaf582c4f082f3989a6b8513b3e93
   RNVectorIcons: 6acc19c833be864e9c70894e101a587fe491150a
-  RNWorklets: d24560051beb87ad91223feec6cb6e776775cdfd
+  RNWorklets: 582ee5c59370d483a7a3c3f8a8014d48b1bff6bd
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: b01392348aeea02064c21a2762a42893d82b60a7
 
