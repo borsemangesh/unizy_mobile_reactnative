@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useState, useEffect, useRef } from 'react';
 import {
@@ -17,6 +18,8 @@ import {
   Dimensions,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { postRequest } from '../../utils/API';
+import { MAIN_URL } from '../../utils/APIConstant';
 
 type SignupScreenProps = {
   navigation: any;
@@ -29,8 +32,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
-    useState(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const { width, height } = Dimensions.get('window');
   const [error, setError] = useState("");
@@ -50,15 +52,47 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
   const heightAnim = useRef(new Animated.Value(0)).current;
   const animatedHeight = heightAnim.interpolate({
     inputRange: [0, 0.5, 1],
-    outputRange: ['34%', '45%', '45%'],
+    outputRange: ['34%', '48%', '48%'],
     extrapolate: 'clamp',
   });
 
   const handleLayout = (e: LayoutChangeEvent) => {
-    // if (!measuredHeight) {
-    //   setMeasuredHeight(400);
-    // }
+    if (!measuredHeight) {
+      setMeasuredHeight(400);
+    }
   };
+
+
+
+
+  //   useEffect(() => {
+  //   const loadSignupData = async () => {
+  //     const saved = await AsyncStorage.getItem('signupData');
+  //     if (saved) {
+  //       const data = JSON.parse(saved);
+  //       setFirstName(data.firstName || '');
+  //       setLastName(data.lastName || '');
+  //       setPostalCode(data.postalCode || '');
+  //       setUsername(data.username || '');
+  //       setPassword(data.password || '');
+  //       setConfirmPassword(data.confirmPassword || '');
+  //     }
+  //   };
+  //   loadSignupData();
+  // }, []);
+
+   const saveSignupData = async () => {
+    const data = {
+      firstName,
+      lastName,
+      postalCode,
+      username,
+      password,
+      confirmPassword,
+    };
+    await AsyncStorage.setItem('signupData', JSON.stringify(data));
+  };
+
 
   useEffect(() => {
     Animated.timing(heightAnim, {
@@ -92,6 +126,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
           useNativeDriver: true,
         }),
       ]).start(() => {
+        setUseAutoHeight(true);
         setHasAnimated(true);
       });
     }
@@ -121,8 +156,23 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
       };
     }, []),
   );
+  useEffect(() => {
+  const unsubscribe = navigation.addListener('focus', () => {
+    // Clear fields when screen gains focus
+    setFirstName('');
+    setLastName('');
+    setUsername('');
+    setPassword('');
+    setConfirmPassword('');
+    setPostalCode('');
+  });
 
-  const handleSendOTP = () => {
+  return unsubscribe; // cleanup
+}, [navigation]);
+
+  const handleSendOTP = async () => {
+    
+   //await saveSignupData();
     if (Platform.OS === 'ios') {
       navigation.replace('OTPScreen');
     } else {
@@ -130,11 +180,79 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
     }
   };
 
-  const handleLogin = () => {
-    // navigation.reset({
-    //   index: 0,
-    //   routes: [{ name: 'LoginScreen' }],
-    // });
+
+
+// const handleSendOTP = async () => {
+
+  
+
+//   if (!firstName || !lastName || !username || !password || !confirmPassword) {
+//     ToastAndroid.show("Please fill all required fields", ToastAndroid.SHORT);
+//     return;
+//   }
+
+//   if (password !== confirmPassword) {
+//     ToastAndroid.show("Passwords do not match", ToastAndroid.SHORT);
+//     return;
+//   }
+
+//   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+//   if (!emailRegex.test(username)) {
+//     ToastAndroid.show("Please enter a valid email address", ToastAndroid.SHORT);
+//     return;
+//   }
+
+//   try {
+//     const body = {
+//       firstname: firstName,
+//       lastname: lastName,
+//       postal_code: postalCode,
+//       email: username,
+//       password: password,
+//       confirmPassword: confirmPassword,
+//     };
+
+//     console.log('Request body:', JSON.stringify(body, null, 2));
+
+
+//     const url = MAIN_URL.baseUrl+'user/user-signup'
+
+//     const response = await fetch(url, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(body),
+//     });
+
+//     const data = await response.json();
+//     console.log('API response:', data);
+
+//     if (response.status === 201) {
+//       ToastAndroid.show(data.message, ToastAndroid.SHORT);
+
+//       await AsyncStorage.setItem('tempUserId', data.data.temp_user_id.toString());
+//        await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
+//        await AsyncStorage.setItem('personal_mail_id',username.toString())
+
+//       if (Platform.OS === 'ios') {
+//         navigation.replace('OTPScreen');
+//       } else {
+//         navigation.navigate('OTPScreen');
+//       }
+//     } else {
+//       ToastAndroid.show(data.message || 'Signup failed', ToastAndroid.SHORT);
+//     }
+//   } catch (err) {
+//     console.log('Error sending signup request:', err);
+//     ToastAndroid.show('Failed to send OTP', ToastAndroid.SHORT);
+//   }
+// };
+
+
+
+const handleLogin = async () => {
+    
     if(Platform.OS === 'ios'){
       navigation.replace('LoginScreen')
     } else {
@@ -145,7 +263,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
 
   return (
     <ImageBackground
-      source={require('../../../assets/images/BGAnimationScreen.png')}
+      source={require('../../../assets/images/bganimationscreen.png')}
       style={styles.flex_1}
       resizeMode="cover"
     >
@@ -154,7 +272,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
         <View style={styles.emptyView}></View>
       </View>
       {/* <Animated.View style={[styles.cardView, { height: 'auto',maxHeight: cardHeight }]}> */}
-      <Animated.View style={[styles.cardView, { height: animatedHeight }]}>
+      <Animated.View style={[styles.cardView, { height: 'auto' }]}>
         {!useAutoHeight && (
           <View
             style={{
@@ -193,6 +311,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
                       placeholder="Last Name"
                       placeholderTextColor="rgba(255, 255, 255, 0.48)"
                       value={lastName}
+                      maxLength={20}
                       onChangeText={text =>
                         /^[A-Za-z ]*$/.test(text) && setLastName(text)
                       }
@@ -207,10 +326,10 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
                     placeholderTextColor="rgba(255, 255, 255, 0.48)"
                     value={postalCode}
                     maxLength={6}
-                    keyboardType="numeric"
+                    //keyboardType="numeric"
                     onChangeText={text => {
-                      const numericText = text.replace(/[^0-9]/g, '');
-                      setPostalCode(numericText);
+                     const alphanumericText = text.replace(/[^a-zA-Z0-9]/g, '');
+                      setPostalCode(alphanumericText);
                     }}
                   />
                 </View>
@@ -221,7 +340,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
                     placeholder="Personal Email ID"
                     placeholderTextColor="rgba(255, 255, 255, 0.48)"
                     value={username}
-                    maxLength={20}
+                    maxLength={50}
                     onChangeText={text => setUsername(text)}
                   />
                   <TouchableOpacity onPress={() => setShowInfo(!showInfo)}>
@@ -248,6 +367,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
                     placeholder="Create Password"
                     placeholderTextColor="rgba(255, 255, 255, 0.48)"
                     value={password}
+                    maxLength={20}
                     onChangeText={setPassword}
                     secureTextEntry={!isPasswordVisible}
                   />
@@ -276,6 +396,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
                     placeholder="Confirm Password"
                     placeholderTextColor="rgba(255, 255, 255, 0.48)"
                     value={confirmPassword}
+                    maxLength={20}
                     onChangeText={setConfirmPassword}
                     secureTextEntry={!isConfirmPasswordVisible}
                   />
@@ -353,6 +474,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
                 placeholder="Last Name"
                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                 value={lastName}
+                maxLength={20}
                 onChangeText={text =>
                   /^[A-Za-z ]*$/.test(text) && setLastName(text)
                 }
@@ -367,10 +489,10 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               value={postalCode}
               maxLength={6}
-              keyboardType="numeric"
+              //keyboardType="numeric"
               onChangeText={text => {
-                const numericText = text.replace(/[^0-9]/g, '');
-                setPostalCode(numericText);
+                const alphanumericText = text.replace(/[^a-zA-Z0-9]/g, '');
+                setPostalCode(alphanumericText);
               }}
             />
           </View>
@@ -381,13 +503,13 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
               placeholder="Personal Email ID"
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               value={username}
-              maxLength={20}
+              maxLength={50}
               onChangeText={text => setUsername(text)}
             />
             <TouchableOpacity onPress={() => setShowInfo(!showInfo)}>
               <Image
                 source={require('../../../assets/images/info_icon.png')}
-                style={styles.eyeIcon}
+                style={styles.eyeIcon1}
               />
             </TouchableOpacity>
           </View>
@@ -408,6 +530,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
               placeholder="Create Password"
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               value={password}
+              maxLength={20}
               onChangeText={setPassword}
               secureTextEntry={!isPasswordVisible}
             />
@@ -436,6 +559,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
               placeholder="Confirm Password"
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               value={confirmPassword}
+              maxLength={20}
               onChangeText={setConfirmPassword}
               secureTextEntry={!isConfirmPasswordVisible}
             />
@@ -632,6 +756,11 @@ const styles = StyleSheet.create({
   eyeIcon: {
     width: 19,
     height: 15,
+    // paddingRight: 16,
+  },
+   eyeIcon1: {
+    width: 19,
+    height: 19,
     // paddingRight: 16,
   },
 

@@ -5,7 +5,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 // import LinearGradient from "react-native-linear-gradient";
 
 // const ProductIcon = require('../../../assets/images/ProductIcon.png');
-const ProductIcon = require('../../assets/images/ProductIcon.png');
+const ProductIcon = require('../../assets/images/producticon.png');
 
 export default function ProductCard() {
   return (

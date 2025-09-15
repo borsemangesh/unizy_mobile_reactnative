@@ -97,11 +97,11 @@ const SelectLanguage_Popup = ({ navigation }: LoginScreenProps) => {
   }, []);
 
   const flagMap: Record<string, any> = {
-  en: require('../../../assets/images/English.png'),
-  hi: require('../../../assets/images/Indian.png'),
-  es: require('../../../assets/images/Spanish.png'),
-  fr: require('../../../assets/images/French.png'),
-  zh: require('../../../assets/images/China.png'),
+  en: require('../../../assets/images/english.png'),
+  hi: require('../../../assets/images/indian.png'),
+  es: require('../../../assets/images/spanish.png'),
+  fr: require('../../../assets/images/french.png'),
+  zh: require('../../../assets/images/china.png'),
   // add others as needed
 };
 
@@ -109,7 +109,7 @@ const filteredLanguages = languages
   .map(lang => ({
     code: lang.iso_code,
     name: lang.language_name,
-    flag: flagMap[lang.iso_code] || require('../../../assets/images/English.png'),
+    flag: flagMap[lang.iso_code] || require('../../../assets/images/english.png'),
   }))
   .filter(lang => lang.name.toLowerCase().includes(search.toLowerCase()));
 
@@ -134,7 +134,7 @@ const filteredLanguages = languages
 
   return (
     <ImageBackground
-      source={require('../../../assets/images/BGAnimationScreen.png')}
+      source={require('../../../assets/images/bganimationscreen.png')}
       style={[selectlang_styles.flex_1]}
     >
       <View style={selectlang_styles.container}>
@@ -142,7 +142,7 @@ const filteredLanguages = languages
 
         <View style={selectlang_styles.search_container}>
           <Image
-            source={require('../../../assets/images/SearchIcon.png')}
+            source={require('../../../assets/images/searchicon.png')}
             style={selectlang_styles.searchIcon}
           />
           <TextInput

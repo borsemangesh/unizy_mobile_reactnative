@@ -6,7 +6,7 @@ import {  StyleSheet  } from "react-native";
 const BackgroundAnimation = () => {
   return (
      <LottieView
-      source={require("../../../assets/animations/BackgroundAnimation3.json")}
+      source={require("../../../assets/animations/backgroundanimation3.json")}
       autoPlay
       loop
       resizeMode="cover"

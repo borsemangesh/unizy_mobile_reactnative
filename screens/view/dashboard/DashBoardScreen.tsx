@@ -12,11 +12,11 @@ import { useState } from 'react';
 import ProductCard from '../../utils/ProductCard';
 
 
-const MyListing = require('../../../assets/images/MyListings.png');
-const searchIcon = require('../../../assets/images/SearchIcon.png');
-const BGImag = require('../../../assets/images/BGImage.png');
+const MyListing = require('../../../assets/images/mylistings.png');
+const searchIcon = require('../../../assets/images/searchicon.png');
+const BGImag = require('../../../assets/images/bgimage.png');
 
-const ProductIcon = require('../../../assets/images/ProductIcon.png');
+const ProductIcon = require('../../../assets/images/producticon.png');
 
 const DashBoardScreen = () => {
   const [search, setSearch] = useState('');

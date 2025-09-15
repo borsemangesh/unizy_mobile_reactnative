@@ -21,7 +21,9 @@ import LinearGradient from 'react-native-linear-gradient';
  
 import GlassButton from '../Hello/GlassButton';
 import ResetButton from '../Hello/ResetButton';
- 
+ import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MAIN_URL } from '../../utils/APIConstant';
+
 const { width } = Dimensions.get('window');
  
 type RestPasswordScreenProps = {
@@ -75,21 +77,71 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
     });
   };
 
-  const clickLoginListner = () =>{
+  const clickLoginListner = async () =>{
     if (Platform.OS === 'ios') {
       navigation.replace('LoginScreen');
     } else {
+      await AsyncStorage.setItem('fromForgotPassword', 'true');
+
       navigation.navigate('LoginScreen');
     }
   }
-  const handleSendResetLink = () => {
+
+  const handleSendResetLink = async () => {
+    if (!username) {
+        ToastAndroid.show("Please fill all required fields", ToastAndroid.SHORT);
+        return;
+      }
+    
+       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(username)) {
+          ToastAndroid.show("Please enter a valid email address", ToastAndroid.SHORT);
+          return;
+        }
+
+  //   try {
+
+  //   const url = MAIN_URL.baseUrl+'user/student-email'
+
+  //   const res = await fetch(url, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({
+  //       student_email: username,
+  //       temp_user_id: Number(await AsyncStorage.getItem('temp_user_id')) || undefined
+  //     }),
+  //   });
+
+  //   const data = await res.json();
+  //   console.log('Send OTP Response:', data);
+
+  //   if (data?.statusCode === 200) {
+  //     await AsyncStorage.setItem('temp_user_id', data.data.temp_user_id.toString());
+  //     await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
+  //     await AsyncStorage.setItem('signupUsername', username);
+
+  //     ToastAndroid.show(data.message, ToastAndroid.SHORT);
+    
+  //   } else {
+  //     ToastAndroid.show(data?.message || 'Failed to send OTP', ToastAndroid.SHORT);
+  //   }
+  // } 
+  // catch (err) {
+  //   console.error('Error sending OTP:', err);
+  //   ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
+  // }
+
     console.log(`Send reset link to ${username}`);
     setShowPopup(true);
+
   };
  
   const handleLogin = () => {
     navigation.replace('LoginScreen');
   };
+
    const validateEmail = (text: string) => {
       setUsername(text);
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -108,7 +160,7 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
  
   return (
     <ImageBackground
-      source={require('../../../assets/images/BGAnimationScreen.png')}
+      source={require('../../../assets/images/bganimationscreen.png')}
       style={styles.flex_1}
       resizeMode="cover"
       onLoad={() => setImageLoaded(true)}
@@ -157,7 +209,8 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
-                onChangeText={validateEmail}
+                //onChangeText={validateEmail}
+                onChangeText={usernameText => setUsername(usernameText)}
               />
             </View>
  
