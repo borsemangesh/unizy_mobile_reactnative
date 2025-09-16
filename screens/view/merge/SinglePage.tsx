@@ -915,12 +915,12 @@
 //   //   showToast("Please enter a valid email address", 'error');
 //   //   return;
 //   // }
-//   const emailRegex = /^[^\s@]+@(?:[^\s@]+\.)*ac\.uk$/i;
+  // const emailRegex = /^[^\s@]+@(?:[^\s@]+\.)*ac\.uk$/i;
 
-//     if (!emailRegex.test(verifyusername)) {
-//       showToast("Please enter a valid student email address", 'error');
-//       return;
-//     }
+  //   if (!emailRegex.test(verifyusername)) {
+  //     showToast("Please enter a valid student email address", 'error');
+  //     return;
+  //   }
     
 //   try {
  
@@ -2463,51 +2463,56 @@ const greetings = [
 ];
 
 type Language = {
+  id: number;
   code: string;
   name: string;
   flag: any;
 };
-const languages: Language[] = [
-  {
-    code: 'en',
-    name: 'English',
-    flag: require('../../../assets/images/english.png'),
-  },
-  {
-    code: 'es',
-    name: 'Spanish',
-    flag: require('../../../assets/images/spanish.png'),
-  },
-  {
-    code: 'fr',
-    name: 'French',
-    flag: require('../../../assets/images/french.png'),
-  },
-  {
-    code: 'sv',
-    name: 'Swedish',
-    flag: require('../../../assets/images/swedish.png'),
-  },
-  {
-    code: 'it',
-    name: 'Italian',
-    flag: require('../../../assets/images/italian.png'),
-  },
-  {
-    code: 'de',
-    name: 'German',
-    flag: require('../../../assets/images/german.png'),
-  },
-  {
-    code: 'pt',
-    name: 'Portuguese',
-    flag: require('../../../assets/images/portuguese.png'),
-  },
-];
+// const languages: Language[] = [
+//   {
+//     code: 'en',
+//     name: 'English',
+//     flag: require('../../../assets/images/english.png'),
+//   },
+//   {
+//     code: 'es',
+//     name: 'Spanish',
+//     flag: require('../../../assets/images/spanish.png'),
+//   },
+//   {
+//     code: 'fr',
+//     name: 'French',
+//     flag: require('../../../assets/images/french.png'),
+//   },
+//   {
+//     code: 'sv',
+//     name: 'Swedish',
+//     flag: require('../../../assets/images/swedish.png'),
+//   },
+//   {
+//     code: 'it',
+//     name: 'Italian',
+//     flag: require('../../../assets/images/italian.png'),
+//   },
+//   {
+//     code: 'de',
+//     name: 'German',
+//     flag: require('../../../assets/images/german.png'),
+//   },
+//   {
+//     code: 'pt',
+//     name: 'Portuguese',
+//     flag: require('../../../assets/images/portuguese.png'),
+//   },
+// ];
 
 const { height } = Dimensions.get('window');
 
-const SinglePage = () => {
+type SinglePageProps = {
+  navigation: any;
+};
+
+const SinglePage = ({navigation}:SinglePageProps) => {
   const [currentScreen, setCurrentScreen] = useState<
     'hello' | 'language' | 'login'
   >('hello');
@@ -2559,6 +2564,7 @@ const SinglePage = () => {
 
   const filteredLanguages = languages
     .map(lang => ({
+      id: lang.id,
       code: lang.iso_code,
       name: lang.language_name,
       flag:
@@ -2575,10 +2581,16 @@ const SinglePage = () => {
   const handleLanguageSelect = async (item: Language) => {
     try {
 
-      await AsyncStorage.setItem(
-        'selectedLanguage',
-        JSON.stringify({ code: item.code, name: item.name })
-      );
+      // await AsyncStorage.setItem(
+      //   'selectedLanguage',
+      //   JSON.stringify({ code: item.code, name: item.name })
+      // );
+
+       await AsyncStorage.setItem(
+      'selectedLanguage',
+      JSON.stringify({ id: item.id, code: item.code, name: item.name })
+    );
+      
       setSelected(item.code);
       setCurrentScreen('login');
       setcurrentScreenIninner('login');
@@ -3016,7 +3028,7 @@ const SinglePage = () => {
 
   const handleSendOTP = async () => {
 
-
+    setOtp(['','','',''])
     
     if (!firstName || !lastName || !signUpusername || !signUppassword || !confirmPassword) {
       showToast("Please fill all required fields", 'error');
@@ -3135,6 +3147,7 @@ const SinglePage = () => {
   const otpverify = async () => {
 
   
+    setverifyUsername('')
     const otpValue = otp.join('');
 
     if (otpValue.length < 4 ) {
@@ -3282,35 +3295,22 @@ const SinglePage = () => {
   };
 
   const verifyOTP = async () => {
-    Animated.timing(verifyAndContinyTranslateY1, {
-      toValue: Dimensions.get('window').height, // move down off screen
-      duration: 500,
-      easing: Easing.in(Easing.ease),
-      useNativeDriver: true,
-    }).start(() => {
-      setShowOtp(true); // now show OTP view
-
-      // Immediately reset OTP position above screen
-      verifyAndContinyTranslateY2.setValue(-100);
-
-      // Slide in OTP form (from top to 0)
-      Animated.timing(verifyAndContinyTranslateY2, {
-        toValue: 0,
-        duration: 500,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }).start();
-    });
-
+    
     setOtp1(['','','','']);
     if (!verifyusername) {
       showToast("Please fill all required fields", 'error');
       return;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // if (!emailRegex.test(verifyusername)) {
+    //   showToast("Please enter a valid email address", 'error');
+    //   return;
+    // }
+    const emailRegex = /^[^\s@]+@(?:[^\s@]+\.)*ac\.uk$/i;
+
     if (!emailRegex.test(verifyusername)) {
-      showToast("Please enter a valid email address", 'error');
+      showToast("Please enter a valid student email address", 'error');
       return;
     }
 
@@ -3338,8 +3338,27 @@ const SinglePage = () => {
         await AsyncStorage.setItem('signupUsername', verifyusername);
 
         showToast(data.message, 'success');
-        setShowOtp(true);
+        //setShowOtp(true);
         //startAnimation();
+
+      Animated.timing(verifyAndContinyTranslateY1, {
+      toValue: Dimensions.get('window').height, // move down off screen
+      duration: 500,
+      easing: Easing.in(Easing.ease),
+      useNativeDriver: true,
+    }).start(() => {
+      setShowOtp(true); // now show OTP view
+
+      verifyAndContinyTranslateY2.setValue(-100);
+
+      Animated.timing(verifyAndContinyTranslateY2, {
+        toValue: 0,
+        duration: 500,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start();
+    });
+
       } else {
         showToast(data?.message || 'Failed to send OTP', 'error');
       }
@@ -3352,6 +3371,7 @@ const SinglePage = () => {
 
   const submitotp = async () => {
 
+    setPhoto('')
     //setCurrentScreen('login');
     //setcurrentScreenIninner('profile');
     const otpValue = otp1.join('');
@@ -3413,6 +3433,7 @@ const SinglePage = () => {
   };
 
   const resubmitotp = async () => {
+    setOtp1(['','','',''])
     try {
 
       const url = MAIN_URL.baseUrl + 'user/student-email'
@@ -4564,7 +4585,7 @@ const SinglePage = () => {
                             <TouchableOpacity
                               style={{ flexDirection: 'row', marginTop: 6 }}
                             >
-                              <Text style={Styles.goBackText}>
+                              <Text style={Styles.verifyresendText}>
                                 Entered wrong email?{' '}
                               </Text>
                               <TouchableOpacity
