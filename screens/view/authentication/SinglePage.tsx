@@ -28,81 +28,11 @@ import { MAIN_URL } from '../../utils/APIConstant';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { showToast } from '../../utils/toast';
 import BackgroundAnimation from '../Hello/BackgroundAnimation';
+import { Language } from '../../utils/Language';
+import { greetings } from '../../utils/Greetings';
+import { Constant } from '../../utils/Constant';
 
 
-
-const greetings = [
-  'Hello', // English
-  '你好', // Chinese
-  'Hola', // Spanish
-  'Bonjour', // French
-  'Hallo', // German
-  'Ciao', // Italian
-  'Olá', // Portuguese
-  'Привет', // Russian
-  'مرحبا', // Arabic
-  'こんにちは', // Japanese
-  '안녕하세요', // Korean
-  'नमस्ते', // Hindi
-  'สวัสดี', // Thai
-  'Merhaba', // Turkish
-  'Cześć', // Polish
-  'السلام علیکم', // Urdu
-  'হ্যালো', // Bengali
-  'Shalom', // Hebrew
-  'Halo', // Malay
-];
-
-type Language = {
-  id: number;
-  code: string;
-  name: string;
-  flag: any;
-};
-const languages: Language[] = [
-  {
-    id: 1,
-    code: 'en',
-    name: 'English',
-    flag: require('../../../assets/images/english.png'),
-  },
-  {
-    id: 2,
-    code: 'es',
-    name: 'Spanish',
-    flag: require('../../../assets/images/spanish.png'),
-  },
-  {
-    id: 3,
-    code: 'fr',
-    name: 'French',
-    flag: require('../../../assets/images/french.png'),
-  },
-  {
-    id: 4,
-    code: 'sv',
-    name: 'Swedish',
-    flag: require('../../../assets/images/swedish.png'),
-  },
-  {
-    id: 5,
-    code: 'it',
-    name: 'Italian',
-    flag: require('../../../assets/images/italian.png'),
-  },
-  {
-    id: 6,
-    code: 'de',
-    name: 'German',
-    flag: require('../../../assets/images/german.png'),
-  },
-  {
-    id: 7,
-    code: 'pt',
-    name: 'Portuguese',
-    flag: require('../../../assets/images/portuguese.png'),
-  },
-];
 
 const { height } = Dimensions.get('window');
 
@@ -503,7 +433,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
 
   const handleSendResetLink = async () => {
     if (!username1) {
-      showToast("Please fill all required fields", 'error');
+      showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
       return;
     }
    
@@ -511,7 +441,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
     const emailRegex = /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;
   
     if (!emailRegex.test(username1)) {
-      showToast("Please enter a valid email address", 'error');
+      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
       return;
     }
    
@@ -530,31 +460,31 @@ const SinglePage = ({navigation}:SinglePageProps) => {
    
       if (res.ok) {
         // Show toast
-        showToast(data.message || "Password reset link sent", 'success');
+        showToast(data.message || Constant.PASSWORD_RESET_LINK_SENT, 'success');
         const toastDuration = 3000;
         setTimeout(() => {
           setShowPopup(true);
         }, toastDuration);
         setUsername1('')
       } else {
-        showToast(data.message || "Something went wrong", 'error');
+        showToast(data.message || Constant.SOMTHING_WENT_WRONG, 'error');
       }
      
     } catch (error) {
       console.error("Error sending reset link:", error);
-      showToast("Network error, please try again", 'error');
+      showToast(Constant.NETWORK_ERROR_PLEASE_TRY_AGAIN, 'error');
     }
   };
 
   const loginapi = async () => {
     if (!username || !password) {
-      showToast('Please fill all required fields', 'error');
+      showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
       return;
     }
   
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(username)) {
-      showToast('Please enter a valid email address', 'error');
+      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
       return;
     }
   
@@ -577,7 +507,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
         result = await response.json();
       } catch (err) {
         setLoading(false);
-        showToast('Invalid server response', 'error');
+        showToast(Constant.INVALID_SERVER_RESPONSE, 'error');
         return;
       }
   
@@ -585,7 +515,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
   
       if (!response.ok || result?.statusCode !== 200) {
         setLoading(false);
-        showToast(result?.message || 'Invalid Email or Password', 'error');
+        showToast(result?.message || Constant.INVALID_EMAIL_OR_PASSWORD, 'error');
         return;
       }
  
@@ -597,7 +527,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
         await AsyncStorage.setItem('userToken', token);
         await AsyncStorage.setItem('userData', JSON.stringify(user));
   
-        showToast(result?.message || 'Login successful', 'success'); 
+        showToast(result?.message || Constant.LOGIN_SUCCESSFUL, 'success'); 
   
         setUsername('');
         setPassword('');
@@ -605,7 +535,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
         navigation.replace('Dashboard');
       } else {
         setLoading(false);
-        showToast('Invalid user data received', 'error');
+        showToast(Constant.INVALID_USER_DATA_RECEIVED, 'error');
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -620,22 +550,22 @@ const SinglePage = ({navigation}:SinglePageProps) => {
     setOtp(['','','','']);
 
     if (!firstName || !lastName || !signUpusername || !signUppassword || !confirmPassword) {
-      showToast("Please fill all required fields", 'error');
+      showToast(Constant.REQUIRED_ALL_FIELDS , 'error');
       return;
     }
     const passwordRegex = /^.{8,}$/;
     if (!passwordRegex.test(signUppassword)) {
-      showToast("Password must be at least 8 characters long.", "error");
+      showToast(Constant.PASSWORD_MUST_BE_AT_LEAST_8_CHARACTERS, "error");
       return;
     }
     if (signUppassword !== confirmPassword) {
-      showToast("Passwords do not match",'error');
+      showToast(Constant.PASSWORDS_DO_NOT_MATCH,'error'); 
       return;
     }
 
     const emailRegex = /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;    
     if (!emailRegex.test(signUpusername)) {
-      showToast("Please enter a valid email address", 'error');
+      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
       return;
     }
 
@@ -698,7 +628,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
       }
     } catch (err) {
       console.log('Error sending signup request:', err);
-      showToast('Failed to send OTP', 'error');
+      showToast(Constant.FAIL_TO_SEND_OTP, 'error');
     }
   };
 
@@ -733,14 +663,14 @@ const SinglePage = ({navigation}:SinglePageProps) => {
     const otpValue = otp.join('');
 
     if (otpValue.length < 4 || otp.includes('')) {
-      showToast("Please enter all 4 digits of the OTP", 'error');
+      showToast(Constant.PLEASE_ENTER_ALL_4_DIGITS_OF_THE_OTP, 'error');
       return;
     }
     try {
       const otp_id = await AsyncStorage.getItem('otp_id');
 
       if (!otp_id) {
-        showToast("OTP ID missing. Please request OTP again.", 'error');
+        showToast(Constant.OTP_ID_MISSING, 'error');
         return;
       }
 
@@ -800,12 +730,12 @@ const SinglePage = ({navigation}:SinglePageProps) => {
         });
 
       } else {
-        showToast(data?.message || 'OTP verification failed', 'error');
+        showToast(data?.message || Constant.OPT_VERIFICATION_FAILED, 'error');
       }
     }
     catch (err) {
       console.error(err);
-      showToast('Something went wrong', 'error');
+      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
     }
   };
 
@@ -878,13 +808,13 @@ const SinglePage = ({navigation}:SinglePageProps) => {
 
     setOtp1(['','','','']);
     if (!verifyusername) {
-      showToast("Please fill all required fields", 'error');
+      showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(verifyusername)) {
-      showToast("Please enter a valid email address", 'error');
+      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
       return;
     }
 
@@ -939,7 +869,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
       }
     } catch (err) {
       console.error('Error sending OTP:', err);
-      showToast('Something went wrong','error');
+      showToast(Constant.SOMTHING_WENT_WRONG,'error');
     }
   };
 
@@ -950,14 +880,14 @@ const SinglePage = ({navigation}:SinglePageProps) => {
     const otpValue = otp1.join('');
 
     if (otpValue.length < 4 || otp1.includes('')) {
-     showToast("Please enter all 4 digits of the OTP", 'error');
+     showToast(Constant.PLEASE_ENTER_ALL_4_DIGITS_OF_THE_OTP, 'error');
       return;
     }
 
     try {
       const otp_id = await AsyncStorage.getItem('otp_id');
       if (!otp_id) {
-        showToast("OTP ID missing. Please request OTP again.", 'error');
+        showToast(Constant.OTP_ID_MISSING, 'error');
         return;
       }
 
@@ -1001,7 +931,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
       }
     } catch (err) {
       console.error('Error verifying OTP:', err);
-      showToast('Something went wrong', 'error');
+      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
     }
   };
 
@@ -1034,11 +964,11 @@ const SinglePage = ({navigation}:SinglePageProps) => {
         setShowOtp(true);
         //startAnimation();
       } else {
-        showToast(data?.message || 'Failed to send OTP', 'error');
+        showToast(data?.message || Constant.FAIL_TO_SEND_OTP, 'error');
       }
     } catch (err) {
       console.error('Error sending OTP:', err);
-      showToast('Something went wrong', 'error');
+      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
     }
   }
   //profile
@@ -1205,7 +1135,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
     try {
       if (!uri) {
         console.log('No photo selected');
-        Alert.alert('Please select an image first');
+        Alert.alert(Constant.ALERT_MESSAGE_PLEASE_SELECT_AN_IMAGE_FIRST);
         setLoading(false);
         return;
       }
