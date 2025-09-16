@@ -170,7 +170,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
   }
 
  
-  const BGAnimationScreen = require('../../../assets/images/BGAnimationScreen.png');
+  const BGAnimationScreen = require('../../../assets/images/bganimationscreen.png');
 
 
   return (

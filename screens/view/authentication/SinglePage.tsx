@@ -54,51 +54,63 @@ const greetings = [
 ];
 
 type Language = {
+  id: number;
   code: string;
   name: string;
   flag: any;
 };
 const languages: Language[] = [
   {
+    id: 1,
     code: 'en',
     name: 'English',
-    flag: require('../../../assets/images/English.png'),
+    flag: require('../../../assets/images/english.png'),
   },
   {
+    id: 2,
     code: 'es',
     name: 'Spanish',
-    flag: require('../../../assets/images/Spanish.png'),
+    flag: require('../../../assets/images/spanish.png'),
   },
   {
+    id: 3,
     code: 'fr',
     name: 'French',
-    flag: require('../../../assets/images/French.png'),
+    flag: require('../../../assets/images/french.png'),
   },
   {
+    id: 4,
     code: 'sv',
     name: 'Swedish',
-    flag: require('../../../assets/images/Swedish.png'),
+    flag: require('../../../assets/images/swedish.png'),
   },
   {
+    id: 5,
     code: 'it',
     name: 'Italian',
-    flag: require('../../../assets/images/Italian.png'),
+    flag: require('../../../assets/images/italian.png'),
   },
   {
+    id: 6,
     code: 'de',
     name: 'German',
-    flag: require('../../../assets/images/German.png'),
+    flag: require('../../../assets/images/german.png'),
   },
   {
+    id: 7,
     code: 'pt',
     name: 'Portuguese',
-    flag: require('../../../assets/images/Portuguese.png'),
+    flag: require('../../../assets/images/portuguese.png'),
   },
 ];
 
 const { height } = Dimensions.get('window');
 
-const SinglePage = () => {
+type SinglePageProps = {
+  navigation: any;
+};
+
+const SinglePage = ({navigation}:SinglePageProps) => {
   const [currentScreen, setCurrentScreen] = useState<
     'hello' | 'language' | 'login'
   >('hello');
@@ -140,22 +152,29 @@ const SinglePage = () => {
   }, []);
 
   const flagMap: Record<string, any> = {
-    en: require('../../../assets/images/English.png'),
-    hi: require('../../../assets/images/Indian.png'),
-    es: require('../../../assets/images/Spanish.png'),
-    fr: require('../../../assets/images/French.png'),
-    zh: require('../../../assets/images/China.png'),
+    en: require('../../../assets/images/english.png'),
+    hi: require('../../../assets/images/indian.png'),
+    es: require('../../../assets/images/spanish.png'),
+    fr: require('../../../assets/images/french.png'),
+    zh: require('../../../assets/images/china.png'),
     // add others as needed
   };
 
   const filteredLanguages = languages
     .map(lang => ({
+      id: lang.id,
       code: lang.iso_code,
       name: lang.language_name,
       flag:
-        flagMap[lang.iso_code] || require('../../../assets/images/English.png'),
+        flagMap[lang.iso_code] || require('../../../assets/images/english.png'),
     }))
     .filter(lang => lang.name.toLowerCase().includes(search.toLowerCase()));
+
+      useEffect(() => {
+        if (search.trim() !== '' && filteredLanguages.length === 0) {
+          showToast('No results found', 'error');
+        }
+      }, [search, filteredLanguages]);
 
   const handleLanguageSelect = async (item: Language) => {
     try {
@@ -163,7 +182,7 @@ const SinglePage = () => {
       loginTranslateY.setValue(0);
       await AsyncStorage.setItem(
         'selectedLanguage',
-        JSON.stringify({ code: item.code, name: item.name })
+        JSON.stringify({id: item.id, code: item.code, name: item.name })
       );
       setSelected(item.code);
       setCurrentScreen('login');
@@ -583,6 +602,7 @@ const SinglePage = () => {
         setUsername('');
         setPassword('');
         setIsPasswordVisible(false)
+        navigation.replace('Dashboard');
       } else {
         setLoading(false);
         showToast('Invalid user data received', 'error');
@@ -1235,7 +1255,7 @@ const SinglePage = () => {
 
   return (
     <ImageBackground
-      source={require('../../../assets/images/BGAnimationScreen.png')}
+      source={require('../../../assets/images/bganimationscreen.png')}
       style={Styles.container}
       resizeMode="cover"
     >
@@ -1316,7 +1336,7 @@ const SinglePage = () => {
 
               <View style={selectlang_styles.search_container}>
                 <Image
-                  source={require('../../../assets/images/SearchIcon.png')}
+                  source={require('../../../assets/images/searchicon.png')}
                   style={selectlang_styles.searchIcon}
                 />
                 <TextInput
@@ -1907,6 +1927,11 @@ const SinglePage = () => {
                                   returnKeyType="next"
                                   textAlign="center"
                                   secureTextEntry
+                                  onKeyPress={({nativeEvent }) =>{
+                                    if (nativeEvent.key === 'Backspace' && otp[index] === '' && index > 0) {
+                                      inputs.current[index - 1]?.focus();
+                                    }
+                                  }}  
                                 />
                               ))}
                             </View>
@@ -2059,6 +2084,11 @@ const SinglePage = () => {
                                   returnKeyType="next"
                                   textAlign="center"
                                   secureTextEntry={true}
+                                  onKeyPress={({ nativeEvent }) => {
+                                    if (nativeEvent.key === 'Backspace' && otp1[index] === '' && index > 0) {
+                                      verifyinputs.current[index - 1]?.focus();
+                                    }
+                                  }}
                                 />
                               ))}
                             </View>

@@ -122,7 +122,7 @@ const greetings = [
   return (
     // <EdgeToEdgeScreen>
       <ImageBackground
-        source={require('../../../assets/images/BGAnimationScreen.png')}
+        source={require('../../../assets/images/bganimationscreen.png')}
         style={{ flex: 1, width: '100%', height: '100%'}}
         resizeMode="cover"
       >

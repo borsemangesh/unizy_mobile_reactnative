@@ -5,7 +5,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 // import LinearGradient from "react-native-linear-gradient";
 
 // const ProductIcon = require('../../../assets/images/ProductIcon.png');
-const ProductIcon = require('../../assets/images/ProductIcon.png');
+const producticon = require('../../assets/images/producticon.png');
 
 export default function ProductCard() {
   return (
@@ -32,7 +32,7 @@ export default function ProductCard() {
          
         </BlurView>  */}
         {/* <BlurView style={styles.bookmark} blurType="light" blurAmount={10}> */}
-             <Image source={ProductIcon} style={{ width: 24, height: 24 }} />
+             <Image source={producticon} style={{ width: 24, height: 24 }} />
         {/* </BlurView> */}
 
         {/* Label (Glass) */}

@@ -22,7 +22,7 @@ const ResendPopup = ({ navigation }: any) => {
 
   return (
     <ImageBackground
-      source={require('../../../assets/images/BGAnimationScreen.png')}
+      source={require('../../../assets/images/bganimationscreen.png')}
       style={styles.flex_1}
       resizeMode="cover"
     >

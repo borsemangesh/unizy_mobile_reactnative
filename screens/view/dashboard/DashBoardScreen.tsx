@@ -12,18 +12,18 @@ import { useState } from 'react';
 import ProductCard from '../../utils/ProductCard';
 
 
-const MyListing = require('../../../assets/images/MyListings.png');
-const searchIcon = require('../../../assets/images/SearchIcon.png');
-const BGImag = require('../../../assets/images/BGImage.png');
+const mylistings = require('../../../assets/images/mylistings.png');
+const searchIcon = require('../../../assets/images/searchicon.png');
+//const BGImag = require('../../../assets/images/bgimage.png');
 
-const ProductIcon = require('../../../assets/images/ProductIcon.png');
+const producticon = require('../../../assets/images/producticon.png');
 
 const DashBoardScreen = () => {
   const [search, setSearch] = useState('');
 
   return (
     <ImageBackground
-      source={BGImag}
+      source={require('../../../assets/images/bganimationscreen.png')}
       style={{ flex: 1, width: '100%', height: '100%' }}
     >
       <View style={dashboardStyles.fullScreenContainer}>
@@ -39,13 +39,13 @@ const DashBoardScreen = () => {
         >
           <View style={{ flexDirection: 'row', alignItems: 'center',alignContent: 'center' }}>
             <View style={dashboardStyles.MylistingsBackground}>
-              <Image source={MyListing} style={{ width: 15, height: 15 }} />
+              <Image source={mylistings} style={{ width: 15, height: 15 }} />
             </View>
 
             <Text style={dashboardStyles.unizyText}>UniZy</Text>
             <View style={dashboardStyles.emptyView}>
               <View style={dashboardStyles.MylistingsBackground}>
-                <Image source={MyListing} style={{ width: 15, height: 15 }} />
+                <Image source={mylistings} style={{ width: 15, height: 15 }} />
               </View>
             </View>
           </View>
@@ -71,7 +71,7 @@ const DashBoardScreen = () => {
           }}
         >
           <View style={dashboardStyles.product_container}>
-            <Image source={ProductIcon} style={{ width: 24, height: 24 }} />
+            <Image source={producticon} style={{ width: 24, height: 24 }} />
             <Text style={dashboardStyles.productText}>Product</Text>
           </View>
 
@@ -95,7 +95,7 @@ const DashBoardScreen = () => {
                 margin: 4,
               }}
             >
-              <Image source={ProductIcon} style={{ width: 24, height: 24 }} />
+              <Image source={producticon} style={{ width: 24, height: 24 }} />
               <Text style={dashboardStyles.productText}>Food </Text>
             </View>
 
@@ -113,7 +113,7 @@ const DashBoardScreen = () => {
                 alignItems: 'center',
               }}
             >
-              <Image source={ProductIcon} style={{ width: 24, height: 24 }} />
+              <Image source={producticon} style={{ width: 24, height: 24 }} />
               <Text style={dashboardStyles.productText}>Accommodation</Text>
             </View>
           </View>
@@ -137,7 +137,7 @@ const DashBoardScreen = () => {
                 margin: 4,
               }}
             >
-              <Image source={ProductIcon} style={{ width: 24, height: 24 }} />
+              <Image source={producticon} style={{ width: 24, height: 24 }} />
               <Text style={dashboardStyles.productText}>Tuition </Text>
             </View>
 
@@ -155,7 +155,7 @@ const DashBoardScreen = () => {
                 alignItems: 'center',
               }}
             >
-              <Image source={ProductIcon} style={{ width: 24, height: 24 }} />
+              <Image source={producticon} style={{ width: 24, height: 24 }} />
               <Text style={dashboardStyles.productText}>House Keeping</Text>
             </View>
           </View>

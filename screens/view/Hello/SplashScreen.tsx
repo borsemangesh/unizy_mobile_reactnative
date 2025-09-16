@@ -32,13 +32,13 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void })  => {
 
   return (
     <ImageBackground
-      source={require('../../../assets/images/BGAnimationScreen.png')}
+      source={require('../../../assets/images/bganimationscreen.png')}
       style={styles.container}
       resizeMode="cover"
     >
       <View style={styles.centerContent}>
         <LottieView
-          source={require('../../../assets/animations/Animation.json')}
+          source={require('../../../assets/animations/animation.json')}
           autoPlay
           loop={false}
           resizeMode="cover"

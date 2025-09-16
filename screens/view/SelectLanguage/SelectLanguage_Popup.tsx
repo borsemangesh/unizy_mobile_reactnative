@@ -11,51 +11,60 @@ import {
 
 import { selectlang_styles } from './SelectLanguage.style';
 
-type Language = {
-  code: string;
-  name: string;
-  flag: any;
-};
+
 
 type LoginScreenProps = {
   navigation: any;
 };
 
+type Language = {
+  id: number;
+  code: string;
+  name: string;
+  flag: any;
+};
 const languages: Language[] = [
   {
+    id: 1,
     code: 'en',
     name: 'English',
-    flag: require('../../../assets/images/English.png'),
+    flag: require('../../../assets/images/english.png'),
   },
   {
+    id: 2,
     code: 'es',
     name: 'Spanish',
-    flag: require('../../../assets/images/Spanish.png'),
+    flag: require('../../../assets/images/spanish.png'),
   },
   {
+    id: 3,
     code: 'fr',
     name: 'French',
-    flag: require('../../../assets/images/French.png'),
+    flag: require('../../../assets/images/french.png'),
   },
   {
+    id: 4,
     code: 'sv',
     name: 'Swedish',
-    flag: require('../../../assets/images/Swedish.png'),
+    flag: require('../../../assets/images/swedish.png'),
   },
   {
+    id: 5,
     code: 'it',
     name: 'Italian',
-    flag: require('../../../assets/images/Italian.png'),
+    flag: require('../../../assets/images/italian.png'),
   },
   {
+    id: 6,
     code: 'de',
     name: 'German',
-    flag: require('../../../assets/images/German.png'),
+    flag: require('../../../assets/images/german.png'),
   },
   {
+    id: 7,
     code: 'pt',
     name: 'Portuguese',
-    flag: require('../../../assets/images/Portuguese.png'),
+    flag: require('../../../assets/images/portuguese.png'),
   },
 ];
 
@@ -69,7 +78,7 @@ const SelectLanguage_Popup = ({ navigation }: LoginScreenProps) => {
 
   return (
     <ImageBackground
-      source={require('../../../assets/images/BGAnimationScreen.png')}
+      source={require('../../../assets/images/bganimationscreen.png')}
       style={[selectlang_styles.flex_1]}
     >
       <View style={selectlang_styles.container}>
@@ -77,7 +86,7 @@ const SelectLanguage_Popup = ({ navigation }: LoginScreenProps) => {
 
         <View style={selectlang_styles.search_container}>
           <Image
-            source={require('../../../assets/images/SearchIcon.png')}
+            source={require('../../../assets/images/searchicon.png')}
             style={selectlang_styles.searchIcon}
           />
           <TextInput

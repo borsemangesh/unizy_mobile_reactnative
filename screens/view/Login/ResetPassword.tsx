@@ -108,7 +108,7 @@ const ResetPassword = ({ navigation }: RestPasswordScreenProps) => {
  
   return (
     <ImageBackground
-      source={require('../../../assets/images/BGAnimationScreen.png')}
+      source={require('../../../assets/images/bganimationscreen.png')}
       style={styles.flex_1}
       resizeMode="cover"
       onLoad={() => setImageLoaded(true)}
