@@ -529,12 +529,18 @@ export const Styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
   },
-  infoText: {
+ infoText: {
     color: '#FFFFFF7A',
     fontFamily: 'Urbanist-Medium',
     fontSize: 14,
     lineHeight: 20,
-    flex: 1,
+  },
+   infoText1: {
+    color: '#FFFFFF7A',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight:500,
   },
 
   stepCircle: {

@@ -31,6 +31,7 @@ import BackgroundAnimation from '../Hello/BackgroundAnimation';
 import { Language } from '../../utils/Language';
 import { greetings } from '../../utils/Greetings';
 import { Constant } from '../../utils/Constant';
+import BackgroundAnimation_Android from '../Hello/BackgroundAnimation_Android';
 
 
 
@@ -203,10 +204,12 @@ const SinglePage = ({navigation}:SinglePageProps) => {
   const [showPopup, setShowPopup] = useState(false);
 
   const resetPasswordtranslateY = React.useRef(new Animated.Value(-300),).current;
-  const setOTPTranslatY = React.useRef(new Animated.Value(-300)).current;
+  const setOTPTranslatY = React.useRef(new Animated.Value(height)).current;
   const verifyAndContinyTranslateY1 = React.useRef(new Animated.Value(0)).current;
   const verifyAndContinyTranslateY2 = useRef(new Animated.Value(-100)).current;
   const profileTranslateY = useRef(new Animated.Value(-300)).current;
+    const newsendOTPTranslateY = useRef(new Animated.Value(-300)).current;
+
   const closePopup = () => setShowPopup(false);
 
   const [showOtp, setShowOtp] = useState(false);
@@ -216,17 +219,22 @@ const SinglePage = ({navigation}:SinglePageProps) => {
   const scaleY = useRef(new Animated.Value(0)).current;
   const [resetusername, resetsetUsername] = useState<string>('');
 
+  useEffect(() => {
+  slideUp.setValue(100);
+  translateY.setValue(-100);
+  slideUp1.setValue(screenHeight);
+  resetPasswordtranslateY.setValue(0);
+  setOTPTranslatY.setValue(Dimensions.get('window').height);
+  verifyAndContinyTranslateY1.setValue(-300);
+  verifyAndContinyTranslateY2.setValue(-100);
+  newsendOTPTranslateY.setValue(-300);
+  profileTranslateY.setValue(-300);
+  resetPasswordtranslateY.setValue(0);
+}, []); 
 
 
   useEffect(() => {
-    slideUp.setValue(100);
-    translateY.setValue(-100);
-    slideUp1.setValue(screenHeight);
-    resetPasswordtranslateY.setValue(-300);
-    setOTPTranslatY.setValue(-300);
-    verifyAndContinyTranslateY1.setValue(-300);
-    verifyAndContinyTranslateY2.setValue(-100);
-    profileTranslateY.setValue(-300);
+  
     if (photo) {
       setShowButton(true);
       Animated.timing(scaleY, {
@@ -301,14 +309,13 @@ const SinglePage = ({navigation}:SinglePageProps) => {
       }).start();
     }
     if (currentScreenIninner === 'profile') {
-      Animated.parallel([
-        Animated.timing(profileTranslateY, {
-          toValue: 0,
-          duration: 1000,
-          easing: Easing.out(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ]).start();
+     
+      Animated.timing(profileTranslateY, {
+        toValue: 0,
+        duration: 1000,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start();
     }
     if (currentScreenIninner === 'verify') {
       setverifyimageLoaded(true);
@@ -338,6 +345,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
 
     if (currentScreenIninner === 'sendOTP') {
       Animated.parallel([
+       
         Animated.timing(setOTPTranslatY, {
           toValue: 0,
           duration: 1000,
@@ -553,10 +561,16 @@ const SinglePage = ({navigation}:SinglePageProps) => {
       showToast(Constant.REQUIRED_ALL_FIELDS , 'error');
       return;
     }
-    const passwordRegex = /^.{8,}$/;
-    if (!passwordRegex.test(signUppassword)) {
-      showToast(Constant.PASSWORD_MUST_BE_AT_LEAST_8_CHARACTERS, "error");
+    
+    if (postalCode.length < 5) {
+      showToast("Postal code must be at least 5 characters long.", 'error');
       return;
+    }
+     const passwordRegex =/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(signUppassword)) {
+      showToast('Min 8 chars: upper, lower, number, symbol.','error')
+    return;
+    
     }
     if (signUppassword !== confirmPassword) {
       showToast(Constant.PASSWORDS_DO_NOT_MATCH,'error'); 
@@ -604,7 +618,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
 
         // setCurrentScreen('login');
         // setcurrentScreenIninner('sendOTP');
-        Animated.timing(loginTranslateY, {
+       Animated.timing(loginTranslateY, {
           toValue: Dimensions.get('window').height,
           duration: 1000,
           easing: Easing.in(Easing.ease),
@@ -613,15 +627,29 @@ const SinglePage = ({navigation}:SinglePageProps) => {
           setCurrentScreen('login');
           setcurrentScreenIninner('sendOTP');
         });
-    
+        
         Animated.timing(signupTranslateY, {
           toValue: Dimensions.get('window').height,
           duration: 1000,
           easing: Easing.in(Easing.ease),
           useNativeDriver: true,
         }).start(() => {
-          // setCurrentScreen('login');
-          // setcurrentScreenIninner('sendOTP');
+
+
+          // Slide SendOTP screen from top into view
+          setOTPTranslatY.setValue(-Dimensions.get('window').height ); // reset position
+          
+        
+          Animated.timing(setOTPTranslatY, {
+            toValue: 0,
+            duration: 1000,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+          }).start(() => {
+            setCurrentScreen('login');
+            setcurrentScreenIninner('sendOTP');
+          });
+
         });
       } else {
         showToast(data.message || 'Signup failed', 'error')
@@ -638,11 +666,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
   const [otp, setOtp] = useState(['', '', '', '']);
   const inputs = useRef<(TextInput | null)[]>([]);
 
-  // useEffect(()=>{
-  //   if(inputs.current[0]){
-  //     inputs.current[0].focus();
-  //   }
-  // })
+ 
 
   const handleChange = (text: string, index: number) => {
     const newOtp = [...otp];
@@ -705,8 +729,9 @@ const SinglePage = ({navigation}:SinglePageProps) => {
         setsignUpIsPasswordVisible(false)
         setIsConfirmPasswordVisible(false)
 
+         
         Animated.timing(setOTPTranslatY, {
-          toValue: Dimensions.get('window').height, // slide down off screen
+          toValue: Dimensions.get('window').height, 
           duration: 1000,
           easing: Easing.in(Easing.ease),
           useNativeDriver: true,
@@ -715,17 +740,14 @@ const SinglePage = ({navigation}:SinglePageProps) => {
         });
     
         Animated.timing(loginTranslateY, {
-          toValue: Dimensions.get('window').height, // slide down off screen
+          toValue: Dimensions.get('window').height, 
           duration: 1000,
           easing: Easing.in(Easing.ease),
           useNativeDriver: true,
         }).start(() => {
-          // setCurrentScreen('login');
-          // setcurrentScreenIninner('verify');
-          // setShowOtp(false);
           setCurrentScreen('login');
           setcurrentScreenIninner('verify');
-           setShowOtp(false);
+          setShowOtp(false);
           setverifyimageLoaded(true);
         });
 
@@ -855,6 +877,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
     
           // Immediately reset OTP position above screen
           verifyAndContinyTranslateY2.setValue(-100);
+          
     
           // Slide in OTP form (from top to 0)
           Animated.timing(verifyAndContinyTranslateY2, {
@@ -920,12 +943,9 @@ const SinglePage = ({navigation}:SinglePageProps) => {
             await AsyncStorage.setItem('access_token', data.data.token.access_token);
           }
         }
-
-            setShowPopup1(false);
+        setShowPopup1(false);
         setCurrentScreen('login');
         setcurrentScreenIninner('profile');
-
-
       } else {
         showToast(data?.message || 'OTP verification failed', 'error');
       }
@@ -1020,6 +1040,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
   };
 
   const goToForgotPassword = () => {
+    
     Animated.timing(loginTranslateY, {
       toValue: Dimensions.get('window').height, // slide down off screen
       duration: 1000,
@@ -1034,25 +1055,29 @@ const SinglePage = ({navigation}:SinglePageProps) => {
     });
   };
 
-  const collapsedHeight = 20; // Start from small visible card
-  const stepHeight = 50;      // Mid step (optional)
-  const fullHeight = screenHeight * 0.4; // Final expanded height
 
   const heightAnim = useRef(new Animated.Value(0)).current;
-
-  const animatedHeight = heightAnim.interpolate({
-    inputRange: [0, 0.3, 1],
-    outputRange: [20, 100, 170],
-  });
-
+  const [contentHeight, setContentHeight] = useState(Dimensions.get('window').height);
+ 
   useEffect(() => {
-    Animated.timing(heightAnim, {
-      toValue: 1,
-      duration: 1000,
-      easing: Easing.linear,
-      useNativeDriver: false,
-    }).start();
-  }, []);
+  if (contentHeight > 0) {
+    if(currentScreenIninner !== 'signup'){
+        Animated.timing(heightAnim, {
+              toValue: contentHeight + 30, // animate to measured height
+              duration: 800,
+              easing: Easing.out(Easing.exp),
+              useNativeDriver: false, // height can't use native driver
+      }).start();
+    } else {
+      Animated.timing(heightAnim, {
+            toValue: contentHeight + 30, // animate to measured height
+            duration: 1000,
+            easing: Easing.out(Easing.exp),
+            useNativeDriver: false, // height can't use native driver
+      }).start();
+    }
+  }
+}, [contentHeight]);
 
 
 
@@ -1067,11 +1092,39 @@ const SinglePage = ({navigation}:SinglePageProps) => {
     });
 
     Animated.timing(signupTranslateY, {
-      toValue: Dimensions.get('window').height, // slide into place
+      toValue: Dimensions.get('window').height, 
       duration: 1000,
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
     }).start();
+  };
+
+   const ClickBackToSendOTP1 = (onFinish?: () => void) => {
+    console.log('ClickBackToSendOTP1', setOTPTranslatY);
+
+  // ✅ Reset OTP screen below the window
+  setOTPTranslatY.setValue(Dimensions.get('window').height);
+
+  Animated.parallel([
+    // Slide Verify screen up (out)
+    Animated.timing(verifyAndContinyTranslateY2, {
+      toValue: -Dimensions.get('window').height,
+      duration: 1000,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: true,
+    }),
+    // Slide SendOTP screen up from bottom (in)
+    Animated.timing(setOTPTranslatY, {
+      toValue: Dimensions.get('window').height, // on screen
+      duration: 1000,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: true,
+    }),
+  ]).start(() => {
+    setCurrentScreen('login');
+    setcurrentScreenIninner('sendOTP');
+    if (onFinish) onFinish();
+  });
   };
 
 
@@ -1189,11 +1242,16 @@ const SinglePage = ({navigation}:SinglePageProps) => {
       style={Styles.container}
       resizeMode="cover"
     >
-      {/* <BackgroundAnimation children={undefined}/> */}
+     {Platform.OS === 'android' ? (
+      <BackgroundAnimation_Android />
+    ) : (
+      <BackgroundAnimation children={undefined}/>
+    )}
+      
       {currentScreen === 'hello' && (
         <View style={Styles.ScreenLayout}>
           <Animated.View
-            style={[{ transform: [{ translateY: unizyTranslateY }] }, { paddingTop: 60 }]}
+            style={[{ transform: [{ translateY: unizyTranslateY }] }, { paddingTop: (Platform.OS === 'ios') ?60: 0}]}
           >
             <TouchableOpacity
               onPress={() => console.log('Back button pressed')}
@@ -1255,7 +1313,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
       ;
       {currentScreen === 'language' && (
         <>
-          <View style={{ height: '100%', padding: 16, paddingTop: 70 }}>
+          <View style={{ height: '100%', padding: 16, paddingTop: (Platform.OS === 'ios')? 70 :30}}>
             <Animated.View
               style={[
                 selectlang_styles.container,
@@ -1344,9 +1402,9 @@ const SinglePage = ({navigation}:SinglePageProps) => {
       )}
       {currentScreen === 'login' && (
         <>
-         <View style={{paddingTop: 80,paddingLeft: 16,paddingRight: 16}}>
+         <View style={{paddingTop: (Platform.OS === 'ios')? 80:30,paddingLeft: 16,paddingRight: 16}}>
          {currentScreenIninner === 'login' && (
-            <TouchableOpacity style={{zIndex: 1}} onPress={() => setCurrentScreen('language')}>
+            <TouchableOpacity style={{zIndex: 1}} onPress={() => {setCurrentScreen('language');}}>
               <View style={Styles.backIconRow}>
                 <Image
                   source={require('../../../assets/images/back.png')}
@@ -1365,11 +1423,14 @@ const SinglePage = ({navigation}:SinglePageProps) => {
 
           <View style={{ width: '100%', height: '100%', paddingLeft: 16, paddingRight: 16, paddingTop: 16, }} >
             <Animated.View
-              style={[Styles.cardView, {
-                minHeight: animatedHeight
-              }]}>
+              style={[Styles.cardView, { height: heightAnim ,}]}>
 
-              <View>
+              <View
+                onLayout={e => {
+              const { height } = e.nativeEvent.layout;
+              setContentHeight(height); // save measured height
+            }}
+              >
 
                 {currentScreenIninner === 'login' && (
                   <>
@@ -1389,6 +1450,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
                           placeholder={'Personal Email ID'}
                           placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
                           value={username}
+                          maxLength={50}
                           onChangeText={usernameText =>
                             setUsername(usernameText)
                           }
@@ -1401,6 +1463,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
                           placeholder={'Password'}
                           placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
                           value={password}
+                          maxLength={20}
                           secureTextEntry={!isPasswordVisible}
                           onChangeText={passwordText =>
                             setPassword(passwordText)
@@ -1662,14 +1725,12 @@ const SinglePage = ({navigation}:SinglePageProps) => {
                             placeholder="Postal Code"
                             placeholderTextColor="rgba(255, 255, 255, 0.48)"
                             value={postalCode}
-                            maxLength={6}
+                            maxLength={7}
                             //keyboardType="numeric"
                             onChangeText={text => {
-                              const alphanumericText = text.replace(
-                                /[^a-zA-Z0-9]/g,
-                                '',
-                              );
-                              setPostalCode(alphanumericText);
+                              const alphanumericText = text.replace(/[^a-zA-Z0-9]/g, '');
+                               const limitedText = alphanumericText.slice(0, 7);
+                               setPostalCode(limitedText);
                             }}
                           />
                         </View>
@@ -1680,7 +1741,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
                             placeholder="Personal Email ID"
                             placeholderTextColor="rgba(255, 255, 255, 0.48)"
                             value={signUpusername}
-                            maxLength={20}
+                            maxLength={50}
                             onChangeText={text => setsignUpUsername(text)}
                           />
                           <TouchableOpacity
@@ -1693,15 +1754,15 @@ const SinglePage = ({navigation}:SinglePageProps) => {
                           </TouchableOpacity>
                         </View>
 
-                        {showInfo && (
+                      {showInfo && (
                           <View style={Styles.infoContainer}>
-                            <Text style={Styles.infoText}>
-                              Important: Use your personal email address for
-                              signup. Your university email will be requested
-                              separately for student verification.
-                            </Text>
+                                <Text style={Styles.infoText}>
+                              <Text style={Styles.infoText1}>Important: </Text>
+                              Use your personal email address for signup. Your university email will be
+                              requested separately for student verification.
+                          </Text>
                           </View>
-                        )}
+                      )}
 
                         <View style={Styles.password_container}>
                           <TextInput
@@ -1709,6 +1770,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
                             placeholder="Create Password"
                             placeholderTextColor="rgba(255, 255, 255, 0.48)"
                             value={signUppassword}
+                            maxLength={20}
                             onChangeText={setsignUpPassword}
                             secureTextEntry={!issignUpPasswordVisible}
                           />
@@ -1740,6 +1802,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
                             placeholder="Confirm Password"
                             placeholderTextColor="rgba(255, 255, 255, 0.48)"
                             value={confirmPassword}
+                            maxLength={20}
                             onChangeText={setConfirmPassword}
                             secureTextEntry={!isConfirmPasswordVisible}
                           />
@@ -1768,9 +1831,11 @@ const SinglePage = ({navigation}:SinglePageProps) => {
                         </View>
 
                         <TouchableOpacity
-                          onPress={
-                            handleSendOTP
-                          }
+                          onPress={() => {
+                            handleSendOTP();
+                            setImageLoaded(true);
+
+                          }}
                           style={Styles.loginButton}
                         >
                           <Text style={Styles.loginText}>Send OTP</Text>
@@ -1790,6 +1855,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
                           <TouchableOpacity
                             onPress={() => {
                               {
+                                 
                                 setCurrentScreen('login');
                                 setcurrentScreenIninner('login');
                                 setConfirmPassword('')
@@ -1821,6 +1887,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
                               {
                                 transform: [
                                   { translateY: setOTPTranslatY },
+                                  
                                 ],
                               },
                             ]
@@ -1907,6 +1974,8 @@ const SinglePage = ({navigation}:SinglePageProps) => {
                                   Click_SENDOTP_TO_SIGNUPSCREEN(() => {
                                     setCurrentScreen('login');
                                     setcurrentScreenIninner('signup');
+                                     setShowOtp(false);
+                                      setverifyimageLoaded(true);
                                   })
                                 }}
                               >
@@ -1959,7 +2028,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
 
                             <TouchableOpacity
                               style={Styles.verifyloginButton}
-                              onPress={verifyOTP}
+                              onPress={()=>{verifyOTP()}}
                             >
                               <Text style={Styles.loginText}>Send OTP</Text>
                             </TouchableOpacity>
@@ -2051,9 +2120,11 @@ const SinglePage = ({navigation}:SinglePageProps) => {
                               </Text>
                               <TouchableOpacity
                                 onPress={() => {
-                                  // handleSendOTP
-                                  setCurrentScreen('login');
-                                  setcurrentScreenIninner('sendOTP');
+                                  ClickBackToSendOTP1(() => {
+                                  //   setCurrentScreen('login');
+                                  // setcurrentScreenIninner('sendOTP');
+                                  })
+                                  
                                 }}
                               >
                                 <Text style={Styles.verifygoBackText1}>

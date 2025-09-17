@@ -9,11 +9,4 @@ export const showToast = (message: string, type: 'success' | 'error' | 'info' = 
     position: 'bottom',
     visibilityTime: 2500,
   });
-
-  // If you want to fallback to native Toast/Alert instead:
-  if (Platform.OS === 'android') {
-    ToastAndroid.show(message, ToastAndroid.SHORT);
-  } else {
-    Alert.alert('', message);
-  }
 };

@@ -16,7 +16,7 @@ const BackgroundAnimation:React.FC<Mywarpter> = ({ children }) =>
     {/* Background Animation */}
     <View style={{position:'absolute', top:0, left:0, right:0, bottom:0,}}>
       <LottieView
-        source={require('../../../assets/animations/BackgroundAnimation3.json')}
+        source={require('../../../assets/animations/backgroundanimation3.json')}
         autoPlay
         renderMode="AUTOMATIC"
         resizeMode='cover'

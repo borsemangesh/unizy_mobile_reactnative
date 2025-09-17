@@ -4,6 +4,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Navigation } from './screens/view/Navigation';
 import SplashScreen from './screens/view/Hello/SplashScreen';
 import { enableScreens } from 'react-native-screens';
+import Toast from 'react-native-toast-message';
 
 function App() {
   LogBox.ignoreAllLogs();
@@ -29,6 +30,7 @@ function App() {
     ) : (
       <Navigation />
     )}
+     <Toast/>
   </SafeAreaProvider>
   );
 }
