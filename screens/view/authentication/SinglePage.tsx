@@ -33,6 +33,7 @@ import { Language } from '../../utils/Language';
 import { greetings } from '../../utils/Greetings';
 import { Constant } from '../../utils/Constant';
 import BackgroundAnimation_Android from '../Hello/BackgroundAnimation_Android';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 
@@ -54,6 +55,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
   //Hello Screen
   const [currentGreetingIndex, setCurrentGreetingIndex] = useState(0);
   const unizyTranslateY = React.useRef(new Animated.Value(-100)).current;
+  const loginunizyTranslateY = React.useRef(new Animated.Value(-100)).current;
   const greetingOpacity = React.useRef(new Animated.Value(0)).current;
   const greetingScale = React.useRef(new Animated.Value(0.8)).current;
   const slideUp = React.useRef(new Animated.Value(200)).current;
@@ -117,8 +119,18 @@ const SinglePage = ({navigation}:SinglePageProps) => {
         JSON.stringify({id: item.id, code: item.code, name: item.name })
       );
       setSelected(item.code);
-      setCurrentScreen('login');
-      setcurrentScreenIninner('login');
+      Animated.timing(loginunizyTranslateY, {
+        toValue: 0,
+        duration: 1000,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start(() => {
+        setTextandBackIcon(true);
+        setCurrentScreen('login');
+        setcurrentScreenIninner('login');
+      });
+    
+      
     } catch (err) {
       console.log('Error saving selected language', err);
     }
@@ -415,6 +427,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
         clearInterval(interval);
         unizyTranslateY.stopAnimation();
         slideUp.stopAnimation();
+        loginunizyTranslateY.stopAnimation();
       };
     }, []),
   );
@@ -536,6 +549,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
         setUsername('');
         setPassword('');
         setIsPasswordVisible(false)
+        setTextandBackIcon(false);
         navigation.replace('Dashboard');
       } else {
         setLoading(false);
@@ -1036,6 +1050,11 @@ const SinglePage = ({navigation}:SinglePageProps) => {
   };
 
   const goToForgotPassword = () => {
+    Animated.timing(textAndBackOpacity, {
+      toValue: 0,   // fade out
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
     
     Animated.timing(loginTranslateY, {
       toValue: Dimensions.get('window').height, // slide down off screen
@@ -1043,6 +1062,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
       easing: Easing.in(Easing.ease),
       useNativeDriver: true,
     }).start(() => {
+      setTextandBackIcon(false);
       setUsername('');
       setPassword('');
       setIsPasswordVisible(false);
@@ -1059,17 +1079,17 @@ const SinglePage = ({navigation}:SinglePageProps) => {
   if (contentHeight > 0) {
     if(currentScreenIninner !== 'signup'){
         Animated.timing(heightAnim, {
-              toValue: contentHeight + 30, // animate to measured height
+              toValue: contentHeight + 30,
               duration: 800,
               easing: Easing.out(Easing.exp),
-              useNativeDriver: false, // height can't use native driver
+              useNativeDriver: false, 
       }).start();
     } else {
       Animated.timing(heightAnim, {
-            toValue: contentHeight + 30, // animate to measured height
+            toValue: contentHeight + 30,
             duration: 1000,
             easing: Easing.out(Easing.exp),
-            useNativeDriver: false, // height can't use native driver
+            useNativeDriver: false, 
       }).start();
     }
   }
@@ -1176,6 +1196,8 @@ const SinglePage = ({navigation}:SinglePageProps) => {
       { cancelable: true }
     );
   };
+
+  const insets = useSafeAreaInsets();
   
   const uploadImage = async (uri: string) => {
     console.log('Started');
@@ -1232,6 +1254,8 @@ const SinglePage = ({navigation}:SinglePageProps) => {
     }
   };
 
+  const [textandBackIcon, setTextandBackIcon] = useState(false);
+  const textAndBackOpacity = useRef(new Animated.Value(1)).current;
   return (
     <ImageBackground
       source={require('../../../assets/images/bganimationscreen.png')}
@@ -1286,7 +1310,32 @@ const SinglePage = ({navigation}:SinglePageProps) => {
               { transform: [{ translateY: slideUp }] },
             ]}
           >
-            <TouchableOpacity onPress={() => setCurrentScreen('language')}>
+            <TouchableOpacity onPress={() => {
+
+              
+
+
+           
+              Animated.parallel([
+    // Slide Verify screen up (out)
+          Animated.timing(unizyTranslateY, {
+            toValue: -Dimensions.get('window').height,
+            duration: 1000,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+          }),
+          // Slide SendOTP screen up from bottom (in)
+          // Animated.timing(slideUp, {
+          //   toValue: -Dimensions.get('window').height, // on screen
+          //   duration: 200,
+          //   easing: Easing.out(Easing.ease),
+          //   useNativeDriver: true,
+          // }),
+        ]).start(() => {
+        });
+        setCurrentScreen('language');
+
+            }}>
               <View style={Styles.SelectLanguageContainer}>
                 <Image
                   source={require('../../../assets/images/language.png')}
@@ -1314,7 +1363,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
       ;
       {currentScreen === 'language' && (
         <>
-          <View style={{ height: '100%', padding: 16, paddingTop: (Platform.OS === 'ios')? 70 :30}}>
+          <View style={{ height: '100%', padding: 16, paddingBottom: insets.bottom, paddingTop: (Platform.OS === 'ios')? 70 :30}}>
             <Animated.View
               style={[
                 selectlang_styles.container,
@@ -1404,22 +1453,33 @@ const SinglePage = ({navigation}:SinglePageProps) => {
       {currentScreen === 'login' && (
         <>
          <View style={{paddingTop: (Platform.OS === 'ios')? 80:30,paddingLeft: 16,paddingRight: 16}}>
-         {currentScreenIninner === 'login' && (
-            <TouchableOpacity style={{zIndex: 1}} onPress={() => {setCurrentScreen('language');}}>
-              <View style={Styles.backIconRow}>
-                <Image
-                  source={require('../../../assets/images/back.png')}
-                  style={{ height: 24, width: 24 }}
-                />
-              </View>
-            </TouchableOpacity>
-         )}
+          {currentScreenIninner === 'login' && (
+            <Animated.View style={{
+                opacity: textAndBackOpacity,
+                transform: [{ translateY: textandBackIcon ? translateY : 0 }],
+              }}>
 
-          <Animated.View>
-              <Text style={Styles.unizyText}>UniZy</Text>
-          </Animated.View>
-        
-        </View> 
+            
+                <TouchableOpacity style={{zIndex: 1}} onPress={() => {setCurrentScreen('language');}}>
+                  <View style={Styles.backIconRow}>
+                    <Image
+                      source={require('../../../assets/images/back.png')}
+                      style={{ height: 24, width: 24 }}
+                    />
+                  </View>
+                </TouchableOpacity>
+              </Animated.View>
+          )}
+
+            <Animated.View style={{
+                transform: [
+                  { translateY: textandBackIcon ? translateY : 0 }
+                ]
+              }}>
+                <Text style={Styles.unizyText}>UniZy</Text>
+            </Animated.View>
+          
+          </View> 
         
 
           <View style={{ width: '100%', height: '100%', paddingLeft: 16, paddingRight: 16, paddingTop: 16, }} >
@@ -1436,7 +1496,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
                 {currentScreenIninner === 'login' && (
                   <>
                     <Animated.View
-                      style={{ transform: [{ translateY: loginTranslateY }] }}
+                      style={{ transform: [{ translateY: loginTranslateY}] }}
                     >
                       <BlurView blurType="light" blurAmount={15} />
                       <LinearGradient
@@ -1532,6 +1592,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
                         </Text>
                         <TouchableOpacity
                           onPress={() => {
+                            setTextandBackIcon(false);
                             signupTranslateY.setValue(0);
                             setUsername('')
                             setPassword('')
@@ -1610,6 +1671,11 @@ const SinglePage = ({navigation}:SinglePageProps) => {
                             onPress={() => {
                               resetPasswordtranslateY.setValue(0); 
                               ClickFPGoBack_slideOutToTop(() => {
+                                Animated.timing(textAndBackOpacity, {
+                                  toValue: 1,   // fade in
+                                  duration: 500,
+                                  useNativeDriver: true,
+                                }).start();
                                 setUsername1('');
                                 // reset for next time
                                 setCurrentScreen('login');
