@@ -12,8 +12,6 @@ import DashBoardScreen from './dashboard/DashBoardScreen';
 import OTPScreen from './Login/OTPScreen';
 import VerifyScreen from './Login/VerifyScreen';
 import ProfileScreen from './Login/ProfileScreen';
-import SplashScreen from './Hello/SplashScreen';
-import BackgroundAnimation from './Hello/BackgroundAnimation';
 import { enableScreens } from 'react-native-screens';
 import SinglePage from './authentication/SinglePage';
 

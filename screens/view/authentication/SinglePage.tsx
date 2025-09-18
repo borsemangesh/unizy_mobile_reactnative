@@ -18,6 +18,7 @@ import {
   Alert,
   PermissionsAndroid,
   Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { Styles } from './SinglePage.style';
@@ -193,9 +194,6 @@ const SinglePage = ({navigation}:SinglePageProps) => {
   // Animations
   const opacity = React.useRef(new Animated.Value(0)).current;
 
-
-  const slideAnim = React.useRef(new Animated.Value(-height)).current;
-
   const [slideUp1] = useState(new Animated.Value(height + 500));
 
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -217,7 +215,6 @@ const SinglePage = ({navigation}:SinglePageProps) => {
   const [photo, setPhoto] = useState<string | null>(null);
   const [showButton, setShowButton] = useState(false);
   const scaleY = useRef(new Animated.Value(0)).current;
-  const [resetusername, resetsetUsername] = useState<string>('');
 
   useEffect(() => {
   slideUp.setValue(100);
@@ -387,7 +384,6 @@ const SinglePage = ({navigation}:SinglePageProps) => {
       }
 
       if (currentScreen === 'login' && currentScreenIninner === 'login' || currentScreenIninner === 'signup') {
-
 
         slideUp.setValue(100);
         translateY.setValue(-100);
@@ -1247,6 +1243,11 @@ const SinglePage = ({navigation}:SinglePageProps) => {
     ) : (
       <BackgroundAnimation children={undefined}/>
     )}
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0} // adjust if you have header
+    >
       
       {currentScreen === 'hello' && (
         <View style={Styles.ScreenLayout}>
@@ -1607,9 +1608,10 @@ const SinglePage = ({navigation}:SinglePageProps) => {
 
                           <TouchableOpacity
                             onPress={() => {
+                              resetPasswordtranslateY.setValue(0); 
                               ClickFPGoBack_slideOutToTop(() => {
                                 setUsername1('');
-                                resetPasswordtranslateY.setValue(0); // reset for next time
+                                // reset for next time
                                 setCurrentScreen('login');
                                 setcurrentScreenIninner('login');
                               });
@@ -2332,6 +2334,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
           )}
         </>
       )}
+      </KeyboardAvoidingView>
     </ImageBackground>
   );
 };
