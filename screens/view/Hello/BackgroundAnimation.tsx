@@ -1,7 +1,7 @@
 import { BlurView } from "@react-native-community/blur";
 import LottieView from "lottie-react-native";
 import { ReactNode } from "react";
-import {  Platform, StyleSheet, View  } from "react-native";
+import {  StyleSheet, View  } from "react-native";
 
 
 interface Mywarpter{

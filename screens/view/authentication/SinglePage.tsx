@@ -143,11 +143,9 @@ const SinglePage = ({navigation}:SinglePageProps) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [error, setError] = useState('');
   const [shrink, setShrink] = useState(false);
-  const isFocused = useIsFocused();
   const [showPopup1, setShowPopup1] = useState(false);
   const closePopup1 = () => setShowPopup1(false);
 
-  const sendOptinputs = useRef<Array<TextInput | null>>([]);
 
   const animateGreeting = () => {
     greetingOpacity.setValue(0);
@@ -1347,6 +1345,8 @@ const SinglePage = ({navigation}:SinglePageProps) => {
         setCurrentScreen('language');
 
             }}>
+             
+             
               <View style={Styles.SelectLanguageContainer}>
                 <Image
                   source={require('../../../assets/images/language.png')}

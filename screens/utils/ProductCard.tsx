@@ -1,137 +1,274 @@
-import { BlurView } from '@react-native-community/blur';
 import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
-// import { BlurView } from "@react-native-community/blur";
-// import LinearGradient from "react-native-linear-gradient";
+import { View, Text, Image, StyleSheet } from "react-native";
 
-// const ProductIcon = require('../../../assets/images/ProductIcon.png');
-const producticon = require('../../assets/images/producticon.png');
+
+// export default function ProductCard() {
+//   return (
+   
+//     <View style={{ 
+//         paddingTop: 10,
+//         paddingLeft: 12,
+        
+//     }}>
+//       <View style={styles.imageContainer}>
+//         <Image
+//           source={{ uri: "https://picsum.photos/600/400" }}
+//           style={styles.image}
+//         />
+
+//           <Text style={styles.tagText}>University of Warwick</Text>
+        
+//       </View>
+//       <View style={styles.infoRow}>
+//         <View>
+//           <Text style={styles.title}>Quadcopter (Drone)</Text>
+//           <Text style={styles.price}>$10.00</Text>
+//         </View>
+
+      
+//         <View style={styles.rating}>
+         
+//           <Text style={styles.ratingText}>4.5</Text>
+//         </View>
+//       </View>
+//       </View>
+   
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   card: {
+//     borderRadius: 20,
+//     margin: 20,
+//     overflow: "hidden",
+//     shadowColor: "#000",
+//     shadowOpacity: 0.2,
+//     shadowRadius: 10,
+//     shadowOffset: { width: 0, height: 5 },
+//     elevation: 5,
+//   },
+//   imageContainer: {
+//     position: "relative",
+//     width: "100%",
+//     height: 160,
+//   },
+//   image: {
+//     width: "100%",
+//     height: "100%",
+//     borderTopLeftRadius: 20,
+//     borderTopRightRadius: 20,
+//   },
+//   bookmark: {
+//     position: "absolute",
+//     top: 10,
+//     right: 10,
+//     borderRadius: 20,
+//     padding: 6,
+//     overflow: "hidden",
+//   },
+//   tag: {
+//     position: "absolute",
+//     bottom: 10,
+//     left: 10,
+//     borderRadius: 15,
+//     paddingHorizontal: 12,
+//     paddingVertical: 4,
+//     overflow: "hidden",
+//   },
+//   tagText: {
+//     fontSize: 12,
+//     fontWeight: "500",
+//     color: "#333",
+//   },
+//   infoRow: {
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     alignItems: "center",
+//     padding: 12,
+//   },
+//   title: {
+//     fontSize: 15,
+//     fontWeight: "600",
+//     color: "#fff",
+//     marginBottom: 2,
+//   },
+//   price: {
+//     fontSize: 13,
+//     fontWeight: "500",
+//     color: "#fff",
+//   },
+//   rating: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     backgroundColor: "rgba(255,255,255,0.15)",
+//     paddingHorizontal: 8,
+//     paddingVertical: 4,
+//     borderRadius: 12,
+//   },
+//   ratingText: {
+//     fontSize: 13,
+//     fontWeight: "500",
+//     color: "#fff",
+//     marginLeft: 4,
+//   },
+// });
+
 
 export default function ProductCard() {
   return (
-    // <LinearGradient
-    //   colors={["#1E3C72", "#2A5298"]}
-    //   start={{ x: 0, y: 0 }}
-    //   end={{ x: 1, y: 1 }}
-    //   style={styles.card}
-    // >
-    <View style={{ 
-        paddingTop: 10,
-        paddingLeft: 12,
-        
-    }}>
-      {/* Image Section */}
+    <View style={styles.card}>
+      
       <View style={styles.imageContainer}>
         <Image
-          source={{ uri: "https://picsum.photos/600/400" }}
+          source={require('../../assets/images/drone.png')}
           style={styles.image}
         />
 
-        {/* Bookmark (Glass) */}
-       {/* <BlurView style={styles.bookmark} blurType="light" blurAmount={10}> 
-         
-        </BlurView>  */}
-        {/* <BlurView style={styles.bookmark} blurType="light" blurAmount={10}> */}
-             <Image source={producticon} style={{ width: 24, height: 24 }} />
-        {/* </BlurView> */}
-
-        {/* Label (Glass) */}
-        {/* <BlurView style={styles.tag} blurType="light" blurAmount={10}> */}
+      
+ 
+        <View style={styles.tag}>
           <Text style={styles.tagText}>University of Warwick</Text>
-        {/* </BlurView> */}
+        </View>
+        {/* </LinearGradient> */}
+      
+        <View style={styles.bookmark1}>
+          <Image
+            source={require('../../assets/images/bookmark.png')}
+            style={{ width: 48, height: 48 }}
+          />
+        </View>
       </View>
 
-      {/* Info Section */}
       <View style={styles.infoRow}>
         <View>
           <Text style={styles.title}>Quadcopter (Drone)</Text>
           <Text style={styles.price}>$10.00</Text>
         </View>
+       
+        <View style={styles.ratingAbsolute}>
+        <Image
+          source={require('../../assets/images/staricon.png')}
+          style={styles.image1}/>
 
-        {/* Rating */}
-        <View style={styles.rating}>
-          {/* <Ionicons name="star" size={16} color="#fff" /> */}
-          <Text style={styles.ratingText}>4.5</Text>
-        </View>
+        <Text style={styles.ratingText}>4.5</Text>
       </View>
       </View>
-    // </LinearGradient>
+     
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
+    width: 320,
     borderRadius: 20,
-    margin: 20,
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 5 },
-    elevation: 5,
+    backgroundColor: '#5973c1ff',
+    marginHorizontal: 8,
+    // shadow for iOS
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    overflow: 'hidden',
+    height:300,
+    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 15px 15px 6px',
   },
   imageContainer: {
-    position: "relative",
-    width: "100%",
-    height: 160,
+    width: '100%',
+    height: 230,
+    position: 'relative',
+    padding:12
   },
   image: {
-    width: "100%",
-    height: "100%",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    width: '100%',
+    height: '100%',
+    padding:12,
+    borderRadius:12,
+    //borderColor:'000',
+   // borderWidth:2,
+    alignSelf:'center'
   },
-  bookmark: {
-    position: "absolute",
+
+   image1: {
+    width: 16,
+    height: 16,
+    
+  },
+  bookmark1: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    borderRadius: 20,
+    
+  },
+   bookmark: {
+    position: 'absolute',
     top: 10,
     right: 10,
     borderRadius: 20,
     padding: 6,
-    overflow: "hidden",
   },
   tag: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 10,
-    left: 10,
-    borderRadius: 15,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    overflow: "hidden",
+    right: 10,
+    //backgroundColor: '#fff',
+    backgroundColor:'rgba(255,255,255,0.4)',
+    borderRadius: 12,
+    padding: 8,
+    marginVertical:8,
+    marginHorizontal:8,
+     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
   },
   tagText: {
-    fontSize: 12,
-    fontWeight: "500",
-    color: "#333",
+    fontSize: 11,
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: '600',
+    color: '#000',
+    
   },
   infoRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 12,
+    //backgroundColor: '#fff',
   },
   title: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#fff",
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#fff',
+    fontFamily: 'Urbanist-SemiBold',
+    marginBottom: 2,
+  },
+   title1: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: '#000',
+    fontFamily: 'Urbanist-Regular',
     marginBottom: 2,
   },
   price: {
-    fontSize: 13,
-    fontWeight: "500",
-    color: "#fff",
+    fontSize: 17,
+    fontWeight: '500',
+    color: '#fff',
+     fontFamily: 'Urbanist-Bold',
   },
-  rating: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.15)",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
+  
   ratingText: {
-    fontSize: 13,
-    fontWeight: "500",
-    color: "#fff",
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#fff',
+     fontFamily: 'Urbanist-SemiBold',
     marginLeft: 4,
   },
+  ratingAbsolute: {
+  position: 'absolute',
+  bottom:10,
+  right: 10,
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingHorizontal: 8,
+  paddingVertical: 4,
+  borderRadius: 12,
+},
 });

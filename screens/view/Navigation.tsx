@@ -14,6 +14,7 @@ import VerifyScreen from './Login/VerifyScreen';
 import ProfileScreen from './Login/ProfileScreen';
 import { enableScreens } from 'react-native-screens';
 import SinglePage from './authentication/SinglePage';
+import AddScreen from './dashboard/AddScreen';
 
 const Stack = createNativeStackNavigator();
 //const Stack = createStackNavigator();
@@ -33,6 +34,7 @@ export const Navigation = () => {
         animation: 'fade',presentation: 'fullScreenModal',}} />
         <Stack.Screen name="HelloScreen" component={HelloScreen}  options={{headerShown: false,gestureEnabled: true,
         }} />
+        <Stack.Screen name='AddScreen' component={AddScreen} options={{headerShown:false,animation: 'fade',presentation: 'fullScreenModal'}}/>
 
         <Stack.Screen name="LoginScreen" component={LoginScreen}  options={{headerShown: false, presentation: 'fullScreenModal',gestureEnabled: true, }}/>
         <Stack.Screen name="Dashboard" component={DashBoardScreen} options={{headerShown: false}} />
