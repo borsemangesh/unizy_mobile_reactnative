@@ -18,6 +18,7 @@ import { enableScreens } from 'react-native-screens';
 import { SignupContext } from './Login/SignupContext ';
 import SinglePage from './merge/SinglePage';
 import BackgroundWrapper from './Hello/BackgroundAnimation';
+import AddScreen from './dashboard/AddScreen';
 
 const Stack = createNativeStackNavigator();
 //const Stack = createStackNavigator();
@@ -48,8 +49,7 @@ export const Navigation = () => {
         <Stack.Screen name="OTPScreen" component={OTPScreen} options={{headerShown:false,animation: 'fade', presentation: 'fullScreenModal'}}/>
         <Stack.Screen name="VerifyScreen" component={VerifyScreen} options={{headerShown:false,animation: 'fade',presentation: 'fullScreenModal'}}/>
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{headerShown:false,animation: 'fade',presentation: 'fullScreenModal'}}/>
-
-
+        <Stack.Screen name='AddScreen' component={AddScreen} options={{headerShown:false,animation: 'fade',presentation: 'fullScreenModal'}}/>
 
       </Stack.Navigator>
     </NavigationContainer>

@@ -515,13 +515,13 @@ const handleLogin = async () => {
           </View>
 
           {showInfo && (
-            <View style={styles.infoContainer}>
-              <Text style={styles.infoText}>
-                Important: Use your personal email address for signup. Your
-                university email will be requested separately for student
-                verification.
-              </Text>
-            </View>
+           <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+        <Text style={styles.infoText1}>Important: </Text>
+       <Text style={styles.infoText}>
+        Use your personal email address for signup. Your university email will be
+        requested separately for student verification.
+      </Text>
+     </View>
           )}
 
           <View style={styles.password_container}>
@@ -697,6 +697,14 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-Medium',
     fontSize: 14,
     lineHeight: 20,
+    flex: 1,
+  },
+  infoText1: {
+    color: '#FFFFFF7A',
+    fontFamily: 'Urbanist-Semibold',
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight:500,
     flex: 1,
   },
 
