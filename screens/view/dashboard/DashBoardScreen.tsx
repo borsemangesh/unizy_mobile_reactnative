@@ -17,6 +17,7 @@ import {
 import ProductCard from '../../utils/ProductCard';
 
 import AnimatedSlideUp from '../../utils/AnimatedSlideUp';
+import LinearGradient from 'react-native-linear-gradient';
 
 const mylistings = require('../../../assets/images/new_list_icon.png');
 const mylistings1 = require('../../../assets/images/new_bookmark_icon.png');
@@ -239,19 +240,19 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
       // Catagory bar animation categorytranslateY
       Animated.timing(categorytranslateY, {
         toValue: 0,
-        duration: 600,
+        duration: 1000,
         easing: Easing.out(Easing.ease),
         useNativeDriver: true,
       }).start();
       Animated.timing(leftItemTranslateX, {
         toValue: 0,
-        duration: 600,
+        duration: 1200,
         easing: Easing.out(Easing.ease),
         useNativeDriver: true,
       }).start();
       Animated.timing(rightItemTranslateX, {
         toValue: 0,
-        duration: 600,
+        duration: 1200,
         easing: Easing.out(Easing.ease),
         useNativeDriver: true,
       }).start();
@@ -265,7 +266,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
       const animations = [0, 1, 2].map(i =>
         Animated.timing(cardSlideupAnimation, {
           toValue: 0,
-          duration: 900,
+          duration: 1000,
           delay: i * 200,
           easing: Easing.out(Easing.ease),
           useNativeDriver: true,
@@ -718,10 +719,10 @@ halfWidth: {
     marginBottom: 10,
     alignItems: 'center',
 
-    borderWidth: 1,
-    borderColor: '#ffffff2c',
+    borderWidth: 0.3,
+    borderColor: '#ffffff25',
     backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
+      'rgba(255, 255, 255, 0.06)',
     boxShadow: 'rgba(255, 255, 255, 0.02) -1px 10px 5px 10px',
   },
   cardIcon1: {
@@ -756,10 +757,11 @@ halfWidth: {
     paddingVertical: 8,
     paddingHorizontal: 12,
 
-    borderWidth: 1,
+    borderWidth: 0.9,
     borderColor: '#ffffff2c',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px',
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.13)inset',
+ 
   },
 });

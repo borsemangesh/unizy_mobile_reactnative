@@ -40,15 +40,15 @@ export const Navigation = () => {
         <Stack.Screen name='AddScreen' component={AddScreen} options={{headerShown:false,animation: 'fade',presentation: 'fullScreenModal'}}/>
         <Stack.Screen name='PreviewThumbnail' component={PreviewThumbnail} options={{headerShown:false,animation: 'fade',presentation: 'fullScreenModal'}}/>
         <Stack.Screen name='PreviewDetailed' component={PreviewDetailed} options={{headerShown:false,animation: 'fade',presentation: 'fullScreenModal'}}/>
-    <Stack.Screen name='ProductDetails' component={ProductDetails} options={{headerShown:false,animation: 'fade',presentation: 'fullScreenModal'}}/>
+        <Stack.Screen name='ProductDetails' component={ProductDetails} options={{headerShown:false,animation: 'fade',presentation: 'fullScreenModal'}}/>
         <Stack.Screen name="LoginScreen" component={LoginScreen}  options={{headerShown: false, presentation: 'fullScreenModal',gestureEnabled: true, }}/>
         <Stack.Screen name="Dashboard" component={DashBoardScreen} options={{headerShown: false,headerBlurEffect: 'regular',headerTransparent: true}} />
         <Stack.Screen name="LanguagePopup" component={SelectLanguage_Popup} options={{
-         headerShown: false,
-         gestureEnabled: true,
-         animation: 'fade_from_bottom',
-         animationDuration: 700,
-        }} />
+          headerShown: false,
+          gestureEnabled: true,
+          animation: 'fade_from_bottom',
+          animationDuration: 700,
+          }} />
         <Stack.Screen name="Reset" component={ResetPassword} options={{headerShown: false, presentation: 'fullScreenModal',gestureEnabled: true,}}/>
         <Stack.Screen name="Signup" component={SignupScreen} options={{headerShown: false, presentation: 'fullScreenModal',gestureEnabled: true,}}/>
         <Stack.Screen name="RevarifyStudentStatus" component={RevarifyStudentStatus} options={{headerShown: false}} />

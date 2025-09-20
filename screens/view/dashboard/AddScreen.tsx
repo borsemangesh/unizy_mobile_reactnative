@@ -122,16 +122,24 @@ const AddScreen: React.FC<AddScreenContentProps> = ({ navigation }) => {
 
                 <View style={styles.imagelistcard}> 
                     {uploadedImages.map(file => (
+                        <View style={{width: '100%',flexDirection: 'row',
+    borderBottomColor: '#ffffff79',borderWidth:1}}>
+                       
                     <View style={{ flexDirection: 'row',width: '90%',justifyContent: 'space-between',alignItems: 'center',}}>
                         <View style={{ flexDirection: 'row',width: '100%',padding: 10, alignItems: 'center',}}>
-                            <View style={{flexDirection:'row', gap: -14,width: 30}}>
+                            <View style={{flexDirection:'row', gap: -50,width: 30,}}>
                                 <Image source={require('../../../assets/images/threedots.png')} style={styles.threedots} />
-                                <Image source={require('../../../assets/images/threedots.png')} style={[styles.threedots,{marginRight:-19}]} />
+                                <Image source={require('../../../assets/images/threedots.png')} style={[styles.threedots,{paddingLeft: 10}]} />
                             </View>
                             <Image source={fileIcon}  style={{width: 20,height:20}}/>
-                            <Text style={[styles.fileName]}>{file.name}</Text>                        
+                            <Text style={[styles.fileName]}>{file.name}</Text>
+                              
                         </View>
+                        
                      <Image source={deleteIcon} style={styles.deleteIcon}/>
+                     
+                    </View>
+                     
                    </View>
                     ))}
                     
