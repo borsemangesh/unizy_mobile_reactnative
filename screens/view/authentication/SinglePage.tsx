@@ -492,73 +492,73 @@ const SinglePage = ({navigation}:SinglePageProps) => {
   };
 
   const loginapi = async () => {
-    navigation.replace('Dashboard');
-    // if (!username || !password) {
-    //   showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
-    //   return;
-    // }
+    // navigation.replace('Dashboard');
+    if (!username || !password) {
+      showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
+      return;
+    }
   
-    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    // if (!emailRegex.test(username)) {
-    //   showToast(Constant.VALID_EMAI_LADDRESS, 'error');
-    //   return;
-    // }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(username)) {
+      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
+      return;
+    }
   
-    // setLoading(true);
+    setLoading(true);
   
-    // try {
-    //   const response = await fetch(MAIN_URL.baseUrl + 'user/login', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //       email: username,
-    //       password: password,
-    //     }),
-    //   });
+    try {
+      const response = await fetch(MAIN_URL.baseUrl + 'user/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: username,
+          password: password,
+        }),
+      });
   
-    //   let result;
-    //   try {
-    //     result = await response.json();
-    //   } catch (err) {
-    //     setLoading(false);
-    //     showToast(Constant.INVALID_SERVER_RESPONSE, 'error');
-    //     return;
-    //   }
+      let result;
+      try {
+        result = await response.json();
+      } catch (err) {
+        setLoading(false);
+        showToast(Constant.INVALID_SERVER_RESPONSE, 'error');
+        return;
+      }
   
-    //   console.log('Login response:', JSON.stringify(result, null, 2));
+      console.log('Login response:', JSON.stringify(result, null, 2));
   
-    //   if (!response.ok || result?.statusCode !== 200) {
-    //     setLoading(false);
-    //     showToast(result?.message || Constant.INVALID_EMAIL_OR_PASSWORD, 'error');
-    //     return;
-    //   }
+      if (!response.ok || result?.statusCode !== 200) {
+        setLoading(false);
+        showToast(result?.message || Constant.INVALID_EMAIL_OR_PASSWORD, 'error');
+        return;
+      }
  
-    //   const token = result?.data?.token;
-    //   const user = result?.data?.user;
+      const token = result?.data?.token;
+      const user = result?.data?.user;
   
-    //   if (token && user) {
-    //     setLoading(false)
-    //     await AsyncStorage.setItem('userToken', token);
-    //     await AsyncStorage.setItem('userData', JSON.stringify(user));
+      if (token && user) {
+        setLoading(false)
+        await AsyncStorage.setItem('userToken', token);
+        await AsyncStorage.setItem('userData', JSON.stringify(user));
   
-    //     showToast(result?.message || Constant.LOGIN_SUCCESSFUL, 'success'); 
+        showToast(result?.message || Constant.LOGIN_SUCCESSFUL, 'success'); 
   
-    //     setUsername('');
-    //     setPassword('');
-    //     setIsPasswordVisible(false)
-    //     setTextandBackIcon(false);
-    //     navigation.replace('Dashboard');
-    //   } else {
-    //     setLoading(false);
-    //     showToast(Constant.INVALID_USER_DATA_RECEIVED, 'error');
-    //   }
-    // } catch (error) {
-    //   console.error('Login error:', error);
-    // } finally {
-    //   setLoading(false);
-    // }
+        setUsername('');
+        setPassword('');
+        setIsPasswordVisible(false)
+        setTextandBackIcon(false);
+        navigation.replace('Dashboard');
+      } else {
+        setLoading(false);
+        showToast(Constant.INVALID_USER_DATA_RECEIVED, 'error');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
  
 
@@ -843,7 +843,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
       return;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@(?:[^\s@]+\.)*ac\.uk$/i;
     if (!emailRegex.test(verifyusername)) {
       showToast(Constant.VALID_EMAI_LADDRESS, 'error');
       return;

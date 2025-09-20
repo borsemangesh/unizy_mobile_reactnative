@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, ImageSourcePropType } from "react-native";
 
 
 // export default function ProductCard() {
@@ -113,21 +113,28 @@ import { View, Text, Image, StyleSheet } from "react-native";
 //   },
 // });
 
+type ProductCardProps = {
+  tag: string;
+  infoTitle: string;
+  inforTitlePrice: string;
+  rating:string;
+  productImage: ImageSourcePropType
+};
 
-export default function ProductCard() {
+
+export default function ProductCard({tag,infoTitle,inforTitlePrice,rating,productImage}:ProductCardProps) {
   return (
     <View style={styles.card}>
       
       <View style={styles.imageContainer}>
         <Image
-          source={require('../../assets/images/drone.png')}
+          source={productImage}
           style={styles.image}
         />
 
-      
  
         <View style={styles.tag}>
-          <Text style={styles.tagText}>University of Warwick</Text>
+          <Text style={styles.tagText}>{tag}</Text>
         </View>
         {/* </LinearGradient> */}
       
@@ -138,11 +145,11 @@ export default function ProductCard() {
           />
         </View>
       </View>
-
+{/* require('../../assets/images/bookmark.png') */}
       <View style={styles.infoRow}>
         <View>
-          <Text style={styles.title}>Quadcopter (Drone)</Text>
-          <Text style={styles.price}>$10.00</Text>
+          <Text style={styles.title}>{infoTitle}</Text>
+          <Text style={styles.price}>{inforTitlePrice}</Text>
         </View>
        
         <View style={styles.ratingAbsolute}>
@@ -150,7 +157,7 @@ export default function ProductCard() {
           source={require('../../assets/images/staricon.png')}
           style={styles.image1}/>
 
-        <Text style={styles.ratingText}>4.5</Text>
+        <Text style={styles.ratingText}>{rating}</Text>
       </View>
       </View>
      

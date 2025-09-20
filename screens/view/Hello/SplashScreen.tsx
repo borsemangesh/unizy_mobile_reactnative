@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Dimensions, ImageBackground } from 'react-native';
+import { View, StyleSheet, Dimensions, ImageBackground, Platform } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import BackgroundAnimation_Android from './BackgroundAnimation_Android';
+import BackgroundAnimation from './BackgroundAnimation';
 
 type RootStackParamList = {
   Splash: undefined;
@@ -36,6 +38,12 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void })  => {
       style={styles.container}
       resizeMode="cover"
     >
+       {Platform.OS === 'android' ? (
+      <BackgroundAnimation_Android />
+    ) : (
+      <BackgroundAnimation children={undefined}/>
+    )}
+      
       <View style={styles.centerContent}>
         <LottieView
           source={require('../../../assets/animations/animation.json')}
