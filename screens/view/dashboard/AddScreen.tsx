@@ -1,4 +1,3 @@
-import { BlurView } from '@react-native-community/blur';
 import React, { useState } from 'react';
 import {
   Image,
@@ -14,6 +13,7 @@ import {
 } from 'react-native';
 import ToggleButton from '../../utils/component/ToggleButton';
 import LinearGradient from 'react-native-linear-gradient';
+import Header from '../../utils/component/Header';
 
 // assets
 const bgImage = require('../../../assets/images/bganimationscreen.png');
@@ -41,7 +41,7 @@ const AddScreen: React.FC<AddScreenContentProps> = ({ navigation }) => {
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
         {/* Header */}
-        <View style={styles.header}>
+        {/* <View style={styles.header}>
           <View style={styles.headerRow}>
             <TouchableOpacity
               style={styles.backBtn}
@@ -59,7 +59,9 @@ const AddScreen: React.FC<AddScreenContentProps> = ({ navigation }) => {
             <Text style={styles.unizyText}>List Product</Text>
             <View style={{ width: 30 }} />
           </View>
-        </View>
+        </View> */}
+
+        <Header/>
         {/* Content */}
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
