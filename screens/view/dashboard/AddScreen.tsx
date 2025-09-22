@@ -37,7 +37,6 @@ const AddScreen: React.FC<AddScreenContentProps> = ({ navigation }) => {
   const [scrollY, setScrollY] = useState(0);
   const scrollY1 = new Animated.Value(0);
 
-
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
@@ -115,133 +114,156 @@ const AddScreen: React.FC<AddScreenContentProps> = ({ navigation }) => {
           <View style={styles.productdetails}>
             {/* <View style={{}}> */}
             <Text style={styles.productdetailstext}>Product Details</Text>
-              <TouchableOpacity style={styles.uploadButton}>
-                <Image source={uploadIcon} style={styles.uploadIcon} />
-                <Text style={styles.uploadText}>Upload Images</Text>
-              </TouchableOpacity>
+            <TouchableOpacity style={styles.uploadButton}>
+              <Image source={uploadIcon} style={styles.uploadIcon} />
+              <Text style={styles.uploadText}>Upload Images</Text>
+            </TouchableOpacity>
 
-                <View style={styles.imagelistcard}> 
-                    {uploadedImages.map(file => (
-                        <View style={{width: '100%',flexDirection: 'row',
-    borderBottomColor: '#ffffff79',borderWidth:1}}>
-                       
-                    <View style={{ flexDirection: 'row',width: '90%',justifyContent: 'space-between',alignItems: 'center',}}>
-                        <View style={{ flexDirection: 'row',width: '100%',padding: 10, alignItems: 'center',}}>
-                            <View style={{flexDirection:'row', gap: -50,width: 30,}}>
-                                <Image source={require('../../../assets/images/threedots.png')} style={styles.threedots} />
-                                <Image source={require('../../../assets/images/threedots.png')} style={[styles.threedots,{paddingLeft: 10}]} />
-                            </View>
-                            <Image source={fileIcon}  style={{width: 20,height:20}}/>
-                            <Text style={[styles.fileName]}>{file.name}</Text>
-                              
-                        </View>
-                        
-                     <Image source={deleteIcon} style={styles.deleteIcon}/>
-                     
+            <View style={styles.imagelistcard}>
+              {uploadedImages.map(file => (
+                <View
+                  style={{
+                    width: '100%',
+                    flexDirection: 'row',
+                  }}
+                >
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      width: '90%',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        width: '100%',
+                        padding: 10,
+                        alignItems: 'center',
+                      }}
+                    >
+                      <View
+                        style={{ flexDirection: 'row', gap: -50, width: 30 }}
+                      >
+                        <Image
+                          source={require('../../../assets/images/threedots.png')}
+                          style={styles.threedots}
+                        />
+                        <Image
+                          source={require('../../../assets/images/threedots.png')}
+                          style={[styles.threedots, { paddingLeft: 10 }]}
+                        />
+                      </View>
+                      <Image
+                        source={fileIcon}
+                        style={{ width: 20, height: 20 }}
+                      />
+                      <Text style={[styles.fileName]}>{file.name}</Text>
                     </View>
-                     
-                   </View>
-                    ))}
-                    
+
+                    <Image source={deleteIcon} style={styles.deleteIcon} />
+                  </View>
                 </View>
-                
+              ))}
+            </View>
 
-                <View style={styles.productTextView}>
-                    <Text style={styles.textstyle}>Product Name</Text>
-                    {/* <View style={styles.login_container}> */}
-                        <TextInput
-                        style={[styles.personalEmailID_TextInput,styles.login_container]}
-                        placeholder="Product Name"
-                        placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                        value="Quadcopter (Drone)"
-                        />
-                    {/* </View> */}
-                </View>
+            <View style={styles.productTextView}>
+              <Text style={styles.textstyle}>Product Name</Text>
+              <TextInput
+                style={[
+                  styles.personalEmailID_TextInput,
+                  styles.login_container,
+                ]}
+                placeholder="Product Name"
+                placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                value="Quadcopter (Drone)"
+              />
+            </View>
 
-                <View style={styles.productTextView}>
-                            
-                    <Text style={styles.textstyle}>Product Description</Text>
-                    {/* <View style={styles.login_container}> */}
-                        <TextInput
-                        style={[styles.personalEmailID_TextInput,styles.login_container, ]}
-                        placeholder="Enter Description"
-                        placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                        multiline
-                        />
-                    {/* </View> */}
-                </View>
+            <View style={styles.productTextView}>
+              <Text style={styles.textstyle}>Product Description</Text>
+              <TextInput
+                style={[
+                  styles.personalEmailID_TextInput,
+                  styles.login_container,
+                ]}
+                placeholder="Enter Description"
+                placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                multiline
+              />
+            </View>
 
-                <View style={styles.productTextView}>
-                    <Text style={styles.textstyle}>Product Price</Text>
-                    <TextInput
-                        style={[styles.personalEmailID_TextInput,styles.login_container]}
-                        placeholder="£ Enter Price"
-                        placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                        keyboardType="numeric"
-                        />
-                </View>
-                    {/* Condition */}
-                <View style={styles.productTextView}>
-                    <Text style={styles.textstyle}>Product Condition</Text>
-                    {/* <View style={styles.login_container}> */}
-                        <TextInput
-                        style={[styles.personalEmailID_TextInput,styles.login_container]}
-                        placeholder="-Select Condition-"
-                        placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                        />
-                    {/* </View> */}
-                </View>
+            <View style={styles.productTextView}>
+              <Text style={styles.textstyle}>Product Price</Text>
+              <TextInput
+                style={[
+                  styles.personalEmailID_TextInput,
+                  styles.login_container,
+                ]}
+                placeholder="£ Enter Price"
+                placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                keyboardType="numeric"
+              />
+            </View>
+            {/* Condition */}
+            <View style={styles.productTextView}>
+              <Text style={styles.textstyle}>Product Condition</Text>
+              <TextInput
+                style={[
+                  styles.personalEmailID_TextInput,
+                  styles.login_container,
+                ]}
+                placeholder="-Select Condition-"
+                placeholderTextColor="rgba(255, 255, 255, 0.48)"
+              />
+            </View>
 
-
-              {/* Category */}
-               <View style={styles.productTextView}>
-                <Text style={styles.textstyle}>Product Category (Select one or more)</Text>
-                {/* <View style={styles.login_container}> */}
-                    <TextInput
-                    style={[styles.personalEmailID_TextInput,styles.login_container]}
-                    placeholder="-Select Category-"
-                    placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                    />
-                {/* </View> */}
-              </View>
-
-              {/* Selected Categories */}
-              <View style={styles.categoryContainer}>
-                <Text style={styles.categoryTag}>Category 1 ✕</Text>
-                <Text style={styles.categoryTag}>Category 2 ✕</Text>
-              </View>
-              
-                {/* </View> */}
+            {/* Category */}
+            <View style={styles.productTextView}>
+              <Text style={styles.textstyle}>
+                Product Category (Select one or more)
+              </Text>
+              <TextInput
+                style={[
+                  styles.personalEmailID_TextInput,
+                  styles.login_container,
+                ]}
+                placeholder="-Select Category-"
+                placeholderTextColor="rgba(255, 255, 255, 0.48)"
+              />
+            </View>
+            <View style={styles.categoryContainer}>
+              <Text style={styles.categoryTag}>Category 1 ✕</Text>
+              <Text style={styles.categoryTag}>Category 2 ✕</Text>
+            </View>
           </View>
 
           {/* Featured Listing */}
-          <View style={[styles.productdetails,{padding: 16}]}> 
-
-          
-          <View style={[styles.featuredRow,]}>
-            <Text style={styles.featuredLabel}>List as Featured Listing</Text>
-            <ToggleButton/>
-            {/* <Switch
+          <View style={[styles.productdetails, { padding: 16 }]}>
+            <View style={[styles.featuredRow]}>
+              <Text style={styles.featuredLabel}>List as Featured Listing</Text>
+              <ToggleButton />
+              {/* <Switch
               value={featured}
               onValueChange={setFeatured}
               trackColor={{ false: '#555', true: '#3b82f6' }}
             /> */}
-          </View>
+            </View>
 
-          <Text style={styles.importantText}>
-            Important: For Featured listings, $1 is deducted from your payout.
-          </Text>
+            <Text style={styles.importantText}>
+              Important: For Featured listings, $1 is deducted from your payout.
+            </Text>
           </View>
-
         </ScrollView>
         <TouchableOpacity
-            style={styles.previewBtn}
-            onPress={() => {
-              navigation.navigate('PreviewThumbnail');
-            }}
-          >
-            <Text style={styles.previewText}>Preview Details </Text>
-          </TouchableOpacity>
+          style={styles.previewBtn}
+          onPress={() => {
+            navigation.navigate('PreviewThumbnail');
+          }}
+        >
+          <Text style={styles.previewText}>Preview Details </Text>
+        </TouchableOpacity>
       </View>
     </ImageBackground>
   );
@@ -250,15 +272,14 @@ const AddScreen: React.FC<AddScreenContentProps> = ({ navigation }) => {
 export default AddScreen;
 
 const styles = StyleSheet.create({
-
-     headerContainer: {
+  headerContainer: {
     height: 80,
-    width: "100%",
-    position: "absolute",
+    width: '100%',
+    position: 'absolute',
     top: 0,
     left: 0,
     zIndex: 10,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   headerBlur: {
     ...StyleSheet.absoluteFillObject,
@@ -289,7 +310,6 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 10,
     overflow: 'hidden',
-
   },
   headerRow: {
     flexDirection: 'row',
@@ -347,14 +367,12 @@ const styles = StyleSheet.create({
     // padding: 16,
     // borderRadius: 24,
     // backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    
 
     // // gap: 10,
     marginTop: 10,
     padding: 12,
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderRadius: 24,
-  
   },
   avatar: {
     width: 50,
@@ -408,14 +426,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
 
-  productdetailstext:{
+  productdetailstext: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 18,
     fontWeight: '600',
     fontStyle: 'normal',
     letterSpacing: -0.36,
-
   },
 
   uploadIcon: {
@@ -427,7 +444,6 @@ const styles = StyleSheet.create({
   uploadText: {
     color: 'rgba(255, 255, 255, 0.48)',
     fontSize: 14,
-    
   },
 
   filecard: {
@@ -452,7 +468,6 @@ const styles = StyleSheet.create({
     // flex: 1,
     // paddingStart: 5,
 
-
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 16,
@@ -462,14 +477,14 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     paddingStart: 5,
 
-//     color: rgba(255, 255, 255, 0.88);
+    //     color: rgba(255, 255, 255, 0.88);
 
-// font-feature-settings: 'liga' off, 'clig' off;
-// font-family: Urbanist;
-// font-size: 15px;
-// font-style: normal;
-// font-weight: 500;
-// line-height: normal;
+    // font-feature-settings: 'liga' off, 'clig' off;
+    // font-family: Urbanist;
+    // font-size: 15px;
+    // font-style: normal;
+    // font-weight: 500;
+    // line-height: normal;
   },
   deleteBtn: {
     width: 30,
@@ -482,23 +497,23 @@ const styles = StyleSheet.create({
     height: 28,
     resizeMode: 'contain',
   },
-   threedots: {
+  threedots: {
     width: 10,
     height: 10,
     resizeMode: 'contain',
   },
-  textstyle:{
+  textstyle: {
     color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-Regular',
     fontWeight: 400,
     lineHeight: 16,
     fontSize: 14,
   },
-  productTextView:{
+  productTextView: {
     gap: 4,
     marginTop: 10,
   },
-  
+
   input: {
     backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: 8,
@@ -514,9 +529,10 @@ const styles = StyleSheet.create({
     marginTop: 9,
   },
   categoryTag: {
-    backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderWidth: 0.9,
-    borderColor:'rgba(255, 255, 255, 0.08)',
+    borderColor: 'rgba(255, 255, 255, 0.08)',
     borderBlockEndColor: 'rgba(255, 255, 255, 0.08)',
     color: '#fff',
     paddingHorizontal: 8,
@@ -524,7 +540,7 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     marginRight: 8,
     marginBottom: 8,
-    boxShadow:'0 2px 8px 0 rgba(0, 0, 0, 0.23)'
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.23)',
   },
   featuredRow: {
     flexDirection: 'row',
@@ -556,7 +572,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
-    
+
     position: 'absolute',
     bottom: 10,
   },
@@ -584,8 +600,7 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-   paddingLeft: 10,
-
+    paddingLeft: 10,
   },
   personalEmailID_TextInput: {
     width: '100%',
@@ -595,5 +610,5 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     fontStyle: 'normal',
     color: '#fff',
-      },
+  },
 });
