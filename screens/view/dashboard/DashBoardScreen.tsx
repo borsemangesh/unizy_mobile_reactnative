@@ -103,6 +103,8 @@ const AddScreenContent: React.FC<AddScreenContentProps & { products: any[] }> = 
   <View style={styles.tabContent3}>
     <Text style={styles.tabContentText3}>List Product</Text>
     <AnimatedSlideUp>
+    
+    <View>
       <FlatList
         data={products}
         keyExtractor={item => item.id.toString()}
@@ -128,6 +130,7 @@ const AddScreenContent: React.FC<AddScreenContentProps & { products: any[] }> = 
           </TouchableOpacity>
         )}
       />
+      </View>
     </AnimatedSlideUp>
   </View>
 );
@@ -349,12 +352,17 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
           <>
           <TouchableOpacity onPress={() => navigation.navigate('ProductDetails')} >
             <View style={styles.productsWrapper}>{renderProducts()}</View></TouchableOpacity>
-            <Text style={styles.featuredText}>Featured Listings</Text>
+             <Animated.View 
+              style={{
+                    transform: [{ translateY: cardSlideupAnimation }],
+                  }}>
+                  <Text style={styles.featuredText}>Featured Listings</Text>    
+             </Animated.View>
+            
             <ScrollView
               style={[{ paddingHorizontal: 6 }]}
               horizontal
-              showsHorizontalScrollIndicator={false}
-            >
+              showsHorizontalScrollIndicator={false}>
               {[1, 2, 3].map((_, index) => (
                 <Animated.View
                   key={index}
@@ -371,9 +379,6 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                   productImage={require("../../../assets/images/drone.png")}/>
                 </Animated.View>
               ))}
-              {/* <ProductCard />
-              <ProductCard />
-              <ProductCard /> */}
             </ScrollView>
           </>
         );
