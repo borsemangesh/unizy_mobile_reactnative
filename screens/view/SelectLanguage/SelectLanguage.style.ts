@@ -63,7 +63,8 @@ export const selectlang_styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-    // maxHeight: '80%',
+    maxHeight: '83%',
+    overflow: 'hidden'
   },
   listContent: {
     paddingLeft: 10,

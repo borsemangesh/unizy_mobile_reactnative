@@ -71,7 +71,7 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
           <TouchableOpacity
             style={styles.nextButton}
             onPress={() => {
-              navigation.navigate('PreviewDetailed');
+              navigation.replace('PreviewDetailed');
             }}
           >
             <Text style={styles.nextText}>Next</Text>

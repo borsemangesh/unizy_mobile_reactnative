@@ -13,6 +13,7 @@ import {
   Animated,
   Dimensions,
   Easing,
+  Platform,
 } from 'react-native';
 import ProductCard from '../../utils/ProductCard';
 
@@ -352,12 +353,13 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
           <>
           <TouchableOpacity onPress={() => navigation.navigate('ProductDetails')} >
             <View style={styles.productsWrapper}>{renderProducts()}</View></TouchableOpacity>
-             <Animated.View 
-              style={{
-                    transform: [{ translateY: cardSlideupAnimation }],
-                  }}>
-                  <Text style={styles.featuredText}>Featured Listings</Text>    
-             </Animated.View>
+            <Animated.View 
+            style={{
+              transform: [{ translateY: cardSlideupAnimation }],
+              
+            }}>
+              <Text style={styles.featuredText}>Featured Listings</Text>
+            </Animated.View>
             
             <ScrollView
               style={[{ paddingHorizontal: 6 }]}
@@ -408,6 +410,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
       source={require('../../../assets/images/bganimationscreen.png')}
       style={styles.background}
     >
+      
       <View style={styles.fullScreenContainer}>
         {/* Header visible only on Home */}
         {activeTab === 'Home' && (
@@ -584,6 +587,8 @@ const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
     flexDirection: 'column',
+    paddingTop: (Platform.OS==='ios')? 70: 30,
+
   },
 
   header: {

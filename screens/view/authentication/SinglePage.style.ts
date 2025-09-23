@@ -17,7 +17,7 @@ export const Styles = StyleSheet.create({
   },
   flex_1: {
     flex: 1,
-    paddingTop: 20,
+    paddingTop: 0,
   },
   ScreenLayout: {
     flex: 1,

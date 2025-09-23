@@ -25,7 +25,7 @@ type AddScreenContentProps = {
   navigation: any;
 };
 
-const AddScreen: React.FC<AddScreenContentProps> = ({ navigation }) => {
+const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const [featured, setFeatured] = useState(false);
 
   const uploadedImages = [
@@ -34,19 +34,29 @@ const AddScreen: React.FC<AddScreenContentProps> = ({ navigation }) => {
     { id: 3, name: 'Image303' },
   ];
 
-  const [scrollY, setScrollY] = useState(0);
-  const scrollY1 = new Animated.Value(0);
+  const BGAnimationScreen = require('../../../assets/images/bganimationscreen.png');
 
   return (
-    <ImageBackground source={bgImage} style={styles.background}>
-      <View style={styles.fullScreenContainer}>
-        {/* Header */}
-        {/* <View style={styles.header}>
+    <ImageBackground
+      source={BGAnimationScreen}
+      resizeMode="cover"
+      style={{
+        width: '100%',
+        height: '100%',
+        // alignItems: 'center',
+        flex: 1,
+      }}
+    >
+      <View style={{
+        padding: 16,
+      }}>
+        <View style={styles.header}>
           <View style={styles.headerRow}>
             <TouchableOpacity
               style={styles.backBtn}
               onPress={() => {
-                navigation.navigate('Dashboard');
+                console.log('Back button click');
+                navigation.replace('Dashboard');
               }}
             >
               <View style={styles.backIconRow}>
@@ -59,18 +69,10 @@ const AddScreen: React.FC<AddScreenContentProps> = ({ navigation }) => {
             <Text style={styles.unizyText}>List Product</Text>
             <View style={{ width: 30 }} />
           </View>
-        </View> */}
+        </View>
 
-        <Header/>
-        {/* Content */}
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
-          onScroll={Animated.event([
-            {
-              nativeEvent: { contentOffset: { y: scrollY1 } },
-            },
-          ])}
-          scrollEventThrottle={16}
         >
           {/* User Info */}
           <View style={styles.userRow}>
@@ -247,10 +249,10 @@ const AddScreen: React.FC<AddScreenContentProps> = ({ navigation }) => {
               <Text style={styles.featuredLabel}>List as Featured Listing</Text>
               <ToggleButton />
               {/* <Switch
-              value={featured}
-              onValueChange={setFeatured}
-              trackColor={{ false: '#555', true: '#3b82f6' }}
-            /> */}
+value={featured}
+onValueChange={setFeatured}
+trackColor={{ false: '#555', true: '#3b82f6' }}
+/> */}
             </View>
 
             <Text style={styles.importantText}>
@@ -258,6 +260,7 @@ const AddScreen: React.FC<AddScreenContentProps> = ({ navigation }) => {
             </Text>
           </View>
         </ScrollView>
+
         <TouchableOpacity
           style={styles.previewBtn}
           onPress={() => {
@@ -267,6 +270,11 @@ const AddScreen: React.FC<AddScreenContentProps> = ({ navigation }) => {
           <Text style={styles.previewText}>Preview Details </Text>
         </TouchableOpacity>
       </View>
+
+
+
+
+
     </ImageBackground>
   );
 };
@@ -296,18 +304,19 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
+
   },
   fullScreenContainer: {
     flex: 1,
   },
   header: {
     height: 70,
-    paddingTop: 12,
+    paddingStart: 16,
     paddingBottom: 12,
     paddingHorizontal: 16,
     justifyContent: 'center',
     position: 'absolute',
-    top: 0,
+    top: 40,
     left: 0,
     right: 0,
     zIndex: 10,
@@ -353,9 +362,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
   },
   scrollContainer: {
-    paddingHorizontal: 20,
+
     paddingBottom: 80,
-    paddingTop: 80,
+    paddingTop: 90,
+
   },
   userRow: {
     flexDirection: 'row',
