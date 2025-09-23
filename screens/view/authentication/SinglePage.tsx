@@ -492,7 +492,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
   };
 
   const loginapi = async () => {
-    // navigation.replace('Dashboard');
+    navigation.replace('Dashboard');
     if (!username || !password) {
       showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
       return;
@@ -1266,163 +1266,162 @@ const SinglePage = ({navigation}:SinglePageProps) => {
   const [textandBackIcon, setTextandBackIcon] = useState(false);
   const textAndBackOpacity = useRef(new Animated.Value(1)).current;
   return (
+ 
     <ImageBackground
       source={require('../../../assets/images/bganimationscreen.png')}
-      style={Styles.container}
+      style={{ width: '100%', height: '100%' }}
       resizeMode="cover"
     >
-     {Platform.OS === 'android' ? (
+      <View
+        style={{
+          flex: 1,
+          paddingTop: Platform.OS === 'ios' ? 60 : 30,
+        }}
+      >
+    {Platform.OS === 'android' ? (
       <BackgroundAnimation_Android />
     ) : (
-      <BackgroundAnimation children={undefined}/>
-    )}
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0} // adjust if you have header
-    >
-      
-      {currentScreen === 'hello' && (
-        <View style={Styles.ScreenLayout}>
-          <Animated.View
-            style={[{ transform: [{ translateY: unizyTranslateY }] }, { paddingTop: (Platform.OS === 'ios') ?60: 0}]}
-          >
-            <TouchableOpacity
-              onPress={() => console.log('Back button pressed')}
+      <BackgroundAnimation/>
+    )} 
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ?0 : 0} 
+      >
+        
+        {currentScreen === 'hello' && (
+          <View style={Styles.ScreenLayout}>
+            <Animated.View
+              style={[{ transform: [{ translateY: unizyTranslateY }] }, { paddingTop: (Platform.OS === 'ios') ?0: 0}]}
             >
-              <View style={[Styles.backIconRow, { display: 'none' }]}>
-                <Image
-                  source={require('../../../assets/images/back.png')}
-                  style={{ height: 24, width: 24 }}
-                />
-              </View>
-            </TouchableOpacity>
-            <Text style={Styles.unizyText}>UniZy</Text>
-            <View style={Styles.emptyView}></View>
-          </Animated.View>
-
-          <Animated.Text
-            style={[
-              Styles.hellowText,
-              {
-                opacity: greetingOpacity,
-                transform: [{ scale: greetingScale }],
-              },
-            ]}
-          >
-            {greetings[currentGreetingIndex]}
-          </Animated.Text>
-
-          <Animated.View
-            style={[
-              Styles.linearGradient,
-              { transform: [{ translateY: slideUp }] },
-            ]}
-          >
-            <TouchableOpacity onPress={() => {
-
-              
-
-
-           
-              Animated.parallel([
-    // Slide Verify screen up (out)
-          Animated.timing(unizyTranslateY, {
-            toValue: -Dimensions.get('window').height,
-            duration: 1000,
-            easing: Easing.out(Easing.ease),
-            useNativeDriver: true,
-          }),
-          // Slide SendOTP screen up from bottom (in)
-          // Animated.timing(slideUp, {
-          //   toValue: -Dimensions.get('window').height, // on screen
-          //   duration: 200,
-          //   easing: Easing.out(Easing.ease),
-          //   useNativeDriver: true,
-          // }),
-        ]).start(() => {
-        });
-        setCurrentScreen('language');
-
-            }}>
-             
-             
-              <View style={Styles.SelectLanguageContainer}>
-                <Image
-                  source={require('../../../assets/images/language.png')}
-                  style={{ width: 18, height: 18 }}
-                />
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    flex: 1,
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <Text style={Styles.selectlanguageText}>Select Language</Text>
+              <TouchableOpacity
+                onPress={() => console.log('Back button pressed')}
+              >
+                <View style={[Styles.backIconRow, { display: 'none' }]}>
                   <Image
-                    source={require('../../../assets/images/right.png')}
-                    style={{ width: 24, height: 24 }}
+                    source={require('../../../assets/images/back.png')}
+                    style={{ height: 24, width: 24 }}
                   />
                 </View>
-              </View>
-            </TouchableOpacity>
-          </Animated.View>
-        </View>
-      )}
-      ;
-      {currentScreen === 'language' && (
-        <>
-          <View style={{ height: '100%', padding: 16, paddingBottom: insets.bottom, paddingTop: (Platform.OS === 'ios')? 70 :30}}>
-            <Animated.View
+              </TouchableOpacity>
+              <Text style={Styles.unizyText}>UniZy</Text>
+              <View style={Styles.emptyView}></View>
+            </Animated.View>
+
+            <Animated.Text
               style={[
-                selectlang_styles.container,
-                { transform: [{ translateY: slideUp1 }] },
+                Styles.hellowText,
+                {
+                  opacity: greetingOpacity,
+                  transform: [{ scale: greetingScale }],
+                },
               ]}
             >
-              <Text style={selectlang_styles.title}>Select Language</Text>
+              {greetings[currentGreetingIndex]}
+            </Animated.Text>
 
-              <View style={selectlang_styles.search_container}>
-                <Image
-                  source={require('../../../assets/images/searchicon.png')}
-                  style={selectlang_styles.searchIcon}
-                />
-                <TextInput
-                  style={selectlang_styles.searchBar}
-                  placeholder="Search"
-                  placeholderTextColor="#ccc"
-                  onChangeText={setSearch}
-                  value={search}
-                />
-              </View>
+            <Animated.View
+              style={[
+                Styles.linearGradient,
+                { transform: [{ translateY: slideUp }] },
+              ]}
+            >
+              <TouchableOpacity onPress={() => {
 
-              <View style={selectlang_styles.listContainer}>
-                <FlatList
-                  contentContainerStyle={selectlang_styles.listContent}
-                  style={selectlang_styles.flatListStyle}
-                  data={filteredLanguages}
-                  keyExtractor={item => item.code}
-                  renderItem={({ item }) => (
-                    <TouchableOpacity
-                      style={selectlang_styles.languageItem}
-                      onPress={() => handleLanguageSelect(item)}
-                    >
-                      <View
-                        style={{
-                          display: 'flex',
-                          paddingTop: 10,
-                          paddingBottom: 12,
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          width: '100%',
-                        }}
+                
+
+
+            
+                Animated.parallel([
+      // Slide Verify screen up (out)
+            Animated.timing(unizyTranslateY, {
+              toValue: -Dimensions.get('window').height,
+              duration: 1000,
+              easing: Easing.out(Easing.ease),
+              useNativeDriver: true,
+            }),
+            // Slide SendOTP screen up from bottom (in)
+            // Animated.timing(slideUp, {
+            //   toValue: -Dimensions.get('window').height, // on screen
+            //   duration: 200,
+            //   easing: Easing.out(Easing.ease),
+            //   useNativeDriver: true,
+            // }),
+          ]).start(() => {
+          });
+          setCurrentScreen('language');
+
+              }}>
+              
+              
+                <View style={Styles.SelectLanguageContainer}>
+                  <Image
+                    source={require('../../../assets/images/language.png')}
+                    style={{ width: 18, height: 18 }}
+                  />
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      flex: 1,
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <Text style={Styles.selectlanguageText}>Select Language</Text>
+                    <Image
+                      source={require('../../../assets/images/right.png')}
+                      style={{ width: 24, height: 24 }}
+                    />
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </Animated.View>
+          </View>
+        )}
+        ;
+        {currentScreen === 'language' && (
+          <>
+            <View style={{ height: '100%', padding: 16, paddingBottom: insets.bottom, paddingTop: (Platform.OS === 'ios')? 10 :30}}>
+              <Animated.View
+                style={[
+                  selectlang_styles.container,
+                  { transform: [{ translateY: slideUp1 }] },
+                ]}
+              >
+                <Text style={selectlang_styles.title}>Select Language</Text>
+
+                <View style={selectlang_styles.search_container}>
+                  <Image
+                    source={require('../../../assets/images/searchicon.png')}
+                    style={selectlang_styles.searchIcon}
+                  />
+                  <TextInput
+                    style={selectlang_styles.searchBar}
+                    placeholder="Search"
+                    placeholderTextColor="#ccc"
+                    onChangeText={setSearch}
+                    value={search}
+                  />
+                </View>
+
+                <View style={selectlang_styles.listContainer}>
+                  <FlatList
+                    contentContainerStyle={selectlang_styles.listContent}
+                    style={selectlang_styles.flatListStyle}
+                    data={filteredLanguages}
+                    keyExtractor={item => item.code}
+                    renderItem={({ item }) => (
+                      <TouchableOpacity
+                        style={selectlang_styles.languageItem}
+                        onPress={() => handleLanguageSelect(item)}
                       >
                         <View
                           style={{
+                            display: 'flex',
+                            paddingTop: 10,
+                            paddingBottom: 12,
                             flexDirection: 'row',
                             alignItems: 'center',
-                            justifyContent: 'space-between',
                             width: '100%',
                           }}
                         >
@@ -1430,444 +1429,139 @@ const SinglePage = ({navigation}:SinglePageProps) => {
                             style={{
                               flexDirection: 'row',
                               alignItems: 'center',
+                              justifyContent: 'space-between',
+                              width: '100%',
                             }}
                           >
-                            <Image
-                              source={item.flag}
-                              style={selectlang_styles.flag}
-                            />
-                            <Text style={selectlang_styles.languageText}>
-                              {item.name}
-                            </Text>
-                          </View>
-                          <View>
-                            <View style={selectlang_styles.radioButton_round}>
-                              <View
-                                style={[
-                                  selectlang_styles.radioButton,
-                                  selected === item.code &&
-                                  selectlang_styles.radioButtonSelected,
-                                ]}
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <Image
+                                source={item.flag}
+                                style={selectlang_styles.flag}
                               />
+                              <Text style={selectlang_styles.languageText}>
+                                {item.name}
+                              </Text>
+                            </View>
+                            <View>
+                              <View style={selectlang_styles.radioButton_round}>
+                                <View
+                                  style={[
+                                    selectlang_styles.radioButton,
+                                    selected === item.code &&
+                                    selectlang_styles.radioButtonSelected,
+                                  ]}
+                                />
+                              </View>
                             </View>
                           </View>
                         </View>
-                      </View>
-                    </TouchableOpacity>
-                  )}
-                />
-              </View>
-            </Animated.View>
-          </View>
-        </>
-      )}
-      {currentScreen === 'login' && (
-        <>
-         <View style={{paddingTop: (Platform.OS === 'ios')? 80:30,paddingLeft: 16,paddingRight: 16}}>
-          {currentScreenIninner === 'login' && (
-            <Animated.View style={{
-                opacity: textAndBackOpacity,
-                transform: [{ translateY: textandBackIcon ? translateY : 0 }],
-              }}>
-
-            
-                <TouchableOpacity style={{zIndex: 1}} onPress={() => {setCurrentScreen('language');}}>
-                  <View style={Styles.backIconRow}>
-                    <Image
-                      source={require('../../../assets/images/back.png')}
-                      style={{ height: 24, width: 24 }}
-                    />
-                  </View>
-                </TouchableOpacity>
-              </Animated.View>
-          )}
-
-            <Animated.View style={{
-                transform: [
-                  { translateY: textandBackIcon ? translateY : 0 }
-                ]
-              }}>
-                <Text style={Styles.unizyText}>UniZy</Text>
-            </Animated.View>
-          
-          </View> 
-        
-
-          <View style={{ width: '100%', height: '100%', paddingLeft: 16, paddingRight: 16, paddingTop: 16, }} >
-            <Animated.View
-              style={[Styles.cardView, { height: heightAnim ,}]}>
-
-              <View
-                onLayout={e => {
-              const { height } = e.nativeEvent.layout;
-              setContentHeight(height); // save measured height
-            }}
-              >
-
-                {currentScreenIninner === 'login' && (
-                  <>
-                    <Animated.View
-                      style={{ transform: [{ translateY: loginTranslateY}] }}
-                    >
-                      <BlurView blurType="light" blurAmount={15} />
-                      <LinearGradient
-                        colors={[
-                          'rgba(255, 255, 255, 0.76)',
-                          'rgba(255, 255, 255, 0.85)',
-                        ]}
-                      />
-                      <View style={Styles.login_container}>
-                        <TextInput
-                          style={Styles.personalEmailID_TextInput}
-                          placeholder={'Personal Email ID'}
-                          placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
-                          value={username}
-                          maxLength={50}
-                          onChangeText={usernameText =>
-                            setUsername(usernameText)
-                          }
-                        />
-                      </View>
-
-                      <View style={Styles.password_container}>
-                        <TextInput
-                          style={Styles.password_TextInput}
-                          placeholder={'Password'}
-                          placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
-                          value={password}
-                          maxLength={20}
-                          secureTextEntry={!isPasswordVisible}
-                          onChangeText={passwordText =>
-                            setPassword(passwordText)
-                          }
-                        />
-                        <TouchableOpacity
-                          onPress={() =>
-                            setIsPasswordVisible(!isPasswordVisible)
-                          }
-                        >
-                          <Image
-                            source={
-                              isPasswordVisible
-                                ? require('../../../assets/images/eyeopen.png')
-                                : require('../../../assets/images/eyecross1.png')
-                            }
-                            style={[
-                              Styles.eyeIcon,
-                              isPasswordVisible
-                                ? Styles.eyeIcon
-                                : Styles.eyeCross,
-                            ]}
-                          />
-                        </TouchableOpacity>
-                      </View>
-
-                      <Text
-                        style={Styles.forgetPasswordText}
-                        onPress={() => {
-                          goToForgotPassword();
-
-                        }}
-                      >
-                        Forgot Password?
-                      </Text>
-
-                      <TouchableOpacity
-                        style={Styles.loginButton}
-                        onPress={loginapi}
-                      >
-                        <Text style={Styles.loginText}>Login</Text>
                       </TouchableOpacity>
+                    )}
+                  />
+                </View>
+              </Animated.View>
+            </View>
+          </>
+        )}
+        {currentScreen === 'login' && (
+          <>
+          <View style={{paddingTop: (Platform.OS === 'ios')? 10:30,paddingLeft: 16,paddingRight: 16}}>
+            {currentScreenIninner === 'login' && (
+              <Animated.View style={{
+                  opacity: textAndBackOpacity,
+                  transform: [{ translateY: textandBackIcon ? translateY : 0 }],
+                }}>
 
-                      <View
-                        style={{
-                          width: '100%',
-                          flexDirection: 'row',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          gap: 5,
-                        }}
-                      >
-                        <Text
-                          style={{
-                            color: 'rgba(255, 255, 255, 0.48)',
-                            textAlign: 'center',
-                            fontFamily: 'Urbanist-Regular',
-                            fontSize: 14,
-                            fontWeight: 400,
-                            lineHeight: 19,
-                            marginTop: 10,
-                          }}
-                        >
-                          Don't have an account?
-                        </Text>
-                        <TouchableOpacity
-                          onPress={() => {
-                            setTextandBackIcon(false);
-                            signupTranslateY.setValue(0);
-                            setUsername('')
-                            setPassword('')
-                            setIsPasswordVisible(false)
-                            setCurrentScreen('login');
-                            setcurrentScreenIninner('signup');
-                            setFirstName('')
-                            setLastName('')
-                            setPostalCode('')
-                            setConfirmPassword('')
-                            setsignUpPassword('')
-                            setsignUpUsername('')
-                            setIsConfirmPasswordVisible(false)
-                            setsignUpIsPasswordVisible(false)
-                          }}
-                        >
-                          <Text style={Styles.signupText}>Sign up</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </Animated.View>
-                  </>
-                )}
+              
+                  <TouchableOpacity style={{zIndex: 1}} onPress={() => {setCurrentScreen('language');}}>
+                    <View style={Styles.backIconRow}>
+                      <Image
+                        source={require('../../../assets/images/back.png')}
+                        style={{ height: 24, width: 24 }}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                </Animated.View>
+            )}
 
-                {currentScreenIninner ===
-                  ('forgotpassword' as typeof currentScreenIninner) && (
-                    <>
-                      <View style={{ width: '100%' }}>
-                        <Animated.View
-                          style={[
-                            { gap: 10 },
-                            {
-                              transform: [
-                                { translateY: resetPasswordtranslateY },
-                              ],
-                            },
-                          ]}
-                        >
-                          <Text style={Styles.resetTitle}>Reset Password</Text>
-                          <View style={Styles.privacyContainer}>
-                            <Text style={Styles.termsText}>
-                              Enter your personal email address and we’ll send you
-                              a link to reset your password
-                            </Text>
-                          </View>
+              <Animated.View style={{
+                  transform: [
+                    { translateY: textandBackIcon ? translateY : 0 }
+                  ]
+                }}>
+                  <Text style={Styles.unizyText}>UniZy</Text>
+              </Animated.View>
+            
+            </View> 
+          
 
-                          <View style={Styles.login_container}>
-                            <TextInput
-                              style={[
-                                Styles.personalEmailID_TextInput,
-                                { color: '#fff' },
-                              ]}
-                              placeholder="Personal Email ID"
-                              placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                              value={username1}
-                              maxLength={50}
-                              keyboardType="email-address"
-                              autoCapitalize="none"
-                              autoCorrect={false}
-                              onChangeText={usernameText =>
-                                setUsername1(usernameText)
-                              }
-                            />
-                          </View>
+            <View style={{ width: '100%', height: '100%', paddingLeft: 16, paddingRight: 16, paddingTop: 16, }} >
+              <Animated.View
+                style={[Styles.cardView, { height: heightAnim ,}]}>
 
-                          <TouchableOpacity
-                            style={Styles.loginButton}
-                            onPress={() => {
-                              handleSendResetLink();
+                <View
+                  onLayout={e => {
+                const { height } = e.nativeEvent.layout;
+                setContentHeight(height); // save measured height
+              }}
+                >
 
-                            }}
-                          >
-                            <Text style={Styles.loginText}>Send Reset Link</Text>
-                          </TouchableOpacity>
-
-                          <TouchableOpacity
-                            onPress={() => {
-                              resetPasswordtranslateY.setValue(0); 
-                              ClickFPGoBack_slideOutToTop(() => {
-                                Animated.timing(textAndBackOpacity, {
-                                  toValue: 1,   // fade in
-                                  duration: 500,
-                                  useNativeDriver: true,
-                                }).start();
-                                setUsername1('');
-                                // reset for next time
-                                setCurrentScreen('login');
-                                setcurrentScreenIninner('login');
-                              });
-                            }}
-                          >
-                            <Text style={Styles.goBackText}>Go back</Text>
-                          </TouchableOpacity>
-                        </Animated.View>
-                        <Modal
-                          visible={showPopup}
-                          transparent
-                          animationType="fade"
-                          onRequestClose={closePopup}
-                        >
-                          <View style={Styles.overlay}>
-                            <BlurView
-                              style={{
-                                flex: 1,
-                                alignContent: 'center',
-                                justifyContent: 'center',
-                                width: '100%',
-                                alignItems: 'center',
-                              }}
-                              blurType="dark"
-                              blurAmount={1000}
-                              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-                            >
-                              <View
-                                style={[
-                                  StyleSheet.absoluteFill,
-                                  { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-                                ]}
-                              />
-
-                              <View
-                                style={[
-                                  Styles.popupContainer,
-                                  { width: width * 0.85 },
-                                ]}
-                              >
-                                <Image
-                                  source={require('../../../assets/images/success_icon.png')}
-                                  style={Styles.logo}
-                                  resizeMode="contain"
-                                />
-                                <Text style={Styles.termsText1}>
-                                  A password reset link has been sent to your
-                                  personal email. Please check your inbox (or spam
-                                  folder) to continue.
-                                </Text>
-
-                                <TouchableOpacity
-                                  style={Styles.loginButton}
-                                  onPress={() => {
-                                    setShowPopup(false);
-                                    setCurrentScreen('login');
-                                    setcurrentScreenIninner('login');
-                                  }}
-                                >
-                                  <Text style={Styles.loginText}>
-                                    Back to Login
-                                  </Text>
-                                </TouchableOpacity>
-                              </View>
-                            </BlurView>
-                          </View>
-                        </Modal>
-                      </View>
-                    </>
-                  )}
-
-                {currentScreenIninner ===
-                  ('signup' as typeof currentScreenIninner) && (
+                  {currentScreenIninner === 'login' && (
                     <>
                       <Animated.View
-                        style={[
-                          { width: '100%', alignItems: 'center' },
-                          {
-                            transform: [{ translateY: signupTranslateY }]
-                          },
-                        ]}
+                        style={{ transform: [{ translateY: loginTranslateY}] }}
                       >
-                        <View style={Styles.nameRow}>
-                          <View style={Styles.login_container1}>
-                            <TextInput
-                              style={Styles.personalEmailID_TextInput1}
-                              placeholder="First Name"
-                              placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                              value={firstName}
-                              onChangeText={text =>
-                                /^[A-Za-z ]*$/.test(text) && setFirstName(text)
-                              }
-                              maxLength={20}
-                            />
-                          </View>
-
-                          <View style={Styles.login_container1}>
-                            <TextInput
-                              style={Styles.personalEmailID_TextInput1}
-                              placeholder="Last Name"
-                              placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                              value={lastName}
-                              onChangeText={text =>
-                                /^[A-Za-z ]*$/.test(text) && setLastName(text)
-                              }
-                            />
-                          </View>
-                        </View>
-
+                        <BlurView blurType="light" blurAmount={15} />
+                        <LinearGradient
+                          colors={[
+                            'rgba(255, 255, 255, 0.76)',
+                            'rgba(255, 255, 255, 0.85)',
+                          ]}
+                        />
                         <View style={Styles.login_container}>
                           <TextInput
                             style={Styles.personalEmailID_TextInput}
-                            placeholder="Postal Code"
-                            placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                            value={postalCode}
-                            maxLength={7}
-                            //keyboardType="numeric"
-                            onChangeText={text => {
-                              const alphanumericText = text.replace(/[^a-zA-Z0-9]/g, '');
-                               const limitedText = alphanumericText.slice(0, 7);
-                               setPostalCode(limitedText);
-                            }}
-                          />
-                        </View>
-
-                        <View style={Styles.password_container}>
-                          <TextInput
-                            style={Styles.password_TextInput}
-                            placeholder="Personal Email ID"
-                            placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                            value={signUpusername}
+                            placeholder={'Personal Email ID'}
+                            placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
+                            value={username}
                             maxLength={50}
-                            onChangeText={text => setsignUpUsername(text)}
+                            onChangeText={usernameText =>
+                              setUsername(usernameText)
+                            }
                           />
-                          <TouchableOpacity
-                            onPress={() => setShowInfo(!showInfo)}
-                          >
-                            <Image
-                              source={require('../../../assets/images/info_icon.png')}
-                              style={Styles.eyeIcon}
-                            />
-                          </TouchableOpacity>
                         </View>
-
-                      {showInfo && (
-                          <View style={Styles.infoContainer}>
-                                <Text style={Styles.infoText}>
-                              <Text style={Styles.infoText1}>Important: </Text>
-                              Use your personal email address for signup. Your university email will be
-                              requested separately for student verification.
-                          </Text>
-                          </View>
-                      )}
 
                         <View style={Styles.password_container}>
                           <TextInput
                             style={Styles.password_TextInput}
-                            placeholder="Create Password"
-                            placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                            value={signUppassword}
+                            placeholder={'Password'}
+                            placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
+                            value={password}
                             maxLength={20}
-                            onChangeText={setsignUpPassword}
-                            secureTextEntry={!issignUpPasswordVisible}
+                            secureTextEntry={!isPasswordVisible}
+                            onChangeText={passwordText =>
+                              setPassword(passwordText)
+                            }
                           />
-
                           <TouchableOpacity
                             onPress={() =>
-                              setsignUpIsPasswordVisible(!issignUpPasswordVisible)
+                              setIsPasswordVisible(!isPasswordVisible)
                             }
                           >
                             <Image
                               source={
-                                issignUpPasswordVisible
+                                isPasswordVisible
                                   ? require('../../../assets/images/eyeopen.png')
                                   : require('../../../assets/images/eyecross1.png')
                               }
                               style={[
                                 Styles.eyeIcon,
-                                issignUpPasswordVisible
+                                isPasswordVisible
                                   ? Styles.eyeIcon
                                   : Styles.eyeCross,
                               ]}
@@ -1875,544 +1569,858 @@ const SinglePage = ({navigation}:SinglePageProps) => {
                           </TouchableOpacity>
                         </View>
 
-                        <View style={Styles.password_container}>
-                          <TextInput
-                            style={[Styles.password_TextInput, { color: '#fff' }]}
-                            placeholder="Confirm Password"
-                            placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                            value={confirmPassword}
-                            maxLength={20}
-                            onChangeText={setConfirmPassword}
-                            secureTextEntry={!isConfirmPasswordVisible}
-                          />
-
-                          <TouchableOpacity
-                            onPress={() =>
-                              setIsConfirmPasswordVisible(
-                                !isConfirmPasswordVisible,
-                              )
-                            }
-                          >
-                            <Image
-                              source={
-                                isConfirmPasswordVisible
-                                  ? require('../../../assets/images/eyeopen.png')
-                                  : require('../../../assets/images/eyecross1.png')
-                              }
-                              style={[
-                                Styles.eyeIcon,
-                                isConfirmPasswordVisible
-                                  ? Styles.eyeIcon
-                                  : Styles.eyeCross,
-                              ]}
-                            />
-                          </TouchableOpacity>
-                        </View>
-
-                        <TouchableOpacity
+                        <Text
+                          style={Styles.forgetPasswordText}
                           onPress={() => {
-                            handleSendOTP();
-                            setImageLoaded(true);
+                            goToForgotPassword();
 
                           }}
-                          style={Styles.loginButton}
                         >
-                          <Text style={Styles.loginText}>Send OTP</Text>
+                          Forgot Password?
+                        </Text>
+
+                        <TouchableOpacity
+                          style={Styles.loginButton}
+                          onPress={loginapi}
+                        >
+                          <Text style={Styles.loginText}>Login</Text>
                         </TouchableOpacity>
 
                         <View
                           style={{
+                            width: '100%',
                             flexDirection: 'row',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            marginTop: 16,
+                            gap: 5,
                           }}
                         >
-                          <Text style={Styles.signupPrompt}>
-                            Already have an account?{' '}
+                          <Text
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.48)',
+                              textAlign: 'center',
+                              fontFamily: 'Urbanist-Regular',
+                              fontSize: 14,
+                              fontWeight: 400,
+                              lineHeight: 19,
+                              marginTop: 10,
+                            }}
+                          >
+                            Don't have an account?
                           </Text>
                           <TouchableOpacity
                             onPress={() => {
-                              {
-                                 
-                                setCurrentScreen('login');
-                                setcurrentScreenIninner('login');
-                                setConfirmPassword('')
-                                setFirstName('')
-                                setLastName('')
-                                setPostalCode('')
-                                setsignUpUsername('')
-                                setsignUpPassword('')
-                                setsignUpIsPasswordVisible(false)
-                                setIsConfirmPasswordVisible(false)
-                              }
+                              setTextandBackIcon(false);
+                              signupTranslateY.setValue(0);
+                              setUsername('')
+                              setPassword('')
+                              setIsPasswordVisible(false)
+                              setCurrentScreen('login');
+                              setcurrentScreenIninner('signup');
+                              setFirstName('')
+                              setLastName('')
+                              setPostalCode('')
+                              setConfirmPassword('')
+                              setsignUpPassword('')
+                              setsignUpUsername('')
+                              setIsConfirmPasswordVisible(false)
+                              setsignUpIsPasswordVisible(false)
                             }}
                           >
-                            <Text style={Styles.signupPrompt1}>Login</Text>
+                            <Text style={Styles.signupText}>Sign up</Text>
                           </TouchableOpacity>
                         </View>
-
                       </Animated.View>
                     </>
                   )}
-                {currentScreenIninner ===
-                  ('sendOTP' as typeof currentScreenIninner) && (
-                    <>
-                      {imageLoaded && (
 
-                        <Animated.View
-                          style={
-                            [
+                  {currentScreenIninner ===
+                    ('forgotpassword' as typeof currentScreenIninner) && (
+                      <>
+                        <View style={{ width: '100%' }}>
+                          <Animated.View
+                            style={[
+                              { gap: 10 },
                               {
                                 transform: [
-                                  { translateY: setOTPTranslatY },
-                                  
+                                  { translateY: resetPasswordtranslateY },
                                 ],
                               },
-                            ]
-                          }
-                        >
-                          <View>
-                            <Text style={Styles.sendOtpresetTitle}>
-                              Verify Personal Email ID
-                            </Text>
-                            <View style={Styles.sendOtpprivacyContainer}>
+                            ]}
+                          >
+                            <Text style={Styles.resetTitle}>Reset Password</Text>
+                            <View style={Styles.privacyContainer}>
                               <Text style={Styles.termsText}>
-                                We have sent a 4-digit code to{' '}
-                                <Text style={Styles.sendOtpresendText2}>
-                                  {signUpusername}
-                                </Text>
+                                Enter your personal email address and we’ll send you
+                                a link to reset your password
                               </Text>
                             </View>
 
-                            <View style={Styles.sendOtpotpContainer}>
-                              {[0, 1, 2, 3].map((_, index) => (
-                                <TextInput
-                                  key={index}
-                                  ref={ref => {
-                                    inputs.current[index] = ref;
-                                  }}
-                                  style={Styles.sendOtpotpBox}
-                                  keyboardType="number-pad"
-                                  maxLength={1}
-                                  onChangeText={text => {
-                                    const digit = text.replace(/[^0-9]/g, '');
-                                    handleChange(digit, index);
-                                  }}
-                                  value={otp[index]}
-                                  returnKeyType="next"
-                                  textAlign="center"
-                                  secureTextEntry
-                                  onKeyPress={({nativeEvent }) =>{
-                                    if (nativeEvent.key === 'Backspace' && otp[index] === '' && index > 0) {
-                                      inputs.current[index - 1]?.focus();
-                                    }
-                                  }}  
-                                />
-                              ))}
-                            </View>
-
-                            <TouchableOpacity
-                              style={Styles.sendOtploginButton}
-                              onPress={otpverify}
-                            >
-                              <Text style={Styles.loginText}>
-                                Verify & Continue
-                              </Text>
-                            </TouchableOpacity>
-
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                marginTop: 16,
-                              }}
-                            >
-                              <Text style={Styles.sendOtpresendText}>
-                                Didn’t receive a code?{' '}
-                              </Text>
-                              <TouchableOpacity onPress={handleresend}>
-                                <Text style={Styles.sendOtpresendText1}>
-                                  Resend Code
-                                </Text>
-                              </TouchableOpacity>
-                            </View>
-
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                marginTop: 16,
-                              }}
-                            >
-                              <Text style={Styles.sendOtpgoBackText}>
-                                Entered wrong email?{' '}
-                              </Text>
-                              <TouchableOpacity
-                                onPress={() => {
-                                  Click_SENDOTP_TO_SIGNUPSCREEN(() => {
-                                    setCurrentScreen('login');
-                                    setcurrentScreenIninner('signup');
-                                     setShowOtp(false);
-                                      setverifyimageLoaded(true);
-                                  })
-                                }}
-                              >
-                                <Text style={Styles.sendOtpgoBackText1}>
-                                  Go back
-                                </Text>
-                              </TouchableOpacity>
-                            </View>
-                          </View>
-                        </Animated.View>
-                      )}
-                    </>
-                  )}
-
-                {currentScreenIninner ===
-                  ('verify' as typeof currentScreenIninner) && (
-                    <>
-                      {verifyimageLoaded && !showOtp && (
-
-                        <Animated.View
-                          style={
-                            [
-                              {
-                                transform: [
-                                  { translateY: verifyAndContinyTranslateY1 },
-                                ],
-                              },
-                            ]
-                          }
-                        >
-                          <View>
-                            <Text style={Styles.verifyresetTitle}>
-                              Verify University Email ID
-                            </Text>
-                            <View style={Styles.verifylogin_container}>
+                            <View style={Styles.login_container}>
                               <TextInput
-                                style={Styles.verifypersonalEmailID_TextInput}
-                                placeholder={'University Email ID'}
-                                placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
-                                value={verifyusername}
+                                style={[
+                                  Styles.personalEmailID_TextInput,
+                                  { color: '#fff' },
+                                ]}
+                                placeholder="Personal Email ID"
+                                placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                                value={username1}
                                 maxLength={50}
                                 keyboardType="email-address"
                                 autoCapitalize="none"
                                 autoCorrect={false}
                                 onChangeText={usernameText =>
-                                  setverifyUsername(usernameText)
+                                  setUsername1(usernameText)
                                 }
                               />
                             </View>
 
                             <TouchableOpacity
-                              style={Styles.verifyloginButton}
-                              onPress={()=>{verifyOTP()}}
+                              style={Styles.loginButton}
+                              onPress={() => {
+                                handleSendResetLink();
+
+                              }}
                             >
-                              <Text style={Styles.loginText}>Send OTP</Text>
+                              <Text style={Styles.loginText}>Send Reset Link</Text>
                             </TouchableOpacity>
-                          </View>
-                        </Animated.View>
-                      )}
 
-                      {showOtp && (
-
-                        <Animated.View style={[
-                          { width: '100%', alignItems: 'center' },
-                          {
-                            transform: [
-                              { translateY: verifyAndContinyTranslateY2 },
-                            ],
-                          },]}>
-
-                          <View
-                            style={[
-                              { width: '100%', alignItems: 'center' },
-
-                            ]}
+                            <TouchableOpacity
+                              onPress={() => {
+                                resetPasswordtranslateY.setValue(0); 
+                                ClickFPGoBack_slideOutToTop(() => {
+                                  Animated.timing(textAndBackOpacity, {
+                                    toValue: 1,   // fade in
+                                    duration: 500,
+                                    useNativeDriver: true,
+                                  }).start();
+                                  setUsername1('');
+                                  // reset for next time
+                                  setCurrentScreen('login');
+                                  setcurrentScreenIninner('login');
+                                });
+                              }}
+                            >
+                              <Text style={Styles.goBackText}>Go back</Text>
+                            </TouchableOpacity>
+                          </Animated.View>
+                          <Modal
+                            visible={showPopup}
+                            transparent
+                            animationType="fade"
+                            onRequestClose={closePopup}
                           >
-                            <Text style={Styles.verifyresetTitle}>
-                              Verify University Email ID
-                            </Text>
-
-                            <View style={Styles.verifyprivacyContainer}>
-                              <Text style={Styles.verifytermsText}>
-                                We have sent a 4-digit code to{' '}
-                                <Text style={Styles.resendText2}>
-                                  {verifyusername}
-                                </Text>
-                              </Text>
-                            </View>
-
-                            <View style={Styles.verifyotpContainer}>
-                              {[0, 1, 2, 3].map((_, index) => (
-                                <TextInput
-                                  key={index}
-                                  ref={ref => {
-                                    verifyinputs.current[index] = ref;
-                                  }}
-                                  style={Styles.verifyotpBox}
-                                  keyboardType="number-pad"
-                                  maxLength={1}
-                                  onChangeText={text => {
-                                    const digit = text.replace(/[^0-9]/g, '');
-                                    veryfyhandleChange(digit, index);
-                                  }}
-                                  value={otp1[index]}
-                                  returnKeyType="next"
-                                  textAlign="center"
-                                  secureTextEntry={true}
-                                  onKeyPress={({ nativeEvent }) => {
-                                    if (nativeEvent.key === 'Backspace' && otp1[index] === '' && index > 0) {
-                                      verifyinputs.current[index - 1]?.focus();
-                                    }
-                                  }}
-                                />
-                              ))}
-                            </View>
-
-                            <TouchableOpacity
-                              style={Styles.verifyloginButton1}
-                              onPress={submitotp}
-                            >
-                              <Text style={Styles.loginText}>
-                                Verify & Continue
-                              </Text>
-                            </TouchableOpacity>
-
-                            <View style={{ flexDirection: 'row', marginTop: 6 }}>
-                              <Text style={Styles.verifyresendText}>
-                                Didn’t receive a code?{' '}
-                              </Text>
-                              <TouchableOpacity onPress={resubmitotp}>
-                                <Text style={Styles.verifyresendText1}>
-                                  Resend Code
-                                </Text>
-                              </TouchableOpacity>
-                            </View>
-
-                            <TouchableOpacity
-                              style={{ flexDirection: 'row', marginTop: 6 }}
-                            >
-                              <Text style={Styles.verifyresendText}>
-                                Entered wrong email?{' '}
-                              </Text>
-                              <TouchableOpacity
-                                onPress={() => {
-                                  ClickBackToSendOTP1(() => {
-                                  //   setCurrentScreen('login');
-                                  // setcurrentScreenIninner('sendOTP');
-                                  })
-                                  
+                            <View style={Styles.overlay}>
+                              <BlurView
+                                style={{
+                                  flex: 1,
+                                  alignContent: 'center',
+                                  justifyContent: 'center',
+                                  width: '100%',
+                                  alignItems: 'center',
                                 }}
+                                blurType="dark"
+                                blurAmount={1000}
+                                reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
                               >
-                                <Text style={Styles.verifygoBackText1}>
-                                  Go back
-                                </Text>
-                              </TouchableOpacity>
-                            </TouchableOpacity>
-                          </View>
+                                <View
+                                  style={[
+                                    StyleSheet.absoluteFill,
+                                    { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                                  ]}
+                                />
 
-                        </Animated.View>
-                      )}
-                    </>
-                  )}
-
-                {currentScreenIninner ===
-                  ('profile' as typeof currentScreenIninner) && (
-                    <>
-                      {imageLoaded && (
-
-                        <Animated.View
-                          style={[{ transform: [{ translateY: profileTranslateY }], opacity },]}>
-                          <View>
-                            <Text style={Styles.profileprofileresetTitle}>
-                              Add a photo
-                            </Text>
-                            <View style={Styles.profileprivacyContainer}>
-                              <Text style={Styles.profiletermsText}>
-                                Personalize your account with a photo. You can
-                                always change it later.
-                              </Text>
-                            </View>
-
-                            <View style={Styles.profileavatarContainer}>
-                              <View style={Styles.profilebigCircle}>
-                                <TouchableOpacity>
-                                  <Image
-                                    source={
-                                      photo
-                                        ? { uri: photo }
-                                        : require('../../../assets/images/add1.png')
-                                    }
-                                    style={Styles.profilelogo}
-                                    resizeMode="cover"
-                                  />
-                                </TouchableOpacity>
-
-                                <TouchableOpacity
-                                  style={Styles.profilecameraButton}
-                                  onPress={handleSelectImage}
+                                <View
+                                  style={[
+                                    Styles.popupContainer,
+                                    { width: width * 0.85 },
+                                  ]}
                                 >
                                   <Image
-                                    source={require('../../../assets/images/new_camera_icon.png')}
-                                    style={Styles.profilecameraIcon}
+                                    source={require('../../../assets/images/success_icon.png')}
+                                    style={Styles.logo}
                                     resizeMode="contain"
                                   />
+                                  <Text style={Styles.termsText1}>
+                                    A password reset link has been sent to your
+                                    personal email. Please check your inbox (or spam
+                                    folder) to continue.
+                                  </Text>
+
+                                  <TouchableOpacity
+                                    style={Styles.loginButton}
+                                    onPress={() => {
+                                      setShowPopup(false);
+                                      setCurrentScreen('login');
+                                      setcurrentScreenIninner('login');
+                                    }}
+                                  >
+                                    <Text style={Styles.loginText}>
+                                      Back to Login
+                                    </Text>
+                                  </TouchableOpacity>
+                                </View>
+                              </BlurView>
+                            </View>
+                          </Modal>
+                        </View>
+                      </>
+                    )}
+
+                  {currentScreenIninner ===
+                    ('signup' as typeof currentScreenIninner) && (
+                      <>
+                        <Animated.View
+                          style={[
+                            { width: '100%', alignItems: 'center' },
+                            {
+                              transform: [{ translateY: signupTranslateY }]
+                            },
+                          ]}
+                        >
+                          <View style={Styles.nameRow}>
+                            <View style={Styles.login_container1}>
+                              <TextInput
+                                style={Styles.personalEmailID_TextInput1}
+                                placeholder="First Name"
+                                placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                                value={firstName}
+                                onChangeText={text =>
+                                  /^[A-Za-z ]*$/.test(text) && setFirstName(text)
+                                }
+                                maxLength={20}
+                              />
+                            </View>
+
+                            <View style={Styles.login_container1}>
+                              <TextInput
+                                style={Styles.personalEmailID_TextInput1}
+                                placeholder="Last Name"
+                                placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                                value={lastName}
+                                onChangeText={text =>
+                                  /^[A-Za-z ]*$/.test(text) && setLastName(text)
+                                }
+                              />
+                            </View>
+                          </View>
+
+                          <View style={Styles.login_container}>
+                            <TextInput
+                              style={Styles.personalEmailID_TextInput}
+                              placeholder="Postal Code"
+                              placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                              value={postalCode}
+                              maxLength={7}
+                              //keyboardType="numeric"
+                              onChangeText={text => {
+                                const alphanumericText = text.replace(/[^a-zA-Z0-9]/g, '');
+                                const limitedText = alphanumericText.slice(0, 7);
+                                setPostalCode(limitedText);
+                              }}
+                            />
+                          </View>
+
+                          <View style={Styles.password_container}>
+                            <TextInput
+                              style={Styles.password_TextInput}
+                              placeholder="Personal Email ID"
+                              placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                              value={signUpusername}
+                              maxLength={50}
+                              onChangeText={text => setsignUpUsername(text)}
+                            />
+                            <TouchableOpacity
+                              onPress={() => setShowInfo(!showInfo)}
+                            >
+                              <Image
+                                source={require('../../../assets/images/info_icon.png')}
+                                style={Styles.eyeIcon}
+                              />
+                            </TouchableOpacity>
+                          </View>
+
+                        {showInfo && (
+                            <View style={Styles.infoContainer}>
+                                  <Text style={Styles.infoText}>
+                                <Text style={Styles.infoText1}>Important: </Text>
+                                Use your personal email address for signup. Your university email will be
+                                requested separately for student verification.
+                            </Text>
+                            </View>
+                        )}
+
+                          <View style={Styles.password_container}>
+                            <TextInput
+                              style={Styles.password_TextInput}
+                              placeholder="Create Password"
+                              placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                              value={signUppassword}
+                              maxLength={20}
+                              onChangeText={setsignUpPassword}
+                              secureTextEntry={!issignUpPasswordVisible}
+                            />
+
+                            <TouchableOpacity
+                              onPress={() =>
+                                setsignUpIsPasswordVisible(!issignUpPasswordVisible)
+                              }
+                            >
+                              <Image
+                                source={
+                                  issignUpPasswordVisible
+                                    ? require('../../../assets/images/eyeopen.png')
+                                    : require('../../../assets/images/eyecross1.png')
+                                }
+                                style={[
+                                  Styles.eyeIcon,
+                                  issignUpPasswordVisible
+                                    ? Styles.eyeIcon
+                                    : Styles.eyeCross,
+                                ]}
+                              />
+                            </TouchableOpacity>
+                          </View>
+
+                          <View style={Styles.password_container}>
+                            <TextInput
+                              style={[Styles.password_TextInput, { color: '#fff' }]}
+                              placeholder="Confirm Password"
+                              placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                              value={confirmPassword}
+                              maxLength={20}
+                              onChangeText={setConfirmPassword}
+                              secureTextEntry={!isConfirmPasswordVisible}
+                            />
+
+                            <TouchableOpacity
+                              onPress={() =>
+                                setIsConfirmPasswordVisible(
+                                  !isConfirmPasswordVisible,
+                                )
+                              }
+                            >
+                              <Image
+                                source={
+                                  isConfirmPasswordVisible
+                                    ? require('../../../assets/images/eyeopen.png')
+                                    : require('../../../assets/images/eyecross1.png')
+                                }
+                                style={[
+                                  Styles.eyeIcon,
+                                  isConfirmPasswordVisible
+                                    ? Styles.eyeIcon
+                                    : Styles.eyeCross,
+                                ]}
+                              />
+                            </TouchableOpacity>
+                          </View>
+
+                          <TouchableOpacity
+                            onPress={() => {
+                              handleSendOTP();
+                              setImageLoaded(true);
+
+                            }}
+                            style={Styles.loginButton}
+                          >
+                            <Text style={Styles.loginText}>Send OTP</Text>
+                          </TouchableOpacity>
+
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              marginTop: 16,
+                            }}
+                          >
+                            <Text style={Styles.signupPrompt}>
+                              Already have an account?{' '}
+                            </Text>
+                            <TouchableOpacity
+                              onPress={() => {
+                                {
+                                  
+                                  setCurrentScreen('login');
+                                  setcurrentScreenIninner('login');
+                                  setConfirmPassword('')
+                                  setFirstName('')
+                                  setLastName('')
+                                  setPostalCode('')
+                                  setsignUpUsername('')
+                                  setsignUpPassword('')
+                                  setsignUpIsPasswordVisible(false)
+                                  setIsConfirmPasswordVisible(false)
+                                }
+                              }}
+                            >
+                              <Text style={Styles.signupPrompt1}>Login</Text>
+                            </TouchableOpacity>
+                          </View>
+
+                        </Animated.View>
+                      </>
+                    )}
+                  {currentScreenIninner ===
+                    ('sendOTP' as typeof currentScreenIninner) && (
+                      <>
+                        {imageLoaded && (
+
+                          <Animated.View
+                            style={
+                              [
+                                {
+                                  transform: [
+                                    { translateY: setOTPTranslatY },
+                                    
+                                  ],
+                                },
+                              ]
+                            }
+                          >
+                            <View>
+                              <Text style={Styles.sendOtpresetTitle}>
+                                Verify Personal Email ID
+                              </Text>
+                              <View style={Styles.sendOtpprivacyContainer}>
+                                <Text style={Styles.termsText}>
+                                  We have sent a 4-digit code to{' '}
+                                  <Text style={Styles.sendOtpresendText2}>
+                                    {signUpusername}
+                                  </Text>
+                                </Text>
+                              </View>
+
+                              <View style={Styles.sendOtpotpContainer}>
+                                {[0, 1, 2, 3].map((_, index) => (
+                                  <TextInput
+                                    key={index}
+                                    ref={ref => {
+                                      inputs.current[index] = ref;
+                                    }}
+                                    style={Styles.sendOtpotpBox}
+                                    keyboardType="number-pad"
+                                    maxLength={1}
+                                    onChangeText={text => {
+                                      const digit = text.replace(/[^0-9]/g, '');
+                                      handleChange(digit, index);
+                                    }}
+                                    value={otp[index]}
+                                    returnKeyType="next"
+                                    textAlign="center"
+                                    secureTextEntry
+                                    onKeyPress={({nativeEvent }) =>{
+                                      if (nativeEvent.key === 'Backspace' && otp[index] === '' && index > 0) {
+                                        inputs.current[index - 1]?.focus();
+                                      }
+                                    }}  
+                                  />
+                                ))}
+                              </View>
+
+                              <TouchableOpacity
+                                style={Styles.sendOtploginButton}
+                                onPress={otpverify}
+                              >
+                                <Text style={Styles.loginText}>
+                                  Verify & Continue
+                                </Text>
+                              </TouchableOpacity>
+
+                              <View
+                                style={{
+                                  flexDirection: 'row',
+                                  justifyContent: 'center',
+                                  marginTop: 16,
+                                }}
+                              >
+                                <Text style={Styles.sendOtpresendText}>
+                                  Didn’t receive a code?{' '}
+                                </Text>
+                                <TouchableOpacity onPress={handleresend}>
+                                  <Text style={Styles.sendOtpresendText1}>
+                                    Resend Code
+                                  </Text>
+                                </TouchableOpacity>
+                              </View>
+
+                              <View
+                                style={{
+                                  flexDirection: 'row',
+                                  justifyContent: 'center',
+                                  marginTop: 16,
+                                }}
+                              >
+                                <Text style={Styles.sendOtpgoBackText}>
+                                  Entered wrong email?{' '}
+                                </Text>
+                                <TouchableOpacity
+                                  onPress={() => {
+                                    Click_SENDOTP_TO_SIGNUPSCREEN(() => {
+                                      setCurrentScreen('login');
+                                      setcurrentScreenIninner('signup');
+                                      setShowOtp(false);
+                                        setverifyimageLoaded(true);
+                                    })
+                                  }}
+                                >
+                                  <Text style={Styles.sendOtpgoBackText1}>
+                                    Go back
+                                  </Text>
                                 </TouchableOpacity>
                               </View>
                             </View>
+                          </Animated.View>
+                        )}
+                      </>
+                    )}
 
-                            <TouchableOpacity
-                              style={Styles.profileloginButton}
-                              onPress={() => {
-                                setShowPopup1(true);
-                              }}
-                            >
-                              <Text style={Styles.profileloginText}>
-                                Continue
+                  {currentScreenIninner ===
+                    ('verify' as typeof currentScreenIninner) && (
+                      <>
+                        {verifyimageLoaded && !showOtp && (
+
+                          <Animated.View
+                            style={
+                              [
+                                {
+                                  transform: [
+                                    { translateY: verifyAndContinyTranslateY1 },
+                                  ],
+                                },
+                              ]
+                            }
+                          >
+                            <View>
+                              <Text style={Styles.verifyresetTitle}>
+                                Verify University Email ID
                               </Text>
-                            </TouchableOpacity>
+                              <View style={Styles.verifylogin_container}>
+                                <TextInput
+                                  style={Styles.verifypersonalEmailID_TextInput}
+                                  placeholder={'University Email ID'}
+                                  placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
+                                  value={verifyusername}
+                                  maxLength={50}
+                                  keyboardType="email-address"
+                                  autoCapitalize="none"
+                                  autoCorrect={false}
+                                  onChangeText={usernameText =>
+                                    setverifyUsername(usernameText)
+                                  }
+                                />
+                              </View>
+
+                              <TouchableOpacity
+                                style={Styles.verifyloginButton}
+                                onPress={()=>{verifyOTP()}}
+                              >
+                                <Text style={Styles.loginText}>Send OTP</Text>
+                              </TouchableOpacity>
+                            </View>
+                          </Animated.View>
+                        )}
+
+                        {showOtp && (
+
+                          <Animated.View style={[
+                            { width: '100%', alignItems: 'center' },
+                            {
+                              transform: [
+                                { translateY: verifyAndContinyTranslateY2 },
+                              ],
+                            },]}>
 
                             <View
-                              style={{
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                marginTop: 16,
-                              }}
+                              style={[
+                                { width: '100%', alignItems: 'center' },
+
+                              ]}
                             >
-                              <Text style={Styles.profilesignupPrompt}>
-                                Want to do it later?{' '}
+                              <Text style={Styles.verifyresetTitle}>
+                                Verify University Email ID
                               </Text>
+
+                              <View style={Styles.verifyprivacyContainer}>
+                                <Text style={Styles.verifytermsText}>
+                                  We have sent a 4-digit code to{' '}
+                                  <Text style={Styles.resendText2}>
+                                    {verifyusername}
+                                  </Text>
+                                </Text>
+                              </View>
+
+                              <View style={Styles.verifyotpContainer}>
+                                {[0, 1, 2, 3].map((_, index) => (
+                                  <TextInput
+                                    key={index}
+                                    ref={ref => {
+                                      verifyinputs.current[index] = ref;
+                                    }}
+                                    style={Styles.verifyotpBox}
+                                    keyboardType="number-pad"
+                                    maxLength={1}
+                                    onChangeText={text => {
+                                      const digit = text.replace(/[^0-9]/g, '');
+                                      veryfyhandleChange(digit, index);
+                                    }}
+                                    value={otp1[index]}
+                                    returnKeyType="next"
+                                    textAlign="center"
+                                    secureTextEntry={true}
+                                    onKeyPress={({ nativeEvent }) => {
+                                      if (nativeEvent.key === 'Backspace' && otp1[index] === '' && index > 0) {
+                                        verifyinputs.current[index - 1]?.focus();
+                                      }
+                                    }}
+                                  />
+                                ))}
+                              </View>
+
                               <TouchableOpacity
+                                style={Styles.verifyloginButton1}
+                                onPress={submitotp}
+                              >
+                                <Text style={Styles.loginText}>
+                                  Verify & Continue
+                                </Text>
+                              </TouchableOpacity>
+
+                              <View style={{ flexDirection: 'row', marginTop: 6 }}>
+                                <Text style={Styles.verifyresendText}>
+                                  Didn’t receive a code?{' '}
+                                </Text>
+                                <TouchableOpacity onPress={resubmitotp}>
+                                  <Text style={Styles.verifyresendText1}>
+                                    Resend Code
+                                  </Text>
+                                </TouchableOpacity>
+                              </View>
+
+                              <TouchableOpacity
+                                style={{ flexDirection: 'row', marginTop: 6 }}
+                              >
+                                <Text style={Styles.verifyresendText}>
+                                  Entered wrong email?{' '}
+                                </Text>
+                                <TouchableOpacity
+                                  onPress={() => {
+                                    ClickBackToSendOTP1(() => {
+                                    //   setCurrentScreen('login');
+                                    // setcurrentScreenIninner('sendOTP');
+                                    })
+                                    
+                                  }}
+                                >
+                                  <Text style={Styles.verifygoBackText1}>
+                                    Go back
+                                  </Text>
+                                </TouchableOpacity>
+                              </TouchableOpacity>
+                            </View>
+
+                          </Animated.View>
+                        )}
+                      </>
+                    )}
+
+                  {currentScreenIninner ===
+                    ('profile' as typeof currentScreenIninner) && (
+                      <>
+                        {imageLoaded && (
+
+                          <Animated.View
+                            style={[{ transform: [{ translateY: profileTranslateY }], opacity },]}>
+                            <View>
+                              <Text style={Styles.profileprofileresetTitle}>
+                                Add a photo
+                              </Text>
+                              <View style={Styles.profileprivacyContainer}>
+                                <Text style={Styles.profiletermsText}>
+                                  Personalize your account with a photo. You can
+                                  always change it later.
+                                </Text>
+                              </View>
+
+                              <View style={Styles.profileavatarContainer}>
+                                <View style={Styles.profilebigCircle}>
+                                  <TouchableOpacity>
+                                    <Image
+                                      source={
+                                        photo
+                                          ? { uri: photo }
+                                          : require('../../../assets/images/add1.png')
+                                      }
+                                      style={Styles.profilelogo}
+                                      resizeMode="cover"
+                                    />
+                                  </TouchableOpacity>
+
+                                  <TouchableOpacity
+                                    style={Styles.profilecameraButton}
+                                    onPress={handleSelectImage}
+                                  >
+                                    <Image
+                                      source={require('../../../assets/images/new_camera_icon.png')}
+                                      style={Styles.profilecameraIcon}
+                                      resizeMode="contain"
+                                    />
+                                  </TouchableOpacity>
+                                </View>
+                              </View>
+
+                              <TouchableOpacity
+                                style={Styles.profileloginButton}
                                 onPress={() => {
                                   setShowPopup1(true);
                                 }}
                               >
-                                <Text style={Styles.profilesignupPrompt1}>
-                                  Skip
+                                <Text style={Styles.profileloginText}>
+                                  Continue
+                                </Text>
+                              </TouchableOpacity>
+
+                              <View
+                                style={{
+                                  flexDirection: 'row',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                  marginTop: 16,
+                                }}
+                              >
+                                <Text style={Styles.profilesignupPrompt}>
+                                  Want to do it later?{' '}
+                                </Text>
+                                <TouchableOpacity
+                                  onPress={() => {
+                                    setShowPopup1(true);
+                                  }}
+                                >
+                                  <Text style={Styles.profilesignupPrompt1}>
+                                    Skip
+                                  </Text>
+                                </TouchableOpacity>
+                              </View>
+                            </View>
+                          </Animated.View>
+                        )}
+
+                        <Modal
+                          visible={showPopup1}
+                          transparent
+                          animationType="fade"
+                          onRequestClose={closePopup1}
+                        >
+                          <View style={Styles.profileoverlay}>
+                            <BlurView
+                              style={StyleSheet.absoluteFill}
+                              blurType="dark"
+                              blurAmount={25}
+                            />
+
+                            <View
+                              style={[
+                                StyleSheet.absoluteFill,
+                                { backgroundColor: 'rgba(0, 0, 0, 0.08)' },
+                              ]}
+                            />
+
+                            <View
+                              style={[
+                                Styles.profilepopupContainer,
+                                { width: width * 0.85 },
+                              ]}
+                            >
+                              <Image
+                                source={require('../../../assets/images/success_icon.png')}
+                                style={Styles.profilelogo1}
+                                resizeMode="contain"
+                              />
+                              <Text style={Styles.profiletermsText2}>
+                                Account Created Successfully!
+                              </Text>
+                              <Text style={Styles.profiletermsText1}>
+                                Welcome to Unizy! Your account has been created and
+                                your’re all set to start exploring
+                              </Text>
+                              <TouchableOpacity
+                                style={Styles.profileloginButton}
+                                onPress={() => {
+                                  setCurrentScreen('login');
+                                  setcurrentScreenIninner('login');
+                                  closePopup1();
+                                }}
+                              >
+                                <Text style={Styles.profileloginText}>
+                                  Start Exploring
                                 </Text>
                               </TouchableOpacity>
                             </View>
                           </View>
-                        </Animated.View>
-                      )}
-
-                      <Modal
-                        visible={showPopup1}
-                        transparent
-                        animationType="fade"
-                        onRequestClose={closePopup1}
-                      >
-                        <View style={Styles.profileoverlay}>
-                          <BlurView
-                            style={StyleSheet.absoluteFill}
-                            blurType="dark"
-                            blurAmount={25}
-                          />
-
-                          <View
-                            style={[
-                              StyleSheet.absoluteFill,
-                              { backgroundColor: 'rgba(0, 0, 0, 0.08)' },
-                            ]}
-                          />
-
-                          <View
-                            style={[
-                              Styles.profilepopupContainer,
-                              { width: width * 0.85 },
-                            ]}
-                          >
-                            <Image
-                              source={require('../../../assets/images/success_icon.png')}
-                              style={Styles.profilelogo1}
-                              resizeMode="contain"
-                            />
-                            <Text style={Styles.profiletermsText2}>
-                              Account Created Successfully!
-                            </Text>
-                            <Text style={Styles.profiletermsText1}>
-                              Welcome to Unizy! Your account has been created and
-                              your’re all set to start exploring
-                            </Text>
-                            <TouchableOpacity
-                              style={Styles.profileloginButton}
-                              onPress={() => {
-                                setCurrentScreen('login');
-                                setcurrentScreenIninner('login');
-                                closePopup1();
-                              }}
-                            >
-                              <Text style={Styles.profileloginText}>
-                                Start Exploring
-                              </Text>
-                            </TouchableOpacity>
-                          </View>
-                        </View>
-                      </Modal>
-                    </>
-                  )}
-              </View>
-            </Animated.View>
-            
-            {/* Indecator */}
-
-            {currentScreenIninner !==
-              ('login' as typeof currentScreenIninner) &&
-              currentScreenIninner !==
-              ('forgotpassword' as typeof currentScreenIninner) && (
-                <View style={Styles.stepIndicatorContainer}>
-                  {[0, 1, 2, 3].map(index =>
-                    index === stepIndex ? (
-                      <LinearGradient
-                        key={index}
-                        colors={[
-                          'rgba(255,255,255,1)',
-                          'rgba(255,255,255,0.5)',
-                        ]}
-                        style={Styles.stepCircle}
-                      />
-                    ) : (
-                      <View
-                        key={index}
-                        style={[Styles.stepCircle, Styles.inactiveStepCircle]}
-                      />
-                    ),
-                  )}
+                        </Modal>
+                      </>
+                    )}
                 </View>
-              )}
-            {/* Teams and codition */}
-          </View>
+              </Animated.View>
+              
+              {/* Indecator */}
+
+              {currentScreenIninner !==
+                ('login' as typeof currentScreenIninner) &&
+                currentScreenIninner !==
+                ('forgotpassword' as typeof currentScreenIninner) && (
+                  <View style={Styles.stepIndicatorContainer}>
+                    {[0, 1, 2, 3].map(index =>
+                      index === stepIndex ? (
+                        <LinearGradient
+                          key={index}
+                          colors={[
+                            'rgba(255,255,255,1)',
+                            'rgba(255,255,255,0.5)',
+                          ]}
+                          style={Styles.stepCircle}
+                        />
+                      ) : (
+                        <View
+                          key={index}
+                          style={[Styles.stepCircle, Styles.inactiveStepCircle]}
+                        />
+                      ),
+                    )}
+                  </View>
+                )}
+              {/* Teams and codition */}
+            </View>
 
 
-          {(currentScreen === 'login' && currentScreenIninner === 'login' || currentScreenIninner === 'signup') && (
+            {(currentScreen === 'login' && currentScreenIninner === 'login' || currentScreenIninner === 'signup') && (
 
-            <Animated.View
-              style={[Styles.mainTemsAndConditions, (currentScreenIninner === 'login' || currentScreenIninner === 'signup')
-                ? { transform: [{ translateY: slideUp }] }
-                : {},
-              ]}>
-              <View style={Styles.teamsandConditionContainer}>
-                <Text style={Styles.bycountuningAgreementText}>
-                  By continuing, you agree to our
-                </Text>
-                <Text style={Styles.teamsandConditionText}>
-                  Terms & Conditions
-                </Text>
-              </View>
+              <Animated.View
+                style={[Styles.mainTemsAndConditions, (currentScreenIninner === 'login' || currentScreenIninner === 'signup')
+                  ? { transform: [{ translateY: slideUp }] }
+                  : {},
+                ]}>
+                <View style={Styles.teamsandConditionContainer}>
+                  <Text style={Styles.bycountuningAgreementText}>
+                    By continuing, you agree to our
+                  </Text>
+                  <Text style={Styles.teamsandConditionText}>
+                    Terms & Conditions
+                  </Text>
+                </View>
 
-              <View style={Styles.teamsandConditionContainer}>
-                <Text style={Styles.bycountuningAgreementText}>and</Text>
-                <Text style={Styles.teamsandConditionText}>Privacy Policy</Text>
-              </View>
-            </Animated.View>
-          )}
-        </>
-      )}
-      </KeyboardAvoidingView>
-    </ImageBackground>
+                <View style={Styles.teamsandConditionContainer}>
+                  <Text style={Styles.bycountuningAgreementText}>and</Text>
+                  <Text style={Styles.teamsandConditionText}>Privacy Policy</Text>
+                </View>
+              </Animated.View>
+            )}
+          </>
+        )}
+        </KeyboardAvoidingView>
+      </View>
+      </ImageBackground>
   );
 };
 
