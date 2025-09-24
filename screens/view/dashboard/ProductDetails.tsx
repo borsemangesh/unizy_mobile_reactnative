@@ -100,7 +100,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
   const renderItem = ({ item }: { item: Feature }) => (
     <View style={styles.itemContainer}>
       <SearchListProductCard
-        tag={`ID: ${item.id}`}
+        tag='University of Warwick'//{`ID: ${item.id}`}
         infoTitle={item.title}
         inforTitlePrice={`$ ${item.price}`}
         rating={item.isfeatured ? '4.5' : '4.5'}
