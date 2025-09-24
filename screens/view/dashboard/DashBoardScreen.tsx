@@ -1229,11 +1229,14 @@ const [features, setFeatures] = useState<any[]>([]);
 
               <Text style={styles.unizyText}>UniZy</Text>
 
-              <View style={styles.emptyView}>
+
+<TouchableOpacity onPress={async () =>  {await AsyncStorage.setItem('ISLOGIN', 'false');navigation.navigate('SinglePage');}}>
+              <View style={styles.emptyView} >
                 <View style={styles.MylistingsBackground}>
                   <Image source={mylistings1} style={styles.iconSmall} />
                 </View>
               </View>
+              </TouchableOpacity>
             </Animated.View>
 
             <Animated.View
@@ -1307,7 +1310,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'stretch',
     borderRadius: 50,
-    marginTop: 20,
+    // marginTop: 20,
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
@@ -1404,15 +1407,15 @@ const styles = StyleSheet.create({
   },
 
   MylistingsBackground: {
-    height: 40,
-    width: 40,
+    height: 60,
+    width: 60,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 40,
   },
   iconSmall: {
-    width: 50,
-    height: 50,
+    width: 60,
+    height: 60,
   },
   unizyText: {
     color: '#FFFFFF',
@@ -1451,19 +1454,20 @@ const styles = StyleSheet.create({
 
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
 
     borderEndEndRadius: 10,
     borderStartEndRadius: 10,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
+    borderBottomStartRadius: 10,
     // borderBlockStartColor: '#ffffff79',
     // borderBlockColor: '#ffffff79',
 
-    // borderTopColor: '#ffffff79',
-    // borderBottomColor: '#ffffff95',
-    // borderLeftColor: '#ffffff79',
-    // borderRightColor: '#ffffff79',
+    borderTopColor: '#ffffff5d',
+    borderBottomColor: '#ffffff36',
+    borderLeftColor: '#ffffff5d',
+    borderRightColor: '#ffffff36',
     
   },
 

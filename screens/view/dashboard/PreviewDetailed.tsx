@@ -10,330 +10,611 @@ import {
   Animated,
   Modal,
   Dimensions,
+  FlatList,
 } from 'react-native';
-import { useState } from 'react';
+import { Key, useEffect, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
+import { showToast } from '../../utils/toast';
+import { MAIN_URL } from '../../utils/APIConstant';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type previewDetailsProps = {
   navigation: any;
 };
 
- const { width } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const profileImg = require('../../../assets/images/user.jpg');
 
+const itemOptions = [
+  { id: 1, option_name: 'New' },
+  { id: 2, option_name: 'Like new' },
+  { id: 3, option_name: 'Used' },
+];
 
+const categoryOptions = [
+  { id: 4, option_name: 'Appliances (Kitchen & Home)' },
+  { id: 8, option_name: 'Clothing, Shoes & Accessories' },
+  { id: 9, option_name: 'Electronics & Gadgets' },
+  { id: 10, option_name: 'Event Wear & Costumes' },
+  { id: 11, option_name: 'Furniture' },
+  { id: 12, option_name: 'Games, Toys & Hobbies' },
+  { id: 13, option_name: 'Health & Personal Care' },
+  { id: 15, option_name: 'Kitchenware & Dining' },
+  { id: 16, option_name: 'Miscellaneous / Other' },
+  { id: 17, option_name: 'Musical Instruments & Audio Gear' },
+  { id: 18, option_name: 'Pet Supplies' },
+  { id: 19, option_name: 'Sports & Fitness Gear' },
+  { id: 20, option_name: 'Stationery & Office Supplies' },
+  { id: 21, option_name: 'Tickets & Gift Cards' },
+  { id: 5, option_name: 'Art & Craft Supplies' },
+  { id: 7, option_name: 'Books & Study Materials' },
+  { id: 6, option_name: 'Bicycles & Personal Transport' },
+];
 
 const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
-     const [showPopup, setShowPopup] = useState(false);
-       const closePopup = () => setShowPopup(false);
-         const [scrollY, setScrollY] = useState(0);
-         const scrollY1 = new Animated.Value(0);
+  const [showPopup, setShowPopup] = useState(false);
+  const closePopup = () => setShowPopup(false);
+  const [scrollY, setScrollY] = useState(0);
+  const scrollY1 = new Animated.Value(0);
+
+  const [storedForm, setStoredForm] = useState<any | null>(null);
+  const screenWidth = Dimensions.get('window').width;
+  const [activeIndex, setActiveIndex] = useState(0);
+  const flatListRef = useRef(null);
+
+  useEffect(() => {
+    const fetchStoredData = async () => {
+      try {
+        const storedData = await AsyncStorage.getItem('formData');
+        if (storedData) {
+          const parsedData = JSON.parse(storedData);
+          console.log('Stored Form Data:', parsedData);
+          setStoredForm(parsedData);
+        } else {
+          console.log('No form data found');
+        }
+      } catch (error) {
+        console.log('Error reading form data: ', error);
+      }
+    };
+
+    fetchStoredData();
+  }, []);
+
+  const onScroll = (event: {
+    nativeEvent: { contentOffset: { x: number } };
+  }) => {
+    const slideSize = screenWidth;
+    const index = Math.round(event.nativeEvent.contentOffset.x / slideSize);
+    setActiveIndex(index);
+  };
+
+  type ImageField = {
+    id?: string;
+    uri: string;
+    name: string;
+    type?: string;
+  };
+
+  const handleListPress = async () => {
+    console.log('🔵 handleListPress called');
+
+    try {
+      // 1️⃣ Get stored form data
+      console.log('Step 1: Fetching formData from AsyncStorage...');
+      const storedData = await AsyncStorage.getItem('formData');
+      console.log('✅ AsyncStorage.getItem(formData) result:', storedData);
+
+      if (!storedData) {
+        console.log('⚠️ No form data found in storage');
+        showToast('No form data found');
+        return;
+      }
+
+      const formData: Record<string, any> = JSON.parse(storedData);
+      console.log('✅ Parsed formData:', formData);
+
+      // 2️⃣ Get token
+      console.log('Step 2: Fetching userToken...');
+      const token = await AsyncStorage.getItem('userToken');
+      const productId1 = await AsyncStorage.getItem('selectedProductId');
+
+      console.log('✅ AsyncStorage.getItem(userToken):', token);
+
+      if (!token) {
+        console.log('⚠️ Token not found. Cannot upload.');
+        return;
+      }
+
+      // 3️⃣ Split formData into image and non-image fields
+      console.log('Step 3: Splitting formData...');
+      const imageFields = Object.entries(formData).filter(
+        ([, value]) => Array.isArray(value) && value.every((v: any) => v?.uri),
+      ) as [string, ImageField[]][];
+
+      const nonImageFields = Object.entries(formData).filter(
+        ([, value]) =>
+          !(Array.isArray(value) && value.every((v: any) => v?.uri)),
+      );
+
+      console.log('✅ Non-image fields:', nonImageFields);
+      console.log('✅ Image fields:', imageFields);
+
+      // 4️⃣ Build data array for first API (non-image fields)
+      const dataArray = nonImageFields.map(([key, value]) => ({
+        id: Number(key),
+        param_value: value,
+      }));
+
+      console.log('✅ Data array for create API:', dataArray);
+
+      // 5️⃣ Call first API to create feature list
+      const createPayload = {
+        category_id: productId1, // static or dynamic
+        data: dataArray,
+      };
+
+      console.log('Step 5: Calling create API with payload:', createPayload);
+
+      const createRes = await fetch(
+        `${MAIN_URL.baseUrl}category/featurelist/create`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(createPayload),
+        },
+      );
+
+      console.log(`✅ Create API status: ${createRes.status}`);
+      const createJson = await createRes.json();
+      console.log('✅ Create API response:', createJson);
+
+      if (!createRes.ok) {
+        showToast('Failed to create feature list');
+        return;
+      }
+
+      // 6️⃣ Get feature_id from create API response
+      const feature_id = createJson?.data?.id;
+      if (!feature_id) {
+        console.log('❌ feature_id not returned from create API.');
+        showToast('feature_id missing in response');
+        return;
+      }
+      console.log('✅ feature_id from create API:', feature_id);
+
+      // 7️⃣ Upload images one by one
+      for (const [param_id, images] of imageFields) {
+        console.log(`Step 7: Uploading images for param_id=${param_id}`);
+
+        for (const image of images) {
+          console.log(
+            `🟡 Preparing upload for image under param_id=${param_id}:`,
+            image,
+          );
+
+          const data = new FormData();
+          data.append('files', {
+            uri: image.uri,
+            type: image.type || 'image/jpeg',
+            name: image.name,
+          } as any);
+          data.append('feature_id', feature_id); // from API response
+          data.append('param_id', param_id);
+
+          console.log('✅ FormData prepared for upload');
+
+          const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-upload`;
+          console.log(
+            `Step 7: Uploading image ${image.name} with param_id=${param_id} to ${uploadUrl}`,
+          );
+
+          const uploadRes = await fetch(uploadUrl, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${token}`, // no Content-Type for FormData
+            },
+            body: data,
+          });
+
+          console.log(`✅ Upload completed. Status: ${uploadRes.status}`);
+          const uploadJson = await uploadRes.json();
+          console.log('✅ Upload response JSON:', uploadJson);
+
+          if (!uploadRes.ok) {
+            console.log(
+              `❌ Upload failed for ${image.name} (param_id=${param_id})`,
+            );
+            showToast(`Failed to upload image ${image.name}`);
+          } else {
+            console.log(
+              `✅ Upload success for ${image.name} (param_id=${param_id})`,
+            );
+          }
+        }
+      }
+
+      console.log('✅ All uploads done. Showing toast.');
+      showToast('All data uploaded successfully');
+      setShowPopup(true);
+    } catch (error) {
+      console.log('❌ Error in handleListPress:', error);
+      showToast('Error uploading data');
+    }
+  };
+
   return (
     <ImageBackground
       source={require('../../../assets/images/bganimationscreen.png')}
       style={{ width: '100%', height: '100%' }}
       resizeMode="cover"
     >
-        
-        <View style={styles.fullScreenContainer}>
-        {/* Header */}
-      {/* <View
-        style={{
-          paddingTop: Platform.OS === 'ios' ? 80 : 30,
-          height: 70,
-   
-    paddingBottom: 12,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-    overflow: 'hidden',
-        }}
-      >
-        <TouchableOpacity
-          style={{ zIndex: 1 }}
-          onPress={() => {
-            navigation.navigate('PreviewThumbnail');
-          }}
-        >
-          <View style={styles.backIconRow}>
-            <Image
-              source={require('../../../assets/images/back.png')}
-              style={styles.h24_w24}
-            />
-          </View>
-        </TouchableOpacity>
-        <Text style={styles.previewThumbnail}>Preview Details</Text>
-      </View> */}
-
-       <View style={styles.header}>
-                <View style={styles.headerRow}>
-                  <TouchableOpacity
-                    style={styles.backBtn}
-                    onPress={() => {
-                      navigation.navigate('Dashboard');
-                    }}
-                  >
-                    <View style={styles.backIconRow}>
-                      <Image
-                        source={require('../../../assets/images/back.png')}
-                        style={{ height: 24, width: 24 }}
-                      />
-                    </View>
-                  </TouchableOpacity>
-                  <Text style={styles.unizyText}>List Product</Text>
-                  <View style={{ width: 30 }} />
-                </View>
-              </View>
-          
-
-       <ScrollView
-                 contentContainerStyle={styles.scrollContainer}
-                 onScroll={Animated.event([
-                   {
-                     nativeEvent: { contentOffset: { y: scrollY1 } },
-                   },
-                 ])}
-                 scrollEventThrottle={16}
-               >
-            <Image
-                 source={require('../../../assets/images/drone.png')}
-            style={{ width: '100%', height: '40%' }}
-            resizeMode="cover"
-            />
-        <View style={{ flex: 1, padding: 16 }}>
-          <View style={styles.card}>
-            <View style={{ gap: 8 }}>
-              <Text style={styles.QuaddText}>Quadcopter (Drone)</Text>
-              <Text style={styles.priceText}>$10.00</Text>
-            </View>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'flex-start',
-                gap: 2,
-                alignSelf: 'stretch',
-              }}
+      <View style={styles.fullScreenContainer}>
+        <View style={styles.header}>
+          <View style={styles.headerRow}>
+            <TouchableOpacity
+              style={styles.backBtn}
+              onPress={() => navigation.navigate('Dashboard')}
             >
-              <Text style={styles.productDesHeding}>Product Description</Text>
-              <Text style={styles.productDesc}>
+              <View style={styles.backIconRow}>
+                <Image
+                  source={require('../../../assets/images/back.png')}
+                  style={{ height: 24, width: 24 }}
+                />
+              </View>
+            </TouchableOpacity>
+            <Text style={styles.unizyText}>List Product</Text>
+            <View style={{ width: 30 }} />
+          </View>
+        </View>
+
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          onScroll={Animated.event([
+            {
+              nativeEvent: { contentOffset: { y: scrollY1 } },
+            },
+          ])}
+          scrollEventThrottle={16}
+        >
+          {storedForm?.[6]?.length > 1 ? (
+            <View>
+              <FlatList
+                ref={flatListRef}
+                data={storedForm[6]}
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={(item, index) => index.toString()}
+                onScroll={onScroll}
+                scrollEventThrottle={16}
+                renderItem={({ item }) => (
+                  <Image
+                    source={{ uri: item.uri }}
+                    style={{ width: screenWidth, height: 250 }}
+                    resizeMode="cover"
+                  />
+                )}
+              />
+
+              {/* Custom Step Indicator */}
+              <View style={styles.stepIndicatorContainer}>
+                {storedForm[6].map((_: any, index: number) => {
+                  const isActive = index === activeIndex;
+                  return (
+                    <View
+                      key={index}
+                      style={
+                        isActive
+                          ? styles.activeStepCircle
+                          : styles.inactiveStepCircle
+                      }
+                    />
+                  );
+                })}
+              </View>
+            </View>
+          ) : (
+            <Image
+              source={
+                storedForm?.[6]?.[0]?.uri
+                  ? { uri: storedForm[6][0].uri }
+                  : require('../../../assets/images/drone.png')
+              }
+              style={{ width: '100%', height: 250 }}
+              resizeMode="cover"
+            />
+          )}
+
+          <View style={{ flex: 1, padding: 16 }}>
+            <View style={styles.card}>
+              <View style={{ gap: 8 }}>
+                <Text style={styles.QuaddText}>
+                  {storedForm?.[7] || 'No Title'}
+                </Text>
+
+                <Text style={styles.priceText}>
+                  {`$${storedForm?.[8] || '0'}`}
+                </Text>
+              </View>
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                  gap: 2,
+                  alignSelf: 'stretch',
+                }}
+              >
+                <Text style={styles.productDesHeding}>Product Description</Text>
+                {/* <Text style={styles.productDesc}>
                 Your pocket-sized flying buddy! Perfect for capturing epic
                 campus shots, recording events, or just having fun with friends.
                 Easy to fly, stable in the air, and ready for adventure.
-              </Text>
-              <View style={styles.datePosted}>
-                <Image
-                  source={require('../../../assets/images/calendar_icon.png')}
-                  style={{ height: 16, width: 16 }}
-                />
-                <Text style={styles.userSub}>Date Posted:10-01-2025</Text>
+              </Text> */}
+                <Text style={styles.productDesc}>
+                  {storedForm?.[11] || 'No Description'}
+                  {/* Assuming key 9 has description */}
+                </Text>
+
+                <View style={styles.datePosted}>
+                  <Image
+                    source={require('../../../assets/images/calendar_icon.png')}
+                    style={{ height: 16, width: 16 }}
+                  />
+                  <Text style={styles.userSub}>Date Posted:10-01-2025</Text>
+                </View>
               </View>
             </View>
-          </View>
 
-          <View style={styles.card}>
-            <View style={styles.gap12}>
-              <Text style={styles.productDeatilsHeading}>Product Details</Text>
-              <View style={{ gap: 8 }}>
-                {/* <View> */}
+            <View style={styles.card}>
+              <View style={styles.gap12}>
+                <Text style={styles.productDeatilsHeading}>
+                  Product Details
+                </Text>
+                <View style={{ gap: 8 }}>
+                  {/* <View> */}
                   <Text style={styles.itemcondition}>Item Condition</Text>
-                  <Text style={[styles.new,{marginTop: -6}]}>New</Text>
-                {/* </View> */}
-                <View style={styles.gap4}>
-                  <Text style={styles.catagory}>Category</Text>
-                  <View style={styles.categoryContainer}>
+                  <View>
+                    <View style={styles.categoryContainer}>
+                      {storedForm?.[9]?.map((id: number, index: number) => {
+                        const option = itemOptions.find(o => o.id === id);
+                        return (
+                          // <Text key={index} style={[styles.new, { marginTop: -6 }]}>
+                          //   {option?.option_name || 'Unknown'}
+                          // </Text>
+                          <View key={index} style={styles.categoryTag}>
+                            <Text style={styles.catagoryText}>
+                              {option?.option_name || 'Unknown'}
+                            </Text>
+                          </View>
+                        );
+                      })}
+                    </View>
+                  </View>
+                  {/* </View> */}
+                  <View style={styles.gap4}>
+                    <Text style={styles.catagory}>Category</Text>
+                    {/* <View style={styles.categoryContainer}>
                     <View style={styles.categoryTag}>
                       <Text style={styles.catagoryText}>Category 1</Text>
                     </View>
                     <Text style={styles.categoryTag}>
                       <Text style={styles.catagoryText}>Category 1</Text>
                     </Text>
+                  </View> */}
+                    <View style={styles.categoryContainer}>
+                      {storedForm?.[10]?.map(
+                        (id: number, index: Key | null | undefined) => {
+                          const option = categoryOptions.find(o => o.id === id);
+                          return (
+                            <View key={index} style={styles.categoryTag}>
+                              <Text style={styles.catagoryText}>
+                                {option?.option_name || 'Unknown'}
+                              </Text>
+                            </View>
+                          );
+                        },
+                      )}
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </View>
+
+            {/* Selaer details */}
+            <View style={styles.card}>
+              <View style={{ gap: 12 }}>
+                <Text style={styles.productDeatilsHeading}>Seller Details</Text>
+
+                {/* User Info */}
+                <View style={{ flexDirection: 'row' }}>
+                  <Image source={profileImg} style={styles.avatar} />
+
+                  <View style={{ width: '80%', gap: 4 }}>
+                    <Text style={styles.userName}>Alan Walker</Text>
+
+                    <Text style={styles.univeritytext}>
+                      University of Warwick,
+                    </Text>
+                    <Text style={[styles.univeritytext, { marginTop: -5 }]}>
+                      Coventry
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={{ flexDirection: 'row', gap: 8 }}>
+                  <View
+                    style={{
+                      borderRadius: 10,
+                      backgroundColor:
+                        'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+                      boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      gap: 4,
+                      padding: 16,
+
+                      width: '20%',
+                    }}
+                  >
+                    <Image
+                      source={require('../../../assets/images/staricon.png')}
+                      style={{ height: 16, width: 16 }}
+                    />
+
+                    <Text
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.48)',
+                        fontFamily: 'Urbanist-SemiBold',
+                        fontSize: 14,
+                        fontWeight: '600',
+                        fontStyle: 'normal',
+                        letterSpacing: -0.28,
+                      }}
+                    >
+                      4.5
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      borderRadius: 10,
+                      backgroundColor:
+                        'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+                      boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      gap: 4,
+                      padding: 16,
+                      width: '80%',
+                    }}
+                  >
+                    <Image
+                      source={require('../../../assets/images/message_chat.png')}
+                      style={{ height: 16, width: 16 }}
+                    />
+                    <Text
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.48)',
+                        fontFamily: 'Urbanist-SemiBold',
+                        fontSize: 14,
+                        fontWeight: '600',
+                        fontStyle: 'normal',
+                        letterSpacing: -0.28,
+                      }}
+                    >
+                      Chat with Seller
+                    </Text>
                   </View>
                 </View>
               </View>
             </View>
           </View>
-
-          {/* Selaer details */}
-          <View style={styles.card}>
-            <View style={{ gap: 12 }}>
-              <Text style={styles.productDeatilsHeading}>Seller Details</Text>
-
-              {/* User Info */}
-              <View style={{ flexDirection: 'row' }}>
-                <Image source={profileImg} style={styles.avatar} />
-
-                <View style={{ width: '80%', gap: 4 }}>
-                  <Text style={styles.userName}>Alan Walker</Text>
-                
-                    <Text style={styles.univeritytext}>
-                      University of Warwick,
-                    </Text>
-                    <Text style={[styles.univeritytext,{marginTop: -5}]}>Coventry</Text>
-                </View>
-              </View>
-
-              <View style={{ flexDirection: 'row', gap: 8 }}>
-                <View
-                  style={{
-                    borderRadius: 10,
-                    backgroundColor:
-                      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-                    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    gap: 4,
-                    padding: 16,
-
-                    width: '20%',
-                  }}
-                >
-                  <Image
-                    source={require('../../../assets/images/staricon.png')}
-                    style={{ height: 16, width: 16 }}
-                  />
-
-                  <Text
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.48)',
-                      fontFamily: 'Urbanist-SemiBold',
-                      fontSize: 14,
-                      fontWeight: '600',
-                      fontStyle: 'normal',
-                      letterSpacing: -0.28,
-                    }}
-                  >
-                    4.5
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    borderRadius: 10,
-                    backgroundColor:
-                      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-                    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    gap: 4,
-                    padding: 16,
-                    width: '80%',
-                  }}
-                >
-                  <Image
-                    source={require('../../../assets/images/message_chat.png')}
-                    style={{ height: 16, width: 16 }}
-                  />
-                  <Text
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.48)',
-                      fontFamily: 'Urbanist-SemiBold',
-                      fontSize: 14,
-                      fontWeight: '600',
-                      fontStyle: 'normal',
-                      letterSpacing: -0.28,
-                    }}
-                  >
-                    Chat with Seller
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
-
         </ScrollView>
 
+        {/* Bottom */}
+        <TouchableOpacity style={styles.previewBtn} onPress={handleListPress}>
+          <Text style={styles.previewText}>List</Text>
+        </TouchableOpacity>
+        {/* </ScrollView> */}
 
-      {/* Bottom */}
-      <TouchableOpacity
-        style={styles.previewBtn}
-        onPress={() => {
-          setShowPopup(true);
-        }}
-      >
-        <Text style={styles.previewText}>List</Text>
-      </TouchableOpacity>
-      {/* </ScrollView> */}
-
-      <Modal
-        visible={showPopup}
-        transparent
-        animationType="fade"
-        onRequestClose={closePopup}
-      >
-        <View style={styles.overlay}>
-          <BlurView
-            style={{
-              flex: 1,
-              alignContent: 'center',
-              justifyContent: 'center',
-              width: '100%',
-              alignItems: 'center',
-            }}
-            blurType="dark"
-            blurAmount={1000}
-            reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-          >
-            <View
-              style={[
-                StyleSheet.absoluteFill,
-                { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-              ]}
-            />
- 
-            <View style={styles.popupContainer}>
-              <Image
-                source={require('../../../assets/images/success_icon.png')}
-                style={styles.logo}
-                resizeMode="contain"
+        <Modal
+          visible={showPopup}
+          transparent
+          animationType="fade"
+          onRequestClose={closePopup}
+        >
+          <View style={styles.overlay}>
+            <BlurView
+              style={{
+                flex: 1,
+                alignContent: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                alignItems: 'center',
+              }}
+              blurType="dark"
+              blurAmount={1000}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            >
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                ]}
               />
-              <Text style={{
-                color: 'rgba(255, 255, 255, 0.80)',
-                fontFamily: 'Urbanist-SemiBold',
-                fontSize: 20,
-                fontWeight: '600',
-                fontStyle: 'normal',
-                letterSpacing: -0.4,
-                lineHeight: 28,
-              }}>Product Listed Successfully!</Text>
-              <Text style={{
-                color: 'rgba(255, 255, 255, 0.48)',
-                fontFamily: 'Urbanist-Regular',
-                fontSize: 14,
-                fontWeight: '400',
-                fontStyle: 'normal',
-                letterSpacing: -0.28,
-                lineHeight: 19.6,
-              }}>
-                Your product is now live and visible to other students.
-              </Text>
- 
-              <TouchableOpacity
-                style={styles.loginButton}
-                onPress={()=>{navigation.navigate('Dashboard') ;setShowPopup(false);}}
-              >
-                <Text style={styles.loginText}>Return to Choose Category</Text>
-              </TouchableOpacity>
-            </View>
-          </BlurView>
-        </View>
-      </Modal>
+
+              <View style={styles.popupContainer}>
+                <Image
+                  source={require('../../../assets/images/success_icon.png')}
+                  style={styles.logo}
+                  resizeMode="contain"
+                />
+                <Text
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.80)',
+                    fontFamily: 'Urbanist-SemiBold',
+                    fontSize: 20,
+                    fontWeight: '600',
+                    fontStyle: 'normal',
+                    letterSpacing: -0.4,
+                    lineHeight: 28,
+                  }}
+                >
+                  Product Listed Successfully!
+                </Text>
+                <Text
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.48)',
+                    fontFamily: 'Urbanist-Regular',
+                    fontSize: 14,
+                    fontWeight: '400',
+                    fontStyle: 'normal',
+                    letterSpacing: -0.28,
+                    lineHeight: 19.6,
+                  }}
+                >
+                  Your product is now live and visible to other students.
+                </Text>
+
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  onPress={async () => {
+                    try {
+                      await AsyncStorage.removeItem('formData');
+                      await AsyncStorage.removeItem('selectedProductId');
+                      console.log('✅ formData cleared from AsyncStorage');
+
+                      navigation.navigate('Dashboard');
+                      setShowPopup(false);
+                    } catch (err) {
+                      console.log('❌ Error clearing formData:', err);
+                    }
+                  }}
+                >
+                  <Text style={styles.loginText}>
+                    Return to Choose Category
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </BlurView>
+          </View>
+        </Modal>
       </View>
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-    unizyText: {
+  unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
     flex: 1,
@@ -342,13 +623,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     marginTop: 25,
   },
-      backBtn: {
+  backBtn: {
     width: 30,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
-    header: {
+  header: {
     height: 70,
     paddingTop: 12,
     paddingBottom: 12,
@@ -360,18 +641,59 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 10,
     // overflow: 'hidden',
-
-
+  },
+  stepIndicatorContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 12,
+    gap: 6,
+  },
+  stepCircle: {
+    width: 12,
+    height: 12,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  activeStepCircle: {
+    width: 12,
+    height: 12,
+    borderRadius: 40,
+    backgroundColor: '#FFFFFF',
+    borderColor: '#ffffff4e',
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.33,
+    elevation: 2,
+  },
+  inactiveStepCircle: {
+    width: 12,
+    height: 12,
+    borderRadius: 40,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)', // fallback for radial-gradient
+    borderColor: '#ffffff4e',
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.33,
+    elevation: 2,
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-    fullScreenContainer: {
+  fullScreenContainer: {
     flex: 1,
   },
 
-      loginText: {
+  loginText: {
     color: '#002050',
     textAlign: 'center',
     fontFamily: 'Urbanist-Medium',
@@ -380,8 +702,8 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     width: '100%',
   },
- 
-      loginButton: {
+
+  loginButton: {
     display: 'flex',
     width: '100%',
     height: 48,
@@ -396,7 +718,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
   },
-     termsText1: {
+  termsText1: {
     color: 'rgba(255,255,255,0.48)',
     fontFamily: 'Urbanist-Regular',
     fontSize: 14,
@@ -405,13 +727,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 12,
   },
-      logo: {
+  logo: {
     width: 64,
     height: 64,
     marginBottom: 20,
   },
- 
-      popupContainer: {
+
+  popupContainer: {
     width: width * 0.85,
     padding: 20,
     borderRadius: 24,
@@ -419,16 +741,16 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.1)',
     alignItems: 'center',
     overflow: 'hidden',
- 
+
     backgroundColor: 'rgba(255,255,255,0.15)',
   },
-    overlay: {
+  overlay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
- 
+
   previewText: {
     color: '#002050',
     textAlign: 'center',

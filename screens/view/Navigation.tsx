@@ -18,29 +18,70 @@ import AddScreen from './dashboard/AddScreen';
 import PreviewThumbnail from './dashboard/PreviewThumbnail';
 import PreviewDetailed from './dashboard/PreviewDetailed';
 import ProductDetails from './dashboard/ProductDetails';
-import { StatusBar } from 'react-native';
 import Temp from './authentication/Temp';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useState, useEffect } from 'react';
+import SplashScreen from './Hello/SplashScreen';
 
 const Stack = createNativeStackNavigator();
-//const Stack = createStackNavigator();
 
 
 export const Navigation = () => {
+    const [initialRoute, setInitialRoute] = useState<null | string>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+useEffect(() => {
+    const checkLoginStatus = async () => {
+      const flag = await AsyncStorage.getItem('ISLOGIN');
+      // Decide route based on flag
+      setInitialRoute(flag === 'true' ? 'Dashboard' : 'SinglePage');
+    };
+    checkLoginStatus();
+  }, []);
+ 
+  // 👇 until AsyncStorage resolves, show Splash
+  if (initialRoute === null) {
+    return <SplashScreen onFinish={() => {}} />; // no navigation yet
+  }
+ 
 
   enableScreens();
     return (
       <NavigationContainer>
+        
 
-      <Stack.Navigator initialRouteName="SinglePage"  screenOptions={{headerShown: false,}}>
+      {/* <Stack.Navigator
+        initialRouteName={isLoggedIn ? "Dashboard" : "SinglePage"}
+        screenOptions={{ headerShown: false, animation: "fade" }}
+      > */}
+      <Stack.Navigator
+        initialRouteName={initialRoute}
+        screenOptions={{ headerShown: false, animation: 'fade' }}
+      >
+        <Stack.Screen
+          name="SinglePage"
+          component={SinglePage}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Dashboard"
+          component={DashBoardScreen}
+          options={{ headerShown: false }}
+        />
     
     
       <Stack.Screen name='Temp' component={Temp} options={{headerShown:false,animation: 'fade',presentation: 'fullScreenModal'}}/>
 
 
 
-      <Stack.Screen name='SinglePage' component={SinglePage} options={{headerShown:false,animation: 'fade',presentation: 'fullScreenModal'}}/>
-        <Stack.Screen name="HelloScreen" component={HelloScreen}  options={{headerShown: false,gestureEnabled: true,
-        }} />
+      {/* <Stack.Screen name='SinglePage' component={SinglePage} options={{headerShown:false,animation: 'fade',presentation: 'fullScreenModal'}}/> */}
+        {/* {isLoggedIn && (
+          <Stack.Screen
+            name="SinglePage"
+            component={SinglePage}
+            options={{ headerShown: false, animation: "fade",presentation: 'fullScreenModal' }}
+          />
+        )} */}
+        <Stack.Screen name="HelloScreen" component={HelloScreen}  options={{headerShown: false,gestureEnabled: true,}} />
                 
 
         <Stack.Screen name='AddScreen' component={AddScreen} options={{headerShown:false,animation: 'fade',presentation: 'fullScreenModal'}}/>
@@ -48,7 +89,7 @@ export const Navigation = () => {
         <Stack.Screen name='PreviewDetailed' component={PreviewDetailed} options={{headerShown:false,animation: 'fade',presentation: 'fullScreenModal'}}/>
         <Stack.Screen name='ProductDetails' component={ProductDetails} options={{headerShown:false,animation: 'fade',presentation: 'fullScreenModal'}}/>
         <Stack.Screen name="LoginScreen" component={LoginScreen}  options={{headerShown: false, presentation: 'fullScreenModal',gestureEnabled: true, }}/>
-        <Stack.Screen name="Dashboard" component={DashBoardScreen} options={{headerShown: false,headerTransparent: true,presentation: 'fullScreenModal',gestureEnabled: true,}} />
+        {/* <Stack.Screen name="Dashboard" component={DashBoardScreen} options={{headerShown: false,headerTransparent: true,presentation: 'fullScreenModal',gestureEnabled: true,}} /> */}
         <Stack.Screen name="LanguagePopup" component={SelectLanguage_Popup} options={{
           headerShown: false,
           gestureEnabled: true,

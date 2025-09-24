@@ -16,7 +16,7 @@ const BackgroundAnimation_Android = () => {
         top: 0,
         left: 0,
         width: '100%',
-        height: '104%', // 👈 main part
+        height: '107%', 
       }}
     />
   );
