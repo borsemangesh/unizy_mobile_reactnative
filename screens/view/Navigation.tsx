@@ -19,6 +19,9 @@ import { SignupContext } from './Login/SignupContext ';
 import SinglePage from './merge/SinglePage';
 import BackgroundWrapper from './Hello/BackgroundAnimation';
 import AddScreen from './dashboard/AddScreen';
+import ProductDetails from './dashboard/ProductDetails';
+import PreviewDetailed from './dashboard/PreviewDetailed';
+import PreviewThumbnail from './dashboard/PreviewThumbnail';
 
 const Stack = createNativeStackNavigator();
 //const Stack = createStackNavigator();
@@ -41,7 +44,6 @@ export const Navigation = () => {
          presentation: 'modal',
          animation: 'fade_from_bottom',
          animationDuration: 700,
-       
         }} />
         <Stack.Screen name="Reset" component={ResetPassword} options={{headerShown: false,animation: 'fade', presentation: 'fullScreenModal'}}/>
         <Stack.Screen name="Signup" component={SignupScreen} options={{headerShown: false,animation: 'fade', presentation: 'fullScreenModal'}}/>
@@ -50,6 +52,12 @@ export const Navigation = () => {
         <Stack.Screen name="VerifyScreen" component={VerifyScreen} options={{headerShown:false,animation: 'fade',presentation: 'fullScreenModal'}}/>
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{headerShown:false,animation: 'fade',presentation: 'fullScreenModal'}}/>
         <Stack.Screen name='AddScreen' component={AddScreen} options={{headerShown:false,animation: 'fade',presentation: 'fullScreenModal'}}/>
+
+        <Stack.Screen name='PreviewThumbnail' component={PreviewThumbnail} options={{headerShown:false,animation: 'fade',presentation: 'fullScreenModal'}}/>
+        <Stack.Screen name='PreviewDetailed' component={PreviewDetailed} options={{headerShown:false,animation: 'fade',presentation: 'fullScreenModal'}}/>
+        <Stack.Screen name='ProductDetails' component={ProductDetails} options={{headerShown:false,animation: 'fade',presentation: 'fullScreenModal'}}/>
+ 
+
 
       </Stack.Navigator>
     </NavigationContainer>

@@ -15,8 +15,9 @@ import {
   Easing,
 } from 'react-native';
 import ProductCard from '../../utils/ProductCard';
-import { selectlang_styles } from '../SelectLanguage/SelectLanguage.style';
+
 import AnimatedSlideUp from '../../utils/AnimatedSlideUp';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 
 const mylistings = require('../../../assets/images/new_list_icon.png');
@@ -48,20 +49,57 @@ type Product = {
   icon: ImageSourcePropType;
 };
 
-
-const products = [
-  { id: 1, name: 'Products', icon: producticon, description: 'Sell items you own, from books to gadgets and more.' },
-  { id: 2, name: 'Food', icon: foodicon, description: 'List homemade meals, snacks, or campus treats for sale.' },
-  { id: 3, name: 'Accommodation', icon: accomicon, description: 'Offer tutoring or academic help in your subject area.' },
-  { id: 4, name: 'Tuition', icon: tuitionicon, description: 'Offer tutoring or academic help in your subject area.' },
-  { id: 5, name: 'House Keeping', icon: houseicon, description: 'Provide cleaning, laundry, or everyday chore services.' },
-  
-];
+// const products = [
+//   {
+//     id: 1,
+//     name: 'Products',
+//     icon: producticon,
+//     description: 'Sell items you own, from books to gadgets and more.',
+//   },
+//   {
+//     id: 2,
+//     name: 'Food',
+//     icon: foodicon,
+//     description: 'List homemade meals, snacks, or campus treats for sale.',
+//   },
+//   {
+//     id: 3,
+//     name: 'Accommodation',
+//     icon: accomicon,
+//     description: 'Offer tutoring or academic help in your subject area.',
+//   },
+//   {
+//     id: 4,
+//     name: 'Tuition',
+//     icon: tuitionicon,
+//     description: 'Offer tutoring or academic help in your subject area.',
+//   },
+//   {
+//     id: 5,
+//     name: 'House Keeping',
+//     icon: houseicon,
+//     description: 'Provide cleaning, laundry, or everyday chore services.',
+//   },
+// ];
 
 type ProductItemProps = {
   item: Product;
   fullWidth: boolean;
 };
+
+
+
+const iconMap: Record<string, any> = {
+  Products: require('../../../assets/images/producticon.png'),
+  Product: require('../../../assets/images/producticon.png'), // for API name
+  Food: require('../../../assets/images/fod_icon.png'),
+  Food2: require('../../../assets/images/fod_icon.png'), // match API data
+  Accommodation: require('../../../assets/images/bed_icon.png'),
+  Accomodation: require('../../../assets/images/bed_icon.png'), // API spelling
+  Tuition: require('../../../assets/images/book.png'),
+  'House Keeping': require('../../../assets/images/housekeeping.png'),
+};
+
 
 
 const ProductItem: React.FC<ProductItemProps> = ({ item, fullWidth }) => (
@@ -84,12 +122,6 @@ const ProductItem: React.FC<ProductItemProps> = ({ item, fullWidth }) => (
   </View>
 );
 
-// 🟩 Layouts for each tab
-const HomeScreenContent = () => (
-  <View style={styles.tabContent}>
-    <Text style={styles.tabContentText}>🏠 Home Layout</Text>
-  </View>
-);
 
 const SearchScreenContent = () => (
   <View style={styles.tabContent}>
@@ -97,40 +129,47 @@ const SearchScreenContent = () => (
   </View>
 );
 type AddScreenContentProps = {
-  navigation: any; 
+  navigation: any;
 };
-const AddScreenContent: React.FC<AddScreenContentProps> = ({ navigation }) =>(
 
+const AddScreenContent: React.FC<AddScreenContentProps & { products: any[] }> = ({ navigation, products }) => (
   <View style={styles.tabContent3}>
     <Text style={styles.tabContentText3}>List Product</Text>
-  <AnimatedSlideUp>
-    <FlatList
-      data={products}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => (
+    <AnimatedSlideUp>
+      <FlatList
+        data={products}
+        keyExtractor={item => item.id.toString()}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            onPress={async () =>
+               {
+              // navigation.navigate('AddScreen', {
+              //   productId: item.id,
+              //   name: item.name,
+              // });
+               try {
+                await AsyncStorage.setItem('selectedProductId', String(item.id));
+                console.log('✅ Product info saved to AsyncStorage');
+                navigation.navigate('AddScreen');
+              } catch (error) {
+                console.log('❌ Error saving product info:', error);
+              }
+            }
+          }
+          >
+            <View style={styles.card}>
+              <View style={styles.iconBackground}>
+                <Image source={item.icon} style={styles.cardIcon1} />
+              </View>
 
-        <TouchableOpacity
-              onPress={() => {
-                navigation.navigate('AddScreen', {
-                  productId: item.id,
-                  name: item.name,
-                });
-              }}
-            >
-        <View style={styles.card}>
-
-          <View style={styles.iconBackground}>
-        <Image source={item.icon} style={styles.cardIcon1} />
-      </View>
-
-          <View style={styles.cardTextContainer}>
-            <Text style={styles.cardTitle}>{item.name}</Text>
-            <Text style={styles.cardDescription}>{item.description}</Text>
-          </View>
-        </View>
-        </TouchableOpacity>
-      )}
-    />
+              <View style={styles.cardTextContainer}>
+                <Text style={styles.cardTitle}>{item.name}</Text>
+                <Text style={styles.cardDescription}>{item.description}</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        )}
+      />
     </AnimatedSlideUp>
   </View>
 );
@@ -146,48 +185,206 @@ const ProfileScreenContent = () => (
   </View>
 );
 
-
 type DashBoardScreenProps = {
   navigation: any;
 };
 
 const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   const [search, setSearch] = useState('');
-  const [activeTab, setActiveTab] = useState<'Home' | 'Search' | 'Add' | 'Bookmark' | 'Profile'>('Home');
+  const [activeTab, setActiveTab] = useState<
+    'Home' | 'Search' | 'Add' | 'Bookmark' | 'Profile'
+  >('Home');
 
   const screenWidth = Dimensions.get('window').width;
- //const tabWidth = screenWidth / 5;
-const tabsname = ['Home', 'Search', 'Add', 'Bookmark', 'Profile'];
+  //const tabWidth = screenWidth / 5;
+  const tabsname = ['Home', 'Search', 'Add', 'Bookmark', 'Profile'];
 
- const tabWidth = screenWidth * 0.9 / tabsname.length; // match container width = 90%
-
+  const tabWidth = (screenWidth * 0.9) / tabsname.length; // match container width = 90%
 
   const bubbleX = useRef(new Animated.Value(0)).current;
 
-    const translateY = React.useRef(new Animated.Value(-100)).current;
 
- 
-useEffect(() => {
-  if (activeTab === 'Home') {
-    translateY.setValue(-100); // reset position on tab change
-    Animated.timing(translateY, {
-      toValue: 0,
-      duration: 600,
-      easing: Easing.out(Easing.ease),
-      useNativeDriver: true,
-    }).start();
-  }
-}, [activeTab]);
+
+
+ const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+const [features, setFeatures] = useState<any[]>([]);
+
+
 
   useEffect(() => {
-    const index = ['Home', 'Search', 'Add', 'Bookmark', 'Profile'].indexOf(activeTab);
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch('http://65.0.99.229:4320/user/category');
+        const json = await res.json();
+        // Filter only active categories and map to your local icon structure
+        const mapped = json.data
+          .filter((cat: any) => cat.isactive) // only active
+          .map((cat: any) => ({
+            id: cat.id,
+            name: cat.name,
+            description: cat.description,
+            icon: iconMap[cat.name] || require('../../../assets/images/producticon.png'), // fallback icon
+          })).slice(0,5)
+        setProducts(mapped);
+      } catch (err) {
+        console.error('Error fetching categories', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+
+//   useEffect(() => {
+//   const fetchFeatures = async () => {
+//     try {
+//       const token = await AsyncStorage.getItem('userToken');
+//       if (!token) return;
+
+//       const res = await fetch('http://65.0.99.229:4320/category/feature-list', {
+//         headers: { Authorization: `Bearer ${token}` },
+//       });
+
+//       const json = await res.json();
+//       console.log('✅ Features API response:', json);
+
+//       if (json.statusCode === 200) {
+//         setFeatures(json.data.features || []);
+//       }
+//     } catch (err) {
+//       console.log('❌ Error fetching features:', err);
+//     }
+//   };
+
+//   fetchFeatures();
+// }, []);
+
+
+
+  //Animation For all components variables.
+  
+  useFocusEffect(
+  React.useCallback(() => {
+    const fetchFeatures = async () => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) return;
+
+        const res = await fetch('http://65.0.99.229:4320/category/feature-list', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const json = await res.json();
+        console.log('✅ Features API response:', json);
+
+        if (json.statusCode === 200) {
+          setFeatures(json.data.features || []);
+        }
+      } catch (err) {
+        console.log('❌ Error fetching features:', err);
+      }
+    };
+
+    fetchFeatures();
+  }, [])
+);
+
+  
+  const screenHeight = Dimensions.get('window').height;
+  const translateY = React.useRef(new Animated.Value(screenHeight)).current;
+  const searchBartranslateY = React.useRef(
+    new Animated.Value(screenHeight),
+  ).current;
+  const categorytranslateY = React.useRef(
+    new Animated.Value(screenHeight),
+  ).current;
+  // const evenCategorytranslateX = React.useRef(new Animated.Value(screenWidth)).current;
+  const leftItemTranslateX = useRef(new Animated.Value(-300)).current; // from left
+  const rightItemTranslateX = useRef(new Animated.Value(300)).current; // from right
+  const cardSlideupAnimation = useRef(new Animated.Value(screenHeight)).current;
+  const bottomNaviationSlideupAnimation = useRef(
+    new Animated.Value(screenHeight),
+  ).current;
+
+  useEffect(() => {
+    if (activeTab === 'Home') {
+      translateY.setValue(-screenWidth);
+      searchBartranslateY.setValue(-screenWidth);
+      categorytranslateY.setValue(-screenWidth);
+      // evenCategorytranslateX.setValue(-screenWidth);
+      leftItemTranslateX.setValue(-screenWidth);
+      rightItemTranslateX.setValue(screenWidth);
+      cardSlideupAnimation.setValue(screenHeight);
+      bottomNaviationSlideupAnimation.setValue(screenHeight);
+      Animated.timing(translateY, {
+        toValue: 0,
+        duration: 600,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start();
+
+      // Search bar animation
+      Animated.timing(searchBartranslateY, {
+        toValue: 0,
+        duration: 900,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start();
+
+      // Catagory bar animation categorytranslateY
+      Animated.timing(categorytranslateY, {
+        toValue: 0,
+        duration: 600,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start();
+      Animated.timing(leftItemTranslateX, {
+        toValue: 0,
+        duration: 600,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start();
+      Animated.timing(rightItemTranslateX, {
+        toValue: 0,
+        duration: 600,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start();
+      Animated.timing(bottomNaviationSlideupAnimation, {
+        toValue: 0,
+        duration: 1000,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start();
+
+      const animations = [0, 1, 2].map(i =>
+        Animated.timing(cardSlideupAnimation, {
+          toValue: 0,
+          duration: 900,
+          delay: i * 200,
+          easing: Easing.out(Easing.ease),
+          useNativeDriver: true,
+        }),
+      );
+      Animated.stagger(200, animations).start();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab]);
+
+  useEffect(() => {
+    const index = ['Home', 'Search', 'Add', 'Bookmark', 'Profile'].indexOf(
+      activeTab,
+    );
     Animated.spring(bubbleX, {
       toValue: index * tabWidth,
       friction: 8,
       tension: 60,
       useNativeDriver: true,
     }).start();
-  }, [activeTab, tabWidth]);
+  }, [activeTab, bubbleX, tabWidth]);
+
 
   const renderProducts = () => {
     const isEven = products.length % 2 === 0;
@@ -196,25 +393,48 @@ useEffect(() => {
 
     if (!isEven) {
       rows.push(
-        <View style={styles.row} key={products[0].id}>
+        <Animated.View
+          style={[
+            styles.row,
+            { transform: [{ translateY: categorytranslateY }] },
+          ]}
+          key={products[0].id}
+        >
           <ProductItem item={products[0]} fullWidth />
-        </View>
+        </Animated.View>,
       );
       startIndex = 1;
     }
 
     for (let i = startIndex; i < products.length; i += 2) {
+      i === 0 && rows.push(
+      <View style={styles.row} key={i} />);
       const rowItems = products.slice(i, i + 2);
+      console.log('RowITEM: ', rowItems);
       rows.push(
-        <View style={styles.row} key={i}>
-          {rowItems.map((item) => (
-            <ProductItem key={item.id} item={item} fullWidth={false} />
-          ))}
+        <View style={{ flexDirection: 'row' }} key={i}>
+          {rowItems.map((item, index) => (
+          <Animated.View
+            key={item.id}
+            style={[
+              index === 0 ? styles.halfWidth : styles.halfWidth, // keep same base width
+              {
+                transform: [
+                  {
+                    translateX:
+                      index === 0 ? leftItemTranslateX : rightItemTranslateX,
+                  },
+                ],
+              },
+            ]}
+  >
+    <ProductItem item={item} fullWidth={false} />
+  </Animated.View>
+))}
           {rowItems.length === 1 && <View style={styles.halfWidth} />}
-        </View>
+        </View>,
       );
     }
-
     return rows;
   };
 
@@ -223,19 +443,40 @@ useEffect(() => {
       case 'Home':
         return (
           <>
+          <TouchableOpacity onPress={() => navigation.navigate('ProductDetails')} >
             <View style={styles.productsWrapper}>{renderProducts()}</View>
+            </TouchableOpacity>
             <Text style={styles.featuredText}>Featured Listings</Text>
-            <ScrollView style ={[{paddingHorizontal: 6}]}horizontal showsHorizontalScrollIndicator={false}>
-              <ProductCard />
-              <ProductCard />
-              <ProductCard />
-            </ScrollView>
+       
+           <ScrollView
+            style={{ paddingHorizontal: 6 }}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          >
+            {features.map((item) => (
+              <Animated.View
+                key={item.id}
+                style={{
+                  transform: [{ translateY: cardSlideupAnimation }],
+                  marginRight: 10,
+                }}
+              >
+                <ProductCard
+                  tag="University of Warwick" 
+                  infoTitle={item.title} 
+                  inforTitlePrice={`£${item.price}`} 
+                  rating="4.5" 
+                  productImage={{ uri: item.thumbnail }} 
+                />
+              </Animated.View>
+            ))}
+          </ScrollView>
           </>
         );
       case 'Search':
         return <SearchScreenContent />;
       case 'Add':
-        return <AddScreenContent navigation={navigation} />;
+       return <AddScreenContent navigation={navigation} products={products} />;
       case 'Bookmark':
         return <BookmarkScreenContent />;
       case 'Profile':
@@ -245,14 +486,13 @@ useEffect(() => {
     }
   };
 
-
   const tabs = [
-  { key: 'Home', icon: homeIcon, activeIcon: homeIcon1 },
-  { key: 'Search', icon: searchTabIcon, activeIcon: searchTabIcon2 },
-  { key: 'Add', icon: addIcon, activeIcon: addIcon3 },
-  { key: 'Bookmark', icon: bookmarkIcon, activeIcon: bookmarkIcon4 },
-  { key: 'Profile', icon: profileIcon, activeIcon: profileIcon5 },
-];
+    { key: 'Home', icon: homeIcon, activeIcon: homeIcon1 },
+    { key: 'Search', icon: searchTabIcon, activeIcon: searchTabIcon2 },
+    { key: 'Add', icon: addIcon, activeIcon: addIcon3 },
+    { key: 'Bookmark', icon: bookmarkIcon, activeIcon: bookmarkIcon4 },
+    { key: 'Profile', icon: profileIcon, activeIcon: profileIcon5 },
+  ];
 
   return (
     <ImageBackground
@@ -264,11 +504,11 @@ useEffect(() => {
         {activeTab === 'Home' && (
           <View style={styles.header}>
             <Animated.View
-                    style={[
-                      styles.headerRow,
-                      { transform: [{ translateY: translateY }] },
-                    ]}
-                  >
+              style={[
+                styles.headerRow,
+                { transform: [{ translateY: translateY }] },
+              ]}
+            >
               <View style={styles.MylistingsBackground}>
                 <Image source={mylistings} style={styles.iconSmall} />
               </View>
@@ -282,7 +522,12 @@ useEffect(() => {
               </View>
             </Animated.View>
 
-            <View style={styles.search_container}>
+            <Animated.View
+              style={[
+                styles.search_container,
+                { transform: [{ translateY: searchBartranslateY }] },
+              ]}
+            >
               <Image source={searchIcon} style={styles.searchIcon} />
               <TextInput
                 style={styles.searchBar}
@@ -291,17 +536,23 @@ useEffect(() => {
                 onChangeText={setSearch}
                 value={search}
               />
-            </View>
+            </Animated.View>
           </View>
         )}
 
         {/* Main Content */}
+
         <View style={{ flex: 1 }}>{renderActiveTabContent()}</View>
 
         {/* Bottom Tab Bar */}
-        <View style={styles.bottomTabContainer}>
+        <Animated.View
+          style={[
+            styles.bottomTabContainer,
+            { transform: [{ translateY: bottomNaviationSlideupAnimation }] },
+          ]}
+        >
           {/* Bubble background */}
-          <View style={{  height: 48,}}>
+          <View style={{ height: 48 }}>
             <Animated.View
               style={[
                 styles.bubble,
@@ -313,114 +564,108 @@ useEffect(() => {
             />
           </View>
 
-          {tabs.map(({  key, icon, activeIcon  }) => (
+          {tabs.map(({ key, icon, activeIcon }) => (
             <TouchableOpacity
               key={key}
               style={[styles.tabItem, { width: tabWidth }]}
               onPress={() => setActiveTab(key as any)}
             >
               <View style={styles.iconWrapper}>
-                  <Image
-                source={activeTab === key ? activeIcon : icon} // <-- choose icon based on active tab
-               style={styles.tabIcon}
+                <Image
+                  source={activeTab === key ? activeIcon : icon} // <-- choose icon based on active tab
+                  style={styles.tabIcon}
                 />
               </View>
             </TouchableOpacity>
           ))}
-        </View>
+        </Animated.View>
       </View>
     </ImageBackground>
   );
 };
-
+//
 export default DashBoardScreen;
 
 const styles = StyleSheet.create({
-
-
   search_container: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'stretch',
     borderRadius: 50,
-    marginTop:20,
+    marginTop: 20,
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
   },
   searchIcon: {
-    padding: 5, 
-    margin: 10 ,
-    height:24,
-    width:24
+    padding: 5,
+    margin: 10,
+    height: 24,
+    width: 24,
   },
   searchBar: {
     fontFamily: 'Urbanist-Medium',
     marginLeft: -5,
-    fontWeight:500,
-    fontSize:17,
-    color:'#fff'
+    fontWeight: 500,
+    fontSize: 17,
+    color: '#fff',
   },
-
-
 
   bottomTabContainer: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  height: 56,
-  marginBottom: 20,
-  borderRadius: 50,
-  backgroundColor: 'rgba(255,255,255,0.1)',
-  alignSelf: 'center',   // center horizontally
-  position: 'relative',  // important for absolute bubble
-  paddingHorizontal: 4,  
-},
-tabItem: {
-  //justifyContent: 'center',
-  //alignItems: 'center',
-},
-iconWrapper: {
-  height: 50,
-  borderRadius: 50,
-  justifyContent: 'center',
-  alignItems: 'center',
-},
-tabIcon: {
-  width: 22,
-  height: 22,
-  tintColor: '#fff',
-  resizeMode:'contain'
-},
-activeTabIcon: {
-  //tintColor: '#ccc',
-},
-bubble: {
-  height: 48,
-  backgroundColor: 'rgba(255,255,255,0.2)',
-  //borderRadius: 40,
-  position: 'absolute',
-    
-  justifyContent: 'center',   // center icon vertically
-  alignItems: 'center', 
-  //paddingHorizontal: 12,
-  //paddingVertical: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 56,
+    marginBottom: 20,
+    borderRadius: 50,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    alignSelf: 'center', // center horizontally
+    position: 'relative', // important for absolute bubble
+    paddingHorizontal: 4,
+  },
+  tabItem: {
+    //justifyContent: 'center',
+    //alignItems: 'center',
+  },
+  iconWrapper: {
+    height: 50,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tabIcon: {
+    width: 22,
+    height: 22,
+    tintColor: '#fff',
+    resizeMode: 'contain',
+  },
+  activeTabIcon: {
+    //tintColor: '#ccc',
+  },
+  bubble: {
+    height: 48,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    //borderRadius: 40,
+    position: 'absolute',
 
-  left:3,
-  right:3,
+    justifyContent: 'center', // center icon vertically
+    alignItems: 'center',
+    //paddingHorizontal: 12,
+    //paddingVertical: 8,
 
-   borderTopLeftRadius: 30,
-  borderBottomLeftRadius: 30,
-  borderTopRightRadius: 30,
-  borderBottomRightRadius: 30,
-},
+    left: 3,
+    right: 3,
 
-  
+    borderTopLeftRadius: 30,
+    borderBottomLeftRadius: 30,
+    borderTopRightRadius: 30,
+    borderBottomRightRadius: 30,
+  },
 
   activeIconWrapper: {
-   // backgroundColor: 'rgba(255,255,255,0.2)', // highlight active tab
+    // backgroundColor: 'rgba(255,255,255,0.2)', // highlight active tab
   },
- 
+
   background: {
     flex: 1,
     width: '100%',
@@ -473,6 +718,11 @@ bubble: {
     flexDirection: 'row',
     marginTop: 2,
   },
+  row1: {
+    flexDirection: 'row',
+    marginTop: 2,
+    justifyContent: 'space-between',
+  },
 
   cardContainer: {
     height: 56,
@@ -481,19 +731,31 @@ bubble: {
     padding: 12,
     alignItems: 'center',
     margin: 4,
-    borderWidth: 0.5,
-  borderColor: '#ffffff2c',
-  backgroundColor:
+    borderWidth: 0.4,
+    borderColor: '#ffffff36',
+    borderTopLeftRadius: 16,
+    borderBottomRightRadius: 16,
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+    backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 1px 5px 10px',
+
+    // borderTopColor: '#ffffff79',
+    // borderBottomColor: '#ffffff95',
+    // borderLeftColor: '#ffffff2f',
+    // borderRightColor: '#ffffff2f',
   },
-  fullWidth: {
-    flex: 1,
-    justifyContent: 'flex-start',
-  },
-  halfWidth: {
-    flex: 0.5,
-  },
+
+
+fullWidth: {
+  flex: 1,
+  justifyContent: 'flex-start',
+},
+halfWidth: {
+  flex: 1, 
+  maxWidth: '100%',
+  maxHeight: '100%',
+  height: 60,
+},
   cardIcon: {
     width: 24,
     height: 24,
@@ -518,7 +780,6 @@ bubble: {
     paddingHorizontal: 6,
   },
 
-  // layouts for tabs
   tabContent: {
     flex: 1,
     justifyContent: 'center',
@@ -529,77 +790,73 @@ bubble: {
     fontSize: 20,
   },
 
-
-
-
-  //list product tab 
+  //list product tab
 
   tabContent3: {
-  flex: 1,
-  padding: 20,
-},
-tabContentText3: {
-  color: '#fff',
-  fontSize: 20,
-  marginBottom: 12,
-  textAlign: 'center',
-  fontFamily: 'Urbanist-SemiBold',
-  fontWeight:600
-},
+    flex: 1,
+    padding: 20,
+  },
+  tabContentText3: {
+    color: '#fff',
+    fontSize: 20,
+    marginBottom: 12,
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: 600,
+  },
 
-card: {
-  height:85,
-  flexDirection: 'row',
-  //backgroundColor: '#ffffff20', // semi-transparent for dark bg
-  borderRadius: 24,
-  padding: 16,
-  marginTop:10,
-  marginBottom: 10,
-  alignItems: 'center',
+  card: {
+    height: 85,
+    flexDirection: 'row',
+    //backgroundColor: '#ffffff20', // semi-transparent for dark bg
+    borderRadius: 24,
+    padding: 16,
+    marginTop: 10,
+    marginBottom: 10,
+    alignItems: 'center',
 
-  borderWidth: 1,
-  borderColor: '#ffffff2c',
-  backgroundColor:
+    borderWidth: 1,
+    borderColor: '#ffffff2c',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
+    boxShadow: 'rgba(255, 255, 255, 0.02) -1px 10px 5px 10px',
+  },
+  cardIcon1: {
+    width: 30,
+    height: 30,
+    //marginRight: 12,
+    resizeMode: 'contain',
+  },
+  cardTextContainer: {
+    flex: 1,
+  },
+  cardTitle: {
+    fontSize: 17,
+    fontWeight: 600,
+    fontFamily: 'Urbanist-SemiBold',
+    color: '#fff',
+  },
+  cardDescription: {
+    fontSize: 14,
+    color: '#ccc',
+    marginTop: 6,
+    fontFamily: 'Urbanist-Medium',
+    fontWeight: 500,
+  },
+  iconBackground: {
+    width: 75,
+    height: 62,
+    borderRadius: 16, // adjust for rounded square / circle
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+
+    borderWidth: 1,
+    borderColor: '#ffffff2c',
+    backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px',
-  
-},
-cardIcon1: {
-  width: 30,
-  height: 30,
-  //marginRight: 12,
-  resizeMode: 'contain',
-},
-cardTextContainer: {
-  flex: 1,
-},
-cardTitle: {
-  fontSize: 17,
-  fontWeight: 600,
- fontFamily: 'Urbanist-SemiBold',
-  color: '#fff',
-},
-cardDescription: {
-  fontSize: 14,
-  color: '#ccc',
-  marginTop: 6,
-  fontFamily: 'Urbanist-Medium',
-  fontWeight:500
-},
-iconBackground: {
-  width: 75,
-  height: 62,
-  borderRadius: 16, // adjust for rounded square / circle
-  justifyContent: 'center',
-  alignItems: 'center',
-  marginRight: 12,
-  paddingVertical:8,
-  paddingHorizontal:12,
-
-  borderWidth: 1,
-  borderColor: '#ffffff2c',
-  backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px',
-},
+  },
 });

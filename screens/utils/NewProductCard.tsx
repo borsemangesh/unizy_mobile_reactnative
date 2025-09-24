@@ -1,9 +1,8 @@
-
 import React from "react";
 import { View, Text, Image, StyleSheet, ImageSourcePropType } from "react-native";
 
 
-type ProductCardProps = {
+type NewProductCardProps = {
   tag: string;
   infoTitle: string;
   inforTitlePrice: string;
@@ -12,7 +11,7 @@ type ProductCardProps = {
 };
 
 
-export default function ProductCard({tag,infoTitle,inforTitlePrice,rating,productImage}:ProductCardProps) {
+export default function NewProductCard({tag,infoTitle,inforTitlePrice,rating,productImage}:NewProductCardProps) {
   return (
     <View style={styles.card}>
       
@@ -21,8 +20,6 @@ export default function ProductCard({tag,infoTitle,inforTitlePrice,rating,produc
           source={productImage}
           style={styles.image}
         />
-
- 
         <View style={styles.tag}>
           <Text style={styles.tagText}>{tag}</Text>
         </View>
@@ -30,8 +27,8 @@ export default function ProductCard({tag,infoTitle,inforTitlePrice,rating,produc
       
         <View style={styles.bookmark1}>
           <Image
-            source={require('../../assets/images/bookmark.png')}
-            style={{ width: 48, height: 48 }}
+            source={require('../../assets/images/newbookmark.png')}
+            style={{ width: 36, height: 36 }}
           />
         </View>
       </View>
@@ -57,23 +54,26 @@ export default function ProductCard({tag,infoTitle,inforTitlePrice,rating,produc
 
 const styles = StyleSheet.create({
   card: {
-    width:320 ,
-    borderRadius: 20,
-    backgroundColor: '#5973c1ff',
-    marginHorizontal: 8,
+    borderRadius: 16,
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    //marginHorizontal: 8,
     // shadow for iOS
     shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 8,
+    width:188,
     overflow: 'hidden',
-    height:300,
+    height:'auto',
+    margin:6,
+    paddingBottom:10,
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 15px 15px 6px',
   },
   imageContainer: {
-    width: '100%',
-    height: 230,
+    width: 186,
+    height: 180,
     position: 'relative',
-    padding:12
+    padding:6
   },
   image: {
     width: '100%',
@@ -82,7 +82,8 @@ const styles = StyleSheet.create({
     borderRadius:12,
     //borderColor:'000',
    // borderWidth:2,
-    alignSelf:'center'
+    alignSelf:'center',
+    resizeMode:'cover'
   },
 
    image1: {
@@ -92,8 +93,8 @@ const styles = StyleSheet.create({
   },
   bookmark1: {
     position: 'absolute',
-    top: 10,
-    right: 10,
+    top: 5,
+    right: 5,
     borderRadius: 20,
     
   },
@@ -106,18 +107,18 @@ const styles = StyleSheet.create({
   },
   tag: {
     position: 'absolute',
-    bottom: 10,
-    right: 10,
+    bottom: 5,
+    right: 5,
     //backgroundColor: '#fff',
     backgroundColor:'rgba(255,255,255,0.4)',
-    borderRadius: 12,
-    padding: 8,
-    marginVertical:8,
-    marginHorizontal:8,
+    borderRadius: 4,
+    padding: 4,
+    marginVertical:4,
+    marginHorizontal:4,
      boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
   },
   tagText: {
-    fontSize: 11,
+    fontSize: 10,
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: '600',
     color: '#000',
@@ -127,45 +128,44 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 12,
     //backgroundColor: '#fff',
+    paddingHorizontal:6,
   },
   title: {
-    fontSize: 17,
+    fontSize: 12,
     fontWeight: '600',
     color: '#fff',
     fontFamily: 'Urbanist-SemiBold',
-    marginBottom: 2,
   },
    title1: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '400',
     color: '#000',
     fontFamily: 'Urbanist-Regular',
     marginBottom: 2,
   },
   price: {
-    fontSize: 17,
+    fontSize: 12,
     fontWeight: '500',
     color: '#fff',
      fontFamily: 'Urbanist-Bold',
   },
   
   ratingText: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '600',
     color: '#fff',
      fontFamily: 'Urbanist-SemiBold',
     marginLeft: 4,
   },
   ratingAbsolute: {
-  position: 'absolute',
-  bottom:10,
-  right: 10,
-  flexDirection: 'row',
-  alignItems: 'center',
-  paddingHorizontal: 8,
-  paddingVertical: 4,
-  borderRadius: 12,
+    position: 'absolute',
+    bottom:10,
+    right: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
 },
 });

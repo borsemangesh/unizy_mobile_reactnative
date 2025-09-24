@@ -2959,6 +2959,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
         setUsername('');
         setPassword('');
         setIsPasswordVisible(false)
+        await AsyncStorage.setItem('islogin', 'success');
         navigation.replace('Dashboard');
       } else {
         setLoading(false);
