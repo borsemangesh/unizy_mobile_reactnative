@@ -57,6 +57,15 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
 
+  interface UserMeta {
+  firstname: string | null;
+  lastname: string | null;
+  profile: string | null;
+  student_email: string | null;
+}
+
+const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
+
   useEffect(() => {
     const fetchFields = async () => {
       try {
@@ -82,6 +91,26 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
         }
 
         const json = await response.json();
+
+        if (json?.metadata) {
+        setUserMeta({
+          firstname: json.metadata.firstname ?? null,
+          lastname: json.metadata.lastname ?? null,
+          profile: json.metadata.profile ?? null,
+          student_email: json.metadata.student_email ?? null,
+        });
+
+        await AsyncStorage.setItem(
+          'userMeta',
+          JSON.stringify({
+            firstname: json.metadata.firstname ?? null,
+            lastname: json.metadata.lastname ?? null,
+            profile: json.metadata.profile ?? null,
+            student_email: json.metadata.student_email ?? null,
+          })
+        );
+      }
+
         if (json?.data) {
           const sellerFields = json.data.filter(
             (item: any) => item.seller === true,
@@ -157,7 +186,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     }
   };
 
-  // const handlePreview = async () => {
+
   //   try {
   //     const dataToStore: any = { ...formValues };
 
@@ -214,6 +243,56 @@ const handlePreview = async () => {
     showToast('Failed to save form data');
   }
 };
+
+// const handlePreview = async () => {
+//   try {
+//     for (const field of fields) {
+//       const { id, field_type, alias_name } = field.param;
+
+//       if (field.mandatory) {
+//         let value = formValues[id]?.value;
+
+//         if (field_type.toLowerCase() === 'image') {
+//           value = uploadedImages; 
+//         }
+
+//         if (
+//           value === undefined ||
+//           value === null ||
+//           (typeof value === 'string' && value.trim() === '') ||
+//           (Array.isArray(value) && value.length === 0)
+//         ) {
+//           showToast(`${field.param.field_name} is mandatory`);
+//           return;
+//         }
+//       }
+//     }
+
+//     const dataToStore: any = { ...formValues };
+
+//     fields.forEach(field => {
+//       if (field.param.field_type.toLowerCase() === 'image') {
+//         const uploadedForField = uploadedImages.map(img => ({
+//           id: img.id,
+//           uri: img.uri,
+//           name: img.name,
+//         }));
+
+//         dataToStore[field.param.id] = {
+//           value: uploadedForField,
+//           alias_name: field.param.alias_name ?? null,
+//         };
+//       }
+//     });
+
+//     await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
+//     console.log('Form data saved: ', dataToStore);
+//     navigation.navigate('PreviewThumbnail');
+//   } catch (error) {
+//     console.log('Error saving form data: ', error);
+//     showToast('Failed to save form data');
+//   }
+// };
 
 
   const handleSelectImage = async () => {
@@ -304,180 +383,13 @@ const handlePreview = async () => {
     );
   };
 
-  // const renderField = (field: any) => {
-  //   const { field_name, field_type, options, id } = field.param;
-  //   const fieldType = field_type.toLowerCase();
 
-  //   switch (fieldType) {
-  //     case 'text': {
-  //       const { param } = field;
-  //       const { field_name, keyboardtype, alias_name, field_type } = param;
-
-  //       // Placeholder from alias_name if present, else field_name
-  //       const placeholderText = alias_name || field_name;
-
-  //       let rnKeyboardType:
-  //         | 'default'
-  //         | 'numeric'
-  //         | 'email-address'
-  //         | 'phone-pad'
-  //         | 'decimal-pad' = 'default';
-  //       switch (keyboardtype) {
-  //         case 'alpha-numeric':
-  //           rnKeyboardType = 'default';
-  //           break;
-  //         case 'numeric':
-  //           rnKeyboardType = 'numeric';
-  //           break;
-  //         case 'decimal':
-  //           rnKeyboardType = 'decimal-pad';
-  //           break;
-  //         case 'email':
-  //           rnKeyboardType = 'email-address';
-  //           break;
-  //         case 'phone':
-  //           rnKeyboardType = 'phone-pad';
-  //           break;
-  //         default:
-  //           rnKeyboardType = 'default';
-  //       }
-
-  //       return (
-  //         <View key={field.id} style={styles.productTextView}>
-  //           <Text style={styles.textstyle}>{field_name}</Text>
-  //           <TextInput
-  //             style={[styles.personalEmailID_TextInput, styles.login_container]}
-  //             placeholder={placeholderText}
-  //             multiline={false}
-  //             placeholderTextColor="rgba(255, 255, 255, 0.48)"
-  //             keyboardType={rnKeyboardType}
-  //             value={formValues[param.id] || ''}
-  //             onChangeText={text => handleValueChange(param.id, text)}
-  //           />
-  //         </View>
-  //       );
-  //     }
-
-  //     case 'multi-line-text': {
-  //       const { param } = field;
-  //       const { field_name, keyboardtype, alias_name } = param;
-  //       const placeholderText = alias_name || field_name;
-
-  //       let rnKeyboardType:
-  //         | 'default'
-  //         | 'numeric'
-  //         | 'email-address'
-  //         | 'phone-pad'
-  //         | 'decimal-pad' = 'default';
-  //       switch (keyboardtype) {
-  //         case 'alpha-numeric':
-  //           rnKeyboardType = 'default';
-  //           break;
-  //         case 'numeric':
-  //           rnKeyboardType = 'numeric';
-  //           break;
-  //         case 'decimal':
-  //           rnKeyboardType = 'decimal-pad';
-  //           break;
-  //         case 'email':
-  //           rnKeyboardType = 'email-address';
-  //           break;
-  //         case 'phone':
-  //           rnKeyboardType = 'phone-pad';
-  //           break;
-  //         default:
-  //           rnKeyboardType = 'default';
-  //       }
-
-  //       return (
-  //         <View key={field.id} style={styles.productTextView}>
-  //           <Text style={styles.textstyle}>{field_name}</Text>
-  //           <TextInput
-  //             style={[
-  //               styles.personalEmailID_TextInput,
-  //               styles.login_container,
-  //               { textAlign: 'left', textAlignVertical: 'top', height: 100 },
-  //             ]}
-  //             placeholder={placeholderText}
-  //             multiline={true}
-  //             placeholderTextColor="rgba(255, 255, 255, 0.48)"
-  //             keyboardType={rnKeyboardType}
-  //             value={formValues[param.id] || ''}
-  //             onChangeText={text => handleValueChange(param.id, text)}
-  //           />
-  //         </View>
-  //       );
-  //     }
-
-  //     case 'dropdown':
-  //       return (
-  //         <View key={field.id} style={styles.productTextView}>
-  //           <Text style={styles.textstyle}>{field_name}</Text>
-
-  //           {/* Multi-select picker touchable */}
-  //           <TouchableOpacity
-  //             style={styles.pickerContainer}
-  //             onPress={() => {
-  //               setMultiSelectModal({ visible: true, fieldId: id });
-  //               setMultiSelectOptions(options);
-  //             }}
-  //           >
-  //             <Text style={styles.dropdowntext}>
-  //               {Array.isArray(formValues[id]) && formValues[id].length > 0
-  //                 ? `${formValues[id].length} Selected`
-  //                 : `Select ${field_name}`}
-  //             </Text>
-  //           </TouchableOpacity>
-
-  //           <View style={styles.categoryContainer}>
-  //             {options
-  //               .filter(
-  //                 (opt: any) =>
-  //                   Array.isArray(formValues[id]) &&
-  //                   formValues[id].includes(opt.id),
-  //               )
-  //               .map((opt: any) => (
-  //                 <View key={opt.id} style={styles.categoryTagWrapper}>
-  //                   <TouchableOpacity
-  //                     onPress={() => {
-  //                       // remove option from formValues[id]
-  //                       setFormValues((prev: any) => {
-  //                         const updated = Array.isArray(prev[id])
-  //                           ? [...prev[id]]
-  //                           : [];
-  //                         return {
-  //                           ...prev,
-  //                           [id]: updated.filter(value => value !== opt.id),
-  //                         };
-  //                       });
-  //                     }}
-  //                   >
-  //                     <Text style={styles.categoryTag}>
-  //                       {opt.option_name} ✕
-  //                     </Text>
-  //                   </TouchableOpacity>
-  //                 </View>
-  //               ))}
-  //           </View>
-  //         </View>
-  //       );
-
-    
-  //     case 'boolean':
-  //       return (
-  //         <View key={field.id} style={styles.featuredRow}>
-  //           <Text style={styles.featuredLabel}>{field_name}</Text>
-  //           <ToggleButton
-  //             value={!!formValues[id]}              // current value
-  //             onValueChange={(val) => handleValueChange(id, val)} // update state
-  //           />
-  //         </View>
-  //       );
-
-  //     default:
-  //       return null;
-  //   }
-  // };
+  const renderLabel = (field_name: any, mandatory: any) => (
+  <Text style={styles.textstyle}>
+    {field_name}
+    {mandatory && <Text style={{ color: '#fff' }}> *</Text>}
+  </Text>
+);
 
 const renderField = (field: any) => {
   const { field_name, field_type, options, id } = field.param;
@@ -519,9 +431,16 @@ const renderField = (field: any) => {
 
       return (
         <View key={field.id} style={styles.productTextView}>
-          <Text style={styles.textstyle}>{field_name}</Text>
+          {/* <Text style={styles.textstyle}>{field_name}</Text> */}
+          {renderLabel(field_name, field.mandatory)}
           <TextInput
-            style={[styles.personalEmailID_TextInput, styles.login_container]}
+            style={[
+              styles.personalEmailID_TextInput,
+              styles.login_container,
+              {
+                textAlignVertical: 'center', // centers text vertically on Android
+                paddingVertical: 0, // prevents padding changes on focus
+              } ]}
             placeholder={placeholderText}
             multiline={false}
             placeholderTextColor="rgba(255, 255, 255, 0.48)"
@@ -567,7 +486,8 @@ const renderField = (field: any) => {
 
       return (
         <View key={field.id} style={styles.productTextView}>
-          <Text style={styles.textstyle}>{field_name}</Text>
+          {/* <Text style={styles.textstyle}>{field_name}</Text> */}
+          {renderLabel(field_name, field.mandatory)}
           <TextInput
             style={[
               styles.personalEmailID_TextInput,
@@ -585,11 +505,11 @@ const renderField = (field: any) => {
       );
     }
 
-    // ---------------- DROPDOWN ----------------
     case 'dropdown':
       return (
         <View key={field.id} style={styles.productTextView}>
-          <Text style={styles.textstyle}>{field_name}</Text>
+          {/* <Text style={styles.textstyle}>{field_name}</Text> */}
+          {renderLabel(field_name, field.mandatory)}
 
           <TouchableOpacity
             style={styles.pickerContainer}
@@ -642,114 +562,104 @@ const renderField = (field: any) => {
         </View>
       );
 
-    // ---------------- IMAGE ----------------
+      
+
       case 'image': {
         const { param } = field;
         const { field_name, maxvalue, ismulltiple } = param;
 
         const handleImageSelect = () => {
-          //showToast(ismulltiple)
           if (uploadedImages.length >= maxvalue) {
             showToast(`Maximum ${maxvalue} images allowed`);
             return;
           }
-
           handleSelectImage();
         };
 
-        return (
-          <View key={field.id} style={styles.productTextView}>
-            <Text style={styles.textstyle}>{field_name}</Text>
+  return (
+    <View key={field.id} style={styles.productTextView}>
+      {/* <Text style={styles.textstyle}>{field_name}</Text> */}
+      {renderLabel(field_name, field.mandatory)}
+      <TouchableOpacity
+        style={styles.uploadButton}
+        onPress={handleImageSelect}
+      >
+        <Image source={uploadIcon} style={styles.uploadIcon} />
+        <Text style={styles.uploadText}>Upload {field_name}</Text>
+      </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.uploadButton}
-              onPress={handleImageSelect}
-            >
-              <Image source={uploadIcon} style={styles.uploadIcon} />
-              <Text style={styles.uploadText}>Upload {field_name}</Text>
-            </TouchableOpacity>
-
-             <View style={styles.imagelistcard}>
-              {uploadedImages.map(file => (
-                <View
-                  key={file.id}
-                  style={{ width: '100%', flexDirection: 'row' }}
-                >
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      width: '90%',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                    }}
+      {/* Show uploaded images only if there's at least one */}
+      {uploadedImages.length > 0 && (
+        <View style={styles.imagelistcard}>
+          {uploadedImages.map((file, index) => (
+            <View key={file.id} style={{ width: '100%' }}>
+              {/* Image row */}
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: 10,
+                }}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 }}>
+                  <Image
+                    source={require('../../../assets/images/sixdots.png')}
+                    style={styles.threedots}
+                  />
+                  <Image
+                    source={fileIcon}
+                    style={{ width: 20, height: 20, marginRight: 5 }}
+                  />
+                  <Text
+                    style={[styles.fileName, { flexShrink: 1 }]}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
                   >
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        width: '100%',
-                        padding: 10,
-                        alignItems: 'center',
-                      }}
-                    >
-                      <View
-                        style={{
-                          flex: 1,
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          gap: 10,
-                        }}
-                      >
-                        <View style={{ flexDirection: 'row', width: 30 }}>
-                          <Image
-                            source={require('../../../assets/images/threedots.png')}
-                            style={styles.threedots}
-                          />
-                          <Image
-                            source={require('../../../assets/images/threedots.png')}
-                            style={[styles.threedots, { paddingLeft: 5 }]}
-                          />
-                        </View>
-
-                        <Image
-                          source={fileIcon}
-                          style={{ width: 20, height: 20, marginRight: 5 }}
-                        />
-
-                        <Text
-                          style={[styles.fileName, { flexShrink: 1 }]}
-                          numberOfLines={1}
-                          ellipsizeMode="tail"
-                        >
-                          {file.name}
-                        </Text>
-                      </View>
-                    </View>
-
-                    <TouchableOpacity
-                      onPress={() =>
-                        setUploadedImages(prev =>
-                          prev.filter(img => img.id !== file.id),
-                        )
-                      }
-                    >
-                      <Image source={deleteIcon} style={styles.deleteIcon} />
-                    </TouchableOpacity>
-                  </View>
+                    {file.name}
+                  </Text>
                 </View>
-              ))}
-            </View> 
-          </View>
-        );
-      }
+
+                <TouchableOpacity
+                  onPress={() =>
+                    setUploadedImages(prev =>
+                      prev.filter(img => img.id !== file.id)
+                    )
+                  }
+                >
+                  <Image source={deleteIcon} style={styles.deleteIcon} />
+                </TouchableOpacity>
+              </View>
+
+              {/* Horizontal line if not the last image */}
+              {uploadedImages.length > 1 && index !== uploadedImages.length - 1 && (
+                <View
+                  style={{
+                    height: 1,
+                    backgroundColor:'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%)',
+                    marginHorizontal: 10,
+                  }}
+                />
+              )}
+            </View>
+          ))}
+        </View>
+      )}
+    </View>
+  );
+}
+
 
 
 
   case 'boolean':
   return (
-    <View key={field.id} style={{ marginBottom: 16 }}>
+    <View key={field.id} style={styles.featurecard}>
       {/* Main row with label and toggle */}
       <View style={styles.featuredRow}>
-        <Text style={styles.featuredLabel}>{field.param.field_name}</Text>
+        {/* <Text style={styles.featuredLabel}>{field.param.field_name}</Text> */}
+       {renderLabel(field.param.field_name, field.mandatory)}
+
         <ToggleButton
           value={!!formValues[field.param.id]?.value} 
           onValueChange={(val) =>
@@ -811,21 +721,53 @@ const renderField = (field: any) => {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
           <ScrollView contentContainerStyle={styles.scrollContainer}>
-            {/* User Info   */}
-            <View style={styles.userRow}>
-              <View style={{ width: '20%' }}>
-                <Image source={profileImg} style={styles.avatar} />
-              </View>
-              <View style={{ width: '80%' }}>
-                <Text style={styles.userName}>Alan Walker</Text>
-                <Text style={styles.userSub}>
-                  University of Warwick, Coventry
-                </Text>
-                <Text style={styles.userSub}>{displayDate}</Text>
+        
+             <View style={styles.userRow}>
+            <View style={{ width: '20%' }}>
+              <Image source={profileImg} style={styles.avatar} />
+            </View>
+            <View style={{ width: '80%' }}>
+              {/* <Text style={styles.userName}>Alan Walker</Text> */}
+              <Text style={styles.userName}>
+              {userMeta
+                ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''}`.trim()
+                : 'Alan Walker'}
+            </Text>
+              <View
+                style={{
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  display: 'flex',
+                  alignItems: 'stretch',
+                }}
+              >
+                <Text style={styles.userSub}>University of Warwick,</Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <Text style={styles.userSub}>Coventry</Text>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      gap: 3,
+                    }}
+                  >
+                    <Image
+                      source={require('../../../assets/images/calendar_icon.png')}
+                      style={{ height: 20, width: 20 }}
+                    />
+                    <Text style={styles.userSub}>10-01-2025</Text>
+                  </View>
+                </View>
               </View>
             </View>
+          </View>
 
-            {/* Dynamic Fields */}
+           
 
             <View style={styles.productdetails}>
               <Animated.View style={{ transform: [{ translateY: slideUp1 }] }}>
@@ -906,6 +848,15 @@ const renderField = (field: any) => {
 export default AddScreen;
 
 const styles = StyleSheet.create({
+
+  featurecard:{
+     paddingHorizontal: 16,
+    borderRadius: 12,
+    paddingBottom:8,
+    marginTop:12,
+    gap:10,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+  },
   dropdowntext: {
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
@@ -1133,8 +1084,8 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   threedots: {
-    width: 10,
-    height: 10,
+    width: 20,
+    height: 20,
     resizeMode: 'contain',
   },
   textstyle: {
@@ -1181,8 +1132,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
-    marginTop: 12,
+    marginBottom: 4,
+    marginTop: 4,
   },
   featuredLabel: {
     //color: '#fff',
@@ -1199,12 +1150,11 @@ const styles = StyleSheet.create({
           boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
           padding: 6,
           borderWidth:0.5,
-          marginTop: 8,
-            borderEndEndRadius: 8,
-            borderStartEndRadius: 8,
-            borderTopLeftRadius: 8,
-            borderTopRightRadius: 8,
-            borderBottomStartRadius: 8,
+            borderEndEndRadius: 12,
+            borderStartEndRadius: 12,
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12,
+            borderBottomStartRadius: 12,
             borderBlockStartColor: '#ffffff31',
             borderBlockColor: '#ffffff31',
             borderTopColor: '#ffffff31',

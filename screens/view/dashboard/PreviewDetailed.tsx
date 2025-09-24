@@ -62,6 +62,14 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const screenWidth = Dimensions.get('window').width;
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef(null);
+  const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
+
+  interface UserMeta {
+  firstname: string | null;
+  lastname: string | null;
+  profile: string | null;
+  student_email: string | null;
+}
 
   useEffect(() => {
     const fetchStoredData = async () => {
@@ -82,6 +90,21 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
     fetchStoredData();
   }, []);
 
+    useEffect(() => {
+    const loadUserMeta = async () => {
+      try {
+        const metaStr = await AsyncStorage.getItem('userMeta');
+        if (metaStr) {
+          const meta: UserMeta = JSON.parse(metaStr);
+          setUserMeta(meta);
+        }
+      } catch (error) {
+        console.log('Error loading userMeta', error);
+      }
+    };
+
+    loadUserMeta();
+  }, []);
 
 
   type FormEntry = {
@@ -124,165 +147,160 @@ const descriptionvalue= getValueByAlias(storedForm,'Description') || 'No Descrip
 
 const handleListPress = async () => {
   console.log('🔵 handleListPress called');
+ setShowPopup(true);
+  // try {
+  //   console.log('Step 1: Fetching formData from AsyncStorage...');
+  //   const storedData = await AsyncStorage.getItem('formData');
+  //   console.log('✅ AsyncStorage.getItem(formData) result:', storedData);
 
-  try {
-    // 1️⃣ Get stored form data
-    console.log('Step 1: Fetching formData from AsyncStorage...');
-    const storedData = await AsyncStorage.getItem('formData');
-    console.log('✅ AsyncStorage.getItem(formData) result:', storedData);
+  //   if (!storedData) {
+  //     console.log('⚠️ No form data found in storage');
+  //     showToast('No form data found');
+  //     return;
+  //   }
 
-    if (!storedData) {
-      console.log('⚠️ No form data found in storage');
-      showToast('No form data found');
-      return;
-    }
+  //   const formData: Record<
+  //     string,
+  //     { value: any; alias_name: string | null }
+  //   > = JSON.parse(storedData);
+  //   console.log('✅ Parsed formData:', formData);
 
-    const formData: Record<
-      string,
-      { value: any; alias_name: string | null }
-    > = JSON.parse(storedData);
-    console.log('✅ Parsed formData:', formData);
+  //   console.log('Step 2: Fetching userToken...');
+  //   const token = await AsyncStorage.getItem('userToken');
+  //   const productId1 = await AsyncStorage.getItem('selectedProductId');
 
-    // 2️⃣ Get token & productId
-    console.log('Step 2: Fetching userToken...');
-    const token = await AsyncStorage.getItem('userToken');
-    const productId1 = await AsyncStorage.getItem('selectedProductId');
+  //   if (!token) {
+  //     console.log('⚠️ Token not found. Cannot upload.');
+  //     return;
+  //   }
 
-    if (!token) {
-      console.log('⚠️ Token not found. Cannot upload.');
-      return;
-    }
+  //   console.log('Step 3: Splitting formData...');
 
-    // 3️⃣ Split formData into image and non-image fields
-    console.log('Step 3: Splitting formData...');
+  //   const imageFields = Object.entries(formData)
+  //     .filter(([key, obj]) => {
+  //       const v = obj.value;
+  //       return (
+  //         Array.isArray(v) &&
+  //         v.length > 0 &&
+  //         v.every((item: any) => item?.uri)
+  //       );
+  //     })
+  //     .map(([key, obj]) => [key, obj.value as ImageField[]]) as [
+  //     string,
+  //     ImageField[]
+  //   ][];
 
-    // 👉 now we must check formData[key].value
-    const imageFields = Object.entries(formData)
-      .filter(([key, obj]) => {
-        const v = obj.value;
-        return (
-          Array.isArray(v) &&
-          v.length > 0 &&
-          v.every((item: any) => item?.uri)
-        );
-      })
-      .map(([key, obj]) => [key, obj.value as ImageField[]]) as [
-      string,
-      ImageField[]
-    ][];
+  //   const nonImageFields = Object.entries(formData).filter(([key, obj]) => {
+  //     const v = obj.value;
+  //     return !(Array.isArray(v) && v.every((item: any) => item?.uri));
+  //   });
 
-    const nonImageFields = Object.entries(formData).filter(([key, obj]) => {
-      const v = obj.value;
-      return !(Array.isArray(v) && v.every((item: any) => item?.uri));
-    });
+  //   console.log('✅ Non-image fields:', nonImageFields);
+  //   console.log('✅ Image fields:', imageFields);
 
-    console.log('✅ Non-image fields:', nonImageFields);
-    console.log('✅ Image fields:', imageFields);
+  //   const dataArray = nonImageFields.map(([key, obj]) => ({
+  //     id: Number(key),
+  //     param_value: obj.value, // now take .value
+  //   }));
 
-    // 4️⃣ Build data array for first API (non-image fields)
-    const dataArray = nonImageFields.map(([key, obj]) => ({
-      id: Number(key),
-      param_value: obj.value, // now take .value
-    }));
+  //   console.log('✅ Data array for create API:', dataArray);
 
-    console.log('✅ Data array for create API:', dataArray);
+  //   const createPayload = {
+  //     category_id: productId1, // dynamic or static
+  //     data: dataArray,
+  //   };
 
-    // 5️⃣ Call first API to create feature list
-    const createPayload = {
-      category_id: productId1, // dynamic or static
-      data: dataArray,
-    };
+  //   console.log('Step 5: Calling create API with payload:', createPayload);
 
-    console.log('Step 5: Calling create API with payload:', createPayload);
+  //   const createRes = await fetch(
+  //     `${MAIN_URL.baseUrl}category/featurelist/create`,
+  //     {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //       body: JSON.stringify(createPayload),
+  //     },
+  //   );
 
-    const createRes = await fetch(
-      `${MAIN_URL.baseUrl}category/featurelist/create`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(createPayload),
-      },
-    );
+  //   console.log(`✅ Create API status: ${createRes.status}`);
+  //   const createJson = await createRes.json();
+  //   console.log('✅ Create API response:', createJson);
 
-    console.log(`✅ Create API status: ${createRes.status}`);
-    const createJson = await createRes.json();
-    console.log('✅ Create API response:', createJson);
+  //   if (!createRes.ok) {
+  //     showToast('Failed to create feature list');
+  //     return;
+  //   }
 
-    if (!createRes.ok) {
-      showToast('Failed to create feature list');
-      return;
-    }
+  //   // 6️⃣ Get feature_id from create API response
+  //   const feature_id = createJson?.data?.id;
+  //   if (!feature_id) {
+  //     console.log('❌ feature_id not returned from create API.');
+  //     showToast('feature_id missing in response');
+  //     return;
+  //   }
+  //   console.log('✅ feature_id from create API:', feature_id);
 
-    // 6️⃣ Get feature_id from create API response
-    const feature_id = createJson?.data?.id;
-    if (!feature_id) {
-      console.log('❌ feature_id not returned from create API.');
-      showToast('feature_id missing in response');
-      return;
-    }
-    console.log('✅ feature_id from create API:', feature_id);
+  //   // 7️⃣ Upload images one by one
+  //   for (const [param_id, images] of imageFields) {
+  //     console.log(`Step 7: Uploading images for param_id=${param_id}`);
 
-    // 7️⃣ Upload images one by one
-    for (const [param_id, images] of imageFields) {
-      console.log(`Step 7: Uploading images for param_id=${param_id}`);
+  //     for (const image of images) {
+  //       console.log(
+  //         `🟡 Preparing upload for image under param_id=${param_id}:`,
+  //         image,
+  //       );
 
-      for (const image of images) {
-        console.log(
-          `🟡 Preparing upload for image under param_id=${param_id}:`,
-          image,
-        );
+  //       const data = new FormData();
+  //       data.append('files', {
+  //         uri: image.uri,
+  //         type: image.type || 'image/jpeg',
+  //         name: image.name,
+  //       } as any);
+  //       data.append('feature_id', feature_id); // from API response
+  //       data.append('param_id', param_id);
 
-        const data = new FormData();
-        data.append('files', {
-          uri: image.uri,
-          type: image.type || 'image/jpeg',
-          name: image.name,
-        } as any);
-        data.append('feature_id', feature_id); // from API response
-        data.append('param_id', param_id);
+  //       console.log('✅ FormData prepared for upload');
 
-        console.log('✅ FormData prepared for upload');
+  //       const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-upload`;
+  //       console.log(
+  //         `Step 7: Uploading image ${image.name} with param_id=${param_id} to ${uploadUrl}`,
+  //       );
 
-        const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-upload`;
-        console.log(
-          `Step 7: Uploading image ${image.name} with param_id=${param_id} to ${uploadUrl}`,
-        );
+  //       const uploadRes = await fetch(uploadUrl, {
+  //         method: 'POST',
+  //         headers: {
+  //           Authorization: `Bearer ${token}`, // no Content-Type for FormData
+  //         },
+  //         body: data,
+  //       });
 
-        const uploadRes = await fetch(uploadUrl, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`, // no Content-Type for FormData
-          },
-          body: data,
-        });
+  //       console.log(`✅ Upload completed. Status: ${uploadRes.status}`);
+  //       const uploadJson = await uploadRes.json();
+  //       console.log('✅ Upload response JSON:', uploadJson);
 
-        console.log(`✅ Upload completed. Status: ${uploadRes.status}`);
-        const uploadJson = await uploadRes.json();
-        console.log('✅ Upload response JSON:', uploadJson);
+  //       if (!uploadRes.ok) {
+  //         console.log(
+  //           `❌ Upload failed for ${image.name} (param_id=${param_id})`,
+  //         );
+  //         showToast(`Failed to upload image ${image.name}`);
+  //       } else {
+  //         console.log(
+  //           `✅ Upload success for ${image.name} (param_id=${param_id})`,
+  //         );
+  //       }
+  //     }
+  //   }
 
-        if (!uploadRes.ok) {
-          console.log(
-            `❌ Upload failed for ${image.name} (param_id=${param_id})`,
-          );
-          showToast(`Failed to upload image ${image.name}`);
-        } else {
-          console.log(
-            `✅ Upload success for ${image.name} (param_id=${param_id})`,
-          );
-        }
-      }
-    }
-
-    console.log('✅ All uploads done. Showing toast.');
-    showToast('All data uploaded successfully');
-    setShowPopup(true);
-  } catch (error) {
-    console.log('❌ Error in handleListPress:', error);
-    showToast('Error uploading data');
-  }
+  //   console.log('✅ All uploads done. Showing toast.');
+  //   showToast('All data uploaded successfully');
+  //   setShowPopup(true);
+  // } 
+  // catch (error) {
+  //   console.log('❌ Error in handleListPress:', error);
+  //   showToast('Error uploading data');
+  // }
 };
 
   return (
@@ -305,7 +323,7 @@ const handleListPress = async () => {
                 />
               </View>
             </TouchableOpacity>
-            <Text style={styles.unizyText}>List Product</Text>
+            <Text style={styles.unizyText}>Preview Details</Text>
             <View style={{ width: 30 }} />
           </View>
         </View>
@@ -319,54 +337,64 @@ const handleListPress = async () => {
           ])}
           scrollEventThrottle={16}
         >
-       {storedForm?.[6]?.value?.length > 1 ? (
-          <View>
-            <FlatList
-              ref={flatListRef}
-              data={storedForm[6].value}
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              keyExtractor={(item, index) => index.toString()}
-              onScroll={onScroll}
-              scrollEventThrottle={16}
-              renderItem={({ item }) => (
-                <Image
-                  source={{ uri: item.uri }}
-                  style={{ width: screenWidth, height: 250 }}
-                  resizeMode="cover"
-                />
-              )}
-            />
-
-            {/* Custom Step Indicator */}
-            <View style={styles.stepIndicatorContainer}>
-              {storedForm[6].value.map((_: any, index: number) => {
-                const isActive = index === activeIndex;
-                return (
-                  <View
-                    key={index}
-                    style={
-                      isActive
-                        ? styles.activeStepCircle
-                        : styles.inactiveStepCircle
-                    }
-                  />
-                );
-              })}
-            </View>
-          </View>
-        ) : (
-          <Image
-            source={
-              storedForm?.[6]?.value?.[0]?.uri
-                ? { uri: storedForm[6].value[0].uri }
-                : require('../../../assets/images/drone.png')
-            }
-            style={{ width: '100%', height: 250 }}
-            resizeMode="cover"
+     
+        {storedForm?.[6]?.value?.length > 1 ? (
+        <View style={{ position: 'relative' }}>
+          <FlatList
+            ref={flatListRef}
+            data={storedForm[6].value}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(item, index) => index.toString()}
+            onScroll={onScroll}
+            scrollEventThrottle={16}
+            renderItem={({ item }) => (
+              <Image
+                source={{ uri: item.uri }}
+                style={{ width: screenWidth, height: 250 }}
+                resizeMode="cover"
+              />
+            )}
           />
-        )}
+
+          {/* Custom Step Indicator inside image */}
+          <View
+            style={[
+              styles.stepIndicatorContainer,
+              {
+                position: 'absolute',
+                bottom: 10, // distance from bottom of image
+                left: 0,
+                right: 0,
+                flexDirection: 'row',
+                justifyContent: 'center',
+              },
+            ]}
+          >
+            {storedForm[6].value.map((_: any, index: number) => {
+              const isActive = index === activeIndex;
+              return (
+                <View
+                  key={index}
+                  style={isActive ? styles.activeStepCircle : styles.inactiveStepCircle}
+                />
+              );
+            })}
+          </View>
+        </View>
+      ) : (
+        <Image
+          source={
+            storedForm?.[6]?.value?.[0]?.uri
+              ? { uri: storedForm[6].value[0].uri }
+              : require('../../../assets/images/drone.png')
+          }
+          style={{ width: '100%', height: 250 }}
+          resizeMode="cover"
+        />
+      )}
+
                   <View style={{ flex: 1, padding: 16 }}>
             <View style={styles.card}>
               <View style={{ gap: 8 }}>
@@ -375,7 +403,7 @@ const handleListPress = async () => {
                 </Text>
 
                 <Text style={styles.priceText}>
-                  {`$${priceValue}`}
+                  {`£${priceValue}`}
                 </Text>
               </View>
               <View
@@ -466,8 +494,10 @@ const handleListPress = async () => {
                   <Image source={profileImg} style={styles.avatar} />
 
                   <View style={{ width: '80%', gap: 4 }}>
-                    <Text style={styles.userName}>Alan Walker</Text>
-
+                    {/* <Text style={styles.userName}>Alan Walker</Text> */}
+                    <Text style={styles.userName}>
+  {`${userMeta?.firstname ?? ''} ${userMeta?.lastname ?? ''}`.trim()}
+</Text>
                     <Text style={styles.univeritytext}>
                       University of Warwick,
                     </Text>
@@ -610,6 +640,7 @@ const handleListPress = async () => {
                     fontStyle: 'normal',
                     letterSpacing: -0.28,
                     lineHeight: 19.6,
+                    textAlign:'center'
                   }}
                 >
                   Your product is now live and visible to other students.
@@ -824,7 +855,7 @@ const styles = StyleSheet.create({
     paddingRight: 8,
     paddingTop: 6,
     paddingBottom: 6,
-
+    marginTop:6,
     alignItems: 'center',
     gap: 3,
   },
@@ -933,7 +964,7 @@ const styles = StyleSheet.create({
   },
   productDeatilsHeading: {
     color: 'rgba(255, 255, 255, 0.88)',
-    fontFamily: 'Urbanist-Regular',
+    fontFamily: 'Urbanist-SemiBold',
     fontSize: 18,
     fontWeight: '600',
     fontStyle: 'normal',
@@ -946,7 +977,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 20,
     fontWeight: '600',
-    fontStyle: 'normal',
     letterSpacing: -0.4,
     lineHeight: 24,
   },
@@ -955,7 +985,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 20,
     fontWeight: '700',
-    fontStyle: 'normal',
     letterSpacing: -0.4,
     lineHeight: 24,
   },

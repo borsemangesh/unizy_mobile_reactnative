@@ -544,7 +544,7 @@ const imageArray = storedForm?.[6]?.value || [];
 
 
 
-          <View style={styles.importantNotice}>
+          {/* <View style={styles.importantNotice}>
             <View style={styles.h24_w24}>
               <Image
                 source={require('../../../assets/images/info_icon.png')}
@@ -557,16 +557,33 @@ const imageArray = storedForm?.[6]?.value || [];
                 Price shown includes a 10% platform fee.
               </Text>
             </View>
-          </View>
+          </View> */}
+
+
+           <View
+                  style={styles.textbg}
+                >
+                  <Image
+                    source={require('../../../assets/images/info_icon.png')} 
+                    style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+                  />
+          
+                  {/* Texts */}
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.importantText1}>Important:</Text>
+                    <Text style={styles.importantText}>
+                      Price shown includes a 10% platform fee.
+                    </Text>
+                  </View>
+                </View>
+
+
           <TouchableOpacity
             style={styles.nextButton}
             onPress={() => {
               navigation.navigate('PreviewDetailed');
             }}
-            // onPress={async () => {
-            //   await printStoredFormData();
-            // }}
-                    >
+            >
             <Text style={styles.nextText}>Next</Text>
           </TouchableOpacity>
         </View>
@@ -576,6 +593,43 @@ const imageArray = storedForm?.[6]?.value || [];
 };
 
 const styles = StyleSheet.create({
+
+ textbg:{
+ flexDirection: 'row',
+          alignItems: 'flex-start',
+          backgroundColor:
+            'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
+          boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+          padding: 6,
+          borderWidth:0.5,
+            borderEndEndRadius: 12,
+            borderStartEndRadius: 12,
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12,
+            borderBottomStartRadius: 12,
+            borderBlockStartColor: '#ffffff31',
+            borderBlockColor: '#ffffff31',
+            borderTopColor: '#ffffff31',
+            borderBottomColor: '#ffffff31',
+            borderLeftColor: '#ffffff31',
+            borderRightColor: '#ffffff31',
+            marginBottom:2
+            
+  },
+  importantText: {
+    color: '#ccc',
+    fontSize: 12,
+    marginBottom: 6,
+    fontFamily: 'Urbanist-Medium',
+    fontWeight: 500,
+  },
+  importantText1: {
+    color: '#ccc',
+    fontSize: 12,
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: 500,
+  },
+
   h24_w24: {
     width: 24,
     height: 24,
@@ -591,7 +645,7 @@ const styles = StyleSheet.create({
   },
   productCarddisplay: {
     display: 'flex',
-    height: '80%',
+    height: '78%',
     alignContent: 'center',
     justifyContent: 'center',
     alignItems: 'center',
@@ -650,10 +704,9 @@ const styles = StyleSheet.create({
     paddingTop: 6,
     paddingBottom: 12,
     backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    marginTop: 10,
-
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
+    marginTop:10,
   },
   nextText: {
     color: '#002050',
