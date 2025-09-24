@@ -11,12 +11,16 @@ import {
   Modal,
   Dimensions,
   FlatList,
+  SafeAreaView,
 } from 'react-native';
 import { Key, useEffect, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import { showToast } from '../../utils/toast';
 import { MAIN_URL } from '../../utils/APIConstant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { CommonActions } from '@react-navigation/native';
+
 
 type previewDetailsProps = {
   navigation: any;
@@ -63,6 +67,15 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef(null);
   const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
+  const insets = useSafeAreaInsets();
+
+  const today = new Date();
+
+// Format as DD-MM-YYYY
+const formattedDate = `${today.getDate().toString().padStart(2, '0')}-${(today.getMonth() + 1)
+  .toString()
+  .padStart(2, '0')}-${today.getFullYear()}`;
+
 
   interface UserMeta {
   firstname: string | null;
@@ -304,6 +317,7 @@ const handleListPress = async () => {
 };
 
   return (
+    <SafeAreaView style={{ flex: 1 }}>
     <ImageBackground
       source={require('../../../assets/images/bganimationscreen.png')}
       style={{ width: '100%', height: '100%' }}
@@ -314,8 +328,7 @@ const handleListPress = async () => {
           <View style={styles.headerRow}>
             <TouchableOpacity
               style={styles.backBtn}
-              onPress={() => navigation.navigate('Dashboard')}
-            >
+              onPress={() => navigation.replace('PreviewThumbnail')}>
               <View style={styles.backIconRow}>
                 <Image
                   source={require('../../../assets/images/back.png')}
@@ -329,7 +342,11 @@ const handleListPress = async () => {
         </View>
 
         <ScrollView
-          contentContainerStyle={styles.scrollContainer}
+          // contentContainerStyle={styles.scrollContainer}
+         contentContainerStyle={[
+          styles.scrollContainer,
+          { paddingBottom: insets.bottom + 80 } // 80 = your bottom button height + margin
+        ]}
           onScroll={Animated.event([
             {
               nativeEvent: { contentOffset: { y: scrollY1 } },
@@ -425,7 +442,10 @@ const handleListPress = async () => {
                     source={require('../../../assets/images/calendar_icon.png')}
                     style={{ height: 16, width: 16 }}
                   />
-                  <Text style={styles.userSub}>Date Posted:10-01-2025</Text>
+                  {/* <Text style={styles.userSub}>Date Posted:10-01-2025</Text> */}
+                  <Text style={styles.userSub}>
+                  Date Posted: {formattedDate}
+                </Text>
                 </View>
               </View>
             </View>
@@ -496,8 +516,8 @@ const handleListPress = async () => {
                   <View style={{ width: '80%', gap: 4 }}>
                     {/* <Text style={styles.userName}>Alan Walker</Text> */}
                     <Text style={styles.userName}>
-  {`${userMeta?.firstname ?? ''} ${userMeta?.lastname ?? ''}`.trim()}
-</Text>
+                    {`${userMeta?.firstname ?? ''} ${userMeta?.lastname ?? ''}`.trim()}
+                  </Text>
                     <Text style={styles.univeritytext}>
                       University of Warwick,
                     </Text>
@@ -646,7 +666,7 @@ const handleListPress = async () => {
                   Your product is now live and visible to other students.
                 </Text>
 
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   style={styles.loginButton}
                   onPress={async () => {
                     try {
@@ -654,13 +674,35 @@ const handleListPress = async () => {
                       await AsyncStorage.removeItem('selectedProductId');
                       console.log('✅ formData cleared from AsyncStorage');
 
-                      navigation.navigate('Dashboard');
+                      navigation.replace('Dashboard');
                       setShowPopup(false);
                     } catch (err) {
                       console.log('❌ Error clearing formData:', err);
                     }
                   }}
-                >
+                > */}
+                <TouchableOpacity
+                style={styles.loginButton}
+                onPress={async () => {
+                  try {
+                    await AsyncStorage.removeItem('formData');
+                    await AsyncStorage.removeItem('selectedProductId');
+                    console.log('✅ formData cleared from AsyncStorage');
+
+                    // Reset navigation stack
+                    navigation.dispatch(
+                      CommonActions.reset({
+                        index: 0,
+                        routes: [{ name: 'Dashboard' }], // make Dashboard the only screen
+                      })
+                    );
+
+                    setShowPopup(false);
+                  } catch (err) {
+                    console.log('❌ Error clearing formData:', err);
+                  }
+                }}
+              >
                   <Text style={styles.loginText}>
                     Return to Choose Category
                   </Text>
@@ -671,6 +713,7 @@ const handleListPress = async () => {
         </Modal>
       </View>
     </ImageBackground>
+    </SafeAreaView>
   );
 };
 
@@ -839,7 +882,7 @@ const styles = StyleSheet.create({
     bottom: 10,
   },
   scrollContainer: {
-    paddingBottom: 280,
+    paddingBottom: 150,
     paddingTop: 90,
     // paddingHorizontal: 20,
   },
