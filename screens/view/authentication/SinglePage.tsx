@@ -492,7 +492,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
   };
 
   const loginapi = async () => {
-    navigation.replace('Dashboard');
+    // navigation.replace('Dashboard');
     if (!username || !password) {
       showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
       return;
@@ -1383,7 +1383,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
         ;
         {currentScreen === 'language' && (
           <>
-            <View style={{ height: '100%', padding: 16, paddingBottom: insets.bottom, paddingTop: (Platform.OS === 'ios')? 10 :30}}>
+            <View style={{ height: '100%', padding: 16, paddingBottom: (Platform.OS === 'ios') ?insets.bottom: 20, paddingTop: (Platform.OS === 'ios')? 10 :0}}>
               <Animated.View
                 style={[
                   selectlang_styles.container,
@@ -1472,7 +1472,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
         )}
         {currentScreen === 'login' && (
           <>
-          <View style={{paddingTop: (Platform.OS === 'ios')? 10:30,paddingLeft: 16,paddingRight: 16}}>
+          <View style={{paddingTop: 10,paddingLeft: 16,paddingRight: 16}}>
             {currentScreenIninner === 'login' && (
               <Animated.View style={{
                   opacity: textAndBackOpacity,
