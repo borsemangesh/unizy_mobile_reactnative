@@ -544,7 +544,8 @@ const styles = StyleSheet.create({
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
+    paddingVertical: 4,
+   
     },
   searchIcon: {
     padding: 5,
@@ -640,8 +641,8 @@ const styles = StyleSheet.create({
   },
 
   MylistingsBackground: {
-    height: 40,
-    width: 40,
+    height: 48,
+    width: 48,
    
     justifyContent: 'center',
     alignItems: 'center',
@@ -660,8 +661,8 @@ const styles = StyleSheet.create({
 // box-shadow: ;
   },
   iconSmall: {
-    width:19,
-    height: 19,
+    width:25,
+    height: 25,
   },
   unizyText: {
     color: '#FFFFFF',
@@ -786,11 +787,12 @@ halfWidth: {
   },
 
   card: {
+  
     height: 85,
     flexDirection: 'row',
     //backgroundColor: '#ffffff20', // semi-transparent for dark bg
     borderRadius: 24,
-    padding: 16,
+    padding: 12,
     marginTop: 10,
     marginBottom: 10,
     alignItems: 'center',
@@ -800,6 +802,7 @@ halfWidth: {
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
     boxShadow: 'rgba(255, 255, 255, 0.02) -1px 10px 5px 10px',
+
   },
   cardIcon1: {
     width: 30,
@@ -831,7 +834,6 @@ halfWidth: {
     alignItems: 'center',
     marginRight: 12,
     paddingVertical: 8,
-    paddingHorizontal: 12,
 
     borderWidth: 1,
     borderColor: '#ffffff2c',
