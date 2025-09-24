@@ -19,6 +19,7 @@ import ProductCard from '../../utils/ProductCard';
 
 import AnimatedSlideUp from '../../utils/AnimatedSlideUp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Navigation } from '../Navigation';
 
 const mylistings = require('../../../assets/images/mylistingicon.png');
 const mylistings1 = require('../../../assets/images/favourite.png');
@@ -50,6 +51,7 @@ type Product = {
 };
 
 type ProductItemProps = {
+  navigation: any;
   item: Product;
   fullWidth: boolean;
 };
@@ -69,26 +71,26 @@ const iconMap: Record<string, any> = {
 
 
 
-const ProductItem: React.FC<ProductItemProps> = ({ item, fullWidth }) => (
-  <View
-    style={[
-      styles.cardContainer,
-      fullWidth ? styles.fullWidth : styles.halfWidth,
-    ]}
+const ProductItem: React.FC<ProductItemProps> = ({ navigation, item, fullWidth }) => (
+  <TouchableOpacity
+    key={item.id}
+    onPress={() => {
+      navigation.navigate('ProductDetails', { category_id: item.id });
+    }}
   >
-    <Image source={item.icon} style={styles.cardIcon} />
-    <Text
+    <View
       style={[
-        styles.cardText,
-        fullWidth && { flexShrink: 1, textAlign: 'left', marginLeft: 8 },
+        styles.cardContainer,
+        // fullWidth ? styles.fullWidth : styles.halfWidth,
       ]}
-      numberOfLines={1}
     >
-      {item.name}
-    </Text>
-  </View>
+      <Image source={item.icon} style={styles.cardIcon} />
+      <Text style={styles.cardText} numberOfLines={1}>
+        {item.name}
+      </Text>
+    </View>
+  </TouchableOpacity>
 );
-
 
 const SearchScreenContent = () => (
   <View style={styles.tabContent}>
@@ -323,38 +325,38 @@ const [features, setFeatures] = useState<any[]>([]);
   }, [activeTab, bubbleX, tabWidth]);
 
 
-  const renderProducts = () => {
-    const isEven = products.length % 2 === 0;
-    let startIndex = 0;
-    const rows: JSX.Element[] = [];
+ const renderProducts = () => {
+  const isEven = products.length % 2 === 0;
+  let startIndex = 0;
+  const rows: JSX.Element[] = [];
 
-    if (!isEven) {
-      rows.push(
-        <Animated.View
-          style={[
-            styles.row,
-            { transform: [{ translateY: categorytranslateY }] },
-          ]}
-          key={products[0].id}
-        >
-          <ProductItem item={products[0]} fullWidth />
-        </Animated.View>,
-      );
-      startIndex = 1;
-    }
+  // Odd first item -> full width
+  if (!isEven) {
+    rows.push(
+      <Animated.View
+        style={[
+          { width: '100%' }, // wrapper stretches row
+          { transform: [{ translateY: categorytranslateY }] },
+        ]}
+        key={products[0].id}
+      >
+        <ProductItem navigation={navigation} item={products[0]} fullWidth />
+      </Animated.View>,
+    );
+    startIndex = 1;
+  }
 
-    for (let i = startIndex; i < products.length; i += 2) {
-      i === 0 && rows.push(
-      <View style={styles.row} key={i} />);
-      const rowItems = products.slice(i, i + 2);
-      console.log('RowITEM: ', rowItems);
-      rows.push(
-        <View style={{ flexDirection: 'row' }} key={i}>
-          {rowItems.map((item, index) => (
+  // Render pairs
+  for (let i = startIndex; i < products.length; i += 2) {
+    const rowItems = products.slice(i, i + 2);
+
+    rows.push(
+      <View style={styles.row} key={i}>
+        {rowItems.map((item, index) => (
           <Animated.View
             key={item.id}
             style={[
-              index === 0 ? styles.halfWidth : styles.halfWidth, // keep same base width
+              styles.halfWidth,
               {
                 transform: [
                   {
@@ -364,25 +366,26 @@ const [features, setFeatures] = useState<any[]>([]);
                 ],
               },
             ]}
-  >
-    <ProductItem item={item} fullWidth={false} />
-  </Animated.View>
-))}
-          {rowItems.length === 1 && <View style={styles.halfWidth} />}
-        </View>,
-      );
-    }
-    return rows;
-  };
+          >
+            <ProductItem navigation={navigation} item={item} fullWidth={false} />
+          </Animated.View>
+        ))}
+        {/* If odd inside the loop, fill empty space */}
+        {rowItems.length === 1 && <View style={styles.halfWidth} />}
+      </View>,
+    );
+  }
+  return rows;
+};
 
   const renderActiveTabContent = () => {
     switch (activeTab) {
       case 'Home':
         return (
           <>
-          <TouchableOpacity onPress={() => navigation.navigate('ProductDetails')} >
+          {/* <TouchableOpacity onPress={() => navigation.navigate('ProductDetails')} > */}
             <View style={styles.productsWrapper}>{renderProducts()}</View>
-            </TouchableOpacity>
+            {/* </TouchableOpacity> */}
             <Animated.View
                 style={{
                   transform: [{ translateY: cardSlideupAnimation }],
@@ -445,7 +448,7 @@ const [features, setFeatures] = useState<any[]>([]);
       <View style={styles.fullScreenContainer}>
        
         {activeTab === 'Home' && (
-          <View style={[styles.header,{paddingTop: Platform.OS === 'ios' ? 50 : 10}]}>
+          <View style={[styles.header,{paddingTop: Platform.OS === 'ios' ? 50 : 40}]}>
             <Animated.View
               style={[
                 styles.headerRow,
@@ -460,11 +463,10 @@ const [features, setFeatures] = useState<any[]>([]);
 
 
             <TouchableOpacity onPress={async () =>  {await AsyncStorage.setItem('ISLOGIN', 'false');navigation.navigate('SinglePage');}}>
-              {/* <View style={styles.emptyView} > */}
+              
                 <View style={styles.MylistingsBackground}>
                   <Image source={mylistings1} style={styles.iconSmall} />
                 </View>
-              {/* </View> */}
               </TouchableOpacity>
             </Animated.View>
 
@@ -678,6 +680,7 @@ const styles = StyleSheet.create({
 
   row: {
     flexDirection: 'row',
+    width: '100%',
   },
   row1: {
     flexDirection: 'row',
@@ -716,15 +719,21 @@ const styles = StyleSheet.create({
   },
 
 
+
+
 fullWidth: {
-  flex: 1,
-  justifyContent: 'flex-start',
+  // flex: 1,
+  // justifyContent: 'flex-start',
+  width: '100%',
+  maxWidth: '100%',
+  // maxHeight: '100%',
 },
 halfWidth: {
   flex: 1, 
-  maxWidth: '100%',
-  maxHeight: '100%',
-  height: 60,
+  // maxWidth: '90%',
+  // maxHeight: '100%',
+  // width: '90%',
+  // height: 60,
 },
   cardIcon: {
     width: 24,
@@ -735,7 +744,7 @@ halfWidth: {
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 16,
     fontWeight: '600',
-    paddingLeft: 12,
+    paddingLeft: 9,
     flexShrink: 1,
   },
 

@@ -28,8 +28,8 @@ export default function ProductCard({tag,infoTitle,inforTitlePrice,rating,produc
       
         <View style={styles.bookmark1}>
           <Image
-            source={require('../../assets/images/bookmark.png')}
-            style={{ width: 48, height: 48 }}
+            source={require('../../assets/images/favourite.png')}
+            style={{ width: 20, height: 20 }}
           />
         </View>
       </View>
@@ -101,7 +101,30 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: (Platform.OS === 'ios' ? 25 : 10),
     right: (Platform.OS === 'ios' ? 25 : 10),
-    borderRadius: 20,
+    // borderRadius: 10,
+    backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(101, 101, 101, 0.72) 0%, rgba(117, 117, 117, 0.1) 100%)',
+    width: 40,
+    height: 40,
+    display: 'flex',
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    boxShadow: '0 2px 5px 0 rgba(109, 109, 109, 0.2)',
+    borderWidth: 0.5,
+    borderColor: '#ffffff2e',
+    borderEndEndRadius: 15,
+    borderStartEndRadius: 15,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    borderBottomStartRadius: 15,
+    borderBlockStartColor: '#ffffff2e',
+    borderBlockColor: '#ffffff2e',
+ 
+    borderTopColor: '#ffffff2e',
+    borderBottomColor: '#ffffff2e',
+    borderLeftColor: '#ffffff2e',
+    borderRightColor: '#ffffff2e',
     
   },
    bookmark: {

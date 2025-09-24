@@ -24,10 +24,7 @@ function App() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView
-        style={{ flex: 1, backgroundColor: 'transparent' }}
-        edges={['bottom', 'top']}
-      >
+     
         <StatusBar
         barStyle="light-content"
         translucent
@@ -39,7 +36,6 @@ function App() {
           <Navigation />
        )} 
         <Toast />
-      </SafeAreaView>
     </SafeAreaProvider>
   );
 }
