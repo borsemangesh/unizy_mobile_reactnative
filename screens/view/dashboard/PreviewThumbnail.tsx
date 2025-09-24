@@ -416,6 +416,7 @@ import { showToast } from '../../utils/toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 import NewProductCard from '../../utils/NewProductCard';
+import PreviewCard from '../../utils/PreviewCard';
 
 type PreviewThumbnailProps = {
   navigation: any;
@@ -504,43 +505,39 @@ const imageArray = storedForm?.[6]?.value || [];
          
          
         
-     <View style={styles.productCarddisplay}>
-        {storedForm ? (
-          <>
-            {storedForm[13]?.value === 'true' ? ( // ✅ access .value
-              // If true → render ProductCard
-              <ProductCard
-                tag="University of Warwick"
-                infoTitle={titleValue} // keep as before (from alias)
-                inforTitlePrice={`£${priceValue}`} // from alias
-                rating={storedForm[12]?.value || '4.5'} // ✅ access .value
-                productImage={
-                  imageArray.length > 0
-                    ? { uri: imageArray[0].uri }
-                    : require('../../../assets/images/drone.png')
-                }
-              />
-            ) : (
-              // If false → render NewProductCard
-              <NewProductCard
-                tag="University of Warwick"
-                infoTitle={titleValue} // from alias
-                inforTitlePrice={`£${priceValue}`} // from alias
-                rating={storedForm[12]?.value || '4.5'} // ✅ access .value
-                productImage={
-                  imageArray.length > 0
-                    ? { uri: imageArray[0].uri }
-                    : require('../../../assets/images/drone.png')
-                }
-              />
-            )}
-          </>
-        ) : (
-          <Text style={{ color: '#fff', textAlign: 'center' }}>Loading...</Text>
-        )}
-      </View>
-
-
+    <View style={styles.productCarddisplay}>
+  {storedForm ? (
+    <>
+      {(storedForm[13]?.value === true || storedForm[13]?.value === 'true') ? (
+        <PreviewCard
+          tag="University of Warwick"
+          infoTitle={titleValue} // from alias
+          inforTitlePrice={`£${priceValue}`} // from alias
+          rating={storedForm[12]?.value || '4.5'}
+          productImage={
+            imageArray.length > 0
+              ? { uri: imageArray[0].uri }
+              : require('../../../assets/images/drone.png')
+          }
+        />
+      ) : (
+        <NewProductCard
+          tag="University of Warwick"
+          infoTitle={titleValue} 
+          inforTitlePrice={`£${priceValue}`} 
+          rating={storedForm[12]?.value || '4.5'}
+          productImage={
+            imageArray.length > 0
+              ? { uri: imageArray[0].uri }
+              : require('../../../assets/images/drone.png')
+          }
+        />
+      )}
+    </>
+  ) : (
+    <Text style={{ color: '#fff', textAlign: 'center' }}>Loading...</Text>
+  )}
+</View>
 
 
 

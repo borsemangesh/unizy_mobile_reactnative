@@ -580,10 +580,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tabIcon: {
-    width: 22,
-    height: 22,
-    tintColor: '#fff',
-    resizeMode: 'contain',
+    width: 24,
+    height: 24,
+    //tintColor: '#fff',
+    resizeMode: 'center',
   },
   activeTabIcon: {
     //tintColor: '#ccc',
