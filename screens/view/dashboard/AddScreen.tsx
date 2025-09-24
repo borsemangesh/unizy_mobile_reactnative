@@ -108,9 +108,19 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     }).start();
   }, []);
 
-  const handleValueChange = (fieldId: number, value: any) => {
-    setFormValues((prev: any) => ({ ...prev, [fieldId]: value }));
-  };
+  // const handleValueChange = (fieldId: number, value: any) => {
+  //   setFormValues((prev: any) => ({ ...prev, [fieldId]: value }));
+  // };
+
+  const handleValueChange = (fieldId: number, aliasName: string | null, value: any) => {
+  setFormValues((prev: any) => ({
+    ...prev,
+    [fieldId]: {
+      value: value,
+      alias_name: aliasName ?? null, // null if no alias_name
+    },
+  }));
+};
 
   const handleMultiSelectToggle = (fieldId: number, optionId: number) => {
     const prevSelected: number[] = Array.isArray(formValues[fieldId])
@@ -147,32 +157,64 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     }
   };
 
-  const handlePreview = async () => {
-    try {
-      const dataToStore: any = { ...formValues };
+  // const handlePreview = async () => {
+  //   try {
+  //     const dataToStore: any = { ...formValues };
 
-      // Add images separately
-      fields.forEach(field => {
-        if (field.param.field_type.toLowerCase() === 'image') {
-          const uploadedForField = uploadedImages.map(img => ({
-            id: img.id,
-            uri: img.uri,
-            name: img.name,
-          }));
-          dataToStore[field.param.id] = uploadedForField;
-        }
-      });
+  //     // Add images separately
+  //     fields.forEach(field => {
+  //       if (field.param.field_type.toLowerCase() === 'image') {
+  //         const uploadedForField = uploadedImages.map(img => ({
+  //           id: img.id,
+  //           uri: img.uri,
+  //           name: img.name,
+  //         }));
+  //         dataToStore[field.param.id] = uploadedForField;
+  //       }
+  //     });
 
-      await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
+  //     await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
 
-      console.log('Form data saved: ', dataToStore);
+  //     console.log('Form data saved: ', dataToStore);
 
-      navigation.navigate('PreviewThumbnail'); // navigate after saving
-    } catch (error) {
-      console.log('Error saving form data: ', error);
-      showToast('Failed to save form data');
-    }
-  };
+  //     navigation.navigate('PreviewThumbnail'); // navigate after saving
+  //   } catch (error) {
+  //     console.log('Error saving form data: ', error);
+  //     showToast('Failed to save form data');
+  //   }
+  // };
+
+const handlePreview = async () => {
+  try {
+    const dataToStore: any = { ...formValues };
+
+    // Handle image fields separately
+    fields.forEach(field => {
+      if (field.param.field_type.toLowerCase() === 'image') {
+        const uploadedForField = uploadedImages.map(img => ({
+          id: img.id,
+          uri: img.uri,
+          name: img.name,
+        }));
+
+        dataToStore[field.param.id] = {
+          value: uploadedForField,
+          alias_name: field.param.alias_name ?? null,
+        };
+      }
+    });
+
+    await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
+
+    console.log('Form data saved: ', dataToStore);
+
+    navigation.navigate('PreviewThumbnail'); 
+  } catch (error) {
+    console.log('Error saving form data: ', error);
+    showToast('Failed to save form data');
+  }
+};
+
 
   const handleSelectImage = async () => {
     const hasPermission = await requestCameraPermission();
@@ -262,164 +304,345 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     );
   };
 
-  const renderField = (field: any) => {
-    const { field_name, field_type, options, id } = field.param;
-    const fieldType = field_type.toLowerCase();
+  // const renderField = (field: any) => {
+  //   const { field_name, field_type, options, id } = field.param;
+  //   const fieldType = field_type.toLowerCase();
 
-    switch (fieldType) {
-      case 'text': {
-        const { param } = field;
-        const { field_name, keyboardtype, alias_name, field_type } = param;
+  //   switch (fieldType) {
+  //     case 'text': {
+  //       const { param } = field;
+  //       const { field_name, keyboardtype, alias_name, field_type } = param;
 
-        // Placeholder from alias_name if present, else field_name
-        const placeholderText = alias_name || field_name;
+  //       // Placeholder from alias_name if present, else field_name
+  //       const placeholderText = alias_name || field_name;
 
-        let rnKeyboardType:
-          | 'default'
-          | 'numeric'
-          | 'email-address'
-          | 'phone-pad'
-          | 'decimal-pad' = 'default';
-        switch (keyboardtype) {
-          case 'alpha-numeric':
-            rnKeyboardType = 'default';
-            break;
-          case 'numeric':
-            rnKeyboardType = 'numeric';
-            break;
-          case 'decimal':
-            rnKeyboardType = 'decimal-pad';
-            break;
-          case 'email':
-            rnKeyboardType = 'email-address';
-            break;
-          case 'phone':
-            rnKeyboardType = 'phone-pad';
-            break;
-          default:
-            rnKeyboardType = 'default';
-        }
+  //       let rnKeyboardType:
+  //         | 'default'
+  //         | 'numeric'
+  //         | 'email-address'
+  //         | 'phone-pad'
+  //         | 'decimal-pad' = 'default';
+  //       switch (keyboardtype) {
+  //         case 'alpha-numeric':
+  //           rnKeyboardType = 'default';
+  //           break;
+  //         case 'numeric':
+  //           rnKeyboardType = 'numeric';
+  //           break;
+  //         case 'decimal':
+  //           rnKeyboardType = 'decimal-pad';
+  //           break;
+  //         case 'email':
+  //           rnKeyboardType = 'email-address';
+  //           break;
+  //         case 'phone':
+  //           rnKeyboardType = 'phone-pad';
+  //           break;
+  //         default:
+  //           rnKeyboardType = 'default';
+  //       }
 
-        return (
-          <View key={field.id} style={styles.productTextView}>
-            <Text style={styles.textstyle}>{field_name}</Text>
-            <TextInput
-              style={[styles.personalEmailID_TextInput, styles.login_container]}
-              placeholder={placeholderText}
-              multiline={false}
-              placeholderTextColor="rgba(255, 255, 255, 0.48)"
-              keyboardType={rnKeyboardType}
-              value={formValues[param.id] || ''}
-              onChangeText={text => handleValueChange(param.id, text)}
-            />
-          </View>
-        );
+  //       return (
+  //         <View key={field.id} style={styles.productTextView}>
+  //           <Text style={styles.textstyle}>{field_name}</Text>
+  //           <TextInput
+  //             style={[styles.personalEmailID_TextInput, styles.login_container]}
+  //             placeholder={placeholderText}
+  //             multiline={false}
+  //             placeholderTextColor="rgba(255, 255, 255, 0.48)"
+  //             keyboardType={rnKeyboardType}
+  //             value={formValues[param.id] || ''}
+  //             onChangeText={text => handleValueChange(param.id, text)}
+  //           />
+  //         </View>
+  //       );
+  //     }
+
+  //     case 'multi-line-text': {
+  //       const { param } = field;
+  //       const { field_name, keyboardtype, alias_name } = param;
+  //       const placeholderText = alias_name || field_name;
+
+  //       let rnKeyboardType:
+  //         | 'default'
+  //         | 'numeric'
+  //         | 'email-address'
+  //         | 'phone-pad'
+  //         | 'decimal-pad' = 'default';
+  //       switch (keyboardtype) {
+  //         case 'alpha-numeric':
+  //           rnKeyboardType = 'default';
+  //           break;
+  //         case 'numeric':
+  //           rnKeyboardType = 'numeric';
+  //           break;
+  //         case 'decimal':
+  //           rnKeyboardType = 'decimal-pad';
+  //           break;
+  //         case 'email':
+  //           rnKeyboardType = 'email-address';
+  //           break;
+  //         case 'phone':
+  //           rnKeyboardType = 'phone-pad';
+  //           break;
+  //         default:
+  //           rnKeyboardType = 'default';
+  //       }
+
+  //       return (
+  //         <View key={field.id} style={styles.productTextView}>
+  //           <Text style={styles.textstyle}>{field_name}</Text>
+  //           <TextInput
+  //             style={[
+  //               styles.personalEmailID_TextInput,
+  //               styles.login_container,
+  //               { textAlign: 'left', textAlignVertical: 'top', height: 100 },
+  //             ]}
+  //             placeholder={placeholderText}
+  //             multiline={true}
+  //             placeholderTextColor="rgba(255, 255, 255, 0.48)"
+  //             keyboardType={rnKeyboardType}
+  //             value={formValues[param.id] || ''}
+  //             onChangeText={text => handleValueChange(param.id, text)}
+  //           />
+  //         </View>
+  //       );
+  //     }
+
+  //     case 'dropdown':
+  //       return (
+  //         <View key={field.id} style={styles.productTextView}>
+  //           <Text style={styles.textstyle}>{field_name}</Text>
+
+  //           {/* Multi-select picker touchable */}
+  //           <TouchableOpacity
+  //             style={styles.pickerContainer}
+  //             onPress={() => {
+  //               setMultiSelectModal({ visible: true, fieldId: id });
+  //               setMultiSelectOptions(options);
+  //             }}
+  //           >
+  //             <Text style={styles.dropdowntext}>
+  //               {Array.isArray(formValues[id]) && formValues[id].length > 0
+  //                 ? `${formValues[id].length} Selected`
+  //                 : `Select ${field_name}`}
+  //             </Text>
+  //           </TouchableOpacity>
+
+  //           <View style={styles.categoryContainer}>
+  //             {options
+  //               .filter(
+  //                 (opt: any) =>
+  //                   Array.isArray(formValues[id]) &&
+  //                   formValues[id].includes(opt.id),
+  //               )
+  //               .map((opt: any) => (
+  //                 <View key={opt.id} style={styles.categoryTagWrapper}>
+  //                   <TouchableOpacity
+  //                     onPress={() => {
+  //                       // remove option from formValues[id]
+  //                       setFormValues((prev: any) => {
+  //                         const updated = Array.isArray(prev[id])
+  //                           ? [...prev[id]]
+  //                           : [];
+  //                         return {
+  //                           ...prev,
+  //                           [id]: updated.filter(value => value !== opt.id),
+  //                         };
+  //                       });
+  //                     }}
+  //                   >
+  //                     <Text style={styles.categoryTag}>
+  //                       {opt.option_name} ✕
+  //                     </Text>
+  //                   </TouchableOpacity>
+  //                 </View>
+  //               ))}
+  //           </View>
+  //         </View>
+  //       );
+
+    
+  //     case 'boolean':
+  //       return (
+  //         <View key={field.id} style={styles.featuredRow}>
+  //           <Text style={styles.featuredLabel}>{field_name}</Text>
+  //           <ToggleButton
+  //             value={!!formValues[id]}              // current value
+  //             onValueChange={(val) => handleValueChange(id, val)} // update state
+  //           />
+  //         </View>
+  //       );
+
+  //     default:
+  //       return null;
+  //   }
+  // };
+
+const renderField = (field: any) => {
+  const { field_name, field_type, options, id } = field.param;
+  const fieldType = field_type.toLowerCase();
+
+  switch (fieldType) {
+    // ---------------- TEXT FIELD ----------------
+    case 'text': {
+      const { param } = field;
+      const { field_name, keyboardtype, alias_name } = param;
+
+      const placeholderText = alias_name || field_name;
+
+      let rnKeyboardType:
+        | 'default'
+        | 'numeric'
+        | 'email-address'
+        | 'phone-pad'
+        | 'decimal-pad' = 'default';
+      switch (keyboardtype) {
+        case 'alpha-numeric':
+          rnKeyboardType = 'default';
+          break;
+        case 'numeric':
+          rnKeyboardType = 'numeric';
+          break;
+        case 'decimal':
+          rnKeyboardType = 'decimal-pad';
+          break;
+        case 'email':
+          rnKeyboardType = 'email-address';
+          break;
+        case 'phone':
+          rnKeyboardType = 'phone-pad';
+          break;
+        default:
+          rnKeyboardType = 'default';
       }
 
-      case 'multi-line-text': {
-        const { param } = field;
-        const { field_name, keyboardtype, alias_name } = param;
-        const placeholderText = alias_name || field_name;
+      return (
+        <View key={field.id} style={styles.productTextView}>
+          <Text style={styles.textstyle}>{field_name}</Text>
+          <TextInput
+            style={[styles.personalEmailID_TextInput, styles.login_container]}
+            placeholder={placeholderText}
+            multiline={false}
+            placeholderTextColor="rgba(255, 255, 255, 0.48)"
+            keyboardType={rnKeyboardType}
+            value={formValues[param.id]?.value || ''}
+            onChangeText={text => handleValueChange(param.id, alias_name, text)}
+          />
+        </View>
+      );
+    }
 
-        let rnKeyboardType:
-          | 'default'
-          | 'numeric'
-          | 'email-address'
-          | 'phone-pad'
-          | 'decimal-pad' = 'default';
-        switch (keyboardtype) {
-          case 'alpha-numeric':
-            rnKeyboardType = 'default';
-            break;
-          case 'numeric':
-            rnKeyboardType = 'numeric';
-            break;
-          case 'decimal':
-            rnKeyboardType = 'decimal-pad';
-            break;
-          case 'email':
-            rnKeyboardType = 'email-address';
-            break;
-          case 'phone':
-            rnKeyboardType = 'phone-pad';
-            break;
-          default:
-            rnKeyboardType = 'default';
-        }
+    // ---------------- MULTI-LINE TEXT ----------------
+    case 'multi-line-text': {
+      const { param } = field;
+      const { field_name, keyboardtype, alias_name } = param;
+      const placeholderText = alias_name || field_name;
 
-        return (
-          <View key={field.id} style={styles.productTextView}>
-            <Text style={styles.textstyle}>{field_name}</Text>
-            <TextInput
-              style={[
-                styles.personalEmailID_TextInput,
-                styles.login_container,
-                { textAlign: 'left', textAlignVertical: 'top', height: 100 },
-              ]}
-              placeholder={placeholderText}
-              multiline={true}
-              placeholderTextColor="rgba(255, 255, 255, 0.48)"
-              keyboardType={rnKeyboardType}
-              value={formValues[param.id] || ''}
-              onChangeText={text => handleValueChange(param.id, text)}
-            />
-          </View>
-        );
+      let rnKeyboardType:
+        | 'default'
+        | 'numeric'
+        | 'email-address'
+        | 'phone-pad'
+        | 'decimal-pad' = 'default';
+      switch (keyboardtype) {
+        case 'alpha-numeric':
+          rnKeyboardType = 'default';
+          break;
+        case 'numeric':
+          rnKeyboardType = 'numeric';
+          break;
+        case 'decimal':
+          rnKeyboardType = 'decimal-pad';
+          break;
+        case 'email':
+          rnKeyboardType = 'email-address';
+          break;
+        case 'phone':
+          rnKeyboardType = 'phone-pad';
+          break;
+        default:
+          rnKeyboardType = 'default';
       }
 
-      case 'dropdown':
-        return (
-          <View key={field.id} style={styles.productTextView}>
-            <Text style={styles.textstyle}>{field_name}</Text>
+      return (
+        <View key={field.id} style={styles.productTextView}>
+          <Text style={styles.textstyle}>{field_name}</Text>
+          <TextInput
+            style={[
+              styles.personalEmailID_TextInput,
+              styles.login_container,
+              { textAlign: 'left', textAlignVertical: 'top', height: 100 },
+            ]}
+            placeholder={placeholderText}
+            multiline={true}
+            placeholderTextColor="rgba(255, 255, 255, 0.48)"
+            keyboardType={rnKeyboardType}
+            value={formValues[param.id]?.value || ''}
+            onChangeText={text => handleValueChange(param.id, alias_name, text)}
+          />
+        </View>
+      );
+    }
 
-            {/* Multi-select picker touchable */}
-            <TouchableOpacity
-              style={styles.pickerContainer}
-              onPress={() => {
-                setMultiSelectModal({ visible: true, fieldId: id });
-                setMultiSelectOptions(options);
-              }}
-            >
-              <Text style={styles.dropdowntext}>
-                {Array.isArray(formValues[id]) && formValues[id].length > 0
-                  ? `${formValues[id].length} Selected`
-                  : `Select ${field_name}`}
-              </Text>
-            </TouchableOpacity>
+    // ---------------- DROPDOWN ----------------
+    case 'dropdown':
+      return (
+        <View key={field.id} style={styles.productTextView}>
+          <Text style={styles.textstyle}>{field_name}</Text>
 
-            <View style={styles.categoryContainer}>
-              {options
-                .filter(
-                  (opt: any) =>
-                    Array.isArray(formValues[id]) &&
-                    formValues[id].includes(opt.id),
-                )
-                .map((opt: any) => (
-                  <View key={opt.id} style={styles.categoryTagWrapper}>
-                    <TouchableOpacity
-                      onPress={() => {
-                        // remove option from formValues[id]
-                        setFormValues((prev: any) => {
-                          const updated = Array.isArray(prev[id])
-                            ? [...prev[id]]
-                            : [];
-                          return {
-                            ...prev,
-                            [id]: updated.filter(value => value !== opt.id),
-                          };
-                        });
-                      }}
-                    >
-                      <Text style={styles.categoryTag}>
-                        {opt.option_name} ✕
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                ))}
-            </View>
+          <TouchableOpacity
+            style={styles.pickerContainer}
+            onPress={() => {
+              setMultiSelectModal({ visible: true, fieldId: id });
+              setMultiSelectOptions(options);
+            }}
+          >
+            <Text style={styles.dropdowntext}>
+              {Array.isArray(formValues[id]?.value) &&
+              formValues[id]?.value.length > 0
+                ? `${formValues[id]?.value.length} Selected`
+                : `Select ${field_name}`}
+            </Text>
+          </TouchableOpacity>
+
+          <View style={styles.categoryContainer}>
+            {options
+              .filter(
+                (opt: any) =>
+                  Array.isArray(formValues[id]?.value) &&
+                  formValues[id]?.value.includes(opt.id),
+              )
+              .map((opt: any) => (
+                <View key={opt.id} style={styles.categoryTagWrapper}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      // remove option from formValues[id]
+                      setFormValues((prev: any) => {
+                        const updated = Array.isArray(prev[id]?.value)
+                          ? [...prev[id].value]
+                          : [];
+                        return {
+                          ...prev,
+                          [id]: {
+                            ...prev[id],
+                            value: updated.filter(v => v !== opt.id),
+                          },
+                        };
+                      });
+                    }}
+                  >
+                    <Text style={styles.categoryTag}>
+                      {opt.option_name} ✕
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
           </View>
-        );
+        </View>
+      );
 
+    // ---------------- IMAGE ----------------
       case 'image': {
         const { param } = field;
         const { field_name, maxvalue, ismulltiple } = param;
@@ -446,7 +669,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               <Text style={styles.uploadText}>Upload {field_name}</Text>
             </TouchableOpacity>
 
-            <View style={styles.imagelistcard}>
+             <View style={styles.imagelistcard}>
               {uploadedImages.map(file => (
                 <View
                   key={file.id}
@@ -514,26 +737,52 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                   </View>
                 </View>
               ))}
-            </View>
+            </View> 
           </View>
         );
       }
 
-      case 'boolean':
-        return (
-          <View key={field.id} style={styles.featuredRow}>
-            <Text style={styles.featuredLabel}>{field_name}</Text>
-            <ToggleButton
-              value={!!formValues[id]}              // current value
-              onValueChange={(val) => handleValueChange(id, val)} // update state
-            />
-          </View>
-        );
 
-      default:
-        return null;
-    }
-  };
+
+  case 'boolean':
+  return (
+    <View key={field.id} style={{ marginBottom: 16 }}>
+      {/* Main row with label and toggle */}
+      <View style={styles.featuredRow}>
+        <Text style={styles.featuredLabel}>{field.param.field_name}</Text>
+        <ToggleButton
+          value={!!formValues[field.param.id]?.value} 
+          onValueChange={(val) =>
+            handleValueChange(field.param.id, field.param.alias_name, val)
+          }
+        />
+      </View>
+
+      <View
+        style={styles.textbg}
+      >
+        <Image
+          source={require('../../../assets/images/info_icon.png')} 
+          style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+        />
+
+        {/* Texts */}
+        <View style={{ flex: 1 }}>
+          <Text style={styles.importantText1}>Important:</Text>
+          <Text style={styles.importantText}>
+            For Featured listings, $1 is deducted from your payout.
+          </Text>
+        </View>
+      </View>
+    </View>
+  );
+
+    default:
+      return null;
+  }
+};
+
+
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -731,7 +980,6 @@ const styles = StyleSheet.create({
     height: 48,
     width: 48,
     position: 'absolute',
-    top: -10,
     left: 0,
     right: 0,
     justifyContent: 'center',
@@ -840,6 +1088,11 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.48)',
     fontSize: 14,
   },
+  divider: {
+  height: 1,
+  backgroundColor: '#ccc',
+  marginVertical: 4,
+},
 
   filecard: {
     marginTop: 20,
@@ -932,15 +1185,37 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   featuredLabel: {
-    color: '#fff',
+    //color: '#fff',
+    color: '#FFFFFFE0',
     fontSize: 14,
     fontFamily: 'Urbanist-Medium',
     fontWeight: 500,
   },
+  textbg:{
+ flexDirection: 'row',
+          alignItems: 'flex-start',
+          backgroundColor:
+            'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
+          boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+          padding: 6,
+          borderWidth:0.5,
+          marginTop: 8,
+            borderEndEndRadius: 8,
+            borderStartEndRadius: 8,
+            borderTopLeftRadius: 8,
+            borderTopRightRadius: 8,
+            borderBottomStartRadius: 8,
+            borderBlockStartColor: '#ffffff31',
+            borderBlockColor: '#ffffff31',
+            borderTopColor: '#ffffff31',
+            borderBottomColor: '#ffffff31',
+            borderLeftColor: '#ffffff31',
+            borderRightColor: '#ffffff31',
+  },
   importantText: {
     color: '#ccc',
     fontSize: 12,
-    marginBottom: 16,
+    marginBottom: 6,
     fontFamily: 'Urbanist-Medium',
     fontWeight: 500,
   },

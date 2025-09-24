@@ -14,7 +14,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { showToast } from '../../utils/toast';
-import NewProductCard from '../../utils/ProductCardNew';
+import NewProductCard from '../../utils/NewProductCard';
 
 const bgImage = require('../../../assets/images/bganimationscreen.png');
 const searchIcon = require('../../../assets/images/searchicon.png');
