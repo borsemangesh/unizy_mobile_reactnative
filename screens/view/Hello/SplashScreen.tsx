@@ -20,7 +20,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
 
   //Comment while run on IOS
   // useEffect(() => {
-  //   const timer = setTimeout(onFinish, 4200);
+  //   const timer = setTimeout(onFinish, 6200);
   //   return () => clearTimeout(timer);
   // }, [onFinish]);
 

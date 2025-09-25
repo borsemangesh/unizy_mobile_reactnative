@@ -111,11 +111,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
-      <StatusBar
-        translucent
-        backgroundColor="transparent"
-        barStyle="light-content"
-      />
       <View style={styles.fullScreenContainer}>
         {/* Header */}
         <View style={styles.header}>

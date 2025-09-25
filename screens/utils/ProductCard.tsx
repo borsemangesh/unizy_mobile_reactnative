@@ -1,204 +1,172 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, ImageSourcePropType, Platform } from "react-native";
+import { View, Text, Image, StyleSheet, ImageSourcePropType, Platform, Dimensions } from "react-native";
 
 type ProductCardProps = {
   tag: string;
   infoTitle: string;
   inforTitlePrice: string;
-  rating:string;
-  productImage: ImageSourcePropType
+  rating: string;
+  productImage: ImageSourcePropType;
 };
 
+const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
-export default function ProductCard({tag,infoTitle,inforTitlePrice,rating,productImage}:ProductCardProps) {
+export default function ProductCard({
+  tag,
+  infoTitle,
+  inforTitlePrice,
+  rating,
+  productImage,
+}: ProductCardProps) {
   return (
     <View style={styles.card}>
-      
+      {/* Image */}
       <View style={styles.imageContainer}>
-        <Image
-          source={productImage}
-          style={styles.image}
-        />
+        <Image source={productImage} style={styles.image} resizeMode="contain" />
 
- 
+        {/* Tag */}
         <View style={styles.tag}>
           <Text style={styles.tagText}>{tag}</Text>
         </View>
-        {/* </LinearGradient> */}
-      
-        <View style={styles.bookmark1}>
+
+        {/* Bookmark */}
+        <View style={styles.bookmark}>
           <Image
-            source={require('../../assets/images/favourite.png')}
-            style={{ width: 20, height: 20 }}
+            source={require("../../assets/images/favourite.png")}
+            style={styles.bookmarkIcon}
           />
         </View>
       </View>
 
+      {/* Info */}
       <View style={styles.infoRow}>
         <Text style={styles.title}>{infoTitle}</Text>
-          <View style={{flexDirection:'row',width: '100%',justifyContent:'space-between'}}>
-            
-            <Text style={styles.price}>{inforTitlePrice}</Text>
-            <View style={{flexDirection:'row'}}>
-              <Image
-                source={require('../../assets/images/staricon.png')}
-                style={styles.image1}/>
-
-              <Text style={styles.ratingText}>{rating}</Text>
-              </View>
+        <View style={styles.priceRow}>
+          <Text style={styles.price}>{inforTitlePrice}</Text>
+          <View style={styles.ratingRow}>
+            <Image
+              source={require("../../assets/images/staricon.png")}
+              style={styles.starIcon}
+            />
+            <Text style={styles.ratingText}>{rating}</Text>
           </View>
+        </View>
       </View>
-     
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    width: (Platform.OS === 'ios' ? 360 : 320),
-    minWidth: '80%',
-    padding:(Platform.OS === 'ios' ? 0 : 10),
+    width: screenWidth * 0.75,
+    height: screenHeight * 0.4,
   
-    height:'70%',
-    minHeight: '90%',
-    borderRadius: 34,
-    backgroundColor: '#5973c1ff',
     marginHorizontal: 8,
-    // shadow for iOS
-    shadowColor: '#000',
+    borderRadius: 34,
+    backgroundColor: "rgba(255, 255, 255, 0.17)",
+    shadowColor: "#000",
     shadowOpacity: 0.15,
     shadowRadius: 8,
-    overflow: 'hidden',
-    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 15px 15px 6px',
-    borderBlockColor: '#ffffff79',
-    borderStartColor: '#ffffff79',
-    borderWidth: 0.4,
-    borderColor: '#ffffff79',
-    gap:4,
-    
-    // borderTopColor: '#ffffff5d',
-    // borderBottomColor: '#ffffff36',
-    // borderLeftColor: '#ffffff5d',
-    // borderRightColor: '#ffffff36',
-  },
-  imageContainer: {
-    width: '100%',
-    height: '85%',
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-    padding:12,
-    borderRadius:34,
-  },
-
-   image1: {
-    width: 16,
-    height: 16,
-    
-  },
-  bookmark1: {
-    position: 'absolute',
-    top: (Platform.OS === 'ios' ? 25 : 10),
-    right: (Platform.OS === 'ios' ? 25 : 10),
-    // borderRadius: 10,
-    backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(101, 101, 101, 0.72) 0%, rgba(117, 117, 117, 0.1) 100%)',
-    width: 40,
-    height: 40,
-    display: 'flex',
-    alignContent: 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    boxShadow: '0 2px 5px 0 rgba(109, 109, 109, 0.2)',
     borderWidth: 0.5,
-    borderColor: '#ffffff2e',
-    borderEndEndRadius: 15,
-    borderStartEndRadius: 15,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-    borderBottomStartRadius: 15,
-    borderBlockStartColor: '#ffffff2e',
+    borderColor: "#ffffff79",
+    overflow: "hidden",
+
+
+       borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
- 
+
     borderTopColor: '#ffffff2e',
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
-    
+
   },
-   bookmark: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    borderRadius: 20,
-    padding: 6,
+  imageContainer: {
+    width: "100%",
+    height: "80%", // image takes 65% of card height
+    position: "relative",
+    padding:10,
+  },
+  image: {
+    
+    width: "100%",
+    height: "100%",
+    borderRadius: 25,
+    backgroundColor: "#ccc",
+    
   },
   tag: {
-    position: 'absolute',
-    // bottom: 10,
-    // right: 10,
-    bottom:  (Platform.OS === 'ios' ? 15 : 10),
-    right: (Platform.OS === 'ios' ? 20 : 10),
-    //backgroundColor: '#fff',
-    backgroundColor:'rgba(255,255,255,0.4)',
+    position: "absolute",
+
+    bottom: Platform.OS === "ios" ? 20 : 20,
+    right: Platform.OS === "ios" ? 20 : 20,
+
+    backgroundColor: "rgba(152, 152, 152, 0.21)",
     borderRadius: 12,
-    padding: 8,
-    marginVertical:8,
-    marginHorizontal:8,
-     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    zIndex: 2,
   },
   tagText: {
-    fontSize: 11,
-    fontFamily: 'Urbanist-SemiBold',
-    fontWeight: '600',
-    color: '#000',
-    
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#000",
+  },
+  bookmark: {
+    position: "absolute",
+    top: Platform.OS === "ios" ? 20 : 20,
+    right: Platform.OS === "ios" ? 20 : 20,
+    width: 40,
+    height: 40,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 15,
+    zIndex: 2,
+    elevation: 5,
+  },
+  bookmarkIcon: {
+    width: 20,
+    height: 20,
   },
   infoRow: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '90%',
-    alignContent: 'center',
-    alignSelf: 'center',
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "90%",
+    alignSelf: "center",
+    // backgroundColor:'black'
+    // marginTop: 10,
   },
   title: {
     fontSize: 17,
-    fontWeight: '600',
-    color: '#fff',
-    fontFamily: 'Urbanist-SemiBold',
-    width: '100%',
+    fontWeight: "600",
+    color: "#fff",
+    width: "100%",
   },
-   title1: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: '#000',
-    fontFamily: 'Urbanist-Regular',
-    marginBottom: 2,
+  priceRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    // marginTop: 4,
   },
   price: {
     fontSize: 17,
-    fontWeight: '500',
-    color: '#fff',
-     fontFamily: 'Urbanist-Bold',
+    fontWeight: "500",
+    color: "#fff",
   },
-  
+  ratingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  starIcon: {
+    width: 16,
+    height: 16,
+  },
   ratingText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#fff',
-     fontFamily: 'Urbanist-SemiBold',
+    fontWeight: "600",
+    color: "#fff",
     marginLeft: 4,
   },
-  ratingAbsolute: {
-  // position: 'absolute',
-  // bottom:10,
-  // right: 10,
-  flexDirection: 'row',
-  alignItems: 'center',
-  paddingHorizontal: 8,
-  paddingVertical: 4,
-  borderRadius: 12,
-},
 });

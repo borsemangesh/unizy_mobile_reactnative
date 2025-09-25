@@ -56,8 +56,6 @@ type ProductItemProps = {
   fullWidth: boolean;
 };
 
-
-
 const iconMap: Record<string, any> = {
   Products: require('../../../assets/images/producticon.png'),
   Product: require('../../../assets/images/producticon.png'), // for API name
@@ -69,9 +67,11 @@ const iconMap: Record<string, any> = {
   'House Keeping': require('../../../assets/images/housekeeping.png'),
 };
 
-
-
-const ProductItem: React.FC<ProductItemProps> = ({ navigation, item, fullWidth }) => (
+const ProductItem: React.FC<ProductItemProps> = ({
+  navigation,
+  item,
+  fullWidth,
+}) => (
   <TouchableOpacity
     key={item.id}
     onPress={() => {
@@ -101,7 +101,9 @@ type AddScreenContentProps = {
   navigation: any;
 };
 
-const AddScreenContent: React.FC<AddScreenContentProps & { products: any[] }> = ({ navigation, products }) => (
+const AddScreenContent: React.FC<
+  AddScreenContentProps & { products: any[] }
+> = ({ navigation, products }) => (
   <View style={styles.tabContent3}>
     <Text style={styles.tabContentText3}>List Product</Text>
     <AnimatedSlideUp>
@@ -116,7 +118,10 @@ const AddScreenContent: React.FC<AddScreenContentProps & { products: any[] }> = 
               //   name: item.name,
               // });
               try {
-                await AsyncStorage.setItem('selectedProductId', String(item.id));
+                await AsyncStorage.setItem(
+                  'selectedProductId',
+                  String(item.id),
+                );
                 console.log('✅ Product info saved to AsyncStorage');
                 navigation.navigate('AddScreen');
               } catch (error) {
@@ -170,14 +175,9 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
 
   const bubbleX = useRef(new Animated.Value(0)).current;
 
-
-
-
- const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-const [features, setFeatures] = useState<any[]>([]);
-
-
+  const [features, setFeatures] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -191,8 +191,11 @@ const [features, setFeatures] = useState<any[]>([]);
             id: cat.id,
             name: cat.name,
             description: cat.description,
-            icon: iconMap[cat.name] || require('../../../assets/images/producticon.png'), // fallback icon
-          })).slice(0,5)
+            icon:
+              iconMap[cat.name] ||
+              require('../../../assets/images/producticon.png'), // fallback icon
+          }))
+          .slice(0, 5);
         setProducts(mapped);
       } catch (err) {
         console.error('Error fetching categories', err);
@@ -203,32 +206,32 @@ const [features, setFeatures] = useState<any[]>([]);
     fetchCategories();
   }, []);
 
-
   useEffect(() => {
-  const fetchFeatures = async () => {
-    try {
-      const token = await AsyncStorage.getItem('userToken');
-      if (!token) return;
+    const fetchFeatures = async () => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) return;
 
-      const res = await fetch('http://65.0.99.229:4320/category/feature-list', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+        const res = await fetch(
+          'http://65.0.99.229:4320/category/feature-list',
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
 
-      const json = await res.json();
-      console.log('✅ Features API response:', json);
+        const json = await res.json();
+        console.log('✅ Features API response:', json);
 
-      if (json.statusCode === 200) {
-        setFeatures(json.data.features || []);
+        if (json.statusCode === 200) {
+          setFeatures(json.data.features || []);
+        }
+      } catch (err) {
+        console.log('❌ Error fetching features:', err);
       }
-    } catch (err) {
-      console.log('❌ Error fetching features:', err);
-    }
-  };
+    };
 
-  fetchFeatures();
-}, []);
-
-
+    fetchFeatures();
+  }, []);
 
   //Animation For all components variables.
   const screenHeight = Dimensions.get('window').height;
@@ -324,105 +327,110 @@ const [features, setFeatures] = useState<any[]>([]);
     }).start();
   }, [activeTab, bubbleX, tabWidth]);
 
+  const renderProducts = () => {
+    const isEven = products.length % 2 === 0;
+    let startIndex = 0;
+    const rows: JSX.Element[] = [];
 
- const renderProducts = () => {
-  const isEven = products.length % 2 === 0;
-  let startIndex = 0;
-  const rows: JSX.Element[] = [];
+    // Odd first item -> full width
+    if (!isEven) {
+      rows.push(
+        <Animated.View
+          style={[
+            { width: '100%' }, // wrapper stretches row
+            { transform: [{ translateY: categorytranslateY }] },
+          ]}
+          key={products[0].id}
+        >
+          <ProductItem navigation={navigation} item={products[0]} fullWidth />
+        </Animated.View>,
+      );
+      startIndex = 1;
+    }
 
-  // Odd first item -> full width
-  if (!isEven) {
-    rows.push(
-      <Animated.View
-        style={[
-          { width: '100%' }, // wrapper stretches row
-          { transform: [{ translateY: categorytranslateY }] },
-        ]}
-        key={products[0].id}
-      >
-        <ProductItem navigation={navigation} item={products[0]} fullWidth />
-      </Animated.View>,
-    );
-    startIndex = 1;
-  }
+    // Render pairs
+    for (let i = startIndex; i < products.length; i += 2) {
+      const rowItems = products.slice(i, i + 2);
 
-  // Render pairs
-  for (let i = startIndex; i < products.length; i += 2) {
-    const rowItems = products.slice(i, i + 2);
-
-    rows.push(
-      <View style={styles.row} key={i}>
-        {rowItems.map((item, index) => (
-          <Animated.View
-            key={item.id}
-            style={[
-              styles.halfWidth,
-              {
-                transform: [
-                  {
-                    translateX:
-                      index === 0 ? leftItemTranslateX : rightItemTranslateX,
-                  },
-                ],
-              },
-            ]}
-          >
-            <ProductItem navigation={navigation} item={item} fullWidth={false} />
-          </Animated.View>
-        ))}
-        {/* If odd inside the loop, fill empty space */}
-        {rowItems.length === 1 && <View style={styles.halfWidth} />}
-      </View>,
-    );
-  }
-  return rows;
-};
+      rows.push(
+        <View style={styles.row} key={i}>
+          {rowItems.map((item, index) => (
+            <Animated.View
+              key={item.id}
+              style={[
+                styles.halfWidth,
+                {
+                  transform: [
+                    {
+                      translateX:
+                        index === 0 ? leftItemTranslateX : rightItemTranslateX,
+                    },
+                  ],
+                },
+              ]}
+            >
+              <ProductItem
+                navigation={navigation}
+                item={item}
+                fullWidth={false}
+              />
+            </Animated.View>
+          ))}
+          {/* If odd inside the loop, fill empty space */}
+          {rowItems.length === 1 && <View style={styles.halfWidth} />}
+        </View>,
+      );
+    }
+    return rows;
+  };
+  
 
   const renderActiveTabContent = () => {
     switch (activeTab) {
       case 'Home':
         return (
           <>
-          {/* <TouchableOpacity onPress={() => navigation.navigate('ProductDetails')} > */}
+            {/* <TouchableOpacity onPress={() => navigation.navigate('ProductDetails')} > */}
             <View style={styles.productsWrapper}>{renderProducts()}</View>
             {/* </TouchableOpacity> */}
             <Animated.View
-                style={{
-                  transform: [{ translateY: cardSlideupAnimation }],
-                }}
-              > <Text style={styles.featuredText}>Featured Listings</Text>
-              </Animated.View>
-           
-       
-           <ScrollView
-            style={{ paddingHorizontal: 6 }}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          >
-            {features.map((item) => (
-              <Animated.View
-                key={item.id}
-                style={{
-                  transform: [{ translateY: cardSlideupAnimation }],
-                  marginRight: 10,
-                }}
-              >
-                <ProductCard
-                  tag="University of Warwick" 
-                  infoTitle={item.title} 
-                  inforTitlePrice={`$${item.price}`} 
-                  rating="4.5" 
-                  productImage={{ uri: item.thumbnail }} 
-                />
-              </Animated.View>
-            ))}
-          </ScrollView>
+              style={{
+                transform: [{ translateY: cardSlideupAnimation }],
+              }}
+            >
+              {' '}
+              <Text style={styles.featuredText}>Featured Listings</Text>
+            </Animated.View>
+            <ScrollView
+              style={{ paddingHorizontal: 0,}}
+              horizontal
+              
+              showsHorizontalScrollIndicator={false}
+            >
+              {features.map(item => (
+                <Animated.View
+                  key={item.id}
+                  style={{
+                    transform: [{ translateY: cardSlideupAnimation }],
+                    // marginRight: 10,
+                  }}
+                >
+                  <ProductCard
+                    tag="University of Warwick"
+                    infoTitle={item.title}
+                    inforTitlePrice={`$${item.price}`}
+                    rating="4.5"
+                    productImage={{ uri: item.thumbnail }}
+                  />
+                </Animated.View>
+              ))}
+            </ScrollView>
           </>
         );
       case 'Search':
         return <SearchScreenContent />;
       case 'Add':
-       return <AddScreenContent navigation={navigation} products={products} />;
+        return <AddScreenContent navigation={navigation} products={products} />;
       case 'Bookmark':
         return <BookmarkScreenContent />;
       case 'Profile':
@@ -446,9 +454,13 @@ const [features, setFeatures] = useState<any[]>([]);
       style={styles.background}
     >
       <View style={styles.fullScreenContainer}>
-       
         {activeTab === 'Home' && (
-          <View style={[styles.header,{paddingTop: Platform.OS === 'ios' ? 50 : 40}]}>
+          <View
+            style={[
+              styles.header,
+              { paddingTop: Platform.OS === 'ios' ? 50 : 40 },
+            ]}
+          >
             <Animated.View
               style={[
                 styles.headerRow,
@@ -461,9 +473,12 @@ const [features, setFeatures] = useState<any[]>([]);
 
               <Text style={styles.unizyText}>UniZy</Text>
 
-
-            <TouchableOpacity onPress={async () =>  {await AsyncStorage.setItem('ISLOGIN', 'false');navigation.navigate('SinglePage');}}>
-              
+              <TouchableOpacity
+                onPress={async () => {
+                  await AsyncStorage.setItem('ISLOGIN', 'false');
+                  navigation.navigate('SinglePage');
+                }}
+              >
                 <View style={styles.MylistingsBackground}>
                   <Image source={mylistings1} style={styles.iconSmall} />
                 </View>
@@ -490,8 +505,16 @@ const [features, setFeatures] = useState<any[]>([]);
 
         {/* Main Content */}
 
+        
+          <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 10 }} // space for bottom bar
+        showsVerticalScrollIndicator={false}
+      >
+
         <View style={{ flex: 1 }}>{renderActiveTabContent()}</View>
 
+        </ScrollView>
         {/* Bottom Tab Bar */}
         <Animated.View
           style={[
@@ -545,8 +568,7 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     paddingVertical: 4,
-   
-    },
+  },
   searchIcon: {
     padding: 5,
     margin: 10,
@@ -577,7 +599,7 @@ const styles = StyleSheet.create({
     //alignItems: 'center',
   },
   iconWrapper: {
-    height: 50,
+    height: 50,//
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
@@ -593,7 +615,8 @@ const styles = StyleSheet.create({
   },
   bubble: {
     height: 48,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: 'rgba(255, 255, 255, 0.16)',
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18)',
     //borderRadius: 40,
     position: 'absolute',
 
@@ -604,11 +627,21 @@ const styles = StyleSheet.create({
 
     left: 3,
     right: 3,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2e',
 
     borderTopLeftRadius: 30,
     borderBottomLeftRadius: 30,
     borderTopRightRadius: 30,
     borderBottomRightRadius: 30,
+
+       borderBlockStartColor: '#ffffff2e',
+    borderBlockColor: '#ffffff2e',
+
+    borderTopColor: '#ffffff2e',
+    borderBottomColor: '#ffffff2e',
+    borderLeftColor: '#ffffff2e',
+    borderRightColor: '#ffffff2e',
   },
 
   activeIconWrapper: {
@@ -624,13 +657,13 @@ const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
     flexDirection: 'column',
-    gap:12,
+    gap: 12,
   },
 
   header: {
     flexDirection: 'column',
     alignItems: 'center',
-  
+
     // paddingBottom: 12,
     paddingHorizontal: 16,
   },
@@ -643,25 +676,27 @@ const styles = StyleSheet.create({
   MylistingsBackground: {
     height: 48,
     width: 48,
-   
+
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 100,
-    backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(97, 179, 255, 0.2) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow: '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(97, 179, 255, 0.2) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow:
+      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
 
-     borderTopColor: '#ffffff5d',
+    borderTopColor: '#ffffff5d',
     borderBottomColor: '#ffffff36',
     borderLeftColor: '#ffffff5d',
     borderRightColor: '#ffffff36',
     borderWidth: 0.3,
 
-//     border-radius: 40px;
-// background: ;
-// box-shadow: ;
+    //     border-radius: 40px;
+    // background: ;
+    // box-shadow: ;
   },
   iconSmall: {
-    width:25,
+    width: 25,
     height: 25,
   },
   unizyText: {
@@ -670,7 +705,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     flex: 1,
     textAlign: 'center',
-    
   },
   emptyView: {},
 
@@ -715,27 +749,23 @@ const styles = StyleSheet.create({
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
 
-    boxSizing: 'border-box',  
-    
+    boxSizing: 'border-box',
   },
 
-
-
-
-fullWidth: {
-  // flex: 1,
-  // justifyContent: 'flex-start',
-  width: '100%',
-  maxWidth: '100%',
-  // maxHeight: '100%',
-},
-halfWidth: {
-  flex: 1, 
-  // maxWidth: '90%',
-  // maxHeight: '100%',
-  // width: '90%',
-  // height: 60,
-},
+  fullWidth: {
+    // flex: 1,
+    // justifyContent: 'flex-start',
+    width: '100%',
+    maxWidth: '100%',
+    // maxHeight: '100%',
+  },
+  halfWidth: {
+    flex: 1,
+    // maxWidth: '90%',
+    // maxHeight: '100%',
+    // width: '90%',
+    // height: 60,
+  },
   cardIcon: {
     width: 24,
     height: 24,
@@ -775,7 +805,7 @@ halfWidth: {
   tabContent3: {
     flex: 1,
     padding: 20,
-    paddingTop: Platform.OS === 'ios' ? 70: 30
+    paddingTop: Platform.OS === 'ios' ? 70 : 30,
   },
   tabContentText3: {
     color: '#fff',
@@ -787,7 +817,6 @@ halfWidth: {
   },
 
   card: {
-  
     height: 85,
     flexDirection: 'row',
     //backgroundColor: '#ffffff20', // semi-transparent for dark bg
@@ -802,7 +831,6 @@ halfWidth: {
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
     boxShadow: 'rgba(255, 255, 255, 0.02) -1px 10px 5px 10px',
-
   },
   cardIcon1: {
     width: 30,
