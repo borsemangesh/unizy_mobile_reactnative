@@ -73,8 +73,8 @@ export default function SearchListProductCard({
 const styles = StyleSheet.create({
   card: {
     borderRadius: 16,
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    // backgroundColor:
+    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
 
     shadowColor: '#000',
     shadowOpacity: 0.15,
@@ -84,7 +84,25 @@ const styles = StyleSheet.create({
     height: 'auto',
     margin: 6,
     paddingBottom: 10,
-    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 15px 15px 6px',
+    borderWidth: 0.4,
+    borderColor: '#ffffff11',
+    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    borderEndEndRadius: 15,
+    borderStartEndRadius: 15,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    borderBottomStartRadius: 15,
+    borderBlockStartColor: '#ffffff2e',
+    borderBlockColor: '#ffffff2e',
+
+    borderTopColor: '#ffffff2e',
+    borderBottomColor: '#ffffff2e',
+    borderLeftColor: '#ffffff2e',
+    borderRightColor: '#ffffff2e',
+
+    boxSizing: 'border-box',
   },
   imageContainer: {
     // width: 186,
