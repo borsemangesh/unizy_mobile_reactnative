@@ -97,10 +97,20 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
   );
 
   // Render single item
-  const renderItem = ({ item }: { item: Feature }) => (
-    <View style={styles.itemContainer}>
+const renderItem = ({ item, index }: { item: Feature; index: number }) => {
+  const isLastOddItem =
+    filteredFeatures.length % 2 !== 0 &&
+    index === filteredFeatures.length - 1;
+
+  return (
+    <View
+      style={[
+        styles.itemContainer,
+        { flex: isLastOddItem ? 0.5: 0.5, marginRight: isLastOddItem ? 0.5 : 0.5 },
+      ]}
+    >
       <SearchListProductCard
-        tag='University of Warwick'//{`ID: ${item.id}`}
+        tag="University of Warwick"
         infoTitle={item.title}
         inforTitlePrice={`$ ${item.price}`}
         rating={item.isfeatured ? '4.5' : '4.5'}
@@ -108,6 +118,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
       />
     </View>
   );
+};
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
