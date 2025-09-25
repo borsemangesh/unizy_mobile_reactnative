@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -127,15 +127,23 @@ const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
     fetchFields();
   }, []);
 
-  useEffect(() => {
-    slideUp1.setValue(-screenHeight);
-    Animated.timing(slideUp1, {
-      toValue: 0,
-      duration: 1200,
-      easing: Easing.inOut(Easing.exp),
-      useNativeDriver: true,
+ const [expanded, setExpanded] = useState(false);
+const animatedHeight = useRef(new Animated.Value(0)).current;
+
+useEffect(() => {
+  if (expanded) {
+    Animated.timing(animatedHeight, {
+      toValue: 1,
+      duration: 800, // slow expansion
+      useNativeDriver: false, // height cannot use native driver
     }).start();
-  }, []);
+  }
+}, [expanded]);
+
+const containerHeight = animatedHeight.interpolate({
+  inputRange: [0, 1],
+  outputRange: [0, 200], // 200 = max height you expect (or measure dynamically)
+});
 
   // const handleValueChange = (fieldId: number, value: any) => {
   //   setFormValues((prev: any) => ({ ...prev, [fieldId]: value }));
@@ -187,32 +195,6 @@ const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
   };
 
 
-  //   try {
-  //     const dataToStore: any = { ...formValues };
-
-  //     // Add images separately
-  //     fields.forEach(field => {
-  //       if (field.param.field_type.toLowerCase() === 'image') {
-  //         const uploadedForField = uploadedImages.map(img => ({
-  //           id: img.id,
-  //           uri: img.uri,
-  //           name: img.name,
-  //         }));
-  //         dataToStore[field.param.id] = uploadedForField;
-  //       }
-  //     });
-
-  //     await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
-
-  //     console.log('Form data saved: ', dataToStore);
-
-  //     navigation.navigate('PreviewThumbnail'); // navigate after saving
-  //   } catch (error) {
-  //     console.log('Error saving form data: ', error);
-  //     showToast('Failed to save form data');
-  //   }
-  // };
-
 const handlePreview = async () => {
   try {
     const dataToStore: any = { ...formValues };
@@ -244,55 +226,6 @@ const handlePreview = async () => {
   }
 };
 
-// const handlePreview = async () => {
-//   try {
-//     for (const field of fields) {
-//       const { id, field_type, alias_name } = field.param;
-
-//       if (field.mandatory) {
-//         let value = formValues[id]?.value;
-
-//         if (field_type.toLowerCase() === 'image') {
-//           value = uploadedImages; 
-//         }
-
-//         if (
-//           value === undefined ||
-//           value === null ||
-//           (typeof value === 'string' && value.trim() === '') ||
-//           (Array.isArray(value) && value.length === 0)
-//         ) {
-//           showToast(`${field.param.field_name} is mandatory`);
-//           return;
-//         }
-//       }
-//     }
-
-//     const dataToStore: any = { ...formValues };
-
-//     fields.forEach(field => {
-//       if (field.param.field_type.toLowerCase() === 'image') {
-//         const uploadedForField = uploadedImages.map(img => ({
-//           id: img.id,
-//           uri: img.uri,
-//           name: img.name,
-//         }));
-
-//         dataToStore[field.param.id] = {
-//           value: uploadedForField,
-//           alias_name: field.param.alias_name ?? null,
-//         };
-//       }
-//     });
-
-//     await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
-//     console.log('Form data saved: ', dataToStore);
-//     navigation.navigate('PreviewThumbnail');
-//   } catch (error) {
-//     console.log('Error saving form data: ', error);
-//     showToast('Failed to save form data');
-//   }
-// };
 
 
   const handleSelectImage = async () => {
@@ -770,21 +703,31 @@ const renderField = (field: any) => {
            
 
             <View style={styles.productdetails}>
-              <Animated.View style={{ transform: [{ translateY: slideUp1 }] }}>
+              {/* <Animated.View style={{ transform: [{ translateY: slideUp1 }] }}>
                 <Text style={styles.productdetailstext}>Product Details</Text>
                 {fields.map(field => renderField(field))}
-              </Animated.View>
+              </Animated.View> */}
+              <Animated.View
+          style={{
+            transform: [{ translateY: slideUp1 }],
+            opacity: slideUp1.interpolate({
+              inputRange: [-screenHeight, 0],
+              outputRange: [0, 1],
+            }),
+          }}
+        >
+         
+            <Text style={styles.productdetailstext}>Product Details</Text>
+                {fields.map(field => renderField(field))}
+        </Animated.View>
             </View>
           </ScrollView>
 
           <TouchableOpacity
             style={styles.previewBtn}
-            onPress={
-              //console.log('Collected form values: ', formValues);
-              //navigation.navigate('PreviewThumbnail');
-              handlePreview
-            }
-          >
+            onPress={()=>{
+                handlePreview();
+            }}>
             <Text style={styles.previewText}>Preview Details</Text>
           </TouchableOpacity>
         </KeyboardAvoidingView>
@@ -852,7 +795,7 @@ const styles = StyleSheet.create({
   featurecard:{
      paddingHorizontal: 16,
     borderRadius: 12,
-    paddingBottom:8,
+    padding: 12,
     marginTop:12,
     gap:10,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
@@ -899,8 +842,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    height: 70,
-    paddingTop: 12,
+    height: 100,
+    paddingTop: 40,
     paddingBottom: 12,
     paddingHorizontal: 16,
     justifyContent: 'center',
@@ -951,7 +894,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     paddingHorizontal: 20,
     paddingBottom: 80,
-    paddingTop: 80,
+    paddingTop: 100,
   },
   userRow: {
     flexDirection: 'row',

@@ -22,7 +22,7 @@ export default function ProductCard({
     <View style={styles.card}>
       {/* Image */}
       <View style={styles.imageContainer}>
-        <Image source={productImage} style={styles.image} resizeMode="contain" />
+        <Image source={productImage} style={styles.image} resizeMode="cover" />
 
         {/* Tag */}
         <View style={styles.tag}>
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     right: Platform.OS === "ios" ? 20 : 20,
     width: 40,
     height: 40,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    backgroundColor: "rgba(0, 0, 0, 0.14)",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 15,
