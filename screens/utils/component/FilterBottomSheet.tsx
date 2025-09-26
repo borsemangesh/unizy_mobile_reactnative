@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import React, { useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
+import { CONSTDEFAULT } from '../CONSTDEFAULT';
 interface FilterBottomSheetProps {
   visible: boolean;
   onClose: () => void;
@@ -16,24 +17,24 @@ interface FilterBottomSheetProps {
 const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
   const tabs = [
     {
-      title: 'Sort by',
-      image: require('../../../assets/images/sort_vertical_02.png'),
+      title: CONSTDEFAULT.SORT_BY,
+      image: CONSTDEFAULT.SORTVERTICAL_ICON,
     },
     {
-      title: 'Price',
-      image: require('../../../assets/images/currency_coin_pound.png'),
+      title: CONSTDEFAULT.PRICE,
+      image: CONSTDEFAULT.CURRENCY_COIN_POUND_ICON,
     },
     {
-      title: 'Featured Listing',
-      image: require('../../../assets/images/diamond.png'),
+      title: CONSTDEFAULT.FEATURED_LISTING,
+      image: CONSTDEFAULT.DIMAOND_ICON,
     },
   ];
 
   const [selected, setSelected] = useState<string | null>(null);
-  const [selectedTab, setSelectedTab] = useState('Sort by');
+  const [selectedTab, setSelectedTab] = useState(CONSTDEFAULT.SORT_BY);
   const [selectedSort, setSelectedSort] = useState('Relevance');
-  const [activeTab, setActiveTab] = useState('Sort by');
-  const [title, setTitle] = useState('Sort by');
+  const [activeTab, setActiveTab] = useState(CONSTDEFAULT.SORT_BY);
+  const [title, setTitle] = useState(CONSTDEFAULT.SORT_BY);
 
   const handleTabPress = (tabTitle: string) => {
     setSelectedTab(tabTitle);
@@ -42,9 +43,9 @@ const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
   };
 
   const renderSortOptions = () => {
-    if (selectedTab === 'Sort by') {
+    if (selectedTab === CONSTDEFAULT.SORT_BY) {
       return (
-        <View style={{ width: '100%', height: '100%', gap: 10, }}>
+        <View style={{ width: '100%', height: '100%', gap: 10 }}>
           <View style={{ gap: 10 }}>
             {sortOptions.map(option => (
               <>
@@ -58,7 +59,7 @@ const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
                 >
                   <Text
                     key={option}
-                    style={styles.filtertitle}
+                    style={styles.filtertitleFilteryBy}
                     onPress={() => setSelectedSort(option)}
                   >
                     {option}
@@ -79,14 +80,14 @@ const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
           </View>
         </View>
       );
-    } else if (selectedTab === 'Price') {
+    } else if (selectedTab === CONSTDEFAULT.PRICE) {
       return (
         <View style={{ width: '60%', height: '100%', gap: 10 }}>
           <Text style={styles.filtertitle}>Price</Text>
           {/* Render price-related options */}
         </View>
       );
-    } else if (selectedTab === 'Featured Listing') {
+    } else if (selectedTab === CONSTDEFAULT.FEATURED_LISTING) {
       return (
         <View style={{ width: '60%', height: '100%', gap: 10 }}>
           <Text style={styles.filtertitle}>Featured Listing</Text>
@@ -111,12 +112,12 @@ const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
-        
         <View
           style={{
             height: '84%',
             marginTop: 'auto',
-            backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(0, 0, 0, 0.59) 0%, rgba(255, 255, 255, 0.10) 100%)',
+            backgroundColor:
+              'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(0, 0, 0, 0.59) 0%, rgba(255, 255, 255, 0.10) 100%)',
             width: '100%',
             borderTopLeftRadius: 50,
             borderTopRightRadius: 50,
@@ -124,11 +125,11 @@ const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
             filter: 'drop-shadow(0 0.833px 3.333px rgba(0, 0, 0, 0.02))',
           }}
         >
-            <BlurView
-                style={StyleSheet.absoluteFill} // fill the entire screen
-                blurAmount={40}
-                reducedTransparencyFallbackColor="white"
-                />
+          <BlurView
+            style={StyleSheet.absoluteFill} // fill the entire screen
+            blurAmount={40}
+            reducedTransparencyFallbackColor="white"
+          />
           <View>
             <View
               style={{
@@ -159,8 +160,13 @@ const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
             </View>
           </View>
 
-          <View style={{ width: '100%', height: '80%',
-                backgroundColor: '#5d5c5c14', }}>
+          <View
+            style={{
+              width: '100%',
+              height: '80%',
+              backgroundColor: '#5d5c5c14',
+            }}
+          >
             <View
               style={{
                 height: '100%',
@@ -192,7 +198,13 @@ const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
                 ))}
               </View>
               <View
-                style={{ width: '60%', height: '100%', gap: 10, padding: 16 ,backgroundColor: '#5d5c5c3c'}}
+                style={{
+                  width: '60%',
+                  height: '100%',
+                  gap: 10,
+                  padding: 16,
+                  backgroundColor: '#5d5c5c3c',
+                }}
               >
                 <Text style={styles.filterHeadTitle}>{title}</Text>
                 {renderSortOptions()}
@@ -200,23 +212,18 @@ const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
             </View>
           </View>
 
-          <View
-            style={{
-              padding: 10,
-              width: '100%',
-              height: '10%',
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              backgroundColor: '#5d5c5c14',
-            }}
-          >
+          <View style={styles.bottomview}>
             <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
               <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={[styles.cancelBtn,{backgroundColor: '#ffffff4e',}]} onPress={onClose}>
-              <Text style={[styles.cancelText]}>Apply</Text>
+            <TouchableOpacity
+              style={[styles.cancelBtn, { backgroundColor: '#ffffff4e' }]}
+              onPress={onClose}
+            >
+              <Text style={[styles.cancelText, { color: '#000000' }]}>
+                Apply
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -226,6 +233,15 @@ const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
 };
 
 const styles = StyleSheet.create({
+  bottomview: {
+    padding: 10,
+    width: '100%',
+    height: '10%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#5d5c5c14',
+  },
   radioButtonSelected: {
     backgroundColor: 'white',
     borderRadius: 10,
@@ -261,7 +277,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff1b',
     alignItems: 'center',
     justifyContent: 'center',
-    boxShadow: '0 2px 8px 0 rgba(75, 75, 75, 0.19)'
+    boxShadow: '0 2px 8px 0 rgba(75, 75, 75, 0.19)',
   },
   overlay: {
     backgroundColor: 'rgba(0,0,0,0.2)',
@@ -271,20 +287,25 @@ const styles = StyleSheet.create({
   filtertitle: {
     color: 'rgba(255, 255, 255, 0.64)',
     fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
     fontStyle: 'normal',
-    letterSpacing: -0.32,
-    lineHeight: 19.6,
   },
   filterHeadTitle: {
-      color: 'rgba(255, 255, 255, 0.64)',
+    color: 'rgba(255, 255, 255, 0.64)',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 16,
     fontWeight: '600',
     fontStyle: 'normal',
-    letterSpacing: -0.32,
+    letterSpacing: 0.32,
     lineHeight: 19.6,
+  },
+  filtertitleFilteryBy: {
+    color: 'rgba(255, 255, 255, 0.64)',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 14,
+    fontWeight: '500',
+    fontStyle: 'normal',
   },
   filtertype: {
     display: 'flex',
@@ -316,9 +337,9 @@ const styles = StyleSheet.create({
     letterSpacing: -0.34,
     lineHeight: 19.6,
   },
-  clearAll:{
+  clearAll: {
     color: 'rgba(255, 255, 255, 0.54)',
-    fontFamily: 'Urbanist-regular',
+    fontFamily: 'Urbanist-Regular',
     fontSize: 17,
     fontWeight: '600',
     fontStyle: 'normal',
@@ -343,7 +364,15 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
   },
-  cancelText: { color: '#fff', fontWeight: '600' },
+  cancelText: {
+    color: 'rgba(255, 255, 255, 0.48)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 17,
+    fontWeight: '500',
+    fontStyle: 'normal',
+    letterSpacing: 0.17,
+    lineHeight: 19.6,
+  },
 
   inactiveTab: {
     display: 'flex',
@@ -371,7 +400,6 @@ const styles = StyleSheet.create({
     gap: 4,
     marginBottom: 5,
     boxShadow: 'rgba(255, 255, 255, 0.16) inset -1px 0px 4px 2px',
-    
   },
 
   filterTypeTab: {
