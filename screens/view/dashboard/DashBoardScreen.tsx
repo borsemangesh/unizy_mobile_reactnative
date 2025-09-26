@@ -179,6 +179,8 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [features, setFeatures] = useState<any[]>([]);
+  const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
+
 
   
   useEffect(() => {
@@ -414,7 +416,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   try {
     const token = await AsyncStorage.getItem('userToken');
         if (!token) return;
-
+  const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
     const url=MAIN_URL.baseUrl+'category/list-bookmark'
     const response = await fetch(url, {
       method: 'POST',
@@ -433,6 +435,11 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
 
     const data = await response.json();
     console.log('Bookmark response:', data);
+     if (isCurrentlyBookmarked) {
+      setBookmarkedIds(prev => prev.filter(id => id !== productId));
+    } else {
+      setBookmarkedIds(prev => [...prev, productId]);
+    }
   } catch (error) {
     console.error('Bookmark error:', error);
   }
@@ -472,10 +479,11 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                   <ProductCard
                     tag="University of Warwick"
                     infoTitle={item.title}
-                    inforTitlePrice={`$${item.price}`}
+                    inforTitlePrice={`£ ${item.price}`}
                     rating="4.5"
                     productImage={{ uri: item.thumbnail }}
                     onBookmarkPress={() => handleBookmarkPress(item.id)}
+                    isBookmarked={bookmarkedIds.includes(item.id)}
                   />
                 </Animated.View>
               ))}

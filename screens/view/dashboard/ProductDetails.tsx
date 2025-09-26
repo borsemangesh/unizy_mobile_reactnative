@@ -10,6 +10,7 @@ import {
   Platform,
   StyleSheet,
   StatusBar,
+  ActivityIndicator,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -52,46 +53,64 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
   const route = useRoute<ProductDetailsRouteProp>();
   const { category_id } = route.params;
 
+const [page, setPage] = useState(1);
+const [isLoading, setIsLoading] = useState(false);
+const [hasMore, setHasMore] = useState(true); // whether more pages exist
+
   useEffect(() => {
     displayListOfProduct();
   }, []);
 
-  // Fetch data from API
-  const displayListOfProduct = async () => {
-    try {
-      const body = {
-        search: search,
-        page: 1,
-        pagesize: 20,
-        category_id:category_id
-      };
 
-      const url = MAIN_URL.baseUrl + 'category/feature-list/search';
-      const token = await AsyncStorage.getItem('userToken');
-      if (!token) return;
+  const displayListOfProduct = async (pageNum: number = 1) => {
+  if (isLoading || !hasMore) return;
 
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      });
+  try {
+    setIsLoading(true);
 
-      const jsonResponse = await response.json();
-      console.log('API Response:', jsonResponse);
+    const body = {
+      search: search,
+      page: pageNum,
+      pagesize: 20,
+      category_id: category_id,
+    };
 
-      if (jsonResponse.statusCode === 200) {
-        showToast(jsonResponse.message);
-        setFeaturelist(jsonResponse.data.features);
+    const url = MAIN_URL.baseUrl + 'category/feature-list/search';
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) return;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    const jsonResponse = await response.json();
+    console.log('API Response:', jsonResponse);
+
+    if (jsonResponse.statusCode === 200) {
+      const newFeatures = jsonResponse.data.features;
+
+      if (pageNum === 1) {
+        setFeaturelist(newFeatures);
+      } else {
+        setFeaturelist(prev => [...prev, ...newFeatures]);
       }
-    } catch (err) {
-      console.log('Error:', err);
-    }
-  };
 
-  // Filter features by search
+      setHasMore(newFeatures.length === 20); 
+      setPage(prev => prev + 1);
+    }
+  } catch (err) {
+    console.log('Error:', err);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+  
   const filteredFeatures: Feature[] = featurelist.filter((item) =>
     item.title.toLowerCase().includes(search.toLowerCase())
   );
@@ -103,6 +122,12 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
     index === filteredFeatures.length - 1;
 
   return (
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate('SearchDetails', { id: item.id }) // 👈 pass id here
+      }
+      style={{ flex: 1 }}
+    >
     <View
       style={[
         styles.itemContainer,
@@ -112,11 +137,13 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
       <SearchListProductCard
         tag="University of Warwick"
         infoTitle={item.title}
-        inforTitlePrice={`$ ${item.price}`}
+        inforTitlePrice={`£ ${item.price}`}
         rating={item.isfeatured ? '4.5' : '4.5'}
         productImage={require('../../../assets/images/drone.png')}
+        bookmark={item.isfeatured}
       />
     </View>
+    </TouchableOpacity>
   );
 };
 
@@ -151,20 +178,26 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
           />
         </View>
 
-        {/* FlatList */}
-        <FlatList
-          data={filteredFeatures}
-          keyExtractor={(item) => item.id.toString()}
-          numColumns={2}
-          columnWrapperStyle={styles.row1}
-          contentContainerStyle={styles.listContainer}
-          renderItem={renderItem}
-          ListEmptyComponent={
-            <Text style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
-              No products found
-            </Text>
+      <FlatList
+        data={featurelist}
+        keyExtractor={item => item.id.toString()}
+        numColumns={2}
+        columnWrapperStyle={styles.row1}
+        contentContainerStyle={styles.listContainer}
+        renderItem={renderItem}
+        onEndReached={() => displayListOfProduct(page)} // fetch next page
+        onEndReachedThreshold={0.5} // adjust when to trigger
+        ListFooterComponent={
+            isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
           }
-        />
+          ListEmptyComponent={
+            !isLoading ? ( // ✅ only show if not loading
+              <Text style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
+                No products found
+              </Text>
+            ) : null
+          }
+          />
       </View>
     </ImageBackground>
   );

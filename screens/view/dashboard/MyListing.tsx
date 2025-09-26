@@ -48,6 +48,7 @@ const MyListing = ({ navigation }: MyListingProps)  => {
   const pagesize = 10;
   const [featureList, setFeatureList] = useState<any[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   type Category = {
   id: number | null; 
@@ -104,17 +105,18 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
     console.log('API Response:', jsonResponse);
 
     if (jsonResponse.statusCode === 200) {
+      setIsLoading(false);
       if (pageNum === 1) {
-        // first page → replace
         setFeatureList(jsonResponse.data.features);
       } else {
-        // next page → append
         setFeatureList(prev => [...prev, ...jsonResponse.data.features]);
       }
     } else {
+      setIsLoading(false);
       console.log('API Error:', jsonResponse.message);
     }
   } catch (err) {
+    setIsLoading(false);
     console.log('Error:', err);
   }
 };
@@ -215,19 +217,6 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
         })}
       </ScrollView>
             
-
-        
-        {/* <FlatList
-          data={filteredFeatures}
-          keyExtractor={(item) => item.id.toString()}
-          contentContainerStyle={styles.listContainer}
-          renderItem={renderItem}
-          ListEmptyComponent={
-            <Text style={{ color: '#fff', textAlign: 'center' }}>
-              No products found
-            </Text>
-          }
-        /> */}
        <FlatList
         data={featureList}
         renderItem={renderItem}
@@ -239,6 +228,18 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
           setPage(nextPage);
           displayListOfProduct(selectedCategory?.id ?? null, nextPage);
         }}
+        ListFooterComponent={
+          isLoadingMore ? (
+            <ActivityIndicator size="small" color="#fff" style={{ marginVertical: 10 }} />
+          ) : null
+        }
+        ListEmptyComponent={
+          !isLoading ? (
+            <Text style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
+              No products found
+            </Text>
+          ) : null
+        }
       />
         </View>
       </View>

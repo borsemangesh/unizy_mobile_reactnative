@@ -11,6 +11,7 @@ import {
   StyleSheet,
   StatusBar,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -49,10 +50,10 @@ type BookmarkProps = {
 const Bookmark = ({ navigation }: BookmarkProps)  => {
   const [search, setSearch] = useState<string>('');
     const [page, setPage] = useState(1);
-    const [isLoadingMore, setIsLoadingMore] = useState(false);
     const pagesize = 10;
     const [featurelist, setFeaturelist] = useState<Feature[]>([]);  
     const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     type Category = {
       id: number | null; 
@@ -88,6 +89,7 @@ useEffect(() => {
 
 const displayListOfProduct = async (categoryId: number | null, pageNum: number) => {
   try {
+   // setIsLoading(true);
     const pagesize = 10;
     
     let url = `${MAIN_URL.baseUrl}category/mybookmark-list?page=${pageNum}&pagesize=${pagesize}`;
@@ -109,17 +111,19 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
 
     const jsonResponse = await response.json();
     console.log('API Response:', jsonResponse);
-
     if (jsonResponse.statusCode === 200) {
+      setIsLoading(false);
       if (pageNum === 1) {
         setFeaturelist(jsonResponse.data.features);
       } else {
         setFeaturelist(prev => [...prev, ...jsonResponse.data.features]);
       }
     } else {
+      setIsLoading(false);
       console.log('API Error:', jsonResponse.message);
     }
   } catch (err) {
+    setIsLoading(true);
     console.log('Error:', err);
   }
 };
@@ -168,6 +172,7 @@ const formatDate = (dateString: string | null | undefined) => {
         inforTitlePrice={`£ ${displayPrice}`} 
         rating={displayRating}
         productImage={productImage}
+        bookmark={true}
       />
     </View>
   );
@@ -226,10 +231,15 @@ const formatDate = (dateString: string | null | undefined) => {
           columnWrapperStyle={styles.row1}
           contentContainerStyle={styles.listContainer}
           renderItem={renderItem}
+           ListFooterComponent={
+            isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
+          }
           ListEmptyComponent={
-            <Text style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
-              No products found
-            </Text>
+            !isLoading ? ( 
+              <Text style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
+                No products found
+              </Text>
+            ) : null
           }
         />
         </View>

@@ -7,6 +7,7 @@ type ProductCardProps = {
   inforTitlePrice: string;
   rating: string;
   productImage: ImageSourcePropType;
+  isBookmarked: boolean; 
   onBookmarkPress?: () => void; 
 };
 
@@ -18,7 +19,8 @@ export default function ProductCard({
   inforTitlePrice,
   rating,
   productImage,
-  onBookmarkPress 
+  onBookmarkPress ,
+  isBookmarked
 }: ProductCardProps) {
   return (
     <View style={styles.card}>
@@ -35,10 +37,14 @@ export default function ProductCard({
         
         <View style={styles.bookmark}>
           <TouchableOpacity onPress={onBookmarkPress}>
-          <Image
-            source={require("../../assets/images/favourite.png")}
-            style={styles.bookmarkIcon}
-          />
+           <Image
+              source={
+                isBookmarked
+                  ? require("../../assets/images/favourite_filled.png") // bookmarked
+                  : require("../../assets/images/favourite.png") // not bookmarked
+              }
+              style={styles.bookmarkIcon}
+            />
           </TouchableOpacity>
         </View>
         

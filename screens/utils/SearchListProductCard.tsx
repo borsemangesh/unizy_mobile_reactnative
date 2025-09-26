@@ -14,6 +14,7 @@ type NewProductCardProps = {
   inforTitlePrice: string;
   rating: string;
   productImage: ImageSourcePropType;
+  bookmark:boolean
 };
 
 export default function SearchListProductCard({
@@ -22,6 +23,7 @@ export default function SearchListProductCard({
   inforTitlePrice,
   rating,
   productImage,
+  bookmark
 }: NewProductCardProps) {
   return (
     <View style={styles.card}>
@@ -33,9 +35,13 @@ export default function SearchListProductCard({
 
         <View style={styles.bookmark1}>
           <Image
-            source={require('../../assets/images/favourite.png')}
-            style={{ width: 16, height: 16 }}
-          />
+              source={
+                bookmark
+                  ? require("../../assets/images/favourite_filled.png") // bookmarked
+                  : require("../../assets/images/favourite.png") // not bookmarked
+              }
+               style={{ width: 16, height: 16 }}
+            />
         </View>
       </View>
 
@@ -133,8 +139,8 @@ const styles = StyleSheet.create({
     top: Platform.OS === 'ios' ? 25 : 10,
     right: Platform.OS === 'ios' ? 25 : 10,
     // borderRadius: 10,
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(101, 101, 101, 0.72) 0%, rgba(117, 117, 117, 0.1) 100%)',
+     backgroundColor:
+       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(101, 101, 101, 0.72) 0%, rgba(117, 117, 117, 0.1) 100%)',
     width: 26,
     height: 26,
     display: 'flex',
