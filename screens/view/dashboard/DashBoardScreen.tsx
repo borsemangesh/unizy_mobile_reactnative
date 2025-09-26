@@ -448,6 +448,16 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
     { key: 'Profile', icon: profileIcon, activeIcon: profileIcon5 },
   ];
 
+   const clickbookmark = () =>{
+      navigation.navigate('Bookmark');
+     
+   }
+    const clicklisting = async () =>{
+      navigation.navigate('MyListing');
+      await AsyncStorage.setItem('ISLOGIN', 'false');
+      //navigation.navigate('SinglePage');
+   }
+
   return (
     <ImageBackground
       source={require('../../../assets/images/bgimage_1.png')}
@@ -467,18 +477,16 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                 { transform: [{ translateY: translateY }] },
               ]}
             >
+              <TouchableOpacity onPress={clicklisting}>
               <View style={styles.MylistingsBackground}>
                 <Image source={mylistings} style={styles.iconSmall} />
               </View>
+              </TouchableOpacity>
 
               <Text style={styles.unizyText}>UniZy</Text>
 
               <TouchableOpacity
-                onPress={async () => {
-                  await AsyncStorage.setItem('ISLOGIN', 'false');
-                  navigation.navigate('SinglePage');
-                }}
-              >
+                onPress={clickbookmark}>
                 <View style={styles.MylistingsBackground}>
                   <Image source={mylistings1} style={styles.iconSmall} />
                 </View>

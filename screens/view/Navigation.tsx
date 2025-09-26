@@ -22,6 +22,8 @@ import Temp from './authentication/Temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState, useEffect } from 'react';
 import SplashScreen from './Hello/SplashScreen';
+import Bookmark from './dashboard/Bookmark';
+import MyListing from './dashboard/MyListing';
 
 const Stack = createNativeStackNavigator();
 
@@ -102,6 +104,8 @@ useEffect(() => {
         <Stack.Screen name="OTPScreen" component={OTPScreen} options={{headerShown:false, presentation: 'fullScreenModal'}}/>
         <Stack.Screen name="VerifyScreen" component={VerifyScreen} options={{headerShown:false,presentation: 'fullScreenModal'}}/>
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{headerShown:false,presentation: 'fullScreenModal'}}/>
+        <Stack.Screen name='Bookmark' component={Bookmark} options={{headerShown:false,presentation: 'fullScreenModal'}}/>
+        <Stack.Screen name='MyListing' component={MyListing} options={{headerShown:false,presentation: 'fullScreenModal'}}/>
       </Stack.Navigator>
     </NavigationContainer>
     );
