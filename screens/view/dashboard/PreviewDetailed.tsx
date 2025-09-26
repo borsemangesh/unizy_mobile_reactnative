@@ -65,7 +65,6 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const [storedForm, setStoredForm] = useState<any | null>(null);
   const screenWidth = Dimensions.get('window').width;
   const [activeIndex, setActiveIndex] = useState(0);
-  const flatListRef = useRef(null);
   const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
   const insets = useSafeAreaInsets();
 
@@ -341,114 +340,50 @@ const handleListPress = async () => {
           </View>
         </View>
 
-        <ScrollView
-          // contentContainerStyle={styles.scrollContainer}
-         contentContainerStyle={[
-          styles.scrollContainer,
-          { paddingBottom: insets.bottom + 80 } // 80 = your bottom button height + margin
-        ]}
-          onScroll={Animated.event([
-            {
-              nativeEvent: { contentOffset: { y: scrollY1 } },
-            },
-          ])}
-          scrollEventThrottle={16}
-        >
-     
-        {storedForm?.[6]?.value?.length > 1 ? (
-        <View style={{ position: 'relative' }}>
-          <FlatList
-            ref={flatListRef}
-            data={storedForm[6].value}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            keyExtractor={(item, index) => index.toString()}
-            onScroll={onScroll}
-            scrollEventThrottle={16}
-            renderItem={({ item }) => (
-              <Image
-                source={{ uri: item.uri }}
-                style={{ width: screenWidth, height: 250 }}
-                resizeMode="cover"
-              />
-            )}
-          />
-
-          {/* Custom Step Indicator inside image */}
-          <View
-            style={[
-              styles.stepIndicatorContainer,
-              {
-                position: 'absolute',
-                bottom: 10, // distance from bottom of image
-                left: 0,
-                right: 0,
-                flexDirection: 'row',
-                justifyContent: 'center',
-              },
-            ]}
-          >
-            {storedForm[6].value.map((_: any, index: number) => {
-              const isActive = index === activeIndex;
-              return (
-                <View
-                  key={index}
-                  style={isActive ? styles.activeStepCircle : styles.inactiveStepCircle}
+       <ScrollView
+                 contentContainerStyle={styles.scrollContainer}
+                 onScroll={Animated.event([
+                   {
+                     nativeEvent: { contentOffset: { y: scrollY1 } },
+                   },
+                 ])}
+                 scrollEventThrottle={16}
+               >
+            <Image
+                 source={require('../../../assets/images/drone.png')}
+            style={{ width: '100%', height: '40%' }}
+            resizeMode="cover"
+            />
+        <View style={{ flex: 1, padding: 16 }}>
+          <View style={styles.card}>
+            <View style={{ gap: 8 }}>
+              <Text style={styles.QuaddText}>Quadcopter (Drone)</Text>
+              <Text style={styles.priceText}>$10.00</Text>
+            </View>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                gap: 2,
+                alignSelf: 'stretch',
+              }}
+            >
+              <Text style={styles.productDesHeding}>Product Description</Text>
+              <Text style={styles.productDesc}>
+                Your pocket-sized flying buddy! Perfect for capturing epic
+                campus shots, recording events, or just having fun with friends.
+                Easy to fly, stable in the air, and ready for adventure.
+              </Text>
+              <View style={styles.datePosted}>
+                <Image
+                  source={require('../../../assets/images/calendar_icon.png')}
+                  style={{ height: 16, width: 16 }}
                 />
-              );
-            })}
-          </View>
-        </View>
-      ) : (
-        <Image
-          source={
-            storedForm?.[6]?.value?.[0]?.uri
-              ? { uri: storedForm[6].value[0].uri }
-              : require('../../../assets/images/drone.png')
-          }
-          style={{ width: '100%', height: 250 }}
-          resizeMode="cover"
-        />
-      )}
-
-                  <View style={{ flex: 1, padding: 16 }}>
-            <View style={styles.card}>
-              <View style={{ gap: 8 }}>
-                <Text style={styles.QuaddText}>
-                  {titleValue}
-                </Text>
-
-                <Text style={styles.priceText}>
-                  {`£${priceValue}`}
-                </Text>
-              </View>
-              <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'flex-start',
-                  gap: 2,
-                  alignSelf: 'stretch',
-                }}
-              >
-                <Text style={styles.productDesHeding}>Product Description</Text>
-                <Text style={styles.productDesc}>
-                  {descriptionvalue}
-                </Text>
-
-                <View style={styles.datePosted}>
-                  <Image
-                    source={require('../../../assets/images/calendar_icon.png')}
-                    style={{ height: 16, width: 16 }}
-                  />
-                  {/* <Text style={styles.userSub}>Date Posted:10-01-2025</Text> */}
-                  <Text style={styles.userSub}>
-                  Date Posted: {formattedDate}
-                </Text>
-                </View>
+                <Text style={styles.userSub}>Date Posted:10-01-2025</Text>
               </View>
             </View>
+          </View>
 
             <View style={styles.card}>
               <View style={styles.gap12}>
@@ -504,10 +439,10 @@ const handleListPress = async () => {
               </View>
             </View>
 
-            {/* Selaer details */}
-            <View style={styles.card}>
-              <View style={{ gap: 12 }}>
-                <Text style={styles.productDeatilsHeading}>Seller Details</Text>
+          {/* Selaer details */}
+          <View style={styles.card}>
+            <View style={{ gap: 12 }}>
+              <Text style={styles.productDeatilsHeading}>Seller Details</Text>
 
                 {/* User Info */}
                 <View style={{ flexDirection: 'row' }}>
@@ -882,7 +817,7 @@ const styles = StyleSheet.create({
     bottom: 10,
   },
   scrollContainer: {
-    paddingBottom: 150,
+    paddingBottom: 280,
     paddingTop: 90,
     // paddingHorizontal: 20,
   },
@@ -1039,6 +974,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     gap: 12,
+    marginTop: 12
   },
   h24_w24: {
     width: 24,

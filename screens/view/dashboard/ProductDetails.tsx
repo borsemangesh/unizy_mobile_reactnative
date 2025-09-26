@@ -15,37 +15,36 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { showToast } from '../../utils/toast';
-import NewProductCard from '../../utils/NewProductCard';
 
 const bgImage = require('../../../assets/images/bganimationscreen.png');
 const searchIcon = require('../../../assets/images/searchicon.png');
 import { useRoute, RouteProp } from '@react-navigation/native';
 import SearchListProductCard from '../../utils/SearchListProductCard';
+import FilterBottomSheet from '../../utils/component/FilterBottomSheet';
+
 type Feature = {
-id: number,
-created_by: number,
-category_id: number,
-created_at: any,
-updated_at: string,
-isactive: boolean,
-isfeatured: boolean,
-title: string,
-price: number,
-thumbnail: string
+  id: number;
+  created_by: number;
+  category_id: number;
+  created_at: any;
+  updated_at: string;
+  isactive: boolean;
+  isfeatured: boolean;
+  title: string;
+  price: number;
+  thumbnail: string;
 };
 
 type ProductDetailsProps = {
   navigation: any;
 };
 
-
-// Define your stack param list (optional but helps with TypeScript)
 type RootStackParamList = {
-  ProductDetails: { category_id: number }; // name is passed in productId
+  ProductDetails: { category_id: number };
 };
 
 type ProductDetailsRouteProp = RouteProp<RootStackParamList, 'ProductDetails'>;
-const mylistings = require('../../../assets/images/mylistingicon.png');
+const mylistings = require('../../../assets/images/filter_icon.png');
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
   const [featurelist, setFeaturelist] = useState<Feature[]>([]);
@@ -56,6 +55,11 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
 const [page, setPage] = useState(1);
 const [isLoading, setIsLoading] = useState(false);
 const [hasMore, setHasMore] = useState(true); // whether more pages exist
+const [isFilterVisible, setFilterVisible] = useState(false);
+
+const clickfilter = () => {
+  setFilterVisible(true);
+};
 
   useEffect(() => {
     displayListOfProduct();
@@ -115,24 +119,24 @@ const [hasMore, setHasMore] = useState(true); // whether more pages exist
     item.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Render single item
-const renderItem = ({ item, index }: { item: Feature; index: number }) => {
-  const isLastOddItem =
-    filteredFeatures.length % 2 !== 0 &&
-    index === filteredFeatures.length - 1;
+  const renderItem = ({ item, index }: { item: Feature; index: number }) => {
+    const isLastOddItem =
+      filteredFeatures.length % 2 !== 0 &&
+      index === filteredFeatures.length - 1;
 
   return (
-    <TouchableOpacity
-      onPress={() =>
-        navigation.navigate('SearchDetails', { id: item.id }) // 👈 pass id here
-      }
-      style={{ flex: 1 }}
-    >
+   
     <View
       style={[
         styles.itemContainer,
         { flex: isLastOddItem ? 0.5: 0.5, marginRight: isLastOddItem ? 0.5 : 0.5 },
       ]}
+    >
+         <TouchableOpacity
+      onPress={() =>
+        navigation.navigate('SearchDetails', { id: item.id }) // 👈 pass id here
+      }
+      style={{ flex: 1 }}
     >
       <SearchListProductCard
         tag="University of Warwick"
@@ -142,8 +146,9 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
         productImage={require('../../../assets/images/drone.png')}
         bookmark={item.isfeatured}
       />
-    </View>
+      
     </TouchableOpacity>
+    </View>
   );
 };
 
@@ -167,15 +172,28 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
         </View>
 
         {/* Search Bar */}
-        <View style={styles.search_container}>
-          <Image source={searchIcon} style={styles.searchIcon} />
-          <TextInput
-            style={styles.searchBar}
-            placeholder="Search"
-            placeholderTextColor="#ccc"
-            onChangeText={setSearch}
-            value={search}
-          />
+        <View style={{ flexDirection: 'row', paddingHorizontal: 16 }}>
+          <View style={styles.search_container}>
+            <Image source={searchIcon} style={styles.searchIcon} />
+            <TextInput
+              style={styles.searchBar}
+              placeholder="Search"
+              placeholderTextColor="#ccc"
+              onChangeText={setSearch}
+              value={search}
+            />
+          </View>
+          <View>
+            <TouchableOpacity
+              onPress={() => {
+                clickfilter();
+              }}
+            >
+              <View style={styles.MylistingsBackground}>
+                <Image source={mylistings} style={styles.iconSmall} />
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
 
       <FlatList
@@ -199,6 +217,11 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
           }
           />
       </View>
+
+      <FilterBottomSheet
+        visible={isFilterVisible}
+        onClose={() => setFilterVisible(false)}
+      />
     </ImageBackground>
   );
 };
@@ -221,12 +244,12 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 40,
 
-     display: 'flex',
+    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-      boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
+    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
     height: 48,
@@ -242,18 +265,17 @@ const styles = StyleSheet.create({
   search_container: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: 16,
-    marginRight: 16,
     borderRadius: 40,
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    width: '84%',
+    marginEnd: 8,
   },
   searchIcon: { margin: 10, height: 24, width: 24 },
   searchBar: {
     fontSize: 17,
     color: '#fff',
-    width: '85%',
   },
   listContainer: {
     marginLeft: 10,
@@ -267,5 +289,45 @@ const styles = StyleSheet.create({
   itemContainer: {
     flex: 1,
     marginHorizontal: 4,
+  },
+  ylistingsBackground: {
+    height: 48,
+    width: 48,
+
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 100,
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(97, 179, 255, 0.2) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow:
+      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
+
+    borderTopColor: '#ffffff5d',
+    borderBottomColor: '#ffffff36',
+    borderLeftColor: '#ffffff5d',
+    borderRightColor: '#ffffff36',
+    borderWidth: 0.3,
+  },
+  MylistingsBackground: {
+    height: 48,
+    width: 48,
+
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 100,
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(97, 179, 255, 0.2) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow:
+      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
+
+    borderTopColor: '#ffffff5d',
+    borderBottomColor: '#ffffff36',
+    borderLeftColor: '#ffffff5d',
+    borderRightColor: '#ffffff36',
+    borderWidth: 0.3,
+  },
+  iconSmall: {
+    width: 24,
+    height: 24,
   },
 });

@@ -657,33 +657,19 @@ const styles = StyleSheet.create({
   bottomTabContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 57,
+    height: '7%',
     marginBottom: 20,
     borderRadius: 50,
-    // backgroundColor: 'rgba(255, 255, 255, 0.04)',
-    alignSelf: 'center', // center horizontally
-    position: 'relative', // important for absolute bubble
+    alignSelf: 'center',
+    position: 'relative', 
     paddingHorizontal: 4,
-
     borderWidth: 0.4,
-
-    //        borderBlockStartColor: '#ffffff2e',
-    // borderBlockColor: '#ffffff2e',
-
-    // borderTopColor: '#ffffff2e',
-    // borderBottomColor: '#ffffff2e',
-    // borderLeftColor: '#ffffff2e',
-    // borderRightColor: '#ffffff2e',
-
-
     padding: 12,
     margin: 4,
     borderColor: '#ffffff11',
-
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
     borderEndEndRadius: 50,
     borderStartEndRadius: 50,
     borderTopLeftRadius: 50,
@@ -691,7 +677,6 @@ const styles = StyleSheet.create({
     borderBottomStartRadius: 50,
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
-
     borderTopColor: '#ffffff2e',
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
@@ -720,7 +705,8 @@ const styles = StyleSheet.create({
     //tintColor: '#ccc',
   },
   bubble: {
-    height: 48,
+    // height: 48,
+    height: '88%',
     backgroundColor: 'rgba(255, 255, 255, 0.16)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18)',
 
@@ -728,7 +714,7 @@ const styles = StyleSheet.create({
 
     justifyContent: 'center',
     alignItems: 'center',
-
+    top: 3,
     left: 3,
     right: 3,
     borderWidth: 0.5,
