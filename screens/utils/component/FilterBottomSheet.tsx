@@ -7,14 +7,11 @@ import {
   Text,
 } from 'react-native';
 import React, { useState } from 'react';
+import { BlurView } from '@react-native-community/blur';
 interface FilterBottomSheetProps {
   visible: boolean;
   onClose: () => void;
 }
-
-const sort = require('../../../assets/images/sort_vertical_02.png');
-const price = require('../../../assets/images/currency_coin_pound.png');
-const featureListing = require('../../../assets/images/diamond.png');
 
 const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
   const tabs = [
@@ -47,7 +44,7 @@ const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
   const renderSortOptions = () => {
     if (selectedTab === 'Sort by') {
       return (
-        <View style={{ width: '100%', height: '100%', gap: 10 }}>
+        <View style={{ width: '100%', height: '100%', gap: 10, }}>
           <View style={{ gap: 10 }}>
             {sortOptions.map(option => (
               <>
@@ -114,20 +111,24 @@ const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
+        
         <View
           style={{
             height: '84%',
             marginTop: 'auto',
-            backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(0, 0, 0, 0.74) 0%, rgba(255, 255, 255, 0.10) 100%)',
+            backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(0, 0, 0, 0.59) 0%, rgba(255, 255, 255, 0.10) 100%)',
             width: '100%',
             borderTopLeftRadius: 50,
             borderTopRightRadius: 50,
             alignItems: 'center',
             filter: 'drop-shadow(0 0.833px 3.333px rgba(0, 0, 0, 0.02))',
-//             fill: radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%);
-// filter: drop-shadow(0 0.833px 3.333px rgba(0, 0, 0, 0.25));
           }}
         >
+            <BlurView
+                style={StyleSheet.absoluteFill} // fill the entire screen
+                blurAmount={40}
+                reducedTransparencyFallbackColor="white"
+                />
           <View>
             <View
               style={{
@@ -135,16 +136,16 @@ const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
                 height: 1,
                 backgroundColor: '#fff',
                 paddingTop: 1,
-                marginTop: 10,
+                // marginTop: 10,
               }}
             ></View>
             <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
-                padding: 25,
                 width: '100%',
-                backgroundColor: '#5d5c5cff',
+                padding: 26,
+                backgroundColor: '#5d5c5c14',
               }}
             >
               <Text style={styles.modelTextHeader}>Filters</Text>
@@ -153,12 +154,13 @@ const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
                   console.log('Clear All Clicked');
                 }}
               >
-                <Text style={styles.modelTextHeader}>Clear all</Text>
+                <Text style={styles.clearAll}>Clear all</Text>
               </TouchableOpacity>
             </View>
           </View>
 
-          <View style={{ width: '100%', height: '80%' }}>
+          <View style={{ width: '100%', height: '80%',
+                backgroundColor: '#5d5c5c14', }}>
             <View
               style={{
                 height: '100%',
@@ -190,9 +192,9 @@ const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
                 ))}
               </View>
               <View
-                style={{ width: '60%', height: '100%', gap: 10, padding: 16 }}
+                style={{ width: '60%', height: '100%', gap: 10, padding: 16 ,backgroundColor: '#5d5c5c3c'}}
               >
-                <Text style={styles.filtertitle}>{title}</Text>
+                <Text style={styles.filterHeadTitle}>{title}</Text>
                 {renderSortOptions()}
               </View>
             </View>
@@ -206,14 +208,15 @@ const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
               display: 'flex',
               flexDirection: 'row',
               justifyContent: 'space-between',
+              backgroundColor: '#5d5c5c14',
             }}
           >
             <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
               <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
-              <Text style={styles.cancelText}>Apply</Text>
+            <TouchableOpacity style={[styles.cancelBtn,{backgroundColor: '#ffffff4e',}]} onPress={onClose}>
+              <Text style={[styles.cancelText]}>Apply</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -253,10 +256,12 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 8,
     padding: 12,
-    borderRadius: 10,
-    backgroundColor: 'gray',
+    borderRadius: 50,
+    // backgroundColor: 'gray',
+    backgroundColor: '#ffffff1b',
     alignItems: 'center',
     justifyContent: 'center',
+    boxShadow: '0 2px 8px 0 rgba(75, 75, 75, 0.19)'
   },
   overlay: {
     backgroundColor: 'rgba(0,0,0,0.2)',
@@ -265,6 +270,15 @@ const styles = StyleSheet.create({
   },
   filtertitle: {
     color: 'rgba(255, 255, 255, 0.64)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 14,
+    fontWeight: '600',
+    fontStyle: 'normal',
+    letterSpacing: -0.32,
+    lineHeight: 19.6,
+  },
+  filterHeadTitle: {
+      color: 'rgba(255, 255, 255, 0.64)',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 16,
     fontWeight: '600',
@@ -291,11 +305,20 @@ const styles = StyleSheet.create({
     width: '40%',
     height: '120%',
     padding: 16,
-    backgroundColor: '#5d5c5cc6',
+    backgroundColor: '#5d5c5c0b',
   },
   modelTextHeader: {
     color: 'rgba(255, 255, 255, 0.88)',
-    fontFamily: 'Urbanist',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 18,
+    fontWeight: '600',
+    fontStyle: 'normal',
+    letterSpacing: -0.34,
+    lineHeight: 19.6,
+  },
+  clearAll:{
+    color: 'rgba(255, 255, 255, 0.54)',
+    fontFamily: 'Urbanist-regular',
     fontSize: 17,
     fontWeight: '600',
     fontStyle: 'normal',
@@ -337,15 +360,18 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(151, 151, 151, 0.85) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    borderRadius: 14,
-    boxShadow:
-      '0 2px 8px 0 rgba(0, 0, 0, 0.25)inset 0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(151, 151, 151, 0.4) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    borderRadius: 12,
+    borderWidth: 0.5,
+    borderColor: '#ffffff0e',
+    // boxShadow:
+    //   '0 0px 2px 1px rgba(255, 255, 255, 0.16)inset',
     justifyContent: 'center',
     padding: 16,
     gap: 4,
     marginBottom: 5,
+    boxShadow: 'rgba(255, 255, 255, 0.16) inset -1px 0px 4px 2px',
+    
   },
 
   filterTypeTab: {
