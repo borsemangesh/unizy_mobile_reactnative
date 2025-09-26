@@ -107,6 +107,7 @@ useEffect(() => {
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{headerShown:false,presentation: 'fullScreenModal'}}/>
         <Stack.Screen name='Bookmark' component={Bookmark} options={{headerShown:false,presentation: 'fullScreenModal'}}/>
         <Stack.Screen name='SearchDetails' component={SearchDetails} options={{headerShown:false,presentation: 'fullScreenModal'}}/>
+        <Stack.Screen name='MyListing' component={MyListing} options={{headerShown:false,presentation: 'fullScreenModal'}}/>
 
       </Stack.Navigator>
     </NavigationContainer>

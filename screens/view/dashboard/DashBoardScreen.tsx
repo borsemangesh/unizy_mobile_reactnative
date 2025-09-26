@@ -451,9 +451,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
       case 'Home':
         return (
           <>
-            {/* <TouchableOpacity onPress={() => navigation.navigate('ProductDetails')} > */}
             <View style={styles.productsWrapper}>{renderProducts()}</View>
-            {/* </TouchableOpacity> */}
             <Animated.View
               style={{
                 transform: [{ translateY: cardSlideupAnimation }],
@@ -540,7 +538,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                 { transform: [{ translateY: translateY }] },
               ]}
             >
-              <TouchableOpacity onPress={clicklisting}>
+              <TouchableOpacity onPress={()=>{clicklisting()}}>
               <View style={styles.MylistingsBackground}>
                 <Image source={mylistings} style={styles.iconSmall} />
               </View>
@@ -657,7 +655,7 @@ const styles = StyleSheet.create({
   bottomTabContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: '7%',
+    height: '6%',
     marginBottom: 20,
     borderRadius: 50,
     alignSelf: 'center',
