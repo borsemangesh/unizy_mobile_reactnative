@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, ImageSourcePropType, Platform, Dimensions } from "react-native";
+import { View, Text, Image, StyleSheet, ImageSourcePropType, Platform, Dimensions, Touchable, TouchableOpacity } from "react-native";
 
 type ProductCardProps = {
   tag: string;
@@ -7,6 +7,7 @@ type ProductCardProps = {
   inforTitlePrice: string;
   rating: string;
   productImage: ImageSourcePropType;
+  onBookmarkPress?: () => void; 
 };
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
@@ -17,6 +18,7 @@ export default function ProductCard({
   inforTitlePrice,
   rating,
   productImage,
+  onBookmarkPress 
 }: ProductCardProps) {
   return (
     <View style={styles.card}>
@@ -30,12 +32,16 @@ export default function ProductCard({
         </View>
 
         {/* Bookmark */}
+        
         <View style={styles.bookmark}>
+          <TouchableOpacity onPress={onBookmarkPress}>
           <Image
             source={require("../../assets/images/favourite.png")}
             style={styles.bookmarkIcon}
           />
+          </TouchableOpacity>
         </View>
+        
       </View>
 
       {/* Info */}

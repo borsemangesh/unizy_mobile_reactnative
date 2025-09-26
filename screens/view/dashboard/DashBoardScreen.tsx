@@ -20,6 +20,7 @@ import ProductCard from '../../utils/ProductCard';
 import AnimatedSlideUp from '../../utils/AnimatedSlideUp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Navigation } from '../Navigation';
+import { MAIN_URL } from '../../utils/APIConstant';
 
 const mylistings = require('../../../assets/images/mylistingicon.png');
 const mylistings1 = require('../../../assets/images/favourite.png');
@@ -179,41 +180,66 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   const [loading, setLoading] = useState(true);
   const [features, setFeatures] = useState<any[]>([]);
 
+  
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await fetch('http://65.0.99.229:4320/user/category');
-        const json = await res.json();
-        // Filter only active categories and map to your local icon structure
-        const mapped = json.data
-          .filter((cat: any) => cat.isactive) // only active
-          .map((cat: any) => ({
-            id: cat.id,
-            name: cat.name,
-            description: cat.description,
-            icon:
-              iconMap[cat.name] ||
-              require('../../../assets/images/producticon.png'), // fallback icon
-          }))
-          .slice(0, 5);
-        setProducts(mapped);
-      } catch (err) {
-        console.error('Error fetching categories', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCategories();
-  }, []);
+  const fetchCategories = async () => {
+    try {
+    
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) return;
+
+    const url2 = MAIN_URL.baseUrl+'user/category'
+
+    const response = await fetch(url2, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    const json = await response.json();
+
+      const mapped = json.data
+        .filter((cat: any) => cat.isactive)
+        .map((cat: any) => ({
+          id: cat.id,
+          name: cat.name,
+          description: cat.description,
+          icon:
+            iconMap[cat.name] ||
+            require('../../../assets/images/producticon.png'), 
+        }))
+        .slice(0, 5);
+
+      const idNameArray = mapped.map((item: any) => ({
+        id: item.id,
+        name: item.name,
+      }));
+
+      await AsyncStorage.setItem(
+        'categories', // key
+        JSON.stringify(idNameArray) 
+      );
+
+      setProducts(mapped);
+    } catch (err) {
+      console.error('Error fetching categories', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchCategories();
+}, []);
 
   useEffect(() => {
     const fetchFeatures = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
         if (!token) return;
+        const url1=MAIN_URL.baseUrl+'category/feature-list'
 
-        const res = await fetch(
-          'http://65.0.99.229:4320/category/feature-list',
+        const res = await fetch(url1,
           {
             headers: { Authorization: `Bearer ${token}` },
           },
@@ -383,7 +409,35 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
     }
     return rows;
   };
-  
+
+ const handleBookmarkPress = async (productId: number) => {
+  try {
+    const token = await AsyncStorage.getItem('userToken');
+        if (!token) return;
+
+    const url=MAIN_URL.baseUrl+'category/list-bookmark'
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`, 
+      },
+      body: JSON.stringify({
+        feature_id: productId, 
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Bookmark response:', data);
+  } catch (error) {
+    console.error('Bookmark error:', error);
+  }
+};
+
 
   const renderActiveTabContent = () => {
     switch (activeTab) {
@@ -421,6 +475,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                     inforTitlePrice={`$${item.price}`}
                     rating="4.5"
                     productImage={{ uri: item.thumbnail }}
+                    onBookmarkPress={() => handleBookmarkPress(item.id)}
                   />
                 </Animated.View>
               ))}

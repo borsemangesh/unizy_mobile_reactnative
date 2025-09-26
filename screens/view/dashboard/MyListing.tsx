@@ -11,6 +11,7 @@ import {
   StyleSheet,
   StatusBar,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -20,6 +21,7 @@ const bgImage = require('../../../assets/images/bganimationscreen.png');
 import { useRoute, RouteProp } from '@react-navigation/native';
 import SearchListProductCard from '../../utils/SearchListProductCard';
 import MyListingCard from '../../utils/MyListingCard';
+
 type Feature = {
 id: number,
 created_by: number,
@@ -38,66 +40,118 @@ type MyListingProps = {
 };
 
 
-
-
 const MyListing = ({ navigation }: MyListingProps)  => {
   const [featurelist, setFeaturelist] = useState<Feature[]>([]);
   const [search, setSearch] = useState<string>('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const categories = ['All', 'Product', 'Tuition', 'Accommodation','Food'];
+  const [page, setPage] = useState(1);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const pagesize = 10;
+  const [featureList, setFeatureList] = useState<any[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
 
+  type Category = {
+  id: number | null; 
+  name: string;
+};
 
-  //const { category_id } = route.params;
+const [categories, setCategories] = useState<Category[]>([
+  { id: null, name: 'All' }
+]);
+const [selectedCategory, setSelectedCategory] = useState<Category>({ id: null, name: 'All' });
 
-  useEffect(() => {
-    displayListOfProduct();
-  }, []);
-
-  const displayListOfProduct = async () => {
-    try {
-      const body = {
-        search: search,
-        page: 1,
-        pagesize: 20,
-        category_id:1
-      };
-
-      const url = MAIN_URL.baseUrl + 'category/feature-list/search';
-      const token = await AsyncStorage.getItem('userToken');
-      if (!token) return;
-
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      });
-
-      const jsonResponse = await response.json();
-      console.log('API Response:', jsonResponse);
-
-      if (jsonResponse.statusCode === 200) {
-        showToast(jsonResponse.message);
-        setFeaturelist(jsonResponse.data.features);
-      }
-    } catch (err) {
-      console.log('Error:', err);
+useEffect(() => {
+  const loadCategories = async () => {
+    const stored = await AsyncStorage.getItem('categories');
+    if (stored) {
+      const parsed = JSON.parse(stored); 
+      const catObjects = [
+        { id: null, name: 'All' }, 
+        ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
+      ];
+      setCategories(catObjects);
+      setSelectedCategory(catObjects[0]); 
     }
   };
+  loadCategories();
+}, []);
 
-  const filteredFeatures: Feature[] = featurelist
+useEffect(() => {
+  setPage(1);
+  displayListOfProduct(selectedCategory?.id ?? null, 1);
+}, [selectedCategory]);
+
+
+const displayListOfProduct = async (categoryId: number | null, pageNum: number) => {
+  try {
+    const pagesize = 10;
+    let url = `${MAIN_URL.baseUrl}category/mylisting?page=${pageNum}&pagesize=${pagesize}`;
+    if (categoryId) {
+      url += `&category_id=${categoryId}`;
+    }
+
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) return;
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const jsonResponse = await response.json();
+    console.log('API Response:', jsonResponse);
+
+    if (jsonResponse.statusCode === 200) {
+      if (pageNum === 1) {
+        // first page → replace
+        setFeatureList(jsonResponse.data.features);
+      } else {
+        // next page → append
+        setFeatureList(prev => [...prev, ...jsonResponse.data.features]);
+      }
+    } else {
+      console.log('API Error:', jsonResponse.message);
+    }
+  } catch (err) {
+    console.log('Error:', err);
+  }
+};
+
+const filteredFeatures: Feature[] = featurelist
   .filter((item) =>
     (item.title ?? '').toLowerCase().includes(search.toLowerCase())
   )
-  .slice(0, 5); 
 
+const formatDate = (dateString: string | null | undefined) => {
+  if (!dateString || dateString.trim() === '') return '01-01-2025';
+
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return '01-01-2025';
+
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+};
 
 const renderItem = ({ item, index }: { item: Feature; index: number }) => {
   const isLastOddItem =
     filteredFeatures.length % 2 !== 0 &&
     index === filteredFeatures.length - 1;
+      const displayDate = formatDate(item.created_at);
+
+
+    const displayTitle =
+    item.title && item.title.trim() !== '' ? item.title : 'Title';
+    
+    const displayPrice = item.price != null ? item.price : 0;
+
+
+    const productImage = item.thumbnail
+  ? { uri: item.thumbnail }
+  : require('../../../assets/images/drone.png');
 
   return (
     <View
@@ -107,10 +161,12 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
     >
       <MyListingCard
         tag="University of Warwick"
-        infoTitle={item.title}
-        inforTitlePrice={`$ ${item.price}`}
-        rating={item.isfeatured ? '4.5' : '4.5'}
-        productImage={require('../../../assets/images/drone.png')}
+        infoTitle={displayTitle}
+        inforTitlePrice={`£ ${displayPrice}`} 
+        rating={displayDate} 
+        productImage={productImage}
+        topRightText={item.isactive ? 'Active' : 'Inactive'}
+        isfeature={item.isfeatured}
       />
     </View>
   );
@@ -137,33 +193,31 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
 
     <View>
      <ScrollView
-                 horizontal
-                 showsHorizontalScrollIndicator={false}
-                 style={{ marginVertical: 10 }}
-                 contentContainerStyle={{ paddingHorizontal: 10 }}
-                 >
-               
-             {categories.map((cat, index) => {
-                 const isSelected = selectedCategory === cat;
-                 return (
-                    <View style={{paddingVertical:2}}>
-                 <TouchableOpacity
-                     key={index}
-                     onPress={() => setSelectedCategory(cat)}
-                     style={isSelected ? styles.tabcard : styles.tabcard1}
-                 >
-                     <Text  style={isSelected ? styles.tabtext : styles.othertext}>
-                     {cat}
-                     </Text>
-                 </TouchableOpacity>
-                 </View>
-                 );
-             })}
-        </ScrollView>
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={{ marginVertical: 10 }}
+        contentContainerStyle={{ paddingHorizontal: 10 }}
+      >
+        {categories.map((cat, index) => {
+          const isSelected = selectedCategory.name === cat.name;
+          return (
+            <View style={{ paddingVertical: 2 }} key={index}>
+              <TouchableOpacity
+                onPress={() => setSelectedCategory(cat)}
+                style={isSelected ? styles.tabcard : styles.tabcard1}
+              >
+                <Text style={isSelected ? styles.tabtext : styles.othertext}>
+                  {cat.name}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          );
+        })}
+      </ScrollView>
             
 
-        {/* FlatList */}
-        <FlatList
+        
+        {/* <FlatList
           data={filteredFeatures}
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={styles.listContainer}
@@ -173,7 +227,19 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
               No products found
             </Text>
           }
-        />
+        /> */}
+       <FlatList
+        data={featureList}
+        renderItem={renderItem}
+        contentContainerStyle={styles.listContainer}
+        keyExtractor={(item, index) => index.toString()}
+        onEndReachedThreshold={0.5}
+        onEndReached={() => {
+          const nextPage = page + 1;
+          setPage(nextPage);
+          displayListOfProduct(selectedCategory?.id ?? null, nextPage);
+        }}
+      />
         </View>
       </View>
     </ImageBackground>
@@ -288,6 +354,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '600',
      fontFamily: 'Urbanist-SemiBold',
+     marginRight:12,
   },
   search_container: {
     flexDirection: 'row',
@@ -299,7 +366,11 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
   },
-  searchIcon: { margin: 10, height: 24, width: 24 },
+  searchIcon: { 
+    margin: 10, 
+    height: 24, 
+    width: 24 
+  },
   searchBar: {
     fontSize: 17,
     color: '#fff',
@@ -307,8 +378,9 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     marginLeft: 10,
-    marginRight: 20,
+    marginRight: 10,
     paddingTop: 10,
+    paddingBottom:40,
   },
   row1: {
     // flexDirection: 'row',
