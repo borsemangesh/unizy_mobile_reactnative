@@ -11,8 +11,11 @@ import {
   Modal,
   Dimensions,
 } from 'react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
+import { useRoute } from '@react-navigation/native';
+import { MAIN_URL } from '../../utils/APIConstant';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type SearchDetailsProps = {
   navigation: any;
@@ -25,11 +28,51 @@ const profileImg = require('../../../assets/images/user.jpg');
 
 
 const SearchDetails = ({ navigation }: SearchDetailsProps) => {
-     const [showPopup, setShowPopup] = useState(false);
-       const closePopup = () => setShowPopup(false);
-         const [scrollY, setScrollY] = useState(0);
-         const scrollY1 = new Animated.Value(0);
-  return (
+    const [showPopup, setShowPopup] = useState(false);
+    const closePopup = () => setShowPopup(false);
+    const [scrollY, setScrollY] = useState(0);
+    const scrollY1 = new Animated.Value(0);
+    const route = useRoute();
+    const { id } = route.params as { id: number };
+    const [detail, setDetail] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+    
+  useEffect(() => {
+    const fetchDetails = async () => {
+      try {
+
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) return;
+        const url1 = `${MAIN_URL.baseUrl}category/feature-detail/${id}`;
+       // const url1 = `http://65.0.99.229:4320/category/feature-detail/1`;
+
+        const res = await fetch(url1,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+        const json = await res.json();
+        setDetail(json.data); 
+      } catch (error) {
+        console.error('Error fetching details:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDetails();
+  }, [id]);
+ 
+  const formatDate = (dateString:string) => {
+  if (!dateString) return '01-01-2025'; // fallback if null
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+};
+    return (
     <ImageBackground
       source={require('../../../assets/images/bganimationscreen.png')}
       style={{ width: '100%', height: '100%' }}
@@ -52,7 +95,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       />
                     </View>
                   </TouchableOpacity>
-                  <Text style={styles.unizyText}>List Product</Text>
+                  <Text style={styles.unizyText}>Listing Details</Text>
                   <View style={{ width: 30 }} />
                 </View>
               </View>
@@ -68,15 +111,19 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                  scrollEventThrottle={16}
                >
             <Image
-                 source={require('../../../assets/images/drone.png')}
+            source={require('../../../assets/images/drone.png')}
             style={{ width: '100%', height: '40%' }}
             resizeMode="cover"
             />
         <View style={{ flex: 1, padding: 16 }}>
           <View style={styles.card}>
             <View style={{ gap: 8 }}>
-              <Text style={styles.QuaddText}>Quadcopter (Drone)</Text>
-              <Text style={styles.priceText}>$10.00</Text>
+              {detail && (
+                <>
+                    <Text style={styles.QuaddText}>{detail.title}</Text>
+                    <Text style={styles.priceText}>${Number(detail.price).toFixed(2)}</Text>
+                </>
+                )}
             </View>
             <View
               style={{
@@ -88,17 +135,15 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
               }}
             >
               <Text style={styles.productDesHeding}>Product Description</Text>
-              <Text style={styles.productDesc}>
-                Your pocket-sized flying buddy! Perfect for capturing epic
-                campus shots, recording events, or just having fun with friends.
-                Easy to fly, stable in the air, and ready for adventure.
-              </Text>
+               <Text style={styles.productDesc}>
+                {detail?.category?.description || 'No description available'}
+                </Text>
               <View style={styles.datePosted}>
                 <Image
                   source={require('../../../assets/images/calendar_icon.png')}
                   style={{ height: 16, width: 16 }}
                 />
-                <Text style={styles.userSub}>Date Posted:10-01-2025</Text>
+                <Text style={styles.userSub}>Date Posted: {formatDate(detail?.category?.created_at)}</Text>
               </View>
             </View>
           </View>
@@ -133,15 +178,25 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
               {/* User Info */}
               <View style={{ flexDirection: 'row' }}>
-                <Image source={profileImg} style={styles.avatar} />
+               <Image 
+                source={detail?.createdby?.profile 
+                        ? { uri: detail.createdby.profile } 
+                        : require('../../../assets/images/user.jpg')} 
+                style={styles.avatar} />
 
                 <View style={{ width: '80%', gap: 4 }}>
-                  <Text style={styles.userName}>Alan Walker</Text>
+                 <Text style={styles.userName}>
+                    {detail?.createdby
+                        ? `${detail.createdby.firstname || 'First'} ${detail.createdby.lastname || 'Last'}`
+                        : 'Unknown User'}
+                    </Text>
                 
                     <Text style={styles.univeritytext}>
-                      University of Warwick,
+                    {detail?.createdby?.university_name || 'University of Warwick'}, 
                     </Text>
-                    <Text style={[styles.univeritytext,{marginTop: -5}]}>Coventry</Text>
+                    <Text style={[styles.univeritytext, { marginTop: -5 }]}>
+                    {detail?.category?.name || 'Coventry'}
+                    </Text>
                 </View>
               </View>
 
@@ -227,7 +282,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
           setShowPopup(true);
         }}
       >
-        <Text style={styles.previewText}>List</Text>
+        <Text style={styles.previewText}>Deactivate Listing</Text>
       </TouchableOpacity>
       {/* </ScrollView> */}
 
@@ -307,9 +362,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
-    marginTop: 25,
+    paddingTop: 20,
   },
-      backBtn: {
+    backBtn: {
     width: 30,
     justifyContent: 'center',
     alignItems: 'center',
