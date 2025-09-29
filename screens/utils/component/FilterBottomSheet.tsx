@@ -9,6 +9,7 @@ import {
 import React, { useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import { CONSTDEFAULT } from '../CONSTDEFAULT';
+
 interface FilterBottomSheetProps {
   visible: boolean;
   onClose: () => void;
@@ -17,24 +18,24 @@ interface FilterBottomSheetProps {
 const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
   const tabs = [
     {
-      title: CONSTDEFAULT.SORT_BY,
-      image: CONSTDEFAULT.SORTVERTICAL_ICON,
+      title: 'Sort By',
+      image: require('../../../assets/images/sort_vertical_02.png'),
     },
     {
-      title: CONSTDEFAULT.PRICE,
-      image: CONSTDEFAULT.CURRENCY_COIN_POUND_ICON,
+      title: 'Price',
+      image: require('../../../assets/images/currency_coin_pound.png'),
     },
     {
-      title: CONSTDEFAULT.FEATURED_LISTING,
-      image: CONSTDEFAULT.DIMAOND_ICON,
+      title: 'Featured Listing',
+      image: require('../../../assets/images/diamond.png'),
     },
   ];
 
   const [selected, setSelected] = useState<string | null>(null);
-  const [selectedTab, setSelectedTab] = useState(CONSTDEFAULT.SORT_BY);
+  const [selectedTab, setSelectedTab] = useState('Sort By');
   const [selectedSort, setSelectedSort] = useState('Relevance');
-  const [activeTab, setActiveTab] = useState(CONSTDEFAULT.SORT_BY);
-  const [title, setTitle] = useState(CONSTDEFAULT.SORT_BY);
+  const [activeTab, setActiveTab] = useState('Sort By');
+  const [title, setTitle] = useState('Sort By');
 
   const handleTabPress = (tabTitle: string) => {
     setSelectedTab(tabTitle);
@@ -43,7 +44,7 @@ const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
   };
 
   const renderSortOptions = () => {
-    if (selectedTab === CONSTDEFAULT.SORT_BY) {
+    if (selectedTab === 'Sort By') {
       return (
         <View style={{ width: '100%', height: '100%', gap: 10 }}>
           <View style={{ gap: 10 }}>
@@ -80,14 +81,14 @@ const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
           </View>
         </View>
       );
-    } else if (selectedTab === CONSTDEFAULT.PRICE) {
+    } else if (selectedTab === 'Price') {
       return (
         <View style={{ width: '60%', height: '100%', gap: 10 }}>
           <Text style={styles.filtertitle}>Price</Text>
           {/* Render price-related options */}
         </View>
       );
-    } else if (selectedTab === CONSTDEFAULT.FEATURED_LISTING) {
+    } else if (selectedTab === 'Featured Listing') {
       return (
         <View style={{ width: '60%', height: '100%', gap: 10 }}>
           <Text style={styles.filtertitle}>Featured Listing</Text>
@@ -116,6 +117,7 @@ const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
           style={{
             height: '84%',
             marginTop: 'auto',
+            
             backgroundColor:
               'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(0, 0, 0, 0.59) 0%, rgba(255, 255, 255, 0.10) 100%)',
             width: '100%',
@@ -126,20 +128,13 @@ const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
           }}
         >
           <BlurView
-            style={StyleSheet.absoluteFill} // fill the entire screen
-            blurAmount={40}
+             style={[StyleSheet.absoluteFill, { borderTopLeftRadius: 50,
+              borderTopRightRadius: 50, }]}
+             blurAmount={40}
             reducedTransparencyFallbackColor="white"
           />
           <View>
-            <View
-              style={{
-                width: '10%',
-                height: 1,
-                backgroundColor: '#fff',
-                paddingTop: 1,
-                // marginTop: 10,
-              }}
-            ></View>
+            
             <View
               style={{
                 flexDirection: 'row',
@@ -147,6 +142,8 @@ const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
                 width: '100%',
                 padding: 26,
                 backgroundColor: '#5d5c5c14',
+                borderTopLeftRadius: 50,
+            borderTopRightRadius: 50,
               }}
             >
               <Text style={styles.modelTextHeader}>Filters</Text>
@@ -290,6 +287,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     fontStyle: 'normal',
+    width:'100%'
   },
   filterHeadTitle: {
     color: 'rgba(255, 255, 255, 0.64)',
@@ -324,7 +322,7 @@ const styles = StyleSheet.create({
 
   modelLeftSideContainer: {
     width: '40%',
-    height: '120%',
+    height: '100%',
     padding: 16,
     backgroundColor: '#5d5c5c0b',
   },
@@ -411,6 +409,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 4,
     marginBottom: 5,
+    textAlign: 'center',
   },
 });
 

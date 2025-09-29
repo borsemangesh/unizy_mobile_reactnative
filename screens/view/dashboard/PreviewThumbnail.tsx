@@ -477,7 +477,7 @@ const imageArray = storedForm?.[6]?.value || [];
     >
       <View
         style={{
-          paddingTop: Platform.OS === 'ios' ? 80 : 30,
+          paddingTop: Platform.OS === 'ios' ? 70 : 30,
           paddingLeft: 16,
           paddingRight: 16,
         }}

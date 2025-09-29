@@ -184,7 +184,14 @@ const formatDate = (dateString: string | null | undefined) => {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerRow}>
-            <TouchableOpacity onPress={() => navigation.replace('Dashboard')}>
+            <TouchableOpacity onPress={() => {
+              navigation.replace('Dashboard')}
+              // navigation.reset({
+              //   index: 0,
+              //   routes: [{ name: 'Dashboard'}],
+              // }); 
+            // } 
+            }>
               <View style={styles.backIconRow}>
                 <Image
                   source={require('../../../assets/images/back.png')}

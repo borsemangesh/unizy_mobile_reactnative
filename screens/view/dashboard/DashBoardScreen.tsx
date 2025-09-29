@@ -77,6 +77,10 @@ const ProductItem: React.FC<ProductItemProps> = ({
     key={item.id}
     onPress={() => {
       navigation.navigate('ProductDetails', { category_id: item.id });
+      // navigation.reset({
+      //   index: 0,
+      //   routes: [{ name: 'ProductDetails', },{ category_id: item.id }],
+      // });
     }}
   >
     <View
@@ -125,6 +129,10 @@ const AddScreenContent: React.FC<
                 );
                 console.log('✅ Product info saved to AsyncStorage');
                 navigation.navigate('AddScreen');
+                // navigation.reset({
+                //   index: 0,
+                //   routes: [{ name: 'AddScreen', }],
+                // });
               } catch (error) {
                 console.log('❌ Error saving product info:', error);
               }
@@ -511,10 +519,18 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
 
    const clickbookmark = () =>{
       navigation.navigate('Bookmark');
+      // navigation.reset({
+      //   index: 0,
+      //   routes: [{ name: 'Bookmark', }],
+      // });
      
    }
     const clicklisting = async () =>{
       navigation.navigate('MyListing');
+      // navigation.reset({
+      //   index: 0,
+      //   routes: [{ name: 'MyListing'}],
+      // });
       await AsyncStorage.setItem('ISLOGIN', 'false');
       //navigation.navigate('SinglePage');
    }
