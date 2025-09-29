@@ -9,6 +9,7 @@ type ProductCardProps = {
   productImage: ImageSourcePropType;
   isBookmarked: boolean; 
   onBookmarkPress?: () => void; 
+  onpress?:()=>void,
 };
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
@@ -20,9 +21,11 @@ export default function ProductCard({
   rating,
   productImage,
   onBookmarkPress ,
-  isBookmarked
+  isBookmarked,
+  onpress
 }: ProductCardProps) {
   return (
+    <TouchableOpacity  onPress={onpress} >
     <View style={styles.card}>
       {/* Image */}
       <View style={styles.imageContainer}>
@@ -65,6 +68,7 @@ export default function ProductCard({
         </View>
       </View>
     </View>
+    </TouchableOpacity>
   );
 }
 

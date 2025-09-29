@@ -116,13 +116,17 @@ const clickfilter = () => {
 
   
   const filteredFeatures: Feature[] = featurelist.filter((item) =>
-    item.title.toLowerCase().includes(search.toLowerCase())
+    item.title?.toLowerCase().includes(search.toLowerCase())
   );
 
   const renderItem = ({ item, index }: { item: Feature; index: number }) => {
     const isLastOddItem =
       filteredFeatures.length % 2 !== 0 &&
       index === filteredFeatures.length - 1;
+
+       const productImage = item.thumbnail
+  ? { uri: item.thumbnail }
+  : require('../../../assets/images/drone.png');
 
   return (
    
@@ -143,7 +147,7 @@ const clickfilter = () => {
         infoTitle={item.title}
         inforTitlePrice={`£ ${item.price}`}
         rating={item.isfeatured ? '4.5' : '4.5'}
-        productImage={require('../../../assets/images/drone.png')}
+        productImage={productImage}
         bookmark={item.isfeatured}
       />
       

@@ -195,11 +195,65 @@ const containerHeight = animatedHeight.interpolate({
   };
 
 
+// const handlePreview = async () => {
+//   try {
+//     const dataToStore: any = { ...formValues };
+
+//     // Handle image fields separately
+//     fields.forEach(field => {
+//       if (field.param.field_type.toLowerCase() === 'image') {
+//         const uploadedForField = uploadedImages.map(img => ({
+//           id: img.id,
+//           uri: img.uri,
+//           name: img.name,
+//         }));
+
+//         dataToStore[field.param.id] = {
+//           value: uploadedForField,
+//           alias_name: field.param.alias_name ?? null,
+//         };
+//       }
+//     });
+
+//     await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
+
+//     console.log('Form data saved: ', dataToStore);
+
+//     navigation.navigate('PreviewThumbnail'); 
+//   } catch (error) {
+//     console.log('Error saving form data: ', error);
+//     showToast('Failed to save form data');
+//   }
+// };
+
+
+
 const handlePreview = async () => {
   try {
+    for (const field of fields) {
+      const { id, field_type, alias_name } = field.param;
+
+      if (field.mandatory) {
+        let value = formValues[id]?.value;
+
+        if (field_type.toLowerCase() === 'image') {
+          value = uploadedImages; 
+        }
+
+        if (
+          value === undefined ||
+          value === null ||
+          (typeof value === 'string' && value.trim() === '') ||
+          (Array.isArray(value) && value.length === 0)
+        ) {
+          showToast(`${field.param.field_name} is mandatory`);
+          return;
+        }
+      }
+    }
+
     const dataToStore: any = { ...formValues };
 
-    // Handle image fields separately
     fields.forEach(field => {
       if (field.param.field_type.toLowerCase() === 'image') {
         const uploadedForField = uploadedImages.map(img => ({
@@ -216,10 +270,8 @@ const handlePreview = async () => {
     });
 
     await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
-
     console.log('Form data saved: ', dataToStore);
-
-    navigation.navigate('PreviewThumbnail'); 
+    navigation.navigate('PreviewThumbnail');
   } catch (error) {
     console.log('Error saving form data: ', error);
     showToast('Failed to save form data');
@@ -747,20 +799,38 @@ const renderField = (field: any) => {
                 <TouchableOpacity
                   key={opt.id}
                   style={styles.modalOption}
+                  // onPress={() => {
+                  //   const prevSelected: number[] = Array.isArray(
+                  //     formValues[multiSelectModal.fieldId!],
+                  //   )
+                  //     ? formValues[multiSelectModal.fieldId!]
+                  //     : [];
+                  //   const updated = prevSelected.includes(opt.id)
+                  //     ? prevSelected.filter(id => id !== opt.id)
+                  //     : [...prevSelected, opt.id];
+                  //   setFormValues((prev: any) => ({
+                  //     ...prev,
+                  //     [multiSelectModal.fieldId!]: updated,
+                  //   }));
+                  // }}
+
                   onPress={() => {
-                    const prevSelected: number[] = Array.isArray(
-                      formValues[multiSelectModal.fieldId!],
-                    )
-                      ? formValues[multiSelectModal.fieldId!]
-                      : [];
-                    const updated = prevSelected.includes(opt.id)
-                      ? prevSelected.filter(id => id !== opt.id)
-                      : [...prevSelected, opt.id];
-                    setFormValues((prev: any) => ({
-                      ...prev,
-                      [multiSelectModal.fieldId!]: updated,
-                    }));
-                  }}
+              const prevSelected: number[] = Array.isArray(
+                formValues[multiSelectModal.fieldId!]?.value
+              )
+                ? formValues[multiSelectModal.fieldId!].value
+                : [];
+
+              const updated = prevSelected.includes(opt.id)
+                ? prevSelected.filter(id => id !== opt.id)
+                : [...prevSelected, opt.id];
+
+              setFormValues((prev: any) => ({
+                ...prev,
+                [multiSelectModal.fieldId!]: { value: updated },
+              }));
+            }}
+
                 >
                   <Text style={{ color: '#fff', fontSize: 16 }}>
                     {opt.option_name}

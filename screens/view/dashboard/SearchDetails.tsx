@@ -10,8 +10,9 @@ import {
   Animated,
   Modal,
   Dimensions,
+  FlatList,
 } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import { useRoute } from '@react-navigation/native';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -25,6 +26,19 @@ type SearchDetailsProps = {
 
 const profileImg = require('../../../assets/images/user.jpg');
 
+type ParamOption = {
+  id: number;
+  option_id: number;
+  option_name: string;
+};
+
+type Param = {
+  id: number;
+  name: string;
+  options: ParamOption[];
+  field_type: string;
+  param_value: string;
+};
 
 
 const SearchDetails = ({ navigation }: SearchDetailsProps) => {
@@ -45,7 +59,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         const token = await AsyncStorage.getItem('userToken');
         if (!token) return;
         const url1 = `${MAIN_URL.baseUrl}category/feature-detail/${id}`;
-       // const url1 = `http://65.0.99.229:4320/category/feature-detail/1`;
+        console.log(url1)
+       //const url1 = `http://65.0.99.229:4320/category/feature-detail/30`;
 
         const res = await fetch(url1,
           {
@@ -64,6 +79,19 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     fetchDetails();
   }, [id]);
  
+const flatListRef = useRef<FlatList>(null);
+const screenWidth = Dimensions.get('window').width;
+const [activeIndex, setActiveIndex] = useState(0);
+
+const images = detail?.files?.map((file: any) => ({
+  uri: file.signedurl,
+})) || [];
+
+const onScroll = (event: any) => {
+  const index = Math.round(event.nativeEvent.contentOffset.x / screenWidth);
+  setActiveIndex(index);
+};
+
   const formatDate = (dateString:string) => {
   if (!dateString) return '01-01-2025'; // fallback if null
   const date = new Date(dateString);
@@ -110,20 +138,69 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                  ])}
                  scrollEventThrottle={16}
                >
-            <Image
-            source={require('../../../assets/images/drone.png')}
-            style={{ width: '100%', height: '40%' }}
-            resizeMode="cover"
+           {/* <Image
+          source={
+            detail?.files?.length
+              ? { uri: detail.files[0].signedurl }
+              : require('../../../assets/images/drone.png')
+          }
+          style={{ width: '100%', height: '40%' }}
+          resizeMode="cover"
+        /> */}
+              {images.length > 1 ? (
+          <View>
+            <FlatList
+              ref={flatListRef}
+              data={images}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(_, index) => index.toString()}
+              onScroll={onScroll}
+              scrollEventThrottle={16}
+              renderItem={({ item }) => (
+                <Image
+                  source={{ uri: item.uri }}
+                  style={{ width: screenWidth, height: 250 }}
+                  resizeMode="cover"
+                />
+              )}
             />
+
+            {/* Step Indicator */}
+            <View style={styles.stepIndicatorContainer}>
+              {images.map((_, index) => (
+                <View
+                  key={index}
+                  style={
+                    index === activeIndex
+                      ? styles.activeStepCircle
+                      : styles.inactiveStepCircle
+                  }
+                />
+              ))}
+            </View>
+          </View>
+        ) : (
+          <Image
+            source={
+              images[0]?.uri
+                ? { uri: images[0].uri }
+                : require('../../../assets/images/drone.png')
+            }
+            style={{ width: '100%', height: 250 }}
+            resizeMode="cover"
+          />
+        )}
         <View style={{ flex: 1, padding: 16 }}>
           <View style={styles.card}>
             <View style={{ gap: 8 }}>
-              {detail && (
-                <>
-                    <Text style={styles.QuaddText}>{detail.title}</Text>
-                    <Text style={styles.priceText}>${Number(detail.price).toFixed(2)}</Text>
-                </>
-                )}
+             {detail && (
+            <>
+              <Text style={styles.QuaddText}>{detail.title}</Text>
+              <Text style={styles.priceText}>${Number(detail.price).toFixed(2)}</Text>
+            </>
+          )}
             </View>
             <View
               style={{
@@ -135,41 +212,59 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
               }}
             >
               <Text style={styles.productDesHeding}>Product Description</Text>
-               <Text style={styles.productDesc}>
-                {detail?.category?.description || 'No description available'}
-                </Text>
+              <Text style={styles.productDesc}>
+            {detail?.description || 'No description available'}
+          </Text>
+              
               <View style={styles.datePosted}>
-                <Image
-                  source={require('../../../assets/images/calendar_icon.png')}
-                  style={{ height: 16, width: 16 }}
-                />
-                <Text style={styles.userSub}>Date Posted: {formatDate(detail?.category?.created_at)}</Text>
-              </View>
+              <Image
+                source={require('../../../assets/images/calendar_icon.png')}
+                style={{ height: 16, width: 16 }}
+              />
+              <Text style={styles.userSub}>
+                Date Posted: {formatDate(detail?.created_at)}
+              </Text>
+            </View>
+
             </View>
           </View>
 
-          <View style={styles.card}>
-            <View style={styles.gap12}>
-              <Text style={styles.productDeatilsHeading}>Product Details</Text>
-              <View style={{ gap: 8 }}>
-                {/* <View> */}
-                  <Text style={styles.itemcondition}>Item Condition</Text>
-                  <Text style={[styles.new,{marginTop: -6}]}>New</Text>
-                {/* </View> */}
-                <View style={styles.gap4}>
-                  <Text style={styles.catagory}>Category</Text>
-                  <View style={styles.categoryContainer}>
-                    <View style={styles.categoryTag}>
-                      <Text style={styles.catagoryText}>Category 1</Text>
-                    </View>
-                    <Text style={styles.categoryTag}>
-                      <Text style={styles.catagoryText}>Category 1</Text>
-                    </Text>
-                  </View>
-                </View>
-              </View>
+         <View style={styles.card}>
+          <View style={styles.gap12}>
+            <Text style={styles.productDeatilsHeading}>Product Details</Text>
+
+        {detail?.params?.map((param: Param) => (
+  <View key={param.id} style={{ marginBottom: 12 }}>
+    {/* Param name */}
+    <Text style={styles.itemcondition}>{param.name}</Text>
+
+    {/* Param value */}
+    {param.options && param.options.length > 0 ? (
+      <View style={styles.categoryContainer}>
+        {param.options
+          .filter(opt =>
+            param.param_value
+              ?.split(',')
+              .map(v => v.trim())
+              .includes(opt.option_id.toString())
+          )
+          .map((opt: ParamOption) => (
+            <View key={opt.id} style={styles.categoryTag}>
+              <Text style={styles.catagoryText}>{opt.option_name}</Text>
             </View>
-          </View>
+        ))}
+      </View>
+    ) : (
+      <Text style={[styles.new, { marginTop: -6 }]}>
+        {param.param_value || '—'}
+      </Text>
+    )}
+  </View>
+))}
+
+        </View>
+        </View>
+
 
           {/* Selaer details */}
           <View style={styles.card}>
@@ -178,25 +273,26 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
               {/* User Info */}
               <View style={{ flexDirection: 'row' }}>
-               <Image 
-                source={detail?.createdby?.profile 
-                        ? { uri: detail.createdby.profile } 
-                        : require('../../../assets/images/user.jpg')} 
-                style={styles.avatar} />
+             <Image 
+              source={detail?.createdby?.profile 
+                ? { uri: detail.createdby.profile } 
+                : require('../../../assets/images/user.jpg')} 
+              style={styles.avatar} 
+            />
 
                 <View style={{ width: '80%', gap: 4 }}>
                  <Text style={styles.userName}>
-                    {detail?.createdby
-                        ? `${detail.createdby.firstname || 'First'} ${detail.createdby.lastname || 'Last'}`
-                        : 'Unknown User'}
-                    </Text>
-                
+                  {detail?.createdby
+                    ? `${detail.createdby.firstname || ''} ${detail.createdby.lastname || ''}`
+                    : 'Unknown User'}
+                </Text>
+                                
                     <Text style={styles.univeritytext}>
-                    {detail?.createdby?.university_name || 'University of Warwick'}, 
-                    </Text>
-                    <Text style={[styles.univeritytext, { marginTop: -5 }]}>
-                    {detail?.category?.name || 'Coventry'}
-                    </Text>
+                  {detail?.createdby?.university_name || 'University of Warwick'}
+                </Text>
+                   <Text style={[styles.univeritytext, { marginTop: -5 }]}>
+                  {detail?.category?.name || 'Coventry'}
+                </Text>
                 </View>
               </View>
 
@@ -355,6 +451,50 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 };
 
 const styles = StyleSheet.create({
+
+   stepIndicatorContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 12,
+    gap: 6,
+  },
+  stepCircle: {
+    width: 12,
+    height: 12,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  activeStepCircle: {
+    width: 12,
+    height: 12,
+    borderRadius: 40,
+    backgroundColor: '#FFFFFF',
+    borderColor: '#ffffff4e',
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.33,
+    elevation: 2,
+  },
+  inactiveStepCircle: {
+    width: 12,
+    height: 12,
+    borderRadius: 40,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)', // fallback for radial-gradient
+    borderColor: '#ffffff4e',
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.33,
+    elevation: 2,
+  },
     unizyText: {
     color: '#FFFFFF',
     fontSize: 20,

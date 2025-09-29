@@ -490,6 +490,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                     productImage={{ uri: item.thumbnail }}
                     onBookmarkPress={() => handleBookmarkPress(item.id)}
                     isBookmarked={bookmarkedIds.includes(item.id)}
+                    onpress={() =>  navigation.navigate('SearchDetails', { id: item.id })}
                   />
                 </Animated.View>
               ))}
@@ -532,7 +533,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
       //   routes: [{ name: 'MyListing'}],
       // });
       await AsyncStorage.setItem('ISLOGIN', 'false');
-      //navigation.navigate('SinglePage');
+     // navigation.navigate('SinglePage');
    }
 
   return (

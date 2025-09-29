@@ -166,6 +166,12 @@ const formatDate = (dateString: string | null | undefined) => {
         { flex: isLastOddItem ? 0.5: 0.5, marginRight: isLastOddItem ? 0.5 : 0.5 },
       ]}
     >
+       <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('SearchDetails', { id: feature.id }) 
+            }
+            style={{ flex: 1 }}
+          >
       <SearchListProductCard
         tag="University of Warwick"
         infoTitle={displayTitle}
@@ -174,6 +180,7 @@ const formatDate = (dateString: string | null | undefined) => {
         productImage={productImage}
         bookmark={true}
       />
+      </TouchableOpacity>
     </View>
   );
 };

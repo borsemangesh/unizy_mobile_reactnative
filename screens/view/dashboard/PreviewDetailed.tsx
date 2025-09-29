@@ -82,6 +82,7 @@ const formattedDate = `${today.getDate().toString().padStart(2, '0')}-${(today.g
   profile: string | null;
   student_email: string | null;
 }
+  const flatListRef = useRef(null);
 
   useEffect(() => {
     const fetchStoredData = async () => {
@@ -139,7 +140,7 @@ const getValueByAlias = (
 
 const titleValue = getValueByAlias(storedForm, 'title') || 'No Title';
 const priceValue = getValueByAlias(storedForm, 'price') || '0';
-const descriptionvalue= getValueByAlias(storedForm,'Description') || 'No Description'
+const descriptionvalue= getValueByAlias(storedForm,'description') || 'No Description'
   
 
   const onScroll = (event: {
@@ -159,160 +160,160 @@ const descriptionvalue= getValueByAlias(storedForm,'Description') || 'No Descrip
 
 const handleListPress = async () => {
   console.log('🔵 handleListPress called');
- setShowPopup(true);
-  // try {
-  //   console.log('Step 1: Fetching formData from AsyncStorage...');
-  //   const storedData = await AsyncStorage.getItem('formData');
-  //   console.log('✅ AsyncStorage.getItem(formData) result:', storedData);
+ //setShowPopup(true);
+  try {
+    console.log('Step 1: Fetching formData from AsyncStorage...');
+    const storedData = await AsyncStorage.getItem('formData');
+    console.log('✅ AsyncStorage.getItem(formData) result:', storedData);
 
-  //   if (!storedData) {
-  //     console.log('⚠️ No form data found in storage');
-  //     showToast('No form data found');
-  //     return;
-  //   }
+    if (!storedData) {
+      console.log('⚠️ No form data found in storage');
+      showToast('No form data found');
+      return;
+    }
 
-  //   const formData: Record<
-  //     string,
-  //     { value: any; alias_name: string | null }
-  //   > = JSON.parse(storedData);
-  //   console.log('✅ Parsed formData:', formData);
+    const formData: Record<
+      string,
+      { value: any; alias_name: string | null }
+    > = JSON.parse(storedData);
+    console.log('✅ Parsed formData:', formData);
 
-  //   console.log('Step 2: Fetching userToken...');
-  //   const token = await AsyncStorage.getItem('userToken');
-  //   const productId1 = await AsyncStorage.getItem('selectedProductId');
+    console.log('Step 2: Fetching userToken...');
+    const token = await AsyncStorage.getItem('userToken');
+    const productId1 = await AsyncStorage.getItem('selectedProductId');
 
-  //   if (!token) {
-  //     console.log('⚠️ Token not found. Cannot upload.');
-  //     return;
-  //   }
+    if (!token) {
+      console.log('⚠️ Token not found. Cannot upload.');
+      return;
+    }
 
-  //   console.log('Step 3: Splitting formData...');
+    console.log('Step 3: Splitting formData...');
 
-  //   const imageFields = Object.entries(formData)
-  //     .filter(([key, obj]) => {
-  //       const v = obj.value;
-  //       return (
-  //         Array.isArray(v) &&
-  //         v.length > 0 &&
-  //         v.every((item: any) => item?.uri)
-  //       );
-  //     })
-  //     .map(([key, obj]) => [key, obj.value as ImageField[]]) as [
-  //     string,
-  //     ImageField[]
-  //   ][];
+    const imageFields = Object.entries(formData)
+      .filter(([key, obj]) => {
+        const v = obj.value;
+        return (
+          Array.isArray(v) &&
+          v.length > 0 &&
+          v.every((item: any) => item?.uri)
+        );
+      })
+      .map(([key, obj]) => [key, obj.value as ImageField[]]) as [
+      string,
+      ImageField[]
+    ][];
 
-  //   const nonImageFields = Object.entries(formData).filter(([key, obj]) => {
-  //     const v = obj.value;
-  //     return !(Array.isArray(v) && v.every((item: any) => item?.uri));
-  //   });
+    const nonImageFields = Object.entries(formData).filter(([key, obj]) => {
+      const v = obj.value;
+      return !(Array.isArray(v) && v.every((item: any) => item?.uri));
+    });
 
-  //   console.log('✅ Non-image fields:', nonImageFields);
-  //   console.log('✅ Image fields:', imageFields);
+    console.log('✅ Non-image fields:', nonImageFields);
+    console.log('✅ Image fields:', imageFields);
 
-  //   const dataArray = nonImageFields.map(([key, obj]) => ({
-  //     id: Number(key),
-  //     param_value: obj.value, // now take .value
-  //   }));
+    const dataArray = nonImageFields.map(([key, obj]) => ({
+      id: Number(key),
+      param_value: obj.value, // now take .value
+    }));
 
-  //   console.log('✅ Data array for create API:', dataArray);
+    console.log('✅ Data array for create API:', dataArray);
 
-  //   const createPayload = {
-  //     category_id: productId1, // dynamic or static
-  //     data: dataArray,
-  //   };
+    const createPayload = {
+      category_id: productId1, // dynamic or static
+      data: dataArray,
+    };
 
-  //   console.log('Step 5: Calling create API with payload:', createPayload);
+    console.log('Step 5: Calling create API with payload:', createPayload);
 
-  //   const createRes = await fetch(
-  //     `${MAIN_URL.baseUrl}category/featurelist/create`,
-  //     {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //       body: JSON.stringify(createPayload),
-  //     },
-  //   );
+    const createRes = await fetch(
+      `${MAIN_URL.baseUrl}category/featurelist/create`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(createPayload),
+      },
+    );
 
-  //   console.log(`✅ Create API status: ${createRes.status}`);
-  //   const createJson = await createRes.json();
-  //   console.log('✅ Create API response:', createJson);
+    console.log(`✅ Create API status: ${createRes.status}`);
+    const createJson = await createRes.json();
+    console.log('✅ Create API response:', createJson);
 
-  //   if (!createRes.ok) {
-  //     showToast('Failed to create feature list');
-  //     return;
-  //   }
+    if (!createRes.ok) {
+      showToast('Failed to create feature list');
+      return;
+    }
 
-  //   // 6️⃣ Get feature_id from create API response
-  //   const feature_id = createJson?.data?.id;
-  //   if (!feature_id) {
-  //     console.log('❌ feature_id not returned from create API.');
-  //     showToast('feature_id missing in response');
-  //     return;
-  //   }
-  //   console.log('✅ feature_id from create API:', feature_id);
+    // 6️⃣ Get feature_id from create API response
+    const feature_id = createJson?.data?.id;
+    if (!feature_id) {
+      console.log('❌ feature_id not returned from create API.');
+      showToast('feature_id missing in response');
+      return;
+    }
+    console.log('✅ feature_id from create API:', feature_id);
 
-  //   // 7️⃣ Upload images one by one
-  //   for (const [param_id, images] of imageFields) {
-  //     console.log(`Step 7: Uploading images for param_id=${param_id}`);
+    // 7️⃣ Upload images one by one
+    for (const [param_id, images] of imageFields) {
+      console.log(`Step 7: Uploading images for param_id=${param_id}`);
 
-  //     for (const image of images) {
-  //       console.log(
-  //         `🟡 Preparing upload for image under param_id=${param_id}:`,
-  //         image,
-  //       );
+      for (const image of images) {
+        console.log(
+          `🟡 Preparing upload for image under param_id=${param_id}:`,
+          image,
+        );
 
-  //       const data = new FormData();
-  //       data.append('files', {
-  //         uri: image.uri,
-  //         type: image.type || 'image/jpeg',
-  //         name: image.name,
-  //       } as any);
-  //       data.append('feature_id', feature_id); // from API response
-  //       data.append('param_id', param_id);
+        const data = new FormData();
+        data.append('files', {
+          uri: image.uri,
+          type: image.type || 'image/jpeg',
+          name: image.name,
+        } as any);
+        data.append('feature_id', feature_id); // from API response
+        data.append('param_id', param_id);
 
-  //       console.log('✅ FormData prepared for upload');
+        console.log('✅ FormData prepared for upload');
 
-  //       const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-upload`;
-  //       console.log(
-  //         `Step 7: Uploading image ${image.name} with param_id=${param_id} to ${uploadUrl}`,
-  //       );
+        const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-upload`;
+        console.log(
+          `Step 7: Uploading image ${image.name} with param_id=${param_id} to ${uploadUrl}`,
+        );
 
-  //       const uploadRes = await fetch(uploadUrl, {
-  //         method: 'POST',
-  //         headers: {
-  //           Authorization: `Bearer ${token}`, // no Content-Type for FormData
-  //         },
-  //         body: data,
-  //       });
+        const uploadRes = await fetch(uploadUrl, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`, // no Content-Type for FormData
+          },
+          body: data,
+        });
 
-  //       console.log(`✅ Upload completed. Status: ${uploadRes.status}`);
-  //       const uploadJson = await uploadRes.json();
-  //       console.log('✅ Upload response JSON:', uploadJson);
+        console.log(`✅ Upload completed. Status: ${uploadRes.status}`);
+        const uploadJson = await uploadRes.json();
+        console.log('✅ Upload response JSON:', uploadJson);
 
-  //       if (!uploadRes.ok) {
-  //         console.log(
-  //           `❌ Upload failed for ${image.name} (param_id=${param_id})`,
-  //         );
-  //         showToast(`Failed to upload image ${image.name}`);
-  //       } else {
-  //         console.log(
-  //           `✅ Upload success for ${image.name} (param_id=${param_id})`,
-  //         );
-  //       }
-  //     }
-  //   }
+        if (!uploadRes.ok) {
+          console.log(
+            `❌ Upload failed for ${image.name} (param_id=${param_id})`,
+          );
+          showToast(`Failed to upload image ${image.name}`);
+        } else {
+          console.log(
+            `✅ Upload success for ${image.name} (param_id=${param_id})`,
+          );
+        }
+      }
+    }
 
-  //   console.log('✅ All uploads done. Showing toast.');
-  //   showToast('All data uploaded successfully');
-  //   setShowPopup(true);
-  // } 
-  // catch (error) {
-  //   console.log('❌ Error in handleListPress:', error);
-  //   showToast('Error uploading data');
-  // }
+    console.log('✅ All uploads done. Showing toast.');
+    showToast('All data uploaded successfully');
+    setShowPopup(true);
+  } 
+  catch (error) {
+    console.log('❌ Error in handleListPress:', error);
+    showToast('Error uploading data');
+  }
 };
 
   return (
@@ -340,50 +341,97 @@ const handleListPress = async () => {
           </View>
         </View>
 
-       <ScrollView
-                 contentContainerStyle={styles.scrollContainer}
-                 onScroll={Animated.event([
-                   {
-                     nativeEvent: { contentOffset: { y: scrollY1 } },
-                   },
-                 ])}
-                 scrollEventThrottle={16}
-               >
-            <Image
-                 source={require('../../../assets/images/drone.png')}
-            style={{ width: '100%', height: '40%' }}
-            resizeMode="cover"
-            />
-        <View style={{ flex: 1, padding: 16 }}>
-          <View style={styles.card}>
-            <View style={{ gap: 8 }}>
-              <Text style={styles.QuaddText}>Quadcopter (Drone)</Text>
-              <Text style={styles.priceText}>$10.00</Text>
-            </View>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'flex-start',
-                gap: 2,
-                alignSelf: 'stretch',
-              }}
-            >
-              <Text style={styles.productDesHeding}>Product Description</Text>
-              <Text style={styles.productDesc}>
-                Your pocket-sized flying buddy! Perfect for capturing epic
-                campus shots, recording events, or just having fun with friends.
-                Easy to fly, stable in the air, and ready for adventure.
-              </Text>
-              <View style={styles.datePosted}>
+     <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          onScroll={Animated.event([
+            {
+              nativeEvent: { contentOffset: { y: scrollY1 } },
+            },
+          ])}
+          scrollEventThrottle={16}
+        >
+       {storedForm?.[6]?.value?.length > 1 ? (
+          <View>
+            <FlatList
+              ref={flatListRef}
+              data={storedForm[6].value}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(item, index) => index.toString()}
+              onScroll={onScroll}
+              scrollEventThrottle={16}
+              renderItem={({ item }) => (
                 <Image
-                  source={require('../../../assets/images/calendar_icon.png')}
-                  style={{ height: 16, width: 16 }}
+                  source={{ uri: item.uri }}
+                  style={{ width: screenWidth, height: 250 }}
+                  resizeMode="cover"
                 />
-                <Text style={styles.userSub}>Date Posted:10-01-2025</Text>
-              </View>
+              )}
+            />
+
+            {/* Custom Step Indicator */}
+            <View style={styles.stepIndicatorContainer}>
+              {storedForm[6].value.map((_: any, index: number) => {
+                const isActive = index === activeIndex;
+                return (
+                  <View
+                    key={index}
+                    style={
+                      isActive
+                        ? styles.activeStepCircle
+                        : styles.inactiveStepCircle
+                    }
+                  />
+                );
+              })}
             </View>
           </View>
+        ) : (
+          <Image
+            source={
+              storedForm?.[6]?.value?.[0]?.uri
+                ? { uri: storedForm[6].value[0].uri }
+                : require('../../../assets/images/drone.png')
+            }
+            style={{ width: '100%', height: 250 }}
+            resizeMode="cover"
+          />
+        )}
+                  <View style={{ flex: 1, padding: 16 }}>
+            <View style={styles.card}>
+              <View style={{ gap: 8 }}>
+                <Text style={styles.QuaddText}>
+                  {titleValue}
+                </Text>
+
+                <Text style={styles.priceText}>
+                  {`$${priceValue}`}
+                </Text>
+              </View>
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                  gap: 2,
+                  alignSelf: 'stretch',
+                }}
+              >
+                <Text style={styles.productDesHeding}>Product Description</Text>
+                <Text style={styles.productDesc}>
+                  {descriptionvalue}
+                </Text>
+
+                <View style={styles.datePosted}>
+                  <Image
+                    source={require('../../../assets/images/calendar_icon.png')}
+                    style={{ height: 16, width: 16 }}
+                  />
+                  <Text style={styles.userSub}>Date Posted:10-01-2025</Text>
+                </View>
+              </View>
+            </View>
 
             <View style={styles.card}>
               <View style={styles.gap12}>
@@ -393,13 +441,29 @@ const handleListPress = async () => {
                 <View style={{ gap: 8 }}>
                   <Text style={styles.itemcondition}>Item Condition</Text>
                   <View>
+                  <View style={styles.categoryContainer}>
+                {Array.isArray(storedForm?.[9]?.value) &&
+                  storedForm[9].value.map((id: number, index: number) => {
+                    const option = itemOptions.find(o => o.id === id);
+                    return (
+                      <View key={index} style={styles.categoryTag}>
+                        <Text style={styles.catagoryText}>
+                          {option?.option_name || 'Unknown'}
+                        </Text>
+                      </View>
+                    );
+                  })}
+              </View>
+                  </View>
+                  {/* </View> */}
+                  <View style={styles.gap4}>
+                    <Text style={styles.catagory}>Category</Text>
+                    
                     <View style={styles.categoryContainer}>
-                      {storedForm?.[9]?.map((id: number, index: number) => {
-                        const option = itemOptions.find(o => o.id === id);
+                    {Array.isArray(storedForm?.[10]?.value) &&
+                      storedForm[10].value.map((id: number, index: number) => {
+                        const option = categoryOptions.find(o => o.id === id);
                         return (
-                          // <Text key={index} style={[styles.new, { marginTop: -6 }]}>
-                          //   {option?.option_name || 'Unknown'}
-                          // </Text>
                           <View key={index} style={styles.categoryTag}>
                             <Text style={styles.catagoryText}>
                               {option?.option_name || 'Unknown'}
@@ -407,42 +471,17 @@ const handleListPress = async () => {
                           </View>
                         );
                       })}
-                    </View>
                   </View>
-                  {/* </View> */}
-                  <View style={styles.gap4}>
-                    <Text style={styles.catagory}>Category</Text>
-                    {/* <View style={styles.categoryContainer}>
-                    <View style={styles.categoryTag}>
-                      <Text style={styles.catagoryText}>Category 1</Text>
-                    </View>
-                    <Text style={styles.categoryTag}>
-                      <Text style={styles.catagoryText}>Category 1</Text>
-                    </Text>
-                  </View> */}
-                    <View style={styles.categoryContainer}>
-                      {storedForm?.[10]?.map(
-                        (id: number, index: Key | null | undefined) => {
-                          const option = categoryOptions.find(o => o.id === id);
-                          return (
-                            <View key={index} style={styles.categoryTag}>
-                              <Text style={styles.catagoryText}>
-                                {option?.option_name || 'Unknown'}
-                              </Text>
-                            </View>
-                          );
-                        },
-                      )}
-                    </View>
+
                   </View>
                 </View>
               </View>
             </View>
 
-          {/* Selaer details */}
-          <View style={styles.card}>
-            <View style={{ gap: 12 }}>
-              <Text style={styles.productDeatilsHeading}>Seller Details</Text>
+            {/* Selaer details */}
+            <View style={styles.card}>
+              <View style={{ gap: 12 }}>
+                <Text style={styles.productDeatilsHeading}>Seller Details</Text>
 
                 {/* User Info */}
                 <View style={{ flexDirection: 'row' }}>
@@ -461,6 +500,7 @@ const handleListPress = async () => {
                     </Text>
                   </View>
                 </View>
+
 
                 <View style={{ flexDirection: 'row', gap: 8 }}>
                   <View
@@ -534,7 +574,6 @@ const handleListPress = async () => {
             </View>
           </View>
         </ScrollView>
-
         {/* Bottom */}
         <TouchableOpacity style={styles.previewBtn} onPress={handleListPress}>
           <Text style={styles.previewText}>List</Text>
