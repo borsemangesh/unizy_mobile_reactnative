@@ -7,8 +7,6 @@ import { Navigation } from './screens/view/Navigation';
 import SplashScreen from './screens/view/Hello/SplashScreen';
 import { enableScreens } from 'react-native-screens';
 import Toast from 'react-native-toast-message';
-import EdgeToEdgeScreen from './screens/view/Hello/EdgeToEdgeScreen';
-
 
 function App() {
   LogBox.ignoreAllLogs();
@@ -105,8 +103,7 @@ const styles = StyleSheet.create({
 });
   return (
     <SafeAreaProvider>
-     
-        <StatusBar
+      <StatusBar
         barStyle="light-content"
         translucent
         backgroundColor="transparent"

@@ -74,7 +74,7 @@ const BackgroundAnimation = () => {
       <BlurView
         style={StyleSheet.absoluteFill}
         blurType="light"   // "light", "dark", "xlight"
-        blurAmount={90}    // adjust intensity
+        blurAmount={50}    // adjust intensity
         reducedTransparencyFallbackColor="white"
       />
     </View>
