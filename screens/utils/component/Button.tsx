@@ -1,62 +1,54 @@
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { BlurView } from '@react-native-community/blur';
-import { StyleSheet, Text, View } from 'react-native';
 
-const Button = () => {
+type ButtonProps = {
+  onPress: () => void;
+  title?: string;
+};
+
+const Button = ({ onPress, title = 'Click' }: ButtonProps) => {
   return (
-    <View style={styles.container}>
-      <View style={styles.viewStyle}>
-        {/* Semi-transparent background layer below the BlurView */}
-        <View
-          style={[
-            StyleSheet.absoluteFill,
-            { backgroundColor: 'rgba(255, 255, 255, 0.4)' }, // Adjust opacity for the button background here
-          ]}
-        />
-        
-        {/* BlurView applied with no opacity to keep the blur effect strong */}
-        <BlurView
-          style={[
-            StyleSheet.absoluteFill,
-            {
-              // No opacity applied here to preserve blur strength
-            },
-          ]}
-          blurAmount={20}
-          reducedTransparencyFallbackColor="white"
-        />
-        
-        {/* Text displayed over the button */}
-        <Text style={styles.buttonText}>Button</Text>
-      </View>
-    </View>
+    <TouchableOpacity onPress={onPress} activeOpacity={0.7} style={styles.buttonContainer}>
+      <BlurView
+        style={StyleSheet.absoluteFill}
+        blurType="light"
+        blurAmount={2}
+        // REMOVE fallback color if you want absolutely NO background color
+        reducedTransparencyFallbackColor="transparent"
+      />
+      <Text style={styles.buttonText}>{title}</Text>
+    </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-   
-    height: 200,
-    width: 200
-  },
-  viewStyle: {
-    display: 'flex',
+  buttonContainer: {
     width: '90%',
-    paddingHorizontal: 20,
     height: 48,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 100,
-    backgroundColor: 'rgba(255, 255, 255, 0.16)', // Light transparency for button
-    marginBottom: 10,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(255, 255, 255, 0.56)',
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
+    alignSelf: 'center',
+    marginBottom: 10,
     position: 'absolute',
-    bottom: 10,
+    bottom: 0
   },
   buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    // color: '#000',
+    // fontSize: 16,
+    // fontWeight: 'bold',
+    color: '#002050ff',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: 500,
+    letterSpacing: 1,
+    opacity: 0.9
   },
 });
 

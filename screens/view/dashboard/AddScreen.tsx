@@ -23,6 +23,7 @@ import { PermissionsAndroid, Platform } from 'react-native';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { showToast } from '../../utils/toast';
 import ToggleButton from '../../utils/component/ToggleButton';
+import Button from '../../utils/component/Button';
 
 const bgImage = require('../../../assets/images/bganimationscreen.png');
 const profileImg = require('../../../assets/images/user.jpg'); // your avatar image
@@ -790,13 +791,14 @@ const renderField = (field: any) => {
             </View>
           </ScrollView>
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.previewBtn}
             onPress={()=>{
                 handlePreview();
             }}>
             <Text style={styles.previewText}>Preview Details</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+          <Button  title="Preview Details" onPress={() => handlePreview()} />
         </KeyboardAvoidingView>
       </View>
 
@@ -1079,11 +1081,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
   },
 
-  fileRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-  },
   fileIcon: {
     width: 28,
     height: 28,

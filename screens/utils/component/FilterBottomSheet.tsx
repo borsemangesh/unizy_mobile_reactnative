@@ -9,13 +9,65 @@ import {
 import React, { useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import { CONSTDEFAULT } from '../CONSTDEFAULT';
+import { MAIN_URL } from '../APIConstant';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface FilterBottomSheetProps {
+  catagory_id: number;
   visible: boolean;
   onClose: () => void;
 }
 
-const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
+const FilterBottomSheet = ({
+  catagory_id,
+  visible,
+  onClose,
+}: FilterBottomSheetProps) => {
+  const displayListOfProduct = async () => {
+    // if (isLoading || !hasMore) return;
+
+    try {
+      // setIsLoading(true);
+
+      const body = {
+        category_id: catagory_id,
+      };
+
+      const url = MAIN_URL.baseUrl + 'category/feature-list/search';
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) return;
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+
+      const jsonResponse = await response.json();
+      console.log('API Response:', jsonResponse);
+
+      if (jsonResponse.statusCode === 200) {
+        const newFeatures = jsonResponse.data.features;
+
+        // if (pageNum === 1) {
+        //   setFeaturelist(newFeatures);
+        // } else {
+        //   setFeaturelist(prev => [...prev, ...newFeatures]);
+        // }
+
+        // setHasMore(newFeatures.length === 20);
+        // setPage(prev => prev + 1);
+      }
+    } catch (err) {
+      console.log('Error:', err);
+    } finally {
+      // setIsLoading(false);
+    }
+  };
+
   const tabs = [
     {
       title: 'Sort By',
@@ -113,39 +165,17 @@ const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
-        <View
-          style={{
-            height: '84%',
-            marginTop: 'auto',
-            
-            backgroundColor:
-              'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(0, 0, 0, 0.59) 0%, rgba(255, 255, 255, 0.10) 100%)',
-            width: '100%',
-            borderTopLeftRadius: 50,
-            borderTopRightRadius: 50,
-            alignItems: 'center',
-            filter: 'drop-shadow(0 0.833px 3.333px rgba(0, 0, 0, 0.02))',
-          }}
-        >
+        <View style={styles.modelcontainer}>
           <BlurView
-             style={[StyleSheet.absoluteFill, { borderTopLeftRadius: 50,
-              borderTopRightRadius: 50, }]}
-             blurAmount={40}
+            style={[
+              StyleSheet.absoluteFill,
+              styles.broderTopLeftRightRadius_30,
+            ]}
+            blurAmount={40}
             reducedTransparencyFallbackColor="white"
           />
           <View>
-            
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                width: '100%',
-                padding: 26,
-                backgroundColor: '#5d5c5c14',
-                borderTopLeftRadius: 50,
-            borderTopRightRadius: 50,
-              }}
-            >
+            <View style={styles.modeltitleContainer}>
               <Text style={styles.modelTextHeader}>Filters</Text>
               <TouchableOpacity
                 onPress={() => {
@@ -230,6 +260,30 @@ const FilterBottomSheet = ({ visible, onClose }: FilterBottomSheetProps) => {
 };
 
 const styles = StyleSheet.create({
+  modeltitleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    padding: 26,
+    backgroundColor: '#5d5c5c14',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+  },
+  broderTopLeftRightRadius_30: {
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+  },
+  modelcontainer: {
+    height: '84%',
+    marginTop: 'auto',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(0, 0, 0, 0.59) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    width: '100%',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    alignItems: 'center',
+    filter: 'drop-shadow(0 0.833px 3.333px rgba(0, 0, 0, 0.02))',
+  },
   bottomview: {
     padding: 10,
     width: '100%',
@@ -287,7 +341,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     fontStyle: 'normal',
-    width:'100%'
+    width: '100%',
   },
   filterHeadTitle: {
     color: 'rgba(255, 255, 255, 0.64)',

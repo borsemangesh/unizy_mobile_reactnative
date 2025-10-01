@@ -417,6 +417,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 import NewProductCard from '../../utils/NewProductCard';
 import PreviewCard from '../../utils/PreviewCard';
+import Button from '../../utils/component/Button';
 
 type PreviewThumbnailProps = {
   navigation: any;
@@ -477,7 +478,7 @@ const imageArray = storedForm?.[6]?.value || [];
     >
       <View
         style={{
-          paddingTop: Platform.OS === 'ios' ? 70 : 30,
+          paddingTop: Platform.OS === 'ios' ? 70 : 70,
           paddingLeft: 16,
           paddingRight: 16,
         }}
@@ -583,6 +584,10 @@ const imageArray = storedForm?.[6]?.value || [];
             >
             <Text style={styles.nextText}>Next</Text>
           </TouchableOpacity>
+          {/* <Button
+            onPress={() => {
+            navigation.navigate('PreviewDetailed');
+          }} title='Next'/> */}
         </View>
       </View>
     </ImageBackground>

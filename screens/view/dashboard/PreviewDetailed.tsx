@@ -20,6 +20,7 @@ import { MAIN_URL } from '../../utils/APIConstant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CommonActions } from '@react-navigation/native';
+import Button from '../../utils/component/Button';
 
 
 type previewDetailsProps = {
@@ -588,7 +589,7 @@ const handleListPress = async () => {
         <TouchableOpacity style={styles.previewBtn} onPress={handleListPress}>
           <Text style={styles.previewText}>List</Text>
         </TouchableOpacity>
-        {/* </ScrollView> */}
+          {/* <Button onPress={handleListPress} title="List" />         */}
 
         <Modal
           visible={showPopup}
@@ -719,7 +720,7 @@ const styles = StyleSheet.create({
 
   header: {
     height: 70,
-    paddingTop: 12,
+    paddingTop: 15,
     paddingBottom: 12,
     paddingHorizontal: 16,
     justifyContent: 'center',
@@ -866,7 +867,7 @@ const styles = StyleSheet.create({
     bottom: 10,
   },
   scrollContainer: {
-    paddingBottom: 280,
+    paddingBottom: 70,
     paddingTop: 90,
     // paddingHorizontal: 20,
   },

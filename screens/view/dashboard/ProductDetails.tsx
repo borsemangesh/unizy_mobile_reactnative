@@ -298,6 +298,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
       </View>
 
       <FilterBottomSheet
+        catagory_id={category_id}
         visible={isFilterVisible}
         onClose={() => setFilterVisible(false)}
       />

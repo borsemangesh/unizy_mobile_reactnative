@@ -1,60 +1,53 @@
-import React from "react"
-import { Platform, StyleSheet, Text, View } from "react-native"
-import { BlurView } from "@react-native-community/blur"
-import LinearGradient from "react-native-linear-gradient"
-import { useSafeAreaInsets } from "react-native-safe-area-context"
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { BlurView } from '@react-native-community/blur';
 
-const Header: React.FC = () => {
-  const insets = useSafeAreaInsets()
+type ButtonProps = {
+  onPress: () => void;
+  title?: string;
+};
 
+const Header = () => {
   return (
-    <View style={[styles.headerContainer, { paddingTop: insets.top }]}>
-      {/* Background layer */}
-      {Platform.OS === "ios" ? (
-        // iOS: real blur
-        <BlurView
-          blurType="light" // or "dark" for stronger contrast
-          blurAmount={20}
-          style={StyleSheet.absoluteFill}
-        />
-      ) : (
-        // Android: gradient fallback
-        <LinearGradient
-          colors={["rgba(0,30,100,0.7)", "rgba(0,50,150,0.7)"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={StyleSheet.absoluteFill}
-        />
-      )}
-
-      {/* Foreground content */}
-      <View style={styles.headerContent}>
-        <Text style={styles.headerTitle}>List Product</Text>
-      </View>
+    <View>
+      <BlurView
+        style={[StyleSheet.absoluteFill,{}]}
+        blurType="light"
+        blurAmount={50}
+        // REMOVE fallback color if you want absolutely NO background color
+        reducedTransparencyFallbackColor="transparent"
+      />
+      <Text style={styles.buttonText}>Product Details</Text>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
-  headerContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 90, // base height (extra space added via insets)
-    zIndex: 10,
-    overflow: "hidden",
+  buttonContainer: {
+    width: '100%',
+    height: 100,
+    justifyContent: 'center',
+    alignItems: 'center',    
+    overflow: 'hidden',
+    backgroundColor: 'transparent',
+    borderWidth: 0.5,
+    borderColor: 'transparent',
+    alignSelf: 'center',
+    marginBottom: 10,
+    position: 'absolute',
+    top: 0
   },
-  headerContent: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+  buttonText: {
+    // color: '#000',
+    // fontSize: 16,
+    // fontWeight: 'bold',
+    color: '#002050',
+    fontSize: 17,
+    fontFamily: 'Urbanist-Medium',
+    fontWeight: '500',
+    letterSpacing: 1,
+    opacity: 0.9
   },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "white",
-  },
-})
+});
 
-export default Header
+export default Header;
