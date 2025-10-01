@@ -386,7 +386,13 @@ const renderField = (field: any) => {
       const { param } = field;
       const { field_name, keyboardtype, alias_name } = param;
 
-      const placeholderText = alias_name || field_name;
+      const rawValue = formValues[param.id]?.value || '';
+
+      const isPriceField = alias_name?.toLowerCase() === 'price';
+      const placeholderText =
+      alias_name?.toLowerCase() === 'price'
+        ? `£ ${alias_name}`
+        : alias_name || field_name;
 
       let rnKeyboardType:
         | 'default'
@@ -430,8 +436,17 @@ const renderField = (field: any) => {
             multiline={false}
             placeholderTextColor="rgba(255, 255, 255, 0.48)"
             keyboardType={rnKeyboardType}
-            value={formValues[param.id]?.value || ''}
-            onChangeText={text => handleValueChange(param.id, alias_name, text)}
+            value={isPriceField && rawValue ? `£ ${rawValue}` : rawValue}
+            //onChangeText={text => handleValueChange(param.id, alias_name, text)}
+             onChangeText={text => {
+              if (isPriceField) {
+                // Remove £ and spaces before saving
+                const cleaned = text.replace(/£\s?/g, '');
+                handleValueChange(param.id, alias_name, cleaned);
+              } else {
+                handleValueChange(param.id, alias_name, text);
+              }
+            }}
           />
         </View>
       );
@@ -665,7 +680,7 @@ const renderField = (field: any) => {
         <View style={{ flex: 1 }}>
           <Text style={styles.importantText1}>Important:</Text>
           <Text style={styles.importantText}>
-            For Featured listings, $1 is deducted from your payout.
+            For Featured listings, £1 is deducted from your payout.
           </Text>
         </View>
       </View>

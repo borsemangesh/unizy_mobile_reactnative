@@ -119,42 +119,106 @@ const clickfilter = () => {
     item.title?.toLowerCase().includes(search.toLowerCase())
   );
 
-  const renderItem = ({ item, index }: { item: Feature; index: number }) => {
-    const isLastOddItem =
-      filteredFeatures.length % 2 !== 0 &&
-      index === filteredFeatures.length - 1;
+//   const renderItem = ({ item, index }: { item: Feature; index: number }) => {
+//     const isLastOddItem =
+//       filteredFeatures.length % 2 !== 0 &&
+//       index === filteredFeatures.length - 1;
 
-       const productImage = item.thumbnail
+//        const productImage = item.thumbnail
+//   ? { uri: item.thumbnail }
+//   : require('../../../assets/images/drone.png');
+
+//   return (
+   
+//     <View
+//       style={[
+//         styles.itemContainer,
+//         { flex: isLastOddItem ? 0.5: 0.5, marginRight: isLastOddItem ? 0.5 : 0.5 },
+//       ]}
+//     >
+//          <TouchableOpacity
+//       onPress={() =>
+//         navigation.navigate('SearchDetails', { id: item.id }) // 👈 pass id here
+//       }
+//       style={{ flex: 1 }}
+//     >
+//       <SearchListProductCard
+//         tag="University of Warwick"
+//         infoTitle={item.title}
+//         inforTitlePrice={`£ ${item.price}`}
+//         rating={item.isfeatured ? '4.5' : '4.5'}
+//         productImage={productImage}
+//         bookmark={item.isfeatured}
+//       />
+      
+//     </TouchableOpacity>
+//     </View>
+//   );
+// };
+
+const renderItem = ({ item, index }: { item: Feature; index: number }) => {
+  const isLastOddItem =
+    filteredFeatures.length % 2 !== 0 &&
+    index === filteredFeatures.length - 1;
+
+  const isCircleCategory = item.category_id === 2 || item.category_id === 5;
+
+  // Get initials from title or show "NA" if null/empty
+  const getInitials = (text?: string) => {
+    // if (!text) return 'NA';
+    // const initials = text
+    //   .split(' ')
+    //   .map(word => word[0]?.toUpperCase())
+    //   .slice(0, 2)
+    //   .join('');
+    return 'NA';
+  };
+
+  const productImage = isCircleCategory ? (
+    <View
+      style={{
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        backgroundColor: '#ccc',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#000' }}>
+        {getInitials("NA")}
+      </Text>
+    </View>
+  ) : item.thumbnail
   ? { uri: item.thumbnail }
   : require('../../../assets/images/drone.png');
 
   return (
-   
     <View
       style={[
         styles.itemContainer,
-        { flex: isLastOddItem ? 0.5: 0.5, marginRight: isLastOddItem ? 0.5 : 0.5 },
+        { flex: isLastOddItem ? 0.5 : 0.5, marginRight: isLastOddItem ? 0.5 : 0.5 },
       ]}
     >
-         <TouchableOpacity
-      onPress={() =>
-        navigation.navigate('SearchDetails', { id: item.id }) // 👈 pass id here
-      }
-      style={{ flex: 1 }}
-    >
-      <SearchListProductCard
-        tag="University of Warwick"
-        infoTitle={item.title}
-        inforTitlePrice={`£ ${item.price}`}
-        rating={item.isfeatured ? '4.5' : '4.5'}
-        productImage={productImage}
-        bookmark={item.isfeatured}
-      />
-      
-    </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('SearchDetails', { id: item.id })
+        }
+        style={{ flex: 1 }}
+      >
+        <SearchListProductCard
+          tag="University of Warwick"
+          infoTitle={item.title}
+          inforTitlePrice={`£ ${item.price}`}
+          rating={item.isfeatured ? '4.5' : '4.5'}
+          productImage={productImage} // Circle with initials or image
+          bookmark={item.isfeatured}
+        />
+      </TouchableOpacity>
     </View>
   );
 };
+
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>

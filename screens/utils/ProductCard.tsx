@@ -86,11 +86,8 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: "#ffffff79",
     overflow: "hidden",
-
-
-       borderBlockStartColor: '#ffffff2e',
+    borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
-
     borderTopColor: '#ffffff2e',
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',

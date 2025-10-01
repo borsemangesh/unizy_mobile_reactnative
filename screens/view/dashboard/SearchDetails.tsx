@@ -12,11 +12,12 @@ import {
   Dimensions,
   FlatList,
 } from 'react-native';
-import { useEffect, useRef, useState } from 'react';
+import { Key, useEffect, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import { useRoute } from '@react-navigation/native';
 import { MAIN_URL } from '../../utils/APIConstant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { showToast } from '../../utils/toast';
 
 type SearchDetailsProps = {
   navigation: any;
@@ -51,6 +52,10 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     const [detail, setDetail] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  const screenWidth = Dimensions.get('window').width;
+
+const [imageUri, setImageUri] = useState<string | null>(null);
+
     
   useEffect(() => {
     const fetchDetails = async () => {
@@ -80,7 +85,6 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
   }, [id]);
  
 const flatListRef = useRef<FlatList>(null);
-const screenWidth = Dimensions.get('window').width;
 const [activeIndex, setActiveIndex] = useState(0);
 
 const images = detail?.files?.map((file: any) => ({
@@ -92,6 +96,7 @@ const onScroll = (event: any) => {
   setActiveIndex(index);
 };
 
+
   const formatDate = (dateString:string) => {
   if (!dateString) return '01-01-2025'; // fallback if null
   const date = new Date(dateString);
@@ -100,6 +105,169 @@ const onScroll = (event: any) => {
   const year = date.getFullYear();
   return `${day}-${month}-${year}`;
 };
+
+
+const handleDeactivate = async () => {
+  try {
+    
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) return;
+
+    const url2 = `${MAIN_URL.baseUrl}category/feature/active-inactive`;
+    const response = await fetch(url2, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, 
+      },
+      body: JSON.stringify({
+        product_id: id, 
+      }),
+    });
+
+    const data = await response.json();
+    console.log("✅ API Response:", data);
+
+    if (response.ok) {
+      showToast( "Product status updated!",'success');
+    } else {
+      showToast("Error", data.message || "Something went wrong");
+    }
+    setShowPopup(true);
+  } catch (error) {
+    console.error("❌ API Error:", error);
+    showToast("Failed to update product status",'error');
+  }
+};
+// const renderImage = () => {
+//   const fallbackImage = require('../../../assets/images/drone.png');
+
+//   if (detail?.profileshowinview) {
+//     return (
+//       <Image
+//         source={detail?.createdby?.profile ? { uri: detail?.createdby.profile } : fallbackImage}
+//         style={{ width: '100%', height: 200 }}
+//         resizeMode="cover"
+//       />
+//     );
+//   }
+
+//   if (images.length > 1) {
+//     return (
+//       <View>
+//         <FlatList
+//           ref={flatListRef}
+//           data={images}
+//           horizontal
+//           pagingEnabled
+//           showsHorizontalScrollIndicator={false}
+//           keyExtractor={(_, index) => index.toString()}
+//           onScroll={onScroll}
+//           scrollEventThrottle={16}
+//           renderItem={({ item }) => (
+//             <Image
+//               source={{ uri: item.uri }}
+//               style={{ width: screenWidth, height: 250 }}
+//               resizeMode="cover"
+//             />
+//           )}
+//         />
+//         {/* Step Indicator */}
+//         <View style={styles.stepIndicatorContainer}>
+//           {images.map((_: any, index: Key | null | undefined) => (
+//             <View
+//               key={index}
+//               style={
+//                 index === activeIndex
+//                   ? styles.activeStepCircle
+//                   : styles.inactiveStepCircle
+//               }
+//             />
+//           ))}
+//         </View>
+//       </View>
+//     );
+//   }
+
+//   return (
+//     <Image
+//       source={images[0]?.uri ? { uri: images[0].uri } : fallbackImage}
+//       style={{ width: '100%', height: 250 }}
+//       resizeMode="cover"
+//     />
+//   );
+// };
+
+
+const renderImage = () => {
+  const fallbackImage = require('../../../assets/images/drone.png');
+
+  // 1️⃣ Show creator profile image if requested
+  if (detail?.profileshowinview) {
+    const profileUri = detail?.createdby?.profile || null;
+
+    return (
+      <Image
+        source={profileUri ? { uri: profileUri } : fallbackImage}
+        style={{ width: screenWidth, height: 250 }}
+        resizeMode="cover"
+        onError={() => {
+          console.log('Profile image failed to load');
+          setImageUri(null); // fallback
+        }}
+      />
+    );
+  }
+
+  // 2️⃣ Show carousel if multiple images exist
+  if (images.length > 1) {
+    return (
+      <View>
+        <FlatList
+          ref={flatListRef}
+          data={images}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(_, index) => index.toString()}
+          onScroll={onScroll}
+          scrollEventThrottle={16}
+          renderItem={({ item }) => (
+            <Image
+              source={item.uri ? { uri: item.uri } : fallbackImage}
+              style={{ width: screenWidth, height: 250 }}
+              resizeMode="cover"
+            />
+          )}
+        />
+        {/* Step Indicator */}
+        <View style={styles.stepIndicatorContainer}>
+          {images.map((_: any, index: Key | null | undefined) => (
+            <View
+              key={index}
+              style={
+                index === activeIndex
+                  ? styles.activeStepCircle
+                  : styles.inactiveStepCircle
+              }
+            />
+          ))}
+        </View>
+      </View>
+    );
+  }
+
+  // 3️⃣ Single image or fallback
+  return (
+    <Image
+      source={images[0]?.uri ? { uri: images[0].uri } : fallbackImage}
+      style={{ width: screenWidth, height: 250 }}
+      resizeMode="cover"
+    />
+  );
+};
+
+
     return (
     <ImageBackground
       source={require('../../../assets/images/bganimationscreen.png')}
@@ -138,60 +306,9 @@ const onScroll = (event: any) => {
                  ])}
                  scrollEventThrottle={16}
                >
-           {/* <Image
-          source={
-            detail?.files?.length
-              ? { uri: detail.files[0].signedurl }
-              : require('../../../assets/images/drone.png')
-          }
-          style={{ width: '100%', height: '40%' }}
-          resizeMode="cover"
-        /> */}
-              {images.length > 1 ? (
-          <View>
-            <FlatList
-              ref={flatListRef}
-              data={images}
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              keyExtractor={(_, index) => index.toString()}
-              onScroll={onScroll}
-              scrollEventThrottle={16}
-              renderItem={({ item }) => (
-                <Image
-                  source={{ uri: item.uri }}
-                  style={{ width: screenWidth, height: 250 }}
-                  resizeMode="cover"
-                />
-              )}
-            />
+        
+        {renderImage()}
 
-            {/* Step Indicator */}
-            <View style={styles.stepIndicatorContainer}>
-              {images.map((_, index) => (
-                <View
-                  key={index}
-                  style={
-                    index === activeIndex
-                      ? styles.activeStepCircle
-                      : styles.inactiveStepCircle
-                  }
-                />
-              ))}
-            </View>
-          </View>
-        ) : (
-          <Image
-            source={
-              images[0]?.uri
-                ? { uri: images[0].uri }
-                : require('../../../assets/images/drone.png')
-            }
-            style={{ width: '100%', height: 250 }}
-            resizeMode="cover"
-          />
-        )}
         <View style={{ flex: 1, padding: 16 }}>
           <View style={styles.card}>
             <View style={{ gap: 8 }}>
@@ -374,9 +491,7 @@ const onScroll = (event: any) => {
       {/* Bottom */}
       <TouchableOpacity
         style={styles.previewBtn}
-        onPress={() => {
-          setShowPopup(true);
-        }}
+        onPress={handleDeactivate}
       >
         <Text style={styles.previewText}>Deactivate Listing</Text>
       </TouchableOpacity>

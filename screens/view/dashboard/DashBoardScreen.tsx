@@ -21,6 +21,7 @@ import AnimatedSlideUp from '../../utils/AnimatedSlideUp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Navigation } from '../Navigation';
 import { MAIN_URL } from '../../utils/APIConstant';
+import TutitionCard from '../../utils/TutitionCard';
 
 const mylistings = require('../../../assets/images/mylistingicon.png');
 const mylistings1 = require('../../../assets/images/favourite.png');
@@ -482,16 +483,30 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                     // marginRight: 10,
                   }}
                 >
-                  <ProductCard
-                    tag="University of Warwick"
-                    infoTitle={item.title}
-                    inforTitlePrice={`£ ${item.price}`}
-                    rating="4.5"
-                    productImage={{ uri: item.thumbnail }}
-                    onBookmarkPress={() => handleBookmarkPress(item.id)}
-                    isBookmarked={bookmarkedIds.includes(item.id)}
-                    onpress={() =>  navigation.navigate('SearchDetails', { id: item.id })}
-                  />
+                    {item.category_id === 2 || item.category_id === 5 ? (
+                    <TutitionCard
+                      tag="University of Warwick"
+                      title={item.title}
+                      infoTitle={`${item.createdby?.firstname || ''} ${item.createdby?.lastname || ''}`}
+                      inforTitlePrice={`£ ${item.price}`}
+                      rating="4.5"
+                      productImage={{ uri: item.createdby?.profile || item.thumbnail }}
+                      onBookmarkPress={() => handleBookmarkPress(item.id)}
+                      isBookmarked={bookmarkedIds.includes(item.id)}
+                      onpress={() => navigation.navigate('SearchDetails', { id: item.id })}
+                    />
+                  ) : (
+                    <ProductCard
+                      tag="University of Warwick"
+                      infoTitle={item.title}
+                      inforTitlePrice={`£ ${item.price}`}
+                      rating="4.5"
+                      productImage={{ uri: item.thumbnail }}
+                      onBookmarkPress={() => handleBookmarkPress(item.id)}
+                      isBookmarked={bookmarkedIds.includes(item.id)}
+                      onpress={() => navigation.navigate('SearchDetails', { id: item.id })}
+                    />
+                  )}
                 </Animated.View>
               ))}
             </ScrollView>

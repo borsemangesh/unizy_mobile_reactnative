@@ -1,0 +1,280 @@
+import React from "react";
+import { View, Text, Image, StyleSheet, ImageSourcePropType, Platform, Dimensions, Touchable, TouchableOpacity } from "react-native";
+
+type TutitionCardProps = {
+  tag: string;
+  title:string;
+  infoTitle: string;
+  inforTitlePrice: string;
+  rating: string;
+  productImage: ImageSourcePropType;
+  isBookmarked: boolean; 
+  onBookmarkPress?: () => void; 
+  onpress?:()=>void,
+};
+
+const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+
+export default function TutitionCard({
+  tag,
+  title,
+  infoTitle,
+  inforTitlePrice,
+  rating,
+  productImage,
+  onBookmarkPress ,
+  isBookmarked,
+  onpress
+}: TutitionCardProps) {
+  return (
+    <TouchableOpacity  onPress={onpress} >
+
+    <View style={styles.card}>
+      {/* Image */}
+     <View style={styles.imageContainer}>
+  <View style={styles.splitRow}>
+   
+    <View style={styles.leftPortion}>
+      {productImage ? (
+        <Image source={productImage} style={styles.leftImage} resizeMode="cover" />
+      ) : (
+        <View style={styles.initialsCircle}>
+          <Text style={styles.initialsText}>
+            {infoTitle
+              ? infoTitle.split(" ").map((n) => n[0]).join("").toUpperCase()
+              : "?"}
+          </Text>
+        </View>
+      )}
+    </View>
+
+    <View style={styles.rightPortion}>
+      {/* Background only for right side */}
+      <Image
+        source={require("../../assets/images/featurebg.png")}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
+      />
+
+      {/* Center text */}
+      <Text style={styles.rightText}>{infoTitle}</Text>
+
+      {/* Tag */}
+      <View style={styles.tag}>
+        <Text style={styles.tagText}>{tag}</Text>
+      </View>
+
+      {/* Bookmark */}
+      <View style={styles.bookmark}>
+        <TouchableOpacity onPress={onBookmarkPress}>
+          <Image
+            source={
+              isBookmarked
+                ? require("../../assets/images/favourite_filled.png")
+                : require("../../assets/images/favourite.png")
+            }
+            style={styles.bookmarkIcon}
+          />
+        </TouchableOpacity>
+      </View>
+    </View>
+  </View>
+</View>
+
+
+      {/* Info */}
+      <View style={styles.infoRow}>
+        <Text style={styles.title}>{title}</Text>
+        <View style={styles.priceRow}>
+          <Text style={styles.price}>{inforTitlePrice}</Text>
+          <View style={styles.ratingRow}>
+            <Image
+              source={require("../../assets/images/staricon.png")}
+              style={styles.starIcon}
+            />
+            <Text style={styles.ratingText}>{rating}</Text>
+          </View>
+        </View>
+      </View>
+    </View>
+
+    </TouchableOpacity>
+  );
+}
+
+const styles = StyleSheet.create({
+  card: {
+    width: screenWidth * 0.75,
+    height: screenHeight * 0.4,
+  
+    marginHorizontal: 8,
+    borderRadius: 34,
+    backgroundColor: "rgba(255, 255, 255, 0.17)",
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    borderWidth: 0.5,
+    borderColor: "#ffffff79",
+    overflow: "hidden",
+    borderBlockStartColor: '#ffffff2e',
+    borderBlockColor: '#ffffff2e',
+    borderTopColor: '#ffffff2e',
+    borderBottomColor: '#ffffff2e',
+    borderLeftColor: '#ffffff2e',
+    borderRightColor: '#ffffff2e',
+
+  },
+
+  image: {
+    
+    width: "100%",
+    height: "100%",
+    borderRadius: 25,
+    backgroundColor: "#ccc",
+},
+    
+
+  infoRow: {
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "90%",
+    alignSelf: "center",
+  },
+  title: {
+    fontSize: 17,
+    fontWeight: "600",
+    color: "#fff",
+    width: "100%",
+     fontFamily: 'Urbanist-SemiBold',
+  },
+  priceRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    // marginTop: 4,
+  },
+  price: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: "#fff",
+     fontFamily: 'Urbanist-SemiBold',
+  },
+  ratingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  starIcon: {
+    width: 16,
+    height: 16,
+  },
+  ratingText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#fff",
+    marginLeft: 4,
+     fontFamily: 'Urbanist-SemiBold',
+  },
+
+splitRow: {
+  flexDirection: "row",
+  width: "100%",
+  height: "100%",
+  borderRadius:20,
+  //padding: 10
+},
+
+leftPortion: {
+  flex: 1,
+  justifyContent: "center",
+  alignItems: "center",
+ // borderRadius: 20,
+  overflow: "hidden",
+},
+
+leftImage: {
+  width: "100%",
+  height: "100%",
+  //borderRadius: 20,
+  borderTopLeftRadius:20,
+  borderBottomLeftRadius:20
+},
+
+initialsCircle: {
+  width: 80,
+  height: 80,
+  borderRadius: 40,
+  backgroundColor: "#666",
+  justifyContent: "center",
+  alignItems: "center",
+},
+
+initialsText: {
+  fontSize: 28,
+  fontWeight: "700",
+  color: "#fff",
+},
+
+rightPortion: {
+  flex: 1,
+  justifyContent: "center",
+  alignItems: "center",
+  //padding: 10,
+   borderTopRightRadius:20,
+  borderBottomRightRadius:20,
+  overflow: "hidden",
+  position: "relative", 
+},
+
+rightText: {
+  fontSize: 18,
+  fontWeight: "600",
+  color: "#fff",
+  textAlign: "center",
+  fontFamily: 'Urbanist-SemiBold',
+},
+
+tag: {
+  position: "absolute",
+  bottom: 5,
+  right: 5,
+  backgroundColor: "rgba(152, 152, 152, 0.21)",
+  borderRadius: 12,
+  paddingHorizontal: 8,
+  paddingVertical: 4,
+  zIndex: 2,
+},
+
+tagText: {
+  fontSize: 11,
+  fontWeight: "600",
+  color: "#000",
+    fontFamily: 'Urbanist-SemiBold',
+},
+
+bookmark: {
+  position: "absolute",
+  top: 5,
+  right: 5,
+  width: 40,
+  height: 40,
+  backgroundColor: "rgba(0, 0, 0, 0.14)",
+  justifyContent: "center",
+  alignItems: "center",
+  borderRadius: 15,
+  zIndex: 2,
+  elevation: 5,
+},
+
+bookmarkIcon: {
+  width: 20,
+  height: 20,
+},
+
+imageContainer: {
+  width: "100%",
+  height: "80%",
+  position: "relative",
+  padding: 10,
+},
+});
