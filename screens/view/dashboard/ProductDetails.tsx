@@ -183,16 +183,24 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
     filteredFeatures.length % 2 !== 0 &&
     index === filteredFeatures.length - 1;
 
-   let productImage: ImageSourcePropType;
+ let productImage: ImageSourcePropType | null = null;
+  let showInitials = false;
+  let initials = '';
 
-  if (item.profileshowinview && item.createdby?.profile) {
-    productImage = { uri: item.createdby.profile };
-  } else if (item.thumbnail) {
-    productImage = { uri: item.thumbnail };
+  if (item.profileshowinview) {
+    if (item.createdby?.profile) {
+      productImage = { uri: item.createdby.profile };
+    } else {
+      showInitials = true;
+      initials = `${item.createdby?.firstname?.[0] ?? ''}${item.createdby?.lastname?.[0] ?? ''}`;
+    }
   } else {
-    productImage = require('../../../assets/images/drone.png');
+    if (item.thumbnail) {
+      productImage = { uri: item.thumbnail };
+    } else {
+      productImage = require('../../../assets/images/drone.png');
+    }
   }
-
   return (
     <View
       style={[
@@ -212,6 +220,8 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
           infoTitle={item.title}
           inforTitlePrice={`£ ${item.price}`}
           rating={item.isfeatured ? '4.5' : '4.5'}
+          showInitials={showInitials}
+          initialsName={initials}
           productImage={item.createdby?.profile ? { uri: item.createdby.profile } : undefined}
           bookmark={item.isfeatured}
         />
@@ -221,7 +231,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
           infoTitle={item.title}
           inforTitlePrice={`£ ${item.price}`}
           rating={item.isfeatured ? '4.5' : '4.5'}
-          productImage={productImage}
+          productImage={productImage ?? require('../../../assets/images/drone.png')}
           bookmark={item.isfeatured}
         />
       )}

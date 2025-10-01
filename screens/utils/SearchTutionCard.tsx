@@ -16,6 +16,8 @@ type NewProductCardProps = {
   rating: string;
   productImage?: ImageSourcePropType; // optional now
   bookmark: boolean;
+  showInitials:boolean;
+  initialsName: string; 
 };
 
 export default function SearchTutionCard({
@@ -25,18 +27,20 @@ export default function SearchTutionCard({
   rating,
   productImage,
   bookmark,
+  showInitials,
+  initialsName
 }: NewProductCardProps) {
-  // get initials from infoTitle
-  const getInitials = (name?: string) => {
-    if (!name) return '?';
+  
+
+    const getInitials = (name?: string) => {
+    if (!name) return 'NA';
     return name
       .split(' ')
       .map(word => word[0]?.toUpperCase())
       .slice(0, 2)
       .join('');
   };
-
-  const showInitials = !productImage;
+  
 
   return (
     <View style={styles.card}>
@@ -52,10 +56,10 @@ export default function SearchTutionCard({
         ) : null}
 
         {productImage ? (
-          <Image source={productImage} style={styles.image} resizeMode="contain" />
+          <Image source={productImage} style={styles.image} resizeMode="cover" />
         ) : (
           <View style={[styles.initialsCircle]}>
-            <Text style={styles.initialsText}>{getInitials('Mahesh Jadhav')}</Text>
+            <Text style={styles.initialsText}>{getInitials(initialsName)}</Text>
           </View>
         )}
 

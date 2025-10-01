@@ -212,7 +212,7 @@ const renderImage = () => {
     return (
       <Image
         source={profileUri ? { uri: profileUri } : fallbackImage}
-        style={{ width: screenWidth, height: '40%',resizeMode:'stretch'}}
+        style={{ width: screenWidth, height: '40%',resizeMode:'cover'}}
        
         onError={() => {
           console.log('Profile image failed to load');

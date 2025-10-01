@@ -175,19 +175,24 @@ const formatDate = (dateString: string | null | undefined) => {
   const feature = item.featurelist;
 
   
-  // const productImage = feature.thumbnail
-  //   ? { uri: feature.thumbnail }
-  //   : require('../../../assets/images/drone.png');
-
-       let productImage: ImageSourcePropType;
-    
-      if (feature.profileshowinview && feature.createdby?.profile) {
+   let productImage: ImageSourcePropType | null = null;
+    let showInitials = false;
+    let initials = '';
+  
+    if (feature.profileshowinview) {
+      if (feature.createdby?.profile) {
         productImage = { uri: feature.createdby.profile };
-      } else if (feature.thumbnail) {
+      } else {
+        showInitials = true;
+        initials = `${feature.createdby?.firstname?.[0] ?? ''}${feature.createdby?.lastname?.[0] ?? ''}`;
+      }
+    } else {
+      if (feature.thumbnail) {
         productImage = { uri: feature.thumbnail };
       } else {
         productImage = require('../../../assets/images/drone.png');
       }
+    }
     
 
   return (
@@ -212,6 +217,8 @@ const formatDate = (dateString: string | null | undefined) => {
                 rating={feature.isfeatured ? '4.5' : '4.5'}
                 productImage={feature.createdby?.profile ? { uri: feature.createdby.profile } : undefined}
                 bookmark={feature.isfeatured}
+                showInitials={showInitials}
+                initialsName={initials}
               />
             ) : (
               <SearchListProductCard
@@ -219,7 +226,7 @@ const formatDate = (dateString: string | null | undefined) => {
                 infoTitle={feature.title}
                 inforTitlePrice={`£ ${feature.price}`}
                 rating={feature.isfeatured ? '4.5' : '4.5'}
-                productImage={productImage}
+                productImage={productImage ?? require('../../../assets/images/drone.png')}
                 bookmark={feature.isfeatured}
               />
             )}

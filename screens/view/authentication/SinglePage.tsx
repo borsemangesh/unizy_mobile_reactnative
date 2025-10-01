@@ -430,6 +430,29 @@ const SinglePage = ({navigation}:SinglePageProps) => {
     }, []),
   );
 
+
+  const [universityDomains, setUniversityDomains] = useState<string[]>([]);
+
+useEffect(() => {
+  const fetchUniversities = async () => {
+    try {
+      const url4=MAIN_URL.baseUrl+'user/university-list'
+      const res = await fetch(url4);
+      const json = await res.json();
+      if (json?.data) {
+        // Extract domain names
+        const domains = json.data.map((u: any) => u.domain_name.toLowerCase());
+        setUniversityDomains(domains);
+      }
+    } catch (err) {
+      console.error('Error fetching universities:', err);
+    }
+  };
+
+  fetchUniversities();
+}, []);
+
+
   const stepIndex = (() => {
     switch (currentScreenIninner) {
       case 'signup':
@@ -841,16 +864,24 @@ const SinglePage = ({navigation}:SinglePageProps) => {
   const verifyOTP = async () => {
 
     setOtp1(['','','','']);
+  
     if (!verifyusername) {
-      showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
-      return;
-    }
+    showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
+    return;
+  }
 
-    const emailRegex = /^[^\s@]+@(?:[^\s@]+\.)*ac\.uk$/i;
-    if (!emailRegex.test(verifyusername)) {
-      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
-      return;
-    }
+  const emailParts = verifyusername.split('@');
+  if (emailParts.length !== 2) {
+    showToast(Constant.VALID_EMAI_LADDRESS, 'error');
+    return;
+  }
+
+  const domain = '@' + emailParts[1].toLowerCase();
+
+  if (!universityDomains.includes(domain)) {
+    showToast(Constant.VALID_EMAI_LADDRESS, 'error');
+    return;
+  }
 
     try {
 

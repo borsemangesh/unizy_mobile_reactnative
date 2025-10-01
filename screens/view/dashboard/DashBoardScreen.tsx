@@ -23,6 +23,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Navigation } from '../Navigation';
 import { MAIN_URL } from '../../utils/APIConstant';
 import TutitionCard from '../../utils/TutitionCard';
+import ProfileCard from './ProfileCard';
 
 const mylistings = require('../../../assets/images/mylistingicon.png');
 const mylistings1 = require('../../../assets/images/favourite.png');
@@ -69,6 +70,8 @@ const iconMap: Record<string, any> = {
   Tuition: require('../../../assets/images/book.png'),
   'House Keeping': require('../../../assets/images/housekeeping.png'),
 };
+
+
 
 const ProductItem: React.FC<ProductItemProps> = ({
   navigation,
@@ -131,10 +134,6 @@ const AddScreenContent: React.FC<
                 );
                 console.log('✅ Product info saved to AsyncStorage');
                 navigation.navigate('AddScreen');
-                // navigation.reset({
-                //   index: 0,
-                //   routes: [{ name: 'AddScreen', }],
-                // });
               } catch (error) {
                 console.log('❌ Error saving product info:', error);
               }
@@ -162,9 +161,13 @@ const BookmarkScreenContent = () => (
     <Text style={styles.tabContentText}>🔖 Bookmark Layout</Text>
   </View>
 );
-const ProfileScreenContent = () => (
+
+type ProfileScreenContentProps = {
+  navigation: any;
+};
+const ProfileScreenContent = ({navigation}:ProfileScreenContentProps) => (
   <View style={styles.tabContent}>
-    <Text style={styles.tabContentText}>👤 Profile Layout</Text>
+    <ProfileCard navigation={navigation}/>
   </View>
 );
 
@@ -523,7 +526,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
       case 'Bookmark':
         return <BookmarkScreenContent />;
       case 'Profile':
-        return <ProfileScreenContent />;
+        return <ProfileScreenContent navigation={navigation}/>;
       default:
         return null;
     }
