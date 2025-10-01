@@ -73,7 +73,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
      
           <Animated.View style={[styles.centerContent, { opacity: fadeAnim }]}>
           <LottieView
-            source={require("../../../assets/animations/animation.json")}
+            source={require("../../../assets/animations/animation_new.json")}
             autoPlay
             loop={false}
             resizeMode="contain"

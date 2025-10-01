@@ -62,7 +62,7 @@ import { BlurView } from '@react-native-community/blur';
 
 const BackgroundAnimation = () => {
   return (
-    <View style={StyleSheet.absoluteFill}>
+    <View style={[StyleSheet.absoluteFill,{opacity: 0.4}]}>
       <LottieView
         source={require("../../../assets/animations/backgroundanimation3.json")}
         autoPlay
@@ -72,11 +72,12 @@ const BackgroundAnimation = () => {
       />
       {/* Blur Overlay */}
       <BlurView
-        style={StyleSheet.absoluteFill}
+        style={[StyleSheet.absoluteFill]}
         blurType="light"   // "light", "dark", "xlight"
-        blurAmount={50}    // adjust intensity
-        reducedTransparencyFallbackColor="white"
+        blurAmount={30}    // adjust intensity
+        
       />
+      {/* <View style={[StyleSheet.absoluteFillObject,{opacity: 0.1, backgroundColor: 'rgba(255, 255, 255, 0.02)' }]}></View> */}
     </View>
   );
 };
