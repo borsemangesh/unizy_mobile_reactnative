@@ -169,6 +169,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
         productImage={productImage}
         topRightText={item.isactive ? 'Active' : 'Inactive'}
         isfeature={item.isfeatured}
+       navigation={navigation}
       />
     </View>
   );

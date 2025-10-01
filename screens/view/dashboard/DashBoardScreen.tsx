@@ -14,6 +14,7 @@ import {
   Dimensions,
   Easing,
   Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import ProductCard from '../../utils/ProductCard';
 
@@ -547,7 +548,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
       //   index: 0,
       //   routes: [{ name: 'MyListing'}],
       // });
-      await AsyncStorage.setItem('ISLOGIN', 'false');
+      // await AsyncStorage.setItem('ISLOGIN', 'false');
      // navigation.navigate('SinglePage');
    }
 
@@ -556,6 +557,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
       source={require('../../../assets/images/bgimage_1.png')}
       style={styles.background}
     >
+      
       <View style={styles.fullScreenContainer}>
         {activeTab === 'Home' && (
           <View
@@ -605,8 +607,11 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
         )}
 
         {/* Main Content */}
-
-        
+        <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} // tweak this as needed
+    >
           <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingBottom: 10 }} // space for bottom bar
@@ -616,6 +621,8 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
         <View style={{ flex: 1 }}>{renderActiveTabContent()}</View>
 
         </ScrollView>
+        
+      </KeyboardAvoidingView>
         {/* Bottom Tab Bar */}
         <Animated.View
           style={[
@@ -651,6 +658,8 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
             </TouchableOpacity>
           ))}
         </Animated.View>
+        
+        
       </View>
     </ImageBackground>
   );
@@ -691,7 +700,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderRadius: 50,
     alignSelf: 'center',
-    position: 'relative', 
+    // position: 'relative', 
     paddingHorizontal: 4,
     borderWidth: 0.4,
     padding: 12,
@@ -713,6 +722,7 @@ const styles = StyleSheet.create({
     borderRightColor: '#ffffff2e',
 
     boxSizing: 'border-box',
+  zIndex: 100,
     
   },
   tabItem: {

@@ -1383,7 +1383,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
         ;
         {currentScreen === 'language' && (
           <>
-            <View style={{ height: '100%', padding: 16, paddingBottom: (Platform.OS === 'ios') ?insets.bottom: 20, paddingTop: (Platform.OS === 'ios')? 10 :0}}>
+            <View style={{ height: '100%', padding: 16, paddingBottom: (Platform.OS === 'ios') ?insets.bottom: 20, paddingTop: (Platform.OS === 'ios')? 10 :20}}>
               <Animated.View
                 style={[
                   selectlang_styles.container,
@@ -1472,7 +1472,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
         )}
         {currentScreen === 'login' && (
           <>
-          <View style={{paddingTop: 10,paddingLeft: 16,paddingRight: 16}}>
+          <View style={{paddingTop: 20,paddingLeft: 16,paddingRight: 16}}>
             {currentScreenIninner === 'login' && (
               <Animated.View style={{
                   opacity: textAndBackOpacity,
@@ -1502,7 +1502,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
             </View> 
           
 
-            <View style={{ width: '100%', height: '100%', paddingLeft: 16, paddingRight: 16, paddingTop: 16, }} >
+            <View style={{ width: '100%', height: '100%', paddingLeft: 16, paddingRight: 16, paddingTop: 10, }} >
               <Animated.View
                 style={[Styles.cardView, { height: heightAnim ,}]}>
 

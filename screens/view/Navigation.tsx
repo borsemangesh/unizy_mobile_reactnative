@@ -25,6 +25,7 @@ import SplashScreen from './Hello/SplashScreen';
 import Bookmark from './dashboard/Bookmark';
 import MyListing from './dashboard/MyListing';
 import SearchDetails from './dashboard/SearchDetails';
+import ListingDetails from './dashboard/ListingDetails';
 
 const Stack = createNativeStackNavigator();
 
@@ -108,7 +109,7 @@ useEffect(() => {
         <Stack.Screen name='Bookmark' component={Bookmark} options={{headerShown:false,presentation: 'fullScreenModal'}}/>
         <Stack.Screen name='SearchDetails' component={SearchDetails} options={{headerShown:false,presentation: 'fullScreenModal'}}/>
         <Stack.Screen name='MyListing' component={MyListing} options={{headerShown:false,presentation: 'fullScreenModal'}}/>
-
+        <Stack.Screen name='ListingDetails' component={ListingDetails} options={{headerShown:false,presentation: 'fullScreenModal'}}/>
       </Stack.Navigator>
     </NavigationContainer>
     );

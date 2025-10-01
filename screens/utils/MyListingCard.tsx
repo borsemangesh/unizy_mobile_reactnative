@@ -17,7 +17,7 @@ type MyListingCardProps = {
   productImage: ImageSourcePropType;
   topRightText:string
   isfeature:Boolean
-  
+  navigation:any;
 };
 
 const MyListingCard: React.FC<MyListingCardProps> = ({
@@ -27,11 +27,14 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
   rating = '',
   productImage,
   topRightText,
-  isfeature
+  isfeature,
+  navigation
 }) => {
 
  return (
-  <TouchableOpacity style={styles.wrapper}>
+  <TouchableOpacity style={styles.wrapper} onPress={() => {
+    navigation.navigate('ListingDetails');
+  }}>
     <Image source={productImage} style={styles.image} resizeMode="cover" />
 
     <View style={styles.content}>
