@@ -577,6 +577,12 @@ const SinglePage = ({navigation}:SinglePageProps) => {
       showToast("Postal code must be at least 5 characters long.", 'error');
       return;
     }
+    const emailRegex = /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;    
+    if (!emailRegex.test(signUpusername)) {
+      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
+      return;
+    }
+
      const passwordRegex =/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(signUppassword)) {
       showToast('Min 8 chars: upper, lower, number, symbol.','error')
@@ -588,12 +594,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
       return;
     }
 
-    const emailRegex = /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;    
-    if (!emailRegex.test(signUpusername)) {
-      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
-      return;
-    }
-
+    
     try {
       const body = {
         firstname: firstName,

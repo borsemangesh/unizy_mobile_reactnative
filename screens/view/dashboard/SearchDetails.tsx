@@ -18,6 +18,7 @@ import { useRoute } from '@react-navigation/native';
 import { MAIN_URL } from '../../utils/APIConstant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showToast } from '../../utils/toast';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type SearchDetailsProps = {
   navigation: any;
@@ -55,6 +56,9 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
   const screenWidth = Dimensions.get('window').width;
 
 const [imageUri, setImageUri] = useState<string | null>(null);
+
+ const insets = useSafeAreaInsets(); // Safe area insets
+  const { height: screenHeight } = Dimensions.get('window');
 
     
   useEffect(() => {
@@ -202,24 +206,22 @@ const handleDeactivate = async () => {
 const renderImage = () => {
   const fallbackImage = require('../../../assets/images/drone.png');
 
-  // 1️⃣ Show creator profile image if requested
   if (detail?.profileshowinview) {
     const profileUri = detail?.createdby?.profile || null;
 
     return (
       <Image
         source={profileUri ? { uri: profileUri } : fallbackImage}
-        style={{ width: screenWidth, height: 250 }}
-        resizeMode="cover"
+        style={{ width: screenWidth, height: '40%',resizeMode:'stretch'}}
+       
         onError={() => {
           console.log('Profile image failed to load');
-          setImageUri(null); // fallback
+          setImageUri(null);
         }}
       />
     );
   }
 
-  // 2️⃣ Show carousel if multiple images exist
   if (images.length > 1) {
     return (
       <View>
@@ -297,15 +299,15 @@ const renderImage = () => {
               </View>
           
 
-       <ScrollView
-                 contentContainerStyle={styles.scrollContainer}
-                 onScroll={Animated.event([
-                   {
-                     nativeEvent: { contentOffset: { y: scrollY1 } },
-                   },
-                 ])}
-                 scrollEventThrottle={16}
-               >
+        <ScrollView
+          contentContainerStyle={[
+            styles.scrollContainer,
+            {
+              paddingBottom: screenHeight * 0.1 + insets.bottom, // 10% of screen + safe area
+            },
+          ]}
+          scrollEventThrottle={16}
+    >
         
         {renderImage()}
 
@@ -315,7 +317,7 @@ const renderImage = () => {
              {detail && (
             <>
               <Text style={styles.QuaddText}>{detail.title}</Text>
-              <Text style={styles.priceText}>${Number(detail.price).toFixed(2)}</Text>
+              <Text style={styles.priceText}>£{Number(detail.price).toFixed(2)}</Text>
             </>
           )}
             </View>

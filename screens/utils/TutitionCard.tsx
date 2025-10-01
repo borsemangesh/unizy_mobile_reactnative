@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, ImageSourcePropType, Platform, Dimensions, Touchable, TouchableOpacity } from "react-native";
+import { View, Text, Image, StyleSheet, ImageSourcePropType, Platform, Dimensions, Touchable, TouchableOpacity, ImageURISource } from "react-native";
 
 type TutitionCardProps = {
   tag: string;
@@ -32,12 +32,17 @@ export default function TutitionCard({
     <View style={styles.card}>
       {/* Image */}
      <View style={styles.imageContainer}>
-  <View style={styles.splitRow}>
+      <View style={styles.splitRow}>
    
     <View style={styles.leftPortion}>
-      {productImage ? (
-        <Image source={productImage} style={styles.leftImage} resizeMode="cover" />
+      {productImage && (productImage as ImageURISource).uri ? (
+        <Image
+          source={productImage}
+          style={styles.leftImage}
+          resizeMode="cover"
+        />
       ) : (
+    
         <View style={styles.initialsCircle}>
           <Text style={styles.initialsText}>
             {infoTitle
@@ -48,13 +53,16 @@ export default function TutitionCard({
       )}
     </View>
 
+  
+
     <View style={styles.rightPortion}>
       {/* Background only for right side */}
-      <Image
-        source={require("../../assets/images/featurebg.png")}
-        style={StyleSheet.absoluteFillObject}
-        resizeMode="cover"
-      />
+     <Image
+                 source={require('../../assets/images/featurebg.png')}
+                 style={[{width: '220%',height:'220%',resizeMode: 'cover'}]}
+                 // style={{resizeMode: 'contain'}}
+                 resizeMode="cover"
+               />
 
       {/* Center text */}
       <Text style={styles.rightText}>{infoTitle}</Text>
@@ -189,30 +197,32 @@ leftPortion: {
   justifyContent: "center",
   alignItems: "center",
  // borderRadius: 20,
-  overflow: "hidden",
+  //overflow: "hidden",
 },
 
 leftImage: {
   width: "100%",
   height: "100%",
+  //backgroundColor:'#fff',
   //borderRadius: 20,
   borderTopLeftRadius:20,
   borderBottomLeftRadius:20
 },
 
 initialsCircle: {
-  width: 80,
-  height: 80,
-  borderRadius: 40,
-  backgroundColor: "#666",
+  width: 75,
+  height: 75,
+  borderRadius: 100,
+  backgroundColor: "#8390D4",
   justifyContent: "center",
   alignItems: "center",
 },
 
 initialsText: {
-  fontSize: 28,
+  fontSize: 32,
   fontWeight: "700",
   color: "#fff",
+   fontFamily: 'Urbanist-SemiBold',
 },
 
 rightPortion: {
@@ -232,6 +242,7 @@ rightText: {
   color: "#fff",
   textAlign: "center",
   fontFamily: 'Urbanist-SemiBold',
+  position:'absolute'
 },
 
 tag: {

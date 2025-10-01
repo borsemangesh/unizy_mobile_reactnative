@@ -11,6 +11,7 @@ import {
   StyleSheet,
   StatusBar,
   ActivityIndicator,
+  ImageSourcePropType,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -21,6 +22,24 @@ const searchIcon = require('../../../assets/images/searchicon.png');
 import { useRoute, RouteProp } from '@react-navigation/native';
 import SearchListProductCard from '../../utils/SearchListProductCard';
 import FilterBottomSheet from '../../utils/component/FilterBottomSheet';
+import SearchTutionCard from '../../utils/SearchTutionCard';
+type CreatedBy = {
+  id: number;
+  firstname: string;
+  lastname: string;
+  email: string;
+  postal_code: string;
+  password: string;
+  student_email: string;
+  university_name: string | null;
+  profile: string;
+  reset_password_token: string | null;
+  reset_password_expires: string | null;
+  isactive: boolean;
+  created_at: string;
+  updated_at: string;
+  role_id: number;
+};
 
 type Feature = {
   id: number;
@@ -33,6 +52,8 @@ type Feature = {
   title: string;
   price: number;
   thumbnail: string;
+  profileshowinview: boolean
+  createdby: CreatedBy;
 };
 
 type ProductDetailsProps = {
@@ -40,7 +61,7 @@ type ProductDetailsProps = {
 };
 
 type RootStackParamList = {
-  ProductDetails: { category_id: number };
+  ProductDetails: { category_id: number ,category_name:string};
 };
 
 type ProductDetailsRouteProp = RouteProp<RootStackParamList, 'ProductDetails'>;
@@ -51,6 +72,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
   const [search, setSearch] = useState<string>('');
   const route = useRoute<ProductDetailsRouteProp>();
   const { category_id } = route.params;
+  const {category_name} =route.params;
 
 const [page, setPage] = useState(1);
 const [isLoading, setIsLoading] = useState(false);
@@ -161,37 +183,15 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
     filteredFeatures.length % 2 !== 0 &&
     index === filteredFeatures.length - 1;
 
-  const isCircleCategory = item.category_id === 2 || item.category_id === 5;
+   let productImage: ImageSourcePropType;
 
-  // Get initials from title or show "NA" if null/empty
-  const getInitials = (text?: string) => {
-    // if (!text) return 'NA';
-    // const initials = text
-    //   .split(' ')
-    //   .map(word => word[0]?.toUpperCase())
-    //   .slice(0, 2)
-    //   .join('');
-    return 'NA';
-  };
-
-  const productImage = isCircleCategory ? (
-    <View
-      style={{
-        width: 80,
-        height: 80,
-        borderRadius: 40,
-        backgroundColor: '#ccc',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#000' }}>
-        {getInitials("NA")}
-      </Text>
-    </View>
-  ) : item.thumbnail
-  ? { uri: item.thumbnail }
-  : require('../../../assets/images/drone.png');
+  if (item.profileshowinview && item.createdby?.profile) {
+    productImage = { uri: item.createdby.profile };
+  } else if (item.thumbnail) {
+    productImage = { uri: item.thumbnail };
+  } else {
+    productImage = require('../../../assets/images/drone.png');
+  }
 
   return (
     <View
@@ -206,14 +206,25 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
         }
         style={{ flex: 1 }}
       >
+        {item.profileshowinview ? (
+        <SearchTutionCard
+          tag="University of Warwick"
+          infoTitle={item.title}
+          inforTitlePrice={`£ ${item.price}`}
+          rating={item.isfeatured ? '4.5' : '4.5'}
+          productImage={item.createdby?.profile ? { uri: item.createdby.profile } : undefined}
+          bookmark={item.isfeatured}
+        />
+      ) : (
         <SearchListProductCard
           tag="University of Warwick"
           infoTitle={item.title}
           inforTitlePrice={`£ ${item.price}`}
           rating={item.isfeatured ? '4.5' : '4.5'}
-          productImage={productImage} // Circle with initials or image
+          productImage={productImage}
           bookmark={item.isfeatured}
         />
+      )}
       </TouchableOpacity>
     </View>
   );
@@ -234,7 +245,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
                 />
               </View>
             </TouchableOpacity>
-            <Text style={styles.unizyText}>Products</Text>
+            <Text style={styles.unizyText}>{category_name}</Text>
             <View style={{ width: 30 }} />
           </View>
         </View>

@@ -22,8 +22,10 @@ export const showToast = (
   Toast.show({
     type: 'customToast',
     text1: message,
-    position: 'bottom',
+    position:'bottom',
     visibilityTime: 2500,
+    onPress: () => {}, 
+    swipeable:false,
     props: {
       type,
       toastId: Date.now(), // unique id to re-trigger animation

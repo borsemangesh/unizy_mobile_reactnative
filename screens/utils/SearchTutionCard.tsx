@@ -7,41 +7,71 @@ import {
   ImageSourcePropType,
   Platform,
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
 type NewProductCardProps = {
   tag: string;
-  infoTitle: string;
+  infoTitle: string; // will use to get initials
   inforTitlePrice: string;
   rating: string;
-  productImage: ImageSourcePropType;
-  bookmark:boolean
+  productImage?: ImageSourcePropType; // optional now
+  bookmark: boolean;
 };
 
-export default function SearchListProductCard({
+export default function SearchTutionCard({
   tag,
   infoTitle,
   inforTitlePrice,
   rating,
   productImage,
-  bookmark
+  bookmark,
 }: NewProductCardProps) {
+  // get initials from infoTitle
+  const getInitials = (name?: string) => {
+    if (!name) return '?';
+    return name
+      .split(' ')
+      .map(word => word[0]?.toUpperCase())
+      .slice(0, 2)
+      .join('');
+  };
+
+  const showInitials = !productImage;
+
   return (
     <View style={styles.card}>
       <View style={styles.imageContainer}>
-        <Image source={productImage} style={styles.image} />
+        {showInitials ? (
+         
+          <Image
+            source={require('../../assets/images/featurebg.png')}
+            style={[{width: '220%',height:'220%',resizeMode: 'cover'}]}
+            // style={{resizeMode: 'contain'}}
+            resizeMode="cover"
+          />
+        ) : null}
+
+        {productImage ? (
+          <Image source={productImage} style={styles.image} resizeMode="contain" />
+        ) : (
+          <View style={[styles.initialsCircle]}>
+            <Text style={styles.initialsText}>{getInitials('Mahesh Jadhav')}</Text>
+          </View>
+        )}
+
         <View style={styles.tag}>
           <Text style={styles.tagText}>{tag}</Text>
         </View>
 
         <View style={styles.bookmark1}>
           <Image
-              source={
-                bookmark
-                  ? require("../../assets/images/favourite_filled.png") // bookmarked
-                  : require("../../assets/images/favourite.png") // not bookmarked
-              }
-               style={{ width: 16, height: 16 }}
-            />
+            source={
+              bookmark
+                ? require('../../assets/images/favourite_filled.png')
+                : require('../../assets/images/favourite.png')
+            }
+            style={{ width: 16, height: 16 }}
+          />
         </View>
       </View>
 
@@ -63,11 +93,7 @@ export default function SearchListProductCard({
               alignItems: 'center',
             }}
           >
-            <Image
-              source={require('../../assets/images/staricon.png')}
-              style={styles.image1}
-            />
-
+            <Image source={require('../../assets/images/staricon.png')} style={styles.image1} />
             <Text style={styles.ratingText}>{rating}</Text>
           </View>
         </View>
@@ -77,6 +103,23 @@ export default function SearchListProductCard({
 }
 
 const styles = StyleSheet.create({
+
+    initialsCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: 100,
+  backgroundColor: "#8390D4",
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    position: 'absolute'
+  },
+  initialsText: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: "#fff",
+   fontFamily: 'Urbanist-SemiBold',
+  },
   card: {
     borderRadius: 16,
     // backgroundColor:
@@ -91,10 +134,10 @@ const styles = StyleSheet.create({
     margin: 6,
     paddingBottom: 10,
     borderWidth: 0.4,
-    borderColor: '#ffffff11',
+    //borderColor: '#ffffff11',
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    // backgroundColor:
+    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderEndEndRadius: 15,
     borderStartEndRadius: 15,
     borderTopLeftRadius: 15,
@@ -107,15 +150,34 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
+    padding: 6,
 
     boxSizing: 'border-box',
   },
   imageContainer: {
     // width: 186,
-    width: '100%',
-    height: 180,
-    position: 'relative',
-     padding: 6,
+    backgroundColor: 'rgba(154, 154, 255, 0.12)',
+    width: '100%',       
+    height: 180,            
+    overflow: 'hidden',       
+    justifyContent: 'center', 
+    alignItems: 'center',
+    borderWidth: 0.4,
+    //borderColor: '#ffffff11',
+    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
+    borderBlockStartColor: '#ffffff2e',
+    borderBlockColor: '#ffffff2e',
+
+    borderTopColor: '#ffffff2e',
+    borderBottomColor: '#ffffff2e',
+    borderLeftColor: '#ffffff2e',
+    borderRightColor: '#ffffff2e',
+    borderEndEndRadius: 15,
+    borderStartEndRadius: 15,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    borderBottomStartRadius: 15,
+      
   },
   image: {
     width: '100%',
@@ -125,7 +187,7 @@ const styles = StyleSheet.create({
     //borderColor:'000',
     // borderWidth:2,
     alignSelf: 'center',
-    resizeMode: 'cover',
+    resizeMode: 'stretch'
   },
 
   image1: {
@@ -150,7 +212,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     boxShadow: '0 2px 5px 0 rgba(109, 109, 109, 0.2)',
     borderWidth: 0.5,
-    borderColor: '#ffffff2e',
+    //borderColor: '#ffffff2e',
     borderEndEndRadius: 15,
     borderStartEndRadius: 15,
     borderTopLeftRadius: 15,
@@ -195,6 +257,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     //backgroundColor: '#fff',
     paddingHorizontal: 6,
+    paddingTop:6
   },
   title: {
     fontSize: 12,

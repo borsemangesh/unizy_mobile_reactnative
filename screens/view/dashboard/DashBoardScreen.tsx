@@ -78,7 +78,7 @@ const ProductItem: React.FC<ProductItemProps> = ({
   <TouchableOpacity
     key={item.id}
     onPress={() => {
-      navigation.navigate('ProductDetails', { category_id: item.id });
+      navigation.navigate('ProductDetails', { category_id: item.id ,category_name:item.name});
       // navigation.reset({
       //   index: 0,
       //   routes: [{ name: 'ProductDetails', },{ category_id: item.id }],
@@ -457,6 +457,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
 
 
   const renderActiveTabContent = () => {
+    
     switch (activeTab) {
       case 'Home':
         return (
@@ -473,7 +474,6 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
             <ScrollView
               style={{ paddingHorizontal: 0,}}
               horizontal
-              
               showsHorizontalScrollIndicator={false}
             >
               {features.map(item => (
@@ -484,17 +484,19 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                     // marginRight: 10,
                   }}
                 >
-                    {item.category_id === 2 || item.category_id === 5 ? (
+                    {item.profileshowinview ? (    
                     <TutitionCard
                       tag="University of Warwick"
                       title={item.title}
                       infoTitle={`${item.createdby?.firstname || ''} ${item.createdby?.lastname || ''}`}
                       inforTitlePrice={`£ ${item.price}`}
                       rating="4.5"
-                      productImage={{ uri: item.createdby?.profile || item.thumbnail }}
+                      productImage={{ uri: item.createdby?.profile}}
+                     //productImage={require("../../../assets/images/drone.png")} 
                       onBookmarkPress={() => handleBookmarkPress(item.id)}
                       isBookmarked={bookmarkedIds.includes(item.id)}
                       onpress={() => navigation.navigate('SearchDetails', { id: item.id })}
+                      
                     />
                   ) : (
                     <ProductCard
@@ -508,6 +510,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                       onpress={() => navigation.navigate('SearchDetails', { id: item.id })}
                     />
                   )}
+                  
                 </Animated.View>
               ))}
             </ScrollView>
@@ -691,6 +694,7 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     fontSize: 17,
     color: '#fff',
+    width:'80%'
   },
 
   bottomTabContainer: {

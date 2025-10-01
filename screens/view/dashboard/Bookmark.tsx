@@ -12,6 +12,7 @@ import {
   StatusBar,
   ScrollView,
   ActivityIndicator,
+  ImageSourcePropType,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -20,6 +21,25 @@ import { showToast } from '../../utils/toast';
 const bgImage = require('../../../assets/images/bganimationscreen.png');
 import { useRoute, RouteProp } from '@react-navigation/native';
 import SearchListProductCard from '../../utils/SearchListProductCard';
+import SearchTutionCard from '../../utils/SearchTutionCard';
+
+type CreatedBy = {
+  id: number;
+  firstname: string;
+  lastname: string;
+  email: string;
+  postal_code: string;
+  password: string;
+  student_email: string;
+  university_name: string | null;
+  profile: string;
+  reset_password_token: string | null;
+  reset_password_expires: string | null;
+  isactive: boolean;
+  created_at: string;
+  updated_at: string;
+  role_id: number;
+};
 
 type Feature = {
   id: number;
@@ -37,6 +57,8 @@ type Feature = {
     title: string;
     price: number;
     thumbnail: string;
+    profileshowinview:boolean;
+    createdby: CreatedBy;
   };
 };
 
@@ -152,12 +174,21 @@ const formatDate = (dateString: string | null | undefined) => {
 
   const feature = item.featurelist;
 
-  const displayTitle = feature?.title?.trim() || 'Title';
-  const displayPrice = feature?.price != null ? feature.price : 0;
-  const displayRating = feature?.isfeatured ? '4.5' : '4.5';
-  const productImage = feature.thumbnail
-    ? { uri: feature.thumbnail }
-    : require('../../../assets/images/drone.png');
+  
+  // const productImage = feature.thumbnail
+  //   ? { uri: feature.thumbnail }
+  //   : require('../../../assets/images/drone.png');
+
+       let productImage: ImageSourcePropType;
+    
+      if (feature.profileshowinview && feature.createdby?.profile) {
+        productImage = { uri: feature.createdby.profile };
+      } else if (feature.thumbnail) {
+        productImage = { uri: feature.thumbnail };
+      } else {
+        productImage = require('../../../assets/images/drone.png');
+      }
+    
 
   return (
     <View
@@ -172,14 +203,26 @@ const formatDate = (dateString: string | null | undefined) => {
             }
             style={{ flex: 1 }}
           >
-      <SearchListProductCard
-        tag="University of Warwick"
-        infoTitle={displayTitle}
-        inforTitlePrice={`£ ${displayPrice}`} 
-        rating={displayRating}
-        productImage={productImage}
-        bookmark={true}
-      />
+  
+         {feature.profileshowinview ? (
+              <SearchTutionCard
+                tag="University of Warwick"
+                infoTitle={feature.title}
+                inforTitlePrice={`£ ${feature.price}`}
+                rating={feature.isfeatured ? '4.5' : '4.5'}
+                productImage={feature.createdby?.profile ? { uri: feature.createdby.profile } : undefined}
+                bookmark={feature.isfeatured}
+              />
+            ) : (
+              <SearchListProductCard
+                tag="University of Warwick"
+                infoTitle={feature.title}
+                inforTitlePrice={`£ ${feature.price}`}
+                rating={feature.isfeatured ? '4.5' : '4.5'}
+                productImage={productImage}
+                bookmark={feature.isfeatured}
+              />
+            )}
       </TouchableOpacity>
     </View>
   );

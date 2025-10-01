@@ -66,7 +66,8 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const screenWidth = Dimensions.get('window').width;
   const [activeIndex, setActiveIndex] = useState(0);
   const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
-  const insets = useSafeAreaInsets();
+  const insets = useSafeAreaInsets(); // Safe area insets
+  const { height: screenHeight } = Dimensions.get('window');
 
   const today = new Date();
 
@@ -340,7 +341,7 @@ const handleListPress = async () => {
             <View style={{ width: 30 }} />
           </View>
         </View>
-
+{/* 
      <ScrollView
           contentContainerStyle={styles.scrollContainer}
           onScroll={Animated.event([
@@ -349,7 +350,16 @@ const handleListPress = async () => {
             },
           ])}
           scrollEventThrottle={16}
-        >
+        > */}
+        <ScrollView
+            contentContainerStyle={[
+             styles.scrollContainer,
+               {
+               paddingBottom: screenHeight * 0.1 + insets.bottom, // 10% of screen + safe area
+                },
+            ]}
+             scrollEventThrottle={16}
+            >
        {storedForm?.[6]?.value?.length > 1 ? (
           <View>
             <FlatList
