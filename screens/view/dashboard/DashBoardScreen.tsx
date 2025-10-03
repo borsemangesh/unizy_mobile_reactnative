@@ -16,6 +16,8 @@ import {
   Platform,
   KeyboardAvoidingView,
 } from 'react-native';
+
+const bgImage = require('../../../assets/images/bganimationscreen.png');
 import ProductCard from '../../utils/ProductCard';
 
 import AnimatedSlideUp from '../../utils/AnimatedSlideUp';
@@ -559,10 +561,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
    }
 
   return (
-    <ImageBackground
-      source={require('../../../assets/images/bgimage_1.png')}
-      style={styles.background}
-    >
+    <ImageBackground source={bgImage} style={styles.background}>
       
       <View style={styles.fullScreenContainer}>
         {activeTab === 'Home' && (

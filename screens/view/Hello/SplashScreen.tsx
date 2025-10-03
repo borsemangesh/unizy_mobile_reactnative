@@ -11,52 +11,46 @@ import LottieView from "lottie-react-native";
 import BackgroundAnimation_Android from "./BackgroundAnimation_Android";
 import BackgroundAnimation from "./BackgroundAnimation";
 import { Navigation } from "../Navigation";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width, height } = Dimensions.get("window");
 
 type SplashScreenProps = {
-  onFinish: () => void;
+  navigation: any;
+  // onFinish: () => void;
 };
 
-const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
-  // const fadeAnim = useRef(new Animated.Value(1)).current;
+const SplashScreen = ({ navigation }: SplashScreenProps) => {
+  
 
-  // useEffect(() => {
-  //   const timeout = setTimeout(() => {
-  //     Animated.timing(fadeAnim, {
-  //       toValue: 0,
-  //       duration: 1000,
-  //       useNativeDriver: true,
-  //     }).start(() => {
-  //       console.log("Splash finished");
-  //       onFinish(); // trigger the callback to hide splash
-  //     });
-  //   }, 4100); 
-
-  //   return () => clearTimeout(timeout);
-  // }, [fadeAnim, onFinish]);
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const [animationDone, setAnimationDone] = useState(false);
-  const onFinishCalled = useRef(false); // prevent double call
+  // const onFinishCalled = useRef(false); 
+  const [initialRoute, setInitialRoute] = useState<null | string>(null);
 
   const handleAnimationFinish = () => {
-    setAnimationDone(true);
-  };
+    // setAnimationDone(true);
 
-  useEffect(() => {
-    if (animationDone && !onFinishCalled.current) {
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 800,
-        useNativeDriver: true,
-      }).start(() => {
-        if (!onFinishCalled.current) {
-          onFinishCalled.current = true;
-          onFinish();
-        }
-      });
-    }
-  }, [animationDone, fadeAnim, onFinish]);
+    const checkLoginStatus = async () => {
+      const flag = await AsyncStorage.getItem('ISLOGIN');
+      // Decide route based on flag
+      setInitialRoute(flag === 'true' ? navigation.navigate('Dashboard') : navigation.navigate('SinglePage'))
+    };
+    checkLoginStatus();
+    navigation.navigate("SingleScreen");
+  };
+  
+
+
+  //  useEffect(() => {
+  //   const checkLoginStatus = async () => {
+  //     const flag = await AsyncStorage.getItem('ISLOGIN');
+  //     // Decide route based on flag
+  //     setInitialRoute(flag === 'true' ? navigation.navigate('Dashboard') : navigation.navigate('SinglePage'))
+  //   };
+  //   checkLoginStatus();
+    
+  // }, []);
 
   return (
     <ImageBackground
@@ -64,13 +58,13 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
       style={styles.container}
       resizeMode="cover"
     >
-      <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
+      <Animated.View style={styles.container}>
         {Platform.OS === "android" ? (
           <BackgroundAnimation_Android />
         ) : (
           <BackgroundAnimation />
         )}
-     
+          
           <Animated.View style={[styles.centerContent, { opacity: fadeAnim }]}>
           <LottieView
             source={require("../../../assets/animations/animation_new.json")}

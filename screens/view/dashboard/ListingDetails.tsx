@@ -13,7 +13,7 @@ import {
 type ListingDetailsProps = {
   navigation: any;
 };
-const bgImage = require('../../../assets/images/bgimage_1.png');
+const bgImage = require('../../../assets/images/bganimationscreen.png');
 const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 
     const scrollY1 = new Animated.Value(0);
@@ -38,13 +38,6 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 
 
         <View >
-          {/* <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={{ }}
-            contentContainerStyle={{ paddingHorizontal: 16 ,width: '100%'}}
-           
-          > */}
            <ScrollView
             contentContainerStyle={styles.scrollContainer}
             onScroll={Animated.event([

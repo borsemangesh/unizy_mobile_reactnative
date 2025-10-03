@@ -137,11 +137,11 @@ const styles = StyleSheet.create({
         translucent
         backgroundColor="transparent"
       />
-      {showSplash ? (
-          <SplashScreen onFinish={() => setShowSplash(false)} />
-        ) : ( 
+      {/* {showSplash ? (
+          <SplashScreen onFinish={() => {setShowSplash(false)} }/>
+        ) : (  */}
           <Navigation />
-       )} 
+       {/* )}  */}
        <Toast config={toastConfig} />
     </SafeAreaProvider>
   );
