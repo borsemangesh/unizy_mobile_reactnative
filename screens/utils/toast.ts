@@ -28,6 +28,7 @@ export const showToast = (
     swipeable:false,
     props: {
       type,
+      
       //toastId: Date.now(), // unique id to re-trigger animation
     },
   });

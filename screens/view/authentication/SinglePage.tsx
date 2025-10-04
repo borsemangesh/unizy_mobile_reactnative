@@ -475,7 +475,6 @@ useEffect(() => {
       return;
     }
    
-   
     const emailRegex = /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;
   
     if (!emailRegex.test(username1)) {
@@ -497,7 +496,6 @@ useEffect(() => {
       const data = await res.json();
    
       if (res.ok) {
-        // Show toast
         showToast(data.message || 'Password reset link sent', 'success');
         const toastDuration = 3000;
         setTimeout(() => {
