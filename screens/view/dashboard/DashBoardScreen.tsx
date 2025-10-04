@@ -370,6 +370,14 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
     }).start();
   }, [activeTab, bubbleX, tabWidth]);
 
+  useEffect(() => {
+  const loadBookmarks = async () => {
+    const saved = await AsyncStorage.getItem('bookmarkedIds');
+    if (saved) setBookmarkedIds(JSON.parse(saved));
+  };
+  loadBookmarks();
+}, []);
+
   const renderProducts = () => {
     const isEven = products.length % 2 === 0;
     let startIndex = 0;
@@ -427,21 +435,22 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
     return rows;
   };
 
- const handleBookmarkPress = async (productId: number) => {
+
+const handleBookmarkPress = async (productId: number) => {
   try {
     const token = await AsyncStorage.getItem('userToken');
-        if (!token) return;
-  const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
-    const url=MAIN_URL.baseUrl+'category/list-bookmark'
+    if (!token) return;
+
+    const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
+
+    const url = MAIN_URL.baseUrl + 'category/list-bookmark';
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`, 
+        'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        feature_id: productId, 
-      }),
+      body: JSON.stringify({ feature_id: productId }),
     });
 
     if (!response.ok) {
@@ -450,11 +459,17 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
 
     const data = await response.json();
     console.log('Bookmark response:', data);
-     if (isCurrentlyBookmarked) {
-      setBookmarkedIds(prev => prev.filter(id => id !== productId));
+
+    let updatedBookmarks;
+    if (isCurrentlyBookmarked) {
+      updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
     } else {
-      setBookmarkedIds(prev => [...prev, productId]);
+      updatedBookmarks = [...bookmarkedIds, productId];
     }
+
+    setBookmarkedIds(updatedBookmarks);
+    await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks)); // persist locally
+
   } catch (error) {
     console.error('Bookmark error:', error);
   }
@@ -512,6 +527,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                       productImage={{ uri: item.thumbnail }}
                       onBookmarkPress={() => handleBookmarkPress(item.id)}
                       isBookmarked={bookmarkedIds.includes(item.id)}
+                      //isBookmarked={item.}
                       onpress={() => navigation.navigate('SearchDetails', { id: item.id })}
                     />
                   )}

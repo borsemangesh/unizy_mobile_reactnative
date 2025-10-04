@@ -37,25 +37,6 @@ const itemOptions = [
   { id: 3, option_name: 'Used' },
 ];
 
-const categoryOptions = [
-  { id: 4, option_name: 'Appliances (Kitchen & Home)' },
-  { id: 8, option_name: 'Clothing, Shoes & Accessories' },
-  { id: 9, option_name: 'Electronics & Gadgets' },
-  { id: 10, option_name: 'Event Wear & Costumes' },
-  { id: 11, option_name: 'Furniture' },
-  { id: 12, option_name: 'Games, Toys & Hobbies' },
-  { id: 13, option_name: 'Health & Personal Care' },
-  { id: 15, option_name: 'Kitchenware & Dining' },
-  { id: 16, option_name: 'Miscellaneous / Other' },
-  { id: 17, option_name: 'Musical Instruments & Audio Gear' },
-  { id: 18, option_name: 'Pet Supplies' },
-  { id: 19, option_name: 'Sports & Fitness Gear' },
-  { id: 20, option_name: 'Stationery & Office Supplies' },
-  { id: 21, option_name: 'Tickets & Gift Cards' },
-  { id: 5, option_name: 'Art & Craft Supplies' },
-  { id: 7, option_name: 'Books & Study Materials' },
-  { id: 6, option_name: 'Bicycles & Personal Transport' },
-];
 
 const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const [showPopup, setShowPopup] = useState(false);
@@ -70,6 +51,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const insets = useSafeAreaInsets(); // Safe area insets
   const { height: screenHeight } = Dimensions.get('window');
 
+  const [fields, setFields] = useState<any[]>([]); // seller fields from API
   const today = new Date();
 
 // Format as DD-MM-YYYY
@@ -121,6 +103,8 @@ const formattedDate = `${today.getDate().toString().padStart(2, '0')}-${(today.g
     loadUserMeta();
   }, []);
 
+  
+
 
   type FormEntry = {
   value: any;
@@ -152,6 +136,69 @@ const descriptionvalue= getValueByAlias(storedForm,'description') || 'No Descrip
     const index = Math.round(event.nativeEvent.contentOffset.x / slideSize);
     setActiveIndex(index);
   };
+
+   useEffect(() => {
+    const fetchFields = async () => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        const productId1 = await AsyncStorage.getItem('selectedProductId');
+        if (!token) {
+          console.log('No token found');
+          return;
+        }
+
+        const url = `${MAIN_URL.baseUrl}category/listparams/user/${productId1}`;
+
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const json = await response.json();
+
+        if (json?.metadata) {
+          setUserMeta({
+            firstname: json.metadata.firstname ?? null,
+            lastname: json.metadata.lastname ?? null,
+            profile: json.metadata.profile ?? null,
+            student_email: json.metadata.student_email ?? null,
+          });
+
+          await AsyncStorage.setItem(
+            'userMeta',
+            JSON.stringify({
+              firstname: json.metadata.firstname ?? null,
+              lastname: json.metadata.lastname ?? null,
+              profile: json.metadata.profile ?? null,
+              student_email: json.metadata.student_email ?? null,
+            }),
+          );
+        }
+
+        if (json?.data) {
+          const sellerFields = json.data.filter(
+            (item: any) => item.seller === true,
+          );
+          setFields(sellerFields);
+        }
+      } catch (err) {
+        console.log('Error fetching fields', err);
+      } finally {
+        //setLoading(false);
+      }
+    };
+
+    fetchFields();
+  }, []);
+
+
 
   type ImageField = {
   id?: string;
@@ -248,7 +295,6 @@ const handleListPress = async () => {
       return;
     }
 
-    // 6️⃣ Get feature_id from create API response
     const feature_id = createJson?.data?.id;
     if (!feature_id) {
       console.log('❌ feature_id not returned from create API.');
@@ -257,7 +303,6 @@ const handleListPress = async () => {
     }
     console.log('✅ feature_id from create API:', feature_id);
 
-    // 7️⃣ Upload images one by one
     for (const [param_id, images] of imageFields) {
       console.log(`Step 7: Uploading images for param_id=${param_id}`);
 
@@ -273,7 +318,7 @@ const handleListPress = async () => {
           type: image.type || 'image/jpeg',
           name: image.name,
         } as any);
-        data.append('feature_id', feature_id); // from API response
+        data.append('feature_id', feature_id); 
         data.append('param_id', param_id);
 
         console.log('✅ FormData prepared for upload');
@@ -286,7 +331,7 @@ const handleListPress = async () => {
         const uploadRes = await fetch(uploadUrl, {
           method: 'POST',
           headers: {
-            Authorization: `Bearer ${token}`, // no Content-Type for FormData
+            Authorization: `Bearer ${token}`, 
           },
           body: data,
         });
@@ -444,50 +489,65 @@ const handleListPress = async () => {
               </View>
             </View>
 
-            <View style={styles.card}>
-              <View style={styles.gap12}>
-                <Text style={styles.productDeatilsHeading}>
-                  Product Details
-                </Text>
-                <View style={{ gap: 8 }}>
-                  <Text style={styles.itemcondition}>Item Condition</Text>
-                  <View>
-                  <View style={styles.categoryContainer}>
-                {Array.isArray(storedForm?.[9]?.value) &&
-                  storedForm[9].value.map((id: number, index: number) => {
-                    const option = itemOptions.find(o => o.id === id);
-                    return (
-                      <View key={index} style={styles.categoryTag}>
-                        <Text style={styles.catagoryText}>
-                          {option?.option_name || 'Unknown'}
-                        </Text>
-                      </View>
-                    );
-                  })}
-              </View>
-                  </View>
-                  {/* </View> */}
-                  <View style={styles.gap4}>
-                    <Text style={styles.catagory}>Category</Text>
-                    
-                    <View style={styles.categoryContainer}>
-                    {Array.isArray(storedForm?.[10]?.value) &&
-                      storedForm[10].value.map((id: number, index: number) => {
-                        const option = categoryOptions.find(o => o.id === id);
-                        return (
-                          <View key={index} style={styles.categoryTag}>
-                            <Text style={styles.catagoryText}>
-                              {option?.option_name || 'Unknown'}
-                            </Text>
-                          </View>
-                        );
-                      })}
-                  </View>
+          <View style={styles.card}>
+          <View style={styles.gap12}>
+            <Text style={styles.productDeatilsHeading}>Product Details</Text>
 
+            <View style={{ gap: 12 }}>
+              {fields.map(field => {
+                const fieldId = field.param.id;
+
+                // Skip Title, Description, Price, Images, Featured
+                const skipAliases = ['title', 'description', 'price'];
+                if (
+                  skipAliases.includes(field.param.alias_name ?? '') ||
+                  ['Image', 'boolean'].includes(field.param.field_type)
+                )
+                  return null;
+
+                const storedValue = storedForm?.[fieldId]?.value;
+                if (storedValue == null) return null;
+
+                let displayValues: string[] = [];
+
+                if (field.param.field_type === 'dropdown') {
+                  if (Array.isArray(storedValue)) {
+                    displayValues = storedValue
+                      .map((id: number) =>
+                        field.param.options.find((opt: any) => opt.id === id)?.option_name
+                      )
+                      .filter(Boolean) as string[];
+                  } else {
+                    const option = field.param.options.find((opt: any) => opt.id === storedValue);
+                    if (option) displayValues = [option.option_name];
+                  }
+                } else if (Array.isArray(storedValue)) {
+                  displayValues = storedValue.map(String);
+                } else {
+                  displayValues = [String(storedValue)];
+                }
+
+                return (
+                  <View key={fieldId} style={{ gap: 6 }}>
+                    {/* Label */}
+                    <Text style={styles.detailLabel}>{field.param.field_name}</Text>
+
+                    {/* Values */}
+                    <View style={styles.categoryContainer}>
+                      {displayValues.map((val, idx) => (
+                        <View key={idx} style={styles.categoryTag}>
+                          <Text style={styles.catagoryText}>{val}</Text>
+                        </View>
+                      ))}
+                    </View>
                   </View>
-                </View>
-              </View>
+                );
+              })}
             </View>
+          </View>
+        </View>
+
+
 
             {/* Selaer details */}
             <View style={styles.card}>
@@ -651,21 +711,6 @@ const handleListPress = async () => {
                   Your product is now live and visible to other students.
                 </Text>
 
-                {/* <TouchableOpacity
-                  style={styles.loginButton}
-                  onPress={async () => {
-                    try {
-                      await AsyncStorage.removeItem('formData');
-                      await AsyncStorage.removeItem('selectedProductId');
-                      console.log('✅ formData cleared from AsyncStorage');
-
-                      navigation.replace('Dashboard');
-                      setShowPopup(false);
-                    } catch (err) {
-                      console.log('❌ Error clearing formData:', err);
-                    }
-                  }}
-                > */}
                 <TouchableOpacity
                 style={styles.loginButton}
                 onPress={async () => {
@@ -703,6 +748,34 @@ const handleListPress = async () => {
 };
 
 const styles = StyleSheet.create({
+
+   detailRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#ccc',
+    backgroundColor: '#fff', // optional
+    borderRadius: 8,
+    marginVertical: 4,
+  },
+  detailLabel: {
+     color: 'rgba(255, 255, 255, 0.72)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 16,
+    fontWeight: '600',
+    fontStyle: 'normal',
+    lineHeight: 22,
+  },
+  detailValue: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: '#666',
+    textAlign: 'right',
+    flex: 1,
+  },
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,

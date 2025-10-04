@@ -81,7 +81,7 @@ const renderItem = ({ item }: any) => {
       onPress={async () => {
         if (isLogout) {      
         await AsyncStorage.setItem('ISLOGIN', 'false');
-        showToast('User Logout Successfully','info')
+        showToast('User Logout Successfully','success')
         navigation.navigate('SinglePage');
         } else {
           console.log(item.title, 'pressed');

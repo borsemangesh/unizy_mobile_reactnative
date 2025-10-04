@@ -1,5 +1,5 @@
 import { BlurView } from '@react-native-community/blur';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Dimensions,
   Image,
@@ -14,9 +14,10 @@ import {
 interface SelectCatagoryDropdownProps {
   options: { id: number; option_name: string }[];
   visible: boolean;
-  ismultilple:boolean
+  ismultilple: boolean;
   onClose: () => void;
-  onSelect: (selectedId: number) => void; 
+  onSelect: (selectedId: number | number[]) => void; 
+  selectedValues?: number | number[];
 }
 const SelectCatagoryDropdown = ({
   options,
@@ -24,23 +25,41 @@ const SelectCatagoryDropdown = ({
   ismultilple,
   onClose,
   onSelect,
+  selectedValues
 }: SelectCatagoryDropdownProps) => {
   const [selectedCheckboxes, setSelectedCheckboxes] = useState<number[]>([]); // For checkboxes
   const [selectedRadio, setSelectedRadio] = useState<number | null>(null); // For radio buttons
-  const screenHeight = Dimensions.get("window").height;
+  const screenHeight = Dimensions.get('window').height;
 
-  const toggleCheckbox = (id: number) => {
-    setSelectedCheckboxes(prevState => {
-      if (prevState.includes(id)) {
-        return prevState.filter(item => item !== id); // Remove item if already selected
-      } else {
-        return [...prevState, id]; // Add item if not selected
-      }
-    });
-  };
+useEffect(() => {
+  if (visible) {
+    if (Array.isArray(selectedValues)) {
+      setSelectedCheckboxes(selectedValues);
+    } else if (selectedValues) {
+      setSelectedRadio(selectedValues);
+    } else {
+      setSelectedCheckboxes([]);
+      setSelectedRadio(null);
+    }
+  }
+}, [visible, selectedValues]);
+
+const toggleCheckbox = (id: number) => {
+  setSelectedCheckboxes(prevState => {
+    let updated;
+    if (prevState.includes(id)) {
+      updated = prevState.filter(item => item !== id);
+    } else {
+      updated = [...prevState, id];
+    }
+
+    onSelect(updated); 
+    return updated;
+  });
+};
 
   const handleRadioButton = (id: number) => {
-    setSelectedRadio(id); // Set the selected radio button id
+    setSelectedRadio(id); 
     onSelect(id);
   };
 
@@ -90,97 +109,17 @@ const SelectCatagoryDropdown = ({
           <View
             style={{
               width: '100%',
-              minHeight: screenHeight * 0.2,   // 20% of screen height
-            maxHeight: screenHeight * 0.6,   // 60% of screen height (dynamic)
+              minHeight: screenHeight * 0.2, 
+              maxHeight: screenHeight * 0.6,
               paddingHorizontal: 10,
             }}
           >
-
             <ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
-          {options.map((option, index) => {
-            const isSelectedRadio = selectedRadio === option.id;
-            const isSelectedCheckbox = selectedCheckboxes.includes(option.id);
-
-    return (
-      <View
-        style={{
-          marginBottom: 10,
-          paddingHorizontal: 10,
-          marginTop: 10,
-        }}
-        key={index}
-      >
-        {/* If multi-select → show checkbox, else show radio */}
-        <TouchableOpacity
-          onPress={() =>
-            ismultilple
-              ? toggleCheckbox(option.id)
-              : handleRadioButton(option.id)
-          }
-          style={styles.radioButtonContainer}
-        >
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              paddingHorizontal: 10,
-              justifyContent: "flex-start",
-            }}
-          >
-            {ismultilple ? (
-              // ✅ Checkbox
-              <View
-                style={[
-                  styles.checkboxContainer,
-                  isSelectedCheckbox && styles.checkedBox,
-                ]}
-              >
-                {isSelectedCheckbox && (
-                  <View
-                    style={{
-                      width: 12,
-                      height: 12,
-                      borderRadius: 3,
-                      backgroundColor: "#FFF",
-                    }}
-                  />
-                )}
-              </View>
-            ) : (
-              // ✅ Radio
-              <View
-                style={[
-                  styles.radioButton,
-                  isSelectedRadio && styles.selectedRadio,
-                ]}
-              >
-                {isSelectedRadio && <View style={styles.radioDot} />}
-              </View>
-            )}
-
-            {/* Option Name */}
-            <Text
-              style={{
-                color: "#FFF",
-                fontSize: 16,
-                marginLeft: 10,
-                fontWeight: "600",
-                lineHeight: 18,
-                letterSpacing: -0.28,
-                fontFamily: "Urbanist-SemiBold",
-              }}
-            >
-              {option.option_name}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-    );
-  })}
-</ScrollView>
-            {/* <ScrollView contentContainerStyle={{ paddingBottom:10 }}>
               {options.map((option, index) => {
-                const isSelectedRadio = selectedRadio === option.id; // Check if the radio button is selected
+                const isSelectedRadio = selectedRadio === option.id;
+                const isSelectedCheckbox = selectedCheckboxes.includes(
+                  option.id,
+                );
 
                 return (
                   <View
@@ -191,9 +130,15 @@ const SelectCatagoryDropdown = ({
                     }}
                     key={index}
                   >
-                    {/* Radio Button */}
-                    {/* <TouchableOpacity
-                      onPress={() => handleRadioButton(option.id)} // Handle the radio button press
+                   
+                    <TouchableOpacity
+                      onPress={() =>{
+                        console.log('Option selected:', ismultilple)
+                        ismultilple
+                          ? toggleCheckbox(option.id)
+                          : handleRadioButton(option.id)
+                      }
+                    }
                       style={styles.radioButtonContainer}
                     >
                       <View
@@ -204,16 +149,25 @@ const SelectCatagoryDropdown = ({
                           justifyContent: 'flex-start',
                         }}
                       >
-                        <View
-                          style={[
-                            styles.radioButton,
-                            isSelectedRadio && styles.selectedRadio,
-                          ]}
-                        >
-                          {isSelectedRadio && <View style={styles.radioDot} />}
-                        </View>
+                       {ismultilple ?  (
+                      
+                    <View style={[styles.checkboxContainer, isSelectedCheckbox && styles.checkedBox]}>
+                      
+                      {/* {isSelectedCheckbox && (
+                        <View style={{ width: 12, height: 12, borderRadius: 3, backgroundColor: '#FFF' }} />
+                      )} */}
+                      {isSelectedCheckbox && (
+                      <Text style={{ color: '#FFF', fontSize: 12 }}>✓</Text>
+                    )}
+                    </View>
+                  ) : (
+                    <View style={[styles.radioButton, isSelectedRadio && styles.selectedRadio]}>
+                      {isSelectedRadio && <View style={styles.radioDot} />}
+                    </View>
+                  )}
+
                         {/* Option Name */}
-                        {/* <Text
+                        <Text
                           style={{
                             color: '#FFF',
                             fontSize: 16,
@@ -228,12 +182,13 @@ const SelectCatagoryDropdown = ({
                         </Text>
                       </View>
                     </TouchableOpacity>
-                  </View> */}
-                {/* );
-              })} */}
-            {/* </ScrollView>  */}
+                  </View>
+                );
+              })}
+            </ScrollView>
+        
           </View>
-          <View style={styles.cardconstinerdivider}/>
+          <View style={styles.cardconstinerdivider} />
           <View style={styles.bottomview}>
             <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
               <Text style={styles.cancelText}>Cancel</Text>
@@ -255,19 +210,19 @@ const SelectCatagoryDropdown = ({
 };
 
 const styles = StyleSheet.create({
-    cardconstinerdivider:{
-        display:'flex',
-        flexDirection:'row',
-        justifyContent:'space-between',
-        alignItems:'center',
-        width: '90%',
-        height: 'auto',
-        borderStyle: 'dashed',
-        borderBottomWidth: 0.8,
-        borderBottomColor: '#76c1f0ff',
-    },
+  cardconstinerdivider: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '90%',
+    height: 'auto',
+    borderStyle: 'dashed',
+    borderBottomWidth: 0.8,
+    borderBottomColor: '#76c1f0ff',
+  },
   checkedBox: {
-    backgroundColor: '#00f', // Checkbox color when checked
+    //backgroundColor: '#00f', // Checkbox color when checked
   },
   radioButtonContainer: {
     marginTop: 10,
@@ -292,14 +247,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   checkboxContainer: {
-    width: 24,
-    height: 24,
+    width: 19,
+    height: 19,
     borderRadius: 5,
     borderWidth: 1,
     borderColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
+    //marginTop: 10,
   },
   orderandTotalEarings: {
     color: 'rgba(255, 255, 255, 0.64)',
@@ -346,7 +301,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
   },
   modelcontainer: {
-       //marginTop: 'auto',
+    //marginTop: 'auto',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(0, 0, 0, 0.59) 0%, rgba(255, 255, 255, 0.10) 100%)',
     width: '100%',
@@ -532,7 +487,5 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     textAlign: 'center',
   },
-
-  
 });
 export default SelectCatagoryDropdown;

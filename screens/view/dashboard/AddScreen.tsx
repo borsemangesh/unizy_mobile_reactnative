@@ -24,6 +24,7 @@ import { MAIN_URL } from '../../utils/APIConstant';
 import { showToast } from '../../utils/toast';
 import ToggleButton from '../../utils/component/ToggleButton';
 import Button from '../../utils/component/Button';
+import SelectCatagoryDropdown from '../../utils/component/SelectCatagoryDropdown';
 
 const bgImage = require('../../../assets/images/bganimationscreen.png');
 const profileImg = require('../../../assets/images/user.jpg'); // your avatar image
@@ -48,8 +49,10 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
   const [multiSelectModal, setMultiSelectModal] = useState<{
     visible: boolean;
+    ismultilple: boolean;
     fieldId?: number;
-  }>({ visible: false });
+  }>({ visible: false, ismultilple: false });
+
   const [multiSelectOptions, setMultiSelectOptions] = useState<any[]>([]);
   const [uploadedImages, setUploadedImages] = useState<
     { id: string; uri: string; name: string }[]
@@ -59,13 +62,13 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const [slideUp1] = useState(new Animated.Value(0));
 
   interface UserMeta {
-  firstname: string | null;
-  lastname: string | null;
-  profile: string | null;
-  student_email: string | null;
-}
+    firstname: string | null;
+    lastname: string | null;
+    profile: string | null;
+    student_email: string | null;
+  }
 
-const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
+  const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
 
   useEffect(() => {
     const fetchFields = async () => {
@@ -94,23 +97,23 @@ const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
         const json = await response.json();
 
         if (json?.metadata) {
-        setUserMeta({
-          firstname: json.metadata.firstname ?? null,
-          lastname: json.metadata.lastname ?? null,
-          profile: json.metadata.profile ?? null,
-          student_email: json.metadata.student_email ?? null,
-        });
-
-        await AsyncStorage.setItem(
-          'userMeta',
-          JSON.stringify({
+          setUserMeta({
             firstname: json.metadata.firstname ?? null,
             lastname: json.metadata.lastname ?? null,
             profile: json.metadata.profile ?? null,
             student_email: json.metadata.student_email ?? null,
-          })
-        );
-      }
+          });
+
+          await AsyncStorage.setItem(
+            'userMeta',
+            JSON.stringify({
+              firstname: json.metadata.firstname ?? null,
+              lastname: json.metadata.lastname ?? null,
+              profile: json.metadata.profile ?? null,
+              student_email: json.metadata.student_email ?? null,
+            }),
+          );
+        }
 
         if (json?.data) {
           const sellerFields = json.data.filter(
@@ -128,37 +131,32 @@ const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
     fetchFields();
   }, []);
 
- const [expanded, setExpanded] = useState(false);
-const animatedHeight = useRef(new Animated.Value(0)).current;
+  const [expanded, setExpanded] = useState(false);
+  const animatedHeight = useRef(new Animated.Value(0)).current;
 
-useEffect(() => {
-  if (expanded) {
-    Animated.timing(animatedHeight, {
-      toValue: 1,
-      duration: 800, // slow expansion
-      useNativeDriver: false, // height cannot use native driver
-    }).start();
-  }
-}, [expanded]);
+  useEffect(() => {
+    if (expanded) {
+      Animated.timing(animatedHeight, {
+        toValue: 1,
+        duration: 800, // slow expansion
+        useNativeDriver: false, // height cannot use native driver
+      }).start();
+    }
+  }, [expanded]);
 
-const containerHeight = animatedHeight.interpolate({
-  inputRange: [0, 1],
-  outputRange: [0, 200], // 200 = max height you expect (or measure dynamically)
-});
-
-  // const handleValueChange = (fieldId: number, value: any) => {
-  //   setFormValues((prev: any) => ({ ...prev, [fieldId]: value }));
-  // };
-
-  const handleValueChange = (fieldId: number, aliasName: string | null, value: any) => {
-  setFormValues((prev: any) => ({
-    ...prev,
-    [fieldId]: {
-      value: value,
-      alias_name: aliasName ?? null, // null if no alias_name
-    },
-  }));
-};
+  const handleValueChange = (
+    fieldId: number,
+    aliasName: string | null,
+    value: any,
+  ) => {
+    setFormValues((prev: any) => ({
+      ...prev,
+      [fieldId]: {
+        value: value,
+        alias_name: aliasName ?? null, // null if no alias_name
+      },
+    }));
+  };
 
   const handleMultiSelectToggle = (fieldId: number, optionId: number) => {
     const prevSelected: number[] = Array.isArray(formValues[fieldId])
@@ -195,91 +193,86 @@ const containerHeight = animatedHeight.interpolate({
     }
   };
 
+  // const handlePreview = async () => {
+  //   try {
+  //     const dataToStore: any = { ...formValues };
 
-// const handlePreview = async () => {
-//   try {
-//     const dataToStore: any = { ...formValues };
+  //     // Handle image fields separately
+  //     fields.forEach(field => {
+  //       if (field.param.field_type.toLowerCase() === 'image') {
+  //         const uploadedForField = uploadedImages.map(img => ({
+  //           id: img.id,
+  //           uri: img.uri,
+  //           name: img.name,
+  //         }));
 
-//     // Handle image fields separately
-//     fields.forEach(field => {
-//       if (field.param.field_type.toLowerCase() === 'image') {
-//         const uploadedForField = uploadedImages.map(img => ({
-//           id: img.id,
-//           uri: img.uri,
-//           name: img.name,
-//         }));
+  //         dataToStore[field.param.id] = {
+  //           value: uploadedForField,
+  //           alias_name: field.param.alias_name ?? null,
+  //         };
+  //       }
+  //     });
 
-//         dataToStore[field.param.id] = {
-//           value: uploadedForField,
-//           alias_name: field.param.alias_name ?? null,
-//         };
-//       }
-//     });
+  //     await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
 
-//     await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
+  //     console.log('Form data saved: ', dataToStore);
 
-//     console.log('Form data saved: ', dataToStore);
+  //     navigation.navigate('PreviewThumbnail');
+  //   } catch (error) {
+  //     console.log('Error saving form data: ', error);
+  //     showToast('Failed to save form data');
+  //   }
+  // };
 
-//     navigation.navigate('PreviewThumbnail'); 
-//   } catch (error) {
-//     console.log('Error saving form data: ', error);
-//     showToast('Failed to save form data');
-//   }
-// };
+  const handlePreview = async () => {
+    try {
+      for (const field of fields) {
+        const { id, field_type, alias_name } = field.param;
 
+        if (field.mandatory) {
+          let value = formValues[id]?.value;
 
+          if (field_type.toLowerCase() === 'image') {
+            value = uploadedImages;
+          }
 
-const handlePreview = async () => {
-  try {
-    for (const field of fields) {
-      const { id, field_type, alias_name } = field.param;
-
-      if (field.mandatory) {
-        let value = formValues[id]?.value;
-
-        if (field_type.toLowerCase() === 'image') {
-          value = uploadedImages; 
-        }
-
-        if (
-          value === undefined ||
-          value === null ||
-          (typeof value === 'string' && value.trim() === '') ||
-          (Array.isArray(value) && value.length === 0)
-        ) {
-          showToast(`${field.param.field_name} is mandatory`);
-          return;
+          if (
+            value === undefined ||
+            value === null ||
+            (typeof value === 'string' && value.trim() === '') ||
+            (Array.isArray(value) && value.length === 0)
+          ) {
+            showToast(`${field.param.field_name} is mandatory`);
+            return;
+          }
         }
       }
+
+      const dataToStore: any = { ...formValues };
+
+      fields.forEach(field => {
+        if (field.param.field_type.toLowerCase() === 'image') {
+          const uploadedForField = uploadedImages.map(img => ({
+            id: img.id,
+            uri: img.uri,
+            name: img.name,
+          }));
+
+          dataToStore[field.param.id] = {
+            value: uploadedForField,
+            alias_name: field.param.alias_name ?? null,
+          };
+        }
+      });
+
+      await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
+      console.log('Form data saved: ', dataToStore);
+      navigation.navigate('PreviewThumbnail');
+    } catch (error) {
+      console.log('Error saving form data: ', error);
+      showToast('Failed to save form data');
     }
-
-    const dataToStore: any = { ...formValues };
-
-    fields.forEach(field => {
-      if (field.param.field_type.toLowerCase() === 'image') {
-        const uploadedForField = uploadedImages.map(img => ({
-          id: img.id,
-          uri: img.uri,
-          name: img.name,
-        }));
-
-        dataToStore[field.param.id] = {
-          value: uploadedForField,
-          alias_name: field.param.alias_name ?? null,
-        };
-      }
-    });
-
-    await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
-    console.log('Form data saved: ', dataToStore);
-    navigation.navigate('PreviewThumbnail');
-  } catch (error) {
-    console.log('Error saving form data: ', error);
-    showToast('Failed to save form data');
-  }
-};
-
-
+  };
 
   const handleSelectImage = async () => {
     const hasPermission = await requestCameraPermission();
@@ -369,201 +362,253 @@ const handlePreview = async () => {
     );
   };
 
-
   const renderLabel = (field_name: any, mandatory: any) => (
-  <Text style={styles.textstyle}>
-    {field_name}
-    {mandatory && <Text style={{ color: '#fff' }}> *</Text>}
-  </Text>
-);
+    <Text style={styles.textstyle}>
+      {field_name}
+      {mandatory && <Text style={{ color: '#fff' }}> *</Text>}
+    </Text>
+  );
 
-const renderField = (field: any) => {
-  const { field_name, field_type, options, id } = field.param;
-  const fieldType = field_type.toLowerCase();
+  const [isCheckbox, setCheckBox] = useState(false);
 
-  switch (fieldType) {
-    // ---------------- TEXT FIELD ----------------
-    case 'text': {
-      const { param } = field;
-      const { field_name, keyboardtype, alias_name } = param;
+  const renderField = (field: any) => {
+    const { field_name, field_type, options, id, field_ismultilple } =field.param;
+    const fieldType = field_type.toLowerCase();
+     const ism = field_ismultilple;
+    console.log('fieldType', ism);
+    switch (fieldType) {
+      // ---------------- TEXT FIELD ----------------
+      case 'text': {
+        const { param } = field;
+        const { field_name, keyboardtype, alias_name } = param;
 
-      const rawValue = formValues[param.id]?.value || '';
+        const rawValue = formValues[param.id]?.value || '';
 
-      const isPriceField = alias_name?.toLowerCase() === 'price';
-      const placeholderText =
-      alias_name?.toLowerCase() === 'price'
-        ? `£ ${alias_name}`
-        : alias_name || field_name;
+        const isPriceField = alias_name?.toLowerCase() === 'price';
+        const placeholderText =
+          alias_name?.toLowerCase() === 'price'
+            ? `£ ${alias_name}`
+            : alias_name || field_name;
 
-      let rnKeyboardType:
-        | 'default'
-        | 'numeric'
-        | 'email-address'
-        | 'phone-pad'
-        | 'decimal-pad' = 'default';
-      switch (keyboardtype) {
-        case 'alpha-numeric':
-          rnKeyboardType = 'default';
-          break;
-        case 'numeric':
-          rnKeyboardType = 'numeric';
-          break;
-        case 'decimal':
-          rnKeyboardType = 'decimal-pad';
-          break;
-        case 'email':
-          rnKeyboardType = 'email-address';
-          break;
-        case 'phone':
-          rnKeyboardType = 'phone-pad';
-          break;
-        default:
-          rnKeyboardType = 'default';
-      }
+        let rnKeyboardType:
+          | 'default'
+          | 'numeric'
+          | 'email-address'
+          | 'phone-pad'
+          | 'decimal-pad' = 'default';
+        switch (keyboardtype) {
+          case 'alpha-numeric':
+            rnKeyboardType = 'default';
+            break;
+          case 'numeric':
+            rnKeyboardType = 'numeric';
+            break;
+          case 'decimal':
+            rnKeyboardType = 'decimal-pad';
+            break;
+          case 'email':
+            rnKeyboardType = 'email-address';
+            break;
+          case 'phone':
+            rnKeyboardType = 'phone-pad';
+            break;
+          default:
+            rnKeyboardType = 'default';
+        }
 
-      return (
-        <View key={field.id} style={styles.productTextView}>
-          {/* <Text style={styles.textstyle}>{field_name}</Text> */}
-          {renderLabel(field_name, field.mandatory)}
-          <TextInput
-            style={[
-              styles.personalEmailID_TextInput,
-              styles.login_container,
-              {
-                textAlignVertical: 'center', // centers text vertically on Android
-                paddingVertical: 0, // prevents padding changes on focus
-              } ]}
-            placeholder={placeholderText}
-            multiline={false}
-            placeholderTextColor="rgba(255, 255, 255, 0.48)"
-            keyboardType={rnKeyboardType}
-            value={isPriceField && rawValue ? `£ ${rawValue}` : rawValue}
-            //onChangeText={text => handleValueChange(param.id, alias_name, text)}
-             onChangeText={text => {
-              if (isPriceField) {
-                // Remove £ and spaces before saving
-                const cleaned = text.replace(/£\s?/g, '');
-                handleValueChange(param.id, alias_name, cleaned);
-              } else {
-                handleValueChange(param.id, alias_name, text);
-              }
-            }}
-          />
-        </View>
-      );
-    }
-
-    // ---------------- MULTI-LINE TEXT ----------------
-    case 'multi-line-text': {
-      const { param } = field;
-      const { field_name, keyboardtype, alias_name } = param;
-      const placeholderText = alias_name || field_name;
-
-      let rnKeyboardType:
-        | 'default'
-        | 'numeric'
-        | 'email-address'
-        | 'phone-pad'
-        | 'decimal-pad' = 'default';
-      switch (keyboardtype) {
-        case 'alpha-numeric':
-          rnKeyboardType = 'default';
-          break;
-        case 'numeric':
-          rnKeyboardType = 'numeric';
-          break;
-        case 'decimal':
-          rnKeyboardType = 'decimal-pad';
-          break;
-        case 'email':
-          rnKeyboardType = 'email-address';
-          break;
-        case 'phone':
-          rnKeyboardType = 'phone-pad';
-          break;
-        default:
-          rnKeyboardType = 'default';
-      }
-
-      return (
-        <View key={field.id} style={styles.productTextView}>
-          {/* <Text style={styles.textstyle}>{field_name}</Text> */}
-          {renderLabel(field_name, field.mandatory)}
-          <TextInput
-            style={[
-              styles.personalEmailID_TextInput,
-              styles.login_container,
-              { textAlign: 'left', textAlignVertical: 'top', height: 100 },
-            ]}
-            placeholder={placeholderText}
-            multiline={true}
-            placeholderTextColor="rgba(255, 255, 255, 0.48)"
-            keyboardType={rnKeyboardType}
-            value={formValues[param.id]?.value || ''}
-            onChangeText={text => handleValueChange(param.id, alias_name, text)}
-          />
-        </View>
-      );
-    }
-
-    case 'dropdown':
-      return (
-        <View key={field.id} style={styles.productTextView}>
-          {/* <Text style={styles.textstyle}>{field_name}</Text> */}
-          {renderLabel(field_name, field.mandatory)}
-
-          <TouchableOpacity
-            style={styles.pickerContainer}
-            onPress={() => {
-              setMultiSelectModal({ visible: true, fieldId: id });
-              setMultiSelectOptions(options);
-            }}
-          >
-            <Text style={styles.dropdowntext}>
-              {Array.isArray(formValues[id]?.value) &&
-              formValues[id]?.value.length > 0
-                ? `${formValues[id]?.value.length} Selected`
-                : `Select ${field_name}`}
-            </Text>
-          </TouchableOpacity>
-
-          <View style={styles.categoryContainer}>
-            {options
-              .filter(
-                (opt: any) =>
-                  Array.isArray(formValues[id]?.value) &&
-                  formValues[id]?.value.includes(opt.id),
-              )
-              .map((opt: any) => (
-                <View key={opt.id} style={styles.categoryTagWrapper}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      // remove option from formValues[id]
-                      setFormValues((prev: any) => {
-                        const updated = Array.isArray(prev[id]?.value)
-                          ? [...prev[id].value]
-                          : [];
-                        return {
-                          ...prev,
-                          [id]: {
-                            ...prev[id],
-                            value: updated.filter(v => v !== opt.id),
-                          },
-                        };
-                      });
-                    }}
-                  >
-                    <Text style={styles.categoryTag}>
-                      {opt.option_name} ✕
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              ))}
+        return (
+          <View key={field.id} style={styles.productTextView}>
+            {/* <Text style={styles.textstyle}>{field_name}</Text> */}
+            {renderLabel(field_name, field.mandatory)}
+            <TextInput
+              style={[
+                styles.personalEmailID_TextInput,
+                styles.login_container,
+                {
+                  textAlignVertical: 'center', // centers text vertically on Android
+                  paddingVertical: 0, // prevents padding changes on focus
+                },
+              ]}
+              placeholder={placeholderText}
+              multiline={false}
+              placeholderTextColor="rgba(255, 255, 255, 0.48)"
+              keyboardType={rnKeyboardType}
+              value={isPriceField && rawValue ? `£ ${rawValue}` : rawValue}
+              //onChangeText={text => handleValueChange(param.id, alias_name, text)}
+              onChangeText={text => {
+                if (isPriceField) {
+                  // Remove £ and spaces before saving
+                  const cleaned = text.replace(/£\s?/g, '');
+                  handleValueChange(param.id, alias_name, cleaned);
+                } else {
+                  handleValueChange(param.id, alias_name, text);
+                }
+              }}
+            />
           </View>
-        </View>
-      );
+        );
+      }
 
-      
+      // ---------------- MULTI-LINE TEXT ----------------
+      case 'multi-line-text': {
+        const { param } = field;
+        const { field_name, keyboardtype, alias_name } = param;
+        const placeholderText = alias_name || field_name;
+
+        let rnKeyboardType:
+          | 'default'
+          | 'numeric'
+          | 'email-address'
+          | 'phone-pad'
+          | 'decimal-pad' = 'default';
+        switch (keyboardtype) {
+          case 'alpha-numeric':
+            rnKeyboardType = 'default';
+            break;
+          case 'numeric':
+            rnKeyboardType = 'numeric';
+            break;
+          case 'decimal':
+            rnKeyboardType = 'decimal-pad';
+            break;
+          case 'email':
+            rnKeyboardType = 'email-address';
+            break;
+          case 'phone':
+            rnKeyboardType = 'phone-pad';
+            break;
+          default:
+            rnKeyboardType = 'default';
+        }
+
+        return (
+          <View key={field.id} style={styles.productTextView}>
+            {/* <Text style={styles.textstyle}>{field_name}</Text> */}
+            {renderLabel(field_name, field.mandatory)}
+            <TextInput
+              style={[
+                styles.personalEmailID_TextInput,
+                styles.login_container,
+                { textAlign: 'left', textAlignVertical: 'top', height: 100 },
+              ]}
+              placeholder={placeholderText}
+              multiline={true}
+              placeholderTextColor="rgba(255, 255, 255, 0.48)"
+              keyboardType={rnKeyboardType}
+              value={formValues[param.id]?.value || ''}
+              onChangeText={text =>
+                handleValueChange(param.id, alias_name, text)
+              }
+            />
+          </View>
+        );
+      }
+
+      case 'dropdown':
+        return (
+          <View key={field.id} style={styles.productTextView}>
+            {/* <Text style={styles.textstyle}>{field_name}</Text> */}
+            {renderLabel(field_name, field.mandatory)}
+
+            <TouchableOpacity
+              style={styles.pickerContainer}
+              onPress={() => {
+                console.log("field_ismultilple"+field.ismultilple);
+                setMultiSelectModal({
+                  visible: true,
+                 ismultilple: !!field.param.ismultilple,
+                  fieldId: id,
+                });
+                setMultiSelectOptions(options);
+                
+
+              }}
+            >
+              <Text style={styles.dropdowntext}>
+                {Array.isArray(formValues[id]?.value) &&
+                formValues[id]?.value.length > 0
+                  ? `${formValues[id]?.value.length} Selected`
+                  : `Select ${field_name}`}
+              </Text>
+            </TouchableOpacity>
+
+            {/* <View style={styles.categoryContainer}>
+              {options
+                .filter((opt: any) => {
+                  const value = formValues[id]?.value;
+                  if (Array.isArray(value)) {
+                    return value.includes(opt.id);
+                  }
+                  return value === opt.id;
+                })
+                .map((opt: any) => (
+                  <View key={opt.id} style={styles.categoryTagWrapper}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setFormValues((prev: any) => {
+                          const currentValue = prev[id]?.value;
+                          let updated;
+                          if (Array.isArray(currentValue)) {
+                            updated = currentValue.filter(
+                              (v: any) => v !== opt.id,
+                            );
+                          } else {
+                            updated = null;
+                          }
+                          return {
+                            ...prev,
+                            [id]: { ...prev[id], value: updated },
+                          };
+                        });
+                      }}
+                    >
+                      <Text style={styles.categoryTag}>
+                        {opt.option_name} ✕
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                ))}
+            </View> */}
+
+            <View style={styles.categoryContainer}>
+  {options
+    .filter((opt: any) => {
+      const value = formValues[id]?.value;
+      if (Array.isArray(value)) {
+        return value.includes(opt.id); // show if selected in multi-select
+      }
+      return value === opt.id; // show if selected in single-select
+    })
+    .map((opt: any) => (
+      <View key={opt.id} style={styles.categoryTagWrapper}>
+        <TouchableOpacity
+          onPress={() => {
+            setFormValues((prev: any) => {
+              const currentValue = prev[id]?.value;
+              let updated;
+              if (Array.isArray(currentValue)) {
+                updated = currentValue.filter((v: any) => v !== opt.id);
+              } else {
+                updated = null; // removing single-select
+              }
+              return {
+                ...prev,
+                [id]: { ...prev[id], value: updated },
+              };
+            });
+          }}
+        >
+          <Text style={styles.categoryTag}>
+            {opt.option_name} ✕
+          </Text>
+        </TouchableOpacity>
+      </View>
+    ))}
+</View>
+
+
+          </View>
+        );
 
       case 'image': {
         const { param } = field;
@@ -577,123 +622,125 @@ const renderField = (field: any) => {
           handleSelectImage();
         };
 
-  return (
-    <View key={field.id} style={styles.productTextView}>
-      {/* <Text style={styles.textstyle}>{field_name}</Text> */}
-      {renderLabel(field_name, field.mandatory)}
-      <TouchableOpacity
-        style={styles.uploadButton}
-        onPress={handleImageSelect}
-      >
-        <Image source={uploadIcon} style={styles.uploadIcon} />
-        <Text style={styles.uploadText}>Upload {field_name}</Text>
-      </TouchableOpacity>
+        return (
+          <View key={field.id} style={styles.productTextView}>
+            {/* <Text style={styles.textstyle}>{field_name}</Text> */}
+            {renderLabel(field_name, field.mandatory)}
+            <TouchableOpacity
+              style={styles.uploadButton}
+              onPress={handleImageSelect}
+            >
+              <Image source={uploadIcon} style={styles.uploadIcon} />
+              <Text style={styles.uploadText}>Upload {field_name}</Text>
+            </TouchableOpacity>
 
-      {/* Show uploaded images only if there's at least one */}
-      {uploadedImages.length > 0 && (
-        <View style={styles.imagelistcard}>
-          {uploadedImages.map((file, index) => (
-            <View key={file.id} style={{ width: '100%' }}>
-              {/* Image row */}
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: 10,
-                }}
-              >
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 }}>
-                  <Image
-                    source={require('../../../assets/images/sixdots.png')}
-                    style={styles.threedots}
-                  />
-                  <Image
-                    source={fileIcon}
-                    style={{ width: 20, height: 20, marginRight: 5 }}
-                  />
-                  <Text
-                    style={[styles.fileName, { flexShrink: 1 }]}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                  >
-                    {file.name}
-                  </Text>
-                </View>
+            {/* Show uploaded images only if there's at least one */}
+            {uploadedImages.length > 0 && (
+              <View style={styles.imagelistcard}>
+                {uploadedImages.map((file, index) => (
+                  <View key={file.id} style={{ width: '100%' }}>
+                    {/* Image row */}
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: 10,
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 10,
+                          flex: 1,
+                        }}
+                      >
+                        <Image
+                          source={require('../../../assets/images/sixdots.png')}
+                          style={styles.threedots}
+                        />
+                        <Image
+                          source={fileIcon}
+                          style={{ width: 20, height: 20, marginRight: 5 }}
+                        />
+                        <Text
+                          style={[styles.fileName, { flexShrink: 1 }]}
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
+                        >
+                          {file.name}
+                        </Text>
+                      </View>
 
-                <TouchableOpacity
-                  onPress={() =>
-                    setUploadedImages(prev =>
-                      prev.filter(img => img.id !== file.id)
-                    )
-                  }
-                >
-                  <Image source={deleteIcon} style={styles.deleteIcon} />
-                </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() =>
+                          setUploadedImages(prev =>
+                            prev.filter(img => img.id !== file.id),
+                          )
+                        }
+                      >
+                        <Image source={deleteIcon} style={styles.deleteIcon} />
+                      </TouchableOpacity>
+                    </View>
+
+                    {/* Horizontal line if not the last image */}
+                    {uploadedImages.length > 1 &&
+                      index !== uploadedImages.length - 1 && (
+                        <View
+                          style={{
+                            height: 1,
+                            backgroundColor:
+                              'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%)',
+                            marginHorizontal: 10,
+                          }}
+                        />
+                      )}
+                  </View>
+                ))}
               </View>
+            )}
+          </View>
+        );
+      }
 
-              {/* Horizontal line if not the last image */}
-              {uploadedImages.length > 1 && index !== uploadedImages.length - 1 && (
-                <View
-                  style={{
-                    height: 1,
-                    backgroundColor:'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%)',
-                    marginHorizontal: 10,
-                  }}
-                />
-              )}
+      case 'boolean':
+        return (
+          <View key={field.id} style={styles.featurecard}>
+            {/* Main row with label and toggle */}
+            <View style={styles.featuredRow}>
+              {/* <Text style={styles.featuredLabel}>{field.param.field_name}</Text> */}
+              {renderLabel(field.param.field_name, field.mandatory)}
+
+              <ToggleButton
+                value={!!formValues[field.param.id]?.value}
+                onValueChange={val =>
+                  handleValueChange(field.param.id, field.param.alias_name, val)
+                }
+              />
             </View>
-          ))}
-        </View>
-      )}
-    </View>
-  );
-}
 
+            <View style={styles.textbg}>
+              <Image
+                source={require('../../../assets/images/info_icon.png')}
+                style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+              />
 
+              {/* Texts */}
+              <View style={{ flex: 1 }}>
+                <Text style={styles.importantText1}>Important:</Text>
+                <Text style={styles.importantText}>
+                  For Featured listings, £1 is deducted from your payout.
+                </Text>
+              </View>
+            </View>
+          </View>
+        );
 
-
-  case 'boolean':
-  return (
-    <View key={field.id} style={styles.featurecard}>
-      {/* Main row with label and toggle */}
-      <View style={styles.featuredRow}>
-        {/* <Text style={styles.featuredLabel}>{field.param.field_name}</Text> */}
-       {renderLabel(field.param.field_name, field.mandatory)}
-
-        <ToggleButton
-          value={!!formValues[field.param.id]?.value} 
-          onValueChange={(val) =>
-            handleValueChange(field.param.id, field.param.alias_name, val)
-          }
-        />
-      </View>
-
-      <View
-        style={styles.textbg}
-      >
-        <Image
-          source={require('../../../assets/images/info_icon.png')} 
-          style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
-        />
-
-        {/* Texts */}
-        <View style={{ flex: 1 }}>
-          <Text style={styles.importantText1}>Important:</Text>
-          <Text style={styles.importantText}>
-            For Featured listings, £1 is deducted from your payout.
-          </Text>
-        </View>
-      </View>
-    </View>
-  );
-
-    default:
-      return null;
-  }
-};
-
-
+      default:
+        return null;
+    }
+  };
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -722,53 +769,52 @@ const renderField = (field: any) => {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
           <ScrollView contentContainerStyle={styles.scrollContainer}>
-        
-             <View style={styles.userRow}>
-            <View style={{ width: '20%' }}>
-              <Image source={profileImg} style={styles.avatar} />
-            </View>
-            <View style={{ width: '80%' }}>
-              {/* <Text style={styles.userName}>Alan Walker</Text> */}
-              <Text style={styles.userName}>
-              {userMeta
-                ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''}`.trim()
-                : 'Alan Walker'}
-            </Text>
-              <View
-                style={{
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  display: 'flex',
-                  alignItems: 'stretch',
-                }}
-              >
-                <Text style={styles.userSub}>University of Warwick,</Text>
+            <View style={styles.userRow}>
+              <View style={{ width: '20%' }}>
+                <Image source={profileImg} style={styles.avatar} />
+              </View>
+              <View style={{ width: '80%' }}>
+                {/* <Text style={styles.userName}>Alan Walker</Text> */}
+                <Text style={styles.userName}>
+                  {userMeta
+                    ? `${userMeta.firstname ?? ''} ${
+                        userMeta.lastname ?? ''
+                      }`.trim()
+                    : 'Alan Walker'}
+                </Text>
                 <View
                   style={{
-                    flexDirection: 'row',
+                    flexDirection: 'column',
                     justifyContent: 'space-between',
+                    display: 'flex',
+                    alignItems: 'stretch',
                   }}
                 >
-                  <Text style={styles.userSub}>Coventry</Text>
+                  <Text style={styles.userSub}>University of Warwick,</Text>
                   <View
                     style={{
                       flexDirection: 'row',
-                      alignItems: 'center',
-                      gap: 3,
+                      justifyContent: 'space-between',
                     }}
                   >
-                    <Image
-                      source={require('../../../assets/images/calendar_icon.png')}
-                      style={{ height: 20, width: 20 }}
-                    />
-                    <Text style={styles.userSub}>10-01-2025</Text>
+                    <Text style={styles.userSub}>Coventry</Text>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 3,
+                      }}
+                    >
+                      <Image
+                        source={require('../../../assets/images/calendar_icon.png')}
+                        style={{ height: 20, width: 20 }}
+                      />
+                      <Text style={styles.userSub}>10-01-2025</Text>
+                    </View>
                   </View>
                 </View>
               </View>
             </View>
-          </View>
-
-           
 
             <View style={styles.productdetails}>
               {/* <Animated.View style={{ transform: [{ translateY: slideUp1 }] }}>
@@ -776,101 +822,109 @@ const renderField = (field: any) => {
                 {fields.map(field => renderField(field))}
               </Animated.View> */}
               <Animated.View
-          style={{
-            transform: [{ translateY: slideUp1 }],
-            opacity: slideUp1.interpolate({
-              inputRange: [-screenHeight, 0],
-              outputRange: [0, 1],
-            }),
-          }}
-        >
-         
-            <Text style={styles.productdetailstext}>Product Details</Text>
+                style={{
+                  transform: [{ translateY: slideUp1 }],
+                  opacity: slideUp1.interpolate({
+                    inputRange: [-screenHeight, 0],
+                    outputRange: [0, 1],
+                  }),
+                }}
+              >
+                <Text style={styles.productdetailstext}>Product Details</Text>
                 {fields.map(field => renderField(field))}
-        </Animated.View>
+              </Animated.View>
             </View>
           </ScrollView>
 
-          {/* <TouchableOpacity
-            style={styles.previewBtn}
-            onPress={()=>{
-                handlePreview();
-            }}>
-            <Text style={styles.previewText}>Preview Details</Text>
-          </TouchableOpacity> */}
-          <Button  title="Preview Details" onPress={() => handlePreview()} />
+          <Button title="Preview Details" onPress={() => handlePreview()} />
         </KeyboardAvoidingView>
       </View>
 
-      <Modal
+     
+      {/* <SelectCatagoryDropdown
+        options={multiSelectOptions}
         visible={multiSelectModal.visible}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setMultiSelectModal({ visible: false })}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Select Options</Text>
-            <ScrollView>
-              {multiSelectOptions.map((opt: any) => (
-                <TouchableOpacity
-                  key={opt.id}
-                  style={styles.modalOption}
-                  // onPress={() => {
-                  //   const prevSelected: number[] = Array.isArray(
-                  //     formValues[multiSelectModal.fieldId!],
-                  //   )
-                  //     ? formValues[multiSelectModal.fieldId!]
-                  //     : [];
-                  //   const updated = prevSelected.includes(opt.id)
-                  //     ? prevSelected.filter(id => id !== opt.id)
-                  //     : [...prevSelected, opt.id];
-                  //   setFormValues((prev: any) => ({
-                  //     ...prev,
-                  //     [multiSelectModal.fieldId!]: updated,
-                  //   }));
-                  // }}
+        ismultilple={multiSelectModal?.ismultilple}
+        onClose={() =>
+          setMultiSelectModal(prev => ({ ...prev, visible: false }))
+        }
+        onSelect={(selectedIds: number[] | number) => {
+          if (Array.isArray(selectedIds)) {
+            setFormValues((prev: any) => ({
+              ...prev,
+              [multiSelectModal.fieldId!]: { value: selectedIds },
+            }));
+          } else {
+            setFormValues((prev: any) => ({
+              ...prev,
+              [multiSelectModal.fieldId!]: { value: selectedIds },
+            }));
+          }
+        }}
+      /> */}
 
-                  onPress={() => {
-              const prevSelected: number[] = Array.isArray(
-                formValues[multiSelectModal.fieldId!]?.value
-              )
-                ? formValues[multiSelectModal.fieldId!].value
+      <SelectCatagoryDropdown
+        options={multiSelectOptions}
+        visible={multiSelectModal.visible}
+        ismultilple={multiSelectModal?.ismultilple}
+        selectedValues={formValues[multiSelectModal.fieldId!]?.value} // <-- add this
+        onClose={() =>
+          setMultiSelectModal(prev => ({ ...prev, visible: false }))
+        }
+        onSelect={(selectedIds: number[] | number) => {
+          setFormValues((prev: any) => ({
+            ...prev,
+            [multiSelectModal.fieldId!]: { value: selectedIds },
+          }));
+        }}
+      />
+
+      {/* 
+ <Modal
+      visible={multiSelectModal.visible}
+      transparent
+      animationType="slide"
+      onRequestClose={() => setMultiSelectModal({ visible: false })}
+    >
+  <View style={styles.modalOverlay}>
+    <View style={styles.modalContent}>
+      <Text style={styles.modalTitle}>Select Options</Text>
+      <ScrollView>
+        {multiSelectOptions.map((opt: any) => (
+          <TouchableOpacity
+            key={opt.id}
+            style={styles.modalOption}
+            onPress={() => {
+              const prevSelected: number[] = Array.isArray(formValues[multiSelectModal.fieldId!])
+                ? formValues[multiSelectModal.fieldId!]
                 : [];
-
               const updated = prevSelected.includes(opt.id)
-                ? prevSelected.filter(id => id !== opt.id)
+                ? prevSelected.filter((id) => id !== opt.id)
                 : [...prevSelected, opt.id];
-
               setFormValues((prev: any) => ({
                 ...prev,
-                [multiSelectModal.fieldId!]: { value: updated },
+                [multiSelectModal.fieldId!]: updated,
               }));
             }}
+          >
+            <Text style={{ color: '#fff', fontSize: 16 }}>{opt.option_name}</Text>
+            {Array.isArray(formValues[multiSelectModal.fieldId!]) &&
+              formValues[multiSelectModal.fieldId!].includes(opt.id) && (
+                <Text style={{ color: '#3b82f6', marginLeft: 10 }}>✓</Text>
+              )}
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
 
-                >
-                  <Text style={{ color: '#fff', fontSize: 16 }}>
-                    {opt.option_name}
-                  </Text>
-                  {Array.isArray(formValues[multiSelectModal.fieldId!]) &&
-                    formValues[multiSelectModal.fieldId!].includes(opt.id) && (
-                      <Text style={{ color: '#3b82f6', marginLeft: 10 }}>
-                        ✓
-                      </Text>
-                    )}
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-
-            <TouchableOpacity
-              style={styles.modalCloseBtn}
-              onPress={() => setMultiSelectModal({ visible: false })}
-            >
-              <Text style={{ color: '#fff' }}>Done</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+      <TouchableOpacity
+        style={styles.modalCloseBtn}
+        onPress={() => setMultiSelectModal({ visible: false })}
+      >
+        <Text style={{ color: '#fff' }}>Done</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+</Modal> */}
     </ImageBackground>
   );
 };
@@ -878,13 +932,12 @@ const renderField = (field: any) => {
 export default AddScreen;
 
 const styles = StyleSheet.create({
-
-  featurecard:{
-     paddingHorizontal: 16,
+  featurecard: {
+    paddingHorizontal: 16,
     borderRadius: 12,
     padding: 12,
-    marginTop:12,
-    gap:10,
+    marginTop: 12,
+    gap: 10,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
   },
   dropdowntext: {
@@ -1070,10 +1123,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   divider: {
-  height: 1,
-  backgroundColor: '#ccc',
-  marginVertical: 4,
-},
+    height: 1,
+    backgroundColor: '#ccc',
+    marginVertical: 4,
+  },
 
   filecard: {
     marginTop: 20,
@@ -1167,25 +1220,25 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-Medium',
     fontWeight: 500,
   },
-  textbg:{
- flexDirection: 'row',
-          alignItems: 'flex-start',
-          backgroundColor:
-            'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
-          boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-          padding: 6,
-          borderWidth:0.5,
-            borderEndEndRadius: 12,
-            borderStartEndRadius: 12,
-            borderTopLeftRadius: 12,
-            borderTopRightRadius: 12,
-            borderBottomStartRadius: 12,
-            borderBlockStartColor: '#ffffff31',
-            borderBlockColor: '#ffffff31',
-            borderTopColor: '#ffffff31',
-            borderBottomColor: '#ffffff31',
-            borderLeftColor: '#ffffff31',
-            borderRightColor: '#ffffff31',
+  textbg: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+    padding: 6,
+    borderWidth: 0.5,
+    borderEndEndRadius: 12,
+    borderStartEndRadius: 12,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    borderBottomStartRadius: 12,
+    borderBlockStartColor: '#ffffff31',
+    borderBlockColor: '#ffffff31',
+    borderTopColor: '#ffffff31',
+    borderBottomColor: '#ffffff31',
+    borderLeftColor: '#ffffff31',
+    borderRightColor: '#ffffff31',
   },
   importantText: {
     color: '#ccc',
