@@ -70,10 +70,7 @@ useEffect(() => {
   }
 }, [expanded]);
 
-const containerHeight = animatedHeight.interpolate({
-  inputRange: [0, 1],
-  outputRange: [0, 200],
-});
+
 
 const renderItem = ({ item }: any) => {
   const isLogout = item.title.toLowerCase() === 'logout';
@@ -95,7 +92,7 @@ const renderItem = ({ item }: any) => {
       <Text
         style={[
           styles.cardText,
-          isLogout && { color: '#FF8282E0' }, // different color for logout
+          isLogout && { color: '#FF8282E0' },
         ]}
       >
         {item.title}
@@ -154,17 +151,16 @@ const renderItem = ({ item }: any) => {
             <Text style={styles.userSub}>studentname@gmail.com</Text>
         </View>
 
-  {/* Line 3 */}
-  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-    <Image
-      source={require('../../../assets/images/sms.png')}
-      style={{ width: 16, height: 16 }}
-    />
-    <Text style={styles.userSub}>studentname@warwick.ac.uk</Text>
-  </View>
-</View>
-            </View>
-          </View>   
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <Image
+          source={require('../../../assets/images/sms.png')}
+          style={{ width: 16, height: 16 }}
+        />
+        <Text style={styles.userSub}>studentname@warwick.ac.uk</Text>
+      </View>
+    </View>
+    </View>
+    </View>   
 
     <View style={styles.listContainer}>
       <FlatList

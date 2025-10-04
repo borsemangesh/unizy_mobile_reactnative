@@ -22,7 +22,8 @@ export default function ProductCard({
   productImage,
   onBookmarkPress ,
   isBookmarked,
-  onpress
+  onpress,
+
 }: ProductCardProps) {
   return (
     <TouchableOpacity  onPress={onpress} >
