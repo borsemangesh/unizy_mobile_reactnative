@@ -90,7 +90,7 @@ const SinglePage = ({navigation}:SinglePageProps) => {
     hi: require('../../../assets/images/indian.png'),
     es: require('../../../assets/images/spanish.png'),
     fr: require('../../../assets/images/french.png'),
-    zh: require('../../../assets/images/china.png'),
+    'zh-CN': require('../../../assets/images/china.png'),
     // add others as needed
   };
 
@@ -471,7 +471,7 @@ useEffect(() => {
 
   const handleSendResetLink = async () => {
     if (!username1) {
-      showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
+      showToast('Please fill all required fields', 'error');
       return;
     }
    
@@ -479,7 +479,7 @@ useEffect(() => {
     const emailRegex = /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;
   
     if (!emailRegex.test(username1)) {
-      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
+      showToast('Please enter a valid email address', 'error');
       return;
     }
    
@@ -498,32 +498,34 @@ useEffect(() => {
    
       if (res.ok) {
         // Show toast
-        showToast(data.message || Constant.PASSWORD_RESET_LINK_SENT, 'success');
+        showToast(data.message || 'Password reset link sent', 'success');
         const toastDuration = 3000;
         setTimeout(() => {
           setShowPopup(true);
         }, toastDuration);
         setUsername1('')
       } else {
-        showToast(data.message || Constant.SOMTHING_WENT_WRONG, 'error');
+        showToast(data.message || 'Something went wrong', 'error');
       }
      
     } catch (error) {
       console.error("Error sending reset link:", error);
-      showToast(Constant.NETWORK_ERROR_PLEASE_TRY_AGAIN, 'error');
+      showToast('Network error, please try again', 'error');
     }
   };
 
   const loginapi = async () => {
     // navigation.replace('Dashboard');
     if (!username || !password) {
-      showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
+      //showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
+      showToast('Please fill all required fields','error')
       return;
     }
   
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(username)) {
-      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
+      //showToast(Constant.VALID_EMAI_LADDRESS, 'error');
+      showToast('Please enter a valid email address','error')
       return;
     }
   
@@ -546,7 +548,8 @@ useEffect(() => {
         result = await response.json();
       } catch (err) {
         setLoading(false);
-        showToast(Constant.INVALID_SERVER_RESPONSE, 'error');
+        //showToast(Constant.INVALID_SERVER_RESPONSE, 'error');
+        showToast('Invalid server response','error')
         return;
       }
   
@@ -554,7 +557,7 @@ useEffect(() => {
   
       if (!response.ok || result?.statusCode !== 200) {
         setLoading(false);
-        showToast(result?.message || Constant.INVALID_EMAIL_OR_PASSWORD, 'error');
+        showToast(result?.message || 'Invalid Email or Password', 'error');
         return;
       }
  
@@ -566,7 +569,7 @@ useEffect(() => {
         await AsyncStorage.setItem('userToken', token);
         await AsyncStorage.setItem('userData', JSON.stringify(user));
   
-        showToast(result?.message || Constant.LOGIN_SUCCESSFUL, 'success'); 
+        showToast(result?.message || 'Login successful', 'success'); 
   
         setUsername('');
         setPassword('');
@@ -577,7 +580,7 @@ useEffect(() => {
 
       } else {
         setLoading(false);
-        showToast(Constant.INVALID_USER_DATA_RECEIVED, 'error');
+        showToast('Invalid user data received', 'error');
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -592,7 +595,7 @@ useEffect(() => {
     setOtp(['','','','']);
 
     if (!firstName || !lastName || !signUpusername || !signUppassword || !confirmPassword) {
-      showToast(Constant.REQUIRED_ALL_FIELDS , 'error');
+      showToast('Please fill all required fields' , 'error');
       return;
     }
     
@@ -602,7 +605,7 @@ useEffect(() => {
     }
     const emailRegex = /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;    
     if (!emailRegex.test(signUpusername)) {
-      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
+      showToast('Please enter a valid email address', 'error');
       return;
     }
 
@@ -613,7 +616,7 @@ useEffect(() => {
     
     }
     if (signUppassword !== confirmPassword) {
-      showToast(Constant.PASSWORDS_DO_NOT_MATCH,'error'); 
+      showToast('Passwords do not match.','error'); 
       return;
     }
 
@@ -691,7 +694,7 @@ useEffect(() => {
       }
     } catch (err) {
       console.log('Error sending signup request:', err);
-      showToast(Constant.FAIL_TO_SEND_OTP, 'error');
+      showToast('Failed to send OTP', 'error');
     }
   };
 
@@ -722,14 +725,14 @@ useEffect(() => {
     const otpValue = otp.join('');
 
     if (otpValue.length < 4 || otp.includes('')) {
-      showToast(Constant.PLEASE_ENTER_ALL_4_DIGITS_OF_THE_OTP, 'error');
+      showToast('Please enter all 4 digits of the OTP', 'error');
       return;
     }
     try {
       const otp_id = await AsyncStorage.getItem('otp_id');
 
       if (!otp_id) {
-        showToast(Constant.OTP_ID_MISSING, 'error');
+        showToast('OTP ID missing. Please request OTP again.', 'error');
         return;
       }
 
@@ -787,12 +790,12 @@ useEffect(() => {
         });
 
       } else {
-        showToast(data?.message || Constant.OPT_VERIFICATION_FAILED, 'error');
+        showToast(data?.message || 'OTP verification failed', 'error');
       }
     }
     catch (err) {
       console.error(err);
-      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+      showToast('Something went wrong', 'error');
     }
   };
 
@@ -866,20 +869,20 @@ useEffect(() => {
     setOtp1(['','','','']);
   
     if (!verifyusername) {
-    showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
+    showToast('Please fill all required fields', 'error');
     return;
   }
 
   const emailParts = verifyusername.split('@');
   if (emailParts.length !== 2) {
-    showToast(Constant.VALID_EMAI_LADDRESS, 'error');
+    showToast('Please enter a valid email address', 'error');
     return;
   }
 
   const domain = '@' + emailParts[1].toLowerCase();
 
   if (!universityDomains.includes(domain)) {
-    showToast(Constant.VALID_EMAI_LADDRESS, 'error');
+    showToast('Please enter a valid email address', 'error');
     return;
   }
 
@@ -935,7 +938,7 @@ useEffect(() => {
       }
     } catch (err) {
       console.error('Error sending OTP:', err);
-      showToast(Constant.SOMTHING_WENT_WRONG,'error');
+      showToast('Something went wrong','error');
     }
   };
 
@@ -946,14 +949,14 @@ useEffect(() => {
     const otpValue = otp1.join('');
 
     if (otpValue.length < 4 || otp1.includes('')) {
-     showToast(Constant.PLEASE_ENTER_ALL_4_DIGITS_OF_THE_OTP, 'error');
+     showToast('Please enter all 4 digits of the OTP', 'error');
       return;
     }
 
     try {
       const otp_id = await AsyncStorage.getItem('otp_id');
       if (!otp_id) {
-        showToast(Constant.OTP_ID_MISSING, 'error');
+        showToast('OTP ID missing. Please request OTP again.', 'error');
         return;
       }
 
@@ -994,7 +997,7 @@ useEffect(() => {
       }
     } catch (err) {
       console.error('Error verifying OTP:', err);
-      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+      showToast('Something went wrong', 'error');
     }
   };
 
@@ -1027,11 +1030,11 @@ useEffect(() => {
         setShowOtp(true);
         //startAnimation();
       } else {
-        showToast(data?.message || Constant.FAIL_TO_SEND_OTP, 'error');
+        showToast(data?.message || 'Failed to send OTP', 'error');
       }
     } catch (err) {
       console.error('Error sending OTP:', err);
-      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+      showToast('Something went wrong', 'error');
     }
   }
   //profile
@@ -1512,7 +1515,7 @@ useEffect(() => {
                 }}>
 
               
-                  <TouchableOpacity style={{zIndex: 1}} onPress={() => {setCurrentScreen('language');}}>
+                  <TouchableOpacity style={{position: 'absolute',zIndex: 1}} onPress={() => {setCurrentScreen('language');}}>
                     <View style={Styles.backIconRow}>
                       <Image
                         source={require('../../../assets/images/back.png')}
