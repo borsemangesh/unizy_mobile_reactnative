@@ -138,7 +138,7 @@ const handleDeactivate = async () => {
     } else {
       showToast("Error", data.message || "Something went wrong");
     }
-    setShowPopup(true);
+    
   } catch (error) {
     console.error("❌ API Error:", error);
     showToast("Failed to update product status",'error');
@@ -451,6 +451,7 @@ const renderImage = () => {
                     4.5
                   </Text>
                 </View>
+                
                 <View
                   style={{
                     borderRadius: 10,
@@ -466,9 +467,13 @@ const renderImage = () => {
                     width: '80%',
                   }}
                 >
-                  <Image
+                  <TouchableOpacity
+                    style={{ flexDirection: 'row', alignItems: 'center' }}
+                    onPress={() => setShowPopup(true)}
+                  >
+                        <Image
                     source={require('../../../assets/images/message_chat.png')}
-                    style={{ height: 16, width: 16 }}
+                    style={{ height: 16, width: 16 ,marginRight:6}}
                   />
                   <Text
                     style={{
@@ -482,7 +487,9 @@ const renderImage = () => {
                   >
                     Chat with Seller
                   </Text>
+                    </TouchableOpacity>
                 </View>
+              
               </View>
             </View>
           </View>
@@ -496,7 +503,13 @@ const renderImage = () => {
         style={styles.previewBtn}
         onPress={handleDeactivate}
       >
-        <Text style={styles.previewText}>Deactivate Listing</Text>
+        {/* <Text style={styles.previewText}>Deactivate Listing</Text> */}
+        <Text style={{ textAlign: 'center' }}>
+        <Text style={styles.payText}>Pay </Text>
+        <Text style={styles.priceText1}>
+        £{Number(detail?.price ?? 0).toFixed(2)}
+      </Text>
+      </Text>
       </TouchableOpacity>
       {/* </ScrollView> */}
 
@@ -528,7 +541,7 @@ const renderImage = () => {
  
             <View style={styles.popupContainer}>
               <Image
-                source={require('../../../assets/images/success_icon.png')}
+                source={require('../../../assets/images/alerticon.png')}
                 style={styles.logo}
                 resizeMode="contain"
               />
@@ -537,27 +550,26 @@ const renderImage = () => {
                 fontFamily: 'Urbanist-SemiBold',
                 fontSize: 20,
                 fontWeight: '600',
-                fontStyle: 'normal',
                 letterSpacing: -0.4,
                 lineHeight: 28,
-              }}>Product Listed Successfully!</Text>
+              }}>Complete Your Purchase</Text>
               <Text style={{
                 color: 'rgba(255, 255, 255, 0.48)',
                 fontFamily: 'Urbanist-Regular',
                 fontSize: 14,
+                textAlign:'center',
                 fontWeight: '400',
-                fontStyle: 'normal',
                 letterSpacing: -0.28,
                 lineHeight: 19.6,
               }}>
-                Your product is now live and visible to other students.
+                Chat with the seller will be available after you’ve bought this product or service.
               </Text>
  
               <TouchableOpacity
                 style={styles.loginButton}
                 onPress={()=>{navigation.navigate('Dashboard') ;setShowPopup(false);}}
               >
-                <Text style={styles.loginText}>Return to Choose Category</Text>
+                <Text style={styles.loginText}>Go Back</Text>
               </TouchableOpacity>
             </View>
           </BlurView>
@@ -717,6 +729,13 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     letterSpacing: 1,
   },
+  payText: {
+  color: '#002050',
+  fontFamily: 'Urbanist-Medium',
+  fontSize: 17,
+  fontWeight: '600',
+  letterSpacing: 1,
+},
   previewBtn: {
     display: 'flex',
     width: '90%',
@@ -881,12 +900,18 @@ const styles = StyleSheet.create({
   priceText: {
     color: '#fff',
     fontFamily: 'Urbanist-SemiBold',
-    fontSize: 20,
-    fontWeight: '700',
-    fontStyle: 'normal',
-    letterSpacing: -0.4,
-    lineHeight: 24,
+    fontSize: 17,
+    fontWeight: 500,
+    letterSpacing: 1,
   },
+    priceText1: {
+    color: '#002050',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 17,
+    fontWeight: 700,
+    letterSpacing: 1,
+  },
+
 
   card: {
     flexDirection: 'column',

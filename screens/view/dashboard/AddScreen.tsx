@@ -70,11 +70,31 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   }
 
   const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
+   const [productName, setProductName] = useState('');
+
+  useEffect(() => {
+    const loadProductName = async () => {
+      try {
+        const name = await AsyncStorage.getItem('selectedProductName');
+        if (name) {
+          setProductName(name);
+        } else {
+          setProductName('List Product'); // fallback
+        }
+      } catch (error) {
+        console.log('❌ Error loading product name:', error);
+      }
+    };
+
+    loadProductName();
+  }, []);
+
 
   useEffect(() => {
     const fetchFields = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
+        
         const productId1 = await AsyncStorage.getItem('selectedProductId');
         if (!token) {
           console.log('No token found');
@@ -760,7 +780,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 />
               </View>
             </TouchableOpacity>
-            <Text style={styles.unizyText}>List Product</Text>
+              <Text style={styles.unizyText}>
+              {`List${productName ? `  ${productName} ` : ''}`}
+            </Text>
             <View style={{ width: 30 }} />
           </View>
         </View>

@@ -35,7 +35,8 @@ const cardData = [
   { id: '3', title: 'My Reviews', image: require('../../../assets/images/ok.png') },
   { id: '4', title: 'Notifications', image: require('../../../assets/images/notify.png') },
   { id: '5', title: 'Help & Support', image: require('../../../assets/images/help.png') },
-    { id: '6', title: 'Logout', image: require('../../../assets/images/logout.png') },
+  { id: '6', title: 'Logout', image: require('../../../assets/images/logout.png') },
+  
 ];
 
 const arrowIcon = require('../../../assets/images/nextarrow.png');
@@ -72,37 +73,6 @@ useEffect(() => {
 
 
 
-// const renderItem = ({ item }: any) => {
-//   const isLogout = item.title.toLowerCase() === 'logout';
-
-//   return (
-//     <TouchableOpacity
-//       style={styles.cardContainer}
-//       onPress={async () => {
-//         if (isLogout) {      
-//         await AsyncStorage.setItem('ISLOGIN', 'false');
-//         showToast('User Logout Successfully','success')
-//         navigation.navigate('SinglePage');
-//         } else {
-//           console.log(item.title, 'pressed');
-//         }
-//       }}
-//     >
-//       <Image source={item.image} style={styles.cardImage} />
-//       <Text
-//         style={[
-//           styles.cardText,
-//           isLogout && { color: '#FF8282E0' },
-//         ]}
-//       >
-//         {item.title}
-//       </Text>
-//       <Image source={arrowIcon} style={styles.cardArrow} />
-//     </TouchableOpacity>
-//   );
-// };
-  const APP_VERSION = 'v1.0.3'; // you can import this from package.json if needed
-
 const renderItem = ({ item }: any) => {
   const isLogout = item.title.toLowerCase() === 'logout';
 
@@ -110,10 +80,10 @@ const renderItem = ({ item }: any) => {
     <TouchableOpacity
       style={styles.cardContainer}
       onPress={async () => {
-        if (isLogout) {
-          await AsyncStorage.setItem('ISLOGIN', 'false');
-          showToast('User Logout Successfully', 'success');
-          navigation.navigate('SinglePage');
+        if (isLogout) {      
+        await AsyncStorage.setItem('ISLOGIN', 'false');
+        showToast('User Logout Successfully','success')
+        navigation.navigate('SinglePage');
         } else {
           console.log(item.title, 'pressed');
         }
@@ -128,15 +98,12 @@ const renderItem = ({ item }: any) => {
       >
         {item.title}
       </Text>
-
-      {isLogout ? (
-        <Text style={styles.versionText}>{APP_VERSION}</Text>
-      ) : (
-        <Image source={arrowIcon} style={styles.cardArrow} />
-      )}
+      <Image source={arrowIcon} style={styles.cardArrow} />
     </TouchableOpacity>
   );
 };
+  const APP_VERSION = '1.0.0'; 
+
 
 
 return (
@@ -146,8 +113,7 @@ return (
         <View style={styles.header}>
           <View style={styles.headerRow}>
             <TouchableOpacity
-              style={styles.backBtn}
-              onPress={() => navigation.navigate('Dashboard')}
+              onPress={() => {navigation.navigate('Dashboard')}}
             >
               <View style={styles.backIconRow}>
                 <Image
@@ -207,7 +173,11 @@ return (
         renderItem={renderItem}
         ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
       />
-    </View>     
+    </View>  
+      <View style={[styles.cardContainer, { justifyContent: 'space-between', paddingHorizontal: 16 }]}>
+        <Text style={styles.cardText}>App Version</Text>
+        <Text style={styles.versionText}>{APP_VERSION}</Text>
+      </View>   
       </View>
       </View>
    
@@ -221,6 +191,20 @@ const styles = StyleSheet.create({
     padding: 16,
     
   },
+  versionRow: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  marginTop: 4,
+  width: '100%',
+  paddingHorizontal: 10, // optional, align with card content
+},
+
+versionLabel: {
+  color: '#888',
+  fontSize: 12,
+},
+
+
   versionText: {
   position: 'absolute',
   right: 20,

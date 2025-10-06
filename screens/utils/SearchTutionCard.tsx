@@ -70,8 +70,9 @@ export default function SearchTutionCard({
           <Text style={styles.tagText}>{tag}</Text>
         </View>
 
-        <TouchableOpacity onPress={applybookmark}>
+       
         <View style={styles.bookmark1}>
+           <TouchableOpacity onPress={applybookmark}>
           <Image
             source={
               bookmark
@@ -80,8 +81,8 @@ export default function SearchTutionCard({
             }
             style={{ width: 16, height: 16 }}
           />
+          </TouchableOpacity>
         </View>
-        </TouchableOpacity>
       </View>
 
       <View style={styles.infoRow}>

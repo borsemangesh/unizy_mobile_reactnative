@@ -134,6 +134,10 @@ const AddScreenContent: React.FC<
                   'selectedProductId',
                   String(item.id),
                 );
+                await AsyncStorage.setItem(
+                  'selectedProductName',
+                  String(item.name),
+                );
                 console.log('✅ Product info saved to AsyncStorage');
                 navigation.navigate('AddScreen');
               } catch (error) {
@@ -516,6 +520,7 @@ const handleBookmarkPress = async (productId: number) => {
                       onBookmarkPress={() => handleBookmarkPress(item.id)}
                       isBookmarked={bookmarkedIds.includes(item.id)}
                       onpress={() => navigation.navigate('SearchDetails', { id: item.id })}
+                      
                       
                     />
                   ) : (

@@ -569,6 +569,7 @@ useEffect(() => {
         setLoading(false)
         await AsyncStorage.setItem('userToken', token);
         await AsyncStorage.setItem('userData', JSON.stringify(user));
+        await AsyncStorage.setItem('userId', String(user.id)); 
   
         showToast(result?.message || Constant.LOGIN_SUCCESSFUL, 'success'); 
   

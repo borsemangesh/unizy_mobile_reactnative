@@ -269,7 +269,9 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
                 />
               </View>
             </TouchableOpacity>
-            <Text style={styles.unizyText}>{category_name}</Text>
+            {/* <Text style={styles.unizyText}>{category_name}</Text> */}
+            <Text style={styles.unizyText}>{`${category_name}s`}</Text>
+
             <View style={{ width: 30 }} />
           </View>
         </View>
