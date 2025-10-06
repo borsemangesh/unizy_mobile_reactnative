@@ -13,7 +13,6 @@ import {
   TextInput,
   Dimensions,
   FlatList,
-  ToastAndroid,
   Modal,
   Alert,
   PermissionsAndroid,
@@ -27,13 +26,16 @@ import { getRequest } from '../../utils/API';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import { showToast } from '../../utils/toast';
+
 import BackgroundAnimation from '../Hello/BackgroundAnimation';
 import { Language } from '../../utils/Language';
 import { greetings } from '../../utils/Greetings';
 import { Constant } from '../../utils/Constant';
 import BackgroundAnimation_Android from '../Hello/BackgroundAnimation_Android';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import LottieView from 'lottie-react-native';
+import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
+
 
 
 
@@ -45,7 +47,7 @@ type SinglePageProps = {
 
 const SinglePage = ({navigation}:SinglePageProps) => {
   const [currentScreen, setCurrentScreen] = useState<
-    'hello' | 'language' | 'login'
+    'hello' | 'language' | 'login' | 'splashScreen'
   >('hello');
 
   const [currentScreenIninner, setcurrentScreenIninner] = useState<
@@ -471,14 +473,15 @@ useEffect(() => {
 
   const handleSendResetLink = async () => {
     if (!username1) {
-      showToast('Please fill all required fields', 'error');
+      showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
       return;
     }
+   
    
     const emailRegex = /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;
   
     if (!emailRegex.test(username1)) {
-      showToast('Please enter a valid email address', 'error');
+      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
       return;
     }
    
@@ -496,34 +499,35 @@ useEffect(() => {
       const data = await res.json();
    
       if (res.ok) {
-        showToast(data.message || 'Password reset link sent', 'success');
+        // Show toast
+        showToast(data.message || Constant.PASSWORD_RESET_LINK_SENT, 'success');
         const toastDuration = 3000;
         setTimeout(() => {
           setShowPopup(true);
         }, toastDuration);
         setUsername1('')
       } else {
-        showToast(data.message || 'Something went wrong', 'error');
+        showToast(data.message || Constant.SOMTHING_WENT_WRONG, 'error');
       }
      
     } catch (error) {
       console.error("Error sending reset link:", error);
-      showToast('Network error, please try again', 'error');
+      showToast(Constant.NETWORK_ERROR_PLEASE_TRY_AGAIN, 'error');
     }
   };
 
   const loginapi = async () => {
     // navigation.replace('Dashboard');
+    console.log('sdfsdf')
+   
     if (!username || !password) {
-      //showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
-      showToast('Please fill all required fields','error')
+      showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
       return;
     }
   
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(username)) {
-      //showToast(Constant.VALID_EMAI_LADDRESS, 'error');
-      showToast('Please enter a valid email address','error')
+      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
       return;
     }
   
@@ -546,8 +550,7 @@ useEffect(() => {
         result = await response.json();
       } catch (err) {
         setLoading(false);
-        //showToast(Constant.INVALID_SERVER_RESPONSE, 'error');
-        showToast('Invalid server response','error')
+        showToast(Constant.INVALID_SERVER_RESPONSE, 'error');
         return;
       }
   
@@ -555,7 +558,7 @@ useEffect(() => {
   
       if (!response.ok || result?.statusCode !== 200) {
         setLoading(false);
-        showToast(result?.message || 'Invalid Email or Password', 'error');
+        showToast(result?.message || Constant.INVALID_EMAIL_OR_PASSWORD, 'error');
         return;
       }
  
@@ -567,7 +570,7 @@ useEffect(() => {
         await AsyncStorage.setItem('userToken', token);
         await AsyncStorage.setItem('userData', JSON.stringify(user));
   
-        showToast(result?.message || 'Login successful', 'success'); 
+        showToast(result?.message || Constant.LOGIN_SUCCESSFUL, 'success'); 
   
         setUsername('');
         setPassword('');
@@ -578,7 +581,7 @@ useEffect(() => {
 
       } else {
         setLoading(false);
-        showToast('Invalid user data received', 'error');
+        showToast(Constant.INVALID_USER_DATA_RECEIVED, 'error');
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -593,17 +596,17 @@ useEffect(() => {
     setOtp(['','','','']);
 
     if (!firstName || !lastName || !signUpusername || !signUppassword || !confirmPassword) {
-      showToast('Please fill all required fields' , 'error');
+      showToast(Constant.REQUIRED_ALL_FIELDS , 'error');
       return;
     }
     
-    if (postalCode.length < 5) {
-      showToast("Postal code must be at least 5 characters long.", 'error');
-      return;
-    }
+    // if (postalCode.length < 5) {
+    //   showToast("Postal code must be at least 5 characters long.", 'error');
+    //   return;
+    // }
     const emailRegex = /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;    
     if (!emailRegex.test(signUpusername)) {
-      showToast('Please enter a valid email address', 'error');
+      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
       return;
     }
 
@@ -614,7 +617,7 @@ useEffect(() => {
     
     }
     if (signUppassword !== confirmPassword) {
-      showToast('Passwords do not match.','error'); 
+      showToast(Constant.PASSWORDS_DO_NOT_MATCH,'error'); 
       return;
     }
 
@@ -623,7 +626,7 @@ useEffect(() => {
       const body = {
         firstname: firstName,
         lastname: lastName,
-        postal_code: postalCode,
+        postal_code: '123456',
         email: signUpusername,
         password: signUppassword,
         confirmPassword: confirmPassword,
@@ -692,7 +695,7 @@ useEffect(() => {
       }
     } catch (err) {
       console.log('Error sending signup request:', err);
-      showToast('Failed to send OTP', 'error');
+      showToast(Constant.FAIL_TO_SEND_OTP, 'error');
     }
   };
 
@@ -723,14 +726,14 @@ useEffect(() => {
     const otpValue = otp.join('');
 
     if (otpValue.length < 4 || otp.includes('')) {
-      showToast('Please enter all 4 digits of the OTP', 'error');
+      showToast(Constant.PLEASE_ENTER_ALL_4_DIGITS_OF_THE_OTP, 'error');
       return;
     }
     try {
       const otp_id = await AsyncStorage.getItem('otp_id');
 
       if (!otp_id) {
-        showToast('OTP ID missing. Please request OTP again.', 'error');
+        showToast(Constant.OTP_ID_MISSING, 'error');
         return;
       }
 
@@ -788,12 +791,12 @@ useEffect(() => {
         });
 
       } else {
-        showToast(data?.message || 'OTP verification failed', 'error');
+        showToast(data?.message || Constant.OPT_VERIFICATION_FAILED, 'error');
       }
     }
     catch (err) {
       console.error(err);
-      showToast('Something went wrong', 'error');
+      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
     }
   };
 
@@ -867,20 +870,20 @@ useEffect(() => {
     setOtp1(['','','','']);
   
     if (!verifyusername) {
-    showToast('Please fill all required fields', 'error');
+    showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
     return;
   }
 
   const emailParts = verifyusername.split('@');
   if (emailParts.length !== 2) {
-    showToast('Please enter a valid email address', 'error');
+    showToast(Constant.VALID_EMAI_LADDRESS, 'error');
     return;
   }
 
   const domain = '@' + emailParts[1].toLowerCase();
 
   if (!universityDomains.includes(domain)) {
-    showToast('Please enter a valid email address', 'error');
+    showToast(Constant.VALID_EMAI_LADDRESS, 'error');
     return;
   }
 
@@ -936,7 +939,7 @@ useEffect(() => {
       }
     } catch (err) {
       console.error('Error sending OTP:', err);
-      showToast('Something went wrong','error');
+      showToast(Constant.SOMTHING_WENT_WRONG,'error');
     }
   };
 
@@ -947,14 +950,14 @@ useEffect(() => {
     const otpValue = otp1.join('');
 
     if (otpValue.length < 4 || otp1.includes('')) {
-     showToast('Please enter all 4 digits of the OTP', 'error');
+     showToast(Constant.PLEASE_ENTER_ALL_4_DIGITS_OF_THE_OTP, 'error');
       return;
     }
 
     try {
       const otp_id = await AsyncStorage.getItem('otp_id');
       if (!otp_id) {
-        showToast('OTP ID missing. Please request OTP again.', 'error');
+        showToast(Constant.OTP_ID_MISSING, 'error');
         return;
       }
 
@@ -995,7 +998,7 @@ useEffect(() => {
       }
     } catch (err) {
       console.error('Error verifying OTP:', err);
-      showToast('Something went wrong', 'error');
+      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
     }
   };
 
@@ -1028,11 +1031,11 @@ useEffect(() => {
         setShowOtp(true);
         //startAnimation();
       } else {
-        showToast(data?.message || 'Failed to send OTP', 'error');
+        showToast(data?.message || Constant.FAIL_TO_SEND_OTP, 'error');
       }
     } catch (err) {
       console.error('Error sending OTP:', err);
-      showToast('Something went wrong', 'error');
+      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
     }
   }
   //profile
@@ -1300,6 +1303,30 @@ useEffect(() => {
 
   const [textandBackIcon, setTextandBackIcon] = useState(false);
   const textAndBackOpacity = useRef(new Animated.Value(1)).current;
+  const [initialRoute, setInitialRoute] = useState<null | string>(null);
+
+  // const animRef = useRef<LottieView>(null);
+
+  // const handleAnimationFinish = () => {
+  //   const checkLoginStatus = async () => {
+  //     const flag = await AsyncStorage.getItem('ISLOGIN');
+  //  animRef.current?.pause();
+  //     if (flag === 'true') {
+  //       // User is logged in → navigate to Dashboard
+  //       navigation.navigate('Dashboard');
+  //     } else {
+  //       // User is not logged in → show hello screen
+  //       setCurrentScreen('hello');
+  //       setCurrentGreetingIndex(0); // set greeting index only for hello screen
+  //     }
+  //   };
+  
+  //   checkLoginStatus();
+  // };
+  
+
+
+
   return (
  
     <ImageBackground
@@ -1307,10 +1334,31 @@ useEffect(() => {
       style={{ width: '100%', height: '100%' }}
       resizeMode="cover"
     >
+      {/* {Platform.OS === 'android' ? 
+      (
+        <><BackgroundAnimation_Android/></>
+      ):(<>
+      <View style={[StyleSheet.absoluteFill,{opacity: 0.4}]}>
+    <LottieView
+
+      source={require("../../../assets/animations/backgroundanimation3.json")}
+      autoPlay
+      loop
+      resizeMode="cover"
+      style={StyleSheet.absoluteFillObject}
+    />
+    <BlurView
+      style={[StyleSheet.absoluteFill]}
+      blurType="light"   // "light", "dark", "xlight"
+      blurAmount={30}    // adjust intensity
+      
+    />
+  </View></>
+  )} */}
       <View
         style={{
           flex: 1,
-          paddingTop: Platform.OS === 'ios' ? 60 : 30,
+          paddingTop: Platform.OS === 'ios' ? 80 : 30,
         }}
       >
     {Platform.OS === 'android' ? (
@@ -1318,11 +1366,32 @@ useEffect(() => {
     ) : (
       <BackgroundAnimation/>
     )} 
+       
+
+
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ?0 : 0} 
       >
+
+        {/* {currentScreen === 'splashScreen' && (
+          <>
+           <View style={Styles.ScreenLayout}>
+          <LottieView
+
+            ref={animRef}
+            source={require("../../../assets/animations/animation_new.json")}
+            autoPlay
+            loop={false}
+            resizeMode="contain"
+            style={{ width, height }}
+            onAnimationFinish={handleAnimationFinish}
+          />
+          </View>
+          </>
+
+        )} */}
         
         {currentScreen === 'hello' && (
           <View style={Styles.ScreenLayout}>
@@ -1507,21 +1576,25 @@ useEffect(() => {
           <>
           <View style={{paddingTop: 20,paddingLeft: 16,paddingRight: 16}}>
             {currentScreenIninner === 'login' && (
+              <TouchableOpacity style={{zIndex: 1000}} onPress={()=>{
+                console.log('backPRess');
+                setCurrentScreen('language');
+                }}>
               <Animated.View style={{
                   opacity: textAndBackOpacity,
                   transform: [{ translateY: textandBackIcon ? translateY : 0 }],
                 }}>
-
               
-                  <TouchableOpacity style={{position: 'absolute',zIndex: 1}} onPress={() => {setCurrentScreen('language');}}>
+                  
                     <View style={Styles.backIconRow}>
                       <Image
                         source={require('../../../assets/images/back.png')}
                         style={{ height: 24, width: 24 }}
                       />
                     </View>
-                  </TouchableOpacity>
                 </Animated.View>
+                
+                </TouchableOpacity>
             )}
 
               <Animated.View style={{
@@ -1561,7 +1634,7 @@ useEffect(() => {
                         <View style={Styles.login_container}>
                           <TextInput
                             style={Styles.personalEmailID_TextInput}
-                            placeholder={'Personal Email ID'}
+                            placeholder={'Personal Email ID*'}
                             placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
                             value={username}
                             maxLength={50}
@@ -1574,7 +1647,7 @@ useEffect(() => {
                         <View style={Styles.password_container}>
                           <TextInput
                             style={Styles.password_TextInput}
-                            placeholder={'Password'}
+                            placeholder={'Password*'}
                             placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
                             value={password}
                             maxLength={20}
@@ -1697,7 +1770,7 @@ useEffect(() => {
                                   Styles.personalEmailID_TextInput,
                                   { color: '#fff' },
                                 ]}
-                                placeholder="Personal Email ID"
+                                placeholder="Personal Email ID*"
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                 value={username1}
                                 maxLength={50}
@@ -1817,7 +1890,7 @@ useEffect(() => {
                             <View style={Styles.login_container1}>
                               <TextInput
                                 style={Styles.personalEmailID_TextInput1}
-                                placeholder="First Name"
+                                placeholder="First Name*"
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                 value={firstName}
                                 onChangeText={text =>
@@ -1830,7 +1903,7 @@ useEffect(() => {
                             <View style={Styles.login_container1}>
                               <TextInput
                                 style={Styles.personalEmailID_TextInput1}
-                                placeholder="Last Name"
+                                placeholder="Last Name*"
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                 value={lastName}
                                 onChangeText={text =>
@@ -1840,7 +1913,9 @@ useEffect(() => {
                             </View>
                           </View>
 
-                          <View style={Styles.login_container}>
+                          <View style={{display: 'none'}}>
+
+                          <View style={[Styles.login_container, { display: 'none' }]}>
                             <TextInput
                               style={Styles.personalEmailID_TextInput}
                               placeholder="Postal Code"
@@ -1855,11 +1930,12 @@ useEffect(() => {
                               }}
                             />
                           </View>
+                          </View>
 
-                          <View style={Styles.password_container}>
+                          <View style={[Styles.password_container,{ marginTop: 0,}]}>
                             <TextInput
                               style={Styles.password_TextInput}
-                              placeholder="Personal Email ID"
+                              placeholder="Personal Email ID*"
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
                               value={signUpusername}
                               maxLength={50}
@@ -1888,7 +1964,7 @@ useEffect(() => {
                           <View style={Styles.password_container}>
                             <TextInput
                               style={Styles.password_TextInput}
-                              placeholder="Create Password"
+                              placeholder="Create Password*"
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
                               value={signUppassword}
                               maxLength={20}
@@ -1920,7 +1996,7 @@ useEffect(() => {
                           <View style={Styles.password_container}>
                             <TextInput
                               style={[Styles.password_TextInput, { color: '#fff' }]}
-                              placeholder="Confirm Password"
+                              placeholder="Confirm Password*"
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
                               value={confirmPassword}
                               maxLength={20}
@@ -2134,7 +2210,7 @@ useEffect(() => {
                               <View style={Styles.verifylogin_container}>
                                 <TextInput
                                   style={Styles.verifypersonalEmailID_TextInput}
-                                  placeholder={'University Email ID'}
+                                  placeholder={'University Email ID*'}
                                   placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
                                   value={verifyusername}
                                   maxLength={50}
@@ -2454,7 +2530,12 @@ useEffect(() => {
           </>
         )}
         </KeyboardAvoidingView>
+        
+      
       </View>
+      
+
+        <NewCustomToastContainer/>
       </ImageBackground>
   );
 };

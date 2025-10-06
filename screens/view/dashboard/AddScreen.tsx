@@ -21,10 +21,11 @@ import ImageResizer from 'react-native-image-resizer';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { PermissionsAndroid, Platform } from 'react-native';
 import { MAIN_URL } from '../../utils/APIConstant';
-import { showToast } from '../../utils/toast';
+// import { showToast } from '../../utils/toast';
 import ToggleButton from '../../utils/component/ToggleButton';
 import Button from '../../utils/component/Button';
 import SelectCatagoryDropdown from '../../utils/component/SelectCatagoryDropdown';
+import { NewCustomToastContainer,showToast } from '../../utils/component/NewCustomToastManager';
 
 const bgImage = require('../../../assets/images/bganimationscreen.png');
 const profileImg = require('../../../assets/images/user.jpg'); // your avatar image
@@ -925,6 +926,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     </View>
   </View>
 </Modal> */}
+<NewCustomToastContainer/>
     </ImageBackground>
   );
 };

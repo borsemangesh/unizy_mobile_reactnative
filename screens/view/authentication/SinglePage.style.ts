@@ -207,6 +207,7 @@ export const Styles = StyleSheet.create({
 
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 1000,
   },
 
   backIconRowEmpty: {

@@ -14,250 +14,7 @@ import { BlurView } from '@react-native-community/blur';
 import { CONSTDEFAULT } from '../CONSTDEFAULT';
 import { MAIN_URL } from '../APIConstant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Slider from '@react-native-community/slider';
 import RangeSlider from 'rn-range-slider';
-
-// interface FilterBottomSheetProps {
-//   catagory_id: number;
-//   visible: boolean;
-//   onClose: () => void;
-// }
-
-// const FilterBottomSheet = ({
-//   catagory_id,
-//   visible,
-//   onClose,
-// }: FilterBottomSheetProps) => {
-//   const displayListOfProduct = async () => {
-//     // if (isLoading || !hasMore) return;
-
-//     try {
-//       // setIsLoading(true);
-
-//       const body = {
-//         category_id: catagory_id,
-//       };
-
-//       const url = MAIN_URL.baseUrl + 'category/feature-list/search';
-//       const token = await AsyncStorage.getItem('userToken');
-//       if (!token) return;
-
-//       const response = await fetch(url, {
-//         method: 'POST',
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify(body),
-//       });
-
-//       const jsonResponse = await response.json();
-//       console.log('API Response:', jsonResponse);
-
-//       if (jsonResponse.statusCode === 200) {
-//         const newFeatures = jsonResponse.data.features;
-//       }
-//     } catch (err) {
-//       console.log('Error:', err);
-//     } finally {
-//       // setIsLoading(false);
-//     }
-//   };
-
-//   const tabs = [
-//     {
-//       title: 'Sort By',
-//       image: require('../../../assets/images/sort_vertical_02.png'),
-//     },
-//     {
-//       title: 'Price',
-//       image: require('../../../assets/images/currency_coin_pound.png'),
-//     },
-//     {
-//       title: 'Featured Listing',
-//       image: require('../../../assets/images/diamond.png'),
-//     },
-//   ];
-
-//   const [selected, setSelected] = useState<string | null>(null);
-//   const [selectedTab, setSelectedTab] = useState('Sort By');
-//   const [selectedSort, setSelectedSort] = useState('Relevance');
-//   const [activeTab, setActiveTab] = useState('Sort By');
-//   const [title, setTitle] = useState('Sort By');
-
-//   const handleTabPress = (tabTitle: string) => {
-//     setSelectedTab(tabTitle);
-//     setActiveTab(tabTitle);
-//     setTitle(tabTitle);
-//   };
-
-//   const renderSortOptions = () => {
-//     if (selectedTab === 'Sort By') {
-//       return (
-//         <View style={{ width: '100%', height: '100%', gap: 10 }}>
-//           <View style={{ gap: 10 }}>
-//             {sortOptions.map(option => (
-//               <>
-//                 <View
-//                   style={{
-//                     flexDirection: 'row',
-//                     alignItems: 'center',
-//                     justifyContent: 'space-between',
-//                     height: 40,
-//                   }}
-//                 >
-//                   <Text
-//                     key={option}
-//                     style={styles.filtertitleFilteryBy}
-//                     onPress={() => setSelectedSort(option)}
-//                   >
-//                     {option}
-//                   </Text>
-
-//                   <View style={styles.radioButton_round}>
-//                     <View
-//                       style={[
-//                         styles.radioButton,
-//                         // selected === item.code &&
-//                         // selectlang_styles.radioButtonSelected,
-//                       ]}
-//                     />
-//                   </View>
-//                 </View>
-//               </>
-//             ))}
-//           </View>
-//         </View>
-//       );
-//     } else if (selectedTab === 'Price') {
-//       return (
-//         <View style={{ width: '60%', height: '100%', gap: 10 }}>
-//           <Text style={styles.filtertitle}>Price</Text>
-//           {/* Render price-related options */}
-//         </View>
-//       );
-//     } else if (selectedTab === 'Featured Listing') {
-//       return (
-//         <View style={{ width: '60%', height: '100%', gap: 10 }}>
-//           <Text style={styles.filtertitle}>Featured Listing</Text>
-//           {/* Render featured listing-related options */}
-//         </View>
-//       );
-//     }
-//     return null;
-//   };
-
-//   const sortOptions = [
-//     'Relevance',
-//     'Rating: High to Low',
-//     'Price: Low to High',
-//     'Price: High to Low',
-//   ];
-//   return (
-//     <Modal
-//       animationType="slide"
-//       visible={visible}
-//       transparent
-//       onRequestClose={onClose}
-//     >
-//       <View style={styles.overlay}>
-//         <View style={styles.modelcontainer}>
-//           <BlurView
-//             style={[
-//               StyleSheet.absoluteFill,
-//               styles.broderTopLeftRightRadius_30,
-//             ]}
-//             blurAmount={40}
-//             reducedTransparencyFallbackColor="white"
-//           />
-//           <View>
-//             <View style={styles.modeltitleContainer}>
-//               <Text style={styles.modelTextHeader}>Filters</Text>
-//               <TouchableOpacity
-//                 onPress={() => {
-//                   console.log('Clear All Clicked');
-//                 }}
-//               >
-//                 <Text style={styles.clearAll}>Clear all</Text>
-//               </TouchableOpacity>
-//             </View>
-//           </View>
-
-//           <View
-//             style={{
-//               width: '100%',
-//               height: '80%',
-//               backgroundColor: '#5d5c5c14',
-//             }}
-//           >
-//             <View
-//               style={{
-//                 height: '100%',
-//                 marginBottom: 10,
-//                 display: 'flex',
-//                 flexDirection: 'row',
-//               }}
-//             >
-//               <View style={styles.modelLeftSideContainer}>
-//                 {tabs.map(tab => (
-//                   <TouchableOpacity
-//                     key={tab.title}
-//                     onPress={() => handleTabPress(tab.title)}
-//                     style={[
-//                       //   styles.filtertype,
-//                       selectedTab === tab.title
-//                         ? styles.activeTab
-//                         : styles.inactiveTab,
-//                     ]}
-//                   >
-//                     <View style={styles.filterTypeTab}>
-//                       <Image
-//                         source={tab.image}
-//                         style={{ width: 24, height: 24 }}
-//                       />
-//                       <Text style={styles.filtertitle}>{tab.title}</Text>
-//                     </View>
-//                   </TouchableOpacity>
-//                 ))}
-//               </View>
-//               <View
-//                 style={{
-//                   width: '60%',
-//                   height: '100%',
-//                   gap: 10,
-//                   padding: 16,
-//                   backgroundColor: '#5d5c5c3c',
-//                 }}
-//               >
-//                 <Text style={styles.filterHeadTitle}>{title}</Text>
-//                 {renderSortOptions()}
-//               </View>
-//             </View>
-//           </View>
-
-//           <View style={styles.bottomview}>
-//             <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
-//               <Text style={styles.cancelText}>Cancel</Text>
-//             </TouchableOpacity>
-
-//             <TouchableOpacity
-//               style={[styles.cancelBtn, { backgroundColor: '#ffffff4e' }]}
-//               onPress={onClose}
-//             >
-//               <Text style={[styles.cancelText, { color: '#000000' }]}>
-//                 Apply
-//               </Text>
-//             </TouchableOpacity>
-//           </View>
-//         </View>
-//       </View>
-//     </Modal>
-//   );
-// };
-
-
-
-//addded after
 
 interface FilterBottomSheetProps {
   catagory_id: number;
@@ -273,11 +30,13 @@ const FilterBottomSheet = ({
   const [filters, setFilters] = useState<any[]>([]);
   const [selectedTab, setSelectedTab] = useState<string | null>(null);
 
-  const [dropdownSelections, setDropdownSelections] = useState<Record<number, number[]>>({});
+  const [dropdownSelections, setDropdownSelections] = useState<
+    Record<number, number[]>
+  >({});
 
-const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
-const [sliderLow, setSliderLow] = useState(priceRange.min);
-const [sliderHigh, setSliderHigh] = useState(priceRange.max);
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
+  const [sliderLow, setSliderLow] = useState(priceRange.min);
+  const [sliderHigh, setSliderHigh] = useState(priceRange.max);
 
   const fetchFilters = async () => {
     try {
@@ -289,21 +48,20 @@ const [sliderHigh, setSliderHigh] = useState(priceRange.max);
 
       const res = await fetch(url, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(body),
       });
 
       const data = await res.json();
       if (data.statusCode === 200) {
-        // const dynamicFilters = data.data.filter(
-        //   (item: any) =>
-        //     (item.field_type === 'dropdown') || item.alias_name === 'price'
-        // );
         const dynamicFilters = data.data.filter(
-        (item: any) =>
-          item.field_type?.toLowerCase() === "dropdown" ||
-          item.alias_name?.toLowerCase() === "price"
-      );
+          (item: any) =>
+            item.field_type?.toLowerCase() === 'dropdown' ||
+            item.alias_name?.toLowerCase() === 'price',
+        );
         setFilters(dynamicFilters);
         if (dynamicFilters.length) setSelectedTab(dynamicFilters[0].field_name);
       }
@@ -331,123 +89,148 @@ const [sliderHigh, setSliderHigh] = useState(priceRange.max);
     });
   };
 
-
-
   const renderRightContent = () => {
     const currentFilter = filters.find(f => f.field_name === selectedTab);
     if (!currentFilter) return null;
 
     if (currentFilter.field_type === 'dropdown') {
-    return (
-    <ScrollView
-      style={{ flexGrow: 0 ,paddingBottom:10}}
-      showsVerticalScrollIndicator={false}
-    >
-      {currentFilter.options.map((opt: any) => (
-        <TouchableOpacity
-          key={opt.id}
-          style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }}
-          onPress={() => toggleDropdownOption(currentFilter.id, opt.id)}
+      return (
+        <ScrollView
+          style={{ flexGrow: 0, paddingBottom: 10 }}
+          showsVerticalScrollIndicator={false}
         >
-          <View
-            style={{
-              width: 20,
-              height: 20,
-              borderRadius: 4,
-              borderWidth: 1,
-              borderColor: '#fff',
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginRight: 10,
+          {currentFilter.options.map((opt: any) => (
+            <TouchableOpacity
+              key={opt.id}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingVertical: 8,
+              }}
+              onPress={() => toggleDropdownOption(currentFilter.id, opt.id)}
+            >
+              <View
+                style={{
+                  width: 20,
+                  height: 20,
+                  borderRadius: 4,
+                  borderWidth: 1,
+                  borderColor: '#fff',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginRight: 10,
+                }}
+              >
+                {dropdownSelections[currentFilter.id]?.includes(opt.id) && (
+                  <Text style={{ color: '#FFF', fontSize: 12 }}>✓</Text>
+                )}
+              </View>
+              <Text style={{ color: 'white' }}>
+                {opt.option_name || opt.name}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      );
+    } else if (currentFilter.alias_name === 'price') {
+      return (
+        <View>
+          <Text style={{ color: 'white', marginBottom: 10 }}>
+            Range: {sliderLow} - {sliderHigh}
+          </Text>
+
+          <RangeSlider
+            min={currentFilter.minvalue || 0}
+            max={currentFilter.maxvalue || 10000}
+            step={1}
+            low={sliderLow}
+            high={sliderHigh}
+            onValueChanged={(l, h) => {
+              setSliderLow(l);
+              setSliderHigh(h);
+              setPriceRange({ min: l, max: h }); // update your main filter state
             }}
-          >
-            {dropdownSelections[currentFilter.id]?.includes(opt.id) && (
-              <Text style={{ color: '#FFF', fontSize: 12 }}>✓</Text>
+            renderThumb={() => (
+              <View
+                style={{
+                  width: 20,
+                  height: 20,
+                  borderRadius: 10,
+                  backgroundColor: '#fff',
+                }}
+              />
             )}
-          </View>
-          <Text style={{ color: 'white' }}>{opt.option_name || opt.name}</Text>
-        </TouchableOpacity>
-      ))}
-    </ScrollView>
-  );
-}
-
-    
-    // else if (currentFilter.alias_name === 'price') {
-    //   return (
-    //     <View>
-    //       <Text style={{ color: 'white', marginBottom: 10 }}>
-    //         Range: {priceRange.min} - {priceRange.max}
-    //       </Text>
-    //       <Slider
-    //         minimumValue={currentFilter.minvalue || 0}
-    //         maximumValue={currentFilter.maxvalue || 10000}
-    //         value={priceRange.min}
-    //         onValueChange={val => setPriceRange(prev => ({ ...prev, min: val }))}
-    //       />
-         
-    //     </View>
-    //   );
-    // }
-
- else if (currentFilter.alias_name === 'price') {
-  return (
-    <View>
-      <Text style={{ color: 'white', marginBottom: 10 }}>
-        Range: {sliderLow} - {sliderHigh}
-      </Text>
-
-      <RangeSlider
-        min={currentFilter.minvalue || 0}
-        max={currentFilter.maxvalue || 10000}
-        step={1}
-        low={sliderLow}
-        high={sliderHigh}
-        onValueChanged={(l, h) => {
-          setSliderLow(l);
-          setSliderHigh(h);
-          setPriceRange({ min: l, max: h }); // update your main filter state
-        }}
-        renderThumb={() => <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: '#fff' }} />}
-        renderRail={() => <View style={{ height: 4, backgroundColor: '#888', borderRadius: 2 }} />}
-        renderRailSelected={() => <View style={{ height: 4, backgroundColor: '#fff', borderRadius: 2 }} />}
-      />
-    </View>
-  );
-}
-
+            renderRail={() => (
+              <View
+                style={{ height: 4, backgroundColor: '#888', borderRadius: 2 }}
+              />
+            )}
+            renderRailSelected={() => (
+              <View
+                style={{ height: 4, backgroundColor: '#fff', borderRadius: 2 }}
+              />
+            )}
+          />
+        </View>
+      );
+    }
 
     return null;
   };
 
   return (
-    <Modal animationType="slide" visible={visible} transparent onRequestClose={onClose}>
+    <Modal
+      animationType="slide"
+      visible={visible}
+      transparent
+      onRequestClose={onClose}
+    >
       <View style={styles.overlay}>
         <View style={styles.modelcontainer}>
-          <BlurView style={[StyleSheet.absoluteFill, styles.broderTopLeftRightRadius_30]} blurAmount={40} />
+          <BlurView
+            style={[
+              StyleSheet.absoluteFill,
+              styles.broderTopLeftRightRadius_30,
+            ]}
+            blurAmount={40}
+          />
           <View style={styles.modeltitleContainer}>
             <Text style={styles.modelTextHeader}>Filters</Text>
-            <TouchableOpacity onPress={() => {
-              setDropdownSelections({});
-              setPriceRange({ min: 0, max: 10000 });
-            }}>
+            <TouchableOpacity
+              onPress={() => {
+                setDropdownSelections({});
+                setPriceRange({ min: 0, max: 10000 });
+              }}
+            >
               <Text style={styles.clearAll}>Clear all</Text>
             </TouchableOpacity>
           </View>
 
-          <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#5d5c5c14' }}>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              backgroundColor: '#5d5c5c14',
+            }}
+          >
             <View style={styles.modelLeftSideContainer}>
               {filters.map(f => (
                 <TouchableOpacity
                   key={f.field_name}
                   onPress={() => handleTabPress(f.field_name)}
-                  style={selectedTab === f.field_name ? styles.activeTab : styles.inactiveTab}
+                  style={
+                    selectedTab === f.field_name
+                      ? styles.activeTab
+                      : styles.inactiveTab
+                  }
                 >
                   <Text style={styles.filtertitle}>{f.field_name}</Text>
                 </TouchableOpacity>
               ))}
             </View>
-            <View style={{ flex: 1, padding: 16, backgroundColor: '#5d5c5c3c' }}>
+            <View
+              style={{ flex: 1, padding: 16, backgroundColor: '#5d5c5c3c' }}
+            >
               <Text style={styles.filterHeadTitle}>{selectedTab}</Text>
               {renderRightContent()}
             </View>
@@ -457,7 +240,10 @@ const [sliderHigh, setSliderHigh] = useState(priceRange.max);
             <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
               <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.cancelBtn, { backgroundColor: '#ffffff4e' }]} onPress={onClose}>
+            <TouchableOpacity
+              style={[styles.cancelBtn, { backgroundColor: '#ffffff4e' }]}
+              onPress={onClose}
+            >
               <Text style={[styles.cancelText, { color: '#000' }]}>Apply</Text>
             </TouchableOpacity>
           </View>
@@ -466,7 +252,6 @@ const [sliderHigh, setSliderHigh] = useState(priceRange.max);
     </Modal>
   );
 };
-
 
 const styles = StyleSheet.create({
   modeltitleContainer: {
@@ -677,6 +462,3 @@ const styles = StyleSheet.create({
 });
 
 export default FilterBottomSheet;
-
-
-

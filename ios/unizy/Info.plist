@@ -1,111 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" 
- "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>CFBundleDevelopmentRegion</key>
-    <string>en</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>unizy</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>65.0.99.229</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSTemporaryExceptionMinimumTLSVersion</key>
+				<string>TLSv1.2</string>
+			</dict>
+		</dict>
+	</dict>
 
-    <key>CFBundleDisplayName</key>
-    <string>unizy</string>
+	<!-- Privacy Permissions -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app requires access to your location.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app requires access to your photo library to allow uploading and saving images.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app requires access to your camera to allow taking photos.</string>
 
-    <key>CFBundleExecutable</key>
-    <string>$(EXECUTABLE_NAME)</string>
-
-    <key>CFBundleIdentifier</key>
-    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-
-    <key>CFBundleInfoDictionaryVersion</key>
-    <string>6.0</string>
-
-    <key>CFBundleName</key>
-    <string>$(PRODUCT_NAME)</string>
-
-    <key>CFBundlePackageType</key>
-    <string>APPL</string>
-
-    <key>CFBundleShortVersionString</key>
-    <string>$(MARKETING_VERSION)</string>
-
-    <key>CFBundleSignature</key>
-    <string>????</string>
-
-    <key>CFBundleVersion</key>
-    <string>$(CURRENT_PROJECT_VERSION)</string>
-
-    <key>LSRequiresIPhoneOS</key>
-    <true/>
-
-    <!-- App Transport Security settings -->
-    <key>NSAppTransportSecurity</key>
-    <dict>
-        <key>NSExceptionDomains</key>
-        <dict>
-            <key>65.0.99.229</key>
-            <dict>
-                <key>NSIncludesSubdomains</key>
-                <true/>
-                <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
-                <true/>
-                <key>NSTemporaryExceptionMinimumTLSVersion</key>
-                <string>TLSv1.2</string>
-            </dict>
-        </dict>
-    </dict>
-
-    <!-- Location Permission -->
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>This app requires access to your location.</string>
-
-    <!-- Enable new architecture -->
-    <key>RCTNewArchEnabled</key>
-    <true/>
-
-    <!-- Fonts -->
-    <key>UIAppFonts</key>
-    <array>
-        <string>MonumentExtended-Regular.otf</string>
-        <string>MeowScript-Regular.ttf</string>
-        <string>Urbanist-Black.ttf</string>
-        <string>Urbanist-BlackItalic.ttf</string>
-        <string>Urbanist-Bold.ttf</string>
-        <string>Urbanist-BoldItalic.ttf</string>
-        <string>Urbanist-ExtraBold.ttf</string>
-        <string>Urbanist-ExtraBoldItalic.ttf</string>
-        <string>Urbanist-ExtraLight.ttf</string>
-        <string>Urbanist-ExtraLightItalic.ttf</string>
-        <string>Urbanist-Italic.ttf</string>
-        <string>Urbanist-Light.ttf</string>
-        <string>Urbanist-LightItalic.ttf</string>
-        <string>Urbanist-Medium.ttf</string>
-        <string>Urbanist-MediumItalic.ttf</string>
-        <string>Urbanist-Regular.ttf</string>
-        <string>Urbanist-SemiBold.ttf</string>
-        <string>Urbanist-SemiBoldItalic.ttf</string>
-        <string>Urbanist-Thin.ttf</string>
-        <string>Urbanist-ThinItalic.ttf</string>
-    </array>
-
-    <!-- Launch Screen -->
-    <key>UILaunchStoryboardName</key>
-    <string>LaunchScreen</string>
-
-    <!-- Device Capabilities -->
-    <key>UIRequiredDeviceCapabilities</key>
-    <array>
-        <string>arm64</string>
-    </array>
-
-    <!-- Supported Orientations -->
-    <key>UISupportedInterfaceOrientations</key>
-    <array>
-        <string>UIInterfaceOrientationPortrait</string>
-        <string>UIInterfaceOrientationLandscapeLeft</string>
-        <string>UIInterfaceOrientationLandscapeRight</string>
-    </array>
-
-    <!-- Status Bar Appearance -->
-    <key>UIViewControllerBasedStatusBarAppearance</key>
-    <false/>
+	<key>RCTNewArchEnabled</key>
+	<true/>
+	<key>UIAppFonts</key>
+	<array>
+		<string>MonumentExtended-Regular.otf</string>
+		<string>MeowScript-Regular.ttf</string>
+		<string>Urbanist-Black.ttf</string>
+		<string>Urbanist-BlackItalic.ttf</string>
+		<string>Urbanist-Bold.ttf</string>
+		<string>Urbanist-BoldItalic.ttf</string>
+		<string>Urbanist-ExtraBold.ttf</string>
+		<string>Urbanist-ExtraBoldItalic.ttf</string>
+		<string>Urbanist-ExtraLight.ttf</string>
+		<string>Urbanist-ExtraLightItalic.ttf</string>
+		<string>Urbanist-Italic.ttf</string>
+		<string>Urbanist-Light.ttf</string>
+		<string>Urbanist-LightItalic.ttf</string>
+		<string>Urbanist-Medium.ttf</string>
+		<string>Urbanist-MediumItalic.ttf</string>
+		<string>Urbanist-Regular.ttf</string>
+		<string>Urbanist-SemiBold.ttf</string>
+		<string>Urbanist-SemiBoldItalic.ttf</string>
+		<string>Urbanist-Thin.ttf</string>
+		<string>Urbanist-ThinItalic.ttf</string>
+	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>arm64</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
 </dict>
 </plist>
