@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ImageSourcePropType,
   Platform,
+  TouchableOpacity,
 } from 'react-native';
 
 type NewProductCardProps = {
@@ -14,7 +15,8 @@ type NewProductCardProps = {
   inforTitlePrice: string;
   rating: string;
   productImage: ImageSourcePropType;
-  bookmark:boolean
+  bookmark:boolean,
+  applybookmark?: () => void; 
 };
 
 export default function SearchListProductCard({
@@ -23,7 +25,8 @@ export default function SearchListProductCard({
   inforTitlePrice,
   rating,
   productImage,
-  bookmark
+  bookmark,
+  applybookmark
 }: NewProductCardProps) {
   return (
     <View style={styles.card}>
@@ -33,6 +36,7 @@ export default function SearchListProductCard({
           <Text style={styles.tagText}>{tag}</Text>
         </View>
 
+      <TouchableOpacity onPress={applybookmark}>
         <View style={styles.bookmark1}>
           <Image
               source={
@@ -43,6 +47,7 @@ export default function SearchListProductCard({
                style={{ width: 16, height: 16 }}
             />
         </View>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.infoRow}>

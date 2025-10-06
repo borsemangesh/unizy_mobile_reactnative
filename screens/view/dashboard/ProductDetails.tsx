@@ -78,6 +78,15 @@ const [page, setPage] = useState(1);
 const [isLoading, setIsLoading] = useState(false);
 const [hasMore, setHasMore] = useState(true); // whether more pages exist
 const [isFilterVisible, setFilterVisible] = useState(false);
+const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
+
+  useEffect(() => {
+  const loadBookmarks = async () => {
+    const saved = await AsyncStorage.getItem('bookmarkedIds');
+    if (saved) setBookmarkedIds(JSON.parse(saved));
+  };
+  loadBookmarks();
+}, []);
 
 const clickfilter = () => {
   setFilterVisible(true);
@@ -136,47 +145,50 @@ const clickfilter = () => {
   }
 };
 
+const handleBookmarkPress = async (productId: number) => {
+  try {
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) return;
+
+    const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
+
+    const url = MAIN_URL.baseUrl + 'category/list-bookmark';
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ feature_id: productId }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Bookmark response:', data);
+
+    let updatedBookmarks;
+    if (isCurrentlyBookmarked) {
+      updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
+    } else {
+      updatedBookmarks = [...bookmarkedIds, productId];
+    }
+
+    setBookmarkedIds(updatedBookmarks);
+    await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks)); // persist locally
+
+  } catch (error) {
+    console.error('Bookmark error:', error);
+  }
+};
+
   
   const filteredFeatures: Feature[] = featurelist.filter((item) =>
     item.title?.toLowerCase().includes(search.toLowerCase())
   );
 
-//   const renderItem = ({ item, index }: { item: Feature; index: number }) => {
-//     const isLastOddItem =
-//       filteredFeatures.length % 2 !== 0 &&
-//       index === filteredFeatures.length - 1;
-
-//        const productImage = item.thumbnail
-//   ? { uri: item.thumbnail }
-//   : require('../../../assets/images/drone.png');
-
-//   return (
-   
-//     <View
-//       style={[
-//         styles.itemContainer,
-//         { flex: isLastOddItem ? 0.5: 0.5, marginRight: isLastOddItem ? 0.5 : 0.5 },
-//       ]}
-//     >
-//          <TouchableOpacity
-//       onPress={() =>
-//         navigation.navigate('SearchDetails', { id: item.id }) // 👈 pass id here
-//       }
-//       style={{ flex: 1 }}
-//     >
-//       <SearchListProductCard
-//         tag="University of Warwick"
-//         infoTitle={item.title}
-//         inforTitlePrice={`£ ${item.price}`}
-//         rating={item.isfeatured ? '4.5' : '4.5'}
-//         productImage={productImage}
-//         bookmark={item.isfeatured}
-//       />
-      
-//     </TouchableOpacity>
-//     </View>
-//   );
-// };
 
 const renderItem = ({ item, index }: { item: Feature; index: number }) => {
   const isLastOddItem =
@@ -210,7 +222,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
     >
       <TouchableOpacity
         onPress={() =>
-          navigation.navigate('SearchDetails', { id: item.id })
+          navigation.navigate('SearchDetails', { id: item.id ,name:category_name})
         }
         style={{ flex: 1 }}
       >
@@ -224,6 +236,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
           initialsName={initials}
           productImage={item.createdby?.profile ? { uri: item.createdby.profile } : undefined}
           bookmark={item.isfeatured}
+          applybookmark={() => handleBookmarkPress(item.id)}
         />
       ) : (
         <SearchListProductCard
@@ -233,6 +246,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
           rating={item.isfeatured ? '4.5' : '4.5'}
           productImage={productImage ?? require('../../../assets/images/drone.png')}
           bookmark={item.isfeatured}
+          applybookmark={() => handleBookmarkPress(item.id)}
         />
       )}
       </TouchableOpacity>
@@ -307,11 +321,16 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
           />
       </View>
 
-      <FilterBottomSheet
+      {/* <FilterBottomSheet
         catagory_id={category_id}
         visible={isFilterVisible}
         onClose={() => setFilterVisible(false)}
-      />
+      /> */}
+      <FilterBottomSheet
+      catagory_id={category_id}
+      visible={isFilterVisible}
+      onClose={() => setFilterVisible(false)}
+    />
     </ImageBackground>
   );
 };

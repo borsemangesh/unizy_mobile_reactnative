@@ -72,6 +72,37 @@ useEffect(() => {
 
 
 
+// const renderItem = ({ item }: any) => {
+//   const isLogout = item.title.toLowerCase() === 'logout';
+
+//   return (
+//     <TouchableOpacity
+//       style={styles.cardContainer}
+//       onPress={async () => {
+//         if (isLogout) {      
+//         await AsyncStorage.setItem('ISLOGIN', 'false');
+//         showToast('User Logout Successfully','success')
+//         navigation.navigate('SinglePage');
+//         } else {
+//           console.log(item.title, 'pressed');
+//         }
+//       }}
+//     >
+//       <Image source={item.image} style={styles.cardImage} />
+//       <Text
+//         style={[
+//           styles.cardText,
+//           isLogout && { color: '#FF8282E0' },
+//         ]}
+//       >
+//         {item.title}
+//       </Text>
+//       <Image source={arrowIcon} style={styles.cardArrow} />
+//     </TouchableOpacity>
+//   );
+// };
+  const APP_VERSION = 'v1.0.3'; // you can import this from package.json if needed
+
 const renderItem = ({ item }: any) => {
   const isLogout = item.title.toLowerCase() === 'logout';
 
@@ -79,10 +110,10 @@ const renderItem = ({ item }: any) => {
     <TouchableOpacity
       style={styles.cardContainer}
       onPress={async () => {
-        if (isLogout) {      
-        await AsyncStorage.setItem('ISLOGIN', 'false');
-        showToast('User Logout Successfully','success')
-        navigation.navigate('SinglePage');
+        if (isLogout) {
+          await AsyncStorage.setItem('ISLOGIN', 'false');
+          showToast('User Logout Successfully', 'success');
+          navigation.navigate('SinglePage');
         } else {
           console.log(item.title, 'pressed');
         }
@@ -97,11 +128,18 @@ const renderItem = ({ item }: any) => {
       >
         {item.title}
       </Text>
-      <Image source={arrowIcon} style={styles.cardArrow} />
+
+      {isLogout ? (
+        <Text style={styles.versionText}>{APP_VERSION}</Text>
+      ) : (
+        <Image source={arrowIcon} style={styles.cardArrow} />
+      )}
     </TouchableOpacity>
   );
 };
-  return (
+
+
+return (
    
       <View style={styles.fullScreenContainer}>
         {/* Header */}
@@ -183,6 +221,13 @@ const styles = StyleSheet.create({
     padding: 16,
     
   },
+  versionText: {
+  position: 'absolute',
+  right: 20,
+  color: '#B0B0B0',
+  fontSize: 14,
+  fontWeight: '500',
+},
   cardContainer: {
     flexDirection: 'row',
     alignItems: 'center',

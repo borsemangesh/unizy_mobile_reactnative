@@ -50,6 +50,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     const scrollY1 = new Animated.Value(0);
     const route = useRoute();
     const { id } = route.params as { id: number };
+    const {name} =route.params as {name :string}
     const [detail, setDetail] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -293,7 +294,7 @@ const renderImage = () => {
                       />
                     </View>
                   </TouchableOpacity>
-                  <Text style={styles.unizyText}>Listing Details</Text>
+                  <Text style={styles.unizyText}>{`${name} Details`}</Text>
                   <View style={{ width: 30 }} />
                 </View>
               </View>

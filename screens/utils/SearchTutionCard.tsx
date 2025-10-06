@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ImageSourcePropType,
   Platform,
+  TouchableOpacity,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -18,6 +19,7 @@ type NewProductCardProps = {
   bookmark: boolean;
   showInitials:boolean;
   initialsName: string; 
+  applybookmark?: () => void; 
 };
 
 export default function SearchTutionCard({
@@ -28,7 +30,8 @@ export default function SearchTutionCard({
   productImage,
   bookmark,
   showInitials,
-  initialsName
+  initialsName,
+  applybookmark
 }: NewProductCardProps) {
   
 
@@ -67,6 +70,7 @@ export default function SearchTutionCard({
           <Text style={styles.tagText}>{tag}</Text>
         </View>
 
+        <TouchableOpacity onPress={applybookmark}>
         <View style={styles.bookmark1}>
           <Image
             source={
@@ -77,6 +81,7 @@ export default function SearchTutionCard({
             style={{ width: 16, height: 16 }}
           />
         </View>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.infoRow}>

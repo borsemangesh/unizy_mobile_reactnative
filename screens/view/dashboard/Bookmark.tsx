@@ -76,7 +76,15 @@ const Bookmark = ({ navigation }: BookmarkProps)  => {
     const [featurelist, setFeaturelist] = useState<Feature[]>([]);  
     const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+  const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
 
+   useEffect(() => {
+  const loadBookmarks = async () => {
+    const saved = await AsyncStorage.getItem('bookmarkedIds');
+    if (saved) setBookmarkedIds(JSON.parse(saved));
+  };
+  loadBookmarks();
+}, []);
     type Category = {
       id: number | null; 
       name: string;
@@ -166,6 +174,45 @@ const formatDate = (dateString: string | null | undefined) => {
   return `${day}-${month}-${year}`;
 };
 
+const handleBookmarkPress = async (productId: number) => {
+  try {
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) return;
+
+    const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
+
+    const url = MAIN_URL.baseUrl + 'category/list-bookmark';
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ feature_id: productId }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Bookmark response:', data);
+
+    let updatedBookmarks;
+    if (isCurrentlyBookmarked) {
+      updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
+    } else {
+      updatedBookmarks = [...bookmarkedIds, productId];
+    }
+
+    setBookmarkedIds(updatedBookmarks);
+    await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks)); // persist locally
+
+  } catch (error) {
+    console.error('Bookmark error:', error);
+  }
+};
+
 
  const renderItem = ({ item, index }: { item: Feature; index: number }) => {
   const isLastOddItem =
@@ -204,7 +251,7 @@ const formatDate = (dateString: string | null | undefined) => {
     >
        <TouchableOpacity
             onPress={() =>
-              navigation.navigate('SearchDetails', { id: feature.id }) 
+              navigation.navigate('SearchDetails', { id: feature.id,name: selectedCategory.name === 'All' ? 'List' : selectedCategory.name, }) 
             }
             style={{ flex: 1 }}
           >
@@ -219,6 +266,8 @@ const formatDate = (dateString: string | null | undefined) => {
                 bookmark={feature.isfeatured}
                 showInitials={showInitials}
                 initialsName={initials}
+                applybookmark={() => handleBookmarkPress(item.id)}
+                
               />
             ) : (
               <SearchListProductCard
@@ -228,6 +277,7 @@ const formatDate = (dateString: string | null | undefined) => {
                 rating={feature.isfeatured ? '4.5' : '4.5'}
                 productImage={productImage ?? require('../../../assets/images/drone.png')}
                 bookmark={feature.isfeatured}
+                applybookmark={() => handleBookmarkPress(item.id)}
               />
             )}
       </TouchableOpacity>
