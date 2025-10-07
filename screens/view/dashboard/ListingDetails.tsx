@@ -13,6 +13,7 @@ import { showToast } from '../../utils/toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { useRoute } from '@react-navigation/native';
+import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 
 type ListingDetailsProps = {
   navigation: any;
@@ -45,10 +46,15 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
     const data = await response.json();
     console.log("✅ API Response:", data);
 
-    if (response.ok) {
-      showToast( "Product status updated!",'success');
+    // if (response.ok) {
+    //   showToast( "Product status updated!",'success');
+    // } else {
+    //   showToast("Error", data.message || "Something went wrong");
+    // }
+    if (data.message) {
+      showToast(data.message, data.statusCode === 200 ? 'success' : 'error');
     } else {
-      showToast("Error", data.message || "Something went wrong");
+      showToast("Something went wrong", "error");
     }
     
   } catch (error) {
@@ -228,6 +234,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
             </View>
         
       </View>
+      <NewCustomToastContainer/>
     </ImageBackground>
   );
 };

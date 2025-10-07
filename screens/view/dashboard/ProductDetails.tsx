@@ -23,6 +23,7 @@ import { useRoute, RouteProp } from '@react-navigation/native';
 import SearchListProductCard from '../../utils/SearchListProductCard';
 import FilterBottomSheet from '../../utils/component/FilterBottomSheet';
 import SearchTutionCard from '../../utils/SearchTutionCard';
+import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 type CreatedBy = {
   id: number;
   firstname: string;
@@ -333,6 +334,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
       visible={isFilterVisible}
       onClose={() => setFilterVisible(false)}
     />
+    <NewCustomToastContainer/>
     </ImageBackground>
   );
 };

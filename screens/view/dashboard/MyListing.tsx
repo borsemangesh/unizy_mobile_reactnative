@@ -21,6 +21,7 @@ const bgImage = require('../../../assets/images/bganimationscreen.png');
 import { useRoute, RouteProp } from '@react-navigation/native';
 import SearchListProductCard from '../../utils/SearchListProductCard';
 import MyListingCard from '../../utils/MyListingCard';
+import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 
 type Feature = {
 id: number,
@@ -247,6 +248,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
       />
         </View>
       </View>
+      <NewCustomToastContainer/>
     </ImageBackground>
   );
 };

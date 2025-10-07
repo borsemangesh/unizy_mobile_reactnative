@@ -22,6 +22,7 @@ const bgImage = require('../../../assets/images/bganimationscreen.png');
 import { useRoute, RouteProp } from '@react-navigation/native';
 import SearchListProductCard from '../../utils/SearchListProductCard';
 import SearchTutionCard from '../../utils/SearchTutionCard';
+import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 
 type CreatedBy = {
   id: number;
@@ -358,6 +359,7 @@ const handleBookmarkPress = async (productId: number) => {
         />
         </View>
       </View>
+      <NewCustomToastContainer/>
     </ImageBackground>
   );
 };

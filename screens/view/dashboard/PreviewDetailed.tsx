@@ -21,6 +21,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CommonActions } from '@react-navigation/native';
 import Button from '../../utils/component/Button';
+import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 
 
 type previewDetailsProps = {
@@ -742,6 +743,7 @@ const handleListPress = async () => {
           </View>
         </Modal>
       </View>
+      <NewCustomToastContainer/>
     </ImageBackground>
     </SafeAreaView>
   );

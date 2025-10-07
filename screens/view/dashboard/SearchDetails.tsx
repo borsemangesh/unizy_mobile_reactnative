@@ -19,6 +19,7 @@ import { MAIN_URL } from '../../utils/APIConstant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showToast } from '../../utils/toast';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 
 type SearchDetailsProps = {
   navigation: any;
@@ -145,64 +146,6 @@ const handleDeactivate = async () => {
     showToast("Failed to update product status",'error');
   }
 };
-// const renderImage = () => {
-//   const fallbackImage = require('../../../assets/images/drone.png');
-
-//   if (detail?.profileshowinview) {
-//     return (
-//       <Image
-//         source={detail?.createdby?.profile ? { uri: detail?.createdby.profile } : fallbackImage}
-//         style={{ width: '100%', height: 200 }}
-//         resizeMode="cover"
-//       />
-//     );
-//   }
-
-//   if (images.length > 1) {
-//     return (
-//       <View>
-//         <FlatList
-//           ref={flatListRef}
-//           data={images}
-//           horizontal
-//           pagingEnabled
-//           showsHorizontalScrollIndicator={false}
-//           keyExtractor={(_, index) => index.toString()}
-//           onScroll={onScroll}
-//           scrollEventThrottle={16}
-//           renderItem={({ item }) => (
-//             <Image
-//               source={{ uri: item.uri }}
-//               style={{ width: screenWidth, height: 250 }}
-//               resizeMode="cover"
-//             />
-//           )}
-//         />
-//         {/* Step Indicator */}
-//         <View style={styles.stepIndicatorContainer}>
-//           {images.map((_: any, index: Key | null | undefined) => (
-//             <View
-//               key={index}
-//               style={
-//                 index === activeIndex
-//                   ? styles.activeStepCircle
-//                   : styles.inactiveStepCircle
-//               }
-//             />
-//           ))}
-//         </View>
-//       </View>
-//     );
-//   }
-
-//   return (
-//     <Image
-//       source={images[0]?.uri ? { uri: images[0].uri } : fallbackImage}
-//       style={{ width: '100%', height: 250 }}
-//       resizeMode="cover"
-//     />
-//   );
-// };
 
 
 const renderImage = () => {
@@ -507,7 +450,7 @@ const renderImage = () => {
       {/* Bottom */}
       <TouchableOpacity
         style={styles.previewBtn}
-        onPress={handleDeactivate}
+        //onPress={handleDeactivate}
       >
         {/* <Text style={styles.previewText}>Deactivate Listing</Text> */}
         <Text style={{ textAlign: 'center' }}>
@@ -582,6 +525,7 @@ const renderImage = () => {
         </View>
       </Modal>
       </View>
+      <NewCustomToastContainer/>
     </ImageBackground>
   );
 };

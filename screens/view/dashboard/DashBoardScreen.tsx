@@ -26,6 +26,7 @@ import { Navigation } from '../Navigation';
 import { MAIN_URL } from '../../utils/APIConstant';
 import TutitionCard from '../../utils/TutitionCard';
 import ProfileCard from './ProfileCard';
+import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 
 const mylistings = require('../../../assets/images/mylistingicon.png');
 const mylistings1 = require('../../../assets/images/favourite.png');
@@ -687,6 +688,7 @@ const handleBookmarkPress = async (productId: number) => {
         
         
       </View>
+      <NewCustomToastContainer/>
     </ImageBackground>
   );
 };

@@ -21,6 +21,7 @@ import {
 } from 'react-native';
 import { showToast } from '../../utils/toast';
 import { MAIN_URL } from '../../utils/APIConstant';
+import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 
 
 const bgImage = require('../../../assets/images/bganimationscreen.png');
@@ -253,6 +254,7 @@ return (
     </View>  
       
       </View>
+      <NewCustomToastContainer/>
       </View>
    
   );
