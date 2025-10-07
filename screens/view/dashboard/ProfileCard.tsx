@@ -20,6 +20,7 @@ import {
   FlatList,
 } from 'react-native';
 import { showToast } from '../../utils/toast';
+import { MAIN_URL } from '../../utils/APIConstant';
 
 
 const bgImage = require('../../../assets/images/bganimationscreen.png');
@@ -50,11 +51,13 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
   const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
 
-  interface UserMeta {
+ interface UserMeta {
   firstname: string | null;
   lastname: string | null;
   profile: string | null;
   student_email: string | null;
+  email?: string | null;
+  university_name?: string | null;
 }
 
 const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
@@ -72,6 +75,48 @@ useEffect(() => {
 }, [expanded]);
 
 
+useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        const userId = await AsyncStorage.getItem('userId');
+
+        if (!token || !userId) {
+          console.warn('Missing token or user ID in AsyncStorage');
+          return;
+        }
+
+        const url = `${MAIN_URL.baseUrl}user/user-profile/${userId}`;
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          const user = data.data;
+          setUserMeta({
+            firstname: user.firstname ?? null,
+            lastname: user.lastname ?? null,
+            profile: user.profile ?? null,
+            student_email: user.student_email ?? null,
+            email: user.email ?? null,
+            university_name: user.university_name ?? null,
+          });
+        } else {
+          console.warn('Failed to fetch user profile:', data?.message || response.status);
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
 const renderItem = ({ item }: any) => {
   const isLogout = item.title.toLowerCase() === 'logout';
@@ -104,13 +149,15 @@ const renderItem = ({ item }: any) => {
 };
   const APP_VERSION = '1.0.0'; 
 
-
+const clickBack = () =>{
+    navigation.replace('Dashboard');
+  }
 
 return (
    
       <View style={styles.fullScreenContainer}>
         {/* Header */}
-        <View style={styles.header}>
+        {/* <View style={styles.header}>
           <View style={styles.headerRow}>
             <TouchableOpacity
               onPress={() => {navigation.navigate('Dashboard')}}
@@ -125,7 +172,27 @@ return (
             <Text style={styles.unizyText}>Profile</Text>
             <View style={{ width: 30 }} />
           </View>
-        </View>
+        </View> */}
+
+        <View style={styles.header}>
+      <View style={styles.headerRow}>
+        <TouchableOpacity
+          style={styles.backBtn}
+          onPress={clickBack}
+        >
+          <View style={styles.backIconRow}>
+            <Image
+              source={require('../../../assets/images/back.png')}
+              style={{ height: 24, width: 24 }}
+            />
+          </View>
+        </TouchableOpacity>
+        <Text style={styles.unizyText}>Profile</Text>
+        <View style={{ width: 30 }} />
+      </View>
+    </View>
+
+
         <View style={{ paddingTop: 120 }}> 
         
              <View style={styles.userRow}>
@@ -134,17 +201,19 @@ return (
             </View>
             <View style={{ width: '80%' }}>
               <Text style={styles.userName}>
-              {userMeta
-                ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''}`.trim()
-                : 'Alan Walker'}
-            </Text>
+                {userMeta
+                  ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''}`.trim()
+                  : 'Loading...'}
+              </Text>
               <View style={{ flexDirection: 'column', gap: 6,marginTop:4 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <Image
             source={require('../../../assets/images/buildings.png')}
             style={{ width: 16, height: 16 }}
             />
-            <Text style={styles.userSub}>University of Warwick</Text>
+             <Text style={styles.userSub}>
+              {userMeta?.university_name || 'University Name'}
+            </Text>
         </View>
 
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
@@ -152,7 +221,9 @@ return (
             source={require('../../../assets/images/sms.png')}
             style={{ width: 16, height: 16 }}
             />
-            <Text style={styles.userSub}>studentname@gmail.com</Text>
+             <Text style={styles.userSub}>
+              {userMeta?.email || 'studentname@gmail.com'}
+            </Text>
         </View>
 
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
@@ -160,7 +231,9 @@ return (
           source={require('../../../assets/images/sms.png')}
           style={{ width: 16, height: 16 }}
         />
-        <Text style={styles.userSub}>studentname@warwick.ac.uk</Text>
+      <Text style={styles.userSub}>
+          {userMeta?.student_email || 'studentname@university.ac.uk'}
+        </Text>
       </View>
     </View>
     </View>
@@ -173,11 +246,12 @@ return (
         renderItem={renderItem}
         ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
       />
-    </View>  
-      <View style={[styles.cardContainer, { justifyContent: 'space-between', paddingHorizontal: 16 }]}>
+       <View style={[styles.cardContainer, { justifyContent: 'space-between', paddingHorizontal: 16,marginTop:12 }]}>
         <Text style={styles.cardText}>App Version</Text>
         <Text style={styles.versionText}>{APP_VERSION}</Text>
-      </View>   
+      </View>  
+    </View>  
+      
       </View>
       </View>
    

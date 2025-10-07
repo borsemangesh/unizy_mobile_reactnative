@@ -27,6 +27,7 @@ type SearchDetailsProps = {
  const { width } = Dimensions.get('window');
 
 const profileImg = require('../../../assets/images/user.jpg');
+const mylistings1 = require('../../../assets/images/favourite.png');
 
 type ParamOption = {
   id: number;
@@ -294,8 +295,13 @@ const renderImage = () => {
                       />
                     </View>
                   </TouchableOpacity>
-                  <Text style={styles.unizyText}>{`${name} Details`}</Text>
+                  <Text style={styles.unizyText}>
+                {detail?.category?.name ? `${detail.category.name} Details` : ''}
+              </Text>
                   <View style={{ width: 30 }} />
+                  <View style={styles.MylistingsBackground}>
+                  <Image source={mylistings1} style={styles.iconSmall} />
+                </View>
                 </View>
               </View>
           
@@ -582,6 +588,29 @@ const renderImage = () => {
 
 const styles = StyleSheet.create({
 
+ MylistingsBackground: {
+    height: 48,
+    width: 48,
+
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 100,
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(97, 179, 255, 0.2) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow:
+      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
+
+    borderTopColor: '#ffffff5d',
+    borderBottomColor: '#ffffff36',
+    borderLeftColor: '#ffffff5d',
+    borderRightColor: '#ffffff36',
+    borderWidth: 0.3,
+  },
+  iconSmall: {
+    width: 25,
+    height: 25,
+  },
+  
    stepIndicatorContainer: {
     flexDirection: 'row',
     justifyContent: 'center',

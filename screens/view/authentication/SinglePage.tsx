@@ -472,7 +472,7 @@ useEffect(() => {
 
 
   const handleSendResetLink = async () => {
-    if (!username1) {
+    if (!username1.trim()) {
       showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
       return;
     }
@@ -480,7 +480,7 @@ useEffect(() => {
    
     const emailRegex = /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;
   
-    if (!emailRegex.test(username1)) {
+    if (!emailRegex.test(username1.trim())) {
       showToast(Constant.VALID_EMAI_LADDRESS, 'error');
       return;
     }
@@ -520,13 +520,13 @@ useEffect(() => {
     // navigation.replace('Dashboard');
     console.log('sdfsdf')
    
-    if (!username || !password) {
+    if (!username.trim() || !password.trim()) {
       showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
       return;
     }
   
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(username)) {
+    if (!emailRegex.test(username.trim())) {
       showToast(Constant.VALID_EMAI_LADDRESS, 'error');
       return;
     }
@@ -596,7 +596,7 @@ useEffect(() => {
 
     setOtp(['','','','']);
 
-    if (!firstName || !lastName || !signUpusername || !signUppassword || !confirmPassword) {
+    if (!firstName.trim() || !lastName.trim() || !signUpusername.trim() || !signUppassword.trim() || !confirmPassword.trim()) {
       showToast(Constant.REQUIRED_ALL_FIELDS , 'error');
       return;
     }
@@ -606,18 +606,18 @@ useEffect(() => {
     //   return;
     // }
     const emailRegex = /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;    
-    if (!emailRegex.test(signUpusername)) {
+    if (!emailRegex.test(signUpusername.trim())) {
       showToast(Constant.VALID_EMAI_LADDRESS, 'error');
       return;
     }
 
      const passwordRegex =/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passwordRegex.test(signUppassword)) {
+    if (!passwordRegex.test(signUppassword.trim())) {
       showToast('Min 8 chars: upper, lower, number, symbol.','error')
     return;
     
     }
-    if (signUppassword !== confirmPassword) {
+    if (signUppassword.trim() !== confirmPassword.trim()) {
       showToast(Constant.PASSWORDS_DO_NOT_MATCH,'error'); 
       return;
     }
@@ -870,7 +870,7 @@ useEffect(() => {
 
     setOtp1(['','','','']);
   
-    if (!verifyusername) {
+    if (!verifyusername.trim()) {
     showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
     return;
   }
@@ -2459,9 +2459,10 @@ useEffect(() => {
                               <TouchableOpacity
                                 style={Styles.profileloginButton}
                                 onPress={() => {
-                                  setCurrentScreen('login');
-                                  setcurrentScreenIninner('login');
+                                 // setCurrentScreen('login');
+                                  //setcurrentScreenIninner('login');
                                   closePopup1();
+                                navigation.replace('Dashboard');
                                 }}
                               >
                                 <Text style={Styles.profileloginText}>
