@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, ImageSourcePropType } from "react-native";
+import { View, Text, Image, StyleSheet, ImageSourcePropType, Platform } from "react-native";
 
 
 type NewProductCardProps = {
@@ -73,7 +73,8 @@ const styles = StyleSheet.create({
     width: 186,
     height: 180,
     position: 'relative',
-    padding:6
+    // padding:6
+    padding:(Platform.OS === 'ios' ? 0 : 6),
   },
   image: {
     width: '100%',
