@@ -27,6 +27,7 @@ import { MAIN_URL } from '../../utils/APIConstant';
 import TutitionCard from '../../utils/TutitionCard';
 import ProfileCard from './ProfileCard';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
+import { RouteProp, useRoute } from '@react-navigation/native';
 
 const mylistings = require('../../../assets/images/mylistingicon.png');
 const mylistings1 = require('../../../assets/images/favourite.png');
@@ -84,7 +85,7 @@ const ProductItem: React.FC<ProductItemProps> = ({
   <TouchableOpacity
     key={item.id}
     onPress={() => {
-      navigation.navigate('ProductDetails', { category_id: item.id ,category_name:item.name});
+      navigation.replace('ProductDetails', { category_id: item.id ,category_name:item.name});
       // navigation.reset({
       //   index: 0,
       //   routes: [{ name: 'ProductDetails', },{ category_id: item.id }],
@@ -126,7 +127,7 @@ const AddScreenContent: React.FC<
         renderItem={({ item }) => (
           <TouchableOpacity
             // onPress={async () => {
-            //   // navigation.navigate('AddScreen', {
+            //   // navigation.replace('AddScreen', {
             //   //   productId: item.id,
             //   //   name: item.name,
             //   // });
@@ -140,13 +141,13 @@ const AddScreenContent: React.FC<
             //       String(item.name),
             //     );
             //     console.log('✅ Product info saved to AsyncStorage');
-            //     navigation.navigate('AddScreen');
+            //     navigation.replace('AddScreen');
             //   } catch (error) {
             //     console.log('❌ Error saving product info:', error);
             //   }
             // }}
             onPress={() => {
-            navigation.navigate('AddScreen', {
+            navigation.replace('AddScreen', {
               productId: item.id,
               productName: item.name,
             });
@@ -188,12 +189,15 @@ type DashBoardScreenProps = {
   navigation: any;
 };
 
+type RootStackParamList = {
+  Dashboard: { AddScreenBackactiveTab: string };
+  // other screens...
+};
+type DashboardRouteProp = RouteProp<RootStackParamList, 'Dashboard'>;
+
 const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   const [search, setSearch] = useState('');
-  const [activeTab, setActiveTab] = useState<
-    'Home' | 'Search' | 'Add' | 'Bookmark' | 'Profile'
-  >('Home');
-
+  const [activeTab, setActiveTab] = useState<string>('Home');
   const screenWidth = Dimensions.get('window').width;
   //const tabWidth = screenWidth / 5;
   const tabsname = ['Home', 'Search', 'Add', 'Bookmark', 'Profile'];
@@ -206,10 +210,49 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   const [loading, setLoading] = useState(true);
   const [features, setFeatures] = useState<any[]>([]);
   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
+  const route = useRoute<DashboardRouteProp>();
 
-
-  
   useEffect(() => {
+
+     if (route.params?.AddScreenBackactiveTab) {
+       setActiveTab(
+         route.params?.AddScreenBackactiveTab as
+           | 'Home'
+           | 'Search'
+           | 'Add'
+           | 'Bookmark'
+           | 'Profile',
+       );
+     }
+
+	  const fetchFeatures = async () => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) return;
+        const url1=MAIN_URL.baseUrl+'category/feature-list'
+
+        const res = await fetch(url1,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+
+        const json = await res.json();
+        console.log('✅ Features API response:', json);
+
+        if (json.statusCode === 200) {
+          setFeatures(json.data.features || []);
+        }
+      } catch (err) {
+        console.log('❌ Error fetching features:', err);
+      }
+    };
+
+    fetchFeatures();
+
+
+
+
   const fetchCategories = async () => {
     try {
     
@@ -257,35 +300,21 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
     }
   };
 
+  
   fetchCategories();
-}, []);
 
-  useEffect(() => {
-    const fetchFeatures = async () => {
-      try {
-        const token = await AsyncStorage.getItem('userToken');
-        if (!token) return;
-        const url1=MAIN_URL.baseUrl+'category/feature-list'
 
-        const res = await fetch(url1,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
+  const loadBookmarks = async () => {
+    const saved = await AsyncStorage.getItem('bookmarkedIds');
+    if (saved) setBookmarkedIds(JSON.parse(saved));
+  };
+  loadBookmarks();
 
-        const json = await res.json();
-        console.log('✅ Features API response:', json);
+}, [route.params?.AddScreenBackactiveTab]);
 
-        if (json.statusCode === 200) {
-          setFeatures(json.data.features || []);
-        }
-      } catch (err) {
-        console.log('❌ Error fetching features:', err);
-      }
-    };
-
-    fetchFeatures();
-  }, []);
+//   useEffect(() => {
+   
+//   }, []);
 
   //Animation For all components variables.
   const screenHeight = Dimensions.get('window').height;
@@ -381,13 +410,13 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
     }).start();
   }, [activeTab, bubbleX, tabWidth]);
 
-  useEffect(() => {
-  const loadBookmarks = async () => {
-    const saved = await AsyncStorage.getItem('bookmarkedIds');
-    if (saved) setBookmarkedIds(JSON.parse(saved));
-  };
-  loadBookmarks();
-}, []);
+//   useEffect(() => {
+//   const loadBookmarks = async () => {
+//     const saved = await AsyncStorage.getItem('bookmarkedIds');
+//     if (saved) setBookmarkedIds(JSON.parse(saved));
+//   };
+//   loadBookmarks();
+// }, []);
 
   const renderProducts = () => {
     const isEven = products.length % 2 === 0;
@@ -526,7 +555,7 @@ const handleBookmarkPress = async (productId: number) => {
                      //productImage={require("../../../assets/images/drone.png")} 
                       onBookmarkPress={() => handleBookmarkPress(item.id)}
                       isBookmarked={bookmarkedIds.includes(item.id)}
-                      onpress={() => navigation.navigate('SearchDetails', { id: item.id })}
+                      onpress={() => navigation.replace('SearchDetails', { id: item.id })}
                       
                       
                     />
@@ -540,7 +569,7 @@ const handleBookmarkPress = async (productId: number) => {
                       onBookmarkPress={() => handleBookmarkPress(item.id)}
                       isBookmarked={bookmarkedIds.includes(item.id)}
                       //isBookmarked={item.}
-                      onpress={() => navigation.navigate('SearchDetails', { id: item.id })}
+                      onpress={() => navigation.replace('SearchDetails', { id: item.id })}
                     />
                   )}
                   
@@ -571,7 +600,7 @@ const handleBookmarkPress = async (productId: number) => {
   ];
 
    const clickbookmark = () =>{
-      navigation.navigate('Bookmark');
+      navigation.replace('Bookmark');
       // navigation.reset({
       //   index: 0,
       //   routes: [{ name: 'Bookmark', }],
@@ -579,13 +608,13 @@ const handleBookmarkPress = async (productId: number) => {
      
    }
     const clicklisting = async () =>{
-      navigation.navigate('MyListing');
+      navigation.replace('MyListing');
       // navigation.reset({
       //   index: 0,
       //   routes: [{ name: 'MyListing'}],
       // });
       // await AsyncStorage.setItem('ISLOGIN', 'false');
-     // navigation.navigate('SinglePage');
+     // navigation.replace('SinglePage');
    }
 
   return (

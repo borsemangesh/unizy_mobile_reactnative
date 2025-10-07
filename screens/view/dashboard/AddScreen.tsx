@@ -25,7 +25,10 @@ import { MAIN_URL } from '../../utils/APIConstant';
 import ToggleButton from '../../utils/component/ToggleButton';
 import Button from '../../utils/component/Button';
 import SelectCatagoryDropdown from '../../utils/component/SelectCatagoryDropdown';
-import { NewCustomToastContainer,showToast } from '../../utils/component/NewCustomToastManager';
+import {
+  NewCustomToastContainer,
+  showToast,
+} from '../../utils/component/NewCustomToastManager';
 import { RouteProp, useRoute } from '@react-navigation/native';
 
 const bgImage = require('../../../assets/images/bganimationscreen.png');
@@ -76,8 +79,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   }
 
   const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
- //  const [productName, setProductName] = useState('');
-   const route = useRoute<AddScreenRouteProp>();
+  //  const [productName, setProductName] = useState('');
+  const route = useRoute<AddScreenRouteProp>();
   const { productId, productName } = route.params;
 
   // useEffect(() => {
@@ -97,13 +100,12 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   //   loadProductName();
   // }, []);
 
-
   useEffect(() => {
     const fetchFields = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
-        
-       // const productId1 = await AsyncStorage.getItem('selectedProductId');
+
+        // const productId1 = await AsyncStorage.getItem('selectedProductId');
         if (!token) {
           console.log('No token found');
           return;
@@ -143,7 +145,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             }),
           );
         }
-        await AsyncStorage.setItem('selectedProductId',String(productId));
+        await AsyncStorage.setItem('selectedProductId', String(productId));
 
         if (json?.data) {
           const sellerFields = json.data.filter(
@@ -201,11 +203,11 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   };
 
   const getCurrentDate = () => {
-  const today = new Date();
-  return `${String(today.getDate()).padStart(2, '0')}-${String(
-    today.getMonth() + 1
-  ).padStart(2, '0')}-${today.getFullYear()}`;
-};
+    const today = new Date();
+    return `${String(today.getDate()).padStart(2, '0')}-${String(
+      today.getMonth() + 1,
+    ).padStart(2, '0')}-${today.getFullYear()}`;
+  };
 
   const requestCameraPermission = async () => {
     if (Platform.OS === 'android') {
@@ -409,21 +411,20 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const [isCheckbox, setCheckBox] = useState(false);
 
   const renderField = (field: any) => {
-    
     // const { field_name, field_type, options, id, field_ismultilple } =field.param;
     // const fieldType = field_type.toLowerCase();
     //  const ism = field_ismultilple;
     // console.log('fieldType', ism);
-      const param = field?.param;
-  if (!param) return null; // skip if param is missing
+    const param = field?.param;
+    if (!param) return null; // skip if param is missing
 
-  const fieldType = param.field_type?.toLowerCase() ?? '';
-  const field_ismultilple = param.ismultilple ?? false;
-  const field_name = param.field_name ?? '';
-  const id = param.id;
-  const options = Array.isArray(param.options) ? param.options : [];
+    const fieldType = param.field_type?.toLowerCase() ?? '';
+    const field_ismultilple = param.ismultilple ?? false;
+    const field_name = param.field_name ?? '';
+    const id = param.id;
+    const options = Array.isArray(param.options) ? param.options : [];
 
-  if (!fieldType || !id) return null; // skip if critical info missing
+    if (!fieldType || !id) return null; // skip if critical info missing
 
     switch (fieldType) {
       // ---------------- TEXT FIELD ----------------
@@ -562,15 +563,13 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             <TouchableOpacity
               style={styles.pickerContainer}
               onPress={() => {
-                console.log("field_ismultilple"+field.ismultilple);
+                console.log('field_ismultilple' + field.ismultilple);
                 setMultiSelectModal({
                   visible: true,
-                 ismultilple: !!field.param.ismultilple,
+                  ismultilple: !!field.param.ismultilple,
                   fieldId: id,
                 });
                 setMultiSelectOptions(options);
-                
-
               }}
             >
               <Text style={styles.dropdowntext}>
@@ -620,42 +619,42 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             </View> */}
 
             <View style={styles.categoryContainer}>
-  {options
-    .filter((opt: any) => {
-      const value = formValues[id]?.value;
-      if (Array.isArray(value)) {
-        return value.includes(opt.id); // show if selected in multi-select
-      }
-      return value === opt.id; // show if selected in single-select
-    })
-    .map((opt: any) => (
-      <View key={opt.id} style={styles.categoryTagWrapper}>
-        <TouchableOpacity
-          onPress={() => {
-            setFormValues((prev: any) => {
-              const currentValue = prev[id]?.value;
-              let updated;
-              if (Array.isArray(currentValue)) {
-                updated = currentValue.filter((v: any) => v !== opt.id);
-              } else {
-                updated = null; // removing single-select
-              }
-              return {
-                ...prev,
-                [id]: { ...prev[id], value: updated },
-              };
-            });
-          }}
-        >
-          <Text style={styles.categoryTag}>
-            {opt.option_name} ✕
-          </Text>
-        </TouchableOpacity>
-      </View>
-    ))}
-</View>
-
-
+              {options
+                .filter((opt: any) => {
+                  const value = formValues[id]?.value;
+                  if (Array.isArray(value)) {
+                    return value.includes(opt.id); // show if selected in multi-select
+                  }
+                  return value === opt.id; // show if selected in single-select
+                })
+                .map((opt: any) => (
+                  <View key={opt.id} style={styles.categoryTagWrapper}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setFormValues((prev: any) => {
+                          const currentValue = prev[id]?.value;
+                          let updated;
+                          if (Array.isArray(currentValue)) {
+                            updated = currentValue.filter(
+                              (v: any) => v !== opt.id,
+                            );
+                          } else {
+                            updated = null; // removing single-select
+                          }
+                          return {
+                            ...prev,
+                            [id]: { ...prev[id], value: updated },
+                          };
+                        });
+                      }}
+                    >
+                      <Text style={styles.categoryTag}>
+                        {opt.option_name} ✕
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                ))}
+            </View>
           </View>
         );
 
@@ -799,7 +798,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           <View style={styles.headerRow}>
             <TouchableOpacity
               style={styles.backBtn}
-              onPress={() => navigation.navigate('Dashboard')}
+              onPress={() => {navigation.navigate('Dashboard',{AddScreenBackactiveTab: 'Add'})}}
             >
               <View style={styles.backIconRow}>
                 <Image
@@ -808,7 +807,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 />
               </View>
             </TouchableOpacity>
-              <Text style={styles.unizyText}>
+            <Text style={styles.unizyText}>
               {`List${productName ? `  ${productName} ` : ''}`}
             </Text>
             <View style={{ width: 30 }} />
@@ -823,10 +822,12 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             <View style={styles.userRow}>
               <View style={{ width: '20%' }}>
                 {/* <Image source={profileImg} style={styles.avatar} /> */}
-                 <Image
-                source={userMeta?.profile ? { uri: userMeta?.profile } : profileImg}
-                style={styles.avatar}
-              />
+                <Image
+                  source={
+                    userMeta?.profile ? { uri: userMeta?.profile } : profileImg
+                  }
+                  style={styles.avatar}
+                />
               </View>
               <View style={{ width: '80%' }}>
                 {/* <Text style={styles.userName}>Alan Walker</Text> */}
@@ -864,8 +865,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                         source={require('../../../assets/images/calendar_icon.png')}
                         style={{ height: 20, width: 20 }}
                       />
-                     <Text style={styles.userSub}>{getCurrentDate()}</Text>
-                  </View>
+                      <Text style={styles.userSub}>{getCurrentDate()}</Text>
+                    </View>
                   </View>
                 </View>
               </View>
@@ -895,29 +896,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
         </KeyboardAvoidingView>
       </View>
 
-     
-      {/* <SelectCatagoryDropdown
-        options={multiSelectOptions}
-        visible={multiSelectModal.visible}
-        ismultilple={multiSelectModal?.ismultilple}
-        onClose={() =>
-          setMultiSelectModal(prev => ({ ...prev, visible: false }))
-        }
-        onSelect={(selectedIds: number[] | number) => {
-          if (Array.isArray(selectedIds)) {
-            setFormValues((prev: any) => ({
-              ...prev,
-              [multiSelectModal.fieldId!]: { value: selectedIds },
-            }));
-          } else {
-            setFormValues((prev: any) => ({
-              ...prev,
-              [multiSelectModal.fieldId!]: { value: selectedIds },
-            }));
-          }
-        }}
-      /> */}
-
       <SelectCatagoryDropdown
         options={multiSelectOptions}
         visible={multiSelectModal.visible}
@@ -933,54 +911,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           }));
         }}
       />
-
-      {/* 
- <Modal
-      visible={multiSelectModal.visible}
-      transparent
-      animationType="slide"
-      onRequestClose={() => setMultiSelectModal({ visible: false })}
-    >
-  <View style={styles.modalOverlay}>
-    <View style={styles.modalContent}>
-      <Text style={styles.modalTitle}>Select Options</Text>
-      <ScrollView>
-        {multiSelectOptions.map((opt: any) => (
-          <TouchableOpacity
-            key={opt.id}
-            style={styles.modalOption}
-            onPress={() => {
-              const prevSelected: number[] = Array.isArray(formValues[multiSelectModal.fieldId!])
-                ? formValues[multiSelectModal.fieldId!]
-                : [];
-              const updated = prevSelected.includes(opt.id)
-                ? prevSelected.filter((id) => id !== opt.id)
-                : [...prevSelected, opt.id];
-              setFormValues((prev: any) => ({
-                ...prev,
-                [multiSelectModal.fieldId!]: updated,
-              }));
-            }}
-          >
-            <Text style={{ color: '#fff', fontSize: 16 }}>{opt.option_name}</Text>
-            {Array.isArray(formValues[multiSelectModal.fieldId!]) &&
-              formValues[multiSelectModal.fieldId!].includes(opt.id) && (
-                <Text style={{ color: '#3b82f6', marginLeft: 10 }}>✓</Text>
-              )}
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-
-      <TouchableOpacity
-        style={styles.modalCloseBtn}
-        onPress={() => setMultiSelectModal({ visible: false })}
-      >
-        <Text style={{ color: '#fff' }}>Done</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-</Modal> */}
-<NewCustomToastContainer/>
+      <NewCustomToastContainer />
     </ImageBackground>
   );
 };

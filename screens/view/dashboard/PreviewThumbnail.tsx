@@ -85,10 +85,11 @@ const imageArray = storedForm?.[6]?.value || [];
         <TouchableOpacity
           style={{ zIndex: 1 }}
           onPress={() => {
-            navigation.replace('AddScreen',{
-              productId:1,
-              name: "name",
-            });
+            // navigation.replace('AddScreen',{
+            //   productId:1,
+            //   name: "name",
+            // });
+             navigation.goBack();
           }}
         >
           <View style={styles.backIconRow}>
