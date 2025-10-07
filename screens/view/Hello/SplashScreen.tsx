@@ -29,7 +29,6 @@ const SplashScreen = ({ navigation }: SplashScreenProps) => {
   const [initialRoute, setInitialRoute] = useState<null | string>(null);
 
   const handleAnimationFinish = () => {
-    // setAnimationDone(true);
 
     const checkLoginStatus = async () => {
       const flag = await AsyncStorage.getItem('ISLOGIN');
@@ -37,21 +36,8 @@ const SplashScreen = ({ navigation }: SplashScreenProps) => {
       setInitialRoute(flag === 'true' ? navigation.navigate('Dashboard') : navigation.navigate('SinglePage'))
     };
     checkLoginStatus();
-    navigation.navigate("SingleScreen");
   };
   
-
-
-  //  useEffect(() => {
-  //   const checkLoginStatus = async () => {
-  //     const flag = await AsyncStorage.getItem('ISLOGIN');
-  //     // Decide route based on flag
-  //     setInitialRoute(flag === 'true' ? navigation.navigate('Dashboard') : navigation.navigate('SinglePage'))
-  //   };
-  //   checkLoginStatus();
-    
-  // }, []);
-
   return (
     <ImageBackground
       source={require("../../../assets/images/bganimationscreen.png")}

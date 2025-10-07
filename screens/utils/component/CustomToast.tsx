@@ -1,3 +1,4 @@
+import { BlurView } from "@react-native-community/blur";
 import React, { useEffect, useRef } from "react";
 import { View, Text, StyleSheet, Animated, Easing } from "react-native";
 
@@ -22,7 +23,7 @@ const CustomToast: React.FC<CustomToastProps> = ({
     info: "rgba(96, 189, 255, 0.9)",
   };
 
-  const bgColor = "rgba(0, 0, 0, 0.81)";
+  const bgColor = "rgba(0, 0, 0, 0.59)";
   const textColor = colors[type] ?? colors.info;
 
   const progressWidth = progress.interpolate({
@@ -43,6 +44,13 @@ const CustomToast: React.FC<CustomToastProps> = ({
 
   return (
     <View style={[styles.toastWrapper, { backgroundColor: bgColor }]}>
+      <BlurView 
+       style={[{ backgroundColor: bgColor }]}
+        blurType="light"
+        blurAmount={100}
+        // REMOVE fallback color if you want absolutely NO background color
+        reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.59)"
+      />
       <Text style={[styles.toastText, { color: textColor }]}>{text}</Text>
       <View style={styles.progressBarContainer}>
         <Animated.View
@@ -62,15 +70,12 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 16,
     marginHorizontal: 16,
+    backgroundColor:'rgba(0, 0, 0, 0.59)',
     marginVertical: 8,
-    shadowColor: "rgba(0, 0, 0, 0.9)",
-    shadowOpacity: 0.3,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
     elevation: 5,
     alignSelf: "center",
-    
     position: "relative", // ensures absolute child aligns correctly
+
   },
   toastText: {
     fontSize: 16,
@@ -83,7 +88,7 @@ const styles = StyleSheet.create({
     left: 5,
     right:5,
     height: 4,
-    backgroundColor: "rgba(255,255,255,0.2)",
+    backgroundColor: "rgba(0, 0, 0, 0.59)",
     borderBottomLeftRadius: 16,
     borderBottomRightRadius: 16,
     overflow: "hidden",

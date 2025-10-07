@@ -63,6 +63,8 @@ const [imageUri, setImageUri] = useState<string | null>(null);
  const insets = useSafeAreaInsets(); // Safe area insets
   const { height: screenHeight } = Dimensions.get('window');
 
+   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
+
     
   useEffect(() => {
     const fetchDetails = async () => {
@@ -214,237 +216,290 @@ const renderImage = () => {
   );
 };
 
+const handleBookmarkPress = async (productId: number) => {
+  try {
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) return;
+
+    const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
+
+    const url = MAIN_URL.baseUrl + 'category/list-bookmark';
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ feature_id: productId }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Bookmark response:', data);
+
+    let updatedBookmarks;
+    if (isCurrentlyBookmarked) {
+      updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
+    } else {
+      updatedBookmarks = [...bookmarkedIds, productId];
+    }
+
+    setBookmarkedIds(updatedBookmarks);
+    await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks)); // persist locally
+
+  } catch (error) {
+    console.error('Bookmark error:', error);
+  }
+};
+
 
     return (
-    <ImageBackground
-      source={require('../../../assets/images/bganimationscreen.png')}
-      style={{ width: '100%', height: '100%' }}
-      resizeMode="cover">
-        
+      <ImageBackground
+        source={require('../../../assets/images/bganimationscreen.png')}
+        style={{ width: '100%', height: '100%' }}
+        resizeMode="cover"
+      >
         <View style={styles.fullScreenContainer}>
-     
-       <View style={styles.header}>
-                <View style={styles.headerRow}>
-                  <TouchableOpacity
-                    style={styles.backBtn}
-                    onPress={() => {
-                      navigation.navigate('Dashboard');
-                    }}
-                  >
-                    <View style={styles.backIconRow}>
-                      <Image
-                        source={require('../../../assets/images/back.png')}
-                        style={{ height: 24, width: 24 }}
-                      />
-                    </View>
-                  </TouchableOpacity>
-                  <Text style={styles.unizyText}>
-                {detail?.category?.name ? `${detail.category.name} Details` : ''}
-              </Text>
-                  <View style={{ width: 30 }} />
-                  <View style={styles.MylistingsBackground}>
-                  <Image source={mylistings1} style={styles.iconSmall} />
-                </View>
-                </View>
-              </View>
-          
-
-        <ScrollView
-          contentContainerStyle={[
-            styles.scrollContainer,
-            {
-              paddingBottom: screenHeight * 0.1 + insets.bottom, // 10% of screen + safe area
-            },
-          ]}
-          scrollEventThrottle={16}
-    >
-        
-        {renderImage()}
-
-        <View style={{ flex: 1, padding: 16 }}>
-          <View style={styles.card}>
-            <View style={{ gap: 8 }}>
-             {detail && (
-            <>
-              <Text style={styles.QuaddText}>{detail.title}</Text>
-              <Text style={styles.priceText}>£{Number(detail.price).toFixed(2)}</Text>
-            </>
-          )}
-            </View>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'flex-start',
-                gap: 2,
-                alignSelf: 'stretch',
-              }}
-            >
-              <Text style={styles.productDesHeding}>Product Description</Text>
-              <Text style={styles.productDesc}>
-            {detail?.description || 'No description available'}
-          </Text>
-              
-              <View style={styles.datePosted}>
-              <Image
-                source={require('../../../assets/images/calendar_icon.png')}
-                style={{ height: 16, width: 16 }}
-              />
-              <Text style={styles.userSub}>
-                Date Posted: {formatDate(detail?.created_at)}
-              </Text>
-            </View>
-
-            </View>
-          </View>
-
-         <View style={styles.card}>
-          <View style={styles.gap12}>
-            <Text style={styles.productDeatilsHeading}>Product Details</Text>
-
-        {detail?.params?.map((param: Param) => (
-  <View key={param.id} style={{ marginBottom: 12 }}>
-    {/* Param name */}
-    <Text style={styles.itemcondition}>{param.name}</Text>
-
-    {/* Param value */}
-    {param.options && param.options.length > 0 ? (
-      <View style={styles.categoryContainer}>
-        {param.options
-          .filter(opt =>
-            param.param_value
-              ?.split(',')
-              .map(v => v.trim())
-              .includes(opt.option_id.toString())
-          )
-          .map((opt: ParamOption) => (
-            <View key={opt.id} style={styles.categoryTag}>
-              <Text style={styles.catagoryText}>{opt.option_name}</Text>
-            </View>
-        ))}
-      </View>
-    ) : (
-      <Text style={[styles.new, { marginTop: -6 }]}>
-        {param.param_value || '—'}
-      </Text>
-    )}
-  </View>
-))}
-
-        </View>
-        </View>
-
-
-          {/* Selaer details */}
-          <View style={styles.card}>
-            <View style={{ gap: 12 }}>
-              <Text style={styles.productDeatilsHeading}>Seller Details</Text>
-
-              {/* User Info */}
-              <View style={{ flexDirection: 'row' }}>
-             <Image 
-              source={detail?.createdby?.profile 
-                ? { uri: detail.createdby.profile } 
-                : require('../../../assets/images/user.jpg')} 
-              style={styles.avatar} 
-            />
-
-                <View style={{ width: '80%', gap: 4 }}>
-                 <Text style={styles.userName}>
-                  {detail?.createdby
-                    ? `${detail.createdby.firstname || ''} ${detail.createdby.lastname || ''}`
-                    : 'Unknown User'}
-                </Text>
-                                
-                    <Text style={styles.univeritytext}>
-                  {detail?.createdby?.university_name || 'University of Warwick'}
-                </Text>
-                   <Text style={[styles.univeritytext, { marginTop: -5 }]}>
-                  {detail?.category?.name || 'Coventry'}
-                </Text>
-                </View>
-              </View>
-
-              <View style={{ flexDirection: 'row', gap: 8 }}>
-                <View
-                  style={{
-                    borderRadius: 10,
-                    backgroundColor:
-                      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-                    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    gap: 4,
-                    padding: 16,
-
-                    width: '20%',
-                  }}
-                >
+          <View style={styles.header}>
+            <View style={styles.headerRow}>
+              <TouchableOpacity
+                style={styles.backBtn}
+                onPress={() => {
+                  navigation.navigate('Dashboard');
+                }}
+              >
+                <View style={styles.backIconRow}>
                   <Image
-                    source={require('../../../assets/images/staricon.png')}
-                    style={{ height: 16, width: 16 }}
+                    source={require('../../../assets/images/back.png')}
+                    style={{ height: 24, width: 24 }}
                   />
-
-                  <Text
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.48)',
-                      fontFamily: 'Urbanist-SemiBold',
-                      fontSize: 14,
-                      fontWeight: '600',
-                      fontStyle: 'normal',
-                      letterSpacing: -0.28,
-                    }}
-                  >
-                    4.5
-                  </Text>
                 </View>
-                
-                <View
-                  style={{
-                    borderRadius: 10,
-                    backgroundColor:
-                      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-                    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    gap: 4,
-                    padding: 16,
-                    width: '80%',
-                  }}
-                >
-                  <TouchableOpacity
-                    style={{ flexDirection: 'row', alignItems: 'center' }}
-                    onPress={() => setShowPopup(true)}
-                  >
-                        <Image
-                    source={require('../../../assets/images/message_chat.png')}
-                    style={{ height: 16, width: 16 ,marginRight:6}}
-                  />
-                  <Text
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.48)',
-                      fontFamily: 'Urbanist-SemiBold',
-                      fontSize: 14,
-                      fontWeight: '600',
-                      fontStyle: 'normal',
-                      letterSpacing: -0.28,
-                    }}
-                  >
-                    Chat with Seller
-                  </Text>
-                    </TouchableOpacity>
-                </View>
-              
+              </TouchableOpacity>
+              <Text style={styles.unizyText}>
+                {detail?.category?.name
+                  ? `${detail.category.name} Details`
+                  : ''}
+              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                    console.log("bookmark Clicked");
+                    handleBookmarkPress(id);
+                }}>
+              <View style={styles.MylistingsBackground}>
+                <Image source={mylistings1} style={styles.iconSmall} />
               </View>
+              </TouchableOpacity>
             </View>
           </View>
-        </View>
 
-        </ScrollView>
+          <ScrollView
+            contentContainerStyle={[
+              styles.scrollContainer,
+              {
+                paddingBottom: screenHeight * 0.1 + insets.bottom, // 10% of screen + safe area
+              },
+            ]}
+            scrollEventThrottle={16}
+          >
+            {renderImage()}
+
+            <View style={{ flex: 1, padding: 16 }}>
+              <View style={styles.card}>
+                <View style={{ gap: 8 }}>
+                  {detail && (
+                    <>
+                      <Text style={styles.QuaddText}>{detail.title}</Text>
+                      <Text style={styles.priceText}>
+                        £{Number(detail.price).toFixed(2)}
+                      </Text>
+                    </>
+                  )}
+                </View>
+                <View
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    gap: 2,
+                    alignSelf: 'stretch',
+                  }}
+                >
+                  <Text style={styles.productDesHeding}>
+                    Product Description
+                  </Text>
+                  <Text style={styles.productDesc}>
+                    {detail?.description || 'No description available'}
+                  </Text>
+
+                  <View style={styles.datePosted}>
+                    <Image
+                      source={require('../../../assets/images/calendar_icon.png')}
+                      style={{ height: 16, width: 16 }}
+                    />
+                    <Text style={styles.userSub}>
+                      Date Posted: {formatDate(detail?.created_at)}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+
+              <View style={styles.card}>
+                <View style={styles.gap12}>
+                  <Text style={styles.productDeatilsHeading}>
+                    Product Details
+                  </Text>
+
+                  {detail?.params?.map((param: Param) => (
+                    <View key={param.id} style={{ marginBottom: 12 }}>
+                      {/* Param name */}
+                      <Text style={styles.itemcondition}>{param.name}</Text>
+
+                      {/* Param value */}
+                      {param.options && param.options.length > 0 ? (
+                        <View style={styles.categoryContainer}>
+                          {param.options
+                            .filter(opt =>
+                              param.param_value
+                                ?.split(',')
+                                .map(v => v.trim())
+                                .includes(opt.option_id.toString()),
+                            )
+                            .map((opt: ParamOption) => (
+                              <View key={opt.id} style={styles.categoryTag}>
+                                <Text style={styles.catagoryText}>
+                                  {opt.option_name}
+                                </Text>
+                              </View>
+                            ))}
+                        </View>
+                      ) : (
+                        <Text style={[styles.new, { marginTop: -6 }]}>
+                          {param.param_value || '—'}
+                        </Text>
+                      )}
+                    </View>
+                  ))}
+                </View>
+              </View>
+
+              {/* Selaer details */}
+              <View style={styles.card}>
+                <View style={{ gap: 12 }}>
+                  <Text style={styles.productDeatilsHeading}>
+                    Seller Details
+                  </Text>
+
+                  {/* User Info */}
+                  <View style={{ flexDirection: 'row' }}>
+                    <Image
+                      source={
+                        detail?.createdby?.profile
+                          ? { uri: detail.createdby.profile }
+                          : require('../../../assets/images/user.jpg')
+                      }
+                      style={styles.avatar}
+                    />
+
+                    <View style={{ width: '80%', gap: 4 }}>
+                      <Text style={styles.userName}>
+                        {detail?.createdby
+                          ? `${detail.createdby.firstname || ''} ${
+                              detail.createdby.lastname || ''
+                            }`
+                          : 'Unknown User'}
+                      </Text>
+
+                      <Text style={styles.univeritytext}>
+                        {detail?.createdby?.university_name ||
+                          'University of Warwick'}
+                      </Text>
+                      <Text style={[styles.univeritytext, { marginTop: -5 }]}>
+                        {detail?.category?.name || 'Coventry'}
+                      </Text>
+                    </View>
+                  </View>
+
+                  <View style={{ flexDirection: 'row', gap: 8 }}>
+                    <View
+                      style={{
+                        borderRadius: 10,
+                        backgroundColor:
+                          'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+                        boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        gap: 4,
+                        padding: 16,
+
+                        width: '20%',
+                      }}
+                    >
+                      <Image
+                        source={require('../../../assets/images/staricon.png')}
+                        style={{ height: 16, width: 16 }}
+                      />
+
+                      <Text
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.48)',
+                          fontFamily: 'Urbanist-SemiBold',
+                          fontSize: 14,
+                          fontWeight: '600',
+                          fontStyle: 'normal',
+                          letterSpacing: -0.28,
+                        }}
+                      >
+                        4.5
+                      </Text>
+                    </View>
+
+                    <View
+                      style={{
+                        borderRadius: 10,
+                        backgroundColor:
+                          'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+                        boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        gap: 4,
+                        padding: 16,
+                        width: '80%',
+                      }}
+                    >
+                      <TouchableOpacity
+                        style={{ flexDirection: 'row', alignItems: 'center' }}
+                        onPress={() => setShowPopup(true)}
+                      >
+                        <Image
+                          source={require('../../../assets/images/message_chat.png')}
+                          style={{ height: 16, width: 16, marginRight: 6 }}
+                        />
+                        <Text
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.48)',
+                            fontFamily: 'Urbanist-SemiBold',
+                            fontSize: 14,
+                            fontWeight: '600',
+                            fontStyle: 'normal',
+                            letterSpacing: -0.28,
+                          }}
+                        >
+                          Chat with Seller
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </ScrollView>
 
 
       {/* Bottom */}
@@ -549,6 +604,9 @@ const styles = StyleSheet.create({
     borderLeftColor: '#ffffff5d',
     borderRightColor: '#ffffff36',
     borderWidth: 0.3,
+    position: 'absolute',
+    right: 0,
+    top: -10
   },
   iconSmall: {
     width: 25,
