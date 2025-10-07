@@ -1,5 +1,5 @@
 import { BlurView } from '@react-native-community/blur';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { RouteProp, useFocusEffect, useIsFocused, useRoute } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
@@ -44,6 +44,10 @@ const { height } = Dimensions.get('window');
 type SinglePageProps = {
   navigation: any;
 };
+type RootStackParamList = {
+  SinglePage: { resetToLogin?: boolean };
+};
+type SinglePageRouteProp = RouteProp<RootStackParamList, 'SinglePage'>;
 
 const SinglePage = ({ navigation }: SinglePageProps) => {
   const [currentScreen, setCurrentScreen] = useState<
@@ -62,13 +66,20 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   const greetingScale = React.useRef(new Animated.Value(0.8)).current;
   const slideUp = React.useRef(new Animated.Value(200)).current;
   const [username1, setUsername1] = useState<string>('');
-
   //Language Screen
   const [selected, setSelected] = useState<string | null>(null);
   const [search, setSearch] = useState('');
 
   const [languages, setLanguages] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const route = useRoute<SinglePageRouteProp>();
+
+   useEffect(() => {
+  if (route.params?.resetToLogin) {
+    setCurrentScreen('login'); 
+    setcurrentScreenIninner('login'); 
+  }
+}, [route.params]);
 
   useEffect(() => {
     (async () => {
@@ -86,6 +97,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       }
     })();
   }, []);
+
+ 
 
   const flagMap: Record<string, any> = {
     en: require('../../../assets/images/english.png'),
