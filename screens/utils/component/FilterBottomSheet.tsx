@@ -43,7 +43,7 @@ const FilterBottomSheet = ({
       const token = await AsyncStorage.getItem('userToken');
       if (!token) return;
 
-      const body = { category_id: 1 };
+      const body = { category_id: catagory_id};
       const url = MAIN_URL.baseUrl + 'category/feature/filter';
 
       const res = await fetch(url, {

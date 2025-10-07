@@ -552,7 +552,7 @@ const handleBookmarkPress = async (productId: number) => {
                 >
                     {item.profileshowinview ? (    
                     <TutitionCard
-                      tag="University of Warwick"
+                      tag={item.university?.name || 'University of Warwick'}
                       title={item.title}
                       infoTitle={`${item.createdby?.firstname || ''} ${item.createdby?.lastname || ''}`}
                       inforTitlePrice={`£ ${item.price}`}

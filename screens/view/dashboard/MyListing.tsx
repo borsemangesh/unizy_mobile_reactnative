@@ -29,8 +29,13 @@ isactive: boolean,
 isfeatured: boolean,
 title: string,
 price: number,
-thumbnail: string
+thumbnail: string,
+university:university;
 };
+type university={
+  id:number,
+  name:string
+}
 
 type MyListingProps = {
   navigation: any;
@@ -159,7 +164,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
       ]}
     >
       <MyListingCard
-        tag="University of Warwick"
+        tag={item.university?.name || 'University of Warwick'}
         infoTitle={displayTitle}
         inforTitlePrice={`£ ${displayPrice}`} 
         rating={displayDate} 

@@ -60,8 +60,13 @@ type Feature = {
     thumbnail: string;
     profileshowinview:boolean;
     createdby: CreatedBy;
+    university:university;
   };
 };
+type university={
+  id:number,
+  name:string
+}
 
 type BookmarkProps = {
   navigation: any;
@@ -259,7 +264,7 @@ const handleBookmarkPress = async (productId: number) => {
   
          {feature.profileshowinview ? (
               <SearchTutionCard
-                tag="University of Warwick"
+                tag={feature.university?.name || 'University of Warwick'}
                 infoTitle={feature.title}
                 inforTitlePrice={`£ ${feature.price}`}
                 rating={feature.isfeatured ? '4.5' : '4.5'}
@@ -272,7 +277,7 @@ const handleBookmarkPress = async (productId: number) => {
               />
             ) : (
               <SearchListProductCard
-                tag="University of Warwick"
+                tag={feature.university?.name || 'University of Warwick'}
                 infoTitle={feature.title}
                 inforTitlePrice={`£ ${feature.price}`}
                 rating={feature.isfeatured ? '4.5' : '4.5'}

@@ -40,6 +40,10 @@ type CreatedBy = {
   updated_at: string;
   role_id: number;
 };
+type university={
+  id:number,
+  name:string
+}
 
 type Feature = {
   id: number;
@@ -54,6 +58,7 @@ type Feature = {
   thumbnail: string;
   profileshowinview: boolean
   createdby: CreatedBy;
+  university:university;
 };
 
 type ProductDetailsProps = {
@@ -228,7 +233,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
       >
         {item.profileshowinview ? (
         <SearchTutionCard
-          tag="University of Warwick"
+           tag={item.university?.name || 'University of Warwick'}
           infoTitle={item.title}
           inforTitlePrice={`£ ${item.price}`}
           rating={item.isfeatured ? '4.5' : '4.5'}
@@ -240,7 +245,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
         />
       ) : (
         <SearchListProductCard
-          tag="University of Warwick"
+           tag={item.university?.name || 'University of Warwick'}
           infoTitle={item.title}
           inforTitlePrice={`£ ${item.price}`}
           rating={item.isfeatured ? '4.5' : '4.5'}
