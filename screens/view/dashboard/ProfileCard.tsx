@@ -129,7 +129,10 @@ const renderItem = ({ item }: any) => {
         if (isLogout) {      
         await AsyncStorage.setItem('ISLOGIN', 'false');
         showToast('User Logout Successfully','success')
-        navigation.navigate('SinglePage');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+        });
         } else {
           console.log(item.title, 'pressed');
         }
@@ -284,9 +287,10 @@ versionLabel: {
   versionText: {
   position: 'absolute',
   right: 20,
-  color: '#B0B0B0',
+  color: '#fff',
   fontSize: 14,
   fontWeight: '500',
+   fontFamily: 'Urbanist-SemiBold',
 },
   cardContainer: {
     flexDirection: 'row',

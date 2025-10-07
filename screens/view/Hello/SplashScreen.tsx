@@ -28,15 +28,19 @@ const SplashScreen = ({ navigation }: SplashScreenProps) => {
   // const onFinishCalled = useRef(false); 
   const [initialRoute, setInitialRoute] = useState<null | string>(null);
 
-  const handleAnimationFinish = () => {
-
-    const checkLoginStatus = async () => {
-      const flag = await AsyncStorage.getItem('ISLOGIN');
-      // Decide route based on flag
-      setInitialRoute(flag === 'true' ? navigation.navigate('Dashboard') : navigation.navigate('SinglePage'))
-    };
-    checkLoginStatus();
-  };
+  const handleAnimationFinish = async () => {
+  try {
+    const flag = await AsyncStorage.getItem('ISLOGIN');
+    if (flag === 'true') {
+      navigation.replace('Dashboard'); 
+    } else {
+      navigation.replace('SinglePage');
+    }
+  } catch (error) {
+    console.log('Error reading login status:', error);
+    navigation.replace('SinglePage');
+  }
+};
   
   return (
     <ImageBackground
