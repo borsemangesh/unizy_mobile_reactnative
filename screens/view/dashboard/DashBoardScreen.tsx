@@ -125,26 +125,32 @@ const AddScreenContent: React.FC<
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={async () => {
-              // navigation.navigate('AddScreen', {
-              //   productId: item.id,
-              //   name: item.name,
-              // });
-              try {
-                await AsyncStorage.setItem(
-                  'selectedProductId',
-                  String(item.id),
-                );
-                await AsyncStorage.setItem(
-                  'selectedProductName',
-                  String(item.name),
-                );
-                console.log('✅ Product info saved to AsyncStorage');
-                navigation.navigate('AddScreen');
-              } catch (error) {
-                console.log('❌ Error saving product info:', error);
-              }
-            }}
+            // onPress={async () => {
+            //   // navigation.navigate('AddScreen', {
+            //   //   productId: item.id,
+            //   //   name: item.name,
+            //   // });
+            //   try {
+            //     await AsyncStorage.setItem(
+            //       'selectedProductId',
+            //       String(item.id),
+            //     );
+            //     await AsyncStorage.setItem(
+            //       'selectedProductName',
+            //       String(item.name),
+            //     );
+            //     console.log('✅ Product info saved to AsyncStorage');
+            //     navigation.navigate('AddScreen');
+            //   } catch (error) {
+            //     console.log('❌ Error saving product info:', error);
+            //   }
+            // }}
+            onPress={() => {
+            navigation.navigate('AddScreen', {
+              productId: item.id,
+              productName: item.name,
+            });
+          }}
           >
             <View style={styles.card}>
               <View style={styles.iconBackground}>

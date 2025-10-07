@@ -26,6 +26,7 @@ import ToggleButton from '../../utils/component/ToggleButton';
 import Button from '../../utils/component/Button';
 import SelectCatagoryDropdown from '../../utils/component/SelectCatagoryDropdown';
 import { NewCustomToastContainer,showToast } from '../../utils/component/NewCustomToastManager';
+import { RouteProp, useRoute } from '@react-navigation/native';
 
 const bgImage = require('../../../assets/images/bganimationscreen.png');
 const profileImg = require('../../../assets/images/user.jpg'); // your avatar image
@@ -37,12 +38,17 @@ const deleteIcon = require('../../../assets/images/delete.png'); // delete/trash
 type AddScreenContentProps = {
   navigation: any;
 };
+type RootStackParamList = {
+  AddScreen: { productId: number; productName: string };
+  // other screens...
+};
+type AddScreenRouteProp = RouteProp<RootStackParamList, 'AddScreen'>;
+
 const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const [formValues, setFormValues] = useState<any>({});
   const [fields, setFields] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const MAX_SIZE_MB = 1;
-
   const today = new Date();
   const formattedDate = today.toLocaleDateString('en-GB');
   const displayDate = formattedDate.replace(/\//g, '-');
@@ -70,24 +76,26 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   }
 
   const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
-   const [productName, setProductName] = useState('');
+ //  const [productName, setProductName] = useState('');
+   const route = useRoute<AddScreenRouteProp>();
+  const { productId, productName } = route.params;
 
-  useEffect(() => {
-    const loadProductName = async () => {
-      try {
-        const name = await AsyncStorage.getItem('selectedProductName');
-        if (name) {
-          setProductName(name);
-        } else {
-          setProductName('List Product'); // fallback
-        }
-      } catch (error) {
-        console.log('❌ Error loading product name:', error);
-      }
-    };
+  // useEffect(() => {
+  //   const loadProductName = async () => {
+  //     try {
+  //       const name = await AsyncStorage.getItem('selectedProductName');
+  //       if (name) {
+  //         setProductName(name);
+  //       } else {
+  //         setProductName('List Product'); // fallback
+  //       }
+  //     } catch (error) {
+  //       console.log('❌ Error loading product name:', error);
+  //     }
+  //   };
 
-    loadProductName();
-  }, []);
+  //   loadProductName();
+  // }, []);
 
 
   useEffect(() => {
@@ -95,13 +103,13 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
       try {
         const token = await AsyncStorage.getItem('userToken');
         
-        const productId1 = await AsyncStorage.getItem('selectedProductId');
+       // const productId1 = await AsyncStorage.getItem('selectedProductId');
         if (!token) {
           console.log('No token found');
           return;
         }
 
-        const url = `${MAIN_URL.baseUrl}category/listparams/user/${productId1}`;
+        const url = `${MAIN_URL.baseUrl}category/listparams/user/${productId}`;
 
         const response = await fetch(url, {
           method: 'GET',
@@ -135,6 +143,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             }),
           );
         }
+        await AsyncStorage.setItem('selectedProductId',String(productId));
 
         if (json?.data) {
           const sellerFields = json.data.filter(
@@ -190,6 +199,13 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
     setFormValues((prev: any) => ({ ...prev, [fieldId]: updated }));
   };
+
+  const getCurrentDate = () => {
+  const today = new Date();
+  return `${String(today.getDate()).padStart(2, '0')}-${String(
+    today.getMonth() + 1
+  ).padStart(2, '0')}-${today.getFullYear()}`;
+};
 
   const requestCameraPermission = async () => {
     if (Platform.OS === 'android') {
@@ -393,10 +409,22 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const [isCheckbox, setCheckBox] = useState(false);
 
   const renderField = (field: any) => {
-    const { field_name, field_type, options, id, field_ismultilple } =field.param;
-    const fieldType = field_type.toLowerCase();
-     const ism = field_ismultilple;
-    console.log('fieldType', ism);
+    
+    // const { field_name, field_type, options, id, field_ismultilple } =field.param;
+    // const fieldType = field_type.toLowerCase();
+    //  const ism = field_ismultilple;
+    // console.log('fieldType', ism);
+      const param = field?.param;
+  if (!param) return null; // skip if param is missing
+
+  const fieldType = param.field_type?.toLowerCase() ?? '';
+  const field_ismultilple = param.ismultilple ?? false;
+  const field_name = param.field_name ?? '';
+  const id = param.id;
+  const options = Array.isArray(param.options) ? param.options : [];
+
+  if (!fieldType || !id) return null; // skip if critical info missing
+
     switch (fieldType) {
       // ---------------- TEXT FIELD ----------------
       case 'text': {
@@ -794,7 +822,11 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           <ScrollView contentContainerStyle={styles.scrollContainer}>
             <View style={styles.userRow}>
               <View style={{ width: '20%' }}>
-                <Image source={profileImg} style={styles.avatar} />
+                {/* <Image source={profileImg} style={styles.avatar} /> */}
+                 <Image
+                source={userMeta?.profile ? { uri: userMeta?.profile } : profileImg}
+                style={styles.avatar}
+              />
               </View>
               <View style={{ width: '80%' }}>
                 {/* <Text style={styles.userName}>Alan Walker</Text> */}
@@ -832,8 +864,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                         source={require('../../../assets/images/calendar_icon.png')}
                         style={{ height: 20, width: 20 }}
                       />
-                      <Text style={styles.userSub}>10-01-2025</Text>
-                    </View>
+                     <Text style={styles.userSub}>{getCurrentDate()}</Text>
+                  </View>
                   </View>
                 </View>
               </View>
