@@ -824,7 +824,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 {/* <Image source={profileImg} style={styles.avatar} /> */}
                 <Image
                   source={
-                    userMeta?.profile ? { uri: userMeta?.profile } : profileImg
+                    userMeta?.profile ? { uri: userMeta?.profile } : require('../../../assets/images/add1.png')
                   }
                   style={styles.avatar}
                 />

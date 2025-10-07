@@ -377,7 +377,6 @@ const getCurrentDate = () => {
 };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
     <ImageBackground
       source={require('../../../assets/images/bganimationscreen.png')}
       style={{ width: '100%', height: '100%' }}
@@ -397,7 +396,6 @@ const getCurrentDate = () => {
               </View>
             </TouchableOpacity>
             <Text style={styles.unizyText}>Preview Details</Text>
-            <View style={{ width: 30 }} />
           </View>
         </View>
 {/* 
@@ -757,7 +755,6 @@ const getCurrentDate = () => {
       </View>
       <NewCustomToastContainer/>
     </ImageBackground>
-    </SafeAreaView>
   );
 };
 
@@ -797,7 +794,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
-    marginTop: 25,
+    marginTop: 20,
+    // height: 50,
+    textAlignVertical: 'center',
   },
   backBtn: {
     width: 30,
@@ -867,6 +866,7 @@ const styles = StyleSheet.create({
   },
   fullScreenContainer: {
     flex: 1,
+    marginTop: 30,
   },
 
   loginText: {

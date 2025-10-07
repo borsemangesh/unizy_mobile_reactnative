@@ -15,7 +15,6 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
-import { showToast } from '../../utils/toast';
 
 const bgImage = require('../../../assets/images/bganimationscreen.png');
 const searchIcon = require('../../../assets/images/searchicon.png');
@@ -345,7 +344,7 @@ const styles = StyleSheet.create({
   background: { flex: 1, width: '100%', height: '100%' },
   fullScreenContainer: { flex: 1 },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 70 : 50,
+    paddingTop: Platform.OS === 'ios' ? 50 : 50,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },

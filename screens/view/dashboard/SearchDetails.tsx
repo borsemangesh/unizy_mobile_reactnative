@@ -293,7 +293,8 @@ const handleBookmarkPress = async (productId: number) => {
               <TouchableOpacity
                 style={styles.backBtn}
                 onPress={() => {
-                  navigation.navigate('Dashboard');
+                  // navigation.navigate('Dashboard');
+                  navigation.goBack();
                 }}
               >
                 <View style={styles.backIconRow}>
@@ -717,6 +718,7 @@ const styles = StyleSheet.create({
   },
     fullScreenContainer: {
     flex: 1,
+    marginTop: (Platform.OS === 'ios' ? 25 : 0),
   },
 
       loginText: {

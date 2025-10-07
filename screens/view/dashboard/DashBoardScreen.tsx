@@ -85,7 +85,7 @@ const ProductItem: React.FC<ProductItemProps> = ({
   <TouchableOpacity
     key={item.id}
     onPress={() => {
-      navigation.replace('ProductDetails', { category_id: item.id ,category_name:item.name});
+      navigation.navigate('ProductDetails', { category_id: item.id ,category_name:item.name});
       // navigation.reset({
       //   index: 0,
       //   routes: [{ name: 'ProductDetails', },{ category_id: item.id }],
@@ -995,7 +995,7 @@ const styles = StyleSheet.create({
   tabContent3: {
     flex: 1,
     padding: 20,
-    paddingTop: Platform.OS === 'ios' ? 70 : 30,
+    paddingTop: Platform.OS === 'ios' ? 60 : 30,
   },
   tabContentText3: {
     color: '#fff',

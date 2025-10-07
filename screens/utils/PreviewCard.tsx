@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, ImageSourcePropType } from "react-native";
+import { View, Text, Image, StyleSheet, ImageSourcePropType, Platform } from "react-native";
 
 
 type PreviewCardProps = {
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 230,
     position: 'relative',
-    padding:12
+    padding:(Platform.OS === 'ios' ? 0 : 12),
   },
   image: {
     width: '100%',

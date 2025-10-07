@@ -142,6 +142,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         setTextandBackIcon(true);
         setCurrentScreen('login');
         setcurrentScreenIninner('login');
+        setPassword('');
+        setUsername('');
       });
     } catch (err) {
       console.log('Error saving selected language', err);

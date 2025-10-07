@@ -295,6 +295,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#5d5c5c14',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
+
   },
   broderTopLeftRightRadius_30: {
     borderTopLeftRadius: 30,

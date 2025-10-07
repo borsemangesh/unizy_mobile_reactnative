@@ -15,11 +15,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
-import { showToast } from '../../utils/toast';
-
 const bgImage = require('../../../assets/images/bganimationscreen.png');
-import { useRoute, RouteProp } from '@react-navigation/native';
-import SearchListProductCard from '../../utils/SearchListProductCard';
 import MyListingCard from '../../utils/MyListingCard';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 
@@ -328,10 +324,11 @@ const styles = StyleSheet.create({
      width: '100%',
       height: '100%' },
   fullScreenContainer: {
-     flex: 1
+     flex: 1,
+     marginTop: 10
      },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 70 : 30,
+    paddingTop: Platform.OS === 'ios' ? 40 : 30,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },
