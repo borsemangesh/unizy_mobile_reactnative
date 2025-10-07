@@ -65,9 +65,20 @@ const getValueByAlias = (
 };
 
 const titleValue = getValueByAlias(storedForm, 'title') || 'No Title';
-const priceValue = getValueByAlias(storedForm, 'price') || '0';
+//const priceValue = getValueByAlias(storedForm, 'price') || '0';
 const imageArray = storedForm?.[6]?.value || [];
 
+// console.log(priceValue)
+// const commisionprice = priceValue + priceValue * 0.12;
+// const featurecommisionprice = priceValue + priceValue * 0.8;
+
+
+const raw = getValueByAlias(storedForm, 'price') ?? '0';
+const priceValue = parseFloat(String(raw)) || 0;
+const commissionPrice = +(priceValue * 1.12).toFixed(2); // number, 2 decimals
+const featureCommissionPrice = +(priceValue * 1.08).toFixed(2);
+
+//console.log(commisionprice)
 
   return (
     <ImageBackground
@@ -113,7 +124,7 @@ const imageArray = storedForm?.[6]?.value || [];
         <PreviewCard
           tag="University of Warwick"
           infoTitle={titleValue} // from alias
-          inforTitlePrice={`£${priceValue}`} // from alias
+          inforTitlePrice={`£${featureCommissionPrice}`} // from alias
           rating={storedForm[12]?.value || '4.5'}
           productImage={
             imageArray.length > 0
@@ -125,7 +136,7 @@ const imageArray = storedForm?.[6]?.value || [];
         <NewProductCard
           tag="University of Warwick"
           infoTitle={titleValue} 
-          inforTitlePrice={`£${priceValue}`} 
+          inforTitlePrice={`£${commissionPrice}`} 
           rating={storedForm[12]?.value || '4.5'}
           productImage={
             imageArray.length > 0

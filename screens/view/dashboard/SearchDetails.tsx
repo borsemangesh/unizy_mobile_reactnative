@@ -157,18 +157,42 @@ const renderImage = () => {
     const profileUri = detail?.createdby?.profile || null;
 
     return (
-      <Image
-        source={profileUri ? { uri: profileUri } : fallbackImage}
-        style={{ width: screenWidth, height: '40%',resizeMode:'cover'}}
+      <ImageBackground
+      source={require('../../../assets/images/featurebg.png')} // your background image
+      style={{
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <View
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginVertical: 20,
+        }}>
+      
+        <Image
+          source={profileUri ? { uri: profileUri } : fallbackImage}
+          style={{
+            width: 160,
+            height: 160,
+            borderRadius: 80, // circular shape
+            //borderWidth: 2,
+            //borderColor: '#ddd',
+          }}
+          resizeMode="cover"
+          onError={() => {
+            console.log('Profile image failed to load');
+            setImageUri(null);
+          }}
+        />
        
-        onError={() => {
-          console.log('Profile image failed to load');
-          setImageUri(null);
-        }}
-      />
+      </View>
+       </ImageBackground>
     );
   }
 
+  // ✅ Multiple images
   if (images.length > 1) {
     return (
       <View>
@@ -206,7 +230,7 @@ const renderImage = () => {
     );
   }
 
-  // 3️⃣ Single image or fallback
+  // ✅ Single image or fallback
   return (
     <Image
       source={images[0]?.uri ? { uri: images[0].uri } : fallbackImage}
@@ -215,6 +239,7 @@ const renderImage = () => {
     />
   );
 };
+
 
 const handleBookmarkPress = async (productId: number) => {
   try {

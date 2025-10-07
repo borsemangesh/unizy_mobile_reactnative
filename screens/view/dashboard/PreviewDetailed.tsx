@@ -126,8 +126,13 @@ const getValueByAlias = (
 };
 
 const titleValue = getValueByAlias(storedForm, 'title') || 'No Title';
-const priceValue = getValueByAlias(storedForm, 'price') || '0';
+//const priceValue = getValueByAlias(storedForm, 'price') || '0';
 const descriptionvalue= getValueByAlias(storedForm,'description') || 'No Description'
+
+const raw = getValueByAlias(storedForm, 'price') ?? '0';
+const priceValue = parseFloat(String(raw)) || 0;
+const commissionPrice = +(priceValue * 1.12).toFixed(2); // number, 2 decimals
+const featureCommissionPrice = +(priceValue * 1.08).toFixed(2);
   
 
   const onScroll = (event: {
@@ -364,6 +369,13 @@ const handleListPress = async () => {
   }
 };
 
+const getCurrentDate = () => {
+  const today = new Date();
+  return `${String(today.getDate()).padStart(2, '0')}-${String(
+    today.getMonth() + 1
+  ).padStart(2, '0')}-${today.getFullYear()}`;
+};
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
     <ImageBackground
@@ -463,7 +475,7 @@ const handleListPress = async () => {
                 </Text>
 
                 <Text style={styles.priceText}>
-                  {`$${priceValue}`}
+                  {`$${commissionPrice}`}
                 </Text>
               </View>
               <View
@@ -485,7 +497,7 @@ const handleListPress = async () => {
                     source={require('../../../assets/images/calendar_icon.png')}
                     style={{ height: 16, width: 16 }}
                   />
-                  <Text style={styles.userSub}>Date Posted:10-01-2025</Text>
+                  <Text style={styles.userSub}>Date Posted: {getCurrentDate()}</Text>
                 </View>
               </View>
             </View>
