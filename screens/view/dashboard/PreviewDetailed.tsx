@@ -60,13 +60,26 @@ const formattedDate = `${today.getDate().toString().padStart(2, '0')}-${(today.g
   .toString()
   .padStart(2, '0')}-${today.getFullYear()}`;
 
+interface Category {
+  id: number;
+  name: string;
+  description: string | null;
+  isactive: boolean;
+  logo: string | null;
+  commission: string | null;
+  max_cappund: string | null;
+  feature_fee:string | null
+  max_feature_cap: |null,
+}
 
   interface UserMeta {
-  firstname: string | null;
-  lastname: string | null;
-  profile: string | null;
-  student_email: string | null;
-}
+    firstname: string | null;
+    lastname: string | null;
+    profile: string | null;
+    student_email: string | null;
+    category?: Category | null;
+  }
+
   const flatListRef = useRef(null);
 
   useEffect(() => {
@@ -129,11 +142,7 @@ const titleValue = getValueByAlias(storedForm, 'title') || 'No Title';
 //const priceValue = getValueByAlias(storedForm, 'price') || '0';
 const descriptionvalue= getValueByAlias(storedForm,'description') || 'No Description'
 
-const raw = getValueByAlias(storedForm, 'price') ?? '0';
-const priceValue = parseFloat(String(raw)) || 0;
-const commissionPrice = +(priceValue * 1.12).toFixed(2); // number, 2 decimals
-const featureCommissionPrice = +(priceValue * 1.08).toFixed(2);
-  
+
 
   const onScroll = (event: {
     nativeEvent: { contentOffset: { x: number } };
@@ -175,6 +184,7 @@ const featureCommissionPrice = +(priceValue * 1.08).toFixed(2);
             lastname: json.metadata.lastname ?? null,
             profile: json.metadata.profile ?? null,
             student_email: json.metadata.student_email ?? null,
+            category: json.metadata.category ?? null,
           });
 
           await AsyncStorage.setItem(
@@ -184,6 +194,7 @@ const featureCommissionPrice = +(priceValue * 1.08).toFixed(2);
               lastname: json.metadata.lastname ?? null,
               profile: json.metadata.profile ?? null,
               student_email: json.metadata.student_email ?? null,
+              category: json.metadata.category ?? null,
             }),
           );
         }
@@ -375,6 +386,21 @@ const getCurrentDate = () => {
     today.getMonth() + 1
   ).padStart(2, '0')}-${today.getFullYear()}`;
 };
+
+
+
+const raw = getValueByAlias(storedForm, 'price') ?? '0';
+const priceValue = parseFloat(String(raw)) || 0;
+
+const commissionPercent = parseFloat(userMeta?.category?.commission ?? '0');
+const maxCap = parseFloat(userMeta?.category?.max_cappund ?? '0');
+
+const commissionAmount = priceValue * (commissionPercent / 100);
+const calculatedPrice = priceValue + commissionAmount;
+const maxAllowedPrice = priceValue + maxCap;
+const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(2);
+
+  
 
   return (
     <ImageBackground

@@ -71,14 +71,29 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
 
+  interface Category {
+  id: number;
+  name: string;
+  description: string | null;
+  isactive: boolean;
+  logo: string | null;
+  commission: string | null;
+  max_cappund: string | null;
+  feature_fee:string | null
+  max_feature_cap: |null,
+}
+
   interface UserMeta {
     firstname: string | null;
     lastname: string | null;
     profile: string | null;
     student_email: string | null;
+    category?: Category | null;
   }
 
   const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
+  const [featureFee, setFeatureFee] = useState(0);
+const [maxFeatureCap, setMaxFeatureCap] = useState(0);
   //  const [productName, setProductName] = useState('');
   const route = useRoute<AddScreenRouteProp>();
   const { productId, productName } = route.params;
@@ -128,11 +143,18 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
         const json = await response.json();
 
         if (json?.metadata) {
+
+        if (json.metadata.category) {
+          // Convert null or undefined to 0
+          setFeatureFee(parseFloat(json.metadata.category.feature_fee ?? '0'));
+          setMaxFeatureCap(parseFloat(json.metadata.category.max_feature_cap ?? '0'));
+        }
           setUserMeta({
             firstname: json.metadata.firstname ?? null,
             lastname: json.metadata.lastname ?? null,
             profile: json.metadata.profile ?? null,
             student_email: json.metadata.student_email ?? null,
+            category: json.metadata.category ?? null, // 
           });
 
           await AsyncStorage.setItem(
@@ -142,10 +164,13 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               lastname: json.metadata.lastname ?? null,
               profile: json.metadata.profile ?? null,
               student_email: json.metadata.student_email ?? null,
+              category: json.metadata.category ?? null, // 
             }),
           );
         }
         await AsyncStorage.setItem('selectedProductId', String(productId));
+
+        
 
         if (json?.data) {
           const sellerFields = json.data.filter(
@@ -778,7 +803,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               <View style={{ flex: 1 }}>
                 <Text style={styles.importantText1}>Important:</Text>
                 <Text style={styles.importantText}>
-                  For Featured listings, £1 is deducted from your payout.
+                  Featured listings require a small upfront fee - {featureFee}% of your item’s price or up to £{maxFeatureCap} (whichever is lower).
                 </Text>
               </View>
             </View>

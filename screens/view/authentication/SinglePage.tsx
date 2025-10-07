@@ -2506,10 +2506,11 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                               </Text>
                               <TouchableOpacity
                                 style={Styles.profileloginButton}
-                                onPress={() => {
+                                onPress={async () => {
                                   // setCurrentScreen('login');
                                   //setcurrentScreenIninner('login');
                                   closePopup1();
+                                  await AsyncStorage.setItem('ISLOGIN', 'true');
                                   navigation.replace('Dashboard');
                                 }}
                               >

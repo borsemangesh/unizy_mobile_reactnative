@@ -276,9 +276,12 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
           id: cat.id,
           name: cat.name,
           description: cat.description,
-          icon:
-            iconMap[cat.name] ||
-            require('../../../assets/images/producticon.png'), 
+          // icon:
+          //   iconMap[cat.name] ||
+          //   require('../../../assets/images/producticon.png'), 
+          icon: cat.logo
+          ? { uri: cat.logo } // use backend logo if available
+          : require('../../../assets/images/producticon.png'),
         }))
         
 

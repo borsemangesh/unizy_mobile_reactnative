@@ -21,14 +21,69 @@ import { NewCustomToastContainer } from '../../utils/component/NewCustomToastMan
 type PreviewThumbnailProps = {
   navigation: any;
 };
+type CategoryDetailsType = {
+  commission: string;     // e.g., "10.00"
+  max_cappund: string;   
+  feature_fee:string,
+   max_feature_cap:string
+};
+
+interface Category {
+  id: number;
+  name: string;
+  description: string | null;
+  isactive: boolean;
+  logo: string | null;
+  commission: string | null;
+  max_cappund: string | null;
+ feature_fee:string | null
+  max_feature_cap: |null,
+}
+
+interface UserMeta {
+  firstname: string | null;
+  lastname: string | null;
+  profile: string | null;
+  student_email: string | null;
+  category?: Category | null;
+}
 
 const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
 
   const [storedForm, setStoredForm] = useState<any | null>(null);
+const [categoryDetails, setCategoryDetails] = useState<CategoryDetailsType | null>(null);
+
+// useEffect(() => {
+//   const fetchStoredData = async () => {
+//     try {
+//       const storedData = await AsyncStorage.getItem('formData');
+//       if (storedData) {
+//         const parsedData = JSON.parse(storedData);
+//         console.log('Stored Form Data:', parsedData);
+//         setStoredForm(parsedData);
+//       } else {
+//         console.log('No form data found');
+//       }
+//       const categoryData = await AsyncStorage.getItem('categoryDetails');
+//       if (categoryData) {
+//         const parsedCategory = JSON.parse(categoryData);
+//         console.log('Stored Category Details:', parsedCategory);
+//         setCategoryDetails(parsedCategory); // <-- your state for category details
+//       } else {
+//         console.log('No category details found');
+//       }
+//     } catch (error) {
+//       console.log('Error reading form data: ', error);
+//     }
+//   };
+
+//   fetchStoredData();
+// }, []);
 
 useEffect(() => {
   const fetchStoredData = async () => {
     try {
+      // 1️⃣ Fetch stored form data
       const storedData = await AsyncStorage.getItem('formData');
       if (storedData) {
         const parsedData = JSON.parse(storedData);
@@ -37,14 +92,29 @@ useEffect(() => {
       } else {
         console.log('No form data found');
       }
+
+      const storedUserMeta = await AsyncStorage.getItem('userMeta');
+      if (storedUserMeta) {
+        const parsedUserMeta: UserMeta = JSON.parse(storedUserMeta);
+        console.log('Stored User Meta:', parsedUserMeta);
+
+        if (parsedUserMeta.category) {
+          const { commission, max_cappund,feature_fee, max_feature_cap} = parsedUserMeta.category;
+          setCategoryDetails({ commission: commission ?? '0', max_cappund: max_cappund ?? '0',feature_fee:feature_fee ?? '0' ,max_feature_cap:max_feature_cap ?? '0'});
+          console.log('Category Details set:', { commission, max_cappund });
+        } else {
+          console.log('No category in userMeta');
+        }
+      } else {
+        console.log('No userMeta found');
+      }
     } catch (error) {
-      console.log('Error reading form data: ', error);
+      console.log('Error reading stored data: ', error);
     }
   };
 
   fetchStoredData();
 }, []);
-
 
 type FormEntry = {
   value: any;
@@ -75,8 +145,31 @@ const imageArray = storedForm?.[6]?.value || [];
 
 const raw = getValueByAlias(storedForm, 'price') ?? '0';
 const priceValue = parseFloat(String(raw)) || 0;
-const commissionPrice = +(priceValue * 1.12).toFixed(2); // number, 2 decimals
-const featureCommissionPrice = +(priceValue * 1.08).toFixed(2);
+
+const commissionPercent = parseFloat(categoryDetails?.commission ?? '0');
+const maxCap = parseFloat(categoryDetails?.max_cappund ?? '0');
+
+const commissionAmount = priceValue * (commissionPercent / 100);
+const calculatedPrice = priceValue + commissionAmount;
+const maxAllowedPrice = priceValue + maxCap;
+const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(2);
+
+///feature
+
+const raw1 = getValueByAlias(storedForm, 'price') ?? '0';
+const priceValue1 = parseFloat(String(raw1)) || 0;
+
+const commissionPercent1 = parseFloat(categoryDetails?.feature_fee ?? '0');
+const maxCap1 = parseFloat(categoryDetails?.max_feature_cap ?? '0');
+
+const commissionAmount1 = priceValue1 * (commissionPercent1 / 100);
+const calculatedPrice1 = priceValue1 + commissionAmount1;
+const maxAllowedPrice1 = priceValue1 + maxCap1;
+const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2);
+
+
+
+
 
 //console.log(commisionprice)
 
@@ -117,14 +210,14 @@ const featureCommissionPrice = +(priceValue * 1.08).toFixed(2);
          
          
         
-    <View style={styles.productCarddisplay}>
+    {/* <View style={styles.productCarddisplay}>
   {storedForm ? (
     <>
       {(storedForm[13]?.value === true || storedForm[13]?.value === 'true') ? (
         <PreviewCard
           tag="University of Warwick"
           infoTitle={titleValue} // from alias
-          inforTitlePrice={`£${featureCommissionPrice}`} // from alias
+          inforTitlePrice={`£${commissionPrice}`} // from alias
           rating={storedForm[12]?.value || '4.5'}
           productImage={
             imageArray.length > 0
@@ -136,7 +229,58 @@ const featureCommissionPrice = +(priceValue * 1.08).toFixed(2);
         <NewProductCard
           tag="University of Warwick"
           infoTitle={titleValue} 
-          inforTitlePrice={`£${commissionPrice}`} 
+          inforTitlePrice={`£${commissionPrice1}`} 
+          rating={storedForm[12]?.value || '4.5'}
+          productImage={
+            imageArray.length > 0
+              ? { uri: imageArray[0].uri }
+              : require('../../../assets/images/drone.png')
+          }
+        />
+      )}
+    </>
+  ) : (
+    <Text style={{ color: '#fff', textAlign: 'center' }}>Loading...</Text>
+  )}
+</View> */}
+
+
+<View style={styles.productCarddisplay}>
+  {storedForm ? (
+    <>
+      {storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
+        <>
+        <Text style={styles.newtext}>Feature Listing Preview</Text>
+          <PreviewCard
+            tag="University of Warwick"
+            infoTitle={titleValue} // from alias
+            inforTitlePrice={`£${commissionPrice}`} // from alias
+            rating={storedForm[12]?.value || '4.5'}
+            productImage={
+              imageArray.length > 0
+                ? { uri: imageArray[0].uri }
+                : require('../../../assets/images/drone.png')
+            }
+          />
+          <Text style={styles.newtext}>Regular Listing Preview</Text>
+          <NewProductCard
+            tag="University of Warwick"
+            infoTitle={titleValue}
+            inforTitlePrice={`£${commissionPrice1}`}
+            rating={storedForm[12]?.value || '4.5'}
+            productImage={
+              imageArray.length > 0
+                ? { uri: imageArray[0].uri }
+                : require('../../../assets/images/drone.png')
+            }
+          />
+        </>
+      ) : (
+       
+        <NewProductCard
+          tag="University of Warwick"
+          infoTitle={titleValue} // from alias
+          inforTitlePrice={`£${commissionPrice}`} // from alias
           rating={storedForm[12]?.value || '4.5'}
           productImage={
             imageArray.length > 0
@@ -151,24 +295,6 @@ const featureCommissionPrice = +(priceValue * 1.08).toFixed(2);
   )}
 </View>
 
-
-
-          {/* <View style={styles.importantNotice}>
-            <View style={styles.h24_w24}>
-              <Image
-                source={require('../../../assets/images/info_icon.png')}
-                style={styles.h24_w24}
-              />
-            </View>
-            <View style={{ flexDirection: 'column', marginLeft: 8 }}>
-              <Text style={styles.infoText}>Important:</Text>
-              <Text style={styles.note}>
-                Price shown includes a 10% platform fee.
-              </Text>
-            </View>
-          </View> */}
-
-
            <View
                   style={styles.textbg}
                 >
@@ -181,7 +307,7 @@ const featureCommissionPrice = +(priceValue * 1.08).toFixed(2);
                   <View style={{ flex: 1 }}>
                     <Text style={styles.importantText1}>Important:</Text>
                     <Text style={styles.importantText}>
-                      Price shown includes a 10% platform fee.
+                       A {categoryDetails?.commission ?? '0'}% commission or a maximum of £{categoryDetails?.max_cappund ?? '0'}, whichever is lower, will be added to the entered price.
                     </Text>
                   </View>
                 </View>
@@ -207,6 +333,13 @@ const featureCommissionPrice = +(priceValue * 1.08).toFixed(2);
 };
 
 const styles = StyleSheet.create({
+  newtext:{
+     color: '#ccc',
+    fontSize: 16,
+    margin: 6,
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: 600,
+  },
 
  textbg:{
  flexDirection: 'row',
