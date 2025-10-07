@@ -9,6 +9,10 @@ import {
   ScrollView,
   Animated,
 } from 'react-native';
+import { showToast } from '../../utils/toast';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MAIN_URL } from '../../utils/APIConstant';
+import { useRoute } from '@react-navigation/native';
 
 type ListingDetailsProps = {
   navigation: any;
@@ -16,7 +20,42 @@ type ListingDetailsProps = {
 const bgImage = require('../../../assets/images/bganimationscreen.png');
 const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 
-    const scrollY1 = new Animated.Value(0);
+  const scrollY1 = new Animated.Value(0);
+  const route = useRoute();
+  //const { shareid } = route.params as { shareid: number };
+  const { shareid = 1 } = (route.params as { shareid?: number }) || {}
+  const handleDeactivate = async () => {
+  try {
+    
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) return;
+
+    const url2 = `${MAIN_URL.baseUrl}category/feature/active-inactive`;
+    const response = await fetch(url2, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, 
+      },
+      body: JSON.stringify({
+        product_id: shareid, 
+      }),
+    });
+
+    const data = await response.json();
+    console.log("✅ API Response:", data);
+
+    if (response.ok) {
+      showToast( "Product status updated!",'success');
+    } else {
+      showToast("Error", data.message || "Something went wrong");
+    }
+    
+  } catch (error) {
+    console.error("❌ API Error:", error);
+    showToast("Failed to update product status",'error');
+  }
+};
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
@@ -174,7 +213,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
         </View>
         
             <View style={styles.bottomview}>
-                <TouchableOpacity style={styles.cancelBtn}>
+                <TouchableOpacity style={styles.cancelBtn} onPress={handleDeactivate}>
                 <Text style={styles.cancelText}>Deactivate</Text>
                 </TouchableOpacity>
 

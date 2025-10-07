@@ -230,7 +230,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
             iconMap[cat.name] ||
             require('../../../assets/images/producticon.png'), 
         }))
-        .slice(0, 5);
+        
 
       const idNameArray = mapped.map((item: any) => ({
         id: item.id,
@@ -847,10 +847,6 @@ const styles = StyleSheet.create({
     borderLeftColor: '#ffffff5d',
     borderRightColor: '#ffffff36',
     borderWidth: 0.3,
-
-    //     border-radius: 40px;
-    // background: ;
-    // box-shadow: ;
   },
   iconSmall: {
     width: 25,

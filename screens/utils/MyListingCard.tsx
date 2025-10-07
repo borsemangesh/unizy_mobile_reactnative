@@ -18,6 +18,7 @@ type MyListingCardProps = {
   topRightText:string
   isfeature:Boolean
   navigation:any;
+  shareid:number;
 };
 
 const MyListingCard: React.FC<MyListingCardProps> = ({
@@ -28,12 +29,13 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
   productImage,
   topRightText,
   isfeature,
-  navigation
+  navigation,
+  shareid
 }) => {
-
+ console.log('Share ID in card:', shareid);
  return (
   <TouchableOpacity style={styles.wrapper} onPress={() => {
-    navigation.navigate('ListingDetails');
+    navigation.navigate('ListingDetails',{ shareid });
   }}>
     <Image source={productImage} style={styles.image} resizeMode="cover" />
 

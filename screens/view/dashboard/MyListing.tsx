@@ -170,10 +170,13 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
         topRightText={item.isactive ? 'Active' : 'Inactive'}
         isfeature={item.isfeatured}
        navigation={navigation}
+       shareid={item.id}
       />
     </View>
   );
 };
+
+
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
