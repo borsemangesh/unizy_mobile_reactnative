@@ -319,6 +319,9 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
    
 //   }, []);
 
+
+  const [isNav,setIsNav] = useState(true)
+
   //Animation For all components variables.
   const screenHeight = Dimensions.get('window').height;
   const translateY = React.useRef(new Animated.Value(screenHeight)).current;
@@ -337,7 +340,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   ).current;
 
   useEffect(() => {
-    if (activeTab === 'Home') {
+    if (activeTab === 'Home' && isNav === true) {
       translateY.setValue(-screenWidth);
       searchBartranslateY.setValue(-screenWidth);
       categorytranslateY.setValue(-screenWidth);
@@ -712,7 +715,7 @@ const handleBookmarkPress = async (productId: number) => {
             <TouchableOpacity
               key={key}
               style={[styles.tabItem, { width: tabWidth }]}
-              onPress={() => setActiveTab(key as any)}
+              onPress={() =>{ setActiveTab(key as any); setIsNav(false)}}
             >
               <View style={styles.iconWrapper}>
                 <Image
