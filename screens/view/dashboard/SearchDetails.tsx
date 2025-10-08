@@ -293,8 +293,8 @@ const handleBookmarkPress = async (productId: number) => {
               <TouchableOpacity
                 style={styles.backBtn}
                 onPress={() => {
-                  // navigation.navigate('Dashboard');
-                  navigation.goBack();
+                   navigation.replace('Dashboard');
+                  //navigation.goBack();
                 }}
               >
                 <View style={styles.backIconRow}>
@@ -387,11 +387,17 @@ const handleBookmarkPress = async (productId: number) => {
                       {param.options && param.options.length > 0 ? (
                         <View style={styles.categoryContainer}>
                           {param.options
+                            // .filter(opt =>
+                            //   param.param_value
+                            //     ?.split(',')
+                            //     .map(v => v.trim())
+                            //     .includes(opt.option_id.toString()),
+                            // )
                             .filter(opt =>
-                              param.param_value
-                                ?.split(',')
+                              (param.param_value?.toString() || "")
+                                .split(',')
                                 .map(v => v.trim())
-                                .includes(opt.option_id.toString()),
+                                .includes(opt.option_id.toString())
                             )
                             .map((opt: ParamOption) => (
                               <View key={opt.id} style={styles.categoryTag}>

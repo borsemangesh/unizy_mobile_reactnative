@@ -266,7 +266,7 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
           <NewProductCard
             tag="University of Warwick"
             infoTitle={titleValue}
-            inforTitlePrice={`£${commissionPrice1}`}
+            inforTitlePrice={`£${commissionPrice}`}
             rating={storedForm[12]?.value || '4.5'}
             productImage={
               imageArray.length > 0

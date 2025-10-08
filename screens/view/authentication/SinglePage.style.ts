@@ -310,6 +310,21 @@ export const Styles = StyleSheet.create({
     textAlign: 'right',
     marginTop: 10,
   },
+    loginButton2: {
+    display: 'flex',
+    width: '100%',
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    //gap: 4,
+    borderRadius: 100,
+    //paddingTop: 6,
+    paddingVertical: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.56)',
+    marginTop: 6,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+  },
   loginButton: {
     display: 'flex',
     width: '100%',
@@ -540,7 +555,7 @@ export const Styles = StyleSheet.create({
     lineHeight: 20,
   },
    infoText1: {
-    color: '#FFFFFF7A',
+    color: '#fff',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
     lineHeight: 20,
@@ -698,7 +713,7 @@ export const Styles = StyleSheet.create({
 
   login_container1: {
     display: 'flex',
-    width: '48%',
+    width: '49%',
     height: 40,
     gap: 10,
     alignSelf: 'stretch',
@@ -871,7 +886,7 @@ export const Styles = StyleSheet.create({
   privacyContainer: {
     width: '100%',
     alignItems: 'center',
-    marginTop: 16,
+    marginTop: 6,
   },
 
   termsText: {
@@ -950,7 +965,7 @@ export const Styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: '600',
     fontSize: 14,
-    marginTop: 12,
+    marginVertical: 6,
     textAlign: 'center',
     lineHeight: 19.6,
     letterSpacing: 0,

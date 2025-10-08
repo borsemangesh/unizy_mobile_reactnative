@@ -30,6 +30,7 @@ import {
   showToast,
 } from '../../utils/component/NewCustomToastManager';
 import { RouteProp, useRoute } from '@react-navigation/native';
+// import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
 
 const bgImage = require('../../../assets/images/bganimationscreen.png');
 const profileImg = require('../../../assets/images/user.jpg'); // your avatar image
@@ -46,6 +47,12 @@ type RootStackParamList = {
   // other screens...
 };
 type AddScreenRouteProp = RouteProp<RootStackParamList, 'AddScreen'>;
+
+type ImageFile = {
+  id: string;
+  uri: string;
+  name: string;
+};
 
 const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const [formValues, setFormValues] = useState<any>({});
@@ -68,9 +75,12 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     { id: string; uri: string; name: string }[]
   >([]);
 
+  //const [uploadedImages, setUploadedImages] = useState<ImageFile[]>([]);
+
   const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
 
+  
   interface Category {
   id: number;
   name: string;
@@ -425,6 +435,11 @@ const [maxFeatureCap, setMaxFeatureCap] = useState(0);
       { cancelable: true },
     );
   };
+  const getInitials = (firstName = '', lastName = '') => {
+  const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
+  const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
+  return (f + l) || '?';
+};
 
   const renderLabel = (field_name: any, mandatory: any) => (
     <Text style={styles.textstyle}>
@@ -706,9 +721,7 @@ const [maxFeatureCap, setMaxFeatureCap] = useState(0);
               <Image source={uploadIcon} style={styles.uploadIcon} />
               <Text style={styles.uploadText}>Upload {field_name}</Text>
             </TouchableOpacity>
-
-            {/* Show uploaded images only if there's at least one */}
-            {uploadedImages.length > 0 && (
+    {uploadedImages.length > 0 && (
               <View style={styles.imagelistcard}>
                 {uploadedImages.map((file, index) => (
                   <View key={file.id} style={{ width: '100%' }}>
@@ -844,64 +857,80 @@ const [maxFeatureCap, setMaxFeatureCap] = useState(0);
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
           <ScrollView contentContainerStyle={styles.scrollContainer}>
+            
             <View style={styles.userRow}>
-              <View style={{ width: '20%' }}>
-                {/* <Image source={profileImg} style={styles.avatar} /> */}
-                <Image
-                  source={
-                    userMeta?.profile ? { uri: userMeta?.profile } : require('../../../assets/images/add1.png')
-                  }
-                  style={styles.avatar}
-                />
-              </View>
-              <View style={{ width: '80%' }}>
-                {/* <Text style={styles.userName}>Alan Walker</Text> */}
-                <Text style={styles.userName}>
-                  {userMeta
-                    ? `${userMeta.firstname ?? ''} ${
-                        userMeta.lastname ?? ''
-                      }`.trim()
-                    : 'Alan Walker'}
-                </Text>
-                <View
+          <View style={{ width: '20%', alignItems: 'center', justifyContent: 'center' }}>
+            {userMeta?.profile ? (
+              <Image
+                source={{ uri: userMeta.profile }}
+                style={styles.avatar}
+              />
+            ) : (
+              <View
+                style={{
+                  ...styles.avatar,
+                  backgroundColor: '#5A67D8', // or any fallback color
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Text
                   style={{
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    display: 'flex',
-                    alignItems: 'stretch',
+                    color: '#fff',
+                    fontSize: 18,
+                    fontWeight: '600',
                   }}
                 >
-                  <Text style={styles.userSub}>University of Warwick,</Text>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <Text style={styles.userSub}>Coventry</Text>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 3,
-                      }}
-                    >
-                      <Image
-                        source={require('../../../assets/images/calendar_icon.png')}
-                        style={{ height: 20, width: 20 }}
-                      />
-                      <Text style={styles.userSub}>{getCurrentDate()}</Text>
-                    </View>
-                  </View>
+                  {getInitials(userMeta?.firstname ?? 'Alan', userMeta?.lastname ?? 'Walker')}
+
+                </Text>
+              </View>
+            )}
+          </View>
+
+          <View style={{ width: '80%' }}>
+            <Text style={styles.userName}>
+              {userMeta
+                ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''}`.trim()
+                : 'Alan Walker'}
+            </Text>
+
+            <View
+              style={{
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                display: 'flex',
+                alignItems: 'stretch',
+              }}
+            >
+              <Text style={styles.userSub}>University of Warwick,</Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <Text style={styles.userSub}>Coventry</Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 3,
+                  }}
+                >
+                  <Image
+                    source={require('../../../assets/images/calendar_icon.png')}
+                    style={{ height: 20, width: 20 }}
+                  />
+                  <Text style={styles.userSub}>{getCurrentDate()}</Text>
                 </View>
               </View>
             </View>
+          </View>
+        </View>
+
 
             <View style={styles.productdetails}>
-              {/* <Animated.View style={{ transform: [{ translateY: slideUp1 }] }}>
-                <Text style={styles.productdetailstext}>Product Details</Text>
-                {fields.map(field => renderField(field))}
-              </Animated.View> */}
               <Animated.View
                 style={{
                   transform: [{ translateY: slideUp1 }],
@@ -1129,10 +1158,15 @@ const styles = StyleSheet.create({
     height: 20,
     marginRight: 8,
     resizeMode: 'contain',
+     mixBlendMode: 'normal',
   },
   uploadText: {
     color: 'rgba(255, 255, 255, 0.48)',
     fontSize: 14,
+     mixBlendMode: 'normal',
+     fontFamily: 'Urbanist-Medium',
+     fontWeight:500,
+     
   },
   divider: {
     height: 1,
@@ -1163,14 +1197,14 @@ const styles = StyleSheet.create({
     paddingStart: 5,
   },
   deleteBtn: {
-    width: 30,
-    height: 30,
+    width: 32,
+    height: 32,
     justifyContent: 'center',
     alignItems: 'center',
   },
   deleteIcon: {
-    width: 30,
-    height: 30,
+    width: 32,
+    height: 32,
     resizeMode: 'contain',
   },
   threedots: {

@@ -623,8 +623,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       return;
     }
 
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordRegex =/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(signUppassword.trim())) {
       showToast('Min 8 chars: upper, lower, number, symbol.', 'error');
       return;
@@ -990,7 +989,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
           if (data?.data?.token?.access_token) {
             await AsyncStorage.setItem(
-              'access_token',
+              'userToken',
               data.data.token.access_token,
             );
           }
@@ -1584,7 +1583,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                   <TouchableOpacity
                     style={{ zIndex: 1000 }}
                     onPress={() => {
-                      console.log('backPRess');
+                      //console.log('backPRess');
+                      setSelected(null)
                       setCurrentScreen('language');
                     }}
                   >
@@ -1829,7 +1829,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                 });
                               }}
                             >
-                              <Text style={Styles.goBackText}>Go back</Text>
+                              <Text style={Styles.goBackText}>Go Back</Text>
                             </TouchableOpacity>
                           </Animated.View>
                           <Modal
@@ -2216,7 +2216,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                   }}
                                 >
                                   <Text style={Styles.sendOtpgoBackText1}>
-                                    Go back
+                                    Go Back
                                   </Text>
                                 </TouchableOpacity>
                               </View>
@@ -2370,7 +2370,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                   }}
                                 >
                                   <Text style={Styles.verifygoBackText1}>
-                                    Go back
+                                    Go Back
                                   </Text>
                                 </TouchableOpacity>
                               </TouchableOpacity>
@@ -2394,7 +2394,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                           >
                             <View>
                               <Text style={Styles.profileprofileresetTitle}>
-                                Add a photo
+                                Add a Photo
                               </Text>
                               <View style={Styles.profileprivacyContainer}>
                                 <Text style={Styles.profiletermsText}>
