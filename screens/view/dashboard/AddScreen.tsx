@@ -836,7 +836,7 @@ const [maxFeatureCap, setMaxFeatureCap] = useState(0);
           <View style={styles.headerRow}>
             <TouchableOpacity
               style={styles.backBtn}
-              onPress={() => {navigation.navigate('Dashboard',{AddScreenBackactiveTab: 'Add'})}}
+              onPress={() => {navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Add'})}}
             >
               <View style={styles.backIconRow}>
                 <Image

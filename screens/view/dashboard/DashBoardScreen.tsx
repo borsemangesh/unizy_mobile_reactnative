@@ -702,7 +702,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
               style={[styles.tabItem, { width: tabWidth }]}
               onPress={() => {
                 setActiveTab(key as any);
-                setIsNav(false);
+                setIsNav(true);
               }}
             >
               <View style={styles.iconWrapper}>

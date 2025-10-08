@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Platform, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { BlurView } from '@react-native-community/blur';
 
 type ButtonProps = {
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 10,
     position: 'absolute',
-    bottom: 0
+    bottom: (Platform.OS === 'ios'? 16 : 10),
   },
   buttonText: {
     // color: '#000',
