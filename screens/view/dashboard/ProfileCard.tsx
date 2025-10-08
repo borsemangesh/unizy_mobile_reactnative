@@ -24,7 +24,7 @@ import { MAIN_URL } from '../../utils/APIConstant';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 
 
-const bgImage = require('../../../assets/images/bganimationscreen.png');
+const bgImage = require('../../../assets/images/bgimage.png');
 const profileImg = require('../../../assets/images/user.jpg'); 
 const logouticon=require('../../../assets/images/logout.png')
 

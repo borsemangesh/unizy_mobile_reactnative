@@ -17,7 +17,7 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 
-const bgImage = require('../../../assets/images/bganimationscreen.png');
+const bgImage = require('../../../assets/images/bgimage.png');
 import ProductCard from '../../utils/ProductCard';
 
 import AnimatedSlideUp from '../../utils/AnimatedSlideUp';
@@ -521,7 +521,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
               <Text style={styles.featuredText}>Featured Listings</Text>
             </Animated.View>
             <ScrollView
-              style={{ paddingHorizontal: 0 }}
+              style={{ paddingHorizontal: 0,marginLeft:8 }}
               horizontal
               showsHorizontalScrollIndicator={false}
             >
@@ -530,7 +530,6 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                   key={item.id}
                   style={{
                     transform: [{ translateY: cardSlideupAnimation }],
-                    // marginRight: 10,
                   }}
                 >
                   {item.profileshowinview ? (
@@ -552,7 +551,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                     />
                   ) : (
                     <ProductCard
-                      tag="University of Warwick"
+                      tag={item.university?.name || 'University of Warwick'}
                       infoTitle={item.title}
                       inforTitlePrice={`£ ${item.price}`}
                       rating="4.5"

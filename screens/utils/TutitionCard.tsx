@@ -126,9 +126,8 @@ export default function TutitionCard({
 
 const styles = StyleSheet.create({
   card: {
-    width: screenWidth * 0.75,
+    width: screenWidth * 0.85,
     height: screenHeight * 0.4,
-
     marginHorizontal: 8,
     borderRadius: 34,
     backgroundColor: 'rgba(255, 255, 255, 0.17)',

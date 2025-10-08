@@ -760,12 +760,11 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       console.log('OTP Verify Response:', data);
 
       if (data?.statusCode === 200) {
+        showToast(data.message, 'success');
         await AsyncStorage.setItem(
           'temp_user_id',
           data.data.temp_user_id.toString(),
         );
-
-        showToast(data.message, 'success');
 
         setFirstName('');
         setLastName('');
@@ -904,14 +903,13 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       console.log('Send OTP Response:', data);
 
       if (data?.statusCode === 200) {
+        showToast(data.message, 'success');
         await AsyncStorage.setItem(
           'temp_user_id',
           data.data.temp_user_id.toString(),
         );
         await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
         await AsyncStorage.setItem('signupUsername', verifyusername);
-
-        showToast(data.message, 'success');
         // setShowOtp(true);
         //startAnimation();
 

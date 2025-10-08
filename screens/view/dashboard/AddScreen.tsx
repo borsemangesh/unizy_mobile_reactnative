@@ -32,7 +32,7 @@ import {
 import { RouteProp, useRoute } from '@react-navigation/native';
 // import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
 
-const bgImage = require('../../../assets/images/bganimationscreen.png');
+const bgImage = require('../../../assets/images/bgimage.png');
 const profileImg = require('../../../assets/images/user.jpg'); // your avatar image
 const uploadIcon = require('../../../assets/images/upload.png'); // upload icon
 
@@ -316,7 +316,7 @@ const [maxFeatureCap, setMaxFeatureCap] = useState(0);
             (typeof value === 'string' && value.trim() === '') ||
             (Array.isArray(value) && value.length === 0)
           ) {
-            showToast(`${field.param.field_name} is mandatory`);
+            showToast(`${field.param.field_name} is mandatory`,'error');
             return;
           }
         }

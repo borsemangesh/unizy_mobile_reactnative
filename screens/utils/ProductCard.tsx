@@ -81,7 +81,7 @@ export default function ProductCard({
 
 const styles = StyleSheet.create({
   card: {
-    width: screenWidth * 0.75,
+    width: screenWidth * 0.85,
     height: screenHeight * 0.4,
   
     marginHorizontal: 8,
@@ -196,9 +196,10 @@ const styles = StyleSheet.create({
     // marginTop: 4,
   },
   price: {
-    fontSize: 17,
-    fontWeight: "500",
-    color: "#fff",
+   fontSize: 17,
+    fontWeight: '700',
+    color: '#fff',
+    fontFamily: 'Urbanist-SemiBold',
   },
   ratingRow: {
     flexDirection: "row",
