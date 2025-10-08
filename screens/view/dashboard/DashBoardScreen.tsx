@@ -793,7 +793,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     //tintColor: '#fff',
-    resizeMode: 'center',
+    resizeMode: 'contain',
   },
   bubble: {
     // height: 48,

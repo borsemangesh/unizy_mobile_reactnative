@@ -1080,7 +1080,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   const ClickFPGoBack_slideOutToTop = (onFinish?: () => void) => {
     Animated.timing(resetPasswordtranslateY, {
       toValue: -Dimensions.get('window').height,
-      duration: 1000,
+      duration: 500,
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
     }).start(() => {
@@ -1089,7 +1089,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
     Animated.timing(loginTranslateY, {
       toValue: Dimensions.get('window').height, // slide into place
-      duration: 1000,
+      duration: 500,
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
     }).start();
@@ -1104,13 +1104,13 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
     Animated.timing(resetPasswordtranslateY, {
       toValue: -Dimensions.get('window').height,
-      duration: 1000,
+      duration: 500,
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
     }).start(() => {});
     Animated.timing(loginTranslateY, {
       toValue: Dimensions.get('window').height, // slide down off screen
-      duration: 1000,
+      duration: 500,
       easing: Easing.in(Easing.ease),
       useNativeDriver: true,
     }).start(() => {
