@@ -18,7 +18,7 @@ import { NewCustomToastContainer } from '../../utils/component/NewCustomToastMan
 type ListingDetailsProps = {
   navigation: any;
 };
-const bgImage = require('../../../assets/images/bganimationscreen.png');
+const bgImage = require('../../../assets/images/bgimage.png');
 const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 
   const scrollY1 = new Animated.Value(0);
