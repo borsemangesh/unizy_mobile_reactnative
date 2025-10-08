@@ -1,19 +1,31 @@
-import React from "react";
-import { View, Text, Image, StyleSheet, ImageSourcePropType, Platform, Dimensions, Touchable, TouchableOpacity, ImageURISource } from "react-native";
+import { BlurView } from '@react-native-community/blur';
+import React from 'react';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ImageSourcePropType,
+  Platform,
+  Dimensions,
+  Touchable,
+  TouchableOpacity,
+  ImageURISource,
+} from 'react-native';
 
 type TutitionCardProps = {
   tag: string;
-  title:string;
+  title: string;
   infoTitle: string;
   inforTitlePrice: string;
   rating: string;
   productImage: ImageSourcePropType;
-  isBookmarked: boolean; 
-  onBookmarkPress?: () => void; 
-  onpress?:()=>void,
+  isBookmarked: boolean;
+  onBookmarkPress?: () => void;
+  onpress?: () => void;
 };
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export default function TutitionCard({
   tag,
@@ -22,90 +34,92 @@ export default function TutitionCard({
   inforTitlePrice,
   rating,
   productImage,
-  onBookmarkPress ,
+  onBookmarkPress,
   isBookmarked,
-  onpress
+  onpress,
 }: TutitionCardProps) {
   return (
-    <TouchableOpacity  onPress={onpress} >
+    <TouchableOpacity onPress={onpress}>
+      <View style={styles.card}>
 
-    <View style={styles.card}>
-      {/* Image */}
-     <View style={styles.imageContainer}>
-      <View style={styles.splitRow}>
-   
-    <View style={styles.leftPortion}>
-      {productImage && (productImage as ImageURISource).uri ? (
-        <Image
-          source={productImage}
-          style={styles.leftImage}
-          resizeMode="cover"
-        />
-      ) : (
-    
-        <View style={styles.initialsCircle}>
-          <Text style={styles.initialsText}>
-            {infoTitle
-              ? infoTitle.split(" ").map((n) => n[0]).join("").toUpperCase()
-              : "?"}
-          </Text>
+        
+        {/* Image */}
+        <View style={styles.imageContainer}>
+          <View style={styles.splitRow}>
+            <View style={styles.leftPortion}>
+              {productImage && (productImage as ImageURISource).uri ? (
+                <Image
+                  source={productImage}
+                  style={styles.leftImage}
+                  resizeMode="cover"
+                />
+              ) : (
+                <View style={styles.initialsCircle}>
+                  <Text style={styles.initialsText}>
+                    {infoTitle
+                      ? infoTitle
+                          .split(' ')
+                          .map(n => n[0])
+                          .join('')
+                          .toUpperCase()
+                      : '?'}
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            <View style={styles.rightPortion}>
+              <Image
+                source={require('../../assets/images/featurebg.png')}
+                style={[{ width: '220%', height: '220%', resizeMode: 'cover' }]}
+                resizeMode="cover"
+              />
+
+            
+              <Text style={styles.rightText}>{infoTitle}</Text>
+
+             
+              <View style={styles.tag}>
+                <Text style={styles.tagText}>{tag}</Text>
+              </View>
+
+              
+              <View style={[styles.bookmark, { opacity: 0.9 }]}>
+                <BlurView
+                  blurType="light"
+                  blurAmount={100}
+                  style={StyleSheet.absoluteFillObject}
+                />
+                <TouchableOpacity onPress={onBookmarkPress}>
+                  <Image
+                    source={
+                      isBookmarked
+                        ? require('../../assets/images/favourite_filled.png')
+                        : require('../../assets/images/favourite.png')
+                    }
+                    style={styles.bookmarkIcon}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
         </View>
-      )}
-    </View>
 
-  
-
-    <View style={styles.rightPortion}>
-      {/* Background only for right side */}
-     <Image
-                 source={require('../../assets/images/featurebg.png')}
-                 style={[{width: '220%',height:'220%',resizeMode: 'cover'}]}
-                 // style={{resizeMode: 'contain'}}
-                 resizeMode="cover"
-               />
-
-      {/* Center text */}
-      <Text style={styles.rightText}>{infoTitle}</Text>
-
-      {/* Tag */}
-      <View style={styles.tag}>
-        <Text style={styles.tagText}>{tag}</Text>
-      </View>
-
-      {/* Bookmark */}
-      <View style={styles.bookmark}>
-        <TouchableOpacity onPress={onBookmarkPress}>
-          <Image
-            source={
-              isBookmarked
-                ? require("../../assets/images/favourite_filled.png")
-                : require("../../assets/images/favourite.png")
-            }
-            style={styles.bookmarkIcon}
-          />
-        </TouchableOpacity>
-      </View>
-    </View>
-  </View>
-</View>
-
-
-      {/* Info */}
-      <View style={styles.infoRow}>
-        <Text style={styles.title}>{title}</Text>
-        <View style={styles.priceRow}>
-          <Text style={styles.price}>{inforTitlePrice}</Text>
-          <View style={styles.ratingRow}>
-            <Image
-              source={require("../../assets/images/staricon.png")}
-              style={styles.starIcon}
-            />
-            <Text style={styles.ratingText}>{rating}</Text>
+        {/* Info */}
+        <View style={styles.infoRow}>
+          <Text style={styles.title}>{title}</Text>
+          <View style={styles.priceRow}>
+            <Text style={styles.price}>{inforTitlePrice}</Text>
+            <View style={styles.ratingRow}>
+              <Image
+                source={require('../../assets/images/staricon.png')}
+                style={styles.starIcon}
+              />
+              <Text style={styles.ratingText}>{rating}</Text>
+            </View>
           </View>
         </View>
       </View>
-    </View>
-
     </TouchableOpacity>
   );
 }
@@ -114,63 +128,61 @@ const styles = StyleSheet.create({
   card: {
     width: screenWidth * 0.75,
     height: screenHeight * 0.4,
-  
+
     marginHorizontal: 8,
     borderRadius: 34,
-    backgroundColor: "rgba(255, 255, 255, 0.17)",
-    shadowColor: "#000",
+    backgroundColor: 'rgba(255, 255, 255, 0.17)',
+    shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
     borderWidth: 0.5,
-    borderColor: "#ffffff79",
-    overflow: "hidden",
+    borderColor: '#ffffff79',
+    overflow: 'hidden',
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
     borderTopColor: '#ffffff2e',
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-
+    borderRightColor: '#ffffff2e', 
   },
 
   image: {
-    
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
     borderRadius: 25,
-    backgroundColor: "#ccc",
-},
-    
+    backgroundColor: '#ccc',
+  },
 
   infoRow: {
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "90%",
-    alignSelf: "center",
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '90%',
+    alignSelf: 'center',
   },
   title: {
     fontSize: 17,
-    fontWeight: "600",
-    color: "#fff",
-    width: "100%",
-     fontFamily: 'Urbanist-SemiBold',
+    fontWeight: '600',
+    color: '#fff',
+    width: '100%',
+    fontFamily: 'Urbanist-SemiBold',
   },
   priceRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
     // marginTop: 4,
   },
   price: {
     fontSize: 17,
-    fontWeight: "700",
-    color: "#fff",
-     fontFamily: 'Urbanist-SemiBold',
+    fontWeight: '700',
+    color: '#fff',
+    fontFamily: 'Urbanist-SemiBold',
   },
   ratingRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   starIcon: {
     width: 16,
@@ -178,114 +190,140 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     fontSize: 16,
-    fontWeight: "600",
-    color: "#fff",
+    fontWeight: '600',
+    color: '#fff',
     marginLeft: 4,
-     fontFamily: 'Urbanist-SemiBold',
+    fontFamily: 'Urbanist-SemiBold',
   },
 
-splitRow: {
-  flexDirection: "row",
-  width: "100%",
-  height: "100%",
-  borderRadius:20,
-  //padding: 10
-},
+  splitRow: {
+    flexDirection: 'row',
+    width: '100%',
+    height: '100%',
+    borderRadius: 20,
+    //padding: 10
+  },
 
-leftPortion: {
-  flex: 1,
-  justifyContent: "center",
-  alignItems: "center",
- // borderRadius: 20,
-  //overflow: "hidden",
-},
+  leftPortion: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    // borderRadius: 20,
+    //overflow: "hidden",
+  },
 
-leftImage: {
-  width: "100%",
-  height: "100%",
-  //backgroundColor:'#fff',
-  //borderRadius: 20,
-  borderTopLeftRadius:20,
-  borderBottomLeftRadius:20
-},
+  leftImage: {
+    width: '100%',
+    height: '100%',
+    //backgroundColor:'#fff',
+    //borderRadius: 20,
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
+  },
 
-initialsCircle: {
-  width: 75,
-  height: 75,
-  borderRadius: 100,
-  backgroundColor: "#8390D4",
-  justifyContent: "center",
-  alignItems: "center",
-},
+  initialsCircle: {
+    width: 75,
+    height: 75,
+    borderRadius: 100,
+    backgroundColor: '#8390D4',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 
-initialsText: {
-  fontSize: 32,
-  fontWeight: "700",
-  color: "#fff",
-   fontFamily: 'Urbanist-SemiBold',
-},
-
-rightPortion: {
-  flex: 1,
-  justifyContent: "center",
-  alignItems: "center",
-  //padding: 10,
-   borderTopRightRadius:20,
-  borderBottomRightRadius:20,
-  overflow: "hidden",
-  position: "relative", 
-},
-
-rightText: {
-  fontSize: 18,
-  fontWeight: "600",
-  color: "#fff",
-  textAlign: "center",
-  fontFamily: 'Urbanist-SemiBold',
-  position:'absolute'
-},
-
-tag: {
-  position: "absolute",
-  bottom: 5,
-  right: 5,
-  backgroundColor: "rgba(152, 152, 152, 0.21)",
-  borderRadius: 12,
-  paddingHorizontal: 8,
-  paddingVertical: 4,
-  zIndex: 2,
-},
-
-tagText: {
-  fontSize: 11,
-  fontWeight: "600",
-  color: "#000",
+  initialsText: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: '#fff',
     fontFamily: 'Urbanist-SemiBold',
-},
+  },
 
-bookmark: {
-  position: "absolute",
-  top: 5,
-  right: 5,
-  width: 40,
-  height: 40,
-  backgroundColor: "rgba(0, 0, 0, 0.14)",
-  justifyContent: "center",
-  alignItems: "center",
-  borderRadius: 15,
-  zIndex: 2,
-  elevation: 5,
-},
+  rightPortion: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    //padding: 10,
+    borderTopRightRadius: 20,
+    borderBottomRightRadius: 20,
+    overflow: 'hidden',
+    position: 'relative',
+  },
 
-bookmarkIcon: {
-  width: 20,
-  height: 20,
-},
+  rightText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#fff',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
+    position: 'absolute',
+  },
 
-imageContainer: {
-  width: "100%",
-  height: "80%",
-  position: "relative",
-  padding: 10,
-},
+  tag: {
+    position: 'absolute',
+    bottom: 9,
+    right: 5,  
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    zIndex: 2,
+    padding: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.34) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow:'0 2px 8px 0 rgba(0, 0, 0, 0.17)',
+    height: 29,
+  },
+
+  tagText: {
+    // fontSize: 11,
+    // fontWeight: '600',
+    // color: '#000',
+    color:'rgba(0, 0, 0, 0.80)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: 600,
+    fontSize: 11,
+    fontStyle: 'normal',
+    lineHeight:16,
+  },
+
+  bookmark: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    width: 44,
+    height: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 2,
+    borderRadius: 16,
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18)',
+
+    // elevation: 1,
+
+    // shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    borderWidth: 0.5,
+    borderColor: '#ffffff79',
+    overflow: 'hidden',
+    borderBlockStartColor: 'rgba(255, 255, 255, 0.25)',
+    borderBlockColor: 'rgba(255, 255, 255, 0.25)',
+    borderTopColor: 'rgba(255, 255, 255, 0.25)',
+    borderBottomColor: 'rgba(255, 255, 255, 0.25)',
+    borderLeftColor: 'rgba(255, 255, 255, 0.25)',
+    borderRightColor: 'rgba(255, 255, 255, 0.25)',
+  },
+
+  bookmarkIcon: {
+    width: 24,
+    height: 24,
+  },
+
+  imageContainer: {
+    width: '100%',
+    height: '80%',
+    position: 'relative',
+    padding: 13,
+  },
 });

@@ -75,8 +75,6 @@ const iconMap: Record<string, any> = {
   'House Keeping': require('../../../assets/images/housekeeping.png'),
 };
 
-
-
 const ProductItem: React.FC<ProductItemProps> = ({
   navigation,
   item,
@@ -85,17 +83,15 @@ const ProductItem: React.FC<ProductItemProps> = ({
   <TouchableOpacity
     key={item.id}
     onPress={() => {
-      navigation.navigate('ProductDetails', { category_id: item.id ,category_name:item.name});
-      // navigation.reset({
-      //   index: 0,
-      //   routes: [{ name: 'ProductDetails', },{ category_id: item.id }],
-      // });
+      navigation.navigate('ProductDetails', {
+        category_id: item.id,
+        category_name: item.name,
+      });
     }}
   >
     <View
       style={[
         styles.cardContainer,
-        // fullWidth ? styles.fullWidth : styles.halfWidth,
       ]}
     >
       <Image source={item.icon} style={styles.cardIcon} />
@@ -147,11 +143,11 @@ const AddScreenContent: React.FC<
             //   }
             // }}
             onPress={() => {
-            navigation.replace('AddScreen', {
-              productId: item.id,
-              productName: item.name,
-            });
-          }}
+              navigation.replace('AddScreen', {
+                productId: item.id,
+                productName: item.name,
+              });
+            }}
           >
             <View style={styles.card}>
               <View style={styles.iconBackground}>
@@ -179,9 +175,9 @@ const BookmarkScreenContent = () => (
 type ProfileScreenContentProps = {
   navigation: any;
 };
-const ProfileScreenContent = ({navigation}:ProfileScreenContentProps) => (
+const ProfileScreenContent = ({ navigation }: ProfileScreenContentProps) => (
   <View style={styles.tabContent}>
-    <ProfileCard navigation={navigation}/>
+    <ProfileCard navigation={navigation} />
   </View>
 );
 
@@ -213,29 +209,26 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   const route = useRoute<DashboardRouteProp>();
 
   useEffect(() => {
+    if (route.params?.AddScreenBackactiveTab) {
+      setActiveTab(
+        route.params?.AddScreenBackactiveTab as
+          | 'Home'
+          | 'Search'
+          | 'Add'
+          | 'Bookmark'
+          | 'Profile',
+      );
+    }
 
-     if (route.params?.AddScreenBackactiveTab) {
-       setActiveTab(
-         route.params?.AddScreenBackactiveTab as
-           | 'Home'
-           | 'Search'
-           | 'Add'
-           | 'Bookmark'
-           | 'Profile',
-       );
-     }
-
-	  const fetchFeatures = async () => {
+    const fetchFeatures = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
         if (!token) return;
-        const url1=MAIN_URL.baseUrl+'category/feature-list'
+        const url1 = MAIN_URL.baseUrl + 'category/feature-list';
 
-        const res = await fetch(url1,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
+        const res = await fetch(url1, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         const json = await res.json();
         console.log('✅ Features API response:', json);
@@ -250,77 +243,68 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
 
     fetchFeatures();
 
+    const fetchCategories = async () => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) return;
 
+        const url2 = MAIN_URL.baseUrl + 'user/category';
 
+        const response = await fetch(url2, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        const json = await response.json();
 
-  const fetchCategories = async () => {
-    try {
-    
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) return;
+        const mapped = json.data
+          .filter((cat: any) => cat.isactive)
+          .map((cat: any) => ({
+            id: cat.id,
+            name: cat.name,
+            description: cat.description,
+            // icon:
+            //   iconMap[cat.name] ||
+            //   require('../../../assets/images/producticon.png'),
+            icon: cat.logo
+              ? { uri: cat.logo } // use backend logo if available
+              : require('../../../assets/images/producticon.png'),
+          }));
 
-    const url2 = MAIN_URL.baseUrl+'user/category'
+        const idNameArray = mapped.map((item: any) => ({
+          id: item.id,
+          name: item.name,
+        }));
 
-    const response = await fetch(url2, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-    const json = await response.json();
+        await AsyncStorage.setItem(
+          'categories', // key
+          JSON.stringify(idNameArray),
+        );
 
-      const mapped = json.data
-        .filter((cat: any) => cat.isactive)
-        .map((cat: any) => ({
-          id: cat.id,
-          name: cat.name,
-          description: cat.description,
-          // icon:
-          //   iconMap[cat.name] ||
-          //   require('../../../assets/images/producticon.png'), 
-          icon: cat.logo
-          ? { uri: cat.logo } // use backend logo if available
-          : require('../../../assets/images/producticon.png'),
-        }))
-        
+        setProducts(mapped);
+      } catch (err) {
+        console.error('Error fetching categories', err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      const idNameArray = mapped.map((item: any) => ({
-        id: item.id,
-        name: item.name,
-      }));
+    fetchCategories();
 
-      await AsyncStorage.setItem(
-        'categories', // key
-        JSON.stringify(idNameArray) 
-      );
+    const loadBookmarks = async () => {
+      const saved = await AsyncStorage.getItem('bookmarkedIds');
+      if (saved) setBookmarkedIds(JSON.parse(saved));
+    };
+    loadBookmarks();
+  }, [route.params?.AddScreenBackactiveTab]);
 
-      setProducts(mapped);
-    } catch (err) {
-      console.error('Error fetching categories', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //   useEffect(() => {
 
-  
-  fetchCategories();
+  //   }, []);
 
-
-  const loadBookmarks = async () => {
-    const saved = await AsyncStorage.getItem('bookmarkedIds');
-    if (saved) setBookmarkedIds(JSON.parse(saved));
-  };
-  loadBookmarks();
-
-}, [route.params?.AddScreenBackactiveTab]);
-
-//   useEffect(() => {
-   
-//   }, []);
-
-
-  const [isNav,setIsNav] = useState(true)
+  const [isNav, setIsNav] = useState(true);
 
   //Animation For all components variables.
   const screenHeight = Dimensions.get('window').height;
@@ -416,13 +400,13 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
     }).start();
   }, [activeTab, bubbleX, tabWidth]);
 
-//   useEffect(() => {
-//   const loadBookmarks = async () => {
-//     const saved = await AsyncStorage.getItem('bookmarkedIds');
-//     if (saved) setBookmarkedIds(JSON.parse(saved));
-//   };
-//   loadBookmarks();
-// }, []);
+  //   useEffect(() => {
+  //   const loadBookmarks = async () => {
+  //     const saved = await AsyncStorage.getItem('bookmarkedIds');
+  //     if (saved) setBookmarkedIds(JSON.parse(saved));
+  //   };
+  //   loadBookmarks();
+  // }, []);
 
   const renderProducts = () => {
     const isEven = products.length % 2 === 0;
@@ -481,49 +465,48 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
     return rows;
   };
 
+  const handleBookmarkPress = async (productId: number) => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) return;
 
-const handleBookmarkPress = async (productId: number) => {
-  try {
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) return;
+      const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
 
-    const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
+      const url = MAIN_URL.baseUrl + 'category/list-bookmark';
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ feature_id: productId }),
+      });
 
-    const url = MAIN_URL.baseUrl + 'category/list-bookmark';
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify({ feature_id: productId }),
-    });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const data = await response.json();
+      console.log('Bookmark response:', data);
+
+      let updatedBookmarks;
+      if (isCurrentlyBookmarked) {
+        updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
+      } else {
+        updatedBookmarks = [...bookmarkedIds, productId];
+      }
+
+      setBookmarkedIds(updatedBookmarks);
+      await AsyncStorage.setItem(
+        'bookmarkedIds',
+        JSON.stringify(updatedBookmarks),
+      ); // persist locally
+    } catch (error) {
+      console.error('Bookmark error:', error);
     }
-
-    const data = await response.json();
-    console.log('Bookmark response:', data);
-
-    let updatedBookmarks;
-    if (isCurrentlyBookmarked) {
-      updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
-    } else {
-      updatedBookmarks = [...bookmarkedIds, productId];
-    }
-
-    setBookmarkedIds(updatedBookmarks);
-    await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks)); // persist locally
-
-  } catch (error) {
-    console.error('Bookmark error:', error);
-  }
-};
-
+  };
 
   const renderActiveTabContent = () => {
-    
     switch (activeTab) {
       case 'Home':
         return (
@@ -538,7 +521,7 @@ const handleBookmarkPress = async (productId: number) => {
               <Text style={styles.featuredText}>Featured Listings</Text>
             </Animated.View>
             <ScrollView
-              style={{ paddingHorizontal: 0,}}
+              style={{ paddingHorizontal: 0 }}
               horizontal
               showsHorizontalScrollIndicator={false}
             >
@@ -550,20 +533,22 @@ const handleBookmarkPress = async (productId: number) => {
                     // marginRight: 10,
                   }}
                 >
-                    {item.profileshowinview ? (    
+                  {item.profileshowinview ? (
                     <TutitionCard
                       tag={item.university?.name || 'University of Warwick'}
                       title={item.title}
-                      infoTitle={`${item.createdby?.firstname || ''} ${item.createdby?.lastname || ''}`}
+                      infoTitle={`${item.createdby?.firstname || ''} ${
+                        item.createdby?.lastname || ''
+                      }`}
                       inforTitlePrice={`£ ${item.price}`}
                       rating="4.5"
-                      productImage={{ uri: item.createdby?.profile}}
-                     //productImage={require("../../../assets/images/drone.png")} 
+                      productImage={{ uri: item.createdby?.profile }}
+                      //productImage={require("../../../assets/images/drone.png")}
                       onBookmarkPress={() => handleBookmarkPress(item.id)}
                       isBookmarked={bookmarkedIds.includes(item.id)}
-                      onpress={() => navigation.replace('SearchDetails', { id: item.id })}
-                      
-                      
+                      onpress={() =>
+                        navigation.replace('SearchDetails', { id: item.id })
+                      }
                     />
                   ) : (
                     <ProductCard
@@ -575,10 +560,11 @@ const handleBookmarkPress = async (productId: number) => {
                       onBookmarkPress={() => handleBookmarkPress(item.id)}
                       isBookmarked={bookmarkedIds.includes(item.id)}
                       //isBookmarked={item.}
-                      onpress={() => navigation.replace('SearchDetails', { id: item.id })}
+                      onpress={() =>
+                        navigation.replace('SearchDetails', { id: item.id })
+                      }
                     />
                   )}
-                  
                 </Animated.View>
               ))}
             </ScrollView>
@@ -591,7 +577,7 @@ const handleBookmarkPress = async (productId: number) => {
       case 'Bookmark':
         return <BookmarkScreenContent />;
       case 'Profile':
-        return <ProfileScreenContent navigation={navigation}/>;
+        return <ProfileScreenContent navigation={navigation} />;
       default:
         return null;
     }
@@ -605,27 +591,25 @@ const handleBookmarkPress = async (productId: number) => {
     { key: 'Profile', icon: profileIcon, activeIcon: profileIcon5 },
   ];
 
-   const clickbookmark = () =>{
-      navigation.replace('Bookmark');
-      // navigation.reset({
-      //   index: 0,
-      //   routes: [{ name: 'Bookmark', }],
-      // });
-     
-   }
-    const clicklisting = async () =>{
-      navigation.replace('MyListing');
-      // navigation.reset({
-      //   index: 0,
-      //   routes: [{ name: 'MyListing'}],
-      // });
-      // await AsyncStorage.setItem('ISLOGIN', 'false');
-     // navigation.replace('SinglePage');
-   }
+  const clickbookmark = () => {
+    navigation.replace('Bookmark');
+    // navigation.reset({
+    //   index: 0,
+    //   routes: [{ name: 'Bookmark', }],
+    // });
+  };
+  const clicklisting = async () => {
+    navigation.replace('MyListing');
+    // navigation.reset({
+    //   index: 0,
+    //   routes: [{ name: 'MyListing'}],
+    // });
+    // await AsyncStorage.setItem('ISLOGIN', 'false');
+    // navigation.replace('SinglePage');
+  };
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
-      
       <View style={styles.fullScreenContainer}>
         {activeTab === 'Home' && (
           <View
@@ -640,16 +624,19 @@ const handleBookmarkPress = async (productId: number) => {
                 { transform: [{ translateY: translateY }] },
               ]}
             >
-              <TouchableOpacity onPress={()=>{clicklisting()}}>
-              <View style={styles.MylistingsBackground}>
-                <Image source={mylistings} style={styles.iconSmall} />
-              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  clicklisting();
+                }}
+              >
+                <View style={styles.MylistingsBackground}>
+                  <Image source={mylistings} style={styles.iconSmall} />
+                </View>
               </TouchableOpacity>
 
               <Text style={styles.unizyText}>UniZy</Text>
 
-              <TouchableOpacity
-                onPress={clickbookmark}>
+              <TouchableOpacity onPress={clickbookmark}>
                 <View style={styles.MylistingsBackground}>
                   <Image source={mylistings1} style={styles.iconSmall} />
                 </View>
@@ -676,21 +663,18 @@ const handleBookmarkPress = async (productId: number) => {
 
         {/* Main Content */}
         <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} // tweak this as needed
-    >
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} // tweak this as needed
+        >
           <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 10 }} // space for bottom bar
-        showsVerticalScrollIndicator={false}
-      >
-
-        <View style={{ flex: 1 }}>{renderActiveTabContent()}</View>
-
-        </ScrollView>
-        
-      </KeyboardAvoidingView>
+            style={{ flex: 1 }}
+            contentContainerStyle={{ paddingBottom: 10 }} // space for bottom bar
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={{ flex: 1 }}>{renderActiveTabContent()}</View>
+          </ScrollView>
+        </KeyboardAvoidingView>
         {/* Bottom Tab Bar */}
         <Animated.View
           style={[
@@ -715,7 +699,10 @@ const handleBookmarkPress = async (productId: number) => {
             <TouchableOpacity
               key={key}
               style={[styles.tabItem, { width: tabWidth }]}
-              onPress={() =>{ setActiveTab(key as any); setIsNav(false)}}
+              onPress={() => {
+                setActiveTab(key as any);
+                setIsNav(false);
+              }}
             >
               <View style={styles.iconWrapper}>
                 <Image
@@ -726,10 +713,8 @@ const handleBookmarkPress = async (productId: number) => {
             </TouchableOpacity>
           ))}
         </Animated.View>
-        
-        
       </View>
-      <NewCustomToastContainer/>
+      <NewCustomToastContainer />
     </ImageBackground>
   );
 };
@@ -760,7 +745,7 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     fontSize: 17,
     color: '#fff',
-    width:'80%'
+    width: '80%',
   },
 
   bottomTabContainer: {
@@ -770,7 +755,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderRadius: 50,
     alignSelf: 'center',
-    // position: 'relative', 
+    // position: 'relative',
     paddingHorizontal: 4,
     borderWidth: 0.4,
     padding: 12,
@@ -792,15 +777,14 @@ const styles = StyleSheet.create({
     borderRightColor: '#ffffff2e',
 
     boxSizing: 'border-box',
-  zIndex: 100,
-    
+    zIndex: 100,
   },
   tabItem: {
     //justifyContent: 'center',
     //alignItems: 'center',
   },
   iconWrapper: {
-    height: 50,//
+    height: 50, //
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
@@ -811,13 +795,10 @@ const styles = StyleSheet.create({
     //tintColor: '#fff',
     resizeMode: 'center',
   },
-  activeTabIcon: {
-    //tintColor: '#ccc',
-  },
   bubble: {
     // height: 48,
     height: '88%',
-    backgroundColor: 'rgba(255, 255, 255, 0.16)',
+    backgroundColor: 'rgba(255, 255, 255, 0.16)',    
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18)',
 
     position: 'absolute',
@@ -835,7 +816,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     borderBottomRightRadius: 30,
 
-       borderBlockStartColor: '#ffffff2e',
+    borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
 
     borderTopColor: '#ffffff2e',

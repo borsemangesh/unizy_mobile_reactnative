@@ -1,3 +1,4 @@
+import { BlurView } from "@react-native-community/blur";
 import React from "react";
 import { View, Text, Image, StyleSheet, ImageSourcePropType, Platform, Dimensions, Touchable, TouchableOpacity } from "react-native";
 
@@ -39,7 +40,12 @@ export default function ProductCard({
 
         {/* Bookmark */}
         
-        <View style={styles.bookmark}>
+        <View style={[styles.bookmark,{opacity: 0.9}]}>
+                <BlurView 
+                  blurType="light"
+                  blurAmount={100}
+                  style={StyleSheet.absoluteFillObject}
+                />
           <TouchableOpacity onPress={onBookmarkPress}>
            <Image
               source={
@@ -99,7 +105,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "80%", // image takes 65% of card height
     position: "relative",
-    padding:10,
+    padding: 13,
   },
   image: {
     
@@ -109,39 +115,64 @@ const styles = StyleSheet.create({
     backgroundColor: "#ccc",
     
   },
+
   tag: {
-    position: "absolute",
-
-    bottom: Platform.OS === "ios" ? 20 : 20,
-    right: Platform.OS === "ios" ? 20 : 20,
-
-    backgroundColor: "rgba(152, 152, 152, 0.21)",
+   
+    position: 'absolute',
+    bottom: 20,
+    right: 20,  
     borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 4,
     zIndex: 2,
+    padding: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow:'0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+    height: 29,
   },
+
   tagText: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#000",
+  color:'rgba(0, 0, 0, 0.80)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: 600,
+    fontSize: 11,
+    fontStyle: 'normal',
+    lineHeight:16,
   },
   bookmark: {
     position: "absolute",
     top: Platform.OS === "ios" ? 20 : 20,
     right: Platform.OS === "ios" ? 20 : 20,
-    width: 40,
-    height: 40,
-    backgroundColor: "rgba(0, 0, 0, 0.14)",
+      width: 44,
+  height: 44, 
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 15,
     zIndex: 2,
-    elevation: 5,
+     borderRadius: 16,
+  backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18)',
+
+    // elevation: 1,
+
+
+  shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    borderWidth: 0.5,
+    borderColor: "#ffffff79",
+    overflow: "hidden",
+    borderBlockStartColor: 'rgba(255, 255, 255, 0.25)',
+    borderBlockColor: 'rgba(255, 255, 255, 0.25)',
+    borderTopColor: 'rgba(255, 255, 255, 0.25)',
+    borderBottomColor: 'rgba(255, 255, 255, 0.25)',
+    borderLeftColor: 'rgba(255, 255, 255, 0.25)',
+    borderRightColor: 'rgba(255, 255, 255, 0.25)',
   },
   bookmarkIcon: {
-    width: 20,
-    height: 20,
+    width: 24,
+    height: 24,
   },
   infoRow: {
     flexDirection: "column",
