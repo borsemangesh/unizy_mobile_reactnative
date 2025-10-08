@@ -293,8 +293,8 @@ const handleBookmarkPress = async (productId: number) => {
               <TouchableOpacity
                 style={styles.backBtn}
                 onPress={() => {
-                   navigation.replace('Dashboard');
-                  //navigation.goBack();
+                  //  navigation.replace('Dashboard');
+                  navigation.goBack();
                 }}
               >
                 <View style={styles.backIconRow}>
@@ -311,7 +311,6 @@ const handleBookmarkPress = async (productId: number) => {
               </Text>
               <TouchableOpacity
                 onPress={() => {
-                    console.log("bookmark Clicked");
                     handleBookmarkPress(id);
                 }}>
               <View style={styles.MylistingsBackground}>
@@ -992,6 +991,8 @@ const styles = StyleSheet.create({
   backIconRow: {
     padding: 12,
     borderRadius: 40,
+
+
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',

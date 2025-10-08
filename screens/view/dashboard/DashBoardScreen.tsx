@@ -83,7 +83,7 @@ const ProductItem: React.FC<ProductItemProps> = ({
   <TouchableOpacity
     key={item.id}
     onPress={() => {
-      navigation.navigate('ProductDetails', {
+      navigation.replace('ProductDetails', {
         category_id: item.id,
         category_name: item.name,
       });
@@ -545,9 +545,9 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                       //productImage={require("../../../assets/images/drone.png")}
                       onBookmarkPress={() => handleBookmarkPress(item.id)}
                       isBookmarked={bookmarkedIds.includes(item.id)}
-                      onpress={() =>
-                        navigation.replace('SearchDetails', { id: item.id })
-                      }
+                      onpress={() =>{
+                        navigation.navigate('SearchDetails', { id: item.id })
+                      }}
                     />
                   ) : (
                     <ProductCard
@@ -559,9 +559,9 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                       onBookmarkPress={() => handleBookmarkPress(item.id)}
                       isBookmarked={bookmarkedIds.includes(item.id)}
                       //isBookmarked={item.}
-                      onpress={() =>
-                        navigation.replace('SearchDetails', { id: item.id })
-                      }
+                      onpress={() =>{
+                        navigation.navigate('SearchDetails', { id: item.id })
+                      }}
                     />
                   )}
                 </Animated.View>
