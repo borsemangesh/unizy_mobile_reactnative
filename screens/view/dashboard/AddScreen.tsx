@@ -429,7 +429,7 @@ const [maxFeatureCap, setMaxFeatureCap] = useState(0);
   const renderLabel = (field_name: any, mandatory: any) => (
     <Text style={styles.textstyle}>
       {field_name}
-      {mandatory && <Text style={{ color: '#fff' }}> *</Text>}
+      {mandatory && <Text style={{ color: '#fff' }}>*</Text>}
     </Text>
   );
 
@@ -833,7 +833,7 @@ const [maxFeatureCap, setMaxFeatureCap] = useState(0);
               </View>
             </TouchableOpacity>
             <Text style={styles.unizyText}>
-              {`List${productName ? `  ${productName} ` : ''}`}
+              {`List${productName ? ` ${productName} ` : ''}`}
             </Text>
             <View style={{ width: 30 }} />
           </View>
@@ -1147,8 +1147,8 @@ const styles = StyleSheet.create({
   },
 
   fileIcon: {
-    width: 28,
-    height: 28,
+    width: 30,
+    height: 30,
     resizeMode: 'contain',
     marginRight: 8,
   },
@@ -1169,8 +1169,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   deleteIcon: {
-    width: 28,
-    height: 28,
+    width: 30,
+    height: 30,
     resizeMode: 'contain',
   },
   threedots: {

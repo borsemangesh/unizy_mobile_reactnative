@@ -273,6 +273,7 @@ export const Styles = StyleSheet.create({
     lineHeight: 22,
     fontStyle: 'normal',
     color:"#fff"
+    
   },
   password_container: {
     display: 'flex',
@@ -293,7 +294,7 @@ export const Styles = StyleSheet.create({
     marginTop: 12,
   },
   password_TextInput: {
-    width: '87%',
+    width: '88%',
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
     fontSize: 17,
@@ -315,13 +316,12 @@ export const Styles = StyleSheet.create({
     height: 48,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 4,
+    //gap: 4,
     borderRadius: 100,
-    paddingTop: 6,
-    paddingBottom: 12,
+    //paddingTop: 6,
+    paddingVertical: 12,
     backgroundColor: 'rgba(255, 255, 255, 0.56)',
     marginTop: 10,
-
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
   },
@@ -432,11 +432,13 @@ export const Styles = StyleSheet.create({
   eyeIcon: {
     width: 19,
     height: 15,
+    resizeMode:'contain'
     // paddingRight: 16,
   },
   eyeCross: {
     width: 19,
     height: 15,
+    resizeMode:'contain'
   },
   donthaveAccountText: {
     color: 'rgba(255, 255, 255, 0.48)',
@@ -713,7 +715,7 @@ export const Styles = StyleSheet.create({
   },
 
   personalEmailID_TextInput1: {
-    width: '84%',
+    width: '85%',
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
     fontSize: 17,

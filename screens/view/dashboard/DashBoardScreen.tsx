@@ -1006,7 +1006,7 @@ const styles = StyleSheet.create({
   tabContentText3: {
     color: '#fff',
     fontSize: 20,
-    marginBottom: 12,
+    marginVertical: 12,
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600,
