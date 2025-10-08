@@ -18,6 +18,7 @@ import {
   PermissionsAndroid,
   Platform,
   KeyboardAvoidingView,
+  Keyboard,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { Styles } from './SinglePage.style';
@@ -478,6 +479,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   })();
 
   const handleSendResetLink = async () => {
+    Keyboard.dismiss();
     if (!username1.trim()) {
       showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
       return;
@@ -522,8 +524,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   };
 
   const loginapi = async () => {
-    // navigation.replace('Dashboard');
-    console.log('sdfsdf');
+    Keyboard.dismiss();
 
     if (!username.trim() || !password.trim()) {
       showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
@@ -728,6 +729,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   };
 
   const otpverify = async () => {
+    Keyboard.dismiss();
     setverifyUsername('');
     const otpValue = otp.join('');
 
@@ -864,6 +866,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   };
 
   const verifyOTP = async () => {
+    Keyboard.dismiss();
     setOtp1(['', '', '', '']);
 
     if (!verifyusername.trim()) {
@@ -942,6 +945,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   };
 
   const submitotp = async () => {
+    Keyboard.dismiss();
     setPhoto('');
     const otpValue = otp1.join('');
 
@@ -1005,7 +1009,9 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   };
 
   const resubmitotp = async () => {
+    
     try {
+        Keyboard.dismiss();
       setOtp1(['', '', '', '']);
       const url = MAIN_URL.baseUrl + 'user/student-email';
 
@@ -1075,10 +1081,11 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
     new Animated.Value(Dimensions.get('window').height),
   ).current;
 
+
   const ClickFPGoBack_slideOutToTop = (onFinish?: () => void) => {
     Animated.timing(resetPasswordtranslateY, {
       toValue: -Dimensions.get('window').height,
-      duration: 500,
+      duration: 1000,
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
     }).start(() => {
@@ -1087,13 +1094,14 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
     Animated.timing(loginTranslateY, {
       toValue: Dimensions.get('window').height, // slide into place
-      duration: 500,
+      duration: 200,
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
     }).start();
   };
 
   const goToForgotPassword = () => {
+    Keyboard.dismiss();
     Animated.timing(textAndBackOpacity, {
       toValue: 0, // fade out
       duration: 500,
@@ -1102,7 +1110,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
     Animated.timing(resetPasswordtranslateY, {
       toValue: -Dimensions.get('window').height,
-      duration: 500,
+      duration: 200,
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
     }).start(() => {});
@@ -1165,6 +1173,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   };
 
   const ClickBackToSendOTP1 = (onFinish?: () => void) => {
+    Keyboard.dismiss();
     console.log('ClickBackToSendOTP1', setOTPTranslatY);
 
     // ✅ Reset OTP screen below the window
@@ -1391,7 +1400,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
               <Animated.View
                 style={[
                   { transform: [{ translateY: unizyTranslateY }] },
-                  { paddingTop: Platform.OS === 'ios' ? 0 : 0 },
                 ]}
               >
                 <TouchableOpacity
@@ -1481,7 +1489,11 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                   height: '100%',
                   padding: 16,
                   paddingBottom: Platform.OS === 'ios' ? insets.bottom : 20,
-                  paddingTop: Platform.OS === 'ios' ? 10 : 20,
+                  paddingTop: Platform.OS === 'ios' ? 0 : 20,
+                }}
+                onLayout={e => {
+                  const { height } = e.nativeEvent.layout;
+                  setContentHeight(height); // save measured height
                 }}
               >
                 <Animated.View
@@ -1575,14 +1587,13 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
           {currentScreen === 'login' && (
             <>
               <View
-                style={{ paddingTop: 20, paddingLeft: 16, paddingRight: 16 }}
+                style={{ paddingTop: (Platform.OS === 'ios' ? 0: 20), paddingLeft: 16, paddingRight: 16 }}
               >
                 {currentScreenIninner === 'login' && (
                   <TouchableOpacity
                     style={{ zIndex: 1000 }}
                     onPress={() => {
-                      //console.log('backPRess');
-                      setSelected(null)
+                      setSelected(null);
                       setCurrentScreen('language');
                     }}
                   >
@@ -1733,6 +1744,12 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                             </Text>
                             <TouchableOpacity
                               onPress={() => {
+                                Keyboard.dismiss();
+                                Animated.timing(textAndBackOpacity, {
+                                  toValue: 0, // fade out
+                                  duration: 500,
+                                  useNativeDriver: true,
+                                }).start();
                                 setTextandBackIcon(false);
                                 signupTranslateY.setValue(0);
                                 setUsername('');
@@ -1813,6 +1830,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
                             <TouchableOpacity
                               onPress={() => {
+                                Keyboard.dismiss();
                                 resetPasswordtranslateY.setValue(0);
                                 ClickFPGoBack_slideOutToTop(() => {
                                   Animated.timing(textAndBackOpacity, {
@@ -2071,6 +2089,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
                           <TouchableOpacity
                             onPress={() => {
+                              Keyboard.dismiss();
                               handleSendOTP();
                               setImageLoaded(true);
                             }}
@@ -2093,6 +2112,11 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                             <TouchableOpacity
                               onPress={() => {
                                 {
+                                  Animated.timing(textAndBackOpacity, {
+                                    toValue: 1, // fade in
+                                    duration: 500,
+                                    useNativeDriver: true,
+                                  }).start();
                                   setCurrentScreen('login');
                                   setcurrentScreenIninner('login');
                                   setConfirmPassword('');
@@ -2205,6 +2229,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                 </Text>
                                 <TouchableOpacity
                                   onPress={() => {
+                                    Keyboard.dismiss();
                                     Click_SENDOTP_TO_SIGNUPSCREEN(() => {
                                       setCurrentScreen('login');
                                       setcurrentScreenIninner('signup');

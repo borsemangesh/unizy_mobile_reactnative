@@ -591,6 +591,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   ];
 
   const clickbookmark = () => {
+    setIsNav(false);
     navigation.replace('Bookmark');
     // navigation.reset({
     //   index: 0,
@@ -598,6 +599,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
     // });
   };
   const clicklisting = async () => {
+    setIsNav(false);
     navigation.replace('MyListing');
     // navigation.reset({
     //   index: 0,
@@ -733,7 +735,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   searchIcon: {
-    padding: 5,
+    padding: (Platform.OS === 'ios'? 0:5),
     margin: 10,
     height: 24,
     width: 24,

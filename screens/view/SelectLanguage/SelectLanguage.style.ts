@@ -105,8 +105,8 @@ export const selectlang_styles = StyleSheet.create({
   radioButton_round: {
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    width: 15,
-    height: 15,
+    width: 20,
+    height: 20,
     flexShrink: 0,
     borderColor: '#ffffff4e',
     
@@ -117,8 +117,8 @@ export const selectlang_styles = StyleSheet.create({
     shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25',
   },
   radioButton: {
-    width: 8,
-    height: 8,
+    width: 12,
+    height: 12,
     borderRadius: 10,
     // borderWidth: 1,
     // borderColor: '#ffffff4e',

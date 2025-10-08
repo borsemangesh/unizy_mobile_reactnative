@@ -25,7 +25,7 @@ export const Styles = StyleSheet.create({
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 30,
+    paddingTop: (Platform.OS === 'ios' ? 0 : 30 ) ,
   },
   linearGradient: {
     height: '14%',
@@ -445,14 +445,14 @@ export const Styles = StyleSheet.create({
     textAlign: 'center',
   },
   eyeIcon: {
-    width: 19,
-    height: 15,
+    width: 24,
+    height: 24,
     resizeMode:'contain'
     // paddingRight: 16,
   },
   eyeCross: {
-    width: 19,
-    height: 15,
+    width: 24,
+    height: 24,
     resizeMode:'contain'
   },
   donthaveAccountText: {
@@ -1979,6 +1979,7 @@ export const Styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.57)',
+    // opacity: (Platform.OS === 'ios' ? 0.9: 1) 
   },
 
   profilelogo1: {
