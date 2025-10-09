@@ -1812,7 +1812,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                               </Text>
                             </View>
 
-                            <View style={Styles.login_container}>
+                            <View style={[Styles.login_container]}>
                               <TextInput
                                 style={[
                                   Styles.personalEmailID_TextInput,
@@ -1832,7 +1832,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                             </View>
 
                             <TouchableOpacity
-                              style={Styles.loginButton}
+                              style={[Styles.loginButton]}
                               onPress={() => {
                                 handleSendResetLink();
                               }}

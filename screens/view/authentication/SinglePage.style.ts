@@ -294,6 +294,7 @@ export const Styles = StyleSheet.create({
   },
   password_TextInput: {
     width: '88%',
+    paddingLeft: 4,
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
     fontSize: 17,
@@ -729,13 +730,14 @@ export const Styles = StyleSheet.create({
   },
 
   personalEmailID_TextInput1: {
-    width: '85%',
+    width: '85.5%',
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
     fontSize: 17,
     lineHeight: 22,
     fontStyle: 'normal',
     color: '#fff',
+    // paddingLeft: 2,
   },
 
   search_container: {
