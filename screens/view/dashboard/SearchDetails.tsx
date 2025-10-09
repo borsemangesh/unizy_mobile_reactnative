@@ -699,7 +699,7 @@ const handleBookmarkPress = async (productId: number) => {
  
               <TouchableOpacity
                 style={styles.loginButton}
-                onPress={()=>{navigation.navigate('Dashboard') ;setShowPopup(false);}}
+                onPress={()=>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home', isNavigate:false }) ;setShowPopup(false);}}
               >
                 <Text style={styles.loginText}>Go Back</Text>
               </TouchableOpacity>
@@ -750,9 +750,7 @@ const styles = StyleSheet.create({
     borderLeftColor: '#ffffff5d',
     borderRightColor: '#ffffff36',
     borderWidth: 0.3,
-    position: 'absolute',
-    right: 0,
-    top: -10
+  
   },
   iconSmall: {
     width: 25,
@@ -809,17 +807,18 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
-    paddingTop: 20,
+    // paddingTop: 20,
   },
     backBtn: {
-    width: 30,
+    width: 48,
+    height: 48, 
     justifyContent: 'center',
     alignItems: 'center',
   },
 
     header: {
     height: 70,
-    paddingTop: 12,
+    paddingTop: (Platform.OS === 'ios' ? 40: 20),
     paddingBottom: 12,
     paddingHorizontal: 16,
     justifyContent: 'center',
@@ -1104,7 +1103,7 @@ const styles = StyleSheet.create({
     height: 24,
   },
   backIconRow: {
-    padding: 12,
+    //padding: 12,
     borderRadius: 40,
 
 
@@ -1115,10 +1114,7 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
     height: 48,
     width: 48,
-    position: 'absolute',
-    top: -10,
-    left: 0,
-    right: 0,
+   
     justifyContent: 'center',
     alignItems: 'center',
   },

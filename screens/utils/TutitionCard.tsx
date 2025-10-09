@@ -127,7 +127,7 @@ export default function TutitionCard({
 const styles = StyleSheet.create({
   card: {
     width: screenWidth * 0.85,
-    height: screenHeight * 0.4,
+    height: (Platform.OS == 'ios'? screenHeight * 0.35: screenHeight * 0.4),
     marginHorizontal: 8,
     borderRadius: 34,
     backgroundColor: 'rgba(255, 255, 255, 0.17)',
@@ -286,8 +286,8 @@ const styles = StyleSheet.create({
 
   bookmark: {
     position: 'absolute',
-    top: 5,
-    right: 5,
+    top: (Platform.OS === 'ios'? 9: 9),
+    right: (Platform.OS === 'ios'? 9: 9),
     width: 44,
     height: 44,
     justifyContent: 'center',

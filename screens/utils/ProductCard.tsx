@@ -82,7 +82,7 @@ export default function ProductCard({
 const styles = StyleSheet.create({
   card: {
     width: screenWidth * 0.85,
-    height: screenHeight * 0.4,
+    height: (Platform.OS == 'ios'? screenHeight * 0.35: screenHeight * 0.4),
   
     marginHorizontal: 8,
     borderRadius: 34,

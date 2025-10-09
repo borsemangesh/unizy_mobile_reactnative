@@ -63,11 +63,11 @@ export default function SearchListProductCard({
             </TouchableOpacity>
         </View> */}
 
-         <View style={[styles.bookmark,{opacity: 0.9}]}>
+         <View style={[styles.bookmark]}>
                         <BlurView 
                           blurType="light"
                           blurAmount={100}
-                          style={StyleSheet.absoluteFillObject}
+                          style={[StyleSheet.absoluteFillObject,{borderRadius: 9}]}
                         />
                   <TouchableOpacity onPress={applybookmark}>
                    <Image
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '100%',
-    padding: 12,
+    padding: (Platform.OS === 'ios'? 5: 12),
     borderRadius: 12,
     //borderColor:'000',
     // borderWidth:2,
@@ -172,13 +172,13 @@ const styles = StyleSheet.create({
   bookmark: {
   
     position: 'absolute',
-    top: Platform.OS === 'ios' ? 25 : 10,
-    right: Platform.OS === 'ios' ? 25 : 10,
-     borderRadius: 10,
+    top: Platform.OS === 'ios' ? 10 : 10,
+    right: Platform.OS === 'ios' ? 10 : 10,
+     borderRadius: 9,
      backgroundColor:
-       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(101, 101, 101, 0.72) 0%, rgba(117, 117, 117, 0.1) 100%)',
-    width: 26,
-    height: 26,
+       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(101, 101, 101, 0.13) 0%, rgba(117, 117, 117, 0.1) 100%)',
+    width: 28,
+    height: 28,
     display: 'flex',
     alignContent: 'center',
     justifyContent: 'center',
@@ -187,11 +187,7 @@ const styles = StyleSheet.create({
     boxShadow: '0 2px 5px 0 rgba(109, 109, 109, 0.2)',
     borderWidth: 0.5,
     borderColor: '#ffffff2e',
-    borderEndEndRadius: 15,
-    borderStartEndRadius: 15,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-    borderBottomStartRadius: 15,
+    
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
 

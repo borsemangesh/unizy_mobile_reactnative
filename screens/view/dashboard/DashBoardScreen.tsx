@@ -86,7 +86,7 @@ const ProductItem: React.FC<ProductItemProps> = ({
       navigation.replace('ProductDetails', {
         category_id: item.id,
         category_name: item.name,
-      });
+      },{ animation: 'none' });
     }}
   >
     <View
@@ -146,7 +146,7 @@ const AddScreenContent: React.FC<
               navigation.replace('AddScreen', {
                 productId: item.id,
                 productName: item.name,
-              });
+              },{ animation: 'none' });
             }}
           >
             <View style={styles.card}>
@@ -560,7 +560,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                       onBookmarkPress={() => handleBookmarkPress(item.id)}
                       isBookmarked={bookmarkedIds.includes(item.id)}
                       onpress={() =>{
-                        navigation.navigate('SearchDetails', { id: item.id })
+                        navigation.navigate('SearchDetails', { id: item.id },{ animation: 'none' })
                       }}
                     />
                   ) : (
@@ -574,7 +574,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                       isBookmarked={bookmarkedIds.includes(item.id)}
                       //isBookmarked={item.}
                       onpress={() =>{
-                        navigation.navigate('SearchDetails', { id: item.id })
+                        navigation.navigate('SearchDetails', { id: item.id },{ animation: 'none' })
                       }}
                     />
                   )}
@@ -606,7 +606,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
 
   const clickbookmark = () => {
     setIsNav(false);
-    navigation.replace('Bookmark');
+    navigation.replace('Bookmark',{ animation: 'none' });
     // navigation.reset({
     //   index: 0,
     //   routes: [{ name: 'Bookmark', }],
@@ -614,7 +614,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   };
   const clicklisting = async () => {
     setIsNav(false);
-    navigation.replace('MyListing');
+    navigation.replace('MyListing',{ animation: 'none' });
     // navigation.reset({
     //   index: 0,
     //   routes: [{ name: 'MyListing'}],

@@ -226,9 +226,13 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
         { flex: isLastOddItem ? 0.5 : 0.5, marginRight: isLastOddItem ? 0.5 : 0.5 },
       ]}
     >
+
+
+
       <TouchableOpacity
-        onPress={() =>
-          navigation.navigate('SearchDetails', { id: item.id ,name:category_name})
+        onPress={() =>{
+          navigation.navigate('SearchDetails', { id: item.id ,name:category_name},{animation: 'none'})}
+          
         }
         style={{ flex: 1 }}
       >
@@ -304,6 +308,8 @@ const handleFilterApply = async (filterBody: any) => {
         <View style={styles.header}>
           <View style={styles.headerRow}>
             <TouchableOpacity onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})}}>
+          
+            
               <View style={styles.backIconRow}>
                 <Image
                   source={require('../../../assets/images/back.png')}

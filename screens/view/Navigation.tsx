@@ -47,15 +47,17 @@ export const Navigation = () => {
 
   enableScreens();
   return (
-    <NavigationContainer>
+    <NavigationContainer
+     
+  >
       <Stack.Navigator
         initialRouteName='SinglePage'
-        screenOptions={{ headerShown: false, animation: 'fade',presentation: 'fullScreenModal'  }}
+        screenOptions={{ headerShown: false, animation: 'none',presentation: 'fullScreenModal'  }}
       >
         <Stack.Screen 
           name='Splashscreen'
           component={SplashScreen}
-          options={{ headerShown: false, animation: 'fade',presentation: 'fullScreenModal' }}/>
+          options={{ headerShown: false, animation: 'none',presentation: 'fullScreenModal' }}/>
         <Stack.Screen
           name="SinglePage"
           component={SinglePage}
@@ -72,7 +74,7 @@ export const Navigation = () => {
           component={Temp}
           options={{
             headerShown: false,
-            animation: 'fade',
+            animation: 'none',
             presentation: 'fullScreenModal',
           }}
         />
@@ -88,7 +90,7 @@ export const Navigation = () => {
           component={AddScreen}
           options={{
             headerShown: false,
-            animation: 'fade',
+            animation: 'none',
             presentation: 'fullScreenModal',
           }}
         />
@@ -97,7 +99,7 @@ export const Navigation = () => {
           component={PreviewThumbnail}
           options={{
             headerShown: false,
-            animation: 'fade',
+            animation: 'none',
             presentation: 'fullScreenModal',
           }}
         />
@@ -106,7 +108,7 @@ export const Navigation = () => {
           component={PreviewDetailed}
           options={{
             headerShown: false,
-            animation: 'fade',
+            animation: 'none',
             presentation: 'fullScreenModal',
           }}
         />
@@ -115,7 +117,7 @@ export const Navigation = () => {
           component={ProductDetails}
           options={{
             headerShown: false,
-            animation: 'fade',
+            animation: 'none',
             presentation: 'fullScreenModal',
           }}
         />
