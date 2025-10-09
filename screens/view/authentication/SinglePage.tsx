@@ -1321,7 +1321,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
    animRef.current?.pause();
       if (flag === 'true') {
         // User is logged in → navigate to Dashboard
-        navigation.navigate('Dashboard');
+        navigation.navigate('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: true});
       } else {
         // User is not logged in → show hello screen
         setCurrentScreen('hello');

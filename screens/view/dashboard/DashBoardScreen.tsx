@@ -17,7 +17,7 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 
-const bgImage = require('../../../assets/images/bgimage.png');
+const bgImage = require('../../../assets/images/backimg.png');
 import ProductCard from '../../utils/ProductCard';
 
 import AnimatedSlideUp from '../../utils/AnimatedSlideUp';
@@ -186,9 +186,10 @@ type DashBoardScreenProps = {
 };
 
 type RootStackParamList = {
-  Dashboard: { AddScreenBackactiveTab: string };
-  // other screens...
-};
+  Dashboard: { AddScreenBackactiveTab: string;
+        isNavigate: boolean;    
+      }
+   };
 type DashboardRouteProp = RouteProp<RootStackParamList, 'Dashboard'>;
 
 const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
@@ -209,6 +210,8 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   const route = useRoute<DashboardRouteProp>();
 
   useEffect(() => {
+    setIsNav(route.params?.isNavigate);
+    console.log('useEffect_IsNav', isNav,route.params?.isNavigate);
     if (route.params?.AddScreenBackactiveTab) {
       setActiveTab(
         route.params?.AddScreenBackactiveTab as
@@ -324,7 +327,9 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   ).current;
 
   useEffect(() => {
-    if (activeTab === 'Home' && isNav === true) {
+    if (activeTab === 'Home' && route.params?.isNavigate) {
+      console.log("isNav: ",isNav)
+      setIsNav(false);
       translateY.setValue(-screenWidth);
       searchBartranslateY.setValue(-screenWidth);
       categorytranslateY.setValue(-screenWidth);
@@ -384,9 +389,18 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
         }),
       );
       Animated.stagger(200, animations).start();
+    } else if (activeTab === 'Home' && route.params?.isNavigate === false) {
+      // No animation: Just reset instantly
+      translateY.setValue(0);
+      searchBartranslateY.setValue(0);
+      categorytranslateY.setValue(0);
+      leftItemTranslateX.setValue(0);
+      rightItemTranslateX.setValue(0);
+      cardSlideupAnimation.setValue(0);
+      bottomNaviationSlideupAnimation.setValue(0);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab]);
+  }, [activeTab,route.params?.isNavigate]);
 
   useEffect(() => {
     const index = ['Home', 'Search', 'Add', 'Bookmark', 'Profile'].indexOf(
@@ -500,7 +514,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
       await AsyncStorage.setItem(
         'bookmarkedIds',
         JSON.stringify(updatedBookmarks),
-      ); // persist locally
+      );
     } catch (error) {
       console.error('Bookmark error:', error);
     }
