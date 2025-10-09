@@ -18,7 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { showToast } from '../../utils/toast';
 
-const bgImage = require('../../../assets/images/bgimage.png');
+const bgImage = require('../../../assets/images/backimg.png');
 import { useRoute, RouteProp } from '@react-navigation/native';
 import SearchListProductCard from '../../utils/SearchListProductCard';
 import SearchTutionCard from '../../utils/SearchTutionCard';
@@ -299,14 +299,7 @@ const handleBookmarkPress = async (productId: number) => {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerRow}>
-            <TouchableOpacity onPress={() => {
-              navigation.replace('Dashboard')}
-              // navigation.reset({
-              //   index: 0,
-              //   routes: [{ name: 'Dashboard'}],
-              // }); 
-            // } 
-            }>
+            <TouchableOpacity onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})}}>
               <View style={styles.backIconRow}>
                 <Image
                   source={require('../../../assets/images/back.png')}
@@ -315,7 +308,7 @@ const handleBookmarkPress = async (productId: number) => {
               </View>
             </TouchableOpacity>
             <Text style={styles.unizyText}>Bookmarks</Text>
-            <View style={{ width: 30 }} />
+            <View style={{ width: 48 }} />
           </View>
         </View>
 
@@ -449,7 +442,7 @@ const styles = StyleSheet.create({
      flex: 1
      },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 40 : 30,
+    paddingTop: Platform.OS === 'ios' ? 50 : 25,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },

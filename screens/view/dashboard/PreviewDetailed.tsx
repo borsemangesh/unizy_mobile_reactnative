@@ -416,7 +416,7 @@ const diff1 =commissionPrice1-priceValue1
 
   return (
     <ImageBackground
-      source={require('../../../assets/images/bganimationscreen.png')}
+      source={require('../../../assets/images/backimg.png')}
       style={{ width: '100%', height: '100%' }}
       resizeMode="cover"
     >

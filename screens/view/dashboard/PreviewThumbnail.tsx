@@ -175,7 +175,7 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
 
   return (
     <ImageBackground
-      source={require('../../../assets/images/bganimationscreen.png')}
+      source={require('../../../assets/images/backimg.png')}
       style={{ width: '100%', height: '100%' }}
       resizeMode="cover"
     >

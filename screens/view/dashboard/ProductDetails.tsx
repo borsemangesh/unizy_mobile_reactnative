@@ -16,7 +16,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 
-const bgImage = require('../../../assets/images/bgimage.png');
+const bgImage = require('../../../assets/images/backimg.png');
 const searchIcon = require('../../../assets/images/searchicon.png');
 import { useRoute, RouteProp } from '@react-navigation/native';
 import SearchListProductCard from '../../utils/SearchListProductCard';
@@ -262,6 +262,40 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
   );
 };
 
+const handleFilterApply = async (filterBody: any) => {
+  try {
+    setIsLoading(true);
+
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) return;
+
+    const url = 'http://65.0.99.229:4320/category/filter-apply';
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(filterBody),
+    });
+
+    const jsonResponse = await response.json();
+    console.log('Filter Apply Response:', jsonResponse);
+
+    if (jsonResponse.statusCode === 200) {
+      const filteredFeatures = jsonResponse.data.features;
+      setFeaturelist(filteredFeatures);
+      setHasMore(filteredFeatures.length === 20);
+      setPage(2);
+    }
+  } catch (err) {
+    console.log('Error applying filters:', err);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -269,7 +303,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerRow}>
-            <TouchableOpacity onPress={() => navigation.replace('Dashboard')}>
+            <TouchableOpacity onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})}}>
               <View style={styles.backIconRow}>
                 <Image
                   source={require('../../../assets/images/back.png')}
@@ -279,7 +313,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
             </TouchableOpacity>
             <Text style={styles.unizyText}>{`${category_name}s`}</Text>
 
-            <View style={{ width: 30 }} />
+            <View style={{ width: 48 }} />
           </View>
         </View>
 
@@ -339,7 +373,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
       catagory_id={category_id}
       visible={isFilterVisible}
       onClose={() => setFilterVisible(false)}
-    />
+      onApply={(filterBody) => handleFilterApply(filterBody)}/>
     <NewCustomToastContainer/>
     </ImageBackground>
   );
@@ -351,7 +385,7 @@ const styles = StyleSheet.create({
   background: { flex: 1, width: '100%', height: '100%' },
   fullScreenContainer: { flex: 1 },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 50,
+    paddingTop: Platform.OS === 'ios' ? 50 : 25,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },

@@ -18,7 +18,7 @@ import { NewCustomToastContainer } from '../../utils/component/NewCustomToastMan
 type ListingDetailsProps = {
   navigation: any;
 };
-const bgImage = require('../../../assets/images/bgimage.png');
+const bgImage = require('../../../assets/images/backimg.png');
 const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 
   const scrollY1 = new Animated.Value(0);
@@ -77,7 +77,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
               </View>
             </TouchableOpacity>
             <Text style={styles.unizyText}>Listing Details</Text>
-            <View style={{ width: 30 }} />
+            <View style={{ width: 48 }} />
           </View>
         </View>
 
@@ -242,8 +242,8 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 const styles = StyleSheet.create({
   background: { flex: 1, width: '100%', height: '100%' },
   fullScreenContainer: { flex: 1 },
-  header: {
-    paddingTop: Platform.OS === 'ios' ? 70 : 50,
+   header: {
+    paddingTop: Platform.OS === 'ios' ? 50 : 25,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },

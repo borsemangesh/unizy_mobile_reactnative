@@ -24,7 +24,7 @@ import { MAIN_URL } from '../../utils/APIConstant';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 
 
-const bgImage = require('../../../assets/images/bgimage.png');
+const bgImage = require('../../../assets/images/backimg.png');
 const profileImg = require('../../../assets/images/user.jpg'); 
 const logouticon=require('../../../assets/images/logout.png')
 
@@ -192,7 +192,7 @@ return (
           </View>
         </TouchableOpacity>
         <Text style={styles.unizyText}>Profile</Text>
-        <View style={{ width: 30 }} />
+        <View style={{ width: 48 }} />
       </View>
     </View>
 

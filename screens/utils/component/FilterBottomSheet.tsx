@@ -20,12 +20,13 @@ interface FilterBottomSheetProps {
   catagory_id: number;
   visible: boolean;
   onClose: () => void;
+  onApply: (filters: any) => void; // 👈 new callback
 }
-
 const FilterBottomSheet = ({
   catagory_id,
   visible,
   onClose,
+  onApply
 }: FilterBottomSheetProps) => {
   const [filters, setFilters] = useState<any[]>([]);
   const [selectedTab, setSelectedTab] = useState<string | null>(null);
@@ -178,6 +179,47 @@ const FilterBottomSheet = ({
     return null;
   };
 
+const handleApply = () => {
+  const selectedFilters = filters
+    .map(f => {
+      if (f.field_type === 'dropdown' && dropdownSelections[f.id]?.length) {
+        return {
+          id: f.id,
+          field_name: f.field_name,
+          field_type: f.field_type,
+          alias_name: f.alias_name,
+          options: dropdownSelections[f.id],
+        };
+      } else if (f.alias_name?.toLowerCase() === 'price') {
+        return {
+          id: f.id,
+          field_name: f.field_name,
+          field_type: f.field_type,
+          alias_name: f.alias_name,
+          options: [priceRange.min, priceRange.max],
+        };
+      }
+      return null;
+    })
+    .filter(Boolean);
+
+  const filterBody = {
+    filters: selectedFilters,
+    page: 1,
+    pagesize: 10,
+    search: '',
+    category_id: catagory_id,
+  };
+
+  console.log('Selected filter body:', JSON.stringify(filterBody, null, 2));
+
+  // send filter body back to parent
+  onApply(filterBody);
+
+  // close bottom sheet
+  onClose();
+};
+
   return (
     <Modal
       animationType="slide"
@@ -193,6 +235,7 @@ const FilterBottomSheet = ({
               styles.broderTopLeftRightRadius_30,
             ]}
             blurAmount={40}
+            pointerEvents='none'
           />
           <View style={styles.modeltitleContainer}>
             <Text style={styles.modelTextHeader}>Filters</Text>
@@ -242,7 +285,7 @@ const FilterBottomSheet = ({
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.cancelBtn, { backgroundColor: '#ffffff4e' }]}
-              onPress={onClose}
+              onPress={handleApply}
             >
               <Text style={[styles.cancelText, { color: '#000' }]}>Apply</Text>
             </TouchableOpacity>

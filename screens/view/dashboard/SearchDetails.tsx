@@ -259,7 +259,7 @@ const renderImage = () => {
             >
               <Text
                 style={{
-                  fontSize: 60,
+                  fontSize: 80,
                  color: '#FFF',
                  fontWeight:600,
                 textAlign: 'center',
@@ -368,7 +368,7 @@ const handleBookmarkPress = async (productId: number) => {
 
     return (
       <ImageBackground
-        source={require('../../../assets/images/bganimationscreen.png')}
+        source={require('../../../assets/images/backimg.png')}
         style={{ width: '100%', height: '100%' }}
         resizeMode="cover"
       >
@@ -492,7 +492,7 @@ const handleBookmarkPress = async (productId: number) => {
                             ))}
                         </View>
                       ) : (
-                        <Text style={[styles.new, { marginTop: -6 }]}>
+                        <Text style={[styles.new, { marginTop:2 }]}>
                           {param.param_value || '—'}
                         </Text>
                       )}
@@ -545,7 +545,7 @@ const handleBookmarkPress = async (productId: number) => {
                           'University of Warwick'}
                       </Text>
                       <Text style={[styles.univeritytext, { marginTop: -5 }]}>
-                        {detail?.category?.name || 'Coventry'}
+                        {'Coventry'}
                       </Text>
                     </View>
                   </View>

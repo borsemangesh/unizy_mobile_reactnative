@@ -32,7 +32,7 @@ import {
 import { RouteProp, useRoute } from '@react-navigation/native';
 // import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
 
-const bgImage = require('../../../assets/images/bgimage.png');
+const bgImage = require('../../../assets/images/backimg.png');
 const profileImg = require('../../../assets/images/user.jpg'); // your avatar image
 const uploadIcon = require('../../../assets/images/upload.png'); // upload icon
 
@@ -816,7 +816,7 @@ const [maxFeatureCap, setMaxFeatureCap] = useState(0);
             <Text style={styles.unizyText}>
               {`List${productName ? ` ${productName} ` : ''}`}
             </Text>
-            <View style={{ width: 30 }} />
+            <View style={{ width: 48 }} />
           </View>
         </View>
 
