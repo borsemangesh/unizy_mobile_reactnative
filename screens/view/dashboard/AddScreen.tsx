@@ -783,9 +783,11 @@ const [maxFeatureCap, setMaxFeatureCap] = useState(0);
               {/* Texts */}
               <View style={{ flex: 1 }}>
                 <Text style={styles.importantText1}>Important:</Text>
-                <Text style={styles.importantText}>
-                  Featured listings require a small upfront fee - {featureFee}% of your item’s price or up to £{maxFeatureCap} (whichever is lower).
-                </Text>
+              <Text style={styles.importantText}>
+                Featured listings require a small upfront fee —{' '}
+                <Text style={styles.importantText1}>{featureFee}%</Text> of your item’s price or up to{' '}
+                <Text style={styles.importantText1}>£{maxFeatureCap}</Text> (whichever is lower).
+              </Text>
               </View>
             </View>
           </View>
@@ -864,7 +866,7 @@ const [maxFeatureCap, setMaxFeatureCap] = useState(0);
                   justifyContent: 'space-between',
                 }}
               >
-                <Text style={styles.userSub}>Coventry</Text>
+                <Text style={styles.userSub1}>Coventry</Text>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -876,7 +878,7 @@ const [maxFeatureCap, setMaxFeatureCap] = useState(0);
                     source={require('../../../assets/images/calendar_icon.png')}
                     style={{ height: 20, width: 20 }}
                   />
-                  <Text style={styles.userSub}>{getCurrentDate()}</Text>
+                  <Text style={styles.userSub1}>{getCurrentDate()}</Text>
                 </View>
               </View>
             </View>
@@ -1091,6 +1093,15 @@ dropdownIcon: {
     fontSize: 12,
     fontWeight: '500',
     lineHeight: 16,
+    marginTop:4
+  },
+   userSub1: {
+    color: 'rgba(255, 255, 255, 0.88)',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 12,
+    fontWeight: '500',
+    lineHeight: 16,
+    marginTop:1
   },
   dateText: {
     color: '#ccc',
@@ -1196,6 +1207,7 @@ dropdownIcon: {
     fontWeight: 400,
     lineHeight: 16,
     fontSize: 14,
+    paddingLeft:4
   },
   productTextView: {
     gap: 4,
@@ -1214,7 +1226,7 @@ dropdownIcon: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     // marginBottom: 12,
-    marginTop: 9,
+   // marginTop: 9,
   },
   categoryTag: {
     backgroundColor:
@@ -1265,16 +1277,16 @@ dropdownIcon: {
     borderRightColor: '#ffffff31',
   },
   importantText: {
-    color: '#ccc',
+    color: '#FFFFFFCC',
     fontSize: 12,
     marginBottom: 6,
-    fontFamily: 'Urbanist-Medium',
-    fontWeight: 500,
+    fontFamily: 'Urbanist-Regular',
+    fontWeight: 400,
   },
   importantText1: {
-    color: '#ccc',
+    color: '#FFFFFF',
     fontSize: 12,
-    fontFamily: 'Urbanist-SemiBold',
+    fontFamily: 'Urbanist-Medium',
     fontWeight: 500,
   },
 
