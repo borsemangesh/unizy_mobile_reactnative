@@ -1325,7 +1325,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       } else {
         // User is not logged in → show hello screen
         setCurrentScreen('hello');
-        setCurrentGreetingIndex(0); // set greeting index only for hello screen
+        setCurrentGreetingIndex(-1); // set greeting index only for hello screen
 
 
         Animated.timing(unizyTranslateY, {
@@ -1646,7 +1646,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                   height: '100%',
                   paddingLeft: 16,
                   paddingRight: 16,
-                  paddingTop: 10,
+                  paddingTop: 15,
                 }}
               >
                 <Animated.View

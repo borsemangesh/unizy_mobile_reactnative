@@ -2230,9 +2230,9 @@ export const Styles = StyleSheet.create({
 
   mainTemsAndConditions: {
     position: 'absolute',
-                          bottom: 20, // adjust spacing
-                          left: 0,
-                          right: 0,
-                          alignItems: 'center',
+    bottom: (Platform.OS === 'ios' ? 30 : 20), // adjust spacing
+    left: 0,
+    right: 0,
+    alignItems: 'center',
   },
 });

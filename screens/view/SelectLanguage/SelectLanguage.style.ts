@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 
 export const selectlang_styles = StyleSheet.create({
   flex_1: {
@@ -42,7 +42,7 @@ export const selectlang_styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
   },
   searchIcon: {
-    padding: 5, 
+    padding: (Platform.OS === 'ios'? 0:5), 
     margin: 10 ,
     height:24,
     width:24
