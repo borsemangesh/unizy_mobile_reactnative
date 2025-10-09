@@ -25,7 +25,6 @@ export const Styles = StyleSheet.create({
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: (Platform.OS === 'ios' ? 0 : 30 ) ,
   },
   linearGradient: {
     height: '14%',

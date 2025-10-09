@@ -53,7 +53,7 @@ type SinglePageRouteProp = RouteProp<RootStackParamList, 'SinglePage'>;
 const SinglePage = ({ navigation }: SinglePageProps) => {
   const [currentScreen, setCurrentScreen] = useState<
     'hello' | 'language' | 'login' | 'splashScreen'
-  >('hello');
+  >('splashScreen');
 
   const [currentScreenIninner, setcurrentScreenIninner] = useState<
     'login' | 'signup' | 'forgotpassword' | 'sendOTP' | 'verify' | 'profile'
@@ -272,9 +272,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         useNativeDriver: true,
       }).start(() => setShowButton(false));
     }
-    if (currentScreen === 'hello') {
-      animateGreeting();
-    }
+   
     if (currentScreen === 'language') {
       slideUp1.setValue(screenHeight);
       Animated.timing(slideUp1, {
@@ -387,19 +385,19 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   useFocusEffect(
     React.useCallback(() => {
       if (currentScreen === 'hello') {
-        Animated.timing(unizyTranslateY, {
-          toValue: 0,
-          duration: 1200,
-          easing: Easing.out(Easing.ease),
-          useNativeDriver: true,
-        }).start();
-        Animated.timing(slideUp, {
-          toValue: 0, // final position
-          duration: 1000,
-          easing: Easing.out(Easing.ease),
-          useNativeDriver: true,
-        }).start();
-        animateGreeting();
+        // Animated.timing(unizyTranslateY, {
+        //   toValue: 0,
+        //   duration: 1200,
+        //   easing: Easing.out(Easing.ease),
+        //   useNativeDriver: true,
+        // }).start();
+        // Animated.timing(slideUp, {
+        //   toValue: 0, // final position
+        //   duration: 1000,
+        //   easing: Easing.out(Easing.ease),
+        //   useNativeDriver: true,
+        // }).start();
+        // animateGreeting();
       }
 
       if (
@@ -1315,24 +1313,39 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   const textAndBackOpacity = useRef(new Animated.Value(1)).current;
   const [initialRoute, setInitialRoute] = useState<null | string>(null);
 
-  // const animRef = useRef<LottieView>(null);
+  const animRef = useRef<LottieView>(null);
 
-  // const handleAnimationFinish = () => {
-  //   const checkLoginStatus = async () => {
-  //     const flag = await AsyncStorage.getItem('ISLOGIN');
-  //  animRef.current?.pause();
-  //     if (flag === 'true') {
-  //       // User is logged in → navigate to Dashboard
-  //       navigation.navigate('Dashboard');
-  //     } else {
-  //       // User is not logged in → show hello screen
-  //       setCurrentScreen('hello');
-  //       setCurrentGreetingIndex(0); // set greeting index only for hello screen
-  //     }
-  //   };
+  const handleAnimationFinish = () => {
+    const checkLoginStatus = async () => {
+      const flag = await AsyncStorage.getItem('ISLOGIN');
+   animRef.current?.pause();
+      if (flag === 'true') {
+        // User is logged in → navigate to Dashboard
+        navigation.navigate('Dashboard');
+      } else {
+        // User is not logged in → show hello screen
+        setCurrentScreen('hello');
+        setCurrentGreetingIndex(0); // set greeting index only for hello screen
 
-  //   checkLoginStatus();
-  // };
+
+        Animated.timing(unizyTranslateY, {
+          toValue: 0,
+          duration: 1200,
+          easing: Easing.out(Easing.ease),
+          useNativeDriver: true,
+        }).start();
+        Animated.timing(slideUp, {
+          toValue: 0, // final position
+          duration: 1000,
+          easing: Easing.out(Easing.ease),
+          useNativeDriver: true,
+        }).start();
+        // animateGreeting();
+      }
+    };
+
+    checkLoginStatus();
+  };
 
   return (
     <ImageBackground
@@ -1340,67 +1353,64 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       style={{ width: '100%', height: '100%' }}
       resizeMode="cover"
     >
-      {/* {Platform.OS === 'android' ? 
-      (
-        <><BackgroundAnimation_Android/></>
-      ):(<>
-      <View style={[StyleSheet.absoluteFill,{opacity: 0.4}]}>
-    <LottieView
-
-      source={require("../../../assets/animations/backgroundanimation3.json")}
-      autoPlay
-      loop
-      resizeMode="cover"
-      style={StyleSheet.absoluteFillObject}
-    />
-    <BlurView
-      style={[StyleSheet.absoluteFill]}
-      blurType="light"   // "light", "dark", "xlight"
-      blurAmount={30}    // adjust intensity
-      
-    />
-  </View></>
-  )} */}
+      {Platform.OS === 'android' ? (
+        <>
+          <BackgroundAnimation_Android />
+        </>
+      ) : (
+        <>
+          <View style={[StyleSheet.absoluteFill, { opacity: 0.4 }]}>
+            <LottieView
+              source={require('../../../assets/animations/backgroundanimation3.json')}
+              autoPlay
+              loop
+              resizeMode="cover"
+              style={StyleSheet.absoluteFillObject}
+            />
+            <BlurView
+              style={[StyleSheet.absoluteFill]}
+              blurType="light" // "light", "dark", "xlight"
+              blurAmount={30} // adjust intensity
+            />
+          </View>
+        </>
+      )}
       <View
         style={{
           flex: 1,
-          paddingTop: Platform.OS === 'ios' ? 80 : 30,
+          paddingTop: Platform.OS === 'ios' ? 0 : 30,
         }}
       >
-        {Platform.OS === 'android' ? (
+        {/* {Platform.OS === 'android' ? (
           <BackgroundAnimation_Android />
         ) : (
           <BackgroundAnimation />
-        )}
+        )} */}
 
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
         >
-          {/* {currentScreen === 'splashScreen' && (
-          <>
-           <View style={Styles.ScreenLayout}>
-          <LottieView
-
-            ref={animRef}
-            source={require("../../../assets/animations/animation_new.json")}
-            autoPlay
-            loop={false}
-            resizeMode="contain"
-            style={{ width, height }}
-            onAnimationFinish={handleAnimationFinish}
-          />
-          </View>
-          </>
-
-        )} */}
+          {currentScreen === 'splashScreen' && (
+            <>
+              {/* <View style={Styles.ScreenLayout}> */}
+                <LottieView
+                  ref={animRef}
+                  source={require('../../../assets/animations/animation_new.json')}
+                  autoPlay
+                  loop={false}
+                  resizeMode="contain"
+                  style={{ width, height }}
+                  onAnimationFinish={handleAnimationFinish}
+                />
+              {/* </View> */}
+            </>
+          )}
           {currentScreen === 'hello' && (
             <View style={Styles.ScreenLayout}>
               <Animated.View
-                style={[
-                  { transform: [{ translateY: unizyTranslateY }] },
-                ]}
+                style={[{paddingTop: (Platform.OS === 'ios'? 80: 0)},{ transform: [{ translateY: unizyTranslateY }] }]}
               >
                 <TouchableOpacity
                   onPress={() => console.log('Back button pressed')}
@@ -1489,7 +1499,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                   height: '100%',
                   padding: 16,
                   paddingBottom: Platform.OS === 'ios' ? insets.bottom : 20,
-                  paddingTop: Platform.OS === 'ios' ? 0 : 20,
+                  paddingTop: Platform.OS === 'ios' ? 60 : 20,
                 }}
                 onLayout={e => {
                   const { height } = e.nativeEvent.layout;
@@ -1587,7 +1597,11 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
           {currentScreen === 'login' && (
             <>
               <View
-                style={{ paddingTop: (Platform.OS === 'ios' ? 0: 20), paddingLeft: 16, paddingRight: 16 }}
+                style={{
+                  paddingTop: Platform.OS === 'ios' ? 70 : 20,
+                  paddingLeft: 16,
+                  paddingRight: 16,
+                }}
               >
                 {currentScreenIninner === 'login' && (
                   <TouchableOpacity

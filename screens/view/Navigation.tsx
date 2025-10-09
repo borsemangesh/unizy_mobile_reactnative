@@ -49,7 +49,7 @@ export const Navigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName='Splashscreen'
+        initialRouteName='SinglePage'
         screenOptions={{ headerShown: false, animation: 'fade',presentation: 'fullScreenModal'  }}
       >
         <Stack.Screen 
