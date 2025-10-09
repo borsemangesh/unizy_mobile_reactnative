@@ -618,45 +618,13 @@ const [maxFeatureCap, setMaxFeatureCap] = useState(0);
                   ? `${formValues[id]?.value.length} Selected`
                   : `Select ${field_name}`}
               </Text>
-            </TouchableOpacity>
 
-            {/* <View style={styles.categoryContainer}>
-              {options
-                .filter((opt: any) => {
-                  const value = formValues[id]?.value;
-                  if (Array.isArray(value)) {
-                    return value.includes(opt.id);
-                  }
-                  return value === opt.id;
-                })
-                .map((opt: any) => (
-                  <View key={opt.id} style={styles.categoryTagWrapper}>
-                    <TouchableOpacity
-                      onPress={() => {
-                        setFormValues((prev: any) => {
-                          const currentValue = prev[id]?.value;
-                          let updated;
-                          if (Array.isArray(currentValue)) {
-                            updated = currentValue.filter(
-                              (v: any) => v !== opt.id,
-                            );
-                          } else {
-                            updated = null;
-                          }
-                          return {
-                            ...prev,
-                            [id]: { ...prev[id], value: updated },
-                          };
-                        });
-                      }}
-                    >
-                      <Text style={styles.categoryTag}>
-                        {opt.option_name} ✕
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                ))}
-            </View> */}
+               <Image
+              source={require('../../../assets/images/right.png')} // your asset
+              style={styles.dropdownIcon}
+              resizeMode="contain"
+            />
+            </TouchableOpacity>
 
             <View style={styles.categoryContainer}>
               {options
@@ -866,23 +834,9 @@ const [maxFeatureCap, setMaxFeatureCap] = useState(0);
                 style={styles.avatar}
               />
             ) : (
-              <View
-                style={{
-                  ...styles.avatar,
-                  backgroundColor: '#5A67D8', // or any fallback color
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Text
-                  style={{
-                    color: '#fff',
-                    fontSize: 18,
-                    fontWeight: '600',
-                  }}
-                >
+              <View style={styles.initialsCircle}>
+                <Text style={styles.initialsText}>
                   {getInitials(userMeta?.firstname ?? 'Alan', userMeta?.lastname ?? 'Walker')}
-
                 </Text>
               </View>
             )}
@@ -973,6 +927,23 @@ const [maxFeatureCap, setMaxFeatureCap] = useState(0);
 export default AddScreen;
 
 const styles = StyleSheet.create({
+
+    initialsCircle:{
+ backgroundColor: '#8390D4',
+  alignItems: 'center',
+  justifyContent: 'center',
+   width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 12,
+  },
+  initialsText:{
+   color: '#fff',
+  fontSize: 18,
+  fontWeight:600,
+  textAlign: 'center',
+  fontFamily: 'Urbanist-SemiBold',
+  },
   featurecard: {
     paddingHorizontal: 16,
     borderRadius: 12,
@@ -981,13 +952,20 @@ const styles = StyleSheet.create({
     gap: 10,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
   },
+  
+dropdownIcon: {
+  width: 20,
+  height: 20,
+},
   dropdowntext: {
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
     fontSize: 17,
-    lineHeight: 22,
+    //lineHeight:24,
     fontStyle: 'normal',
     color: '#fff',
+    includeFontPadding: false,
+    //textAlignVertical: 'center',
   },
 
   eyeIcon1: {
@@ -1342,7 +1320,7 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-    paddingLeft: 10,
+    paddingLeft: 12,
   },
   personalEmailID_TextInput: {
     width: '100%',
@@ -1360,13 +1338,13 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderColor: '#ffffff2c',
     flexDirection: 'row',
-    //justifyContent: 'center',
-    //alignItems: 'center',
+    justifyContent: 'space-between',
+  alignItems: 'center',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-    padding: 10,
-    height: 40,
+    padding: 12,
+    height: 44,
   },
 
   pickerStyle: {

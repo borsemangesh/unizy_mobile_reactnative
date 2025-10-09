@@ -116,83 +116,165 @@ const onScroll = (event: any) => {
 };
 
 
-const handleDeactivate = async () => {
-  try {
-    
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) return;
 
-    const url2 = `${MAIN_URL.baseUrl}category/feature/active-inactive`;
-    const response = await fetch(url2, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, 
-      },
-      body: JSON.stringify({
-        product_id: id, 
-      }),
-    });
+// const renderImage = () => {
+//   const fallbackImage = require('../../../assets/images/drone.png');
 
-    const data = await response.json();
-    console.log("✅ API Response:", data);
+//   if (detail?.profileshowinview) {
+//     const profileUri = detail?.createdby?.profile || null;
+//     const initials = `${detail?.createdby?.firstname?.[0] ?? ''}${detail?.createdby?.lastname?.[0] ?? ''}`.toUpperCase();
 
-    if (response.ok) {
-      showToast( "Product status updated!",'success');
-    } else {
-      showToast("Error", data.message || "Something went wrong");
-    }
-    
-  } catch (error) {
-    console.error("❌ API Error:", error);
-    showToast("Failed to update product status",'error');
-  }
-};
 
+//     return (
+//       <ImageBackground
+//       source={require('../../../assets/images/featurebg.png')} // your background image
+//       style={{
+//         alignItems: 'center',
+//         justifyContent: 'center',
+//       }}
+//     >
+//       <View
+//         style={{
+//           alignItems: 'center',
+//           justifyContent: 'center',
+//           marginVertical: 20,
+//         }}>
+      
+//         <Image
+//           source={profileUri ? { uri: profileUri } : fallbackImage}
+//           style={{
+//             width: 160,
+//             height: 160,
+//             borderRadius: 80, // circular shape
+//             //borderWidth: 2,
+//             //borderColor: '#ddd',
+//           }}
+//           resizeMode="cover"
+//           onError={() => {
+//             console.log('Profile image failed to load');
+//             setImageUri(null);
+//           }}
+//         />
+       
+//       </View>
+//        </ImageBackground>
+//     );
+//   }
+
+//   // ✅ Multiple images
+//   if (images.length > 1) {
+//     return (
+//       <View>
+//         <FlatList
+//           ref={flatListRef}
+//           data={images}
+//           horizontal
+//           pagingEnabled
+//           showsHorizontalScrollIndicator={false}
+//           keyExtractor={(_, index) => index.toString()}
+//           onScroll={onScroll}
+//           scrollEventThrottle={16}
+//           renderItem={({ item }) => (
+//             <Image
+//               source={item.uri ? { uri: item.uri } : fallbackImage}
+//               style={{ width: screenWidth, height: 250 }}
+//               resizeMode="cover"
+//             />
+//           )}
+//         />
+//         {/* Step Indicator */}
+//         <View style={styles.stepIndicatorContainer}>
+//           {images.map((_: any, index: Key | null | undefined) => (
+//             <View
+//               key={index}
+//               style={
+//                 index === activeIndex
+//                   ? styles.activeStepCircle
+//                   : styles.inactiveStepCircle
+//               }
+//             />
+//           ))}
+//         </View>
+//       </View>
+//     );
+//   }
+
+//   // ✅ Single image or fallback
+//   return (
+//     <Image
+//       source={images[0]?.uri ? { uri: images[0].uri } : fallbackImage}
+//       style={{ width: screenWidth, height: 250 }}
+//       resizeMode="cover"
+//     />
+//   );
+// };
 
 const renderImage = () => {
   const fallbackImage = require('../../../assets/images/drone.png');
 
   if (detail?.profileshowinview) {
     const profileUri = detail?.createdby?.profile || null;
+    const initials = `${detail?.createdby?.firstname?.[0] ?? ''}${detail?.createdby?.lastname?.[0] ?? ''}`.toUpperCase();
 
     return (
       <ImageBackground
-      source={require('../../../assets/images/featurebg.png')} // your background image
-      style={{
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <View
+        source={require('../../../assets/images/featurebg.png')}
         style={{
           alignItems: 'center',
           justifyContent: 'center',
-          marginVertical: 20,
-        }}>
-      
-        <Image
-          source={profileUri ? { uri: profileUri } : fallbackImage}
+        }}
+      >
+        <View
           style={{
-            width: 160,
-            height: 160,
-            borderRadius: 80, // circular shape
-            //borderWidth: 2,
-            //borderColor: '#ddd',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginVertical: 20,
           }}
-          resizeMode="cover"
-          onError={() => {
-            console.log('Profile image failed to load');
-            setImageUri(null);
-          }}
-        />
-       
-      </View>
-       </ImageBackground>
+        >
+          {profileUri ? (
+            <Image
+              source={{ uri: profileUri }}
+              style={{
+                width: 160,
+                height: 160,
+                borderRadius: 80,
+              }}
+              resizeMode="cover"
+              onError={() => {
+                console.log('Profile image failed to load');
+                setImageUri(null);
+              }}
+            />
+          ) : (
+
+            <View
+              style={{
+                width: 160,
+                height: 160,
+                borderRadius: 80,
+                backgroundColor: '#8390D4',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 60,
+                 color: '#FFF',
+                 fontWeight:600,
+                textAlign: 'center',
+                fontFamily: 'Urbanist-SemiBold',
+                }}
+              >
+                {initials || 'NA'}
+              </Text>
+            </View>
+          )}
+        </View>
+      </ImageBackground>
     );
   }
 
-  // ✅ Multiple images
   if (images.length > 1) {
     return (
       <View>
@@ -215,7 +297,7 @@ const renderImage = () => {
         />
         {/* Step Indicator */}
         <View style={styles.stepIndicatorContainer}>
-          {images.map((_: any, index: Key | null | undefined) => (
+          {images.map((_: any, index: number) => (
             <View
               key={index}
               style={
@@ -229,8 +311,6 @@ const renderImage = () => {
       </View>
     );
   }
-
-  // ✅ Single image or fallback
   return (
     <Image
       source={images[0]?.uri ? { uri: images[0].uri } : fallbackImage}
@@ -280,6 +360,11 @@ const handleBookmarkPress = async (productId: number) => {
   }
 };
 
+  const getInitials = (firstName = '', lastName = '') => {
+  const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
+  const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
+  return (f + l) || '?';
+};
 
     return (
       <ImageBackground
@@ -425,14 +510,26 @@ const handleBookmarkPress = async (productId: number) => {
 
                   {/* User Info */}
                   <View style={{ flexDirection: 'row' }}>
-                    <Image
+                    {/* <Image
                       source={
                         detail?.createdby?.profile
                           ? { uri: detail.createdby.profile }
                           : require('../../../assets/images/user.jpg')
                       }
                       style={styles.avatar}
-                    />
+                    /> */}
+                    {detail?.profileshowinview && (
+                      detail?.createdby?.profile ? (
+                        <Image
+                          source={{ uri: detail?.createdby?.profile }}
+                          style={styles.avatar}
+                        />
+                      ) : (
+                        <View style={styles.initialsCircle}>
+                          <Text style={styles.initialsText}>{getInitials(detail?.createdby?.firstname ?? 'Alan', detail?.createdby?.lastname ?? 'Walker')}</Text>
+                        </View>
+                      )
+                    )}
 
                     <View style={{ width: '80%', gap: 4 }}>
                       <Text style={styles.userName}>
@@ -617,6 +714,24 @@ const handleBookmarkPress = async (productId: number) => {
 };
 
 const styles = StyleSheet.create({
+
+  initialsCircle:{
+ backgroundColor: '#8390D4',
+  alignItems: 'center',
+  justifyContent: 'center',
+   width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 12,
+  },
+  initialsText:{
+   color: '#fff',
+  fontSize: 18,
+  fontWeight:600,
+  textAlign: 'center',
+  fontFamily: 'Urbanist-SemiBold',
+  },
+
 
  MylistingsBackground: {
     height: 48,

@@ -400,6 +400,18 @@ const calculatedPrice = priceValue + commissionAmount;
 const maxAllowedPrice = priceValue + maxCap;
 const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(2);
 
+
+const raw1 = getValueByAlias(storedForm, 'price') ?? '0';
+const priceValue1 = parseFloat(String(raw1)) || 0;
+
+const commissionPercent1 = parseFloat(userMeta?.category?.feature_fee ?? '0');
+const maxCap1 = parseFloat(userMeta?.category?.max_feature_cap ?? '0');
+
+const commissionAmount1 = priceValue1 * (commissionPercent1 / 100);
+const calculatedPrice1 = priceValue1 + commissionAmount1;
+const maxAllowedPrice1 = priceValue1 + maxCap1;
+const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2);
+const diff1 =commissionPrice1-priceValue1
   
 
   return (
@@ -684,9 +696,32 @@ const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(2);
         </ScrollView>
         {/* Bottom */}
         <TouchableOpacity style={styles.previewBtn} onPress={handleListPress}>
-          <Text style={styles.previewText}>List</Text>
+          {/* <Text style={styles.previewText}>List</Text> */}
+
+        <Text style={styles.previewText}>
+        {(() => {
+          try {
+            const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+            const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
+
+            if (isFeatured) {
+              return (
+                <>
+                  List for{' '}
+                  <Text style={styles.priceText1}>£</Text>
+                  <Text style={styles.priceText1}>{diff1}</Text>
+                </>
+              );
+            }
+            return 'List';
+          } catch (e) {
+            console.log('Error parsing storedForm:', e);
+            return 'List';
+          }
+        })()}
+      </Text>
         </TouchableOpacity>
-          {/* <Button onPress={handleListPress} title="List" />         */}
+          
 
         <Modal
           visible={showPopup}
@@ -785,6 +820,15 @@ const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(2);
 };
 
 const styles = StyleSheet.create({
+
+    priceText1: {
+    color: '#002050',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 17,
+    fontWeight: 700,
+    letterSpacing: 1,
+  },
+
 
    detailRow: {
     flexDirection: 'row',

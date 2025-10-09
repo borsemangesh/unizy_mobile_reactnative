@@ -59,6 +59,7 @@ type Feature = {
   profileshowinview: boolean
   createdby: CreatedBy;
   university:university;
+  isbookmarked:boolean
 };
 
 type ProductDetailsProps = {
@@ -238,9 +239,10 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
           inforTitlePrice={`£ ${item.price}`}
           rating={item.isfeatured ? '4.5' : '4.5'}
           showInitials={showInitials}
-          initialsName={initials}
+          initialsName={initials.toUpperCase()}
           productImage={item.createdby?.profile ? { uri: item.createdby.profile } : undefined}
-          bookmark={item.isfeatured}
+          bookmark={item.isbookmarked}
+          isfeature={item.isfeatured}
           applybookmark={() => handleBookmarkPress(item.id)}
         />
       ) : (
@@ -250,7 +252,8 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
           inforTitlePrice={`£ ${item.price}`}
           rating={item.isfeatured ? '4.5' : '4.5'}
           productImage={productImage ?? require('../../../assets/images/drone.png')}
-          bookmark={item.isfeatured}
+          bookmark={item.isbookmarked}
+          isfeature={item.isfeatured}
           applybookmark={() => handleBookmarkPress(item.id)}
         />
       )}
@@ -274,7 +277,6 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
                 />
               </View>
             </TouchableOpacity>
-            {/* <Text style={styles.unizyText}>{category_name}</Text> */}
             <Text style={styles.unizyText}>{`${category_name}s`}</Text>
 
             <View style={{ width: 30 }} />

@@ -1,3 +1,4 @@
+import { BlurView } from '@react-native-community/blur';
 import React from 'react';
 import {
   View,
@@ -16,6 +17,7 @@ type NewProductCardProps = {
   rating: string;
   productImage: ImageSourcePropType;
   bookmark:boolean,
+  isfeature:boolean,
   applybookmark?: () => void; 
 };
 
@@ -26,6 +28,7 @@ export default function SearchListProductCard({
   rating,
   productImage,
   bookmark,
+  isfeature,
   applybookmark
 }: NewProductCardProps) {
   return (
@@ -36,8 +39,18 @@ export default function SearchListProductCard({
           <Text style={styles.tagText}>{tag}</Text>
         </View>
 
+       {isfeature && (
+        <View style={styles.tagTopLeft}>
+          <Text style={styles.tagText}>Featured</Text>
+        </View>
+      )}
       
-        <View style={styles.bookmark1}>
+       {/* <View style={[styles.bookmark1,{opacity: 0.9}]}>
+             <BlurView 
+                  blurType="light"
+                  blurAmount={100}
+                  style={StyleSheet.absoluteFillObject}
+                />
           <TouchableOpacity onPress={applybookmark}>
           <Image
               source={
@@ -48,7 +61,25 @@ export default function SearchListProductCard({
                style={{ width: 16, height: 16 }}
             />
             </TouchableOpacity>
-        </View>
+        </View> */}
+
+         <View style={[styles.bookmark,{opacity: 0.9}]}>
+                        <BlurView 
+                          blurType="light"
+                          blurAmount={100}
+                          style={StyleSheet.absoluteFillObject}
+                        />
+                  <TouchableOpacity onPress={applybookmark}>
+                   <Image
+                      source={
+                        bookmark
+                          ? require("../../assets/images/favourite_filled.png") // bookmarked
+                          : require("../../assets/images/favourite.png") // not bookmarked
+                      }
+                      style={styles.bookmarkIcon}
+                    />
+                  </TouchableOpacity>
+                </View>
       </View>
 
       <View style={styles.infoRow}>
@@ -138,13 +169,12 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
   },
-  bookmark1: {
-    borderRadius: 20,
-
+  bookmark: {
+  
     position: 'absolute',
     top: Platform.OS === 'ios' ? 25 : 10,
     right: Platform.OS === 'ios' ? 25 : 10,
-    // borderRadius: 10,
+     borderRadius: 10,
      backgroundColor:
        'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(101, 101, 101, 0.72) 0%, rgba(117, 117, 117, 0.1) 100%)',
     width: 26,
@@ -170,13 +200,17 @@ const styles = StyleSheet.create({
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
   },
-  bookmark: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    borderRadius: 20,
-    padding: 6,
+  bookmarkIcon: {
+    width: 16,
+    height: 16,
   },
+  // bookmark: {
+  //   position: 'absolute',
+  //   top: 10,
+  //   right: 10,
+  //   borderRadius: 20,
+  //   padding: 6,
+  // },
   tag: {
     position: 'absolute',
     bottom: 5,
@@ -195,6 +229,17 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#000',
   },
+  tagTopLeft: {
+  position: 'absolute',
+  top: 5,
+  left: 5,
+  backgroundColor: 'rgba(255,255,255,0.4)',
+  borderRadius: 4,
+  padding: 4,
+  marginVertical: 4,
+  marginHorizontal: 4,
+  boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
+},
   infoRow: {
     flexDirection: 'column',
     justifyContent: 'space-between',

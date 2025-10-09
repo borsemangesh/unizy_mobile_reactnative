@@ -19,6 +19,7 @@ type NewProductCardProps = {
   bookmark: boolean;
   showInitials:boolean;
   initialsName: string; 
+  isfeature:boolean,
   applybookmark?: () => void; 
 };
 
@@ -31,20 +32,10 @@ export default function SearchTutionCard({
   bookmark,
   showInitials,
   initialsName,
+  isfeature,
   applybookmark
 }: NewProductCardProps) {
   
-
-    const getInitials = (name?: string) => {
-    if (!name) return 'NA';
-    return name
-      .split(' ')
-      .map(word => word[0]?.toUpperCase())
-      .slice(0, 2)
-      .join('');
-  };
-  
-
   return (
     <View style={styles.card}>
       <View style={styles.imageContainer}>
@@ -62,7 +53,7 @@ export default function SearchTutionCard({
           <Image source={productImage} style={styles.image} resizeMode="cover" />
         ) : (
           <View style={[styles.initialsCircle]}>
-            <Text style={styles.initialsText}>{getInitials(initialsName)}</Text>
+            <Text style={styles.initialsText}>{initialsName}</Text>
           </View>
         )}
 
@@ -70,6 +61,11 @@ export default function SearchTutionCard({
           <Text style={styles.tagText}>{tag}</Text>
         </View>
 
+      {isfeature && (
+              <View style={styles.tagTopLeft}>
+                <Text style={styles.tagText}>Featured</Text>
+              </View>
+            )}
        
         <View style={styles.bookmark1}>
            <TouchableOpacity onPress={applybookmark}>
@@ -113,6 +109,17 @@ export default function SearchTutionCard({
 }
 
 const styles = StyleSheet.create({
+   tagTopLeft: {
+  position: 'absolute',
+  top: 5,
+  left: 5,
+  backgroundColor: 'rgba(255,255,255,0.4)',
+  borderRadius: 4,
+  padding: 4,
+  marginVertical: 4,
+  marginHorizontal: 4,
+  boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
+},
 
     initialsCircle: {
     width: 80,

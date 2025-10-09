@@ -262,7 +262,7 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
                 : require('../../../assets/images/drone.png')
             }
           />
-          <Text style={styles.newtext}>Regular Listing Preview</Text>
+          <Text style={styles.newtext1}>Regular Listing Preview</Text>
           <NewProductCard
             tag="University of Warwick"
             infoTitle={titleValue}
@@ -340,7 +340,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600,
   },
-
+ newtext1:{
+     color: '#ccc',
+    fontSize: 16,
+    marginTop: 12,
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: 600,
+  },
  textbg:{
  flexDirection: 'row',
           alignItems: 'flex-start',

@@ -269,9 +269,10 @@ const handleBookmarkPress = async (productId: number) => {
                 inforTitlePrice={`£ ${feature.price}`}
                 rating={feature.isfeatured ? '4.5' : '4.5'}
                 productImage={feature.createdby?.profile ? { uri: feature.createdby.profile } : undefined}
-                bookmark={feature.isfeatured}
+                bookmark={true}
                 showInitials={showInitials}
                 initialsName={initials}
+                isfeature={feature.isfeatured}
                 applybookmark={() => handleBookmarkPress(item.id)}
                 
               />
@@ -282,7 +283,8 @@ const handleBookmarkPress = async (productId: number) => {
                 inforTitlePrice={`£ ${feature.price}`}
                 rating={feature.isfeatured ? '4.5' : '4.5'}
                 productImage={productImage ?? require('../../../assets/images/drone.png')}
-                bookmark={feature.isfeatured}
+                bookmark={true}
+                isfeature={feature.isfeatured}
                 applybookmark={() => handleBookmarkPress(item.id)}
               />
             )}
