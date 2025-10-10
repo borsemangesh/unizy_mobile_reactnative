@@ -98,6 +98,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     lastname: string | null;
     profile: string | null;
     student_email: string | null;
+    university_name:string|null
     category?: Category | null;
   }
 
@@ -164,6 +165,7 @@ const [maxFeatureCap, setMaxFeatureCap] = useState(0);
             lastname: json.metadata.lastname ?? null,
             profile: json.metadata.profile ?? null,
             student_email: json.metadata.student_email ?? null,
+            university_name:json.metadata.university_name ?? null,
             category: json.metadata.category ?? null, // 
           });
 
@@ -174,6 +176,7 @@ const [maxFeatureCap, setMaxFeatureCap] = useState(0);
               lastname: json.metadata.lastname ?? null,
               profile: json.metadata.profile ?? null,
               student_email: json.metadata.student_email ?? null,
+              university_name:json.metadata.university_name ?? null,
               category: json.metadata.category ?? null, // 
             }),
           );
@@ -859,7 +862,9 @@ const [maxFeatureCap, setMaxFeatureCap] = useState(0);
                 alignItems: 'stretch',
               }}
             >
-              <Text style={styles.userSub}>University of Warwick,</Text>
+              <Text style={styles.userSub}>
+            {userMeta?.university_name || 'University of Warwick,'}
+          </Text>
               <View
                 style={{
                   flexDirection: 'row',

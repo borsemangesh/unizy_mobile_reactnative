@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { useRoute } from '@react-navigation/native';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
+import { useState, useEffect } from 'react';
 
 type ListingDetailsProps = {
   navigation: any;
@@ -25,6 +26,44 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
   const route = useRoute();
   //const { shareid } = route.params as { shareid: number };
   const { shareid = 1 } = (route.params as { shareid?: number }) || {}
+
+
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+
+  useEffect(() => {
+    const fetchDetails = async () => {
+      try {
+         const token = await AsyncStorage.getItem('userToken');
+        if (!token) return;
+        const url = `${MAIN_URL.baseUrl}category/mylisting-details/${shareid}`;
+
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/json',
+          },
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+          setData(result.data);
+        } else {
+          console.error('Error:', result.message || 'Failed to fetch details');
+        }
+      } catch (error) {
+        console.error('API Error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDetails();
+  }, [shareid]);
+
+
   const handleDeactivate = async () => {
   try {
     
@@ -43,16 +82,16 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
       }),
     });
 
-    const data = await response.json();
-    console.log("✅ API Response:", data);
+    const data1 = await response.json();
+    console.log("✅ API Response:", data1);
 
     // if (response.ok) {
     //   showToast( "Product status updated!",'success');
     // } else {
     //   showToast("Error", data.message || "Something went wrong");
     // }
-    if (data.message) {
-      showToast(data.message, data.statusCode === 200 ? 'success' : 'error');
+    if (data1.message) {
+      showToast(data1.message, data1.statusCode === 200 ? 'success' : 'error');
     } else {
       showToast("Something went wrong", "error");
     }
@@ -61,6 +100,14 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
     console.error("❌ API Error:", error);
     showToast("Failed to update product status",'error');
   }
+};
+const formatDateWithDash = (dateString?: string) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
 };
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -96,13 +143,24 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                 {/* Card */}
                 <View style={styles.card}>
                     <View style={{ flexDirection: 'row'}}>
-                        <Image source={require('../../../assets/images/drone.png')} style={styles.image} resizeMode="cover" />
+                        <Image
+                            source={{
+                              uri: data?.list?.profileshowinview
+                                ? data?.list?.createdby?.profile
+                                : data?.list?.thumbnail,
+                            }}
+                            style={styles.image}
+                            resizeMode="cover"
+                          />
                         <View style={{ marginLeft: 10,gap: 8}}>
-                            <Text style={styles.productlebleHeader}>Quadcopter (Drone)</Text>
-                            <Text style={styles.productlableprice}>$10</Text>
+                            <Text style={styles.productlebleHeader}> {data?.list?.title}</Text>
+                            <Text style={styles.productlableprice}>£{data?.list?.price}</Text>
                             <View style={styles.univercitycontainer}>
-                                <Text style={styles.universitylable}>University of Warwick</Text>
-                                <Text style={styles.datetlable}>01-01-2025</Text>
+                                <Text style={styles.universitylable}>{data?.list?.createdby?.university_name}</Text>
+                               <Text style={styles.datetlable}>
+                              {formatDateWithDash(data?.list?.created_at)}
+                            </Text>
+
                             </View>
                             
                         </View>
@@ -110,108 +168,122 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     <View style={styles.cardconstinerdivider}/>
                     <View style={styles.listingtyperow}>
                         <Text style={styles.lebleHeader}>Listing Type:</Text>
-                        <Text style={styles.status}>Featured</Text>
+                         <Text style={styles.status}>
+                    {data?.list?.isfeatured ? 'Featured' : 'Not Featured'}
+                  </Text>
                     </View>
                     <View style={styles.listingtyperow}>
                         <Text style={styles.lebleHeader}>Listing Status:</Text>
-                        <Text style={styles.status}>Active</Text>
+                        <Text style={styles.status}> {data?.list?.isactive ? 'Active' : 'Inactive'}</Text>
                     </View>
                 </View>
 
                 <View style={styles.carddivider}/>
 
-                {/* Seller Card */}
-                <View style={styles.card}>
-                    <View style={{ flexDirection: 'row',alignContent:'center',alignItems:'center',gap: 4,}}>
-                        <Image source={require('../../../assets/images/sellerfile.png')} style={{width:24,height:24}} resizeMode="cover" />
-                        
-                        <Text style={styles.sellerHeaderlable}>Sale Details</Text>
-                         
-                    </View>
-                    <View style={styles.cardconstinerdivider}/>
-                    <View style={styles.listingtyperow}>
-                        <Text style={styles.lebleHeader}>Buyer Name:</Text>
-                        <Text style={styles.status}>Harry Kane</Text>
-                    </View>
-                    <View style={styles.listingtyperow}>
-                        <Text style={styles.lebleHeader}>Buyer’s University:</Text>
-                        <Text style={styles.status}>University of Warwick</Text>
-                    </View>
-                    <View style={styles.listingtyperow}>
-                        <Text style={styles.lebleHeader}>City:</Text>
-                        <Text style={styles.status}>Coventrys</Text>
-                    </View>
-                    <View style={styles.listingtyperow}>
-                        <Text style={styles.lebleHeader}>Sold On:</Text>
-                        <Text style={styles.status}>Jan 01, 2025 - 5:42 pm</Text>
-                    </View>
-                    <View style={styles.listingtyperow}>
-                        <Text style={styles.lebleHeader}>Sold For:</Text>
-                        <Text style={styles.status}>$10</Text>
-                    </View>
-                    <View style={styles.cardconstinerdivider}/>
-                    <View style={{justifyContent:'center',alignItems:'center'}}>
-                        <TouchableOpacity style={{width:'100%',justifyContent:'center',alignItems:'center'}}>
-                            <Text style={styles.status}>Enter OTP</Text>
-                        </TouchableOpacity>
-                    </View>
-                    
+               {Array.isArray(data?.buyers) &&
+              data.buyers.map((buyer: any, index: number) => (
+                <View key={index} style={styles.card}>
+          {/* HEADER */}
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 4,
+              justifyContent: buyer.otpverified ? 'space-between' : 'flex-start',
+            }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+              <Image
+                source={require('../../../assets/images/sellerfile.png')}
+                style={{ width: 24, height: 24 }}
+                resizeMode="cover"
+              />
+              <Text style={styles.sellerHeaderlable}>Sale Details</Text>
+            </View>
+
+            {/* ✅ STATUS BADGE - only if otpverified */}
+                {buyer.otpverified && (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      backgroundColor: 'rgba(255, 255, 255, 0.18)',
+                      paddingHorizontal: 6,
+                      paddingVertical: 4,
+                      borderRadius: 6,
+                      gap: 4,
+                    }}>
+                    <Text
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.88)',
+                        fontFamily: 'Urbanist-Regular',
+                        fontSize: 12,
+                        fontWeight: '600',
+                      }}>
+                      Completed
+                    </Text>
+                    <Image
+                      source={require('../../../assets/images/tick.png')}
+                      style={{ width: 12, height: 12 }}
+                      resizeMode="cover"
+                    />
+                  </View>
+                )}
+              </View>
+
+              <View style={styles.cardconstinerdivider} />
+
+              {/* BUYER DETAILS */}
+              <View style={styles.listingtyperow}>
+                <Text style={styles.lebleHeader}>Buyer Name:</Text>
+                <Text style={styles.status}>
+                  {buyer.firstname} {buyer.lastname}
+                </Text>
+              </View>
+
+              <View style={styles.listingtyperow}>
+                <Text style={styles.lebleHeader}>Buyer’s University:</Text>
+                <Text style={styles.status}>{buyer.university}</Text>
+              </View>
+
+              <View style={styles.listingtyperow}>
+                <Text style={styles.lebleHeader}>City:</Text>
+                <Text style={styles.status}>{buyer.city}</Text>
+              </View>
+
+              <View style={styles.listingtyperow}>
+                <Text style={styles.lebleHeader}>Sold On:</Text>
+                <Text style={styles.status}>
+                  {new Date(buyer.date).toLocaleString('en-GB', {
+                      month: 'short',
+                      day: '2-digit',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: true,
+                  })}
+                </Text>
+              </View>
+
+              <View style={styles.listingtyperow}>
+                <Text style={styles.lebleHeader}>Sold For:</Text>
+                <Text style={styles.status}>${buyer.price}</Text>
+              </View>
+
+              <View style={styles.cardconstinerdivider} />
+
+              {/* 🔢 Enter OTP Button - only if NOT verified */}
+              {!buyer.otpverified && (
+                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                  <TouchableOpacity
+                    style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}
+                    onPress={() => console.log(`Enter OTP for ${buyer.firstname}`)}>
+                    <Text style={styles.status}>Enter OTP</Text>
+                  </TouchableOpacity>
                 </View>
-                {/* Byer Card  */}
-                <View style={styles.card}>
-                    <View style={{ flexDirection: 'row',alignContent:'center',alignItems:'center',gap: 4,justifyContent: 'space-between'}}>
-                        <View style={{flexDirection: 'row',alignContent:'center',alignItems:'center',gap: 4}}>
-                            <Image source={require('../../../assets/images/sellerfile.png')} style={{width:24,height:24}} resizeMode="cover" />
-                        
-                            <Text style={styles.sellerHeaderlable}>Sale Details</Text>
-                        </View>
-                        <View style={{
-                            display: 'flex',
-                            paddingLeft: 6,
-                            paddingRight: 6,
-                            alignItems: 'center',
-                            gap: 0,
-                            padding: 6,
-                            borderRadius: 6,
-                            backgroundColor: 'rgba(255, 255, 255, 0.18)',
-                            flexDirection: 'row'
-                       
-                        }}>
-                            <Text style={{
-                                color: 'rgba(255, 255, 255, 0.88)',
-                                fontFamily: 'Urbanist-Regular',
-                                fontSize: 12,
-                                fontWeight: 600,
-                                
-                            }}>Completed </Text>
-                            <Image source={require('../../../assets/images/tick.png')} style={{width:12,height:12}} resizeMode="cover" />
-                        </View>
-                         
-                    </View>
-                    <View style={styles.cardconstinerdivider}/>
-                    <View style={styles.listingtyperow}>
-                        <Text style={styles.lebleHeader}>Buyer Name:</Text>
-                        <Text style={styles.status}>Alex Johnson</Text>
-                    </View>
-                    <View style={styles.listingtyperow}>
-                        <Text style={styles.lebleHeader}>Buyer’s University:</Text>
-                        <Text style={styles.status}>University of Warwick</Text>
-                    </View>
-                    <View style={styles.listingtyperow}>
-                        <Text style={styles.lebleHeader}>City:</Text>
-                        <Text style={styles.status}>Coventrys</Text>
-                    </View>
-                    <View style={styles.listingtyperow}>
-                        <Text style={styles.lebleHeader}>Sold On:</Text>
-                        <Text style={styles.status}>Jan 01, 2025 - 5:42 pm</Text>
-                    </View>
-                    <View style={styles.listingtyperow}>
-                        <Text style={styles.lebleHeader}>Sold For:</Text>
-                        <Text style={styles.status}>$10</Text>
-                    </View>
-                  
-                    
-                </View>
+              )}
+            </View>
+         ))}
+
                 </View>
                 
           </ScrollView>

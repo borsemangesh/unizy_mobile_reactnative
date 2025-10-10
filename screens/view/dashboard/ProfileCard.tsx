@@ -154,30 +154,12 @@ const renderItem = ({ item }: any) => {
   const APP_VERSION = '1.0.0'; 
 
 const clickBack = () =>{
-    navigation.replace('Dashboard');
+    navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})
   }
 
 return (
    
       <View style={styles.fullScreenContainer}>
-        {/* Header */}
-        {/* <View style={styles.header}>
-          <View style={styles.headerRow}>
-            <TouchableOpacity
-              onPress={() => {navigation.navigate('Dashboard')}}
-            >
-              <View style={styles.backIconRow}>
-                <Image
-                  source={require('../../../assets/images/back.png')}
-                  style={{ height: 24, width: 24 }}
-                />
-              </View>
-            </TouchableOpacity>
-            <Text style={styles.unizyText}>Profile</Text>
-            <View style={{ width: 30 }} />
-          </View>
-        </View> */}
-
         <View style={styles.header}>
       <View style={styles.headerRow}>
         <TouchableOpacity

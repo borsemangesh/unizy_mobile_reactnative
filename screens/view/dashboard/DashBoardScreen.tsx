@@ -208,6 +208,8 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   const [features, setFeatures] = useState<any[]>([]);
   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
   const route = useRoute<DashboardRouteProp>();
+  const [isBookmarked, setIsBookmarked] = useState(false);
+
 
   useEffect(() => {
     setIsNav(route.params?.isNavigate);
@@ -479,46 +481,104 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
     return rows;
   };
 
-  const handleBookmarkPress = async (productId: number) => {
-    try {
-      const token = await AsyncStorage.getItem('userToken');
-      if (!token) return;
+  // const handleBookmarkPress = async (productId: number) => {
+  //   try {
+  //     const token = await AsyncStorage.getItem('userToken');
+  //     if (!token) return;
 
-      const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
+  //     const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
 
-      const url = MAIN_URL.baseUrl + 'category/list-bookmark';
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ feature_id: productId }),
-      });
+  //     const url = MAIN_URL.baseUrl + 'category/list-bookmark';
+  //     const response = await fetch(url, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //       body: JSON.stringify({ feature_id: productId }),
+  //     });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`);
+  //     }
 
-      const data = await response.json();
-      console.log('Bookmark response:', data);
+  //     const data = await response.json();
+  //     console.log('Bookmark response:', data);
 
-      let updatedBookmarks;
-      if (isCurrentlyBookmarked) {
-        updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
-      } else {
-        updatedBookmarks = [...bookmarkedIds, productId];
-      }
+  //     let updatedBookmarks;
+  //     if (isCurrentlyBookmarked) {
+  //       updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
+  //     } else {
+  //       updatedBookmarks = [...bookmarkedIds, productId];
+  //     }
 
-      setBookmarkedIds(updatedBookmarks);
-      await AsyncStorage.setItem(
-        'bookmarkedIds',
-        JSON.stringify(updatedBookmarks),
-      );
-    } catch (error) {
-      console.error('Bookmark error:', error);
+  //     setBookmarkedIds(updatedBookmarks);
+  //     await AsyncStorage.setItem(
+  //       'bookmarkedIds',
+  //       JSON.stringify(updatedBookmarks),
+  //     );
+  //   } catch (error) {
+  //     console.error('Bookmark error:', error);
+  //   }
+  // };
+
+ const handleBookmarkPress = async (productId: number) => {
+  try {
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) return;
+
+    // 1️⃣ Optimistically update UI — toggle isbookmarked in `features` immediately
+    setFeatures(prev =>
+      prev.map(item =>
+        item.id === productId
+          ? { ...item, isbookmarked: !item.isbookmarked }
+          : item
+      )
+    );
+
+    const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
+
+    // 2️⃣ Send API request
+    const url = MAIN_URL.baseUrl + 'category/list-bookmark';
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ feature_id: productId }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  };
+
+    const data = await response.json();
+    console.log('Bookmark response:', data);
+
+    // 3️⃣ Update bookmarkedIds array for persistent storage
+    let updatedBookmarks;
+    if (isCurrentlyBookmarked) {
+      updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
+    } else {
+      updatedBookmarks = [...bookmarkedIds, productId];
+    }
+
+    setBookmarkedIds(updatedBookmarks);
+    await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks));
+  } catch (error) {
+    console.error('Bookmark error:', error);
+
+    // 4️⃣ Revert UI if API failed (optional)
+    setFeatures(prev =>
+      prev.map(item =>
+        item.id === productId
+          ? { ...item, isbookmarked: !item.isbookmarked }
+          : item
+      )
+    );
+  }
+};
 
   const renderActiveTabContent = () => {
     switch (activeTab) {
@@ -558,7 +618,8 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                       productImage={{ uri: item.createdby?.profile }}
                       //productImage={require("../../../assets/images/drone.png")}
                       onBookmarkPress={() => handleBookmarkPress(item.id)}
-                      isBookmarked={bookmarkedIds.includes(item.id)}
+                      //isBookmarked={bookmarkedIds.includes(item.id)}
+                      isBookmarked={item.isbookmarked}
                       onpress={() =>{
                         navigation.navigate('SearchDetails', { id: item.id },{ animation: 'none' })
                       }}
@@ -571,8 +632,8 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                       rating="4.5"
                       productImage={{ uri: item.thumbnail }}
                       onBookmarkPress={() => handleBookmarkPress(item.id)}
-                      isBookmarked={bookmarkedIds.includes(item.id)}
-                      //isBookmarked={item.}
+                      //isBookmarked={bookmarkedIds.includes(item.id)}
+                     isBookmarked={item.isbookmarked}
                       onpress={() =>{
                         navigation.navigate('SearchDetails', { id: item.id },{ animation: 'none' })
                       }}

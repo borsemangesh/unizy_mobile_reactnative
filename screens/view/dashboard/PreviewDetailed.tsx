@@ -77,6 +77,7 @@ interface Category {
     lastname: string | null;
     profile: string | null;
     student_email: string | null;
+    university_name:string|null
     category?: Category | null;
   }
 
@@ -184,6 +185,7 @@ const descriptionvalue= getValueByAlias(storedForm,'description') || 'No Descrip
             lastname: json.metadata.lastname ?? null,
             profile: json.metadata.profile ?? null,
             student_email: json.metadata.student_email ?? null,
+            university_name:json.metadata.university_name ?? null,
             category: json.metadata.category ?? null,
           });
 
@@ -194,6 +196,7 @@ const descriptionvalue= getValueByAlias(storedForm,'description') || 'No Descrip
               lastname: json.metadata.lastname ?? null,
               profile: json.metadata.profile ?? null,
               student_email: json.metadata.student_email ?? null,
+              university_name:json.metadata.university_name ?? null,
               category: json.metadata.category ?? null,
             }),
           );
@@ -613,7 +616,7 @@ const diff1 =commissionPrice1-priceValue1
                     {`${userMeta?.firstname ?? ''} ${userMeta?.lastname ?? ''}`.trim()}
                   </Text>
                     <Text style={styles.univeritytext}>
-                      University of Warwick,
+                      {userMeta?.university_name || 'University of Warwick,'}
                     </Text>
                     <Text style={[styles.univeritytext, { marginTop: -5 }]}>
                       Coventry
@@ -791,13 +794,20 @@ const diff1 =commissionPrice1-priceValue1
                     await AsyncStorage.removeItem('selectedProductId');
                     console.log('✅ formData cleared from AsyncStorage');
 
-                    // Reset navigation stack
-                    navigation.dispatch(
-                      CommonActions.reset({
-                        index: 0,
-                        routes: [{ name: 'Dashboard' }], // make Dashboard the only screen
-                      })
-                    );
+                   navigation.dispatch(
+                    CommonActions.reset({
+                      index: 0, // make this the active screen
+                      routes: [
+                        {
+                          name: 'Dashboard',
+                          params: {
+                            AddScreenBackactiveTab: 'Home',
+                            isNavigate: false,
+                          },
+                        },
+                      ],
+                    })
+                  );
 
                     setShowPopup(false);
                   } catch (err) {

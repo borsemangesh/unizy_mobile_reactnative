@@ -64,7 +64,6 @@ const [imageUri, setImageUri] = useState<string | null>(null);
   const { height: screenHeight } = Dimensions.get('window');
 
    const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
-
     
   useEffect(() => {
     const fetchDetails = async () => {
@@ -92,7 +91,8 @@ const [imageUri, setImageUri] = useState<string | null>(null);
 
     fetchDetails();
   }, [id]);
- 
+ const [isBookmarked, setIsBookmarked] = useState(false);
+
 const flatListRef = useRef<FlatList>(null);
 const [activeIndex, setActiveIndex] = useState(0);
 
@@ -326,14 +326,21 @@ const handleBookmarkPress = async (productId: number) => {
     const token = await AsyncStorage.getItem('userToken');
     if (!token) return;
 
+   setDetail((prev: any) =>
+  prev
+    ? { ...prev, isbookmarked: !prev.isbookmarked }
+    : prev // if null, just return null
+);
+
     const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
 
+    // 2️⃣ Send API request
     const url = MAIN_URL.baseUrl + 'category/list-bookmark';
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ feature_id: productId }),
     });
@@ -345,6 +352,7 @@ const handleBookmarkPress = async (productId: number) => {
     const data = await response.json();
     console.log('Bookmark response:', data);
 
+    // 3️⃣ Update bookmarkedIds for persistence
     let updatedBookmarks;
     if (isCurrentlyBookmarked) {
       updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
@@ -353,12 +361,18 @@ const handleBookmarkPress = async (productId: number) => {
     }
 
     setBookmarkedIds(updatedBookmarks);
-    await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks)); // persist locally
-
+    await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks));
   } catch (error) {
     console.error('Bookmark error:', error);
+
+   setDetail((prev: any) =>
+  prev
+    ? { ...prev, isbookmarked: !prev.isbookmarked }
+    : prev // if null, just return null
+);
   }
 };
+
 
   const getInitials = (firstName = '', lastName = '') => {
   const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
@@ -399,7 +413,15 @@ const handleBookmarkPress = async (productId: number) => {
                     handleBookmarkPress(id);
                 }}>
               <View style={styles.MylistingsBackground}>
-                <Image source={mylistings1} style={styles.iconSmall} />
+                {/* <Image source={mylistings1} style={styles.iconSmall} /> */}
+                <Image
+                    source={
+                        detail?.isbookmarked
+                          ? require("../../../assets/images/favourite_filled.png") // bookmarked
+                         : require("../../../assets/images/favourite.png") // not bookmarked
+                        }
+                      style={styles.iconSmall}
+                    />
               </View>
               </TouchableOpacity>
             </View>
@@ -818,7 +840,7 @@ const styles = StyleSheet.create({
 
     header: {
     height: 70,
-    paddingTop: (Platform.OS === 'ios' ? 40: 20),
+    paddingTop: (Platform.OS === 'ios' ? 40: 50),
     paddingBottom: 12,
     paddingHorizontal: 16,
     justifyContent: 'center',
