@@ -145,8 +145,8 @@ const styles = StyleSheet.create({
   },
   card: {
     borderRadius: 16,
-    // backgroundColor:
-    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
 
     shadowColor: '#000',
     shadowOpacity: 0.15,

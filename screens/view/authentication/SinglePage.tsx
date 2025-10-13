@@ -39,6 +39,7 @@ import {
   NewCustomToastContainer,
   showToast,
 } from '../../utils/component/NewCustomToastManager';
+import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 
 const { height } = Dimensions.get('window');
 
@@ -699,6 +700,9 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
           }).start(() => {
             setCurrentScreen('login');
             setcurrentScreenIninner('sendOTP');
+             setTimeout(() => {
+            inputs.current[0]?.focus();
+          }, 300);
           });
         });
       } else {
@@ -713,7 +717,10 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   //otp
   const [otp, setOtp] = useState(['', '', '', '']);
   const inputs = useRef<(TextInput | null)[]>([]);
-
+  // useEffect(() => {
+  //   const timer = setTimeout(() => inputs.current[0]?.focus(), 300);
+  //   return () => clearTimeout(timer);
+  // }, []);
   const handleChange = (text: string, index: number) => {
     const newOtp = [...otp];
     newOtp[index] = text;
@@ -831,6 +838,9 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
 
         console.log('OTP resent successfully:', data.message);
+         setTimeout(() => {
+        inputs.current[0]?.focus();
+      }, 200);
       } else {
       }
     } catch (err) {
@@ -932,6 +942,9 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
             easing: Easing.out(Easing.ease),
             useNativeDriver: true,
           }).start();
+          setTimeout(() => {
+          verifyinputs.current[0]?.focus();
+        }, 300);
         });
       } else {
         showToast(data?.message || 'Failed to send OTP', 'error');
@@ -1039,6 +1052,9 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         showToast(data.message, 'success');
         setShowOtp(true);
         //startAnimation();
+        setTimeout(() => {
+        verifyinputs.current[0]?.focus();
+      }, 200);
       } else {
         showToast(data?.message || Constant.FAIL_TO_SEND_OTP, 'error');
       }
@@ -1049,25 +1065,71 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   };
   //profile
 
+  // const requestCameraPermission = async () => {
+  //   if (Platform.OS === 'android') {
+  //     try {
+  //       const granted = await PermissionsAndroid.request(
+  //         PermissionsAndroid.PERMISSIONS.CAMERA,
+  //         {
+  //           title: 'Camera Permission',
+  //           message: 'App needs access to your camera',
+  //           buttonNeutral: 'Ask Me Later',
+  //           buttonNegative: 'Cancel',
+  //           buttonPositive: 'OK',
+  //         },
+  //       );
+  //       return granted === PermissionsAndroid.RESULTS.GRANTED;
+  //     } catch (err) {
+  //       console.warn(err);
+  //       return false;
+  //     }
+  //   } else {
+  //     return true;
+  //   }
+  // };
+
   const requestCameraPermission = async () => {
-    if (Platform.OS === 'android') {
+    if (Platform.OS === "android") {
       try {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.CAMERA,
           {
-            title: 'Camera Permission',
-            message: 'App needs access to your camera',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
+            title: "Camera Permission",
+            message: "App needs access to your camera",
+            buttonNeutral: "Ask Me Later",
+            buttonNegative: "Cancel",
+            buttonPositive: "OK",
+          }
         );
         return granted === PermissionsAndroid.RESULTS.GRANTED;
       } catch (err) {
         console.warn(err);
         return false;
       }
-    } else {
+    } else if (Platform.OS === 'ios') {
+      try {
+        // Check current permission status first
+        const status = await check(PERMISSIONS.IOS.CAMERA);
+        if (status === RESULTS.GRANTED) {
+          return true;
+        }
+        const result = await request(PERMISSIONS.IOS.CAMERA);
+  
+        if (result === RESULTS.GRANTED) {
+          return true; 
+        } else if (result === RESULTS.BLOCKED) {
+          console.warn('Camera permission is blocked. Please enable it in Settings.');
+          return false;
+        } else {
+          return false; // Denied
+        }
+      } catch (err) {
+        console.warn(err);
+        return false;
+      }
+    } 
+    
+    else {
       return true;
     }
   };
@@ -1102,7 +1164,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
     Keyboard.dismiss();
     Animated.timing(textAndBackOpacity, {
       toValue: 0, // fade out
-      duration: 500,
+      duration: 200,
       useNativeDriver: true,
     }).start();
 
@@ -1113,8 +1175,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       useNativeDriver: true,
     }).start(() => {});
     Animated.timing(loginTranslateY, {
-      toValue: Dimensions.get('window').height, // slide down off screen
-      duration: 500,
+      toValue: Dimensions.get('window').height, 
+      duration: 200,
       easing: Easing.in(Easing.ease),
       useNativeDriver: true,
     }).start(() => {
@@ -1679,6 +1741,11 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                               placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
                               value={username}
                               maxLength={50}
+                              keyboardType="email-address"
+                              autoCapitalize="none"
+                              autoComplete="email"
+                              textContentType="emailAddress"
+                              autoCorrect={false}
                               onChangeText={usernameText =>
                                 setUsername(usernameText)
                               }
@@ -1849,7 +1916,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                 ClickFPGoBack_slideOutToTop(() => {
                                   Animated.timing(textAndBackOpacity, {
                                     toValue: 1, // fade in
-                                    duration: 500,
+                                    duration: 250,
                                     useNativeDriver: true,
                                   }).start();
                                   setUsername1('');
@@ -1878,16 +1945,24 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                   alignItems: 'center',
                                 }}
                                 blurType="dark"
-                                blurAmount={1000}
-                                reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-                              >
+                                blurAmount={Platform.OS === 'ios' ? 15 : 100}
+                                reducedTransparencyFallbackColor={
+                                  Platform.OS === 'ios'
+                                    ? 'rgba(0, 0, 0, 0.11)'
+                                    : 'rgba(0, 0, 0, 0.5)' 
+                                }
+                                >
                                 <View
                                   style={[
                                     StyleSheet.absoluteFill,
-                                    { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                                    {
+                                      backgroundColor:
+                                        Platform.OS === 'ios'
+                                          ? 'rgba(0, 0, 0, 0.15)' 
+                                          : 'rgba(0, 0, 0, 0.32)', 
+                                    },
                                   ]}
                                 />
-
                                 <View
                                   style={[
                                     Styles.popupContainer,
@@ -1948,6 +2023,10 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                   setFirstName(text)
                                 }
                                 maxLength={20}
+                                autoComplete="name-given"        
+                                textContentType="givenName"      
+                                autoCapitalize="words"        
+                                importantForAutofill="yes"  
                               />
                             </View>
 
@@ -1957,6 +2036,10 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                 placeholder="Last Name*"
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                 value={lastName}
+                                autoComplete="name-family"      
+                                  textContentType="familyName"     
+                                  importantForAutofill="yes"
+                                  autoCapitalize="words"
                                 onChangeText={text =>
                                   /^[A-Za-z ]*$/.test(text) && setLastName(text)
                                 }
@@ -2005,6 +2088,11 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
                               value={signUpusername}
                               maxLength={50}
+                              keyboardType="email-address"
+                              autoCapitalize="none"
+                              autoComplete="email"
+                              textContentType="emailAddress"
+                              autoCorrect={false}
                               onChangeText={text => setsignUpUsername(text)}
                             />
                             <TouchableOpacity
@@ -2292,6 +2380,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                   keyboardType="email-address"
                                   autoCapitalize="none"
                                   autoCorrect={false}
+                                  autoComplete="email"
+                                  textContentType="emailAddress"
                                   onChangeText={usernameText =>
                                     setverifyUsername(usernameText)
                                   }

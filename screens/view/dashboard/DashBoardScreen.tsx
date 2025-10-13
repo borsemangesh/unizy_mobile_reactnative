@@ -66,11 +66,11 @@ type ProductItemProps = {
 
 const iconMap: Record<string, any> = {
   Products: require('../../../assets/images/producticon.png'),
-  Product: require('../../../assets/images/producticon.png'), // for API name
+  Product: require('../../../assets/images/producticon.png'), 
   Food: require('../../../assets/images/fod_icon.png'),
-  Food2: require('../../../assets/images/fod_icon.png'), // match API data
+  Food2: require('../../../assets/images/fod_icon.png'), 
   Accommodation: require('../../../assets/images/bed_icon.png'),
-  Accomodation: require('../../../assets/images/bed_icon.png'), // API spelling
+  Accomodation: require('../../../assets/images/bed_icon.png'), 
   Tuition: require('../../../assets/images/book.png'),
   'House Keeping': require('../../../assets/images/housekeeping.png'),
 };
@@ -121,27 +121,7 @@ const AddScreenContent: React.FC<
         data={products}
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            // onPress={async () => {
-            //   // navigation.replace('AddScreen', {
-            //   //   productId: item.id,
-            //   //   name: item.name,
-            //   // });
-            //   try {
-            //     await AsyncStorage.setItem(
-            //       'selectedProductId',
-            //       String(item.id),
-            //     );
-            //     await AsyncStorage.setItem(
-            //       'selectedProductName',
-            //       String(item.name),
-            //     );
-            //     console.log('✅ Product info saved to AsyncStorage');
-            //     navigation.replace('AddScreen');
-            //   } catch (error) {
-            //     console.log('❌ Error saving product info:', error);
-            //   }
-            // }}
+          <TouchableOpacity       
             onPress={() => {
               navigation.replace('AddScreen', {
                 productId: item.id,
@@ -199,7 +179,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   //const tabWidth = screenWidth / 5;
   const tabsname = ['Home', 'Search', 'Add', 'Bookmark', 'Profile'];
 
-  const tabWidth = (screenWidth * 0.9) / tabsname.length; // match container width = 90%
+  const tabWidth = (screenWidth * 0.9) / tabsname.length;
 
   const bubbleX = useRef(new Animated.Value(0)).current;
 
@@ -270,11 +250,8 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
             id: cat.id,
             name: cat.name,
             description: cat.description,
-            // icon:
-            //   iconMap[cat.name] ||
-            //   require('../../../assets/images/producticon.png'),
             icon: cat.logo
-              ? { uri: cat.logo } // use backend logo if available
+              ? { uri: cat.logo }
               : require('../../../assets/images/producticon.png'),
           }));
 
@@ -284,7 +261,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
         }));
 
         await AsyncStorage.setItem(
-          'categories', // key
+          'categories', 
           JSON.stringify(idNameArray),
         );
 
@@ -305,13 +282,9 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
     loadBookmarks();
   }, [route.params?.AddScreenBackactiveTab]);
 
-  //   useEffect(() => {
-
-  //   }, []);
-
+  
   const [isNav, setIsNav] = useState(true);
 
-  //Animation For all components variables.
   const screenHeight = Dimensions.get('window').height;
   const translateY = React.useRef(new Animated.Value(screenHeight)).current;
   const searchBartranslateY = React.useRef(
@@ -320,9 +293,8 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   const categorytranslateY = React.useRef(
     new Animated.Value(screenHeight),
   ).current;
-  // const evenCategorytranslateX = React.useRef(new Animated.Value(screenWidth)).current;
-  const leftItemTranslateX = useRef(new Animated.Value(-300)).current; // from left
-  const rightItemTranslateX = useRef(new Animated.Value(300)).current; // from right
+  const leftItemTranslateX = useRef(new Animated.Value(-300)).current; 
+  const rightItemTranslateX = useRef(new Animated.Value(300)).current; 
   const cardSlideupAnimation = useRef(new Animated.Value(screenHeight)).current;
   const bottomNaviationSlideupAnimation = useRef(
     new Animated.Value(screenHeight),
@@ -416,25 +388,17 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
     }).start();
   }, [activeTab, bubbleX, tabWidth]);
 
-  //   useEffect(() => {
-  //   const loadBookmarks = async () => {
-  //     const saved = await AsyncStorage.getItem('bookmarkedIds');
-  //     if (saved) setBookmarkedIds(JSON.parse(saved));
-  //   };
-  //   loadBookmarks();
-  // }, []);
-
+ 
   const renderProducts = () => {
     const isEven = products.length % 2 === 0;
     let startIndex = 0;
     const rows: JSX.Element[] = [];
 
-    // Odd first item -> full width
     if (!isEven) {
       rows.push(
         <Animated.View
           style={[
-            { width: '100%' }, // wrapper stretches row
+            { width: '100%' }, 
             { transform: [{ translateY: categorytranslateY }] },
           ]}
           key={products[0].id}
@@ -445,7 +409,6 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
       startIndex = 1;
     }
 
-    // Render pairs
     for (let i = startIndex; i < products.length; i += 2) {
       const rowItems = products.slice(i, i + 2);
 
@@ -473,7 +436,6 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
               />
             </Animated.View>
           ))}
-          {/* If odd inside the loop, fill empty space */}
           {rowItems.length === 1 && <View style={styles.halfWidth} />}
         </View>,
       );
@@ -481,53 +443,12 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
     return rows;
   };
 
-  // const handleBookmarkPress = async (productId: number) => {
-  //   try {
-  //     const token = await AsyncStorage.getItem('userToken');
-  //     if (!token) return;
-
-  //     const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
-
-  //     const url = MAIN_URL.baseUrl + 'category/list-bookmark';
-  //     const response = await fetch(url, {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //       body: JSON.stringify({ feature_id: productId }),
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error(`HTTP error! status: ${response.status}`);
-  //     }
-
-  //     const data = await response.json();
-  //     console.log('Bookmark response:', data);
-
-  //     let updatedBookmarks;
-  //     if (isCurrentlyBookmarked) {
-  //       updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
-  //     } else {
-  //       updatedBookmarks = [...bookmarkedIds, productId];
-  //     }
-
-  //     setBookmarkedIds(updatedBookmarks);
-  //     await AsyncStorage.setItem(
-  //       'bookmarkedIds',
-  //       JSON.stringify(updatedBookmarks),
-  //     );
-  //   } catch (error) {
-  //     console.error('Bookmark error:', error);
-  //   }
-  // };
 
  const handleBookmarkPress = async (productId: number) => {
   try {
     const token = await AsyncStorage.getItem('userToken');
     if (!token) return;
 
-    // 1️⃣ Optimistically update UI — toggle isbookmarked in `features` immediately
     setFeatures(prev =>
       prev.map(item =>
         item.id === productId
@@ -538,7 +459,6 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
 
     const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
 
-    // 2️⃣ Send API request
     const url = MAIN_URL.baseUrl + 'category/list-bookmark';
     const response = await fetch(url, {
       method: 'POST',
@@ -556,7 +476,6 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
     const data = await response.json();
     console.log('Bookmark response:', data);
 
-    // 3️⃣ Update bookmarkedIds array for persistent storage
     let updatedBookmarks;
     if (isCurrentlyBookmarked) {
       updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
@@ -569,7 +488,6 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   } catch (error) {
     console.error('Bookmark error:', error);
 
-    // 4️⃣ Revert UI if API failed (optional)
     setFeatures(prev =>
       prev.map(item =>
         item.id === productId
@@ -616,9 +534,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                       inforTitlePrice={`£ ${item.price}`}
                       rating="4.5"
                       productImage={{ uri: item.createdby?.profile }}
-                      //productImage={require("../../../assets/images/drone.png")}
                       onBookmarkPress={() => handleBookmarkPress(item.id)}
-                      //isBookmarked={bookmarkedIds.includes(item.id)}
                       isBookmarked={item.isbookmarked}
                       onpress={() =>{
                         navigation.navigate('SearchDetails', { id: item.id },{ animation: 'none' })
@@ -632,7 +548,6 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                       rating="4.5"
                       productImage={{ uri: item.thumbnail }}
                       onBookmarkPress={() => handleBookmarkPress(item.id)}
-                      //isBookmarked={bookmarkedIds.includes(item.id)}
                      isBookmarked={item.isbookmarked}
                       onpress={() =>{
                         navigation.navigate('SearchDetails', { id: item.id },{ animation: 'none' })
@@ -667,21 +582,11 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
 
   const clickbookmark = () => {
     setIsNav(false);
-    navigation.replace('Bookmark',{ animation: 'none' });
-    // navigation.reset({
-    //   index: 0,
-    //   routes: [{ name: 'Bookmark', }],
-    // });
+    navigation.replace('Bookmark',{ animation: 'none' }); 
   };
   const clicklisting = async () => {
     setIsNav(false);
     navigation.replace('MyListing',{ animation: 'none' });
-    // navigation.reset({
-    //   index: 0,
-    //   routes: [{ name: 'MyListing'}],
-    // });
-    // await AsyncStorage.setItem('ISLOGIN', 'false');
-    // navigation.replace('SinglePage');
   };
 
   return (
@@ -732,33 +637,31 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                 placeholderTextColor="#ccc"
                 onChangeText={setSearch}
                 value={search}
+                onFocus={() => navigation.navigate('SearchPage',{ animation: 'none' })}
               />
             </Animated.View>
           </View>
         )}
 
-        {/* Main Content */}
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} // tweak this as needed
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} 
         >
           <ScrollView
             style={{ flex: 1 }}
-            contentContainerStyle={{ paddingBottom: 10 }} // space for bottom bar
+            contentContainerStyle={{ paddingBottom: 10 }} 
             showsVerticalScrollIndicator={false}
           >
             <View style={{ flex: 1 }}>{renderActiveTabContent()}</View>
           </ScrollView>
         </KeyboardAvoidingView>
-        {/* Bottom Tab Bar */}
         <Animated.View
           style={[
             styles.bottomTabContainer,
             { transform: [{ translateY: bottomNaviationSlideupAnimation }] },
           ]}
         >
-          {/* Bubble background */}
           <View style={{ height: 48 }}>
             <Animated.View
               style={[
@@ -778,11 +681,12 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
               onPress={() => {
                 setActiveTab(key as any);
                 setIsNav(true);
+                navigation.setParams({isNavigate:false})
               }}
             >
               <View style={styles.iconWrapper}>
                 <Image
-                  source={activeTab === key ? activeIcon : icon} // <-- choose icon based on active tab
+                  source={activeTab === key ? activeIcon : icon} 
                   style={styles.tabIcon}
                 />
               </View>

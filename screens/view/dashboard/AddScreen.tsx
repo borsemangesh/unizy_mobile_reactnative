@@ -15,6 +15,8 @@ import {
   Animated,
   Dimensions,
   Easing,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImageResizer from 'react-native-image-resizer';
@@ -31,13 +33,14 @@ import {
 } from '../../utils/component/NewCustomToastManager';
 import { RouteProp, useRoute } from '@react-navigation/native';
 // import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
+import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
+
 
 const bgImage = require('../../../assets/images/backimg.png');
-const profileImg = require('../../../assets/images/user.jpg'); // your avatar image
-const uploadIcon = require('../../../assets/images/upload.png'); // upload icon
-
-const fileIcon = require('../../../assets/images/file.png'); // file icon
-const deleteIcon = require('../../../assets/images/delete.png'); // delete/trash ico
+const profileImg = require('../../../assets/images/user.jpg'); 
+const uploadIcon = require('../../../assets/images/upload.png'); 
+const fileIcon = require('../../../assets/images/file.png'); 
+const deleteIcon = require('../../../assets/images/delete.png'); 
 
 type AddScreenContentProps = {
   navigation: any;
@@ -75,7 +78,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     { id: string; uri: string; name: string }[]
   >([]);
 
-  //const [uploadedImages, setUploadedImages] = useState<ImageFile[]>([]);
 
   const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
@@ -104,28 +106,11 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
   const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
   const [featureFee, setFeatureFee] = useState(0);
-const [maxFeatureCap, setMaxFeatureCap] = useState(0);
-  //  const [productName, setProductName] = useState('');
+  const [maxFeatureCap, setMaxFeatureCap] = useState(0);
   const route = useRoute<AddScreenRouteProp>();
   const { productId, productName } = route.params;
 
-  // useEffect(() => {
-  //   const loadProductName = async () => {
-  //     try {
-  //       const name = await AsyncStorage.getItem('selectedProductName');
-  //       if (name) {
-  //         setProductName(name);
-  //       } else {
-  //         setProductName('List Product'); // fallback
-  //       }
-  //     } catch (error) {
-  //       console.log('❌ Error loading product name:', error);
-  //     }
-  //   };
-
-  //   loadProductName();
-  // }, []);
-
+  
   useEffect(() => {
     const fetchFields = async () => {
       try {
@@ -247,59 +232,75 @@ const [maxFeatureCap, setMaxFeatureCap] = useState(0);
     ).padStart(2, '0')}-${today.getFullYear()}`;
   };
 
-  const requestCameraPermission = async () => {
-    if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.CAMERA,
-          {
-            title: 'Camera Permission',
-            message: 'App needs access to your camera',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        );
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } catch (err) {
-        console.warn(err);
-        return false;
-      }
-    } else {
-      return true;
-    }
-  };
-
-  // const handlePreview = async () => {
-  //   try {
-  //     const dataToStore: any = { ...formValues };
-
-  //     // Handle image fields separately
-  //     fields.forEach(field => {
-  //       if (field.param.field_type.toLowerCase() === 'image') {
-  //         const uploadedForField = uploadedImages.map(img => ({
-  //           id: img.id,
-  //           uri: img.uri,
-  //           name: img.name,
-  //         }));
-
-  //         dataToStore[field.param.id] = {
-  //           value: uploadedForField,
-  //           alias_name: field.param.alias_name ?? null,
-  //         };
-  //       }
-  //     });
-
-  //     await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
-
-  //     console.log('Form data saved: ', dataToStore);
-
-  //     navigation.navigate('PreviewThumbnail');
-  //   } catch (error) {
-  //     console.log('Error saving form data: ', error);
-  //     showToast('Failed to save form data');
+  // const requestCameraPermission = async () => {
+  //   if (Platform.OS === 'android') {
+  //     try {
+  //       const granted = await PermissionsAndroid.request(
+  //         PermissionsAndroid.PERMISSIONS.CAMERA,
+  //         {
+  //           title: 'Camera Permission',
+  //           message: 'App needs access to your camera',
+  //           buttonNeutral: 'Ask Me Later',
+  //           buttonNegative: 'Cancel',
+  //           buttonPositive: 'OK',
+  //         },
+  //       );
+  //       return granted === PermissionsAndroid.RESULTS.GRANTED;
+  //     } catch (err) {
+  //       console.warn(err);
+  //       return false;
+  //     }
+  //   } else {
+  //     return true;
   //   }
   // };
+
+  const requestCameraPermission = async () => {
+      if (Platform.OS === "android") {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.CAMERA,
+            {
+              title: "Camera Permission",
+              message: "App needs access to your camera",
+              buttonNeutral: "Ask Me Later",
+              buttonNegative: "Cancel",
+              buttonPositive: "OK",
+            }
+          );
+          return granted === PermissionsAndroid.RESULTS.GRANTED;
+        } catch (err) {
+          console.warn(err);
+          return false;
+        }
+      } else if (Platform.OS === 'ios') {
+        try {
+          // Check current permission status first
+          const status = await check(PERMISSIONS.IOS.CAMERA);
+          if (status === RESULTS.GRANTED) {
+            return true;
+          }
+          const result = await request(PERMISSIONS.IOS.CAMERA);
+    
+          if (result === RESULTS.GRANTED) {
+            return true; 
+          } else if (result === RESULTS.BLOCKED) {
+            console.warn('Camera permission is blocked. Please enable it in Settings.');
+            return false;
+          } else {
+            return false; // Denied
+          }
+        } catch (err) {
+          console.warn(err);
+          return false;
+        }
+      } 
+      
+      else {
+        return true;
+      }
+    };
+
 
   const handlePreview = async () => {
     try {
@@ -802,7 +803,17 @@ const [maxFeatureCap, setMaxFeatureCap] = useState(0);
   };
 
   return (
+ 
     <ImageBackground source={bgImage} style={styles.background}>
+         <TouchableWithoutFeedback
+        onPress={() => {
+          if (multiSelectModal.visible) {
+            setMultiSelectModal(prev => ({ ...prev, visible: false }));
+          }
+          Keyboard.dismiss();
+        }}
+        accessible={false} 
+      >
       <View style={styles.fullScreenContainer}>
         {/* Header */}
         <View style={styles.header}>
@@ -910,12 +921,14 @@ const [maxFeatureCap, setMaxFeatureCap] = useState(0);
           <Button title="Preview Details" onPress={() => handlePreview()} />
         </KeyboardAvoidingView>
       </View>
+      </TouchableWithoutFeedback>
+
 
       <SelectCatagoryDropdown
         options={multiSelectOptions}
         visible={multiSelectModal.visible}
         ismultilple={multiSelectModal?.ismultilple}
-        selectedValues={formValues[multiSelectModal.fieldId!]?.value} // <-- add this
+        selectedValues={formValues[multiSelectModal.fieldId!]?.value}
         onClose={() =>
           setMultiSelectModal(prev => ({ ...prev, visible: false }))
         }
@@ -927,6 +940,7 @@ const [maxFeatureCap, setMaxFeatureCap] = useState(0);
         }}
       />
       <NewCustomToastContainer />
+
     </ImageBackground>
   );
 };

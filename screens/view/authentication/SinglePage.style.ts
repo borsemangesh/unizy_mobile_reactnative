@@ -984,14 +984,12 @@ export const Styles = StyleSheet.create({
   },
 
   popupContainer: {
-    // width: width * 0.85,
     padding: 20,
     borderRadius: 24,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.1)',
     alignItems: 'center',
     overflow: 'hidden',
-
     backgroundColor: 'rgba(255,255,255,0.15)',
   },
 

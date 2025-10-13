@@ -20,6 +20,7 @@ import {
  import { PermissionsAndroid, Platform } from "react-native";
 import LinearGradient from 'react-native-linear-gradient';
 import { useIsFocused } from '@react-navigation/native';
+import { request, PERMISSIONS, RESULTS, check } from 'react-native-permissions';
 
 
 const { width } = Dimensions.get('window');
@@ -142,7 +143,30 @@ const requestCameraPermission = async () => {
       console.warn(err);
       return false;
     }
-  } else {
+  } else if (Platform.OS === 'ios') {
+    try {
+      // Check current permission status first
+      const status = await check(PERMISSIONS.IOS.CAMERA);
+      if (status === RESULTS.GRANTED) {
+        return true;
+      }
+      const result = await request(PERMISSIONS.IOS.CAMERA);
+
+      if (result === RESULTS.GRANTED) {
+        return true; 
+      } else if (result === RESULTS.BLOCKED) {
+        console.warn('Camera permission is blocked. Please enable it in Settings.');
+        return false;
+      } else {
+        return false; // Denied
+      }
+    } catch (err) {
+      console.warn(err);
+      return false;
+    }
+  } 
+  
+  else {
     return true;
   }
 };

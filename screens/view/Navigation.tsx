@@ -25,6 +25,7 @@ import Bookmark from './dashboard/Bookmark';
 import MyListing from './dashboard/MyListing';
 import SearchDetails from './dashboard/SearchDetails';
 import ListingDetails from './dashboard/ListingDetails';
+import SearchPage from './dashboard/SearchPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -40,19 +41,19 @@ export const Navigation = () => {
   //   checkLoginStatus();
   // }, []);
 
-  // 👇 until AsyncStorage resolves, show Splash
-  if (initialRoute === null) {
-    // return <SplashScreen onFinish={() => {}} />; // no navigation yet
-  }
-
+ 
   enableScreens();
   return (
     <NavigationContainer
      
   >
-      <Stack.Navigator
+      {/* <Stack.Navigator
         initialRouteName='SinglePage'
         screenOptions={{ headerShown: false, animation: 'none',presentation: 'fullScreenModal'  }}
+      > */}
+      <Stack.Navigator
+        initialRouteName="Splashscreen"
+        screenOptions={{ headerShown: false, animation: 'none' }}
       >
         <Stack.Screen 
           name='Splashscreen'
@@ -198,6 +199,11 @@ export const Navigation = () => {
           name="ListingDetails"
           component={ListingDetails}
           options={{ headerShown: false, presentation: 'fullScreenModal' }}
+        />
+        <Stack.Screen
+        name='SearchPage'
+        component={SearchPage}
+        options={{ headerShown: false, presentation: 'fullScreenModal' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
