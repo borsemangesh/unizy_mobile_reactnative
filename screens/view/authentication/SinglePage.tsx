@@ -599,6 +599,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   };
 
   const handleSendOTP = async () => {
+
+
     setOtp(['', '', '', '']);
 
     if (
@@ -735,6 +737,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
   const otpverify = async () => {
     Keyboard.dismiss();
+    
     setverifyUsername('');
     const otpValue = otp.join('');
 
@@ -874,6 +877,9 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   };
 
   const verifyOTP = async () => {
+
+
+
     Keyboard.dismiss();
     setOtp1(['', '', '', '']);
 
@@ -956,6 +962,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   };
 
   const submitotp = async () => {
+
     Keyboard.dismiss();
     setPhoto('');
     const otpValue = otp1.join('');
@@ -1317,9 +1324,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   const insets = useSafeAreaInsets();
 
   const uploadImage = async (uri: string) => {
-    console.log('Started');
     setLoading(true);
-
     try {
       if (!uri) {
         console.log('No photo selected');
@@ -1936,7 +1941,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                             onRequestClose={closePopup}
                           >
                             <View style={Styles.overlay}>
-                              <BlurView
+                              {/* <BlurView  
                                 style={{
                                   flex: 1,
                                   alignContent: 'center',
@@ -1962,13 +1967,41 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                           : 'rgba(0, 0, 0, 0.32)', 
                                     },
                                   ]}
+                                /> */}
+                                <BlurView
+                                style={{
+                                  flex: 1,
+                                  alignContent: 'center',
+                                  justifyContent: 'center',
+                                  width: '100%',
+                                  alignItems: 'center',
+                                }}
+                                blurType="dark"
+                                blurAmount={Platform.OS === 'ios' ? 2 : 100}
+                                reducedTransparencyFallbackColor={
+                                  Platform.OS === 'ios'
+                                    ? 'rgba(0, 0, 0, 0.11)'
+                                    : 'rgba(0, 0, 0, 0.5)' 
+                                }
+                                >
+                                <View
+                                  style={[
+                                    StyleSheet.absoluteFill,
+                                    {
+                                      backgroundColor:
+                                        Platform.OS === 'ios'
+                                          ? 'rgba(0, 0, 0, 0.15)' 
+                                          : 'rgba(0, 0, 0, 0.32)', 
+                                    },
+                                  ]}
                                 />
                                 <View
                                   style={[
                                     Styles.popupContainer,
-                                    { width: width * 0.85 },
+                                    { width: width * 0.85}
                                   ]}
                                 >
+                                  
                                   <Image
                                     source={require('../../../assets/images/success_icon.png')}
                                     style={Styles.logo}
@@ -2600,7 +2633,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                           onRequestClose={closePopup1}
                         >
                           <View style={Styles.profileoverlay}>
-                            <BlurView
+                            {/* <BlurView
                               style={StyleSheet.absoluteFill}
                               blurType="dark"
                               blurAmount={25}
@@ -2611,7 +2644,34 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                 StyleSheet.absoluteFill,
                                 { backgroundColor: 'rgba(0, 0, 0, 0.08)' },
                               ]}
-                            />
+                            /> */}
+                            <BlurView
+                                style={{
+                                  flex: 1,
+                                  alignContent: 'center',
+                                  justifyContent: 'center',
+                                  width: '100%',
+                                  alignItems: 'center',
+                                }}
+                                blurType="dark"
+                                blurAmount={Platform.OS === 'ios' ? 5 : 100}
+                                reducedTransparencyFallbackColor={
+                                  Platform.OS === 'ios'
+                                    ? 'rgba(0, 0, 0, 0.11)'
+                                    : 'rgba(0, 0, 0, 0.5)' 
+                                }
+                                >
+                                <View
+                                  style={[
+                                    StyleSheet.absoluteFill,
+                                    {
+                                      backgroundColor:
+                                        Platform.OS === 'ios'
+                                          ? 'rgba(0, 0, 0, 0.15)' 
+                                          : 'rgba(0, 0, 0, 0.32)', 
+                                    },
+                                  ]}
+                                />
 
                             <View
                               style={[
@@ -2646,6 +2706,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                 </Text>
                               </TouchableOpacity>
                             </View>
+                            </BlurView>
                           </View>
                         </Modal>
                       </>

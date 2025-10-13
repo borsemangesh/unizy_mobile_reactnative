@@ -844,36 +844,10 @@ export const Styles = StyleSheet.create({
     //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
   },
 
-  // Reset Password Screen
-  //    flex_1: {
-  //     flex: 1,
-  //     alignItems: 'center',
-  //   },
   blurstyle: {
     backgroundColor: 'transparent',
   },
-  //   topHeader: {
-  //     display: 'flex',
-  //     flexDirection: 'row',
-  //     alignItems: 'center',
-  //   },
-
-  //   formContainer: {
-  //     width: '90%',
-  //     padding: 20,
-  //     borderRadius: 24,
-  //     alignItems: 'center',
-  //     gap: 10,
-  //     marginTop: -15,
-  //     flexDirection: 'column',
-  //     borderWidth: 0.2,
-  //     borderColor: '#ffffff3d',
-  //     backgroundColor:
-  //       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-  //     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-  //     overflow: 'hidden',
-  //   },
-
+  
   resetTitle: {
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 17,
@@ -908,59 +882,6 @@ export const Styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 12,
   },
-
-  //   login_container: {
-  //     display: 'flex',
-  //     width: '100%',
-  //     height: 40,
-  //     gap: 10,
-  //     marginTop: 16,
-  //     alignSelf: 'stretch',
-  //     borderRadius: 12,
-  //     borderWidth: 0.6,
-  //     borderColor: '#ffffff2c',
-  //     flexDirection: 'row',
-  //     justifyContent: 'center',
-  //     alignContent: 'center',
-  //     alignItems: 'center',
-  //     backgroundColor:
-  //       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  //     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-  //   },
-  //   personalEmailID_TextInput: {
-  //     width: '93%',
-  //     fontFamily: 'Urbanist-Regular',
-  //     fontWeight: '400',
-  //     fontSize: 17,
-  //     lineHeight: 22,
-  //     fontStyle: 'normal',
-  //   },
-
-  //   loginButton: {
-  //     display: 'flex',
-  //     width: '100%',
-  //     height: 48,
-  //     justifyContent: 'center',
-  //     alignItems: 'center',
-  //     gap: 4,
-  //     borderRadius: 100,
-  //     paddingTop: 6,
-  //     paddingBottom: 6,
-  //     backgroundColor: 'rgba(255, 255, 255, 0.56)',
-  //     marginTop: 16,
-  //     borderWidth: 0.5,
-  //     borderColor: '#ffffff2c',
-  //   },
-  //   loginText: {
-  //     color: '#002050',
-  //     textAlign: 'center',
-  //     fontFamily: 'Urbanist-Medium',
-  //     fontSize: 17,
-  //     fontWeight: 500,
-  //     letterSpacing: 1,
-  //     width: '100%',
-  //   },
-
   goBackText: {
     color: 'rgba(255,255,255,0.48)',
     fontFamily: 'Urbanist-SemiBold',
@@ -981,16 +902,21 @@ export const Styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
+    // opacity: 0.4
   },
 
   popupContainer: {
-    padding: 20,
+    // width: width * 0.85,
+    padding: 16,
     borderRadius: 24,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.1)',
     alignItems: 'center',
     overflow: 'hidden',
-    backgroundColor: 'rgba(255,255,255,0.15)',
+
+    backgroundColor: 'rgba(253, 253, 253, 0.07)',
+    boxShadow:
+      'rgba(255, 2550, 255, 0.1) inset -0.90px 0px 1px 0px,',
   },
 
   logo: {
@@ -999,182 +925,6 @@ export const Styles = StyleSheet.create({
     marginBottom: 20,
   },
 
-  //   fullScreenContainer: {
-  //     display: 'flex',
-  //     paddingRight: 20,
-  //     paddingLeft: 16,
-  //     width: '100%',
-  //     alignItems: 'center',
-  //     justifyContent: 'center',
-  //     flexShrink: 0,
-  //     flexDirection: 'row',
-  //     paddingTop: 20,
-  //   },
-  //   backIconRow: {
-  //     display: 'flex',
-  //     padding: 5,
-  //     justifyContent: 'center',
-  //     alignItems: 'center',
-  //     borderRadius: 40,
-  //     backgroundColor:
-  //       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  //     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-  //     borderWidth: 0.6,
-  //     borderColor: '#ffffff2c',
-  //   },
-
-  //   emptyView: {
-  //     display: 'flex',
-  //     padding: 12,
-  //     justifyContent: 'center',
-  //     alignItems: 'center',
-  //     gap: 8,
-  //     borderRadius: 40,
-  //     opacity: 0.01,
-  //     backgroundColor:
-  //       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  //     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-  //   },
-
-  //Select Language
-  // flex_1: {
-  //     flex: 1,
-  //     paddingTop: 50,
-  //     padding: 16,
-  //   },
-  //   container: {
-  //     flex: 1,
-  //     flexDirection: 'column',
-  //     gap: 16,
-  //     flexShrink: 0,
-  //     borderColor: '#ffffff3d',
-  //     borderRadius: 16,
-
-  //     // boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.09)',
-  //     padding: 16,
-
-  //          borderWidth: 0.3,
-  //     // backgroundColor:
-  //     //   'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-  //   backgroundColor:
-  //       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-  //       boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-
-  //   },
-
-  //   title: {
-  //     fontFamily: 'Urbanist-SemiBold',
-  //     color: '#FFF',
-  //     fontSize: 20,
-  //     fontWeight: '600',
-  //     lineHeight: 24,
-  //     letterSpacing: 0.5,
-  //   },
-  //   search_container: {
-  //     display: 'flex',
-  //     flexDirection: 'row',
-  //     alignItems: 'center',
-  //     alignSelf: 'stretch',
-  //     borderRadius: 50,
-  //     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-  //     backgroundColor:
-  //       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  //   },
-  //   searchIcon: {
-  //     padding: 5,
-  //     margin: 10 ,
-  //     height:24,
-  //     width:24
-  //   },
-  //   searchBar: {
-  //     fontFamily: 'Urbanist-Medium',
-  //     marginLeft: -5,
-  //     fontWeight:500,
-  //     fontSize:17
-  //   },
-
-  //   listContainer: {
-  //     justifyContent: 'center',
-  //     alignItems: 'flex-start',
-  //     alignSelf: 'stretch',
-  //     borderRadius: 12,
-  //     backgroundColor:
-  //       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  //     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-  //     // maxHeight: '80%',
-  //   },
-  //   listContent: {
-  //     paddingLeft: 10,
-  //     paddingRight: 10,
-  //   },
-  //   flatListStyle: {
-  //     width: '98%',
-  //     alignSelf: 'center',
-  //   },
-  //   languageItem: {
-  //     flexDirection: 'row',
-  //     alignItems: 'center',
-  //     borderBottomColor: '#ffffff23',
-  //     borderBottomWidth: 1,
-  //   },
-  //   languageInfo: {
-  //     flexDirection: 'row',
-  //     alignItems: 'center',
-  //     marginTop: 10,
-  //     marginBottom: 10,
-  //     flex: 2,
-  //   },
-  //   flag: {
-  //     marginRight: 12,
-  //     resizeMode: 'cover',
-  //     borderRadius: 2,
-  //     width: 34,
-  //     height: 24,
-  //   },
-  //   languageText: {
-  //     color: 'white',
-  //     fontSize: 17,
-  //     fontFamily: 'Urbanist-Medium',
-  //     fontWeight: '500',
-  //     mixBlendMode: 'normal',
-
-  //   },
-  //   radioButton_round: {
-  //     backgroundColor:
-  //       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  //     width: 15,
-  //     height: 15,
-  //     flexShrink: 0,
-  //     borderColor: '#ffffff4e',
-
-  //     alignItems: 'center',
-  //     borderRadius: 50,
-  //     justifyContent: 'center',
-  //     boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
-  //     shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25',
-  //   },
-  //   radioButton: {
-  //     width: 8,
-  //     height: 8,
-  //     borderRadius: 10,
-  //     // borderWidth: 1,
-  //     // borderColor: '#ffffff4e',
-  //     // boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
-  //     // backgroundColor:
-  //     //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  //   },
-  //   radioButtonSelected: {
-  //     // borderColor: 'white',
-  //     backgroundColor: 'white',
-
-  //     borderRadius: 10,
-  //       borderWidth: 1,
-  //     borderColor: '#ffffff4e',
-  //     boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
-  //     // backgroundColor:
-  //     //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-  //   },
 
   resetPasswordoverlay: {
     flex: 1,
@@ -1991,10 +1741,15 @@ export const Styles = StyleSheet.create({
     // width: width * 0.85,
     padding: 20,
     borderRadius: 24,
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    // backgroundColor: 'rgba(255, 255, 255, 0.06)',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.1)',
     alignItems: 'center',
+    // filter: 'blur(2px)',
+    
+    backgroundColor: 'rgba(253, 253, 253, 0.07)',
+    boxShadow:
+      'rgba(255, 2550, 255, 0.1) inset -0.90px 0px 1px 0px,',
   },
   profiletermsText1: {
     color: 'rgba(255,255,255,0.48)',

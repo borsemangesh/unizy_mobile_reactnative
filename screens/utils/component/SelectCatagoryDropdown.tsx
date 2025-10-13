@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import {
   Dimensions,
   Image,
+  ImageBackground,
   Modal,
   ScrollView,
   StyleSheet,
@@ -69,8 +70,10 @@ const toggleCheckbox = (id: number) => {
       animationType="slide"
       visible={visible}
       transparent
+      backdropColor={'rgba(0, 0, 0, 0.5)'}
       onRequestClose={onClose}
     >
+       
       <View style={styles.overlay}>
         <View style={styles.modelcontainer}>
           <BlurView
@@ -130,7 +133,7 @@ const toggleCheckbox = (id: number) => {
               paddingHorizontal: 10,
             }}
           >
-            <ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
+            <ScrollView contentContainerStyle={{  }}>
               {options.map((option, index) => {
                 const isSelectedRadio = selectedRadio === option.id;
                 const isSelectedCheckbox = selectedCheckboxes.includes(
@@ -140,7 +143,7 @@ const toggleCheckbox = (id: number) => {
                 return (
                   <View
                     style={{
-                      marginBottom: 10,
+                      // marginBottom: 10,
                       paddingHorizontal: 10,
                       marginTop: 10,
                     }}
@@ -149,7 +152,6 @@ const toggleCheckbox = (id: number) => {
                    
                     <TouchableOpacity
                       onPress={() =>{
-                        console.log('Option selected:', ismultilple)
                         ismultilple
                           ? toggleCheckbox(option.id)
                           : handleRadioButton(option.id)
@@ -232,10 +234,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '90%',
-    height: 'auto',
+    height: '5%',
     borderStyle: 'dashed',
-    borderBottomWidth: 0.8,
+    borderBottomWidth: 0.1,
     borderBottomColor: '#76c1f0ff',
+    // backgroundColor: 'red'
   },
   checkedBox: {
     //backgroundColor: '#00f', // Checkbox color when checked
@@ -284,7 +287,9 @@ const styles = StyleSheet.create({
     textShadowRadius: 1,
     marginTop: 10,
   },
-  header: {},
+  header: {
+    
+  },
   optionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -311,7 +316,7 @@ const styles = StyleSheet.create({
     //backgroundColor: '#5d5c5c14',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-
+  
   },
   broderTopLeftRightRadius_30: {
     borderTopLeftRadius: 30,
@@ -326,17 +331,17 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     alignItems: 'center',
-    filter: 'drop-shadow(0 0.833px 3.333px rgba(0, 0, 0, 0.02))',
+    // filter: 'drop-shadow(0 0.833px 3.333px rgba(255, 255, 255, 0.18))',
     gap: 5,
+    // opacity: 0.7
   },
   bottomview: {
     padding: 10,
     width: '100%',
-    // height: '10%',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    // backgroundColor: '#5d5c5c14',
+    paddingBottom: 10,
   },
   radioButtonSelected: {
     backgroundColor: 'white',
@@ -374,6 +379,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
     flex: 1,
     justifyContent: 'flex-end',
+    // opacity: 0.8
   },
   filtertitle: {
     color: 'rgba(255, 255, 255, 0.64)',

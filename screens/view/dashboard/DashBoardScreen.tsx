@@ -301,7 +301,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   ).current;
 
   useEffect(() => {
-    if (activeTab === 'Home' && route.params?.isNavigate) {
+    if (activeTab === 'Home' && isNav) {
       console.log("isNav: ",isNav)
       setIsNav(false);
       translateY.setValue(-screenWidth);
@@ -382,8 +382,9 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
     );
     Animated.spring(bubbleX, {
       toValue: index * tabWidth,
-      friction: 8,
-      tension: 60,
+      friction: 20,
+      tension: 1,
+      
       useNativeDriver: true,
     }).start();
   }, [activeTab, bubbleX, tabWidth]);
@@ -680,8 +681,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
               style={[styles.tabItem, { width: tabWidth }]}
               onPress={() => {
                 setActiveTab(key as any);
-                setIsNav(true);
-                navigation.setParams({isNavigate:false})
+                setIsNav(false);
               }}
             >
               <View style={styles.iconWrapper}>
