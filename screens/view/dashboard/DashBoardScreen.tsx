@@ -15,6 +15,8 @@ import {
   Easing,
   Platform,
   KeyboardAvoidingView,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from 'react-native';
 
 const bgImage = require('../../../assets/images/backimg.png');
@@ -28,6 +30,7 @@ import TutitionCard from '../../utils/TutitionCard';
 import ProfileCard from './ProfileCard';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 import { RouteProp, useRoute } from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
 
 const mylistings = require('../../../assets/images/mylistingicon.png');
 const mylistings1 = require('../../../assets/images/favourite.png');
@@ -61,7 +64,6 @@ type Product = {
 type ProductItemProps = {
   navigation: any;
   item: Product;
-  fullWidth: boolean;
 };
 
 const iconMap: Record<string, any> = {
@@ -78,7 +80,6 @@ const iconMap: Record<string, any> = {
 const ProductItem: React.FC<ProductItemProps> = ({
   navigation,
   item,
-  fullWidth,
 }) => (
   <TouchableOpacity
     key={item.id}
@@ -189,6 +190,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
   const route = useRoute<DashboardRouteProp>();
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const { width } = Dimensions.get('window');
 
 
   useEffect(() => {
@@ -301,7 +303,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   ).current;
 
   useEffect(() => {
-    if (activeTab === 'Home' && isNav) {
+    if (activeTab === 'Home' && route.params?.isNavigate) {
       console.log("isNav: ",isNav)
       setIsNav(false);
       translateY.setValue(-screenWidth);
@@ -390,21 +392,80 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   }, [activeTab, bubbleX, tabWidth]);
 
  
-  const renderProducts = () => {
-    const isEven = products.length % 2 === 0;
-    let startIndex = 0;
-    const rows: JSX.Element[] = [];
+  // const renderProducts = () => {
+  //   const isEven = products.length % 2 === 0;
+  //   let startIndex = 0;
+  //   const rows: JSX.Element[] = [];
 
+  //   if (!isEven) {
+  //     rows.push(
+  //       <Animated.View
+  //         style={[
+  //           { width: '100%' }, 
+  //           { transform: [{ translateY: categorytranslateY }] },
+  //         ]}
+  //         key={products[0].id}
+  //       >
+  //         <ProductItem navigation={navigation} item={products[0]} fullWidth />
+  //       </Animated.View>,
+  //     );
+  //     startIndex = 1;
+  //   }
+
+  //   for (let i = startIndex; i < products.length; i += 2) {
+  //     const rowItems = products.slice(i, i + 2);
+
+  //     rows.push(
+  //       <View style={styles.row} key={i}>
+  //         {rowItems.map((item, index) => (
+  //           <Animated.View
+  //             key={item.id}
+  //             style={[
+  //               styles.halfWidth,
+  //               {
+  //                 transform: [
+  //                   {
+  //                     translateX:
+  //                       index === 0 ? leftItemTranslateX : rightItemTranslateX,
+  //                   },
+  //                 ],
+  //               },
+  //             ]}
+  //           >
+  //             <ProductItem
+  //               navigation={navigation}
+  //               item={item}
+  //               fullWidth={false}
+  //             />
+  //           </Animated.View>
+  //         ))}
+  //         {rowItems.length === 1 && <View style={styles.halfWidth} />}
+  //       </View>,
+  //     );
+  //   }
+  //   return rows;
+  // };
+
+const [activeIndex, setActiveIndex] = useState(0);
+const scrollX = useRef(new Animated.Value(0)).current;
+
+const renderProducts = () => {
+  const isEven = products.length % 2 === 0;
+  let startIndex = 0;
+  const rows: JSX.Element[] = [];
+
+  if (products.length <= 6) {
+    // ✅ Old grid layout (no change)
     if (!isEven) {
       rows.push(
         <Animated.View
           style={[
-            { width: '100%' }, 
+            // { width: '80%' },
             { transform: [{ translateY: categorytranslateY }] },
           ]}
           key={products[0].id}
         >
-          <ProductItem navigation={navigation} item={products[0]} fullWidth />
+          <ProductItem navigation={navigation} item={products[0]}  />
         </Animated.View>,
       );
       startIndex = 1;
@@ -412,14 +473,13 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
 
     for (let i = startIndex; i < products.length; i += 2) {
       const rowItems = products.slice(i, i + 2);
-
       rows.push(
         <View style={styles.row} key={i}>
           {rowItems.map((item, index) => (
             <Animated.View
               key={item.id}
               style={[
-                styles.halfWidth,
+                // styles.halfWidth,
                 {
                   transform: [
                     {
@@ -430,19 +490,143 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                 },
               ]}
             >
-              <ProductItem
-                navigation={navigation}
-                item={item}
-                fullWidth={false}
-              />
+              <ProductItem navigation={navigation} item={item} />
             </Animated.View>
           ))}
-          {rowItems.length === 1 && <View style={styles.halfWidth} />}
-        </View>,
+        </View>
       );
     }
-    return rows;
-  };
+
+    return <View>{rows}</View>;
+  }
+
+  
+
+const createPages = (items: typeof products) => {
+  const pages = [];
+  const pageSize = 6;
+  const overlap = 3;
+
+  if (items.length <= pageSize) {
+    pages.push({
+      left: items.filter((_, i) => i < 3),
+      right: items.filter((_, i) => i >= 3),
+    });
+    return pages;
+  }
+
+  pages.push({
+    left: items.slice(0, 3),
+    right: items.slice(3, 6),
+  });
+
+  let start = 3;
+  while (start + overlap < items.length) {
+    const left = items.slice(start, start + overlap); 
+    const right = items.slice(start + overlap, start + overlap + 3);
+    pages.push({ left, right });
+    start += 3;
+  }
+
+  const lastIndex = start + overlap;
+  if (lastIndex < items.length) {
+    const left = items.slice(start, start + overlap);
+    const right = items.slice(start + overlap);
+    pages.push({ left, right });
+  }
+
+  return pages;
+};
+
+
+
+const pages = createPages(products);
+ 
+
+let secondPageLeft: typeof products = [];
+let secondPageRight: typeof products = [];
+if (products.length > 6) {
+  secondPageLeft = products.slice(3, 6); 
+  secondPageRight = products.slice(6);  
+}
+
+const rightRows: (typeof products[0] | null)[] = [];
+if (secondPageRight.length > 0) {
+  const rowsCount = secondPageLeft.length;
+  for (let i = 0; i < rowsCount; i++) {
+    rightRows.push(secondPageRight[i] || null);
+  }
+}
+
+const onScroll = Animated.event(
+  [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+  { useNativeDriver: false }
+);
+
+const handleScrollEnd = (e: { nativeEvent: { contentOffset: { x: number } } }) => {
+  const index = Math.round(e.nativeEvent.contentOffset.x / width);
+  setActiveIndex(index);
+};
+
+return (
+  <View>
+    <Animated.ScrollView
+      horizontal
+      pagingEnabled
+      showsHorizontalScrollIndicator={false}
+      onScroll={onScroll}
+      onMomentumScrollEnd={handleScrollEnd}
+      scrollEventThrottle={16}
+    >
+  {pages.map((page, pageIndex) => (
+    <View key={pageIndex} style={{ width, flexDirection: 'row'}}>
+      {/* Left column */}
+      <View style={{ flex: 1 }}>
+        {page.left.map(item => (
+          <Animated.View
+            key={item.id}
+            style={{ transform: [{ translateY: categorytranslateY }], marginBottom: 4 }}
+          >
+            <ProductItem navigation={navigation} item={item} />
+          </Animated.View>
+        ))}
+      </View>
+
+      {/* Right column */}
+      <View style={{ flex: 1, paddingLeft: 2}}>
+        {page.right.map(item => (
+          <Animated.View
+            key={item.id}
+            style={{ transform: [{ translateY: categorytranslateY }], marginBottom: 4 }}
+          >
+            <ProductItem navigation={navigation} item={item} />
+          </Animated.View>
+        ))}
+      </View>
+    </View>
+  ))}
+</Animated.ScrollView>
+    
+    <View style={styles.stepIndicatorContainer}>
+  {pages.map((_, idx) =>
+    idx === activeIndex ? (
+      <LinearGradient
+        key={idx}
+        colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0.5)']}
+        style={styles.stepCircle}
+      />
+    ) : (
+      <View
+        key={idx}
+        style={[styles.stepCircle, styles.inactiveStepCircle]}
+      />
+    )
+  )}
+</View>
+  </View>
+);
+
+};
 
 
  const handleBookmarkPress = async (productId: number) => {
@@ -702,6 +886,48 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
 export default DashBoardScreen;
 
 const styles = StyleSheet.create({
+
+   stepCircle: {
+    width: 12,
+    height: 12,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+  },
+
+  activeStepCircle: {
+    backgroundColor: '#FFFFFF',
+    width: 12,
+    height: 12,
+    flexShrink: 0,
+    borderColor: '#ffffff4e',
+    alignItems: 'center',
+    borderRadius: 40,
+    justifyContent: 'center',
+    boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
+    shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25)',
+  },
+  
+  stepIndicatorContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 12
+  },
+
+  inactiveStepCircle: {
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    width: 12,
+    height: 12,
+    flexShrink: 0,
+    borderColor: '#ffffff4e',
+    alignItems: 'center',
+    borderRadius: 40,
+    justifyContent: 'center',
+    boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
+    shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25)',
+  },
   search_container: {
     display: 'flex',
     flexDirection: 'row',
@@ -885,7 +1111,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 12,
     alignItems: 'center',
-    margin: 4,
+     margin: 4,
     borderWidth: 0.4,
     borderColor: '#ffffff11',
 
@@ -905,23 +1131,18 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
-
     boxSizing: 'border-box',
+    
   },
 
   fullWidth: {
-    // flex: 1,
-    // justifyContent: 'flex-start',
-    width: '100%',
-    maxWidth: '100%',
-    // maxHeight: '100%',
+    //width: '100%',
+   // maxWidth: '100%',
   },
   halfWidth: {
-    flex: 1,
-    // maxWidth: '90%',
-    // maxHeight: '100%',
-    // width: '90%',
-    // height: 60,
+   // flex: 0.48,
+   // width:'40%',
+    //justifyContent:'flex-start'
   },
   cardIcon: {
     width: 24,

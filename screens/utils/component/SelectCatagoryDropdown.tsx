@@ -5,10 +5,12 @@ import {
   Image,
   ImageBackground,
   Modal,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -17,6 +19,8 @@ interface SelectCatagoryDropdownProps {
   options: { id: number; option_name: string }[];
   visible: boolean;
   ismultilple: boolean;
+  title?: string;
+  subtitle?: string;
   onClose: () => void;
   onSelect: (selectedId: number | number[]) => void; 
   selectedValues?: number | number[];
@@ -25,6 +29,8 @@ const SelectCatagoryDropdown = ({
   options,
   visible,
   ismultilple,
+  title,
+  subtitle,
   onClose,
   onSelect,
   selectedValues
@@ -73,7 +79,16 @@ const toggleCheckbox = (id: number) => {
       backdropColor={'rgba(0, 0, 0, 0.5)'}
       onRequestClose={onClose}
     >
-       
+      <TouchableWithoutFeedback onPress={onClose}>
+    <View style={{ flex: 1,justifyContent: 'flex-end', }}>
+
+        <BlurView
+      style={StyleSheet.absoluteFill} 
+      blurType="light"
+      blurAmount={Platform.OS === 'ios' ? 5 : 2}
+      reducedTransparencyFallbackColor="transparent"
+    />
+
       <View style={styles.overlay}>
         <View style={styles.modelcontainer}>
           <BlurView
@@ -82,21 +97,25 @@ const toggleCheckbox = (id: number) => {
               StyleSheet.absoluteFill,
               styles.broderTopLeftRightRadius_30,
             ]}
-            blurAmount={1}
-            //reducedTransparencyFallbackColor="white"
+            blurAmount={Platform.OS === 'ios' ? 2 : 10}
+            reducedTransparencyFallbackColor="white"
           />
 
           {/* <View style={styles.modeltitleContainer}> */}
 
               <LinearGradient
+                // colors={[
+                //   'rgba(255,255,255,0.03)', 'rgba(255,255,255,0.10)',
+                // ]}
                 colors={[
-                  'rgba(255,255,255,0.03)', 'rgba(255,255,255,0.10)',
+                  'rgba(180, 140, 255, 0.05)',
+                  'rgba(180, 140, 255, 0.15)',
                 ]}
-                start={{ x: 0.175, y: 0.0625 }} // roughly "17.5% 6.25%"
-                end={{ x: 1, y: 1 }}            // similar to your gradient spread
+                start={{ x: 0.175, y: 0.0625 }}
+                end={{ x: 1, y: 1 }}          
                 style={[
                   styles.modeltitleContainer,
-                  { borderTopLeftRadius: 30, borderTopRightRadius: 30, overflow: 'hidden' },
+                  { borderTopLeftRadius: 30, borderTopRightRadius: 30,},
                 ]}
               >
             <View
@@ -112,19 +131,15 @@ const toggleCheckbox = (id: number) => {
                       style={{ width: 24, height: 24 }}
                     />
                   </View>
-                  <Text style={styles.modelTextHeader}>Select Category</Text>
+                  <Text style={styles.modelTextHeader}>{title}</Text>
                 </View>
                 <Text style={styles.orderandTotalEarings}>
-                  Pick all categories that fit your item.
+                  {subtitle}
                 </Text>
               </View>
             </View>
           {/* </View> */}
           </LinearGradient>
-
-
-        
-         
           <View
             style={{
               width: '100%',
@@ -133,7 +148,7 @@ const toggleCheckbox = (id: number) => {
               paddingHorizontal: 10,
             }}
           >
-            <ScrollView contentContainerStyle={{  }}>
+            <ScrollView contentContainerStyle={{ paddingBottom:15 }}>
               {options.map((option, index) => {
                 const isSelectedRadio = selectedRadio === option.id;
                 const isSelectedCheckbox = selectedCheckboxes.includes(
@@ -169,15 +184,16 @@ const toggleCheckbox = (id: number) => {
                       >
                        {ismultilple ?  (
                       
-                    <View style={[styles.checkboxContainer, isSelectedCheckbox && styles.checkedBox]}>
-                      
-                      {/* {isSelectedCheckbox && (
-                        <View style={{ width: 12, height: 12, borderRadius: 3, backgroundColor: '#FFF' }} />
-                      )} */}
-                      {isSelectedCheckbox && (
-                      <Text style={{ color: '#FFF', fontSize: 12 }}>✓</Text>
+                    <View
+                    style={[
+                      styles.checkboxContainer,
+                      isSelectedCheckbox && styles.checkedBox,
+                    ]}
+                  >
+                    {isSelectedCheckbox && (
+                      <Text style={styles.tickMark}>✓</Text>
                     )}
-                    </View>
+                  </View>
                   ) : (
                     <View style={[styles.radioButton, isSelectedRadio && styles.selectedRadio]}>
                       {isSelectedRadio && <View style={styles.radioDot} />}
@@ -223,6 +239,8 @@ const toggleCheckbox = (id: number) => {
           </View>
         </View>
       </View>
+      </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 };
@@ -234,15 +252,21 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '90%',
-    height: '5%',
     borderStyle: 'dashed',
-    borderBottomWidth: 0.1,
-    borderBottomColor: '#76c1f0ff',
-    // backgroundColor: 'red'
+    borderBottomWidth: 1,
+    borderBottomColor: '#3c3c3cff',
   },
   checkedBox: {
-    //backgroundColor: '#00f', // Checkbox color when checked
+    backgroundColor: '#ffffff',
   },
+  tickMark: {
+  color: '#260426ff', 
+  fontSize: 10,
+  textAlign: 'center',
+  fontWeight: '600',
+  lineHeight: 10, // keeps it centered
+},
+  
   radioButtonContainer: {
     marginTop: 10,
     // alignItems: 'center',
@@ -273,19 +297,21 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'transparent'
     //marginTop: 10,
   },
   orderandTotalEarings: {
-    color: 'rgba(255, 255, 255, 0.64)',
-    fontFamily: 'Urbanist-Regular',
+    color: '#FFFFFF',
+    fontFamily: 'Urbanist-SemiBold',
     fontSize: 12,
     fontWeight: '600',
     lineHeight: 16,
     opacity: 0.64,
-    textShadowColor: 'rgba(255,255,255,0.6)',
+    //textShadowColor: 'rgba(255,255,255,0.6)',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 1,
     marginTop: 10,
+    
   },
   header: {
     
@@ -312,7 +338,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    padding: 26,
+    paddingVertical: 16,
+    paddingHorizontal:20,
     //backgroundColor: '#5d5c5c14',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
@@ -334,6 +361,7 @@ const styles = StyleSheet.create({
     // filter: 'drop-shadow(0 0.833px 3.333px rgba(255, 255, 255, 0.18))',
     gap: 5,
     // opacity: 0.7
+    overflow:'hidden'
   },
   bottomview: {
     padding: 10,
@@ -376,7 +404,7 @@ const styles = StyleSheet.create({
     boxShadow: '0 2px 8px 0 rgba(75, 75, 75, 0.19)',
   },
   overlay: {
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    //backgroundColor: 'rgba(0, 0, 0, 0.5)',
     flex: 1,
     justifyContent: 'flex-end',
     // opacity: 0.8
@@ -464,10 +492,9 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     color: 'rgba(255, 255, 255, 0.48)',
-    fontFamily: 'Urbanist-Regular',
+    fontFamily: 'Urbanist-Medium',
     fontSize: 17,
     fontWeight: '500',
-    fontStyle: 'normal',
     letterSpacing: 0.17,
     lineHeight: 19.6,
   },

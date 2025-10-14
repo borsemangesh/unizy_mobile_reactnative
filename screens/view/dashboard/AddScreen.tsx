@@ -34,6 +34,7 @@ import {
 import { RouteProp, useRoute } from '@react-navigation/native';
 // import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
 import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
+import { BlurView } from '@react-native-community/blur';
 
 
 const bgImage = require('../../../assets/images/backimg.png');
@@ -71,7 +72,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     visible: boolean;
     ismultilple: boolean;
     fieldId?: number;
-  }>({ visible: false, ismultilple: false });
+    fieldLabel?: string;
+
+  }>({ visible: false, ismultilple: false,});
 
   const [multiSelectOptions, setMultiSelectOptions] = useState<any[]>([]);
   const [uploadedImages, setUploadedImages] = useState<
@@ -452,6 +455,13 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     </Text>
   );
 
+  const renderLabel1 = (field_name: any, mandatory: any) => (
+    <Text style={styles.textstyle1}>
+      {field_name}
+      {mandatory && <Text style={{ color: '#fff' }}>*</Text>}
+    </Text>
+  );
+
   const [isCheckbox, setCheckBox] = useState(false);
 
   const renderField = (field: any) => {
@@ -612,6 +622,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                   visible: true,
                   ismultilple: !!field.param.ismultilple,
                   fieldId: id,
+                  fieldLabel: field.param.field_name,
                 });
                 setMultiSelectOptions(options);
               }}
@@ -624,7 +635,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               </Text>
 
                <Image
-              source={require('../../../assets/images/right.png')} // your asset
+              source={require('../../../assets/images/right.png')} 
               style={styles.dropdownIcon}
               resizeMode="contain"
             />
@@ -768,7 +779,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             {/* Main row with label and toggle */}
             <View style={styles.featuredRow}>
               {/* <Text style={styles.featuredLabel}>{field.param.field_name}</Text> */}
-              {renderLabel(field.param.field_name, field.mandatory)}
+              {renderLabel1(field.param.field_name, field.mandatory)}
 
               <ToggleButton
                 value={!!formValues[field.param.id]?.value}
@@ -805,18 +816,15 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   return (
  
     <ImageBackground source={bgImage} style={styles.background}>
-         <TouchableWithoutFeedback
-        onPress={() => {
-          if (multiSelectModal.visible) {
-            setMultiSelectModal(prev => ({ ...prev, visible: false }));
-          }
-          Keyboard.dismiss();
-        }}
-        accessible={false} 
-      >
       <View style={styles.fullScreenContainer}>
         {/* Header */}
         <View style={styles.header}>
+            {/* <BlurView
+            style={StyleSheet.absoluteFill}
+            blurType="light"       // or 'dark' for darker backgrounds
+            blurAmount={10}        // intensity
+            reducedTransparencyFallbackColor="transparent" // fallback on Android
+          /> */}
           <View style={styles.headerRow}>
             <TouchableOpacity
               style={styles.backBtn}
@@ -921,13 +929,14 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           <Button title="Preview Details" onPress={() => handlePreview()} />
         </KeyboardAvoidingView>
       </View>
-      </TouchableWithoutFeedback>
 
 
       <SelectCatagoryDropdown
         options={multiSelectOptions}
         visible={multiSelectModal.visible}
         ismultilple={multiSelectModal?.ismultilple}
+        title={`Select ${multiSelectModal?.fieldLabel || 'Category'}`}
+        subtitle={`Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your item.`}
         selectedValues={formValues[multiSelectModal.fieldId!]?.value}
         onClose={() =>
           setMultiSelectModal(prev => ({ ...prev, visible: false }))
@@ -977,6 +986,7 @@ const styles = StyleSheet.create({
 dropdownIcon: {
   width: 20,
   height: 20,
+  tintColor:"rgba(255, 255, 255, 0.48)"
 },
   dropdowntext: {
     fontFamily: 'Urbanist-Regular',
@@ -984,7 +994,7 @@ dropdownIcon: {
     fontSize: 17,
     //lineHeight:24,
     fontStyle: 'normal',
-    color: '#fff',
+    color: 'rgba(255, 255, 255, 0.48)',
     includeFontPadding: false,
     //textAlignVertical: 'center',
   },
@@ -1033,7 +1043,21 @@ dropdownIcon: {
     right: 0,
     zIndex: 10,
     overflow: 'hidden',
+    backgroundColor:'transparent'
+    
   },
+//   header: {
+//   position: 'absolute',
+//   top: 0,
+//   left: 0,
+//   right: 0,
+//   zIndex: 10,
+//   height: 100,
+//   paddingHorizontal: 16,
+//   paddingTop: 40,
+//   paddingBottom: 12,
+//   justifyContent: 'flex-end',
+// },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1226,6 +1250,14 @@ dropdownIcon: {
     fontWeight: 400,
     lineHeight: 16,
     fontSize: 14,
+    paddingLeft:4
+  },
+    textstyle1: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-Medium',
+    fontWeight: 500,
+    lineHeight: 22,
+    fontSize: 17,
     paddingLeft:4
   },
   productTextView: {
