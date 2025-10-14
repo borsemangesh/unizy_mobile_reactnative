@@ -76,8 +76,10 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   const [loading, setLoading] = useState(false);
   const route = useRoute<SinglePageRouteProp>();
 
-   useEffect(() => {
+useEffect(() => {
   if (route.params?.resetToLogin) {
+    loginOpacity.setValue(1);
+    loginTranslateY.setValue(0);
     setCurrentScreen('login'); 
     setcurrentScreenIninner('login'); 
   }
@@ -138,9 +140,10 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       Animated.timing(loginunizyTranslateY, {
         toValue: 0,
         duration: 1000,
-        easing: Easing.out(Easing.ease),
+        easing: Easing.linear,
         useNativeDriver: true,
       }).start(() => {
+        loginOpacity.setValue(1);
         setTextandBackIcon(true);
         setCurrentScreen('login');
         setcurrentScreenIninner('login');
@@ -171,13 +174,13 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         Animated.timing(greetingOpacity, {
           toValue: 1,
           duration: 600,
-          easing: Easing.out(Easing.ease),
+          easing: Easing.linear,
           useNativeDriver: true,
         }),
         Animated.timing(greetingScale, {
           toValue: 1,
           duration: 600,
-          easing: Easing.out(Easing.ease),
+          easing: Easing.linear,
           useNativeDriver: true,
         }),
       ]),
@@ -233,7 +236,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   const verifyAndContinyTranslateY1 = React.useRef(
     new Animated.Value(0),
   ).current;
-  const verifyAndContinyTranslateY2 = useRef(new Animated.Value(-100)).current;
+  const verifyAndContinyTranslateY2 = useRef(new Animated.Value(-200)).current;
   const profileTranslateY = useRef(new Animated.Value(-300)).current;
   const newsendOTPTranslateY = useRef(new Animated.Value(-300)).current;
 
@@ -252,7 +255,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
     resetPasswordtranslateY.setValue(0);
     setOTPTranslatY.setValue(Dimensions.get('window').height);
     verifyAndContinyTranslateY1.setValue(-300);
-    verifyAndContinyTranslateY2.setValue(-100);
+    verifyAndContinyTranslateY2.setValue(-200);
     newsendOTPTranslateY.setValue(-300);
     profileTranslateY.setValue(-300);
     resetPasswordtranslateY.setValue(0);
@@ -295,14 +298,14 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       Animated.timing(loginTranslateY, {
         toValue: 0,
         duration: 1000,
-        easing: Easing.out(Easing.ease),
+        easing: Easing.linear,
         useNativeDriver: true,
       }).start();
 
       Animated.timing(translateY, {
         toValue: 0,
         duration: 600,
-        easing: Easing.out(Easing.ease),
+        easing: Easing.linear,
         useNativeDriver: true,
       }).start();
 
@@ -310,7 +313,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         Animated.timing(slideUp, {
           toValue: 0,
           duration: 600,
-          easing: Easing.out(Easing.ease),
+          easing: Easing.linear,
           useNativeDriver: true,
         }),
       ]).start();
@@ -322,15 +325,15 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       Animated.timing(signupTranslateY, {
         toValue: 0,
         duration: 1000,
-        easing: Easing.out(Easing.ease),
+        easing: Easing.linear,
         useNativeDriver: true,
       }).start();
     }
     if (currentScreenIninner === 'profile') {
       Animated.timing(profileTranslateY, {
         toValue: 0,
-        duration: 1000,
-        easing: Easing.out(Easing.ease),
+        duration: 500,
+        easing: Easing.linear,
         useNativeDriver: true,
       }).start();
     }
@@ -341,17 +344,17 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         Animated.timing(verifyAndContinyTranslateY1, {
           toValue: 0,
           duration: 1000,
-          easing: Easing.out(Easing.ease),
+          easing: Easing.linear,
           useNativeDriver: true,
         }),
       ]).start();
       Animated.parallel([
-        Animated.timing(verifyAndContinyTranslateY2, {
-          toValue: 0,
-          duration: 500,
-          easing: Easing.out(Easing.ease),
-          useNativeDriver: true,
-        }),
+        // Animated.timing(verifyAndContinyTranslateY2, {
+        //   toValue: 200,
+        //   duration: 500,
+        //   easing: Easing.linear,
+        //   useNativeDriver: true,
+        // }),
         Animated.timing(opacity, {
           toValue: 1,
           duration: 500,
@@ -365,7 +368,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         Animated.timing(setOTPTranslatY, {
           toValue: 0,
           duration: 1000,
-          easing: Easing.out(Easing.ease),
+          easing: Easing.linear,
           useNativeDriver: true,
         }),
       ]).start();
@@ -376,7 +379,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         Animated.timing(resetPasswordtranslateY, {
           toValue: 0,
           duration: 1000,
-          easing: Easing.out(Easing.ease),
+          easing: Easing.linear,
           useNativeDriver: true,
         }),
       ]).start();
@@ -411,13 +414,13 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
           Animated.timing(translateY, {
             toValue: 0,
             duration: 600,
-            easing: Easing.out(Easing.ease),
+            easing: Easing.linear,
             useNativeDriver: true,
           }),
           Animated.timing(slideUp, {
             toValue: 0,
             duration: 1000,
-            easing: Easing.out(Easing.ease),
+            easing: Easing.linear,
             useNativeDriver: true,
           }),
         ]).start();
@@ -523,6 +526,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   };
 
   const loginapi = async () => {
+    if(loading) return
     Keyboard.dismiss();
 
     if (!username.trim() || !password.trim()) {
@@ -600,7 +604,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
   const handleSendOTP = async () => {
 
-
     setOtp(['', '', '', '']);
 
     if (
@@ -673,40 +676,40 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
           signUpusername.toString(),
         );
 
-        // setCurrentScreen('login');
-        // setcurrentScreenIninner('sendOTP');
-        Animated.timing(loginTranslateY, {
-          toValue: Dimensions.get('window').height,
-          duration: 1000,
-          easing: Easing.in(Easing.ease),
-          useNativeDriver: true,
-        }).start(() => {
-          setCurrentScreen('login');
-          setcurrentScreenIninner('sendOTP');
-        });
-
         Animated.timing(signupTranslateY, {
-          toValue: Dimensions.get('window').height,
-          duration: 1000,
-          easing: Easing.in(Easing.ease),
-          useNativeDriver: true,
-        }).start(() => {
-          // Slide SendOTP screen from top into view
-          setOTPTranslatY.setValue(-Dimensions.get('window').height); // reset position
-
-          Animated.timing(setOTPTranslatY, {
-            toValue: 0,
-            duration: 1000,
-            easing: Easing.out(Easing.ease),
+            toValue: 300,//Dimensions.get('window').height,
+            duration: 350,
+            easing: Easing.in(Easing.ease),
             useNativeDriver: true,
           }).start(() => {
-            setCurrentScreen('login');
-            setcurrentScreenIninner('sendOTP');
-             setTimeout(() => {
-            inputs.current[0]?.focus();
-          }, 300);
+            // Slide SendOTP screen from top into view
+            // setOTPTranslatY.setValue(-Dimensions.get('window').height); // reset position
+            setOTPTranslatY.setValue(-600);
+            Animated.timing(setOTPTranslatY, {
+              toValue: 0,
+              duration: 250,
+              easing: Easing.out(Easing.ease),
+              useNativeDriver: true,
+            }).start(() => {
+              setCurrentScreen('login');
+              setcurrentScreenIninner('sendOTP');
+               setTimeout(() => {
+              inputs.current[0]?.focus();
+            }, 300);
+            });
           });
-        });
+    
+            Animated.timing(loginTranslateY, {
+              toValue: 500,//Dimensions.get('window').height,
+              duration: 350,
+              easing: Easing.in(Easing.ease),
+              useNativeDriver: true,
+            }).start(() => {
+              setCurrentScreen('login');
+              setcurrentScreenIninner('sendOTP');
+            });
+
+        
       } else {
         showToast(data.message || 'Signup failed', 'error');
       }
@@ -786,15 +789,15 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         setIsConfirmPasswordVisible(false);
 
         Animated.timing(setOTPTranslatY, {
-          toValue: Dimensions.get('window').height,
-          duration: 1000,
+          toValue: 200,//Dimensions.get('window').height,
+          duration: 200,
           easing: Easing.in(Easing.ease),
           useNativeDriver: true,
         }).start(() => {});
 
         Animated.timing(loginTranslateY, {
-          toValue: Dimensions.get('window').height,
-          duration: 1000,
+          toValue: 200,//Dimensions.get('window').height,
+          duration: 200,
           easing: Easing.in(Easing.ease),
           useNativeDriver: true,
         }).start(() => {
@@ -878,8 +881,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
   const verifyOTP = async () => {
 
-
-
     Keyboard.dismiss();
     setOtp1(['', '', '', '']);
 
@@ -927,31 +928,26 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         );
         await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
         await AsyncStorage.setItem('signupUsername', verifyusername);
-        // setShowOtp(true);
-        //startAnimation();
+        
 
         Animated.timing(verifyAndContinyTranslateY1, {
-          toValue: Dimensions.get('window').height, // move down off screen
-          duration: 500,
-          easing: Easing.in(Easing.ease),
-          useNativeDriver: true,
-        }).start(() => {
-          setShowOtp(true); // now show OTP view
-
-          // Immediately reset OTP position above screen
-          verifyAndContinyTranslateY2.setValue(-100);
-
-          // Slide in OTP form (from top to 0)
-          Animated.timing(verifyAndContinyTranslateY2, {
-            toValue: 0,
+            toValue: 200,//Dimensions.get('window').height, // move down off screen
             duration: 500,
-            easing: Easing.out(Easing.ease),
+            easing: Easing.in(Easing.ease),
             useNativeDriver: true,
-          }).start();
-          setTimeout(() => {
-          verifyinputs.current[0]?.focus();
-        }, 300);
-        });
+          }).start(() => {
+            setShowOtp(true); 
+            verifyAndContinyTranslateY2.setValue(-200);
+            Animated.timing(verifyAndContinyTranslateY2, {
+              toValue: 0,
+              duration: 500,
+              easing: Easing.out(Easing.ease),
+              useNativeDriver: true,
+            }).start();
+            setTimeout(() => {
+            verifyinputs.current[0]?.focus();
+          }, 300);
+          });
       } else {
         showToast(data?.message || 'Failed to send OTP', 'error');
       }
@@ -963,6 +959,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
   const submitotp = async () => {
 
+   
     Keyboard.dismiss();
     setPhoto('');
     const otpValue = otp1.join('');
@@ -1014,9 +1011,31 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
             );
           }
         }
+        // setShowPopup1(false);
+        // setCurrentScreen('login');
+        // setcurrentScreenIninner('profile');
+                 // verifyAndContinyTranslateY2.setValue(-200);
+
+    // Slide in OTP form (from top to 0)
+    profileTranslateY.setValue(-300);
+
+      Animated.timing(verifyAndContinyTranslateY2, {
+        toValue: 300, // slide down off-screen
+        duration: 200,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start(()=>{
+    
         setShowPopup1(false);
         setCurrentScreen('login');
         setcurrentScreenIninner('profile');
+        Animated.timing(profileTranslateY, {
+            toValue: 0,
+            duration: 500,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+          }).start();
+      });
       } else {
         showToast(data?.message || 'OTP verification failed', 'error');
       }
@@ -1151,49 +1170,85 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
   const ClickFPGoBack_slideOutToTop = (onFinish?: () => void) => {
     Animated.timing(resetPasswordtranslateY, {
-      toValue: -Dimensions.get('window').height,
-      duration: 1000,
+      toValue: -300,//-Dimensions.get('window').height,
+      duration: 300,
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
     }).start(() => {
+      
       if (onFinish) onFinish();
     });
-
     Animated.timing(loginTranslateY, {
-      toValue: Dimensions.get('window').height, // slide into place
-      duration: 200,
+      toValue: 300,//Dimensions.get('window').height,
+      duration: 100,
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
     }).start();
+    
   };
 
   const goToForgotPassword = () => {
     Keyboard.dismiss();
-    Animated.timing(textAndBackOpacity, {
-      toValue: 0, // fade out
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
 
-    Animated.timing(resetPasswordtranslateY, {
-      toValue: -Dimensions.get('window').height,
-      duration: 200,
-      easing: Easing.out(Easing.ease),
-      useNativeDriver: true,
-    }).start(() => {});
-    Animated.timing(loginTranslateY, {
-      toValue: Dimensions.get('window').height, 
-      duration: 200,
-      easing: Easing.in(Easing.ease),
-      useNativeDriver: true,
-    }).start(() => {
-      setTextandBackIcon(false);
-      setUsername('');
-      setPassword('');
-      setIsPasswordVisible(false);
-      setCurrentScreen('login');
-      setcurrentScreenIninner('forgotpassword');
-    });
+
+    // Animated.timing(loginTranslateY, {
+    //   toValue: 300,//Dimensions.get('window').height,
+    //   duration: 100,
+    //   easing: Easing.in(Easing.ease),
+    //   useNativeDriver: true,
+    // }).start(()=>{
+    //   Animated.timing(resetPasswordtranslateY, {
+    //     toValue: -300,//-Dimensions.get('window').height,
+    //     duration: 100, // 👈 make it instant
+    //     useNativeDriver: true,
+    //     easing: Easing.out(Easing.ease),
+    //   }).start(()=>{
+    //     setTextandBackIcon(false);
+    //     setUsername('');
+    //     setPassword('');
+    //     setIsPasswordVisible(false);
+    //     setCurrentScreen('login');
+    //     setcurrentScreenIninner('forgotpassword');
+    //   })
+    //   Animated.timing(textAndBackOpacity, {
+    //     toValue: 0, // fade out
+    //     duration: 50,
+    //     useNativeDriver: true,
+    //   }).start();
+    // })
+
+    Animated.parallel([
+        // Slide login down
+        Animated.timing(loginTranslateY, {
+          toValue: 300, // move login view to bottom
+          duration: 150, // same duration for both
+          easing:  Easing.linear,
+          useNativeDriver: true,
+        }),
+        // Slide reset password up
+        Animated.timing(resetPasswordtranslateY, {
+          toValue: -300, // slide reset password view to actual position
+          duration: 150, // same duration
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+        // Fade out text and back icon (optional)
+        Animated.timing(textAndBackOpacity, {   
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        // Callback after animation finishes
+        setTextandBackIcon(false);
+        setUsername('');
+        setPassword('');
+        setIsPasswordVisible(false);
+        setCurrentScreen('login');
+        setcurrentScreenIninner('forgotpassword');
+      });
+      
+    
   };
 
   const heightAnim = useRef(new Animated.Value(0)).current;
@@ -1206,10 +1261,17 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       if (currentScreenIninner !== 'signup') {
         Animated.timing(heightAnim, {
           toValue: contentHeight + 30,
-          duration: 800,
+          duration: 700,
           easing: Easing.out(Easing.exp),
           useNativeDriver: false,
         }).start();
+        
+        // Animated.spring(heightAnim, {
+        //     toValue: contentHeight + 30, // overshoot a bit
+        //     friction: 100,
+        //     tension: 1000,
+        //     useNativeDriver: false,
+        //   }).start();
       } else {
         Animated.timing(heightAnim, {
           toValue: contentHeight + 30,
@@ -1217,56 +1279,144 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
           easing: Easing.out(Easing.exp),
           useNativeDriver: false,
         }).start();
+        // Animated.spring(heightAnim, {
+        //     toValue: contentHeight+ 30, // overshoot a bit
+        //     friction: 10,
+        //     tension: 1000,
+        //     useNativeDriver: false,
+        //   }).start();
       }
     }
   }, [contentHeight]);
 
   const Click_SENDOTP_TO_SIGNUPSCREEN = (onFinish?: () => void) => {
     Animated.timing(setOTPTranslatY, {
-      toValue: -Dimensions.get('window').height,
-      duration: 1000,
+      toValue: -400,//-Dimensions.get('window').height,
+      duration: 350,
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
     }).start(() => {
+        
       if (onFinish) onFinish();
     });
-
     Animated.timing(signupTranslateY, {
-      toValue: Dimensions.get('window').height,
-      duration: 1000,
-      easing: Easing.out(Easing.ease),
-      useNativeDriver: true,
-    }).start();
+        toValue: 400,//Dimensions.get('window').height,
+        duration: 250,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start();
   };
 
   const ClickBackToSendOTP1 = (onFinish?: () => void) => {
     Keyboard.dismiss();
-    console.log('ClickBackToSendOTP1', setOTPTranslatY);
-
-    // ✅ Reset OTP screen below the window
-    setOTPTranslatY.setValue(Dimensions.get('window').height);
-
+  
     Animated.parallel([
-      // Slide Verify screen up (out)
+      // OTP slides up & fades out
       Animated.timing(verifyAndContinyTranslateY2, {
-        toValue: -Dimensions.get('window').height,
-        duration: 1000,
-        easing: Easing.out(Easing.ease),
+        toValue: -300,
+        duration: 400,
+        easing: Easing.linear,
         useNativeDriver: true,
       }),
-      // Slide SendOTP screen up from bottom (in)
-      Animated.timing(setOTPTranslatY, {
-        toValue: Dimensions.get('window').height, // on screen
-        duration: 1000,
-        easing: Easing.out(Easing.ease),
+    //   Animated.timing(otpOpacity, {
+    //     toValue: 0,
+    //     duration: 350,
+    //     easing: Easing.linear,
+    //     useNativeDriver: true,
+    //   }),
+  
+      // Verify Email slides in from bottom & fades in
+      Animated.timing(verifyAndContinyTranslateY1, {
+        toValue: 0,
+        duration: 450,
+        easing: Easing.linear,
         useNativeDriver: true,
       }),
+    //   Animated.timing(verifyOpacity, {
+    //     toValue: 1,
+    //     duration: 400,
+    //     easing: Easing.linear,
+    //     useNativeDriver: true,
+    //   }),
     ]).start(() => {
+      // cleanup & state updates after animation
+      setShowOtp(false);
+      setverifyimageLoaded(true);
       setCurrentScreen('login');
-      setcurrentScreenIninner('sendOTP');
+      setcurrentScreenIninner('verify');
       if (onFinish) onFinish();
     });
   };
+  
+//   const ClickBackToSendOTP1 = (onFinish?: () => void) => {
+
+
+//     Keyboard.dismiss();
+
+//     Animated.parallel([
+//       // Slide Verify screen up from bottom (IN)
+//       Animated.timing(verifyAndContinyTranslateY1, {
+//         toValue: 0, // on screen
+//         duration: 400,
+//         easing: Easing.out(Easing.ease),
+//         useNativeDriver: true,
+//       }),
+  
+//       // Slide OTP screen up and out (OUT)
+//       Animated.timing(verifyAndContinyTranslateY2, {
+//         toValue: -300, // move up off-screen
+//         duration: 400,
+//         easing: Easing.out(Easing.ease),
+//         useNativeDriver: true,
+//       }),
+//     ]).start(() => {
+//       // After animation, update states
+//       setShowOtp(false);
+//       setverifyimageLoaded(true);
+//       setCurrentScreen('login');
+//       setcurrentScreenIninner('verify');
+//       if (onFinish) onFinish();
+//     });
+
+
+//     // Keyboard.dismiss();
+ 
+//     // // ✅ Reset OTP screen below the window
+//     // // setOTPTranslatY.setValue(Dimensions.get('window').height);
+//     // setCurrentScreen('login');
+//     // setcurrentScreenIninner('verify');
+//     // setverifyimageLoaded(true)
+//     // setShowOtp(false);
+    
+//     // Animated.parallel([
+//     //     Animated.timing( verifyAndContinyTranslateY1, {
+//     //         toValue: -300,//Dimensions.get('window').height, // on screen
+//     //         duration: 300,
+//     //         easing: Easing.out(Easing.ease),
+//     //         useNativeDriver: true,
+//     //       }),
+//     //   // Slide Verify screen up (out)
+//     //   Animated.timing(verifyAndContinyTranslateY2, {
+//     //     toValue: -300,//-Dimensions.get('window').height,
+//     //     duration: 400,
+//     //     easing: Easing.out(Easing.ease),
+//     //     useNativeDriver: true,
+//     //   }),
+     
+     
+//     //   // Slide SendOTP screen up from bottom (in)
+//     //   Animated.timing(setOTPTranslatY, {
+//     //     toValue: 300,//Dimensions.get('window').height, // on screen
+//     //     duration: 300,
+//     //     easing: Easing.out(Easing.ease),
+//     //     useNativeDriver: true,
+//     //   }),
+//     // ]).start(() => {
+  
+//     //   if (onFinish) onFinish();
+//     // });
+
+//   };
 
   const handleSelectImage = async () => {
     const hasPermission = await requestCameraPermission();
@@ -1414,13 +1564,15 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
     checkLoginStatus();
   };
 
+  const signupOpacity = useRef(new Animated.Value(0)).current;
+  const loginOpacity = useRef(new Animated.Value(0)).current;
   return (
     <ImageBackground
       source={require('../../../assets/images/bganimationscreen.png')}
       style={{ width: '100%', height: '100%' }}
       resizeMode="cover"
     >
-      {Platform.OS === 'android' ? (
+      {/* {Platform.OS === 'android' ? (
         <>
           <BackgroundAnimation_Android />
         </>
@@ -1441,18 +1593,14 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
             />
           </View>
         </>
-      )}
+      )} */}
       <View
         style={{
           flex: 1,
           paddingTop: Platform.OS === 'ios' ? 0 : 30,
         }}
       >
-        {/* {Platform.OS === 'android' ? (
-          <BackgroundAnimation_Android />
-        ) : (
-          <BackgroundAnimation />
-        )} */}
+
 
         <KeyboardAvoidingView
           style={{ flex: 1 }}
@@ -1518,7 +1666,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                       Animated.timing(unizyTranslateY, {
                         toValue: -Dimensions.get('window').height,
                         duration: 1000,
-                        easing: Easing.out(Easing.ease),
+                        easing: Easing.linear,
                         useNativeDriver: true,
                       }),
                       // Slide SendOTP screen up from bottom (in)
@@ -1589,6 +1737,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                     <TextInput
                       style={selectlang_styles.searchBar}
                       placeholder="Search"
+                      selectionColor="white"
                       placeholderTextColor="#ccc"
                       onChangeText={setSearch}
                       value={search}
@@ -1728,7 +1877,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                     {currentScreenIninner === 'login' && (
                       <>
                         <Animated.View
-                          style={{
+                          style={{ opacity: loginOpacity,
                             transform: [{ translateY: loginTranslateY }],
                           }}
                         >
@@ -1751,6 +1900,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                               autoComplete="email"
                               textContentType="emailAddress"
                               autoCorrect={false}
+                              selectionColor="white"
                               onChangeText={usernameText =>
                                 setUsername(usernameText)
                               }
@@ -1764,6 +1914,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                               placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
                               value={password}
                               maxLength={20}
+                              selectionColor="white"
                               secureTextEntry={!isPasswordVisible}
                               onChangeText={passwordText =>
                                 setPassword(passwordText)
@@ -1830,14 +1981,41 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                             </Text>
                             <TouchableOpacity
                               onPress={() => {
-                                Keyboard.dismiss();
-                                Animated.timing(textAndBackOpacity, {
-                                  toValue: 0, // fade out
-                                  duration: 500,
+                            
+                              Keyboard.dismiss();
+                            Animated.timing(textAndBackOpacity, {
+                                toValue: 0,
+                                duration: 300,
+                                useNativeDriver: true,
+                              }).start();
+                          
+                              // Reset initial position and opacity before animation
+                              signupTranslateY.setValue(0); // start off-screen
+                              signupOpacity.setValue(0); // start invisible
+                              loginOpacity.setValue(1); // start visible
+                          
+                              // Animate slide + fade together
+                              Animated.parallel([
+                                Animated.spring(signupTranslateY, {
+                                  toValue: 0, // slide in
                                   useNativeDriver: true,
-                                }).start();
-                                setTextandBackIcon(false);
-                                signupTranslateY.setValue(0);
+                                  friction: 6,
+                                  tension: 50,
+                                }),
+                                Animated.timing(signupOpacity, {
+                                  toValue: 1,
+                                  duration: 200,
+                                  easing: Easing.linear,
+                                  useNativeDriver: true,
+                                }),
+                                Animated.timing(loginOpacity, {
+                                  toValue: 0,
+                                  duration: 150,
+                                  easing: Easing.linear,
+                                  useNativeDriver: true,
+                                }),
+                              ]).start(() => {
+                                                             setTextandBackIcon(false);
                                 setUsername('');
                                 setPassword('');
                                 setIsPasswordVisible(false);
@@ -1851,7 +2029,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                 setsignUpUsername('');
                                 setIsConfirmPasswordVisible(false);
                                 setsignUpIsPasswordVisible(false);
-                              }}
+                              });
+                            }}
                             >
                               <Text style={Styles.signupText}>Sign up</Text>
                             </TouchableOpacity>
@@ -1894,6 +2073,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                 value={username1}
                                 maxLength={50}
+                                selectionColor="white"
                                 keyboardType="email-address"
                                 autoCapitalize="none"
                                 autoCorrect={false}
@@ -1941,33 +2121,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                             onRequestClose={closePopup}
                           >
                             <View style={Styles.overlay}>
-                              {/* <BlurView  
-                                style={{
-                                  flex: 1,
-                                  alignContent: 'center',
-                                  justifyContent: 'center',
-                                  width: '100%',
-                                  alignItems: 'center',
-                                }}
-                                blurType="dark"
-                                blurAmount={Platform.OS === 'ios' ? 15 : 100}
-                                reducedTransparencyFallbackColor={
-                                  Platform.OS === 'ios'
-                                    ? 'rgba(0, 0, 0, 0.11)'
-                                    : 'rgba(0, 0, 0, 0.5)' 
-                                }
-                                >
-                                <View
-                                  style={[
-                                    StyleSheet.absoluteFill,
-                                    {
-                                      backgroundColor:
-                                        Platform.OS === 'ios'
-                                          ? 'rgba(0, 0, 0, 0.15)' 
-                                          : 'rgba(0, 0, 0, 0.32)', 
-                                    },
-                                  ]}
-                                /> */}
+                          
                                 <BlurView
                                 style={{
                                   flex: 1,
@@ -2038,7 +2192,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                       <>
                         <Animated.View
                           style={[
-                            { width: '100%', alignItems: 'center' },
+                            { width: '100%', alignItems: 'center',opacity: signupOpacity},
                             {
                               transform: [{ translateY: signupTranslateY }],
                             },
@@ -2060,6 +2214,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                 textContentType="givenName"      
                                 autoCapitalize="words"        
                                 importantForAutofill="yes"  
+                                selectionColor="white"
                               />
                             </View>
 
@@ -2069,6 +2224,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                 placeholder="Last Name*"
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                 value={lastName}
+                                selectionColor="white"
+                                maxLength={20}
                                 autoComplete="name-family"      
                                   textContentType="familyName"     
                                   importantForAutofill="yes"
@@ -2125,6 +2282,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                               autoCapitalize="none"
                               autoComplete="email"
                               textContentType="emailAddress"
+                              selectionColor="white"
                               autoCorrect={false}
                               onChangeText={text => setsignUpUsername(text)}
                             />
@@ -2158,6 +2316,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
                               value={signUppassword}
                               maxLength={20}
+                              selectionColor="white"
                               onChangeText={setsignUpPassword}
                               secureTextEntry={!issignUpPasswordVisible}
                             />
@@ -2195,6 +2354,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
                               value={confirmPassword}
                               maxLength={20}
+                              selectionColor="white"
                               onChangeText={setConfirmPassword}
                               secureTextEntry={!isConfirmPasswordVisible}
                             />
@@ -2223,6 +2383,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                           </View>
 
                           <TouchableOpacity
+                          disabled={loading}
                             onPress={() => {
                               Keyboard.dismiss();
                               handleSendOTP();
@@ -2252,6 +2413,12 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                     duration: 500,
                                     useNativeDriver: true,
                                   }).start();
+                                  Animated.timing(loginOpacity, {
+                                    toValue: 1, // fade in
+                                    duration: 500,
+                                    useNativeDriver: true,
+                                  }).start();
+                                  // loginOpacity.setValue(1);
                                   setCurrentScreen('login');
                                   setcurrentScreenIninner('login');
                                   setConfirmPassword('');
@@ -2305,6 +2472,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                     style={Styles.sendOtpotpBox}
                                     keyboardType="number-pad"
                                     maxLength={1}
+                                    selectionColor="white"
                                     onChangeText={text => {
                                       const digit = text.replace(/[^0-9]/g, '');
                                       handleChange(digit, index);
@@ -2364,13 +2532,46 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                 </Text>
                                 <TouchableOpacity
                                   onPress={() => {
+
+
                                     Keyboard.dismiss();
-                                    Click_SENDOTP_TO_SIGNUPSCREEN(() => {
-                                      setCurrentScreen('login');
-                                      setcurrentScreenIninner('signup');
-                                      setShowOtp(false);
-                                      setverifyimageLoaded(true);
-                                    });
+
+                                        Animated.parallel([
+                                            
+                                            Animated.timing(signupTranslateY, {
+                                                toValue: 300,
+                                                duration: 400,
+                                                easing: Easing.linear,
+                                                useNativeDriver: true,
+                                            }),
+
+                                            // Hide sendOTP screen below (optional)
+                                            Animated.timing(setOTPTranslatY, {
+                                            toValue: -300, // slide out downwards
+                                            duration: 400,
+                                            easing: Easing.linear,
+                                            useNativeDriver: true,
+                                            }),
+                                        ]).start(() => {
+                                            setCurrentScreen('login');
+                                            setcurrentScreenIninner('signup');
+                                            setShowOtp(false);
+                                            setverifyimageLoaded(true);
+                                        });
+
+
+                                    // Keyboard.dismiss();
+                                    // verifyAndContinyTranslateY1.setValue(-300); // below screen ❌ wrong direction
+                                    // verifyAndContinyTranslateY2.setValue(300);  // currently on screen ❌ wrong
+                                    // ClickBackToSendOTP1();  // visible
+                                    // verifyOpacity.setValue(0);
+                                    // otpOpacity.setValue(1);
+                                    // Click_SENDOTP_TO_SIGNUPSCREEN(() => {
+                                    //   setCurrentScreen('login');
+                                    //   setcurrentScreenIninner('signup');
+                                    //   setShowOtp(false);
+                                    //   setverifyimageLoaded(true);
+                                    // });
                                   }}
                                 >
                                   <Text style={Styles.sendOtpgoBackText1}>
@@ -2412,6 +2613,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                   maxLength={50}
                                   keyboardType="email-address"
                                   autoCapitalize="none"
+                                  selectionColor="white"
                                   autoCorrect={false}
                                   autoComplete="email"
                                   textContentType="emailAddress"
@@ -2477,6 +2679,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                     value={otp1[index]}
                                     returnKeyType="next"
                                     textAlign="center"
+                                    selectionColor="white"
                                     secureTextEntry={true}
                                     onKeyPress={({ nativeEvent }) => {
                                       if (
@@ -2523,10 +2726,47 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                 </Text>
                                 <TouchableOpacity
                                   onPress={() => {
-                                    ClickBackToSendOTP1(() => {
-                                      //   setCurrentScreen('login');
-                                      // setcurrentScreenIninner('sendOTP');
-                                    });
+                                    // verifyAndContinyTranslateY1.setValue(300); // below screen
+                                    // verifyAndContinyTranslateY2.setValue(0);
+                                    // // setOTPTranslatY.setValue(300);
+                                    // ClickBackToSendOTP1(() => {
+                                    //   //   setCurrentScreen('login');
+                                    //   // setcurrentScreenIninner('sendOTP');
+                                    //     setCurrentScreen('login');
+                                    //     setcurrentScreenIninner('verify');
+                                    //     setverifyimageLoaded(true)
+                                    //     setShowOtp(false);
+                                    // });
+
+
+
+                                    Keyboard.dismiss();
+    // Set correct starting positions
+    verifyAndContinyTranslateY1.setValue(300);
+    verifyAndContinyTranslateY2.setValue(0);
+
+    // Run animation
+    Animated.parallel([
+      Animated.timing(verifyAndContinyTranslateY1, {
+        toValue: 0,
+        duration: 400,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }),
+      Animated.timing(verifyAndContinyTranslateY2, {
+        toValue: -300,
+        duration: 400,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setShowOtp(false);
+      setverifyimageLoaded(true);
+      setCurrentScreen('login');
+      setcurrentScreenIninner('verify');
+    });
+  
+
                                   }}
                                 >
                                   <Text style={Styles.verifygoBackText1}>

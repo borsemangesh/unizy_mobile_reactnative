@@ -271,7 +271,7 @@ export const Styles = StyleSheet.create({
     fontSize: 17,
     lineHeight: 22,
     fontStyle: 'normal',
-    color:"#fff"
+    color:"#fff",
     
   },
   password_container: {
