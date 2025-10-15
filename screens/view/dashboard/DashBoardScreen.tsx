@@ -1,4 +1,4 @@
-import React, { JSX, useEffect, useRef, useState } from 'react';
+import React, { JSX, useCallback, useEffect, useRef, useState } from 'react';
 import {
   Image,
   ImageBackground,
@@ -29,7 +29,7 @@ import { MAIN_URL } from '../../utils/APIConstant';
 import TutitionCard from '../../utils/TutitionCard';
 import ProfileCard from './ProfileCard';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 
 const mylistings = require('../../../assets/images/mylistingicon.png');
@@ -207,28 +207,28 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
       );
     }
 
-    const fetchFeatures = async () => {
-      try {
-        const token = await AsyncStorage.getItem('userToken');
-        if (!token) return;
-        const url1 = MAIN_URL.baseUrl + 'category/feature-list';
+    // const fetchFeatures = async () => {
+    //   try {
+    //     const token = await AsyncStorage.getItem('userToken');
+    //     if (!token) return;
+    //     const url1 = MAIN_URL.baseUrl + 'category/feature-list';
 
-        const res = await fetch(url1, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+    //     const res = await fetch(url1, {
+    //       headers: { Authorization: `Bearer ${token}` },
+    //     });
 
-        const json = await res.json();
-        console.log('✅ Features API response:', json);
+    //     const json = await res.json();
+    //     console.log('✅ Features API response:', json);
 
-        if (json.statusCode === 200) {
-          setFeatures(json.data.features || []);
-        }
-      } catch (err) {
-        console.log('❌ Error fetching features:', err);
-      }
-    };
+    //     if (json.statusCode === 200) {
+    //       setFeatures(json.data.features || []);
+    //     }
+    //   } catch (err) {
+    //     console.log('❌ Error fetching features:', err);
+    //   }
+    // };
 
-    fetchFeatures();
+    // fetchFeatures();
 
     const fetchCategories = async () => {
       try {
@@ -284,6 +284,33 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
     loadBookmarks();
   }, [route.params?.AddScreenBackactiveTab]);
 
+
+  useFocusEffect(
+  useCallback(() => {
+    const fetchFeatures = async () => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) return;
+
+        const url1 = MAIN_URL.baseUrl + 'category/feature-list';
+        const res = await fetch(url1, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const json = await res.json();
+        console.log('✅ Features API response:', json);
+
+        if (json.statusCode === 200) {
+          setFeatures(json.data.features || []);
+        }
+      } catch (err) {
+        console.log('❌ Error fetching features:', err);
+      }
+    };
+
+    fetchFeatures();
+  }, [])
+);
   
   const [isNav, setIsNav] = useState(true);
 
@@ -1132,6 +1159,7 @@ const styles = StyleSheet.create({
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
     boxSizing: 'border-box',
+    width:'auto'
     
   },
 

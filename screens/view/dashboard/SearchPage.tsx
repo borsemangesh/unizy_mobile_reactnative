@@ -298,7 +298,9 @@ const handleFilterApply = async (filterBody: any) => {
     const token = await AsyncStorage.getItem('userToken');
     if (!token) return;
 
-    const url = 'http://65.0.99.229:4320/category/filter-apply';
+    const url = `${MAIN_URL.baseUrl}category/filter-apply`;
+
+    //const url = 'http://65.0.99.229:4320/category/filter-apply';
 
     const response = await fetch(url, {
       method: 'POST',

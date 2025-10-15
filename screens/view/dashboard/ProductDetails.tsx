@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Image,
   ImageBackground,
@@ -18,7 +18,7 @@ import { MAIN_URL } from '../../utils/APIConstant';
 
 const bgImage = require('../../../assets/images/backimg.png');
 const searchIcon = require('../../../assets/images/searchicon.png');
-import { useRoute, RouteProp } from '@react-navigation/native';
+import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import SearchListProductCard from '../../utils/SearchListProductCard';
 import FilterBottomSheet from '../../utils/component/FilterBottomSheet';
 import SearchTutionCard from '../../utils/SearchTutionCard';
@@ -98,10 +98,15 @@ const clickfilter = () => {
   setFilterVisible(true);
 };
 
-  useEffect(() => {
-    displayListOfProduct();
-  }, []);
+  // useEffect(() => {
+  //   displayListOfProduct();
+  // }, []);
 
+  useFocusEffect(
+  useCallback(() => {
+    displayListOfProduct(); // refresh whenever screen regains focus
+  }, [])
+);
 
   const displayListOfProduct = async (pageNum: number = 1) => {
   if (isLoading || !hasMore) return;
@@ -151,42 +156,86 @@ const clickfilter = () => {
   }
 };
 
+// const handleBookmarkPress = async (productId: number) => {
+//   try {
+//     const token = await AsyncStorage.getItem('userToken');
+//     if (!token) return;
+
+//     const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
+
+//     const url = MAIN_URL.baseUrl + 'category/list-bookmark';
+//     const response = await fetch(url, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': `Bearer ${token}`,
+//       },
+//       body: JSON.stringify({ feature_id: productId }),
+//     });
+
+//     if (!response.ok) {
+//       throw new Error(`HTTP error! status: ${response.status}`);
+//     }
+
+//     const data = await response.json();
+//     console.log('Bookmark response:', data);
+
+//     let updatedBookmarks;
+//     if (isCurrentlyBookmarked) {
+//       updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
+//     } else {
+//       updatedBookmarks = [...bookmarkedIds, productId];
+//     }
+
+//     setBookmarkedIds(updatedBookmarks);
+//     await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks)); // persist locally
+
+//   } catch (error) {
+//     console.error('Bookmark error:', error);
+//   }
+// };
+
 const handleBookmarkPress = async (productId: number) => {
   try {
+    // 1️⃣ Optimistically update local UI immediately
+    setFeaturelist(prevList =>
+      prevList.map(item =>
+        item.id === productId
+          ? { ...item, isbookmarked: !item.isbookmarked } // toggle local bookmark
+          : item
+      )
+    );
+
+    // 2️⃣ Send API request
     const token = await AsyncStorage.getItem('userToken');
     if (!token) return;
-
-    const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
 
     const url = MAIN_URL.baseUrl + 'category/list-bookmark';
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ feature_id: productId }),
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
     const data = await response.json();
     console.log('Bookmark response:', data);
 
-    let updatedBookmarks;
-    if (isCurrentlyBookmarked) {
-      updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
-    } else {
-      updatedBookmarks = [...bookmarkedIds, productId];
-    }
-
-    setBookmarkedIds(updatedBookmarks);
-    await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks)); // persist locally
-
   } catch (error) {
     console.error('Bookmark error:', error);
+
+    // 3️⃣ Revert if API fails
+    setFeaturelist(prevList =>
+      prevList.map(item =>
+        item.id === productId
+          ? { ...item, isbookmarked: !item.isbookmarked }
+          : item
+      )
+    );
   }
 };
 
@@ -246,6 +295,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
           initialsName={initials.toUpperCase()}
           productImage={item.createdby?.profile ? { uri: item.createdby.profile } : undefined}
           bookmark={item.isbookmarked}
+          //bookmark={bookmarkedIds.includes(item.id)} 
           isfeature={item.isfeatured}
           applybookmark={() => handleBookmarkPress(item.id)}
         />
@@ -257,6 +307,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
           rating={item.isfeatured ? '4.5' : '4.5'}
           productImage={productImage ?? require('../../../assets/images/drone.png')}
           bookmark={item.isbookmarked}
+          //bookmark={bookmarkedIds.includes(item.id)} 
           isfeature={item.isfeatured}
           applybookmark={() => handleBookmarkPress(item.id)}
         />
@@ -273,7 +324,9 @@ const handleFilterApply = async (filterBody: any) => {
     const token = await AsyncStorage.getItem('userToken');
     if (!token) return;
 
-    const url = 'http://65.0.99.229:4320/category/filter-apply';
+    const url = `${MAIN_URL.baseUrl}category/filter-apply`;
+
+    //const url = 'http://65.0.99.229:4320/category/filter-apply';
 
     const response = await fetch(url, {
       method: 'POST',
@@ -440,6 +493,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 20,
     paddingTop: 10,
+    paddingBottom:20
   },
   row1: {
     // flexDirection: 'row',

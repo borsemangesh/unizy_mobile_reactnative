@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Image,
   ImageBackground,
@@ -19,7 +19,7 @@ import { MAIN_URL } from '../../utils/APIConstant';
 import { showToast } from '../../utils/toast';
 
 const bgImage = require('../../../assets/images/backimg.png');
-import { useRoute, RouteProp } from '@react-navigation/native';
+import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import SearchListProductCard from '../../utils/SearchListProductCard';
 import SearchTutionCard from '../../utils/SearchTutionCard';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
@@ -47,6 +47,7 @@ type Feature = {
   added_by: number;
   featurelist_id: number;
   created_at: string;
+ 
   featurelist: {
     id: number;
     created_by: number;
@@ -61,6 +62,7 @@ type Feature = {
     profileshowinview:boolean;
     createdby: CreatedBy;
     university:university;
+    isbookmarked:boolean;
   };
 };
 type university={
@@ -84,7 +86,7 @@ const Bookmark = ({ navigation }: BookmarkProps)  => {
     const [isLoading, setIsLoading] = useState(false);
   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
 
-   useEffect(() => {
+  useEffect(() => {
   const loadBookmarks = async () => {
     const saved = await AsyncStorage.getItem('bookmarkedIds');
     if (saved) setBookmarkedIds(JSON.parse(saved));
@@ -122,6 +124,13 @@ useEffect(() => {
   displayListOfProduct(selectedCategory?.id ?? null, 1);
 }, [selectedCategory]);
 
+
+useFocusEffect(
+  useCallback(() => {
+    setPage(1);
+    displayListOfProduct(selectedCategory?.id ?? null, 1);
+  }, [selectedCategory]) 
+);
 
 const displayListOfProduct = async (categoryId: number | null, pageNum: number) => {
   try {
@@ -180,19 +189,73 @@ const formatDate = (dateString: string | null | undefined) => {
   return `${day}-${month}-${year}`;
 };
 
+// const handleBookmarkPress = async (productId: number) => {
+//   try {
+//     const token = await AsyncStorage.getItem('userToken');
+//     if (!token) return;
+
+//     const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
+
+//     const url = MAIN_URL.baseUrl + 'category/list-bookmark';
+//     const response = await fetch(url, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': `Bearer ${token}`,
+//       },
+//       body: JSON.stringify({ feature_id: productId }),
+//     });
+
+//     if (!response.ok) {
+//       throw new Error(`HTTP error! status: ${response.status}`);
+//     }
+
+//     const data = await response.json();
+//     console.log('Bookmark response:', data);
+
+//     let updatedBookmarks;
+//     if (isCurrentlyBookmarked) {
+//       updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
+//     } else {
+//       updatedBookmarks = [...bookmarkedIds, productId];
+//     }
+
+//     setBookmarkedIds(updatedBookmarks);
+//     await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks)); // persist locally
+
+//   } catch (error) {
+//     console.error('Bookmark error:', error);
+//   }
+// };
+
 const handleBookmarkPress = async (productId: number) => {
   try {
+    // 1️⃣ Optimistically update local bookmark state for immediate UI feedback
+    const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
+    let updatedBookmarks;
+
+    if (isCurrentlyBookmarked) {
+      updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
+    } else {
+      updatedBookmarks = [...bookmarkedIds, productId];
+    }
+
+    // Update state immediately
+    setBookmarkedIds(updatedBookmarks);
+
+    // Persist locally
+    await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks));
+
+    // 2️⃣ Call API in the background
     const token = await AsyncStorage.getItem('userToken');
     if (!token) return;
-
-    const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
 
     const url = MAIN_URL.baseUrl + 'category/list-bookmark';
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ feature_id: productId }),
     });
@@ -204,18 +267,15 @@ const handleBookmarkPress = async (productId: number) => {
     const data = await response.json();
     console.log('Bookmark response:', data);
 
-    let updatedBookmarks;
-    if (isCurrentlyBookmarked) {
-      updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
-    } else {
-      updatedBookmarks = [...bookmarkedIds, productId];
-    }
-
-    setBookmarkedIds(updatedBookmarks);
-    await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks)); // persist locally
-
   } catch (error) {
     console.error('Bookmark error:', error);
+
+    // Optional: revert bookmark if API call fails
+    setBookmarkedIds(prev =>
+      prev.includes(productId)
+        ? prev.filter(id => id !== productId)
+        : [...prev, productId]
+    );
   }
 };
 
@@ -269,7 +329,8 @@ const handleBookmarkPress = async (productId: number) => {
                 inforTitlePrice={`£ ${feature.price}`}
                 rating={feature.isfeatured ? '4.5' : '4.5'}
                 productImage={feature.createdby?.profile ? { uri: feature.createdby.profile } : undefined}
-                bookmark={true}
+                bookmark={feature.isbookmarked}
+                //bookmark={true}
                 showInitials={showInitials}
                 initialsName={initials}
                 isfeature={feature.isfeatured}
@@ -283,7 +344,8 @@ const handleBookmarkPress = async (productId: number) => {
                 inforTitlePrice={`£ ${feature.price}`}
                 rating={feature.isfeatured ? '4.5' : '4.5'}
                 productImage={productImage ?? require('../../../assets/images/drone.png')}
-                bookmark={true}
+                bookmark={feature.isbookmarked}
+                //bookmark={true}
                 isfeature={feature.isfeatured}
                 applybookmark={() => handleBookmarkPress(item.id)}
               />
@@ -493,6 +555,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 20,
     paddingTop: 10,
+    paddingBottom:160
   },
   row1: {
     // flexDirection: 'row',

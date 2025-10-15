@@ -118,8 +118,7 @@ useEffect(() => {
       id: lang.id,
       code: lang.iso_code,
       name: lang.language_name,
-      flag:
-        flagMap[lang.iso_code] || require('../../../assets/images/english.png'),
+      flag:lang.logo || require('../../../assets/images/english.png'),
     }))
     .filter(lang => lang.name.toLowerCase().includes(search.toLowerCase()));
 
@@ -1779,8 +1778,12 @@ useEffect(() => {
                                   alignItems: 'center',
                                 }}
                               >
-                                <Image
+                                {/* <Image
                                   source={item.flag}
+                                  style={selectlang_styles.flag}
+                                /> */}
+                                <Image
+                                  source={typeof item.flag === 'string' ? { uri: item.flag } : item.flag} // handle URI or require
                                   style={selectlang_styles.flag}
                                 />
                                 <Text style={selectlang_styles.languageText}>
