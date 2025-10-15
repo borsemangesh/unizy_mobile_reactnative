@@ -361,6 +361,7 @@ const handleFilterApply = async (filterBody: any) => {
                 value={search}
                 onChangeText={handleSearchChange}
                 returnKeyType="search"
+                selectionColor="white"
                 autoFocus={true} 
                onSubmitEditing={() => {
                     if (search.trim().length > 0) {

@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
-    padding: (Platform.OS === 'ios' ? 0 : 6),
+    padding: (Platform.OS === 'ios' ? 5 : 6),
 
     boxSizing: 'border-box',
   },
