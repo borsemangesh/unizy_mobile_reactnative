@@ -98,6 +98,17 @@ useEffect(() => {
 
         const data = await response.json();
 
+        if (response.status === 401 || response.status === 403) {
+        handleForceLogout();
+        return;
+      }
+
+      // 👇 Case 2: backend wraps statusCode in JSON body
+      if (data.statusCode === 401 || data.statusCode === 403) {
+        handleForceLogout();
+        return;
+      }
+
         if (response.ok) {
           const user = data.data;
           setUserMeta({
@@ -108,12 +119,22 @@ useEffect(() => {
             email: user.email ?? null,
             university_name: user.university_name ?? null,
           });
+          
+          
         } else {
           console.warn('Failed to fetch user profile:', data?.message || response.status);
         }
       } catch (error) {
         console.error('Error fetching user profile:', error);
       }
+    };
+    const handleForceLogout = async () => {
+      console.log('User inactive or unauthorized — logging out');
+      await AsyncStorage.clear();
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+      });
     };
 
     fetchUserProfile();
@@ -156,6 +177,11 @@ const renderItem = ({ item }: any) => {
 const clickBack = () =>{
     navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})
   }
+  const getInitials = (firstName = '', lastName = '') => {
+  const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
+  const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
+  return (f + l) || '?';
+};
 
 return (
    
@@ -183,7 +209,25 @@ return (
         
              <View style={styles.userRow}>
             <View style={{ width: '20%' }}>
-              <Image source={profileImg} style={styles.avatar} />
+
+              {/* <Image source={userMeta?.profile ? { uri: userMeta.profile } : profileImg}
+               style={styles.avatar} /> */}
+
+               {userMeta?.profile ? (
+                <Image
+                  source={{ uri: userMeta.profile }}
+                  style={styles.avatar}
+                />
+              ) : (
+                <View style={styles.initialsCircle}>
+                  <Text style={styles.initialsText}>
+                    {getInitials(
+                      userMeta?.firstname ?? 'A',
+                      userMeta?.lastname ?? 'W'
+                    )}
+                  </Text>
+                </View>
+              )}
             </View>
             <View style={{ width: '80%' }}>
               <Text style={styles.userName}>
@@ -248,6 +292,23 @@ return (
 export default ProfileCard;
 
 const styles = StyleSheet.create({
+
+     initialsCircle:{
+ backgroundColor: '#8390D4',
+  alignItems: 'center',
+  justifyContent: 'center',
+   width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 12,
+  },
+  initialsText:{
+   color: '#fff',
+  fontSize: 18,
+  fontWeight:600,
+  textAlign: 'center',
+  fontFamily: 'Urbanist-SemiBold',
+  },
   listContainer: {
     padding: 16,
     

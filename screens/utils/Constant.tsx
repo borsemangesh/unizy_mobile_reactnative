@@ -14,5 +14,8 @@ export const Constant = {
   PLEASE_ENTER_ALL_4_DIGITS_OF_THE_OTP: 'Please enter all 4 digits of the OTP',
   OTP_ID_MISSING:"OTP ID missing. Please request OTP again.",
   OPT_VERIFICATION_FAILED:'OTP verification failed',
-  ALERT_MESSAGE_PLEASE_SELECT_AN_IMAGE_FIRST:'Please select an image first'
+  ALERT_MESSAGE_PLEASE_SELECT_AN_IMAGE_FIRST:'Please select an image first',
+
+
+  PUBLIC_KEY:'pk_test_51SI6AfLdn8TxPB1nJ4gRNbDy6tpLjrOL9kpFBuNAzLTqAu4m1QOZiTkBrm2x4N4P3xoqqtWTawAzBKbdtGw9yfUn003biHR8ku'
 };

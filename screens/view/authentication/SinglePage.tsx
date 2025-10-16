@@ -1484,7 +1484,7 @@ useEffect(() => {
 
       console.log('Photo URI:', uri);
 
-      const token = await AsyncStorage.getItem('access_token');
+      const token = await AsyncStorage.getItem('userToken');
       console.log('Token retrieved:', token);
 
       const formData = new FormData();

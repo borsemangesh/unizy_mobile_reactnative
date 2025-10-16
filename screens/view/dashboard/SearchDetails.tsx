@@ -11,6 +11,7 @@ import {
   Modal,
   Dimensions,
   FlatList,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { Key, useEffect, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
@@ -47,7 +48,9 @@ type Param = {
 
 const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     const [showPopup, setShowPopup] = useState(false);
+    const [showPopup1, setShowPopup1] = useState(false);
     const closePopup = () => setShowPopup(false);
+    const closePopup1 = () => setShowPopup1(false);
     const [scrollY, setScrollY] = useState(0);
     const scrollY1 = new Animated.Value(0);
     const route = useRoute();
@@ -82,6 +85,16 @@ const [imageUri, setImageUri] = useState<string | null>(null);
         );
         const json = await res.json();
         setDetail(json.data); 
+
+        if (res.status === 401 || res.status === 403) {
+        handleForceLogout();
+        return;
+      }
+
+      if (json.statusCode === 401 || json.statusCode === 403) {
+        handleForceLogout();
+        return;
+      }
       } catch (error) {
         console.error('Error fetching details:', error);
       } finally {
@@ -89,6 +102,14 @@ const [imageUri, setImageUri] = useState<string | null>(null);
       }
     };
 
+    const handleForceLogout = async () => {
+      console.log('Force logging out user...');
+      await AsyncStorage.clear();
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+      });
+    };
     fetchDetails();
   }, [id]);
  const [isBookmarked, setIsBookmarked] = useState(false);
@@ -540,18 +561,21 @@ const handleBookmarkPress = async (productId: number) => {
                       }
                       style={styles.avatar}
                     /> */}
-                    {detail?.profileshowinview && (
-                      detail?.createdby?.profile ? (
-                        <Image
-                          source={{ uri: detail?.createdby?.profile }}
-                          style={styles.avatar}
-                        />
-                      ) : (
-                        <View style={styles.initialsCircle}>
-                          <Text style={styles.initialsText}>{getInitials(detail?.createdby?.firstname ?? 'Alan', detail?.createdby?.lastname ?? 'Walker')}</Text>
-                        </View>
-                      )
-                    )}
+                    {detail?.createdby?.profile ? (
+                    <Image
+                      source={{ uri: detail.createdby.profile }}
+                      style={styles.avatar}
+                    />
+                  ) : (
+                    <View style={styles.initialsCircle}>
+                      <Text style={styles.initialsText}>
+                        {getInitials(
+                          detail?.createdby?.firstname ?? 'Alan',
+                          detail?.createdby?.lastname ?? 'Walker'
+                        )}
+                      </Text>
+                    </View>
+                  )}
 
                     <View style={{ width: '80%', gap: 4 }}>
                       <Text style={styles.userName}>
@@ -655,9 +679,10 @@ const handleBookmarkPress = async (productId: number) => {
       {/* Bottom */}
       <TouchableOpacity
         style={styles.previewBtn}
-        //onPress={handleDeactivate}
+        //onPress={() => setShowPopup1(true)}
+
+        onPress={() => navigation.navigate('PaymentScreen')}
       >
-        {/* <Text style={styles.previewText}>Deactivate Listing</Text> */}
         <Text style={{ textAlign: 'center' }}>
         <Text style={styles.payText}>Pay </Text>
         <Text style={styles.priceText1}>
@@ -673,6 +698,7 @@ const handleBookmarkPress = async (productId: number) => {
         animationType="fade"
         onRequestClose={closePopup}
       >
+        <TouchableWithoutFeedback onPress={closePopup}>
         <View style={styles.overlay}>
           <BlurView
             style={{
@@ -728,6 +754,69 @@ const handleBookmarkPress = async (productId: number) => {
             </View>
           </BlurView>
         </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+
+      <Modal
+        visible={showPopup1}
+        transparent
+        animationType="fade"
+        onRequestClose={closePopup1}
+      >
+        <TouchableWithoutFeedback onPress={closePopup1}>
+        <View style={styles.overlay}>
+          <BlurView
+            style={{
+              flex: 1,
+              alignContent: 'center',
+              justifyContent: 'center',
+              width: '100%',
+              alignItems: 'center',
+            }}
+            blurType="light"
+            blurAmount={10}
+            reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+          >
+            <View
+              style={[
+                StyleSheet.absoluteFill,
+                { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+              ]}
+            />
+ 
+            <View style={styles.popupContainer}>
+              <Image
+                source={require('../../../assets/images/success_icon.png')}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+              <Text style={{
+                color: 'rgba(255, 255, 255, 0.80)',
+                fontFamily: 'Urbanist-SemiBold',
+                fontSize: 20,
+                fontWeight: '600',
+                letterSpacing: -0.4,
+                lineHeight: 28,
+              }}>Order Placed Successfully!</Text>
+              
+ 
+              <TouchableOpacity
+                style={styles.loginButton}
+                onPress={()=>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home', isNavigate:false }) ;setShowPopup1(false);}}
+              >
+                <Text style={styles.loginText}>Return to Home</Text>
+              </TouchableOpacity>
+
+               <TouchableOpacity
+                style={styles.loginButton1}
+                onPress={()=>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home', isNavigate:false }) ;setShowPopup1(false);}}
+              >
+                <Text style={styles.loginText1}>Chat with Sellar</Text>
+              </TouchableOpacity>
+            </View>
+          </BlurView>
+        </View>
+        </TouchableWithoutFeedback>
       </Modal>
       </View>
       <NewCustomToastContainer/>
@@ -871,6 +960,15 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     width: '100%',
   },
+   loginText1: {
+    color: '#FFFFFF7A',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: 500,
+    letterSpacing: 1,
+    width: '100%',
+  },
  
       loginButton: {
     display: 'flex',
@@ -883,6 +981,22 @@ const styles = StyleSheet.create({
     paddingTop: 6,
     paddingBottom: 6,
     backgroundColor: 'rgba(255, 255, 255, 0.56)',
+    marginTop: 16,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+  },
+
+      loginButton1: {
+    display: 'flex',
+    width: '100%',
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 100,
+    paddingTop: 6,
+    paddingBottom: 6,
+    backgroundColor: 'rgba(170, 169, 176, 0.56)',
     marginTop: 16,
     borderWidth: 0.5,
     borderColor: '#ffffff2c',

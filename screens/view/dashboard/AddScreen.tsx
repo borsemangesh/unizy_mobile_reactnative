@@ -141,6 +141,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
         const json = await response.json();
 
+       
+
         if (json?.metadata) {
 
         if (json.metadata.category) {
@@ -179,6 +181,15 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           );
           setFields(sellerFields);
         }
+         if (response.status === 401 || response.status === 403) {
+        handleForceLogout();
+        return;
+      }
+
+      if (json.statusCode === 401 || json.statusCode === 403) {
+        handleForceLogout();
+        return;
+      }
       } catch (err) {
         console.log('Error fetching fields', err);
       } finally {
@@ -186,6 +197,14 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
       }
     };
 
+     const handleForceLogout = async () => {
+      console.log('User inactive or unauthorized — logging out');
+      await AsyncStorage.clear();
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+      });
+    };
     fetchFields();
   }, []);
 

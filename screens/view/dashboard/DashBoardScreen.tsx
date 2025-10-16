@@ -303,6 +303,12 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
         if (json.statusCode === 200) {
           setFeatures(json.data.features || []);
         }
+        if(json.statusCode === 401 || json.statusCode === 403){
+          navigation.reset({
+          index: 0,
+          routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+        });
+        }
       } catch (err) {
         console.log('❌ Error fetching features:', err);
       }
@@ -606,9 +612,9 @@ return (
       scrollEventThrottle={16}
     >
   {pages.map((page, pageIndex) => (
-    <View key={pageIndex} style={{ width, flexDirection: 'row'}}>
+    <View key={pageIndex} style={{ width, flexDirection: 'row',padding:10,}}>
       {/* Left column */}
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1}}>
         {page.left.map(item => (
           <Animated.View
             key={item.id}
@@ -620,7 +626,7 @@ return (
       </View>
 
       {/* Right column */}
-      <View style={{ flex: 1, paddingLeft: 2}}>
+      <View style={{ flex: 1,paddingLeft:2}}>
         {page.right.map(item => (
           <Animated.View
             key={item.id}
@@ -1120,7 +1126,7 @@ const styles = StyleSheet.create({
 
   productsWrapper: {
     flexDirection: 'column',
-    paddingHorizontal: 12,
+    //paddingHorizontal: 12,
   },
 
   row: {
@@ -1138,7 +1144,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 12,
     alignItems: 'center',
-     margin: 4,
+    margin:4,
     borderWidth: 0.4,
     borderColor: '#ffffff11',
 
@@ -1159,7 +1165,6 @@ const styles = StyleSheet.create({
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
     boxSizing: 'border-box',
-    width:'auto'
     
   },
 

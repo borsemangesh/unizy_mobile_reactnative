@@ -162,7 +162,16 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
       } else {
         setFeaturelist(prev => [...prev, ...jsonResponse.data.features]);
       }
-    } else {
+    } 
+    else if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
+          setIsLoading(false);
+          navigation.reset({
+          index: 0,
+          routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+        });
+        }
+    
+    else {
       setIsLoading(false);
       console.log('API Error:', jsonResponse.message);
     }
@@ -229,7 +238,6 @@ const formatDate = (dateString: string | null | undefined) => {
 
 const handleBookmarkPress = async (productId: number) => {
   try {
-    // 1️⃣ Optimistically update local bookmark state for immediate UI feedback
     const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
     let updatedBookmarks;
 
@@ -239,13 +247,18 @@ const handleBookmarkPress = async (productId: number) => {
       updatedBookmarks = [...bookmarkedIds, productId];
     }
 
-    // Update state immediately
     setBookmarkedIds(updatedBookmarks);
 
-    // Persist locally
     await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks));
 
-    // 2️⃣ Call API in the background
+    // setFeaturelist(prevList =>
+    //   prevList.map(item =>
+    //     item.id === productId
+    //       ? { ...item, isbookmarked: !item.featurelist.isbookmarked } // toggle local bookmark
+    //       : item
+    //   )
+    // );
+
     const token = await AsyncStorage.getItem('userToken');
     if (!token) return;
 

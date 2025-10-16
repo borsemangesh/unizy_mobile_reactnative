@@ -320,6 +320,13 @@ const handleFilterApply = async (filterBody: any) => {
       setHasMore(filteredFeatures.length === 20);
       setPage(2);
     }
+    if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
+          setIsLoading(false);
+          navigation.reset({
+          index: 0,
+          routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+        });
+        }
   } catch (err) {
     console.log('Error applying filters:', err);
   } finally {

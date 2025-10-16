@@ -149,6 +149,13 @@ const clickfilter = () => {
       setHasMore(newFeatures.length === 20); 
       setPage(prev => prev + 1);
     }
+    if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
+          setIsLoading(false);
+          navigation.reset({
+          index: 0,
+          routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+        });
+        }
   } catch (err) {
     console.log('Error:', err);
   } finally {
@@ -197,7 +204,6 @@ const clickfilter = () => {
 
 const handleBookmarkPress = async (productId: number) => {
   try {
-    // 1️⃣ Optimistically update local UI immediately
     setFeaturelist(prevList =>
       prevList.map(item =>
         item.id === productId

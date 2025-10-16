@@ -115,7 +115,15 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
       } else {
         setFeatureList(prev => [...prev, ...jsonResponse.data.features]);
       }
-    } else {
+    } else if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
+          setIsLoading(false);
+          navigation.reset({
+          index: 0,
+          routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+        });
+        }
+    
+    else {
       setIsLoading(false);
       // console.log('API Error:', jsonResponse.message);
     }

@@ -390,6 +390,11 @@ const getCurrentDate = () => {
   ).padStart(2, '0')}-${today.getFullYear()}`;
 };
 
+ const getInitials = (firstName = '', lastName = '') => {
+  const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
+  const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
+  return (f + l) || '?';
+};
 
 
 const raw = getValueByAlias(storedForm, 'price') ?? '0';
@@ -606,12 +611,26 @@ const diff1 =commissionPrice1-priceValue1
               <View style={{ gap: 12 }}>
                 <Text style={styles.productDeatilsHeading}>Seller Details</Text>
 
-                {/* User Info */}
                 <View style={{ flexDirection: 'row' }}>
-                  <Image source={profileImg} style={styles.avatar} />
+                  {/* <Image source={profileImg} style={styles.avatar} /> */}
+
+                  {userMeta?.profile ? (
+                    <Image
+                      source={{ uri: userMeta.profile }}
+                      style={styles.avatar}
+                    />
+                  ) : (
+                    <View style={styles.initialsCircle}>
+                      <Text style={styles.initialsText}>
+                        {getInitials(
+                          userMeta?.firstname ?? 'Alan',
+                          userMeta?.lastname ?? 'Walker'
+                        )}
+                      </Text>
+                    </View>
+                  )}
 
                   <View style={{ width: '80%', gap: 4 }}>
-                    {/* <Text style={styles.userName}>Alan Walker</Text> */}
                     <Text style={styles.userName}>
                     {`${userMeta?.firstname ?? ''} ${userMeta?.lastname ?? ''}`.trim()}
                   </Text>
@@ -830,6 +849,24 @@ const diff1 =commissionPrice1-priceValue1
 };
 
 const styles = StyleSheet.create({
+
+    initialsCircle:{
+ backgroundColor: '#8390D4',
+  alignItems: 'center',
+  justifyContent: 'center',
+   width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 12,
+  },
+  initialsText:{
+   color: '#fff',
+  fontSize: 18,
+  fontWeight:600,
+  textAlign: 'center',
+  fontFamily: 'Urbanist-SemiBold',
+  },
+
 
     priceText1: {
     color: '#002050',
