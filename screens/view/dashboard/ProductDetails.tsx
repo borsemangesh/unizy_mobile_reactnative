@@ -435,10 +435,10 @@ const handleFilterApply = async (filterBody: any) => {
         onClose={() => setFilterVisible(false)}
       /> */}
       <FilterBottomSheet
-      catagory_id={category_id}
-      visible={isFilterVisible}
-      onClose={() => setFilterVisible(false)}
-      onApply={(filterBody) => handleFilterApply(filterBody)}/>
+        catagory_id={category_id}
+        visible={isFilterVisible}
+        onClose={() => setFilterVisible(false)}
+        onApply={(filterBody) => handleFilterApply(filterBody)} from={0} to={0}/>
     <NewCustomToastContainer/>
     </ImageBackground>
   );

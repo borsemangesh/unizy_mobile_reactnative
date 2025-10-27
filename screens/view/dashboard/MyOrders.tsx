@@ -69,14 +69,14 @@ type university={
   name:string
 }
 
-type BookmarkProps = {
+type MyOrdersProps = {
   navigation: any;
 };
 
 
 
 
-const Bookmark = ({ navigation }: BookmarkProps)  => {
+const MyOrders = ({ navigation }: MyOrdersProps)  => {
   const [search, setSearch] = useState<string>('');
     const [page, setPage] = useState(1);
     const pagesize = 10;
@@ -136,7 +136,7 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
    // setIsLoading(true);
     const pagesize = 10;
     
-    let url = `${MAIN_URL.baseUrl}category/mybookmark-list?page=${pageNum}&pagesize=${pagesize}`;
+    let url = `${MAIN_URL.baseUrl}category/myorder-list?page=${pageNum}&pagesize=${pagesize}`;
     
     if (categoryId) {
       url += `&category_id=${categoryId}`;
@@ -299,7 +299,7 @@ const handleBookmarkPress = async (productId: number) => {
     >
        <TouchableOpacity
             onPress={() =>
-              navigation.navigate('SearchDetails', { id: feature.id,name: selectedCategory.name === 'All' ? 'List' : selectedCategory.name, }) 
+              navigation.navigate('MyProductDetails', { id: feature.id,name: selectedCategory.name === 'All' ? 'List' : selectedCategory.name, }) 
             }
             style={{ flex: 1 }}
           >
@@ -343,7 +343,7 @@ const handleBookmarkPress = async (productId: number) => {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerRow}>
-            <TouchableOpacity onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})}}>
+            <TouchableOpacity onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Profile',isNavigate: false})}}>
               <View style={styles.backIconRow}>
                 <Image
                   source={require('../../../assets/images/back.png')}
@@ -351,7 +351,7 @@ const handleBookmarkPress = async (productId: number) => {
                 />
               </View>
             </TouchableOpacity>
-            <Text style={styles.unizyText}>Bookmarks</Text>
+            <Text style={styles.unizyText}>My Orders</Text>
             <View style={{ width: 48 }} />
           </View>
         </View>
@@ -360,7 +360,6 @@ const handleBookmarkPress = async (productId: number) => {
       <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
             style={{ marginVertical: 10 }}
             contentContainerStyle={{ paddingHorizontal: 10 }}
             >
@@ -409,7 +408,7 @@ const handleBookmarkPress = async (productId: number) => {
   );
 };
 
-export default Bookmark;
+export default MyOrders;
 
 const styles = StyleSheet.create({
 

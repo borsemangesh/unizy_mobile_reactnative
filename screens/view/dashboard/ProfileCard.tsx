@@ -38,6 +38,7 @@ const cardData = [
   { id: '4', title: 'Notifications', image: require('../../../assets/images/notify.png') },
   { id: '5', title: 'Help & Support', image: require('../../../assets/images/help.png') },
   { id: '6', title: 'Logout', image: require('../../../assets/images/logout.png') },
+  {id:'7',title:'App Version',image: require('../../../assets/images/versionicon.png')}
   
 ];
 
@@ -86,6 +87,8 @@ useEffect(() => {
           console.warn('Missing token or user ID in AsyncStorage');
           return;
         }
+
+        console.log(token)
 
         const url = `${MAIN_URL.baseUrl}user/user-profile/${userId}`;
         const response = await fetch(url, {
@@ -142,6 +145,7 @@ useEffect(() => {
 
 const renderItem = ({ item }: any) => {
   const isLogout = item.title.toLowerCase() === 'logout';
+  const isVersion = item.title.toLowerCase() === 'app version';
 
   return (
     <TouchableOpacity
@@ -154,7 +158,21 @@ const renderItem = ({ item }: any) => {
           index: 0,
           routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
         });
-        } else {
+      }
+        else if (item.title === 'My Orders') {
+          navigation.navigate('MyOrders'); 
+        } 
+        else if (item.title === 'My Reviews') {
+          navigation.navigate('MyReviews'); 
+        } 
+        else if (item.title === 'Help & Support') {
+          navigation.navigate('HelpSupport'); 
+        } 
+
+        else if (item.title === 'Notifications') {
+          navigation.navigate('Notification'); 
+        } 
+         else {
           console.log(item.title, 'pressed');
         }
       }}
@@ -168,7 +186,11 @@ const renderItem = ({ item }: any) => {
       >
         {item.title}
       </Text>
-      <Image source={arrowIcon} style={styles.cardArrow} />
+      {isVersion ? (
+        <Text style={styles.versionText}>{APP_VERSION}</Text>
+      ) : !isLogout && (
+        <Image source={arrowIcon} style={styles.cardArrow} />
+      )}
     </TouchableOpacity>
   );
 };
@@ -205,69 +227,78 @@ return (
     </View>
 
 
-        <View style={{ paddingTop: 120 }}> 
+    <View style={{ paddingTop: 120 }}> 
         
-             <View style={styles.userRow}>
-            <View style={{ width: '20%' }}>
+  <View style={styles.userRow}>
+    <View style={{ width: '20%' ,alignSelf:'center'}}>
+    {userMeta?.profile ? (
+      <Image
+        source={{ uri: userMeta.profile }}
+        style={styles.avatar}
+      />
+    ) : (
+      <View style={styles.initialsCircle}>
+        <Text style={styles.initialsText}>
+          {getInitials(
+            userMeta?.firstname ?? 'A',
+            userMeta?.lastname ?? 'W'
+          )}
+        </Text>
+      </View>
+    )}
+  </View>
 
-              {/* <Image source={userMeta?.profile ? { uri: userMeta.profile } : profileImg}
-               style={styles.avatar} /> */}
+  <View style={{ width: '60%', position: 'relative' }}>
+    {/* Name + Edit on top row */}
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Text style={styles.userName}>
+        {userMeta
+          ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''}`.trim()
+          : 'Loading...'}
+      </Text>
+     
+    </View>
 
-               {userMeta?.profile ? (
-                <Image
-                  source={{ uri: userMeta.profile }}
-                  style={styles.avatar}
-                />
-              ) : (
-                <View style={styles.initialsCircle}>
-                  <Text style={styles.initialsText}>
-                    {getInitials(
-                      userMeta?.firstname ?? 'A',
-                      userMeta?.lastname ?? 'W'
-                    )}
-                  </Text>
-                </View>
-              )}
-            </View>
-            <View style={{ width: '80%' }}>
-              <Text style={styles.userName}>
-                {userMeta
-                  ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''}`.trim()
-                  : 'Loading...'}
-              </Text>
-              <View style={{ flexDirection: 'column', gap: 6,marginTop:4 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Image
-            source={require('../../../assets/images/buildings.png')}
-            style={{ width: 16, height: 16 }}
-            />
-             <Text style={styles.userSub}>
-              {userMeta?.university_name || 'University Name'}
-            </Text>
-        </View>
-
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Image
-            source={require('../../../assets/images/sms.png')}
-            style={{ width: 16, height: 16 }}
-            />
-             <Text style={styles.userSub}>
-              {userMeta?.email || 'studentname@gmail.com'}
-            </Text>
-        </View>
+    {/* Details below name */}
+    <View style={{ flexDirection: 'column', gap: 6, marginTop: 4 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <Image
+          source={require('../../../assets/images/buildings.png')}
+          style={{ width: 16, height: 16 }}
+        />
+        <Text style={styles.userSub}>
+          {userMeta?.university_name || 'University Name'}
+        </Text>
+      </View>
 
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
         <Image
           source={require('../../../assets/images/sms.png')}
           style={{ width: 16, height: 16 }}
         />
-      <Text style={styles.userSub}>
+        <Text style={styles.userSub}>
+          {userMeta?.email || 'studentname@gmail.com'}
+        </Text>
+      </View>
+
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <Image
+          source={require('../../../assets/images/sms.png')}
+          style={{ width: 16, height: 16 }}
+        />
+        <Text style={styles.userSub}>
           {userMeta?.student_email || 'studentname@university.ac.uk'}
         </Text>
       </View>
     </View>
+  </View>
+
+    <View style={styles.editcard}>
+          <Text style={styles.edittext}>Edit</Text>
+        </View>
     </View>
-    </View>   
+
+    
 
     <View style={styles.listContainer}>
       <FlatList
@@ -276,10 +307,7 @@ return (
         renderItem={renderItem}
         ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
       />
-       <View style={[styles.cardContainer, { justifyContent: 'space-between', paddingHorizontal: 16,marginTop:12 }]}>
-        <Text style={styles.cardText}>App Version</Text>
-        <Text style={styles.versionText}>{APP_VERSION}</Text>
-      </View>  
+        
     </View>  
       
       </View>
@@ -293,7 +321,57 @@ export default ProfileCard;
 
 const styles = StyleSheet.create({
 
- 
+  editcard:{
+     paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginRight: 8,
+     borderWidth: 0.4,
+    borderColor: '#ffffff11',
+
+    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
+
+   borderRadius:10,
+    borderBlockStartColor: '#ffffff2e',
+    borderBlockColor: '#ffffff2e',
+
+    borderTopColor: '#ffffff2e',
+    borderBottomColor: '#ffffff2e',
+    borderLeftColor: '#ffffff2e',
+    borderRightColor: '#ffffff2e',
+
+    boxSizing: 'border-box',
+    gap:10,
+    width:'20%'
+  },
+
+  edittext:{
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize:14,
+    color:'#fff',
+    fontWeight:600,
+    textAlign:'center',
+    
+    
+  },
+
+  initialsCircle:{
+ backgroundColor: '#8390D4',
+  alignItems: 'center',
+  justifyContent: 'center',
+   width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 12,
+  },
+  initialsText:{
+   color: '#fff',
+  fontSize: 18,
+  fontWeight:600,
+  textAlign: 'center',
+  fontFamily: 'Urbanist-SemiBold',
+  },
   listContainer: {
     padding: 16,
     
@@ -320,22 +398,7 @@ versionLabel: {
   fontWeight: '500',
    fontFamily: 'Urbanist-SemiBold',
 },
-initialsCircle:{
-  backgroundColor: '#8390D4',
-   alignItems: 'center',
-   justifyContent: 'center',
-    width: 50,
-     height: 50,
-     borderRadius: 25,
-     marginRight: 12,
-   },
-   initialsText:{
-    color: '#fff',
-   fontSize: 18,
-   fontWeight:600,
-   textAlign: 'center',
-   fontFamily: 'Urbanist-SemiBold',
-   },
+
   cardContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -426,7 +489,7 @@ initialsCircle:{
   },
   userRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: 6,
     padding: 12,
     borderRadius: 24,

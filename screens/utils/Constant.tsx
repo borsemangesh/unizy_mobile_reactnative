@@ -16,6 +16,7 @@ export const Constant = {
   OPT_VERIFICATION_FAILED:'OTP verification failed',
   ALERT_MESSAGE_PLEASE_SELECT_AN_IMAGE_FIRST:'Please select an image first',
 
+  PUBLIC_KEY:'pk_test_51SIt8yJfHNIMSZxgncWbKpvnGsppBiwxAA3Fk3XleikVjZiMPyTt5lCOAUQCwrbv0HX1fDgJsmHYkfJPRK8kRSOF00JGovG410pk_test_51SIt8yJfHNIMSZxgncWbKpvnGsppBiwxAA3Fk3XleikVjZiMPyTt5lCOAUQCwrbv0HX1fDgJsmHYkfJPRK8kRSOF00JGovG410'
 
-  PUBLIC_KEY:'pk_test_51SI6AfLdn8TxPB1nJ4gRNbDy6tpLjrOL9kpFBuNAzLTqAu4m1QOZiTkBrm2x4N4P3xoqqtWTawAzBKbdtGw9yfUn003biHR8ku'
+  //PUBLIC_KEY:'pk_test_51SI6AfLdn8TxPB1nJ4gRNbDy6tpLjrOL9kpFBuNAzLTqAu4m1QOZiTkBrm2x4N4P3xoqqtWTawAzBKbdtGw9yfUn003biHR8ku'
 };

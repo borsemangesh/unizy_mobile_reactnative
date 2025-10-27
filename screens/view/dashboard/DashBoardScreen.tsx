@@ -97,7 +97,7 @@ const ProductItem: React.FC<ProductItemProps> = ({
       ]}
     >
       <Image source={item.icon} style={styles.cardIcon} />
-      <Text style={styles.cardText} numberOfLines={1}>
+      <Text allowFontScaling={false} style={styles.cardText} numberOfLines={1}>
         {item.name}
       </Text>
     </View>
@@ -106,7 +106,7 @@ const ProductItem: React.FC<ProductItemProps> = ({
 
 const SearchScreenContent = () => (
   <View style={styles.tabContent}>
-    <Text style={styles.tabContentText}>🔎 Search Layout</Text>
+    <Text allowFontScaling={false} style={styles.tabContentText}>🔎 Search Layout</Text>
   </View>
 );
 type AddScreenContentProps = {
@@ -117,7 +117,7 @@ const AddScreenContent: React.FC<
   AddScreenContentProps & { products: any[] }
 > = ({ navigation, products }) => (
   <View style={styles.tabContent3}>
-    <Text style={styles.tabContentText3}>List Product</Text>
+    <Text allowFontScaling={false} style={styles.tabContentText3}>List Product</Text>
     <AnimatedSlideUp>
       <FlatList
         data={products}
@@ -137,8 +137,8 @@ const AddScreenContent: React.FC<
               </View>
 
               <View style={styles.cardTextContainer}>
-                <Text style={styles.cardTitle}>{item.name}</Text>
-                <Text style={styles.cardDescription}>{item.description}</Text>
+                <Text allowFontScaling={false} style={styles.cardTitle}>{item.name}</Text>
+                <Text allowFontScaling={false} style={styles.cardDescription}>{item.description}</Text>
               </View>
             </View>
           </TouchableOpacity>
@@ -154,7 +154,7 @@ type ChatProps = {
 
 const BookmarkScreenContent = ({ navigation }: ChatProps) => (
   <View style={[styles.tabContent]}>
-    {/* <Text style={styles.tabContentText}>🔖 Bookmark Layout</Text> */}
+    {/* <Text allowFontScaling={false} style={styles.tabContentText}>🔖 Bookmark Layout</Text> */}
     <MessagesScreen navigation={navigation}/>
 
   </View>
@@ -199,6 +199,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const { width } = Dimensions.get('window');
 
+const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     setIsNav(route.params?.isNavigate);
@@ -597,6 +598,12 @@ if (secondPageRight.length > 0) {
     rightRows.push(secondPageRight[i] || null);
   }
 }
+const handleScrollEndDrag = (e: any) => {
+  const offsetX = e.nativeEvent.contentOffset.x;
+  const index = Math.round(offsetX / width); 
+  scrollViewRef.current?.scrollTo({ x: index * width, animated: true });
+  setActiveIndex(index);
+};
 
 const onScroll = Animated.event(
   [{ nativeEvent: { contentOffset: { x: scrollX } } }],
@@ -611,12 +618,15 @@ const handleScrollEnd = (e: { nativeEvent: { contentOffset: { x: number } } }) =
 return (
   <View>
     <Animated.ScrollView
+    //ref={scrollViewRef}
       horizontal
-      pagingEnabled
+       pagingEnabled={false} 
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
       onScroll={onScroll}
       onMomentumScrollEnd={handleScrollEnd}
+      //onScrollEndDrag={handleScrollEndDrag}
+
       scrollEventThrottle={16}
     >
   {pages.map((page, pageIndex) => (
@@ -736,7 +746,7 @@ return (
               }}
             >
               {' '}
-              <Text style={styles.featuredText}>Featured Listings</Text>
+              <Text allowFontScaling={false} style={styles.featuredText}>Featured Listings</Text>
             </Animated.View>
             <ScrollView
               style={{ paddingHorizontal: 0,marginLeft:8 }}
@@ -842,7 +852,7 @@ return (
                 </View>
               </TouchableOpacity>
 
-              <Text style={styles.unizyText}>UniZy</Text>
+              <Text allowFontScaling={false} style={styles.unizyText}>UniZy</Text>
 
               <TouchableOpacity onPress={clickbookmark}>
                 <View style={styles.MylistingsBackground}>
@@ -864,6 +874,7 @@ return (
                 placeholderTextColor="#ccc"
                 onChangeText={setSearch}
                 value={search}
+                allowFontScaling={false}
                 onFocus={() => navigation.navigate('SearchPage',{ animation: 'none' })}
               />
             </Animated.View>
@@ -1130,6 +1141,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     flex: 1,
     textAlign: 'center',
+    
   },
   emptyView: {},
 

@@ -39,34 +39,34 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Navigation } from "./screens/view/Navigation";
 import { enableScreens } from "react-native-screens";
 import Toast from "react-native-toast-message";
+// import CustomToast from "./screens/view/authentication/CustomToast";
+import { StripeProvider } from '@stripe/stripe-react-native';
+import { Constant } from "./screens/utils/Constant";
+
 
 function App() {
   LogBox.ignoreAllLogs();
   enableScreens();
 
   return (
-    <ImageBackground
-        source={require('../unizy_mobile_reactnative/assets/images/bganimationscreen.png')}
-        style={{ flex: 1, width: '100%', height: '100%'}}
-        resizeMode="cover"
-      >{/* ✅ Root background to prevent white screen */}
-      <SafeAreaProvider>
-        <StatusBar
-          barStyle="light-content"
-          translucent
-          backgroundColor="transparent"
-        />
-        <Navigation />
-        {/* ✅ Single Toast Component */}
-        {/* <Toast
-          config={{
-            customToast: (props) => <CustomToast {...props} />,
-          }}
-          position="bottom"
-          bottomOffset={80}
-        /> */}
-      </SafeAreaProvider>
-    </ImageBackground>
+    <StripeProvider publishableKey={Constant.PUBLIC_KEY}>
+    <SafeAreaProvider>
+      <StatusBar
+        barStyle="light-content"
+        translucent
+        backgroundColor="transparent"
+      />
+      <Navigation />
+      {/* ✅ Single Toast Component */}
+      {/* <Toast
+        config={{
+          customToast: (props) => <CustomToast {...props} />,
+        }}
+        position="bottom"
+        bottomOffset={80}
+      /> */}
+    </SafeAreaProvider>
+    </StripeProvider>
   );
 }
 

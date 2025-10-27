@@ -228,6 +228,26 @@ const descriptionvalue= getValueByAlias(storedForm,'description') || 'No Descrip
 };
 
 const handleListPress = async () => {
+  try {
+    const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+    const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
+
+    if (isFeatured) {
+      navigation.navigate('PaymentScreen', {
+        amount: diff1, 
+        onSuccess: async () => {
+          await listProduct();
+        },
+      });
+    } else {
+      await listProduct(); 
+    }
+  } catch (e) {
+    console.log('Error parsing storedForm:', e);
+  }
+};
+
+const listProduct = async () => {
   console.log('🔵 handleListPress called');
  //setShowPopup(true);
   try {

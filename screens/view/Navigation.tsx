@@ -27,6 +27,14 @@ import SearchDetails from './dashboard/SearchDetails';
 import ListingDetails from './dashboard/ListingDetails';
 import SearchPage from './dashboard/SearchPage';
 import MessagesIndividualScreen from './dashboard/MessageIndividualScreen';
+import PaymentScreen from '../utils/PaymentScreen';
+import ReviewDetails from './dashboard/ReviewDetails';
+import AddReview from './dashboard/AddReview';
+import MyReviews from './dashboard/MyReviews';
+import MyOrders from './dashboard/MyOrders';
+import MyProductDetails from './dashboard/MyProductDetails';
+import HelpSupport from './dashboard/HelpSupport';
+import Notification from './dashboard/Notification';
 
 const Stack = createNativeStackNavigator();
 
@@ -201,6 +209,78 @@ export const Navigation = () => {
         component={SearchPage}
         options={{ headerShown: false, presentation: 'fullScreenModal' }}
         />
+        <Stack.Screen
+        name="PaymentScreen"
+        component={PaymentScreen}
+        options={{
+          headerShown: false,
+          presentation: 'fullScreenModal', 
+        }}
+      />
+
+      <Stack.Screen
+        name="ReviewDetails"
+        component={ReviewDetails}
+        options={{
+          headerShown: false,
+          presentation: 'fullScreenModal', 
+        }}
+      />
+
+       <Stack.Screen
+        name="AddReview"
+        component={AddReview}
+        options={{
+          headerShown: false,
+          presentation: 'fullScreenModal', 
+        }}
+      />
+      <Stack.Screen
+        name='MyReviews'
+        component={MyReviews}
+        options={{
+          headerShown: false,
+          presentation: 'fullScreenModal', 
+        }}
+      />
+
+       <Stack.Screen
+        name='MyOrders'
+        component={MyOrders}
+        options={{
+          headerShown: false,
+          presentation: 'fullScreenModal', 
+        }}
+      />
+
+      <Stack.Screen
+        name='MyProductDetails'
+        component={MyProductDetails}
+        options={{
+          headerShown: false,
+          presentation: 'fullScreenModal', 
+        }}
+      />
+
+      <Stack.Screen
+        name='HelpSupport'
+        component={HelpSupport}
+        options={{
+          headerShown: false,
+          presentation: 'fullScreenModal', 
+        }}
+        
+      />
+
+       <Stack.Screen
+        name='Notification'
+        component={Notification}
+        options={{
+          headerShown: false,
+          presentation: 'fullScreenModal', 
+        }}
+        
+      />
       </Stack.Navigator>
     </NavigationContainer>
   );

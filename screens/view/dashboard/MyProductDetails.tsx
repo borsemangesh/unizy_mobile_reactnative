@@ -21,9 +21,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showToast } from '../../utils/toast';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
-import Button from '../../utils/component/Button';
 
-type SearchDetailsProps = {
+type MyProductDetailsProps = {
   navigation: any;
 };
 
@@ -47,7 +46,7 @@ type Param = {
 };
 
 
-const SearchDetails = ({ navigation }: SearchDetailsProps) => {
+const MyProductDetails = ({ navigation }: MyProductDetailsProps) => {
     const [showPopup, setShowPopup] = useState(false);
     const [showPopup1, setShowPopup1] = useState(false);
     const closePopup = () => setShowPopup(false);
@@ -75,9 +74,9 @@ const [imageUri, setImageUri] = useState<string | null>(null);
 
         const token = await AsyncStorage.getItem('userToken');
         if (!token) return;
-        const url1 = `${MAIN_URL.baseUrl}category/feature-detail/${id}`;
-        console.log(url1)
-       //const url1 = `http://65.0.99.229:4320/category/feature-detail/30`;
+        //const url1 = `${MAIN_URL.baseUrl}category/feature-detail/${id}`;
+        //console.log(url1)
+       const url1 = `http://65.0.99.229:4320/category/feature-detail/30`;
 
         const res = await fetch(url1,
           {
@@ -137,99 +136,6 @@ const onScroll = (event: any) => {
   return `${day}-${month}-${year}`;
 };
 
-
-
-// const renderImage = () => {
-//   const fallbackImage = require('../../../assets/images/drone.png');
-
-//   if (detail?.profileshowinview) {
-//     const profileUri = detail?.createdby?.profile || null;
-//     const initials = `${detail?.createdby?.firstname?.[0] ?? ''}${detail?.createdby?.lastname?.[0] ?? ''}`.toUpperCase();
-
-
-//     return (
-//       <ImageBackground
-//       source={require('../../../assets/images/featurebg.png')} // your background image
-//       style={{
-//         alignItems: 'center',
-//         justifyContent: 'center',
-//       }}
-//     >
-//       <View
-//         style={{
-//           alignItems: 'center',
-//           justifyContent: 'center',
-//           marginVertical: 20,
-//         }}>
-      
-//         <Image
-//           source={profileUri ? { uri: profileUri } : fallbackImage}
-//           style={{
-//             width: 160,
-//             height: 160,
-//             borderRadius: 80, // circular shape
-//             //borderWidth: 2,
-//             //borderColor: '#ddd',
-//           }}
-//           resizeMode="cover"
-//           onError={() => {
-//             console.log('Profile image failed to load');
-//             setImageUri(null);
-//           }}
-//         />
-       
-//       </View>
-//        </ImageBackground>
-//     );
-//   }
-
-//   // ✅ Multiple images
-//   if (images.length > 1) {
-//     return (
-//       <View>
-//         <FlatList
-//           ref={flatListRef}
-//           data={images}
-//           horizontal
-//           pagingEnabled
-//           showsHorizontalScrollIndicator={false}
-//           keyExtractor={(_, index) => index.toString()}
-//           onScroll={onScroll}
-//           scrollEventThrottle={16}
-//           renderItem={({ item }) => (
-//             <Image
-//               source={item.uri ? { uri: item.uri } : fallbackImage}
-//               style={{ width: screenWidth, height: 250 }}
-//               resizeMode="cover"
-//             />
-//           )}
-//         />
-//         {/* Step Indicator */}
-//         <View style={styles.stepIndicatorContainer}>
-//           {images.map((_: any, index: Key | null | undefined) => (
-//             <View
-//               key={index}
-//               style={
-//                 index === activeIndex
-//                   ? styles.activeStepCircle
-//                   : styles.inactiveStepCircle
-//               }
-//             />
-//           ))}
-//         </View>
-//       </View>
-//     );
-//   }
-
-//   // ✅ Single image or fallback
-//   return (
-//     <Image
-//       source={images[0]?.uri ? { uri: images[0].uri } : fallbackImage}
-//       style={{ width: screenWidth, height: 250 }}
-//       resizeMode="cover"
-//     />
-//   );
-// };
 
 const renderImage = () => {
   const fallbackImage = require('../../../assets/images/drone.png');
@@ -413,7 +319,11 @@ const handleBookmarkPress = async (productId: number) => {
             <View style={styles.headerRow}>
               <TouchableOpacity
                 style={styles.backBtn}
-                onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})}}>
+                onPress={() => {
+                  //  navigation.replace('Dashboard');
+                  navigation.goBack();
+                }}
+              >
                 <View style={styles.backIconRow}>
                   <Image
                     source={require('../../../assets/images/back.png')}
@@ -511,12 +421,6 @@ const handleBookmarkPress = async (productId: number) => {
                       {param.options && param.options.length > 0 ? (
                         <View style={styles.categoryContainer}>
                           {param.options
-                            // .filter(opt =>
-                            //   param.param_value
-                            //     ?.split(',')
-                            //     .map(v => v.trim())
-                            //     .includes(opt.option_id.toString()),
-                            // )
                             .filter(opt =>
                               (param.param_value?.toString() || "")
                                 .split(',')
@@ -550,14 +454,6 @@ const handleBookmarkPress = async (productId: number) => {
 
                   {/* User Info */}
                   <View style={{ flexDirection: 'row' }}>
-                    {/* <Image
-                      source={
-                        detail?.createdby?.profile
-                          ? { uri: detail.createdby.profile }
-                          : require('../../../assets/images/user.jpg')
-                      }
-                      style={styles.avatar}
-                    /> */}
                     {detail?.createdby?.profile ? (
                     <Image
                       source={{ uri: detail.createdby.profile }}
@@ -687,19 +583,15 @@ const handleBookmarkPress = async (productId: number) => {
       {/* Bottom */}
       <TouchableOpacity
         style={styles.previewBtn}
-        onPress={() => setShowPopup1(true)}
+       // onPress={() => setShowPopup1(true)}
 
-        //onPress={() => navigation.navigate('PaymentScreen')}
+        onPress={() => navigation.navigate('AddReview')}
       >
         <Text style={{ textAlign: 'center' }}>
-        <Text style={styles.payText}>Pay </Text>
-        <Text style={styles.priceText1}>
-        £{Number(detail?.price ?? 0).toFixed(2)}
-      </Text>
+        <Text style={styles.payText}>Write a Review </Text>
+        
       </Text>
       </TouchableOpacity>
-      
-      {/* <Button onPress={() => navigation.navigate('PaymentScreen')} title={"Pay "+ "£"+Number(detail?.price ?? 0).toFixed(2)} /> */}
       {/* </ScrollView> */}
 
       <Modal
@@ -1274,4 +1166,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SearchDetails;
+export default MyProductDetails;
