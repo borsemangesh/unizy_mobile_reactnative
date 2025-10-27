@@ -148,7 +148,11 @@ const AddScreenContent: React.FC<
   </View>
 );
 
-const BookmarkScreenContent = (navigation: any) => (
+type ChatProps = {
+  navigation: any;
+};
+
+const BookmarkScreenContent = ({ navigation }: ChatProps) => (
   <View style={[styles.tabContent]}>
     {/* <Text style={styles.tabContentText}>🔖 Bookmark Layout</Text> */}
     <MessagesScreen navigation={navigation}/>

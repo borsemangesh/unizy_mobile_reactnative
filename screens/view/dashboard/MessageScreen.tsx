@@ -82,7 +82,8 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
             keyExtractor={item => item.id}
             renderItem={({ item }) => (
               <TouchableOpacity onPress={() => {
-                navigation.replace('MessagesIndividualScreen', { animation: 'none' });
+                navigation.navigate('MessagesIndividualScreen',{ animation: 'none' }); 
+                // navigation.replace('MessagesIndividualScreen', { animation: 'none' });
               }}>
                 <View>
                   {/* Chat Row */}
