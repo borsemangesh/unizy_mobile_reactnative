@@ -526,7 +526,7 @@ const handleBookmarkPress = async (productId: number) => {
                             )
                             .map((opt: ParamOption) => (
                               <View key={opt.id} style={styles.categoryTag}>
-                                <Text style={styles.catagoryText}>
+                                <Text allowFontScaling={false} style={styles.catagoryText}>
                                   {opt.option_name}
                                 </Text>
                               </View>
