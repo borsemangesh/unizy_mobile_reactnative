@@ -1048,7 +1048,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  tabIcon: {
+    tabIcon: {
     width: 24,
     height: 24,
     //tintColor: '#fff',
@@ -1057,8 +1057,8 @@ const styles = StyleSheet.create({
   bubble: {
     // height: 48,
     height: '88%',
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',    
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18), -0.80px 0px 0px 0px rgba(251, 251, 251, 0.36) inset,0px 0px 0px 0px rgba(251, 251, 251, 0.36) inset,0.40px 0.10px 0.10px 0px rgba(251, 251, 251, 0.36) inset',
+    backgroundColor: 'rgba(255, 255, 255, 0.16)',    
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18)',
 
     position: 'absolute',
 
@@ -1068,24 +1068,20 @@ const styles = StyleSheet.create({
     left: 3,
     right: 3,
     borderWidth: 0.5,
-    borderColor: 'transparent',
+    borderColor: '#ffffff2e',
 
     borderTopLeftRadius: 30,
     borderBottomLeftRadius: 30,
     borderTopRightRadius: 30,
     borderBottomRightRadius: 30,
 
-    // borderBlockStartColor: '#ffffff2e',
-    // borderBlockColor: '#ffffff2e',
+    borderBlockStartColor: '#ffffff2e',
+    borderBlockColor: '#ffffff2e',
 
-    // borderTopColor: '#ffffff2e',
-    // borderBottomColor: '#ffffff2e',
-    // borderLeftColor: '#ffffff2e',
-    // borderRightColor: '#ffffff2e',
-  },
-
-  activeIconWrapper: {
-    // backgroundColor: 'rgba(255,255,255,0.2)', // highlight active tab
+    borderTopColor: '#ffffff2e',
+    borderBottomColor: '#ffffff2e',
+    borderLeftColor: '#ffffff2e',
+    borderRightColor: '#ffffff2e',
   },
 
   background: {

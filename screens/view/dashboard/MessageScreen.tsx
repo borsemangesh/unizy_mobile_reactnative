@@ -54,15 +54,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
         </View>
       </View>
 
-      <View
-        style={{
-          top: 90,
-          minHeight: '100%',
-          width: '100%',
-          paddingHorizontal: 16,
-          gap: 10,
-        }}
-      >
+      <View style={styles.chatConainter}>
         <View style={[styles.search_container]}>
           <Image source={searchIcon} style={styles.searchIcon} />
           <TextInput
@@ -82,25 +74,20 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
             data={chatData}
             keyExtractor={item => item.id}
             renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => {
-                navigation.navigate('MessagesIndividualScreen',{ animation: 'none' }); 
-                // navigation.replace('MessagesIndividualScreen', { animation: 'none' });
-              }}>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('MessagesIndividualScreen', {
+                    animation: 'none',
+                  });
+                  // navigation.replace('MessagesIndividualScreen', { animation: 'none' });
+                }}
+              >
                 <View>
                   {/* Chat Row */}
                   <View
-                    style={{
-                      width: '100%',
-                      flexDirection: 'row',
-                      gap: 10,
-                      marginTop: 10,
-                      alignItems: 'center',
-                    }}
+                    style={styles.chatRow}
                   >
-                    <Image
-                      source={item.image}
-                      style={{ width: 50, height: 50, borderRadius: 100 }}
-                    />
+                    <Image source={item.image}  style={styles.chatImage}  />
 
                     <View style={{ flex: 1 }}>
                       <View
@@ -203,6 +190,21 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
 };
 
 const styles = StyleSheet.create({
+    chatImage:{ width: 50, height: 50, borderRadius: 100 },
+    chatRow:{
+      width: '100%',
+      flexDirection: 'row',
+      gap: 10,
+      marginTop: 10,
+      alignItems: 'center',
+   },
+  chatConainter: {
+    top: 90,
+    minHeight: '100%',
+    width: '100%',
+    paddingHorizontal: 16,
+    gap: 10,
+  },
   searchBar: {
     fontFamily: 'Urbanist-Medium',
     marginLeft: -5,
