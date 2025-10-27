@@ -14,7 +14,7 @@ import {
   Platform,
   TouchableWithoutFeedback,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import { CONSTDEFAULT } from '../CONSTDEFAULT';
 import { MAIN_URL } from '../APIConstant';
@@ -26,6 +26,9 @@ interface FilterBottomSheetProps {
   visible: boolean;
   onClose: () => void;
   onApply: (filters: any) => void; // 👈 new callback
+  from: number;
+  to: number;
+  
 }
 const FilterBottomSheet = ({
   catagory_id,
@@ -68,6 +71,7 @@ const FilterBottomSheet = ({
             item.field_type?.toLowerCase() === 'dropdown' ||
             item.alias_name?.toLowerCase() === 'price',
         );
+        console.log("Current Filter: "+ dynamicFilters);
         setFilters(dynamicFilters);
         if (dynamicFilters.length) setSelectedTab(dynamicFilters[0].field_name);
       }
@@ -94,6 +98,13 @@ const FilterBottomSheet = ({
       }
     });
   };
+
+  const handlePriceChange = (low: number, high: number) => {
+    console.log('handlePriceChange:', low, high);
+    setPriceRange({ min: low, max: high });
+
+  };
+
 
   const renderRightContent = () => {
     const currentFilter = filters.find(f => f.field_name === selectedTab);
@@ -140,22 +151,26 @@ const FilterBottomSheet = ({
       );
     } else if (currentFilter.alias_name === 'price') {
       return (
-        <View>
+        <View style={{zIndex: 999}}>
           <Text style={{ color: 'white', marginBottom: 10 }}>
             Range: {sliderLow} - {sliderHigh}
           </Text>
 
+          <View style={{ paddingHorizontal: 20, paddingVertical: 40 }}>
           <RangeSlider
-            min={currentFilter.minvalue || 0}
-            max={currentFilter.maxvalue || 10000}
+            min={currentFilter.minvalue }
+            max={currentFilter.maxvalue}
+            
             step={1}
             low={sliderLow}
             high={sliderHigh}
-            onValueChanged={(l, h) => {
-              setSliderLow(l);
-              setSliderHigh(h);
-              setPriceRange({ min: l, max: h }); // update your main filter state
-            }}
+            onValueChanged={handlePriceChange}
+            // onValueChanged={(l, h) => {
+            //   console.log(`low: ${l}, high: ${h}`);
+            //   setSliderLow(l);
+            //   setSliderHigh(h);
+            //   // setPriceRange({ min: l, max: h }); // update your main filter state
+            // }}
             renderThumb={() => (
               <View
                 style={{
@@ -173,10 +188,18 @@ const FilterBottomSheet = ({
             )}
             renderRailSelected={() => (
               <View
-                style={{ height: 4, backgroundColor: '#fff', borderRadius: 2 }}
+              key={`${priceRange.min}-${priceRange.max}`}
+                style={{
+                  height: 4,
+                  backgroundColor: '#fff',
+                  borderRadius: 2,
+                }}
+                
               />
             )}
           />
+     
+          </View>
         </View>
       );
     }
@@ -248,6 +271,7 @@ const FilterBottomSheet = ({
             {/* <TouchableWithoutFeedback onPress={onClose}> */}
 
             <View style={styles.overlay}>
+            <TouchableWithoutFeedback onPress={() => {}}>
               <View style={[styles.modelcontainer]}>
                 <BlurView
                   style={[
@@ -315,13 +339,14 @@ const FilterBottomSheet = ({
                     <Text style={styles.cancelText}>Cancel</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={[styles.cancelBtn, { backgroundColor: '#ffffff4e' }]}
+                    style={[styles.cancelBtn, { backgroundColor: 'rgba(255, 255, 255, 0)' }]}
                     onPress={handleApply}
                   >
                     <Text style={[styles.cancelText, { color: '#000' }]}>Apply</Text>
                   </TouchableOpacity>
                 </View>
               </View>
+              </TouchableWithoutFeedback>
             </View>
           </View>
 

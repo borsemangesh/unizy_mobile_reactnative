@@ -21,6 +21,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showToast } from '../../utils/toast';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
+import Button from '../../utils/component/Button';
 
 type SearchDetailsProps = {
   navigation: any;
@@ -412,11 +413,7 @@ const handleBookmarkPress = async (productId: number) => {
             <View style={styles.headerRow}>
               <TouchableOpacity
                 style={styles.backBtn}
-                onPress={() => {
-                  //  navigation.replace('Dashboard');
-                  navigation.goBack();
-                }}
-              >
+                onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})}}>
                 <View style={styles.backIconRow}>
                   <Image
                     source={require('../../../assets/images/back.png')}
@@ -690,6 +687,8 @@ const handleBookmarkPress = async (productId: number) => {
       </Text>
       </Text>
       </TouchableOpacity>
+      
+      {/* <Button onPress={() => navigation.navigate('PaymentScreen')} title={"Pay "+ "£"+Number(detail?.price ?? 0).toFixed(2)} /> */}
       {/* </ScrollView> */}
 
       <Modal

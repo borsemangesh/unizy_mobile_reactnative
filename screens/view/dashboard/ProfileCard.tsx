@@ -293,22 +293,7 @@ export default ProfileCard;
 
 const styles = StyleSheet.create({
 
-     initialsCircle:{
- backgroundColor: '#8390D4',
-  alignItems: 'center',
-  justifyContent: 'center',
-   width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 12,
-  },
-  initialsText:{
-   color: '#fff',
-  fontSize: 18,
-  fontWeight:600,
-  textAlign: 'center',
-  fontFamily: 'Urbanist-SemiBold',
-  },
+ 
   listContainer: {
     padding: 16,
     
@@ -335,6 +320,22 @@ versionLabel: {
   fontWeight: '500',
    fontFamily: 'Urbanist-SemiBold',
 },
+initialsCircle:{
+  backgroundColor: '#8390D4',
+   alignItems: 'center',
+   justifyContent: 'center',
+    width: 50,
+     height: 50,
+     borderRadius: 25,
+     marginRight: 12,
+   },
+   initialsText:{
+    color: '#fff',
+   fontSize: 18,
+   fontWeight:600,
+   textAlign: 'center',
+   fontFamily: 'Urbanist-SemiBold',
+   },
   cardContainer: {
     flexDirection: 'row',
     alignItems: 'center',

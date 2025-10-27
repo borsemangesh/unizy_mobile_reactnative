@@ -165,7 +165,7 @@ const toggleCheckbox = (id: number) => {
               // backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(34, 30, 252, 0.08) 0%, rgba(255, 255, 255, 0.10) 100%)'
             }}
           >
-            <ScrollView contentContainerStyle={{ paddingBottom:15 }}>
+            <ScrollView  showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom:15 }}>
               {options.map((option, index) => {
                 const isSelectedRadio = selectedRadio === option.id;
                 const isSelectedCheckbox = selectedCheckboxes.includes(

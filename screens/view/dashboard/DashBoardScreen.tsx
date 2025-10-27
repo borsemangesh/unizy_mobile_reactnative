@@ -31,6 +31,7 @@ import ProfileCard from './ProfileCard';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
+import MessagesScreen from './MessageScreen';
 
 const mylistings = require('../../../assets/images/mylistingicon.png');
 const mylistings1 = require('../../../assets/images/favourite.png');
@@ -147,9 +148,11 @@ const AddScreenContent: React.FC<
   </View>
 );
 
-const BookmarkScreenContent = () => (
-  <View style={styles.tabContent}>
-    <Text style={styles.tabContentText}>🔖 Bookmark Layout</Text>
+const BookmarkScreenContent = (navigation: any) => (
+  <View style={[styles.tabContent]}>
+    {/* <Text style={styles.tabContentText}>🔖 Bookmark Layout</Text> */}
+    <MessagesScreen navigation={navigation}/>
+
   </View>
 );
 
@@ -417,8 +420,8 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
     );
     Animated.spring(bubbleX, {
       toValue: index * tabWidth,
-      friction: 20,
-      tension: 1,
+      friction: 6,
+      tension: 20,
       
       useNativeDriver: true,
     }).start();
@@ -606,6 +609,7 @@ return (
     <Animated.ScrollView
       horizontal
       pagingEnabled
+      showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
       onScroll={onScroll}
       onMomentumScrollEnd={handleScrollEnd}
@@ -733,6 +737,7 @@ return (
             <ScrollView
               style={{ paddingHorizontal: 0,marginLeft:8 }}
               horizontal
+              showsVerticalScrollIndicator={false}
               showsHorizontalScrollIndicator={false}
             >
               {features.map(item => (
@@ -755,7 +760,7 @@ return (
                       onBookmarkPress={() => handleBookmarkPress(item.id)}
                       isBookmarked={item.isbookmarked}
                       onpress={() =>{
-                        navigation.navigate('SearchDetails', { id: item.id },{ animation: 'none' })
+                        navigation.replace('SearchDetails', { id: item.id },{ animation: 'none' })
                       }}
                     />
                   ) : (
@@ -768,7 +773,7 @@ return (
                       onBookmarkPress={() => handleBookmarkPress(item.id)}
                      isBookmarked={item.isbookmarked}
                       onpress={() =>{
-                        navigation.navigate('SearchDetails', { id: item.id },{ animation: 'none' })
+                        navigation.replace('SearchDetails', { id: item.id },{ animation: 'none' })
                       }}
                     />
                   )}
@@ -782,7 +787,7 @@ return (
       case 'Add':
         return <AddScreenContent navigation={navigation} products={products} />;
       case 'Bookmark':
-        return <BookmarkScreenContent />;
+        return <BookmarkScreenContent navigation={navigation} />;
       case 'Profile':
         return <ProfileScreenContent navigation={navigation} />;
       default:
@@ -1037,8 +1042,8 @@ const styles = StyleSheet.create({
   bubble: {
     // height: 48,
     height: '88%',
-    backgroundColor: 'rgba(255, 255, 255, 0.16)',    
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18)',
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',    
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18), -0.80px 0px 0px 0px rgba(251, 251, 251, 0.36) inset,0px 0px 0px 0px rgba(251, 251, 251, 0.36) inset,0.40px 0.10px 0.10px 0px rgba(251, 251, 251, 0.36) inset',
 
     position: 'absolute',
 
@@ -1048,20 +1053,20 @@ const styles = StyleSheet.create({
     left: 3,
     right: 3,
     borderWidth: 0.5,
-    borderColor: '#ffffff2e',
+    borderColor: 'transparent',
 
     borderTopLeftRadius: 30,
     borderBottomLeftRadius: 30,
     borderTopRightRadius: 30,
     borderBottomRightRadius: 30,
 
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
+    // borderBlockStartColor: '#ffffff2e',
+    // borderBlockColor: '#ffffff2e',
 
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
+    // borderTopColor: '#ffffff2e',
+    // borderBottomColor: '#ffffff2e',
+    // borderLeftColor: '#ffffff2e',
+    // borderRightColor: '#ffffff2e',
   },
 
   activeIconWrapper: {

@@ -229,8 +229,9 @@ useEffect(() => {
   const [showPopup, setShowPopup] = useState(false);
 
   const resetPasswordtranslateY = React.useRef(
-    new Animated.Value(-300),
+    new Animated.Value(0),
   ).current;
+  const restPasswordAnimatied = React.useRef(0);
   const setOTPTranslatY = React.useRef(new Animated.Value(height)).current;
   const verifyAndContinyTranslateY1 = React.useRef(
     new Animated.Value(0),
@@ -251,7 +252,6 @@ useEffect(() => {
     slideUp.setValue(100);
     translateY.setValue(-100);
     slideUp1.setValue(screenHeight);
-    resetPasswordtranslateY.setValue(0);
     setOTPTranslatY.setValue(Dimensions.get('window').height);
     verifyAndContinyTranslateY1.setValue(-300);
     verifyAndContinyTranslateY2.setValue(-200);
@@ -374,14 +374,14 @@ useEffect(() => {
     }
 
     if (currentScreenIninner === 'forgotpassword') {
-      Animated.parallel([
-        Animated.timing(resetPasswordtranslateY, {
-          toValue: 0,
-          duration: 1000,
-          easing: Easing.linear,
-          useNativeDriver: true,
-        }),
-      ]).start();
+      // Animated.parallel([
+      //   Animated.timing(resetPasswordtranslateY, {
+      //     toValue: 0,
+      //     duration: 1000,
+      //     easing: Easing.linear,
+      //     useNativeDriver: true,
+      //   }),
+      // ]).start();
     }
   }, [currentScreen, currentScreenIninner, photo]);
 
@@ -1090,77 +1090,77 @@ useEffect(() => {
   };
   //profile
 
-  // const requestCameraPermission = async () => {
-  //   if (Platform.OS === 'android') {
-  //     try {
-  //       const granted = await PermissionsAndroid.request(
-  //         PermissionsAndroid.PERMISSIONS.CAMERA,
-  //         {
-  //           title: 'Camera Permission',
-  //           message: 'App needs access to your camera',
-  //           buttonNeutral: 'Ask Me Later',
-  //           buttonNegative: 'Cancel',
-  //           buttonPositive: 'OK',
-  //         },
-  //       );
-  //       return granted === PermissionsAndroid.RESULTS.GRANTED;
-  //     } catch (err) {
-  //       console.warn(err);
-  //       return false;
-  //     }
-  //   } else {
-  //     return true;
-  //   }
-  // };
-
   const requestCameraPermission = async () => {
-    if (Platform.OS === "android") {
+    if (Platform.OS === 'android') {
       try {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.CAMERA,
           {
-            title: "Camera Permission",
-            message: "App needs access to your camera",
-            buttonNeutral: "Ask Me Later",
-            buttonNegative: "Cancel",
-            buttonPositive: "OK",
-          }
+            title: 'Camera Permission',
+            message: 'App needs access to your camera',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
         );
         return granted === PermissionsAndroid.RESULTS.GRANTED;
       } catch (err) {
         console.warn(err);
         return false;
       }
-    } else if (Platform.OS === 'ios') {
-      try {
-        // Check current permission status first
-        const status = await check(PERMISSIONS.IOS.CAMERA);
-        if (status === RESULTS.GRANTED) {
-          return true;
-        }
-        const result = await request(PERMISSIONS.IOS.CAMERA);
-  
-        if (result === RESULTS.GRANTED) {
-          return true; 
-        } else if (result === RESULTS.BLOCKED) {
-          console.warn('Camera permission is blocked. Please enable it in Settings.');
-          return false;
-        } else {
-          return false; // Denied
-        }
-      } catch (err) {
-        console.warn(err);
-        return false;
-      }
-    } 
-    
-    else {
+    } else {
       return true;
     }
   };
 
+  // const requestCameraPermission = async () => {
+  //   if (Platform.OS === "android") {
+  //     try {
+  //       const granted = await PermissionsAndroid.request(
+  //         PermissionsAndroid.PERMISSIONS.CAMERA,
+  //         {
+  //           title: "Camera Permission",
+  //           message: "App needs access to your camera",
+  //           buttonNeutral: "Ask Me Later",
+  //           buttonNegative: "Cancel",
+  //           buttonPositive: "OK",
+  //         }
+  //       );
+  //       return granted === PermissionsAndroid.RESULTS.GRANTED;
+  //     } catch (err) {
+  //       console.warn(err);
+  //       return false;
+  //     }
+  //   } else if (Platform.OS === 'ios') {
+  //     try {
+  //       // Check current permission status first
+  //       const status = await check(PERMISSIONS.IOS.CAMERA);
+  //       if (status === RESULTS.GRANTED) {
+  //         return true;
+  //       }
+  //       const result = await request(PERMISSIONS.IOS.CAMERA);
+  
+  //       if (result === RESULTS.GRANTED) {
+  //         return true; 
+  //       } else if (result === RESULTS.BLOCKED) {
+  //         console.warn('Camera permission is blocked. Please enable it in Settings.');
+  //         return false;
+  //       } else {
+  //         return false; // Denied
+  //       }
+  //     } catch (err) {
+  //       console.warn(err);
+  //       return false;
+  //     }
+  //   } 
+    
+  //   else {
+  //     return true;
+  //   }
+  // };
+
   const loginTranslateY = useRef(
-    new Animated.Value(Dimensions.get('window').height),
+    new Animated.Value(0),
   ).current;
   const signupTranslateY = useRef(
     new Animated.Value(Dimensions.get('window').height),
@@ -1188,47 +1188,21 @@ useEffect(() => {
 
   const goToForgotPassword = () => {
     Keyboard.dismiss();
-
-
-    // Animated.timing(loginTranslateY, {
-    //   toValue: 300,//Dimensions.get('window').height,
-    //   duration: 100,
-    //   easing: Easing.in(Easing.ease),
-    //   useNativeDriver: true,
-    // }).start(()=>{
-    //   Animated.timing(resetPasswordtranslateY, {
-    //     toValue: -300,//-Dimensions.get('window').height,
-    //     duration: 100, // 👈 make it instant
-    //     useNativeDriver: true,
-    //     easing: Easing.out(Easing.ease),
-    //   }).start(()=>{
-    //     setTextandBackIcon(false);
-    //     setUsername('');
-    //     setPassword('');
-    //     setIsPasswordVisible(false);
-    //     setCurrentScreen('login');
-    //     setcurrentScreenIninner('forgotpassword');
-    //   })
-    //   Animated.timing(textAndBackOpacity, {
-    //     toValue: 0, // fade out
-    //     duration: 50,
-    //     useNativeDriver: true,
-    //   }).start();
-    // })
-
+    
+    // resetPasswordtranslateY.setValue(Dimensions.get('window').height);
     Animated.parallel([
         // Slide login down
         Animated.timing(loginTranslateY, {
           toValue: 300, // move login view to bottom
-          duration: 150, // same duration for both
+          duration: 300, // same duration for both
           easing:  Easing.linear,
           useNativeDriver: true,
         }),
         // Slide reset password up
         Animated.timing(resetPasswordtranslateY, {
-          toValue: -300, // slide reset password view to actual position
-          duration: 150, // same duration
-          easing: Easing.linear,
+          toValue: 0, // slide reset password view to actual position
+          duration: 300, // same duration
+          // easing: Easing.linear,
           useNativeDriver: true,
         }),
         // Fade out text and back icon (optional)
@@ -1238,7 +1212,7 @@ useEffect(() => {
           useNativeDriver: true,
         }),
       ]).start(() => {
-        // Callback after animation finishes
+        
         setTextandBackIcon(false);
         setUsername('');
         setPassword('');
@@ -1246,7 +1220,7 @@ useEffect(() => {
         setCurrentScreen('login');
         setcurrentScreenIninner('forgotpassword');
       });
-      
+   
     
   };
 

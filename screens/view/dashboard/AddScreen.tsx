@@ -254,74 +254,74 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     ).padStart(2, '0')}-${today.getFullYear()}`;
   };
 
-  // const requestCameraPermission = async () => {
-  //   if (Platform.OS === 'android') {
-  //     try {
-  //       const granted = await PermissionsAndroid.request(
-  //         PermissionsAndroid.PERMISSIONS.CAMERA,
-  //         {
-  //           title: 'Camera Permission',
-  //           message: 'App needs access to your camera',
-  //           buttonNeutral: 'Ask Me Later',
-  //           buttonNegative: 'Cancel',
-  //           buttonPositive: 'OK',
-  //         },
-  //       );
-  //       return granted === PermissionsAndroid.RESULTS.GRANTED;
-  //     } catch (err) {
-  //       console.warn(err);
-  //       return false;
-  //     }
-  //   } else {
-  //     return true;
-  //   }
-  // };
-
   const requestCameraPermission = async () => {
-      if (Platform.OS === "android") {
-        try {
-          const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.CAMERA,
-            {
-              title: "Camera Permission",
-              message: "App needs access to your camera",
-              buttonNeutral: "Ask Me Later",
-              buttonNegative: "Cancel",
-              buttonPositive: "OK",
-            }
-          );
-          return granted === PermissionsAndroid.RESULTS.GRANTED;
-        } catch (err) {
-          console.warn(err);
-          return false;
-        }
-      } else if (Platform.OS === 'ios') {
-        try {
-          // Check current permission status first
-          const status = await check(PERMISSIONS.IOS.CAMERA);
-          if (status === RESULTS.GRANTED) {
-            return true;
-          }
-          const result = await request(PERMISSIONS.IOS.CAMERA);
-    
-          if (result === RESULTS.GRANTED) {
-            return true; 
-          } else if (result === RESULTS.BLOCKED) {
-            console.warn('Camera permission is blocked. Please enable it in Settings.');
-            return false;
-          } else {
-            return false; // Denied
-          }
-        } catch (err) {
-          console.warn(err);
-          return false;
-        }
-      } 
-      
-      else {
-        return true;
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            title: 'Camera Permission',
+            message: 'App needs access to your camera',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        console.warn(err);
+        return false;
       }
-    };
+    } else {
+      return true;
+    }
+  };
+
+  // const requestCameraPermission = async () => {
+  //     if (Platform.OS === "android") {
+  //       try {
+  //         const granted = await PermissionsAndroid.request(
+  //           PermissionsAndroid.PERMISSIONS.CAMERA,
+  //           {
+  //             title: "Camera Permission",
+  //             message: "App needs access to your camera",
+  //             buttonNeutral: "Ask Me Later",
+  //             buttonNegative: "Cancel",
+  //             buttonPositive: "OK",
+  //           }
+  //         );
+  //         return granted === PermissionsAndroid.RESULTS.GRANTED;
+  //       } catch (err) {
+  //         console.warn(err);
+  //         return false;
+  //       }
+  //     } else if (Platform.OS === 'ios') {
+  //       try {
+  //         // Check current permission status first
+  //         const status = await check(PERMISSIONS.IOS.CAMERA);
+  //         if (status === RESULTS.GRANTED) {
+  //           return true;
+  //         }
+  //         const result = await request(PERMISSIONS.IOS.CAMERA);
+    
+  //         if (result === RESULTS.GRANTED) {
+  //           return true; 
+  //         } else if (result === RESULTS.BLOCKED) {
+  //           console.warn('Camera permission is blocked. Please enable it in Settings.');
+  //           return false;
+  //         } else {
+  //           return false; // Denied
+  //         }
+  //       } catch (err) {
+  //         console.warn(err);
+  //         return false;
+  //       }
+  //     } 
+      
+  //     else {
+  //       return true;
+  //     }
+  //   };
 
 
   const handlePreview = async () => {
@@ -837,14 +837,21 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
         {/* Header */}
+        
         <View style={styles.header}>
-            {/* <BlurView
-            style={StyleSheet.absoluteFill}
+        {/* <BlurView
+            style={StyleSheet.absoluteFillObject}
             blurType="light"       // or 'dark' for darker backgrounds
-            blurAmount={10}        // intensity
+            blurAmount={30}        // intensity
             reducedTransparencyFallbackColor="transparent" // fallback on Android
-          /> */}
+          >
+          </BlurView> */}
+          <View style={StyleSheet.absoluteFillObject}>
+            
+          </View>
           <View style={styles.headerRow}>
+          
+           
             <TouchableOpacity
               style={styles.backBtn}
               onPress={() => {navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Add', isNavigate:false })}}
@@ -862,7 +869,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             <View style={{ width: 48 }} />
           </View>
         </View>
-
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -948,8 +954,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           <Button title="Preview Details" onPress={() => handlePreview()} />
         </KeyboardAvoidingView>
       </View>
-
-
       <SelectCatagoryDropdown
         options={multiSelectOptions}
         visible={multiSelectModal.visible}
@@ -1062,21 +1066,9 @@ dropdownIcon: {
     right: 0,
     zIndex: 10,
     overflow: 'hidden',
-    backgroundColor:'transparent'
+    backgroundColor:'transparent',
     
   },
-//   header: {
-//   position: 'absolute',
-//   top: 0,
-//   left: 0,
-//   right: 0,
-//   zIndex: 10,
-//   height: 100,
-//   paddingHorizontal: 16,
-//   paddingTop: 40,
-//   paddingBottom: 12,
-//   justifyContent: 'flex-end',
-// },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',

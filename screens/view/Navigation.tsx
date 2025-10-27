@@ -26,22 +26,14 @@ import MyListing from './dashboard/MyListing';
 import SearchDetails from './dashboard/SearchDetails';
 import ListingDetails from './dashboard/ListingDetails';
 import SearchPage from './dashboard/SearchPage';
+import MessagesIndividualScreen from './dashboard/MessageIndividualScreen';
 
 const Stack = createNativeStackNavigator();
 
 export const Navigation = () => {
   const [initialRoute, setInitialRoute] = useState<null | string>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
-  // useEffect(() => {
-  //   const checkLoginStatus = async () => {
-  //     const flag = await AsyncStorage.getItem('ISLOGIN');
-  //     // Decide route based on flag
-  //     setInitialRoute(flag === 'true' ? 'Dashboard' : 'SinglePage');
-  //   };
-  //   checkLoginStatus();
-  // }, []);
 
- 
   enableScreens();
   return (
     <NavigationContainer
@@ -75,7 +67,6 @@ export const Navigation = () => {
             presentation: 'fullScreenModal',
           }}
         />
-
         <Stack.Screen
           name="HelloScreen"
           component={HelloScreen}
@@ -150,6 +141,15 @@ export const Navigation = () => {
         <Stack.Screen
           name="Signup"
           component={SignupScreen}
+          options={{
+            headerShown: false,
+            presentation: 'fullScreenModal',
+            gestureEnabled: true,
+          }}
+        />
+        <Stack.Screen
+          name="MessagesIndividualScreen"
+          component={MessagesIndividualScreen}
           options={{
             headerShown: false,
             presentation: 'fullScreenModal',

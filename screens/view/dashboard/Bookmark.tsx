@@ -390,6 +390,7 @@ const handleBookmarkPress = async (productId: number) => {
       <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
             style={{ marginVertical: 10 }}
             contentContainerStyle={{ paddingHorizontal: 10 }}
             >

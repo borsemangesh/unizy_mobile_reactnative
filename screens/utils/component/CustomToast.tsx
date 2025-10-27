@@ -13,7 +13,7 @@ const CustomToast: React.FC<CustomToastProps> = ({
   text,
   type = "info",
   onHide,
-  duration = 3500,
+  duration = 5000,
 }) => {
   const progress = useRef(new Animated.Value(1)).current;
 
@@ -23,7 +23,7 @@ const CustomToast: React.FC<CustomToastProps> = ({
     info: "rgba(96, 189, 255, 0.9)",
   };
 
-  const bgColor = "rgba(0, 0, 0, 0.59)";
+  const bgColor = "rgba(44, 44, 44, 0.02)";
   const textColor = colors[type] ?? colors.info;
 
   const progressWidth = progress.interpolate({
@@ -43,13 +43,13 @@ const CustomToast: React.FC<CustomToastProps> = ({
   }, []);
 
   return (
-    <View style={[styles.toastWrapper, { backgroundColor: bgColor }]}>
+    <View style={[StyleSheet.absoluteFillObject,styles.toastWrapper, { backgroundColor: bgColor }]}>
       <BlurView 
-       style={[{ backgroundColor: bgColor }]}
-        blurType="light"
+       style={[StyleSheet.absoluteFillObject,{ backgroundColor: bgColor,borderRadius: 16 }]}
+        blurType="dark"
         blurAmount={100}
         // REMOVE fallback color if you want absolutely NO background color
-        reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.59)"
+        reducedTransparencyFallbackColor="rgba(253, 253, 253, 0.1)"
       />
       <Text style={[styles.toastText, { color: textColor }]}>{text}</Text>
       <View style={styles.progressBarContainer}>
@@ -70,25 +70,26 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 16,
     marginHorizontal: 16,
-    backgroundColor:'rgba(0, 0, 0, 0.59)',
+    backgroundColor:'rgba(44, 44, 44, 0.02)',
     marginVertical: 8,
     elevation: 5,
     alignSelf: "center",
     position: "relative", // ensures absolute child aligns correctly
+    // opacity: 0.1
 
   },
   toastText: {
     fontSize: 16,
     fontWeight: "500",
-    marginBottom: 8, // ensures text doesn’t touch progress bar
+    // marginBottom: 3, // ensures text doesn’t touch progress bar
   },
   progressBarContainer: {
     position: "absolute",
     bottom: 1,
     left: 5,
     right:5,
-    height: 4,
-    backgroundColor: "rgba(0, 0, 0, 0.59)",
+    height: 3,
+    backgroundColor: "rgba(44, 44, 44, 0.02)",
     borderBottomLeftRadius: 16,
     borderBottomRightRadius: 16,
     overflow: "hidden",

@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 0,
     right: 0,
-    bottom: 30,
+    bottom: 40,
     zIndex: 9999,
     width: "100%",
     pointerEvents: "box-none",
