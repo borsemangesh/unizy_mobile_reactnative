@@ -31,8 +31,8 @@ const MessagesIndividualScreen = ({navigation}:MessagesIndividualScreenProps) =>
         </TouchableOpacity>
         <Image source={profileImage} style={styles.profileImage} />
         <View>
-          <Text style={styles.studentName}>Student Name</Text>
-          <Text style={styles.universityName}>University Name</Text>
+          <Text allowFontScaling={false} style={styles.studentName}>Student Name</Text>
+          <Text allowFontScaling={false} style={styles.universityName}>University Name</Text>
         </View>
       </View>
 
@@ -40,15 +40,15 @@ const MessagesIndividualScreen = ({navigation}:MessagesIndividualScreenProps) =>
         <ScrollView bounces={true} showsVerticalScrollIndicator={false} contentContainerStyle={styles.chatContainer}>
           <View style={[styles.messageContainer, styles.leftAlign]}>
             <View style={[styles.bubble, styles.leftBubble]}>
-              <Text style={styles.messageText}>Heyy!!</Text>
+              <Text allowFontScaling={false} style={styles.messageText}>Heyy!!</Text>
             </View>
             <View style={[styles.bubble, styles.leftBubble]}>
-              <Text style={styles.messageText}>
+              <Text allowFontScaling={false} style={styles.messageText}>
                 I saw your listing for the quadcopter drone.
               </Text>
             </View>
             <View style={[styles.bubble, styles.leftBubble]}>
-              <Text style={styles.messageText}>
+              <Text allowFontScaling={false} style={styles.messageText}>
                 Can you tell me a bit about the condition? Is it working fine?
               </Text>
             </View>
@@ -57,10 +57,10 @@ const MessagesIndividualScreen = ({navigation}:MessagesIndividualScreenProps) =>
           {/* Receiver Message */}
           <View style={[styles.messageContainer, styles.rightAlign]}>
             <View style={[styles.bubble, styles.rightBubble]}>
-              <Text style={styles.messageText}>Hii!!</Text>
+              <Text allowFontScaling={false} style={styles.messageText}>Hii!!</Text>
             </View>
             <View style={[styles.bubble, styles.rightBubble]}>
-              <Text style={styles.messageText}>
+              <Text allowFontScaling={false} style={styles.messageText}>
                 Yep, it’s in good condition. Hardly used, and everything works
                 perfectly.
               </Text>
@@ -70,10 +70,10 @@ const MessagesIndividualScreen = ({navigation}:MessagesIndividualScreenProps) =>
 
 <View style={[styles.messageContainer, styles.rightAlign]}>
             <View style={[styles.bubble, styles.rightBubble]}>
-              <Text style={styles.messageText}>Hii!!</Text>
+              <Text allowFontScaling={false} style={styles.messageText}>Hii!!</Text>
             </View>
             <View style={[styles.bubble, styles.rightBubble]}>
-              <Text style={styles.messageText}>
+              <Text allowFontScaling={false} style={styles.messageText}>
                 Yep, it’s in good condition. Hardly used, and everything works
                 perfectly.
               </Text>
@@ -81,10 +81,10 @@ const MessagesIndividualScreen = ({navigation}:MessagesIndividualScreenProps) =>
           </View>
           <View style={[styles.messageContainer, styles.rightAlign]}>
             <View style={[styles.bubble, styles.rightBubble]}>
-              <Text style={styles.messageText}>Hii!!</Text>
+              <Text allowFontScaling={false} style={styles.messageText}>Hii!!</Text>
             </View>
             <View style={[styles.bubble, styles.rightBubble]}>
-              <Text style={styles.messageText}>
+              <Text allowFontScaling={false} style={styles.messageText}>
                 Yep, it’s in good condition. Hardly used, and everything works
                 perfectly.
               </Text>
@@ -92,10 +92,10 @@ const MessagesIndividualScreen = ({navigation}:MessagesIndividualScreenProps) =>
           </View>
           <View style={[styles.messageContainer, styles.rightAlign]}>
             <View style={[styles.bubble, styles.rightBubble]}>
-              <Text style={styles.messageText}>Hii!!</Text>
+              <Text allowFontScaling={false} style={styles.messageText}>Hii!!</Text>
             </View>
             <View style={[styles.bubble, styles.rightBubble]}>
-              <Text style={styles.messageText}>
+              <Text allowFontScaling={false} style={styles.messageText}>
                 Yep, it’s in good condition. Hardly used, and everything works
                 perfectly.
               </Text>
@@ -103,10 +103,10 @@ const MessagesIndividualScreen = ({navigation}:MessagesIndividualScreenProps) =>
           </View>
           <View style={[styles.messageContainer, styles.rightAlign]}>
             <View style={[styles.bubble, styles.rightBubble]}>
-              <Text style={styles.messageText}>Hii!!</Text>
+              <Text allowFontScaling={false} style={styles.messageText}>Hii!!</Text>
             </View>
             <View style={[styles.bubble, styles.rightBubble]}>
-              <Text style={styles.messageText}>
+              <Text allowFontScaling={false} style={styles.messageText}>
                 Yep, it’s in good condition. Hardly used, and everything works
                 perfectly.
               </Text>
@@ -114,10 +114,10 @@ const MessagesIndividualScreen = ({navigation}:MessagesIndividualScreenProps) =>
           </View>
           <View style={[styles.messageContainer, styles.rightAlign]}>
             <View style={[styles.bubble, styles.rightBubble]}>
-              <Text style={styles.messageText}>Hii!!</Text>
+              <Text allowFontScaling={false} style={styles.messageText}>Hii!!</Text>
             </View>
             <View style={[styles.bubble, styles.rightBubble]}>
-              <Text style={styles.messageText}>
+              <Text allowFontScaling={false} style={styles.messageText}>
                 Yep, it’s in good condition. Hardly used, and everything works
                 perfectly.
               </Text>
@@ -125,10 +125,10 @@ const MessagesIndividualScreen = ({navigation}:MessagesIndividualScreenProps) =>
           </View>
           <View style={[styles.messageContainer, styles.rightAlign]}>
             <View style={[styles.bubble, styles.rightBubble]}>
-              <Text style={styles.messageText}>Hii!!</Text>
+              <Text allowFontScaling={false} style={styles.messageText}>Hii!!</Text>
             </View>
             <View style={[styles.bubble, styles.rightBubble]}>
-              <Text style={styles.messageText}>
+              <Text allowFontScaling={false} style={styles.messageText}>
                 Yep, it’s in good condition. Hardly used, and everything works
                 perfectly.
               </Text>
@@ -136,10 +136,10 @@ const MessagesIndividualScreen = ({navigation}:MessagesIndividualScreenProps) =>
           </View>
           <View style={[styles.messageContainer, styles.rightAlign]}>
             <View style={[styles.bubble, styles.rightBubble]}>
-              <Text style={styles.messageText}>Hii!!</Text>
+              <Text allowFontScaling={false} style={styles.messageText}>Hii!!</Text>
             </View>
             <View style={[styles.bubble, styles.rightBubble]}>
-              <Text style={styles.messageText}>
+              <Text allowFontScaling={false} style={styles.messageText}>
                 Yep, it’s in good condition. Hardly used, and everything works
                 perfectly.
               </Text>
@@ -147,10 +147,10 @@ const MessagesIndividualScreen = ({navigation}:MessagesIndividualScreenProps) =>
           </View>
           <View style={[styles.messageContainer, styles.rightAlign]}>
             <View style={[styles.bubble, styles.rightBubble]}>
-              <Text style={styles.messageText}>Hii!!</Text>
+              <Text allowFontScaling={false} style={styles.messageText}>Hii!!</Text>
             </View>
             <View style={[styles.bubble, styles.rightBubble]}>
-              <Text style={styles.messageText}>
+              <Text allowFontScaling={false} style={styles.messageText}>
                 Yep, it’s in good condition. Hardly used, and everything works
                 perfectly.
               </Text>
@@ -158,10 +158,10 @@ const MessagesIndividualScreen = ({navigation}:MessagesIndividualScreenProps) =>
           </View>
           <View style={[styles.messageContainer, styles.rightAlign]}>
             <View style={[styles.bubble, styles.rightBubble]}>
-              <Text style={styles.messageText}>Hii!!</Text>
+              <Text allowFontScaling={false} style={styles.messageText}>Hii!!</Text>
             </View>
             <View style={[styles.bubble, styles.rightBubble]}>
-              <Text style={styles.messageText}>
+              <Text allowFontScaling={false} style={styles.messageText}>
                 Yep, it’s in good condition. Hardly used, and everything works
                 perfectly.
               </Text>
@@ -169,10 +169,10 @@ const MessagesIndividualScreen = ({navigation}:MessagesIndividualScreenProps) =>
           </View>
           <View style={[styles.messageContainer, styles.rightAlign]}>
             <View style={[styles.bubble, styles.rightBubble]}>
-              <Text style={styles.messageText}>Hii!!</Text>
+              <Text allowFontScaling={false} style={styles.messageText}>Hii!!</Text>
             </View>
             <View style={[styles.bubble, styles.rightBubble]}>
-              <Text style={styles.messageText}>
+              <Text allowFontScaling={false} style={styles.messageText}>
                 Yep, it’s in good condition. Hardly used, and everything works
                 perfectly.
               </Text>
@@ -189,12 +189,12 @@ const MessagesIndividualScreen = ({navigation}:MessagesIndividualScreenProps) =>
             <Image source={smileyhappy} style={styles.searchIcon} />
             <View style={{height: 20, width: 0.9, backgroundColor: '#ffffff5f'}}/>
             <TextInput
+            allowFontScaling={false}
               style={styles.searchBar}
               placeholder="Search"
               placeholderTextColor="#ccc"
               onChangeText={setMessageText}
               value={messageText}
-              allowFontScaling={false}
             />
           </View>
           <View style={styles.sendIconContainer}>
