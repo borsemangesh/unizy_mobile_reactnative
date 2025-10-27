@@ -90,6 +90,8 @@ useEffect(() => {
 
         console.log(token)
 
+        console.log(token)
+
         const url = `${MAIN_URL.baseUrl}user/user-profile/${userId}`;
         const response = await fetch(url, {
           method: 'GET',
@@ -187,11 +189,7 @@ const renderItem = ({ item }: any) => {
       >
         {item.title}
       </Text>
-      {isVersion ? (
-        <Text allowFontScaling={false} style={styles.versionText}>{APP_VERSION}</Text>
-      ) : !isLogout && (
-        <Image source={arrowIcon} style={styles.cardArrow} />
-      )}
+      <Image source={arrowIcon} style={styles.cardArrow} />
     </TouchableOpacity>
   );
 };
@@ -230,76 +228,67 @@ return (
 
     <View style={{ paddingTop: 120 }}> 
         
-  <View style={styles.userRow}>
-    <View style={{ width: '20%' ,alignSelf:'center'}}>
-    {userMeta?.profile ? (
-      <Image
-        source={{ uri: userMeta.profile }}
-        style={styles.avatar}
-      />
-    ) : (
-      <View style={styles.initialsCircle}>
-        <Text allowFontScaling={false} style={styles.initialsText}>
-          {getInitials(
-            userMeta?.firstname ?? 'A',
-            userMeta?.lastname ?? 'W'
-          )}
-        </Text>
-      </View>
-    )}
-  </View>
+             <View style={styles.userRow}>
+            <View style={{ width: '20%' }}>
 
-  <View style={{ width: '60%', position: 'relative' }}>
-    {/* Name + Edit on top row */}
-    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-      <Text allowFontScaling={false} style={styles.userName}>
-        {userMeta
-          ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''}`.trim()
-          : 'Loading...'}
-      </Text>
-     
-    </View>
+              {/* <Image source={userMeta?.profile ? { uri: userMeta.profile } : profileImg}
+               style={styles.avatar} /> */}
 
-    {/* Details below name */}
-    <View style={{ flexDirection: 'column', gap: 6, marginTop: 4 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-        <Image
-          source={require('../../../assets/images/buildings.png')}
-          style={{ width: 16, height: 16 }}
-        />
-        <Text allowFontScaling={false} style={styles.userSub}>
-          {userMeta?.university_name || 'University Name'}
-        </Text>
-      </View>
+               {userMeta?.profile ? (
+                <Image
+                  source={{ uri: userMeta.profile }}
+                  style={styles.avatar}
+                />
+              ) : (
+                <View style={styles.initialsCircle}>
+                  <Text style={styles.initialsText}>
+                    {getInitials(
+                      userMeta?.firstname ?? 'A',
+                      userMeta?.lastname ?? 'W'
+                    )}
+                  </Text>
+                </View>
+              )}
+            </View>
+            <View style={{ width: '80%' }}>
+              <Text style={styles.userName}>
+                {userMeta
+                  ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''}`.trim()
+                  : 'Loading...'}
+              </Text>
+              <View style={{ flexDirection: 'column', gap: 6,marginTop:4 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Image
+            source={require('../../../assets/images/buildings.png')}
+            style={{ width: 16, height: 16 }}
+            />
+             <Text style={styles.userSub}>
+              {userMeta?.university_name || 'University Name'}
+            </Text>
+        </View>
 
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-        <Image
-          source={require('../../../assets/images/sms.png')}
-          style={{ width: 16, height: 16 }}
-        />
-        <Text allowFontScaling={false} style={styles.userSub}>
-          {userMeta?.email || 'studentname@gmail.com'}
-        </Text>
-      </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Image
+            source={require('../../../assets/images/sms.png')}
+            style={{ width: 16, height: 16 }}
+            />
+             <Text style={styles.userSub}>
+              {userMeta?.email || 'studentname@gmail.com'}
+            </Text>
+        </View>
 
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
         <Image
           source={require('../../../assets/images/sms.png')}
           style={{ width: 16, height: 16 }}
         />
-        <Text allowFontScaling={false} style={styles.userSub}>
+      <Text style={styles.userSub}>
           {userMeta?.student_email || 'studentname@university.ac.uk'}
         </Text>
       </View>
     </View>
-  </View>
-
-    <View style={styles.editcard}>
-          <Text allowFontScaling={false} style={styles.edittext}>Edit</Text>
-        </View>
     </View>
-
-    
+    </View>   
 
     <View style={styles.listContainer}>
       <FlatList

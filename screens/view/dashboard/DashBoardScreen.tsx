@@ -107,6 +107,7 @@ const ProductItem: React.FC<ProductItemProps> = ({
 const SearchScreenContent = () => (
   <View style={styles.tabContent}>
     <Text allowFontScaling={false} style={styles.tabContentText}>🔎 Search Layout</Text>
+    <Text allowFontScaling={false} style={styles.tabContentText}>🔎 Search Layout</Text>
   </View>
 );
 type AddScreenContentProps = {
@@ -117,6 +118,7 @@ const AddScreenContent: React.FC<
   AddScreenContentProps & { products: any[] }
 > = ({ navigation, products }) => (
   <View style={styles.tabContent3}>
+    <Text allowFontScaling={false} style={styles.tabContentText3}>List Product</Text>
     <Text allowFontScaling={false} style={styles.tabContentText3}>List Product</Text>
     <AnimatedSlideUp>
       <FlatList
@@ -137,6 +139,8 @@ const AddScreenContent: React.FC<
               </View>
 
               <View style={styles.cardTextContainer}>
+                <Text allowFontScaling={false} style={styles.cardTitle}>{item.name}</Text>
+                <Text allowFontScaling={false} style={styles.cardDescription}>{item.description}</Text>
                 <Text allowFontScaling={false} style={styles.cardTitle}>{item.name}</Text>
                 <Text allowFontScaling={false} style={styles.cardDescription}>{item.description}</Text>
               </View>
