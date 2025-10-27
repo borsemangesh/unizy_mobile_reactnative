@@ -187,7 +187,7 @@ const groupedList = groupByDate(featureList);
 const renderItem = ({ item, index }: { item: any; index: number }) => {
   if (item.type === 'date') {
     return (
-      <Text style={styles.dateHeading}>{item.displayDate}</Text>
+      <Text allowFontScaling={false} style={styles.dateHeading}>{item.displayDate}</Text>
     );
   }
 
@@ -222,7 +222,7 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
                 />
               </View>
             </TouchableOpacity>
-            <Text style={styles.unizyText}>Notifications</Text>
+            <Text allowFontScaling={false} style={styles.unizyText}>Notifications</Text>
             <View style={{ width: 48 }} />
           </View>
         </View>
@@ -253,7 +253,7 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
             }
             ListEmptyComponent={
               !isLoading ? (
-                <Text style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
+                <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
                   No products found
                 </Text>
               ) : null

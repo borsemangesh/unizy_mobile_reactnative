@@ -139,10 +139,10 @@ const FilterBottomSheet = ({
                 }}
               >
                 {dropdownSelections[currentFilter.id]?.includes(opt.id) && (
-                  <Text style={{ color: '#FFF', fontSize: 12 }}>✓</Text>
+                  <Text allowFontScaling={false} style={{ color: '#FFF', fontSize: 12 }}>✓</Text>
                 )}
               </View>
-              <Text style={{ color: 'white' }}>
+              <Text allowFontScaling={false} style={{ color: 'white' }}>
                 {opt.option_name || opt.name}
               </Text>
             </TouchableOpacity>
@@ -152,7 +152,7 @@ const FilterBottomSheet = ({
     } else if (currentFilter.alias_name === 'price') {
       return (
         <View style={{zIndex: 999}}>
-          <Text style={{ color: 'white', marginBottom: 10 }}>
+          <Text allowFontScaling={false} style={{ color: 'white', marginBottom: 10 }}>
             Range: {sliderLow} - {sliderHigh}
           </Text>
 
@@ -291,14 +291,14 @@ const FilterBottomSheet = ({
                   reducedTransparencyFallbackColor="white"
                 />
                 <View style={styles.modeltitleContainer}>
-                  <Text style={styles.modelTextHeader}>Filters</Text>
+                  <Text allowFontScaling={false} style={styles.modelTextHeader}>Filters</Text>
                   <TouchableOpacity
                     onPress={() => {
                       setDropdownSelections({});
                       setPriceRange({ min: 0, max: 10000 });
                     }}
                   >
-                    <Text style={styles.clearAll}>Clear all</Text>
+                    <Text allowFontScaling={false} style={styles.clearAll}>Clear all</Text>
                   </TouchableOpacity>
                 </View>
 
@@ -321,7 +321,7 @@ const FilterBottomSheet = ({
                             : styles.inactiveTab
                         }
                       >
-                        <Text style={styles.filtertitle}>{f.field_name}</Text>
+                        <Text allowFontScaling={false} style={styles.filtertitle}>{f.field_name}</Text>
                       </TouchableOpacity>
                       // </View>
                     ))}
@@ -329,20 +329,20 @@ const FilterBottomSheet = ({
                   <View
                     style={{ flex: 1, padding: 16, backgroundColor: '#5d5c5c3c' }}
                   >
-                    <Text style={styles.filterHeadTitle}>{selectedTab}</Text>
+                    <Text allowFontScaling={false} style={styles.filterHeadTitle}>{selectedTab}</Text>
                     {renderRightContent()}
                   </View>
                 </View>
 
                 <View style={styles.bottomview}>
                   <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
-                    <Text style={styles.cancelText}>Cancel</Text>
+                    <Text allowFontScaling={false} style={styles.cancelText}>Cancel</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.cancelBtn, { backgroundColor: 'rgba(255, 255, 255, 0)' }]}
                     onPress={handleApply}
                   >
-                    <Text style={[styles.cancelText, { color: '#000' }]}>Apply</Text>
+                    <Text allowFontScaling={false} style={[styles.cancelText, { color: '#000' }]}>Apply</Text>
                   </TouchableOpacity>
                 </View>
               </View>

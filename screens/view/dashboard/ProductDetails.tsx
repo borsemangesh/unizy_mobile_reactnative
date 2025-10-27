@@ -376,7 +376,7 @@ const handleFilterApply = async (filterBody: any) => {
                 />
               </View>
             </TouchableOpacity>
-            <Text style={styles.unizyText}>{`${category_name}s`}</Text>
+            <Text allowFontScaling={false} style={styles.unizyText}>{`${category_name}s`}</Text>
 
             <View style={{ width: 48 }} />
           </View>
@@ -387,6 +387,7 @@ const handleFilterApply = async (filterBody: any) => {
           <View style={styles.search_container}>
             <Image source={searchIcon} style={styles.searchIcon} />
             <TextInput
+              allowFontScaling={false}
               style={styles.searchBar}
               placeholder="Search"
               placeholderTextColor="#ccc"
@@ -421,7 +422,7 @@ const handleFilterApply = async (filterBody: any) => {
           }
           ListEmptyComponent={
             !isLoading ? ( // ✅ only show if not loading
-              <Text style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
+              <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
                 No products found
               </Text>
             ) : null

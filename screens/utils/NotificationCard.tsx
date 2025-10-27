@@ -43,12 +43,12 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
         <View style={styles.imgcontainer}>
       <Image source={productImage} style={styles.image} resizeMode="cover" />
      </View>
-        <Text style={styles.title}>{infoTitle}</Text>
+        <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
     </View>
 
 
   <View style={styles.bottomContent}>
-      <Text style={styles.reviewText} numberOfLines={3}>
+      <Text allowFontScaling={false} style={styles.reviewText} numberOfLines={3}>
         {reviewText}
       </Text>
   </View>

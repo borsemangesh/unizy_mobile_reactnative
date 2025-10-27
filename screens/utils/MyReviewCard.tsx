@@ -17,7 +17,7 @@ type MyReviewCardProps = {
   productImage: ImageSourcePropType;
   topRightText?: string;
   isfeature?: boolean;
-  navigation: any;
+  navigation?: any;
   shareid: number;
 };
 
@@ -36,15 +36,15 @@ const MyReviewCard: React.FC<MyReviewCardProps> = ({
   return (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => navigation.navigate('ListingDetails', { shareid })}
+     // onPress={() => navigation.navigate('ListingDetails', { shareid })}
       activeOpacity={0.8}
     >
      <View style={styles.row}>
       <Image source={productImage} style={styles.image} resizeMode="cover" />
       <View style={styles.details}>
-        <Text style={styles.title}>{infoTitle}</Text>
-        <Text style={styles.price}>{inforTitlePrice}</Text>
-        <Text style={styles.date}>
+        <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
+        <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
+        <Text allowFontScaling={false} style={styles.date}>
           {`${new Date().getDate().toString().padStart(2, '0')}-${(new Date().getMonth()+1)
             .toString()
             .padStart(2, '0')}-${new Date().getFullYear()}`}
@@ -66,7 +66,7 @@ const MyReviewCard: React.FC<MyReviewCardProps> = ({
     </View>
 
     {reviewText ? (
-      <Text style={styles.reviewText} numberOfLines={3}>
+      <Text allowFontScaling={false} style={styles.reviewText} numberOfLines={3}>
         {reviewText}
       </Text>
     ) : null}

@@ -75,6 +75,7 @@ const AddReview = ({ navigation }: AddReviewProps)  => {
 
         <View style={styles.login_container}>
               <TextInput
+              allowFontScaling={false}
                 style={styles.personalEmailID_TextInput}
                 placeholder={'Tell other students what you liked, what could be better...'}
                 placeholderTextColor={'rgba(255, 255, 255, 0.48)'}

@@ -17,7 +17,7 @@ const Header = () => {
         // REMOVE fallback color if you want absolutely NO background color
         reducedTransparencyFallbackColor="transparent"
       />
-      <Text style={styles.buttonText}>Product Details</Text>
+      <Text allowFontScaling={false} style={styles.buttonText}>Product Details</Text>
     </View>
   );
 };

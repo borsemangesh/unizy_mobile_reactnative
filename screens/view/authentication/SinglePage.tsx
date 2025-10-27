@@ -1610,11 +1610,12 @@ useEffect(() => {
                     />
                   </View>
                 </TouchableOpacity>
-                <Text style={Styles.unizyText}>UniZy</Text>
+                <Text allowFontScaling={false} style={Styles.unizyText}>UniZy</Text>
                 <View style={Styles.emptyView}></View>
               </Animated.View>
 
               <Animated.Text
+                allowFontScaling={false}
                 style={[
                   Styles.hellowText,
                   {
@@ -1666,7 +1667,7 @@ useEffect(() => {
                         justifyContent: 'space-between',
                       }}
                     >
-                      <Text style={Styles.selectlanguageText}>
+                      <Text allowFontScaling={false} style={Styles.selectlanguageText}>
                         Select Language
                       </Text>
                       <Image
@@ -1700,7 +1701,7 @@ useEffect(() => {
                     { transform: [{ translateY: slideUp1 }] },
                   ]}
                 >
-                  <Text style={selectlang_styles.title}>Select Language</Text>
+                  <Text allowFontScaling={false} style={selectlang_styles.title}>Select Language</Text>
 
                   <View style={selectlang_styles.search_container}>
                     <Image
@@ -1708,6 +1709,7 @@ useEffect(() => {
                       style={selectlang_styles.searchIcon}
                     />
                     <TextInput
+                      allowFontScaling={false}
                       style={selectlang_styles.searchBar}
                       placeholder="Search"
                       selectionColor="white"
@@ -1760,7 +1762,7 @@ useEffect(() => {
                                   source={typeof item.flag === 'string' ? { uri: item.flag } : item.flag} // handle URI or require
                                   style={selectlang_styles.flag}
                                 />
-                                <Text style={selectlang_styles.languageText}>
+                                <Text allowFontScaling={false} style={selectlang_styles.languageText}>
                                   {item.name}
                                 </Text>
                               </View>
@@ -1829,7 +1831,7 @@ useEffect(() => {
                     ],
                   }}
                 >
-                  <Text style={Styles.unizyText}>UniZy</Text>
+                  <Text allowFontScaling={false} style={Styles.unizyText}>UniZy</Text>
                 </Animated.View>
               </View>
 
@@ -1867,6 +1869,7 @@ useEffect(() => {
                           />
                           <View style={Styles.login_container}>
                             <TextInput
+                            allowFontScaling={false}
                               style={Styles.personalEmailID_TextInput}
                               placeholder={'Personal Email ID*'}
                               placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
@@ -1886,6 +1889,7 @@ useEffect(() => {
 
                           <View style={Styles.password_container}>
                             <TextInput
+                              allowFontScaling={false}
                               style={Styles.password_TextInput}
                               placeholder={'Password*'}
                               placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
@@ -1919,6 +1923,7 @@ useEffect(() => {
                           </View>
 
                           <Text
+                            allowFontScaling={false}
                             style={Styles.forgetPasswordText}
                             onPress={() => {
                               goToForgotPassword();
@@ -1931,7 +1936,7 @@ useEffect(() => {
                             style={Styles.loginButton}
                             onPress={loginapi}
                           >
-                            <Text style={Styles.loginText}>Login</Text>
+                            <Text allowFontScaling={false} style={Styles.loginText}>Login</Text>
                           </TouchableOpacity>
 
                           <View
@@ -1944,6 +1949,7 @@ useEffect(() => {
                             }}
                           >
                             <Text
+                            allowFontScaling={false}
                               style={{
                                 color: 'rgba(255, 255, 255, 0.48)',
                                 textAlign: 'center',
@@ -2009,7 +2015,7 @@ useEffect(() => {
                               });
                             }}
                             >
-                              <Text style={Styles.signupText}>Sign up</Text>
+                              <Text allowFontScaling={false} style={Styles.signupText}>Sign up</Text>
                             </TouchableOpacity>
                           </View>
                         </Animated.View>
@@ -2030,11 +2036,11 @@ useEffect(() => {
                               },
                             ]}
                           >
-                            <Text style={Styles.resetTitle}>
+                            <Text allowFontScaling={false} style={Styles.resetTitle}>
                               Reset Password
                             </Text>
                             <View style={Styles.privacyContainer}>
-                              <Text style={Styles.termsText}>
+                              <Text allowFontScaling={false} style={Styles.termsText}>
                                 Enter your personal email address and we’ll send
                                 you a link to reset your password
                               </Text>
@@ -2042,6 +2048,7 @@ useEffect(() => {
 
                             <View style={[Styles.login_container]}>
                               <TextInput
+                              allowFontScaling={false}
                                 style={[
                                   Styles.personalEmailID_TextInput,
                                   { color: '#fff' },
@@ -2066,7 +2073,7 @@ useEffect(() => {
                                 handleSendResetLink();
                               }}
                             >
-                              <Text style={Styles.loginText}>
+                              <Text allowFontScaling={false} style={Styles.loginText}>
                                 Send Reset Link
                               </Text>
                             </TouchableOpacity>
@@ -2088,7 +2095,7 @@ useEffect(() => {
                                 });
                               }}
                             >
-                              <Text style={Styles.goBackText}>Go Back</Text>
+                              <Text allowFontScaling={false} style={Styles.goBackText}>Go Back</Text>
                             </TouchableOpacity>
                           </Animated.View>
                           <Modal
@@ -2138,7 +2145,7 @@ useEffect(() => {
                                     style={Styles.logo}
                                     resizeMode="contain"
                                   />
-                                  <Text style={Styles.termsText1}>
+                                  <Text allowFontScaling={false} style={Styles.termsText1}>
                                     A password reset link has been sent to your
                                     personal email. Please check your inbox (or
                                     spam folder) to continue.
@@ -2152,7 +2159,7 @@ useEffect(() => {
                                       setcurrentScreenIninner('login');
                                     }}
                                   >
-                                    <Text style={Styles.loginText}>
+                                    <Text allowFontScaling={false} style={Styles.loginText}>
                                       Back to Login
                                     </Text>
                                   </TouchableOpacity>
@@ -2178,6 +2185,7 @@ useEffect(() => {
                           <View style={Styles.nameRow}>
                             <View style={Styles.login_container1}>
                               <TextInput
+                              allowFontScaling={false}
                                 style={Styles.personalEmailID_TextInput1}
                                 placeholder="First Name*"
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
@@ -2197,6 +2205,7 @@ useEffect(() => {
 
                             <View style={Styles.login_container1}>
                               <TextInput
+                              allowFontScaling={false}
                                 style={Styles.personalEmailID_TextInput1}
                                 placeholder="Last Name*"
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
@@ -2222,6 +2231,7 @@ useEffect(() => {
                               ]}
                             >
                               <TextInput
+                              allowFontScaling={false}
                                 style={Styles.personalEmailID_TextInput}
                                 placeholder="Postal Code"
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
@@ -2250,6 +2260,7 @@ useEffect(() => {
                             ]}
                           >
                             <TextInput
+                            allowFontScaling={false}
                               style={Styles.password_TextInput}
                               placeholder="Personal Email ID*"
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
@@ -2275,8 +2286,8 @@ useEffect(() => {
 
                           {showInfo && (
                             <View style={Styles.infoContainer}>
-                              <Text style={Styles.infoText}>
-                                <Text style={Styles.infoText1}>
+                              <Text allowFontScaling={false} style={Styles.infoText}>
+                                <Text allowFontScaling={false} style={Styles.infoText1}>
                                   Important:{' '}
                                 </Text>
                                 Use your personal email address for signup. Your
@@ -2288,6 +2299,7 @@ useEffect(() => {
 
                           <View style={Styles.password_container}>
                             <TextInput
+                            allowFontScaling={false}
                               style={Styles.password_TextInput}
                               placeholder="Create Password*"
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
@@ -2323,6 +2335,7 @@ useEffect(() => {
 
                           <View style={Styles.password_container}>
                             <TextInput
+                            allowFontScaling={false}
                               style={[
                                 Styles.password_TextInput,
                                 { color: '#fff' },
@@ -2368,7 +2381,7 @@ useEffect(() => {
                             }}
                             style={Styles.loginButton}
                           >
-                            <Text style={Styles.loginText}>Send OTP</Text>
+                            <Text allowFontScaling={false} style={Styles.loginText}>Send OTP</Text>
                           </TouchableOpacity>
 
                           <View
@@ -2379,7 +2392,7 @@ useEffect(() => {
                               marginTop: 16,
                             }}
                           >
-                            <Text style={Styles.signupPrompt}>
+                            <Text allowFontScaling={false} style={Styles.signupPrompt}>
                               Already have an account?{' '}
                             </Text>
                             <TouchableOpacity
@@ -2409,7 +2422,7 @@ useEffect(() => {
                                 }
                               }}
                             >
-                              <Text style={Styles.signupPrompt1}>Login</Text>
+                              <Text allowFontScaling={false} style={Styles.signupPrompt1}>Login</Text>
                             </TouchableOpacity>
                           </View>
                         </Animated.View>
@@ -2427,13 +2440,13 @@ useEffect(() => {
                             ]}
                           >
                             <View>
-                              <Text style={Styles.sendOtpresetTitle}>
+                              <Text allowFontScaling={false} style={Styles.sendOtpresetTitle}>
                                 Verify Personal Email ID
                               </Text>
                               <View style={Styles.sendOtpprivacyContainer}>
-                                <Text style={Styles.termsText}>
+                                <Text allowFontScaling={false} style={Styles.termsText}>
                                   We have sent a 4-digit code to{' '}
-                                  <Text style={Styles.sendOtpresendText2}>
+                                  <Text allowFontScaling={false} style={Styles.sendOtpresendText2}>
                                     {signUpusername}
                                   </Text>
                                 </Text>
@@ -2446,6 +2459,7 @@ useEffect(() => {
                                     ref={ref => {
                                       inputs.current[index] = ref;
                                     }}
+                                    allowFontScaling={false}
                                     style={Styles.sendOtpotpBox}
                                     keyboardType="number-pad"
                                     maxLength={1}
@@ -2475,7 +2489,7 @@ useEffect(() => {
                                 style={Styles.sendOtploginButton}
                                 onPress={otpverify}
                               >
-                                <Text style={Styles.loginText}>
+                                <Text allowFontScaling={false} style={Styles.loginText}>
                                   Verify & Continue
                                 </Text>
                               </TouchableOpacity>
@@ -2487,11 +2501,11 @@ useEffect(() => {
                                   marginTop: 16,
                                 }}
                               >
-                                <Text style={Styles.sendOtpresendText}>
+                                <Text allowFontScaling={false} style={Styles.sendOtpresendText}>
                                   Didn’t receive a code?{' '}
                                 </Text>
                                 <TouchableOpacity onPress={handleresend}>
-                                  <Text style={Styles.sendOtpresendText1}>
+                                  <Text allowFontScaling={false} style={Styles.sendOtpresendText1}>
                                     Resend Code
                                   </Text>
                                 </TouchableOpacity>
@@ -2504,7 +2518,7 @@ useEffect(() => {
                                   marginTop: 16,
                                 }}
                               >
-                                <Text style={Styles.sendOtpgoBackText}>
+                                <Text allowFontScaling={false} style={Styles.sendOtpgoBackText}>
                                   Entered wrong email?{' '}
                                 </Text>
                                 <TouchableOpacity
@@ -2551,7 +2565,7 @@ useEffect(() => {
                                     // });
                                   }}
                                 >
-                                  <Text style={Styles.sendOtpgoBackText1}>
+                                  <Text allowFontScaling={false} style={Styles.sendOtpgoBackText1}>
                                     Go Back
                                   </Text>
                                 </TouchableOpacity>
@@ -2576,11 +2590,12 @@ useEffect(() => {
                             ]}
                           >
                             <View>
-                              <Text style={Styles.verifyresetTitle}>
+                              <Text allowFontScaling={false} style={Styles.verifyresetTitle}>
                                 Verify University Email ID
                               </Text>
                               <View style={Styles.verifylogin_container}>
                                 <TextInput
+                                allowFontScaling={false}
                                   style={Styles.verifypersonalEmailID_TextInput}
                                   placeholder={'University Email ID*'}
                                   placeholderTextColor={
@@ -2606,7 +2621,7 @@ useEffect(() => {
                                   verifyOTP();
                                 }}
                               >
-                                <Text style={Styles.loginText}>Send OTP</Text>
+                                <Text allowFontScaling={false} style={Styles.loginText}>Send OTP</Text>
                               </TouchableOpacity>
                             </View>
                           </Animated.View>
@@ -2626,14 +2641,14 @@ useEffect(() => {
                             <View
                               style={[{ width: '100%', alignItems: 'center' }]}
                             >
-                              <Text style={Styles.verifyresetTitle}>
+                              <Text allowFontScaling={false} style={Styles.verifyresetTitle}>
                                 Verify University Email ID
                               </Text>
 
                               <View style={Styles.verifyprivacyContainer}>
                                 <Text style={Styles.verifytermsText}>
                                   We have sent a 4-digit code to{' '}
-                                  <Text style={Styles.resendText2}>
+                                  <Text allowFontScaling={false} style={Styles.resendText2}>
                                     {verifyusername}
                                   </Text>
                                 </Text>
@@ -2642,6 +2657,7 @@ useEffect(() => {
                               <View style={Styles.verifyotpContainer}>
                                 {[0, 1, 2, 3].map((_, index) => (
                                   <TextInput
+                                  allowFontScaling={false}
                                     key={index}
                                     ref={ref => {
                                       verifyinputs.current[index] = ref;
@@ -2677,7 +2693,7 @@ useEffect(() => {
                                 style={Styles.verifyloginButton1}
                                 onPress={submitotp}
                               >
-                                <Text style={Styles.loginText}>
+                                <Text allowFontScaling={false} style={Styles.loginText}>
                                   Verify & Continue
                                 </Text>
                               </TouchableOpacity>
@@ -2685,11 +2701,11 @@ useEffect(() => {
                               <View
                                 style={{ flexDirection: 'row', marginTop: 6 }}
                               >
-                                <Text style={Styles.verifyresendText}>
+                                <Text allowFontScaling={false} style={Styles.verifyresendText}>
                                   Didn’t receive a code?{' '}
                                 </Text>
                                 <TouchableOpacity onPress={resubmitotp}>
-                                  <Text style={Styles.verifyresendText1}>
+                                  <Text allowFontScaling={false} style={Styles.verifyresendText1}>
                                     Resend Code
                                   </Text>
                                 </TouchableOpacity>
@@ -2698,7 +2714,7 @@ useEffect(() => {
                               <TouchableOpacity
                                 style={{ flexDirection: 'row', marginTop: 6 }}
                               >
-                                <Text style={Styles.verifyresendText}>
+                                <Text allowFontScaling={false} style={Styles.verifyresendText}>
                                   Entered wrong email?{' '}
                                 </Text>
                                 <TouchableOpacity
@@ -2746,7 +2762,7 @@ useEffect(() => {
 
                                   }}
                                 >
-                                  <Text style={Styles.verifygoBackText1}>
+                                  <Text allowFontScaling={false} style={Styles.verifygoBackText1}>
                                     Go Back
                                   </Text>
                                 </TouchableOpacity>
@@ -2770,11 +2786,11 @@ useEffect(() => {
                             ]}
                           >
                             <View>
-                              <Text style={Styles.profileprofileresetTitle}>
+                              <Text allowFontScaling={false} style={Styles.profileprofileresetTitle}>
                                 Add a Photo
                               </Text>
                               <View style={Styles.profileprivacyContainer}>
-                                <Text style={Styles.profiletermsText}>
+                                <Text allowFontScaling={false} style={Styles.profiletermsText}>
                                   Personalize your account with a photo. You can
                                   always change it later.
                                 </Text>
@@ -2813,7 +2829,7 @@ useEffect(() => {
                                   setShowPopup1(true);
                                 }}
                               >
-                                <Text style={Styles.profileloginText}>
+                                <Text allowFontScaling={false} style={Styles.profileloginText}>
                                   Continue
                                 </Text>
                               </TouchableOpacity>
@@ -2826,7 +2842,7 @@ useEffect(() => {
                                   marginTop: 16,
                                 }}
                               >
-                                <Text style={Styles.profilesignupPrompt}>
+                                <Text allowFontScaling={false} style={Styles.profilesignupPrompt}>
                                   Want to do it later?{' '}
                                 </Text>
                                 <TouchableOpacity
@@ -2834,7 +2850,7 @@ useEffect(() => {
                                     setShowPopup1(true);
                                   }}
                                 >
-                                  <Text style={Styles.profilesignupPrompt1}>
+                                  <Text allowFontScaling={false} style={Styles.profilesignupPrompt1}>
                                     Skip
                                   </Text>
                                 </TouchableOpacity>
@@ -2901,10 +2917,10 @@ useEffect(() => {
                                 style={Styles.profilelogo1}
                                 resizeMode="contain"
                               />
-                              <Text style={Styles.profiletermsText2}>
+                              <Text allowFontScaling={false} style={Styles.profiletermsText2}>
                                 Account Created Successfully!
                               </Text>
-                              <Text style={Styles.profiletermsText1}>
+                              <Text allowFontScaling={false} style={Styles.profiletermsText1}>
                                 Welcome to Unizy! Your account has been created
                                 and your’re all set to start exploring
                               </Text>
@@ -2918,7 +2934,7 @@ useEffect(() => {
                                   navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: true});
                                 }}
                               >
-                                <Text style={Styles.profileloginText}>
+                                <Text allowFontScaling={false} style={Styles.profileloginText}>
                                   Start Exploring
                                 </Text>
                               </TouchableOpacity>
@@ -2976,17 +2992,17 @@ useEffect(() => {
                   ]}
                 >
                   <View style={Styles.teamsandConditionContainer}>
-                    <Text style={Styles.bycountuningAgreementText}>
+                    <Text allowFontScaling={false} style={Styles.bycountuningAgreementText}>
                       By continuing, you agree to our
                     </Text>
-                    <Text style={Styles.teamsandConditionText}>
+                    <Text allowFontScaling={false} style={Styles.teamsandConditionText}>
                       Terms & Conditions
                     </Text>
                   </View>
 
                   <View style={Styles.teamsandConditionContainer}>
-                    <Text style={Styles.bycountuningAgreementText}>and</Text>
-                    <Text style={Styles.teamsandConditionText}>
+                    <Text allowFontScaling={false} style={Styles.bycountuningAgreementText}>and</Text>
+                    <Text allowFontScaling={false} style={Styles.teamsandConditionText}>
                       Privacy Policy
                     </Text>
                   </View>

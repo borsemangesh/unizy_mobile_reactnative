@@ -204,7 +204,7 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
           </View>
         </TouchableOpacity>
 
-        <Text style={styles.previewThumbnail}>Preview Thumbnail</Text>
+        <Text allowFontScaling={false} style={styles.previewThumbnail}>Preview Thumbnail</Text>
 
         <View style={{ height: '100%' }}>
          
@@ -250,7 +250,7 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
     <>
       {storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
         <>
-        <Text style={styles.newtext}>Feature Listing Preview</Text>
+        <Text allowFontScaling={false} style={styles.newtext}>Feature Listing Preview</Text>
           <PreviewCard
             tag="University of Warwick"
             infoTitle={titleValue} // from alias
@@ -262,7 +262,7 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
                 : require('../../../assets/images/drone.png')
             }
           />
-          <Text style={styles.newtext1}>Regular Listing Preview</Text>
+          <Text allowFontScaling={false} style={styles.newtext1}>Regular Listing Preview</Text>
           <NewProductCard
             tag="University of Warwick"
             infoTitle={titleValue}
@@ -291,7 +291,7 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
       )}
     </>
   ) : (
-    <Text style={{ color: '#fff', textAlign: 'center' }}>Loading...</Text>
+    <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center' }}>Loading...</Text>
   )}
 </View>
 
@@ -305,8 +305,8 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
           
                   {/* Texts */}
                   <View style={{ flex: 1 }}>
-                    <Text style={styles.importantText1}>Important:</Text>
-                    <Text style={styles.importantText}>
+                    <Text allowFontScaling={false} style={styles.importantText1}>Important:</Text>
+                    <Text allowFontScaling={false} style={styles.importantText}>
                        A {categoryDetails?.commission ?? '0'}% commission or a maximum of £{categoryDetails?.max_cappund ?? '0'}, whichever is lower, will be added to the entered price.
                     </Text>
                   </View>
@@ -319,7 +319,7 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
               navigation.navigate('PreviewDetailed');
             }}
             >
-            <Text style={styles.nextText}>Next</Text>
+            <Text allowFontScaling={false} style={styles.nextText}>Next</Text>
           </TouchableOpacity>
           {/* <Button
             onPress={() => {

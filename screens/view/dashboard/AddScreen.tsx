@@ -254,74 +254,74 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     ).padStart(2, '0')}-${today.getFullYear()}`;
   };
 
-  const requestCameraPermission = async () => {
-    if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.CAMERA,
-          {
-            title: 'Camera Permission',
-            message: 'App needs access to your camera',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        );
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } catch (err) {
-        console.warn(err);
-        return false;
-      }
-    } else {
-      return true;
-    }
-  };
-
   // const requestCameraPermission = async () => {
-  //     if (Platform.OS === "android") {
-  //       try {
-  //         const granted = await PermissionsAndroid.request(
-  //           PermissionsAndroid.PERMISSIONS.CAMERA,
-  //           {
-  //             title: "Camera Permission",
-  //             message: "App needs access to your camera",
-  //             buttonNeutral: "Ask Me Later",
-  //             buttonNegative: "Cancel",
-  //             buttonPositive: "OK",
-  //           }
-  //         );
-  //         return granted === PermissionsAndroid.RESULTS.GRANTED;
-  //       } catch (err) {
-  //         console.warn(err);
-  //         return false;
-  //       }
-  //     } else if (Platform.OS === 'ios') {
-  //       try {
-  //         // Check current permission status first
-  //         const status = await check(PERMISSIONS.IOS.CAMERA);
-  //         if (status === RESULTS.GRANTED) {
-  //           return true;
-  //         }
-  //         const result = await request(PERMISSIONS.IOS.CAMERA);
-    
-  //         if (result === RESULTS.GRANTED) {
-  //           return true; 
-  //         } else if (result === RESULTS.BLOCKED) {
-  //           console.warn('Camera permission is blocked. Please enable it in Settings.');
-  //           return false;
-  //         } else {
-  //           return false; // Denied
-  //         }
-  //       } catch (err) {
-  //         console.warn(err);
-  //         return false;
-  //       }
-  //     } 
-      
-  //     else {
-  //       return true;
+  //   if (Platform.OS === 'android') {
+  //     try {
+  //       const granted = await PermissionsAndroid.request(
+  //         PermissionsAndroid.PERMISSIONS.CAMERA,
+  //         {
+  //           title: 'Camera Permission',
+  //           message: 'App needs access to your camera',
+  //           buttonNeutral: 'Ask Me Later',
+  //           buttonNegative: 'Cancel',
+  //           buttonPositive: 'OK',
+  //         },
+  //       );
+  //       return granted === PermissionsAndroid.RESULTS.GRANTED;
+  //     } catch (err) {
+  //       console.warn(err);
+  //       return false;
   //     }
-  //   };
+  //   } else {
+  //     return true;
+  //   }
+  // };
+
+  const requestCameraPermission = async () => {
+      if (Platform.OS === "android") {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.CAMERA,
+            {
+              title: "Camera Permission",
+              message: "App needs access to your camera",
+              buttonNeutral: "Ask Me Later",
+              buttonNegative: "Cancel",
+              buttonPositive: "OK",
+            }
+          );
+          return granted === PermissionsAndroid.RESULTS.GRANTED;
+        } catch (err) {
+          console.warn(err);
+          return false;
+        }
+      } else if (Platform.OS === 'ios') {
+        try {
+          // Check current permission status first
+          const status = await check(PERMISSIONS.IOS.CAMERA);
+          if (status === RESULTS.GRANTED) {
+            return true;
+          }
+          const result = await request(PERMISSIONS.IOS.CAMERA);
+    
+          if (result === RESULTS.GRANTED) {
+            return true; 
+          } else if (result === RESULTS.BLOCKED) {
+            console.warn('Camera permission is blocked. Please enable it in Settings.');
+            return false;
+          } else {
+            return false; // Denied
+          }
+        } catch (err) {
+          console.warn(err);
+          return false;
+        }
+      } 
+      
+      else {
+        return true;
+      }
+    };
 
 
   const handlePreview = async () => {
@@ -468,14 +468,14 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 };
 
   const renderLabel = (field_name: any, mandatory: any) => (
-    <Text style={styles.textstyle}>
+    <Text allowFontScaling={false} style={styles.textstyle}>
       {field_name}
       {mandatory && <Text style={{ color: '#fff' }}>*</Text>}
     </Text>
   );
 
   const renderLabel1 = (field_name: any, mandatory: any) => (
-    <Text style={styles.textstyle1}>
+    <Text allowFontScaling={false} style={styles.textstyle1}>
       {field_name}
       {mandatory && <Text style={{ color: '#fff' }}>*</Text>}
     </Text>
@@ -544,6 +544,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             {/* <Text style={styles.textstyle}>{field_name}</Text> */}
             {renderLabel(field_name, field.mandatory)}
             <TextInput
+            allowFontScaling={false}
               style={[
                 styles.personalEmailID_TextInput,
                 styles.login_container,
@@ -609,6 +610,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             {/* <Text style={styles.textstyle}>{field_name}</Text> */}
             {renderLabel(field_name, field.mandatory)}
             <TextInput
+            allowFontScaling={false}
               style={[
                 styles.personalEmailID_TextInput,
                 styles.login_container,
@@ -646,7 +648,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 setMultiSelectOptions(options);
               }}
             >
-              <Text style={styles.dropdowntext}>
+              <Text allowFontScaling={false} style={styles.dropdowntext}>
                 {Array.isArray(formValues[id]?.value) &&
                 formValues[id]?.value.length > 0
                   ? `${formValues[id]?.value.length} Selected`
@@ -690,7 +692,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                         });
                       }}
                     >
-                      <Text style={styles.categoryTag}>
+                      <Text allowFontScaling={false} style={styles.categoryTag}>
                         {opt.option_name} ✕
                       </Text>
                     </TouchableOpacity>
@@ -721,7 +723,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               onPress={handleImageSelect}
             >
               <Image source={uploadIcon} style={styles.uploadIcon} />
-              <Text style={styles.uploadText}>Upload {field_name}</Text>
+              <Text allowFontScaling={false} style={styles.uploadText}>Upload {field_name}</Text>
             </TouchableOpacity>
     {uploadedImages.length > 0 && (
               <View style={styles.imagelistcard}>
@@ -753,6 +755,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                           style={{ width: 20, height: 20, marginRight: 5 }}
                         />
                         <Text
+                        allowFontScaling={false}
                           style={[styles.fileName, { flexShrink: 1 }]}
                           numberOfLines={1}
                           ellipsizeMode="tail"
@@ -816,11 +819,11 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
               {/* Texts */}
               <View style={{ flex: 1 }}>
-                <Text style={styles.importantText1}>Important:</Text>
-              <Text style={styles.importantText}>
+                <Text allowFontScaling={false} style={styles.importantText1}>Important:</Text>
+              <Text allowFontScaling={false} style={styles.importantText}>
                 Featured listings require a small upfront fee —{' '}
-                <Text style={styles.importantText1}>{featureFee}%</Text> of your item’s price or up to{' '}
-                <Text style={styles.importantText1}>£{maxFeatureCap}</Text> (whichever is lower).
+                <Text allowFontScaling={false} style={styles.importantText1}>{featureFee}%</Text> of your item’s price or up to{' '}
+                <Text allowFontScaling={false} style={styles.importantText1}>£{maxFeatureCap}</Text> (whichever is lower).
               </Text>
               </View>
             </View>
@@ -837,21 +840,14 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
         {/* Header */}
-        
         <View style={styles.header}>
-        {/* <BlurView
-            style={StyleSheet.absoluteFillObject}
+            {/* <BlurView
+            style={StyleSheet.absoluteFill}
             blurType="light"       // or 'dark' for darker backgrounds
-            blurAmount={30}        // intensity
+            blurAmount={10}        // intensity
             reducedTransparencyFallbackColor="transparent" // fallback on Android
-          >
-          </BlurView> */}
-          <View style={StyleSheet.absoluteFillObject}>
-            
-          </View>
+          /> */}
           <View style={styles.headerRow}>
-          
-           
             <TouchableOpacity
               style={styles.backBtn}
               onPress={() => {navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Add', isNavigate:false })}}
@@ -863,12 +859,13 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 />
               </View>
             </TouchableOpacity>
-            <Text style={styles.unizyText}>
+            <Text allowFontScaling={false} style={styles.unizyText}>
               {`List${productName ? ` ${productName} ` : ''}`}
             </Text>
             <View style={{ width: 48 }} />
           </View>
         </View>
+
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -884,7 +881,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               />
             ) : (
               <View style={styles.initialsCircle}>
-                <Text style={styles.initialsText}>
+                <Text allowFontScaling={false} style={styles.initialsText}>
                   {getInitials(userMeta?.firstname ?? 'Alan', userMeta?.lastname ?? 'Walker')}
                 </Text>
               </View>
@@ -892,7 +889,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           </View>
 
           <View style={{ width: '80%' }}>
-            <Text style={styles.userName}>
+            <Text allowFontScaling={false} style={styles.userName}>
               {userMeta
                 ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''}`.trim()
                 : 'Alan Walker'}
@@ -906,7 +903,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 alignItems: 'stretch',
               }}
             >
-              <Text style={styles.userSub}>
+              <Text allowFontScaling={false} style={styles.userSub}>
             {userMeta?.university_name || 'University of Warwick,'}
           </Text>
               <View
@@ -915,7 +912,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                   justifyContent: 'space-between',
                 }}
               >
-                <Text style={styles.userSub1}>Coventry</Text>
+                <Text allowFontScaling={false} style={styles.userSub1}>Coventry</Text>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -927,7 +924,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                     source={require('../../../assets/images/calendar_icon.png')}
                     style={{ height: 20, width: 20 }}
                   />
-                  <Text style={styles.userSub1}>{getCurrentDate()}</Text>
+                  <Text allowFontScaling={false} style={styles.userSub1}>{getCurrentDate()}</Text>
                 </View>
               </View>
             </View>
@@ -945,7 +942,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                   }),
                 }}
               >
-                <Text style={styles.productdetailstext}>Product Details</Text>
+                <Text allowFontScaling={false} style={styles.productdetailstext}>Product Details</Text>
                 {fields.map(field => renderField(field))}
               </Animated.View>
             </View>
@@ -954,6 +951,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           <Button title="Preview Details" onPress={() => handlePreview()} />
         </KeyboardAvoidingView>
       </View>
+
+
       <SelectCatagoryDropdown
         options={multiSelectOptions}
         visible={multiSelectModal.visible}
@@ -1066,9 +1065,21 @@ dropdownIcon: {
     right: 0,
     zIndex: 10,
     overflow: 'hidden',
-    backgroundColor:'transparent',
+    backgroundColor:'transparent'
     
   },
+//   header: {
+//   position: 'absolute',
+//   top: 0,
+//   left: 0,
+//   right: 0,
+//   zIndex: 10,
+//   height: 100,
+//   paddingHorizontal: 16,
+//   paddingTop: 40,
+//   paddingBottom: 12,
+//   justifyContent: 'flex-end',
+// },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',

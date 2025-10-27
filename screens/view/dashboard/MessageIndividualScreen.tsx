@@ -13,7 +13,7 @@ const MessagesIndividualScreen = () => {
       resizeMode="cover"
     >
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Messages Individual Screen</Text>
+        <Text allowFontScaling={false}>Messages Individual Screen</Text>
       </View>
     </ImageBackground>
   );

@@ -55,7 +55,7 @@ export default function TutitionCard({
                 />
               ) : (
                 <View style={styles.initialsCircle}>
-                  <Text style={styles.initialsText}>
+                  <Text allowFontScaling={false} style={styles.initialsText}>
                     {infoTitle
                       ? infoTitle
                           .split(' ')
@@ -76,11 +76,11 @@ export default function TutitionCard({
               />
 
             
-              <Text style={styles.rightText}>{infoTitle}</Text>
+              <Text allowFontScaling={false} style={styles.rightText}>{infoTitle}</Text>
 
              
               <View style={styles.tag}>
-                <Text style={styles.tagText}>{tag}</Text>
+                <Text allowFontScaling={false} style={styles.tagText}>{tag}</Text>
               </View>
 
               
@@ -107,15 +107,15 @@ export default function TutitionCard({
 
         {/* Info */}
         <View style={styles.infoRow}>
-          <Text style={styles.title}>{title}</Text>
+          <Text allowFontScaling={false} style={styles.title}>{title}</Text>
           <View style={styles.priceRow}>
-            <Text style={styles.price}>{inforTitlePrice}</Text>
+            <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
             <View style={styles.ratingRow}>
               <Image
                 source={require('../../assets/images/staricon.png')}
                 style={styles.starIcon}
               />
-              <Text style={styles.ratingText}>{rating}</Text>
+              <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
             </View>
           </View>
         </View>

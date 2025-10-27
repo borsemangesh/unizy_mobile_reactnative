@@ -184,7 +184,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
         rating={'3'} 
         productImage={productImage}
         reviewText='This drone is awesome! Super easy to fly even though it’s my first one. Totally worth it for the price.'
-        navigation={navigation}
+        //navigation={navigation}
         shareid={item.id}
       />
     </View>
@@ -207,7 +207,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
                 />
               </View>
             </TouchableOpacity>
-            <Text style={styles.unizyText}>My Reviews</Text>
+            <Text allowFontScaling={false} style={styles.unizyText}>My Reviews</Text>
             <View style={{ width: 48 }} />
           </View>
         </View>
@@ -228,7 +228,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
               >
                 <View style={isSelected ? styles.tabcard : styles.tabcard1} key={index}>
 
-                <Text style={isSelected ? styles.tabtext : styles.othertext}>
+                <Text allowFontScaling={false} style={isSelected ? styles.tabtext : styles.othertext}>
                   {cat.name}
                 </Text>
 
@@ -262,7 +262,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
         }
         ListEmptyComponent={
           !isLoading ? (
-            <Text style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
+            <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
               No products found
             </Text>
           ) : null

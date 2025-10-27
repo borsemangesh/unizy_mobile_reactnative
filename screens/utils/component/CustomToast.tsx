@@ -51,7 +51,7 @@ const CustomToast: React.FC<CustomToastProps> = ({
         // REMOVE fallback color if you want absolutely NO background color
         reducedTransparencyFallbackColor="rgba(253, 253, 253, 0.1)"
       />
-      <Text style={[styles.toastText, { color: textColor }]}>{text}</Text>
+      <Text allowFontScaling={false} style={[styles.toastText, { color: textColor }]}>{text}</Text>
       <View style={styles.progressBarContainer}>
         <Animated.View
           style={[

@@ -17,7 +17,7 @@ const Button = ({ onPress, title = 'Click' }: ButtonProps) => {
         // REMOVE fallback color if you want absolutely NO background color
         reducedTransparencyFallbackColor="transparent"
       />
-      <Text style={styles.buttonText}>{title}</Text>
+      <Text allowFontScaling={false} style={styles.buttonText}>{title}</Text>
     </TouchableOpacity>
   );
 };

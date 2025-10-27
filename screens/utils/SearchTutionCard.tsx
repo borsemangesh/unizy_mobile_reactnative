@@ -54,17 +54,17 @@ export default function SearchTutionCard({
           <Image source={productImage} style={styles.image} resizeMode="cover" />
         ) : (
           <View style={[styles.initialsCircle]}>
-            <Text style={styles.initialsText}>{initialsName}</Text>
+            <Text allowFontScaling={false} style={styles.initialsText}>{initialsName}</Text>
           </View>
         )}
 
         <View style={styles.tag}>
-          <Text style={styles.tagText}>{tag}</Text>
+          <Text allowFontScaling={false} style={styles.tagText}>{tag}</Text>
         </View>
 
       {isfeature && (
               <View style={styles.tagTopLeft}>
-                <Text style={styles.tagText}>Featured</Text>
+                <Text allowFontScaling={false} style={styles.tagText}>Featured</Text>
               </View>
             )}
        
@@ -88,7 +88,7 @@ export default function SearchTutionCard({
       </View>
 
       <View style={styles.infoRow}>
-        <Text style={styles.title}>{infoTitle}</Text>
+        <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
 
         <View
           style={{
@@ -97,7 +97,7 @@ export default function SearchTutionCard({
             justifyContent: 'space-between',
           }}
         >
-          <Text style={styles.price}>{inforTitlePrice}</Text>
+          <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
           <View
             style={{
               flexDirection: 'row',

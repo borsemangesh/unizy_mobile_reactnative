@@ -41,38 +41,38 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
 
     <View style={styles.content}>
     <View style={styles.titleRow}>
-      <Text style={styles.title} numberOfLines={2}>
+      <Text allowFontScaling={false} style={styles.title} numberOfLines={2}>
         {infoTitle}
       </Text>
       {topRightText ? (
         <View style={styles.topRightBadge}>
-          <Text style={styles.topRightText}>{topRightText}</Text>
+          <Text allowFontScaling={false} style={styles.topRightText}>{topRightText}</Text>
         </View>
       ) : null}
     </View>
 
       <View style={styles.priceRow}>
-      <Text style={styles.price} numberOfLines={1}>
+      <Text allowFontScaling={false} style={styles.price} numberOfLines={1}>
         {inforTitlePrice}
       </Text>
 
       {isfeature && (
         <View style={styles.featureBadge}>
-          <Text style={styles.featureText}>Featured</Text>
+          <Text allowFontScaling={false} style={styles.featureText}>Featured</Text>
         </View>
       )}
     </View>
 
       <View style={styles.metaRow}>
-        <Text style={styles.tag} numberOfLines={1}>
+        <Text allowFontScaling={false} style={styles.tag} numberOfLines={1}>
           {tag}
         </Text>
 
 
       {rating ? (
         <>
-          <Text style={styles.dot}> • </Text>
-          <Text style={styles.ratingText}>{rating}</Text>
+          <Text allowFontScaling={false} style={styles.dot}> • </Text>
+          <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
         </>
       ) : null}
       </View>

@@ -42,7 +42,7 @@ const HelpSupport = ({ navigation }: HelpSupportProps)  => {
                 />
               </View>
             </TouchableOpacity>
-            <Text style={styles.unizyText}>Help and Support</Text>
+            <Text allowFontScaling={false} style={styles.unizyText}>Help and Support</Text>
             <View style={{ width: 48 }} />
           </View>
         </View>

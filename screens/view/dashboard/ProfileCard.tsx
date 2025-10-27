@@ -179,6 +179,7 @@ const renderItem = ({ item }: any) => {
     >
       <Image source={item.image} style={styles.cardImage} />
       <Text
+      allowFontScaling={false}
         style={[
           styles.cardText,
           isLogout && { color: '#FF8282E0' },
@@ -187,7 +188,7 @@ const renderItem = ({ item }: any) => {
         {item.title}
       </Text>
       {isVersion ? (
-        <Text style={styles.versionText}>{APP_VERSION}</Text>
+        <Text allowFontScaling={false} style={styles.versionText}>{APP_VERSION}</Text>
       ) : !isLogout && (
         <Image source={arrowIcon} style={styles.cardArrow} />
       )}
@@ -221,7 +222,7 @@ return (
             />
           </View>
         </TouchableOpacity>
-        <Text style={styles.unizyText}>Profile</Text>
+        <Text allowFontScaling={false} style={styles.unizyText}>Profile</Text>
         <View style={{ width: 48 }} />
       </View>
     </View>
@@ -238,7 +239,7 @@ return (
       />
     ) : (
       <View style={styles.initialsCircle}>
-        <Text style={styles.initialsText}>
+        <Text allowFontScaling={false} style={styles.initialsText}>
           {getInitials(
             userMeta?.firstname ?? 'A',
             userMeta?.lastname ?? 'W'
@@ -251,7 +252,7 @@ return (
   <View style={{ width: '60%', position: 'relative' }}>
     {/* Name + Edit on top row */}
     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-      <Text style={styles.userName}>
+      <Text allowFontScaling={false} style={styles.userName}>
         {userMeta
           ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''}`.trim()
           : 'Loading...'}
@@ -266,7 +267,7 @@ return (
           source={require('../../../assets/images/buildings.png')}
           style={{ width: 16, height: 16 }}
         />
-        <Text style={styles.userSub}>
+        <Text allowFontScaling={false} style={styles.userSub}>
           {userMeta?.university_name || 'University Name'}
         </Text>
       </View>
@@ -276,7 +277,7 @@ return (
           source={require('../../../assets/images/sms.png')}
           style={{ width: 16, height: 16 }}
         />
-        <Text style={styles.userSub}>
+        <Text allowFontScaling={false} style={styles.userSub}>
           {userMeta?.email || 'studentname@gmail.com'}
         </Text>
       </View>
@@ -286,7 +287,7 @@ return (
           source={require('../../../assets/images/sms.png')}
           style={{ width: 16, height: 16 }}
         />
-        <Text style={styles.userSub}>
+        <Text allowFontScaling={false} style={styles.userSub}>
           {userMeta?.student_email || 'studentname@university.ac.uk'}
         </Text>
       </View>
@@ -294,7 +295,7 @@ return (
   </View>
 
     <View style={styles.editcard}>
-          <Text style={styles.edittext}>Edit</Text>
+          <Text allowFontScaling={false} style={styles.edittext}>Edit</Text>
         </View>
     </View>
 

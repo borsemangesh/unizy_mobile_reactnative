@@ -50,7 +50,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
     <View style={{ height: '100%', display: 'flex', flex: 1, width: '100%' }}>
       <View style={styles.header}>
         <View style={styles.headerRow}>
-          <Text style={styles.unizyText}>Messages</Text>
+          <Text allowFontScaling={false} style={styles.unizyText}>Messages</Text>
         </View>
       </View>
 
@@ -66,6 +66,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
         <View style={[styles.search_container]}>
           <Image source={searchIcon} style={styles.searchIcon} />
           <TextInput
+          allowFontScaling={false}
             style={styles.searchBar}
             placeholder="Search"
             placeholderTextColor="#ccc"
@@ -110,6 +111,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
                         }}
                       >
                         <Text
+                        allowFontScaling={false}
                           style={{
                             fontSize: 16,
                             fontWeight: '600',
@@ -120,6 +122,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
                           {item.name}
                         </Text>
                         <Text
+                        allowFontScaling={false}
                           style={{
                             fontSize: 14,
                             fontWeight: '500',
@@ -140,6 +143,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
                         }}
                       >
                         <Text
+                        allowFontScaling={false}
                           numberOfLines={1}
                           ellipsizeMode="tail"
                           style={{
@@ -155,6 +159,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
 
                         {item.unreadCount > 0 && (
                           <Text
+                          allowFontScaling={false}
                             style={{
                               fontSize: 14,
                               fontWeight: '600',

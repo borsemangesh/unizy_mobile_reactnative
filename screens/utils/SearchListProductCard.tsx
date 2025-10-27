@@ -36,12 +36,12 @@ export default function SearchListProductCard({
       <View style={styles.imageContainer}>
         <Image source={productImage} style={styles.image} />
         <View style={styles.tag}>
-          <Text style={styles.tagText}>{tag}</Text>
+          <Text allowFontScaling={false} style={styles.tagText}>{tag}</Text>
         </View>
 
        {isfeature && (
         <View style={styles.tagTopLeft}>
-          <Text style={styles.tagText}>Featured</Text>
+          <Text allowFontScaling={false} style={styles.tagText}>Featured</Text>
         </View>
       )}
       
@@ -83,7 +83,7 @@ export default function SearchListProductCard({
       </View>
 
       <View style={styles.infoRow}>
-        <Text style={styles.title}>{infoTitle}</Text>
+        <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
 
         <View
           style={{
@@ -92,7 +92,7 @@ export default function SearchListProductCard({
             justifyContent: 'space-between',
           }}
         >
-          <Text style={styles.price}>{inforTitlePrice}</Text>
+          <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
           <View
             style={{
               flexDirection: 'row',
@@ -105,7 +105,7 @@ export default function SearchListProductCard({
               style={styles.image1}
             />
 
-            <Text style={styles.ratingText}>{rating}</Text>
+            <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
           </View>
         </View>
       </View>

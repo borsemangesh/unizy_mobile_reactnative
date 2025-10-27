@@ -3386,9 +3386,9 @@ const toggleCheckbox = (id: number) => {
                       style={{ width: 24, height: 24 }}
                     />
                   </View>
-                  <Text style={styles.modelTextHeader}>{title}</Text>
+                  <Text allowFontScaling={false} style={styles.modelTextHeader}>{title}</Text>
                 </View>
-                <Text style={styles.orderandTotalEarings}>
+                <Text allowFontScaling={false} style={styles.orderandTotalEarings}>
                   {subtitle}
                 </Text>
               </View>
@@ -3446,7 +3446,7 @@ const toggleCheckbox = (id: number) => {
                     ]}
                   >
                     {isSelectedCheckbox && (
-                      <Text style={styles.tickMark}>✓</Text>
+                      <Text allowFontScaling={false} style={styles.tickMark}>✓</Text>
                     )}
                   </View>
                   ) : (
@@ -3456,7 +3456,7 @@ const toggleCheckbox = (id: number) => {
                   )}
 
                         {/* Option Name */}
-                        <Text
+                        <Text allowFontScaling={false}
                           style={{
                             color: '#FFF',
                             fontSize: 16,
@@ -3465,6 +3465,7 @@ const toggleCheckbox = (id: number) => {
                             lineHeight: 18,
                             letterSpacing: -0.28,
                             fontFamily: 'Urbanist-SemiBold',
+
                           }}
                         >
                           {option.option_name}
@@ -3480,14 +3481,14 @@ const toggleCheckbox = (id: number) => {
           <View style={styles.cardconstinerdivider} />
           <View style={styles.bottomview}>
             <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
-              <Text style={styles.cancelText}>Cancel</Text>
+              <Text allowFontScaling={false} style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.cancelBtn, { backgroundColor: '#ffffff4e' }]}
               onPress={onClose}
             >
-              <Text style={[styles.cancelText, { color: '#000000' }]}>
+              <Text allowFontScaling={false} style={[styles.cancelText, { color: '#000000' }]}>
                 Apply
               </Text>
             </TouchableOpacity>

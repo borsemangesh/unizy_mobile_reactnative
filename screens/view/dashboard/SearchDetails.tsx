@@ -280,6 +280,7 @@ const renderImage = () => {
               }}
             >
               <Text
+              allowFontScaling={false}
                 style={{
                   fontSize: 80,
                  color: '#FFF',
@@ -421,7 +422,7 @@ const handleBookmarkPress = async (productId: number) => {
                   />
                 </View>
               </TouchableOpacity>
-              <Text style={styles.unizyText}>
+              <Text allowFontScaling={false} style={styles.unizyText}>
                 {detail?.category?.name
                   ? `${detail.category.name} Details`
                   : ''}
@@ -461,8 +462,8 @@ const handleBookmarkPress = async (productId: number) => {
                 <View style={{ gap: 8 }}>
                   {detail && (
                     <>
-                      <Text style={styles.QuaddText}>{detail.title}</Text>
-                      <Text style={styles.priceText}>
+                      <Text allowFontScaling={false} style={styles.QuaddText}>{detail.title}</Text>
+                      <Text allowFontScaling={false} style={styles.priceText}>
                         £{Number(detail.price).toFixed(2)}
                       </Text>
                     </>
@@ -477,10 +478,10 @@ const handleBookmarkPress = async (productId: number) => {
                     alignSelf: 'stretch',
                   }}
                 >
-                  <Text style={styles.productDesHeding}>
+                  <Text allowFontScaling={false} style={styles.productDesHeding}>
                     Product Description
                   </Text>
-                  <Text style={styles.productDesc}>
+                  <Text allowFontScaling={false} style={styles.productDesc}>
                     {detail?.description || 'No description available'}
                   </Text>
 
@@ -489,7 +490,7 @@ const handleBookmarkPress = async (productId: number) => {
                       source={require('../../../assets/images/calendar_icon.png')}
                       style={{ height: 16, width: 16 }}
                     />
-                    <Text style={styles.userSub}>
+                    <Text allowFontScaling={false} style={styles.userSub}>
                       Date Posted: {formatDate(detail?.created_at)}
                     </Text>
                   </View>
@@ -498,14 +499,14 @@ const handleBookmarkPress = async (productId: number) => {
 
               <View style={styles.card}>
                 <View style={styles.gap12}>
-                  <Text style={styles.productDeatilsHeading}>
+                  <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
                     Product Details
                   </Text>
 
                   {detail?.params?.map((param: Param) => (
                     <View key={param.id} style={{ marginBottom: 12 }}>
                       {/* Param name */}
-                      <Text style={styles.itemcondition}>{param.name}</Text>
+                      <Text allowFontScaling={false}style={styles.itemcondition}>{param.name}</Text>
 
                       {/* Param value */}
                       {param.options && param.options.length > 0 ? (
@@ -532,7 +533,7 @@ const handleBookmarkPress = async (productId: number) => {
                             ))}
                         </View>
                       ) : (
-                        <Text style={[styles.new, { marginTop:2 }]}>
+                        <Text allowFontScaling={false} style={[styles.new, { marginTop:2 }]}>
                           {param.param_value || '—'}
                         </Text>
                       )}
@@ -544,7 +545,7 @@ const handleBookmarkPress = async (productId: number) => {
               {/* Selaer details */}
               <View style={styles.card}>
                 <View style={{ gap: 12 }}>
-                  <Text style={styles.productDeatilsHeading}>
+                  <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
                     Seller Details
                   </Text>
 
@@ -565,7 +566,7 @@ const handleBookmarkPress = async (productId: number) => {
                     />
                   ) : (
                     <View style={styles.initialsCircle}>
-                      <Text style={styles.initialsText}>
+                      <Text allowFontScaling={false} style={styles.initialsText}>
                         {getInitials(
                           detail?.createdby?.firstname ?? 'Alan',
                           detail?.createdby?.lastname ?? 'Walker'
@@ -575,7 +576,7 @@ const handleBookmarkPress = async (productId: number) => {
                   )}
 
                     <View style={{ width: '80%', gap: 4 }}>
-                      <Text style={styles.userName}>
+                      <Text allowFontScaling={false} style={styles.userName}>
                         {detail?.createdby
                           ? `${detail.createdby.firstname || ''} ${
                               detail.createdby.lastname || ''
@@ -583,11 +584,11 @@ const handleBookmarkPress = async (productId: number) => {
                           : 'Unknown User'}
                       </Text>
 
-                      <Text style={styles.univeritytext}>
+                      <Text allowFontScaling={false} style={styles.univeritytext}>
                         {detail?.createdby?.university_name ||
                           'University of Warwick'}
                       </Text>
-                      <Text style={[styles.univeritytext, { marginTop: -5 }]}>
+                      <Text allowFontScaling={false} style={[styles.univeritytext, { marginTop: -5 }]}>
                         {'Coventry'}
                       </Text>
                     </View>
@@ -625,6 +626,7 @@ const handleBookmarkPress = async (productId: number) => {
                       />
                       
                       <Text
+                      allowFontScaling={false}
                         style={{
                           color: 'rgba(255, 255, 255, 0.48)',
                           fontFamily: 'Urbanist-SemiBold',
@@ -664,6 +666,7 @@ const handleBookmarkPress = async (productId: number) => {
                           style={{ height: 16, width: 16, marginRight: 6 }}
                         />
                         <Text
+                        allowFontScaling={false}
                           style={{
                             color: 'rgba(255, 255, 255, 0.48)',
                             fontFamily: 'Urbanist-SemiBold',
@@ -691,9 +694,9 @@ const handleBookmarkPress = async (productId: number) => {
 
         //onPress={() => navigation.navigate('PaymentScreen')}
       >
-        <Text style={{ textAlign: 'center' }}>
-        <Text style={styles.payText}>Pay </Text>
-        <Text style={styles.priceText1}>
+        <Text allowFontScaling={false} style={{ textAlign: 'center' }}>
+        <Text allowFontScaling={false} style={styles.payText}>Pay </Text>
+        <Text allowFontScaling={false} style={styles.priceText1}>
         £{Number(detail?.price ?? 0).toFixed(2)}
       </Text>
       </Text>
@@ -735,7 +738,9 @@ const handleBookmarkPress = async (productId: number) => {
                 style={styles.logo}
                 resizeMode="contain"
               />
-              <Text style={{
+              <Text 
+              allowFontScaling={false}
+              style={{
                 color: 'rgba(255, 255, 255, 0.80)',
                 fontFamily: 'Urbanist-SemiBold',
                 fontSize: 20,
@@ -743,7 +748,9 @@ const handleBookmarkPress = async (productId: number) => {
                 letterSpacing: -0.4,
                 lineHeight: 28,
               }}>Complete Your Purchase</Text>
-              <Text style={{
+              <Text 
+              allowFontScaling={false}
+              style={{
                 color: 'rgba(255, 255, 255, 0.48)',
                 fontFamily: 'Urbanist-Regular',
                 fontSize: 14,
@@ -759,7 +766,7 @@ const handleBookmarkPress = async (productId: number) => {
                 style={styles.loginButton}
                 onPress={()=>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home', isNavigate:false }) ;setShowPopup(false);}}
               >
-                <Text style={styles.loginText}>Go Back</Text>
+                <Text allowFontScaling={false} style={styles.loginText}>Go Back</Text>
               </TouchableOpacity>
             </View>
           </BlurView>
@@ -800,7 +807,9 @@ const handleBookmarkPress = async (productId: number) => {
                 style={styles.logo}
                 resizeMode="contain"
               />
-              <Text style={{
+              <Text 
+              allowFontScaling={false}
+              style={{
                 color: 'rgba(255, 255, 255, 0.80)',
                 fontFamily: 'Urbanist-SemiBold',
                 fontSize: 20,
@@ -814,14 +823,14 @@ const handleBookmarkPress = async (productId: number) => {
                 style={styles.loginButton}
                 onPress={()=>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home', isNavigate:false }) ;setShowPopup1(false);}}
               >
-                <Text style={styles.loginText}>Return to Home</Text>
+                <Text allowFontScaling={false} style={styles.loginText}>Return to Home</Text>
               </TouchableOpacity>
 
                <TouchableOpacity
                 style={styles.loginButton1}
                 onPress={()=>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home', isNavigate:false }) ;setShowPopup1(false);}}
               >
-                <Text style={styles.loginText1}>Chat with Sellar</Text>
+                <Text allowFontScaling={false} style={styles.loginText1}>Chat with Sellar</Text>
               </TouchableOpacity>
             </View>
           </BlurView>

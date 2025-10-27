@@ -21,7 +21,7 @@ export default function NewProductCard({tag,infoTitle,inforTitlePrice,rating,pro
           style={styles.image}
         />
         <View style={styles.tag}>
-          <Text style={styles.tagText}>{tag}</Text>
+          <Text allowFontScaling={false} style={styles.tagText}>{tag}</Text>
         </View>
 
       
@@ -35,8 +35,8 @@ export default function NewProductCard({tag,infoTitle,inforTitlePrice,rating,pro
 
       <View style={styles.infoRow}>
         <View>
-          <Text style={styles.title}>{infoTitle}</Text>
-          <Text style={styles.price}>{inforTitlePrice}</Text>
+          <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
+          <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
         </View>
        
         <View style={styles.ratingAbsolute}>
@@ -44,7 +44,7 @@ export default function NewProductCard({tag,infoTitle,inforTitlePrice,rating,pro
           source={require('../../assets/images/staricon.png')}
           style={styles.image1}/>
 
-        <Text style={styles.ratingText}>{rating}</Text>
+        <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
       </View>
       </View> 
      

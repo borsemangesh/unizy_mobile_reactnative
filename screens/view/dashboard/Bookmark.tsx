@@ -351,7 +351,7 @@ const handleBookmarkPress = async (productId: number) => {
                 />
               </View>
             </TouchableOpacity>
-            <Text style={styles.unizyText}>Bookmarks</Text>
+            <Text allowFontScaling={false} style={styles.unizyText}>Bookmarks</Text>
             <View style={{ width: 48 }} />
           </View>
         </View>
@@ -373,7 +373,7 @@ const handleBookmarkPress = async (productId: number) => {
                        onPress={() => setSelectedCategory(cat)}
                        style={isSelected ? styles.tabcard : styles.tabcard1}
                      >
-                       <Text style={isSelected ? styles.tabtext : styles.othertext}>
+                       <Text allowFontScaling={false} style={isSelected ? styles.tabtext : styles.othertext}>
                          {cat.name}
                        </Text>
                      </TouchableOpacity>
@@ -396,7 +396,7 @@ const handleBookmarkPress = async (productId: number) => {
           }
           ListEmptyComponent={
             !isLoading ? ( 
-              <Text style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
+              <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
                 No products found
               </Text>
             ) : null

@@ -123,7 +123,7 @@ const formatDateWithDash = (dateString?: string) => {
                 />
               </View>
             </TouchableOpacity>
-            <Text style={styles.unizyText}>Listing Details</Text>
+            <Text allowFontScaling={false} style={styles.unizyText}>Listing Details</Text>
             <View style={{ width: 48 }} />
           </View>
         </View>
@@ -153,11 +153,11 @@ const formatDateWithDash = (dateString?: string) => {
                             resizeMode="cover"
                           />
                         <View style={{ marginLeft: 10,gap: 8}}>
-                            <Text style={styles.productlebleHeader}> {data?.list?.title}</Text>
-                            <Text style={styles.productlableprice}>£{data?.list?.price}</Text>
+                            <Text allowFontScaling={false} style={styles.productlebleHeader}> {data?.list?.title}</Text>
+                            <Text allowFontScaling={false} style={styles.productlableprice}>£{data?.list?.price}</Text>
                             <View style={styles.univercitycontainer}>
-                                <Text style={styles.universitylable}>{data?.list?.createdby?.university_name}</Text>
-                               <Text style={styles.datetlable}>
+                                <Text allowFontScaling={false} style={styles.universitylable}>{data?.list?.createdby?.university_name}</Text>
+                               <Text allowFontScaling={false} style={styles.datetlable}>
                               {formatDateWithDash(data?.list?.created_at)}
                             </Text>
 
@@ -167,14 +167,14 @@ const formatDateWithDash = (dateString?: string) => {
                     </View>
                     <View style={styles.cardconstinerdivider}/>
                     <View style={styles.listingtyperow}>
-                        <Text style={styles.lebleHeader}>Listing Type:</Text>
-                         <Text style={styles.status}>
+                        <Text allowFontScaling={false} style={styles.lebleHeader}>Listing Type:</Text>
+                         <Text allowFontScaling={false} style={styles.status}>
                     {data?.list?.isfeatured ? 'Featured' : 'Not Featured'}
                   </Text>
                     </View>
                     <View style={styles.listingtyperow}>
-                        <Text style={styles.lebleHeader}>Listing Status:</Text>
-                        <Text style={styles.status}> {data?.list?.isactive ? 'Active' : 'Inactive'}</Text>
+                        <Text allowFontScaling={false} style={styles.lebleHeader}>Listing Status:</Text>
+                        <Text allowFontScaling={false} style={styles.status}> {data?.list?.isactive ? 'Active' : 'Inactive'}</Text>
                     </View>
                 </View>
 
@@ -197,7 +197,7 @@ const formatDateWithDash = (dateString?: string) => {
                 style={{ width: 24, height: 24 }}
                 resizeMode="cover"
               />
-              <Text style={styles.sellerHeaderlable}>Sale Details</Text>
+              <Text allowFontScaling={false} style={styles.sellerHeaderlable}>Sale Details</Text>
             </View>
 
             {/* ✅ STATUS BADGE - only if otpverified */}
@@ -213,6 +213,7 @@ const formatDateWithDash = (dateString?: string) => {
                       gap: 4,
                     }}>
                     <Text
+                    allowFontScaling={false}
                       style={{
                         color: 'rgba(255, 255, 255, 0.88)',
                         fontFamily: 'Urbanist-Regular',
@@ -234,25 +235,25 @@ const formatDateWithDash = (dateString?: string) => {
 
               {/* BUYER DETAILS */}
               <View style={styles.listingtyperow}>
-                <Text style={styles.lebleHeader}>Buyer Name:</Text>
-                <Text style={styles.status}>
+                <Text allowFontScaling={false} style={styles.lebleHeader}>Buyer Name:</Text>
+                <Text allowFontScaling={false} style={styles.status}>
                   {buyer.firstname} {buyer.lastname}
                 </Text>
               </View>
 
               <View style={styles.listingtyperow}>
-                <Text style={styles.lebleHeader}>Buyer’s University:</Text>
-                <Text style={styles.status}>{buyer.university}</Text>
+                <Text allowFontScaling={false} style={styles.lebleHeader}>Buyer’s University:</Text>
+                <Text allowFontScaling={false} style={styles.status}>{buyer.university}</Text>
               </View>
 
               <View style={styles.listingtyperow}>
-                <Text style={styles.lebleHeader}>City:</Text>
-                <Text style={styles.status}>{buyer.city}</Text>
+                <Text allowFontScaling={false} style={styles.lebleHeader}>City:</Text>
+                <Text allowFontScaling={false} style={styles.status}>{buyer.city}</Text>
               </View>
 
               <View style={styles.listingtyperow}>
-                <Text style={styles.lebleHeader}>Sold On:</Text>
-                <Text style={styles.status}>
+                <Text allowFontScaling={false} style={styles.lebleHeader}>Sold On:</Text>
+                <Text allowFontScaling={false} style={styles.status}>
                   {new Date(buyer.date).toLocaleString('en-GB', {
                       month: 'short',
                       day: '2-digit',
@@ -265,8 +266,8 @@ const formatDateWithDash = (dateString?: string) => {
               </View>
 
               <View style={styles.listingtyperow}>
-                <Text style={styles.lebleHeader}>Sold For:</Text>
-                <Text style={styles.status}>${buyer.price}</Text>
+                <Text allowFontScaling={false} style={styles.lebleHeader}>Sold For:</Text>
+                <Text allowFontScaling={false} style={styles.status}>${buyer.price}</Text>
               </View>
 
               <View style={styles.cardconstinerdivider} />
@@ -277,7 +278,7 @@ const formatDateWithDash = (dateString?: string) => {
                   <TouchableOpacity
                     style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}
                     onPress={() => console.log(`Enter OTP for ${buyer.firstname}`)}>
-                    <Text style={styles.status}>Enter OTP</Text>
+                    <Text allowFontScaling={false} style={styles.status}>Enter OTP</Text>
                   </TouchableOpacity>
                 </View>
               )}
@@ -292,14 +293,14 @@ const formatDateWithDash = (dateString?: string) => {
         
             <View style={styles.bottomview}>
                 <TouchableOpacity style={styles.cancelBtn} onPress={handleDeactivate}>
-                <Text style={styles.cancelText}>Deactivate</Text>
+                <Text allowFontScaling={false} style={styles.cancelText}>Deactivate</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                 style={[styles.cancelBtn, { backgroundColor: '#ffffffa7' }]}
             
                 >
-                <Text style={[styles.cancelText, { color: '#000000' }]}>
+                <Text allowFontScaling={false} style={[styles.cancelText, { color: '#000000' }]}>
                     Edit Listing
                 </Text>
                 </TouchableOpacity>

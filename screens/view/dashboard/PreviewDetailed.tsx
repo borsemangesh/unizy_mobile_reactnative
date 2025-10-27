@@ -461,7 +461,7 @@ const diff1 =commissionPrice1-priceValue1
                 />
               </View>
             </TouchableOpacity>
-            <Text style={styles.unizyText}>Preview Details</Text>
+            <Text allowFontScaling={false} style={styles.unizyText}>Preview Details</Text>
           </View>
         </View>
 {/* 
@@ -534,11 +534,11 @@ const diff1 =commissionPrice1-priceValue1
                   <View style={{ flex: 1, padding: 16 }}>
             <View style={styles.card}>
               <View style={{ gap: 8 }}>
-                <Text style={styles.QuaddText}>
+                <Text allowFontScaling={false} style={styles.QuaddText}>
                   {titleValue}
                 </Text>
 
-                <Text style={styles.priceText}>
+                <Text allowFontScaling={false} style={styles.priceText}>
                   {`$${commissionPrice}`}
                 </Text>
               </View>
@@ -551,8 +551,8 @@ const diff1 =commissionPrice1-priceValue1
                   alignSelf: 'stretch',
                 }}
               >
-                <Text style={styles.productDesHeding}>Product Description</Text>
-                <Text style={styles.productDesc}>
+                <Text allowFontScaling={false} style={styles.productDesHeding}>Product Description</Text>
+                <Text allowFontScaling={false} style={styles.productDesc}>
                   {descriptionvalue}
                 </Text>
 
@@ -561,14 +561,14 @@ const diff1 =commissionPrice1-priceValue1
                     source={require('../../../assets/images/calendar_icon.png')}
                     style={{ height: 16, width: 16 }}
                   />
-                  <Text style={styles.userSub}>Date Posted: {getCurrentDate()}</Text>
+                  <Text allowFontScaling={false} style={styles.userSub}>Date Posted: {getCurrentDate()}</Text>
                 </View>
               </View>
             </View>
 
           <View style={styles.card}>
           <View style={styles.gap12}>
-            <Text style={styles.productDeatilsHeading}>Product Details</Text>
+            <Text allowFontScaling={false} style={styles.productDeatilsHeading}>Product Details</Text>
 
             <View style={{ gap: 12 }}>
               {fields.map(field => {
@@ -607,13 +607,13 @@ const diff1 =commissionPrice1-priceValue1
                 return (
                   <View key={fieldId} style={{ gap: 6 }}>
                     {/* Label */}
-                    <Text style={styles.detailLabel}>{field.param.field_name}</Text>
+                    <Text allowFontScaling={false}style={styles.detailLabel}>{field.param.field_name}</Text>
 
                     {/* Values */}
                     <View style={styles.categoryContainer}>
                       {displayValues.map((val, idx) => (
                         <View key={idx} style={styles.categoryTag}>
-                          <Text style={styles.catagoryText}>{val}</Text>
+                          <Text allowFontScaling={false}style={styles.catagoryText}>{val}</Text>
                         </View>
                       ))}
                     </View>
@@ -629,7 +629,7 @@ const diff1 =commissionPrice1-priceValue1
             {/* Selaer details */}
             <View style={styles.card}>
               <View style={{ gap: 12 }}>
-                <Text style={styles.productDeatilsHeading}>Seller Details</Text>
+                <Text allowFontScaling={false} style={styles.productDeatilsHeading}>Seller Details</Text>
 
                 <View style={{ flexDirection: 'row' }}>
                   {/* <Image source={profileImg} style={styles.avatar} /> */}
@@ -641,7 +641,7 @@ const diff1 =commissionPrice1-priceValue1
                     />
                   ) : (
                     <View style={styles.initialsCircle}>
-                      <Text style={styles.initialsText}>
+                      <Text allowFontScaling={false} style={styles.initialsText}>
                         {getInitials(
                           userMeta?.firstname ?? 'Alan',
                           userMeta?.lastname ?? 'Walker'
@@ -651,13 +651,13 @@ const diff1 =commissionPrice1-priceValue1
                   )}
 
                   <View style={{ width: '80%', gap: 4 }}>
-                    <Text style={styles.userName}>
+                    <Text allowFontScaling={false} style={styles.userName}>
                     {`${userMeta?.firstname ?? ''} ${userMeta?.lastname ?? ''}`.trim()}
                   </Text>
-                    <Text style={styles.univeritytext}>
+                    <Text allowFontScaling={false} style={styles.univeritytext}>
                       {userMeta?.university_name || 'University of Warwick,'}
                     </Text>
-                    <Text style={[styles.univeritytext, { marginTop: -5 }]}>
+                    <Text allowFontScaling={false} style={[styles.univeritytext, { marginTop: -5 }]}>
                       Coventry
                     </Text>
                   </View>
@@ -687,6 +687,7 @@ const diff1 =commissionPrice1-priceValue1
                     />
 
                     <Text
+                    allowFontScaling={false}
                       style={{
                         color: 'rgba(255, 255, 255, 0.48)',
                         fontFamily: 'Urbanist-SemiBold',
@@ -719,6 +720,7 @@ const diff1 =commissionPrice1-priceValue1
                       style={{ height: 16, width: 16 }}
                     />
                     <Text
+                    allowFontScaling={false}
                       style={{
                         color: 'rgba(255, 255, 255, 0.48)',
                         fontFamily: 'Urbanist-SemiBold',
@@ -740,7 +742,7 @@ const diff1 =commissionPrice1-priceValue1
         <TouchableOpacity style={styles.previewBtn} onPress={handleListPress}>
           {/* <Text style={styles.previewText}>List</Text> */}
 
-        <Text style={styles.previewText}>
+        <Text allowFontScaling={false} style={styles.previewText}>
         {(() => {
           try {
             const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
@@ -750,8 +752,8 @@ const diff1 =commissionPrice1-priceValue1
               return (
                 <>
                   List for{' '}
-                  <Text style={styles.priceText1}>£</Text>
-                  <Text style={styles.priceText1}>{diff1}</Text>
+                  <Text allowFontScaling={false} style={styles.priceText1}>£</Text>
+                  <Text allowFontScaling={false} style={styles.priceText1}>{diff1}</Text>
                 </>
               );
             }
@@ -798,6 +800,7 @@ const diff1 =commissionPrice1-priceValue1
                   resizeMode="contain"
                 />
                 <Text
+                allowFontScaling={false}
                   style={{
                     color: 'rgba(255, 255, 255, 0.80)',
                     fontFamily: 'Urbanist-SemiBold',
@@ -811,6 +814,7 @@ const diff1 =commissionPrice1-priceValue1
                   Product Listed Successfully!
                 </Text>
                 <Text
+                allowFontScaling={false}
                   style={{
                     color: 'rgba(255, 255, 255, 0.48)',
                     fontFamily: 'Urbanist-Regular',
@@ -854,7 +858,7 @@ const diff1 =commissionPrice1-priceValue1
                   }
                 }}
               >
-                  <Text style={styles.loginText}>
+                  <Text allowFontScaling={false} style={styles.loginText}>
                     Return to Choose Category
                   </Text>
                 </TouchableOpacity>

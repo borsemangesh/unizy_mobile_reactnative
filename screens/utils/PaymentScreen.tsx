@@ -235,7 +235,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation }) => {
     <View style={{ padding: 20 }}>
       {savedPaymentMethod ? (
         <>
-          <Text style={{ marginBottom: 20 }}>Using saved card ending with ****</Text>
+          <Text allowFontScaling={false} style={{ marginBottom: 20 }}>Using saved card ending with ****</Text>
           <Button title="Remove Saved Card" onPress={handleRemoveCard} />
         </>
       ) : (

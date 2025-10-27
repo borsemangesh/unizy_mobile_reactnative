@@ -114,20 +114,20 @@ const renderItem: ListRenderItem<User> = ({ item }) => (
       <View style={{ flex: 1, paddingLeft: 10, justifyContent: 'flex-start' }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <View>
-            <Text style={styles.userName}>{item.name}</Text>
-            <Text style={styles.userSub}>{item.university}</Text>
+            <Text allowFontScaling={false} style={styles.userName}>{item.name}</Text>
+            <Text allowFontScaling={false} style={styles.userSub}>{item.university}</Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Image
               source={require('../../../assets/images/staricon.png')}
               style={{ height: 16, width: 16, marginRight: 2 }}
             />
-            <Text style={styles.ratingText}>{item.rating}</Text>
+            <Text allowFontScaling={false} style={styles.ratingText}>{item.rating}</Text>
           </View>
         </View>
 
         {/* Comment below */}
-        <Text style={[styles.bottomText, { marginTop: 4 }]}>{item.comment}</Text>
+        <Text allowFontScaling={false} style={[styles.bottomText, { marginTop: 4 }]}>{item.comment}</Text>
       </View>
     </View>
   </View>
@@ -152,7 +152,7 @@ const renderItem: ListRenderItem<User> = ({ item }) => (
                 />
               </View>
             </TouchableOpacity>
-            <Text style={styles.unizyText}>
+            <Text allowFontScaling={false} style={styles.unizyText}>
             {selectedCategory?.name === 'All'
               ? 'Reviews'
               : `${selectedCategory?.name} Reviews`}
@@ -177,7 +177,7 @@ const renderItem: ListRenderItem<User> = ({ item }) => (
                        onPress={() => setSelectedCategory(cat)}
                        style={isSelected ? styles.tabcard : styles.tabcard1}
                      >
-                       <Text style={isSelected ? styles.tabtext : styles.othertext}>
+                       <Text allowFontScaling={false} style={isSelected ? styles.tabtext : styles.othertext}>
                          {cat.name}
                        </Text>
                      </TouchableOpacity>
@@ -190,24 +190,24 @@ const renderItem: ListRenderItem<User> = ({ item }) => (
         </View>
 
         <View style={{ paddingHorizontal: 16, marginBottom: 12, alignItems: 'center' }}>
-      <Text style={{ fontSize: 60, fontWeight: '700', color: '#fff', marginBottom: 4 }}>
+      <Text allowFontScaling={false} style={{ fontSize: 60, fontWeight: '700', color: '#fff', marginBottom: 4 }}>
         3.5
       </Text>
 
      <StarRating rating={3.5} starSize={24} />
 
-     <Text style={styles.reviewcount}>11 Reviews</Text>
+     <Text allowFontScaling={false} style={styles.reviewcount}>11 Reviews</Text>
 </View>
 
   <View style={styles.innercontainer}>
-  <Text style={styles.mainlabel}>Reviews</Text>
+  <Text allowFontScaling={false} style={styles.mainlabel}>Reviews</Text>
 
   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
     <Image
       source={require('../../../assets/images/staricon.png')}
       style={{ width: 16, height: 16, marginRight: 4 }}
     />
-    <Text style={styles.subrating}> 4.5(10)</Text>
+    <Text allowFontScaling={false} style={styles.subrating}> 4.5(10)</Text>
   </View>
 </View>
         
@@ -222,7 +222,7 @@ const renderItem: ListRenderItem<User> = ({ item }) => (
     </View>
 
     <TouchableOpacity style={styles.previewBtn} onPress={() =>{navigation.navigate('AddReview')}} >
-            <Text style={styles.payText}>Write a Review </Text>
+            <Text allowFontScaling={false} style={styles.payText}>Write a Review </Text>
           </TouchableOpacity>
 
       </View>
