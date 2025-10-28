@@ -57,6 +57,7 @@ export const Styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 10,
     elevation: 6,
+    //overflow:'hidden'
   },
   title: {
     fontSize: 24,
@@ -176,13 +177,13 @@ export const Styles = StyleSheet.create({
  cardView: {
  
 
-    paddingTop: 15,
-    padding: 10,
+    paddingTop: 16,
+    paddingHorizontal: 16,
     marginTop: 0,
     borderWidth: 0.2,
     gap: 3,
     borderColor: '#ffffff3d',
-    borderRadius: 16,
+    borderRadius: 24,
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.09)',
@@ -250,7 +251,7 @@ export const Styles = StyleSheet.create({
   login_container: {
     display: 'flex',
     width: '100%',
-    height: 40,
+    height: 44,
     gap: 10,
     alignSelf: 'stretch',
     borderRadius: 12,
@@ -266,6 +267,7 @@ export const Styles = StyleSheet.create({
   },
   personalEmailID_TextInput: {
     width: '93%',
+    //padding:12,
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
     fontSize: 17,
@@ -277,7 +279,7 @@ export const Styles = StyleSheet.create({
   password_container: {
     display: 'flex',
     width: '100%',
-    height: 40,
+    height: 44,
     alignSelf: 'stretch',
     borderRadius: 12,
     flexDirection: 'row',
@@ -302,13 +304,18 @@ export const Styles = StyleSheet.create({
     color:'#fff'
   },
   forgetPasswordText: {
-    color: 'rgba(255, 255, 255, 0.48)',
+    //color: 'rgba(255, 255, 255, 0.48)',
+    //color:'#8CE1FF',
+    color: 'rgba(140, 225, 255, 0.9)',
+
     fontFamily: 'Urbanist-Regular',
     fontSize: 14,
     fontWeight: 400,
     width: '100%',
     textAlign: 'right',
     marginTop: 10,
+    marginBottom:8,
+    //mixBlendMode: 'luminosity',
   },
     loginButton2: {
     display: 'flex',
@@ -328,7 +335,7 @@ export const Styles = StyleSheet.create({
   loginButton: {
     display: 'flex',
     width: '100%',
-    height: 48,
+    height: 52,
     justifyContent: 'center',
     alignItems: 'center',
     //gap: 4,
@@ -340,8 +347,32 @@ export const Styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
   },
+  sendButton: {
+    display: 'flex',
+    width: '100%',
+    height: 52,
+    justifyContent: 'center',
+    alignItems: 'center',
+    //gap: 4,
+    borderRadius: 100,
+    //paddingTop: 6,
+    paddingVertical: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.56)',
+    marginTop: 16,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+  },
   loginText: {
     color: '#002050',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: 500,
+    letterSpacing: 1,
+    width: '100%',
+  },
+  sendText: {
+    color: '#0000bc',
     textAlign: 'center',
     fontFamily: 'Urbanist-Medium',
     fontSize: 17,
@@ -359,7 +390,10 @@ export const Styles = StyleSheet.create({
     lineHeight: 19,
   },
   signupText: {
-    color: '#FFFFFF7A',
+   // color: '#FFFFFF7A',
+   //color:'#8CF4FF',
+   color: 'rgba(140, 244, 255, 0.7)',
+
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
     fontWeight: '600',
@@ -372,12 +406,14 @@ export const Styles = StyleSheet.create({
     textShadowRadius: 1,
   },
   teamsandConditionText: {
-    color: '#FFFFFF7A',
+    //color: '#FFFFFF7A',
+    //color:'#7CEAFF',
+    color: 'rgba(124, 234, 255, 0.7)',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
     marginLeft: 5,
     fontWeight: '600',
-    textDecorationLine: 'underline',
+   // textDecorationLine: 'underline',
     textDecorationStyle: 'solid',
     opacity: 2,
     textShadowColor: 'rgba(255,255,255,0.6)',
@@ -386,8 +422,9 @@ export const Styles = StyleSheet.create({
   },
   teamsandConditionContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    //alignItems: 'center',
+    //justifyContent: 'center',
+    marginTop:3
   },
 
   teamandCondition: {
@@ -695,7 +732,9 @@ export const Styles = StyleSheet.create({
     fontWeight: '400',
   },
   signupPrompt1: {
-    color: 'rgba(255, 255, 255, 0.48)',
+    //color: 'rgba(255, 255, 255, 0.48)',
+       color: 'rgba(140, 244, 255, 0.7)',
+
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
     fontWeight: '600',
@@ -714,7 +753,7 @@ export const Styles = StyleSheet.create({
   login_container1: {
     display: 'flex',
     width: '49%',
-    height: 40,
+    height: 44,
     gap: 10,
     alignSelf: 'stretch',
     borderRadius: 12,
@@ -869,7 +908,7 @@ export const Styles = StyleSheet.create({
     fontFamily: 'Urbanist-Regular',
     fontSize: 14,
     textAlign: 'center',
-    lineHeight: 22,
+    lineHeight: 18,
     paddingHorizontal: 10,
   },
 
@@ -1233,7 +1272,7 @@ export const Styles = StyleSheet.create({
   sendOtploginButton: {
     display: 'flex',
     width: '100%',
-    height: 48,
+    height: 52,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 4,
@@ -1241,7 +1280,7 @@ export const Styles = StyleSheet.create({
     paddingTop: 6,
     paddingBottom: 6,
     backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    marginTop: 16,
+    //marginTop: 16,
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
   },
@@ -1469,7 +1508,7 @@ export const Styles = StyleSheet.create({
     width: '70%',
     alignSelf: 'center',
     gap: 8,
-    marginTop: 12,
+    marginVertical: 8,
   },
 
   verifyotpBox: {
@@ -1522,6 +1561,7 @@ export const Styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     marginTop: 16,
+    marginBottom:8
   },
 
   verifytermsText: {
@@ -1537,7 +1577,7 @@ export const Styles = StyleSheet.create({
     marginTop: 16,
     display: 'flex',
     width: '100%',
-    height: 40,
+    height: 44,
     gap: 10,
     alignSelf: 'stretch',
     borderRadius: 12,
@@ -1564,7 +1604,7 @@ export const Styles = StyleSheet.create({
   verifyloginButton: {
     display: 'flex',
     width: '100%',
-    height: 48,
+    height: 52,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 4,
@@ -1573,6 +1613,7 @@ export const Styles = StyleSheet.create({
     paddingBottom: 6,
     backgroundColor: 'rgba(255, 255, 255, 0.56)',
     marginTop: 16,
+    marginBottom:4,
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
   },
@@ -1589,7 +1630,7 @@ export const Styles = StyleSheet.create({
   verifyloginButton1: {
     display: 'flex',
     width: '100%',
-    height: 48,
+    height: 52,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 4,
@@ -1899,7 +1940,7 @@ export const Styles = StyleSheet.create({
     fontFamily: 'Urbanist-Regular',
     fontSize: 14,
     textAlign: 'center',
-    lineHeight: 22,
+    lineHeight: 18,
     paddingHorizontal: 10,
     opacity: 2,
     textShadowColor: 'rgba(255,255,255,0.6)',
@@ -1910,7 +1951,7 @@ export const Styles = StyleSheet.create({
   profileloginButton: {
     display: 'flex',
     width: '100%',
-    height: 48,
+    height: 52,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 4,
@@ -1924,7 +1965,7 @@ export const Styles = StyleSheet.create({
     borderColor: '#ffffff2c',
   },
   profileloginText: {
-    color: '#002050',
+    color: '#0000bc',
     textAlign: 'center',
     fontFamily: 'Urbanist-Medium',
     fontSize: 17,

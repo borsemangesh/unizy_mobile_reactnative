@@ -46,7 +46,8 @@ export default function TutitionCard({
         {/* Image */}
         <View style={styles.imageContainer}>
           <View style={styles.splitRow}>
-            <View style={styles.leftPortion}>
+            {/* <View style={styles.leftPortion}>
+              
               {productImage && (productImage as ImageURISource).uri ? (
                 <Image
                   source={productImage}
@@ -66,7 +67,44 @@ export default function TutitionCard({
                   </Text>
                 </View>
               )}
-            </View>
+            </View> */}
+
+            <View style={styles.leftPortion}>
+  {productImage && (productImage as ImageURISource).uri ? (
+    // ✅ Show user’s actual image
+    <Image
+      source={productImage}
+      style={styles.leftImage}
+      resizeMode="cover"
+    />
+  ) : (
+    // ✅ When showing initials, apply same background as right portion
+    <View style={styles.initialsContainer}>
+       <Image
+      source={require('../../assets/images/featurebg.png')}
+      style={styles.initialsBackground}
+      resizeMode="cover"
+    />
+     <View
+              style={{
+                ...StyleSheet.absoluteFillObject, // covers the image fully
+                backgroundColor: 'rgba(255, 255, 255, 0.07)', // black overlay, 35% opacity
+              }}
+            />
+      <View style={styles.initialsCircle}>
+        <Text allowFontScaling={false} style={styles.initialsText}>
+          {infoTitle
+            ? infoTitle
+                .split(' ')
+                .map(n => n[0])
+                .join('')
+                .toUpperCase()
+            : '?'}
+        </Text>
+      </View>
+    </View>
+  )}
+</View>
 
             <View style={styles.rightPortion}>
               <Image
@@ -74,6 +112,13 @@ export default function TutitionCard({
                 style={[{ width: '220%', height: '220%', resizeMode: 'cover' }]}
                 resizeMode="cover"
               />
+
+              {/* <View
+              style={{
+                ...StyleSheet.absoluteFillObject, // covers the image fully
+                backgroundColor: 'rgba(255, 255, 255, 0.1)', // black overlay, 35% opacity
+              }}
+            /> */}
 
             
               <Text allowFontScaling={false} style={styles.rightText}>{infoTitle}</Text>
@@ -106,7 +151,7 @@ export default function TutitionCard({
         </View>
 
         {/* Info */}
-        <View style={styles.infoRow}>
+        <View style={[styles.infoRow]}>
           <Text allowFontScaling={false} style={styles.title}>{title}</Text>
           <View style={styles.priceRow}>
             <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
@@ -125,9 +170,28 @@ export default function TutitionCard({
 }
 
 const styles = StyleSheet.create({
+
+  initialsBackground: {
+    position: 'absolute',
+    width: '220%',
+    height: '220%',
+    resizeMode: 'cover',
+    top: '-60%',
+    left: '-60%',
+  },
+
+  initialsContainer: {
+    width: '100%',
+    height: '100%',
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius:20,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   card: {
     width: screenWidth * 0.85,
-    height: (Platform.OS == 'ios'? screenHeight * 0.35: screenHeight * 0.4),
+    height: (Platform.OS == 'ios'? screenHeight * 0.35: screenHeight * 0.35),
     marginHorizontal: 8,
     borderRadius: 34,
     backgroundColor: 'rgba(255, 255, 255, 0.17)',
@@ -144,6 +208,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e', 
+    
   },
 
   image: {
@@ -159,6 +224,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '90%',
     alignSelf: 'center',
+    paddingTop: 8,
+  
   },
   title: {
     fontSize: 17,
@@ -199,7 +266,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     height: '100%',
-    borderRadius: 20,
+    borderRadius: 22,
     //padding: 10
   },
 
@@ -216,8 +283,8 @@ const styles = StyleSheet.create({
     height: '100%',
     //backgroundColor:'#fff',
     //borderRadius: 20,
-    borderTopLeftRadius: 20,
-    borderBottomLeftRadius: 20,
+    borderTopLeftRadius: 22,
+    borderBottomLeftRadius: 22,
   },
 
   initialsCircle: {
@@ -231,9 +298,10 @@ const styles = StyleSheet.create({
 
   initialsText: {
     fontSize: 32,
-    fontWeight: '700',
+    fontWeight: '600',
     color: '#fff',
     fontFamily: 'Urbanist-SemiBold',
+    marginBottom:4
   },
 
   rightPortion: {
@@ -241,8 +309,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     //padding: 10,
-    borderTopRightRadius: 20,
-    borderBottomRightRadius: 20,
+    borderTopRightRadius: 22,
+    borderBottomRightRadius: 22,
     overflow: 'hidden',
     position: 'relative',
   },
@@ -254,12 +322,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
     position: 'absolute',
+    left:12
   },
 
   tag: {
     position: 'absolute',
-    bottom: 9,
-    right: 5,  
+    bottom: 10,
+    right: 10,  
     borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -280,14 +349,14 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600,
     fontSize: 11,
-    fontStyle: 'normal',
+   // fontStyle: 'normal',
     lineHeight:16,
   },
 
   bookmark: {
     position: 'absolute',
-    top: (Platform.OS === 'ios'? 9: 9),
-    right: (Platform.OS === 'ios'? 9: 9),
+    top: (Platform.OS === 'ios'? 10: 10),
+    right: (Platform.OS === 'ios'? 10: 10),
     width: 44,
     height: 44,
     justifyContent: 'center',
@@ -321,8 +390,9 @@ const styles = StyleSheet.create({
 
   imageContainer: {
     width: '100%',
-    height: '80%',
+    height: '78%',
     position: 'relative',
-    padding: 13,
+    paddingHorizontal: 14,
+    paddingTop:14
   },
 });

@@ -72,7 +72,7 @@ export default function SearchTutionCard({
         <BlurView 
                           blurType="light"
                           blurAmount={100}
-                          style={[StyleSheet.absoluteFillObject,{borderRadius: 9}]}
+                          style={[StyleSheet.absoluteFillObject,{borderRadius: 12}]}
                         />
            <TouchableOpacity onPress={applybookmark}>
           <Image
@@ -81,7 +81,7 @@ export default function SearchTutionCard({
                 ? require('../../assets/images/favourite_filled.png')
                 : require('../../assets/images/favourite.png')
             }
-            style={{ width: 16, height: 16 }}
+            style={{ width: 20, height: 20 }}
           />
           </TouchableOpacity>
         </View>
@@ -117,8 +117,10 @@ export default function SearchTutionCard({
 const styles = StyleSheet.create({
    tagTopLeft: {
   position: 'absolute',
-  top: 5,
-  left: 5,
+  //top: 5,
+ // left: 5,
+  top: Platform.OS === 'ios' ? 8 : 8,
+    left: Platform.OS === 'ios' ? 8 : 8,
   backgroundColor: 'rgba(255,255,255,0.4)',
   borderRadius: 4,
   padding: 4,
@@ -224,12 +226,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: Platform.OS === 'ios' ? 10 : 10,
     right: Platform.OS === 'ios' ? 10 : 10,
-
-    borderRadius: 9,
+    overflow:'hidden',
+    borderRadius: 12,
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(101, 101, 101, 0.13) 0%, rgba(117, 117, 117, 0.1) 100%)',
-   width: 28,
-   height: 28,
+   width: 36,
+   height: 36,
     display: 'flex',
     alignContent: 'center',
     justifyContent: 'center',
@@ -246,17 +248,19 @@ const styles = StyleSheet.create({
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
   },
-  bookmark: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    borderRadius: 20,
-    padding: 6,
-  },
+  // bookmark: {
+  //   position: 'absolute',
+  //   top: 10,
+  //   right: 10,
+  //   borderRadius: 20,
+  //   padding: 6,
+  // },
   tag: {
     position: 'absolute',
-    bottom: 5,
-    right: 5,
+   // bottom: 5,
+    //right: 5,
+    bottom: Platform.OS === 'ios' ? 8 : 8,
+    right: Platform.OS === 'ios' ? 8 : 8,
     //backgroundColor: '#fff',
     backgroundColor: 'rgba(255,255,255,0.4)',
     borderRadius: 4,
@@ -295,9 +299,9 @@ const styles = StyleSheet.create({
   },
   price: {
     fontSize: 12,
-    fontWeight: '500',
+    fontWeight: '600',
     color: '#fff',
-    fontFamily: 'Urbanist-Bold',
+    fontFamily: 'Urbanist-SemiBold',
   },
 
   ratingText: {

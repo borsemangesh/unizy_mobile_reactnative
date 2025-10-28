@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
   },
   modelcontainer: {
-    height: '84%',
+    height: '80%',
     marginTop: 'auto',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.10) 100%)',
@@ -380,7 +380,8 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     alignItems: 'center',
     // filter: 'drop-shadow(0 0.833px 3.333px rgba(0, 0, 0, 0.02))',
-    opacity: 0.9
+    opacity: 0.9,
+     overflow:'hidden'
 
   },
   bottomview: {
@@ -422,7 +423,8 @@ const styles = StyleSheet.create({
   cancelBtn: {
     flex: 1,
     marginRight: 8,
-    padding: 12,
+    paddingVertical: 8,
+    paddingHorizontal:12,
     borderRadius: 50,
     // backgroundColor: 'gray',
     backgroundColor: '#ffffff1b',
@@ -484,16 +486,15 @@ const styles = StyleSheet.create({
   modelTextHeader: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-SemiBold',
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '600',
-    fontStyle: 'normal',
     letterSpacing: -0.34,
     lineHeight: 19.6,
   },
   clearAll: {
     color: 'rgba(255, 255, 255, 0.54)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 17,
+    fontFamily: 'Urbanist-SemoBold',
+    fontSize: 12,
     fontWeight: '600',
     fontStyle: 'normal',
     letterSpacing: -0.34,
@@ -519,10 +520,9 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     color: 'rgba(255, 255, 255, 0.48)',
-    fontFamily: 'Urbanist-Regular',
+    fontFamily: 'Urbanist-Medium',
     fontSize: 17,
     fontWeight: '500',
-    fontStyle: 'normal',
     letterSpacing: 0.17,
     lineHeight: 19.6,
   },
@@ -553,6 +553,7 @@ const styles = StyleSheet.create({
     gap: 4,
     marginBottom: 5,
     boxShadow: 'rgba(255, 255, 255, 0.16) inset -1px 0px 4px 2px',
+    height:80,
   },
 
   filterTypeTab: {

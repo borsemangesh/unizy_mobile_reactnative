@@ -204,7 +204,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
                 />
               </View>
             </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>My Listing</Text>
+            <Text allowFontScaling={false} style={styles.unizyText}>My Listings</Text>
             <View style={{ width: 48 }} />
           </View>
         </View>
@@ -213,8 +213,8 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
      <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        style={{ marginVertical: 10 }}
-        contentContainerStyle={{ paddingHorizontal: 10 }}
+        style={{ marginVertical: 12 }}
+        contentContainerStyle={{ paddingHorizontal: 16,paddingBottom:10 }}
       >
         {categories.map((cat, index) => {
           const isSelected = selectedCategory.name === cat.name;
@@ -272,6 +272,7 @@ const styles = StyleSheet.create({
 
 
  tabcard: {
+  minHeight:38,
     paddingVertical: 8,
     paddingHorizontal: 16,
     marginRight: 8,
@@ -296,12 +297,20 @@ const styles = StyleSheet.create({
     borderRightColor: '#ffffff2e',
 
      boxSizing: 'border-box',
+    shadowOffset: { width: 0, height: 0},
+    shadowOpacity: 0.25,
+    //shadowRadius: 4,
+    //elevation: 4, 
+
+
+
   },
   tabcard1: {
+     minHeight:38,
      borderWidth: 0.4,
     borderColor: '#ffffff11',
 
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
+   // boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
 
@@ -346,7 +355,7 @@ const styles = StyleSheet.create({
      marginTop: 10
      },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 40 : 30,
+    paddingTop: Platform.OS === 'ios' ? 40 : 50,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },

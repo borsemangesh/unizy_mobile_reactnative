@@ -145,9 +145,9 @@ const styles = StyleSheet.create({
   },
   price: {
     fontSize: 17,
-    fontWeight: '500',
+    fontWeight: '600',
     color: '#fff',
-     fontFamily: 'Urbanist-Bold',
+     fontFamily: 'Urbanist-SemiBold',
   },
   
   ratingText: {

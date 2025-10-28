@@ -91,9 +91,9 @@ const styles = StyleSheet.create({
     padding: 12,
     marginVertical: 6,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    borderWidth: 0.9,
+    borderWidth: 0.3,
     borderColor: 'rgba(255, 255, 255, 0.08)',
-    borderBlockEndColor: 'rgba(255, 255, 255, 0.08)',
+    //borderBlockEndColor: 'rgba(255, 255, 255, 0.08)',
     color: 'rgba(255, 255, 255, 0.48)',
     marginRight: 8,
   },
@@ -169,9 +169,9 @@ titleRow: {
 
 topRightText: {
   color: '#fff',
-  fontSize: 12,
-  fontWeight: '600',
-  fontFamily: 'Urbanist-SemiBold',
+  fontSize: 11,
+  fontWeight: '500',
+  fontFamily: 'Urbanist-Medium',
 },
 featureBadge: {
    backgroundColor:'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(97, 179, 255, 0.2) 0%, rgba(255, 255, 255, 0.10) 100%)',
@@ -184,9 +184,9 @@ featureBadge: {
 
 featureText: {
   color: '#fff',
-  fontSize: 12,
-  fontWeight: '600',
-  fontFamily: 'Urbanist-SemiBold',
+  fontSize: 11,
+  fontWeight: '500',
+  fontFamily: 'Urbanist-Medium',
 },
 dot: {
   color: '#fff', // or lighter shade if you want

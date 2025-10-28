@@ -36,7 +36,7 @@ const cardData = [
   { id: '2', title: 'My Orders', image: require('../../../assets/images/cart.png') },
   { id: '3', title: 'My Reviews', image: require('../../../assets/images/ok.png') },
   { id: '4', title: 'Notifications', image: require('../../../assets/images/notify.png') },
-  { id: '5', title: 'Help & Support', image: require('../../../assets/images/help.png') },
+  { id: '5', title: 'Help & Support', image: require('../../../assets/images/helpicon.png') },
   { id: '6', title: 'Logout', image: require('../../../assets/images/logout.png') },
   {id:'7',title:'App Version',image: require('../../../assets/images/versionicon.png')}
   
@@ -52,6 +52,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
   
   const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
+  const [isHidden, setIsHidden] = useState(true);
 
  interface UserMeta {
   firstname: string | null;
@@ -194,7 +195,7 @@ const renderItem = ({ item }: any) => {
     </TouchableOpacity>
   );
 };
-  const APP_VERSION = '1.0.0'; 
+  const APP_VERSION = 'v1.0.0'; 
 
 const clickBack = () =>{
     navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})
@@ -214,7 +215,12 @@ return (
           style={styles.backBtn}
           onPress={clickBack}
         >
-          <View style={styles.backIconRow}>
+          <View
+              style={[
+                styles.backIconRow,
+                isHidden && { opacity: 0 },
+              ]}
+            >
             <Image
               source={require('../../../assets/images/back.png')}
               style={{ height: 24, width: 24 }}

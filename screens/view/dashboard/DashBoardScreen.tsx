@@ -1013,6 +1013,7 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     paddingVertical: 4,
+    marginTop:20,
   },
   searchIcon: {
     padding: (Platform.OS === 'ios'? 0:5),
@@ -1078,7 +1079,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   bubble: {
-    // height: 48,
+    //height: 48,
     height: '100%',
     backgroundColor: 'rgba(255, 255, 255, 0.16)',    
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18)',
@@ -1087,9 +1088,9 @@ const styles = StyleSheet.create({
 
     justifyContent: 'center',
     alignItems: 'center',
-    //top: 3,
-    left: 3,
-    right: 3,
+    
+    left: 1,
+    right: 1,
     borderWidth: 0.5,
     borderColor: '#ffffff2e',
 
@@ -1130,7 +1131,7 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingBottom: 13,
+   // paddingBottom: 13,
   },
 
   MylistingsBackground: {
@@ -1181,13 +1182,14 @@ const styles = StyleSheet.create({
   },
 
   cardContainer: {
-    height: 62,
+    height: 64,
     flexDirection: 'row',
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical:19,
     alignItems: 'center',
-    margin:4,
+    marginVertical:5.5,
+    marginHorizontal:5.5,
     borderWidth: 0.4,
     borderColor: '#ffffff11',
 

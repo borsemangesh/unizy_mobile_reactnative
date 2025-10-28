@@ -23,7 +23,7 @@ import { MAIN_URL } from '../../utils/APIConstant';
 
 const bgImage = require('../../../assets/images/backimg.png');
 import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
-import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
+import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
 import StarRating from '../../utils/StarRating';
 import AddRating from '../../utils/AddRating';
 import { BlurView } from '@react-native-community/blur';
@@ -36,10 +36,66 @@ type AddReviewProps = {
 
 const AddReview = ({ navigation }: AddReviewProps)  => {
 
+
+   const [rating, setRating] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+
   const [username, setUsername] = useState<string>('');
   const [showPopup1, setShowPopup1] = useState(false);
     const closePopup1 = () => setShowPopup1(false);
    const { width } = Dimensions.get('window');
+
+   const handleSubmit = async () => {
+    if (rating === 0) {
+      showToast('Please select a rating');
+      return;
+    }
+    if (username.trim() === '') {
+      showToast('Please enter your comment');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      const token = await AsyncStorage.getItem('userToken');
+
+        if (!token) {
+          console.log('No token found');
+          return;
+        }
+
+      const response = await fetch('http://65.0.99.229:4320/category/users/5/review', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          rating: rating,
+          comment: username,
+          feature_id: 40,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.statusCode === 200) {
+        console.log('Review saved:', result);
+        showToast(result.message)
+        setShowPopup1(true); 
+      } else {
+        console.warn('Error saving review:', result);
+        showToast(result.message || 'Failed to submit review');
+      }
+    } catch (error) {
+      console.error('Review error:', error);
+      console.log('Something went wrong');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
@@ -67,7 +123,9 @@ const AddReview = ({ navigation }: AddReviewProps)  => {
          </View>
 
         <View style={{ paddingHorizontal: 16, marginTop:12,marginBottom: 12, alignItems: 'center' }}>
-        <AddRating starSize={40} />
+        {/* <AddRating starSize={40} /> */}
+
+        <AddRating starSize={40} onChange={setRating} />
         </View>
 
     <View style={styles.innercontainer}>
@@ -87,7 +145,7 @@ const AddReview = ({ navigation }: AddReviewProps)  => {
          </View>
         
 
-        <TouchableOpacity onPress={() => setShowPopup1(true)} style={styles.previewBtn} >
+        <TouchableOpacity onPress={handleSubmit} style={styles.previewBtn} >
             <Text allowFontScaling={false} style={styles.payText}>Submit Review </Text>
           </TouchableOpacity>
 

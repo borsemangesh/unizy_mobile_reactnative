@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
   background: { flex: 1, width: '100%', height: '100%' },
   fullScreenContainer: { flex: 1 },
    header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 25,
+    paddingTop: Platform.OS === 'ios' ? 50 : 50,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },

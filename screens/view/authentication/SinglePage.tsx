@@ -1598,7 +1598,7 @@ useEffect(() => {
           {currentScreen === 'hello' && (
             <View style={Styles.ScreenLayout}>
               <Animated.View
-                style={[{paddingTop: (Platform.OS === 'ios'? 80: 0)},{ transform: [{ translateY: unizyTranslateY }] }]}
+                style={[{paddingTop: (Platform.OS === 'ios'? 80: 40)},{ transform: [{ translateY: unizyTranslateY }] }]}
               >
                 <TouchableOpacity
                   onPress={() => console.log('Back button pressed')}
@@ -1713,7 +1713,8 @@ useEffect(() => {
                       style={selectlang_styles.searchBar}
                       placeholder="Search"
                       selectionColor="white"
-                      placeholderTextColor="#ccc"
+                      //placeholderTextColor="#ccc"
+                      placeholderTextColor="rgba(255, 255, 255, 0.72)"
                       onChangeText={setSearch}
                       value={search}
                     />
@@ -1752,6 +1753,7 @@ useEffect(() => {
                                 style={{
                                   flexDirection: 'row',
                                   alignItems: 'center',
+                                  minHeight:30
                                 }}
                               >
                                 {/* <Image
@@ -1936,7 +1938,7 @@ useEffect(() => {
                             style={Styles.loginButton}
                             onPress={loginapi}
                           >
-                            <Text allowFontScaling={false} style={Styles.loginText}>Login</Text>
+                            <Text allowFontScaling={false} style={Styles.sendText}>Login</Text>
                           </TouchableOpacity>
 
                           <View
@@ -1946,6 +1948,7 @@ useEffect(() => {
                               justifyContent: 'center',
                               alignItems: 'center',
                               gap: 5,
+                              marginVertical:8
                             }}
                           >
                             <Text
@@ -2040,7 +2043,10 @@ useEffect(() => {
                               Reset Password
                             </Text>
                             <View style={Styles.privacyContainer}>
-                              <Text allowFontScaling={false} style={Styles.termsText}>
+                              <Text
+                                  allowFontScaling={false}
+                                  style={[Styles.termsText, { paddingBottom:8 }]}
+                                >
                                 Enter your personal email address and we’ll send
                                 you a link to reset your password
                               </Text>
@@ -2073,7 +2079,7 @@ useEffect(() => {
                                 handleSendResetLink();
                               }}
                             >
-                              <Text allowFontScaling={false} style={Styles.loginText}>
+                              <Text allowFontScaling={false} style={Styles.sendText}>
                                 Send Reset Link
                               </Text>
                             </TouchableOpacity>
@@ -2095,7 +2101,7 @@ useEffect(() => {
                                 });
                               }}
                             >
-                              <Text allowFontScaling={false} style={Styles.goBackText}>Go Back</Text>
+                              <Text allowFontScaling={false} style={[Styles.goBackText,{color:'rgba(140, 244, 255, 0.7)'}]}>Go Back</Text>
                             </TouchableOpacity>
                           </Animated.View>
                           <Modal
@@ -2379,9 +2385,9 @@ useEffect(() => {
                               handleSendOTP();
                               setImageLoaded(true);
                             }}
-                            style={Styles.loginButton}
+                            style={Styles.sendButton}
                           >
-                            <Text allowFontScaling={false} style={Styles.loginText}>Send OTP</Text>
+                            <Text allowFontScaling={false} style={Styles.sendText}>Send OTP</Text>
                           </TouchableOpacity>
 
                           <View
@@ -2390,6 +2396,7 @@ useEffect(() => {
                               justifyContent: 'center',
                               alignItems: 'center',
                               marginTop: 16,
+                              marginBottom:8,
                             }}
                           >
                             <Text allowFontScaling={false} style={Styles.signupPrompt}>
@@ -2486,10 +2493,10 @@ useEffect(() => {
                               </View>
 
                               <TouchableOpacity
-                                style={Styles.sendOtploginButton}
+                                style={[Styles.sendOtploginButton,{marginTop:16}]}
                                 onPress={otpverify}
                               >
-                                <Text allowFontScaling={false} style={Styles.loginText}>
+                                <Text allowFontScaling={false} style={Styles.sendText}>
                                   Verify & Continue
                                 </Text>
                               </TouchableOpacity>
@@ -2505,7 +2512,7 @@ useEffect(() => {
                                   Didn’t receive a code?{' '}
                                 </Text>
                                 <TouchableOpacity onPress={handleresend}>
-                                  <Text allowFontScaling={false} style={Styles.sendOtpresendText1}>
+                                  <Text allowFontScaling={false} style={[Styles.sendOtpresendText1,{color: 'rgba(140, 244, 255, 0.7)'}]}>
                                     Resend Code
                                   </Text>
                                 </TouchableOpacity>
@@ -2565,7 +2572,7 @@ useEffect(() => {
                                     // });
                                   }}
                                 >
-                                  <Text allowFontScaling={false} style={Styles.sendOtpgoBackText1}>
+                                  <Text allowFontScaling={false} style={[Styles.sendOtpgoBackText1,{color: 'rgba(140, 244, 255, 0.7)'}]}>
                                     Go Back
                                   </Text>
                                 </TouchableOpacity>
@@ -2621,7 +2628,7 @@ useEffect(() => {
                                   verifyOTP();
                                 }}
                               >
-                                <Text allowFontScaling={false} style={Styles.loginText}>Send OTP</Text>
+                                <Text allowFontScaling={false} style={Styles.sendText}>Send OTP</Text>
                               </TouchableOpacity>
                             </View>
                           </Animated.View>
@@ -2646,7 +2653,7 @@ useEffect(() => {
                               </Text>
 
                               <View style={Styles.verifyprivacyContainer}>
-                                <Text style={Styles.verifytermsText}>
+                                <Text allowFontScaling={false} style={Styles.verifytermsText}>
                                   We have sent a 4-digit code to{' '}
                                   <Text allowFontScaling={false} style={Styles.resendText2}>
                                     {verifyusername}
@@ -2693,7 +2700,7 @@ useEffect(() => {
                                 style={Styles.verifyloginButton1}
                                 onPress={submitotp}
                               >
-                                <Text allowFontScaling={false} style={Styles.loginText}>
+                                <Text allowFontScaling={false} style={Styles.sendText}>
                                   Verify & Continue
                                 </Text>
                               </TouchableOpacity>
@@ -2705,14 +2712,14 @@ useEffect(() => {
                                   Didn’t receive a code?{' '}
                                 </Text>
                                 <TouchableOpacity onPress={resubmitotp}>
-                                  <Text allowFontScaling={false} style={Styles.verifyresendText1}>
+                                  <Text allowFontScaling={false} style={[Styles.verifyresendText1,{color: 'rgba(140, 244, 255, 0.7)'}]}>
                                     Resend Code
                                   </Text>
                                 </TouchableOpacity>
                               </View>
 
                               <TouchableOpacity
-                                style={{ flexDirection: 'row', marginTop: 6 }}
+                                style={{ flexDirection: 'row', marginVertical: 6 }}
                               >
                                 <Text allowFontScaling={false} style={Styles.verifyresendText}>
                                   Entered wrong email?{' '}
@@ -2762,7 +2769,7 @@ useEffect(() => {
 
                                   }}
                                 >
-                                  <Text allowFontScaling={false} style={Styles.verifygoBackText1}>
+                                  <Text allowFontScaling={false} style={[Styles.verifygoBackText1,{color: 'rgba(140, 244, 255, 0.7)'}]}>
                                     Go Back
                                   </Text>
                                 </TouchableOpacity>
@@ -2789,7 +2796,7 @@ useEffect(() => {
                               <Text allowFontScaling={false} style={Styles.profileprofileresetTitle}>
                                 Add a Photo
                               </Text>
-                              <View style={Styles.profileprivacyContainer}>
+                              <View style={[Styles.profileprivacyContainer,{marginTop:10}]}>
                                 <Text allowFontScaling={false} style={Styles.profiletermsText}>
                                   Personalize your account with a photo. You can
                                   always change it later.
@@ -2840,6 +2847,7 @@ useEffect(() => {
                                   justifyContent: 'center',
                                   alignItems: 'center',
                                   marginTop: 16,
+                                  marginBottom:8
                                 }}
                               >
                                 <Text allowFontScaling={false} style={Styles.profilesignupPrompt}>
@@ -2850,7 +2858,7 @@ useEffect(() => {
                                     setShowPopup1(true);
                                   }}
                                 >
-                                  <Text allowFontScaling={false} style={Styles.profilesignupPrompt1}>
+                                  <Text allowFontScaling={false} style={[Styles.profilesignupPrompt1,{color:'rgba(140, 244, 255, 0.7)'}]}>
                                     Skip
                                   </Text>
                                 </TouchableOpacity>
@@ -2995,16 +3003,24 @@ useEffect(() => {
                     <Text allowFontScaling={false} style={Styles.bycountuningAgreementText}>
                       By continuing, you agree to our
                     </Text>
-                    <Text allowFontScaling={false} style={Styles.teamsandConditionText}>
+                    {/* <Text allowFontScaling={false} style={Styles.teamsandConditionText}>
                       Terms & Conditions
-                    </Text>
+                    </Text> */}
+                    <View style={{ alignSelf: 'flex-start' }}>
+                <Text allowFontScaling={false}  style={Styles.teamsandConditionText}>Terms & Conditions</Text>
+                <View style={{ marginLeft:5,height: 1.2, backgroundColor: 'rgba(124, 234, 255, 0.9)', marginTop: 0 }} />
+              </View>
                   </View>
 
                   <View style={Styles.teamsandConditionContainer}>
                     <Text allowFontScaling={false} style={Styles.bycountuningAgreementText}>and</Text>
-                    <Text allowFontScaling={false} style={Styles.teamsandConditionText}>
+                    {/* <Text allowFontScaling={false} style={Styles.teamsandConditionText}>
                       Privacy Policy
-                    </Text>
+                    </Text> */}
+                      <View style={{ alignSelf: 'flex-start' }}>
+                <Text allowFontScaling={false}  style={Styles.teamsandConditionText}>Privacy Policy</Text>
+                <View style={{ marginLeft:5,height: 1.2, backgroundColor: 'rgba(124, 234, 255, 0.9)', marginTop: 0 }} />
+              </View>
                   </View>
                 </Animated.View>
               )}

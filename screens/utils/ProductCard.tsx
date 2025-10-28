@@ -82,7 +82,7 @@ export default function ProductCard({
 const styles = StyleSheet.create({
   card: {
     width: screenWidth * 0.85,
-    height: (Platform.OS == 'ios'? screenHeight * 0.35: screenHeight * 0.4),
+    height: (Platform.OS == 'ios'? screenHeight * 0.35: screenHeight * 0.35),
   
     marginHorizontal: 8,
     borderRadius: 34,
@@ -103,15 +103,17 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     width: "100%",
-    height: "80%", // image takes 65% of card height
+    height: '78%', // image takes 65% of card height
     position: "relative",
-    padding: 13,
+    //padding: 13,
+    paddingHorizontal: 14,
+    paddingTop:14
   },
   image: {
     
     width: "100%",
     height: "100%",
-    borderRadius: 25,
+    borderRadius: 20,
     backgroundColor: "#ccc",
     
   },
@@ -119,8 +121,9 @@ const styles = StyleSheet.create({
   tag: {
    
     position: 'absolute',
-    bottom: 20,
+    bottom: 10,
     right: 20,  
+    
     borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -181,13 +184,15 @@ const styles = StyleSheet.create({
     width: "90%",
     alignSelf: "center",
     // backgroundColor:'black'
-    // marginTop: 10,
+     marginTop: 8,
   },
   title: {
-    fontSize: 17,
-    fontWeight: "600",
-    color: "#fff",
-    width: "100%",
+   fontSize: 17,
+    fontWeight: '600',
+    color: '#fff',
+    width: '100%',
+    fontFamily: 'Urbanist-SemiBold',
+
   },
   priceRow: {
     flexDirection: "row",

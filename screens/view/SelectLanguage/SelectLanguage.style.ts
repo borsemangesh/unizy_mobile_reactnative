@@ -33,6 +33,7 @@ export const selectlang_styles = StyleSheet.create({
   },
   search_container: {
     display: 'flex',
+    minHeight:48,
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'stretch',
@@ -95,7 +96,7 @@ export const selectlang_styles = StyleSheet.create({
     height: 24,
   },
   languageText: {
-    color: 'white',
+    color: '#fff',
     fontSize: 17,
     fontFamily: 'Urbanist-Medium',
     fontWeight: '500',
