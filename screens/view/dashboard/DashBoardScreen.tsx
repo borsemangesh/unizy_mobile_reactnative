@@ -107,7 +107,6 @@ const ProductItem: React.FC<ProductItemProps> = ({
 const SearchScreenContent = () => (
   <View style={styles.tabContent}>
     <Text allowFontScaling={false} style={styles.tabContentText}>🔎 Search Layout</Text>
-    <Text allowFontScaling={false} style={styles.tabContentText}>🔎 Search Layout</Text>
   </View>
 );
 type AddScreenContentProps = {
@@ -118,7 +117,6 @@ const AddScreenContent: React.FC<
   AddScreenContentProps & { products: any[] }
 > = ({ navigation, products }) => (
   <View style={styles.tabContent3}>
-    <Text allowFontScaling={false} style={styles.tabContentText3}>List Product</Text>
     <Text allowFontScaling={false} style={styles.tabContentText3}>List Product</Text>
     <AnimatedSlideUp>
       <FlatList
@@ -139,8 +137,6 @@ const AddScreenContent: React.FC<
               </View>
 
               <View style={styles.cardTextContainer}>
-                <Text allowFontScaling={false} style={styles.cardTitle}>{item.name}</Text>
-                <Text allowFontScaling={false} style={styles.cardDescription}>{item.description}</Text>
                 <Text allowFontScaling={false} style={styles.cardTitle}>{item.name}</Text>
                 <Text allowFontScaling={false} style={styles.cardDescription}>{item.description}</Text>
               </View>
@@ -519,26 +515,48 @@ const renderProducts = () => {
     for (let i = startIndex; i < products.length; i += 2) {
       const rowItems = products.slice(i, i + 2);
       rows.push(
+        // <View style={styles.row} key={i}>
+        //   {rowItems.map((item, index) => (
+        //     <Animated.View
+        //       key={item.id}
+        //       style={[
+        //         // styles.halfWidth,
+        //         {
+        //           transform: [
+        //             {
+        //               translateX:
+        //                 index === 0 ? leftItemTranslateX : rightItemTranslateX,
+        //             },
+        //           ],
+        //         },
+        //       ]}
+        //     >
+        //       <ProductItem navigation={navigation} item={item} />
+        //     </Animated.View>
+        //   ))}
+        // </View>
+
         <View style={styles.row} key={i}>
-          {rowItems.map((item, index) => (
-            <Animated.View
-              key={item.id}
-              style={[
-                // styles.halfWidth,
-                {
-                  transform: [
-                    {
-                      translateX:
-                        index === 0 ? leftItemTranslateX : rightItemTranslateX,
-                    },
-                  ],
-                },
-              ]}
-            >
-              <ProductItem navigation={navigation} item={item} />
-            </Animated.View>
-          ))}
-        </View>
+  {rowItems.map((item, index) => (
+    <Animated.View
+      key={item.id}
+      style={{
+        flex: 1,
+        transform: [
+          {
+            translateX:
+              index === 0 ? leftItemTranslateX : rightItemTranslateX,
+          },
+        ],
+      }}
+    >
+      <ProductItem navigation={navigation} item={item} />
+    </Animated.View>
+  ))}
+
+  {/* Add empty placeholder if only one item */}
+  {rowItems.length === 1 && <View style={{ flex: 1 }} />}
+</View>
       );
     }
 
@@ -1014,8 +1032,9 @@ const styles = StyleSheet.create({
   bottomTabContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: '6%',
-    marginBottom: 20,
+    height: '7%',
+    //marginBottom: 20,
+    marginBottom: Platform.OS === 'ios' ? 30 : 20,    
     borderRadius: 50,
     alignSelf: 'center',
     // position: 'relative',
@@ -1053,14 +1072,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
     tabIcon: {
-    width: 24,
-    height: 24,
+    width: 28,
+    height: 28,
     //tintColor: '#fff',
     resizeMode: 'contain',
   },
   bubble: {
     // height: 48,
-    height: '88%',
+    height: '100%',
     backgroundColor: 'rgba(255, 255, 255, 0.16)',    
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18)',
 
@@ -1068,16 +1087,16 @@ const styles = StyleSheet.create({
 
     justifyContent: 'center',
     alignItems: 'center',
-    top: 3,
+    //top: 3,
     left: 3,
     right: 3,
     borderWidth: 0.5,
     borderColor: '#ffffff2e',
 
-    borderTopLeftRadius: 30,
-    borderBottomLeftRadius: 30,
-    borderTopRightRadius: 30,
-    borderBottomRightRadius: 30,
+    borderTopLeftRadius: 50,
+    borderBottomLeftRadius: 50,
+    borderTopRightRadius: 50,
+    borderBottomRightRadius: 50,
 
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
@@ -1106,6 +1125,7 @@ const styles = StyleSheet.create({
 
     // paddingBottom: 12,
     paddingHorizontal: 16,
+    marginVertical:6
   },
   headerRow: {
     flexDirection: 'row',
@@ -1148,6 +1168,7 @@ const styles = StyleSheet.create({
   productsWrapper: {
     flexDirection: 'column',
     //paddingHorizontal: 12,
+    marginHorizontal:12
   },
 
   row: {
@@ -1160,10 +1181,11 @@ const styles = StyleSheet.create({
   },
 
   cardContainer: {
-    height: 56,
+    height: 62,
     flexDirection: 'row',
     borderRadius: 10,
-    padding: 12,
+    paddingHorizontal: 12,
+    paddingVertical:19,
     alignItems: 'center',
     margin:4,
     borderWidth: 0.4,
@@ -1237,7 +1259,7 @@ const styles = StyleSheet.create({
   tabContent3: {
     flex: 1,
     padding: 20,
-    paddingTop: Platform.OS === 'ios' ? 60 : 30,
+    paddingTop: Platform.OS === 'ios' ? 60 : 50,
   },
   tabContentText3: {
     color: '#fff',
@@ -1249,7 +1271,7 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    height: 85,
+    height: 94,
     flexDirection: 'row',
     //backgroundColor: '#ffffff20', // semi-transparent for dark bg
     borderRadius: 24,
@@ -1265,8 +1287,8 @@ const styles = StyleSheet.create({
     boxShadow: 'rgba(255, 255, 255, 0.02) -1px 10px 5px 10px',
   },
   cardIcon1: {
-    width: 30,
-    height: 30,
+    width: 32.5,
+    height: 32.5,
     //marginRight: 12,
     resizeMode: 'contain',
   },
