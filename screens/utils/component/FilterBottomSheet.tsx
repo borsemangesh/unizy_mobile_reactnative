@@ -113,6 +113,7 @@ const FilterBottomSheet = ({
     if (currentFilter.field_type === 'dropdown') {
       return (
         <ScrollView
+        
           style={{ flexGrow: 0, paddingBottom: 10 }}
           showsVerticalScrollIndicator={false}
         >
@@ -154,9 +155,10 @@ const FilterBottomSheet = ({
           ))}
         </ScrollView>
       );
-    } else if (currentFilter.alias_name === 'price') {
+    } 
+    else if (currentFilter.alias_name === 'price') {
       return (
-        <View style={{zIndex: 999}}>
+        <View style={{zIndex: 999,position: 'relative'}}>
           <Text allowFontScaling={false} style={{ color: 'white', marginBottom: 10 }}>
             Range: {sliderLow} - {sliderHigh}
           </Text>
@@ -254,7 +256,7 @@ const FilterBottomSheet = ({
   };
 
   return (
-    <View onTouchCancel={onClose} style={[StyleSheet.absoluteFillObject, { zIndex: 999, display: visible ? 'flex' : 'none' }]}>
+    <View  style={[StyleSheet.absoluteFillObject, { zIndex: 999, display: visible ? 'flex' : 'none' }]}>
       <BlurView
         // style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%'}} 
         style={[StyleSheet.absoluteFillObject]}
@@ -266,17 +268,14 @@ const FilterBottomSheet = ({
         animationType="slide"
         visible={visible}
         transparent
-        // backdropColor={'rgba(0, 0, 0, 0.5)'}
         onRequestClose={onClose}
       >
-        <TouchableWithoutFeedback onPress={onClose}>
           <View style={{
             flex: 1, justifyContent: 'flex-end', backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(34, 30, 252, 0.08) 0%, rgba(255, 255, 255, 0.10) 100%)'
           }}>
-            {/* <TouchableWithoutFeedback onPress={onClose}> */}
+            <TouchableWithoutFeedback onPress={onClose}>
 
             <View style={styles.overlay}>
-            <TouchableWithoutFeedback onPress={() => {}}>
               <View style={[styles.modelcontainer]}>
                 <BlurView
                   style={[
@@ -344,18 +343,18 @@ const FilterBottomSheet = ({
                     <Text allowFontScaling={false} style={styles.cancelText}>Cancel</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={[styles.cancelBtn, { backgroundColor: 'rgba(255, 255, 255, 0)' }]}
+                    style={[styles.loginButton, {}]}
                     onPress={handleApply}
                   >
-                    <Text allowFontScaling={false} style={[styles.cancelText, { color: '#000' }]}>Apply</Text>
+                    <Text allowFontScaling={false} style={[styles.sendText]}>Apply</Text>
                   </TouchableOpacity>
                 </View>
               </View>
-              </TouchableWithoutFeedback>
+             
             </View>
+             </TouchableWithoutFeedback>
           </View>
 
-        </TouchableWithoutFeedback>
       </Modal>
     </View>
   );
@@ -372,7 +371,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     padding: 26,
-    backgroundColor: 'rgba(251, 249, 249, 0.01)',
+    //backgroundColor: 'rgba(251, 251, 251, 0.01)',
+    backgroundColor: 'rgba(0, 0, 0, 0.07)',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
   },
@@ -403,6 +403,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     // backgroundColor: '#5d5c5c14',
     paddingBottom: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.001)',
   },
   radioButtonSelected: {
     backgroundColor: 'white',
@@ -442,6 +443,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     boxShadow: '0 2px 8px 0 rgba(75, 75, 75, 0.19)',
   },
+
+  loginButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.56)',
+    borderColor: '#ffffff2c',
+
+     flex: 1,
+    marginRight: 8,
+    paddingVertical: 8,
+    paddingHorizontal:12,
+    borderRadius: 50,
+  },
+
   overlay: {
     flex: 1,
     justifyContent: 'flex-end',
@@ -491,7 +506,10 @@ const styles = StyleSheet.create({
     width: '40%',
     height: '100%',
     padding: 16,
-    backgroundColor: '#5d5c5c0b',
+    //backgroundColor: '#5d5c5c0b',
+
+    backgroundColor: 'rgba(0, 0, 0, 0.07)',
+    
   },
   modelTextHeader: {
     color: 'rgba(255, 255, 255, 0.88)',
@@ -537,6 +555,16 @@ const styles = StyleSheet.create({
     lineHeight: 19.6,
   },
 
+  sendText: {
+    color: '#0000bc',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: 500,
+   // letterSpacing: 1,
+    //width: '100%',
+  },
+
   inactiveTab: {
     display: 'flex',
     alignItems: 'center',
@@ -577,6 +605,8 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     textAlign: 'center',
   },
+
+  
 });
 
 export default FilterBottomSheet;

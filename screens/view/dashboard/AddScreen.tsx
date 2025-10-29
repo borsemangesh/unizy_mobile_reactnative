@@ -342,8 +342,15 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             (typeof value === 'string' && value.trim() === '') ||
             (Array.isArray(value) && value.length === 0)
           ) {
+            if(field_type.toLowerCase() === 'image'){
+              showToast(`${field.param.field_name} are mandatory`,'error');
+            return;
+            }
+            else{
             showToast(`${field.param.field_name} is mandatory`,'error');
             return;
+            }
+            
           }
         }
       }

@@ -159,8 +159,6 @@ const styles = StyleSheet.create({
     height: '100%',
     padding: (Platform.OS === 'ios'? 5: 12),
     borderRadius: 12,
-    //borderColor:'000',
-    // borderWidth:2,
     alignSelf: 'center',
     resizeMode: 'cover',
   },
@@ -168,6 +166,7 @@ const styles = StyleSheet.create({
   image1: {
     width: 10,
     height: 10,
+    resizeMode:'contain'
   },
   bookmark: {
     overflow:'hidden',

@@ -454,16 +454,17 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
           </View>
         </View>
 
-        <ScrollView
-          contentContainerStyle={[
-            styles.scrollContainer,
-            {
-              paddingBottom: screenHeight * 0.1 + insets.bottom, // 10% of screen + safe area
-            },
-          ]}
-          scrollEventThrottle={16}
-        >
-          {renderImage()}
+          <ScrollView
+            contentContainerStyle={[
+              styles.scrollContainer,
+              {
+                paddingBottom: screenHeight * 0.1 + insets.bottom,
+                marginTop:16 // 10% of screen + safe area
+              },
+            ]}
+            scrollEventThrottle={16}
+          >
+            {renderImage()}
 
           <View style={{ flex: 1, padding: 16 }}>
             <View style={styles.card}>
@@ -516,12 +517,10 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                   Product Details
                 </Text>
 
-                {detail?.params?.map((param: Param) => (
-                  <View key={param.id} style={{ marginBottom: 12 }}>
-                    {/* Param name */}
-                    <Text allowFontScaling={false} style={styles.itemcondition}>
-                      {param.name}
-                    </Text>
+                  {detail?.params?.map((param: Param) => (
+                    <View key={param.id} style={{ marginBottom: 2 }}>
+                      {/* Param name */}
+                      <Text allowFontScaling={false}style={styles.itemcondition}>{param.name}</Text>
 
                     {/* Param value */}
                     {param.options && param.options.length > 0 ? (
@@ -1012,7 +1011,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     justifyContent: 'center',
     position: 'absolute',
-    top: 0,
+   top: Platform.OS === 'ios' ? 10 : 10, 
+  // bottom:Platform.OS === 'ios' ? 20 : 10,
     left: 0,
     right: 0,
     zIndex: 10,
@@ -1308,6 +1308,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     gap: 12,
+    marginTop:6
   },
   h24_w24: {
     width: 24,

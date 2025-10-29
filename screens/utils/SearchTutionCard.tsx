@@ -220,6 +220,7 @@ const styles = StyleSheet.create({
   image1: {
     width: 10,
     height: 10,
+    resizeMode:'contain'
   },
   bookmark1: {
 
