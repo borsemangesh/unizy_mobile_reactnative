@@ -108,8 +108,8 @@ const styles = StyleSheet.create({
   },
   tag: {
     position: 'absolute',
-    bottom: 5,
-    right: 5,
+    bottom: (Platform.OS === 'ios' ? 5 : 8),
+    right:(Platform.OS === 'ios' ? 5 : 8),
     //backgroundColor: '#fff',
     backgroundColor:'rgba(255,255,255,0.4)',
     borderRadius: 4,
@@ -117,6 +117,7 @@ const styles = StyleSheet.create({
     marginVertical:4,
     marginHorizontal:4,
      boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
+     //overflow:'hidden'
   },
   tagText: {
     fontSize: 10,
@@ -161,8 +162,8 @@ const styles = StyleSheet.create({
   },
   ratingAbsolute: {
     position: 'absolute',
-    bottom:10,
-    right: 10,
+    bottom: (Platform.OS === 'ios' ? 4 : 2),
+    right: (Platform.OS === 'ios' ? 4 : 2),
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 8,

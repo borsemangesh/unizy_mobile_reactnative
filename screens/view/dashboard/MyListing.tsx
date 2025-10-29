@@ -213,8 +213,9 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
      <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        style={{ marginVertical: 12 }}
-        contentContainerStyle={{ paddingHorizontal: 16,paddingBottom:10 }}
+        style={{ marginVertical: 6 ,}}
+       
+        contentContainerStyle={{ paddingHorizontal: 16,paddingVertical:10, gap: 4,  }}
       >
         {categories.map((cat, index) => {
           const isSelected = selectedCategory.name === cat.name;
@@ -279,30 +280,29 @@ const styles = StyleSheet.create({
      borderWidth: 0.4,
     borderColor: '#ffffff11',
 
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
+    //boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
 
-    borderEndEndRadius: 10,
-    borderStartEndRadius: 10,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    borderBottomStartRadius: 10,
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
+      borderRadius:10,
 
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
+    // borderBlockStartColor: '#ffffff2e',
+    // borderBlockColor: '#ffffff2e',
 
-     boxSizing: 'border-box',
-    shadowOffset: { width: 0, height: 0},
-    shadowOpacity: 0.25,
+    // borderTopColor: '#ffffff2e',
+    // borderBottomColor: '#ffffff2e',
+    // borderLeftColor: '#ffffff2e',
+    // borderRightColor: '#ffffff2e',
+
+    //  boxSizing: 'border-box',
+    // shadowOffset: { width: 0, height: 0},
+    // shadowOpacity: 0.25,
     //shadowRadius: 4,
     //elevation: 4, 
 
-
+//  backgroundColor:
+//       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
+    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.2)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.2)inset 0.99px 0.88px 0.90px 0px', 
 
   },
   tabcard1: {

@@ -331,25 +331,16 @@ const styles = StyleSheet.create({
      paddingVertical: 8,
     paddingHorizontal: 16,
     marginRight: 8,
-     borderWidth: 0.4,
     borderColor: '#ffffff11',
-
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-   borderRadius:10,
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-
+    borderRadius:10,
     boxSizing: 'border-box',
     gap:10,
-    width:'20%'
+    width:'20%',
+
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
+    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px', 
+  
   },
 
   edittext:{
@@ -411,7 +402,9 @@ versionLabel: {
     backgroundColor: 'rgba(255,255,255,0.06)',
     borderRadius: 12,
     padding: 12,
-    height:50
+    height:50,
+    marginTop:6,
+
     
   },
   cardImage: {

@@ -250,7 +250,7 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
     <>
       {storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
         <>
-        <Text allowFontScaling={false} style={styles.newtext}>Feature Listing Preview</Text>
+        <Text allowFontScaling={false} style={[styles.newtext,{paddingBottom:6}]}>Feature Listing Preview</Text>
           <PreviewCard
             tag="University of Warwick"
             infoTitle={titleValue} // from alias
@@ -262,7 +262,7 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
                 : require('../../../assets/images/drone.png')
             }
           />
-          <Text allowFontScaling={false} style={styles.newtext1}>Regular Listing Preview</Text>
+          <Text allowFontScaling={false} style={[styles.newtext1,{paddingBottom:6}]}>Regular Listing Preview</Text>
           <NewProductCard
             tag="University of Warwick"
             infoTitle={titleValue}
@@ -304,12 +304,23 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
                   />
           
                   {/* Texts */}
-                  <View style={{ flex: 1 }}>
+                  {/* <View style={{ flex: 1 }}>
                     <Text allowFontScaling={false} style={styles.importantText1}>Important:</Text>
                     <Text allowFontScaling={false} style={styles.importantText}>
                        A {categoryDetails?.commission ?? '0'}% commission or a maximum of £{categoryDetails?.max_cappund ?? '0'}, whichever is lower, will be added to the entered price.
                     </Text>
-                  </View>
+                  </View> */}
+
+                  <View style={{ flex: 1 }}>
+                                  <Text allowFontScaling={false} style={styles.importantText1}>Important:</Text>
+                                <Text allowFontScaling={false} style={styles.importantText}>
+                                  A
+                                  <Text allowFontScaling={false} style={styles.importantText1}> {categoryDetails?.commission ?? '0'}%</Text> commission or a maximum of
+                                  <Text allowFontScaling={false} style={styles.importantText1}> £{categoryDetails?.max_cappund ?? '0'}</Text> , whichever is lower, will be added to the entered price.
+                                </Text>
+                                </View>
+
+
                 </View>
 
 
@@ -334,14 +345,14 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
 
 const styles = StyleSheet.create({
   newtext:{
-     color: '#ccc',
+     color: '#fff',
     fontSize: 16,
     margin: 6,
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600,
   },
  newtext1:{
-     color: '#ccc',
+     color: '#fff',
     fontSize: 16,
     marginTop: 12,
     fontFamily: 'Urbanist-SemiBold',
@@ -377,7 +388,7 @@ const styles = StyleSheet.create({
     fontWeight: 500,
   },
   importantText1: {
-    color: '#ccc',
+    color: '#fff',
     fontSize: 12,
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 500,

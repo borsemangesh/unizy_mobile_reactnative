@@ -3437,24 +3437,23 @@ const toggleCheckbox = (id: number) => {
                           justifyContent: 'flex-start',
                         }}
                       >
-                       {ismultilple ?  (
-                      
-                    <View
-                    style={[
-                      styles.checkboxContainer,
-                      isSelectedCheckbox && styles.checkedBox,
-                    ]}
-                  >
-                    {isSelectedCheckbox && (
-                      <Text allowFontScaling={false} style={styles.tickMark}>✓</Text>
-                    )}
-                  </View>
+              {ismultilple ? (
+                <View style={styles.checkboxWrapper}>
+                  {isSelectedCheckbox ? (
+                    <Image
+                      source={require('../../../assets/images/tickicon.png')}
+                      style={styles.tickImage}
+                      resizeMode="contain"
+                    />
                   ) : (
-                    <View style={[styles.radioButton, isSelectedRadio && styles.selectedRadio]}>
-                      {isSelectedRadio && <View style={styles.radioDot} />}
-                    </View>
+                    <View style={styles.checkboxContainer} />
                   )}
-
+                </View>
+              ) : (
+                <View style={[styles.radioButton, isSelectedRadio && styles.selectedRadio]}>
+                  {isSelectedRadio && <View style={styles.radioDot} />}
+                </View>
+              )}
                         {/* Option Name */}
                         <Text allowFontScaling={false}
                           style={{
@@ -3504,6 +3503,10 @@ const toggleCheckbox = (id: number) => {
 };
 
 const styles = StyleSheet.create({
+  tickImage:{
+   height:24,
+   width:24
+  },
   cardconstinerdivider: {
     display: 'flex',
     flexDirection: 'row',
@@ -3516,7 +3519,7 @@ const styles = StyleSheet.create({
     borderColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)'
   },
   checkedBox: {
-    backgroundColor: '#ffffff',
+    //backgroundColor: '#ffffff',
   },
   tickMark: {
   color: '#260426ff', 
@@ -3548,16 +3551,26 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     backgroundColor: '#fff',
   },
+  checkboxWrapper: {
+  width: 19,
+  height: 19,
+  justifyContent: 'center',
+  alignItems: 'center',
+},
   checkboxContainer: {
-    width: 19,
-    height: 19,
+    //width: 19,
+    //height: 19,
+    height:'100%',
+    width:'100%',
+
     borderRadius: 5,
     borderWidth: 1,
     borderColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'transparent'
+    backgroundColor: 'transparent',
     //marginTop: 10,
+   // overflow:'hidden'
   },
   orderandTotalEarings: {
     color: '#FFFFFF',

@@ -479,6 +479,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#5d5c5c14',
     zIndex: 10,
     bottom: 0,
+    marginBottom: Platform.OS === 'ios' ? 10 : 20,
   },
    cancelBtn: {
     flex: 1,
@@ -509,7 +510,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontStyle: 'normal',
     letterSpacing: 0.17,
-    lineHeight: 19.6,
+    lineHeight: 22,
     
   },
 });

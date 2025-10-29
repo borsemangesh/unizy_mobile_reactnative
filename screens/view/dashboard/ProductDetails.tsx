@@ -23,6 +23,7 @@ import SearchListProductCard from '../../utils/SearchListProductCard';
 import FilterBottomSheet from '../../utils/component/FilterBottomSheet';
 import SearchTutionCard from '../../utils/SearchTutionCard';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
+import SeperateTutionCard from '../../utils/SeperateTutitionCard';
 type CreatedBy = {
   id: number;
   firstname: string;
@@ -292,7 +293,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
         style={{ flex: 1 }}
       >
         {item.profileshowinview ? (
-        <SearchTutionCard
+        <SeperateTutionCard
            tag={item.university?.name || 'University of Warwick'}
           infoTitle={item.title}
           inforTitlePrice={`£ ${item.price}`}

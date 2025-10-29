@@ -74,6 +74,7 @@ const [imageUri, setImageUri] = useState<string | null>(null);
       try {
 
         const token = await AsyncStorage.getItem('userToken');
+        console.log(token)
         if (!token) return;
         const url1 = `${MAIN_URL.baseUrl}category/feature-detail/${id}`;
         console.log(url1)
@@ -250,7 +251,7 @@ const renderImage = () => {
           style={{
             alignItems: 'center',
             justifyContent: 'center',
-            marginVertical: 20,
+            paddingVertical: 20,
           }}
         >
           {profileUri ? (
@@ -948,8 +949,8 @@ const styles = StyleSheet.create({
 
     header: {
     height: 70,
-    paddingTop: (Platform.OS === 'ios' ? 40: 50),
-    paddingBottom: 12,
+    paddingTop: (Platform.OS === 'ios' ? 40: 40),
+    //paddingBottom: 12,
     paddingHorizontal: 16,
     justifyContent: 'center',
     position: 'absolute',

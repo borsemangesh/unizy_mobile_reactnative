@@ -549,6 +549,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 styles.personalEmailID_TextInput,
                 styles.login_container,
                 {
+                  height:44,
                   textAlignVertical: 'center', // centers text vertically on Android
                   paddingVertical: 0, // prevents padding changes on focus
                 },
@@ -648,13 +649,14 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 setMultiSelectOptions(options);
               }}
             >
+              <View style={styles.dropdowncard}>
               <Text allowFontScaling={false} style={styles.dropdowntext}>
                 {Array.isArray(formValues[id]?.value) &&
                 formValues[id]?.value.length > 0
                   ? `${formValues[id]?.value.length} Selected`
                   : `Select ${field_name}`}
               </Text>
-
+              </View>
                <Image
               source={require('../../../assets/images/right.png')} 
               style={styles.dropdownIcon}
@@ -1008,13 +1010,17 @@ const styles = StyleSheet.create({
 dropdownIcon: {
   width: 20,
   height: 20,
-  tintColor:"rgba(255, 255, 255, 0.48)"
+  tintColor:'#FFF'
+},
+dropdowncard:{
+  minHeight:40,
+  alignItems:'flex-start',
+  justifyContent:'center'
 },
   dropdowntext: {
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
     fontSize: 17,
-    //lineHeight:24,
     fontStyle: 'normal',
     color: 'rgba(255, 255, 255, 0.48)',
     includeFontPadding: false,
@@ -1415,6 +1421,7 @@ dropdownIcon: {
     lineHeight: 22,
     fontStyle: 'normal',
     color: '#fff',
+    minHeight:40
   },
 
   pickerContainer: {

@@ -198,8 +198,8 @@ export const Styles = StyleSheet.create({
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
+    height: 52,
+    width: 52,
     position: 'absolute',
     top: -20,
     left: 0,
@@ -424,7 +424,7 @@ export const Styles = StyleSheet.create({
     flexDirection: 'row',
     //alignItems: 'center',
     //justifyContent: 'center',
-    marginTop:3
+   // marginTop:3
   },
 
   teamandCondition: {

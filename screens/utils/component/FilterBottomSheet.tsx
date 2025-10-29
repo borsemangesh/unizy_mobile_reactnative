@@ -139,7 +139,12 @@ const FilterBottomSheet = ({
                 }}
               >
                 {dropdownSelections[currentFilter.id]?.includes(opt.id) && (
-                  <Text allowFontScaling={false} style={{ color: '#FFF', fontSize: 12 }}>✓</Text>
+                  <Image
+                        source={require('../../../assets/images/tickicon.png')}
+                                        style={styles.tickImage}
+                                        resizeMode="contain"
+                                      />
+                  // <Text allowFontScaling={false} style={{ color: '#FFF', fontSize: 12 }}>✓</Text>
                 )}
               </View>
               <Text allowFontScaling={false} style={{ color: 'white' }}>
@@ -357,6 +362,11 @@ const FilterBottomSheet = ({
 };
 
 const styles = StyleSheet.create({
+ tickImage:{
+   height:24,
+   width:24
+  },
+
   modeltitleContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',

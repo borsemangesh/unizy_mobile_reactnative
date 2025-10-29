@@ -1795,7 +1795,7 @@ useEffect(() => {
             <>
               <View
                 style={{
-                  paddingTop: Platform.OS === 'ios' ? 70 : 20,
+                  paddingTop: Platform.OS === 'ios' ? 70 : 40,
                   paddingLeft: 16,
                   paddingRight: 16,
                 }}
@@ -1819,7 +1819,7 @@ useEffect(() => {
                       <View style={Styles.backIconRow}>
                         <Image
                           source={require('../../../assets/images/back.png')}
-                          style={{ height: 24, width: 24 }}
+                          style={{ height: 26, width: 26 }}
                         />
                       </View>
                     </Animated.View>
@@ -3012,7 +3012,7 @@ useEffect(() => {
               </View>
                   </View>
 
-                  <View style={Styles.teamsandConditionContainer}>
+                  <View style={[Styles.teamsandConditionContainer,{marginTop:3,paddingBottom:10}]}>
                     <Text allowFontScaling={false} style={Styles.bycountuningAgreementText}>and</Text>
                     {/* <Text allowFontScaling={false} style={Styles.teamsandConditionText}>
                       Privacy Policy

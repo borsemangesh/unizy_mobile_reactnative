@@ -117,7 +117,7 @@ const AddScreenContent: React.FC<
   AddScreenContentProps & { products: any[] }
 > = ({ navigation, products }) => (
   <View style={styles.tabContent3}>
-    <Text allowFontScaling={false} style={styles.tabContentText3}>List Product</Text>
+    <Text allowFontScaling={false} style={[styles.tabContentText3,{paddingBottom:16}]}>List Product</Text>
     <AnimatedSlideUp>
       <FlatList
         data={products}
@@ -771,6 +771,7 @@ return (
               <Text allowFontScaling={false} style={styles.featuredText}>Featured Listings</Text>
             </Animated.View>
             <ScrollView
+             directionalLockEnabled={true} 
               style={{ paddingHorizontal: 0,marginLeft:8 }}
               horizontal
               showsVerticalScrollIndicator={false}
@@ -1033,16 +1034,16 @@ const styles = StyleSheet.create({
   bottomTabContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: '7%',
+    height: '6.5%',
     //marginBottom: 20,
-    marginBottom: Platform.OS === 'ios' ? 30 : 20,    
+    marginBottom: Platform.OS === 'ios' ? 30 : 30,    
     borderRadius: 50,
     alignSelf: 'center',
     // position: 'relative',
-    paddingHorizontal: 4,
+    padding: 4,
     borderWidth: 0.4,
-    padding: 12,
-    margin: 4,
+    //padding: 12,
+    margin:4,
     borderColor: '#ffffff11',
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
     backgroundColor:
@@ -1089,8 +1090,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     
-    left: 1,
-    right: 1,
+    left: 3,
+    right: 3,
     borderWidth: 0.5,
     borderColor: '#ffffff2e',
 
@@ -1319,10 +1320,10 @@ const styles = StyleSheet.create({
     marginRight: 12,
     paddingVertical: 8,
 
-    borderWidth: 1,
-    borderColor: '#ffffff2c',
+    //borderWidth: 0.4,
+    borderColor: 'transparent',
     backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px',
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.15) 100%)',
+    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.51)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.51)inset 0.99px 0.88px 0.90px 0px',
   },
 });

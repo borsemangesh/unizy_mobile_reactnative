@@ -1,6 +1,6 @@
 import { BlurView } from "@react-native-community/blur";
 import React, { useEffect, useRef } from "react";
-import { View, Text, StyleSheet, Animated, Easing } from "react-native";
+import { View, Text, StyleSheet, Animated, Easing, Platform } from "react-native";
 
 interface CustomToastProps {
   text: string;
@@ -76,6 +76,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     position: "relative", // ensures absolute child aligns correctly
     // opacity: 0.1
+    ...(Platform.OS === 'android' && { overflow: 'hidden' })
 
   },
   toastText: {

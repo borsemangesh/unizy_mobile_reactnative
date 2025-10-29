@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
-type NewProductCardProps = {
+type SeperateTutionCardProps = {
   tag: string;
   infoTitle: string; // will use to get initials
   inforTitlePrice: string;
@@ -24,7 +24,7 @@ type NewProductCardProps = {
   applybookmark?: () => void; 
 };
 
-export default function SearchTutionCard({
+export default function SeperateTutionCard({
   tag,
   infoTitle,
   inforTitlePrice,
@@ -35,7 +35,7 @@ export default function SearchTutionCard({
   initialsName,
   isfeature,
   applybookmark
-}: NewProductCardProps) {
+}: SeperateTutionCardProps) {
   
   return (
     <View style={styles.card}>
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     // width: 186,
     backgroundColor: 'rgba(154, 154, 255, 0.12)',
     width: '100%',       
-    height: 166,            
+    height: 180,            
     overflow: 'hidden',       
     justifyContent: 'center', 
     alignItems: 'center',
@@ -204,7 +204,6 @@ const styles = StyleSheet.create({
     borderBottomStartRadius: 15,
       
   },
-  
   image: {
     width: '100%',
     height: '100%',
@@ -260,8 +259,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
    // bottom: 5,
     //right: 5,
-    bottom: Platform.OS === 'ios' ? 8 : 3,
-    right: Platform.OS === 'ios' ? 8 : 3,
+    bottom: Platform.OS === 'ios' ? 8 : 8,
+    right: Platform.OS === 'ios' ? 8 : 8,
     //backgroundColor: '#fff',
     backgroundColor: 'rgba(255,255,255,0.4)',
     borderRadius: 4,
