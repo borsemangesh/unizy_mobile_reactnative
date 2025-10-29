@@ -27,7 +27,7 @@ type SearchDetailsProps = {
   navigation: any;
 };
 
- const { width } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const profileImg = require('../../../assets/images/user.jpg');
 const mylistings1 = require('../../../assets/images/favourite.png');
@@ -46,57 +46,53 @@ type Param = {
   param_value: string;
 };
 
-
 const SearchDetails = ({ navigation }: SearchDetailsProps) => {
-    const [showPopup, setShowPopup] = useState(false);
-    const [showPopup1, setShowPopup1] = useState(false);
-    const closePopup = () => setShowPopup(false);
-    const closePopup1 = () => setShowPopup1(false);
-    const [scrollY, setScrollY] = useState(0);
-    const scrollY1 = new Animated.Value(0);
-    const route = useRoute();
-    const { id } = route.params as { id: number };
-    const {name} =route.params as {name :string}
-    const [detail, setDetail] = useState<any>(null);
+  const [showPopup, setShowPopup] = useState(false);
+  const [showPopup1, setShowPopup1] = useState(false);
+  const closePopup = () => setShowPopup(false);
+  const closePopup1 = () => setShowPopup1(false);
+  const [scrollY, setScrollY] = useState(0);
+  const scrollY1 = new Animated.Value(0);
+  const route = useRoute();
+  const { id } = route.params as { id: number };
+  const { name } = route.params as { name: string };
+  const [detail, setDetail] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   const screenWidth = Dimensions.get('window').width;
 
-const [imageUri, setImageUri] = useState<string | null>(null);
+  const [imageUri, setImageUri] = useState<string | null>(null);
 
- const insets = useSafeAreaInsets(); // Safe area insets
+  const insets = useSafeAreaInsets(); // Safe area insets
   const { height: screenHeight } = Dimensions.get('window');
 
-   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
-    
+  const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
+
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-
         const token = await AsyncStorage.getItem('userToken');
         console.log(token)
         if (!token) return;
         const url1 = `${MAIN_URL.baseUrl}category/feature-detail/${id}`;
-        console.log(url1)
-       //const url1 = `http://65.0.99.229:4320/category/feature-detail/30`;
+        console.log(url1);
+        //const url1 = `http://65.0.99.229:4320/category/feature-detail/30`;
 
-        const res = await fetch(url1,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
+        const res = await fetch(url1, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         const json = await res.json();
-        setDetail(json.data); 
+        setDetail(json.data);
 
         if (res.status === 401 || res.status === 403) {
-        handleForceLogout();
-        return;
-      }
+          handleForceLogout();
+          return;
+        }
 
-      if (json.statusCode === 401 || json.statusCode === 403) {
-        handleForceLogout();
-        return;
-      }
+        if (json.statusCode === 401 || json.statusCode === 403) {
+          handleForceLogout();
+          return;
+        }
       } catch (error) {
         console.error('Error fetching details:', error);
       } finally {
@@ -114,130 +110,129 @@ const [imageUri, setImageUri] = useState<string | null>(null);
     };
     fetchDetails();
   }, [id]);
- const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
-const flatListRef = useRef<FlatList>(null);
-const [activeIndex, setActiveIndex] = useState(0);
+  const flatListRef = useRef<FlatList>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
-const images = detail?.files?.map((file: any) => ({
-  uri: file.signedurl,
-})) || [];
+  const images =
+    detail?.files?.map((file: any) => ({
+      uri: file.signedurl,
+    })) || [];
 
-const onScroll = (event: any) => {
-  const index = Math.round(event.nativeEvent.contentOffset.x / screenWidth);
-  setActiveIndex(index);
-};
+  const onScroll = (event: any) => {
+    const index = Math.round(event.nativeEvent.contentOffset.x / screenWidth);
+    setActiveIndex(index);
+  };
 
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '01-01-2025'; // fallback if null
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
 
-  const formatDate = (dateString:string) => {
-  if (!dateString) return '01-01-2025'; // fallback if null
-  const date = new Date(dateString);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
-  return `${day}-${month}-${year}`;
-};
+  // const renderImage = () => {
+  //   const fallbackImage = require('../../../assets/images/drone.png');
 
+  //   if (detail?.profileshowinview) {
+  //     const profileUri = detail?.createdby?.profile || null;
+  //     const initials = `${detail?.createdby?.firstname?.[0] ?? ''}${detail?.createdby?.lastname?.[0] ?? ''}`.toUpperCase();
 
+  //     return (
+  //       <ImageBackground
+  //       source={require('../../../assets/images/featurebg.png')} // your background image
+  //       style={{
+  //         alignItems: 'center',
+  //         justifyContent: 'center',
+  //       }}
+  //     >
+  //       <View
+  //         style={{
+  //           alignItems: 'center',
+  //           justifyContent: 'center',
+  //           marginVertical: 20,
+  //         }}>
 
-// const renderImage = () => {
-//   const fallbackImage = require('../../../assets/images/drone.png');
+  //         <Image
+  //           source={profileUri ? { uri: profileUri } : fallbackImage}
+  //           style={{
+  //             width: 160,
+  //             height: 160,
+  //             borderRadius: 80, // circular shape
+  //             //borderWidth: 2,
+  //             //borderColor: '#ddd',
+  //           }}
+  //           resizeMode="cover"
+  //           onError={() => {
+  //             console.log('Profile image failed to load');
+  //             setImageUri(null);
+  //           }}
+  //         />
 
-//   if (detail?.profileshowinview) {
-//     const profileUri = detail?.createdby?.profile || null;
-//     const initials = `${detail?.createdby?.firstname?.[0] ?? ''}${detail?.createdby?.lastname?.[0] ?? ''}`.toUpperCase();
+  //       </View>
+  //        </ImageBackground>
+  //     );
+  //   }
 
+  //   // ✅ Multiple images
+  //   if (images.length > 1) {
+  //     return (
+  //       <View>
+  //         <FlatList
+  //           ref={flatListRef}
+  //           data={images}
+  //           horizontal
+  //           pagingEnabled
+  //           showsHorizontalScrollIndicator={false}
+  //           keyExtractor={(_, index) => index.toString()}
+  //           onScroll={onScroll}
+  //           scrollEventThrottle={16}
+  //           renderItem={({ item }) => (
+  //             <Image
+  //               source={item.uri ? { uri: item.uri } : fallbackImage}
+  //               style={{ width: screenWidth, height: 250 }}
+  //               resizeMode="cover"
+  //             />
+  //           )}
+  //         />
+  //         {/* Step Indicator */}
+  //         <View style={styles.stepIndicatorContainer}>
+  //           {images.map((_: any, index: Key | null | undefined) => (
+  //             <View
+  //               key={index}
+  //               style={
+  //                 index === activeIndex
+  //                   ? styles.activeStepCircle
+  //                   : styles.inactiveStepCircle
+  //               }
+  //             />
+  //           ))}
+  //         </View>
+  //       </View>
+  //     );
+  //   }
 
-//     return (
-//       <ImageBackground
-//       source={require('../../../assets/images/featurebg.png')} // your background image
-//       style={{
-//         alignItems: 'center',
-//         justifyContent: 'center',
-//       }}
-//     >
-//       <View
-//         style={{
-//           alignItems: 'center',
-//           justifyContent: 'center',
-//           marginVertical: 20,
-//         }}>
-      
-//         <Image
-//           source={profileUri ? { uri: profileUri } : fallbackImage}
-//           style={{
-//             width: 160,
-//             height: 160,
-//             borderRadius: 80, // circular shape
-//             //borderWidth: 2,
-//             //borderColor: '#ddd',
-//           }}
-//           resizeMode="cover"
-//           onError={() => {
-//             console.log('Profile image failed to load');
-//             setImageUri(null);
-//           }}
-//         />
-       
-//       </View>
-//        </ImageBackground>
-//     );
-//   }
+  //   // ✅ Single image or fallback
+  //   return (
+  //     <Image
+  //       source={images[0]?.uri ? { uri: images[0].uri } : fallbackImage}
+  //       style={{ width: screenWidth, height: 250 }}
+  //       resizeMode="cover"
+  //     />
+  //   );
+  // };
 
-//   // ✅ Multiple images
-//   if (images.length > 1) {
-//     return (
-//       <View>
-//         <FlatList
-//           ref={flatListRef}
-//           data={images}
-//           horizontal
-//           pagingEnabled
-//           showsHorizontalScrollIndicator={false}
-//           keyExtractor={(_, index) => index.toString()}
-//           onScroll={onScroll}
-//           scrollEventThrottle={16}
-//           renderItem={({ item }) => (
-//             <Image
-//               source={item.uri ? { uri: item.uri } : fallbackImage}
-//               style={{ width: screenWidth, height: 250 }}
-//               resizeMode="cover"
-//             />
-//           )}
-//         />
-//         {/* Step Indicator */}
-//         <View style={styles.stepIndicatorContainer}>
-//           {images.map((_: any, index: Key | null | undefined) => (
-//             <View
-//               key={index}
-//               style={
-//                 index === activeIndex
-//                   ? styles.activeStepCircle
-//                   : styles.inactiveStepCircle
-//               }
-//             />
-//           ))}
-//         </View>
-//       </View>
-//     );
-//   }
+  const renderImage = () => {
+    const fallbackImage = require('../../../assets/images/drone.png');
 
-//   // ✅ Single image or fallback
-//   return (
-//     <Image
-//       source={images[0]?.uri ? { uri: images[0].uri } : fallbackImage}
-//       style={{ width: screenWidth, height: 250 }}
-//       resizeMode="cover"
-//     />
-//   );
-// };
-
-const renderImage = () => {
-  const fallbackImage = require('../../../assets/images/drone.png');
-
-  if (detail?.profileshowinview) {
-    const profileUri = detail?.createdby?.profile || null;
-    const initials = `${detail?.createdby?.firstname?.[0] ?? ''}${detail?.createdby?.lastname?.[0] ?? ''}`.toUpperCase();
+    if (detail?.profileshowinview) {
+      const profileUri = detail?.createdby?.profile || null;
+      const initials = `${detail?.createdby?.firstname?.[0] ?? ''}${
+        detail?.createdby?.lastname?.[0] ?? ''
+      }`.toUpperCase();
 
     return (
       <ImageBackground
@@ -299,110 +294,109 @@ const renderImage = () => {
     );
   }
 
-  if (images.length > 1) {
-    return (
-      <View>
-        <FlatList
-          ref={flatListRef}
-          data={images}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(_, index) => index.toString()}
-          onScroll={onScroll}
-          scrollEventThrottle={16}
-          renderItem={({ item }) => (
-            <Image
-              source={item.uri ? { uri: item.uri } : fallbackImage}
-              style={{ width: screenWidth, height: 250 }}
-              resizeMode="cover"
-            />
-          )}
-        />
-        {/* Step Indicator */}
-        <View style={styles.stepIndicatorContainer}>
-          {images.map((_: any, index: number) => (
-            <View
-              key={index}
-              style={
-                index === activeIndex
-                  ? styles.activeStepCircle
-                  : styles.inactiveStepCircle
-              }
-            />
-          ))}
+    if (images.length > 1) {
+      return (
+        <View>
+          <FlatList
+            ref={flatListRef}
+            data={images}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(_, index) => index.toString()}
+            onScroll={onScroll}
+            scrollEventThrottle={16}
+            renderItem={({ item }) => (
+              <Image
+                source={item.uri ? { uri: item.uri } : fallbackImage}
+                style={{ width: screenWidth, height: 250 }}
+                resizeMode="cover"
+              />
+            )}
+          />
+          {/* Step Indicator */}
+          <View style={styles.stepIndicatorContainer}>
+            {images.map((_: any, index: number) => (
+              <View
+                key={index}
+                style={
+                  index === activeIndex
+                    ? styles.activeStepCircle
+                    : styles.inactiveStepCircle
+                }
+              />
+            ))}
+          </View>
         </View>
-      </View>
+      );
+    }
+    return (
+      <Image
+        source={images[0]?.uri ? { uri: images[0].uri } : fallbackImage}
+        style={{ width: screenWidth, height: 250 }}
+        resizeMode="cover"
+      />
     );
-  }
-  return (
-    <Image
-      source={images[0]?.uri ? { uri: images[0].uri } : fallbackImage}
-      style={{ width: screenWidth, height: 250 }}
-      resizeMode="cover"
-    />
-  );
-};
+  };
 
+  const handleBookmarkPress = async (productId: number) => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) return;
 
-const handleBookmarkPress = async (productId: number) => {
-  try {
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) return;
+      setDetail(
+        (prev: any) =>
+          prev ? { ...prev, isbookmarked: !prev.isbookmarked } : prev, // if null, just return null
+      );
 
-   setDetail((prev: any) =>
-  prev
-    ? { ...prev, isbookmarked: !prev.isbookmarked }
-    : prev // if null, just return null
-);
+      const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
 
-    const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
+      // 2️⃣ Send API request
+      const url = MAIN_URL.baseUrl + 'category/list-bookmark';
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ feature_id: productId }),
+      });
 
-    // 2️⃣ Send API request
-    const url = MAIN_URL.baseUrl + 'category/list-bookmark';
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ feature_id: productId }),
-    });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const data = await response.json();
+      console.log('Bookmark response:', data);
+
+      // 3️⃣ Update bookmarkedIds for persistence
+      let updatedBookmarks;
+      if (isCurrentlyBookmarked) {
+        updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
+      } else {
+        updatedBookmarks = [...bookmarkedIds, productId];
+      }
+
+      setBookmarkedIds(updatedBookmarks);
+      await AsyncStorage.setItem(
+        'bookmarkedIds',
+        JSON.stringify(updatedBookmarks),
+      );
+    } catch (error) {
+      console.error('Bookmark error:', error);
+
+      setDetail(
+        (prev: any) =>
+          prev ? { ...prev, isbookmarked: !prev.isbookmarked } : prev, // if null, just return null
+      );
     }
-
-    const data = await response.json();
-    console.log('Bookmark response:', data);
-
-    // 3️⃣ Update bookmarkedIds for persistence
-    let updatedBookmarks;
-    if (isCurrentlyBookmarked) {
-      updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
-    } else {
-      updatedBookmarks = [...bookmarkedIds, productId];
-    }
-
-    setBookmarkedIds(updatedBookmarks);
-    await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks));
-  } catch (error) {
-    console.error('Bookmark error:', error);
-
-   setDetail((prev: any) =>
-  prev
-    ? { ...prev, isbookmarked: !prev.isbookmarked }
-    : prev // if null, just return null
-);
-  }
-};
-
+  };
 
   const getInitials = (firstName = '', lastName = '') => {
-  const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
-  const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
-  return (f + l) || '?';
-};
+    const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
+    const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
+    return f + l || '?';
+  };
 
     return (
       <ImageBackground
@@ -448,124 +442,140 @@ const handleBookmarkPress = async (productId: number) => {
               <View style={styles.MylistingsBackground}>
                 {/* <Image source={mylistings1} style={styles.iconSmall} /> */}
                 <Image
-                    source={
-                        detail?.isbookmarked
-                          ? require("../../../assets/images/favourite_filled.png") // bookmarked
-                         : require("../../../assets/images/favourite.png") // not bookmarked
-                        }
-                      style={styles.iconSmall}
-                    />
+                  source={
+                    detail?.isbookmarked
+                      ? require('../../../assets/images/favourite_filled.png') // bookmarked
+                      : require('../../../assets/images/favourite.png') // not bookmarked
+                  }
+                  style={styles.iconSmall}
+                />
               </View>
-              </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
           </View>
+        </View>
 
-          <ScrollView
-            contentContainerStyle={[
-              styles.scrollContainer,
-              {
-                paddingBottom: screenHeight * 0.1 + insets.bottom, // 10% of screen + safe area
-              },
-            ]}
-            scrollEventThrottle={16}
-          >
-            {renderImage()}
+        <ScrollView
+          contentContainerStyle={[
+            styles.scrollContainer,
+            {
+              paddingBottom: screenHeight * 0.1 + insets.bottom, // 10% of screen + safe area
+            },
+          ]}
+          scrollEventThrottle={16}
+        >
+          {renderImage()}
 
-            <View style={{ flex: 1, padding: 16 }}>
-              <View style={styles.card}>
-                <View style={{ gap: 8 }}>
-                  {detail && (
-                    <>
-                      <Text allowFontScaling={false} style={styles.QuaddText}>{detail.title}</Text>
-                      <Text allowFontScaling={false} style={styles.priceText}>
-                        £{Number(detail.price).toFixed(2)}
-                      </Text>
-                    </>
-                  )}
-                </View>
-                <View
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-start',
-                    gap: 2,
-                    alignSelf: 'stretch',
-                  }}
-                >
-                  <Text allowFontScaling={false} style={styles.productDesHeding}>
-                    Product Description
-                  </Text>
-                  <Text allowFontScaling={false} style={styles.productDesc}>
-                    {detail?.description || 'No description available'}
-                  </Text>
-
-                  <View style={styles.datePosted}>
-                    <Image
-                      source={require('../../../assets/images/calendar_icon.png')}
-                      style={{ height: 16, width: 16 }}
-                    />
-                    <Text allowFontScaling={false} style={styles.userSub}>
-                      Date Posted: {formatDate(detail?.created_at)}
+          <View style={{ flex: 1, padding: 16 }}>
+            <View style={styles.card}>
+              <View style={{ gap: 8 }}>
+                {detail && (
+                  <>
+                    <Text allowFontScaling={false} style={styles.QuaddText}>
+                      {detail.title}
                     </Text>
+                    <Text allowFontScaling={false} style={styles.priceText}>
+                      £{Number(detail.price).toFixed(2)}
+                    </Text>
+                  </>
+                )}
+              </View>
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                  gap: 2,
+                  alignSelf: 'stretch',
+                }}
+              >
+                <Text allowFontScaling={false} style={styles.productDesHeding}>
+                  Product Description
+                </Text>
+                <Text allowFontScaling={false} style={styles.productDesc}>
+                  {detail?.description || 'No description available'}
+                </Text>
+
+                <View style={styles.datePosted}>
+                  <Image
+                    source={require('../../../assets/images/calendar_icon.png')}
+                    style={{ height: 16, width: 16 }}
+                  />
+                  <Text allowFontScaling={false} style={styles.userSub}>
+                    Date Posted: {formatDate(detail?.created_at)}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            <View style={styles.card}>
+              <View style={styles.gap12}>
+                <Text
+                  allowFontScaling={false}
+                  style={styles.productDeatilsHeading}
+                >
+                  Product Details
+                </Text>
+
+                {detail?.params?.map((param: Param) => (
+                  <View key={param.id} style={{ marginBottom: 12 }}>
+                    {/* Param name */}
+                    <Text allowFontScaling={false} style={styles.itemcondition}>
+                      {param.name}
+                    </Text>
+
+                    {/* Param value */}
+                    {param.options && param.options.length > 0 ? (
+                      <View style={styles.categoryContainer}>
+                        {param.options
+                          // .filter(opt =>
+                          //   param.param_value
+                          //     ?.split(',')
+                          //     .map(v => v.trim())
+                          //     .includes(opt.option_id.toString()),
+                          // )
+                          .filter(opt =>
+                            (param.param_value?.toString() || '')
+                              .split(',')
+                              .map(v => v.trim())
+                              .includes(opt.option_id.toString()),
+                          )
+                          .map((opt: ParamOption) => (
+                            <View key={opt.id} style={styles.categoryTag}>
+                              <Text
+                                allowFontScaling={false}
+                                style={styles.catagoryText}
+                              >
+                                {opt.option_name}
+                              </Text>
+                            </View>
+                          ))}
+                      </View>
+                    ) : (
+                      <Text
+                        allowFontScaling={false}
+                        style={[styles.new, { marginTop: 2 }]}
+                      >
+                        {param.param_value || '—'}
+                      </Text>
+                    )}
                   </View>
-                </View>
+                ))}
               </View>
+            </View>
 
-              <View style={styles.card}>
-                <View style={styles.gap12}>
-                  <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
-                    Product Details
-                  </Text>
+            {/* Selaer details */}
+            <View style={styles.card}>
+              <View style={{ gap: 12 }}>
+                <Text
+                  allowFontScaling={false}
+                  style={styles.productDeatilsHeading}
+                >
+                  Seller Details
+                </Text>
 
-                  {detail?.params?.map((param: Param) => (
-                    <View key={param.id} style={{ marginBottom: 12 }}>
-                      {/* Param name */}
-                      <Text allowFontScaling={false}style={styles.itemcondition}>{param.name}</Text>
-
-                      {/* Param value */}
-                      {param.options && param.options.length > 0 ? (
-                        <View style={styles.categoryContainer}>
-                          {param.options
-                            // .filter(opt =>
-                            //   param.param_value
-                            //     ?.split(',')
-                            //     .map(v => v.trim())
-                            //     .includes(opt.option_id.toString()),
-                            // )
-                            .filter(opt =>
-                              (param.param_value?.toString() || "")
-                                .split(',')
-                                .map(v => v.trim())
-                                .includes(opt.option_id.toString())
-                            )
-                            .map((opt: ParamOption) => (
-                              <View key={opt.id} style={styles.categoryTag}>
-                                <Text allowFontScaling={false} style={styles.catagoryText}>
-                                  {opt.option_name}
-                                </Text>
-                              </View>
-                            ))}
-                        </View>
-                      ) : (
-                        <Text allowFontScaling={false} style={[styles.new, { marginTop:2 }]}>
-                          {param.param_value || '—'}
-                        </Text>
-                      )}
-                    </View>
-                  ))}
-                </View>
-              </View>
-
-              {/* Selaer details */}
-              <View style={styles.card}>
-                <View style={{ gap: 12 }}>
-                  <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
-                    Seller Details
-                  </Text>
-
-                  {/* User Info */}
-                  <View style={{ flexDirection: 'row' }}>
-                    {/* <Image
+                {/* User Info */}
+                <View style={{ flexDirection: 'row' }}>
+                  {/* <Image
                       source={
                         detail?.createdby?.profile
                           ? { uri: detail.createdby.profile }
@@ -573,74 +583,80 @@ const handleBookmarkPress = async (productId: number) => {
                       }
                       style={styles.avatar}
                     /> */}
-                    {detail?.createdby?.profile ? (
+                  {detail?.createdby?.profile ? (
                     <Image
                       source={{ uri: detail.createdby.profile }}
                       style={styles.avatar}
                     />
                   ) : (
                     <View style={styles.initialsCircle}>
-                      <Text allowFontScaling={false} style={styles.initialsText}>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.initialsText}
+                      >
                         {getInitials(
                           detail?.createdby?.firstname ?? 'Alan',
-                          detail?.createdby?.lastname ?? 'Walker'
+                          detail?.createdby?.lastname ?? 'Walker',
                         )}
                       </Text>
                     </View>
                   )}
 
-                    <View style={{ width: '80%', gap: 4 }}>
-                      <Text allowFontScaling={false} style={styles.userName}>
-                        {detail?.createdby
-                          ? `${detail.createdby.firstname || ''} ${
-                              detail.createdby.lastname || ''
-                            }`
-                          : 'Unknown User'}
-                      </Text>
+                  <View style={{ width: '80%', gap: 4 }}>
+                    <Text allowFontScaling={false} style={styles.userName}>
+                      {detail?.createdby
+                        ? `${detail.createdby.firstname || ''} ${
+                            detail.createdby.lastname || ''
+                          }`
+                        : 'Unknown User'}
+                    </Text>
 
-                      <Text allowFontScaling={false} style={styles.univeritytext}>
-                        {detail?.createdby?.university_name ||
-                          'University of Warwick'}
-                      </Text>
-                      <Text allowFontScaling={false} style={[styles.univeritytext, { marginTop: -5 }]}>
-                        {'Coventry'}
-                      </Text>
-                    </View>
-                  </View>
-
-                  <View style={{ flexDirection: 'row', gap: 8 }}>
-                    
-                    <View
-                      style={{
-                        borderRadius: 10,
-                        backgroundColor:
-                          'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-                        boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        gap: 4,
-                        padding: 16,
-
-                        width: '20%',
-                      }}
+                    <Text allowFontScaling={false} style={styles.univeritytext}>
+                      {detail?.createdby?.university_name ||
+                        'University of Warwick'}
+                    </Text>
+                    <Text
+                      allowFontScaling={false}
+                      style={[styles.univeritytext, { marginTop: -5 }]}
                     >
-                      <TouchableOpacity 
+                      {'Coventry'}
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={{ flexDirection: 'row', gap: 8 }}>
+                  <View
+                    style={{
+                      borderRadius: 10,
+                      backgroundColor:
+                        'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+                      boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      gap: 4,
+                      padding: 16,
+
+                      width: '20%',
+                    }}
+                  >
+                    <TouchableOpacity
                       onPress={() =>
                         navigation.navigate('ReviewDetails', {
                           category_id: detail?.category_id,
                           id: detail?.id,
                         })
                       }
-                        style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      style={{ flexDirection: 'row', alignItems: 'center' }}
+                    >
                       <Image
                         source={require('../../../assets/images/staricon.png')}
                         style={{ height: 16, width: 16 }}
                       />
-                      
+
                       <Text
-                      allowFontScaling={false}
+                        allowFontScaling={false}
                         style={{
                           color: 'rgba(255, 255, 255, 0.48)',
                           fontFamily: 'Urbanist-SemiBold',
@@ -653,232 +669,261 @@ const handleBookmarkPress = async (productId: number) => {
                       >
                         4.5
                       </Text>
-                      </TouchableOpacity>
-                    </View>
-                   
+                    </TouchableOpacity>
+                  </View>
 
-                    <View
-                      style={{
-                        borderRadius: 10,
-                        backgroundColor:
-                          'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-                        boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        gap: 4,
-                        padding: 16,
-                        width: '80%',
-                      }}
+                  <View
+                    style={{
+                      borderRadius: 10,
+                      backgroundColor:
+                        'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+                      boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      gap: 4,
+                      padding: 16,
+                      width: '80%',
+                    }}
+                  >
+                    <TouchableOpacity
+                      style={{ flexDirection: 'row', alignItems: 'center' }}
+                      onPress={() => setShowPopup(true)}
                     >
-                      <TouchableOpacity
-                        style={{ flexDirection: 'row', alignItems: 'center' }}
-                        onPress={() => setShowPopup(true)}
-                      >
-                        <Image
-                          source={require('../../../assets/images/message_chat.png')}
-                          style={{ height: 16, width: 16, marginRight: 6 }}
-                        />
-                        <Text
+                      <Image
+                        source={require('../../../assets/images/message_chat.png')}
+                        style={{ height: 16, width: 16, marginRight: 6 }}
+                      />
+                      <Text
                         allowFontScaling={false}
-                          style={{
-                            color: 'rgba(255, 255, 255, 0.48)',
-                            fontFamily: 'Urbanist-SemiBold',
-                            fontSize: 14,
-                            fontWeight: '600',
-                            fontStyle: 'normal',
-                            letterSpacing: -0.28,
-                          }}
-                        >
-                          Chat with Seller
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.48)',
+                          fontFamily: 'Urbanist-SemiBold',
+                          fontSize: 14,
+                          fontWeight: '600',
+                          fontStyle: 'normal',
+                          letterSpacing: -0.28,
+                        }}
+                      >
+                        Chat with Seller
+                      </Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
               </View>
             </View>
-          </ScrollView>
+          </View>
+        </ScrollView>
 
+        {/* Bottom */}
+        <TouchableOpacity
+          style={styles.previewBtn}
+          onPress={() => setShowPopup1(true)}
 
-      {/* Bottom */}
-      <TouchableOpacity
-        style={styles.previewBtn}
-        onPress={() => setShowPopup1(true)}
+          //onPress={() => navigation.navigate('PaymentScreen')}
+        >
+          <Text allowFontScaling={false} style={{ textAlign: 'center' }}>
+            <Text allowFontScaling={false} style={styles.payText}>
+              Pay{' '}
+            </Text>
+            <Text allowFontScaling={false} style={styles.priceText1}>
+              £{Number(detail?.price ?? 0).toFixed(2)}
+            </Text>
+          </Text>
+        </TouchableOpacity>
 
-        //onPress={() => navigation.navigate('PaymentScreen')}
-      >
-        <Text allowFontScaling={false} style={{ textAlign: 'center' }}>
-        <Text allowFontScaling={false} style={styles.payText}>Pay </Text>
-        <Text allowFontScaling={false} style={styles.priceText1}>
-        £{Number(detail?.price ?? 0).toFixed(2)}
-      </Text>
-      </Text>
-      </TouchableOpacity>
-      
-      {/* <Button onPress={() => navigation.navigate('PaymentScreen')} title={"Pay "+ "£"+Number(detail?.price ?? 0).toFixed(2)} /> */}
-      {/* </ScrollView> */}
+        {/* <Button onPress={() => navigation.navigate('PaymentScreen')} title={"Pay "+ "£"+Number(detail?.price ?? 0).toFixed(2)} /> */}
+        {/* </ScrollView> */}
 
-      <Modal
-        visible={showPopup}
-        transparent
-        animationType="fade"
-        onRequestClose={closePopup}
-      >
-        <TouchableWithoutFeedback onPress={closePopup}>
-        <View style={styles.overlay}>
-          <BlurView
-            style={{
-              flex: 1,
-              alignContent: 'center',
-              justifyContent: 'center',
-              width: '100%',
-              alignItems: 'center',
-            }}
-            blurType="dark"
-            blurAmount={1000}
-            reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-          >
-            <View
-              style={[
-                StyleSheet.absoluteFill,
-                { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-              ]}
-            />
- 
-            <View style={styles.popupContainer}>
-              <Image
-                source={require('../../../assets/images/alerticon.png')}
-                style={styles.logo}
-                resizeMode="contain"
-              />
-              <Text 
-              allowFontScaling={false}
-              style={{
-                color: 'rgba(255, 255, 255, 0.80)',
-                fontFamily: 'Urbanist-SemiBold',
-                fontSize: 20,
-                fontWeight: '600',
-                letterSpacing: -0.4,
-                lineHeight: 28,
-              }}>Complete Your Purchase</Text>
-              <Text 
-              allowFontScaling={false}
-              style={{
-                color: 'rgba(255, 255, 255, 0.48)',
-                fontFamily: 'Urbanist-Regular',
-                fontSize: 14,
-                textAlign:'center',
-                fontWeight: '400',
-                letterSpacing: -0.28,
-                lineHeight: 19.6,
-              }}>
-                Chat with the seller will be available after you’ve bought this product or service.
-              </Text>
- 
-              <TouchableOpacity
-                style={styles.loginButton}
-                onPress={()=>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home', isNavigate:false }) ;setShowPopup(false);}}
+        <Modal
+          visible={showPopup}
+          transparent
+          animationType="fade"
+          onRequestClose={closePopup}
+        >
+          <TouchableWithoutFeedback onPress={closePopup}>
+            <View style={styles.overlay}>
+              <BlurView
+                style={{
+                  flex: 1,
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                  alignItems: 'center',
+                }}
+                blurType="dark"
+                blurAmount={1000}
+                reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
               >
-                <Text allowFontScaling={false} style={styles.loginText}>Go Back</Text>
-              </TouchableOpacity>
+                <View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                  ]}
+                />
+
+                <View style={styles.popupContainer}>
+                  <Image
+                    source={require('../../../assets/images/alerticon.png')}
+                    style={styles.logo}
+                    resizeMode="contain"
+                  />
+                  <Text
+                    allowFontScaling={false}
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.80)',
+                      fontFamily: 'Urbanist-SemiBold',
+                      fontSize: 20,
+                      fontWeight: '600',
+                      letterSpacing: -0.4,
+                      lineHeight: 28,
+                    }}
+                  >
+                    Complete Your Purchase
+                  </Text>
+                  <Text
+                    allowFontScaling={false}
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.48)',
+                      fontFamily: 'Urbanist-Regular',
+                      fontSize: 14,
+                      textAlign: 'center',
+                      fontWeight: '400',
+                      letterSpacing: -0.28,
+                      lineHeight: 19.6,
+                    }}
+                  >
+                    Chat with the seller will be available after you’ve bought
+                    this product or service.
+                  </Text>
+
+                  <TouchableOpacity
+                    style={styles.loginButton}
+                    onPress={() => {
+                      navigation.replace('Dashboard', {
+                        AddScreenBackactiveTab: 'Home',
+                        isNavigate: false,
+                      });
+                      setShowPopup(false);
+                    }}
+                  >
+                    <Text allowFontScaling={false} style={styles.loginText}>
+                      Go Back
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </BlurView>
             </View>
-          </BlurView>
-        </View>
-        </TouchableWithoutFeedback>
-      </Modal>
+          </TouchableWithoutFeedback>
+        </Modal>
 
-      <Modal
-        visible={showPopup1}
-        transparent
-        animationType="fade"
-        onRequestClose={closePopup1}
-      >
-        <TouchableWithoutFeedback onPress={closePopup1}>
-        <View style={styles.overlay}>
-          <BlurView
-            style={{
-              flex: 1,
-              alignContent: 'center',
-              justifyContent: 'center',
-              width: '100%',
-              alignItems: 'center',
-            }}
-            blurType="light"
-            blurAmount={10}
-            reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-          >
-            <View
-              style={[
-                StyleSheet.absoluteFill,
-                { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-              ]}
-            />
- 
-            <View style={styles.popupContainer}>
-              <Image
-                source={require('../../../assets/images/success_icon.png')}
-                style={styles.logo}
-                resizeMode="contain"
-              />
-              <Text 
-              allowFontScaling={false}
-              style={{
-                color: 'rgba(255, 255, 255, 0.80)',
-                fontFamily: 'Urbanist-SemiBold',
-                fontSize: 20,
-                fontWeight: '600',
-                letterSpacing: -0.4,
-                lineHeight: 28,
-              }}>Order Placed Successfully!</Text>
-              
- 
-              <TouchableOpacity
-                style={styles.loginButton}
-                onPress={()=>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home', isNavigate:false }) ;setShowPopup1(false);}}
+        <Modal
+          visible={showPopup1}
+          transparent
+          animationType="fade"
+          onRequestClose={closePopup1}
+        >
+          <TouchableWithoutFeedback onPress={closePopup1}>
+            <View style={styles.overlay}>
+              <BlurView
+                style={{
+                  flex: 1,
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                  alignItems: 'center',
+                }}
+                blurType="light"
+                blurAmount={10}
+                reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
               >
-                <Text allowFontScaling={false} style={styles.loginText}>Return to Home</Text>
-              </TouchableOpacity>
+                <View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                  ]}
+                />
 
-               <TouchableOpacity
-                style={styles.loginButton1}
-                onPress={()=>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home', isNavigate:false }) ;setShowPopup1(false);}}
-              >
-                <Text allowFontScaling={false} style={styles.loginText1}>Chat with Sellar</Text>
-              </TouchableOpacity>
+                <View style={styles.popupContainer}>
+                  <Image
+                    source={require('../../../assets/images/success_icon.png')}
+                    style={styles.logo}
+                    resizeMode="contain"
+                  />
+                  <Text
+                    allowFontScaling={false}
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.80)',
+                      fontFamily: 'Urbanist-SemiBold',
+                      fontSize: 20,
+                      fontWeight: '600',
+                      letterSpacing: -0.4,
+                      lineHeight: 28,
+                    }}
+                  >
+                    Order Placed Successfully!
+                  </Text>
+
+                  <TouchableOpacity
+                    style={styles.loginButton}
+                    onPress={() => {
+                      navigation.replace('Dashboard', {
+                        AddScreenBackactiveTab: 'Home',
+                        isNavigate: false,
+                      });
+                      setShowPopup1(false);
+                    }}
+                  >
+                    <Text allowFontScaling={false} style={styles.loginText}>
+                      Return to Home
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.loginButton1}
+                    onPress={() => {
+                      navigation.replace('Dashboard', {
+                        AddScreenBackactiveTab: 'Home',
+                        isNavigate: false,
+                      });
+                      setShowPopup1(false);
+                    }}
+                  >
+                    <Text allowFontScaling={false} style={styles.loginText1}>
+                      Chat with Sellar
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </BlurView>
             </View>
-          </BlurView>
-        </View>
-        </TouchableWithoutFeedback>
-      </Modal>
+          </TouchableWithoutFeedback>
+        </Modal>
       </View>
-      <NewCustomToastContainer/>
+      <NewCustomToastContainer />
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-
-  initialsCircle:{
- backgroundColor: '#8390D4',
-  alignItems: 'center',
-  justifyContent: 'center',
-   width: 50,
+  initialsCircle: {
+    backgroundColor: '#8390D4',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 50,
     height: 50,
     borderRadius: 25,
     marginRight: 12,
   },
-  initialsText:{
-   color: '#fff',
-  fontSize: 18,
-  fontWeight:600,
-  textAlign: 'center',
-  fontFamily: 'Urbanist-SemiBold',
+  initialsText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 600,
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
   },
 
-
- MylistingsBackground: {
+  MylistingsBackground: {
     height: 48,
     width: 48,
 
@@ -895,14 +940,13 @@ const styles = StyleSheet.create({
     borderLeftColor: '#ffffff5d',
     borderRightColor: '#ffffff36',
     borderWidth: 0.3,
-  
   },
   iconSmall: {
     width: 25,
     height: 25,
   },
-  
-   stepIndicatorContainer: {
+
+  stepIndicatorContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -945,7 +989,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.33,
     elevation: 2,
   },
-    unizyText: {
+  unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
     flex: 1,
@@ -954,14 +998,14 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     // paddingTop: 20,
   },
-    backBtn: {
+  backBtn: {
     width: 48,
-    height: 48, 
+    height: 48,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
-    header: {
+  header: {
     height: 70,
     paddingTop: (Platform.OS === 'ios' ? 40: 40),
     //paddingBottom: 12,
@@ -973,19 +1017,17 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 10,
     // overflow: 'hidden',
-
-
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-    fullScreenContainer: {
+  fullScreenContainer: {
     flex: 1,
-    marginTop: (Platform.OS === 'ios' ? 25 : 0),
+    marginTop: Platform.OS === 'ios' ? 25 : 0,
   },
 
-      loginText: {
+  loginText: {
     color: '#002050',
     textAlign: 'center',
     fontFamily: 'Urbanist-Medium',
@@ -994,7 +1036,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     width: '100%',
   },
-   loginText1: {
+  loginText1: {
     color: '#FFFFFF7A',
     textAlign: 'center',
     fontFamily: 'Urbanist-Medium',
@@ -1003,8 +1045,8 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     width: '100%',
   },
- 
-      loginButton: {
+
+  loginButton: {
     display: 'flex',
     width: '100%',
     height: 48,
@@ -1020,7 +1062,7 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
   },
 
-      loginButton1: {
+  loginButton1: {
     display: 'flex',
     width: '100%',
     height: 48,
@@ -1035,7 +1077,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
   },
-     termsText1: {
+  termsText1: {
     color: 'rgba(255,255,255,0.48)',
     fontFamily: 'Urbanist-Regular',
     fontSize: 14,
@@ -1044,13 +1086,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 12,
   },
-      logo: {
+  logo: {
     width: 64,
     height: 64,
     marginBottom: 20,
   },
- 
-      popupContainer: {
+
+  popupContainer: {
     width: width * 0.85,
     padding: 20,
     borderRadius: 24,
@@ -1058,16 +1100,16 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.1)',
     alignItems: 'center',
     overflow: 'hidden',
- 
+
     backgroundColor: 'rgba(255,255,255,0.15)',
   },
-    overlay: {
+  overlay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
- 
+
   previewText: {
     color: '#002050',
     textAlign: 'center',
@@ -1077,12 +1119,12 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   payText: {
-  color: '#002050',
-  fontFamily: 'Urbanist-Medium',
-  fontSize: 17,
-  fontWeight: '600',
-  letterSpacing: 1,
-},
+    color: '#002050',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: '600',
+    letterSpacing: 1,
+  },
   previewBtn: {
     display: 'flex',
     width: '90%',
@@ -1251,14 +1293,13 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     letterSpacing: 1,
   },
-    priceText1: {
+  priceText1: {
     color: '#002050',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 17,
     fontWeight: 700,
     letterSpacing: 1,
   },
-
 
   card: {
     flexDirection: 'column',
@@ -1276,7 +1317,6 @@ const styles = StyleSheet.create({
     //padding: 12,
     borderRadius: 40,
 
-
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
@@ -1284,7 +1324,7 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
     height: 48,
     width: 48,
-   
+
     justifyContent: 'center',
     alignItems: 'center',
   },

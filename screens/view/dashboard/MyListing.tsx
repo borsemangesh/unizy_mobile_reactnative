@@ -97,6 +97,10 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
     const token = await AsyncStorage.getItem('userToken');
     if (!token) return;
 
+
+    console.log('URL:', url);
+    console.log('Token:', token);
+
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -183,6 +187,9 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
         isfeature={item.isfeatured}
        navigation={navigation}
        shareid={item.id}
+       catagory_id={item.category_id}
+       catagory_name = {item.title}
+
       />
     </View>
   );

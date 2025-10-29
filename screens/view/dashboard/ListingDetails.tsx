@@ -26,6 +26,8 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
   const route = useRoute();
   //const { shareid } = route.params as { shareid: number };
   const { shareid = 1 } = (route.params as { shareid?: number }) || {}
+  const { catagory_id = 0 } = (route.params as { catagory_id?: number }) || {}
+   const { catagory_name = '' } = (route.params as { catagory_name?: string }) || {}
 
 
   const [data, setData] = useState<any>(null);
@@ -35,6 +37,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
+        console.log('shareidListDetails:', shareid, catagory_id);
          const token = await AsyncStorage.getItem('userToken');
         if (!token) return;
         const url = `${MAIN_URL.baseUrl}category/mylisting-details/${shareid}`;
@@ -85,11 +88,6 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
     const data1 = await response.json();
     console.log("✅ API Response:", data1);
 
-    // if (response.ok) {
-    //   showToast( "Product status updated!",'success');
-    // } else {
-    //   showToast("Error", data.message || "Something went wrong");
-    // }
     if (data1.message) {
       showToast(data1.message, data1.statusCode === 200 ? 'success' : 'error');
     } else {
@@ -115,7 +113,11 @@ const formatDateWithDash = (dateString?: string) => {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerRow}>
-            <TouchableOpacity onPress={() => {navigation.goBack()}}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.goBack();
+              }}
+            >
               <View style={styles.backIconRow}>
                 <Image
                   source={require('../../../assets/images/back.png')}
@@ -123,191 +125,277 @@ const formatDateWithDash = (dateString?: string) => {
                 />
               </View>
             </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>Listing Details</Text>
+            <Text allowFontScaling={false} style={styles.unizyText}>
+              Listing Details
+            </Text>
             <View style={{ width: 48 }} />
           </View>
         </View>
 
-
-        <View >
-           <ScrollView
+        <View>
+          <ScrollView
             contentContainerStyle={styles.scrollContainer}
             onScroll={Animated.event([
-                {
+              {
                 nativeEvent: { contentOffset: { y: scrollY1 } },
-                },
+              },
             ])}
             scrollEventThrottle={16}
+          >
+            <View
+              style={{
+                gap: 16,
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '100%',
+              }}
             >
-            <View style={{gap: 16,justifyContent:'center',alignItems:'center',width: '100%'}}>
-                {/* Card */}
-                <View style={styles.card}>
-                    <View style={{ flexDirection: 'row'}}>
-                        <Image
-                            source={{
-                              uri: data?.list?.profileshowinview
-                                ? data?.list?.createdby?.profile
-                                : data?.list?.thumbnail,
-                            }}
-                            style={styles.image}
-                            resizeMode="cover"
-                          />
-                        <View style={{ marginLeft: 10,gap: 8}}>
-                            <Text allowFontScaling={false} style={styles.productlebleHeader}> {data?.list?.title}</Text>
-                            <Text allowFontScaling={false} style={styles.productlableprice}>£{data?.list?.price}</Text>
-                            <View style={styles.univercitycontainer}>
-                                <Text allowFontScaling={false} style={styles.universitylable}>{data?.list?.createdby?.university_name}</Text>
-                               <Text allowFontScaling={false} style={styles.datetlable}>
-                              {formatDateWithDash(data?.list?.created_at)}
-                            </Text>
-
-                            </View>
-                            
-                        </View>
+              {/* Card */}
+              <View style={styles.card}>
+                <View style={{ flexDirection: 'row' }}>
+                  <Image
+                    source={{
+                      uri: data?.list?.profileshowinview
+                        ? data?.list?.createdby?.profile
+                        : data?.list?.thumbnail,
+                    }}
+                    style={styles.image}
+                    resizeMode="cover"
+                  />
+                  <View style={{ marginLeft: 10, gap: 8 }}>
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.productlebleHeader}
+                    >
+                      {' '}
+                      {data?.list?.title}
+                    </Text>
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.productlableprice}
+                    >
+                      £{data?.list?.price}
+                    </Text>
+                    <View style={styles.univercitycontainer}>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.universitylable}
+                      >
+                        {data?.list?.createdby?.university_name}
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.datetlable}>
+                        {formatDateWithDash(data?.list?.created_at)}
+                      </Text>
                     </View>
-                    <View style={styles.cardconstinerdivider}/>
-                    <View style={styles.listingtyperow}>
-                        <Text allowFontScaling={false} style={styles.lebleHeader}>Listing Type:</Text>
-                         <Text allowFontScaling={false} style={styles.status}>
+                  </View>
+                </View>
+                <View style={styles.cardconstinerdivider} />
+                <View style={styles.listingtyperow}>
+                  <Text allowFontScaling={false} style={styles.lebleHeader}>
+                    Listing Type:
+                  </Text>
+                  <Text allowFontScaling={false} style={styles.status}>
                     {data?.list?.isfeatured ? 'Featured' : 'Not Featured'}
                   </Text>
-                    </View>
-                    <View style={styles.listingtyperow}>
-                        <Text allowFontScaling={false} style={styles.lebleHeader}>Listing Status:</Text>
-                        <Text allowFontScaling={false} style={styles.status}> {data?.list?.isactive ? 'Active' : 'Inactive'}</Text>
-                    </View>
                 </View>
+                <View style={styles.listingtyperow}>
+                  <Text allowFontScaling={false} style={styles.lebleHeader}>
+                    Listing Status:
+                  </Text>
+                  <Text allowFontScaling={false} style={styles.status}>
+                    {' '}
+                    {data?.list?.isactive ? 'Active' : 'Inactive'}
+                  </Text>
+                </View>
+              </View>
 
-                <View style={styles.carddivider}/>
+              <View style={styles.carddivider} />
 
-               {Array.isArray(data?.buyers) &&
-              data.buyers.map((buyer: any, index: number) => (
-                <View key={index} style={styles.card}>
-          {/* HEADER */}
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 4,
-              justifyContent: buyer.otpverified ? 'space-between' : 'flex-start',
-            }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-              <Image
-                source={require('../../../assets/images/sellerfile.png')}
-                style={{ width: 24, height: 24 }}
-                resizeMode="cover"
-              />
-              <Text allowFontScaling={false} style={styles.sellerHeaderlable}>Sale Details</Text>
-            </View>
-
-            {/* ✅ STATUS BADGE - only if otpverified */}
-                {buyer.otpverified && (
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      backgroundColor: 'rgba(255, 255, 255, 0.18)',
-                      paddingHorizontal: 6,
-                      paddingVertical: 4,
-                      borderRadius: 6,
-                      gap: 4,
-                    }}>
-                    <Text
-                    allowFontScaling={false}
+              {Array.isArray(data?.buyers) &&
+                data.buyers.map((buyer: any, index: number) => (
+                  <View key={index} style={styles.card}>
+                    {/* HEADER */}
+                    <View
                       style={{
-                        color: 'rgba(255, 255, 255, 0.88)',
-                        fontFamily: 'Urbanist-Regular',
-                        fontSize: 12,
-                        fontWeight: '600',
-                      }}>
-                      Completed
-                    </Text>
-                    <Image
-                      source={require('../../../assets/images/tick.png')}
-                      style={{ width: 12, height: 12 }}
-                      resizeMode="cover"
-                    />
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 4,
+                        justifyContent: buyer.otpverified
+                          ? 'space-between'
+                          : 'flex-start',
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 4,
+                        }}
+                      >
+                        <Image
+                          source={require('../../../assets/images/sellerfile.png')}
+                          style={{ width: 24, height: 24 }}
+                          resizeMode="cover"
+                        />
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.sellerHeaderlable}
+                        >
+                          Sale Details
+                        </Text>
+                      </View>
+
+                      {/* ✅ STATUS BADGE - only if otpverified */}
+                      {buyer.otpverified && (
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            backgroundColor: 'rgba(255, 255, 255, 0.18)',
+                            paddingHorizontal: 6,
+                            paddingVertical: 4,
+                            borderRadius: 6,
+                            gap: 4,
+                          }}
+                        >
+                          <Text
+                            allowFontScaling={false}
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.88)',
+                              fontFamily: 'Urbanist-Regular',
+                              fontSize: 12,
+                              fontWeight: '600',
+                            }}
+                          >
+                            Completed
+                          </Text>
+                          <Image
+                            source={require('../../../assets/images/tick.png')}
+                            style={{ width: 12, height: 12 }}
+                            resizeMode="cover"
+                          />
+                        </View>
+                      )}
+                    </View>
+
+                    <View style={styles.cardconstinerdivider} />
+
+                    {/* BUYER DETAILS */}
+                    <View style={styles.listingtyperow}>
+                      <Text allowFontScaling={false} style={styles.lebleHeader}>
+                        Buyer Name:
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.status}>
+                        {buyer.firstname} {buyer.lastname}
+                      </Text>
+                    </View>
+
+                    <View style={styles.listingtyperow}>
+                      <Text allowFontScaling={false} style={styles.lebleHeader}>
+                        Buyer’s University:
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.status}>
+                        {buyer.university}
+                      </Text>
+                    </View>
+
+                    <View style={styles.listingtyperow}>
+                      <Text allowFontScaling={false} style={styles.lebleHeader}>
+                        City:
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.status}>
+                        {buyer.city}
+                      </Text>
+                    </View>
+
+                    <View style={styles.listingtyperow}>
+                      <Text allowFontScaling={false} style={styles.lebleHeader}>
+                        Sold On:
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.status}>
+                        {new Date(buyer.date).toLocaleString('en-GB', {
+                          month: 'short',
+                          day: '2-digit',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: true,
+                        })}
+                      </Text>
+                    </View>
+
+                    <View style={styles.listingtyperow}>
+                      <Text allowFontScaling={false} style={styles.lebleHeader}>
+                        Sold For:
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.status}>
+                        ${buyer.price}
+                      </Text>
+                    </View>
+
+                    <View style={styles.cardconstinerdivider} />
+
+                    {/* 🔢 Enter OTP Button - only if NOT verified */}
+                    {!buyer.otpverified && (
+                      <View
+                        style={{
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <TouchableOpacity
+                          style={{
+                            width: '100%',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          }}
+                          onPress={() =>
+                            console.log(`Enter OTP for ${buyer.firstname}`)
+                          }
+                        >
+                          <Text allowFontScaling={false} style={styles.status}>
+                            Enter OTP
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
                   </View>
-                )}
-              </View>
-
-              <View style={styles.cardconstinerdivider} />
-
-              {/* BUYER DETAILS */}
-              <View style={styles.listingtyperow}>
-                <Text allowFontScaling={false} style={styles.lebleHeader}>Buyer Name:</Text>
-                <Text allowFontScaling={false} style={styles.status}>
-                  {buyer.firstname} {buyer.lastname}
-                </Text>
-              </View>
-
-              <View style={styles.listingtyperow}>
-                <Text allowFontScaling={false} style={styles.lebleHeader}>Buyer’s University:</Text>
-                <Text allowFontScaling={false} style={styles.status}>{buyer.university}</Text>
-              </View>
-
-              <View style={styles.listingtyperow}>
-                <Text allowFontScaling={false} style={styles.lebleHeader}>City:</Text>
-                <Text allowFontScaling={false} style={styles.status}>{buyer.city}</Text>
-              </View>
-
-              <View style={styles.listingtyperow}>
-                <Text allowFontScaling={false} style={styles.lebleHeader}>Sold On:</Text>
-                <Text allowFontScaling={false} style={styles.status}>
-                  {new Date(buyer.date).toLocaleString('en-GB', {
-                      month: 'short',
-                      day: '2-digit',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      hour12: true,
-                  })}
-                </Text>
-              </View>
-
-              <View style={styles.listingtyperow}>
-                <Text allowFontScaling={false} style={styles.lebleHeader}>Sold For:</Text>
-                <Text allowFontScaling={false} style={styles.status}>${buyer.price}</Text>
-              </View>
-
-              <View style={styles.cardconstinerdivider} />
-
-              {/* 🔢 Enter OTP Button - only if NOT verified */}
-              {!buyer.otpverified && (
-                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                  <TouchableOpacity
-                    style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}
-                    onPress={() => console.log(`Enter OTP for ${buyer.firstname}`)}>
-                    <Text allowFontScaling={false} style={styles.status}>Enter OTP</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
+                ))}
             </View>
-         ))}
-
-                </View>
-                
           </ScrollView>
-
         </View>
-        
-            <View style={styles.bottomview}>
-                <TouchableOpacity style={styles.cancelBtn} onPress={handleDeactivate}>
-                <Text allowFontScaling={false} style={styles.cancelText}>Deactivate</Text>
-                </TouchableOpacity>
 
-                <TouchableOpacity
-                style={[styles.cancelBtn, { backgroundColor: '#ffffffa7' }]}
-            
-                >
-                <Text allowFontScaling={false} style={[styles.cancelText, { color: '#000000' }]}>
-                    Edit Listing
-                </Text>
-                </TouchableOpacity>
-            </View>
-        
+        <View style={styles.bottomview}>
+          <TouchableOpacity style={styles.cancelBtn} onPress={handleDeactivate}>
+            <Text allowFontScaling={false} style={styles.cancelText}>
+              Deactivate
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.cancelBtn, { backgroundColor: '#ffffffa7' }]}
+            onPress={() => {
+              navigation.replace(
+                'EditListScreen',
+                {
+                  productId: catagory_id,
+                  productName: catagory_name,
+                  shareid: shareid,
+                },
+                { animation: 'none' },
+              );
+            }}
+          >
+            <Text
+              allowFontScaling={false}
+              style={[styles.cancelText, { color: '#000000' }]}
+            >
+              Edit Listing
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      <NewCustomToastContainer/>
+      <NewCustomToastContainer />
     </ImageBackground>
   );
 };
