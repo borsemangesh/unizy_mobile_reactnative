@@ -23,7 +23,6 @@ import { CommonActions } from '@react-navigation/native';
 import Button from '../../utils/component/Button';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 
-
 type previewDetailsProps = {
   navigation: any;
 };
@@ -37,7 +36,6 @@ const itemOptions = [
   { id: 2, option_name: 'Like new' },
   { id: 3, option_name: 'Used' },
 ];
-
 
 const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const [showPopup, setShowPopup] = useState(false);
@@ -55,29 +53,31 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const [fields, setFields] = useState<any[]>([]); // seller fields from API
   const today = new Date();
 
-// Format as DD-MM-YYYY
-const formattedDate = `${today.getDate().toString().padStart(2, '0')}-${(today.getMonth() + 1)
-  .toString()
-  .padStart(2, '0')}-${today.getFullYear()}`;
+  // Format as DD-MM-YYYY
+  const formattedDate = `${today.getDate().toString().padStart(2, '0')}-${(
+    today.getMonth() + 1
+  )
+    .toString()
+    .padStart(2, '0')}-${today.getFullYear()}`;
 
-interface Category {
-  id: number;
-  name: string;
-  description: string | null;
-  isactive: boolean;
-  logo: string | null;
-  commission: string | null;
-  max_cappund: string | null;
-  feature_fee:string | null
-  max_feature_cap: |null,
-}
+  interface Category {
+    id: number;
+    name: string;
+    description: string | null;
+    isactive: boolean;
+    logo: string | null;
+    commission: string | null;
+    max_cappund: string | null;
+    feature_fee: string | null;
+    max_feature_cap: null;
+  }
 
   interface UserMeta {
     firstname: string | null;
     lastname: string | null;
     profile: string | null;
     student_email: string | null;
-    university_name:string|null
+    university_name: string | null;
     category?: Category | null;
   }
 
@@ -102,7 +102,7 @@ interface Category {
     fetchStoredData();
   }, []);
 
-    useEffect(() => {
+  useEffect(() => {
     const loadUserMeta = async () => {
       try {
         const metaStr = await AsyncStorage.getItem('userMeta');
@@ -118,38 +118,33 @@ interface Category {
     loadUserMeta();
   }, []);
 
-  
-
-
   type FormEntry = {
-  value: any;
-  alias_name: string | null;
-};
-
+    value: any;
+    alias_name: string | null;
+  };
 
   const getValueByAlias = (
-  formData: Record<string, FormEntry> | null,
-  alias: string,
-): any => {
-  if (!formData) return null;
+    formData: Record<string, FormEntry> | null,
+    alias: string,
+  ): any => {
+    if (!formData) return null;
 
-  const entry = Object.values(formData).find(
-    item => item.alias_name === alias,
-  ) as FormEntry | undefined;
+    const entry = Object.values(formData).find(
+      item => item.alias_name === alias,
+    ) as FormEntry | undefined;
 
-  if (entry) return entry.value;
+    if (entry) return entry.value;
 
-  // fallback if alias_name missing
-  if (formData[alias]) return formData[alias].value;
+    // fallback if alias_name missing
+    if (formData[alias]) return formData[alias].value;
 
-  return null;
-};
+    return null;
+  };
 
-const titleValue = getValueByAlias(storedForm, 'title') || 'No Title';
-//const priceValue = getValueByAlias(storedForm, 'price') || '0';
-const descriptionvalue= getValueByAlias(storedForm,'description') || 'No Description'
-
-
+  const titleValue = getValueByAlias(storedForm, 'title') || 'No Title';
+  //const priceValue = getValueByAlias(storedForm, 'price') || '0';
+  const descriptionvalue =
+    getValueByAlias(storedForm, 'description') || 'No Description';
 
   const onScroll = (event: {
     nativeEvent: { contentOffset: { x: number } };
@@ -159,7 +154,7 @@ const descriptionvalue= getValueByAlias(storedForm,'description') || 'No Descrip
     setActiveIndex(index);
   };
 
-   useEffect(() => {
+  useEffect(() => {
     const fetchFields = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
@@ -191,7 +186,7 @@ const descriptionvalue= getValueByAlias(storedForm,'description') || 'No Descrip
             lastname: json.metadata.lastname ?? null,
             profile: json.metadata.profile ?? null,
             student_email: json.metadata.student_email ?? null,
-            university_name:json.metadata.university_name ?? null,
+            university_name: json.metadata.university_name ?? null,
             category: json.metadata.category ?? null,
           });
 
@@ -202,7 +197,7 @@ const descriptionvalue= getValueByAlias(storedForm,'description') || 'No Descrip
               lastname: json.metadata.lastname ?? null,
               profile: json.metadata.profile ?? null,
               student_email: json.metadata.student_email ?? null,
-              university_name:json.metadata.university_name ?? null,
+              university_name: json.metadata.university_name ?? null,
               category: json.metadata.category ?? null,
             }),
           );
@@ -224,230 +219,237 @@ const descriptionvalue= getValueByAlias(storedForm,'description') || 'No Descrip
     fetchFields();
   }, []);
 
-
-
   type ImageField = {
-  id?: string;
-  uri: string;
-  name: string;
-  type?: string;
-};
+    id?: string;
+    uri: string;
+    name: string;
+    type?: string;
+  };
 
-// const handleListPress = async () => {
-//   try {
-//     const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
-//     const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
+  // const handleListPress = async () => {
+  //   try {
+  //     const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+  //     const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
 
-//     if (isFeatured) {
-//       navigation.navigate('PaymentScreen', {
-//         amount: diff1, 
-//         onSuccess: async () => {
-//           await listProduct();
-//         },
-//       });
-//     } else {
-//       await listProduct(); 
-//     }
-//   } catch (e) {
-//     console.log('Error parsing storedForm:', e);
-//   }
-// };
+  //     if (isFeatured) {
+  //       navigation.navigate('PaymentScreen', {
+  //         amount: diff1,
+  //         onSuccess: async () => {
+  //           await listProduct();
+  //         },
+  //       });
+  //     } else {
+  //       await listProduct();
+  //     }
+  //   } catch (e) {
+  //     console.log('Error parsing storedForm:', e);
+  //   }
+  // };
 
-const handleListPress = async () => {
-  console.log('🔵 handleListPress called');
- //setShowPopup(true);
-  try {
-    console.log('Step 1: Fetching formData from AsyncStorage...');
-    const storedData = await AsyncStorage.getItem('formData');
-    console.log('✅ AsyncStorage.getItem(formData) result:', storedData);
+  const handleListPress = async () => {
+    console.log('🔵 handleListPress called');
+    //setShowPopup(true);
+    try {
+      console.log('Step 1: Fetching formData from AsyncStorage...');
+      const storedData = await AsyncStorage.getItem('formData');
+      console.log('✅ AsyncStorage.getItem(formData) result:', storedData);
 
-    if (!storedData) {
-      console.log('⚠️ No form data found in storage');
-      showToast('No form data found');
-      return;
-    }
+      if (!storedData) {
+        console.log('⚠️ No form data found in storage');
+        showToast('No form data found');
+        return;
+      }
 
-    const formData: Record<
-      string,
-      { value: any; alias_name: string | null }
-    > = JSON.parse(storedData);
-    console.log('✅ Parsed formData:', formData);
+      const formData: Record<
+        string,
+        { value: any; alias_name: string | null }
+      > = JSON.parse(storedData);
+      console.log('✅ Parsed formData:', formData);
 
-    console.log('Step 2: Fetching userToken...');
-    const token = await AsyncStorage.getItem('userToken');
-    const productId1 = await AsyncStorage.getItem('selectedProductId');
+      console.log('Step 2: Fetching userToken...');
+      const token = await AsyncStorage.getItem('userToken');
+      const productId1 = await AsyncStorage.getItem('selectedProductId');
+      const shareid = await AsyncStorage.getItem('shareid');
 
-    if (!token) {
-      console.log('⚠️ Token not found. Cannot upload.');
-      return;
-    }
+      if (!token) {
+        console.log('⚠️ Token not found. Cannot upload.');
+        return;
+      }
 
-    console.log('Step 3: Splitting formData...');
+      console.log('Step 3: Splitting formData...');
 
-    const imageFields = Object.entries(formData)
-      .filter(([key, obj]) => {
+      const imageFields = Object.entries(formData)
+        .filter(([key, obj]) => {
+          const v = obj.value;
+          return (
+            Array.isArray(v) &&
+            v.length > 0 &&
+            v.every((item: any) => item?.uri)
+          );
+        })
+        .map(([key, obj]) => [key, obj.value as ImageField[]]) as [
+        string,
+        ImageField[],
+      ][];
+
+      const nonImageFields = Object.entries(formData).filter(([key, obj]) => {
         const v = obj.value;
-        return (
-          Array.isArray(v) &&
-          v.length > 0 &&
-          v.every((item: any) => item?.uri)
-        );
-      })
-      .map(([key, obj]) => [key, obj.value as ImageField[]]) as [
-      string,
-      ImageField[]
-    ][];
+        return !(Array.isArray(v) && v.every((item: any) => item?.uri));
+      });
 
-    const nonImageFields = Object.entries(formData).filter(([key, obj]) => {
-      const v = obj.value;
-      return !(Array.isArray(v) && v.every((item: any) => item?.uri));
-    });
+      console.log('✅ Non-image fields:', nonImageFields);
+      console.log('✅ Image fields:', imageFields);
 
-    console.log('✅ Non-image fields:', nonImageFields);
-    console.log('✅ Image fields:', imageFields);
+      const dataArray = nonImageFields
+  .filter(([key, obj]) => !isNaN(Number(key))) // only numeric keys
+  .map(([key, obj]) => ({
+    id: Number(key),
+    param_value: obj.value,
+  }));
 
-    const dataArray = nonImageFields.map(([key, obj]) => ({
-      id: Number(key),
-      param_value: obj.value, // now take .value
-    }));
+      console.log('✅ Data array for create API:', dataArray);
 
-    console.log('✅ Data array for create API:', dataArray);
+      const createPayload = {
+        category_id: productId1, // dynamic or static
+        data: dataArray,
+      };
 
-    const createPayload = {
-      category_id: productId1, // dynamic or static
-      data: dataArray,
-    };
+      console.log('Step 5: Calling create API with payload:', createPayload);
 
-    console.log('Step 5: Calling create API with payload:', createPayload);
-
-    console.log('API',`${MAIN_URL.baseUrl}category/featurelist-update/${productId1}`);
-    const createRes = await fetch(
-      `${MAIN_URL.baseUrl}category/featurelist-update/${productId1}`,
-      {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(createPayload),
-      },
-    );
-
-    console.log(`✅ Create API status: ${createRes.status}`);
-    const createJson = await createRes.json();
-    console.log('✅ Create API response:', createJson);
-
-    if (!createRes.ok) {
-      showToast('Failed to create feature list');
-      return;
-    }
-
-    const feature_id = createJson?.data?.id;
-    if (!feature_id) {
-      console.log('❌ feature_id not returned from create API.');
-      showToast('feature_id missing in response');
-      return;
-    }
-    console.log('✅ feature_id from create API:', feature_id);
-
-    for (const [param_id, images] of imageFields) {
-      console.log(`Step 7: Uploading images for param_id=${param_id}`);
-
-      for (const image of images) {
-        console.log(
-          `🟡 Preparing upload for image under param_id=${param_id}:`,
-          image,
-        );
-
-        const data = new FormData();
-        data.append('files', {
-          uri: image.uri,
-          type: image.type || 'image/jpeg',
-          name: image.name,
-        } as any);
-        data.append('feature_id', feature_id); 
-        data.append('param_id', param_id);
-
-        console.log('✅ FormData prepared for upload');
-
-        const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-upload`;
-        console.log(
-          `Step 7: Uploading image ${image.name} with param_id=${param_id} to ${uploadUrl}`,
-        );
-
-        const uploadRes = await fetch(uploadUrl, {
-          method: 'POST',
+      console.log(
+        'API',
+        `${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`,
+      );
+      const createRes = await fetch(
+        `${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`,
+        {
+          method: 'PATCH',
           headers: {
-            Authorization: `Bearer ${token}`, 
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
           },
-          body: data,
-        });
+          body: JSON.stringify(createPayload),
+        },
+      );
 
-        console.log(`✅ Upload completed. Status: ${uploadRes.status}`);
-        const uploadJson = await uploadRes.json();
-        console.log('✅ Upload response JSON:', uploadJson);
+      console.log(`✅ Create API status: ${createRes.status}`);
+      const createJson = await createRes.json();
+      console.log('✅ Create API response:', createJson);
 
-        if (!uploadRes.ok) {
+      if (!createRes.ok) {
+        showToast('Failed to create feature list');
+        return;
+      }
+
+      const feature_id = createJson?.data?.id;
+      if (!feature_id) {
+        console.log('❌ feature_id not returned from create API.');
+        showToast('feature_id missing in response');
+        return;
+      }
+      console.log('✅ feature_id from create API:', feature_id);
+
+      for (const [param_id, images] of imageFields) {
+        console.log(`Step 7: Uploading images for param_id=${param_id}`);
+
+        for (const image of images) {
           console.log(
-            `❌ Upload failed for ${image.name} (param_id=${param_id})`,
+            `🟡 Preparing upload for image under param_id=${param_id}:`,
+            image,
           );
-          showToast(`Failed to upload image ${image.name}`);
-        } else {
+
+          const data = new FormData();
+          data.append('files', {
+            uri: image.uri,
+            type: image.type || 'image/jpeg',
+            name: image.name,
+          } as any);
+          data.append('feature_id', feature_id);
+          data.append('param_id', param_id);
+
+          console.log('✅ FormData prepared for upload');
+
+          const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-upload`;
           console.log(
-            `✅ Upload success for ${image.name} (param_id=${param_id})`,
+            `Step 7: Uploading image ${image.name} with param_id=${param_id} to ${uploadUrl}`,
           );
+
+          const uploadRes = await fetch(uploadUrl, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: data,
+          });
+
+          console.log(`✅ Upload completed. Status: ${uploadRes.status}`);
+          const uploadJson = await uploadRes.json();
+          console.log('✅ Upload response JSON:', uploadJson);
+
+          if (!uploadRes.ok) {
+            console.log(
+              `❌ Upload failed for ${image.name} (param_id=${param_id})`,
+            );
+            showToast(`Failed to upload image ${image.name}`);
+          } else {
+            console.log(
+              `✅ Upload success for ${image.name} (param_id=${param_id})`,
+            );
+          }
         }
       }
+
+      console.log('✅ All uploads done. Showing toast.');
+      showToast('All data uploaded successfully');
+      setShowPopup(true);
+    } catch (error) {
+      console.log('❌ Error in handleListPress:', error);
+      showToast('Error uploading data');
     }
-
-    console.log('✅ All uploads done. Showing toast.');
-    showToast('All data uploaded successfully');
-    setShowPopup(true);
-  } 
-  catch (error) {
-    console.log('❌ Error in handleListPress:', error);
-    showToast('Error uploading data');
-  }
-};
-
-const getCurrentDate = () => {
-  const today = new Date();
-  return `${String(today.getDate()).padStart(2, '0')}-${String(
-    today.getMonth() + 1
-  ).padStart(2, '0')}-${today.getFullYear()}`;
-};
-
- const getInitials = (firstName = '', lastName = '') => {
-  const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
-  const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
-  return (f + l) || '?';
-};
+  };
 
 
-const raw = getValueByAlias(storedForm, 'price') ?? '0';
-const priceValue = parseFloat(String(raw)) || 0;
 
-const commissionPercent = parseFloat(userMeta?.category?.commission ?? '0');
-const maxCap = parseFloat(userMeta?.category?.max_cappund ?? '0');
+  const getCurrentDate = () => {
+    const today = new Date();
+    return `${String(today.getDate()).padStart(2, '0')}-${String(
+      today.getMonth() + 1,
+    ).padStart(2, '0')}-${today.getFullYear()}`;
+  };
 
-const commissionAmount = priceValue * (commissionPercent / 100);
-const calculatedPrice = priceValue + commissionAmount;
-const maxAllowedPrice = priceValue + maxCap;
-const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(2);
+  const getInitials = (firstName = '', lastName = '') => {
+    const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
+    const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
+    return f + l || '?';
+  };
 
+  const raw = getValueByAlias(storedForm, 'price') ?? '0';
+  const priceValue = parseFloat(String(raw)) || 0;
 
-const raw1 = getValueByAlias(storedForm, 'price') ?? '0';
-const priceValue1 = parseFloat(String(raw1)) || 0;
+  const commissionPercent = parseFloat(userMeta?.category?.commission ?? '0');
+  const maxCap = parseFloat(userMeta?.category?.max_cappund ?? '0');
 
-const commissionPercent1 = parseFloat(userMeta?.category?.feature_fee ?? '0');
-const maxCap1 = parseFloat(userMeta?.category?.max_feature_cap ?? '0');
+  const commissionAmount = priceValue * (commissionPercent / 100);
+  const calculatedPrice = priceValue + commissionAmount;
+  const maxAllowedPrice = priceValue + maxCap;
+  const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(
+    2,
+  );
 
-const commissionAmount1 = priceValue1 * (commissionPercent1 / 100);
-const calculatedPrice1 = priceValue1 + commissionAmount1;
-const maxAllowedPrice1 = priceValue1 + maxCap1;
-const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2);
-const diff1 =commissionPrice1-priceValue1
-  
+  const raw1 = getValueByAlias(storedForm, 'price') ?? '0';
+  const priceValue1 = parseFloat(String(raw1)) || 0;
+
+  const commissionPercent1 = parseFloat(userMeta?.category?.feature_fee ?? '0');
+  const maxCap1 = parseFloat(userMeta?.category?.max_feature_cap ?? '0');
+
+  const commissionAmount1 = priceValue1 * (commissionPercent1 / 100);
+  const calculatedPrice1 = priceValue1 + commissionAmount1;
+  const maxAllowedPrice1 = priceValue1 + maxCap1;
+  const commissionPrice1 = +Math.min(
+    calculatedPrice1,
+    maxAllowedPrice1,
+  ).toFixed(2);
+  const diff1 = commissionPrice1 - priceValue1;
 
   return (
     <ImageBackground
@@ -460,7 +462,8 @@ const diff1 =commissionPrice1-priceValue1
           <View style={styles.headerRow}>
             <TouchableOpacity
               style={styles.backBtn}
-              onPress={() => navigation.replace('EditPreviewThumbnail')}>
+              onPress={() => navigation.replace('EditPreviewThumbnail')}
+            >
               <View style={styles.backIconRow}>
                 <Image
                   source={require('../../../assets/images/back.png')}
@@ -468,10 +471,12 @@ const diff1 =commissionPrice1-priceValue1
                 />
               </View>
             </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>Preview Details</Text>
+            <Text allowFontScaling={false} style={styles.unizyText}>
+              Preview Details
+            </Text>
           </View>
         </View>
-{/* 
+        {/* 
      <ScrollView
           contentContainerStyle={styles.scrollContainer}
           onScroll={Animated.event([
@@ -482,63 +487,63 @@ const diff1 =commissionPrice1-priceValue1
           scrollEventThrottle={16}
         > */}
         <ScrollView
-            contentContainerStyle={[
-             styles.scrollContainer,
-               {
-               paddingBottom: screenHeight * 0.1 + insets.bottom, // 10% of screen + safe area
-                },
-            ]}
-             scrollEventThrottle={16}
-            >
-       {storedForm?.[6]?.value?.length > 1 ? (
-          <View>
-            <FlatList
-              ref={flatListRef}
-              data={storedForm[6].value}
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              keyExtractor={(item, index) => index.toString()}
-              onScroll={onScroll}
-              scrollEventThrottle={16}
-              renderItem={({ item }) => (
-                <Image
-                  source={{ uri: item.uri }}
-                  style={{ width: screenWidth, height: 250 }}
-                  resizeMode="cover"
-                />
-              )}
-            />
-
-            {/* Custom Step Indicator */}
-            <View style={styles.stepIndicatorContainer}>
-              {storedForm[6].value.map((_: any, index: number) => {
-                const isActive = index === activeIndex;
-                return (
-                  <View
-                    key={index}
-                    style={
-                      isActive
-                        ? styles.activeStepCircle
-                        : styles.inactiveStepCircle
-                    }
+          contentContainerStyle={[
+            styles.scrollContainer,
+            {
+              paddingBottom: screenHeight * 0.1 + insets.bottom, // 10% of screen + safe area
+            },
+          ]}
+          scrollEventThrottle={16}
+        >
+          {storedForm?.[6]?.value?.length > 1 ? (
+            <View>
+              <FlatList
+                ref={flatListRef}
+                data={storedForm[6].value}
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={(item, index) => index.toString()}
+                onScroll={onScroll}
+                scrollEventThrottle={16}
+                renderItem={({ item }) => (
+                  <Image
+                    source={{ uri: item.uri }}
+                    style={{ width: screenWidth, height: 250 }}
+                    resizeMode="cover"
                   />
-                );
-              })}
+                )}
+              />
+
+              {/* Custom Step Indicator */}
+              <View style={styles.stepIndicatorContainer}>
+                {storedForm[6].value.map((_: any, index: number) => {
+                  const isActive = index === activeIndex;
+                  return (
+                    <View
+                      key={index}
+                      style={
+                        isActive
+                          ? styles.activeStepCircle
+                          : styles.inactiveStepCircle
+                      }
+                    />
+                  );
+                })}
+              </View>
             </View>
-          </View>
-        ) : (
-          <Image
-            source={
-              storedForm?.[6]?.value?.[0]?.uri
-                ? { uri: storedForm[6].value[0].uri }
-                : require('../../../assets/images/drone.png')
-            }
-            style={{ width: '100%', height: 250 }}
-            resizeMode="cover"
-          />
-        )}
-                  <View style={{ flex: 1, padding: 16 }}>
+          ) : (
+            <Image
+              source={
+                storedForm?.[6]?.value?.[0]?.uri
+                  ? { uri: storedForm[6].value[0].uri }
+                  : require('../../../assets/images/drone.png')
+              }
+              style={{ width: '100%', height: 250 }}
+              resizeMode="cover"
+            />
+          )}
+          <View style={{ flex: 1, padding: 16 }}>
             <View style={styles.card}>
               <View style={{ gap: 8 }}>
                 <Text allowFontScaling={false} style={styles.QuaddText}>
@@ -558,7 +563,9 @@ const diff1 =commissionPrice1-priceValue1
                   alignSelf: 'stretch',
                 }}
               >
-                <Text allowFontScaling={false} style={styles.productDesHeding}>Product Description</Text>
+                <Text allowFontScaling={false} style={styles.productDesHeding}>
+                  Product Description
+                </Text>
                 <Text allowFontScaling={false} style={styles.productDesc}>
                   {descriptionvalue}
                 </Text>
@@ -568,75 +575,100 @@ const diff1 =commissionPrice1-priceValue1
                     source={require('../../../assets/images/calendar_icon.png')}
                     style={{ height: 16, width: 16 }}
                   />
-                  <Text allowFontScaling={false} style={styles.userSub}>Date Posted: {getCurrentDate()}</Text>
+                  <Text allowFontScaling={false} style={styles.userSub}>
+                    Date Posted: {getCurrentDate()}
+                  </Text>
                 </View>
               </View>
             </View>
 
-          <View style={styles.card}>
-          <View style={styles.gap12}>
-            <Text allowFontScaling={false} style={styles.productDeatilsHeading}>Product Details</Text>
+            <View style={styles.card}>
+              <View style={styles.gap12}>
+                <Text
+                  allowFontScaling={false}
+                  style={styles.productDeatilsHeading}
+                >
+                  Product Details
+                </Text>
 
-            <View style={{ gap: 12 }}>
-              {fields.map(field => {
-                const fieldId = field.param.id;
+                <View style={{ gap: 12 }}>
+                  {fields.map(field => {
+                    const fieldId = field.param.id;
 
-                // Skip Title, Description, Price, Images, Featured
-                const skipAliases = ['title', 'description', 'price'];
-                if (
-                  skipAliases.includes(field.param.alias_name ?? '') ||
-                  ['Image', 'boolean'].includes(field.param.field_type)
-                )
-                  return null;
+                    // Skip Title, Description, Price, Images, Featured
+                    const skipAliases = ['title', 'description', 'price'];
+                    if (
+                      skipAliases.includes(field.param.alias_name ?? '') ||
+                      ['Image', 'boolean'].includes(field.param.field_type)
+                    )
+                      return null;
 
-                const storedValue = storedForm?.[fieldId]?.value;
-                if (storedValue == null) return null;
+                    const storedValue = storedForm?.[fieldId]?.value;
+                    if (storedValue == null) return null;
 
-                let displayValues: string[] = [];
+                    let displayValues: string[] = [];
 
-                if (field.param.field_type === 'dropdown') {
-                  if (Array.isArray(storedValue)) {
-                    displayValues = storedValue
-                      .map((id: number) =>
-                        field.param.options.find((opt: any) => opt.id === id)?.option_name
-                      )
-                      .filter(Boolean) as string[];
-                  } else {
-                    const option = field.param.options.find((opt: any) => opt.id === storedValue);
-                    if (option) displayValues = [option.option_name];
-                  }
-                } else if (Array.isArray(storedValue)) {
-                  displayValues = storedValue.map(String);
-                } else {
-                  displayValues = [String(storedValue)];
-                }
+                    if (field.param.field_type === 'dropdown') {
+                      if (Array.isArray(storedValue)) {
+                        displayValues = storedValue
+                          .map(
+                            (id: number) =>
+                              field.param.options.find(
+                                (opt: any) => opt.id === id,
+                              )?.option_name,
+                          )
+                          .filter(Boolean) as string[];
+                      } else {
+                        const option = field.param.options.find(
+                          (opt: any) => opt.id === storedValue,
+                        );
+                        if (option) displayValues = [option.option_name];
+                      }
+                    } else if (Array.isArray(storedValue)) {
+                      displayValues = storedValue.map(String);
+                    } else {
+                      displayValues = [String(storedValue)];
+                    }
 
-                return (
-                  <View key={fieldId} style={{ gap: 6 }}>
-                    {/* Label */}
-                    <Text allowFontScaling={false}style={styles.detailLabel}>{field.param.field_name}</Text>
+                    return (
+                      <View key={fieldId} style={{ gap: 6 }}>
+                        {/* Label */}
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.detailLabel}
+                        >
+                          {field.param.field_name}
+                        </Text>
 
-                    {/* Values */}
-                    <View style={styles.categoryContainer}>
-                      {displayValues.map((val, idx) => (
-                        <View key={idx} style={styles.categoryTag}>
-                          <Text allowFontScaling={false}style={styles.catagoryText}>{val}</Text>
+                        {/* Values */}
+                        <View style={styles.categoryContainer}>
+                          {displayValues.map((val, idx) => (
+                            <View key={idx} style={styles.categoryTag}>
+                              <Text
+                                allowFontScaling={false}
+                                style={styles.catagoryText}
+                              >
+                                {val}
+                              </Text>
+                            </View>
+                          ))}
                         </View>
-                      ))}
-                    </View>
-                  </View>
-                );
-              })}
+                      </View>
+                    );
+                  })}
+                </View>
+              </View>
             </View>
-          </View>
-        </View>
-
-
 
             {/* Selaer details */}
             <View style={styles.card}>
               <View style={{ gap: 12 }}>
-                <Text allowFontScaling={false} style={styles.productDeatilsHeading}>Seller Details</Text>
+                <Text
+                  allowFontScaling={false}
+                  style={styles.productDeatilsHeading}
+                >
+                  Seller Details
+                </Text>
 
                 <View style={{ flexDirection: 'row' }}>
                   {/* <Image source={profileImg} style={styles.avatar} /> */}
@@ -648,10 +680,13 @@ const diff1 =commissionPrice1-priceValue1
                     />
                   ) : (
                     <View style={styles.initialsCircle}>
-                      <Text allowFontScaling={false} style={styles.initialsText}>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.initialsText}
+                      >
                         {getInitials(
                           userMeta?.firstname ?? 'Alan',
-                          userMeta?.lastname ?? 'Walker'
+                          userMeta?.lastname ?? 'Walker',
                         )}
                       </Text>
                     </View>
@@ -659,17 +694,21 @@ const diff1 =commissionPrice1-priceValue1
 
                   <View style={{ width: '80%', gap: 4 }}>
                     <Text allowFontScaling={false} style={styles.userName}>
-                    {`${userMeta?.firstname ?? ''} ${userMeta?.lastname ?? ''}`.trim()}
-                  </Text>
+                      {`${userMeta?.firstname ?? ''} ${
+                        userMeta?.lastname ?? ''
+                      }`.trim()}
+                    </Text>
                     <Text allowFontScaling={false} style={styles.univeritytext}>
                       {userMeta?.university_name || 'University of Warwick,'}
                     </Text>
-                    <Text allowFontScaling={false} style={[styles.univeritytext, { marginTop: -5 }]}>
+                    <Text
+                      allowFontScaling={false}
+                      style={[styles.univeritytext, { marginTop: -5 }]}
+                    >
                       Coventry
                     </Text>
                   </View>
                 </View>
-
 
                 <View style={{ flexDirection: 'row', gap: 8 }}>
                   <View
@@ -694,7 +733,7 @@ const diff1 =commissionPrice1-priceValue1
                     />
 
                     <Text
-                    allowFontScaling={false}
+                      allowFontScaling={false}
                       style={{
                         color: 'rgba(255, 255, 255, 0.48)',
                         fontFamily: 'Urbanist-SemiBold',
@@ -727,7 +766,7 @@ const diff1 =commissionPrice1-priceValue1
                       style={{ height: 16, width: 16 }}
                     />
                     <Text
-                    allowFontScaling={false}
+                      allowFontScaling={false}
                       style={{
                         color: 'rgba(255, 255, 255, 0.48)',
                         fontFamily: 'Urbanist-SemiBold',
@@ -749,30 +788,38 @@ const diff1 =commissionPrice1-priceValue1
         <TouchableOpacity style={styles.previewBtn} onPress={handleListPress}>
           {/* <Text style={styles.previewText}>List</Text> */}
 
-        <Text allowFontScaling={false} style={styles.previewText}>
-        {(() => {
-          try {
-            const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
-            const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
+          <Text allowFontScaling={false} style={styles.previewText}>
+            {(() => {
+              try {
+                const form =
+                  typeof storedForm === 'string'
+                    ? JSON.parse(storedForm)
+                    : storedForm;
+                const isFeatured =
+                  form?.['13']?.value === true ||
+                  form?.['13']?.value === 'true';
 
-            if (isFeatured) {
-              return (
-                <>
-                  List for{' '}
-                  <Text allowFontScaling={false} style={styles.priceText1}>£</Text>
-                  <Text allowFontScaling={false} style={styles.priceText1}>{diff1}</Text>
-                </>
-              );
-            }
-            return 'Update';
-          } catch (e) {
-            console.log('Error parsing storedForm:', e);
-            return 'Update';
-          }
-        })()}
-      </Text>
+                if (isFeatured) {
+                  return (
+                    <>
+                      Update for{' '}
+                      <Text allowFontScaling={false} style={styles.priceText1}>
+                        £
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.priceText1}>
+                        {diff1}
+                      </Text>
+                    </>
+                  );
+                }
+                return 'Update';
+              } catch (e) {
+                console.log('Error parsing storedForm:', e);
+                return 'Update';
+              }
+            })()}
+          </Text>
         </TouchableOpacity>
-          
 
         <Modal
           visible={showPopup}
@@ -807,7 +854,7 @@ const diff1 =commissionPrice1-priceValue1
                   resizeMode="contain"
                 />
                 <Text
-                allowFontScaling={false}
+                  allowFontScaling={false}
                   style={{
                     color: 'rgba(255, 255, 255, 0.80)',
                     fontFamily: 'Urbanist-SemiBold',
@@ -821,7 +868,7 @@ const diff1 =commissionPrice1-priceValue1
                   Product Listed Successfully!
                 </Text>
                 <Text
-                allowFontScaling={false}
+                  allowFontScaling={false}
                   style={{
                     color: 'rgba(255, 255, 255, 0.48)',
                     fontFamily: 'Urbanist-Regular',
@@ -830,41 +877,41 @@ const diff1 =commissionPrice1-priceValue1
                     fontStyle: 'normal',
                     letterSpacing: -0.28,
                     lineHeight: 19.6,
-                    textAlign:'center'
+                    textAlign: 'center',
                   }}
                 >
                   Your product is now live and visible to other students.
                 </Text>
 
                 <TouchableOpacity
-                style={styles.loginButton}
-                onPress={async () => {
-                  try {
-                    await AsyncStorage.removeItem('formData');
-                    await AsyncStorage.removeItem('selectedProductId');
-                    console.log('✅ formData cleared from AsyncStorage');
+                  style={styles.loginButton}
+                  onPress={async () => {
+                    try {
+                      await AsyncStorage.removeItem('formData');
+                      await AsyncStorage.removeItem('selectedProductId');
+                      console.log('✅ formData cleared from AsyncStorage');
 
-                   navigation.dispatch(
-                    CommonActions.reset({
-                      index: 0, // make this the active screen
-                      routes: [
-                        {
-                          name: 'Dashboard',
-                          params: {
-                            AddScreenBackactiveTab: 'Home',
-                            isNavigate: false,
-                          },
-                        },
-                      ],
-                    })
-                  );
+                      navigation.dispatch(
+                        CommonActions.reset({
+                          index: 0, // make this the active screen
+                          routes: [
+                            {
+                              name: 'Dashboard',
+                              params: {
+                                AddScreenBackactiveTab: 'Home',
+                                isNavigate: false,
+                              },
+                            },
+                          ],
+                        }),
+                      );
 
-                    setShowPopup(false);
-                  } catch (err) {
-                    console.log('❌ Error clearing formData:', err);
-                  }
-                }}
-              >
+                      setShowPopup(false);
+                    } catch (err) {
+                      console.log('❌ Error clearing formData:', err);
+                    }
+                  }}
+                >
                   <Text allowFontScaling={false} style={styles.loginText}>
                     Return to Choose Category
                   </Text>
@@ -874,32 +921,30 @@ const diff1 =commissionPrice1-priceValue1
           </View>
         </Modal>
       </View>
-      <NewCustomToastContainer/>
+      <NewCustomToastContainer />
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-
-    initialsCircle:{
- backgroundColor: '#8390D4',
-  alignItems: 'center',
-  justifyContent: 'center',
-   width: 50,
+  initialsCircle: {
+    backgroundColor: '#8390D4',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 50,
     height: 50,
     borderRadius: 25,
     marginRight: 12,
   },
-  initialsText:{
-   color: '#fff',
-  fontSize: 18,
-  fontWeight:600,
-  textAlign: 'center',
-  fontFamily: 'Urbanist-SemiBold',
+  initialsText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 600,
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
   },
 
-
-    priceText1: {
+  priceText1: {
     color: '#002050',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 17,
@@ -907,8 +952,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
 
-
-   detailRow: {
+  detailRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -921,7 +965,7 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   detailLabel: {
-     color: 'rgba(255, 255, 255, 0.72)',
+    color: 'rgba(255, 255, 255, 0.72)',
     fontFamily: 'Urbanist-Regular',
     fontSize: 16,
     fontWeight: '600',
@@ -1118,7 +1162,7 @@ const styles = StyleSheet.create({
     paddingRight: 8,
     paddingTop: 6,
     paddingBottom: 6,
-    marginTop:6,
+    marginTop: 6,
     alignItems: 'center',
     gap: 3,
   },
@@ -1259,7 +1303,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     gap: 12,
-    marginTop: 12
+    marginTop: 12,
   },
   h24_w24: {
     width: 24,

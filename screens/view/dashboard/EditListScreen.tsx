@@ -156,6 +156,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
           );
         }
         await AsyncStorage.setItem('selectedProductId', String(productId));
+        await AsyncStorage.setItem('shareid',String(shareid))
 
         if (json?.data) {
           const sellerFields = json.data.filter(
@@ -218,8 +219,8 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
           initialValues.title = { value: data.title || '' };
           initialValues.price = { value: data.price || '' };
           initialValues.description = { value: data.description || '' };
-        
- initialValues.isfeatured = { value: !!data.isfeatured };
+
+          initialValues.isfeatured = { value: !!data.isfeatured };
 
           // ✅ 2. Dynamic params
           if (Array.isArray(data.params)) {
@@ -378,73 +379,76 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
       return true;
     }
   };
- const handlePreview = async (latestFormValues: any) => {
-  try {
-    for (const field of fields) {
-      // Use param if exists, otherwise field itself
-      const param = field.param || field;
-      const { id, field_type, field_name, alias_name, mandatory } = param;
-      const fieldId = String(id);
+  const handlePreview = async (latestFormValues: any) => {
+    try {
+      for (const field of fields) {
+        // Use param if exists, otherwise field itself
+        const param = field.param || field;
+        const { id, field_type, field_name, alias_name, mandatory } = param;
+        const fieldId = String(id);
 
-      const nameToShow = alias_name || field_name || 'Unnamed Field';
-      
-      // Try getting value by id first, then alias_name
-      let value =
-        latestFormValues[fieldId]?.value ??
-        latestFormValues[alias_name]?.value ??
-        '';
+        const nameToShow = alias_name || field_name || 'Unnamed Field';
 
-      if (field_type?.toLowerCase() === 'image') {
-        value = uploadedImages;
-      }
+        // Try getting value by id first, then alias_name
+        let value =
+          latestFormValues[fieldId]?.value ??
+          latestFormValues[alias_name]?.value ??
+          '';
 
-      if (mandatory) {
-        const isEmpty =
-          value === undefined ||
-          value === null ||
-          (typeof value === 'string' && value.trim() === '') ||
-          (Array.isArray(value) && value.length === 0);
+        if (field_type?.toLowerCase() === 'image') {
+          value = uploadedImages;
+        }
 
-        if (isEmpty) {
-          console.log('❌ Missing mandatory field:', nameToShow, 'Value:', value);
-          showToast(`${nameToShow} is mandatory`, 'error');
-          return;
+        if (mandatory) {
+          const isEmpty =
+            value === undefined ||
+            value === null ||
+            (typeof value === 'string' && value.trim() === '') ||
+            (Array.isArray(value) && value.length === 0);
+
+          if (isEmpty) {
+            console.log(
+              '❌ Missing mandatory field:',
+              nameToShow,
+              'Value:',
+              value,
+            );
+            showToast(`${nameToShow} is mandatory`, 'error');
+            return;
+          }
         }
       }
+
+      // Save all fields (including images)
+      const dataToStore: any = { ...latestFormValues };
+
+      fields.forEach(field => {
+        const param = field.param || field;
+        const fieldType = param.field_type?.toLowerCase();
+
+        if (fieldType === 'image') {
+          const uploadedForField = uploadedImages.map(img => ({
+            id: img.id,
+            uri: img.uri,
+            name: img.name,
+          }));
+
+          dataToStore[String(param.id)] = {
+            value: uploadedForField,
+            alias_name: param.alias_name ?? null,
+          };
+        }
+      });
+
+      await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
+      console.log('✅ Form data saved:', dataToStore);
+
+      navigation.navigate('EditPreviewThumbnail');
+    } catch (error) {
+      console.log('❌ Error saving form data:', error);
+      showToast('Failed to save form data');
     }
-
-    // Save all fields (including images)
-    const dataToStore: any = { ...latestFormValues };
-
-    fields.forEach(field => {
-      const param = field.param || field;
-      const fieldType = param.field_type?.toLowerCase();
-
-      if (fieldType === 'image') {
-        const uploadedForField = uploadedImages.map(img => ({
-          id: img.id,
-          uri: img.uri,
-          name: img.name,
-        }));
-
-        dataToStore[String(param.id)] = {
-          value: uploadedForField,
-          alias_name: param.alias_name ?? null,
-        };
-      }
-    });
-
-    await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
-    console.log('✅ Form data saved:', dataToStore);
-
-    navigation.navigate('EditPreviewThumbnail');
-  } catch (error) {
-    console.log('❌ Error saving form data:', error);
-    showToast('Failed to save form data');
-  }
-};
-
-
+  };
 
   const handleSelectImage = async () => {
     const hasPermission = await requestCameraPermission();
@@ -883,52 +887,54 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         );
       }
       case 'boolean': {
-  const { param } = field;
-  const { id, field_name, alias_name } = param;
+        const { param } = field;
+        const { id, field_name, alias_name } = param;
 
-  // ✅ Read the value from formValues (default false)
-  const toggleValue = !!formValues[id]?.value;
+        // ✅ Read the value from formValues (default false)
+        // const toggleValue = !!formValues[param.]?.value;
+        const  toggleValue  = formValues[param.id]?.value ??formValues[alias_name]?.value ??formValues[field_name]?.value ??'';
 
-  return (
-    <View key={field.id} style={styles.featurecard}>
-      {/* Label + toggle */}
-      <View style={styles.featuredRow}>
-        {renderLabel1(field_name, field.mandatory)}
+        console.log('toggleValue', toggleValue);
 
-        <ToggleButton
-          value={toggleValue}
-          onValueChange={val => handleValueChange(id, alias_name, val)}
-        />
-      </View>
+        return (
+          <View key={field.id} style={styles.featurecard}>
+            {/* Label + toggle */}
+            <View style={styles.featuredRow}>
+              {renderLabel1(field_name, field.mandatory)}
 
-      {/* Info section */}
-      <View style={styles.textbg}>
-        <Image
-          source={require('../../../assets/images/info_icon.png')}
-          style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
-        />
+              <ToggleButton
+                value={toggleValue}
+                onValueChange={val => handleValueChange(id, alias_name, val)}
+              />
+            </View>
 
-        <View style={{ flex: 1 }}>
-          <Text allowFontScaling={false} style={styles.importantText1}>
-            Important:
-          </Text>
-          <Text allowFontScaling={false} style={styles.importantText}>
-            Featured listings require a small upfront fee —{' '}
-            <Text allowFontScaling={false} style={styles.importantText1}>
-              {featureFee}%
-            </Text>{' '}
-            of your item’s price or up to{' '}
-            <Text allowFontScaling={false} style={styles.importantText1}>
-              £{maxFeatureCap}
-            </Text>{' '}
-            (whichever is lower).
-          </Text>
-        </View>
-      </View>
-    </View>
-  );
-}
+            {/* Info section */}
+            <View style={styles.textbg}>
+              <Image
+                source={require('../../../assets/images/info_icon.png')}
+                style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+              />
 
+              <View style={{ flex: 1 }}>
+                <Text allowFontScaling={false} style={styles.importantText1}>
+                  Important:
+                </Text>
+                <Text allowFontScaling={false} style={styles.importantText}>
+                  Featured listings require a small upfront fee —{' '}
+                  <Text allowFontScaling={false} style={styles.importantText1}>
+                    {featureFee}%
+                  </Text>{' '}
+                  of your item’s price or up to{' '}
+                  <Text allowFontScaling={false} style={styles.importantText1}>
+                    £{maxFeatureCap}
+                  </Text>{' '}
+                  (whichever is lower).
+                </Text>
+              </View>
+            </View>
+          </View>
+        );
+      }
 
       // case 'boolean':
       //   return (
@@ -1103,7 +1109,10 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             </View>
           </ScrollView>
 
-          <Button title="Preview Details" onPress={() => handlePreview(formValues)} />
+          <Button
+            title="Preview Details"
+            onPress={() => handlePreview(formValues)}
+          />
         </KeyboardAvoidingView>
       </View>
 

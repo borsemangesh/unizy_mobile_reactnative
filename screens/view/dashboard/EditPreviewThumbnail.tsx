@@ -113,23 +113,22 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
   //   return entry ? entry.value : null;
   // };
   const getValueByAlias = (
-  formData: Record<string, FormEntry> | null,
-  alias: string,
-): any => {
-  if (!formData) return null;
+    formData: Record<string, FormEntry> | null,
+    alias: string,
+  ): any => {
+    if (!formData) return null;
 
-  const entry = Object.values(formData).find(
-    item => item.alias_name === alias,
-  ) as FormEntry | undefined;
+    const entry = Object.values(formData).find(
+      item => item.alias_name === alias,
+    ) as FormEntry | undefined;
 
-  if (entry) return entry.value;
+    if (entry) return entry.value;
 
-  // fallback if alias_name missing
-  if (formData[alias]) return formData[alias].value;
+    // fallback if alias_name missing
+    if (formData[alias]) return formData[alias].value;
 
-  return null;
-};
-
+    return null;
+  };
 
   const titleValue = getValueByAlias(storedForm, 'title') || 'No Title';
   //const priceValue = getValueByAlias(storedForm, 'price') || '0';
