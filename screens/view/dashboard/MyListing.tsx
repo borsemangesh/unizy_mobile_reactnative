@@ -14,12 +14,14 @@ import {
   StatusBar,
   ScrollView,
   ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 const bgImage = require('../../../assets/images/backimg.png');
 import MyListingCard from '../../utils/MyListingCard';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Feature = {
 id: number,
@@ -53,7 +55,8 @@ const MyListing = ({ navigation }: MyListingProps)  => {
   const [featureList, setFeatureList] = useState<any[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-
+  const insets = useSafeAreaInsets(); // Safe area insets
+  const { height: screenHeight } = Dimensions.get('window');
   type Category = {
   id: number | null; 
   name: string;
@@ -246,7 +249,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
        <FlatList
         data={featureList}
         renderItem={renderItem}
-        contentContainerStyle={styles.listContainer}
+        contentContainerStyle={[styles.listContainer]}
         keyExtractor={(item, index) => index.toString()}
         onEndReachedThreshold={0.5}
         onEndReached={() => {
@@ -395,7 +398,9 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10,
     paddingTop: 10,
-    paddingBottom:40,
+    //paddingBottom:40,
+    paddingBottom: Platform.OS === 'ios' ? 40 : 80,
+
   },
   row1: {
     // flexDirection: 'row',
