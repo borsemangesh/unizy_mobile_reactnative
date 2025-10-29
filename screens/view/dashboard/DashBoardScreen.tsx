@@ -797,7 +797,7 @@ return (
                       onBookmarkPress={() => handleBookmarkPress(item.id)}
                       isBookmarked={item.isbookmarked}
                       onpress={() =>{
-                        navigation.replace('SearchDetails', { id: item.id },{ animation: 'none' })
+                        navigation.navigate('SearchDetails', { id: item.id },{ animation: 'none' })
                       }}
                     />
                   ) : (
@@ -898,7 +898,7 @@ return (
                 onChangeText={setSearch}
                 value={search}
                 allowFontScaling={false}
-                onFocus={() => navigation.navigate('SearchPage',{ animation: 'none' })}
+                onFocus={() => navigation.navigate('SearchPage',{ animation: 'none' ,from: 'Dashboard'})}
               />
             </Animated.View>
           </View>

@@ -415,7 +415,20 @@ const handleBookmarkPress = async (productId: number) => {
             <View style={styles.headerRow}>
               <TouchableOpacity
                 style={styles.backBtn}
-                onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})}}>
+
+               onPress={() => {
+                  if (navigation.canGoBack()) {
+                    navigation.goBack(); // go to previous screen if available
+                  } else {
+                    navigation.replace('Dashboard', {
+                      AddScreenBackactiveTab: 'Home',
+                      isNavigate: false,
+                    });
+                  }
+                }}
+                // onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})}}
+                >
+                
                 <View style={styles.backIconRow}>
                   <Image
                     source={require('../../../assets/images/back.png')}
@@ -635,6 +648,7 @@ const handleBookmarkPress = async (productId: number) => {
                           fontWeight: '600',
                           fontStyle: 'normal',
                           letterSpacing: -0.28,
+                          paddingLeft:6
                         }}
                       >
                         4.5

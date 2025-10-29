@@ -120,7 +120,7 @@ const renderItem: ListRenderItem<User> = ({ item }) => (
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Image
               source={require('../../../assets/images/staricon.png')}
-              style={{ height: 16, width: 16, marginRight: 2 }}
+              style={{ height: 16, width: 16, marginRight: 4 }}
             />
             <Text allowFontScaling={false} style={styles.ratingText}>{item.rating}</Text>
           </View>
