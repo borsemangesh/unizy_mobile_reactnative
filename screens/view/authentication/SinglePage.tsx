@@ -1879,10 +1879,10 @@ useEffect(() => {
                               maxLength={50}
                               keyboardType="email-address"
                               autoCapitalize="none"
-                              autoComplete="email"
-                              textContentType="emailAddress"
                               autoCorrect={false}
                               selectionColor="white"
+                              autoComplete={Platform.OS === 'ios' ? 'email' : 'username'}
+                              textContentType={Platform.OS === 'ios' ? 'emailAddress' : 'username'}
                               onChangeText={usernameText =>
                                 setUsername(usernameText)
                               }
@@ -2066,6 +2066,9 @@ useEffect(() => {
                                 selectionColor="white"
                                 keyboardType="email-address"
                                 autoCapitalize="none"
+                                autoComplete={Platform.OS === 'ios' ? 'email' : 'username'}
+                                textContentType={Platform.OS === 'ios' ? 'emailAddress' : 'username'}
+                                importantForAutofill="yes"
                                 autoCorrect={false}
                                 onChangeText={usernameText =>
                                   setUsername1(usernameText)
@@ -2274,9 +2277,10 @@ useEffect(() => {
                               maxLength={50}
                               keyboardType="email-address"
                               autoCapitalize="none"
-                              autoComplete="email"
-                              textContentType="emailAddress"
                               selectionColor="white"
+                              autoComplete={Platform.OS === 'ios' ? 'email' : 'username'}
+                              textContentType={Platform.OS === 'ios' ? 'emailAddress' : 'username'}
+                              importantForAutofill="yes"
                               autoCorrect={false}
                               onChangeText={text => setsignUpUsername(text)}
                             />
