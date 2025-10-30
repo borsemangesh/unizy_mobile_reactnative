@@ -8,19 +8,29 @@ import {
   Platform,
   ScrollView,
   Animated,
+  Modal,
+  TouchableWithoutFeedback,
+  TextInput,
 } from 'react-native';
 import { showToast } from '../../utils/toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { useRoute } from '@react-navigation/native';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { BlurView } from '@react-native-community/blur';
 
 type ListingDetailsProps = {
   navigation: any;
 };
 const bgImage = require('../../../assets/images/backimg.png');
 const ListingDetails = ({ navigation }: ListingDetailsProps) => {
+
+  const [showPopup1, setShowPopup1] = useState(false);
+  const closePopup1 = () => setShowPopup1(false);
+
+  const [showPopup2, setShowPopup2] = useState(false);
+  const closePopup2 = () => setShowPopup2(false);
 
   const scrollY1 = new Animated.Value(0);
   const route = useRoute();
@@ -29,7 +39,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
   const { catagory_id = 0 } = (route.params as { catagory_id?: number }) || {}
    const { catagory_name = '' } = (route.params as { catagory_name?: string }) || {}
 
-
+  const inputs = useRef<Array<TextInput | null>>([]);
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -99,6 +109,16 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
     showToast("Failed to update product status",'error');
   }
 };
+
+ const handleChange = (text: string, index: number) => {
+    if (text && index < inputs.current.length - 1) {
+      inputs.current[index + 1]?.focus(); 
+    } else if (!text && index > 0) {
+      inputs.current[index - 1]?.focus();
+    }
+  };
+
+
 const formatDateWithDash = (dateString?: string) => {
   if (!dateString) return '';
   const date = new Date(dateString);
@@ -349,9 +369,7 @@ const formatDateWithDash = (dateString?: string) => {
                             justifyContent: 'center',
                             alignItems: 'center',
                           }}
-                          onPress={() =>
-                            console.log(`Enter OTP for ${buyer.firstname}`)
-                          }
+                          onPress={() => setShowPopup1(true)}
                         >
                           <Text allowFontScaling={false} style={styles.status}>
                             Enter OTP
@@ -394,6 +412,162 @@ const formatDateWithDash = (dateString?: string) => {
             </Text>
           </TouchableOpacity>
         </View>
+
+
+
+         <Modal
+          visible={showPopup1}
+          transparent
+          animationType="fade"
+          onRequestClose={closePopup1}
+        >
+          <TouchableWithoutFeedback onPress={closePopup1}>
+            <View style={styles.overlay}>
+              <BlurView
+                style={{
+                  flex: 1,
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                  alignItems: 'center',
+                }}
+                blurType="light"
+                blurAmount={10}
+                reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+              >
+                <View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
+                  ]}
+                />
+
+                <View style={styles.popupContainer}>
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.mainheader}>
+                    Enter Delivery OTP
+                  </Text>
+
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.subheader}>
+                    Please enter the 6-digit OTP shared by the buyer to confirm delivery.
+                  </Text>
+
+                   <View style={styles.otpContainer}>
+                        {[0, 1, 2, 3,4,5].map((_, index) => (
+                          <TextInput
+                            key={index}
+                            ref={(ref) => {
+                              inputs.current[index] = ref;
+                            }}
+                            style={styles.otpBox}
+                            keyboardType="number-pad"
+                            maxLength={1}
+                            onChangeText={(text) => {
+                              const digit = text.replace(/[^0-9]/g, '');
+                              handleChange(digit, index);
+                            }}
+                            returnKeyType="next"
+                            textAlign="center"
+                            secureTextEntry={true}
+                          />
+                        ))}
+                      </View>
+
+                  <TouchableOpacity
+                    style={styles.loginButton}
+                    onPress={() => {
+                      setShowPopup2(true);
+                    }}
+                  >
+                    <Text allowFontScaling={false} style={styles.loginText}>
+                      Verify
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.loginButton1}
+                    onPress={() => {
+                      setShowPopup1(false);
+                    }}
+                  >
+                    <Text allowFontScaling={false} style={styles.loginText1}>
+                      Cancel
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </BlurView>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+
+<Modal
+          visible={showPopup2}
+          transparent
+          animationType="fade"
+          onRequestClose={closePopup2}
+        >
+          <TouchableWithoutFeedback onPress={closePopup2}>
+            <View style={styles.overlay}>
+              <BlurView
+                style={{
+                  flex: 1,
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                  alignItems: 'center',
+                }}
+                blurType="dark"
+                blurAmount={1000}
+                reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+              >
+                <View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                  ]}
+                />
+
+                <View style={styles.popupContainer}>
+                  <Image
+                    source={require('../../../assets/images/success_icon.png')}
+                    style={styles.logo}
+                    resizeMode="contain"
+                  />
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.mainheader}
+                  >
+                    Order Fulfilled!
+                  </Text>
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.subheader1}>
+                    Delivery Verified
+                  </Text>
+                  <Text
+                    allowFontScaling={false}
+                    style={[styles.subheader1,{marginTop:0}]}>
+                    The payment of $10 has been transferred to your account.
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.loginButton}
+                    onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})}}
+                  >
+                    <Text allowFontScaling={false} style={styles.loginText}>
+                     Done
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </BlurView>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+
+
+
       </View>
       <NewCustomToastContainer />
     </ImageBackground>
@@ -401,8 +575,147 @@ const formatDateWithDash = (dateString?: string) => {
 };
 
 const styles = StyleSheet.create({
-  background: { flex: 1, width: '100%', height: '100%' },
-  fullScreenContainer: { flex: 1 },
+
+  otpContainer: {
+  flexDirection: 'row',
+  justifyContent: 'space-evenly',
+  width: '100%',
+  alignSelf: 'center',
+  gap: 6, // works in RN 0.71+, otherwise use marginRight
+  marginTop:16
+},
+
+otpBox: {
+  width: 48,
+  height: 48,
+  borderRadius: 12,
+  paddingTop: 8,
+  paddingRight: 12,
+  paddingBottom: 8,
+  paddingLeft: 12,
+  textAlign: 'center',
+  fontSize: 18,
+  color: '#fff',
+  fontWeight: '600',
+  borderWidth: 1,
+  borderColor: '#ffffff2c',
+  elevation: 0,
+  backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.29) 100%)',
+    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 0px 15px 1px',
+},
+
+  mainheader:{
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 18,
+    fontWeight: '600',
+    letterSpacing: -0.4,
+    lineHeight: 28,
+  },
+   subheader:{
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign:'center',
+    marginTop:6
+  },
+  
+    subheader1:{
+    color: 'rgba(255, 255, 255, 0.48)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign:'center',
+    marginTop:6
+  },
+  
+
+
+  logo: {
+    width: 64,
+    height: 64,
+    marginBottom: 20,
+  },
+
+    loginText: {
+    color: '#002050',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: 500,
+    letterSpacing: 1,
+    width: '100%',
+  },
+  loginText1: {
+    color: '#FFFFFF7A',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: 500,
+    letterSpacing: 1,
+    width: '100%',
+  },
+
+  loginButton: {
+    display: 'flex',
+    width: '100%',
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 100,
+    paddingTop: 6,
+    paddingBottom: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.56)',
+    marginTop: 16,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+  },
+
+  loginButton1: {
+    display: 'flex',
+    width: '100%',
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 100,
+    paddingTop: 6,
+    paddingBottom: 6,
+    backgroundColor: 'rgba(170, 169, 176, 0.56)',
+    marginTop: 16,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+  },
+
+ popupContainer: {
+    width: '85%',
+    padding: 20,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'center',
+    overflow: 'hidden',
+
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+  },
+  overlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+
+
+  background: {
+     flex: 1,
+      width: '100%', 
+      height: '100%' },
+  fullScreenContainer: {
+     flex: 1 
+    },
    header: {
     paddingTop: Platform.OS === 'ios' ? 50 : 50,
     paddingBottom: 12,

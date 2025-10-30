@@ -800,10 +800,6 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                   <TouchableOpacity
                     style={styles.loginButton}
                     onPress={() => {
-                      navigation.replace('Dashboard', {
-                        AddScreenBackactiveTab: 'Home',
-                        isNavigate: false,
-                      });
                       setShowPopup(false);
                     }}
                   >

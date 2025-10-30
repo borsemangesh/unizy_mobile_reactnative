@@ -251,6 +251,18 @@ const handleListPress = async () => {
   console.log('🔵 handleListPress called');
  //setShowPopup(true);
   try {
+
+
+    // const data = await AsyncStorage.getItem("last_payment");
+    // if (!data) {
+    //       console.log("No payment data found");
+    //       return null;
+    //     }
+
+
+    // const paymentData = JSON.parse(data);
+
+
     console.log('Step 1: Fetching formData from AsyncStorage...');
     const storedData = await AsyncStorage.getItem('formData');
     console.log('✅ AsyncStorage.getItem(formData) result:', storedData);
@@ -307,10 +319,18 @@ const handleListPress = async () => {
 
     console.log('✅ Data array for create API:', dataArray);
 
-    const createPayload = {
-      category_id: productId1, // dynamic or static
+     const createPayload = {
+      category_id: productId1, 
       data: dataArray,
     };
+
+    // const createPayload = {
+    //   category_id: productId1, 
+    //   data: dataArray,
+    //   paymentintent_id: paymentData.transactionId, 
+    //   savecard: true,
+    //   status: paymentData.status, 
+    // };
 
     console.log('Step 5: Calling create API with payload:', createPayload);
 

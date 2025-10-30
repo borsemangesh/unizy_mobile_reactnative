@@ -41,67 +41,127 @@ const ReviewDetails : React.FC<ReviewDetailsProps> = ({ navigation }) => {
    const route = useRoute<ReviewDetailsRouteProp>();
     const { category_id } = route.params;
     const {id} =route.params;
-  
+   const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [totalReviews, setTotalReviews] = useState(0);
+  const [averageRating, setAverageRating] = useState(0);
 
     type Category = {
       id: number | null; 
       name: string;
     };
 
+    const defaultProfile = require("../../../assets/images/user.jpg");
     const [categories, setCategories] = useState<Category[]>([
       { id: null, name: 'All' }
     ]);
     const [selectedCategory, setSelectedCategory] = useState<Category>({ id: null, name: 'All' });
 
-  useEffect(() => {
-    const loadCategories = async () => {
-      const stored = await AsyncStorage.getItem('categories');
-      if (stored) {
-        const parsed = JSON.parse(stored); 
-        const catObjects = [
-          { id: null, name: 'All' }, 
-          ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
-        ];
-        setCategories(catObjects);
-        setSelectedCategory(catObjects[0]); 
-      }
-    };
-    loadCategories();
-  }, []);
+  // useEffect(() => {
+  //   const loadCategories = async () => {
+  //     const stored = await AsyncStorage.getItem('categories');
+  //     if (stored) {
+  //       const parsed = JSON.parse(stored); 
+  //       const catObjects = [
+  //         { id: null, name: 'All' }, 
+  //         ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
+  //       ];
+  //       setCategories(catObjects);
+  //       setSelectedCategory(catObjects[0]); 
+  //     }
+  //   };
+  //   loadCategories();
+  // }, []);
 
-  type User = {
+
+  useEffect(() => {
+  const loadCategories = async () => {
+    const stored = await AsyncStorage.getItem('categories');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+
+      const catObjects = [
+        { id: null, name: 'All' },
+        ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
+      ];
+
+      setCategories(catObjects);
+
+      const matchedCategory = catObjects.find(
+        (c: any) => c.id === category_id
+      );
+      setSelectedCategory(matchedCategory ?? catObjects[0]);
+    }
+  };
+  loadCategories();
+}, [category_id]);
+
+  useEffect(() => {
+  fetchReviews();
+}, [selectedCategory]);
+
+   const fetchReviews = async () => {
+    try {
+      const userId = await AsyncStorage.getItem('userId');
+      const token = await AsyncStorage.getItem('userToken');
+        console.log(token)
+        if (!token) return;
+        //const url1 = `${MAIN_URL.baseUrl}category/users/10/reviews`;
+         let url1 = "";
+
+          if (selectedCategory?.id === null) {
+            url1 = `${MAIN_URL.baseUrl}category/users/reviews`;
+          } else {
+            url1 = `${MAIN_URL.baseUrl}category/users/reviews/${selectedCategory.id}`;
+          }
+
+          console.log(url1)
+        
+
+      const response = await fetch(url1, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+      const result = await response.json();
+       setTotalReviews(result?.data?.totalReviews ?? 0);
+      setAverageRating(Number((result?.data?.averageRating ?? 0).toFixed(1)));
+      const reviews = result?.data?.reviews ?? [];
+
+
+      const formattedUsers: User[] = reviews.map((item: any) => ({
+        id: item.id.toString(),
+        name: item.reviewer_name,
+        university: item.reviewer?.university_name ?? "Unknown University",
+        rating: item.rating,
+        // profileImg: item.reviewer?.profile
+        //   ? { uri: IMAGE_BASE + item.reviewer.profile }
+        //   : defaultProfile,
+        profileImg:defaultProfile,
+        comment: item.comment,
+      }));
+
+      setUsers(formattedUsers);
+    } catch (error) {
+      console.log("Review Fetch Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  
+
+
+type User = {
   id: string;
   name: string;
   university: string;
   rating: number;
-  profileImg: any; // or ImageSourcePropType
+  profileImg: any; // URL or require()
   comment: string;
 };
 
-const users: User[] = [
-  {
-    id: '1',
-    name: 'Alan Walker',
-    university: 'University of Warwick, Coventry',
-    rating: 4.5,
-    profileImg: require('../../../assets/images/user.jpg'),
-    comment: 'Totally worth it for the price.',
-  },
-  
-   {
-    id: '2',
-    name: 'John Doe',
-    university: 'Harvard University',
-    rating: 4.2,
-    profileImg: require('../../../assets/images/user.jpg'),
-    comment: 'Excellent experience!',
-  },
-];
 
- 
-
-
-const renderItem: ListRenderItem<User> = ({ item }) => (
+const renderItem = ({ item }: any) => (
   <View style={styles.userRow}>
     {/* Top row: Image + Name/Sub + Star */}
     <View style={{ flexDirection: 'row', width: '100%' }}>
@@ -191,12 +251,12 @@ const renderItem: ListRenderItem<User> = ({ item }) => (
 
         <View style={{ paddingHorizontal: 16, marginBottom: 12, alignItems: 'center' }}>
       <Text allowFontScaling={false} style={{ fontSize: 60, fontWeight: '700', color: '#fff', marginBottom: 4 }}>
-        3.5
+        {averageRating}
       </Text>
 
-     <StarRating rating={3.5} starSize={24} />
+     <StarRating rating={averageRating} starSize={24} />
 
-     <Text allowFontScaling={false} style={styles.reviewcount}>11 Reviews</Text>
+     <Text allowFontScaling={false} style={styles.reviewcount}>{totalReviews} Reviews</Text>
 </View>
 
   <View style={styles.innercontainer}>
@@ -207,7 +267,7 @@ const renderItem: ListRenderItem<User> = ({ item }) => (
       source={require('../../../assets/images/staricon.png')}
       style={{ width: 16, height: 16, marginRight: 4 }}
     />
-    <Text allowFontScaling={false} style={styles.subrating}> 4.5(10)</Text>
+    <Text allowFontScaling={false} style={styles.subrating}>{averageRating} ({totalReviews})</Text>
   </View>
 </View>
         
@@ -221,7 +281,7 @@ const renderItem: ListRenderItem<User> = ({ item }) => (
       />
     </View>
 
-    <TouchableOpacity style={styles.previewBtn} onPress={() =>{navigation.navigate('AddReview')}} >
+    <TouchableOpacity style={styles.previewBtn} onPress={() =>{navigation.navigate('AddReview',{category_id:category_id,feature_id:id})}} >
             <Text allowFontScaling={false} style={styles.payText}>Write a Review </Text>
           </TouchableOpacity>
 

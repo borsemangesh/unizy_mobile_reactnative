@@ -438,7 +438,7 @@ const styles = StyleSheet.create({
     paddingHorizontal:12,
     borderRadius: 50,
     // backgroundColor: 'gray',
-    backgroundColor: '#ffffff1b',
+    backgroundColor: 'rgba(138, 135, 135, 0.63)',
     alignItems: 'center',
     justifyContent: 'center',
     boxShadow: '0 2px 8px 0 rgba(75, 75, 75, 0.19)',

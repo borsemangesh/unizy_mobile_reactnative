@@ -34,9 +34,18 @@ type AddReviewProps = {
 };
 
 
-const AddReview = ({ navigation }: AddReviewProps)  => {
 
+type RootStackParamList = {
+  AddReview: { category_id: number,feature_id:number};
+};
 
+type AddReviewRouteProp = RouteProp<RootStackParamList, 'AddReview'>;
+
+const AddReview : React.FC<AddReviewProps> = ({ navigation }) =>{
+
+  const route = useRoute<AddReviewRouteProp>();
+  const {feature_id} =route.params;
+  const { category_id } = route.params;
    const [rating, setRating] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -59,13 +68,15 @@ const AddReview = ({ navigation }: AddReviewProps)  => {
       setIsLoading(true);
 
       const token = await AsyncStorage.getItem('userToken');
-
+      const userId = await AsyncStorage.getItem('userId');
         if (!token) {
           console.log('No token found');
           return;
         }
 
-      const response = await fetch('http://65.0.99.229:4320/category/users/5/review', {
+        
+    const url1 = `${MAIN_URL.baseUrl}category/users/${userId}/review`;
+      const response = await fetch(url1, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -74,7 +85,7 @@ const AddReview = ({ navigation }: AddReviewProps)  => {
         body: JSON.stringify({
           rating: rating,
           comment: username,
-          feature_id: 40,
+          feature_id: feature_id,
         }),
       });
 
@@ -102,7 +113,7 @@ const AddReview = ({ navigation }: AddReviewProps)  => {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerRow}>
-            <TouchableOpacity onPress={() =>{navigation.replace('ReviewDetails',{category_id:1,id: 1,})}}>
+            <TouchableOpacity onPress={() =>{navigation.replace('ReviewDetails',{category_id:category_id,id: feature_id,})}}>
               <View style={styles.backIconRow}>
                 <Image
                   source={require('../../../assets/images/back.png')}
@@ -201,8 +212,12 @@ const AddReview = ({ navigation }: AddReviewProps)  => {
 
                <TouchableOpacity
                 style={styles.loginButton1}
-                onPress={()=>{setShowPopup1(false);}}
-              >
+                //onPress={()=>{setShowPopup1(false);}}
+                onPress={() => {
+                      navigation.goBack();
+                      setShowPopup1(false);
+                    }}
+                    >
                 <Text allowFontScaling={false} style={styles.loginText1}>Return to Reviews</Text>
               </TouchableOpacity>
             </View>
