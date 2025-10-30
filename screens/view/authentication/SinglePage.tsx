@@ -590,7 +590,7 @@ useEffect(() => {
         setIsPasswordVisible(false);
         setTextandBackIcon(false);
         await AsyncStorage.setItem('ISLOGIN', 'true');
-        navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: true,loginMessage: result?.message});
+        navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: true,loginMessage: result?.message,isFirsttimeLogin: true});
       } else {
         setLoading(false);
         showToast(Constant.INVALID_USER_DATA_RECEIVED, 'error');
@@ -1511,8 +1511,8 @@ useEffect(() => {
       const flag = await AsyncStorage.getItem('ISLOGIN');
    animRef.current?.pause();
       if (flag === 'true') {
-        // User is logged in → navigate to Dashboard
-        navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: true});
+       
+        navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: true,isFirsttimeLogin: false});
       } else {
         // User is not logged in → show hello screen
         setCurrentScreen('hello');

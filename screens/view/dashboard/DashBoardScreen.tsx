@@ -178,6 +178,7 @@ type RootStackParamList = {
   Dashboard: { AddScreenBackactiveTab: string;
         isNavigate: boolean;
         loginMessage: string;    
+        isFirsttimeLogin: boolean;   
       }
    };
 type DashboardRouteProp = RouteProp<RootStackParamList, 'Dashboard'>;
@@ -348,7 +349,8 @@ const scrollViewRef = useRef<ScrollView>(null);
   useEffect(() => {
     if (activeTab === 'Home' && route.params?.isNavigate) {
       console.log("isNav: ",isNav)
-      if(route.params?.isNavigate){
+      if(route.params?.isFirsttimeLogin){
+        navigation.setParams({ isFirsttimeLogin: false });
         showToast(route.params?.loginMessage || Constant.LOGIN_SUCCESSFUL, 'success');
       }
       setIsNav(false);
