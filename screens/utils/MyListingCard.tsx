@@ -36,7 +36,7 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
   catagory_id,
   catagory_name
 }) => {
- console.log('Share ID in card:', shareid, catagory_id);
+//  console.log('Share ID in card:', shareid, catagory_id);
  return (
   <TouchableOpacity style={styles.wrapper} onPress={() => {
     navigation.navigate('ListingDetails',{ shareid ,catagory_id,catagory_name});

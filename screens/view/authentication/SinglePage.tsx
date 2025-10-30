@@ -47,7 +47,7 @@ type SinglePageProps = {
   navigation: any;
 };
 type RootStackParamList = {
-  SinglePage: { resetToLogin?: boolean };
+  SinglePage: { resetToLogin?: boolean,logoutMessage:string };
 };
 type SinglePageRouteProp = RouteProp<RootStackParamList, 'SinglePage'>;
 
@@ -82,6 +82,7 @@ useEffect(() => {
     loginTranslateY.setValue(0);
     setCurrentScreen('login'); 
     setcurrentScreenIninner('login'); 
+    showToast(route.params?.logoutMessage,'success')
   }
 }, [route.params]);
 
@@ -589,7 +590,7 @@ useEffect(() => {
         setIsPasswordVisible(false);
         setTextandBackIcon(false);
         await AsyncStorage.setItem('ISLOGIN', 'true');
-        navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: true});
+        navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: true,loginMessage: result?.message});
       } else {
         setLoading(false);
         showToast(Constant.INVALID_USER_DATA_RECEIVED, 'error');

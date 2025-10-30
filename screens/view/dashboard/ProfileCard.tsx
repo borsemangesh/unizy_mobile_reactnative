@@ -154,10 +154,10 @@ const renderItem = ({ item }: any) => {
       onPress={async () => {
         if (isLogout) {      
         await AsyncStorage.setItem('ISLOGIN', 'false');
-        showToast('User Logout Successfully','success')
+        // showToast('User Logout Successfully','success')
         navigation.reset({
           index: 0,
-          routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+          routes: [{ name: 'SinglePage', params: { resetToLogin: true , logoutMessage: 'User Logout Successfully'} }],
         });
       }
         else if (item.title === 'My Orders') {

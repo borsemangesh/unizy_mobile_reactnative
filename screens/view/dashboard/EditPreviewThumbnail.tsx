@@ -57,7 +57,7 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
     const fetchStoredData = async () => {
       try {
         // 1️⃣ Fetch stored form data
-        const storedData = await AsyncStorage.getItem('formData');
+        const storedData = await AsyncStorage.getItem('formData1');
         if (storedData) {
           const parsedData = JSON.parse(storedData);
           console.log('Stored Form Data:', parsedData);

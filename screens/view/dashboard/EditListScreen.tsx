@@ -182,19 +182,112 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
       }
     };
 
+    // const fetchListDetails = async () => {
+    //   try {
+    //     const token = await AsyncStorage.getItem('userToken');
+
+    //     if (!token) {
+    //       console.log('No token found');
+    //       return;
+    //     }
+
+    //     const url = `${MAIN_URL.baseUrl}category/feature-detail/${shareid}`;
+    //     console.log('DetailsURL:', url);
+    //     console.log('Token:', token);
+
+    //     const response = await fetch(url, {
+    //       method: 'GET',
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //         Authorization: `Bearer ${token}`,
+    //       },
+    //     });
+
+    //     if (!response.ok) {
+    //       throw new Error(`HTTP error! status: ${response.status}`);
+    //     }
+
+    //     const json = await response.json();
+    //     console.log('✅ API Response:', json);
+    //     await AsyncStorage.setItem('selectedProductId', String(productId));
+
+    //     if (json?.data) {
+    //       const data = json.data;
+    //       const initialValues: any = {};
+
+          
+    //       initialValues.title = { value: data.title || '' };
+    //       initialValues.price = { value: data.price || '' };
+    //       initialValues.description = { value: data.description || '' };
+
+    //       initialValues.isfeatured = { value: !!data.isfeatured };
+
+          
+    //       if (Array.isArray(data.params)) {
+    //         data.params.forEach((param: any) => {
+    //           const fieldType = param.field_type?.toLowerCase();
+
+    //           if (fieldType === 'dropdown') {
+                
+    //             if (Array.isArray(param.param_value)) {
+    //               initialValues[param.id] = {
+    //                 value: param.param_value.map((v: any) => Number(v)),
+    //               };
+    //             } else {
+    //               initialValues[param.id] = {
+    //                 value: param.param_value ? Number(param.param_value) : null,
+    //               };
+    //             }
+    //           } else {
+    //             // 🟢 for text / multi-line / boolean / etc.
+    //             console.log('dataTitle : ', data.title);
+    //             initialValues[param.id] = { value: param.param_value || '' };
+    //             console.log('initialValues : ', initialValues);
+    //           }
+    //         });
+    //       }
+
+    //       if (Array.isArray(data.files) && data.files.length > 0) {
+    //         const mappedImages = data.files.map((file: any) => ({
+    //           id: file.id,
+    //           name: file.file_name,
+    //           uri: file.signedurl,
+    //         }));
+    //         setUploadedImages(mappedImages);
+    //       }
+    //       // ✅ 4. Update form state
+    //       setFormValues(initialValues);
+    //     }
+    //     if (response.status === 401 || response.status === 403) {
+    //       handleForceLogout();
+    //       return;
+    //     }
+
+    //     if (json.statusCode === 401 || json.statusCode === 403) {
+    //       handleForceLogout();
+    //       return;
+    //     }
+    //   } catch (err) {
+    //     console.log('Error fetching fields', err);
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // };
+
+
     const fetchListDetails = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
-
+    
         if (!token) {
           console.log('No token found');
           return;
         }
-
+    
         const url = `${MAIN_URL.baseUrl}category/feature-detail/${shareid}`;
         console.log('DetailsURL:', url);
         console.log('Token:', token);
-
+    
         const response = await fetch(url, {
           method: 'GET',
           headers: {
@@ -202,54 +295,63 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             Authorization: `Bearer ${token}`,
           },
         });
-
+    
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-
+    
         const json = await response.json();
         console.log('✅ API Response:', json);
         await AsyncStorage.setItem('selectedProductId', String(productId));
-
+    
         if (json?.data) {
           const data = json.data;
           const initialValues: any = {};
-
-          // ✅ 1. Core fields
-          initialValues.title = { value: data.title || '' };
-          initialValues.price = { value: data.price || '' };
-          initialValues.description = { value: data.description || '' };
-
-          initialValues.isfeatured = { value: !!data.isfeatured };
-
-          // ✅ 2. Dynamic params
+    
+          // --- Basic Fields ---
+          initialValues.title = { value: data.title || '', alias_name: 'title' };
+          initialValues.price = { value: data.originalprice || '', alias_name: 'price' };
+          initialValues.description = {
+            value: data.description || '',
+            alias_name: 'description',
+          };
+          initialValues.isfeatured = {
+            value: !!data.isfeatured,
+            alias_name: 'isfeatured',
+          };
+    
+          // --- Dynamic Params ---
           if (Array.isArray(data.params)) {
             data.params.forEach((param: any) => {
               const fieldType = param.field_type?.toLowerCase();
-
+    
+              const baseField = {
+                alias_name: param.alias_name || null,
+              };
+    
               if (fieldType === 'dropdown') {
-                // 🟢 handle both single & multiple select dropdowns
                 if (Array.isArray(param.param_value)) {
-                  // e.g. param_value = [1, 5]
                   initialValues[param.id] = {
+                    ...baseField,
                     value: param.param_value.map((v: any) => Number(v)),
                   };
                 } else {
-                  // e.g. param_value = "1" or 1
                   initialValues[param.id] = {
+                    ...baseField,
                     value: param.param_value ? Number(param.param_value) : null,
                   };
                 }
               } else {
-                // 🟢 for text / multi-line / boolean / etc.
-                console.log('dataTitle : ', data.title);
-                initialValues[param.id] = { value: param.param_value || '' };
-                console.log('initialValues : ', initialValues);
+                // For text / boolean / etc.
+                initialValues[param.id] = {
+                  ...baseField,
+                  value: param.param_value || '',
+                };
               }
             });
           }
-
-          // ✅ 3. Uploaded files
+    
+          // --- Files / Images ---
           if (Array.isArray(data.files) && data.files.length > 0) {
             const mappedImages = data.files.map((file: any) => ({
               id: file.id,
@@ -258,14 +360,19 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             }));
             setUploadedImages(mappedImages);
           }
-          // ✅ 4. Update form state
+    
+          // ✅ Update state + persist data
           setFormValues(initialValues);
+          await AsyncStorage.setItem('formData1', JSON.stringify(initialValues));
+    
+          console.log('✅ Stored formData1:', initialValues);
         }
+    
         if (response.status === 401 || response.status === 403) {
           handleForceLogout();
           return;
         }
-
+    
         if (json.statusCode === 401 || json.statusCode === 403) {
           handleForceLogout();
           return;
@@ -276,6 +383,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         setLoading(false);
       }
     };
+    
 
     const handleForceLogout = async () => {
       console.log('User inactive or unauthorized — logging out');
@@ -352,29 +460,6 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         console.warn(err);
         return false;
       }
-    } else if (Platform.OS === 'ios') {
-      try {
-        // Check current permission status first
-        const status = await check(PERMISSIONS.IOS.CAMERA);
-        if (status === RESULTS.GRANTED) {
-          return true;
-        }
-        const result = await request(PERMISSIONS.IOS.CAMERA);
-
-        if (result === RESULTS.GRANTED) {
-          return true;
-        } else if (result === RESULTS.BLOCKED) {
-          console.warn(
-            'Camera permission is blocked. Please enable it in Settings.',
-          );
-          return false;
-        } else {
-          return false; // Denied
-        }
-      } catch (err) {
-        console.warn(err);
-        return false;
-      }
     } else {
       return true;
     }
@@ -419,7 +504,6 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         }
       }
 
-      // Save all fields (including images)
       const dataToStore: any = { ...latestFormValues };
 
       fields.forEach(field => {
@@ -440,12 +524,12 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         }
       });
 
-      await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
+      await AsyncStorage.setItem('formData1', JSON.stringify(dataToStore));
       console.log('✅ Form data saved:', dataToStore);
 
       navigation.navigate('EditPreviewThumbnail');
     } catch (error) {
-      console.log('❌ Error saving form data:', error);
+      
       showToast('Failed to save form data');
     }
   };
@@ -591,7 +675,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         console.log('formValues: ', formValues);
 
         const isPriceField = alias_name?.toLowerCase() === 'price';
-        console.log('rowValue: ', rawValue);
+        // console.log('rowValue: ', rawValue);
         const placeholderText =
           alias_name?.toLowerCase() === 'price'
             ? `£ ${alias_name}`

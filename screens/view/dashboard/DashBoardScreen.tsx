@@ -28,10 +28,11 @@ import { Navigation } from '../Navigation';
 import { MAIN_URL } from '../../utils/APIConstant';
 import TutitionCard from '../../utils/TutitionCard';
 import ProfileCard from './ProfileCard';
-import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
+import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
 import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import MessagesScreen from './MessageScreen';
+import { Constant } from '../../utils/Constant';
 
 const mylistings = require('../../../assets/images/mylistingicon.png');
 const mylistings1 = require('../../../assets/images/favourite.png');
@@ -175,7 +176,8 @@ type DashBoardScreenProps = {
 
 type RootStackParamList = {
   Dashboard: { AddScreenBackactiveTab: string;
-        isNavigate: boolean;    
+        isNavigate: boolean;
+        loginMessage: string;    
       }
    };
 type DashboardRouteProp = RouteProp<RootStackParamList, 'Dashboard'>;
@@ -203,7 +205,7 @@ const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     setIsNav(route.params?.isNavigate);
-    console.log('useEffect_IsNav', isNav,route.params?.isNavigate);
+    // console.log('useEffect_IsNav', isNav,route.params?.isNavigate);
     if (route.params?.AddScreenBackactiveTab) {
       setActiveTab(
         route.params?.AddScreenBackactiveTab as
@@ -346,6 +348,9 @@ const scrollViewRef = useRef<ScrollView>(null);
   useEffect(() => {
     if (activeTab === 'Home' && route.params?.isNavigate) {
       console.log("isNav: ",isNav)
+      if(route.params?.isNavigate){
+        showToast(route.params?.loginMessage || Constant.LOGIN_SUCCESSFUL, 'success');
+      }
       setIsNav(false);
       translateY.setValue(-screenWidth);
       searchBartranslateY.setValue(-screenWidth);
@@ -940,8 +945,9 @@ return (
               key={key}
               style={[styles.tabItem, { width: tabWidth }]}
               onPress={() => {
-                setActiveTab(key as any);
                 setIsNav(false);
+                navigation.setParams({ isNavigate: false });
+                setActiveTab(key as any);
               }}
             >
               <View style={styles.iconWrapper}>

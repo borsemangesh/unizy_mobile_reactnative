@@ -3344,7 +3344,6 @@ const toggleCheckbox = (id: number) => {
               top: 0,
               bottom: 0,
               opacity: 1,
-            // backgroundColor: 'rgba(108, 142, 255, 0.8)',
             }
               // styles.broderTopLeftRightRadius_30,
             ]}
@@ -3353,31 +3352,15 @@ const toggleCheckbox = (id: number) => {
           />
 
           <View style={styles.modeltitleContainer}>
-
-              {/* <LinearGradient
-                // colors={[
-                //   'rgba(255,255,255,0.03)', 'rgba(255,255,255,0.10)',
-                // ]}
-                colors={[
-                  'rgba(140, 151, 255, 0.05)',
-                  'rgba(0, 0, 248, 0.15)',
-                ]}
-                start={{ x: 0.175, y: 0.0625 }}
-                end={{ x: 1, y: 1 }}          
-                style={[
-                  styles.modeltitleContainer,
-                  { borderTopLeftRadius: 30, borderTopRightRadius: 30,},
-                ]}
-              > */}
               <View style={{width: '100%',alignSelf: 'center',alignItems: 'center',paddingBottom: 10}}>
-              <View style={{height:5,backgroundColor: 'rgba(0, 0, 0, 0.57)',flexDirection: 'row',width: '15%',borderRadius: 10,top:-10}}/>
+                 <View style={{height:5,backgroundColor: 'rgba(0, 0, 0, 0.57)',flexDirection: 'row',width: '15%',borderRadius: 10,top:-10}}/>
 
               </View>
-            <View
+            {/* <View
               style={{
                 flexDirection: 'column',
               }}
-            >
+            > */}
               <View style={styles.header}>
                 <View style={styles.optionHeader}>
                   <View style={styles.checkboxImage}>
@@ -3392,7 +3375,7 @@ const toggleCheckbox = (id: number) => {
                   {subtitle}
                 </Text>
               </View>
-            </View>
+            {/* </View> */}
           </View>
           {/* </LinearGradient> */}
           <View
@@ -3401,6 +3384,8 @@ const toggleCheckbox = (id: number) => {
               minHeight: screenHeight * 0.2, 
               maxHeight: screenHeight * 0.6,
               paddingHorizontal: 10,
+
+              backgroundColor: (Platform.OS === 'ios' ? 'rgba(2, 6, 131, 0.26)' : 'none')
             }}
           >
             <ScrollView  showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom:15 }}>
@@ -3484,7 +3469,7 @@ const toggleCheckbox = (id: number) => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.cancelBtn, { backgroundColor: '#ffffff4e' }]}
+              style={[styles.cancelBtn, { backgroundColor: 'rgba(255, 255, 255, 0.6)' }]}
               onPress={onClose}
             >
               <Text allowFontScaling={false} style={[styles.cancelText, { color: '#000000' }]}>
@@ -3512,9 +3497,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: '90%',
+    width: '95%',
     borderStyle: 'dashed',
     borderBottomWidth: 1,
+    backgroundColor: (Platform.OS === 'ios' ? 'rgba(2, 6, 131, 0.26)' : 'none'),
     height: 1,
     borderColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)'
   },
@@ -3612,9 +3598,6 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingVertical: 16,
     paddingHorizontal:20,
-    // backgroundColor: 'rgba(98, 132, 255, 0.46)',
-    backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(254, 254, 254, 0.11) 0%, rgba(39, 75, 253, 0.03) 100%)',
-
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
   
@@ -3626,15 +3609,13 @@ const styles = StyleSheet.create({
   },
   modelcontainer: {
     backgroundColor:
-  'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(0, 60, 163, 0.05) 0%, rgba(255, 255, 255, 0.03) 100%)',
-
-    
+  'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(10, 64, 156, 0.05) 0%, rgba(255, 255, 255, 0.03) 100%)',
     width: '100%',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     alignItems: 'center',
     // filter: 'drop-shadow(0 0.833px 3.333px rgba(255, 255, 255, 0.18))',
-    gap: 5,
+    // gap: 5,
     opacity: 0.8,
     overflow:'hidden'
   },
@@ -3645,6 +3626,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingBottom: (Platform.OS === 'ios' ? 40 : 10),
+    backgroundColor: (Platform.OS === 'ios' ? 'rgba(2, 6, 131, 0.26)' : 'none'),
+
   },
   radioButtonSelected: {
     backgroundColor: 'white',
@@ -3673,16 +3656,17 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 50,
     // backgroundColor: 'gray',
-    backgroundColor: '#ffffff1b',
+    backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     alignItems: 'center',
     justifyContent: 'center',
-    boxShadow: '0 2px 8px 0 rgba(75, 75, 75, 0.19)',
+    boxShadow: (Platform.OS === 'ios'? '0 2px 8px 0 rgba(41, 41, 41, 0.19) ':'0 2px 8px 0 rgba(75, 75, 75, 0.19)'),
   },
   overlay: {
-    //backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: (Platform.OS === 'ios' ? 'rgba(0, 0, 0, 0.2)':'transparent' ),
     flex: 1,
     justifyContent: 'flex-end',
-    // opacity: 0.8
+    opacity: (Platform.OS === 'ios' ? 1 : 0 ),
+
   },
   filtertitle: {
     color: 'rgba(255, 255, 255, 0.64)',
@@ -3772,6 +3756,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     letterSpacing: 0.17,
     lineHeight: 19.6,
+    
   },
 
   inactiveTab: {

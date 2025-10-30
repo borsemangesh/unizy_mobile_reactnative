@@ -86,7 +86,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
   useEffect(() => {
     const fetchStoredData = async () => {
       try {
-        const storedData = await AsyncStorage.getItem('formData');
+        const storedData = await AsyncStorage.getItem('formData1');
         if (storedData) {
           const parsedData = JSON.parse(storedData);
           console.log('Stored Form Data:', parsedData);
@@ -246,12 +246,15 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
   //   }
   // };
 
+
+  //This is old version which is working for when you change something in form data  
+
   const handleListPress = async () => {
     console.log('🔵 handleListPress called');
     //setShowPopup(true);
     try {
       console.log('Step 1: Fetching formData from AsyncStorage...');
-      const storedData = await AsyncStorage.getItem('formData');
+      const storedData = await AsyncStorage.getItem('formData1');
       console.log('✅ AsyncStorage.getItem(formData) result:', storedData);
 
       if (!storedData) {
@@ -300,12 +303,18 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
       console.log('✅ Non-image fields:', nonImageFields);
       console.log('✅ Image fields:', imageFields);
 
-      const dataArray = nonImageFields
-  .filter(([key, obj]) => !isNaN(Number(key))) // only numeric keys
-  .map(([key, obj]) => ({
+      // --- Build data array safely ---
+const dataArray = nonImageFields
+.filter(([key, obj]) => !isNaN(Number(key)))
+.map(([key, obj]) => {
+  const val = obj.value;
+  return {
     id: Number(key),
-    param_value: obj.value,
-  }));
+    param_value:
+      val !== undefined && val !== null && val !== '' ? val : null,
+  };
+})
+.filter(item => item.param_value !== null); // ✅ only keep filled values
 
       console.log('✅ Data array for create API:', dataArray);
 
@@ -345,7 +354,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
       if (!feature_id) {
         console.log('❌ feature_id not returned from create API.');
         showToast('feature_id missing in response');
-        return;
+        return
       }
       console.log('✅ feature_id from create API:', feature_id);
 
@@ -407,6 +416,140 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
       showToast('Error uploading data');
     }
   };
+
+
+// const handleListPress = async () => {
+//   console.log('🔵 handleListPress called');
+
+//   try {
+//     console.log('Step 1: Fetching formData1 from AsyncStorage...');
+//     const storedData = await AsyncStorage.getItem('formData1');
+//     console.log('✅ AsyncStorage.getItem(formData1) result:', storedData);
+
+//     if (!storedData) {
+//       console.log('⚠️ No form data found in storage');
+//       showToast('No form data found');
+//       return;
+//     }
+
+//     const formData: Record<string, { value: any; alias_name: string | null }> = JSON.parse(storedData);
+//     console.log('✅ Parsed formData:', formData);
+
+//     console.log('Step 2: Fetching userToken...');
+//     const token = await AsyncStorage.getItem('userToken');
+//     const productId1 = await AsyncStorage.getItem('selectedProductId');
+//     const shareid = await AsyncStorage.getItem('shareid');
+
+//     if (!token) {
+//       console.log('⚠️ Token not found. Cannot upload.');
+//       return;
+//     }
+
+//     console.log('Step 3: Splitting formData...');
+
+//     // Identify image fields
+//     const imageFields = Object.entries(formData)
+//       .filter(([key, obj]) => Array.isArray(obj.value) && obj.value.every((item: any) => item?.uri))
+//       .map(([key, obj]) => [key, obj.value as ImageField[]]) as [string, ImageField[]][];
+
+//     const nonImageFields = Object.entries(formData).filter(([key, obj]) => !Array.isArray(obj.value));
+
+//     console.log('✅ Non-image fields:', nonImageFields);
+//     console.log('✅ Image fields:', imageFields);
+
+//     // --- Step 4: Build numeric params for data[]
+//     const dataArray = nonImageFields
+//       .filter(([key]) => !isNaN(Number(key))) // only numeric keys
+//       .map(([key, obj]) => ({
+//         id: Number(key),
+//         param_value: obj.value,
+//       }));
+
+//     console.log('✅ Data array for create API:', dataArray);
+
+//     // --- Step 5: Always include title and description from formData
+//     const mainFields = ['title', 'description'].map((field) => ({
+//       id: field,
+//       param_value: formData[field]?.value ?? '', // fallback to empty string if not defined
+//     }));
+
+//     const createPayload = {
+//       category_id: productId1,
+//       data: [...dataArray, ...mainFields],
+//     };
+
+//     console.log('Step 5: Calling create API with payload:', JSON.stringify(createPayload, null, 2));
+
+//     // --- Step 6: Call API ---
+//     const createRes = await fetch(`${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`, {
+//       method: 'PATCH',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         Authorization: `Bearer ${token}`,
+//       },
+//       body: JSON.stringify(createPayload),
+//     });
+
+//     console.log(`✅ Create API status: ${createRes.status}`);
+//     const createJson = await createRes.json();
+//     console.log('✅ Create API response:', createJson);
+
+//     if (!createRes.ok) {
+//       showToast('Failed to create feature list');
+//       return;
+//     }
+
+//     const feature_id = createJson?.data?.id;
+//     if (!feature_id) {
+//       console.log('❌ feature_id not returned from create API.');
+//       showToast('feature_id missing in response');
+//       return;
+//     }
+
+//     console.log('✅ feature_id from create API:', feature_id);
+
+//     // --- Step 7: Upload images ---
+//     for (const [param_id, images] of imageFields) {
+//       console.log(`Uploading images for param_id=${param_id}`);
+
+//       for (const image of images) {
+//         const data = new FormData();
+//         data.append('files', {
+//           uri: image.uri,
+//           type: image.type || 'image/jpeg',
+//           name: image.name,
+//         } as any);
+//         data.append('feature_id', feature_id);
+//         data.append('param_id', param_id);
+
+//         const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-upload`;
+//         const uploadRes = await fetch(uploadUrl, {
+//           method: 'POST',
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//           },
+//           body: data,
+//         });
+
+//         console.log(`✅ Upload completed for ${image.name}, status: ${uploadRes.status}`);
+//         const uploadJson = await uploadRes.json();
+//         console.log('✅ Upload response JSON:', uploadJson);
+
+//         if (!uploadRes.ok) {
+//           showToast(`Failed to upload image ${image.name}`);
+//         }
+//       }
+//     }
+
+//     console.log('✅ All uploads done.');
+//     showToast('All data uploaded successfully');
+//     setShowPopup(true);
+//   } catch (error) {
+//     console.log('❌ Error in handleListPress:', error);
+//     showToast('Error uploading data');
+//   }
+// };
+
 
 
 
@@ -887,7 +1030,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
                   style={styles.loginButton}
                   onPress={async () => {
                     try {
-                      await AsyncStorage.removeItem('formData');
+                      await AsyncStorage.removeItem('formData1');
                       await AsyncStorage.removeItem('selectedProductId');
                       console.log('✅ formData cleared from AsyncStorage');
 

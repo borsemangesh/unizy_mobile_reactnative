@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
      marginTop: 10
      },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 40 : 50,
+    paddingTop: Platform.OS === 'ios' ? 42 : 50,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },
