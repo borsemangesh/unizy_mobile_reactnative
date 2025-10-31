@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
@@ -95,6 +96,9 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   const [maxFeatureCap, setMaxFeatureCap] = useState(0);
   const route = useRoute<AddScreenRouteProp>();
   const { productId, productName, shareid } = route.params;
+
+    const [deletedImageIds, setDeletedImageIds] = useState<string[]>([]);
+
 
   useEffect(() => {
     console.log('Product ID: ', productId, productName, shareid);
@@ -301,7 +305,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         }
     
         const json = await response.json();
-        console.log('✅ API Response:', json);
+        console.log('✅ API Response Details:', json);
         await AsyncStorage.setItem('selectedProductId', String(productId));
     
         if (json?.data) {
@@ -360,6 +364,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             }));
             setUploadedImages(mappedImages);
           }
+        
     
           // ✅ Update state + persist data
           setFormValues(initialValues);
@@ -546,7 +551,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
           text: 'Camera',
           onPress: () => {
             launchCamera(
-              { mediaType: 'photo', cameraType: 'front', quality: 1 }, // get max quality first
+              { mediaType: 'photo', cameraType: 'front', quality: 1 },
               async response => {
                 if (response.didCancel) return;
                 if (response.assets && response.assets[0].uri) {
@@ -554,26 +559,31 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                   let uri = asset.uri!;
                   let name = asset.fileName || 'Image';
 
-                  // check size
+                  // ✅ compress large images
                   if (
                     asset.fileSize &&
                     asset.fileSize > MAX_SIZE_MB * 1024 * 1024
                   ) {
                     const compressed = await ImageResizer.createResizedImage(
                       uri,
-                      800, // width
-                      800, // height
+                      800,
+                      800,
                       'JPEG',
-                      80, // quality 0-100
+                      80,
                     );
                     uri = compressed.uri;
                     name = compressed.name || name;
                   }
 
-                  setUploadedImages(prev => [
-                    ...prev,
-                    { id: Date.now().toString(), uri, name },
-                  ]);
+                  // ✅ Add status: 'new' for newly selected images
+                  const newImage = {
+                    id: Date.now().toString(), // temporary client ID
+                    uri,
+                    name,
+                    status: 'new', // mark as new image
+                  };
+  
+                  setUploadedImages(prev => [...prev, newImage]);
                 }
               },
             );
@@ -607,10 +617,15 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                     name = compressed.name || name;
                   }
 
-                  setUploadedImages(prev => [
-                    ...prev,
-                    { id: Date.now().toString(), uri, name },
-                  ]);
+                  // ✅ Add status: 'new' for newly selected images
+                  const newImage = {
+                    id: Date.now().toString(),
+                    uri,
+                    name,
+                    status: 'new', // mark as new
+                  };
+  
+                  setUploadedImages(prev => [...prev, newImage]);
                 }
               },
             );
@@ -643,6 +658,31 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
   const [isCheckbox, setCheckBox] = useState(false);
 
+  const handleDeleteImage = async (fileId: string) => {
+    // Remove the image from uploadedImages
+    setUploadedImages(prev => prev.filter(img => img.id !== fileId));
+
+    // Add the deleted image ID to the deletedImageIds array
+    setDeletedImageIds(prevDeletedIds => {
+      const updatedDeletedIds = [...prevDeletedIds, fileId];
+      // Create an object to store only the deleted image IDs
+      const dataToStore = { deleted_image_ids: updatedDeletedIds };
+
+      // Save to AsyncStorage
+      AsyncStorage.setItem('deletedImagesId', JSON.stringify(dataToStore))
+        .then(() => {
+          console.log(`Deleted image ID: ${fileId} saved to AsyncStorage.`);
+        })
+        .catch(error => {
+          console.error('Error saving to AsyncStorage:', error);
+        });
+
+      return updatedDeletedIds;
+    });
+
+    console.log(`Deleted image with ID: ${fileId}`);
+  };
+
   const renderField = (field: any) => {
     // const { field_name, field_type, options, id, field_ismultilple } =field.param;
     // const fieldType = field_type.toLowerCase();
@@ -656,6 +696,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
     const field_name = param.field_name ?? '';
     const id = param.id;
     const options = Array.isArray(param.options) ? param.options : [];
+    const isToggle = false;
 
     if (!fieldType || !id) return null; // skip if critical info missing
 
@@ -940,13 +981,17 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                         </Text>
                       </View>
 
-                      <TouchableOpacity
-                        onPress={() =>
+                      {/* <TouchableOpacity
+                        onPress={() =>{
                           setUploadedImages(prev =>
                             prev.filter(img => img.id !== file.id),
                           )
+                          
+
                         }
-                      >
+                        }
+                      > */}
+                       <TouchableOpacity onPress={() => handleDeleteImage(file.id)}>
                         <Image source={deleteIcon} style={styles.deleteIcon} />
                       </TouchableOpacity>
                     </View>
@@ -979,6 +1024,8 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         const  toggleValue  = formValues[param.id]?.value ??formValues[alias_name]?.value ??formValues[field_name]?.value ??'';
 
         console.log('toggleValue', toggleValue);
+        
+        
 
         return (
           <View key={field.id} style={styles.featurecard}>
@@ -987,9 +1034,16 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
               {renderLabel1(field_name, field.mandatory)}
 
               <ToggleButton
-                value={toggleValue}
-                onValueChange={val => handleValueChange(id, alias_name, val)}
-              />
+  value={toggleValue}
+  onValueChange={val => {
+    // Block only when toggle is currently true and user tries to turn it off
+    
+    
+
+    // Otherwise, allow toggle
+    handleValueChange(id, alias_name, val);
+  }}
+/>
             </View>
 
             {/* Info section */}

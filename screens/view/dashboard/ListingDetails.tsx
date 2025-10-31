@@ -12,11 +12,11 @@ import {
   TouchableWithoutFeedback,
   TextInput,
 } from 'react-native';
-import { showToast } from '../../utils/toast';
+// import { showToast } from '../../utils/toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { useRoute } from '@react-navigation/native';
-import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
+import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
 import { useState, useEffect, useRef } from 'react';
 import { BlurView } from '@react-native-community/blur';
 
@@ -51,6 +51,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
          const token = await AsyncStorage.getItem('userToken');
         if (!token) return;
         const url = `${MAIN_URL.baseUrl}category/mylisting-details/${shareid}`;
+        console.log("APIListingDetailsurl: ", url );
 
         const response = await fetch(url, {
           method: 'GET',
@@ -61,6 +62,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
         });
 
         const result = await response.json();
+         console.log("APIListingDetailsResponse: ", result );
         if (response.ok) {
           setData(result.data);
         } else {
@@ -96,7 +98,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
     });
 
     const data1 = await response.json();
-    console.log("✅ API Response:", data1);
+    console.log("API Response List details:", data1);
 
     if (data1.message) {
       showToast(data1.message, data1.statusCode === 200 ? 'success' : 'error');
@@ -393,6 +395,10 @@ const formatDateWithDash = (dateString?: string) => {
           <TouchableOpacity
             style={[styles.cancelBtn, { backgroundColor: '#ffffffa7' }]}
             onPress={() => {
+              if(data?.list?.ispurchased){
+                 showToast("can not edit",'error');
+                return;
+              } 
               navigation.replace(
                 'EditListScreen',
                 {
