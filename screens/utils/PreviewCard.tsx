@@ -98,8 +98,8 @@ const styles = StyleSheet.create({
   },
    bookmark: {
     position: 'absolute',
-    top: 10,
-    right: 10,
+    top: (Platform.OS === 'ios' ? 2 : 10),
+    right: (Platform.OS === 'ios' ? 2 : 10),
     borderRadius: 20,
     padding: 6,
   },

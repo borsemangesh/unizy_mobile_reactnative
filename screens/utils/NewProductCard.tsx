@@ -94,8 +94,8 @@ const styles = StyleSheet.create({
   },
   bookmark1: {
     position: 'absolute',
-    top: 5,
-    right: 5,
+    top: (Platform.OS === 'ios' ? 15 : 5),
+    right: (Platform.OS === 'ios' ? 15 : 5),
     borderRadius: 20,
     
   },
@@ -108,8 +108,8 @@ const styles = StyleSheet.create({
   },
   tag: {
     position: 'absolute',
-    bottom: (Platform.OS === 'ios' ? 5 : 8),
-    right:(Platform.OS === 'ios' ? 5 : 8),
+    bottom: (Platform.OS === 'ios' ? 16 : 8),
+    right:(Platform.OS === 'ios' ? 16 : 8),
     //backgroundColor: '#fff',
     backgroundColor:'rgba(255,255,255,0.4)',
     borderRadius: 4,
