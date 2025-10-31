@@ -98,6 +98,7 @@ export default function SearchListProductCard({
               flexDirection: 'row',
               alignContent: 'center',
               alignItems: 'center',
+              gap: 4,
             }}
           >
             <Image
@@ -273,7 +274,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#fff',
     fontFamily: 'Urbanist-SemiBold',
-    marginLeft: 4,
+    // marginLeft: 4,
   },
   ratingAbsolute: {
     position: 'absolute',

@@ -103,6 +103,7 @@ export default function SeperateTutionCard({
               flexDirection: 'row',
               alignContent: 'center',
               alignItems: 'center',
+                          gap: 4,
             }}
           >
             <Image source={require('../../assets/images/staricon.png')} style={styles.image1} />
@@ -310,7 +311,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#fff',
     fontFamily: 'Urbanist-SemiBold',
-    marginLeft: 4,
+    // marginLeft: 4,
   },
   ratingAbsolute: {
     position: 'absolute',

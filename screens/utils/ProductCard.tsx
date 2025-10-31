@@ -207,6 +207,7 @@ const styles = StyleSheet.create({
   ratingRow: {
     flexDirection: "row",
     alignItems: "center",
+    gap: 6,
   },
   starIcon: {
     width: 16,
@@ -216,6 +217,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: "#fff",
-    marginLeft: 4,
+    // marginLeft: 14,
   },
 });

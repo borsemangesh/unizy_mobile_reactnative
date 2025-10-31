@@ -113,7 +113,10 @@ const AddReview : React.FC<AddReviewProps> = ({ navigation }) =>{
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerRow}>
-            <TouchableOpacity onPress={() =>{navigation.replace('ReviewDetails',{category_id:category_id,id: feature_id,})}}>
+            <TouchableOpacity onPress={() =>{
+              // navigation.replace('ReviewDetails',{category_id:category_id,id: feature_id,})
+                navigation.goBack();
+              }}>
               <View style={styles.backIconRow}>
                 <Image
                   source={require('../../../assets/images/back.png')}

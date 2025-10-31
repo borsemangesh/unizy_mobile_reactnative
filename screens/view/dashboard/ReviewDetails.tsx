@@ -180,7 +180,7 @@ const renderItem = ({ item }: any) => (
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Image
               source={require('../../../assets/images/staricon.png')}
-              style={{ height: 16, width: 16, marginRight: 4 }}
+              style={{ height: 16, width: 16, marginRight: 4 ,tintColor: 'rgba(140, 225, 255, 0.9)',}}
             />
             <Text allowFontScaling={false} style={styles.ratingText}>{item.rating}</Text>
           </View>
@@ -200,10 +200,14 @@ const renderItem = ({ item }: any) => (
         <View style={styles.header}>
           <View style={styles.headerRow}>
             <TouchableOpacity onPress={() =>
-              navigation.replace('SearchDetails', {
-                id,
-                category_id,
-              })
+              // navigation.replace('SearchDetails', {
+              //   id,
+              //   category_id,
+              // })
+              {
+                navigation.goBack()
+
+              }
             }>
               <View style={styles.backIconRow}>
                 <Image
@@ -262,10 +266,10 @@ const renderItem = ({ item }: any) => (
   <View style={styles.innercontainer}>
   <Text allowFontScaling={false} style={styles.mainlabel}>Reviews</Text>
 
-  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+  <View style={{ flexDirection: 'row', alignItems: 'center',}}>
     <Image
       source={require('../../../assets/images/staricon.png')}
-      style={{ width: 16, height: 16, marginRight: 4 }}
+      style={{ width: 16, height: 16, marginRight: 4 ,tintColor:  'rgba(140, 225, 255, 0.9)',}}
     />
     <Text allowFontScaling={false} style={styles.subrating}>{averageRating} ({totalReviews})</Text>
   </View>
@@ -296,7 +300,7 @@ export default ReviewDetails;
 const styles = StyleSheet.create({
 
   subrating:{
-    color: 'rgba(255, 255, 255, 0.88)',
+    color: 'rgba(140, 225, 255, 0.9)',
      fontSize: 14,
       fontFamily: 'Urbanist-SemiBold', 
       fontWeight: '600'
@@ -318,8 +322,8 @@ const styles = StyleSheet.create({
     innercontainer:{
       paddingHorizontal: 16, 
       marginBottom: 8, 
-      flexDirection: 'column', 
-      justifyContent: 'space-between' 
+      flexDirection: 'row', 
+      justifyContent: 'space-between' ,
     },
   payText: {
   color: '#002050',
@@ -369,12 +373,13 @@ const styles = StyleSheet.create({
 },
 
   ratingText:{
-  color: 'rgba(255, 255, 255, 0.48)',
+
   fontFamily: 'Urbanist-SemiBold',
   fontSize: 14,
   fontWeight: '600',
   fontStyle: 'normal',
   letterSpacing: -0.28,
+   color: 'rgba(140, 225, 255, 0.9)',
   },
 
   initialsCircle:{

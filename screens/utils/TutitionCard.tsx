@@ -249,6 +249,7 @@ const styles = StyleSheet.create({
   ratingRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 4,
   },
   starIcon: {
     width: 16,
@@ -258,7 +259,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#fff',
-    marginLeft: 4,
+    // marginLeft: 4,
     fontFamily: 'Urbanist-SemiBold',
   },
 

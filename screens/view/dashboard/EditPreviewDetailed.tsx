@@ -2672,20 +2672,22 @@ const dataArray = nonImageFields
                       await AsyncStorage.removeItem('selectedProductId');
                       console.log('✅ formData cleared from AsyncStorage');
 
-                      navigation.dispatch(
-                        CommonActions.reset({
-                          index: 0, // make this the active screen
-                          routes: [
-                            {
-                              name: 'Dashboard',
-                              params: {
-                                AddScreenBackactiveTab: 'Home',
-                                isNavigate: false,
-                              },
-                            },
-                          ],
-                        }),
-                      );
+                      // navigation.dispatch(
+                      //   CommonActions.reset({
+                      //     index: 0, // make this the active screen
+                      //     routes: [
+                      //       {
+                      //         name: 'Dashboard',
+                      //         params: {
+                      //           AddScreenBackactiveTab: 'Home',
+                      //           isNavigate: false,
+                      //         },
+                      //       },
+                      //     ],
+                      //   }),
+                      // );
+                      // navigation.goBack();
+                      navigation.replace('MyListing',{ animation: 'none' });
 
                       setShowPopup(false);
                     } catch (err) {

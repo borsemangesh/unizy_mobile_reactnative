@@ -458,7 +458,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
             contentContainerStyle={[
               styles.scrollContainer,
               {
-                paddingBottom: screenHeight * 0.1 + insets.bottom,
+                paddingBottom:(Platform.OS === 'ios' ?screenHeight * 0.1 + -40:  screenHeight * 0.1 + insets.bottom),
                 marginTop:16 // 10% of screen + safe area
               },
             ]}
@@ -647,7 +647,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                           id: detail?.id,
                         })
                       }
-                      style={{ flexDirection: 'row', alignItems: 'center' }}
+                      style={{ flexDirection: 'row', alignItems: 'center' , gap: 6,}}
                     >
                       <Image
                         source={require('../../../assets/images/staricon.png')}
@@ -663,7 +663,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                           fontWeight: '600',
                           fontStyle: 'normal',
                           letterSpacing: -0.28,
-                          paddingLeft:6
+                          // paddingLeft:6
                         }}
                       >
                         4.5
