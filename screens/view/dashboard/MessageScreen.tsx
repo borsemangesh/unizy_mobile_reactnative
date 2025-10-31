@@ -22,7 +22,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
   const chatData = [
     {
       id: '1',
-      name: 'John Doe',
+      name: 'Student name',
       message: 'Can you tell me a bit about the co..',
       time: '9:41 AM',
       unreadCount: 1,
@@ -30,16 +30,16 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
     },
     {
       id: '2',
-      name: 'Emily Smith',
-      message: 'Thanks for your help!',
+      name: 'Student name',
+      message: 'Hi there, can we discuss the timmings for this..',
       time: '8:22 AM',
       unreadCount: 3,
       image: require('../../../assets/images/user.jpg'),
     },
     {
       id: '3',
-      name: 'Michael Brown',
-      message: 'Let’s catch up later.',
+      name: 'Student name',
+      message: 'Hi there, can we discuss the timmings for this..',
       time: 'Yesterday',
       unreadCount: 0,
       image: require('../../../assets/images/user.jpg'),

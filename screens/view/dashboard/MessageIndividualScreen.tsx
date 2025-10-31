@@ -29,11 +29,15 @@ const MessagesIndividualScreen = ({navigation}:MessagesIndividualScreenProps) =>
             style={styles.backIconStyle}
           />
         </TouchableOpacity>
+        <TouchableOpacity style={{flexDirection: 'row',gap: 10, alignItems: 'center',}} onPress={() =>{
+            navigation.navigate('UserProfileScreen');
+        }}>
         <Image source={profileImage} style={styles.profileImage} />
         <View>
           <Text allowFontScaling={false} style={styles.studentName}>Student Name</Text>
           <Text allowFontScaling={false} style={styles.universityName}>University Name</Text>
         </View>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.messageViewContainer}>
@@ -237,7 +241,7 @@ const styles = StyleSheet.create({
   bottomContainer:{
     // position: 'relative',
     // top: 0,
-    bottom: 150,
+    bottom: (Platform.OS === 'ios' ? 200 : 150),
     // alignContent: 'flex-end'
     display: 'flex',
     flexDirection: 'row',
@@ -305,7 +309,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     width: '100%',
     height: '100%',
-    paddingBottom: 155,
+    paddingBottom: (Platform.OS === 'ios'? 205:155),
   },
   messagesView:{
 

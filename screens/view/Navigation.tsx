@@ -38,6 +38,7 @@ import Notification from './dashboard/Notification';
 import EditListScreen from './dashboard/EditListScreen';
 import EditPreviewThumbnail from './dashboard/EditPreviewThumbnail';
 import EditPreviewDetailed from './dashboard/EditPreviewDetailed';
+import UserProfileScreen from './dashboard/UserProfileScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -117,6 +118,16 @@ export const Navigation = () => {
           }}
         />
 
+
+<Stack.Screen
+          name="UserProfileScreen"
+          component={UserProfileScreen}
+          options={{
+            headerShown: false,
+            animation: 'none',
+            presentation: 'fullScreenModal',
+          }}
+        />
         
         <Stack.Screen
           name="EditPreviewDetailed"
