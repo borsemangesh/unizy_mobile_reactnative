@@ -106,7 +106,7 @@ export default function SeperateTutionCard({
             }}
           >
             <Image source={require('../../assets/images/staricon.png')} style={styles.image1} />
-            <Text style={styles.ratingText}>{rating}</Text>
+            <Text allowFontScaling={false}  style={styles.ratingText}>{rating}</Text>
           </View>
         </View>
       </View>
