@@ -894,8 +894,11 @@ useEffect(() => {
       showToast(Constant.VALID_EMAI_LADDRESS, 'error');
       return;
     }
+    console.log(emailParts)
 
-    const domain = '@' + emailParts[1].toLowerCase();
+    //const domain = '@' + emailParts[1].toLowerCase();
+    const domain = '@' + emailParts[1].trim().toLowerCase();
+    console.log(domain)
 
     if (!universityDomains.includes(domain)) {
       showToast(Constant.VALID_EMAI_LADDRESS, 'error');
@@ -971,12 +974,13 @@ useEffect(() => {
 
     try {
       const otp_id = await AsyncStorage.getItem('otp_id');
+      const order_id =await AsyncStorage.getItem('otp_id')
       if (!otp_id) {
         showToast(Constant.OTP_ID_MISSING, 'error');
         return;
       }
 
-      const url = MAIN_URL.baseUrl + 'user/student-otpverify';
+      const url = MAIN_URL.baseUrl + 'verify-post-order-otp';
 
       const res = await fetch(url, {
         method: 'POST',

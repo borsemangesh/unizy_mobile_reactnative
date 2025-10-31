@@ -398,6 +398,57 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     return f + l || '?';
   };
 
+  const purchaseProduct = async () =>{
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) {
+      console.log('⚠️ Token not found. Cannot upload.');
+      return;
+    }
+    const paymentintent_id= await AsyncStorage.getItem("paymentintent_id");
+    try {
+
+      const createPayload = {
+          amount: Number(detail.price).toFixed(2), 
+          feature_id: id,
+          payment_id:paymentintent_id,
+          
+    };
+
+    const url = `${MAIN_URL.baseUrl}transaction/post-order-complete`;
+
+    console.log('Step 5: Calling create API with payload:', createPayload);
+
+    const response = await fetch(url,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(createPayload),
+      },
+    );
+      const data = await response.json();
+      console.log('Response:', data);
+
+
+      if (response.ok && data?.statusCode === 200) {
+      // Save order id to storage
+      await AsyncStorage.setItem("last_order_id", data.data?.orderid?.toString() || "");
+      await AsyncStorage.setItem("last_transaction_amount", data.data?.amount?.toString() || "");
+      await AsyncStorage.setItem('order_otp',data.data?.order_otp?.toString() || "");
+
+      showToast(" Purchased successfully!", "success");
+      setShowPopup1(true)
+    } else {
+      showToast(data?.message || "Something went wrong", "error");
+    }
+     
+    } catch (err) {
+      console.error('Error :', err);
+    }
+  }
+
     return (
       <ImageBackground
         source={require('../../../assets/images/backimg.png')}
@@ -718,9 +769,11 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         {/* Bottom */}
         <TouchableOpacity
           style={styles.previewBtn}
-          onPress={() => setShowPopup1(true)}
+          //onPress={() => setShowPopup1(true)}
 
-          //onPress={() => navigation.navigate('PaymentScreen')}
+          onPress={() => navigation.navigate('PaymentScreen',{amount:Number(detail.price).toFixed(2),feature_id:id,nav:'purchase',onSuccess: async () => {
+          await purchaseProduct();
+        },})}
         >
           <Text allowFontScaling={false} style={{ textAlign: 'center' }}>
             <Text allowFontScaling={false} style={styles.payText}>

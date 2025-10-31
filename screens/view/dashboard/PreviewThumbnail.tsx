@@ -250,7 +250,7 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
     <>
       {storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
         <>
-        <Text allowFontScaling={false} style={[styles.newtext,{paddingBottom:6}]}>Feature Listing Preview</Text>
+        <Text allowFontScaling={false} style={[styles.newtext,{paddingBottom:6}]}>Featured Listing Preview</Text>
           <PreviewCard
             tag="University of Warwick"
             infoTitle={titleValue} // from alias

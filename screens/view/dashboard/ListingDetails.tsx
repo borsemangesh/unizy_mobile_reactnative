@@ -11,6 +11,7 @@ import {
   Modal,
   TouchableWithoutFeedback,
   TextInput,
+  Keyboard,
 } from 'react-native';
 // import { showToast } from '../../utils/toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -19,6 +20,7 @@ import { useRoute } from '@react-navigation/native';
 import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
 import { useState, useEffect, useRef } from 'react';
 import { BlurView } from '@react-native-community/blur';
+import { Constant } from '../../utils/Constant';
 
 type ListingDetailsProps = {
   navigation: any;
@@ -43,6 +45,8 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+const [selectedOrderId, setSelectedOrderId] = useState(null);
+const [otp, setOtp] = useState(['', '', '', '']);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -112,11 +116,72 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
   }
 };
 
- const handleChange = (text: string, index: number) => {
+  const handleChange = (text: string, index: number) => {
+    const newOtp = [...otp];
+    newOtp[index] = text;
+    setOtp(newOtp);
+
     if (text && index < inputs.current.length - 1) {
-      inputs.current[index + 1]?.focus(); 
+      inputs.current[index + 1]?.focus();
     } else if (!text && index > 0) {
       inputs.current[index - 1]?.focus();
+    }
+  };
+
+
+  const otpverify = async () => {
+    Keyboard.dismiss();
+    
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        console.log('⚠️ Token not found. Cannot upload.');
+        return;
+      }
+      const otpValue = otp.join('');
+      const order_id = await AsyncStorage.getItem('last_order_id');
+
+      // if (!otp_id) {
+      //   showToast(Constant.OTP_ID_MISSING, 'error');
+      //   return;
+      // }
+
+      const url = MAIN_URL.baseUrl + 'transaction/verify-post-order-otp';
+
+      const createPayload = {
+          orderid:'KX5WHMSX',
+          otp: '123456',
+          //otp:otpValue,
+          //orderid:selectedOrderId,
+          
+      };
+
+    console.log(url);
+    console.log(createPayload)
+      
+
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(createPayload),
+      });
+
+      const data = await res.json();
+      console.log('OTP Verify Response:', data);
+
+      if (data?.statusCode === 200) {
+        showToast(data.message, 'success');
+        setShowPopup2(true);
+
+      } else {
+        showToast(data?.message, 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
     }
   };
 
@@ -371,7 +436,11 @@ const formatDateWithDash = (dateString?: string) => {
                             justifyContent: 'center',
                             alignItems: 'center',
                           }}
-                          onPress={() => setShowPopup1(true)}
+                          //onPress={() => setShowPopup1(true)}
+                          onPress={() => {
+                          setSelectedOrderId(buyer.orderid); // store selected orderid in state
+                          setShowPopup1(true);
+                        }}
                         >
                           <Text allowFontScaling={false} style={styles.status}>
                             Enter OTP
@@ -484,9 +553,10 @@ const formatDateWithDash = (dateString?: string) => {
 
                   <TouchableOpacity
                     style={styles.loginButton}
-                    onPress={() => {
-                      setShowPopup2(true);
-                    }}
+                    // onPress={() => {
+                    //   setShowPopup2(true);
+                    //   }}
+                    onPress={otpverify}
                   >
                     <Text allowFontScaling={false} style={styles.loginText}>
                       Verify

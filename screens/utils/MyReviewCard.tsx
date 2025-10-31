@@ -19,6 +19,7 @@ type MyReviewCardProps = {
   isfeature?: boolean;
   navigation?: any;
   shareid: number;
+  date:string
 };
 
 const MyReviewCard: React.FC<MyReviewCardProps> = ({
@@ -29,6 +30,7 @@ const MyReviewCard: React.FC<MyReviewCardProps> = ({
   productImage,
   navigation,
   shareid,
+  date
 }) => {
   const fullStar = require('../../assets/images/starfill.png'); 
   const emptyStar = require('../../assets/images/starempty.png'); 
@@ -44,10 +46,7 @@ const MyReviewCard: React.FC<MyReviewCardProps> = ({
       <View style={styles.details}>
         <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
         <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
-        <Text allowFontScaling={false} style={styles.date}>
-          {`${new Date().getDate().toString().padStart(2, '0')}-${(new Date().getMonth()+1)
-            .toString()
-            .padStart(2, '0')}-${new Date().getFullYear()}`}
+        <Text allowFontScaling={false} style={styles.date}>{date}
         </Text>
       </View>
     </View>

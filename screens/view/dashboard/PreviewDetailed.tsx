@@ -227,27 +227,29 @@ const descriptionvalue= getValueByAlias(storedForm,'description') || 'No Descrip
   type?: string;
 };
 
-// const handleListPress = async () => {
-//   try {
-//     const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
-//     const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
-
-//     if (isFeatured) {
-//       navigation.navigate('PaymentScreen', {
-//         amount: diff1, 
-//         onSuccess: async () => {
-//           await listProduct();
-//         },
-//       });
-//     } else {
-//       await listProduct(); 
-//     }
-//   } catch (e) {
-//     console.log('Error parsing storedForm:', e);
-//   }
-// };
-
 const handleListPress = async () => {
+  try {
+    const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+    const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
+
+    if (isFeatured) {
+      navigation.navigate('PaymentScreen', {
+        amount: diff1, 
+        feature_id:1,
+        nav:'add',
+        onSuccess: async () => {
+          await listProduct();
+        },
+      });
+    } else {
+      await listProduct(); 
+    }
+  } catch (e) {
+    console.log('Error parsing storedForm:', e);
+  }
+};
+
+const listProduct = async () => {
   console.log('🔵 handleListPress called');
  //setShowPopup(true);
   try {
@@ -257,10 +259,12 @@ const handleListPress = async () => {
     // if (!data) {
     //       console.log("No payment data found");
     //       return null;
-    //     }
+    //   }
 
 
     // const paymentData = JSON.parse(data);
+
+    const paymentintent_id= await AsyncStorage.getItem("paymentintent_id");
 
 
     console.log('Step 1: Fetching formData from AsyncStorage...');
@@ -319,18 +323,20 @@ const handleListPress = async () => {
 
     console.log('✅ Data array for create API:', dataArray);
 
-     const createPayload = {
-      category_id: productId1, 
-      data: dataArray,
-    };
-
-    // const createPayload = {
+    //  const createPayload = {
     //   category_id: productId1, 
     //   data: dataArray,
-    //   paymentintent_id: paymentData.transactionId, 
-    //   savecard: true,
-    //   status: paymentData.status, 
     // };
+
+    const createPayload = {
+      category_id: productId1, 
+      data: dataArray,
+      //paymentintent_id: paymentData.transactionId, 
+      paymentintent_id:paymentintent_id,
+      savecard: true,
+      //status: paymentData.status, 
+      featureamount:diff1
+    };
 
     console.log('Step 5: Calling create API with payload:', createPayload);
 
