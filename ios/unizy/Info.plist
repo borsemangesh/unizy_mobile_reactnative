@@ -24,6 +24,7 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
@@ -39,14 +40,17 @@
 			</dict>
 		</dict>
 	</dict>
+
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app requires access to your location.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app requires access to your photo library to allow uploading and saving images.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>This app requires access to your camera to allow taking photos.</string>
+
 	<key>RCTNewArchEnabled</key>
 	<true/>
+
 	<key>UIAppFonts</key>
 	<array>
 		<string>MonumentExtended-Regular.otf</string>
@@ -70,19 +74,37 @@
 		<string>Urbanist-Thin.ttf</string>
 		<string>Urbanist-ThinItalic.ttf</string>
 	</array>
+
 	<key>UILaunchStoryboardName</key>
 	<string></string>
+
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>arm64</string>
 	</array>
+
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+
+	<!-- ✅ Added for Firebase Messaging -->
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
+
+	<!-- ✅ Background push support -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+
+	<!-- ✅ iOS Notif Permission -->
+	<key>NSRemoteNotificationUsageDescription</key>
+	<string>This app uses notifications for important alerts.</string>
 </dict>
 </plist>

@@ -34,6 +34,7 @@ import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import MessagesScreen from './MessageScreen';
 import { Constant } from '../../utils/Constant';
+import TransactionHistoryScreen from './TransactionHistoryScreen';
 
 const mylistings = require('../../../assets/images/mylistingicon.png');
 const mylistings1 = require('../../../assets/images/favourite.png');
@@ -108,7 +109,8 @@ const ProductItem: React.FC<ProductItemProps> = ({
 
 const SearchScreenContent = () => (
   <View style={styles.tabContent}>
-    <Text allowFontScaling={false} style={styles.tabContentText}>🔎 Search Layout</Text>
+    {/* <Text allowFontScaling={false} style={styles.tabContentText}>🔎 Search Layout</Text> */}
+    <TransactionHistoryScreen/>
   </View>
 );
 type AddScreenContentProps = {
@@ -305,6 +307,7 @@ const scrollViewRef = useRef<ScrollView>(null);
         if (!token) return;
 
         const url1 = MAIN_URL.baseUrl + 'category/feature-list';
+        console.log("FeatureListingDashboard:",url1);
         const res = await fetch(url1, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -344,7 +347,7 @@ const scrollViewRef = useRef<ScrollView>(null);
     const url1 = MAIN_URL.baseUrl + 'user/devicetoken';
     console.log('📤 FCM URL:', url1);
     const fcmToken = await messaging().getToken();
-    
+    console.log('📤 FCM fcmToken:', fcmToken);
     const requestBody = {
           device_token: fcmToken,
           device_type  : Platform.OS,
