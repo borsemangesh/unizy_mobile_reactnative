@@ -21,6 +21,7 @@ import {
 
 const bgImage = require('../../../assets/images/backimg.png');
 import ProductCard from '../../utils/ProductCard';
+import messaging from "@react-native-firebase/messaging";
 
 import AnimatedSlideUp from '../../utils/AnimatedSlideUp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -328,6 +329,47 @@ const scrollViewRef = useRef<ScrollView>(null);
     fetchFeatures();
   }, [])
 );
+
+ useEffect(() => {
+    sendDeviceTokenToServer();
+  }, []);
+
+
+  const sendDeviceTokenToServer = async () => {
+    try {
+
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) return;
+
+    const url1 = MAIN_URL.baseUrl + 'user/devicetoken';
+    console.log('📤 FCM URL:', url1);
+    const fcmToken = await messaging().getToken();
+    
+    const requestBody = {
+          device_token: fcmToken,
+          device_type  : Platform.OS,
+        };
+    console.log('Body:', JSON.stringify(requestBody));
+    const response = await fetch(url1, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (response.ok) {
+      console.log('✅ FCM token sent to server successfully');
+    } else {
+      const error = await response.text();
+      console.log('❌ Server error:', error);
+    }
+  } catch (error) {
+    console.error('❌ Error sending token to server:', error);
+  }
+
+  };
   
   const [isNav, setIsNav] = useState(true);
 
