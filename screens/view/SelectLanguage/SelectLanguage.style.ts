@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 
 export const selectlang_styles = StyleSheet.create({
   flex_1: {
@@ -14,18 +14,13 @@ export const selectlang_styles = StyleSheet.create({
     borderColor: '#ffffff3d',
     borderRadius: 16,
     
-    // boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.09)',
     padding: 16,
 
          borderWidth: 0.3,
-    // backgroundColor:
-    //   'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-  backgroundColor:
+      backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
       boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-    
-
-
+     
   },
   
   title: {
@@ -38,17 +33,17 @@ export const selectlang_styles = StyleSheet.create({
   },
   search_container: {
     display: 'flex',
+    minHeight:48,
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'stretch',
     borderRadius: 50,
-    marginTop:20,
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
   },
   searchIcon: {
-    padding: 5, 
+    padding: (Platform.OS === 'ios'? 0:5), 
     margin: 10 ,
     height:24,
     width:24
@@ -58,7 +53,7 @@ export const selectlang_styles = StyleSheet.create({
     marginLeft: -5,
     fontWeight:500,
     fontSize:17,
-    color:'#fff'
+    color: '#fff',
   },
 
   listContainer: {
@@ -69,7 +64,8 @@ export const selectlang_styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-    // maxHeight: '80%',
+    maxHeight: '83%',
+    overflow: 'hidden'
   },
   listContent: {
     paddingLeft: 10,
@@ -100,7 +96,7 @@ export const selectlang_styles = StyleSheet.create({
     height: 24,
   },
   languageText: {
-    color: 'white',
+    color: '#fff',
     fontSize: 17,
     fontFamily: 'Urbanist-Medium',
     fontWeight: '500',
@@ -110,8 +106,8 @@ export const selectlang_styles = StyleSheet.create({
   radioButton_round: {
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    width: 15,
-    height: 15,
+    width: 20,
+    height: 20,
     flexShrink: 0,
     borderColor: '#ffffff4e',
     
@@ -122,8 +118,8 @@ export const selectlang_styles = StyleSheet.create({
     shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25',
   },
   radioButton: {
-    width: 8,
-    height: 8,
+    width: 12,
+    height: 12,
     borderRadius: 10,
     // borderWidth: 1,
     // borderColor: '#ffffff4e',

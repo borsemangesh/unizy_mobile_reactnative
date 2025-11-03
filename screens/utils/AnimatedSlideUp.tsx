@@ -58,8 +58,8 @@ interface AnimatedSlideUpProps {
 
 const AnimatedSlideUp: React.FC<AnimatedSlideUpProps> = ({
   children,
-  duration = 1000, // faster overall
-  offset = 100,
+  duration = 900, // faster overall
+  offset = 1000,
   style,
 }) => {
   const translateY = useRef(new Animated.Value(offset)).current;

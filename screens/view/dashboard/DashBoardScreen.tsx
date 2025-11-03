@@ -1,4 +1,4 @@
-import React, { JSX, useEffect, useRef, useState } from 'react';
+import React, { JSX, useCallback, useEffect, useRef, useState } from 'react';
 import {
   Image,
   ImageBackground,
@@ -13,15 +13,31 @@ import {
   Animated,
   Dimensions,
   Easing,
+  Platform,
+  KeyboardAvoidingView,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from 'react-native';
+
+const bgImage = require('../../../assets/images/backimg.png');
 import ProductCard from '../../utils/ProductCard';
+import messaging from "@react-native-firebase/messaging";
 
 import AnimatedSlideUp from '../../utils/AnimatedSlideUp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect } from '@react-navigation/native';
+import { Navigation } from '../Navigation';
+import { MAIN_URL } from '../../utils/APIConstant';
+import TutitionCard from '../../utils/TutitionCard';
+import ProfileCard from './ProfileCard';
+import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
+import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
+import MessagesScreen from './MessageScreen';
+import { Constant } from '../../utils/Constant';
+import TransactionHistoryScreen from './TransactionHistoryScreen';
 
-const mylistings = require('../../../assets/images/new_list_icon.png');
-const mylistings1 = require('../../../assets/images/new_bookmark_icon.png');
+const mylistings = require('../../../assets/images/mylistingicon.png');
+const mylistings1 = require('../../../assets/images/favourite.png');
 
 const searchIcon = require('../../../assets/images/searchicon.png');
 const producticon = require('../../../assets/images/producticon.png');
@@ -49,113 +65,78 @@ type Product = {
   icon: ImageSourcePropType;
 };
 
-// const products = [
-//   {
-//     id: 1,
-//     name: 'Products',
-//     icon: producticon,
-//     description: 'Sell items you own, from books to gadgets and more.',
-//   },
-//   {
-//     id: 2,
-//     name: 'Food',
-//     icon: foodicon,
-//     description: 'List homemade meals, snacks, or campus treats for sale.',
-//   },
-//   {
-//     id: 3,
-//     name: 'Accommodation',
-//     icon: accomicon,
-//     description: 'Offer tutoring or academic help in your subject area.',
-//   },
-//   {
-//     id: 4,
-//     name: 'Tuition',
-//     icon: tuitionicon,
-//     description: 'Offer tutoring or academic help in your subject area.',
-//   },
-//   {
-//     id: 5,
-//     name: 'House Keeping',
-//     icon: houseicon,
-//     description: 'Provide cleaning, laundry, or everyday chore services.',
-//   },
-// ];
-
 type ProductItemProps = {
+  navigation: any;
   item: Product;
-  fullWidth: boolean;
 };
-
-
 
 const iconMap: Record<string, any> = {
   Products: require('../../../assets/images/producticon.png'),
-  Product: require('../../../assets/images/producticon.png'), // for API name
+  Product: require('../../../assets/images/producticon.png'), 
   Food: require('../../../assets/images/fod_icon.png'),
-  Food2: require('../../../assets/images/fod_icon.png'), // match API data
+  Food2: require('../../../assets/images/fod_icon.png'), 
   Accommodation: require('../../../assets/images/bed_icon.png'),
-  Accomodation: require('../../../assets/images/bed_icon.png'), // API spelling
+  Accomodation: require('../../../assets/images/bed_icon.png'), 
   Tuition: require('../../../assets/images/book.png'),
   'House Keeping': require('../../../assets/images/housekeeping.png'),
 };
 
-
-
-const ProductItem: React.FC<ProductItemProps> = ({ item, fullWidth }) => (
-  <View
-    style={[
-      styles.cardContainer,
-      fullWidth ? styles.fullWidth : styles.halfWidth,
-    ]}
+const ProductItem: React.FC<ProductItemProps> = ({
+  navigation,
+  item,
+}) => (
+  <TouchableOpacity
+    key={item.id}
+    onPress={() => {
+      navigation.replace('ProductDetails', {
+        category_id: item.id,
+        category_name: item.name,
+      },{ animation: 'none' });
+    }}
   >
-    <Image source={item.icon} style={styles.cardIcon} />
-    <Text
+    <View
       style={[
-        styles.cardText,
-        fullWidth && { flexShrink: 1, textAlign: 'left', marginLeft: 8 },
+        styles.cardContainer,
       ]}
-      numberOfLines={1}
     >
-      {item.name}
-    </Text>
-  </View>
+      <Image source={item.icon} style={styles.cardIcon} />
+      <Text allowFontScaling={false} style={styles.cardText} numberOfLines={1}>
+        {item.name}
+      </Text>
+    </View>
+  </TouchableOpacity>
 );
+type TransactionScreenProps = {
+  navigation: any;
+};
 
-
-const SearchScreenContent = () => (
+const SearchScreenContent = (navigation: TransactionScreenProps) => (
   <View style={styles.tabContent}>
-    <Text style={styles.tabContentText}>🔎 Search Layout</Text>
+    {/* <Text allowFontScaling={false} style={styles.tabContentText}>🔎 Search Layout</Text> */}
+    <TransactionHistoryScreen navigation ={navigation}/>
   </View>
 );
 type AddScreenContentProps = {
   navigation: any;
 };
 
-const AddScreenContent: React.FC<AddScreenContentProps & { products: any[] }> = ({ navigation, products }) => (
+const AddScreenContent: React.FC<
+  AddScreenContentProps & { products: any[] }
+> = ({ navigation, products }) => (
   <View style={styles.tabContent3}>
-    <Text style={styles.tabContentText3}>List Product</Text>
+    <Text allowFontScaling={false} style={[styles.tabContentText3,{paddingBottom:16}]}>List Product</Text>
     <AnimatedSlideUp>
       <FlatList
         data={products}
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={async () =>
-               {
-              // navigation.navigate('AddScreen', {
-              //   productId: item.id,
-              //   name: item.name,
-              // });
-               try {
-                await AsyncStorage.setItem('selectedProductId', String(item.id));
-                console.log('✅ Product info saved to AsyncStorage');
-                navigation.navigate('AddScreen');
-              } catch (error) {
-                console.log('❌ Error saving product info:', error);
-              }
-            }
-          }
+          <TouchableOpacity       
+            onPress={() => {
+              navigation.replace('AddScreen', {
+                productId: item.id,
+                productName: item.name,
+              },{ animation: 'none' });
+            }}
           >
             <View style={styles.card}>
               <View style={styles.iconBackground}>
@@ -163,8 +144,8 @@ const AddScreenContent: React.FC<AddScreenContentProps & { products: any[] }> = 
               </View>
 
               <View style={styles.cardTextContainer}>
-                <Text style={styles.cardTitle}>{item.name}</Text>
-                <Text style={styles.cardDescription}>{item.description}</Text>
+                <Text allowFontScaling={false} style={styles.cardTitle}>{item.name}</Text>
+                <Text allowFontScaling={false} style={styles.cardDescription}>{item.description}</Text>
               </View>
             </View>
           </TouchableOpacity>
@@ -174,14 +155,24 @@ const AddScreenContent: React.FC<AddScreenContentProps & { products: any[] }> = 
   </View>
 );
 
-const BookmarkScreenContent = () => (
-  <View style={styles.tabContent}>
-    <Text style={styles.tabContentText}>🔖 Bookmark Layout</Text>
+type ChatProps = {
+  navigation: any;
+};
+
+const BookmarkScreenContent = ({ navigation }: ChatProps) => (
+  <View style={[styles.tabContent]}>
+    {/* <Text allowFontScaling={false} style={styles.tabContentText}>🔖 Bookmark Layout</Text> */}
+    <MessagesScreen navigation={navigation}/>
+
   </View>
 );
-const ProfileScreenContent = () => (
+
+type ProfileScreenContentProps = {
+  navigation: any;
+};
+const ProfileScreenContent = ({ navigation }: ProfileScreenContentProps) => (
   <View style={styles.tabContent}>
-    <Text style={styles.tabContentText}>👤 Profile Layout</Text>
+    <ProfileCard navigation={navigation} />
   </View>
 );
 
@@ -189,43 +180,110 @@ type DashBoardScreenProps = {
   navigation: any;
 };
 
+type RootStackParamList = {
+  Dashboard: { AddScreenBackactiveTab: string;
+        isNavigate: boolean;
+        loginMessage: string;    
+        isFirsttimeLogin: boolean;   
+      }
+   };
+type DashboardRouteProp = RouteProp<RootStackParamList, 'Dashboard'>;
+
 const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   const [search, setSearch] = useState('');
-  const [activeTab, setActiveTab] = useState<
-    'Home' | 'Search' | 'Add' | 'Bookmark' | 'Profile'
-  >('Home');
-
+  const [activeTab, setActiveTab] = useState<string>('Home');
   const screenWidth = Dimensions.get('window').width;
   //const tabWidth = screenWidth / 5;
   const tabsname = ['Home', 'Search', 'Add', 'Bookmark', 'Profile'];
 
-  const tabWidth = (screenWidth * 0.9) / tabsname.length; // match container width = 90%
+  const tabWidth = (screenWidth * 0.9) / tabsname.length;
 
   const bubbleX = useRef(new Animated.Value(0)).current;
 
-
-
-
- const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-const [features, setFeatures] = useState<any[]>([]);
+  const [features, setFeatures] = useState<any[]>([]);
+  const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
+  const route = useRoute<DashboardRouteProp>();
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const { width } = Dimensions.get('window');
 
-
+const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
+    setIsNav(route.params?.isNavigate);
+    // console.log('useEffect_IsNav', isNav,route.params?.isNavigate);
+    if (route.params?.AddScreenBackactiveTab) {
+      setActiveTab(
+        route.params?.AddScreenBackactiveTab as
+          | 'Home'
+          | 'Search'
+          | 'Add'
+          | 'Bookmark'
+          | 'Profile',
+      );
+    }
+
+    // const fetchFeatures = async () => {
+    //   try {
+    //     const token = await AsyncStorage.getItem('userToken');
+    //     if (!token) return;
+    //     const url1 = MAIN_URL.baseUrl + 'category/feature-list';
+
+    //     const res = await fetch(url1, {
+    //       headers: { Authorization: `Bearer ${token}` },
+    //     });
+
+    //     const json = await res.json();
+    //     console.log('✅ Features API response:', json);
+
+    //     if (json.statusCode === 200) {
+    //       setFeatures(json.data.features || []);
+    //     }
+    //   } catch (err) {
+    //     console.log('❌ Error fetching features:', err);
+    //   }
+    // };
+
+    // fetchFeatures();
+
     const fetchCategories = async () => {
       try {
-        const res = await fetch('http://65.0.99.229:4320/user/category');
-        const json = await res.json();
-        // Filter only active categories and map to your local icon structure
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) return;
+
+        const url2 = MAIN_URL.baseUrl + 'user/category';
+
+        const response = await fetch(url2, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        const json = await response.json();
+
         const mapped = json.data
-          .filter((cat: any) => cat.isactive) // only active
+          .filter((cat: any) => cat.isactive)
           .map((cat: any) => ({
             id: cat.id,
             name: cat.name,
             description: cat.description,
-            icon: iconMap[cat.name] || require('../../../assets/images/producticon.png'), // fallback icon
-          })).slice(0,5)
+            icon: cat.logo
+              ? { uri: cat.logo }
+              : require('../../../assets/images/producticon.png'),
+          }));
+
+        const idNameArray = mapped.map((item: any) => ({
+          id: item.id,
+          name: item.name,
+        }));
+
+        await AsyncStorage.setItem(
+          'categories', 
+          JSON.stringify(idNameArray),
+        );
+
         setProducts(mapped);
       } catch (err) {
         console.error('Error fetching categories', err);
@@ -233,46 +291,27 @@ const [features, setFeatures] = useState<any[]>([]);
         setLoading(false);
       }
     };
+
     fetchCategories();
-  }, []);
+
+    const loadBookmarks = async () => {
+      const saved = await AsyncStorage.getItem('bookmarkedIds');
+      if (saved) setBookmarkedIds(JSON.parse(saved));
+    };
+    loadBookmarks();
+  }, [route.params?.AddScreenBackactiveTab]);
 
 
-//   useEffect(() => {
-//   const fetchFeatures = async () => {
-//     try {
-//       const token = await AsyncStorage.getItem('userToken');
-//       if (!token) return;
-
-//       const res = await fetch('http://65.0.99.229:4320/category/feature-list', {
-//         headers: { Authorization: `Bearer ${token}` },
-//       });
-
-//       const json = await res.json();
-//       console.log('✅ Features API response:', json);
-
-//       if (json.statusCode === 200) {
-//         setFeatures(json.data.features || []);
-//       }
-//     } catch (err) {
-//       console.log('❌ Error fetching features:', err);
-//     }
-//   };
-
-//   fetchFeatures();
-// }, []);
-
-
-
-  //Animation For all components variables.
-  
   useFocusEffect(
-  React.useCallback(() => {
+  useCallback(() => {
     const fetchFeatures = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
         if (!token) return;
 
-        const res = await fetch('http://65.0.99.229:4320/category/feature-list', {
+        const url1 = MAIN_URL.baseUrl + 'category/feature-list';
+        console.log("FeatureListingDashboard:",url1);
+        const res = await fetch(url1, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -281,6 +320,12 @@ const [features, setFeatures] = useState<any[]>([]);
 
         if (json.statusCode === 200) {
           setFeatures(json.data.features || []);
+        }
+        if(json.statusCode === 401 || json.statusCode === 403){
+          navigation.reset({
+          index: 0,
+          routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+        });
         }
       } catch (err) {
         console.log('❌ Error fetching features:', err);
@@ -291,7 +336,49 @@ const [features, setFeatures] = useState<any[]>([]);
   }, [])
 );
 
+ useEffect(() => {
+    sendDeviceTokenToServer();
+  }, []);
+
+
+  const sendDeviceTokenToServer = async () => {
+    try {
+
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) return;
+
+    const url1 = MAIN_URL.baseUrl + 'user/devicetoken';
+    console.log('📤 FCM URL:', url1);
+    const fcmToken = await messaging().getToken();
+    console.log('📤 FCM fcmToken:', fcmToken);
+    const requestBody = {
+          device_token: fcmToken,
+          device_type  : Platform.OS,
+        };
+    console.log('Body:', JSON.stringify(requestBody));
+    const response = await fetch(url1, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (response.ok) {
+      console.log('✅ FCM token sent to server successfully');
+    } else {
+      const error = await response.text();
+      console.log('❌ Server error:', error);
+    }
+  } catch (error) {
+    console.error('❌ Error sending token to server:', error);
+  }
+
+  };
   
+  const [isNav, setIsNav] = useState(true);
+
   const screenHeight = Dimensions.get('window').height;
   const translateY = React.useRef(new Animated.Value(screenHeight)).current;
   const searchBartranslateY = React.useRef(
@@ -300,16 +387,21 @@ const [features, setFeatures] = useState<any[]>([]);
   const categorytranslateY = React.useRef(
     new Animated.Value(screenHeight),
   ).current;
-  // const evenCategorytranslateX = React.useRef(new Animated.Value(screenWidth)).current;
-  const leftItemTranslateX = useRef(new Animated.Value(-300)).current; // from left
-  const rightItemTranslateX = useRef(new Animated.Value(300)).current; // from right
+  const leftItemTranslateX = useRef(new Animated.Value(-300)).current; 
+  const rightItemTranslateX = useRef(new Animated.Value(300)).current; 
   const cardSlideupAnimation = useRef(new Animated.Value(screenHeight)).current;
   const bottomNaviationSlideupAnimation = useRef(
     new Animated.Value(screenHeight),
   ).current;
 
   useEffect(() => {
-    if (activeTab === 'Home') {
+    if (activeTab === 'Home' && route.params?.isNavigate) {
+      console.log("isNav: ",isNav)
+      if(route.params?.isFirsttimeLogin){
+        navigation.setParams({ isFirsttimeLogin: false });
+        showToast(route.params?.loginMessage || Constant.LOGIN_SUCCESSFUL, 'success');
+      }
+      setIsNav(false);
       translateY.setValue(-screenWidth);
       searchBartranslateY.setValue(-screenWidth);
       categorytranslateY.setValue(-screenWidth);
@@ -369,9 +461,18 @@ const [features, setFeatures] = useState<any[]>([]);
         }),
       );
       Animated.stagger(200, animations).start();
+    } else if (activeTab === 'Home' && route.params?.isNavigate === false) {
+      // No animation: Just reset instantly
+      translateY.setValue(0);
+      searchBartranslateY.setValue(0);
+      categorytranslateY.setValue(0);
+      leftItemTranslateX.setValue(0);
+      rightItemTranslateX.setValue(0);
+      cardSlideupAnimation.setValue(0);
+      bottomNaviationSlideupAnimation.setValue(0);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab]);
+  }, [activeTab,route.params?.isNavigate]);
 
   useEffect(() => {
     const index = ['Home', 'Search', 'Add', 'Bookmark', 'Profile'].indexOf(
@@ -379,108 +480,408 @@ const [features, setFeatures] = useState<any[]>([]);
     );
     Animated.spring(bubbleX, {
       toValue: index * tabWidth,
-      friction: 8,
-      tension: 60,
+      friction: 6,
+      tension: 20,
+      
       useNativeDriver: true,
     }).start();
   }, [activeTab, bubbleX, tabWidth]);
 
+ 
+  // const renderProducts = () => {
+  //   const isEven = products.length % 2 === 0;
+  //   let startIndex = 0;
+  //   const rows: JSX.Element[] = [];
 
-  const renderProducts = () => {
-    const isEven = products.length % 2 === 0;
-    let startIndex = 0;
-    const rows: JSX.Element[] = [];
+  //   if (!isEven) {
+  //     rows.push(
+  //       <Animated.View
+  //         style={[
+  //           { width: '100%' }, 
+  //           { transform: [{ translateY: categorytranslateY }] },
+  //         ]}
+  //         key={products[0].id}
+  //       >
+  //         <ProductItem navigation={navigation} item={products[0]} fullWidth />
+  //       </Animated.View>,
+  //     );
+  //     startIndex = 1;
+  //   }
 
+  //   for (let i = startIndex; i < products.length; i += 2) {
+  //     const rowItems = products.slice(i, i + 2);
+
+  //     rows.push(
+  //       <View style={styles.row} key={i}>
+  //         {rowItems.map((item, index) => (
+  //           <Animated.View
+  //             key={item.id}
+  //             style={[
+  //               styles.halfWidth,
+  //               {
+  //                 transform: [
+  //                   {
+  //                     translateX:
+  //                       index === 0 ? leftItemTranslateX : rightItemTranslateX,
+  //                   },
+  //                 ],
+  //               },
+  //             ]}
+  //           >
+  //             <ProductItem
+  //               navigation={navigation}
+  //               item={item}
+  //               fullWidth={false}
+  //             />
+  //           </Animated.View>
+  //         ))}
+  //         {rowItems.length === 1 && <View style={styles.halfWidth} />}
+  //       </View>,
+  //     );
+  //   }
+  //   return rows;
+  // };
+
+const [activeIndex, setActiveIndex] = useState(0);
+const scrollX = useRef(new Animated.Value(0)).current;
+
+const renderProducts = () => {
+  const isEven = products.length % 2 === 0;
+  let startIndex = 0;
+  const rows: JSX.Element[] = [];
+
+  if (products.length <= 6) {
+    // ✅ Old grid layout (no change)
     if (!isEven) {
       rows.push(
         <Animated.View
           style={[
-            styles.row,
+            // { width: '80%' },
             { transform: [{ translateY: categorytranslateY }] },
           ]}
           key={products[0].id}
         >
-          <ProductItem item={products[0]} fullWidth />
+          <ProductItem navigation={navigation} item={products[0]}  />
         </Animated.View>,
       );
       startIndex = 1;
     }
 
     for (let i = startIndex; i < products.length; i += 2) {
-      i === 0 && rows.push(
-      <View style={styles.row} key={i} />);
       const rowItems = products.slice(i, i + 2);
-      console.log('RowITEM: ', rowItems);
       rows.push(
-        <View style={{ flexDirection: 'row' }} key={i}>
-          {rowItems.map((item, index) => (
-          <Animated.View
-            key={item.id}
-            style={[
-              index === 0 ? styles.halfWidth : styles.halfWidth, // keep same base width
-              {
-                transform: [
-                  {
-                    translateX:
-                      index === 0 ? leftItemTranslateX : rightItemTranslateX,
-                  },
-                ],
-              },
-            ]}
-  >
-    <ProductItem item={item} fullWidth={false} />
-  </Animated.View>
-))}
-          {rowItems.length === 1 && <View style={styles.halfWidth} />}
-        </View>,
+        // <View style={styles.row} key={i}>
+        //   {rowItems.map((item, index) => (
+        //     <Animated.View
+        //       key={item.id}
+        //       style={[
+        //         // styles.halfWidth,
+        //         {
+        //           transform: [
+        //             {
+        //               translateX:
+        //                 index === 0 ? leftItemTranslateX : rightItemTranslateX,
+        //             },
+        //           ],
+        //         },
+        //       ]}
+        //     >
+        //       <ProductItem navigation={navigation} item={item} />
+        //     </Animated.View>
+        //   ))}
+        // </View>
+
+        <View style={styles.row} key={i}>
+  {rowItems.map((item, index) => (
+    <Animated.View
+      key={item.id}
+      style={{
+        flex: 1,
+        transform: [
+          {
+            translateX:
+              index === 0 ? leftItemTranslateX : rightItemTranslateX,
+          },
+        ],
+      }}
+    >
+      <ProductItem navigation={navigation} item={item} />
+    </Animated.View>
+  ))}
+
+  {/* Add empty placeholder if only one item */}
+  {rowItems.length === 1 && <View style={{ flex: 1 }} />}
+</View>
       );
     }
-    return rows;
-  };
+
+    return <View>{rows}</View>;
+  }
+
+  
+
+const createPages = (items: typeof products) => {
+  const pages = [];
+  const pageSize = 6;
+  const overlap = 3;
+
+  if (items.length <= pageSize) {
+    pages.push({
+      left: items.filter((_, i) => i < 3),
+      right: items.filter((_, i) => i >= 3),
+    });
+    return pages;
+  }
+
+  pages.push({
+    left: items.slice(0, 3),
+    right: items.slice(3, 6),
+  });
+
+  let start = 3;
+  while (start + overlap < items.length) {
+    const left = items.slice(start, start + overlap); 
+    const right = items.slice(start + overlap, start + overlap + 3);
+    pages.push({ left, right });
+    start += 3;
+  }
+
+  const lastIndex = start + overlap;
+  if (lastIndex < items.length) {
+    const left = items.slice(start, start + overlap);
+    const right = items.slice(start + overlap);
+    pages.push({ left, right });
+  }
+
+  return pages;
+};
+
+
+
+const pages = createPages(products);
+ 
+
+let secondPageLeft: typeof products = [];
+let secondPageRight: typeof products = [];
+if (products.length > 6) {
+  secondPageLeft = products.slice(3, 6); 
+  secondPageRight = products.slice(6);  
+}
+
+const rightRows: (typeof products[0] | null)[] = [];
+if (secondPageRight.length > 0) {
+  const rowsCount = secondPageLeft.length;
+  for (let i = 0; i < rowsCount; i++) {
+    rightRows.push(secondPageRight[i] || null);
+  }
+}
+const handleScrollEndDrag = (e: any) => {
+  const offsetX = e.nativeEvent.contentOffset.x;
+  const index = Math.round(offsetX / width); 
+  scrollViewRef.current?.scrollTo({ x: index * width, animated: true });
+  setActiveIndex(index);
+};
+
+const onScroll = Animated.event(
+  [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+  { useNativeDriver: false }
+);
+
+const handleScrollEnd = (e: { nativeEvent: { contentOffset: { x: number } } }) => {
+  const index = Math.round(e.nativeEvent.contentOffset.x / width);
+  setActiveIndex(index);
+};
+
+return (
+  <View>
+    <Animated.ScrollView
+    //ref={scrollViewRef}
+      horizontal
+       pagingEnabled={false} 
+      showsVerticalScrollIndicator={false}
+      showsHorizontalScrollIndicator={false}
+      onScroll={onScroll}
+      onMomentumScrollEnd={handleScrollEnd}
+      //onScrollEndDrag={handleScrollEndDrag}
+
+      scrollEventThrottle={16}
+    >
+  {pages.map((page, pageIndex) => (
+    <View key={pageIndex} style={{ width, flexDirection: 'row',padding:10,}}>
+      {/* Left column */}
+      <View style={{ flex: 1}}>
+        {page.left.map(item => (
+          <Animated.View
+            key={item.id}
+            style={{ transform: [{ translateY: categorytranslateY }], marginBottom: 4 }}
+          >
+            <ProductItem navigation={navigation} item={item} />
+          </Animated.View>
+        ))}
+      </View>
+
+      {/* Right column */}
+      <View style={{ flex: 1,paddingLeft:2}}>
+        {page.right.map(item => (
+          <Animated.View
+            key={item.id}
+            style={{ transform: [{ translateY: categorytranslateY }], marginBottom: 4 }}
+          >
+            <ProductItem navigation={navigation} item={item} />
+          </Animated.View>
+        ))}
+      </View>
+    </View>
+  ))}
+</Animated.ScrollView>
+    
+    <View style={styles.stepIndicatorContainer}>
+  {pages.map((_, idx) =>
+    idx === activeIndex ? (
+      <LinearGradient
+        key={idx}
+        colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0.5)']}
+        style={styles.stepCircle}
+      />
+    ) : (
+      <View
+        key={idx}
+        style={[styles.stepCircle, styles.inactiveStepCircle]}
+      />
+    )
+  )}
+</View>
+  </View>
+);
+
+};
+
+
+ const handleBookmarkPress = async (productId: number) => {
+  try {
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) return;
+
+    setFeatures(prev =>
+      prev.map(item =>
+        item.id === productId
+          ? { ...item, isbookmarked: !item.isbookmarked }
+          : item
+      )
+    );
+
+    const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
+
+    const url = MAIN_URL.baseUrl + 'category/list-bookmark';
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ feature_id: productId }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Bookmark response:', data);
+
+    let updatedBookmarks;
+    if (isCurrentlyBookmarked) {
+      updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
+    } else {
+      updatedBookmarks = [...bookmarkedIds, productId];
+    }
+
+    setBookmarkedIds(updatedBookmarks);
+    await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks));
+  } catch (error) {
+    console.error('Bookmark error:', error);
+
+    setFeatures(prev =>
+      prev.map(item =>
+        item.id === productId
+          ? { ...item, isbookmarked: !item.isbookmarked }
+          : item
+      )
+    );
+  }
+};
 
   const renderActiveTabContent = () => {
     switch (activeTab) {
       case 'Home':
         return (
           <>
-          <TouchableOpacity onPress={() => navigation.navigate('ProductDetails')} >
             <View style={styles.productsWrapper}>{renderProducts()}</View>
-            </TouchableOpacity>
-            <Text style={styles.featuredText}>Featured Listings</Text>
-       
-           <ScrollView
-            style={{ paddingHorizontal: 6 }}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          >
-            {features.map((item) => (
-              <Animated.View
-                key={item.id}
-                style={{
-                  transform: [{ translateY: cardSlideupAnimation }],
-                  marginRight: 10,
-                }}
-              >
-                <ProductCard
-                  tag="University of Warwick" 
-                  infoTitle={item.title} 
-                  inforTitlePrice={`£${item.price}`} 
-                  rating="4.5" 
-                  productImage={{ uri: item.thumbnail }} 
-                />
-              </Animated.View>
-            ))}
-          </ScrollView>
+            <Animated.View
+              style={{
+                transform: [{ translateY: cardSlideupAnimation }],
+              }}
+            >
+              {' '}
+              <Text allowFontScaling={false} style={styles.featuredText}>Featured Listings</Text>
+            </Animated.View>
+            <ScrollView
+             directionalLockEnabled={true} 
+              style={{ paddingHorizontal: 0,marginLeft:8 }}
+              horizontal
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+            >
+              {features.map(item => (
+                <Animated.View
+                  key={item.id}
+                  style={{
+                    transform: [{ translateY: cardSlideupAnimation }],
+                  }}
+                >
+                  {item.profileshowinview ? (
+                    <TutitionCard
+                      tag={item.university?.name || 'University of Warwick'}
+                      title={item.title}
+                      infoTitle={`${item.createdby?.firstname || ''} ${
+                        item.createdby?.lastname || ''
+                      }`}
+                      inforTitlePrice={`£ ${item.price}`}
+                      rating="4.5"
+                      productImage={{ uri: item.createdby?.profile }}
+                      onBookmarkPress={() => handleBookmarkPress(item.id)}
+                      isBookmarked={item.isbookmarked}
+                      onpress={() =>{
+                        navigation.navigate('SearchDetails', { id: item.id },{ animation: 'none' })
+                      }}
+                    />
+                  ) : (
+                    <ProductCard
+                      tag={item.university?.name || 'University of Warwick'}
+                      infoTitle={item.title}
+                      inforTitlePrice={`£ ${item.price}`}
+                      rating="4.5"
+                      productImage={{ uri: item.thumbnail }}
+                      onBookmarkPress={() => handleBookmarkPress(item.id)}
+                     isBookmarked={item.isbookmarked}
+                      onpress={() =>{
+                        navigation.replace('SearchDetails', { id: item.id },{ animation: 'none' })
+                      }}
+                    />
+                  )}
+                </Animated.View>
+              ))}
+            </ScrollView>
           </>
         );
       case 'Search':
-        return <SearchScreenContent />;
+        return <SearchScreenContent  navigation={navigation}/>;
       case 'Add':
-       return <AddScreenContent navigation={navigation} products={products} />;
+        return <AddScreenContent navigation={navigation} products={products} />;
       case 'Bookmark':
-        return <BookmarkScreenContent />;
+        return <BookmarkScreenContent navigation={navigation} />;
       case 'Profile':
-        return <ProfileScreenContent />;
+        return <ProfileScreenContent navigation={navigation} />;
       default:
         return null;
     }
@@ -494,32 +895,48 @@ const [features, setFeatures] = useState<any[]>([]);
     { key: 'Profile', icon: profileIcon, activeIcon: profileIcon5 },
   ];
 
+  const clickbookmark = () => {
+    setIsNav(false);
+    navigation.replace('Bookmark',{ animation: 'none' }); 
+  };
+  const clicklisting = async () => {
+    setIsNav(false);
+    navigation.replace('MyListing',{ animation: 'none' });
+  };
+
   return (
-    <ImageBackground
-      source={require('../../../assets/images/bganimationscreen.png')}
-      style={styles.background}
-    >
+    <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-        {/* Header visible only on Home */}
         {activeTab === 'Home' && (
-          <View style={styles.header}>
+          <View
+            style={[
+              styles.header,
+              { paddingTop: Platform.OS === 'ios' ? 50 : 40 },
+            ]}
+          >
             <Animated.View
               style={[
                 styles.headerRow,
                 { transform: [{ translateY: translateY }] },
               ]}
             >
-              <View style={styles.MylistingsBackground}>
-                <Image source={mylistings} style={styles.iconSmall} />
-              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  clicklisting();
+                }}
+              >
+                <View style={styles.MylistingsBackground}>
+                  <Image source={mylistings} style={styles.iconSmall} />
+                </View>
+              </TouchableOpacity>
 
-              <Text style={styles.unizyText}>UniZy</Text>
+              <Text allowFontScaling={false} style={styles.unizyText}>UniZy</Text>
 
-              <View style={styles.emptyView}>
+              <TouchableOpacity onPress={clickbookmark}>
                 <View style={styles.MylistingsBackground}>
                   <Image source={mylistings1} style={styles.iconSmall} />
                 </View>
-              </View>
+              </TouchableOpacity>
             </Animated.View>
 
             <Animated.View
@@ -535,23 +952,32 @@ const [features, setFeatures] = useState<any[]>([]);
                 placeholderTextColor="#ccc"
                 onChangeText={setSearch}
                 value={search}
+                allowFontScaling={false}
+                onFocus={() => navigation.navigate('SearchPage',{ animation: 'none' ,from: 'Dashboard'})}
               />
             </Animated.View>
           </View>
         )}
 
-        {/* Main Content */}
-
-        <View style={{ flex: 1 }}>{renderActiveTabContent()}</View>
-
-        {/* Bottom Tab Bar */}
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} 
+        >
+          <ScrollView
+            style={{ flex: 1 }}
+            contentContainerStyle={{ paddingBottom: 10 }} 
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={{ flex: 1 }}>{renderActiveTabContent()}</View>
+          </ScrollView>
+        </KeyboardAvoidingView>
         <Animated.View
           style={[
             styles.bottomTabContainer,
             { transform: [{ translateY: bottomNaviationSlideupAnimation }] },
           ]}
         >
-          {/* Bubble background */}
           <View style={{ height: 48 }}>
             <Animated.View
               style={[
@@ -568,11 +994,15 @@ const [features, setFeatures] = useState<any[]>([]);
             <TouchableOpacity
               key={key}
               style={[styles.tabItem, { width: tabWidth }]}
-              onPress={() => setActiveTab(key as any)}
+              onPress={() => {
+                setIsNav(false);
+                navigation.setParams({ isNavigate: false });
+                setActiveTab(key as any);
+              }}
             >
               <View style={styles.iconWrapper}>
                 <Image
-                  source={activeTab === key ? activeIcon : icon} // <-- choose icon based on active tab
+                  source={activeTab === key ? activeIcon : icon} 
                   style={styles.tabIcon}
                 />
               </View>
@@ -580,6 +1010,7 @@ const [features, setFeatures] = useState<any[]>([]);
           ))}
         </Animated.View>
       </View>
+      <NewCustomToastContainer />
     </ImageBackground>
   );
 };
@@ -587,19 +1018,62 @@ const [features, setFeatures] = useState<any[]>([]);
 export default DashBoardScreen;
 
 const styles = StyleSheet.create({
+
+   stepCircle: {
+    width: 12,
+    height: 12,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+  },
+
+  activeStepCircle: {
+    backgroundColor: '#FFFFFF',
+    width: 12,
+    height: 12,
+    flexShrink: 0,
+    borderColor: '#ffffff4e',
+    alignItems: 'center',
+    borderRadius: 40,
+    justifyContent: 'center',
+    boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
+    shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25)',
+  },
+  
+  stepIndicatorContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 12
+  },
+
+  inactiveStepCircle: {
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    width: 12,
+    height: 12,
+    flexShrink: 0,
+    borderColor: '#ffffff4e',
+    alignItems: 'center',
+    borderRadius: 40,
+    justifyContent: 'center',
+    boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
+    shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25)',
+  },
   search_container: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'stretch',
     borderRadius: 50,
-    marginTop: 20,
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    paddingVertical: 4,
+    marginTop:20,
   },
   searchIcon: {
-    padding: 5,
+    padding: (Platform.OS === 'ios'? 0:5),
     margin: 10,
     height: 24,
     width: 24,
@@ -610,60 +1084,85 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     fontSize: 17,
     color: '#fff',
+    width: '80%',
   },
 
   bottomTabContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 56,
-    marginBottom: 20,
+    height: '6.5%',
+    //marginBottom: 20,
+    marginBottom: Platform.OS === 'ios' ? 30 : 30,    
     borderRadius: 50,
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    alignSelf: 'center', // center horizontally
-    position: 'relative', // important for absolute bubble
-    paddingHorizontal: 4,
+    alignSelf: 'center',
+    // position: 'relative',
+    padding: 4,
+    borderWidth: 0.4,
+    //padding: 12,
+    margin:4,
+    borderColor: '#ffffff11',
+    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    borderEndEndRadius: 50,
+    borderStartEndRadius: 50,
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
+    borderBottomStartRadius: 50,
+    borderBlockStartColor: '#ffffff2e',
+    borderBlockColor: '#ffffff2e',
+    borderTopColor: '#ffffff2e',
+    borderBottomColor: '#ffffff2e',
+    borderLeftColor: '#ffffff2e',
+    borderRightColor: '#ffffff2e',
+
+    boxSizing: 'border-box',
+    zIndex: 100,
   },
   tabItem: {
     //justifyContent: 'center',
     //alignItems: 'center',
   },
   iconWrapper: {
-    height: 50,
+    height: 50, //
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  tabIcon: {
-    width: 22,
-    height: 22,
-    tintColor: '#fff',
+    tabIcon: {
+    width: 28,
+    height: 28,
+    //tintColor: '#fff',
     resizeMode: 'contain',
   },
-  activeTabIcon: {
-    //tintColor: '#ccc',
-  },
   bubble: {
-    height: 48,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    //borderRadius: 40,
+    //height: 48,
+    height: '100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.16)',    
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18)',
+
     position: 'absolute',
 
-    justifyContent: 'center', // center icon vertically
+    justifyContent: 'center',
     alignItems: 'center',
-    //paddingHorizontal: 12,
-    //paddingVertical: 8,
-
+    
     left: 3,
     right: 3,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2e',
 
-    borderTopLeftRadius: 30,
-    borderBottomLeftRadius: 30,
-    borderTopRightRadius: 30,
-    borderBottomRightRadius: 30,
-  },
+    borderTopLeftRadius: 50,
+    borderBottomLeftRadius: 50,
+    borderTopRightRadius: 50,
+    borderBottomRightRadius: 50,
 
-  activeIconWrapper: {
-    // backgroundColor: 'rgba(255,255,255,0.2)', // highlight active tab
+    borderBlockStartColor: '#ffffff2e',
+    borderBlockColor: '#ffffff2e',
+
+    borderTopColor: '#ffffff2e',
+    borderBottomColor: '#ffffff2e',
+    borderLeftColor: '#ffffff2e',
+    borderRightColor: '#ffffff2e',
   },
 
   background: {
@@ -675,30 +1174,44 @@ const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
     flexDirection: 'column',
+    gap: 12,
   },
 
   header: {
     flexDirection: 'column',
     alignItems: 'center',
-    paddingTop: 12,
-    paddingBottom: 12,
+
+    // paddingBottom: 12,
     paddingHorizontal: 16,
+    marginVertical:6
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
+   // paddingBottom: 13,
   },
 
   MylistingsBackground: {
     height: 48,
     width: 48,
+
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 40,
+    borderRadius: 100,
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(97, 179, 255, 0.2) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow:
+      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
+
+    borderTopColor: '#ffffff5d',
+    borderBottomColor: '#ffffff36',
+    borderLeftColor: '#ffffff5d',
+    borderRightColor: '#ffffff36',
+    borderWidth: 0.3,
   },
   iconSmall: {
-    width: 48,
-    height: 48,
+    width: 25,
+    height: 25,
   },
   unizyText: {
     color: '#FFFFFF',
@@ -706,56 +1219,66 @@ const styles = StyleSheet.create({
     fontSize: 24,
     flex: 1,
     textAlign: 'center',
+    
   },
   emptyView: {},
 
   productsWrapper: {
     flexDirection: 'column',
-    paddingHorizontal: 12,
+    //paddingHorizontal: 12,
+    marginHorizontal:12
   },
 
   row: {
     flexDirection: 'row',
-    marginTop: 2,
+    width: '100%',
   },
   row1: {
     flexDirection: 'row',
-    marginTop: 2,
     justifyContent: 'space-between',
   },
 
   cardContainer: {
-    height: 56,
+    height: 64,
     flexDirection: 'row',
-    borderRadius: 16,
-    padding: 12,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical:19,
     alignItems: 'center',
-    margin: 4,
+    marginVertical:5.5,
+    marginHorizontal:5.5,
     borderWidth: 0.4,
-    borderColor: '#ffffff36',
-    borderTopLeftRadius: 16,
-    borderBottomRightRadius: 16,
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    borderColor: '#ffffff11',
 
-    // borderTopColor: '#ffffff79',
-    // borderBottomColor: '#ffffff95',
-    // borderLeftColor: '#ffffff2f',
-    // borderRightColor: '#ffffff2f',
+    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
+
+    borderEndEndRadius: 15,
+    borderStartEndRadius: 15,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    borderBottomStartRadius: 15,
+    borderBlockStartColor: '#ffffff2e',
+    borderBlockColor: '#ffffff2e',
+
+    borderTopColor: '#ffffff2e',
+    borderBottomColor: '#ffffff2e',
+    borderLeftColor: '#ffffff2e',
+    borderRightColor: '#ffffff2e',
+    boxSizing: 'border-box',
+    
   },
 
-
-fullWidth: {
-  flex: 1,
-  justifyContent: 'flex-start',
-},
-halfWidth: {
-  flex: 1, 
-  maxWidth: '100%',
-  maxHeight: '100%',
-  height: 60,
-},
+  fullWidth: {
+    //width: '100%',
+   // maxWidth: '100%',
+  },
+  halfWidth: {
+   // flex: 0.48,
+   // width:'40%',
+    //justifyContent:'flex-start'
+  },
   cardIcon: {
     width: 24,
     height: 24,
@@ -765,7 +1288,7 @@ halfWidth: {
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 16,
     fontWeight: '600',
-    paddingLeft: 12,
+    paddingLeft: 9,
     flexShrink: 1,
   },
 
@@ -776,7 +1299,7 @@ halfWidth: {
     fontWeight: '600',
     marginTop: 20,
     marginLeft: 16,
-    marginBottom: 10,
+    marginBottom: 20,
     paddingHorizontal: 6,
   },
 
@@ -795,35 +1318,36 @@ halfWidth: {
   tabContent3: {
     flex: 1,
     padding: 20,
+    paddingTop: Platform.OS === 'ios' ? 60 : 50,
   },
   tabContentText3: {
     color: '#fff',
     fontSize: 20,
-    marginBottom: 12,
+    marginVertical: 12,
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600,
   },
 
   card: {
-    height: 85,
+    height: 94,
     flexDirection: 'row',
     //backgroundColor: '#ffffff20', // semi-transparent for dark bg
     borderRadius: 24,
-    padding: 16,
+    padding: 12,
     marginTop: 10,
     marginBottom: 10,
     alignItems: 'center',
 
-    borderWidth: 1,
+    borderWidth: 0.4,
     borderColor: '#ffffff2c',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
     boxShadow: 'rgba(255, 255, 255, 0.02) -1px 10px 5px 10px',
   },
   cardIcon1: {
-    width: 30,
-    height: 30,
+    width: 32.5,
+    height: 32.5,
     //marginRight: 12,
     resizeMode: 'contain',
   },
@@ -851,12 +1375,11 @@ halfWidth: {
     alignItems: 'center',
     marginRight: 12,
     paddingVertical: 8,
-    paddingHorizontal: 12,
 
-    borderWidth: 1,
-    borderColor: '#ffffff2c',
+    //borderWidth: 0.4,
+    borderColor: 'transparent',
     backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px',
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.15) 100%)',
+    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.51)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.51)inset 0.99px 0.88px 0.90px 0px',
   },
 });

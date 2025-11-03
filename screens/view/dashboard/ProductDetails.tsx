@@ -1,71 +1,364 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Image,
   ImageBackground,
-  ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   View,
   TouchableOpacity,
-  Switch,
   FlatList,
+  Platform,
+  StyleSheet,
+  StatusBar,
+  ActivityIndicator,
+  ImageSourcePropType,
 } from 'react-native';
-import ProductCard from '../../utils/ProductCard';
-import NewProductCard from '../../utils/NewProductCard';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MAIN_URL } from '../../utils/APIConstant';
 
-// assets
-const bgImage = require('../../../assets/images/bganimationscreen.png');
+const bgImage = require('../../../assets/images/backimg.png');
 const searchIcon = require('../../../assets/images/searchicon.png');
+import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
+import SearchListProductCard from '../../utils/SearchListProductCard';
+import FilterBottomSheet from '../../utils/component/FilterBottomSheet';
+import SearchTutionCard from '../../utils/SearchTutionCard';
+import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
+import SeperateTutionCard from '../../utils/SeperateTutitionCard';
+type CreatedBy = {
+  id: number;
+  firstname: string;
+  lastname: string;
+  email: string;
+  postal_code: string;
+  password: string;
+  student_email: string;
+  university_name: string | null;
+  profile: string;
+  reset_password_token: string | null;
+  reset_password_expires: string | null;
+  isactive: boolean;
+  created_at: string;
+  updated_at: string;
+  role_id: number;
+};
+type university={
+  id:number,
+  name:string
+}
 
-const products = [
-  {
-    id: '1',
-    tag: 'University of Warwick',
-    infoTitle: 'Quadcopter (Drone)',
-    inforTitlePrice: '$10.00',
-    rating: '4.5',
-    productImage: require('../../../assets/images/drone.png'),
-  },
-  {
-    id: '2',
-    tag: 'MIT',
-    infoTitle: 'Rover Bot',
-    inforTitlePrice: '$25.00',
-    rating: '4.8',
-    productImage: require('../../../assets/images/drone.png'),
-  },
-  {
-    id: '3',
-    tag: 'Stanford',
-    infoTitle: 'Robotic Arm',
-    inforTitlePrice: '$15.00',
-    rating: '4.7',
-    productImage: require('../../../assets/images/drone.png'),
-  },
-  {
-    id: '4',
-    tag: 'Harvard',
-    infoTitle: 'AI Car',
-    inforTitlePrice: '$30.00',
-    rating: '4.9',
-    productImage: require('../../../assets/images/drone.png'),
-  },
+type Feature = {
+  id: number;
+  created_by: number;
+  category_id: number;
+  created_at: any;
+  updated_at: string;
+  isactive: boolean;
+  isfeatured: boolean;
+  title: string;
+  price: number;
+  thumbnail: string;
+  profileshowinview: boolean
+  createdby: CreatedBy;
+  university:university;
+  isbookmarked:boolean
+};
 
-];
 type ProductDetailsProps = {
   navigation: any;
 };
 
+type RootStackParamList = {
+  ProductDetails: { category_id: number ,category_name:string};
+};
 
-const ProductDetails= ({ navigation }: ProductDetailsProps) => {
-  const [featured, setFeatured] = useState(false);
+type ProductDetailsRouteProp = RouteProp<RootStackParamList, 'ProductDetails'>;
+const mylistings = require('../../../assets/images/filter_icon.png');
 
-  const [search, setSearch] = useState('');
+const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
+  const [featurelist, setFeaturelist] = useState<Feature[]>([]);
+  const [search, setSearch] = useState<string>('');
+  const route = useRoute<ProductDetailsRouteProp>();
+  const { category_id } = route.params;
+  const {category_name} =route.params;
 
-  const filteredProducts = products.filter(item =>
-  item.infoTitle.toLowerCase().includes(search.toLowerCase())
+const [page, setPage] = useState(1);
+const [isLoading, setIsLoading] = useState(false);
+const [hasMore, setHasMore] = useState(true); // whether more pages exist
+const [isFilterVisible, setFilterVisible] = useState(false);
+const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
+
+  useEffect(() => {
+  const loadBookmarks = async () => {
+    const saved = await AsyncStorage.getItem('bookmarkedIds');
+    if (saved) setBookmarkedIds(JSON.parse(saved));
+  };
+  loadBookmarks();
+}, []);
+
+const clickfilter = () => {
+  setFilterVisible(true);
+};
+
+  // useEffect(() => {
+  //   displayListOfProduct();
+  // }, []);
+
+  useFocusEffect(
+  useCallback(() => {
+    displayListOfProduct(); // refresh whenever screen regains focus
+  }, [])
 );
+
+  const displayListOfProduct = async (pageNum: number = 1) => {
+  if (isLoading || !hasMore) return;
+
+  try {
+    setIsLoading(true);
+
+    const body = {
+      search: search,
+      page: pageNum,
+      pagesize: 20,
+      category_id: category_id,
+    };
+
+    const url = MAIN_URL.baseUrl + 'category/feature-list/search';
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) return;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    const jsonResponse = await response.json();
+    console.log('API Response:', jsonResponse);
+
+    if (jsonResponse.statusCode === 200) {
+      const newFeatures = jsonResponse.data.features;
+
+      if (pageNum === 1) {
+        setFeaturelist(newFeatures);
+      } else {
+        setFeaturelist(prev => [...prev, ...newFeatures]);
+      }
+
+      setHasMore(newFeatures.length === 20); 
+      setPage(prev => prev + 1);
+    }
+    if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
+          setIsLoading(false);
+          navigation.reset({
+          index: 0,
+          routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+        });
+        }
+  } catch (err) {
+    console.log('Error:', err);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+// const handleBookmarkPress = async (productId: number) => {
+//   try {
+//     const token = await AsyncStorage.getItem('userToken');
+//     if (!token) return;
+
+//     const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
+
+//     const url = MAIN_URL.baseUrl + 'category/list-bookmark';
+//     const response = await fetch(url, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': `Bearer ${token}`,
+//       },
+//       body: JSON.stringify({ feature_id: productId }),
+//     });
+
+//     if (!response.ok) {
+//       throw new Error(`HTTP error! status: ${response.status}`);
+//     }
+
+//     const data = await response.json();
+//     console.log('Bookmark response:', data);
+
+//     let updatedBookmarks;
+//     if (isCurrentlyBookmarked) {
+//       updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
+//     } else {
+//       updatedBookmarks = [...bookmarkedIds, productId];
+//     }
+
+//     setBookmarkedIds(updatedBookmarks);
+//     await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks)); // persist locally
+
+//   } catch (error) {
+//     console.error('Bookmark error:', error);
+//   }
+// };
+
+const handleBookmarkPress = async (productId: number) => {
+  try {
+    setFeaturelist(prevList =>
+      prevList.map(item =>
+        item.id === productId
+          ? { ...item, isbookmarked: !item.isbookmarked } // toggle local bookmark
+          : item
+      )
+    );
+
+    // 2️⃣ Send API request
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) return;
+
+    const url = MAIN_URL.baseUrl + 'category/list-bookmark';
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ feature_id: productId }),
+    });
+
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+    const data = await response.json();
+    console.log('Bookmark response:', data);
+
+  } catch (error) {
+    console.error('Bookmark error:', error);
+
+    // 3️⃣ Revert if API fails
+    setFeaturelist(prevList =>
+      prevList.map(item =>
+        item.id === productId
+          ? { ...item, isbookmarked: !item.isbookmarked }
+          : item
+      )
+    );
+  }
+};
+
+  
+  const filteredFeatures: Feature[] = featurelist.filter((item) =>
+    item.title?.toLowerCase().includes(search.toLowerCase())
+  );
+
+
+const renderItem = ({ item, index }: { item: Feature; index: number }) => {
+  const isLastOddItem =
+    filteredFeatures.length % 2 !== 0 &&
+    index === filteredFeatures.length - 1;
+
+ let productImage: ImageSourcePropType | null = null;
+  let showInitials = false;
+  let initials = '';
+
+  if (item.profileshowinview) {
+    if (item.createdby?.profile) {
+      productImage = { uri: item.createdby.profile };
+    } else {
+      showInitials = true;
+      initials = `${item.createdby?.firstname?.[0] ?? ''}${item.createdby?.lastname?.[0] ?? ''}`;
+    }
+  } else {
+    if (item.thumbnail) {
+      productImage = { uri: item.thumbnail };
+    } else {
+      productImage = require('../../../assets/images/drone.png');
+    }
+  }
+  return (
+    <View
+      style={[
+        styles.itemContainer,
+        { flex: isLastOddItem ? 0.5 : 0.5, marginRight: isLastOddItem ? 0.5 : 0.5 },
+      ]}
+    >
+
+
+
+      <TouchableOpacity
+        onPress={() =>{
+          navigation.navigate('SearchDetails', { id: item.id ,name:category_name},{animation: 'none'})}
+          
+        }
+        style={{ flex: 1 }}
+      >
+        {item.profileshowinview ? (
+        <SeperateTutionCard
+           tag={item.university?.name || 'University of Warwick'}
+          infoTitle={item.title}
+          inforTitlePrice={`£ ${item.price}`}
+          rating={item.isfeatured ? '4.5' : '4.5'}
+          showInitials={showInitials}
+          initialsName={initials.toUpperCase()}
+          productImage={item.createdby?.profile ? { uri: item.createdby.profile } : undefined}
+          bookmark={item.isbookmarked}
+          //bookmark={bookmarkedIds.includes(item.id)} 
+          isfeature={item.isfeatured}
+          applybookmark={() => handleBookmarkPress(item.id)}
+        />
+      ) : (
+        <SearchListProductCard
+           tag={item.university?.name || 'University of Warwick'}
+          infoTitle={item.title}
+          inforTitlePrice={`£ ${item.price}`}
+          rating={item.isfeatured ? '4.5' : '4.5'}
+          productImage={productImage ?? require('../../../assets/images/drone.png')}
+          bookmark={item.isbookmarked}
+          //bookmark={bookmarkedIds.includes(item.id)} 
+          isfeature={item.isfeatured}
+          applybookmark={() => handleBookmarkPress(item.id)}
+        />
+      )}
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const handleFilterApply = async (filterBody: any) => {
+  try {
+    setIsLoading(true);
+
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) return;
+
+    const url = `${MAIN_URL.baseUrl}category/filter-apply`;
+
+    //const url = 'http://65.0.99.229:4320/category/filter-apply';
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(filterBody),
+    });
+
+    const jsonResponse = await response.json();
+    console.log('Filter Apply Response:', jsonResponse);
+
+    if (jsonResponse.statusCode === 200) {
+      const filteredFeatures = jsonResponse.data.features;
+      setFeaturelist(filteredFeatures);
+      setHasMore(filteredFeatures.length === 20);
+      setPage(2);
+    }
+  } catch (err) {
+    console.log('Error applying filters:', err);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
 
   return (
@@ -74,59 +367,81 @@ const ProductDetails= ({ navigation }: ProductDetailsProps) => {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerRow}>
-          <TouchableOpacity  onPress={() => {
-              navigation.replace('Dashboard');
-            }}>
-            <View style={styles.backIconRow}>
-                         <Image
-                           source={require('../../../assets/images/back.png')}
-                           style={{ height: 24, width: 24 }}
-                         />
-                       </View>
-                       </TouchableOpacity>
-            <Text style={styles.unizyText}>Search</Text>
-            <View style={{ width: 30 }} /> 
+            <TouchableOpacity onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})}}>
+          
+            
+              <View style={styles.backIconRow}>
+                <Image
+                  source={require('../../../assets/images/back.png')}
+                  style={{ height: 24, width: 24 }}
+                />
+              </View>
+            </TouchableOpacity>
+            <Text allowFontScaling={false} style={styles.unizyText}>{`${category_name}s`}</Text>
+
+            <View style={{ width: 48 }} />
           </View>
         </View>
-         <View style={styles.search_container}>
-              <Image source={searchIcon} style={styles.searchIcon} />
-              <TextInput
-                style={styles.searchBar}
-                placeholder="Search"
-                placeholderTextColor="#ccc"
-                onChangeText={setSearch}
-                value={search}
-              />
-            </View>
 
-           {/* <ProductCard
-                tag='University of Warwick' 
-                infoTitle='Quadcopter (Drone)'
-                inforTitlePrice='$10.00'
-                rating='4.5'
-                productImage={require("../../../assets/images/drone.png")}/> */}
+        {/* Search Bar */}
+        <View style={{ flexDirection: 'row', paddingHorizontal: 16 }}>
+          <View style={styles.search_container}>
+            <Image source={searchIcon} style={styles.searchIcon} />
+            <TextInput
+              allowFontScaling={false}
+              style={styles.searchBar}
+              placeholder="Search"
+              placeholderTextColor="#ccc"
+              onChangeText={setSearch}
+              value={search}
+            />
+          </View>
+          <View>
+            <TouchableOpacity
+              onPress={() => {
+                clickfilter();
+              }}
+            >
+              <View style={styles.MylistingsBackground}>
+                <Image source={mylistings} style={styles.iconSmall} />
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
 
-            <FlatList
-                data={filteredProducts}
-                keyExtractor={(item) => item.id}
-                numColumns={2} 
-                columnWrapperStyle={styles.row1} 
-                contentContainerStyle={styles.listContainer}
-                renderItem={({ item }) => (
-                    <View style={styles.itemContainer}>
-                    <NewProductCard
-                        tag={item.tag}
-                        infoTitle={item.infoTitle}
-                        inforTitlePrice={item.inforTitlePrice}
-                        rating={item.rating}
-                        productImage={item.productImage}
-                    />
-                    </View>
-                    )}
-    />
-            
-     
+      <FlatList
+        data={featurelist}
+        keyExtractor={item => item.id.toString()}
+        numColumns={2}
+        columnWrapperStyle={styles.row1}
+        contentContainerStyle={styles.listContainer}
+        renderItem={renderItem}
+        onEndReached={() => displayListOfProduct(page)} // fetch next page
+        onEndReachedThreshold={0.5} // adjust when to trigger
+        ListFooterComponent={
+            isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
+          }
+          ListEmptyComponent={
+            !isLoading ? ( // ✅ only show if not loading
+              <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
+                No products found
+              </Text>
+            ) : null
+          }
+          />
       </View>
+
+      {/* <FilterBottomSheet
+        catagory_id={category_id}
+        visible={isFilterVisible}
+        onClose={() => setFilterVisible(false)}
+      /> */}
+      <FilterBottomSheet
+        catagory_id={category_id}
+        visible={isFilterVisible}
+        onClose={() => setFilterVisible(false)}
+        onApply={(filterBody) => handleFilterApply(filterBody)} from={0} to={0}/>
+    <NewCustomToastContainer/>
     </ImageBackground>
   );
 };
@@ -134,91 +449,10 @@ const ProductDetails= ({ navigation }: ProductDetailsProps) => {
 export default ProductDetails;
 
 const styles = StyleSheet.create({
-
-  backIconRow: {
-    
-    display: 'flex',
-    padding: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 40,
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-      boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
-  },
-  listContainer: {
-    paddingHorizontal:4,
-    paddingBottom: 15,
-  },
-  row: {
-    justifyContent: 'space-between',
-    marginBottom: 15,
-  },
-  itemContainer: {
-    flex: 1,
-    marginHorizontal:4,
-   // width:'50%'
-  },
-
- search_container: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'stretch',
-    borderRadius: 50,
-    margin: 20,
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  },
-  searchIcon: {
-    padding: 5, 
-    margin: 10 ,
-    height:24,
-    width:24
-  },
-  searchBar: {
-    fontFamily: 'Urbanist-Medium',
-    marginLeft: -5,
-    fontWeight:500,
-    fontSize:17,
-    color:'#fff'
-  },
-
-
-  textstyle:{
-    color:'#fff',
-    marginTop:10,
-    marginLeft:4,
-    fontWeight:400,
-    fontSize:12,
-    fontFamily: 'Urbanist-Regular',
-  },
-
-   row1: {
-    flexDirection: 'row',  // put icon and text side by side
-  //alignItems: 'center', 
-    justifyContent: 'flex-start'// vertically center them
-  },
-  icon: {
-    width: 18,  // adjust as needed
-    height: 18,
-    marginRight: 6, 
-     resizeMode:'contain'
-  },
-  background: { 
-    flex: 1,
-    width: '100%',
-    height: '100%' },
-  fullScreenContainer: {
-     flex: 1 
-    },
+  background: { flex: 1, width: '100%', height: '100%' },
+  fullScreenContainer: { flex: 1 },
   header: {
-    paddingTop: 12,
+    paddingTop: Platform.OS === 'ios' ? 50 : 50,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },
@@ -226,211 +460,95 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  backBtn: {
-    width: 30,
+  backIconRow: {
+    padding: 12,
+    borderRadius: 40,
+
+    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  backArrow: { 
-    fontSize: 26, 
-    color: '#fff' 
+    backgroundColor:
+      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    height: 48,
+    width: 48,
   },
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
     flex: 1,
-    paddingRight:16,
+    textAlign: 'center',
     fontWeight: '600',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-SemiBold',
   },
-  scrollContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 40,
-  },
-  userRow: {
+  search_container: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 6,
-    padding:16,
-    borderRadius:26,
-     backgroundColor: 'rgba(255, 255, 255, 0.06)',
-
-  },
-  avatar: { 
-    width: 50,
-    height: 50,
-    borderRadius: 25, 
-    marginRight: 12 
-    },
-  userName: { 
-    color: '#fff',
-    fontSize: 16, 
-    fontWeight: 'bold'
-   },
-  userSub: { 
-    color: '#ccc',
-     fontSize: 12
-     },
-
-     
-  dateText: { 
-    color: '#ccc',
-     fontSize: 12 
-    },
-  uploadButton: {
-    height: 40,
-    gap: 10,
-    marginTop:10,
-    alignSelf: 'stretch',
-    borderRadius: 12,
-    borderWidth: 0.6,
-    borderColor: '#ffffff2c',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignContent: 'center',
-    alignItems: 'center',
+    borderRadius: 40,
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+    width: '84%',
+    marginEnd: 8,
   },
-  uploadIcon: { 
-    width: 20, 
-    height: 20, 
-    marginRight: 8, 
-    resizeMode:'contain'
-   },
-  uploadText: { 
+  searchIcon: { margin: 10, height: 24, width: 24 },
+  searchBar: {
+    fontSize: 17,
     color: '#fff',
-     fontSize: 14 },
-
-    filecard:{
-      marginTop:20,
-      borderRadius:12,
-      backgroundColor: 'rgba(255, 255, 255, 0.06)',
-      borderWidth:1,
-      borderColor: '#ffffff2c',
-      boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-     },
-
-  fileRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    
   },
-  fileIcon: {
-      width: 28, 
-    height: 28,
-    resizeMode:'contain',
-      marginRight: 8 
-    },
-  fileName: {
-     color: '#fff',
-      flex: 1 },
-  deleteBtn: {
-    width: 30,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
+  listContainer: {
+    marginLeft: 10,
+    marginRight: 20,
+    paddingTop: 10,
+    paddingBottom:20
   },
-  deleteIcon: { 
-    width: 28, 
-    height: 28,
-    resizeMode:'contain'
-    },
-  input: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    color: '#fff',
-    marginBottom: 12,
+  row1: {
+    // flexDirection: 'row',
+    // justifyContent: 'flex-start',
   },
-  categoryContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 12,
-    marginTop:12,
+  itemContainer: {
+    flex: 1,
+    marginHorizontal: 4,
   },
-  categoryTag: {
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    color: '#fff',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    marginRight: 8,
-    marginBottom: 8,
-  },
-  featuredRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  featuredLabel: {
-     color: '#fff', 
-     fontSize: 14 
-    },
-  importantText: { 
-    color: '#ccc',
-     fontSize: 12,
-      marginBottom: 16 
-    },
- 
-
-    previewBtn: {
-    display: 'flex',
-    width: '100%',
+  ylistingsBackground: {
     height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 4,
-    borderRadius: 100,
-    paddingTop: 6,
-    paddingBottom: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    marginTop: 10,
-    
-    borderWidth: 0.5,
-    borderColor: '#ffffff2c',
-  },
-  previewText: {
-    color: '#002050',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: 500,
-    letterSpacing: 1,
-    width: '100%',
-  },
+    width: 48,
 
-  login_container: {
-    display: 'flex',
-    width: '100%',
-    height: 40,
-    gap: 10,
-    marginBottom:10,
-    alignSelf: 'stretch',
-    borderRadius: 12,
-    borderWidth: 0.6,
-    borderColor: '#ffffff2c',
-    flexDirection: 'row',
     justifyContent: 'center',
-    alignContent: 'center',
     alignItems: 'center',
+    borderRadius: 100,
     backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(97, 179, 255, 0.2) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow:
+      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
+
+    borderTopColor: '#ffffff5d',
+    borderBottomColor: '#ffffff36',
+    borderLeftColor: '#ffffff5d',
+    borderRightColor: '#ffffff36',
+    borderWidth: 0.3,
   },
-  personalEmailID_TextInput: {
-    width: '93%',
-    fontFamily: 'Urbanist-Regular',
-    fontWeight: '400',
-    fontSize: 17,
-    lineHeight: 22,
-    fontStyle: 'normal',
-    color:'#fff'
-    
+  MylistingsBackground: {
+    height: 48,
+    width: 48,
+
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 100,
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(97, 179, 255, 0.2) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow:
+      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
+
+    borderTopColor: '#ffffff5d',
+    borderBottomColor: '#ffffff36',
+    borderLeftColor: '#ffffff5d',
+    borderRightColor: '#ffffff36',
+    borderWidth: 0.3,
+  },
+  iconSmall: {
+    width: 24,
+    height: 24,
   },
 });

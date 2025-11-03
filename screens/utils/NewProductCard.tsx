@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, ImageSourcePropType } from "react-native";
+import { View, Text, Image, StyleSheet, ImageSourcePropType, Platform } from "react-native";
 
 
 type NewProductCardProps = {
@@ -21,7 +21,7 @@ export default function NewProductCard({tag,infoTitle,inforTitlePrice,rating,pro
           style={styles.image}
         />
         <View style={styles.tag}>
-          <Text style={styles.tagText}>{tag}</Text>
+          <Text allowFontScaling={false} style={styles.tagText}>{tag}</Text>
         </View>
         {/* </LinearGradient> */}
       
@@ -35,8 +35,8 @@ export default function NewProductCard({tag,infoTitle,inforTitlePrice,rating,pro
 {/* require('../../assets/images/bookmark.png') */}
       <View style={styles.infoRow}>
         <View>
-          <Text style={styles.title}>{infoTitle}</Text>
-          <Text style={styles.price}>{inforTitlePrice}</Text>
+          <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
+          <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
         </View>
        
         <View style={styles.ratingAbsolute}>
@@ -44,7 +44,7 @@ export default function NewProductCard({tag,infoTitle,inforTitlePrice,rating,pro
           source={require('../../assets/images/staricon.png')}
           style={styles.image1}/>
 
-        <Text style={styles.ratingText}>{rating}</Text>
+        <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
       </View>
       </View>
      
@@ -73,7 +73,8 @@ const styles = StyleSheet.create({
     width: 186,
     height: 180,
     position: 'relative',
-    padding:6
+    // padding:6
+    padding:(Platform.OS === 'ios' ? 0 : 6),
   },
   image: {
     width: '100%',
@@ -93,8 +94,8 @@ const styles = StyleSheet.create({
   },
   bookmark1: {
     position: 'absolute',
-    top: 5,
-    right: 5,
+    top: (Platform.OS === 'ios' ? 15 : 5),
+    right: (Platform.OS === 'ios' ? 15 : 5),
     borderRadius: 20,
     
   },
@@ -107,8 +108,8 @@ const styles = StyleSheet.create({
   },
   tag: {
     position: 'absolute',
-    bottom: 5,
-    right: 5,
+    bottom: (Platform.OS === 'ios' ? 16 : 8),
+    right:(Platform.OS === 'ios' ? 16 : 8),
     //backgroundColor: '#fff',
     backgroundColor:'rgba(255,255,255,0.4)',
     borderRadius: 4,
@@ -116,6 +117,7 @@ const styles = StyleSheet.create({
     marginVertical:4,
     marginHorizontal:4,
      boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
+     //overflow:'hidden'
   },
   tagText: {
     fontSize: 10,
@@ -146,9 +148,9 @@ const styles = StyleSheet.create({
   },
   price: {
     fontSize: 12,
-    fontWeight: '500',
+    fontWeight: '600',
     color: '#fff',
-     fontFamily: 'Urbanist-Bold',
+     fontFamily: 'Urbanist-SemiBold',
   },
   
   ratingText: {
@@ -160,8 +162,8 @@ const styles = StyleSheet.create({
   },
   ratingAbsolute: {
     position: 'absolute',
-    bottom:10,
-    right: 10,
+    bottom: (Platform.OS === 'ios' ? 4 : 2),
+    right: (Platform.OS === 'ios' ? 4 : 2),
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 8,

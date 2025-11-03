@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1083836810105",
+    "project_id": "unizy-1bbfa",
+    "storage_bucket": "unizy-1bbfa.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1083836810105:android:0d5e7da930fd8708c165a8",
+        "android_client_info": {
+          "package_name": "com.unizy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8EP_Qz96rPsFOEraE574LN_udW07lcDI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

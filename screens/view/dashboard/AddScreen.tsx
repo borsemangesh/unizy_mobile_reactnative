@@ -1,6 +1,4 @@
-
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -11,85 +9,187 @@ import {
   ScrollView,
   TextInput,
   Switch,
-  ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
   Modal,
+  Animated,
+  Dimensions,
+  Easing,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker'; // npm install @react-native-picker/picker
-import ToggleButton from '../../utils/component/ToggleButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImageResizer from 'react-native-image-resizer';
- import { launchCamera, launchImageLibrary } from "react-native-image-picker";
- import { PermissionsAndroid, Platform } from "react-native";
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { PermissionsAndroid, Platform } from 'react-native';
 import { MAIN_URL } from '../../utils/APIConstant';
-import { showToast } from '../../utils/toast';
+// import { showToast } from '../../utils/toast';
+import ToggleButton from '../../utils/component/ToggleButton';
+import Button from '../../utils/component/Button';
+import SelectCatagoryDropdown from '../../utils/component/SelectCatagoryDropdown';
+import {
+  NewCustomToastContainer,
+  showToast,
+} from '../../utils/component/NewCustomToastManager';
+import { RouteProp, useRoute } from '@react-navigation/native';
+// import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
+import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
+import { BlurView } from '@react-native-community/blur';
 
-const bgImage = require('../../../assets/images/bganimationscreen.png');
-const profileImg = require('../../../assets/images/user.jpg'); // your avatar image
-const uploadIcon = require('../../../assets/images/upload.png'); // upload icon
 
-const fileIcon = require('../../../assets/images/file.png'); // file icon
-const deleteIcon = require('../../../assets/images/delete.png'); // delete/trash ico
+const bgImage = require('../../../assets/images/backimg.png');
+const profileImg = require('../../../assets/images/user.jpg'); 
+const uploadIcon = require('../../../assets/images/upload.png'); 
+const fileIcon = require('../../../assets/images/file.png'); 
+const deleteIcon = require('../../../assets/images/delete.png'); 
 
 type AddScreenContentProps = {
   navigation: any;
 };
-const AddScreen: React.FC<AddScreenContentProps> = ({ navigation }) => {
+type RootStackParamList = {
+  AddScreen: { productId: number; productName: string };
+  // other screens...
+};
+type AddScreenRouteProp = RouteProp<RootStackParamList, 'AddScreen'>;
+
+type ImageFile = {
+  id: string;
+  uri: string;
+  name: string;
+};
+
+const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const [formValues, setFormValues] = useState<any>({});
   const [fields, setFields] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-const MAX_SIZE_MB = 1;
-// const { productId, name } = route.params;
+  const MAX_SIZE_MB = 1;
   const today = new Date();
   const formattedDate = today.toLocaleDateString('en-GB');
   const displayDate = formattedDate.replace(/\//g, '-');
   const [photo, setPhoto] = useState<string | null>(null);
 
-const [multiSelectModal, setMultiSelectModal] = useState<{ visible: boolean; fieldId?: number }>({ visible: false });
-const [multiSelectOptions, setMultiSelectOptions] = useState<any[]>([]);
-  const [uploadedImages, setUploadedImages] = useState<{ id: string; uri: string; name: string }[]>([]);
+  const [multiSelectModal, setMultiSelectModal] = useState<{
+    visible: boolean;
+    ismultilple: boolean;
+    fieldId?: number;
+    fieldLabel?: string;
 
-//   useEffect(() => {
-//   setFormValues({}); // clear all previous selections
-// }, []); // run only once on screen mount
+  }>({ visible: false, ismultilple: false,});
+
+  const [multiSelectOptions, setMultiSelectOptions] = useState<any[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<
+    { id: string; uri: string; name: string }[]
+  >([]);
 
 
- useEffect(() => {
+  const screenHeight = Dimensions.get('window').height;
+  const [slideUp1] = useState(new Animated.Value(0));
+
+  
+  interface Category {
+  id: number;
+  name: string;
+  description: string | null;
+  isactive: boolean;
+  logo: string | null;
+  commission: string | null;
+  max_cappund: string | null;
+  feature_fee:string | null
+  max_feature_cap: |null,
+}
+
+  interface UserMeta {
+    firstname: string | null;
+    lastname: string | null;
+    profile: string | null;
+    student_email: string | null;
+    university_name:string|null
+    category?: Category | null;
+  }
+
+  const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
+  const [featureFee, setFeatureFee] = useState(0);
+  const [maxFeatureCap, setMaxFeatureCap] = useState(0);
+  const route = useRoute<AddScreenRouteProp>();
+  const { productId, productName } = route.params;
+
+  
+  useEffect(() => {
     const fetchFields = async () => {
       try {
-        const productId1 = await AsyncStorage.getItem('selectedProductId');
-
         const token = await AsyncStorage.getItem('userToken');
+
+        // const productId1 = await AsyncStorage.getItem('selectedProductId');
         if (!token) {
           console.log('No token found');
           return;
         }
 
-        //const url = MAIN_URL.baseUrl+"category/listparams/user/1"
-        const url = `${MAIN_URL.baseUrl}category/listparams/user/${productId1}`;
+        const url = `${MAIN_URL.baseUrl}category/listparams/user/${productId}`;
 
-
-        const response = await fetch(
-          url,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`, // ✅ use token from AsyncStorage
-            },
-          }
-        );
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const json = await response.json();
+
+       
+
+        if (json?.metadata) {
+
+        if (json.metadata.category) {
+          // Convert null or undefined to 0
+          setFeatureFee(parseFloat(json.metadata.category.feature_fee ?? '0'));
+          setMaxFeatureCap(parseFloat(json.metadata.category.max_feature_cap ?? '0'));
+        }
+          setUserMeta({
+            firstname: json.metadata.firstname ?? null,
+            lastname: json.metadata.lastname ?? null,
+            profile: json.metadata.profile ?? null,
+            student_email: json.metadata.student_email ?? null,
+            university_name:json.metadata.university_name ?? null,
+            category: json.metadata.category ?? null, // 
+          });
+
+          await AsyncStorage.setItem(
+            'userMeta',
+            JSON.stringify({
+              firstname: json.metadata.firstname ?? null,
+              lastname: json.metadata.lastname ?? null,
+              profile: json.metadata.profile ?? null,
+              student_email: json.metadata.student_email ?? null,
+              university_name:json.metadata.university_name ?? null,
+              category: json.metadata.category ?? null, // 
+            }),
+          );
+        }
+        await AsyncStorage.setItem('selectedProductId', String(productId));
+
+        
+
         if (json?.data) {
-          const sellerFields = json.data.filter((item: any) => item.seller === true);
+          const sellerFields = json.data.filter(
+            (item: any) => item.seller === true,
+          );
           setFields(sellerFields);
         }
+         if (response.status === 401 || response.status === 403) {
+        handleForceLogout();
+        return;
+      }
+
+      if (json.statusCode === 401 || json.statusCode === 403) {
+        handleForceLogout();
+        return;
+      }
       } catch (err) {
         console.log('Error fetching fields', err);
       } finally {
@@ -97,37 +197,75 @@ const [multiSelectOptions, setMultiSelectOptions] = useState<any[]>([]);
       }
     };
 
+     const handleForceLogout = async () => {
+      console.log('User inactive or unauthorized — logging out');
+      await AsyncStorage.clear();
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+      });
+    };
     fetchFields();
   }, []);
 
-  const handleValueChange = (fieldId: number, value: any) => {
-    setFormValues((prev: any) => ({ ...prev, [fieldId]: value }));
+  const [expanded, setExpanded] = useState(false);
+  const animatedHeight = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (expanded) {
+      Animated.timing(animatedHeight, {
+        toValue: 1,
+        duration: 800, // slow expansion
+        useNativeDriver: false, // height cannot use native driver
+      }).start();
+    }
+  }, [expanded]);
+
+  const handleValueChange = (
+    fieldId: number,
+    aliasName: string | null,
+    value: any,
+  ) => {
+    setFormValues((prev: any) => ({
+      ...prev,
+      [fieldId]: {
+        value: value,
+        alias_name: aliasName ?? null, // null if no alias_name
+      },
+    }));
   };
-  
+
   const handleMultiSelectToggle = (fieldId: number, optionId: number) => {
-  const prevSelected: number[] = Array.isArray(formValues[fieldId])
-    ? formValues[fieldId]
-    : [];
+    const prevSelected: number[] = Array.isArray(formValues[fieldId])
+      ? formValues[fieldId]
+      : [];
 
-  const updated = prevSelected.includes(optionId)
-    ? prevSelected.filter((id) => id !== optionId)
-    : [...prevSelected, optionId];
+    const updated = prevSelected.includes(optionId)
+      ? prevSelected.filter(id => id !== optionId)
+      : [...prevSelected, optionId];
 
-  setFormValues((prev: any) => ({ ...prev, [fieldId]: updated }));
-};
+    setFormValues((prev: any) => ({ ...prev, [fieldId]: updated }));
+  };
+
+  const getCurrentDate = () => {
+    const today = new Date();
+    return `${String(today.getDate()).padStart(2, '0')}-${String(
+      today.getMonth() + 1,
+    ).padStart(2, '0')}-${today.getFullYear()}`;
+  };
 
   const requestCameraPermission = async () => {
-    if (Platform.OS === "android") {
+    if (Platform.OS === 'android') {
       try {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.CAMERA,
           {
-            title: "Camera Permission",
-            message: "App needs access to your camera",
-            buttonNeutral: "Ask Me Later",
-            buttonNegative: "Cancel",
-            buttonPositive: "OK",
-          }
+            title: 'Camera Permission',
+            message: 'App needs access to your camera',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
         );
         return granted === PermissionsAndroid.RESULTS.GRANTED;
       } catch (err) {
@@ -138,525 +276,711 @@ const [multiSelectOptions, setMultiSelectOptions] = useState<any[]>([]);
       return true;
     }
   };
-  
-//  const handleSelectImage = async () => {
-//   const hasPermission = await requestCameraPermission();
-//   if (!hasPermission) return;
 
-//   Alert.alert(
-//     "Select Option",
-//     "Choose a source",
-//     [
-//       {
-//         text: "Camera",
-//         onPress: () => {
-//           launchCamera(
-//             { mediaType: "photo", cameraType: "front", quality: 0.8 },
-//             (response) => {
-//               if (response.didCancel) return;
-//               if (response.assets && response.assets[0].uri) {
-//                 const asset = response.assets[0];
-//                 setUploadedImages((prev) => [
-//                 ...prev,
-//                 { id: Date.now().toString(), uri: asset.uri!, name: asset.fileName || 'Image' },
-//               ]);
-//               }
-//             }
-//           );
-//         },
-//       },
-//       {
-//         text: "Gallery",
-//         onPress: () => {
-//           launchImageLibrary({ mediaType: "photo", quality: 0.8 }, (response) => {
-//             if (response.didCancel) return;
-//             if (response.assets && response.assets[0].uri) {
-//               const asset = response.assets[0];
-//               setUploadedImages((prev) => [
-//               ...prev,
-//               { id: Date.now().toString(), uri: asset.uri!, name: asset.fileName || 'Image' },
-//             ]);
-//             }
-//           });
-//         },
-//       },
-//       { text: "Cancel", style: "cancel" },
-//     ],
-//     { cancelable: true }
-//   );
-// };
+  // const requestCameraPermission = async () => {
+  //     if (Platform.OS === "android") {
+  //       try {
+  //         const granted = await PermissionsAndroid.request(
+  //           PermissionsAndroid.PERMISSIONS.CAMERA,
+  //           {
+  //             title: "Camera Permission",
+  //             message: "App needs access to your camera",
+  //             buttonNeutral: "Ask Me Later",
+  //             buttonNegative: "Cancel",
+  //             buttonPositive: "OK",
+  //           }
+  //         );
+  //         return granted === PermissionsAndroid.RESULTS.GRANTED;
+  //       } catch (err) {
+  //         console.warn(err);
+  //         return false;
+  //       }
+  //     } else if (Platform.OS === 'ios') {
+  //       try {
+  //         // Check current permission status first
+  //         const status = await check(PERMISSIONS.IOS.CAMERA);
+  //         if (status === RESULTS.GRANTED) {
+  //           return true;
+  //         }
+  //         const result = await request(PERMISSIONS.IOS.CAMERA);
+    
+  //         if (result === RESULTS.GRANTED) {
+  //           return true; 
+  //         } else if (result === RESULTS.BLOCKED) {
+  //           console.warn('Camera permission is blocked. Please enable it in Settings.');
+  //           return false;
+  //         } else {
+  //           return false; // Denied
+  //         }
+  //       } catch (err) {
+  //         console.warn(err);
+  //         return false;
+  //       }
+  //     } 
+      
+  //     else {
+  //       return true;
+  //     }
+  //   };
 
 
-const handlePreview = async () => {
-  try {
-    const dataToStore: any = { ...formValues };
+  const handlePreview = async () => {
+    try {
+      for (const field of fields) {
+        const { id, field_type, alias_name } = field.param;
 
-    // Add images separately
-    fields.forEach((field) => {
-      if (field.param.field_type.toLowerCase() === 'image') {
-        const uploadedForField = uploadedImages.map((img) => ({
-          id: img.id,
-          uri: img.uri,
-          name: img.name,
-        }));
-        dataToStore[field.param.id] = uploadedForField;
+        if (field.mandatory) {
+          let value = formValues[id]?.value;
+
+          if (field_type.toLowerCase() === 'image') {
+            value = uploadedImages;
+          }
+
+          if (
+            value === undefined ||
+            value === null ||
+            (typeof value === 'string' && value.trim() === '') ||
+            (Array.isArray(value) && value.length === 0)
+          ) {
+            if(field_type.toLowerCase() === 'image'){
+              showToast(`${field.param.field_name} are mandatory`,'error');
+            return;
+            }
+            else{
+            showToast(`${field.param.field_name} is mandatory`,'error');
+            return;
+            }
+            
+          }
+        }
       }
-    });
 
-    await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
+      const dataToStore: any = { ...formValues };
 
-    console.log('Form data saved: ', dataToStore);
+      fields.forEach(field => {
+        if (field.param.field_type.toLowerCase() === 'image') {
+          const uploadedForField = uploadedImages.map(img => ({
+            id: img.id,
+            uri: img.uri,
+            name: img.name,
+          }));
 
-    navigation.navigate('PreviewThumbnail'); // navigate after saving
-  } catch (error) {
-    console.log('Error saving form data: ', error);
-    showToast('Failed to save form data');
-  }
-};
+          dataToStore[field.param.id] = {
+            value: uploadedForField,
+            alias_name: field.param.alias_name ?? null,
+          };
+        }
+      });
 
-
-const handleSelectImage = async () => {
-  const hasPermission = await requestCameraPermission();
-  if (!hasPermission) return;
-
-  Alert.alert(
-    "Select Option",
-    "Choose a source",
-    [
-      {
-        text: "Camera",
-        onPress: () => {
-          launchCamera(
-            { mediaType: "photo", cameraType: "front", quality: 1 }, // get max quality first
-            async (response) => {
-              if (response.didCancel) return;
-              if (response.assets && response.assets[0].uri) {
-                const asset = response.assets[0];
-                let uri = asset.uri!;
-                let name = asset.fileName || 'Image';
-
-                // check size
-                if (asset.fileSize && asset.fileSize > MAX_SIZE_MB * 1024 * 1024) {
-                  const compressed = await ImageResizer.createResizedImage(
-                    uri,
-                    800, // width
-                    800, // height
-                    'JPEG',
-                    80, // quality 0-100
-                  );
-                  uri = compressed.uri;
-                  name = compressed.name || name;
-                }
-
-                setUploadedImages((prev) => [
-                  ...prev,
-                  { id: Date.now().toString(), uri, name },
-                ]);
-              }
-            }
-          );
-        },
-      },
-      {
-        text: "Gallery",
-        onPress: () => {
-          launchImageLibrary({ mediaType: "photo", quality: 1 }, async (response) => {
-            if (response.didCancel) return;
-            if (response.assets && response.assets[0].uri) {
-              const asset = response.assets[0];
-              let uri = asset.uri!;
-              let name = asset.fileName || 'Image';
-
-              // check size
-              if (asset.fileSize && asset.fileSize > MAX_SIZE_MB * 1024 * 1024) {
-                const compressed = await ImageResizer.createResizedImage(
-                  uri,
-                  800,
-                  800,
-                  'JPEG',
-                  80,
-                );
-                uri = compressed.uri;
-                name = compressed.name || name;
-              }
-
-              setUploadedImages((prev) => [
-                ...prev,
-                { id: Date.now().toString(), uri, name },
-              ]);
-            }
-          });
-        },
-      },
-      { text: "Cancel", style: "cancel" },
-    ],
-    { cancelable: true }
-  );
-};
-
-
-  const renderField = (field: any) => {
-    const { field_name, field_type, options, id } = field.param;
-    const fieldType = field_type.toLowerCase();
-
-    switch (fieldType) {
-     
-      case 'text': {
-  const { param } = field;
-  const { field_name, keyboardtype, alias_name, field_type } = param;
-
-  // Placeholder from alias_name if present, else field_name
-  const placeholderText = alias_name || field_name;
-
-  let rnKeyboardType: 'default' | 'numeric' | 'email-address' | 'phone-pad' | 'decimal-pad' = 'default';
-  switch (keyboardtype) {
-    case 'alpha-numeric':
-      rnKeyboardType = 'default'; 
-      break;
-    case 'numeric':
-      rnKeyboardType = 'numeric';
-      break;
-    case 'decimal':
-      rnKeyboardType = 'decimal-pad';
-      break;
-    case 'email':
-      rnKeyboardType = 'email-address';
-      break;
-    case 'phone':
-      rnKeyboardType = 'phone-pad';
-      break;
-    default:
-      rnKeyboardType = 'default';
-  }
-
-  return (
-    <View key={field.id} style={styles.productTextView}>
-      <Text style={styles.textstyle}>{field_name}</Text>
-      <TextInput
-        style={[styles.personalEmailID_TextInput, styles.login_container]}
-        placeholder={placeholderText}
-        multiline={false}
-        placeholderTextColor="rgba(255, 255, 255, 0.48)"
-        keyboardType={rnKeyboardType}
-        value={formValues[param.id] || ''}
-        onChangeText={(text) => handleValueChange(param.id, text)}
-      />
-    </View>
-  );
-}
-
-case 'multi-line-text': {
-  const { param } = field;
-  const { field_name, keyboardtype, alias_name } = param;
-  const placeholderText = alias_name || field_name;
-
-  let rnKeyboardType: 'default' | 'numeric' | 'email-address' | 'phone-pad' | 'decimal-pad' = 'default';
-  switch (keyboardtype) {
-    case 'alpha-numeric':
-      rnKeyboardType = 'default';
-      break;
-    case 'numeric':
-      rnKeyboardType = 'numeric';
-      break;
-    case 'decimal':
-      rnKeyboardType = 'decimal-pad';
-      break;
-    case 'email':
-      rnKeyboardType = 'email-address';
-      break;
-    case 'phone':
-      rnKeyboardType = 'phone-pad';
-      break;
-    default:
-      rnKeyboardType = 'default';
-  }
-
-  return (
-    <View key={field.id} style={styles.productTextView}>
-      <Text style={styles.textstyle}>{field_name}</Text>
-      <TextInput
-        style={[
-          styles.personalEmailID_TextInput,
-          styles.login_container,
-          { textAlign: 'left', textAlignVertical: 'top', height: 100 },
-        ]}
-        placeholder={placeholderText}
-        multiline={true}
-        placeholderTextColor="rgba(255, 255, 255, 0.48)"
-        keyboardType={rnKeyboardType}
-        value={formValues[param.id] || ''}
-        onChangeText={(text) => handleValueChange(param.id, text)}
-      />
-    </View>
-  );
-}
-    
-      case 'dropdown':
-        return (
-          <View key={field.id} style={styles.productTextView}>
-            <Text style={styles.textstyle}>{field_name}</Text>
-
-            {/* Multi-select picker touchable */}
-            <TouchableOpacity
-              style={styles.pickerContainer}
-              onPress={() => {
-                setMultiSelectModal({ visible: true, fieldId: id });
-                setMultiSelectOptions(options);
-              }}
-            >
-              <Text style={styles.dropdowntext}>
-                {Array.isArray(formValues[id]) && formValues[id].length > 0
-                  ? `${formValues[id].length} Selected`
-                  : `Select ${field_name}`}
-              </Text>
-            </TouchableOpacity>
-
-           
-     <View style={styles.categoryContainer}>
-        {options
-          .filter((opt: any) => Array.isArray(formValues[id]) && formValues[id].includes(opt.id))
-          .map((opt: any) => (
-            <View key={opt.id} style={styles.categoryTagWrapper}>
-              <TouchableOpacity
-                onPress={() => {
-                  // remove option from formValues[id]
-                  setFormValues((prev: any) => {
-                    const updated = Array.isArray(prev[id]) ? [...prev[id]] : [];
-                    return {
-                      ...prev,
-                      [id]: updated.filter((value) => value !== opt.id),
-                    };
-                  });
-                }}
-              >
-                <Text style={styles.categoryTag}>
-                  {opt.option_name} ✕
-                </Text>
-              </TouchableOpacity>
-            </View>
-          ))}
-      </View>
-
-
-          </View>
-        );
-
-
-
-
-    
-  case 'image': {
-      const { param } = field;
-      const { field_name, maxvalue, ismulltiple } = param;
-
-       
-  const handleImageSelect = () => {
-    //showToast(ismulltiple)
-    if (uploadedImages.length >= maxvalue) {
-      showToast(`Maximum ${maxvalue} images allowed`);
-      return;
+      await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
+      console.log('Form data saved: ', dataToStore);
+      navigation.navigate('PreviewThumbnail');
+    } catch (error) {
+      console.log('Error saving form data: ', error);
+      showToast('Failed to save form data');
     }
-
-    handleSelectImage(); 
   };
 
+  const handleSelectImage = async () => {
+    const hasPermission = await requestCameraPermission();
+    if (!hasPermission) return;
 
-  return (
-    <View key={field.id} style={styles.productTextView}>
-      <Text style={styles.textstyle}>{field_name}</Text>
+    Alert.alert(
+      'Select Option',
+      'Choose a source',
+      [
+        {
+          text: 'Camera',
+          onPress: () => {
+            launchCamera(
+              { mediaType: 'photo', cameraType: 'front', quality: 1 }, // get max quality first
+              async response => {
+                if (response.didCancel) return;
+                if (response.assets && response.assets[0].uri) {
+                  const asset = response.assets[0];
+                  let uri = asset.uri!;
+                  let name = asset.fileName || 'Image';
 
-      <TouchableOpacity style={styles.uploadButton} onPress={handleImageSelect}>
-        <Image source={uploadIcon} style={styles.uploadIcon} />
-        <Text style={styles.uploadText}>Upload {field_name}</Text>
-      </TouchableOpacity>
+                  // check size
+                  if (
+                    asset.fileSize &&
+                    asset.fileSize > MAX_SIZE_MB * 1024 * 1024
+                  ) {
+                    const compressed = await ImageResizer.createResizedImage(
+                      uri,
+                      800, // width
+                      800, // height
+                      'JPEG',
+                      80, // quality 0-100
+                    );
+                    uri = compressed.uri;
+                    name = compressed.name || name;
+                  }
 
-      <View style={styles.imagelistcard}>
-        {uploadedImages.map((file) => (
-          <View key={file.id} style={{ width: '100%', flexDirection: 'row' }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                width: '90%',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <View
-                style={{
-                  flexDirection: 'row',
-                  width: '100%',
-                  padding: 10,
-                  alignItems: 'center',
-                }}
-              >
-                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                  <View style={{ flexDirection: 'row', width: 30 }}>
-                    <Image
-                      source={require('../../../assets/images/threedots.png')}
-                      style={styles.threedots}
-                    />
-                    <Image
-                      source={require('../../../assets/images/threedots.png')}
-                      style={[styles.threedots, { paddingLeft: 5 }]}
-                    />
-                  </View>
-
-                  <Image source={fileIcon} style={{ width: 20, height: 20, marginRight: 5 }} />
-
-                  <Text
-                    style={[styles.fileName, { flexShrink: 1 }]}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                  >
-                    {file.name}
-                  </Text>
-                </View>
-              </View>
-
-              <TouchableOpacity
-                onPress={() =>
-                  setUploadedImages((prev) => prev.filter((img) => img.id !== file.id))
+                  setUploadedImages(prev => [
+                    ...prev,
+                    { id: Date.now().toString(), uri, name },
+                  ]);
                 }
-              >
-                <Image source={deleteIcon} style={styles.deleteIcon} />
-              </TouchableOpacity>
-            </View>
-          </View>
-        ))}
-      </View>
-    </View>
+              },
+            );
+          },
+        },
+        {
+          text: 'Gallery',
+          onPress: () => {
+            launchImageLibrary(
+              { mediaType: 'photo', quality: 1 },
+              async response => {
+                if (response.didCancel) return;
+                if (response.assets && response.assets[0].uri) {
+                  const asset = response.assets[0];
+                  let uri = asset.uri!;
+                  let name = asset.fileName || 'Image';
+
+                  // check size
+                  if (
+                    asset.fileSize &&
+                    asset.fileSize > MAX_SIZE_MB * 1024 * 1024
+                  ) {
+                    const compressed = await ImageResizer.createResizedImage(
+                      uri,
+                      800,
+                      800,
+                      'JPEG',
+                      80,
+                    );
+                    uri = compressed.uri;
+                    name = compressed.name || name;
+                  }
+
+                  setUploadedImages(prev => [
+                    ...prev,
+                    { id: Date.now().toString(), uri, name },
+                  ]);
+                }
+              },
+            );
+          },
+        },
+        { text: 'Cancel', style: 'cancel' },
+      ],
+      { cancelable: true },
+    );
+  };
+  const getInitials = (firstName = '', lastName = '') => {
+  const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
+  const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
+  return (f + l) || '?';
+};
+
+  const renderLabel = (field_name: any, mandatory: any) => (
+    <Text allowFontScaling={false} style={styles.textstyle}>
+      {field_name}
+      {mandatory && <Text style={{ color: '#fff' }}>*</Text>}
+    </Text>
   );
-}
 
+  const renderLabel1 = (field_name: any, mandatory: any) => (
+    <Text allowFontScaling={false} style={styles.textstyle1}>
+      {field_name}
+      {mandatory && <Text style={{ color: '#fff' }}>*</Text>}
+    </Text>
+  );
 
+  const [isCheckbox, setCheckBox] = useState(false);
 
-      case 'boolean':
+  const renderField = (field: any) => {
+    // const { field_name, field_type, options, id, field_ismultilple } =field.param;
+    // const fieldType = field_type.toLowerCase();
+    //  const ism = field_ismultilple;
+    // console.log('fieldType', ism);
+    const param = field?.param;
+    if (!param) return null; // skip if param is missing
+
+    const fieldType = param.field_type?.toLowerCase() ?? '';
+    const field_ismultilple = param.ismultilple ?? false;
+    const field_name = param.field_name ?? '';
+    const id = param.id;
+    const options = Array.isArray(param.options) ? param.options : [];
+
+    if (!fieldType || !id) return null; // skip if critical info missing
+
+    switch (fieldType) {
+      // ---------------- TEXT FIELD ----------------
+      case 'text': {
+        const { param } = field;
+        const { field_name, keyboardtype, alias_name } = param;
+
+        const rawValue = formValues[param.id]?.value || '';
+
+        const isPriceField = alias_name?.toLowerCase() === 'price';
+        const placeholderText =
+          alias_name?.toLowerCase() === 'price'
+            ? `£ ${alias_name}`
+            : alias_name || field_name;
+
+        let rnKeyboardType:
+          | 'default'
+          | 'numeric'
+          | 'email-address'
+          | 'phone-pad'
+          | 'decimal-pad' = 'default';
+        switch (keyboardtype) {
+          case 'alpha-numeric':
+            rnKeyboardType = 'default';
+            break;
+          case 'numeric':
+            rnKeyboardType = 'numeric';
+            break;
+          case 'decimal':
+            rnKeyboardType = 'decimal-pad';
+            break;
+          case 'email':
+            rnKeyboardType = 'email-address';
+            break;
+          case 'phone':
+            rnKeyboardType = 'phone-pad';
+            break;
+          default:
+            rnKeyboardType = 'default';
+        }
+
         return (
-          <View key={field.id} style={styles.featuredRow}>
-            <Text style={styles.featuredLabel}>{field_name}</Text>
-            <ToggleButton
-              value={!!formValues[id]}              // current value
-              onValueChange={(val) => handleValueChange(id, val)} // update state
+          <View key={field.id} style={styles.productTextView}>
+            {/* <Text style={styles.textstyle}>{field_name}</Text> */}
+            {renderLabel(field_name, field.mandatory)}
+            <TextInput
+            allowFontScaling={false}
+              style={[
+                styles.personalEmailID_TextInput,
+                styles.login_container,
+                {
+                  height:44,
+                  textAlignVertical: 'center', // centers text vertically on Android
+                  paddingVertical: 0, // prevents padding changes on focus
+                },
+              ]}
+              placeholder={placeholderText}
+              multiline={false}
+              placeholderTextColor="rgba(255, 255, 255, 0.48)"
+              keyboardType={rnKeyboardType}
+              value={isPriceField && rawValue ? `£ ${rawValue}` : rawValue}
+              //onChangeText={text => handleValueChange(param.id, alias_name, text)}
+              onChangeText={text => {
+                if (isPriceField) {
+                  // Remove £ and spaces before saving
+                  const cleaned = text.replace(/£\s?/g, '');
+                  handleValueChange(param.id, alias_name, cleaned);
+                } else {
+                  handleValueChange(param.id, alias_name, text);
+                }
+              }}
             />
           </View>
         );
+      }
+
+      // ---------------- MULTI-LINE TEXT ----------------
+      case 'multi-line-text': {
+        const { param } = field;
+        const { field_name, keyboardtype, alias_name } = param;
+        const placeholderText = alias_name || field_name;
+
+        let rnKeyboardType:
+          | 'default'
+          | 'numeric'
+          | 'email-address'
+          | 'phone-pad'
+          | 'decimal-pad' = 'default';
+        switch (keyboardtype) {
+          case 'alpha-numeric':
+            rnKeyboardType = 'default';
+            break;
+          case 'numeric':
+            rnKeyboardType = 'numeric';
+            break;
+          case 'decimal':
+            rnKeyboardType = 'decimal-pad';
+            break;
+          case 'email':
+            rnKeyboardType = 'email-address';
+            break;
+          case 'phone':
+            rnKeyboardType = 'phone-pad';
+            break;
+          default:
+            rnKeyboardType = 'default';
+        }
+
+        return (
+          <View key={field.id} style={styles.productTextView}>
+            {/* <Text style={styles.textstyle}>{field_name}</Text> */}
+            {renderLabel(field_name, field.mandatory)}
+            <TextInput
+            allowFontScaling={false}
+              style={[
+                styles.personalEmailID_TextInput,
+                styles.login_container,
+                { textAlign: 'left', textAlignVertical: 'top', height: 100 },
+              ]}
+              placeholder={placeholderText}
+              multiline={true}
+              placeholderTextColor="rgba(255, 255, 255, 0.48)"
+              keyboardType={rnKeyboardType}
+              value={formValues[param.id]?.value || ''}
+              onChangeText={text =>
+                handleValueChange(param.id, alias_name, text)
+              }
+            />
+          </View>
+        );
+      }
+
+      case 'dropdown':
+        return (
+          <View key={field.id} style={styles.productTextView}>
+            {/* <Text style={styles.textstyle}>{field_name}</Text> */}
+            {renderLabel(field_name, field.mandatory)}
+
+            <TouchableOpacity
+              style={styles.pickerContainer}
+              onPress={() => {
+                console.log('field_ismultilple' + field.ismultilple);
+                setMultiSelectModal({
+                  visible: true,
+                  ismultilple: !!field.param.ismultilple,
+                  fieldId: id,
+                  fieldLabel: field.param.field_name,
+                });
+                setMultiSelectOptions(options);
+              }}
+            >
+              <View style={styles.dropdowncard}>
+              <Text allowFontScaling={false} style={styles.dropdowntext}>
+                {Array.isArray(formValues[id]?.value) &&
+                formValues[id]?.value.length > 0
+                  ? `${formValues[id]?.value.length} Selected`
+                  : `Select ${field_name}`}
+              </Text>
+              </View>
+               <Image
+              source={require('../../../assets/images/right.png')} 
+              style={styles.dropdownIcon}
+              resizeMode="contain"
+            />
+            </TouchableOpacity>
+
+            <View style={styles.categoryContainer}>
+              {options
+                .filter((opt: any) => {
+                  const value = formValues[id]?.value;
+                  if (Array.isArray(value)) {
+                    return value.includes(opt.id); // show if selected in multi-select
+                  }
+                  return value === opt.id; // show if selected in single-select
+                })
+                .map((opt: any) => (
+                  <View key={opt.id} style={styles.categoryTagWrapper}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setFormValues((prev: any) => {
+                          const currentValue = prev[id]?.value;
+                          let updated;
+                          if (Array.isArray(currentValue)) {
+                            updated = currentValue.filter(
+                              (v: any) => v !== opt.id,
+                            );
+                          } else {
+                            updated = null; // removing single-select
+                          }
+                          return {
+                            ...prev,
+                            [id]: { ...prev[id], value: updated },
+                          };
+                        });
+                      }}
+                    >
+                      <Text allowFontScaling={false} style={styles.categoryTag}>
+                        {opt.option_name} ✕
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                ))}
+            </View>
+          </View>
+        );
+
+      case 'image': {
+        const { param } = field;
+        const { field_name, maxvalue, ismulltiple } = param;
+
+        const handleImageSelect = () => {
+          if (uploadedImages.length >= maxvalue) {
+            showToast(`Maximum ${maxvalue} images allowed`);
+            return;
+          }
+          handleSelectImage();
+        };
+
+        return (
+          <View key={field.id} style={styles.productTextView}>
+            {/* <Text style={styles.textstyle}>{field_name}</Text> */}
+            {renderLabel(field_name, field.mandatory)}
+            <TouchableOpacity
+              style={styles.uploadButton}
+              onPress={handleImageSelect}
+            >
+              <Image source={uploadIcon} style={styles.uploadIcon} />
+              <Text allowFontScaling={false} style={styles.uploadText}>Upload {field_name}</Text>
+            </TouchableOpacity>
+    {uploadedImages.length > 0 && (
+              <View style={styles.imagelistcard}>
+                {uploadedImages.map((file, index) => (
+                  <View key={file.id} style={{ width: '100%' }}>
+                    {/* Image row */}
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: 10,
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 10,
+                          flex: 1,
+                        }}
+                      >
+                        <Image
+                          source={require('../../../assets/images/sixdots.png')}
+                          style={styles.threedots}
+                        />
+                        <Image
+                          source={fileIcon}
+                          style={{ width: 20, height: 20, marginRight: 5 }}
+                        />
+                        <Text
+                        allowFontScaling={false}
+                          style={[styles.fileName, { flexShrink: 1 }]}
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
+                        >
+                          {file.name}
+                        </Text>
+                      </View>
+
+                      <TouchableOpacity
+                        onPress={() =>
+                          setUploadedImages(prev =>
+                            prev.filter(img => img.id !== file.id),
+                          )
+                        }
+                      >
+                        <Image source={deleteIcon} style={styles.deleteIcon} />
+                      </TouchableOpacity>
+                    </View>
+
+                    {/* Horizontal line if not the last image */}
+                    {uploadedImages.length > 1 &&
+                      index !== uploadedImages.length - 1 && (
+                        <View
+                          style={{
+                            height: 1,
+                            backgroundColor:
+                              'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%)',
+                            marginHorizontal: 10,
+                          }}
+                        />
+                      )}
+                  </View>
+                ))}
+              </View>
+            )}
+          </View>
+        );
+      }
+
+      case 'boolean':
+        return (
+          <View key={field.id} style={styles.featurecard}>
+            {/* Main row with label and toggle */}
+            <View style={styles.featuredRow}>
+              {/* <Text style={styles.featuredLabel}>{field.param.field_name}</Text> */}
+              {renderLabel1(field.param.field_name, field.mandatory)}
+
+              <ToggleButton
+                value={!!formValues[field.param.id]?.value}
+                onValueChange={val =>
+                  handleValueChange(field.param.id, field.param.alias_name, val)
+                }
+              />
+            </View>
+
+            <View style={styles.textbg}>
+              <Image
+                source={require('../../../assets/images/info_icon.png')}
+                style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+              />
+
+              {/* Texts */}
+              <View style={{ flex: 1 }}>
+                <Text allowFontScaling={false} style={styles.importantText1}>Important:</Text>
+              <Text allowFontScaling={false} style={styles.importantText}>
+                Featured listings require a small upfront fee —{' '}
+                <Text allowFontScaling={false} style={styles.importantText1}>{featureFee}%</Text> of your item’s price or up to{' '}
+                <Text allowFontScaling={false} style={styles.importantText1}>£{maxFeatureCap}</Text> (whichever is lower).
+              </Text>
+              </View>
+            </View>
+          </View>
+        );
+
       default:
         return null;
     }
   };
 
-  // if (loading) {
-  //   return (
-  //     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#000' }}>
-  //       <ActivityIndicator color="#fff" size="large" />
-  //     </View>
-  //   );
-  // }
-
   return (
+ 
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
         {/* Header */}
         <View style={styles.header}>
+            {/* <BlurView
+            style={StyleSheet.absoluteFill}
+            blurType="light"       // or 'dark' for darker backgrounds
+            blurAmount={10}        // intensity
+            reducedTransparencyFallbackColor="transparent" // fallback on Android
+          /> */}
           <View style={styles.headerRow}>
             <TouchableOpacity
               style={styles.backBtn}
-              onPress={() => navigation.navigate('Dashboard')}>
-               <View style={styles.backIconRow}>
-              <Image
-                source={require('../../../assets/images/back.png')}
-                style={{ height: 24, width: 24 }}
-              />
+              onPress={() => {navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Add', isNavigate:false })}}
+            >
+              <View style={styles.backIconRow}>
+                <Image
+                  source={require('../../../assets/images/back.png')}
+                  style={{ height: 24, width: 24 }}
+                />
               </View>
             </TouchableOpacity>
-            <Text style={styles.unizyText}>List Product</Text>
-            <View style={{ width: 30 }} />
+            <Text allowFontScaling={false} style={styles.unizyText}>
+              {`List${productName ? ` ${productName} ` : ''}`}
+            </Text>
+            <View style={{ width: 48 }} />
           </View>
         </View>
 
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-          {/* User Info */}
-          <View style={styles.userRow}>
-            <View style={{ width: '20%' }}>
-              <Image source={profileImg} style={styles.avatar} />
-            </View>
-            <View style={{ width: '80%' }}>
-              <Text style={styles.userName}>Alan Walker</Text>
-              <Text style={styles.userSub}>University of Warwick, Coventry</Text>
-              <Text style={styles.userSub}>{displayDate}</Text>
-            </View>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <ScrollView contentContainerStyle={styles.scrollContainer}>
+            
+            <View style={styles.userRow}>
+          <View style={{ width: '20%', alignItems: 'center', justifyContent: 'center' }}>
+            {userMeta?.profile ? (
+              <Image
+                source={{ uri: userMeta.profile }}
+                style={styles.avatar}
+              />
+            ) : (
+              <View style={styles.initialsCircle}>
+                <Text allowFontScaling={false} style={styles.initialsText}>
+                  {getInitials(userMeta?.firstname ?? 'Alan', userMeta?.lastname ?? 'Walker')}
+                </Text>
+              </View>
+            )}
           </View>
 
-          {/* Dynamic Fields */}
-          <View style={styles.productdetails}>
-            <Text style={styles.productdetailstext}>Product Details</Text>
-            {fields.map((field) => renderField(field))}
+          <View style={{ width: '80%' }}>
+            <Text allowFontScaling={false} style={styles.userName}>
+              {userMeta
+                ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''}`.trim()
+                : 'Alan Walker'}
+            </Text>
+
+            <View
+              style={{
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                display: 'flex',
+                alignItems: 'stretch',
+              }}
+            >
+              <Text allowFontScaling={false} style={styles.userSub}>
+            {userMeta?.university_name || 'University of Warwick,'}
+          </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <Text allowFontScaling={false} style={styles.userSub1}>Coventry</Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 3,
+                  }}
+                >
+                  <Image
+                    source={require('../../../assets/images/calendar_icon.png')}
+                    style={{ height: 20, width: 20 }}
+                  />
+                  <Text allowFontScaling={false} style={styles.userSub1}>{getCurrentDate()}</Text>
+                </View>
+              </View>
+            </View>
           </View>
-        </ScrollView>
-    
-        <TouchableOpacity
-          style={styles.previewBtn}
-          onPress={
-            //console.log('Collected form values: ', formValues);
-            //navigation.navigate('PreviewThumbnail');
-            handlePreview
-          }
-          
-          >
-          <Text style={styles.previewText}>Preview Details</Text>
-        </TouchableOpacity>
+        </View>
+
+
+            <View style={styles.productdetails}>
+              <Animated.View
+                style={{
+                  transform: [{ translateY: slideUp1 }],
+                  opacity: slideUp1.interpolate({
+                    inputRange: [-screenHeight, 0],
+                    outputRange: [0, 1],
+                  }),
+                }}
+              >
+                <Text allowFontScaling={false} style={styles.productdetailstext}>Product Details</Text>
+                {fields.map(field => renderField(field))}
+              </Animated.View>
+            </View>
+          </ScrollView>
+
+          <Button title="Preview Details" onPress={() => handlePreview()} />
         </KeyboardAvoidingView>
       </View>
-     
-    <Modal
-      visible={multiSelectModal.visible}
-      transparent
-      animationType="slide"
-      onRequestClose={() => setMultiSelectModal({ visible: false })}
-    >
-  <View style={styles.modalOverlay}>
-    <View style={styles.modalContent}>
-      <Text style={styles.modalTitle}>Select Options</Text>
-      <ScrollView>
-        {multiSelectOptions.map((opt: any) => (
-          <TouchableOpacity
-            key={opt.id}
-            style={styles.modalOption}
-            onPress={() => {
-              const prevSelected: number[] = Array.isArray(formValues[multiSelectModal.fieldId!])
-                ? formValues[multiSelectModal.fieldId!]
-                : [];
-              const updated = prevSelected.includes(opt.id)
-                ? prevSelected.filter((id) => id !== opt.id)
-                : [...prevSelected, opt.id];
-              setFormValues((prev: any) => ({
-                ...prev,
-                [multiSelectModal.fieldId!]: updated,
-              }));
-            }}
-          >
-            <Text style={{ color: '#fff', fontSize: 16 }}>{opt.option_name}</Text>
-            {Array.isArray(formValues[multiSelectModal.fieldId!]) &&
-              formValues[multiSelectModal.fieldId!].includes(opt.id) && (
-                <Text style={{ color: '#3b82f6', marginLeft: 10 }}>✓</Text>
-              )}
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
 
-      <TouchableOpacity
-        style={styles.modalCloseBtn}
-        onPress={() => setMultiSelectModal({ visible: false })}
-      >
-        <Text style={{ color: '#fff' }}>Done</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-</Modal>
+
+      <SelectCatagoryDropdown
+        options={multiSelectOptions}
+        visible={multiSelectModal.visible}
+        ismultilple={multiSelectModal?.ismultilple}
+        title={`Select ${multiSelectModal?.fieldLabel || 'Category'}`}
+        subtitle={`Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your item.`}
+        selectedValues={formValues[multiSelectModal.fieldId!]?.value}
+        onClose={() =>
+          setMultiSelectModal(prev => ({ ...prev, visible: false }))
+        }
+        onSelect={(selectedIds: number[] | number) => {
+          setFormValues((prev: any) => ({
+            ...prev,
+            [multiSelectModal.fieldId!]: { value: selectedIds },
+          }));
+        }}
+      />
+      <NewCustomToastContainer />
+
     </ImageBackground>
   );
 };
@@ -665,29 +989,65 @@ export default AddScreen;
 
 const styles = StyleSheet.create({
 
-  dropdowntext:{
- fontFamily: 'Urbanist-Regular',
+    initialsCircle:{
+ backgroundColor: '#8390D4',
+  alignItems: 'center',
+  justifyContent: 'center',
+   width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 12,
+  },
+  initialsText:{
+   color: '#fff',
+  fontSize: 18,
+  fontWeight:600,
+  textAlign: 'center',
+  fontFamily: 'Urbanist-SemiBold',
+  },
+  featurecard: {
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    padding: 12,
+    marginTop: 12,
+    gap: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+  },
+  
+dropdownIcon: {
+  width: 20,
+  height: 20,
+  tintColor:'#FFF'
+},
+dropdowncard:{
+  minHeight:40,
+  alignItems:'flex-start',
+  justifyContent:'center'
+},
+  dropdowntext: {
+    fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
     fontSize: 17,
-    lineHeight: 22,
     fontStyle: 'normal',
-    color: '#fff',
+    color: 'rgba(255, 255, 255, 0.48)',
+    includeFontPadding: false,
+    //textAlignVertical: 'center',
   },
- 
-    eyeIcon1: {
+
+  eyeIcon1: {
     width: 19,
     height: 19,
     // paddingRight: 16,
   },
 
-    headerContainer: {
+  headerContainer: {
     height: 80,
-    width: "100%",
-    position: "absolute",
+    width: '100%',
+    position: 'absolute',
     top: 0,
     left: 0,
     zIndex: 10,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   headerBlur: {
     ...StyleSheet.absoluteFillObject,
@@ -707,8 +1067,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    height: 70,
-    paddingTop: 12,
+    height: 100,
+    paddingTop: 40,
     paddingBottom: 12,
     paddingHorizontal: 16,
     justifyContent: 'center',
@@ -718,8 +1078,21 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 10,
     overflow: 'hidden',
-
+    backgroundColor:'transparent'
+    
   },
+//   header: {
+//   position: 'absolute',
+//   top: 0,
+//   left: 0,
+//   right: 0,
+//   zIndex: 10,
+//   height: 100,
+//   paddingHorizontal: 16,
+//   paddingTop: 40,
+//   paddingBottom: 12,
+//   justifyContent: 'flex-end',
+// },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -730,7 +1103,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   backIconRow: {
-     padding: 12,
+    padding: 12,
     borderRadius: 40,
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
@@ -740,7 +1113,6 @@ const styles = StyleSheet.create({
     height: 48,
     width: 48,
     position: 'absolute',
-    top: -10,
     left: 0,
     right: 0,
     justifyContent: 'center',
@@ -761,7 +1133,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     paddingHorizontal: 20,
     paddingBottom: 80,
-    paddingTop: 80,
+    paddingTop: 100,
   },
   userRow: {
     flexDirection: 'row',
@@ -772,17 +1144,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
   },
   productdetails: {
-    // padding: 16,
-    // borderRadius: 24,
-    // backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    
-
-    // // gap: 10,
     marginTop: 10,
     padding: 12,
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderRadius: 24,
-  
+    overflow: 'hidden',
   },
   avatar: {
     width: 50,
@@ -805,6 +1171,15 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '500',
     lineHeight: 16,
+    marginTop:4
+  },
+   userSub1: {
+    color: 'rgba(255, 255, 255, 0.88)',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 12,
+    fontWeight: '500',
+    lineHeight: 16,
+    marginTop:1
   },
   dateText: {
     color: '#ccc',
@@ -836,14 +1211,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
 
-  productdetailstext:{
+  productdetailstext: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 18,
     fontWeight: '600',
     fontStyle: 'normal',
     letterSpacing: -0.36,
-
   },
 
   uploadIcon: {
@@ -851,11 +1225,20 @@ const styles = StyleSheet.create({
     height: 20,
     marginRight: 8,
     resizeMode: 'contain',
+     mixBlendMode: 'normal',
   },
   uploadText: {
     color: 'rgba(255, 255, 255, 0.48)',
     fontSize: 14,
-    
+     mixBlendMode: 'normal',
+     fontFamily: 'Urbanist-Medium',
+     fontWeight:500,
+     
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#ccc',
+    marginVertical: 4,
   },
 
   filecard: {
@@ -864,19 +1247,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
   },
 
-  fileRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-  },
   fileIcon: {
-    width: 28,
-    height: 28,
+    width: 30,
+    height: 30,
     resizeMode: 'contain',
     marginRight: 8,
   },
   fileName: {
-  
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 16,
@@ -885,37 +1262,44 @@ const styles = StyleSheet.create({
     letterSpacing: -0.32,
     lineHeight: 24,
     paddingStart: 5,
-
-
   },
   deleteBtn: {
-    width: 30,
-    height: 30,
+    width: 32,
+    height: 32,
     justifyContent: 'center',
     alignItems: 'center',
   },
   deleteIcon: {
-    width: 28,
-    height: 28,
+    width: 32,
+    height: 32,
     resizeMode: 'contain',
   },
-   threedots: {
-    width: 10,
-    height: 10,
+  threedots: {
+    width: 20,
+    height: 20,
     resizeMode: 'contain',
   },
-  textstyle:{
+  textstyle: {
     color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-Regular',
     fontWeight: 400,
     lineHeight: 16,
     fontSize: 14,
+    paddingLeft:4
   },
-  productTextView:{
+    textstyle1: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-Medium',
+    fontWeight: 500,
+    lineHeight: 22,
+    fontSize: 17,
+    paddingLeft:4
+  },
+  productTextView: {
     gap: 4,
     marginTop: 10,
   },
-  
+
   input: {
     backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: 8,
@@ -928,12 +1312,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     // marginBottom: 12,
-    marginTop: 9,
+   // marginTop: 9,
   },
   categoryTag: {
-    backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderWidth: 0.9,
-    borderColor:'rgba(255, 255, 255, 0.08)',
+    borderColor: 'rgba(255, 255, 255, 0.08)',
     borderBlockEndColor: 'rgba(255, 255, 255, 0.08)',
     color: '#fff',
     paddingHorizontal: 8,
@@ -941,36 +1326,55 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     marginRight: 4,
     marginBottom: 4,
-    boxShadow:'0 2px 8px 0 rgba(0, 0, 0, 0.23)'
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.23)',
   },
   featuredRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
-    marginTop:8,
+    marginBottom: 4,
+    marginTop: 4,
   },
   featuredLabel: {
-    color: '#fff',
+    //color: '#fff',
+    color: '#FFFFFFE0',
     fontSize: 14,
     fontFamily: 'Urbanist-Medium',
-    fontWeight:500,
+    fontWeight: 500,
+  },
+  textbg: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+    padding: 6,
+    borderWidth: 0.5,
+    borderEndEndRadius: 12,
+    borderStartEndRadius: 12,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    borderBottomStartRadius: 12,
+    borderBlockStartColor: '#ffffff31',
+    borderBlockColor: '#ffffff31',
+    borderTopColor: '#ffffff31',
+    borderBottomColor: '#ffffff31',
+    borderLeftColor: '#ffffff31',
+    borderRightColor: '#ffffff31',
   },
   importantText: {
-    color: '#ccc',
+    color: '#FFFFFFCC',
     fontSize: 12,
-    marginBottom: 16,
+    marginBottom: 6,
+    fontFamily: 'Urbanist-Regular',
+    fontWeight: 400,
+  },
+  importantText1: {
+    color: '#FFFFFF',
+    fontSize: 12,
     fontFamily: 'Urbanist-Medium',
     fontWeight: 500,
   },
-   importantText1: {
-    color: '#ccc',
-    fontSize: 12,
-    fontFamily: 'Urbanist-SemiBold',
-    fontWeight: 500,
-
-  },
-
 
   previewBtn: {
     display: 'flex',
@@ -986,7 +1390,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
-    
     position: 'absolute',
     bottom: 10,
   },
@@ -1014,8 +1417,7 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-   paddingLeft: 10,
-
+    paddingLeft: 12,
   },
   personalEmailID_TextInput: {
     width: '100%',
@@ -1025,70 +1427,68 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     fontStyle: 'normal',
     color: '#fff',
-      },
+    minHeight:40
+  },
 
   pickerContainer: {
-  borderRadius: 12,
-  borderWidth: 0.6,
-  overflow: 'hidden',
+    borderRadius: 12,
+    borderWidth: 0.6,
+    overflow: 'hidden',
     borderColor: '#ffffff2c',
     flexDirection: 'row',
-    //justifyContent: 'center',
-    //alignItems: 'center',
+    justifyContent: 'space-between',
+  alignItems: 'center',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-   padding: 10,
-   height:40,
-},
+    padding: 12,
+    height: 44,
+  },
 
-pickerStyle: {
-  color: '#fff',
-  width: '100%',
-},
+  pickerStyle: {
+    color: '#fff',
+    width: '100%',
+  },
 
-categoryTagWrapper: {
-  borderRadius: 12,
-  paddingHorizontal: 4,
-  paddingVertical: 4,
-},
+  categoryTagWrapper: {
+    borderRadius: 12,
+    paddingHorizontal: 4,
+    paddingVertical: 4,
+  },
 
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'center',
+    padding: 16,
+  },
 
+  modalContent: {
+    backgroundColor: '#222',
+    borderRadius: 12,
+    padding: 16,
+    maxHeight: '80%',
+  },
 
-modalOverlay: {
-  flex: 1,
-  backgroundColor: 'rgba(0,0,0,0.6)',
-  justifyContent: 'center',
-  padding: 16,
-},
+  modalTitle: {
+    color: '#fff',
+    fontSize: 18,
+    marginBottom: 12,
+  },
 
-modalContent: {
-  backgroundColor: '#222',
-  borderRadius: 12,
-  padding: 16,
-  maxHeight: '80%',
-},
+  modalOption: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#555',
+  },
 
-modalTitle: { 
-  color: '#fff',
-  fontSize: 18, 
-  marginBottom: 12 },
-
-modalOption: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  paddingVertical: 10,
-  borderBottomWidth: 0.5,
-  borderBottomColor: '#555',
-},
-
-modalCloseBtn: {
-  backgroundColor: '#3b82f6',
-  borderRadius: 12,
-  padding: 10,
-  marginTop: 16,
-  alignItems: 'center',
-},
-
-
+  modalCloseBtn: {
+    backgroundColor: '#3b82f6',
+    borderRadius: 12,
+    padding: 10,
+    marginTop: 16,
+    alignItems: 'center',
+  },
 });

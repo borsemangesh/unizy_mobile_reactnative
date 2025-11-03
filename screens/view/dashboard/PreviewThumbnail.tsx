@@ -14,18 +14,76 @@ import { showToast } from '../../utils/toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 import NewProductCard from '../../utils/NewProductCard';
+import PreviewCard from '../../utils/PreviewCard';
+import Button from '../../utils/component/Button';
+import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 
 type PreviewThumbnailProps = {
   navigation: any;
 };
+type CategoryDetailsType = {
+  commission: string;     // e.g., "10.00"
+  max_cappund: string;   
+  feature_fee:string,
+   max_feature_cap:string
+};
+
+interface Category {
+  id: number;
+  name: string;
+  description: string | null;
+  isactive: boolean;
+  logo: string | null;
+  commission: string | null;
+  max_cappund: string | null;
+ feature_fee:string | null
+  max_feature_cap: |null,
+}
+
+interface UserMeta {
+  firstname: string | null;
+  lastname: string | null;
+  profile: string | null;
+  student_email: string | null;
+  category?: Category | null;
+}
 
 const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
 
   const [storedForm, setStoredForm] = useState<any | null>(null);
+const [categoryDetails, setCategoryDetails] = useState<CategoryDetailsType | null>(null);
+
+// useEffect(() => {
+//   const fetchStoredData = async () => {
+//     try {
+//       const storedData = await AsyncStorage.getItem('formData');
+//       if (storedData) {
+//         const parsedData = JSON.parse(storedData);
+//         console.log('Stored Form Data:', parsedData);
+//         setStoredForm(parsedData);
+//       } else {
+//         console.log('No form data found');
+//       }
+//       const categoryData = await AsyncStorage.getItem('categoryDetails');
+//       if (categoryData) {
+//         const parsedCategory = JSON.parse(categoryData);
+//         console.log('Stored Category Details:', parsedCategory);
+//         setCategoryDetails(parsedCategory); // <-- your state for category details
+//       } else {
+//         console.log('No category details found');
+//       }
+//     } catch (error) {
+//       console.log('Error reading form data: ', error);
+//     }
+//   };
+
+//   fetchStoredData();
+// }, []);
 
 useEffect(() => {
   const fetchStoredData = async () => {
     try {
+      // 1️⃣ Fetch stored form data
       const storedData = await AsyncStorage.getItem('formData');
       if (storedData) {
         const parsedData = JSON.parse(storedData);
@@ -34,26 +92,96 @@ useEffect(() => {
       } else {
         console.log('No form data found');
       }
+
+      const storedUserMeta = await AsyncStorage.getItem('userMeta');
+      if (storedUserMeta) {
+        const parsedUserMeta: UserMeta = JSON.parse(storedUserMeta);
+        console.log('Stored User Meta:', parsedUserMeta);
+
+        if (parsedUserMeta.category) {
+          const { commission, max_cappund,feature_fee, max_feature_cap} = parsedUserMeta.category;
+          setCategoryDetails({ commission: commission ?? '0', max_cappund: max_cappund ?? '0',feature_fee:feature_fee ?? '0' ,max_feature_cap:max_feature_cap ?? '0'});
+          console.log('Category Details set:', { commission, max_cappund });
+        } else {
+          console.log('No category in userMeta');
+        }
+      } else {
+        console.log('No userMeta found');
+      }
     } catch (error) {
-      console.log('Error reading form data: ', error);
+      console.log('Error reading stored data: ', error);
     }
   };
 
   fetchStoredData();
 }, []);
 
+type FormEntry = {
+  value: any;
+  alias_name: string | null;
+};
 
- 
+const getValueByAlias = (
+  formData: Record<string, FormEntry> | null,
+  alias: string
+): any => {
+  if (!formData) return null;
+
+  const entry = Object.values(formData).find(
+    (item) => item.alias_name === alias
+  ) as FormEntry | undefined;
+
+  return entry ? entry.value : null;
+};
+
+const titleValue = getValueByAlias(storedForm, 'title') || 'No Title';
+//const priceValue = getValueByAlias(storedForm, 'price') || '0';
+const imageArray = storedForm?.[6]?.value || [];
+
+// console.log(priceValue)
+// const commisionprice = priceValue + priceValue * 0.12;
+// const featurecommisionprice = priceValue + priceValue * 0.8;
+
+
+const raw = getValueByAlias(storedForm, 'price') ?? '0';
+const priceValue = parseFloat(String(raw)) || 0;
+
+const commissionPercent = parseFloat(categoryDetails?.commission ?? '0');
+const maxCap = parseFloat(categoryDetails?.max_cappund ?? '0');
+
+const commissionAmount = priceValue * (commissionPercent / 100);
+const calculatedPrice = priceValue + commissionAmount;
+const maxAllowedPrice = priceValue + maxCap;
+const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(2);
+
+///feature
+
+const raw1 = getValueByAlias(storedForm, 'price') ?? '0';
+const priceValue1 = parseFloat(String(raw1)) || 0;
+
+const commissionPercent1 = parseFloat(categoryDetails?.feature_fee ?? '0');
+const maxCap1 = parseFloat(categoryDetails?.max_feature_cap ?? '0');
+
+const commissionAmount1 = priceValue1 * (commissionPercent1 / 100);
+const calculatedPrice1 = priceValue1 + commissionAmount1;
+const maxAllowedPrice1 = priceValue1 + maxCap1;
+const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2);
+
+
+
+
+
+//console.log(commisionprice)
 
   return (
     <ImageBackground
-      source={require('../../../assets/images/bganimationscreen.png')}
+      source={require('../../../assets/images/backimg.png')}
       style={{ width: '100%', height: '100%' }}
       resizeMode="cover"
     >
       <View
         style={{
-          paddingTop: Platform.OS === 'ios' ? 80 : 30,
+          paddingTop: Platform.OS === 'ios' ? 70 : 70,
           paddingLeft: 16,
           paddingRight: 16,
         }}
@@ -61,7 +189,11 @@ useEffect(() => {
         <TouchableOpacity
           style={{ zIndex: 1 }}
           onPress={() => {
-            navigation.navigate('AddScreen');
+            // navigation.replace('AddScreen',{
+            //   productId:1,
+            //   name: "name",
+            // });
+             navigation.goBack();
           }}
         >
           <View style={styles.backIconRow}>
@@ -72,71 +204,36 @@ useEffect(() => {
           </View>
         </TouchableOpacity>
 
-        <Text style={styles.previewThumbnail}>Preview Thumbnail</Text>
+        <Text allowFontScaling={false} style={styles.previewThumbnail}>Preview Thumbnail</Text>
 
         <View style={{ height: '100%' }}>
          
          
-        {/* <View style={styles.productCarddisplay}>
-          {storedForm ? (
-            <>
-              <NewProductCard
-                tag="University of Warwick"
-                infoTitle={storedForm[7] || 'No Title'}
-                inforTitlePrice={`£${storedForm[8] || '0'}`}
-                rating={storedForm[12] || '4.5'}
-                productImage={
-                  storedForm[6] && storedForm[6][0]?.uri
-                    ? { uri: storedForm[6][0].uri }
-                    : require('../../../assets/images/drone.png')
-                }
-              />
-
-              {String(storedForm[13]) === 'true' && (
-                <ProductCard
-                  tag="University of Warwick"
-                  infoTitle={storedForm[7] || 'No Title'}
-                  inforTitlePrice={`$${storedForm[8] || '0'}`}
-                  rating={storedForm[12] || '4.5'}
-                  productImage={
-                    storedForm[6] && storedForm[6][0]?.uri
-                      ? { uri: storedForm[6][0].uri }
-                      : require('../../../assets/images/drone.png')
-                  }
-                />
-              )}
-            </>
-          ) : (
-            <Text style={{ color: '#fff', textAlign: 'center' }}>Loading...</Text>
-          )}
-        </View> */}
-
-        <View style={styles.productCarddisplay}>
+        
+    {/* <View style={styles.productCarddisplay}>
   {storedForm ? (
     <>
-      {String(storedForm[13]) === 'true' ? (
-        // If true → render ProductCard
-        <ProductCard
+      {(storedForm[13]?.value === true || storedForm[13]?.value === 'true') ? (
+        <PreviewCard
           tag="University of Warwick"
-          infoTitle={storedForm[7] || 'No Title'}
-          inforTitlePrice={`£${storedForm[8] || '0'}`} // use £ if needed
-          rating={storedForm[12] || '4.5'}
+          infoTitle={titleValue} // from alias
+          inforTitlePrice={`£${commissionPrice}`} // from alias
+          rating={storedForm[12]?.value || '4.5'}
           productImage={
-            storedForm[6] && storedForm[6][0]?.uri
-              ? { uri: storedForm[6][0].uri }
+            imageArray.length > 0
+              ? { uri: imageArray[0].uri }
               : require('../../../assets/images/drone.png')
           }
         />
       ) : (
-        // If false → render NewProductCard
         <NewProductCard
           tag="University of Warwick"
-          infoTitle={storedForm[7] || 'No Title'}
-          inforTitlePrice={`£${storedForm[8] || '0'}`}
-          rating={storedForm[12] || '4.5'}
+          infoTitle={titleValue} 
+          inforTitlePrice={`£${commissionPrice1}`} 
+          rating={storedForm[12]?.value || '4.5'}
           productImage={
-            storedForm[6] && storedForm[6][0]?.uri
-              ? { uri: storedForm[6][0].uri }
+            imageArray.length > 0
+              ? { uri: imageArray[0].uri }
               : require('../../../assets/images/drone.png')
           }
         />
@@ -145,43 +242,158 @@ useEffect(() => {
   ) : (
     <Text style={{ color: '#fff', textAlign: 'center' }}>Loading...</Text>
   )}
+</View> */}
+
+
+<View style={styles.productCarddisplay}>
+  {storedForm ? (
+    <>
+      {storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
+        <>
+        <Text allowFontScaling={false} style={[styles.newtext,{paddingBottom:6}]}>Featured Listing Preview</Text>
+          <PreviewCard
+            tag="University of Warwick"
+            infoTitle={titleValue} // from alias
+            inforTitlePrice={`£${commissionPrice}`} // from alias
+            rating={storedForm[12]?.value || '4.5'}
+            productImage={
+              imageArray.length > 0
+                ? { uri: imageArray[0].uri }
+                : require('../../../assets/images/drone.png')
+            }
+          />
+          <Text allowFontScaling={false} style={[styles.newtext1,{paddingBottom:6}]}>Regular Listing Preview</Text>
+          <NewProductCard
+            tag="University of Warwick"
+            infoTitle={titleValue}
+            inforTitlePrice={`£${commissionPrice}`}
+            rating={storedForm[12]?.value || '4.5'}
+            productImage={
+              imageArray.length > 0
+                ? { uri: imageArray[0].uri }
+                : require('../../../assets/images/drone.png')
+            }
+          />
+        </>
+      ) : (
+       
+        <NewProductCard
+          tag="University of Warwick"
+          infoTitle={titleValue} // from alias
+          inforTitlePrice={`£${commissionPrice}`} // from alias
+          rating={storedForm[12]?.value || '4.5'}
+          productImage={
+            imageArray.length > 0
+              ? { uri: imageArray[0].uri }
+              : require('../../../assets/images/drone.png')
+          }
+        />
+      )}
+    </>
+  ) : (
+    <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center' }}>Loading...</Text>
+  )}
 </View>
 
+           <View
+                  style={styles.textbg}
+                >
+                  <Image
+                    source={require('../../../assets/images/info_icon.png')} 
+                    style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+                  />
+          
+                  {/* Texts */}
+                  {/* <View style={{ flex: 1 }}>
+                    <Text allowFontScaling={false} style={styles.importantText1}>Important:</Text>
+                    <Text allowFontScaling={false} style={styles.importantText}>
+                       A {categoryDetails?.commission ?? '0'}% commission or a maximum of £{categoryDetails?.max_cappund ?? '0'}, whichever is lower, will be added to the entered price.
+                    </Text>
+                  </View> */}
+
+                  <View style={{ flex: 1 }}>
+                                  <Text allowFontScaling={false} style={styles.importantText1}>Important:</Text>
+                                <Text allowFontScaling={false} style={styles.importantText}>
+                                  A
+                                  <Text allowFontScaling={false} style={styles.importantText1}> {categoryDetails?.commission ?? '0'}%</Text> commission or a maximum of
+                                  <Text allowFontScaling={false} style={styles.importantText1}> £{categoryDetails?.max_cappund ?? '0'}</Text> , whichever is lower, will be added to the entered price.
+                                </Text>
+                                </View>
 
 
+                </View>
 
-          <View style={styles.importantNotice}>
-            <View style={styles.h24_w24}>
-              <Image
-                source={require('../../../assets/images/info_icon.png')}
-                style={styles.h24_w24}
-              />
-            </View>
-            <View style={{ flexDirection: 'column', marginLeft: 8 }}>
-              <Text style={styles.infoText}>Important:</Text>
-              <Text style={styles.note}>
-                Price shown includes a 10% platform fee.
-              </Text>
-            </View>
-          </View>
+
           <TouchableOpacity
             style={styles.nextButton}
             onPress={() => {
               navigation.navigate('PreviewDetailed');
             }}
-            // onPress={async () => {
-            //   await printStoredFormData();
-            // }}
-                    >
-            <Text style={styles.nextText}>Next</Text>
+            >
+            <Text allowFontScaling={false} style={styles.nextText}>Next</Text>
           </TouchableOpacity>
+          {/* <Button
+            onPress={() => {
+            navigation.navigate('PreviewDetailed');
+          }} title='Next'/> */}
         </View>
       </View>
+      <NewCustomToastContainer/>
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  newtext:{
+     color: '#fff',
+    fontSize: 16,
+    margin: 6,
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: 600,
+  },
+ newtext1:{
+     color: '#fff',
+    fontSize: 16,
+    marginTop: 12,
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: 600,
+  },
+ textbg:{
+ flexDirection: 'row',
+          alignItems: 'flex-start',
+          backgroundColor:
+            'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
+          boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+          padding: 6,
+          borderWidth:0.5,
+            borderEndEndRadius: 12,
+            borderStartEndRadius: 12,
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12,
+            borderBottomStartRadius: 12,
+            borderBlockStartColor: '#ffffff31',
+            borderBlockColor: '#ffffff31',
+            borderTopColor: '#ffffff31',
+            borderBottomColor: '#ffffff31',
+            borderLeftColor: '#ffffff31',
+            borderRightColor: '#ffffff31',
+            marginBottom:2
+            
+  },
+  importantText: {
+    color: '#ccc',
+    fontSize: 12,
+    marginBottom: 6,
+    fontFamily: 'Urbanist-Medium',
+    fontWeight: 500,
+  },
+  importantText1: {
+    color: '#fff',
+    fontSize: 12,
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: 500,
+  },
+
   h24_w24: {
     width: 24,
     height: 24,
@@ -197,7 +409,7 @@ const styles = StyleSheet.create({
   },
   productCarddisplay: {
     display: 'flex',
-    height: '80%',
+    height: '78%',
     alignContent: 'center',
     justifyContent: 'center',
     alignItems: 'center',
@@ -256,10 +468,9 @@ const styles = StyleSheet.create({
     paddingTop: 6,
     paddingBottom: 12,
     backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    marginTop: 10,
-
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
+    marginTop:10,
   },
   nextText: {
     color: '#002050',

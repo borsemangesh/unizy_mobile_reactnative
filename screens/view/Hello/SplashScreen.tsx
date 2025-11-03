@@ -1,120 +1,89 @@
-// import React, { useEffect } from 'react';
-// import { View, StyleSheet, Dimensions, ImageBackground } from 'react-native';
-// import LottieView from 'lottie-react-native';
-// import { useNavigation } from '@react-navigation/native';
-// import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import React, { useEffect, useRef, useState } from "react";
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  ImageBackground,
+  Platform,
+  Animated,
+} from "react-native";
+import LottieView from "lottie-react-native";
+import BackgroundAnimation_Android from "./BackgroundAnimation_Android";
+import BackgroundAnimation from "./BackgroundAnimation";
+import { Navigation } from "../Navigation";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// type RootStackParamList = {
-//   Splash: undefined;
-//   HelloScreen: undefined;
-//   // Add other screens here if needed
-// };
-
-// type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Splash'>;
-
-// const { width, height } = Dimensions.get('window');
-
-// const SplashScreen: React.FC = () => {
-//   const navigation = useNavigation<NavigationProp>();
-
-//   const handleFinish = () => {
-//     navigation.replace('HelloScreen');
-//   };
-
-//   useEffect(() => {
-//     const timer = setTimeout(handleFinish, 4200); 
-//     return () => clearTimeout(timer);
-//   }, []);
-
-//   return (
-//     <ImageBackground
-//       source={require('../../../assets/images/BGAnimationScreen.png')}
-//       style={styles.container}
-//       resizeMode="cover"
-//     >
-//       <View style={styles.centerContent}>
-//         <LottieView
-//           source={require('../../../assets/animations/Animation.json')}
-//           autoPlay
-//           loop={false}
-//           resizeMode="cover"
-//           style={{ width, height }}
-//           onAnimationFinish={handleFinish}
-//         />
-//       </View>
-//     </ImageBackground>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   centerContent: {
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     flex: 1,
-//   },
-// });
-
-// export default SplashScreen;
-
-//added for ios
-
-
-
-import React, { useEffect } from 'react';
-import { View, StyleSheet,Dimensions, ImageBackground } from 'react-native';
-import LottieView from 'lottie-react-native';
-import BackgroundAnimation from './BackgroundAnimation';
-
+const { width, height } = Dimensions.get("window");
 
 type SplashScreenProps = {
-  onFinish: () => void;
+  navigation: any;
+  // onFinish: () => void;
 };
-const { width, height } = Dimensions.get('window');
 
-const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onFinish();
-    }, 4300);
-    return () => clearTimeout(timer);
-  }, [onFinish]);
+const SplashScreen = ({ navigation }: SplashScreenProps) => {
+  
 
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const [animationDone, setAnimationDone] = useState(false);
+  // const onFinishCalled = useRef(false); 
+  const [initialRoute, setInitialRoute] = useState<null | string>(null);
+
+  const handleAnimationFinish = async () => {
+  try {
+    const flag = await AsyncStorage.getItem('ISLOGIN');
+    if (flag === 'true') {
+      navigation.replace('Dashboard'); 
+    } else {
+      navigation.replace('SinglePage');
+    }
+  } catch (error) {
+    console.log('Error reading login status:', error);
+    navigation.replace('SinglePage');
+  }
+};
+  
   return (
     <ImageBackground
-      source={require('../../../assets/images/bganimationscreen.png')}
+      source={require("../../../assets/images/bganimationscreen.png")}
       style={styles.container}
       resizeMode="cover"
     >
-      <View style={styles.centerContent}>
-        {/* <BackgroundAnimation /> */}
-        <LottieView
-          source={require('../../../assets/animations/animation.json')}
-          autoPlay
-          loop={false}
-          resizeMode="cover"  
-          style={{ width, height }}  
-          onAnimationFinish={onFinish}
-        />
-      </View>
-   </ImageBackground> 
+      <Animated.View style={styles.container}>
+        {Platform.OS === "android" ? (
+          <BackgroundAnimation_Android />
+        ) : (
+          <BackgroundAnimation />
+        )}
+          
+          <Animated.View style={[styles.centerContent, { opacity: fadeAnim }]}>
+          <LottieView
+            source={require("../../../assets/animations/animation_new.json")}
+            autoPlay
+            loop={false}
+            resizeMode="contain"
+            style={{ width, height }}
+            onAnimationFinish={handleAnimationFinish}
+          />
+        </Animated.View>
+      </Animated.View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center', 
-    alignItems: 'center',
+    flex: 1, // full screen
+    justifyContent: "center",
+    alignItems: "center",
+
+    
   },
   centerContent: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1,
+    // flex: 1, // take full screen
+    justifyContent: "center",
+    alignItems: "center",
+    width: "50%",
+    // height: '100%'
   },
 });
 

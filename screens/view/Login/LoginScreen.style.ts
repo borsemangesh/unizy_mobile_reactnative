@@ -117,8 +117,7 @@ export const loginStyles = StyleSheet.create({
     fontSize: 17,
     lineHeight: 22,
     fontStyle: 'normal',
-    color:'#fff'
-    
+
   },
   password_container: {
     display: 'flex',
@@ -145,7 +144,6 @@ export const loginStyles = StyleSheet.create({
     fontWeight: '400',
     fontSize: 17,
     lineHeight: 22,
-    color:'#fff'
   },
   forgetPasswordText: {
     color: 'rgba(255, 255, 255, 0.48)',

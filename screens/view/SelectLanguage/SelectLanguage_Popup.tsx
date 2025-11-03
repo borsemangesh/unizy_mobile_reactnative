@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   ImageBackground,
@@ -7,130 +7,74 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
-  ActivityIndicator,
-  ToastAndroid,
 } from 'react-native';
 
 import { selectlang_styles } from './SelectLanguage.style';
-import { getRequest } from '../../utils/API';
-import NetInfo from '@react-native-community/netinfo';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-type Language = {
-  code: string;
-  name: string;
-  flag: any;
-};
 
 type LoginScreenProps = {
   navigation: any;
 };
 
-// const languages: Language[] = [
-//   {
-//     code: 'en',
-//     name: 'English',
-//     flag: require('../../../assets/images/English.png'),
-//   },
-//   {
-//     code: 'es',
-//     name: 'Spanish',
-//     flag: require('../../../assets/images/Spanish.png'),
-//   },
-//   {
-//     code: 'fr',
-//     name: 'French',
-//     flag: require('../../../assets/images/French.png'),
-//   },
-//   {
-//     code: 'sv',
-//     name: 'Swedish',
-//     flag: require('../../../assets/images/Swedish.png'),
-//   },
-//   {
-//     code: 'it',
-//     name: 'Italian',
-//     flag: require('../../../assets/images/Italian.png'),
-//   },
-//   {
-//     code: 'de',
-//     name: 'German',
-//     flag: require('../../../assets/images/German.png'),
-//   },
-//   {
-//     code: 'pt',
-//     name: 'Portuguese',
-//     flag: require('../../../assets/images/Portuguese.png'),
-//   },
-// ];
+type Language = {
+  id: number;
+  code: string;
+  name: string;
+  flag: any;
+};
+const languages: Language[] = [
+  {
+    id: 1,
+    code: 'en',
+    name: 'English',
+    flag: require('../../../assets/images/english.png'),
+  },
+  {
+    id: 2,
+    code: 'es',
+    name: 'Spanish',
+    flag: require('../../../assets/images/spanish.png'),
+  },
+  {
+    id: 3,
+    code: 'fr',
+    name: 'French',
+    flag: require('../../../assets/images/french.png'),
+  },
+  {
+    id: 4,
+    code: 'sv',
+    name: 'Swedish',
+    flag: require('../../../assets/images/swedish.png'),
+  },
+  {
+    id: 5,
+    code: 'it',
+    name: 'Italian',
+    flag: require('../../../assets/images/italian.png'),
+  },
+  {
+    id: 6,
+    code: 'de',
+    name: 'German',
+    flag: require('../../../assets/images/german.png'),
+  },
+  {
+    id: 7,
+    code: 'pt',
+    name: 'Portuguese',
+    flag: require('../../../assets/images/portuguese.png'),
+  },
+];
 
 const SelectLanguage_Popup = ({ navigation }: LoginScreenProps) => {
   const [selected, setSelected] = useState<string | null>(null);
   const [search, setSearch] = useState('');
 
-  const [languages, setLanguages] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-
-
-   useEffect(() => {
-    (async () => {
-      setLoading(true)
-      try {
-      // const netState = await NetInfo.fetch();
-      // if (!netState.isConnected) {
-      //   ToastAndroid.show("Please check your internet connection.", ToastAndroid.SHORT);
-      //   setLoading(false);
-      //   return;
-      // }
-        const res = await getRequest('user/language');
-        if (res?.data) {
-         const sortedLanguages = [...res.data].sort((a, b) => a.id - b.id);
-          setLanguages(sortedLanguages);
-        }
-      } catch (err) {
-        console.log('Error fetching languages', err);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
-
-  const flagMap: Record<string, any> = {
-  en: require('../../../assets/images/english.png'),
-  hi: require('../../../assets/images/indian.png'),
-  es: require('../../../assets/images/spanish.png'),
-  fr: require('../../../assets/images/french.png'),
-  zh: require('../../../assets/images/china.png'),
-  // add others as needed
-};
-
-const filteredLanguages = languages
-  .map(lang => ({
-    code: lang.iso_code,
-    name: lang.language_name,
-    flag: flagMap[lang.iso_code] || require('../../../assets/images/english.png'),
-  }))
-  .filter(lang => lang.name.toLowerCase().includes(search.toLowerCase()));
-
-  // const filteredLanguages = languages.filter(lang =>
-  //   lang.name.toLowerCase().includes(search.toLowerCase()),
-  // );
-
-
-  const handleLanguageSelect = async (item:Language) => {
-  try {
-    await AsyncStorage.setItem(
-      'selectedLanguage',
-      JSON.stringify({ code: item.code, name: item.name })
-    );
-    setSelected(item.code);
-    navigation.replace('LoginScreen');
-  } catch (err) {
-    console.log('Error saving selected language', err);
-  }
-};
-
+  const filteredLanguages = languages.filter(lang =>
+    lang.name.toLowerCase().includes(search.toLowerCase()),
+  );
 
   return (
     <ImageBackground
@@ -155,9 +99,7 @@ const filteredLanguages = languages
         </View>
 
         <View style={selectlang_styles.listContainer}>
-         
-         
-          {/* <FlatList
+          <FlatList
             contentContainerStyle={selectlang_styles.listContent}
             style={selectlang_styles.flatListStyle}
             
@@ -198,84 +140,32 @@ const filteredLanguages = languages
                   </View>
                   
                 </View>
+                {/* <View style={selectlang_styles.languageInfo}>
+                  <Image source={item.flag} style={selectlang_styles.flag} />
+                  <View style={{ flexDirection: 'row', alignItems: 'center'}}>
+                    <Text style={selectlang_styles.languageText}>
+                      {item.name}
+                    </Text>
+                    <View style= {selectlang_styles.radioButton_round}>
+                      <View
+                        style={[
+                          selectlang_styles.radioButton,
+                          selected === item.code &&
+                            selectlang_styles.radioButtonSelected,
+                        ]}
+                      />
+
+                    </View>
+                  
+                  </View>
+                  
+                </View> */}
+                
               </TouchableOpacity>
             )}
-          /> */}
-
-           <FlatList
-         contentContainerStyle={selectlang_styles.listContent}
-          style={selectlang_styles.flatListStyle}
-          data={filteredLanguages}
-          keyExtractor={item => item.code}
-          renderItem={({ item }) => (
-      // <TouchableOpacity
-      //   style={selectlang_styles.languageItem}
-      //   onPress={() => {
-      //     setSelected(item.code);
-      //     navigation.replace('LoginScreen');
-      //   }}
-      // >
-      <TouchableOpacity
-        style={selectlang_styles.languageItem}
-        onPress={() => handleLanguageSelect(item)}
-      >
-        <View
-          style={{
-            display: 'flex',
-            paddingTop: 10,
-            paddingBottom: 12,
-            flexDirection: 'row',
-            alignItems: 'center',
-            width: '100%',
-          }}
-        >
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              width: '100%',
-            }}
-          >
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Image source={item.flag} style={selectlang_styles.flag} />
-              <Text style={selectlang_styles.languageText}>{item.name}</Text>
-            </View>
-            <View>
-              <View style={selectlang_styles.radioButton_round}>
-                <View
-                  style={[
-                    selectlang_styles.radioButton,
-                    selected === item.code && selectlang_styles.radioButtonSelected,
-                  ]}
-                />
-              </View>
-            </View>
-          </View>
-        </View>
-      </TouchableOpacity>
-         )}
-        />
+          />
         </View>
       </View>
-
-       {loading && (
-              <View
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  zIndex: 999, // keep it above everything
-                }}
-              >
-                <ActivityIndicator size="large" color="#fff" />
-              </View>
-            )}
-    
     </ImageBackground>
   );
 };
