@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,8 @@ import {
   ScrollView,
   Image,
   Platform,
+  Dimensions,
+  Animated,
 } from 'react-native';
 import { MAIN_URL } from '../../utils/APIConstant';
 
@@ -34,95 +36,30 @@ const productImage = require('../../../assets/images/producticon.png');
 export default function TransactionHistoryScreen(
   navigation: TransactionPropos,
 ) {
-  //  const [selectedTab, setSelectedTab] = useState<'Purchases' | 'Sales' | 'Charges'>('Purchases');
-  // const [transactions, setTransactions] = useState<TransactionSection[]>([]);
-  // const [loading, setLoading] = useState(true);
-
-  // useEffect(() => {
-  //   const fetchPurchases = async () => {
-  //     try {
-  //       const token = await AsyncStorage.getItem('userToken');
-
-  //       if (!token) {
-  //         console.log('No token found');
-  //         return;
-  //       }
-
-  //       const url = `${MAIN_URL.baseUrl}transaction/purchase`;
-
-  //       console.log('TRAN_URL:', url);
-  //       const response = await fetch(url, {
-  //         method: 'GET',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
-
-  //       if (response.status === 401 || response.status === 403) {
-  //         handleForceLogout();
-  //         return;
-  //       }
-
-  //       if (!response.ok) {
-  //         throw new Error(`HTTP error! status: ${response.status}`);
-  //       }
-
-  //       const json = await response.json();
-  //       console.log('JSONTRAN: ',json);
-
-  //       if (json.statusCode === 401 || json.statusCode === 403) {
-  //         handleForceLogout();
-  //         return;
-  //       }
-
-  //       // ✅ Parse and group data for UI
-  //       if (json.statusCode === 200 && Array.isArray(json.data)) {
-  //         const grouped = json.data.reduce(
-  //           (acc: Record<string, TransactionItem[]>, item: any) => {
-  //             const date = item.created_at.split('T')[0];
-  //             if (!acc[date]) acc[date] = [];
-  //             acc[date].push({
-  //               title: item.title,
-  //               price: `$${item.amount}`,
-  //               status: item.order_status,
-  //               code: item.payment_status,
-  //               seller: item.purchased_from,
-  //             });
-  //             return acc;
-  //           },
-  //           {}
-  //         );
-
-  //         const formatted: TransactionSection[] = Object.keys(grouped).map(date => ({
-  //           date,
-  //           items: grouped[date],
-  //         }));
-
-  //         setTransactions(formatted);
-  //       }
-  //     } catch (err) {
-  //       console.log('Error fetching purchases:', err);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   const handleForceLogout = async () => {
-  //     console.log('User inactive or unauthorized — logging out');
-  //     await AsyncStorage.clear();
-  //     // navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
-  //   };
-
-  //   fetchPurchases();
-  // }, []);
-
-  //  const [selectedTab, setSelectedTab] = useState<'Purchases' | 'Sales' | 'Charges'>('Purchases');
-  // const [transactions, setTransactions] = useState<TransactionSection[]>([]);
-  // const [loading, setLoading] = useState(true);
   const [selectedTab, setSelectedTab] = useState('Purchases');
   const [transactions, setTransactions] = useState<TransactionSection[]>([]);
   const [loading, setLoading] = useState(true);
+
+
+const tabs = ['Purchases', 'Sales', 'Charges'];
+const screenWidth = Dimensions.get('window').width;
+const tabWidth = screenWidth / tabs.length;  // equal width per tab
+
+const translateX = useRef(new Animated.Value(0)).current;
+
+
+ useEffect(() => {
+    // Animate bubble position whenever selectedTab changes
+    const index = tabs.indexOf(selectedTab);
+    Animated.spring(translateX, {
+      toValue: index * tabWidth,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 8,
+    }).start();
+  }, [selectedTab]);
+
+
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -284,7 +221,34 @@ export default function TransactionHistoryScreen(
           </TouchableOpacity>
         ))}
       </View>
+{/* <View style={styles.tabContainer}>
+     
+      <Animated.View
+        style={[
+          styles.bubble,
+          { width: tabWidth * 0.8, transform: [{ translateX }] }, // 80% width bubble
+        ]}
+      />
 
+      {tabs.map((tab) => (
+        <TouchableOpacity
+          key={tab}
+          style={[styles.tabButton, { width: tabWidth }]}
+          onPress={() => setSelectedTab(tab)}
+          activeOpacity={0.7}
+        >
+          <Text
+            allowFontScaling={false}
+            style={[
+              styles.tabText,
+              selectedTab === tab && styles.activeTabText,
+            ]}
+          >
+            {tab}
+          </Text>
+        </TouchableOpacity>
+      ))}
+    </View> */}
       {/* Transactions */}
       <ScrollView
         style={{ width: '100%', flex: 1 }}
@@ -372,7 +336,11 @@ export default function TransactionHistoryScreen(
                     }}
                   >
                     <View
-                      style={{ flexDirection: 'row', alignItems: 'center',gap: 10 }}
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 10,
+                      }}
                     >
                       <View style={styles.imgcontainer}>
                         <Image
@@ -384,16 +352,39 @@ export default function TransactionHistoryScreen(
                       <Text style={styles.salesTitle}>{item.title}</Text>
                     </View>
                     <TouchableOpacity>
-                      <Text allowFontScaling={false} style={styles.allDetails}>All Details</Text>
+                      <Text allowFontScaling={false} style={styles.allDetails}>
+                        All Details
+                      </Text>
                     </TouchableOpacity>
                   </View>
 
-                  {/* <Text>Total Orders: {item.orders || 'N/A'}</Text> */}
                   <View style={styles.cardconstinerdivider} />
-                  <View style={{ flexDirection: 'row',justifyContent: 'space-between'}}>
-                    <Text allowFontScaling={false} style={{color: '#FFFFFF',fontFamily: 'Urbanist-SemiBold',}}>Total Order: {item.seller}</Text>
-                    <Text  allowFontScaling={false} style={{color: '#FFFFFF',fontFamily: 'Urbanist-SemiBold',}}>Total Earnings: {item.price}</Text>
-                    
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <Text
+                      allowFontScaling={false}
+                      style={{
+                        color: '#FFFFFF',
+                        fontFamily: 'Urbanist-SemiBold',
+                        fontSize: 12,
+                      }}
+                    >
+                      Total Order: {item.seller}
+                    </Text>
+                    <Text
+                      allowFontScaling={false}
+                      style={{
+                        color: '#FFFFFF',
+                        fontFamily: 'Urbanist-SemiBold',
+                        fontSize: 12,
+                      }}
+                    >
+                      Total Earnings: {item.price}
+                    </Text>
                   </View>
                 </View>
               ))}
@@ -415,7 +406,7 @@ export default function TransactionHistoryScreen(
                       justifyContent: 'space-between',
                     }}
                   >
-                    <View style={{ flexDirection: 'row', gap: 10 }}>
+                    <View style={{ flexDirection: 'row', gap: 10 , alignItems: 'center' , justifyContent: 'center'}}>
                       <View style={styles.imgcontainer}>
                         <Image
                           source={productImage}
@@ -423,9 +414,24 @@ export default function TransactionHistoryScreen(
                           resizeMode="cover"
                         />
                       </View>
-                      <Text  allowFontScaling={false} style={styles.chargesTitle}>{item.title}</Text>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.chargesTitle}
+                      >
+                        {item.title}
+                      </Text>
                     </View>
-                    <Text allowFontScaling={false} style={{ color: '#ffffffff', fontFamily: 'Urbanist-SemiBold', }}>View Listing</Text>
+                    <Text
+                      allowFontScaling={false}
+                      style={{
+                        color: '#ffffffff',
+                        fontFamily: 'Urbanist-SemiBold',
+                        fontSize: 12,
+                        marginTop: 10
+                      }}
+                    >
+                      View Listing
+                    </Text>
                   </View>
                   <View style={styles.cardconstinerdivider} />
                   <Text style={styles.viewListing}>
@@ -455,7 +461,9 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed',
     borderBottomWidth: 1,
     backgroundColor:
-      Platform.OS === 'ios' ? 'rgba(2, 6, 131, 0.26)' : 'rgba(2, 6, 131, 0.26)',
+      Platform.OS === 'ios'
+        ? 'rgba(9, 16, 236, 0.26)'
+        : 'rgba(9, 16, 236, 0.26)',
     height: 1,
     borderColor: '#FFFFFF',
     // borderColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)'
@@ -613,14 +621,14 @@ const styles = StyleSheet.create({
   },
   salesTitle: {
     fontWeight: '700',
-    fontSize: 16,
+    fontSize: 17,
     color: '#fff',
     marginBottom: 5,
     fontFamily: 'Urbanist-SemiBold',
   },
   allDetails: {
     marginTop: 10,
-    color: '#0099ff',
+    color: '#FFFFFF',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
   },
@@ -638,10 +646,17 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginBottom: 5,
     fontFamily: 'Urbanist-SemiBold',
+    
   },
   viewListing: {
     marginTop: 8,
-    color: '#00ccff',
+    color: 'rgba(9, 168, 236, 0.74)',
     fontWeight: '600',
+     fontFamily: 'Urbanist-SemiBold',
+     fontSize: 12,
   },
+
+
+
+ 
 });
