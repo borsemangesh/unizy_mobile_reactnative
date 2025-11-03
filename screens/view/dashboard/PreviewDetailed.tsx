@@ -764,9 +764,8 @@ const diff1 =commissionPrice1-priceValue1
             </View>
           </View>
         </ScrollView>
-        {/* Bottom */}
-        <TouchableOpacity style={styles.previewBtn} onPress={handleListPress}>
-          {/* <Text style={styles.previewText}>List</Text> */}
+
+        {/* <TouchableOpacity style={styles.previewBtn} onPress={handleListPress}>
 
         <Text allowFontScaling={false} style={styles.previewText}>
         {(() => {
@@ -790,8 +789,26 @@ const diff1 =commissionPrice1-priceValue1
           }
         })()}
       </Text>
-        </TouchableOpacity>
-          
+      </TouchableOpacity>
+           */}
+
+           <Button
+      onPress={handleListPress}
+      title={(() => {
+        try {
+          const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+          const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
+
+          if (isFeatured) {
+            return `List for £${diff1}`;
+          }
+          return 'List';
+        } catch (e) {
+          console.log('Error parsing storedForm:', e);
+          return 'List';
+        }
+      })()}
+/>
 
         <Modal
           visible={showPopup}

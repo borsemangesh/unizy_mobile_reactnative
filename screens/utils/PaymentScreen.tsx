@@ -123,8 +123,17 @@ const PaymentScreen :React.FC<PaymentScreenProps> = ({ navigation }) => {
     customerId: customerId,
     customerEphemeralKeySecret: ephemeralKey,
     paymentIntentClientSecret: clientSecret,
-    allowsDelayedPaymentMethods: true,
     merchantDisplayName: "Your Company",
+
+  
+  //applePay: true,
+  //   googlePay: {
+  //   merchantCountryCode: "US",  // your country
+  //   //currencyCode: "INR",        // your currency
+  //   testEnv: true,              // set false in production
+  // },
+    
+    allowsDelayedPaymentMethods: true,
   });
 
 

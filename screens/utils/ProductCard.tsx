@@ -1,6 +1,7 @@
 import { BlurView } from "@react-native-community/blur";
 import React from "react";
 import { View, Text, Image, StyleSheet, ImageSourcePropType, Platform, Dimensions, Touchable, TouchableOpacity } from "react-native";
+import LinearGradient from "react-native-linear-gradient";
 
 type ProductCardProps = {
   tag: string;
@@ -40,7 +41,7 @@ export default function ProductCard({
 
         {/* Bookmark */}
         
-        <View style={[styles.bookmark,{opacity: 0.9}]}>
+        {/* <View style={[styles.bookmark,{opacity: 0.9}]}>
                 <BlurView 
                   blurType="light"
                   blurAmount={100}
@@ -56,7 +57,35 @@ export default function ProductCard({
               style={styles.bookmarkIcon}
             />
           </TouchableOpacity>
-        </View>
+        </View> */}
+
+
+        <View style={[styles.bookmark]}>
+           <BlurView 
+                  blurType="light"
+                  blurAmount={100}
+                  style={StyleSheet.absoluteFillObject}
+                />
+        <LinearGradient
+          colors={[
+            'rgba(0, 1, 102, 0.20)',   // center strong blue tint
+            'rgba(0, 1, 102, 0.024)'  // outer faint blue tint
+          ]}
+          style={StyleSheet.absoluteFillObject}
+          useAngle={false} // radial
+        />
+
+        <TouchableOpacity onPress={onBookmarkPress}>
+          <Image
+            source={
+              isBookmarked
+                ? require("../../assets/images/favourite_filled.png")
+                : require("../../assets/images/favourite.png")
+            }
+            style={styles.bookmarkIcon}
+          />
+        </TouchableOpacity>
+      </View>
         
       </View>
 

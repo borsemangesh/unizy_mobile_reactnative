@@ -22,6 +22,7 @@ import { showToast } from '../../utils/toast';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 import Button from '../../utils/component/Button';
+import PayButton from '../../utils/component/PayButton';
 
 type SearchDetailsProps = {
   navigation: any;
@@ -134,96 +135,17 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     return `${day}-${month}-${year}`;
   };
 
-  // const renderImage = () => {
-  //   const fallbackImage = require('../../../assets/images/drone.png');
+  const handlePay = () => {
+  navigation.navigate('PaymentScreen', {
+    amount: Number(detail.price).toFixed(2),
+    feature_id: id,
+    nav: 'purchase',
+    onSuccess: async () => {
+      await purchaseProduct();
+    }
+  });
+};
 
-  //   if (detail?.profileshowinview) {
-  //     const profileUri = detail?.createdby?.profile || null;
-  //     const initials = `${detail?.createdby?.firstname?.[0] ?? ''}${detail?.createdby?.lastname?.[0] ?? ''}`.toUpperCase();
-
-  //     return (
-  //       <ImageBackground
-  //       source={require('../../../assets/images/featurebg.png')} // your background image
-  //       style={{
-  //         alignItems: 'center',
-  //         justifyContent: 'center',
-  //       }}
-  //     >
-  //       <View
-  //         style={{
-  //           alignItems: 'center',
-  //           justifyContent: 'center',
-  //           marginVertical: 20,
-  //         }}>
-
-  //         <Image
-  //           source={profileUri ? { uri: profileUri } : fallbackImage}
-  //           style={{
-  //             width: 160,
-  //             height: 160,
-  //             borderRadius: 80, // circular shape
-  //             //borderWidth: 2,
-  //             //borderColor: '#ddd',
-  //           }}
-  //           resizeMode="cover"
-  //           onError={() => {
-  //             console.log('Profile image failed to load');
-  //             setImageUri(null);
-  //           }}
-  //         />
-
-  //       </View>
-  //        </ImageBackground>
-  //     );
-  //   }
-
-  //   // ✅ Multiple images
-  //   if (images.length > 1) {
-  //     return (
-  //       <View>
-  //         <FlatList
-  //           ref={flatListRef}
-  //           data={images}
-  //           horizontal
-  //           pagingEnabled
-  //           showsHorizontalScrollIndicator={false}
-  //           keyExtractor={(_, index) => index.toString()}
-  //           onScroll={onScroll}
-  //           scrollEventThrottle={16}
-  //           renderItem={({ item }) => (
-  //             <Image
-  //               source={item.uri ? { uri: item.uri } : fallbackImage}
-  //               style={{ width: screenWidth, height: 250 }}
-  //               resizeMode="cover"
-  //             />
-  //           )}
-  //         />
-  //         {/* Step Indicator */}
-  //         <View style={styles.stepIndicatorContainer}>
-  //           {images.map((_: any, index: Key | null | undefined) => (
-  //             <View
-  //               key={index}
-  //               style={
-  //                 index === activeIndex
-  //                   ? styles.activeStepCircle
-  //                   : styles.inactiveStepCircle
-  //               }
-  //             />
-  //           ))}
-  //         </View>
-  //       </View>
-  //     );
-  //   }
-
-  //   // ✅ Single image or fallback
-  //   return (
-  //     <Image
-  //       source={images[0]?.uri ? { uri: images[0].uri } : fallbackImage}
-  //       style={{ width: screenWidth, height: 250 }}
-  //       resizeMode="cover"
-  //     />
-  //   );
-  // };
 
   const renderImage = () => {
     const fallbackImage = require('../../../assets/images/drone.png');
@@ -692,12 +614,15 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     }}
                   >
                     <TouchableOpacity
-                      onPress={() =>
-                        navigation.navigate('ReviewDetails', {
-                          category_id: detail?.category_id,
-                          id: detail?.id,
-                        })
-                      }
+                      disabled={!detail?.ispurchased}
+                      onPress={() => {
+                        if (detail?.ispurchased) {
+                          navigation.navigate('ReviewDetails', {
+                            category_id: detail?.category_id,
+                            id: detail?.id,
+                          });
+                        }
+                      }}
                       style={{ flexDirection: 'row', alignItems: 'center' , gap: 6,}}
                     >
                       <Image
@@ -739,7 +664,13 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                   >
                     <TouchableOpacity
                       style={{ flexDirection: 'row', alignItems: 'center' }}
-                      onPress={() => setShowPopup(true)}
+                       onPress={() => {
+                      if (detail?.ispurchased) {
+                        navigation.navigate("MessagesIndividualScreen");
+                      } else {
+                        setShowPopup(true);
+                      }
+                    }}
                     >
                       <Image
                         source={require('../../../assets/images/message_chat.png')}
@@ -766,8 +697,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
           </View>
         </ScrollView>
 
-        {/* Bottom */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.previewBtn}
           //onPress={() => setShowPopup1(true)}
 
@@ -783,10 +713,19 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
               £{Number(detail?.price ?? 0).toFixed(2)}
             </Text>
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+        
 
-        {/* <Button onPress={() => navigation.navigate('PaymentScreen')} title={"Pay "+ "£"+Number(detail?.price ?? 0).toFixed(2)} /> */}
-        {/* </ScrollView> */}
+        {/* <PayButton
+          amount={Number(detail?.price).toFixed(2)}
+          label="Buy Now"
+          textStyle={{ fontFamily: 'Urbanist-Bold', fontSize: 18 }}
+          onPress={handlePay}
+      /> */}
+
+        
+    <Button onPress={handlePay} title={"Pay "+ "£"+Number(detail?.price ?? 0).toFixed(2)} /> 
+
 
         <Modal
           visible={showPopup}
@@ -939,7 +878,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText1}>
-                      Chat with Sellar
+                      Chat with Seller
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -994,49 +933,99 @@ const styles = StyleSheet.create({
     height: 25,
   },
 
+  // stepIndicatorContainer: {
+  //   flexDirection: 'row',
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   marginTop: 12,
+  //   gap: 6,
+  // },
+  // stepCircle: {
+  //   width: 12,
+  //   height: 12,
+  //   borderRadius: 16,
+  //   backgroundColor: 'rgba(255, 255, 255, 0.3)',
+  // },
+  // activeStepCircle: {
+  //   width: 12,
+  //   height: 12,
+  //   borderRadius: 40,
+  //   backgroundColor: '#FFFFFF',
+  //   borderColor: '#ffffff4e',
+  //   borderWidth: 1,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   shadowColor: '#000',
+  //   shadowOffset: { width: 0, height: 1 },
+  //   shadowOpacity: 0.25,
+  //   shadowRadius: 3.33,
+  //   elevation: 2,
+  // },
+  // inactiveStepCircle: {
+  //   width: 12,
+  //   height: 12,
+  //   borderRadius: 40,
+  //   backgroundColor: 'rgba(255, 255, 255, 0.2)', // fallback for radial-gradient
+  //   borderColor: '#ffffff4e',
+  //   borderWidth: 1,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   shadowColor: '#000',
+  //   shadowOffset: { width: 0, height: 1 },
+  //   shadowOpacity: 0.25,
+  //   shadowRadius: 3.33,
+  //   elevation: 2,
+  // },
+
   stepIndicatorContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 12,
-    gap: 6,
-  },
-  stepCircle: {
-    width: 12,
-    height: 12,
-    borderRadius: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-  },
-  activeStepCircle: {
-    width: 12,
-    height: 12,
-    borderRadius: 40,
-    backgroundColor: '#FFFFFF',
-    borderColor: '#ffffff4e',
-    borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.33,
-    elevation: 2,
-  },
-  inactiveStepCircle: {
-    width: 12,
-    height: 12,
-    borderRadius: 40,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)', // fallback for radial-gradient
-    borderColor: '#ffffff4e',
-    borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.33,
-    elevation: 2,
-  },
+  position: 'absolute',
+  bottom: 12, // place above bottom edge of image
+  alignSelf: 'center',
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+  gap: 6,
+  zIndex: 10, // ensures it's on top of image
+},
+
+stepCircle: {
+  width: 12,
+  height: 12,
+  borderRadius: 16,
+  backgroundColor: 'rgba(255, 255, 255, 0.3)',
+},
+
+activeStepCircle: {
+  width: 12,
+  height: 12,
+  borderRadius: 40,
+  backgroundColor: '#FFFFFF',
+  borderColor: '#ffffff4e',
+  borderWidth: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 1 },
+  shadowOpacity: 0.25,
+  shadowRadius: 3.33,
+  elevation: 2,
+},
+
+inactiveStepCircle: {
+  width: 12,
+  height: 12,
+  borderRadius: 40,
+  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  borderColor: '#ffffff4e',
+  borderWidth: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 1 },
+  shadowOpacity: 0.25,
+  shadowRadius: 3.33,
+  elevation: 2,
+},
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,

@@ -11,24 +11,21 @@ import {
 type NotificationCardProps = {
   tag?: string;
   infoTitle: string;
-  inforTitlePrice: string;
-  rating: string; // e.g., "3"
   reviewText?: string;
   productImage: ImageSourcePropType;
-  topRightText?: string;
   isfeature?: boolean;
   navigation: any;
-  shareid: number;
+  typeid: number;
+  typename:string;
 };
 
 const NotificationCard: React.FC<NotificationCardProps> = ({
   infoTitle,
-  inforTitlePrice,
-  rating = '0',
   reviewText = '',
   productImage,
   navigation,
-  shareid,
+  typeid,
+  typename
 }) => {
   const fullStar = require('../../assets/images/starfill.png'); // your full star
   const emptyStar = require('../../assets/images/starempty.png'); // your empty star
@@ -36,7 +33,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
   return (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => navigation.navigate('ListingDetails', { shareid })}
+      onPress={() =>  navigation.navigate('SearchDetails', { id: typeid ,name:typename},{animation: 'none'})}
       activeOpacity={0.8}
     >
      <View style={styles.row}>

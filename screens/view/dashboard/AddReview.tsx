@@ -75,7 +75,9 @@ const AddReview : React.FC<AddReviewProps> = ({ navigation }) =>{
         }
 
         
-    const url1 = `${MAIN_URL.baseUrl}category/users/${userId}/review`;
+    const url1 = `${MAIN_URL.baseUrl}category/users/reviews/${category_id}`;
+
+    console.log(url1)
       const response = await fetch(url1, {
         method: 'POST',
         headers: {
@@ -136,7 +138,7 @@ const AddReview : React.FC<AddReviewProps> = ({ navigation }) =>{
              <Text allowFontScaling={false} style={styles.sublabel}>Slide across the stars to rate this product</Text>
          </View>
 
-        <View style={{ paddingHorizontal: 16, marginTop:12,marginBottom: 12, alignItems: 'center' }}>
+        <View style={{ paddingHorizontal: 16, marginTop:16,marginBottom: 20, alignItems: 'center' }}>
         {/* <AddRating starSize={40} /> */}
 
         <AddRating starSize={40} onChange={setRating} />
@@ -321,7 +323,8 @@ const styles = StyleSheet.create({
     fontSize: 18, 
     fontWeight: '600', 
     fontFamily: 'Urbanist-SemiBold',
-    textAlign:'center'
+    marginTop:8
+    //textAlign:'center'
     },
 
     sublabel:{
@@ -329,7 +332,8 @@ const styles = StyleSheet.create({
     fontSize: 14, 
     fontWeight: '600',
     fontFamily: 'Urbanist-Medium',
-    textAlign:'center'
+    //textAlign:'center'
+    marginTop:4
     },
     innercontainer:{
          paddingHorizontal: 16, 
@@ -367,6 +371,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     fontStyle: 'normal',
     color:"#fff",
+    paddingLeft:12
 
   },
    payText: {

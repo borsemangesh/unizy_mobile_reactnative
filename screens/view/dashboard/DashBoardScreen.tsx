@@ -35,6 +35,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import MessagesScreen from './MessageScreen';
 import { Constant } from '../../utils/Constant';
 import TransactionHistoryScreen from './TransactionHistoryScreen';
+import { BlurView } from '@react-native-community/blur';
 
 const mylistings = require('../../../assets/images/mylistingicon.png');
 const mylistings1 = require('../../../assets/images/favourite.png');
@@ -972,6 +973,8 @@ return (
             <View style={{ flex: 1 }}>{renderActiveTabContent()}</View>
           </ScrollView>
         </KeyboardAvoidingView>
+       
+       
         <Animated.View
           style={[
             styles.bottomTabContainer,
@@ -1009,6 +1012,64 @@ return (
             </TouchableOpacity>
           ))}
         </Animated.View>
+
+        {/* Floating Bottom Tab with Blur */}
+
+
+
+{/* <Animated.View
+  pointerEvents="box-none"
+  style={[
+    StyleSheet.absoluteFillObject,
+    { justifyContent: "flex-end" }
+  ]}
+>
+  <BlurView
+    style={[
+      styles.bottomTabContainerBlur,
+    ]}
+    blurType="dark"
+    blurAmount={20}
+    reducedTransparencyFallbackColor="rgba(0,0,0,0.4)"
+  />
+
+  <Animated.View
+    style={[
+      styles.bottomTabContainer,
+      { transform: [{ translateY: bottomNaviationSlideupAnimation }] },
+    ]}
+  >
+    <View style={{ height: 48 }}>
+      <Animated.View
+        style={[
+          styles.bubble,
+          { width: tabWidth - 6, transform: [{ translateX: bubbleX }] }
+        ]}
+      />
+    </View>
+
+    {tabs.map(({ key, icon, activeIcon }) => (
+      <TouchableOpacity
+        key={key}
+        style={[styles.tabItem, { width: tabWidth }]}
+        onPress={() => {
+          setIsNav(false);
+          navigation.setParams({ isNavigate: false });
+          setActiveTab(key);
+        }}
+      >
+        <View style={styles.iconWrapper}>
+          <Image
+            source={activeTab === key ? activeIcon : icon}
+            style={styles.tabIcon}
+          />
+        </View>
+      </TouchableOpacity>
+    ))}
+  </Animated.View>
+</Animated.View> */}
+
+
       </View>
       <NewCustomToastContainer />
     </ImageBackground>
@@ -1087,6 +1148,27 @@ const styles = StyleSheet.create({
     width: '80%',
   },
 
+//   bottomTabContainer: {
+//   flexDirection: "row",
+//   backgroundColor: "rgba(0,0,0,0.3)", // fallback transparent
+//   paddingBottom: Platform.OS === 'ios' ? 32 : 16,
+//   paddingTop: 6,
+//   paddingHorizontal: 16,
+//   borderTopLeftRadius: 20,
+//   borderTopRightRadius: 20,
+// },
+
+bottomTabContainerBlur: {
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  right: 0,
+  height: 70,
+  borderTopLeftRadius: 20,
+  borderTopRightRadius: 20,
+  zIndex: -1,
+},
+
   bottomTabContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1102,8 +1184,8 @@ const styles = StyleSheet.create({
     margin:4,
     borderColor: '#ffffff11',
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    // backgroundColor:
+    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderEndEndRadius: 50,
     borderStartEndRadius: 50,
     borderTopLeftRadius: 50,
@@ -1115,7 +1197,6 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
-
     boxSizing: 'border-box',
     zIndex: 100,
   },

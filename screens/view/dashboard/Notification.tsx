@@ -28,75 +28,50 @@ type NotificationProps = {
   navigation: any;
 };
 
-type Feature = {
-id: number,
-created_by: number,
-category_id: number,
-created_at: any,
-updated_at: string,
-isactive: boolean,
-isfeatured: boolean,
-title: string,
-price: number,
-thumbnail: string,
-university:university;
+type NotificationItem = {
+  id: number;
+  user_id: number;
+  template_id: number;
+  title: string;
+  content: string;
+  created_at: string;
+  metadata: {
+    title: string;
+    feature_id: number;
+  };
+  template: {
+    id: number;
+    name: string;
+  };
 };
-type university={
-  id:number,
-  name:string
-}
 
-  type Category = {
-  id: number | null; 
-  name: string;
-};
 
 
 const Notification = ({ navigation }: NotificationProps)  => {
 
-     const [featurelist, setFeaturelist] = useState<Feature[]>([]);
+     const [notificationList, setNotificationList] = useState<NotificationItem[]>([]);
+
      const [search, setSearch] = useState<string>('');
      const [page, setPage] = useState(1);
      const [isLoadingMore, setIsLoadingMore] = useState(false);
      const pagesize = 10;
-     const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
      const [isLoading, setIsLoading] = useState(false);
      const insets = useSafeAreaInsets(); // Safe area insets
      const { height: screenHeight } = Dimensions.get('window');
-    const [selectedCategory, setSelectedCategory] = useState<Category>({ id: null, name: 'All' });
-const [categories, setCategories] = useState<Category[]>([
-  { id: null, name: 'All' }
-]);
-useEffect(() => {
-  const loadCategories = async () => {
-    const stored = await AsyncStorage.getItem('categories');
-    if (stored) {
-      const parsed = JSON.parse(stored); 
-      const catObjects = [
-        { id: null, name: 'All' }, 
-        ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
-      ];
-      setCategories(catObjects);
-      setSelectedCategory(catObjects[0]); 
-    }
-  };
-  loadCategories();
-}, []);
+    
+
 
 useEffect(() => {
   setPage(1);
-  displayListOfProduct(selectedCategory?.id ?? null, 1);
-}, [selectedCategory]);
+  displayListOfProduct(1);
+}, []);
 
 
-const displayListOfProduct = async (categoryId: number | null, pageNum: number) => {
+const displayListOfProduct = async (pageNum: number) => {
   try {
     const pagesize = 10;
-    let url = `${MAIN_URL.baseUrl}category/mylisting?page=${pageNum}&pagesize=${pagesize}`;
-    if (categoryId) {
-      url += `&category_id=${categoryId}`;
-    }
-
+    let url = `${MAIN_URL.baseUrl}user/mynotification?page=${pageNum}&pagesize=${pagesize}`;
+    
     const token = await AsyncStorage.getItem('userToken');
     if (!token) return;
 
@@ -111,14 +86,18 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
     const jsonResponse = await response.json();
     // console.log('API Response:', jsonResponse);
 
-    if (jsonResponse.statusCode === 200) {
+   if (jsonResponse.statusCode === 200) {
       setIsLoading(false);
+
+      const newData = jsonResponse?.data?.notifications ?? [];
+
       if (pageNum === 1) {
-        setFeatureList(jsonResponse.data.features);
+        setNotificationList(newData);
       } else {
-        setFeatureList(prev => [...prev, ...jsonResponse.data.features]);
+        setNotificationList(prev => [...prev, ...newData]);
       }
-    } else if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
+    } 
+    else if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
           setIsLoading(false);
           navigation.reset({
           index: 0,
@@ -136,78 +115,73 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
   }
 };
 
- const [featureList, setFeatureList] = useState<any[]>([]);
-    const filteredFeatures: Feature[] = featurelist
-  .filter((item) =>
-    (item.title ?? '').toLowerCase().includes(search.toLowerCase())
-  )
+  const filteredNotifications: NotificationItem[] = notificationList.filter((item) =>
+  (item.title ?? '').toLowerCase().includes(search.toLowerCase())
+);
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
-
   const day = date.getDate();
   const month = date.toLocaleString('default', { month: 'long' });
   const year = date.getFullYear();
 
-  // Determine suffix
-  const j = day % 10,
-    k = day % 100;
   let suffix = 'th';
-  if (j === 1 && k !== 11) suffix = 'st';
-  else if (j === 2 && k !== 12) suffix = 'nd';
-  else if (j === 3 && k !== 13) suffix = 'rd';
+  if (day % 10 === 1 && day % 100 !== 11) suffix = 'st';
+  else if (day % 10 === 2 && day % 100 !== 12) suffix = 'nd';
+  else if (day % 10 === 3 && day % 100 !== 13) suffix = 'rd';
 
   return `${day}${suffix} ${month} ${year}`;
 };
 
-const groupByDate = (data: any[]) => {
-  const grouped: { type: string; id: string; displayDate: string; }[] = [];
+const groupByDate = (data: NotificationItem[]) => {
+  const grouped: any[] = [];
   let lastDate: string | null = null;
 
-  data.forEach((item: { created_at: string; }) => {
+  data.forEach((item) => {
     const displayDate = formatDate(item.created_at);
 
     if (displayDate !== lastDate) {
-      grouped.push({ type: 'date', id: `date-${displayDate}`, displayDate });
+      grouped.push({
+        type: 'date',
+        id: `date-${displayDate}`,
+        displayDate,
+      });
       lastDate = displayDate;
     }
 
     grouped.push({
-        ...item, type: 'item',
-        id: '',
-        displayDate: ''
+      ...item,
+      type: 'item'
     });
   });
 
   return grouped;
 };
 
-const groupedList = groupByDate(featureList);
+const groupedList = groupByDate(filteredNotifications);
 
-const renderItem = ({ item, index }: { item: any; index: number }) => {
+
+const renderItem = ({ item }: { item: any }) => {
   if (item.type === 'date') {
-    return (
-      <Text allowFontScaling={false} style={styles.dateHeading}>{item.displayDate}</Text>
-    );
+    return <Text allowFontScaling={false} style={styles.dateHeading}>{item.displayDate}</Text>;
   }
 
-  const displayPrice = item.price != null ? item.price : 0;
   const productImage = require('../../../assets/images/bellicon.png');
 
   return (
     <View style={styles.itemContainer}>
       <NotificationCard
-        infoTitle="Item Listed Successfully"
-        inforTitlePrice={`£ ${displayPrice}`}
-        rating="3"
+        infoTitle={item.title}
         productImage={productImage}
-        reviewText="This drone is awesome! Super easy to fly even though it’s my first one. Totally worth it for the price."
+        reviewText={item.content}
         navigation={navigation}
-        shareid={item.id}
+        typeid={item.metadata.id}
+        typename='Product'
       />
     </View>
   );
 };
+
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
@@ -239,12 +213,12 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
                    paddingBottom: screenHeight * 0.2 + insets.bottom, 
                     },
                 ]}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(item, index) => `${item.type}-${index}`}
             onEndReachedThreshold={0.5}
             onEndReached={() => {
               const nextPage = page + 1;
               setPage(nextPage);
-              displayListOfProduct(selectedCategory?.id ?? null, nextPage);
+              displayListOfProduct(nextPage);
             }}
             ListFooterComponent={
               isLoadingMore ? (
@@ -254,7 +228,7 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
             ListEmptyComponent={
               !isLoading ? (
                 <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
-                  No products found
+                  No Notification found
                 </Text>
               ) : null
             }
