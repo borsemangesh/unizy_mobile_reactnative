@@ -106,11 +106,14 @@ const ProductItem: React.FC<ProductItemProps> = ({
     </View>
   </TouchableOpacity>
 );
+type TransactionScreenProps = {
+  navigation: any;
+};
 
-const SearchScreenContent = () => (
+const SearchScreenContent = (navigation: TransactionScreenProps) => (
   <View style={styles.tabContent}>
     {/* <Text allowFontScaling={false} style={styles.tabContentText}>🔎 Search Layout</Text> */}
-    <TransactionHistoryScreen/>
+    <TransactionHistoryScreen navigation ={navigation}/>
   </View>
 );
 type AddScreenContentProps = {
@@ -872,7 +875,7 @@ return (
           </>
         );
       case 'Search':
-        return <SearchScreenContent />;
+        return <SearchScreenContent  navigation={navigation}/>;
       case 'Add':
         return <AddScreenContent navigation={navigation} products={products} />;
       case 'Bookmark':
