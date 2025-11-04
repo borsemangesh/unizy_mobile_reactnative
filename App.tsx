@@ -8,7 +8,7 @@ import Toast from "react-native-toast-message";
 // import CustomToast from "./screens/view/authentication/CustomToast";
 import { StripeProvider } from '@stripe/stripe-react-native';
 import { Constant } from "./screens/utils/Constant";
-import messaging from '@react-native-firebase/messaging';
+// import messaging from '@react-native-firebase/messaging';
 import notifee, { AndroidImportance } from '@notifee/react-native';
 
 
@@ -49,64 +49,64 @@ function App() {
   // }, []);
 
 
- useEffect(() => {
+//  useEffect(() => {
 
-    const setupNotifications = async () => {
-      // Request FCM permission
-      const authStatus = await messaging().requestPermission();
-      const enabled =
-        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+//     // const setupNotifications = async () => {
+//     //   // Request FCM permission
+//     //   const authStatus = await messaging().requestPermission();
+//     //   const enabled =
+//     //     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+//     //     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-      if (enabled) {
-        console.log("✅ Notification permission granted");
-        const token = await messaging().getToken();
-        console.log("🔥 FCM Token:", token);
-      } else {
-        console.log("❌ Notification permission denied");
-      }
+//     //   if (enabled) {
+//     //     console.log("✅ Notification permission granted");
+//     //     const token = await messaging().getToken();
+//     //     console.log("🔥 FCM Token:", token);
+//     //   } else {
+//     //     console.log("❌ Notification permission denied");
+//     //   }
 
-      // Request Notifee permission
-      await notifee.requestPermission();
+//     //   // Request Notifee permission
+//     //   await notifee.requestPermission();
 
-      // Create Android Notification channel
-      await notifee.createChannel({
-        id: 'default',
-        name: 'Default Channel',
-        importance: AndroidImportance.HIGH,
-      });
-    };
+//     //   // Create Android Notification channel
+//     //   await notifee.createChannel({
+//     //     id: 'default',
+//     //     name: 'Default Channel',
+//     //     importance: AndroidImportance.HIGH,
+//     //   });
+//     // };
 
-    // Foreground FCM listener
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      console.log("📩 Foreground Message:", remoteMessage);
+//     // Foreground FCM listener
+//     const unsubscribe = messaging().onMessage(async remoteMessage => {
+//       console.log("📩 Foreground Message:", remoteMessage);
 
-      const title = remoteMessage.notification?.title || "Notification";
-      const body = remoteMessage.notification?.body || "";
+//       const title = remoteMessage.notification?.title || "Notification";
+//       const body = remoteMessage.notification?.body || "";
 
-      // ✅ Show system notification in foreground
-      await notifee.displayNotification({
-        title,
-        body,
-        android: {
-          channelId: 'default',
-          pressAction: { id: 'default' },
-        },
-      });
-    });
+//       // ✅ Show system notification in foreground
+//       await notifee.displayNotification({
+//         title,
+//         body,
+//         android: {
+//           channelId: 'default',
+//           pressAction: { id: 'default' },
+//         },
+//       });
+//     });
 
-    setupNotifications();
+//     setupNotifications();
 
-    return unsubscribe;
-  }, []);
+//     return unsubscribe;
+//   }, []);
 
   return (
     <StripeProvider publishableKey={Constant.PUBLIC_KEY}>
-      {/* <ImageBackground
+      <ImageBackground
         source={require('../unizy_mobile_reactnative/assets/images/bganimationscreen.png')}
         style={{ flex: 1, width: '100%', height: '100%'}}
         resizeMode="cover"
-      > */}
+      >
     <SafeAreaProvider>
       <StatusBar
         barStyle="light-content"
@@ -115,7 +115,7 @@ function App() {
       />
       <Navigation />
     </SafeAreaProvider>
-    {/* </ImageBackground> */}
+    </ImageBackground>
     </StripeProvider>
   );
 }

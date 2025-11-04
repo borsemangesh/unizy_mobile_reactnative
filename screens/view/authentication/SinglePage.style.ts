@@ -177,8 +177,10 @@ export const Styles = StyleSheet.create({
  cardView: {
  
 
-    paddingTop: 16,
-    paddingHorizontal: 16,
+    paddingTop: (Platform.OS === 'ios' ? 16 : 16),
+    paddingHorizontal: (Platform.OS === 'ios' ? 16 : 16),
+  
+    
     marginTop: 0,
     borderWidth: 0.2,
     gap: 3,
@@ -252,7 +254,7 @@ export const Styles = StyleSheet.create({
     display: 'flex',
     width: '100%',
     height: 44,
-    gap: 10,
+    gap: (Platform.OS === 'ios' ? 10 : 10),
     alignSelf: 'stretch',
     borderRadius: 12,
     borderWidth: 0.6,
@@ -292,7 +294,7 @@ export const Styles = StyleSheet.create({
 
     borderWidth: 0.6,
     borderColor: '#ffffff2c',
-    marginTop: 12,
+    marginTop: (Platform.OS === 'ios' ? 0 : 12),
   },
   password_TextInput: {
     width: '88%',
@@ -313,8 +315,8 @@ export const Styles = StyleSheet.create({
     fontWeight: 400,
     width: '100%',
     textAlign: 'right',
-    marginTop: 10,
-    marginBottom:8,
+    marginTop: (Platform.OS === 'ios' ? 0 : 10),
+    marginBottom:(Platform.OS === 'ios' ? 4 : 8),
     //mixBlendMode: 'luminosity',
   },
     loginButton2: {
@@ -399,7 +401,8 @@ export const Styles = StyleSheet.create({
     fontWeight: '600',
     lineHeight: 19,
     textDecorationStyle: 'solid',
-    marginTop: 10,
+    marginTop: (Platform.OS === 'ios' ? 0 : 10),
+    paddingBottom: (Platform.OS === 'ios' ? 8 : 10),
     opacity: 2,
     textShadowColor: 'rgba(255,255,255,0.6)',
     textShadowOffset: { width: 0, height: 0 },
@@ -628,7 +631,7 @@ export const Styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 12,
-    gap: 6,
+    gap: (Platform.OS === 'ios' ? 4 : 6), // works in RN 0.71+, otherwise use marginRight
   },
 
   inactiveStepCircle: {
@@ -722,7 +725,9 @@ export const Styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    paddingBottom: 10,
+    paddingBottom: (Platform.OS === 'ios' ? 0 : 10),
+    
+  
   },
 
   signupPrompt: {
@@ -752,7 +757,7 @@ export const Styles = StyleSheet.create({
 
   login_container1: {
     display: 'flex',
-    width: '49%',
+    width: '48.5%',
     height: 44,
     gap: 10,
     alignSelf: 'stretch',
@@ -900,11 +905,11 @@ export const Styles = StyleSheet.create({
   privacyContainer: {
     width: '100%',
     alignItems: 'center',
-    marginTop: 6,
+    marginTop: (Platform.OS === 'ios' ? 0 : 6),
   },
 
   termsText: {
-    color: 'rgba(255,255,255,0.48)',
+    color: 'rgb(136, 219, 255)',
     fontFamily: 'Urbanist-Regular',
     fontSize: 14,
     textAlign: 'center',
@@ -1168,8 +1173,8 @@ export const Styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     width: '70%',
     alignSelf: 'center',
-    gap: 6, // works in RN 0.71+, otherwise use marginRight
-    marginTop: 16,
+    gap: (Platform.OS === 'ios' ? 8 : 6), // works in RN 0.71+, otherwise use marginRight
+    marginTop: (Platform.OS === 'ios' ? 20 : 16),
   },
 
   sendOtpotpBox: {
@@ -1574,7 +1579,7 @@ export const Styles = StyleSheet.create({
   },
 
   verifylogin_container: {
-    marginTop: 16,
+    marginTop: (Platform.OS === 'ios' ? 0 : 16),
     display: 'flex',
     width: '100%',
     height: 44,
@@ -1612,7 +1617,7 @@ export const Styles = StyleSheet.create({
     paddingTop: 6,
     paddingBottom: 6,
     backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    marginTop: 16,
+    marginTop: (Platform.OS === 'ios' ? 20 : 16),
     marginBottom:4,
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
@@ -1770,6 +1775,7 @@ export const Styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.57)',
     // opacity: (Platform.OS === 'ios' ? 0.9: 1) 
+
   },
 
   profilelogo1: {
@@ -1847,7 +1853,7 @@ export const Styles = StyleSheet.create({
   profileavatarContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 12,
+    marginTop: (Platform.OS === 'ios' ? 16 : 12),
   },
 
   profilelogo: {
@@ -1936,7 +1942,7 @@ export const Styles = StyleSheet.create({
   },
 
   profiletermsText: {
-    color: 'rgba(255,255,255,0.48)',
+    color: 'rgb(136, 219, 255)',
     fontFamily: 'Urbanist-Regular',
     fontSize: 14,
     textAlign: 'center',
@@ -1959,7 +1965,7 @@ export const Styles = StyleSheet.create({
     paddingTop: 6,
     paddingBottom: 6,
     backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    marginTop: 16,
+    marginTop: (Platform.OS === 'ios' ? 20 : 12),
 
     borderWidth: 0.5,
     borderColor: '#ffffff2c',

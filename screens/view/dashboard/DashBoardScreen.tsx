@@ -21,7 +21,7 @@ import {
 
 const bgImage = require('../../../assets/images/backimg.png');
 import ProductCard from '../../utils/ProductCard';
-import messaging from "@react-native-firebase/messaging";
+// import messaging from "@react-native-firebase/messaging";
 
 import AnimatedSlideUp from '../../utils/AnimatedSlideUp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -336,46 +336,47 @@ const scrollViewRef = useRef<ScrollView>(null);
   }, [])
 );
 
- useEffect(() => {
-    sendDeviceTokenToServer();
-  }, []);
+//  useEffect(() => {
+//     sendDeviceTokenToServer();
+//   }, []);
 
 
-  const sendDeviceTokenToServer = async () => {
-    try {
+//   const sendDeviceTokenToServer = async () => {
+//     try {
 
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) return;
+//     const token = await AsyncStorage.getItem('userToken');
+//     if (!token) return;
 
-    const url1 = MAIN_URL.baseUrl + 'user/devicetoken';
-    console.log('📤 FCM URL:', url1);
-    const fcmToken = await messaging().getToken();
-    console.log('📤 FCM fcmToken:', fcmToken);
-    const requestBody = {
-          device_token: fcmToken,
-          device_type  : Platform.OS,
-        };
-    console.log('Body:', JSON.stringify(requestBody));
-    const response = await fetch(url1, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(requestBody),
-    });
+//     const url1 = MAIN_URL.baseUrl + 'user/devicetoken';
+//     console.log('📤 FCM URL:', url1);
+//     // const fcmToken = await messaging().getToken();
+//     // console.log('📤 FCM fcmToken:', fcmToken);
+//     const fcmToken = "";
+//     const requestBody = {
+//           device_token: fcmToken,
+//           device_type  : Platform.OS,
+//         };
+//     console.log('Body:', JSON.stringify(requestBody));
+//     const response = await fetch(url1, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': `Bearer ${token}`,
+//       },
+//       body: JSON.stringify(requestBody),
+//     });
 
-    if (response.ok) {
-      console.log('✅ FCM token sent to server successfully');
-    } else {
-      const error = await response.text();
-      console.log('❌ Server error:', error);
-    }
-  } catch (error) {
-    console.error('❌ Error sending token to server:', error);
-  }
+//     if (response.ok) {
+//       console.log('✅ FCM token sent to server successfully');
+//     } else {
+//       const error = await response.text();
+//       console.log('❌ Server error:', error);
+//     }
+//   } catch (error) {
+//     console.error('❌ Error sending token to server:', error);
+//   }
 
-  };
+//   };
   
   const [isNav, setIsNav] = useState(true);
 
@@ -911,7 +912,7 @@ return (
           <View
             style={[
               styles.header,
-              { paddingTop: Platform.OS === 'ios' ? 50 : 40 },
+              { paddingTop: Platform.OS === 'ios' ? '12%' : 40 },
             ]}
           >
             <Animated.View
@@ -969,7 +970,7 @@ return (
             contentContainerStyle={{ paddingBottom: 10 }} 
             showsVerticalScrollIndicator={false}
           >
-            <View style={{ flex: 1 }}>{renderActiveTabContent()}</View>
+            <View style={{ flex: 1,paddingTop: Platform.OS === 'ios' ? 4 : 0 }}>{renderActiveTabContent()}</View>
           </ScrollView>
         </KeyboardAvoidingView>
         <Animated.View
@@ -978,6 +979,13 @@ return (
             { transform: [{ translateY: bottomNaviationSlideupAnimation }] },
           ]}
         >
+          {/* <View style={[StyleSheet.absoluteFill,{borderRadius: 30,backgroundColor: 'rgba(11, 9, 130, 0.84)'}]}> */}
+          {/* <BlurView
+            blurType="light"
+            blurAmount={1}
+            style={[StyleSheet.absoluteFill,{borderRadius: 30}]}
+          /> */}
+          {/* </View> */}
           <View style={{ height: 48 }}>
             <Animated.View
               style={[
@@ -1070,17 +1078,20 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     paddingVertical: 4,
-    marginTop:20,
+    padding: (Platform.OS === 'ios'? 12:0),
+    marginTop:(Platform.OS === 'ios' ? 16:20),
+    height: 48,
+    gap: 8
   },
   searchIcon: {
     padding: (Platform.OS === 'ios'? 0:5),
-    margin: 10,
+    margin: (Platform.OS === 'ios'? 0:10),
     height: 24,
     width: 24,
   },
   searchBar: {
     fontFamily: 'Urbanist-Medium',
-    marginLeft: -5,
+    // marginLeft: -5,
     fontWeight: 500,
     fontSize: 17,
     color: '#fff',
@@ -1118,6 +1129,8 @@ const styles = StyleSheet.create({
 
     boxSizing: 'border-box',
     zIndex: 100,
+    // position: 'absolute',
+    // bottom: 0,
   },
   tabItem: {
     //justifyContent: 'center',
@@ -1174,7 +1187,7 @@ const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
     flexDirection: 'column',
-    gap: 12,
+    // gap: 12,
   },
 
   header: {
@@ -1245,8 +1258,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical:19,
     alignItems: 'center',
-    marginVertical:5.5,
-    marginHorizontal:5.5,
+    marginVertical:(Platform.OS === 'ios' ? 5: 5.5),
+    marginHorizontal: (Platform.OS === 'ios' ? 5: 5.5),
     borderWidth: 0.4,
     borderColor: '#ffffff11',
 
@@ -1297,9 +1310,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 20,
     fontWeight: '600',
-    marginTop: 20,
+    marginTop: (Platform.OS === 'ios' ? 14 : 20),
     marginLeft: 16,
-    marginBottom: 20,
+    marginBottom: (Platform.OS === 'ios' ? 16 : 20),
     paddingHorizontal: 6,
   },
 

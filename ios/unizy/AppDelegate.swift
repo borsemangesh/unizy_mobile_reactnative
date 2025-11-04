@@ -2,7 +2,7 @@ import UIKit
 import React
 import React_RCTAppDelegate
 import ReactAppDependencyProvider
-import Firebase
+// import Firebase
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -30,7 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       launchOptions: launchOptions
     )
 
-    FirebaseApp.configure()
+    // FirebaseApp.configure()
     return true
   }
 }

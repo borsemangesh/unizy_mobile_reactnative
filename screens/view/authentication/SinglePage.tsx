@@ -230,8 +230,7 @@ useEffect(() => {
   const [showPopup, setShowPopup] = useState(false);
 
   const resetPasswordtranslateY = React.useRef(
-    new Animated.Value(0),
-  ).current;
+    new Animated.Value(0)).current;
   const restPasswordAnimatied = React.useRef(0);
   const setOTPTranslatY = React.useRef(new Animated.Value(height)).current;
   const verifyAndContinyTranslateY1 = React.useRef(
@@ -297,7 +296,7 @@ useEffect(() => {
 
       Animated.timing(loginTranslateY, {
         toValue: 0,
-        duration: 1000,
+        duration: 300,
         easing: Easing.linear,
         useNativeDriver: true,
       }).start();
@@ -324,7 +323,7 @@ useEffect(() => {
 
       Animated.timing(signupTranslateY, {
         toValue: 0,
-        duration: 1000,
+        duration: 300,
         easing: Easing.linear,
         useNativeDriver: true,
       }).start();
@@ -375,14 +374,14 @@ useEffect(() => {
     }
 
     if (currentScreenIninner === 'forgotpassword') {
-      // Animated.parallel([
-      //   Animated.timing(resetPasswordtranslateY, {
-      //     toValue: 0,
-      //     duration: 1000,
-      //     easing: Easing.linear,
-      //     useNativeDriver: true,
-      //   }),
-      // ]).start();
+      Animated.parallel([
+        Animated.timing(resetPasswordtranslateY, {
+          toValue: 0,
+          duration: 300,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+      ]).start();
     }
   }, [currentScreen, currentScreenIninner, photo]);
 
@@ -676,38 +675,38 @@ useEffect(() => {
           signUpusername.toString(),
         );
 
-        Animated.timing(signupTranslateY, {
-            toValue: 300,//Dimensions.get('window').height,
-            duration: 350,
-            easing: Easing.in(Easing.ease),
-            useNativeDriver: true,
-          }).start(() => {
-            // Slide SendOTP screen from top into view
-            // setOTPTranslatY.setValue(-Dimensions.get('window').height); // reset position
-            setOTPTranslatY.setValue(-600);
-            Animated.timing(setOTPTranslatY, {
-              toValue: 0,
-              duration: 250,
-              easing: Easing.out(Easing.ease),
-              useNativeDriver: true,
-            }).start(() => {
-              setCurrentScreen('login');
-              setcurrentScreenIninner('sendOTP');
-               setTimeout(() => {
-              inputs.current[0]?.focus();
-            }, 300);
-            });
-          });
-    
-            Animated.timing(loginTranslateY, {
-              toValue: 500,//Dimensions.get('window').height,
-              duration: 350,
-              easing: Easing.in(Easing.ease),
-              useNativeDriver: true,
-            }).start(() => {
-              setCurrentScreen('login');
-              setcurrentScreenIninner('sendOTP');
-            });
+    Animated.timing(signupTranslateY, {
+      toValue: 300,//Dimensions.get('window').height,
+      duration: 350,
+      easing: Easing.in(Easing.ease),
+      useNativeDriver: true,
+    }).start(() => {
+      // Slide SendOTP screen from top into view
+      // setOTPTranslatY.setValue(-Dimensions.get('window').height); // reset position
+      setOTPTranslatY.setValue(-600);
+      Animated.timing(setOTPTranslatY, {
+        toValue: 0,
+        duration: 250,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start(() => {
+        setCurrentScreen('login');
+        setcurrentScreenIninner('sendOTP');
+         setTimeout(() => {
+        inputs.current[0]?.focus();
+      }, 300);
+      });
+    });
+
+      Animated.timing(loginTranslateY, {
+        toValue: 500,//Dimensions.get('window').height,
+        duration: 350,
+        easing: Easing.in(Easing.ease),
+        useNativeDriver: true,
+      }).start(() => {
+        setCurrentScreen('login');
+        setcurrentScreenIninner('sendOTP');
+      });
 
         
       } else {
@@ -788,24 +787,24 @@ useEffect(() => {
         setsignUpIsPasswordVisible(false);
         setIsConfirmPasswordVisible(false);
 
-        Animated.timing(setOTPTranslatY, {
-          toValue: 200,//Dimensions.get('window').height,
-          duration: 200,
-          easing: Easing.in(Easing.ease),
-          useNativeDriver: true,
-        }).start(() => {});
+    Animated.timing(setOTPTranslatY, {
+      toValue: 200,//Dimensions.get('window').height,
+      duration: 200,
+      easing: Easing.in(Easing.ease),
+      useNativeDriver: true,
+    }).start(() => {});
 
-        Animated.timing(loginTranslateY, {
-          toValue: 200,//Dimensions.get('window').height,
-          duration: 200,
-          easing: Easing.in(Easing.ease),
-          useNativeDriver: true,
-        }).start(() => {
-          setCurrentScreen('login');
-          setcurrentScreenIninner('verify');
-          setShowOtp(false);
-          setverifyimageLoaded(true);
-        });
+    Animated.timing(loginTranslateY, {
+      toValue: 200,//Dimensions.get('window').height,
+      duration: 200,
+      easing: Easing.in(Easing.ease),
+      useNativeDriver: true,
+    }).start(() => {
+      setCurrentScreen('login');
+      setcurrentScreenIninner('verify');
+      setShowOtp(false);
+      setverifyimageLoaded(true);
+    });
       } else {
         showToast(data?.message || Constant.OPT_VERIFICATION_FAILED, 'error');
       }
@@ -933,24 +932,24 @@ useEffect(() => {
         await AsyncStorage.setItem('signupUsername', verifyusername);
         
 
-        Animated.timing(verifyAndContinyTranslateY1, {
-            toValue: 200,//Dimensions.get('window').height, // move down off screen
-            duration: 500,
-            easing: Easing.in(Easing.ease),
-            useNativeDriver: true,
-          }).start(() => {
-            setShowOtp(true); 
-            verifyAndContinyTranslateY2.setValue(-200);
-            Animated.timing(verifyAndContinyTranslateY2, {
-              toValue: 0,
-              duration: 500,
-              easing: Easing.out(Easing.ease),
-              useNativeDriver: true,
-            }).start();
-            setTimeout(() => {
-            verifyinputs.current[0]?.focus();
-          }, 300);
-          });
+    Animated.timing(verifyAndContinyTranslateY1, {
+      toValue: 200,//Dimensions.get('window').height, // move down off screen
+      duration: 500,
+      easing: Easing.in(Easing.ease),
+      useNativeDriver: true,
+    }).start(() => {
+      setShowOtp(true); 
+      verifyAndContinyTranslateY2.setValue(-200);
+      Animated.timing(verifyAndContinyTranslateY2, {
+        toValue: 0,
+        duration: 500,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start();
+      setTimeout(() => {
+      verifyinputs.current[0]?.focus();
+    }, 300);
+    });
       } else {
         showToast(data?.message || 'Failed to send OTP', 'error');
       }
@@ -1023,23 +1022,23 @@ useEffect(() => {
     // Slide in OTP form (from top to 0)
     profileTranslateY.setValue(-300);
 
-      Animated.timing(verifyAndContinyTranslateY2, {
-        toValue: 300, // slide down off-screen
-        duration: 200,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }).start(()=>{
-    
-        setShowPopup1(false);
-        setCurrentScreen('login');
-        setcurrentScreenIninner('profile');
-        Animated.timing(profileTranslateY, {
-            toValue: 0,
-            duration: 500,
-            easing: Easing.out(Easing.ease),
-            useNativeDriver: true,
-          }).start();
-      });
+    Animated.timing(verifyAndContinyTranslateY2, {
+      toValue: 300, // slide down off-screen
+      duration: 200,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: true,
+    }).start(()=>{
+  
+      setShowPopup1(false);
+      setCurrentScreen('login');
+      setcurrentScreenIninner('profile');
+      Animated.timing(profileTranslateY, {
+          toValue: 0,
+          duration: 500,
+          easing: Easing.out(Easing.ease),
+          useNativeDriver: true,
+        }).start();
+    });
       } else {
         showToast(data?.message || 'OTP verification failed', 'error');
       }
@@ -1191,41 +1190,60 @@ useEffect(() => {
     
   };
 
-  const goToForgotPassword = () => {
-    Keyboard.dismiss();
+  // const goToForgotPassword = () => {
+  //   Keyboard.dismiss();
     
-    // resetPasswordtranslateY.setValue(Dimensions.get('window').height);
-    Animated.parallel([
-        // Slide login down
-        Animated.timing(loginTranslateY, {
-          toValue: 300, // move login view to bottom
-          duration: 300, // same duration for both
-          easing:  Easing.linear,
-          useNativeDriver: true,
-        }),
-        // Slide reset password up
-        Animated.timing(resetPasswordtranslateY, {
-          toValue: 0, // slide reset password view to actual position
-          duration: 300, // same duration
-          // easing: Easing.linear,
-          useNativeDriver: true,
-        }),
-        // Fade out text and back icon (optional)
-        Animated.timing(textAndBackOpacity, {   
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
+  //   // resetPasswordtranslateY.setValue(Dimensions.get('window').height);
+  //   Animated.parallel([
+  //       // Slide login down
+  //   Animated.timing(loginTranslateY, {
+  //         toValue: 300, // move login view to bottom
+  //         duration: 300, // same duration for both
+  //         easing:  Easing.linear,
+  //         useNativeDriver: true,
+  //       }),
+  //       // Slide reset password up
+  //       Animated.timing(resetPasswordtranslateY, {
+  //         toValue: 0, // slide reset password view to actual position
+  //         duration: 300, // same duration
+  //         // easing: Easing.linear,
+  //         useNativeDriver: true,
+  //       }),
+  //       // Fade out text and back icon (optional)
+  //       Animated.timing(textAndBackOpacity, {   
+  //         toValue: 0,
+  //     duration: 300,
+  //     useNativeDriver: true,
+  //       }),
+  //     ]).start(() => {
         
-        setTextandBackIcon(false);
-        setUsername('');
-        setPassword('');
-        setIsPasswordVisible(false);
-        setCurrentScreen('login');
-        setcurrentScreenIninner('forgotpassword');
-      });
+  //       setTextandBackIcon(false);
+  //       setUsername('');
+  //       setPassword('');
+  //       setIsPasswordVisible(false);
+  //       setCurrentScreen('login');
+  //       setcurrentScreenIninner('forgotpassword');
+  //     });
    
+    
+  // };
+
+  const goToForgotPassword = (onFinish?: () => void) => {
+    Animated.timing(loginTranslateY, {
+      toValue: 300,//-Dimensions.get('window').height,
+      duration: 300,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start(() => {
+      
+      if (onFinish) onFinish();
+    });
+    Animated.timing(resetPasswordtranslateY, {
+      toValue: -300,//Dimensions.get('window').height,
+      duration: 80,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start();
     
   };
 
@@ -1578,8 +1596,6 @@ useEffect(() => {
           paddingTop: Platform.OS === 'ios' ? 0 : 30,
         }}
       >
-
-
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -1588,22 +1604,25 @@ useEffect(() => {
           {currentScreen === 'splashScreen' && (
             <>
               {/* <View style={Styles.ScreenLayout}> */}
-                <LottieView
-                  ref={animRef}
-                  source={require('../../../assets/animations/animation_new.json')}
-                  autoPlay
-                  loop={false}
-                  resizeMode="contain"
-                  style={{ width, height }}
-                  onAnimationFinish={handleAnimationFinish}
-                />
+              <LottieView
+                ref={animRef}
+                source={require('../../../assets/animations/animation_new.json')}
+                autoPlay
+                loop={false}
+                resizeMode="contain"
+                style={{ width, height }}
+                onAnimationFinish={handleAnimationFinish}
+              />
               {/* </View> */}
             </>
           )}
           {currentScreen === 'hello' && (
             <View style={Styles.ScreenLayout}>
               <Animated.View
-                style={[{paddingTop: (Platform.OS === 'ios'? 80: 40)},{ transform: [{ translateY: unizyTranslateY }] }]}
+                style={[
+                  { paddingTop: Platform.OS === 'ios' ? 80 : 40 },
+                  { transform: [{ translateY: unizyTranslateY }] },
+                ]}
               >
                 <TouchableOpacity
                   onPress={() => console.log('Back button pressed')}
@@ -1615,7 +1634,9 @@ useEffect(() => {
                     />
                   </View>
                 </TouchableOpacity>
-                <Text allowFontScaling={false} style={Styles.unizyText}>UniZy</Text>
+                <Text allowFontScaling={false} style={Styles.unizyText}>
+                  UniZy
+                </Text>
                 <View style={Styles.emptyView}></View>
               </Animated.View>
 
@@ -1672,7 +1693,10 @@ useEffect(() => {
                         justifyContent: 'space-between',
                       }}
                     >
-                      <Text allowFontScaling={false} style={Styles.selectlanguageText}>
+                      <Text
+                        allowFontScaling={false}
+                        style={Styles.selectlanguageText}
+                      >
                         Select Language
                       </Text>
                       <Image
@@ -1706,7 +1730,12 @@ useEffect(() => {
                     { transform: [{ translateY: slideUp1 }] },
                   ]}
                 >
-                  <Text allowFontScaling={false} style={selectlang_styles.title}>Select Language</Text>
+                  <Text
+                    allowFontScaling={false}
+                    style={selectlang_styles.title}
+                  >
+                    Select Language
+                  </Text>
 
                   <View style={selectlang_styles.search_container}>
                     <Image
@@ -1758,7 +1787,7 @@ useEffect(() => {
                                 style={{
                                   flexDirection: 'row',
                                   alignItems: 'center',
-                                  minHeight:30
+                                  minHeight: 30,
                                 }}
                               >
                                 {/* <Image
@@ -1766,10 +1795,17 @@ useEffect(() => {
                                   style={selectlang_styles.flag}
                                 /> */}
                                 <Image
-                                  source={typeof item.flag === 'string' ? { uri: item.flag } : item.flag} // handle URI or require
+                                  source={
+                                    typeof item.flag === 'string'
+                                      ? { uri: item.flag }
+                                      : item.flag
+                                  } // handle URI or require
                                   style={selectlang_styles.flag}
                                 />
-                                <Text allowFontScaling={false} style={selectlang_styles.languageText}>
+                                <Text
+                                  allowFontScaling={false}
+                                  style={selectlang_styles.languageText}
+                                >
                                   {item.name}
                                 </Text>
                               </View>
@@ -1800,9 +1836,9 @@ useEffect(() => {
             <>
               <View
                 style={{
-                  paddingTop: Platform.OS === 'ios' ? 70 : 40,
-                  paddingLeft: 16,
-                  paddingRight: 16,
+                  paddingTop: Platform.OS === 'ios' ? '18%' : 40,
+                  paddingLeft: Platform.OS === 'ios' ? 16 : 16,
+                  paddingRight: Platform.OS === 'ios' ? 16 : 16,
                 }}
               >
                 {currentScreenIninner === 'login' && (
@@ -1838,7 +1874,9 @@ useEffect(() => {
                     ],
                   }}
                 >
-                  <Text allowFontScaling={false} style={Styles.unizyText}>UniZy</Text>
+                  <Text allowFontScaling={false} style={Styles.unizyText}>
+                    UniZy
+                  </Text>
                 </Animated.View>
               </View>
 
@@ -1846,9 +1884,9 @@ useEffect(() => {
                 style={{
                   width: '100%',
                   height: '100%',
-                  paddingLeft: 16,
-                  paddingRight: 16,
-                  paddingTop: 15,
+                  paddingLeft: Platform.OS === 'ios' ? 16 : 16,
+                  paddingRight: Platform.OS === 'ios' ? 16 : 16,
+                  paddingTop: Platform.OS === 'ios' ? 20 : 16,
                 }}
               >
                 <Animated.View
@@ -1863,7 +1901,8 @@ useEffect(() => {
                     {currentScreenIninner === 'login' && (
                       <>
                         <Animated.View
-                          style={{ opacity: loginOpacity,
+                          style={{
+                            opacity: loginOpacity,
                             transform: [{ translateY: loginTranslateY }],
                           }}
                         >
@@ -1874,157 +1913,195 @@ useEffect(() => {
                               'rgba(255, 255, 255, 0.85)',
                             ]}
                           />
-                          <View style={Styles.login_container}>
-                            <TextInput
-                            allowFontScaling={false}
-                              style={Styles.personalEmailID_TextInput}
-                              placeholder={'Personal Email ID*'}
-                              placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
-                              value={username}
-                              maxLength={50}
-                              keyboardType="email-address"
-                              autoCapitalize="none"
-                              autoCorrect={false}
-                              selectionColor="white"
-                              autoComplete={Platform.OS === 'ios' ? 'email' : 'username'}
-                              textContentType={Platform.OS === 'ios' ? 'emailAddress' : 'username'}
-                              onChangeText={usernameText =>
-                                setUsername(usernameText)
-                              }
-                            />
-                          </View>
-
-                          <View style={Styles.password_container}>
-                            <TextInput
-                              allowFontScaling={false}
-                              style={Styles.password_TextInput}
-                              placeholder={'Password*'}
-                              placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
-                              value={password}
-                              maxLength={20}
-                              selectionColor="white"
-                              secureTextEntry={!isPasswordVisible}
-                              onChangeText={passwordText =>
-                                setPassword(passwordText)
-                              }
-                            />
-                            <TouchableOpacity
-                              onPress={() =>
-                                setIsPasswordVisible(!isPasswordVisible)
-                              }
-                            >
-                              <Image
-                                source={
-                                  isPasswordVisible
-                                    ? require('../../../assets/images/eyeopen.png')
-                                    : require('../../../assets/images/eyecross1.png')
-                                }
-                                style={[
-                                  Styles.eyeIcon,
-                                  isPasswordVisible
-                                    ? Styles.eyeIcon
-                                    : Styles.eyeCross,
-                                ]}
-                              />
-                            </TouchableOpacity>
-                          </View>
-
-                          <Text
-                            allowFontScaling={false}
-                            style={Styles.forgetPasswordText}
-                            onPress={() => {
-                              goToForgotPassword();
-                            }}
-                          >
-                            Forgot Password?
-                          </Text>
-
-                          <TouchableOpacity
-                            style={Styles.loginButton}
-                            onPress={loginapi}
-                          >
-                            <Text allowFontScaling={false} style={Styles.sendText}>Login</Text>
-                          </TouchableOpacity>
-
                           <View
                             style={{
-                              width: '100%',
-                              flexDirection: 'row',
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              gap: 5,
-                              marginVertical:8
+                              gap: Platform.OS === 'ios' ? 12 : 0,
+                              margin: Platform.OS === 'ios' ? 0 : 0,
                             }}
                           >
+                            <View style={Styles.login_container}>
+                              <TextInput
+                                allowFontScaling={false}
+                                style={Styles.personalEmailID_TextInput}
+                                placeholder={'Personal Email ID*'}
+                                placeholderTextColor={
+                                  'rgba(255, 255, 255, 0.48)'
+                                }
+                                value={username}
+                                maxLength={50}
+                                keyboardType="email-address"
+                                autoCapitalize="none"
+                                autoCorrect={false}
+                                selectionColor="white"
+                                autoComplete={
+                                  Platform.OS === 'ios' ? 'email' : 'username'
+                                }
+                                textContentType={
+                                  Platform.OS === 'ios'
+                                    ? 'emailAddress'
+                                    : 'username'
+                                }
+                                onChangeText={usernameText =>
+                                  setUsername(usernameText)
+                                }
+                              />
+                            </View>
+
+                            <View style={Styles.password_container}>
+                              <TextInput
+                                allowFontScaling={false}
+                                style={Styles.password_TextInput}
+                                placeholder={'Password*'}
+                                placeholderTextColor={
+                                  'rgba(255, 255, 255, 0.48)'
+                                }
+                                value={password}
+                                maxLength={20}
+                                selectionColor="white"
+                                secureTextEntry={!isPasswordVisible}
+                                onChangeText={passwordText =>
+                                  setPassword(passwordText)
+                                }
+                              />
+                              <TouchableOpacity
+                                onPress={() =>
+                                  setIsPasswordVisible(!isPasswordVisible)
+                                }
+                              >
+                                <Image
+                                  source={
+                                    isPasswordVisible
+                                      ? require('../../../assets/images/eyeopen.png')
+                                      : require('../../../assets/images/eyecross1.png')
+                                  }
+                                  style={[
+                                    Styles.eyeIcon,
+                                    isPasswordVisible
+                                      ? Styles.eyeIcon
+                                      : Styles.eyeCross,
+                                  ]}
+                                />
+                              </TouchableOpacity>
+                            </View>
+
                             <Text
-                            allowFontScaling={false}
-                              style={{
-                                color: 'rgba(255, 255, 255, 0.48)',
-                                textAlign: 'center',
-                                fontFamily: 'Urbanist-Regular',
-                                fontSize: 14,
-                                fontWeight: 400,
-                                lineHeight: 19,
-                                marginTop: 10,
+                              allowFontScaling={false}
+                              style={Styles.forgetPasswordText}
+                              onPress={() => {
+                                // goToForgotPassword();
+
+                                goToForgotPassword(() => {
+                                  setTextandBackIcon(false);
+                                  setUsername('');
+                                  setPassword('');
+                                  setIsPasswordVisible(false);
+                                  setCurrentScreen('login');
+                                  setcurrentScreenIninner('forgotpassword');
+                                });
                               }}
                             >
-                              Don't have an account?
+                              Forgot Password?
                             </Text>
+                          </View>
+
+                          <View style={{ gap: Platform.OS === 'ios' ? 20 : 0 }}>
                             <TouchableOpacity
-                              onPress={() => {
-                            
-                              Keyboard.dismiss();
-                            Animated.timing(textAndBackOpacity, {
-                                toValue: 0,
-                                duration: 300,
-                                useNativeDriver: true,
-                              }).start();
-                          
-                              // Reset initial position and opacity before animation
-                              signupTranslateY.setValue(0); // start off-screen
-                              signupOpacity.setValue(0); // start invisible
-                              loginOpacity.setValue(1); // start visible
-                          
-                              // Animate slide + fade together
-                              Animated.parallel([
-                                Animated.spring(signupTranslateY, {
-                                  toValue: 0, // slide in
-                                  useNativeDriver: true,
-                                  friction: 6,
-                                  tension: 50,
-                                }),
-                                Animated.timing(signupOpacity, {
-                                  toValue: 1,
-                                  duration: 200,
-                                  easing: Easing.linear,
-                                  useNativeDriver: true,
-                                }),
-                                Animated.timing(loginOpacity, {
-                                  toValue: 0,
-                                  duration: 150,
-                                  easing: Easing.linear,
-                                  useNativeDriver: true,
-                                }),
-                              ]).start(() => {
-                                                             setTextandBackIcon(false);
-                                setUsername('');
-                                setPassword('');
-                                setIsPasswordVisible(false);
-                                setCurrentScreen('login');
-                                setcurrentScreenIninner('signup');
-                                setFirstName('');
-                                setLastName('');
-                                setPostalCode('');
-                                setConfirmPassword('');
-                                setsignUpPassword('');
-                                setsignUpUsername('');
-                                setIsConfirmPasswordVisible(false);
-                                setsignUpIsPasswordVisible(false);
-                              });
-                            }}
+                              style={Styles.loginButton}
+                              onPress={loginapi}
                             >
-                              <Text allowFontScaling={false} style={Styles.signupText}>Sign up</Text>
+                              <Text
+                                allowFontScaling={false}
+                                style={Styles.sendText}
+                              >
+                                Login
+                              </Text>
                             </TouchableOpacity>
+
+                            <View
+                              style={{
+                                width: '100%',
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                gap: 4,
+                                marginVertical: Platform.OS === 'ios' ? 0 : 8,
+                              }}
+                            >
+                              <Text
+                                allowFontScaling={false}
+                                style={{
+                                  color: 'rgba(255, 255, 255, 0.48)',
+                                  textAlign: 'center',
+                                  fontFamily: 'Urbanist-Regular',
+                                  fontSize: 14,
+                                  fontWeight: 400,
+                                  lineHeight: 19,
+                                  marginTop: Platform.OS === 'ios' ? 0 : 10,
+                                  paddingBottom: Platform.OS === 'ios' ? 8 : 10,
+                                }}
+                              >
+                                Don't have an account?
+                              </Text>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  Keyboard.dismiss();
+                                  Animated.timing(textAndBackOpacity, {
+                                    toValue: 0,
+                                    duration: 300,
+                                    useNativeDriver: true,
+                                  }).start();
+
+                                  // Reset initial position and opacity before animation
+                                  signupTranslateY.setValue(0); // start off-screen
+                                  signupOpacity.setValue(0); // start invisible
+                                  loginOpacity.setValue(1); // start visible
+
+                                  // Animate slide + fade together
+                                  Animated.parallel([
+                                    Animated.spring(signupTranslateY, {
+                                      toValue: 0, // slide in
+                                      useNativeDriver: true,
+                                      friction: 6,
+                                      tension: 50,
+                                    }),
+                                    Animated.timing(signupOpacity, {
+                                      toValue: 1,
+                                      duration: 200,
+                                      easing: Easing.linear,
+                                      useNativeDriver: true,
+                                    }),
+                                    Animated.timing(loginOpacity, {
+                                      toValue: 0,
+                                      duration: 150,
+                                      easing: Easing.linear,
+                                      useNativeDriver: true,
+                                    }),
+                                  ]).start(() => {
+                                    setTextandBackIcon(false);
+                                    setUsername('');
+                                    setPassword('');
+                                    setIsPasswordVisible(false);
+                                    setCurrentScreen('login');
+                                    setcurrentScreenIninner('signup');
+                                    setFirstName('');
+                                    setLastName('');
+                                    setPostalCode('');
+                                    setConfirmPassword('');
+                                    setsignUpPassword('');
+                                    setsignUpUsername('');
+                                    setIsConfirmPasswordVisible(false);
+                                    setsignUpIsPasswordVisible(false);
+                                  });
+                                }}
+                              >
+                                <Text
+                                  allowFontScaling={false}
+                                  style={Styles.signupText}
+                                >
+                                  Sign up
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
                           </View>
                         </Animated.View>
                       </>
@@ -2036,7 +2113,7 @@ useEffect(() => {
                         <View style={{ width: '100%' }}>
                           <Animated.View
                             style={[
-                              { gap: 10 },
+                              { gap: 16 },
                               {
                                 transform: [
                                   { translateY: resetPasswordtranslateY },
@@ -2044,14 +2121,17 @@ useEffect(() => {
                               },
                             ]}
                           >
-                            <Text allowFontScaling={false} style={Styles.resetTitle}>
+                            <Text
+                              allowFontScaling={false}
+                              style={Styles.resetTitle}
+                            >
                               Reset Password
                             </Text>
                             <View style={Styles.privacyContainer}>
                               <Text
-                                  allowFontScaling={false}
-                                  style={[Styles.termsText, { paddingBottom:8 }]}
-                                >
+                                allowFontScaling={false}
+                                style={[Styles.termsText, { paddingBottom: 8 }]}
+                              >
                                 Enter your personal email address and we’ll send
                                 you a link to reset your password
                               </Text>
@@ -2059,7 +2139,7 @@ useEffect(() => {
 
                             <View style={[Styles.login_container]}>
                               <TextInput
-                              allowFontScaling={false}
+                                allowFontScaling={false}
                                 style={[
                                   Styles.personalEmailID_TextInput,
                                   { color: '#fff' },
@@ -2071,8 +2151,14 @@ useEffect(() => {
                                 selectionColor="white"
                                 keyboardType="email-address"
                                 autoCapitalize="none"
-                                autoComplete={Platform.OS === 'ios' ? 'email' : 'username'}
-                                textContentType={Platform.OS === 'ios' ? 'emailAddress' : 'username'}
+                                autoComplete={
+                                  Platform.OS === 'ios' ? 'email' : 'username'
+                                }
+                                textContentType={
+                                  Platform.OS === 'ios'
+                                    ? 'emailAddress'
+                                    : 'username'
+                                }
                                 importantForAutofill="yes"
                                 autoCorrect={false}
                                 onChangeText={usernameText =>
@@ -2082,12 +2168,15 @@ useEffect(() => {
                             </View>
 
                             <TouchableOpacity
-                              style={[Styles.loginButton]}
+                              style={[Styles.loginButton, { marginTop: 0 }]}
                               onPress={() => {
                                 handleSendResetLink();
                               }}
                             >
-                              <Text allowFontScaling={false} style={Styles.sendText}>
+                              <Text
+                                allowFontScaling={false}
+                                style={Styles.sendText}
+                              >
                                 Send Reset Link
                               </Text>
                             </TouchableOpacity>
@@ -2109,7 +2198,15 @@ useEffect(() => {
                                 });
                               }}
                             >
-                              <Text allowFontScaling={false} style={[Styles.goBackText,{color:'rgba(140, 244, 255, 0.7)'}]}>Go Back</Text>
+                              <Text
+                                allowFontScaling={false}
+                                style={[
+                                  Styles.goBackText,
+                                  { color: 'rgba(140, 244, 255, 0.7)' },
+                                ]}
+                              >
+                                Go Back
+                              </Text>
                             </TouchableOpacity>
                           </Animated.View>
                           <Modal
@@ -2119,8 +2216,7 @@ useEffect(() => {
                             onRequestClose={closePopup}
                           >
                             <View style={Styles.overlay}>
-                          
-                                <BlurView
+                              <BlurView
                                 style={{
                                   flex: 1,
                                   alignContent: 'center',
@@ -2133,33 +2229,35 @@ useEffect(() => {
                                 reducedTransparencyFallbackColor={
                                   Platform.OS === 'ios'
                                     ? 'rgba(0, 0, 0, 0.11)'
-                                    : 'rgba(0, 0, 0, 0.5)' 
+                                    : 'rgba(0, 0, 0, 0.5)'
                                 }
-                                >
+                              >
                                 <View
                                   style={[
                                     StyleSheet.absoluteFill,
                                     {
                                       backgroundColor:
                                         Platform.OS === 'ios'
-                                          ? 'rgba(0, 0, 0, 0.15)' 
-                                          : 'rgba(0, 0, 0, 0.32)', 
+                                          ? 'rgba(0, 0, 0, 0.15)'
+                                          : 'rgba(0, 0, 0, 0.32)',
                                     },
                                   ]}
                                 />
                                 <View
                                   style={[
                                     Styles.popupContainer,
-                                    { width: width * 0.85}
+                                    { width: width * 0.85 },
                                   ]}
                                 >
-                                  
                                   <Image
                                     source={require('../../../assets/images/success_icon.png')}
                                     style={Styles.logo}
                                     resizeMode="contain"
                                   />
-                                  <Text allowFontScaling={false} style={Styles.termsText1}>
+                                  <Text
+                                    allowFontScaling={false}
+                                    style={Styles.termsText1}
+                                  >
                                     A password reset link has been sent to your
                                     personal email. Please check your inbox (or
                                     spam folder) to continue.
@@ -2173,7 +2271,10 @@ useEffect(() => {
                                       setcurrentScreenIninner('login');
                                     }}
                                   >
-                                    <Text allowFontScaling={false} style={Styles.loginText}>
+                                    <Text
+                                      allowFontScaling={false}
+                                      style={Styles.loginText}
+                                    >
                                       Back to Login
                                     </Text>
                                   </TouchableOpacity>
@@ -2190,16 +2291,20 @@ useEffect(() => {
                       <>
                         <Animated.View
                           style={[
-                            { width: '100%', alignItems: 'center',opacity: signupOpacity},
+                            {
+                              width: '100%',
+                              alignItems: 'center',
+                              opacity: signupOpacity,
+                            },
                             {
                               transform: [{ translateY: signupTranslateY }],
                             },
                           ]}
                         >
-                          <View style={Styles.nameRow}>
+                          <View style={[Styles.nameRow]}>
                             <View style={Styles.login_container1}>
                               <TextInput
-                              allowFontScaling={false}
+                                allowFontScaling={false}
                                 style={Styles.personalEmailID_TextInput1}
                                 placeholder="First Name*"
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
@@ -2209,27 +2314,27 @@ useEffect(() => {
                                   setFirstName(text)
                                 }
                                 maxLength={20}
-                                autoComplete="name-given"        
-                                textContentType="givenName"      
-                                autoCapitalize="words"        
-                                importantForAutofill="yes"  
+                                autoComplete="name-given"
+                                textContentType="givenName"
+                                autoCapitalize="words"
+                                importantForAutofill="yes"
                                 selectionColor="white"
                               />
                             </View>
 
                             <View style={Styles.login_container1}>
                               <TextInput
-                              allowFontScaling={false}
+                                allowFontScaling={false}
                                 style={Styles.personalEmailID_TextInput1}
                                 placeholder="Last Name*"
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                 value={lastName}
                                 selectionColor="white"
                                 maxLength={20}
-                                autoComplete="name-family"      
-                                  textContentType="familyName"     
-                                  importantForAutofill="yes"
-                                  autoCapitalize="words"
+                                autoComplete="name-family"
+                                textContentType="familyName"
+                                importantForAutofill="yes"
+                                autoCapitalize="words"
                                 onChangeText={text =>
                                   /^[A-Za-z ]*$/.test(text) && setLastName(text)
                                 }
@@ -2245,8 +2350,11 @@ useEffect(() => {
                               ]}
                             >
                               <TextInput
-                              allowFontScaling={false}
-                                style={Styles.personalEmailID_TextInput}
+                                allowFontScaling={false}
+                                style={[
+                                  Styles.personalEmailID_TextInput,
+                                  { paddingTop: 10 },
+                                ]}
                                 placeholder="Postal Code"
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                 value={postalCode}
@@ -2270,11 +2378,11 @@ useEffect(() => {
                           <View
                             style={[
                               Styles.password_container,
-                              { marginTop: 0 },
+                              { marginTop: (Platform.OS === 'ios' ? 12 : 0)},
                             ]}
                           >
                             <TextInput
-                            allowFontScaling={false}
+                              allowFontScaling={false}
                               style={Styles.password_TextInput}
                               placeholder="Personal Email ID*"
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
@@ -2283,8 +2391,14 @@ useEffect(() => {
                               keyboardType="email-address"
                               autoCapitalize="none"
                               selectionColor="white"
-                              autoComplete={Platform.OS === 'ios' ? 'email' : 'username'}
-                              textContentType={Platform.OS === 'ios' ? 'emailAddress' : 'username'}
+                              autoComplete={
+                                Platform.OS === 'ios' ? 'email' : 'username'
+                              }
+                              textContentType={
+                                Platform.OS === 'ios'
+                                  ? 'emailAddress'
+                                  : 'username'
+                              }
                               importantForAutofill="yes"
                               autoCorrect={false}
                               onChangeText={text => setsignUpUsername(text)}
@@ -2301,8 +2415,14 @@ useEffect(() => {
 
                           {showInfo && (
                             <View style={Styles.infoContainer}>
-                              <Text allowFontScaling={false} style={Styles.infoText}>
-                                <Text allowFontScaling={false} style={Styles.infoText1}>
+                              <Text
+                                allowFontScaling={false}
+                                style={Styles.infoText}
+                              >
+                                <Text
+                                  allowFontScaling={false}
+                                  style={Styles.infoText1}
+                                >
                                   Important:{' '}
                                 </Text>
                                 Use your personal email address for signup. Your
@@ -2312,9 +2432,9 @@ useEffect(() => {
                             </View>
                           )}
 
-                          <View style={Styles.password_container}>
+                          <View style={[Styles.password_container,{marginTop: (Platform.OS === 'ios' ? 12 : 12)}]}>
                             <TextInput
-                            allowFontScaling={false}
+                              allowFontScaling={false}
                               style={Styles.password_TextInput}
                               placeholder="Create Password*"
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
@@ -2348,9 +2468,9 @@ useEffect(() => {
                             </TouchableOpacity>
                           </View>
 
-                          <View style={Styles.password_container}>
+                          <View style={[Styles.password_container,{marginTop: (Platform.OS === 'ios' ? 12 : 12)}]}>
                             <TextInput
-                            allowFontScaling={false}
+                              allowFontScaling={false}
                               style={[
                                 Styles.password_TextInput,
                                 { color: '#fff' },
@@ -2388,7 +2508,7 @@ useEffect(() => {
                           </View>
 
                           <TouchableOpacity
-                          disabled={loading}
+                            disabled={loading}
                             onPress={() => {
                               Keyboard.dismiss();
                               handleSendOTP();
@@ -2396,7 +2516,12 @@ useEffect(() => {
                             }}
                             style={Styles.sendButton}
                           >
-                            <Text allowFontScaling={false} style={Styles.sendText}>Send OTP</Text>
+                            <Text
+                              allowFontScaling={false}
+                              style={Styles.sendText}
+                            >
+                              Send OTP
+                            </Text>
                           </TouchableOpacity>
 
                           <View
@@ -2405,10 +2530,13 @@ useEffect(() => {
                               justifyContent: 'center',
                               alignItems: 'center',
                               marginTop: 16,
-                              marginBottom:8,
+                              marginBottom: 8,
                             }}
                           >
-                            <Text allowFontScaling={false} style={Styles.signupPrompt}>
+                            <Text
+                              allowFontScaling={false}
+                              style={Styles.signupPrompt}
+                            >
                               Already have an account?{' '}
                             </Text>
                             <TouchableOpacity
@@ -2438,7 +2566,12 @@ useEffect(() => {
                                 }
                               }}
                             >
-                              <Text allowFontScaling={false} style={Styles.signupPrompt1}>Login</Text>
+                              <Text
+                                allowFontScaling={false}
+                                style={Styles.signupPrompt1}
+                              >
+                                Login
+                              </Text>
                             </TouchableOpacity>
                           </View>
                         </Animated.View>
@@ -2456,13 +2589,22 @@ useEffect(() => {
                             ]}
                           >
                             <View>
-                              <Text allowFontScaling={false} style={Styles.sendOtpresetTitle}>
+                              <Text
+                                allowFontScaling={false}
+                                style={Styles.sendOtpresetTitle}
+                              >
                                 Verify Personal Email ID
                               </Text>
                               <View style={Styles.sendOtpprivacyContainer}>
-                                <Text allowFontScaling={false} style={Styles.termsText}>
+                                <Text
+                                  allowFontScaling={false}
+                                  style={Styles.termsText}
+                                >
                                   We have sent a 4-digit code to{' '}
-                                  <Text allowFontScaling={false} style={Styles.sendOtpresendText2}>
+                                  <Text
+                                    allowFontScaling={false}
+                                    style={Styles.sendOtpresendText2}
+                                  >
                                     {signUpusername}
                                   </Text>
                                 </Text>
@@ -2502,10 +2644,16 @@ useEffect(() => {
                               </View>
 
                               <TouchableOpacity
-                                style={[Styles.sendOtploginButton,{marginTop:16}]}
+                                style={[
+                                  Styles.sendOtploginButton,
+                                  { marginTop: (Platform.OS === 'ios' ? 20 : 16) },
+                                ]}
                                 onPress={otpverify}
                               >
-                                <Text allowFontScaling={false} style={Styles.sendText}>
+                                <Text
+                                  allowFontScaling={false}
+                                  style={Styles.sendText}
+                                >
                                   Verify & Continue
                                 </Text>
                               </TouchableOpacity>
@@ -2514,14 +2662,23 @@ useEffect(() => {
                                 style={{
                                   flexDirection: 'row',
                                   justifyContent: 'center',
-                                  marginTop: 16,
+                                  marginTop: (Platform.OS === 'ios' ? 20 : 16),
                                 }}
                               >
-                                <Text allowFontScaling={false} style={Styles.sendOtpresendText}>
+                                <Text
+                                  allowFontScaling={false}
+                                  style={Styles.sendOtpresendText}
+                                >
                                   Didn’t receive a code?{' '}
                                 </Text>
                                 <TouchableOpacity onPress={handleresend}>
-                                  <Text allowFontScaling={false} style={[Styles.sendOtpresendText1,{color: 'rgba(140, 244, 255, 0.7)'}]}>
+                                  <Text
+                                    allowFontScaling={false}
+                                    style={[
+                                      Styles.sendOtpresendText1,
+                                      { color: 'rgba(140, 244, 255, 0.7)' },
+                                    ]}
+                                  >
                                     Resend Code
                                   </Text>
                                 </TouchableOpacity>
@@ -2534,38 +2691,37 @@ useEffect(() => {
                                   marginTop: 16,
                                 }}
                               >
-                                <Text allowFontScaling={false} style={Styles.sendOtpgoBackText}>
+                                <Text
+                                  allowFontScaling={false}
+                                  style={Styles.sendOtpgoBackText}
+                                >
                                   Entered wrong email?{' '}
                                 </Text>
                                 <TouchableOpacity
                                   onPress={() => {
-
-
                                     Keyboard.dismiss();
 
-                                        Animated.parallel([
-                                            
-                                            Animated.timing(signupTranslateY, {
-                                                toValue: 300,
-                                                duration: 400,
-                                                easing: Easing.linear,
-                                                useNativeDriver: true,
-                                            }),
+                                    Animated.parallel([
+                                      Animated.timing(signupTranslateY, {
+                                        toValue: 300,
+                                        duration: 400,
+                                        easing: Easing.linear,
+                                        useNativeDriver: true,
+                                      }),
 
-                                            // Hide sendOTP screen below (optional)
-                                            Animated.timing(setOTPTranslatY, {
-                                            toValue: -300, // slide out downwards
-                                            duration: 400,
-                                            easing: Easing.linear,
-                                            useNativeDriver: true,
-                                            }),
-                                        ]).start(() => {
-                                            setCurrentScreen('login');
-                                            setcurrentScreenIninner('signup');
-                                            setShowOtp(false);
-                                            setverifyimageLoaded(true);
-                                        });
-
+                                      // Hide sendOTP screen below (optional)
+                                      Animated.timing(setOTPTranslatY, {
+                                        toValue: -300, // slide out downwards
+                                        duration: 400,
+                                        easing: Easing.linear,
+                                        useNativeDriver: true,
+                                      }),
+                                    ]).start(() => {
+                                      setCurrentScreen('login');
+                                      setcurrentScreenIninner('signup');
+                                      setShowOtp(false);
+                                      setverifyimageLoaded(true);
+                                    });
 
                                     // Keyboard.dismiss();
                                     // verifyAndContinyTranslateY1.setValue(-300); // below screen ❌ wrong direction
@@ -2581,7 +2737,13 @@ useEffect(() => {
                                     // });
                                   }}
                                 >
-                                  <Text allowFontScaling={false} style={[Styles.sendOtpgoBackText1,{color: 'rgba(140, 244, 255, 0.7)'}]}>
+                                  <Text
+                                    allowFontScaling={false}
+                                    style={[
+                                      Styles.sendOtpgoBackText1,
+                                      { color: 'rgba(140, 244, 255, 0.7)' },
+                                    ]}
+                                  >
                                     Go Back
                                   </Text>
                                 </TouchableOpacity>
@@ -2606,12 +2768,15 @@ useEffect(() => {
                             ]}
                           >
                             <View>
-                              <Text allowFontScaling={false} style={Styles.verifyresetTitle}>
+                              <Text
+                                allowFontScaling={false}
+                                style={[Styles.verifyresetTitle,{paddingBottom: (Platform.OS === 'ios'  ? 16 : 0)}]}
+                              >
                                 Verify University Email ID
                               </Text>
                               <View style={Styles.verifylogin_container}>
                                 <TextInput
-                                allowFontScaling={false}
+                                  allowFontScaling={false}
                                   style={Styles.verifypersonalEmailID_TextInput}
                                   placeholder={'University Email ID*'}
                                   placeholderTextColor={
@@ -2637,7 +2802,12 @@ useEffect(() => {
                                   verifyOTP();
                                 }}
                               >
-                                <Text allowFontScaling={false} style={Styles.sendText}>Send OTP</Text>
+                                <Text
+                                  allowFontScaling={false}
+                                  style={Styles.sendText}
+                                >
+                                  Send OTP
+                                </Text>
                               </TouchableOpacity>
                             </View>
                           </Animated.View>
@@ -2657,14 +2827,23 @@ useEffect(() => {
                             <View
                               style={[{ width: '100%', alignItems: 'center' }]}
                             >
-                              <Text allowFontScaling={false} style={Styles.verifyresetTitle}>
+                              <Text
+                                allowFontScaling={false}
+                                style={Styles.verifyresetTitle}
+                              >
                                 Verify University Email ID
                               </Text>
 
                               <View style={Styles.verifyprivacyContainer}>
-                                <Text allowFontScaling={false} style={Styles.verifytermsText}>
+                                <Text
+                                  allowFontScaling={false}
+                                  style={Styles.verifytermsText}
+                                >
                                   We have sent a 4-digit code to{' '}
-                                  <Text allowFontScaling={false} style={Styles.resendText2}>
+                                  <Text
+                                    allowFontScaling={false}
+                                    style={Styles.resendText2}
+                                  >
                                     {verifyusername}
                                   </Text>
                                 </Text>
@@ -2673,7 +2852,7 @@ useEffect(() => {
                               <View style={Styles.verifyotpContainer}>
                                 {[0, 1, 2, 3].map((_, index) => (
                                   <TextInput
-                                  allowFontScaling={false}
+                                    allowFontScaling={false}
                                     key={index}
                                     ref={ref => {
                                       verifyinputs.current[index] = ref;
@@ -2709,7 +2888,10 @@ useEffect(() => {
                                 style={Styles.verifyloginButton1}
                                 onPress={submitotp}
                               >
-                                <Text allowFontScaling={false} style={Styles.sendText}>
+                                <Text
+                                  allowFontScaling={false}
+                                  style={Styles.sendText}
+                                >
                                   Verify & Continue
                                 </Text>
                               </TouchableOpacity>
@@ -2717,20 +2899,35 @@ useEffect(() => {
                               <View
                                 style={{ flexDirection: 'row', marginTop: 6 }}
                               >
-                                <Text allowFontScaling={false} style={Styles.verifyresendText}>
+                                <Text
+                                  allowFontScaling={false}
+                                  style={Styles.verifyresendText}
+                                >
                                   Didn’t receive a code?{' '}
                                 </Text>
                                 <TouchableOpacity onPress={resubmitotp}>
-                                  <Text allowFontScaling={false} style={[Styles.verifyresendText1,{color: 'rgba(140, 244, 255, 0.7)'}]}>
+                                  <Text
+                                    allowFontScaling={false}
+                                    style={[
+                                      Styles.verifyresendText1,
+                                      { color: 'rgba(140, 244, 255, 0.7)' },
+                                    ]}
+                                  >
                                     Resend Code
                                   </Text>
                                 </TouchableOpacity>
                               </View>
 
                               <TouchableOpacity
-                                style={{ flexDirection: 'row', marginVertical: 6 }}
+                                style={{
+                                  flexDirection: 'row',
+                                  marginVertical: 6,
+                                }}
                               >
-                                <Text allowFontScaling={false} style={Styles.verifyresendText}>
+                                <Text
+                                  allowFontScaling={false}
+                                  style={Styles.verifyresendText}
+                                >
                                   Entered wrong email?{' '}
                                 </Text>
                                 <TouchableOpacity
@@ -2747,38 +2944,46 @@ useEffect(() => {
                                     //     setShowOtp(false);
                                     // });
 
-
-
                                     Keyboard.dismiss();
-    // Set correct starting positions
-    verifyAndContinyTranslateY1.setValue(300);
-    verifyAndContinyTranslateY2.setValue(0);
+                                    // Set correct starting positions
+                                    verifyAndContinyTranslateY1.setValue(300);
+                                    verifyAndContinyTranslateY2.setValue(0);
 
-    // Run animation
-    Animated.parallel([
-      Animated.timing(verifyAndContinyTranslateY1, {
-        toValue: 0,
-        duration: 400,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-      Animated.timing(verifyAndContinyTranslateY2, {
-        toValue: -300,
-        duration: 400,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      setShowOtp(false);
-      setverifyimageLoaded(true);
-      setCurrentScreen('login');
-      setcurrentScreenIninner('verify');
-    });
-  
-
+                                    // Run animation
+                                    Animated.parallel([
+                                      Animated.timing(
+                                        verifyAndContinyTranslateY1,
+                                        {
+                                          toValue: 0,
+                                          duration: 400,
+                                          easing: Easing.linear,
+                                          useNativeDriver: true,
+                                        },
+                                      ),
+                                      Animated.timing(
+                                        verifyAndContinyTranslateY2,
+                                        {
+                                          toValue: -300,
+                                          duration: 400,
+                                          easing: Easing.linear,
+                                          useNativeDriver: true,
+                                        },
+                                      ),
+                                    ]).start(() => {
+                                      setShowOtp(false);
+                                      setverifyimageLoaded(true);
+                                      setCurrentScreen('login');
+                                      setcurrentScreenIninner('verify');
+                                    });
                                   }}
                                 >
-                                  <Text allowFontScaling={false} style={[Styles.verifygoBackText1,{color: 'rgba(140, 244, 255, 0.7)'}]}>
+                                  <Text
+                                    allowFontScaling={false}
+                                    style={[
+                                      Styles.verifygoBackText1,
+                                      { color: 'rgba(140, 244, 255, 0.7)' },
+                                    ]}
+                                  >
                                     Go Back
                                   </Text>
                                 </TouchableOpacity>
@@ -2802,11 +3007,22 @@ useEffect(() => {
                             ]}
                           >
                             <View>
-                              <Text allowFontScaling={false} style={Styles.profileprofileresetTitle}>
+                              <Text
+                                allowFontScaling={false}
+                                style={Styles.profileprofileresetTitle}
+                              >
                                 Add a Photo
                               </Text>
-                              <View style={[Styles.profileprivacyContainer,{marginTop:10}]}>
-                                <Text allowFontScaling={false} style={Styles.profiletermsText}>
+                              <View
+                                style={[
+                                  Styles.profileprivacyContainer,
+                                  { marginTop: (Platform.OS === 'ios' ? 16 : 10) },
+                                ]}
+                              >
+                                <Text
+                                  allowFontScaling={false}
+                                  style={Styles.profiletermsText}
+                                >
                                   Personalize your account with a photo. You can
                                   always change it later.
                                 </Text>
@@ -2845,7 +3061,10 @@ useEffect(() => {
                                   setShowPopup1(true);
                                 }}
                               >
-                                <Text allowFontScaling={false} style={Styles.profileloginText}>
+                                <Text
+                                  allowFontScaling={false}
+                                  style={Styles.profileloginText}
+                                >
                                   Continue
                                 </Text>
                               </TouchableOpacity>
@@ -2855,11 +3074,14 @@ useEffect(() => {
                                   flexDirection: 'row',
                                   justifyContent: 'center',
                                   alignItems: 'center',
-                                  marginTop: 16,
-                                  marginBottom:8
+                                  marginTop: (Platform.OS === 'ios' ? 20 : 16),
+                                  marginBottom: 8,
                                 }}
                               >
-                                <Text allowFontScaling={false} style={Styles.profilesignupPrompt}>
+                                <Text
+                                  allowFontScaling={false}
+                                  style={Styles.profilesignupPrompt}
+                                >
                                   Want to do it later?{' '}
                                 </Text>
                                 <TouchableOpacity
@@ -2867,7 +3089,13 @@ useEffect(() => {
                                     setShowPopup1(true);
                                   }}
                                 >
-                                  <Text allowFontScaling={false} style={[Styles.profilesignupPrompt1,{color:'rgba(140, 244, 255, 0.7)'}]}>
+                                  <Text
+                                    allowFontScaling={false}
+                                    style={[
+                                      Styles.profilesignupPrompt1,
+                                      { color: 'rgba(140, 244, 255, 0.7)' },
+                                    ]}
+                                  >
                                     Skip
                                   </Text>
                                 </TouchableOpacity>
@@ -2896,66 +3124,81 @@ useEffect(() => {
                               ]}
                             /> */}
                             <BlurView
-                                style={{
-                                  flex: 1,
-                                  alignContent: 'center',
-                                  justifyContent: 'center',
-                                  width: '100%',
-                                  alignItems: 'center',
-                                }}
-                                blurType="dark"
-                                blurAmount={Platform.OS === 'ios' ? 5 : 100}
-                                reducedTransparencyFallbackColor={
-                                  Platform.OS === 'ios'
-                                    ? 'rgba(0, 0, 0, 0.11)'
-                                    : 'rgba(0, 0, 0, 0.5)' 
-                                }
-                                >
-                                <View
-                                  style={[
-                                    StyleSheet.absoluteFill,
-                                    {
-                                      backgroundColor:
-                                        Platform.OS === 'ios'
-                                          ? 'rgba(0, 0, 0, 0.15)' 
-                                          : 'rgba(0, 0, 0, 0.32)', 
-                                    },
-                                  ]}
-                                />
-
-                            <View
-                              style={[
-                                Styles.profilepopupContainer,
-                                { width: width * 0.85 },
-                              ]}
+                              style={{
+                                flex: 1,
+                                alignContent: 'center',
+                                justifyContent: 'center',
+                                width: '100%',
+                                alignItems: 'center',
+                              }}
+                              blurType="dark"
+                              blurAmount={Platform.OS === 'ios' ? 5 : 100}
+                              reducedTransparencyFallbackColor={
+                                Platform.OS === 'ios'
+                                  ? 'rgba(0, 0, 0, 0.11)'
+                                  : 'rgba(0, 0, 0, 0.5)'
+                              }
                             >
-                              <Image
-                                source={require('../../../assets/images/success_icon.png')}
-                                style={Styles.profilelogo1}
-                                resizeMode="contain"
+                              <View
+                                style={[
+                                  StyleSheet.absoluteFill,
+                                  {
+                                    backgroundColor:
+                                      Platform.OS === 'ios'
+                                        ? 'rgba(0, 0, 0, 0.15)'
+                                        : 'rgba(0, 0, 0, 0.32)',
+                                  },
+                                ]}
                               />
-                              <Text allowFontScaling={false} style={Styles.profiletermsText2}>
-                                Account Created Successfully!
-                              </Text>
-                              <Text allowFontScaling={false} style={Styles.profiletermsText1}>
-                                Welcome to Unizy! Your account has been created
-                                and your’re all set to start exploring
-                              </Text>
-                              <TouchableOpacity
-                                style={Styles.profileloginButton}
-                                onPress={async () => {
-                                  // setCurrentScreen('login');
-                                  //setcurrentScreenIninner('login');
-                                  closePopup1();
-                                  await AsyncStorage.setItem('ISLOGIN', 'true');
-                                  navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: true});
-                                }}
+
+                              <View
+                                style={[
+                                  Styles.profilepopupContainer,
+                                  { width: width * 0.85 },
+                                ]}
                               >
-                                <Text allowFontScaling={false} style={Styles.profileloginText}>
-                                  Start Exploring
+                                <Image
+                                  source={require('../../../assets/images/success_icon.png')}
+                                  style={Styles.profilelogo1}
+                                  resizeMode="contain"
+                                />
+                                <Text
+                                  allowFontScaling={false}
+                                  style={Styles.profiletermsText2}
+                                >
+                                  Account Created Successfully!
                                 </Text>
-                              </TouchableOpacity>
-                            </View>
+                                <Text
+                                  allowFontScaling={false}
+                                  style={Styles.profiletermsText1}
+                                >
+                                  Welcome to Unizy! Your account has been
+                                  created and your’re all set to start exploring
+                                </Text>
+                                <TouchableOpacity
+                                  style={Styles.profileloginButton}
+                                  onPress={async () => {
+                                    // setCurrentScreen('login');
+                                    //setcurrentScreenIninner('login');
+                                    closePopup1();
+                                    await AsyncStorage.setItem(
+                                      'ISLOGIN',
+                                      'true',
+                                    );
+                                    navigation.replace('Dashboard', {
+                                      AddScreenBackactiveTab: 'Home',
+                                      isNavigate: true,
+                                    });
+                                  }}
+                                >
+                                  <Text
+                                    allowFontScaling={false}
+                                    style={Styles.profileloginText}
+                                  >
+                                    Start Exploring
+                                  </Text>
+                                </TouchableOpacity>
+                              </View>
                             </BlurView>
                           </View>
                         </Modal>
@@ -3009,27 +3252,64 @@ useEffect(() => {
                   ]}
                 >
                   <View style={Styles.teamsandConditionContainer}>
-                    <Text allowFontScaling={false} style={Styles.bycountuningAgreementText}>
+                    <Text
+                      allowFontScaling={false}
+                      style={Styles.bycountuningAgreementText}
+                    >
                       By continuing, you agree to our
                     </Text>
                     {/* <Text allowFontScaling={false} style={Styles.teamsandConditionText}>
                       Terms & Conditions
                     </Text> */}
                     <View style={{ alignSelf: 'flex-start' }}>
-                <Text allowFontScaling={false}  style={Styles.teamsandConditionText}>Terms & Conditions</Text>
-                <View style={{ marginLeft:5,height: 1.2, backgroundColor: 'rgba(124, 234, 255, 0.9)', marginTop: 0 }} />
-              </View>
+                      <Text
+                        allowFontScaling={false}
+                        style={Styles.teamsandConditionText}
+                      >
+                        Terms & Conditions
+                      </Text>
+                      <View
+                        style={{
+                          marginLeft: 5,
+                          height: 1.2,
+                          backgroundColor: 'rgba(124, 234, 255, 0.9)',
+                          marginTop: 0,
+                        }}
+                      />
+                    </View>
                   </View>
 
-                  <View style={[Styles.teamsandConditionContainer,{marginTop:3,paddingBottom:10}]}>
-                    <Text allowFontScaling={false} style={Styles.bycountuningAgreementText}>and</Text>
+                  <View
+                    style={[
+                      Styles.teamsandConditionContainer,
+                      { marginTop: 3, paddingBottom: 10 },
+                    ]}
+                  >
+                    <Text
+                      allowFontScaling={false}
+                      style={Styles.bycountuningAgreementText}
+                    >
+                      and
+                    </Text>
                     {/* <Text allowFontScaling={false} style={Styles.teamsandConditionText}>
                       Privacy Policy
                     </Text> */}
-                      <View style={{ alignSelf: 'flex-start' }}>
-                <Text allowFontScaling={false}  style={Styles.teamsandConditionText}>Privacy Policy</Text>
-                <View style={{ marginLeft:5,height: 1.2, backgroundColor: 'rgba(124, 234, 255, 0.9)', marginTop: 0 }} />
-              </View>
+                    <View style={{ alignSelf: 'flex-start' }}>
+                      <Text
+                        allowFontScaling={false}
+                        style={Styles.teamsandConditionText}
+                      >
+                        Privacy Policy
+                      </Text>
+                      <View
+                        style={{
+                          marginLeft: 5,
+                          height: 1.2,
+                          backgroundColor: 'rgba(124, 234, 255, 0.9)',
+                          marginTop: 0,
+                        }}
+                      />
+                    </View>
                   </View>
                 </Animated.View>
               )}

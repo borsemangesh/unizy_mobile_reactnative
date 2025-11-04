@@ -19,6 +19,7 @@
 		29AD08E1697743A1BA29E6DA /* Urbanist-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9396D41BA0D143ADA06904FA /* Urbanist-Thin.ttf */; };
 		3E23A3A99E4D4F748C9FE3E6 /* Urbanist-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 08A60E91349F4C7380ACDE20 /* Urbanist-ExtraLightItalic.ttf */; };
 		3EBDEA066D68404B80B7F9FA /* Urbanist-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 347F2ACFA0DC4A8AB8A1FE8D /* Urbanist-Regular.ttf */; };
+		5B1E9FBB2800DF185A06282A /* libPods-unizy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE144B51602C1A49E9D9B538 /* libPods-unizy.a */; };
 		6D3DFF96D7AB42489F3E24EA /* Urbanist-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F161E7939B8541CFAC62990C /* Urbanist-ExtraBold.ttf */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		7B6F803398924BB5BA43E283 /* Urbanist-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F0CBC145362441DA52837E4 /* Urbanist-ExtraLight.ttf */; };
@@ -30,7 +31,6 @@
 		BAB84B651E3845ABA7D43BA6 /* MonumentExtended-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = C9080125C4674521AB17A74C /* MonumentExtended-Regular.otf */; };
 		BC2AF0AA67D24F1494E16959 /* Urbanist-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7502A06B9FF14318853FFB1E /* Urbanist-BlackItalic.ttf */; };
 		D515B321D1C94E1FB9433D3D /* Urbanist-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 467DAA25AD9340CEB8DDB47D /* Urbanist-MediumItalic.ttf */; };
-		E01EE31F27FBE1E0F4BC2A66 /* libPods-unizy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FE42A8BBE81DD27E4D9A02B7 /* libPods-unizy.a */; };
 		F423D475E6674FC098A16448 /* Urbanist-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 51D09CC177B144B992C645A1 /* Urbanist-ExtraBoldItalic.ttf */; };
 /* End PBXBuildFile section */
 
@@ -43,14 +43,13 @@
 		167D8AFB8DD343A3A82414B5 /* Urbanist-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Urbanist-Light.ttf"; path = "../assets/fonts/Urbanist-Light.ttf"; sourceTree = "<group>"; };
 		191C21A52CC24636A5B4129A /* Urbanist-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Urbanist-Italic.ttf"; path = "../assets/fonts/Urbanist-Italic.ttf"; sourceTree = "<group>"; };
 		23295354AF354100BD19E175 /* Urbanist-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Urbanist-SemiBold.ttf"; path = "../assets/fonts/Urbanist-SemiBold.ttf"; sourceTree = "<group>"; };
-		2940A7C760179C688C5F1F95 /* Pods-unizy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-unizy.debug.xcconfig"; path = "Target Support Files/Pods-unizy/Pods-unizy.debug.xcconfig"; sourceTree = "<group>"; };
 		30256D51A47D46E1B36702D1 /* Urbanist-ThinItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Urbanist-ThinItalic.ttf"; path = "../assets/fonts/Urbanist-ThinItalic.ttf"; sourceTree = "<group>"; };
 		347F2ACFA0DC4A8AB8A1FE8D /* Urbanist-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Urbanist-Regular.ttf"; path = "../assets/fonts/Urbanist-Regular.ttf"; sourceTree = "<group>"; };
 		35C9C6245B1A440C8F4AC2C8 /* Urbanist-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Urbanist-Medium.ttf"; path = "../assets/fonts/Urbanist-Medium.ttf"; sourceTree = "<group>"; };
 		37FDF7503C724544B7B50FFF /* Urbanist-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Urbanist-Black.ttf"; path = "../assets/fonts/Urbanist-Black.ttf"; sourceTree = "<group>"; };
 		467DAA25AD9340CEB8DDB47D /* Urbanist-MediumItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Urbanist-MediumItalic.ttf"; path = "../assets/fonts/Urbanist-MediumItalic.ttf"; sourceTree = "<group>"; };
 		51D09CC177B144B992C645A1 /* Urbanist-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Urbanist-ExtraBoldItalic.ttf"; path = "../assets/fonts/Urbanist-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
-		630AAC689ACCA9D65FD81868 /* Pods-unizy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-unizy.release.xcconfig"; path = "Target Support Files/Pods-unizy/Pods-unizy.release.xcconfig"; sourceTree = "<group>"; };
+		6691BC2549DBB3EF8793FF06 /* Pods-unizy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-unizy.debug.xcconfig"; path = "Target Support Files/Pods-unizy/Pods-unizy.debug.xcconfig"; sourceTree = "<group>"; };
 		6ACD3AF3BDF8406F98D57B39 /* Urbanist-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Urbanist-Bold.ttf"; path = "../assets/fonts/Urbanist-Bold.ttf"; sourceTree = "<group>"; };
 		7502A06B9FF14318853FFB1E /* Urbanist-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Urbanist-BlackItalic.ttf"; path = "../assets/fonts/Urbanist-BlackItalic.ttf"; sourceTree = "<group>"; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = unizy/AppDelegate.swift; sourceTree = "<group>"; };
@@ -60,11 +59,12 @@
 		9396D41BA0D143ADA06904FA /* Urbanist-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Urbanist-Thin.ttf"; path = "../assets/fonts/Urbanist-Thin.ttf"; sourceTree = "<group>"; };
 		9C6E81871C094E5C80192FD6 /* Urbanist-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Urbanist-LightItalic.ttf"; path = "../assets/fonts/Urbanist-LightItalic.ttf"; sourceTree = "<group>"; };
 		B7450803C9154A379A391743 /* Urbanist-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Urbanist-BoldItalic.ttf"; path = "../assets/fonts/Urbanist-BoldItalic.ttf"; sourceTree = "<group>"; };
+		BE144B51602C1A49E9D9B538 /* libPods-unizy.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-unizy.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9080125C4674521AB17A74C /* MonumentExtended-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "MonumentExtended-Regular.otf"; path = "../assets/fonts/MonumentExtended-Regular.otf"; sourceTree = "<group>"; };
 		CA81393B666740A291840604 /* Urbanist-SemiBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Urbanist-SemiBoldItalic.ttf"; path = "../assets/fonts/Urbanist-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F161E7939B8541CFAC62990C /* Urbanist-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Urbanist-ExtraBold.ttf"; path = "../assets/fonts/Urbanist-ExtraBold.ttf"; sourceTree = "<group>"; };
-		FE42A8BBE81DD27E4D9A02B7 /* libPods-unizy.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-unizy.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F84D769082A4472CB148CE6C /* Pods-unizy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-unizy.release.xcconfig"; path = "Target Support Files/Pods-unizy/Pods-unizy.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,7 +72,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E01EE31F27FBE1E0F4BC2A66 /* libPods-unizy.a in Frameworks */,
+				5B1E9FBB2800DF185A06282A /* libPods-unizy.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,7 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				FE42A8BBE81DD27E4D9A02B7 /* libPods-unizy.a */,
+				BE144B51602C1A49E9D9B538 /* libPods-unizy.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -160,8 +160,8 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				2940A7C760179C688C5F1F95 /* Pods-unizy.debug.xcconfig */,
-				630AAC689ACCA9D65FD81868 /* Pods-unizy.release.xcconfig */,
+				6691BC2549DBB3EF8793FF06 /* Pods-unizy.debug.xcconfig */,
+				F84D769082A4472CB148CE6C /* Pods-unizy.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -173,13 +173,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "unizy" */;
 			buildPhases = (
-				BF44EFAA571E3B831B3B6494 /* [CP] Check Pods Manifest.lock */,
+				C8940B1EEA4EAEEB89A2A41A /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				4200DCB872A0898351941153 /* [CP] Embed Pods Frameworks */,
-				00B87469820C9FCE5DDBCDFD /* [CP] Copy Pods Resources */,
+				2267B0AE5422B8A2E3942A82 /* [CP] Embed Pods Frameworks */,
+				6C09278633C009C361DD03BA /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -255,23 +255,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		00B87469820C9FCE5DDBCDFD /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-unizy/Pods-unizy-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-unizy/Pods-unizy-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-unizy/Pods-unizy-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -288,7 +271,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
-		4200DCB872A0898351941153 /* [CP] Embed Pods Frameworks */ = {
+		2267B0AE5422B8A2E3942A82 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -305,7 +288,24 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-unizy/Pods-unizy-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		BF44EFAA571E3B831B3B6494 /* [CP] Check Pods Manifest.lock */ = {
+		6C09278633C009C361DD03BA /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-unizy/Pods-unizy-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-unizy/Pods-unizy-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-unizy/Pods-unizy-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C8940B1EEA4EAEEB89A2A41A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -343,27 +343,27 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2940A7C760179C688C5F1F95 /* Pods-unizy.debug.xcconfig */;
+			baseConfigurationReference = 6691BC2549DBB3EF8793FF06 /* Pods-unizy.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 9;
-				DEVELOPMENT_TEAM = 4FJ24QM539;
+				CURRENT_PROJECT_VERSION = 11;
+				DEVELOPMENT_TEAM = 6N3D53L4S2;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = unizy/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Testing UDemo";
+				INFOPLIST_KEY_CFBundleDisplayName = UniZy;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.Test123U.good.demo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.org.unizy;
 				PRODUCT_NAME = "Test UDemo";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -373,26 +373,26 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 630AAC689ACCA9D65FD81868 /* Pods-unizy.release.xcconfig */;
+			baseConfigurationReference = F84D769082A4472CB148CE6C /* Pods-unizy.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 9;
-				DEVELOPMENT_TEAM = 4FJ24QM539;
+				CURRENT_PROJECT_VERSION = 11;
+				DEVELOPMENT_TEAM = 6N3D53L4S2;
 				INFOPLIST_FILE = unizy/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Testing UDemo";
+				INFOPLIST_KEY_CFBundleDisplayName = UniZy;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.Test123U.good.demo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.org.unizy;
 				PRODUCT_NAME = "Test UDemo";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
