@@ -299,11 +299,15 @@ return (
     </View>
   </View>
 
+        
     <View style={styles.editcard}>
+      <TouchableOpacity onPress={() =>{navigation.navigate('EditProfile')}}>
           <Text allowFontScaling={false} style={styles.edittext}>Edit</Text>
+          </TouchableOpacity>
         </View>
-    </View>
+        
 
+    </View>
     
 
     <View style={styles.listContainer}>
