@@ -790,7 +790,8 @@ const handleClose = () => {
       return (
         <ScrollView
         
-          style={{ flexGrow: 0, paddingTop: 10 }}
+          style={{ flexGrow: 0, paddingTop: 10 ,
+            }}
           showsVerticalScrollIndicator={false}
         >
           {currentFilter.options.map((opt: any) => (
@@ -890,6 +891,44 @@ const handleClose = () => {
     return null;
   };
 
+  // const handleApply = () => {
+  //   const selectedFilters = filters
+  //     .map(f => {
+  //       if (f.field_type === 'dropdown' && dropdownSelections[f.id]?.length) {
+  //         return {
+  //           id: f.id,
+  //           field_name: f.field_name,
+  //           field_type: f.field_type,
+  //           alias_name: f.alias_name,
+  //           options: dropdownSelections[f.id],
+  //         };
+  //       } else if (f.alias_name?.toLowerCase() === 'price') {
+  //         return {
+  //           id: f.id,
+  //           field_name: f.field_name,
+  //           field_type: f.field_type,
+  //           alias_name: f.alias_name,
+  //           options: [priceRange.min, priceRange.max],
+  //         };
+  //       }
+  //       return null;
+  //     })
+  //     .filter(Boolean);
+
+  //   const filterBody = {
+  //     filters: selectedFilters,
+  //     page: 1,
+  //     pagesize: 10,
+  //     search: '',
+  //     category_id: catagory_id,
+  //   };
+
+  //   console.log('Selected filter body:', JSON.stringify(filterBody, null, 2));
+  //   onApply(filterBody);
+  //   onClose();
+  //  //handleClose()
+  // };
+
   const handleApply = () => {
     const selectedFilters = filters
       .map(f => {
@@ -901,7 +940,22 @@ const handleClose = () => {
             alias_name: f.alias_name,
             options: dropdownSelections[f.id],
           };
-        } else if (f.alias_name?.toLowerCase() === 'price') {
+        }
+        // else if (f.alias_name?.toLowerCase() === 'price') {
+        //   return {
+        //     id: f.id,
+        //     field_name: f.field_name,
+        //     field_type: f.field_type,
+        //     alias_name: f.alias_name,
+        //     options: [priceRange.min, priceRange.max],
+        //   };
+        // }
+        else if (f.alias_name?.toLowerCase() === 'price') {
+        const defaultMin = f.minvalue ?? 0;
+        const defaultMax = f.maxvalue ?? 100;
+ 
+        // ✅ Only submit price filter if user changed slider values
+        if (priceRange.min !== defaultMin || priceRange.max !== defaultMax) {
           return {
             id: f.id,
             field_name: f.field_name,
@@ -910,10 +964,13 @@ const handleClose = () => {
             options: [priceRange.min, priceRange.max],
           };
         }
+ 
+        return null; // ✅ Don't send price filter if unchanged
+      }
         return null;
       })
       .filter(Boolean);
-
+ 
     const filterBody = {
       filters: selectedFilters,
       page: 1,
@@ -921,7 +978,7 @@ const handleClose = () => {
       search: '',
       category_id: catagory_id,
     };
-
+ 
     console.log('Selected filter body:', JSON.stringify(filterBody, null, 2));
     onApply(filterBody);
     onClose();
@@ -968,7 +1025,7 @@ const handleClose = () => {
 
                   ]}
                   blurType="dark"
-                  blurAmount={(Platform.OS === 'ios' ? 100 : 100)}
+                  blurAmount={(Platform.OS === 'ios' ? 10 : 100)}
                   //blurAmount={Platform.OS === 'ios' ? 100 : 100}
                   pointerEvents='none'
                   reducedTransparencyFallbackColor="white"
@@ -1036,7 +1093,7 @@ const handleClose = () => {
                     ))}
                   </View>
                   <ScrollView
-                style={{ flex: 1, backgroundColor: 'rgba(255, 255, 255, 0.07)' }}
+                style={{ flex: 1, backgroundColor: (Platform.OS === 'ios' ? 'rgba(188, 200, 255, 0.19) ':'rgba(255, 255, 255, 0.07)')}}
                 contentContainerStyle={{ padding: 16, paddingBottom: 20 }}
                 showsVerticalScrollIndicator={false}
               >
@@ -1109,7 +1166,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     alignItems: 'center',
-    opacity: 0.9,
+    // opacity: 0.9,
      overflow:'hidden'
 
   },

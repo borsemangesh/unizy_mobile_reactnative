@@ -995,9 +995,9 @@ return (
           >
         
    
-            <View style={[StyleSheet.absoluteFill, { borderRadius: 30, backgroundColor: 'transparent'}]}>
+            <View style={[StyleSheet.absoluteFill, { borderRadius: 25, backgroundColor: 'transparent'}]}>
             <BlurView
-              style={[StyleSheet.absoluteFill, { borderRadius: 30, backgroundColor: 'transparent',}]}
+              style={[StyleSheet.absoluteFill, { borderRadius: 25, backgroundColor: 'transparent',}]}
               blurType='light'
               blurAmount={1.3}
               reducedTransparencyFallbackColor="rgba(15, 21 ,131,0.8)"
