@@ -184,13 +184,14 @@ const translateX = useRef(new Animated.Value(0)).current;
   }
 
   return (
-    <View style={{ width: '100%', paddingHorizontal: 16, flex: 1 }}>
+    <View style={{ width: '100%', paddingHorizontal: 16,  }}>
       {/* Header */}
       <View
         style={{
           justifyContent: 'center',
           alignItems: 'center',
-          paddingVertical: 20,
+          // paddingVertical: 20,
+          marginTop: '1.9%'
         }}
       >
         <Text allowFontScaling={false} style={styles.header}>
@@ -221,37 +222,9 @@ const translateX = useRef(new Animated.Value(0)).current;
           </TouchableOpacity>
         ))}
       </View>
-{/* <View style={styles.tabContainer}>
-     
-      <Animated.View
-        style={[
-          styles.bubble,
-          { width: tabWidth * 0.8, transform: [{ translateX }] }, // 80% width bubble
-        ]}
-      />
 
-      {tabs.map((tab) => (
-        <TouchableOpacity
-          key={tab}
-          style={[styles.tabButton, { width: tabWidth }]}
-          onPress={() => setSelectedTab(tab)}
-          activeOpacity={0.7}
-        >
-          <Text
-            allowFontScaling={false}
-            style={[
-              styles.tabText,
-              selectedTab === tab && styles.activeTabText,
-            ]}
-          >
-            {tab}
-          </Text>
-        </TouchableOpacity>
-      ))}
-    </View> */}
-      {/* Transactions */}
       <ScrollView
-        style={{ width: '100%', flex: 1 }}
+        style={{ width: '100%',}}
         showsVerticalScrollIndicator={false}
       >
         {transactions.length === 0 ? (
@@ -460,13 +433,9 @@ const styles = StyleSheet.create({
     width: '100%',
     borderStyle: 'dashed',
     borderBottomWidth: 1,
-    backgroundColor:
-      Platform.OS === 'ios'
-        ? 'rgba(9, 16, 236, 0.26)'
-        : 'rgba(9, 16, 236, 0.26)',
-    height: 1,
-    borderColor: '#FFFFFF',
-    // borderColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)'
+  
+    height: 2,
+    borderColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(19, 110, 213, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)'
   },
 
   imgcontainer: {
@@ -505,7 +474,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: 30,
     // padding: 5,
-    marginBottom: 25,
+    marginBottom: 16,
     marginTop: 15,
     padding: 5,
   },
@@ -547,7 +516,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: 15,
-    padding: 15,
+    padding: 12,
     marginBottom: 12,
     gap: 5,
   },

@@ -35,6 +35,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import MessagesScreen from './MessageScreen';
 import { Constant } from '../../utils/Constant';
 import TransactionHistoryScreen from './TransactionHistoryScreen';
+import { BlurView } from '@react-native-community/blur';
 
 const mylistings = require('../../../assets/images/mylistingicon.png');
 const mylistings1 = require('../../../assets/images/favourite.png');
@@ -939,6 +940,17 @@ return (
                 </View>
               </TouchableOpacity>
             </Animated.View>
+{/* 
+            <LiquidGlassView
+      style={[
+        { width: 200, height: 100, borderRadius: 20 },
+        !isLiquidGlassSupported && { backgroundColor: 'rgba(255,255,255,0.5)' }
+      ]}
+      interactive
+      effect="clear"
+    >
+      <Text style={{ fontWeight: '600' }}>Hello World</Text>
+    </LiquidGlassView> */}
 
             <Animated.View
               style={[
@@ -972,21 +984,35 @@ return (
           >
             <View style={{ flex: 1,paddingTop: Platform.OS === 'ios' ? 4 : 0 }}>{renderActiveTabContent()}</View>
           </ScrollView>
+
         </KeyboardAvoidingView>
+        
         <Animated.View
           style={[
-            styles.bottomTabContainer,
+            styles.bottomTabContainer,{position: 'absolute',bottom: 0},
             { transform: [{ translateY: bottomNaviationSlideupAnimation }] },
           ]}
-        >
-          {/* <View style={[StyleSheet.absoluteFill,{borderRadius: 30,backgroundColor: 'rgba(11, 9, 130, 0.84)'}]}> */}
-          {/* <BlurView
-            blurType="light"
-            blurAmount={1}
-            style={[StyleSheet.absoluteFill,{borderRadius: 30}]}
-          /> */}
-          {/* </View> */}
-          <View style={{ height: 48 }}>
+          >
+        
+   
+            <View style={[StyleSheet.absoluteFill, { borderRadius: 30, backgroundColor: 'transparent'}]}>
+            <BlurView
+              style={[StyleSheet.absoluteFill, { borderRadius: 30, backgroundColor: 'transparent',}]}
+              blurType='light'
+              blurAmount={1.3}
+              reducedTransparencyFallbackColor="rgba(15, 21 ,131,0.8)"
+              overlayColor="rgba(15, 21 ,131,0.8)"
+            >
+              <View style={{opacity: 0.4, backgroundColor: 'rgba(0, 3, 65, 0.98)', width: '100%', height: '100%',}}></View>
+
+              </BlurView>
+          </View>
+                    
+          
+          
+          <View style={[{ height: 48, }]}>
+           
+          
             <Animated.View
               style={[
                 styles.bubble,
@@ -1113,8 +1139,9 @@ const styles = StyleSheet.create({
     margin:4,
     borderColor: '#ffffff11',
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    backgroundColor: 'rgba(0, 23, 128, 0.49)',
+    // backgroundColor:
+    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderEndEndRadius: 50,
     borderStartEndRadius: 50,
     borderTopLeftRadius: 50,
@@ -1153,9 +1180,8 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: 'rgba(255, 255, 255, 0.16)',    
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18)',
-
     position: 'absolute',
-
+   
     justifyContent: 'center',
     alignItems: 'center',
     

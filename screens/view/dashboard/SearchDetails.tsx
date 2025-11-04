@@ -804,8 +804,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                   width: '100%',
                   alignItems: 'center',
                 }}
-                blurType="dark"
-                blurAmount={1000}
+                blurType="light"
+                blurAmount={5}
                 reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
               >
                 <View
@@ -883,7 +883,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                   alignItems: 'center',
                 }}
                 blurType="light"
-                blurAmount={10}
+                blurAmount={2}
                 reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
               >
                 <View

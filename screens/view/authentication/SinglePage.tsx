@@ -973,13 +973,12 @@ useEffect(() => {
 
     try {
       const otp_id = await AsyncStorage.getItem('otp_id');
-      const order_id =await AsyncStorage.getItem('otp_id')
       if (!otp_id) {
         showToast(Constant.OTP_ID_MISSING, 'error');
         return;
       }
 
-      const url = MAIN_URL.baseUrl + 'verify-post-order-otp';
+      const url = MAIN_URL.baseUrl + 'user/student-otpverify';
 
       const res = await fetch(url, {
         method: 'POST',
@@ -1022,23 +1021,23 @@ useEffect(() => {
     // Slide in OTP form (from top to 0)
     profileTranslateY.setValue(-300);
 
-    Animated.timing(verifyAndContinyTranslateY2, {
-      toValue: 300, // slide down off-screen
-      duration: 200,
-      easing: Easing.out(Easing.ease),
-      useNativeDriver: true,
-    }).start(()=>{
-  
-      setShowPopup1(false);
-      setCurrentScreen('login');
-      setcurrentScreenIninner('profile');
-      Animated.timing(profileTranslateY, {
-          toValue: 0,
-          duration: 500,
-          easing: Easing.out(Easing.ease),
-          useNativeDriver: true,
-        }).start();
-    });
+      Animated.timing(verifyAndContinyTranslateY2, {
+        toValue: 300, // slide down off-screen
+        duration: 200,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start(()=>{
+    
+        setShowPopup1(false);
+        setCurrentScreen('login');
+        setcurrentScreenIninner('profile');
+        Animated.timing(profileTranslateY, {
+            toValue: 0,
+            duration: 500,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+          }).start();
+      });
       } else {
         showToast(data?.message || 'OTP verification failed', 'error');
       }
@@ -1568,7 +1567,7 @@ useEffect(() => {
       style={{ width: '100%', height: '100%' }}
       resizeMode="cover"
     >
-      {Platform.OS === 'android' ? (
+      {/* {Platform.OS === 'android' ? (
         <>
           <BackgroundAnimation_Android />
         </>
@@ -1589,7 +1588,7 @@ useEffect(() => {
             />
           </View>
         </>
-      )}
+      )} */}
       <View
         style={{
           flex: 1,
@@ -2224,7 +2223,7 @@ useEffect(() => {
                                   width: '100%',
                                   alignItems: 'center',
                                 }}
-                                blurType="dark"
+                                blurType="light"
                                 blurAmount={Platform.OS === 'ios' ? 2 : 100}
                                 reducedTransparencyFallbackColor={
                                   Platform.OS === 'ios'
