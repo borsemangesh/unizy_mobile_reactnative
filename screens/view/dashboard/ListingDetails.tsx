@@ -90,6 +90,7 @@ const [otp, setOtp] = useState(['', '', '', '']);
     if (!token) return;
 
     const url2 = `${MAIN_URL.baseUrl}category/feature/active-inactive`;
+    console.log(url2)
     const response = await fetch(url2, {
       method: "POST",
       headers: {
@@ -106,6 +107,10 @@ const [otp, setOtp] = useState(['', '', '', '']);
 
     if (data1.message) {
       showToast(data1.message, data1.statusCode === 200 ? 'success' : 'error');
+      //navigation.goBack();
+      setTimeout(() => {
+          navigation.goBack();
+        }, 5200); 
     } else {
       showToast("Something went wrong", "error");
     }
@@ -296,7 +301,7 @@ const formatDateWithDash = (dateString?: string) => {
                 </View>
               </View>
 
-              <View style={styles.carddivider} />
+              {/* <View style={styles.carddivider} /> */}
 
               {Array.isArray(data?.buyers) &&
                 data.buyers.map((buyer: any, index: number) => (
@@ -456,9 +461,9 @@ const formatDateWithDash = (dateString?: string) => {
 
         <View style={styles.bottomview}>
           <TouchableOpacity style={styles.cancelBtn} onPress={handleDeactivate}>
-            <Text allowFontScaling={false} style={styles.cancelText}>
-              Deactivate
-            </Text>
+           <Text allowFontScaling={false} style={styles.cancelText}>
+          {data?.list?.isactive ? "Deactivate" : "Activate"}
+        </Text>
           </TouchableOpacity>
 
           <TouchableOpacity

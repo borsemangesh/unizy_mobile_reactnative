@@ -126,7 +126,12 @@ const toggleCheckbox = (id: number) => {
                 <View style={styles.optionHeader}>
                   <View style={styles.checkboxImage}>
                     <Image
-                      source={require('../../../assets/images/checkboxicon.png')}
+                    source={
+                      ismultilple
+                        ? require('../../../assets/images/checkboxicon.png')
+                        : require('../../../assets/images/radiobuttonicon.png')
+                    }
+                      // source={require('../../../assets/images/checkboxicon.png')}
                       style={{ width: 24, height: 24 }}
                     />
                   </View>

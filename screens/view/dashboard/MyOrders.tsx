@@ -387,18 +387,31 @@ const handleBookmarkPress = async (productId: number) => {
           keyExtractor={(item) => item.id.toString()}
           numColumns={2}
           columnWrapperStyle={styles.row1}
-          contentContainerStyle={styles.listContainer}
+          //contentContainerStyle={styles.listContainer}
+          contentContainerStyle={[
+            styles.listContainer,
+            filteredFeatures?.length === 0 && { alignContent:'center',alignSelf:'center' ,width:'90%',height:'90%'}
+          ]}
           renderItem={renderItem}
            ListFooterComponent={
             isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
           }
-          ListEmptyComponent={
-            !isLoading ? ( 
-              <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
-                No products found
-              </Text>
-            ) : null
-          }
+            ListEmptyComponent={
+                !isLoading ? (
+                   <View style={styles.emptyWrapper}>
+                  <View style={styles.emptyContainer}>
+                    <Image
+                      source={require('../../../assets/images/noproduct.png')} // your image
+                      style={styles.emptyImage}
+                      resizeMode="contain"
+                    />
+                    <Text allowFontScaling={false} style={styles.emptyText}>
+                      No Orders found
+                    </Text>
+                  </View>
+                  </View>
+                ) : null
+              }
         />
         </View>
       </View>
@@ -410,6 +423,41 @@ const handleBookmarkPress = async (productId: number) => {
 export default MyOrders;
 
 const styles = StyleSheet.create({
+
+
+   emptyWrapper: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      width:'100%'
+    },
+
+ 
+   emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width:'100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderWidth: 0.3,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius:24,
+    overflow:'hidden',
+    //minHeight:'80%',
+   marginBottom:20,
+  },
+  emptyImage: {
+    width: 50,
+    height: 50,
+    marginBottom: 20,
+  },
+  emptyText: {
+    fontSize: 20,
+    color: '#fff',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight:600
+  },
 
   tabcard: {
   minHeight:38,

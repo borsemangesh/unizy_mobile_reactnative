@@ -1,6 +1,7 @@
 import { BlurView } from "@react-native-community/blur";
 import React from "react";
 import { View, Text, Image, StyleSheet, ImageSourcePropType, Platform, Dimensions, Touchable, TouchableOpacity } from "react-native";
+import LinearGradient from "react-native-linear-gradient";
 
 type ProductCardProps = {
   tag: string;
@@ -46,6 +47,15 @@ export default function ProductCard({
                   blurAmount={100}
                   style={StyleSheet.absoluteFillObject}
                 />
+
+<LinearGradient
+          colors={[
+            'rgba(0, 1, 102, 0.20)',   // center strong blue tint
+            'rgba(0, 1, 102, 0.024)'  // outer faint blue tint
+          ]}
+          style={StyleSheet.absoluteFillObject}
+          useAngle={false} // radial
+        />
           <TouchableOpacity onPress={onBookmarkPress}>
            <Image
               source={

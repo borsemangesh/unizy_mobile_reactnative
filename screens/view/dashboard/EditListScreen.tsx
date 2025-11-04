@@ -97,6 +97,8 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   const route = useRoute<AddScreenRouteProp>();
   const { productId, productName, shareid } = route.params;
 
+  const [newdate, setNewDate] = useState('');
+
     const [deletedImageIds, setDeletedImageIds] = useState<string[]>([]);
 
 
@@ -310,6 +312,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
     
         if (json?.data) {
           const data = json.data;
+          setNewDate(data.createdat);
           const initialValues: any = {};
     
           // --- Basic Fields ---
@@ -681,6 +684,16 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
     });
 
     console.log(`Deleted image with ID: ${fileId}`);
+  };
+
+
+  const formatDateWithDash = (dateString?: string) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
   };
 
   const renderField = (field: any) => {
@@ -1218,7 +1231,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                         style={{ height: 20, width: 20 }}
                       />
                       <Text allowFontScaling={false} style={styles.userSub1}>
-                        {getCurrentDate()}
+                      {formatDateWithDash(newdate)}
                       </Text>
                     </View>
                   </View>

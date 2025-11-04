@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Image,
   ImageBackground,
@@ -12,6 +12,7 @@ import {
   StatusBar,
   ActivityIndicator,
   ImageSourcePropType,
+  Pressable,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -86,6 +87,10 @@ const [isLoading, setIsLoading] = useState(false);
 const [hasMore, setHasMore] = useState(true); // whether more pages exist
 const [isFilterVisible, setFilterVisible] = useState(false);
 const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
+const inputRef = useRef<TextInput>(null);
+const [appliedFilter, setAppliedFilter] = useState(null);
+
+
 
   useEffect(() => {
   const loadBookmarks = async () => {
@@ -99,17 +104,41 @@ const clickfilter = () => {
   setFilterVisible(true);
 };
 
-  // useEffect(() => {
-  //   displayListOfProduct();
-  // }, []);
+function debounce<T extends (...args: any[]) => void>(func: T, delay: number) {
+  let timeout: ReturnType<typeof setTimeout>;
+  return (...args: Parameters<T>) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), delay);
+  };
+}
+const debouncedSearch = useRef(
+  debounce((text: string) => {
+    setPage(1);
+    setHasMore(true);
+    //displayListOfProduct(1); 
+    displayListOfProduct(1, text);
+  }, 50)
+).current;
 
-  useFocusEffect(
+
+
+useFocusEffect(
   useCallback(() => {
-    displayListOfProduct(); // refresh whenever screen regains focus
-  }, [])
+    if (appliedFilter) {
+      // ✅ just fetch with filter
+      displayListOfProduct(1, appliedFilter);
+    } else {
+      // ✅ only clear if NO filter
+      setPage(1);
+      setHasMore(true);
+      setFeaturelist([]);
+      displayListOfProduct(1,search);
+    }
+  }, [appliedFilter])
 );
 
-  const displayListOfProduct = async (pageNum: number = 1) => {
+
+  const displayListOfProduct = async (pageNum: number = 1,searchText = search,filterBody = appliedFilter) => {
   if (isLoading || !hasMore) return;
 
   try {
@@ -121,6 +150,8 @@ const clickfilter = () => {
       pagesize: 20,
       category_id: category_id,
     };
+
+    console.log(body)
 
     const url = MAIN_URL.baseUrl + 'category/feature-list/search';
     const token = await AsyncStorage.getItem('userToken');
@@ -326,12 +357,17 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
 
 const handleFilterApply = async (filterBody: any) => {
   try {
+    setAppliedFilter(filterBody); 
     setIsLoading(true);
-
+    setFeaturelist([]); 
     const token = await AsyncStorage.getItem('userToken');
     if (!token) return;
 
+    
+
     const url = `${MAIN_URL.baseUrl}category/filter-apply`;
+
+    console.log(url)
 
     //const url = 'http://65.0.99.229:4320/category/filter-apply';
 
@@ -385,17 +421,28 @@ const handleFilterApply = async (filterBody: any) => {
 
         {/* Search Bar */}
         <View style={{ flexDirection: 'row', paddingHorizontal: 16 }}>
-          <View style={styles.search_container}>
+         
+          <Pressable
+            style={styles.search_container}
+            onPress={() => inputRef.current?.focus()}>
+
             <Image source={searchIcon} style={styles.searchIcon} />
             <TextInput
+              ref={inputRef}
               allowFontScaling={false}
               style={styles.searchBar}
               placeholder="Search"
               placeholderTextColor="#ccc"
-              onChangeText={setSearch}
+              //onChangeText={setSearch}
+              onChangeText={(text) => {
+                setSearch(text);
+                debouncedSearch(text);
+              }}
               value={search}
             />
-          </View>
+            </Pressable>
+          
+          
           <View>
             <TouchableOpacity
               onPress={() => {
@@ -414,7 +461,11 @@ const handleFilterApply = async (filterBody: any) => {
         keyExtractor={item => item.id.toString()}
         numColumns={2}
         columnWrapperStyle={styles.row1}
-        contentContainerStyle={styles.listContainer}
+        //contentContainerStyle={styles.listContainer}
+        contentContainerStyle={[
+            styles.listContainer,
+            featurelist?.length === 0 && { alignContent:'center',alignSelf:'center' ,width:'90%',height:'90%'}
+          ]}
         renderItem={renderItem}
         onEndReached={() => displayListOfProduct(page)} // fetch next page
         onEndReachedThreshold={0.5} // adjust when to trigger
@@ -422,24 +473,30 @@ const handleFilterApply = async (filterBody: any) => {
             isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
           }
           ListEmptyComponent={
-            !isLoading ? ( // ✅ only show if not loading
-              <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
-                No products found
-              </Text>
-            ) : null
-          }
+                          !isLoading ? (
+                             <View style={styles.emptyWrapper}>
+                            <View style={styles.emptyContainer}>
+                              <Image
+                                source={require('../../../assets/images/noproduct.png')} // your image
+                                style={styles.emptyImage}
+                                resizeMode="contain"
+                              />
+                              <Text allowFontScaling={false} style={styles.emptyText}>
+                                No Listings found
+                              </Text>
+                            </View>
+                            </View>
+                          ) : null
+                        }
           />
       </View>
 
-      {/* <FilterBottomSheet
-        catagory_id={category_id}
-        visible={isFilterVisible}
-        onClose={() => setFilterVisible(false)}
-      /> */}
       <FilterBottomSheet
         catagory_id={category_id}
         visible={isFilterVisible}
-        onClose={() => setFilterVisible(false)}
+        initialFilters={appliedFilter} 
+        //onClose={handleFilterClose}
+       onClose={() => setFilterVisible(false)}
         onApply={(filterBody) => handleFilterApply(filterBody)} from={0} to={0}/>
     <NewCustomToastContainer/>
     </ImageBackground>
@@ -449,8 +506,48 @@ const handleFilterApply = async (filterBody: any) => {
 export default ProductDetails;
 
 const styles = StyleSheet.create({
-  background: { flex: 1, width: '100%', height: '100%' },
-  fullScreenContainer: { flex: 1 },
+
+   emptyWrapper: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      width:'100%'
+    },
+
+ 
+   emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width:'100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderWidth: 0.3,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius:24,
+    overflow:'hidden',
+    //minHeight:'80%',
+   marginBottom:20,
+  },
+  emptyImage: {
+    width: 50,
+    height: 50,
+    marginBottom: 20,
+  },
+  emptyText: {
+    fontSize: 20,
+    color: '#fff',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight:600
+  },
+  background: {
+     flex: 1, 
+     width: '100%',
+      height: '100%' 
+    },
+  fullScreenContainer: { 
+    flex: 1
+   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : 50,
     paddingBottom: 12,

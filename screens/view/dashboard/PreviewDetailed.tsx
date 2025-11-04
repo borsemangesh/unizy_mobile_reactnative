@@ -1,485 +1,422 @@
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  View,
-  Text,
-  ImageBackground,
-  Platform,
   Image,
+  ImageBackground,
+  Text,
+  TextInput,
+  View,
   TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  Animated,
-  Modal,
-  Dimensions,
   FlatList,
-  SafeAreaView,
+  Platform,
+  StyleSheet,
+  StatusBar,
+  ActivityIndicator,
+  ImageSourcePropType,
+  Pressable,
 } from 'react-native';
-import { Key, useEffect, useRef, useState } from 'react';
-import { BlurView } from '@react-native-community/blur';
-import { showToast } from '../../utils/toast';
-import { MAIN_URL } from '../../utils/APIConstant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { CommonActions } from '@react-navigation/native';
-import Button from '../../utils/component/Button';
+import { MAIN_URL } from '../../utils/APIConstant';
+
+const bgImage = require('../../../assets/images/backimg.png');
+const searchIcon = require('../../../assets/images/searchicon.png');
+import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
+import SearchListProductCard from '../../utils/SearchListProductCard';
+import FilterBottomSheet from '../../utils/component/FilterBottomSheet';
+import SearchTutionCard from '../../utils/SearchTutionCard';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
+import SeperateTutionCard from '../../utils/SeperateTutitionCard';
+type CreatedBy = {
+  id: number;
+  firstname: string;
+  lastname: string;
+  email: string;
+  postal_code: string;
+  password: string;
+  student_email: string;
+  university_name: string | null;
+  profile: string;
+  reset_password_token: string | null;
+  reset_password_expires: string | null;
+  isactive: boolean;
+  created_at: string;
+  updated_at: string;
+  role_id: number;
+};
+type university={
+  id:number,
+  name:string
+}
 
+type Feature = {
+  id: number;
+  created_by: number;
+  category_id: number;
+  created_at: any;
+  updated_at: string;
+  isactive: boolean;
+  isfeatured: boolean;
+  title: string;
+  price: number;
+  thumbnail: string;
+  profileshowinview: boolean
+  createdby: CreatedBy;
+  university:university;
+  isbookmarked:boolean
+};
 
-type previewDetailsProps = {
+type ProductDetailsProps = {
   navigation: any;
 };
 
-const { width } = Dimensions.get('window');
+type RootStackParamList = {
+  ProductDetails: { category_id: number ,category_name:string};
+};
 
-const profileImg = require('../../../assets/images/user.jpg');
+type ProductDetailsRouteProp = RouteProp<RootStackParamList, 'ProductDetails'>;
+const mylistings = require('../../../assets/images/filter_icon.png');
 
-const itemOptions = [
-  { id: 1, option_name: 'New' },
-  { id: 2, option_name: 'Like new' },
-  { id: 3, option_name: 'Used' },
-];
+const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
+  const [featurelist, setFeaturelist] = useState<Feature[]>([]);
+  const [search, setSearch] = useState<string>('');
+  const route = useRoute<ProductDetailsRouteProp>();
+  const { category_id } = route.params;
+  const {category_name} =route.params;
+
+const [page, setPage] = useState(1);
+const [isLoading, setIsLoading] = useState(false);
+const [hasMore, setHasMore] = useState(true); // whether more pages exist
+const [isFilterVisible, setFilterVisible] = useState(false);
+const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
+const inputRef = useRef<TextInput>(null);
+const [appliedFilter, setAppliedFilter] = useState(null);
 
 
-const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
-  const [showPopup, setShowPopup] = useState(false);
-  const closePopup = () => setShowPopup(false);
-  const [scrollY, setScrollY] = useState(0);
-  const scrollY1 = new Animated.Value(0);
-
-  const [storedForm, setStoredForm] = useState<any | null>(null);
-  const screenWidth = Dimensions.get('window').width;
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
-  const insets = useSafeAreaInsets(); // Safe area insets
-  const { height: screenHeight } = Dimensions.get('window');
-
-  const [fields, setFields] = useState<any[]>([]); // seller fields from API
-  const today = new Date();
-
-// Format as DD-MM-YYYY
-const formattedDate = `${today.getDate().toString().padStart(2, '0')}-${(today.getMonth() + 1)
-  .toString()
-  .padStart(2, '0')}-${today.getFullYear()}`;
-
-interface Category {
-  id: number;
-  name: string;
-  description: string | null;
-  isactive: boolean;
-  logo: string | null;
-  commission: string | null;
-  max_cappund: string | null;
-  feature_fee:string | null
-  max_feature_cap: |null,
-}
-
-  interface UserMeta {
-    firstname: string | null;
-    lastname: string | null;
-    profile: string | null;
-    student_email: string | null;
-    university_name:string|null
-    category?: Category | null;
-  }
-
-  const flatListRef = useRef(null);
 
   useEffect(() => {
-    const fetchStoredData = async () => {
-      try {
-        const storedData = await AsyncStorage.getItem('formData');
-        if (storedData) {
-          const parsedData = JSON.parse(storedData);
-          console.log('Stored Form Data:', parsedData);
-          setStoredForm(parsedData);
-        } else {
-          console.log('No form data found');
-        }
-      } catch (error) {
-        console.log('Error reading form data: ', error);
-      }
-    };
-
-    fetchStoredData();
-  }, []);
-
-    useEffect(() => {
-    const loadUserMeta = async () => {
-      try {
-        const metaStr = await AsyncStorage.getItem('userMeta');
-        if (metaStr) {
-          const meta: UserMeta = JSON.parse(metaStr);
-          setUserMeta(meta);
-        }
-      } catch (error) {
-        console.log('Error loading userMeta', error);
-      }
-    };
-
-    loadUserMeta();
-  }, []);
-
-  
-
-
-  type FormEntry = {
-  value: any;
-  alias_name: string | null;
-};
-
-const getValueByAlias = (
-  formData: Record<string, FormEntry> | null,
-  alias: string
-): any => {
-  if (!formData) return null;
-
-  const entry = Object.values(formData).find(
-    (item) => item.alias_name === alias
-  ) as FormEntry | undefined;
-
-  return entry ? entry.value : null;
-};
-
-const titleValue = getValueByAlias(storedForm, 'title') || 'No Title';
-//const priceValue = getValueByAlias(storedForm, 'price') || '0';
-const descriptionvalue= getValueByAlias(storedForm,'description') || 'No Description'
-
-
-
-  const onScroll = (event: {
-    nativeEvent: { contentOffset: { x: number } };
-  }) => {
-    const slideSize = screenWidth;
-    const index = Math.round(event.nativeEvent.contentOffset.x / slideSize);
-    setActiveIndex(index);
+  const loadBookmarks = async () => {
+    const saved = await AsyncStorage.getItem('bookmarkedIds');
+    if (saved) setBookmarkedIds(JSON.parse(saved));
   };
+  loadBookmarks();
+}, []);
 
-   useEffect(() => {
-    const fetchFields = async () => {
-      try {
-        const token = await AsyncStorage.getItem('userToken');
-        const productId1 = await AsyncStorage.getItem('selectedProductId');
-        if (!token) {
-          console.log('No token found');
-          return;
-        }
+const clickfilter = () => {
+  setFilterVisible(true);
+};
 
-        const url = `${MAIN_URL.baseUrl}category/listparams/user/${productId1}`;
+function debounce<T extends (...args: any[]) => void>(func: T, delay: number) {
+  let timeout: ReturnType<typeof setTimeout>;
+  return (...args: Parameters<T>) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), delay);
+  };
+}
+const debouncedSearch = useRef(
+  debounce((text: string) => {
+    setPage(1);
+    setHasMore(true);
+    //displayListOfProduct(1); 
+    displayListOfProduct(1, text);
+  }, 350)
+).current;
 
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+useEffect(() => {
+  if (appliedFilter) {
+    console.log("🎯 Filter active, fetching filtered data...");
+    setPage(1);
+    setHasMore(true);
+    setFeaturelist([]);
+    handleFilterApply(appliedFilter);
+  }
+}, [appliedFilter]);
 
-        const json = await response.json();
+useFocusEffect(
+  useCallback(() => {
+    if (appliedFilter) {
+      console.log("🔁 Returning with filter active — keeping filter results");
+      return;
+    }
 
-        if (json?.metadata) {
-          setUserMeta({
-            firstname: json.metadata.firstname ?? null,
-            lastname: json.metadata.lastname ?? null,
-            profile: json.metadata.profile ?? null,
-            student_email: json.metadata.student_email ?? null,
-            university_name:json.metadata.university_name ?? null,
-            category: json.metadata.category ?? null,
-          });
+    console.log("📍 No filter — normal fetch on focus");
+    setPage(1);
+    setHasMore(true);
+    setFeaturelist([]);
+    displayListOfProduct(1, search);
+  }, [appliedFilter])
+);
+  const displayListOfProduct = async (
+  pageNum: number = 1,
+  searchText: string = search,
+  filterBody = appliedFilter,
+) => {
+  if (isLoading || !hasMore) return;
 
-          await AsyncStorage.setItem(
-            'userMeta',
-            JSON.stringify({
-              firstname: json.metadata.firstname ?? null,
-              lastname: json.metadata.lastname ?? null,
-              profile: json.metadata.profile ?? null,
-              student_email: json.metadata.student_email ?? null,
-              university_name:json.metadata.university_name ?? null,
-              category: json.metadata.category ?? null,
-            }),
-          );
-        }
+  try {
+    setIsLoading(true);
 
-        if (json?.data) {
-          const sellerFields = json.data.filter(
-            (item: any) => item.seller === true,
-          );
-          setFields(sellerFields);
-        }
-      } catch (err) {
-        console.log('Error fetching fields', err);
-      } finally {
-        //setLoading(false);
-      }
+    const body = {
+      search: searchText,
+      page: pageNum,
+      pagesize: 20,
+      category_id: category_id,
     };
 
-    fetchFields();
-  }, []);
+    console.log(body)
 
-
-
-  type ImageField = {
-  id?: string;
-  uri: string;
-  name: string;
-  type?: string;
-};
-
-const handleListPress = async () => {
-  try {
-    const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
-    const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
-
-    if (isFeatured) {
-      navigation.navigate('PaymentScreen', {
-        amount: diff1, 
-        feature_id:1,
-        nav:'add',
-        onSuccess: async () => {
-          await listProduct();
-        },
-      });
-    } else {
-      await listProduct(); 
-    }
-  } catch (e) {
-    console.log('Error parsing storedForm:', e);
-  }
-};
-
-const listProduct = async () => {
-  console.log('🔵 handleListPress called');
- //setShowPopup(true);
-  try {
-
-
-    // const data = await AsyncStorage.getItem("last_payment");
-    // if (!data) {
-    //       console.log("No payment data found");
-    //       return null;
-    //   }
-
-
-    // const paymentData = JSON.parse(data);
-
-    const paymentintent_id= await AsyncStorage.getItem("paymentintent_id");
-
-
-    console.log('Step 1: Fetching formData from AsyncStorage...');
-    const storedData = await AsyncStorage.getItem('formData');
-    console.log('✅ AsyncStorage.getItem(formData) result:', storedData);
-
-    if (!storedData) {
-      console.log('⚠️ No form data found in storage');
-      showToast('No form data found');
-      return;
-    }
-
-    const formData: Record<
-      string,
-      { value: any; alias_name: string | null }
-    > = JSON.parse(storedData);
-    console.log('✅ Parsed formData:', formData);
-
-    console.log('Step 2: Fetching userToken...');
+    const url = MAIN_URL.baseUrl + 'category/feature-list/search';
     const token = await AsyncStorage.getItem('userToken');
-    const productId1 = await AsyncStorage.getItem('selectedProductId');
+    if (!token) return;
 
-    if (!token) {
-      console.log('⚠️ Token not found. Cannot upload.');
-      return;
-    }
-
-    console.log('Step 3: Splitting formData...');
-
-    const imageFields = Object.entries(formData)
-      .filter(([key, obj]) => {
-        const v = obj.value;
-        return (
-          Array.isArray(v) &&
-          v.length > 0 &&
-          v.every((item: any) => item?.uri)
-        );
-      })
-      .map(([key, obj]) => [key, obj.value as ImageField[]]) as [
-      string,
-      ImageField[]
-    ][];
-
-    const nonImageFields = Object.entries(formData).filter(([key, obj]) => {
-      const v = obj.value;
-      return !(Array.isArray(v) && v.every((item: any) => item?.uri));
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
     });
 
-    console.log('✅ Non-image fields:', nonImageFields);
-    console.log('✅ Image fields:', imageFields);
+    const jsonResponse = await response.json();
+    console.log('API Response:', jsonResponse);
 
-    const dataArray = nonImageFields.map(([key, obj]) => ({
-      id: Number(key),
-      param_value: obj.value, // now take .value
-    }));
+    if (jsonResponse.statusCode === 200) {
+      const newFeatures = jsonResponse.data.features;
 
-    console.log('✅ Data array for create API:', dataArray);
-
-    //  const createPayload = {
-    //   category_id: productId1, 
-    //   data: dataArray,
-    // };
-
-    const createPayload = {
-      category_id: productId1, 
-      data: dataArray,
-      //paymentintent_id: paymentData.transactionId, 
-      paymentintent_id:paymentintent_id,
-      savecard: true,
-      //status: paymentData.status, 
-      featureamount:diff1
-    };
-
-    console.log('Step 5: Calling create API with payload:', createPayload);
-
-    const createRes = await fetch(
-      `${MAIN_URL.baseUrl}category/featurelist/create`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(createPayload),
-      },
-    );
-
-    console.log(`✅ Create API status: ${createRes.status}`);
-    const createJson = await createRes.json();
-    console.log('✅ Create API response:', createJson);
-
-    if (!createRes.ok) {
-      showToast('Failed to create feature list');
-      return;
-    }
-
-    const feature_id = createJson?.data?.id;
-    if (!feature_id) {
-      console.log('❌ feature_id not returned from create API.');
-      showToast('feature_id missing in response');
-      return;
-    }
-    console.log('✅ feature_id from create API:', feature_id);
-
-    for (const [param_id, images] of imageFields) {
-      console.log(`Step 7: Uploading images for param_id=${param_id}`);
-
-      for (const image of images) {
-        console.log(
-          `🟡 Preparing upload for image under param_id=${param_id}:`,
-          image,
-        );
-
-        const data = new FormData();
-        data.append('files', {
-          uri: image.uri,
-          type: image.type || 'image/jpeg',
-          name: image.name,
-        } as any);
-        data.append('feature_id', feature_id); 
-        data.append('param_id', param_id);
-
-        console.log('✅ FormData prepared for upload');
-
-        const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-upload`;
-        console.log(
-          `Step 7: Uploading image ${image.name} with param_id=${param_id} to ${uploadUrl}`,
-        );
-
-        const uploadRes = await fetch(uploadUrl, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`, 
-          },
-          body: data,
-        });
-
-        console.log(`✅ Upload completed. Status: ${uploadRes.status}`);
-        const uploadJson = await uploadRes.json();
-        console.log('✅ Upload response JSON:', uploadJson);
-
-        if (!uploadRes.ok) {
-          console.log(
-            `❌ Upload failed for ${image.name} (param_id=${param_id})`,
-          );
-          showToast(`Failed to upload image ${image.name}`);
-        } else {
-          console.log(
-            `✅ Upload success for ${image.name} (param_id=${param_id})`,
-          );
-        }
+      if (pageNum === 1) {
+        setFeaturelist(newFeatures);
+      } else {
+        setFeaturelist(prev => [...prev, ...newFeatures]);
       }
-    }
 
-    console.log('✅ All uploads done. Showing toast.');
-    showToast('All data uploaded successfully');
-    setShowPopup(true);
-  } 
-  catch (error) {
-    console.log('❌ Error in handleListPress:', error);
-    showToast('Error uploading data');
+      setHasMore(newFeatures.length === 20); 
+      setPage(prev => prev + 1);
+    }
+    if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
+          setIsLoading(false);
+          navigation.reset({
+          index: 0,
+          routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+        });
+        }
+  } catch (err) {
+    console.log('Error:', err);
+  } finally {
+    setIsLoading(false);
   }
 };
 
-const getCurrentDate = () => {
-  const today = new Date();
-  return `${String(today.getDate()).padStart(2, '0')}-${String(
-    today.getMonth() + 1
-  ).padStart(2, '0')}-${today.getFullYear()}`;
+// const handleBookmarkPress = async (productId: number) => {
+//   try {
+//     const token = await AsyncStorage.getItem('userToken');
+//     if (!token) return;
+
+//     const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
+
+//     const url = MAIN_URL.baseUrl + 'category/list-bookmark';
+//     const response = await fetch(url, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': `Bearer ${token}`,
+//       },
+//       body: JSON.stringify({ feature_id: productId }),
+//     });
+
+//     if (!response.ok) {
+//       throw new Error(`HTTP error! status: ${response.status}`);
+//     }
+
+//     const data = await response.json();
+//     console.log('Bookmark response:', data);
+
+//     let updatedBookmarks;
+//     if (isCurrentlyBookmarked) {
+//       updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
+//     } else {
+//       updatedBookmarks = [...bookmarkedIds, productId];
+//     }
+
+//     setBookmarkedIds(updatedBookmarks);
+//     await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks)); // persist locally
+
+//   } catch (error) {
+//     console.error('Bookmark error:', error);
+//   }
+// };
+
+const handleBookmarkPress = async (productId: number) => {
+  try {
+    setFeaturelist(prevList =>
+      prevList.map(item =>
+        item.id === productId
+          ? { ...item, isbookmarked: !item.isbookmarked } // toggle local bookmark
+          : item
+      )
+    );
+
+    // 2️⃣ Send API request
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) return;
+
+    const url = MAIN_URL.baseUrl + 'category/list-bookmark';
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ feature_id: productId }),
+    });
+
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+    const data = await response.json();
+    console.log('Bookmark response:', data);
+
+  } catch (error) {
+    console.error('Bookmark error:', error);
+
+    // 3️⃣ Revert if API fails
+    setFeaturelist(prevList =>
+      prevList.map(item =>
+        item.id === productId
+          ? { ...item, isbookmarked: !item.isbookmarked }
+          : item
+      )
+    );
+  }
 };
 
- const getInitials = (firstName = '', lastName = '') => {
-  const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
-  const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
-  return (f + l) || '?';
-};
-
-
-const raw = getValueByAlias(storedForm, 'price') ?? '0';
-const priceValue = parseFloat(String(raw)) || 0;
-
-const commissionPercent = parseFloat(userMeta?.category?.commission ?? '0');
-const maxCap = parseFloat(userMeta?.category?.max_cappund ?? '0');
-
-const commissionAmount = priceValue * (commissionPercent / 100);
-const calculatedPrice = priceValue + commissionAmount;
-const maxAllowedPrice = priceValue + maxCap;
-const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(2);
-
-
-const raw1 = getValueByAlias(storedForm, 'price') ?? '0';
-const priceValue1 = parseFloat(String(raw1)) || 0;
-
-const commissionPercent1 = parseFloat(userMeta?.category?.feature_fee ?? '0');
-const maxCap1 = parseFloat(userMeta?.category?.max_feature_cap ?? '0');
-
-const commissionAmount1 = priceValue1 * (commissionPercent1 / 100);
-const calculatedPrice1 = priceValue1 + commissionAmount1;
-const maxAllowedPrice1 = priceValue1 + maxCap1;
-const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2);
-const diff1 =commissionPrice1-priceValue1
   
+  const filteredFeatures: Feature[] = featurelist.filter((item) =>
+    item.title?.toLowerCase().includes(search.toLowerCase())
+  );
+
+
+const renderItem = ({ item, index }: { item: Feature; index: number }) => {
+  const isLastOddItem =
+    filteredFeatures.length % 2 !== 0 &&
+    index === filteredFeatures.length - 1;
+
+ let productImage: ImageSourcePropType | null = null;
+  let showInitials = false;
+  let initials = '';
+
+  if (item.profileshowinview) {
+    if (item.createdby?.profile) {
+      productImage = { uri: item.createdby.profile };
+    } else {
+      showInitials = true;
+      initials = `${item.createdby?.firstname?.[0] ?? ''}${item.createdby?.lastname?.[0] ?? ''}`;
+    }
+  } else {
+    if (item.thumbnail) {
+      productImage = { uri: item.thumbnail };
+    } else {
+      productImage = require('../../../assets/images/drone.png');
+    }
+  }
+  return (
+    <View
+      style={[
+        styles.itemContainer,
+        { flex: isLastOddItem ? 0.5 : 0.5, marginRight: isLastOddItem ? 0.5 : 0.5 },
+      ]}
+    >
+
+
+
+      <TouchableOpacity
+        onPress={() =>{
+          navigation.navigate('SearchDetails', { id: item.id ,name:category_name},{animation: 'none'})}
+          
+        }
+        style={{ flex: 1 }}
+      >
+        {item.profileshowinview ? (
+        <SeperateTutionCard
+           tag={item.university?.name || 'University of Warwick'}
+          infoTitle={item.title}
+          inforTitlePrice={`£ ${item.price}`}
+          rating={item.isfeatured ? '4.5' : '4.5'}
+          showInitials={showInitials}
+          initialsName={initials.toUpperCase()}
+          productImage={item.createdby?.profile ? { uri: item.createdby.profile } : undefined}
+          bookmark={item.isbookmarked}
+          //bookmark={bookmarkedIds.includes(item.id)} 
+          isfeature={item.isfeatured}
+          applybookmark={() => handleBookmarkPress(item.id)}
+        />
+      ) : (
+        <SearchListProductCard
+           tag={item.university?.name || 'University of Warwick'}
+          infoTitle={item.title}
+          inforTitlePrice={`£ ${item.price}`}
+          rating={item.isfeatured ? '4.5' : '4.5'}
+          productImage={productImage ?? require('../../../assets/images/drone.png')}
+          bookmark={item.isbookmarked}
+          //bookmark={bookmarkedIds.includes(item.id)} 
+          isfeature={item.isfeatured}
+          applybookmark={() => handleBookmarkPress(item.id)}
+        />
+      )}
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const handleFilterApply = async (filterBody: any) => {
+  try {
+    setAppliedFilter(filterBody); 
+    setIsLoading(true);
+    setFeaturelist([]); 
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) return;
+
+    
+
+    const url = `${MAIN_URL.baseUrl}category/filter-apply`;
+
+    console.log(url)
+
+    //const url = 'http://65.0.99.229:4320/category/filter-apply';
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(filterBody),
+    });
+
+    const jsonResponse = await response.json();
+    console.log('Filter Apply Response:', jsonResponse);
+
+    if (jsonResponse.statusCode === 200) {
+      const filteredFeatures = jsonResponse.data.features;
+      setFeaturelist(filteredFeatures);
+      setHasMore(filteredFeatures.length === 20);
+      setPage(2);
+    }
+  } catch (err) {
+    console.log('Error applying filters:', err);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
-    <ImageBackground
-      source={require('../../../assets/images/backimg.png')}
-      style={{ width: '100%', height: '100%' }}
-      resizeMode="cover"
-    >
+    <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
+        {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerRow}>
-            <TouchableOpacity
-              style={styles.backBtn}
-              onPress={() => navigation.replace('PreviewThumbnail')}>
+            <TouchableOpacity onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})}}>
+          
+            
               <View style={styles.backIconRow}>
                 <Image
                   source={require('../../../assets/images/back.png')}
@@ -487,806 +424,158 @@ const diff1 =commissionPrice1-priceValue1
                 />
               </View>
             </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>Preview Details</Text>
-          </View>
-        </View>
-{/* 
-     <ScrollView
-          contentContainerStyle={styles.scrollContainer}
-          onScroll={Animated.event([
-            {
-              nativeEvent: { contentOffset: { y: scrollY1 } },
-            },
-          ])}
-          scrollEventThrottle={16}
-        > */}
-        <ScrollView
-            contentContainerStyle={[
-             styles.scrollContainer,
-               {
-               paddingBottom: screenHeight * 0.1 + insets.bottom, // 10% of screen + safe area
-                },
-            ]}
-             scrollEventThrottle={16}
-            >
-       {storedForm?.[6]?.value?.length > 1 ? (
-          <View>
-            <FlatList
-              ref={flatListRef}
-              data={storedForm[6].value}
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              keyExtractor={(item, index) => index.toString()}
-              onScroll={onScroll}
-              scrollEventThrottle={16}
-              renderItem={({ item }) => (
-                <Image
-                  source={{ uri: item.uri }}
-                  style={{ width: screenWidth, height: 250 }}
-                  resizeMode="cover"
-                />
-              )}
-            />
+            <Text allowFontScaling={false} style={styles.unizyText}>{`${category_name}s`}</Text>
 
-            {/* Custom Step Indicator */}
-            <View style={styles.stepIndicatorContainer}>
-              {storedForm[6].value.map((_: any, index: number) => {
-                const isActive = index === activeIndex;
-                return (
-                  <View
-                    key={index}
-                    style={
-                      isActive
-                        ? styles.activeStepCircle
-                        : styles.inactiveStepCircle
-                    }
-                  />
-                );
-              })}
-            </View>
-          </View>
-        ) : (
-          <Image
-            source={
-              storedForm?.[6]?.value?.[0]?.uri
-                ? { uri: storedForm[6].value[0].uri }
-                : require('../../../assets/images/drone.png')
-            }
-            style={{ width: '100%', height: 250 }}
-            resizeMode="cover"
-          />
-        )}
-                  <View style={{ flex: 1, padding: 16 }}>
-            <View style={styles.card}>
-              <View style={{ gap: 8 }}>
-                <Text allowFontScaling={false} style={styles.QuaddText}>
-                  {titleValue}
-                </Text>
-
-                <Text allowFontScaling={false} style={styles.priceText}>
-                  {`$${commissionPrice}`}
-                </Text>
-              </View>
-              <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'flex-start',
-                  gap: 2,
-                  alignSelf: 'stretch',
-                }}
-              >
-                <Text allowFontScaling={false} style={styles.productDesHeding}>Product Description</Text>
-                <Text allowFontScaling={false} style={styles.productDesc}>
-                  {descriptionvalue}
-                </Text>
-
-                <View style={styles.datePosted}>
-                  <Image
-                    source={require('../../../assets/images/calendar_icon.png')}
-                    style={{ height: 16, width: 16 }}
-                  />
-                  <Text allowFontScaling={false} style={styles.userSub}>Date Posted: {getCurrentDate()}</Text>
-                </View>
-              </View>
-            </View>
-
-          <View style={styles.card}>
-          <View style={styles.gap12}>
-            <Text allowFontScaling={false} style={styles.productDeatilsHeading}>Product Details</Text>
-
-            <View style={{ gap: 12 }}>
-              {fields.map(field => {
-                const fieldId = field.param.id;
-
-                // Skip Title, Description, Price, Images, Featured
-                const skipAliases = ['title', 'description', 'price'];
-                if (
-                  skipAliases.includes(field.param.alias_name ?? '') ||
-                  ['Image', 'boolean'].includes(field.param.field_type)
-                )
-                  return null;
-
-                const storedValue = storedForm?.[fieldId]?.value;
-                if (storedValue == null) return null;
-
-                let displayValues: string[] = [];
-
-                if (field.param.field_type === 'dropdown') {
-                  if (Array.isArray(storedValue)) {
-                    displayValues = storedValue
-                      .map((id: number) =>
-                        field.param.options.find((opt: any) => opt.id === id)?.option_name
-                      )
-                      .filter(Boolean) as string[];
-                  } else {
-                    const option = field.param.options.find((opt: any) => opt.id === storedValue);
-                    if (option) displayValues = [option.option_name];
-                  }
-                } else if (Array.isArray(storedValue)) {
-                  displayValues = storedValue.map(String);
-                } else {
-                  displayValues = [String(storedValue)];
-                }
-
-                return (
-                  <View key={fieldId} style={{ gap: 6 }}>
-                    {/* Label */}
-                    <Text allowFontScaling={false}style={styles.detailLabel}>{field.param.field_name}</Text>
-
-                    {/* Values */}
-                    <View style={styles.categoryContainer}>
-                      {displayValues.map((val, idx) => (
-                        <View key={idx} style={styles.categoryTag}>
-                          <Text allowFontScaling={false}style={styles.catagoryText}>{val}</Text>
-                        </View>
-                      ))}
-                    </View>
-                  </View>
-                );
-              })}
-            </View>
+            <View style={{ width: 48 }} />
           </View>
         </View>
 
+        {/* Search Bar */}
+        <View style={{ flexDirection: 'row', paddingHorizontal: 16 }}>
+         
+          <Pressable
+            style={styles.search_container}
+            onPress={() => inputRef.current?.focus()}>
 
-
-            {/* Selaer details */}
-            <View style={styles.card}>
-              <View style={{ gap: 12 }}>
-                <Text allowFontScaling={false} style={styles.productDeatilsHeading}>Seller Details</Text>
-
-                <View style={{ flexDirection: 'row' }}>
-                  {/* <Image source={profileImg} style={styles.avatar} /> */}
-
-                  {userMeta?.profile ? (
-                    <Image
-                      source={{ uri: userMeta.profile }}
-                      style={styles.avatar}
-                    />
-                  ) : (
-                    <View style={styles.initialsCircle}>
-                      <Text allowFontScaling={false} style={styles.initialsText}>
-                        {getInitials(
-                          userMeta?.firstname ?? 'Alan',
-                          userMeta?.lastname ?? 'Walker'
-                        )}
-                      </Text>
-                    </View>
-                  )}
-
-                  <View style={{ width: '80%', gap: 4 }}>
-                    <Text allowFontScaling={false} style={styles.userName}>
-                    {`${userMeta?.firstname ?? ''} ${userMeta?.lastname ?? ''}`.trim()}
-                  </Text>
-                    <Text allowFontScaling={false} style={styles.univeritytext}>
-                      {userMeta?.university_name || 'University of Warwick,'}
-                    </Text>
-                    <Text allowFontScaling={false} style={[styles.univeritytext, { marginTop: -5 }]}>
-                      Coventry
-                    </Text>
-                  </View>
-                </View>
-
-
-                <View style={{ flexDirection: 'row', gap: 8 }}>
-                  <View
-                    style={{
-                      borderRadius: 10,
-                      backgroundColor:
-                        'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-                      boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-                      display: 'flex',
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      gap: 4,
-                      padding: 16,
-
-                      width: '20%',
-                    }}
-                  >
-                    <Image
-                      source={require('../../../assets/images/staricon.png')}
-                      style={{ height: 16, width: 16 }}
-                    />
-
-                    <Text
-                    allowFontScaling={false}
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.48)',
-                        fontFamily: 'Urbanist-SemiBold',
-                        fontSize: 14,
-                        fontWeight: '600',
-                        fontStyle: 'normal',
-                        letterSpacing: -0.28,
-                      }}
-                    >
-                      4.5
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      borderRadius: 10,
-                      backgroundColor:
-                        'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-                      boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-                      display: 'flex',
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      gap: 4,
-                      padding: 16,
-                      width: '80%',
-                    }}
-                  >
-                    <Image
-                      source={require('../../../assets/images/message_chat.png')}
-                      style={{ height: 16, width: 16 }}
-                    />
-                    <Text
-                    allowFontScaling={false}
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.48)',
-                        fontFamily: 'Urbanist-SemiBold',
-                        fontSize: 14,
-                        fontWeight: '600',
-                        fontStyle: 'normal',
-                        letterSpacing: -0.28,
-                      }}
-                    >
-                      Chat with Seller
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            </View>
-          </View>
-        </ScrollView>
-        {/* Bottom */}
-        <TouchableOpacity style={styles.previewBtn} onPress={handleListPress}>
-          {/* <Text style={styles.previewText}>List</Text> */}
-
-        <Text allowFontScaling={false} style={styles.previewText}>
-        {(() => {
-          try {
-            const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
-            const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
-
-            if (isFeatured) {
-              return (
-                <>
-                  List for{' '}
-                  <Text allowFontScaling={false} style={styles.priceText1}>£</Text>
-                  <Text allowFontScaling={false} style={styles.priceText1}>{diff1}</Text>
-                </>
-              );
-            }
-            return 'List';
-          } catch (e) {
-            console.log('Error parsing storedForm:', e);
-            return 'List';
-          }
-        })()}
-      </Text>
-        </TouchableOpacity>
-          
-
-        <Modal
-          visible={showPopup}
-          transparent
-          animationType="fade"
-          onRequestClose={closePopup}
-        >
-          <View style={styles.overlay}>
-            <BlurView
-              style={{
-                flex: 1,
-                alignContent: 'center',
-                justifyContent: 'center',
-                width: '100%',
-                alignItems: 'center',
+            <Image source={searchIcon} style={styles.searchIcon} />
+            <TextInput
+              ref={inputRef}
+              allowFontScaling={false}
+              style={styles.searchBar}
+              placeholder="Search"
+              placeholderTextColor="#ccc"
+              //onChangeText={setSearch}
+              onChangeText={(text) => {
+                setSearch(text);
+                debouncedSearch(text);
               }}
-              blurType="dark"
-              blurAmount={1000}
-              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+              value={search}
+            />
+            </Pressable>
+          
+          
+          <View>
+            <TouchableOpacity
+              onPress={() => {
+                clickfilter();
+              }}
             >
-              <View
-                style={[
-                  StyleSheet.absoluteFill,
-                  { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-                ]}
-              />
-
-              <View style={styles.popupContainer}>
-                <Image
-                  source={require('../../../assets/images/success_icon.png')}
-                  style={styles.logo}
-                  resizeMode="contain"
-                />
-                <Text
-                allowFontScaling={false}
-                  style={{
-                    color: 'rgba(255, 255, 255, 0.80)',
-                    fontFamily: 'Urbanist-SemiBold',
-                    fontSize: 20,
-                    fontWeight: '600',
-                    fontStyle: 'normal',
-                    letterSpacing: -0.4,
-                    lineHeight: 28,
-                  }}
-                >
-                  Product Listed Successfully!
-                </Text>
-                <Text
-                allowFontScaling={false}
-                  style={{
-                    color: 'rgba(255, 255, 255, 0.48)',
-                    fontFamily: 'Urbanist-Regular',
-                    fontSize: 14,
-                    fontWeight: '400',
-                    fontStyle: 'normal',
-                    letterSpacing: -0.28,
-                    lineHeight: 19.6,
-                    textAlign:'center'
-                  }}
-                >
-                  Your product is now live and visible to other students.
-                </Text>
-
-                <TouchableOpacity
-                style={styles.loginButton}
-                onPress={async () => {
-                  try {
-                    await AsyncStorage.removeItem('formData');
-                    await AsyncStorage.removeItem('selectedProductId');
-                    console.log('✅ formData cleared from AsyncStorage');
-
-                   navigation.dispatch(
-                    CommonActions.reset({
-                      index: 0, // make this the active screen
-                      routes: [
-                        {
-                          name: 'Dashboard',
-                          params: {
-                            AddScreenBackactiveTab: 'Home',
-                            isNavigate: false,
-                          },
-                        },
-                      ],
-                    })
-                  );
-
-                    setShowPopup(false);
-                  } catch (err) {
-                    console.log('❌ Error clearing formData:', err);
-                  }
-                }}
-              >
-                  <Text allowFontScaling={false} style={styles.loginText}>
-                    Return to Choose Category
-                  </Text>
-                </TouchableOpacity>
+              <View style={styles.MylistingsBackground}>
+                <Image source={mylistings} style={styles.iconSmall} />
               </View>
-            </BlurView>
+            </TouchableOpacity>
           </View>
-        </Modal>
+        </View>
+
+      <FlatList
+        data={featurelist}
+        keyExtractor={item => item.id.toString()}
+        numColumns={2}
+        columnWrapperStyle={styles.row1}
+        //contentContainerStyle={styles.listContainer}
+        contentContainerStyle={[
+            styles.listContainer,
+            featurelist?.length === 0 && { alignContent:'center',alignSelf:'center' ,width:'90%',height:'90%'}
+          ]}
+        renderItem={renderItem}
+        //onEndReached={() => displayListOfProduct(page)} \
+        onEndReached={() => displayListOfProduct(page, search)}
+        onEndReachedThreshold={0.5} // adjust when to trigger
+        ListFooterComponent={
+            isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
+          }
+          ListEmptyComponent={
+                          !isLoading ? (
+                             <View style={styles.emptyWrapper}>
+                            <View style={styles.emptyContainer}>
+                              <Image
+                                source={require('../../../assets/images/noproduct.png')} // your image
+                                style={styles.emptyImage}
+                                resizeMode="contain"
+                              />
+                              <Text allowFontScaling={false} style={styles.emptyText}>
+                                No Listings found
+                              </Text>
+                            </View>
+                            </View>
+                          ) : null
+                        }
+          />
       </View>
-      <NewCustomToastContainer/>
+
+      <FilterBottomSheet
+        catagory_id={category_id}
+        visible={isFilterVisible}
+        initialFilters={appliedFilter} 
+        //onClose={handleFilterClose}
+       onClose={() => setFilterVisible(false)}
+        onApply={(filterBody) => handleFilterApply(filterBody)} from={0} to={0}/>
+    <NewCustomToastContainer/>
     </ImageBackground>
   );
 };
 
+export default ProductDetails;
+
 const styles = StyleSheet.create({
 
-    initialsCircle:{
- backgroundColor: '#8390D4',
-  alignItems: 'center',
-  justifyContent: 'center',
-   width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 12,
-  },
-  initialsText:{
-   color: '#fff',
-  fontSize: 18,
-  fontWeight:600,
-  textAlign: 'center',
-  fontFamily: 'Urbanist-SemiBold',
-  },
+   emptyWrapper: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      width:'100%'
+    },
 
-
-    priceText1: {
-    color: '#002050',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 17,
-    fontWeight: 700,
-    letterSpacing: 1,
-  },
-
-
-   detailRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+ 
+   emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#ccc',
-    backgroundColor: '#fff', // optional
-    borderRadius: 8,
-    marginVertical: 4,
+    width:'100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderWidth: 0.3,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius:24,
+    overflow:'hidden',
+    //minHeight:'80%',
+   marginBottom:20,
   },
-  detailLabel: {
-     color: 'rgba(255, 255, 255, 0.72)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 16,
-    fontWeight: '600',
-    fontStyle: 'normal',
-    lineHeight: 22,
+  emptyImage: {
+    width: 50,
+    height: 50,
+    marginBottom: 20,
   },
-  detailValue: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: '#666',
-    textAlign: 'right',
-    flex: 1,
-  },
-  unizyText: {
-    color: '#FFFFFF',
+  emptyText: {
     fontSize: 20,
-    flex: 1,
-    fontWeight: '600',
+    color: '#fff',
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
-    marginTop: 20,
-    // height: 50,
-    textAlignVertical: 'center',
+    fontWeight:600
   },
-  backBtn: {
-    width: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
+  background: {
+     flex: 1, 
+     width: '100%',
+      height: '100%' 
+    },
+  fullScreenContainer: { 
+    flex: 1
+   },
   header: {
-    height: 70,
-    paddingTop: 15,
+    paddingTop: Platform.OS === 'ios' ? 50 : 50,
     paddingBottom: 12,
     paddingHorizontal: 16,
-    justifyContent: 'center',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-    // overflow: 'hidden',
-  },
-  stepIndicatorContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 12,
-    gap: 6,
-  },
-  stepCircle: {
-    width: 12,
-    height: 12,
-    borderRadius: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-  },
-  activeStepCircle: {
-    width: 12,
-    height: 12,
-    borderRadius: 40,
-    backgroundColor: '#FFFFFF',
-    borderColor: '#ffffff4e',
-    borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.33,
-    elevation: 2,
-  },
-  inactiveStepCircle: {
-    width: 12,
-    height: 12,
-    borderRadius: 40,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)', // fallback for radial-gradient
-    borderColor: '#ffffff4e',
-    borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.33,
-    elevation: 2,
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  fullScreenContainer: {
-    flex: 1,
-    marginTop: 30,
-  },
-
-  loginText: {
-    color: '#002050',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: 500,
-    letterSpacing: 1,
-    width: '100%',
-  },
-
-  loginButton: {
-    display: 'flex',
-    width: '100%',
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 4,
-    borderRadius: 100,
-    paddingTop: 6,
-    paddingBottom: 6,
-    backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    marginTop: 16,
-    borderWidth: 0.5,
-    borderColor: '#ffffff2c',
-  },
-  termsText1: {
-    color: 'rgba(255,255,255,0.48)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 14,
-    textAlign: 'center',
-    lineHeight: 20,
-    paddingHorizontal: 10,
-    marginBottom: 12,
-  },
-  logo: {
-    width: 64,
-    height: 64,
-    marginBottom: 20,
-  },
-
-  popupContainer: {
-    width: width * 0.85,
-    padding: 20,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-    alignItems: 'center',
-    overflow: 'hidden',
-
-    backgroundColor: 'rgba(255,255,255,0.15)',
-  },
-  overlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-
-  previewText: {
-    color: '#002050',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: 500,
-    letterSpacing: 1,
-  },
-  previewBtn: {
-    display: 'flex',
-    width: '90%',
-    alignSelf: 'center',
-    alignContent: 'center',
-    paddingHorizontal: 20,
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 100,
-    backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    marginBottom: 10,
-    borderWidth: 0.5,
-    borderColor: '#ffffff2c',
-
-    position: 'absolute',
-    bottom: 10,
-  },
-  scrollContainer: {
-    paddingBottom: 70,
-    paddingTop: 90,
-    // paddingHorizontal: 20,
-  },
-
-  datePosted: {
-    flexDirection: 'row',
-    height: 'auto',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.09) 100%)',
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    borderRadius: 8,
-    paddingLeft: 8,
-    paddingRight: 8,
-    paddingTop: 6,
-    paddingBottom: 6,
-    marginTop:6,
-    alignItems: 'center',
-    gap: 3,
-  },
-
-  userSub: {
-    color: 'rgba(255, 255, 255, 0.48)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 12,
-    fontWeight: '500',
-    lineHeight: 16,
-    letterSpacing: -0.24,
-  },
-  univeritytext: {
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  userName: {
-    position: 'relative',
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 16,
-    fontWeight: '600',
-    lineHeight: 24,
-    letterSpacing: -0.32,
-  },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 12,
-  },
-  gap12: {
-    gap: 12,
-  },
-  gap4: {
-    gap: 4,
-  },
-  catagory: {
-    color: 'rgba(255, 255, 255, 0.72)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 16,
-    fontWeight: '600',
-    fontStyle: 'normal',
-    lineHeight: 22,
-  },
-  new: {
-    color: 'rgba(255, 255, 255, 0.64)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 14,
-    fontWeight: '500',
-    fontStyle: 'normal',
-    lineHeight: 20,
-  },
-  itemcondition: {
-    color: 'rgba(255, 255, 255, 0.72)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 16,
-    fontWeight: '600',
-    fontStyle: 'normal',
-    lineHeight: 22,
-  },
-  categoryContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  catagoryText: {
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 12,
-    fontWeight: '500',
-    fontStyle: 'normal',
-    lineHeight: 16,
-    color: '#fff',
-  },
-  categoryTag: {
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    borderWidth: 0.9,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
-    borderBlockEndColor: 'rgba(255, 255, 255, 0.08)',
-    color: 'rgba(255, 255, 255, 0.48)',
-    borderRadius: 4,
-    marginRight: 8,
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.23)',
-    paddingLeft: 6,
-    paddingRight: 6,
-    paddingTop: 2,
-    paddingBottom: 2,
-  },
-  productDesHeding: {
-    color: 'rgba(255, 255, 255, 0.72)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 16,
-    fontWeight: '600',
-    fontStyle: 'normal',
-    lineHeight: 22,
-  },
-  productDesc: {
-    color: 'rgba(255, 255, 255, 0.64)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 14,
-    fontWeight: '500',
-    fontStyle: 'normal',
-    lineHeight: 20,
-  },
-  productDeatilsHeading: {
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 18,
-    fontWeight: '600',
-    fontStyle: 'normal',
-    lineHeight: 22,
-    letterSpacing: -0.36,
-  },
-
-  QuaddText: {
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 20,
-    fontWeight: '600',
-    letterSpacing: -0.4,
-    lineHeight: 24,
-  },
-  priceText: {
-    color: '#fff',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 20,
-    fontWeight: '700',
-    letterSpacing: -0.4,
-    lineHeight: 24,
-  },
-
-  card: {
-    flexDirection: 'column',
-    marginBottom: 6,
-    padding: 16,
-    borderRadius: 24,
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    gap: 12,
-    marginTop: 12
-  },
-  h24_w24: {
-    width: 24,
-    height: 24,
-  },
   backIconRow: {
     padding: 12,
     borderRadius: 40,
+
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
@@ -1294,21 +583,82 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
     height: 48,
     width: 48,
-    position: 'absolute',
-    top: -10,
-    left: 0,
-    right: 0,
+  },
+  unizyText: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    flex: 1,
+    textAlign: 'center',
+    fontWeight: '600',
+  },
+  search_container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 40,
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    width: '84%',
+    marginEnd: 8,
+  },
+  searchIcon: { margin: 10, height: 24, width: 24 },
+  searchBar: {
+    fontSize: 17,
+    color: '#fff',
+    paddingLeft:2
+  },
+  listContainer: {
+    marginLeft: 10,
+    marginRight: 20,
+    paddingTop: 10,
+    paddingBottom:20
+  },
+  row1: {
+    // flexDirection: 'row',
+    // justifyContent: 'flex-start',
+  },
+  itemContainer: {
+    flex: 1,
+    marginHorizontal: 4,
+  },
+  ylistingsBackground: {
+    height: 48,
+    width: 48,
+
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 100,
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(97, 179, 255, 0.2) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow:
+      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
+
+    borderTopColor: '#ffffff5d',
+    borderBottomColor: '#ffffff36',
+    borderLeftColor: '#ffffff5d',
+    borderRightColor: '#ffffff36',
+    borderWidth: 0.3,
   },
-  previewThumbnail: {
-    color: '#FFF',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 20,
-    fontWeight: '600',
-    letterSpacing: -0.4,
+  MylistingsBackground: {
+    height: 48,
+    width: 48,
+
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 100,
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(97, 179, 255, 0.2) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow:
+      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
+
+    borderTopColor: '#ffffff5d',
+    borderBottomColor: '#ffffff36',
+    borderLeftColor: '#ffffff5d',
+    borderRightColor: '#ffffff36',
+    borderWidth: 0.3,
+  },
+  iconSmall: {
+    width: 24,
+    height: 24,
   },
 });
-
-export default PreviewDetailed;
