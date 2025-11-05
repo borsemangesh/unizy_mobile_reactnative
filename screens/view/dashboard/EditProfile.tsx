@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Image,
   ImageBackground,
@@ -15,10 +15,16 @@ import {
   Dimensions,
   PermissionsAndroid,
   Alert,
+  Modal,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const bgImage = require('../../../assets/images/backimg.png');
-import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
+import {
+  NewCustomToastContainer,
+  showToast,
+} from '../../utils/component/NewCustomToastManager';
 import { BlurView } from '@react-native-community/blur';
 import { MAIN_URL } from '../../utils/APIConstant';
 import {
@@ -172,40 +178,51 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     }
   };
 
-//-----------------------Handel validation ---------------------//
+  //-----------------------Handel validation ---------------------//
   const validateForm = () => {
-  const errors = [];
-  if (!userMeta.firstname || userMeta.firstname.trim() === '') {
-    errors.push('First name is required.');
-  }
-  if (!userMeta.lastname || userMeta.lastname.trim() === '') {
-    errors.push('Last name is required.');
-  }
-  if (!userMeta.email || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(userMeta.email)) {
-    errors.push('Personal Email ID is invalid.');
-  }
-  if (!userMeta.student_email || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(userMeta.student_email)) {
-    errors.push('Student Email ID is invalid.');
-  }
-  if (!userMeta.city || userMeta.city.trim() === '') {
-    errors.push('City is required.');
-  }
-  if (!userMeta.postal_code || userMeta.postal_code.trim() === '' || isNaN(+userMeta.postal_code)) {
-    errors.push('Postal code is required.');
-  }
-  return errors;
-};
+    const errors = [];
+    if (!userMeta.firstname || userMeta.firstname.trim() === '') {
+      errors.push('First name is required.');
+    }
+    if (!userMeta.lastname || userMeta.lastname.trim() === '') {
+      errors.push('Last name is required.');
+    }
+    if (
+      !userMeta.email ||
+      !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(userMeta.email)
+    ) {
+      errors.push('Personal Email ID is invalid.');
+    }
+    if (
+      !userMeta.student_email ||
+      !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+        userMeta.student_email,
+      )
+    ) {
+      errors.push('Student Email ID is invalid.');
+    }
+    if (!userMeta.city || userMeta.city.trim() === '') {
+      errors.push('City is required.');
+    }
+    if (
+      !userMeta.postal_code ||
+      userMeta.postal_code.trim() === '' ||
+      isNaN(+userMeta.postal_code)
+    ) {
+      errors.push('Postal code is required.');
+    }
+    return errors;
+  };
 
   // ---------------------  Update data method call -----------------//
 
   const handleSaveProfile = async () => {
-
-      const errors = validateForm();
-  if (errors.length > 0) {
-    // Alert.alert('Validation Error', errors.join('\n'));
-      showToast(errors.join('\n'),'error');
-    return;
-  }
+    const errors = validateForm();
+    if (errors.length > 0) {
+      // Alert.alert('Validation Error', errors.join('\n'));
+      showToast(errors.join('\n'), 'error');
+      return;
+    }
 
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -216,7 +233,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
       if (!token || !userId) {
         // Alert.alert('Error', 'User authentication missing.');
-         showToast('User authentication missing.','error');
+        showToast('User authentication missing.', 'error');
         return;
       }
 
@@ -231,7 +248,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         postal_code: userMeta.postal_code,
         // profile:userMeta.profile || photo,
       };
- 
+
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
@@ -241,15 +258,14 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         body: JSON.stringify(body),
       });
 
-   console.log("1 st step");
-   
+      console.log('1 st step');
 
       const data = await response.json();
-      console.log("data",data);
-      
+      console.log('data', data);
+
       if (response.ok) {
         // Alert.alert('Success', data.message);
-        showToast(data.message,'success');   
+        showToast(data.message, 'success');
         navigation.goBack();
       } else {
         // Alert.alert(
@@ -257,7 +273,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         //   data?.message ? data.message : 'Failed to update profile',
         // );
 
-        showToast(data.message,'error');
+        showToast(data.message, 'error');
 
         //  showToast( data?.message,'error');
       }
@@ -345,23 +361,157 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         body: formData,
       });
 
-      const data = await response.json();    
+      const data = await response.json();
 
       if (response.ok) {
         // Alert.alert('Success', 'Image uploaded successfully!');
-   
-        
-          showToast(data?.message,'success');
+
+        showToast(data?.message, 'success');
       } else {
         // Alert.alert('Error', data?.message || 'Failed to upload image');
-         showToast( data?.message,'error');
-
+        showToast(data?.message, 'error');
       }
     } catch (error) {
       // Alert.alert('Error', 'Unexpected error during upload');
-       showToast('Unexpected error during upload','error');
+      showToast('Unexpected error during upload', 'error');
     }
   };
+
+  //------------------------- to handel personal email ------------------------//
+
+  const handleUpdateEmail = (email: any) => {
+    // Optionally request verification code from backend here
+  };
+
+  // const [emailModalVisible, setEmailModalVisible] = useState(false);
+  // const [verificationCode, setVerificationCode] = useState(['', '', '', '']); // One input per digit
+
+  const [otp, setOtp] = useState(['', '', '', '']);
+
+const [save_otp, setSaveOtp] = useState(0);
+
+  const sendOtp = async (res?:any) =>{
+    let flag = res
+    console.log("res---------",flag);
+
+    
+      try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        console.log('⚠️ Token not found. Cannot upload.');
+        return;
+      }
+      
+      const url = MAIN_URL.baseUrl + 'user/update-email';
+        let createPayload ;
+        if (flag == 'studentEmail') {
+          createPayload = {            
+            student_email: userMeta.student_email,
+          };
+        } else if (flag == 'personalEmail') {
+          createPayload = {
+            email: userMeta.email,
+          };
+        }
+
+  console.log("createPayload",createPayload);
+  
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(createPayload),
+      });
+
+      const data = await res.json();
+      console.log('send Otp...........', data);
+
+      if (data?.statusCode === 200) {
+        // showToast(data.message, 'success');   change
+        setSaveOtp(data.data.otp_id);     
+        
+        // setShowPopup2(true);
+      } else {
+        showToast(data?.message, 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      // showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+    }
+  }
+
+
+
+  const otpverify = async () => {
+    Keyboard.dismiss();
+
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        console.log('⚠️ Token not found. Cannot upload.');
+        return;
+      }
+      const otpValue = otp.join('');
+      // const order_id = await AsyncStorage.getItem('last_order_id');
+
+      console.log('otpValue', otpValue);
+
+    
+
+      const url = MAIN_URL.baseUrl + 'user/verify-update';
+      const createPayload = {  
+       otp: otpValue,
+       otp_id:save_otp
+      };
+
+
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(createPayload),
+      });
+
+      const data = await res.json();
+      console.log('OTP Verify Response:', data);
+
+      if (data?.statusCode === 200) {
+        // showToast(data.message, 'success');
+        setShowPopup1(false);
+        // setShowPopup2(true);
+      } else {
+        showToast(data?.message, 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      // showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+    }
+  };
+
+  const handleChange = (text: string, index: number) => {
+    const newOtp = [...otp];
+    newOtp[index] = text;
+    setOtp(newOtp);
+
+    if (text && index < inputs.current.length - 1) {
+      inputs.current[index + 1]?.focus();
+    } else if (!text && index > 0) {
+      inputs.current[index - 1]?.focus();
+    }
+  };
+
+  //------------------ use for show popup------------------------//
+
+  const [showPopup1, setShowPopup1] = useState(false);
+  const closePopup1 = () => setShowPopup1(false);
+
+   const [emailName, setEmailName] = useState('');
+
+  const inputs = useRef<Array<TextInput | null>>([]);
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -369,10 +519,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerRow}>
-            <TouchableOpacity
-             onPress={() => navigation.goBack()}
-            >           
-
+            <TouchableOpacity onPress={() => navigation.goBack()}>
               <View style={styles.backIconRow}>
                 <Image
                   source={require('../../../assets/images/back.png')}
@@ -389,10 +536,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         <ScrollView
           contentContainerStyle={{ paddingBottom: 40 }}
           style={{ flex: 1 }}
-           showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
         >
-          {/* <View style={styles.avatarContainer}>
-            <View style={styles.bigCircle}>
+        
+          <View style={styles.profileavatarContainer}>
+            <View style={styles.profilebigCircle}>
               <TouchableOpacity>
                 <Image
                   source={
@@ -400,57 +548,25 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                       ? { uri: photo }
                       : require('../../../assets/images/add1.png')
                   }
-                  style={styles.logo}
+                  style={styles.profilelogo}
                   resizeMode="cover"
                 />
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={styles.cameraButton}
+                style={styles.profilecameraButton}
                 onPress={handleSelectImage}
               >
+                {/* assets\images\camera_icon.png */}
                 <Image
-                  source={require('../../../assets/images/new_camera_icon.png')}
-                  style={styles.cameraIcon}
+                  source={require('../../../assets/images/camera_1.png')}
+                  // source={require('../../../assets/images/camera_icon.png')}
+                  style={styles.profilecameraIcon}
                   resizeMode="contain"
                 />
-              </TouchableOpacity>             
+              </TouchableOpacity>
             </View>
-          </View> */}
-
-            <View style={styles.profileavatarContainer}>
-                                          <View style={styles.profilebigCircle}>
-                                            <TouchableOpacity>
-                                              <Image
-                                                source={
-                                                  photo
-                                                    ? { uri: photo }
-                                                    : require('../../../assets/images/add1.png')
-                                                }
-                                                style={styles.profilelogo}
-                                                resizeMode="cover"
-                                              />
-                                            </TouchableOpacity>
-          
-                                            <TouchableOpacity
-                                              style={styles.profilecameraButton}
-                                              onPress={handleSelectImage}
-                                            >
-                                              {/* assets\images\camera_icon.png */}
-                                              <Image
-                                              
-                                                 source={require('../../../assets/images/camera_1.png')}
-                                                // source={require('../../../assets/images/camera_icon.png')}
-                                                style={styles.profilecameraIcon}
-                                                resizeMode="contain"
-                                              />
-                                            </TouchableOpacity>
-
-                                                
-
-
-                                          </View>
-                                        </View>
+          </View>
 
           {/* Blur Glass Form */}
           <View style={styles.blurCard}>
@@ -472,40 +588,122 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
               <TextInput
                 value={userMeta.lastname || ''}
                 onChangeText={text =>
-                  setUserMeta(prev => ({ ...prev, setLastName: text }))
+                  setUserMeta(prev => ({ ...prev, lastname: text }))
                 }
                 style={styles.input}
                 placeholder="Enter Last Name"
                 placeholderTextColor="#ccc"
               />
             </View>
+            
 
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Personal Email ID*</Text>
-              <TextInput
-                value={userMeta.email || ''}
-                onChangeText={text =>
-                  setUserMeta(prev => ({ ...prev, setPersonalEmail: text }))
-                }
-                style={styles.input}
-                keyboardType="email-address"
-                placeholder="Enter Email"
-                placeholderTextColor="#ccc"
-              />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  backgroundColor: 'rgba(255,255,255,0.08)',
+                  borderRadius: 12,
+                  // paddingHorizontal: 12,
+                  minHeight: 44, // or any desired height
+                }}
+              >
+                <TextInput
+                  style={{
+                    flex: 1,
+                    color: '#fff',
+                    fontSize: 14,
+                    backgroundColor: 'transparent',
+                    borderWidth: 0,
+                    borderRadius: 10,
+                    paddingVertical: 10,
+                    paddingHorizontal: 12,
+                  }}
+                  value={userMeta.email || ''}
+                  onChangeText={text =>
+                    setUserMeta(prev => ({ ...prev, email: text }))
+                  }
+                  keyboardType="email-address"
+                  placeholder="Enter Email"
+                  placeholderTextColor="#ccc"
+                />
+                <TouchableOpacity
+                  style={{
+                    width: 70, // Fixed width – adjust as needed
+                    height: 30,
+                    // marginLeft: 12,
+                    backgroundColor:
+                      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
+                    boxShadow:
+                      'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+                    borderColor: '#ffffff11',
+                    borderRadius: 10,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginEnd: 8,
+                  }}
+
+                  onPress={() => (setShowPopup1(true),sendOtp('personalEmail'),setEmailName('personalEmail'))}
+                >
+                  <Text style={styles.edittext}>Update</Text>
+                </TouchableOpacity>
+              </View>
             </View>
 
+          
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Student Email ID*</Text>
-              <TextInput
-                value={userMeta.student_email || ''}
-                onChangeText={text =>
-                  setUserMeta(prev => ({ ...prev, setStudentEmail: text }))
-                }
-                style={styles.input}
-                keyboardType="email-address"
-                placeholder="Enter Student Email"
-                placeholderTextColor="#ccc"
-              />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  backgroundColor: 'rgba(255,255,255,0.08)',
+                  borderRadius: 12,
+                  paddingHorizontal: 4,
+                  minHeight: 44, // or any desired height
+                }}
+              >
+                <TextInput
+                  style={{
+                    flex: 1,
+                    color: '#fff',
+                    fontSize: 14,
+                    backgroundColor: 'transparent',
+                    borderWidth: 0,
+                    borderRadius: 10,
+                    paddingVertical: 10,
+                    paddingHorizontal: 10,
+                  }}
+                  //  value={userMeta.email || ''}
+                  value={userMeta.student_email || ''}
+                  onChangeText={text =>
+                    setUserMeta(prev => ({ ...prev, student_email: text }))
+                  }
+                  keyboardType="email-address"
+                  placeholder="Enter Student Email"
+                  placeholderTextColor="#ccc"
+                />
+                <TouchableOpacity
+                  style={{
+                    width: 70, // Fixed width – adjust as needed
+                    height: 30,
+                    // marginLeft: 12,
+                    backgroundColor:
+                      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
+                    boxShadow:
+                      'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+                    borderColor: '#ffffff11',
+                    borderRadius: 10,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginEnd: 4,
+                  }}
+                  onPress={() => (setShowPopup1(true),sendOtp('studentEmail'),setEmailName('studentEmail'))}
+                >
+                  <Text style={styles.edittext}>Update</Text>
+                </TouchableOpacity>
+              </View>
             </View>
 
             <View style={styles.inputGroup}>
@@ -540,11 +738,141 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         {/* <TouchableOpacity style={styles.saveButton} onPress={handleSaveProfile}>
           <Text style={styles.saveText}>Save Details</Text>
         </TouchableOpacity> */}
-        <Button title='Save Details' onPress={()=>{
-            handleSaveProfile()
-        }}/>
+        <Button       
+          title="Save Details"
+          onPress={() => {
+            handleSaveProfile();
+          }}
+        />
       </View>
       <NewCustomToastContainer />
+
+      {/* Blur effect when modal is open */}
+      {/* {emailModalVisible && (
+    <BlurView
+      style={styles.absoluteBlur}
+      blurType="light"     // or 'dark', 'extraLight', etc.
+      blurAmount={25}      // adjust for stronger blur
+      reducedTransparencyFallbackColor="white"
+    />
+  )} */}
+
+      <Modal
+        visible={showPopup1}
+        transparent={true}
+        animationType="fade"
+        // onRequestClose={closePopup1}
+        onRequestClose={() => {}}
+      >
+        <TouchableWithoutFeedback onPress={closePopup1}>
+          <View style={styles.overlay}>
+            <BlurView
+              style={{
+                flex: 1,
+                alignContent: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                alignItems: 'center',
+              }}
+              blurType="light"
+              blurAmount={10}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            >
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
+                ]}
+              />
+
+              <View style={styles.popupContainer}>
+                <Text allowFontScaling={false} style={styles.mainheader}>
+                  Verify Personal Email ID
+                </Text>
+
+              <Text allowFontScaling={false} style={styles.subheader}>
+  We have sent a 4-digit code to {
+    emailName === 'personalEmail' ? userMeta.email : userMeta.student_email
+  }
+</Text>
+
+                <View style={styles.otpContainer}>
+                  {[0, 1, 2, 3].map((_, index) => (
+                    <TextInput
+                      key={index}
+                      ref={ref => {
+                        inputs.current[index] = ref;
+                      }}
+                      style={styles.otpBox}
+                      keyboardType="number-pad"
+                      maxLength={1}
+                      onChangeText={text => {
+                        const digit = text.replace(/[^0-9]/g, '');
+                        handleChange(digit, index);
+                      }}
+                      returnKeyType="next"
+                      textAlign="center"
+                      secureTextEntry={true}
+                    />
+                  ))}
+                </View>
+
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  // onPress={() => {
+                  //   setShowPopup2(true);
+                  //   }}
+                  onPress={otpverify}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText}>
+                    Verify & Continue
+                  </Text>
+                </TouchableOpacity>
+
+                {/* <TouchableOpacity
+                         style={styles.loginButton1}
+                         onPress={() => {
+                           setShowPopup1(false);
+                         }}
+                       >
+                         <Text allowFontScaling={false} style={styles.loginText1}>
+                           Cancel
+                         </Text>                       
+                       </TouchableOpacity>  */}
+
+
+                       <Text style={[styles.subheader, { marginBottom: 6 }]}>
+  Didn’t receive a code? <Text style={{ color: '#FFFFFF7A' }}  onPress={() => sendOtp(emailName)}>Resend Code</Text>
+</Text>
+
+                {/* <Text allowFontScaling={false} style={styles.subheader}
+                 onPress={() => sendOtp(emailName)}>
+                  Didn’t receive a code? Resend Code
+                </Text> */}
+                {/* 
+                <Text allowFontScaling={false} style={styles.subheader}>
+                  Entered wrong email? Go Back
+                </Text> */}
+
+                <Text style={styles.subheader}>
+  Entered wrong email?{' '}
+  <Text style={{ color: '#FFFFFF7A' }} onPress={closePopup1}>Go Back</Text>
+</Text>
+
+                {/* <Text allowFontScaling={false} style={styles.subheader}>
+                  Entered wrong email?{' '}
+                  <Text
+                    style={styles.subheader}
+                    onPress={closePopup1} // or your handler
+                  >
+                    Go Back
+                  </Text>
+                </Text> */}
+              </View>
+            </BlurView>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </ImageBackground>
   );
 };
@@ -620,22 +948,22 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     width: '100%',
-    height: '100%'   
+    height: '100%',
   },
   fullScreenContainer: {
     flex: 1,
     marginTop: 10,
-    width: 361,
-    height: 476,
+    // width: 361,
+    // height: 476,
     // 'angle' not a valid RN style — remove it
     opacity: 1,
     borderRadius: 24,
-    padding: 16,
+    padding: 16,   
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 40 : 30,
     paddingBottom: 12,
-    paddingHorizontal: 16,
+    // paddingHorizontal: 16,
   },
   headerRow: {
     flexDirection: 'row',
@@ -663,10 +991,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
-    marginRight: 12,
+    // marginRight: 12,
     width: 265,
     height: 28,
-    opacity: 1
+    opacity: 1,
   },
   search_container: {
     flexDirection: 'row',
@@ -762,22 +1090,26 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   blurCard: {
-     marginTop: 16,
+    marginTop: 16,
     borderRadius: 24,
     padding: 16,
+    // marginBottom:16,
+
     // overflow: 'hidden',
-    backgroundColor: 'rgba(255,255,255,0.08)',    
+    backgroundColor: 'rgba(255,255,255,0.08)',
   },
   inputGroup: {
-    marginBottom: 12,
-    height:64,
+    marginBottom: 14,
+    height: 64,
+    // paddingHorizontal:8,
+    // paddingVertical:12
   },
   label: {
     color: '#fff',
     fontSize: 13,
     marginBottom: 6,
     opacity: 0.9,
-    fontFamily:'Urbanist'
+    fontFamily: 'Urbanist',
   },
   input: {
     backgroundColor: 'rgba(255,255,255,0.1)',
@@ -785,7 +1117,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     color: '#fff',
-    height:44,
+    height: 44,
     // width:329
   },
   saveButton: {
@@ -835,13 +1167,13 @@ const styles = StyleSheet.create({
     borderRadius: 60,
   },
 
-    profileavatarContainer: {
+  profileavatarContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 12,
   },
 
-    profilebigCircle: {
+  profilebigCircle: {
     width: 120,
     height: 120,
     borderRadius: 60,
@@ -852,14 +1184,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ffffff2c',
   },
- 
-    profilelogo: {
+
+  profilelogo: {
     width: 120,
     height: 120,
     borderRadius: 60,
   },
 
-    profilecameraButton: {
+  profilecameraButton: {
     position: 'absolute',
     bottom: 0,
     right: 0,
@@ -868,13 +1200,279 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
- 
-    
   },
-    profilecameraIcon: {
+  profilecameraIcon: {
     width: 40,
     height: 40,
     marginLeft: 5,
-    marginTop: 5, 
+    marginTop: 5,
+  },
+
+  inputEmail: {
+    flex: 1, // THIS PART IS MOST IMPORTANT!!
+    color: '#fff',
+    fontSize: 16,
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    minWidth: 0, // Prevents unwanted expansion
+    height: 44,
+  },
+
+  inputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.08)', // matches glass effect
+    borderRadius: 14,
+
+    //  paddingHorizontal: 12,
+    // paddingVertical: 6,
+    // marginTop: 4,
+    // shadowColor: '#000',
+    // shadowOpacity: 0.10,
+    // shadowRadius: 7,
+    // elevation: 4,
+  },
+
+  inputWithUpdate: {
+    backgroundColor: 'transparent',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    color: '#fff',
+    height: 44,
+    // width:329
+  },
+
+  // inputFlex: {
+  //   flex: 1,
+  //   // color: '#fff',
+  //   fontSize: 14,
+  //   fontFamily: 'Urbanist-SemiBold',
+  //   backgroundColor: 'transparent',
+  //   borderWidth: 0,
+
+  //   //  backgroundColor: 'rgba(255,255,255,0.1)',
+  //     borderRadius: 10,
+  //     paddingHorizontal: 12,
+  //     paddingVertical: 10,
+  //     color: '#fff',
+  //     height:44,
+  // },
+  updateButton: {
+    marginLeft: 38,
+    backgroundColor: '#FFFFFF8F', // contrast glass effect
+    borderRadius: 10,
+    // paddingHorizontal: 10,
+    // height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#222',
+    shadowOpacity: 0.17,
+    shadowRadius: 5,
+    elevation: 2,
+    // width: 70,
+
+    width: 90, // Fixed width
+    height: 34,
+  },
+  updateButtonText: {
+    color: '#002050',
+    fontSize: 14,
+    fontFamily: 'Urbanist-SemiBold',
+  },
+
+  // -----------------to handel personal email--------------------//
+  overlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+
+//   overlay: {
+//   flex: 1,
+//   justifyContent: 'center',
+//   alignItems: 'center',
+//   backgroundColor: 'rgba(0,0,0,0.5)', // Slight darkening
+// },
+
+
+  popupContainer: {
+    width: '90%',
+    padding: 20,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'center',
+    overflow: 'hidden',
+
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+  },
+
+//   popupContainer: {
+//   backgroundColor: 'rgba(255,255,255,0.10)', // or your preferred glass color
+//   padding: 24,
+//   borderRadius: 18,
+//   width: '90%', // or maxWidth: 400 for big screens
+//   alignItems: 'center',
+//   shadowColor: '#000',
+//   shadowOpacity: 0.2,
+//   shadowRadius: 10,
+//   elevation: 8,
+// },
+
+  // mainheader: {
+  //   color: 'rgba(255, 255, 255, 0.80)',
+  //   fontFamily: 'Urbanist-SemiBold',
+  //   fontSize: 18,
+  //   fontWeight: '600',
+  //   letterSpacing: -0.4,
+  //   lineHeight: 28,
+  // },
+
+  mainheader: {
+  fontFamily: 'Urbanist-SemiBold',
+   fontWeight: '600',
+  marginBottom: 10,
+  fontSize: 20,
+ 
+  color: '#fff',
+  textAlign: 'center',
+},
+
+
+  subheader: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginTop: 20,
+   
+  },
+
+
+
+  subheader1: {
+    color: 'rgba(255, 255, 255, 0.48)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginTop: 6,
+  },
+
+  loginButton1: {
+    display: 'flex',
+    width: '100%',
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 100,
+    paddingTop: 6,
+    paddingBottom: 6,
+    backgroundColor: 'rgba(170, 169, 176, 0.56)',
+    marginTop: 16,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+  },
+
+  loginText: {
+    color: '#002050',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: 500,
+    letterSpacing: 1,
+    width: '100%',
+  },
+  loginText1: {
+    color: '#FFFFFF7A',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: 500,
+    letterSpacing: 1,
+    width: '100%',
+  },
+
+  loginButton: {
+    display: 'flex',
+    width: '100%',
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 100,
+    paddingTop: 6,
+    paddingBottom: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.56)',
+    marginTop: 16,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+  },
+
+  otpContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    // width: '100%',
+    alignSelf: 'center',
+    gap: 8, // works in RN 0.71+, otherwise use marginRight
+    marginTop: 16,
+    paddingHorizontal:20
+  },
+
+//   otpContainer: {
+//   flexDirection: 'row',
+//   justifyContent: 'center',
+//   marginBottom: 24,
+// },
+
+  otpBox: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    paddingTop: 8,
+    paddingRight: 12,
+    paddingBottom: 8,
+    paddingLeft: 12,
+    textAlign: 'center',
+    fontSize: 18,
+    color: '#fff',
+    fontWeight: '600',
+    borderWidth: 1,
+    borderColor: '#ffffff2c',
+    elevation: 0,
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.29) 100%)',
+    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 0px 15px 1px',
+  },
+
+  editcard: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginRight: 8,
+    borderColor: '#ffffff11',
+    borderRadius: 10,
+    boxSizing: 'border-box',
+    gap: 10,
+    width: '20%',
+
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
+    boxShadow:
+      'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+  },
+
+  edittext: {
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 14,
+    color: '#fff',
+    fontWeight: 600,
+    textAlign: 'center',
   },
 });
