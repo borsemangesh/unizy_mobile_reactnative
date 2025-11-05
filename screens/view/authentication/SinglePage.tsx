@@ -167,40 +167,41 @@ useEffect(() => {
 
   const animateGreeting = () => {
     greetingOpacity.setValue(0);
-    greetingScale.setValue(0.8);
+    greetingScale.setValue(0.5);
 
     Animated.sequence([
       Animated.parallel([
         Animated.timing(greetingOpacity, {
           toValue: 1,
-          duration: 600,
+          duration: 1500,
           easing: Easing.linear,
           useNativeDriver: true,
         }),
         Animated.timing(greetingScale, {
           toValue: 1,
-          duration: 600,
+          duration: 1500,
           easing: Easing.linear,
           useNativeDriver: true,
         }),
       ]),
-      Animated.delay(600),
+      Animated.delay(4500),
       Animated.parallel([
         Animated.timing(greetingOpacity, {
           toValue: 0,
-          duration: 600,
+          duration: 1500,
           easing: Easing.in(Easing.ease),
           useNativeDriver: true,
         }),
         Animated.timing(greetingScale, {
           toValue: 0.8,
-          duration: 600,
+          duration: 1500,
           easing: Easing.in(Easing.ease),
           useNativeDriver: true,
         }),
       ]),
     ]).start();
   };
+
 
   //   Signup Screen
   const [firstName, setFirstName] = useState('');
@@ -236,7 +237,7 @@ useEffect(() => {
   const verifyAndContinyTranslateY1 = React.useRef(
     new Animated.Value(0),
   ).current;
-  const verifyAndContinyTranslateY2 = useRef(new Animated.Value(-200)).current;
+  const verifyAndContinyTranslateY2 = useRef(new Animated.Value(-400)).current;
   const profileTranslateY = useRef(new Animated.Value(-300)).current;
   const newsendOTPTranslateY = useRef(new Animated.Value(-300)).current;
 
@@ -254,7 +255,7 @@ useEffect(() => {
     slideUp1.setValue(screenHeight);
     setOTPTranslatY.setValue(Dimensions.get('window').height);
     verifyAndContinyTranslateY1.setValue(-300);
-    verifyAndContinyTranslateY2.setValue(-200);
+    verifyAndContinyTranslateY2.setValue(-400);
     newsendOTPTranslateY.setValue(-300);
     profileTranslateY.setValue(-300);
     resetPasswordtranslateY.setValue(0);
@@ -316,6 +317,15 @@ useEffect(() => {
           useNativeDriver: true,
         }),
       ]).start();
+
+      Animated.sequence([
+        Animated.spring(loginTranslateY, {
+          toValue: 0, // bounce upward
+          friction: 3.5,  // lower = bouncier
+          tension: 0, // controls snap
+          useNativeDriver: true,
+        }),
+      ]).start();
     }
 
     if (currentScreenIninner === 'signup') {
@@ -327,6 +337,16 @@ useEffect(() => {
         easing: Easing.linear,
         useNativeDriver: true,
       }).start();
+
+      Animated.sequence([
+        Animated.spring(signupTranslateY, {
+          toValue: 0, // bounce upward
+          friction: 3.5,  // lower = bouncier
+          tension: 0, // controls snap
+          useNativeDriver: true,
+        }),
+      ]).start();
+    
     }
     if (currentScreenIninner === 'profile') {
       Animated.timing(profileTranslateY, {
@@ -335,6 +355,15 @@ useEffect(() => {
         easing: Easing.linear,
         useNativeDriver: true,
       }).start();
+      Animated.sequence([
+        Animated.spring(profileTranslateY, {
+          toValue: 0, // bounce upward
+          friction: 3.5,  // lower = bouncier
+          tension: 0, // controls snap
+          useNativeDriver: true,
+        }),
+      
+      ]).start();
     }
     if (currentScreenIninner === 'verify') {
       setverifyimageLoaded(true);
@@ -347,27 +376,59 @@ useEffect(() => {
           useNativeDriver: true,
         }),
       ]).start();
+
       Animated.parallel([
-        // Animated.timing(verifyAndContinyTranslateY2, {
-        //   toValue: 200,
-        //   duration: 500,
-        //   easing: Easing.linear,
-        //   useNativeDriver: true,
-        // }),
+        Animated.timing(verifyAndContinyTranslateY2, {
+          toValue: 0,
+          duration: 1000,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+      ]).start();
+     
+      Animated.parallel([
+        
         Animated.timing(opacity, {
           toValue: 1,
           duration: 500,
           useNativeDriver: true,
         }),
       ]).start();
+
+      
+      Animated.sequence([
+        Animated.spring(verifyAndContinyTranslateY1, {
+          toValue: 0, // bounce upward
+          friction: 3.5,  // lower = bouncier
+          tension: 0, // controls snap
+          useNativeDriver: true,
+        }),
+      ]).start();
+      Animated.sequence([
+        Animated.spring(verifyAndContinyTranslateY2, {
+          toValue: 0, // bounce upward
+          friction: 3.5,  // lower = bouncier
+          tension: 0, // controls snap
+          useNativeDriver: true,
+        }),
+      
+      ]).start();
     }
 
     if (currentScreenIninner === 'sendOTP') {
       Animated.parallel([
         Animated.timing(setOTPTranslatY, {
-          toValue: 0,
-          duration: 1000,
-          easing: Easing.linear,
+          toValue: -800,
+          duration: 300,
+          easing: Easing.elastic(2),
+          useNativeDriver: true,
+        }),
+      ]).start();
+      Animated.sequence([
+        Animated.spring(setOTPTranslatY, {
+          toValue: 0, // bounce upward
+          friction: 3.5,  // lower = bouncier
+          tension: 0, // controls snap
           useNativeDriver: true,
         }),
       ]).start();
@@ -378,9 +439,18 @@ useEffect(() => {
         Animated.timing(resetPasswordtranslateY, {
           toValue: 0,
           duration: 300,
-          easing: Easing.linear,
+          easing: Easing.elastic(2),
           useNativeDriver: true,
         }),
+      ]),
+      Animated.sequence([
+        Animated.spring(resetPasswordtranslateY, {
+          toValue: 0, // bounce upward
+          friction: 3.5,  // lower = bouncier
+          tension: 0, // controls snap
+          useNativeDriver: true,
+        }),
+      
       ]).start();
     }
   }, [currentScreen, currentScreenIninner, photo]);
@@ -388,19 +458,19 @@ useEffect(() => {
   useFocusEffect(
     React.useCallback(() => {
       if (currentScreen === 'hello') {
-        // Animated.timing(unizyTranslateY, {
-        //   toValue: 0,
-        //   duration: 1200,
-        //   easing: Easing.out(Easing.ease),
-        //   useNativeDriver: true,
-        // }).start();
-        // Animated.timing(slideUp, {
-        //   toValue: 0, // final position
-        //   duration: 1000,
-        //   easing: Easing.out(Easing.ease),
-        //   useNativeDriver: true,
-        // }).start();
-        // animateGreeting();
+        Animated.timing(unizyTranslateY, {
+          toValue: 0,
+          duration: 1200,
+          easing: Easing.out(Easing.ease),
+          useNativeDriver: true,
+        }).start();
+        Animated.timing(slideUp, {
+          toValue: 0, // final position
+          duration: 1000,
+          easing: Easing.out(Easing.ease),
+          useNativeDriver: true,
+        }).start();
+        animateGreeting();
       }
 
       if (
@@ -418,7 +488,7 @@ useEffect(() => {
           }),
           Animated.timing(slideUp, {
             toValue: 0,
-            duration: 1000,
+            duration: 600,
             easing: Easing.linear,
             useNativeDriver: true,
           }),
@@ -430,7 +500,7 @@ useEffect(() => {
           prevIndex + 1 < greetings.length ? prevIndex + 1 : 0,
         );
         animateGreeting();
-      }, 1800);
+      }, 4500);
 
       return () => {
         clearInterval(interval);
@@ -601,8 +671,31 @@ useEffect(() => {
     }
   };
 
-  const handleSendOTP = async () => {
+  const clickOnSendOTP= (onFinish?: () => void) => {
+    setOTPTranslatY.setValue(-300);
+    Animated.timing(signupTranslateY, {
+      toValue: 300,//-Dimensions.get('window').height,
+      duration: 300,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start(() => {
+      
+      if (onFinish) onFinish();
+    });
+   
+    Animated.timing(loginTranslateY, {
+      toValue: -300,//Dimensions.get('window').height,
+      duration: 80,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start(()=>{
+      
+    });
+    
+  };
 
+  const handleSendOTP = async () => {
+    
     setOtp(['', '', '', '']);
 
     if (
@@ -675,38 +768,43 @@ useEffect(() => {
           signUpusername.toString(),
         );
 
-    Animated.timing(signupTranslateY, {
-      toValue: 300,//Dimensions.get('window').height,
-      duration: 350,
-      easing: Easing.in(Easing.ease),
-      useNativeDriver: true,
-    }).start(() => {
-      // Slide SendOTP screen from top into view
-      // setOTPTranslatY.setValue(-Dimensions.get('window').height); // reset position
-      setOTPTranslatY.setValue(-600);
-      Animated.timing(setOTPTranslatY, {
-        toValue: 0,
-        duration: 250,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }).start(() => {
-        setCurrentScreen('login');
-        setcurrentScreenIninner('sendOTP');
-         setTimeout(() => {
-        inputs.current[0]?.focus();
-      }, 300);
-      });
-    });
+        clickOnSendOTP(() => {
+          setCurrentScreen('login');
+          setcurrentScreenIninner('sendOTP');
+        })
 
-      Animated.timing(loginTranslateY, {
-        toValue: 500,//Dimensions.get('window').height,
-        duration: 350,
-        easing: Easing.in(Easing.ease),
-        useNativeDriver: true,
-      }).start(() => {
-        setCurrentScreen('login');
-        setcurrentScreenIninner('sendOTP');
-      });
+    // Animated.timing(signupTranslateY, {
+    //   toValue: 300,//Dimensions.get('window').height,
+    //   duration: 350,
+    //   easing: Easing.in(Easing.ease),
+    //   useNativeDriver: true,
+    // }).start(() => {
+    //   // Slide SendOTP screen from top into view
+    //   // setOTPTranslatY.setValue(-Dimensions.get('window').height); // reset position
+    //   setOTPTranslatY.setValue(-600);
+    //   Animated.timing(setOTPTranslatY, {
+    //     toValue: 0,
+    //     duration: 250,
+    //     easing: Easing.out(Easing.ease),
+    //     useNativeDriver: true,
+    //   }).start(() => {
+    //     setCurrentScreen('login');
+    //     setcurrentScreenIninner('sendOTP');
+    //      setTimeout(() => {
+    //     inputs.current[0]?.focus();
+    //   }, 300);
+    //   });
+    // });
+
+      // Animated.timing(loginTranslateY, {
+      //   toValue: 500,//Dimensions.get('window').height,
+      //   duration: 350,
+      //   easing: Easing.in(Easing.ease),
+      //   useNativeDriver: true,
+      // }).start(() => {
+      //   setCurrentScreen('login');
+      //   setcurrentScreenIninner('sendOTP');
+      // });
 
         
       } else {
@@ -737,7 +835,28 @@ useEffect(() => {
     }
   };
 
+  const clickOtpVerify = (onFinish?: () => void) => {
+    Animated.timing(setOTPTranslatY, {
+      toValue: 300,//-Dimensions.get('window').height,
+      duration: 300,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start(() => {
+      
+      if (onFinish) onFinish();
+    });
+    
+    Animated.timing(loginTranslateY, {
+      toValue: -300,//Dimensions.get('window').height,
+      duration: 80,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start();
+    
+  };
+
   const otpverify = async () => {
+
     Keyboard.dismiss();
     
     setverifyUsername('');
@@ -787,19 +906,26 @@ useEffect(() => {
         setsignUpIsPasswordVisible(false);
         setIsConfirmPasswordVisible(false);
 
-    Animated.timing(setOTPTranslatY, {
-      toValue: 200,//Dimensions.get('window').height,
-      duration: 200,
-      easing: Easing.in(Easing.ease),
-      useNativeDriver: true,
-    }).start(() => {});
+    // Animated.timing(setOTPTranslatY, {
+    //   toValue: 200,//Dimensions.get('window').height,
+    //   duration: 200,
+    //   easing: Easing.in(Easing.ease),
+    //   useNativeDriver: true,
+    // }).start(() => {});
 
-    Animated.timing(loginTranslateY, {
-      toValue: 200,//Dimensions.get('window').height,
-      duration: 200,
-      easing: Easing.in(Easing.ease),
-      useNativeDriver: true,
-    }).start(() => {
+    // Animated.timing(loginTranslateY, {
+    //   toValue: 200,//Dimensions.get('window').height,
+    //   duration: 200,
+    //   easing: Easing.in(Easing.ease),
+    //   useNativeDriver: true,
+    // }).start(() => {
+    //   setCurrentScreen('login');
+    //   setcurrentScreenIninner('verify');
+    //   setShowOtp(false);
+    //   setverifyimageLoaded(true);
+    // });
+
+    clickOtpVerify(() => {
       setCurrentScreen('login');
       setcurrentScreenIninner('verify');
       setShowOtp(false);
@@ -932,24 +1058,33 @@ useEffect(() => {
         await AsyncStorage.setItem('signupUsername', verifyusername);
         
 
-    Animated.timing(verifyAndContinyTranslateY1, {
-      toValue: 200,//Dimensions.get('window').height, // move down off screen
-      duration: 500,
-      easing: Easing.in(Easing.ease),
-      useNativeDriver: true,
-    }).start(() => {
-      setShowOtp(true); 
-      verifyAndContinyTranslateY2.setValue(-200);
-      Animated.timing(verifyAndContinyTranslateY2, {
-        toValue: 0,
-        duration: 500,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }).start();
-      setTimeout(() => {
-      verifyinputs.current[0]?.focus();
-    }, 300);
-    });
+        Animated.timing(verifyAndContinyTranslateY1, {
+          toValue: 200,//Dimensions.get('window').height, // move down off screen
+          duration: 500,
+          easing: Easing.in(Easing.ease),
+          useNativeDriver: true,
+        }).start(() => {
+          setShowOtp(true); 
+          verifyAndContinyTranslateY2.setValue(-200);
+          Animated.timing(verifyAndContinyTranslateY2, {
+            toValue: 0,
+            duration: 500,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+          }).start();
+          setTimeout(() => {
+          verifyinputs.current[0]?.focus();
+    
+        }, 300);
+        Animated.sequence([
+          Animated.spring(verifyAndContinyTranslateY2, {
+            toValue: 0, // bounce upward
+            friction: 3.5,  // lower = bouncier
+            tension: 0, // controls snap
+            useNativeDriver: true,
+          }),
+        ]).start();
+        });
       } else {
         showToast(data?.message || 'Failed to send OTP', 'error');
       }
@@ -959,9 +1094,33 @@ useEffect(() => {
     }
   };
 
-  const submitotp = async () => {
 
-   
+
+
+  const clicksubmitotp = (onFinish?: () => void) => {
+    profileTranslateY.setValue(-300);
+    Animated.timing(verifyAndContinyTranslateY2, {
+      toValue: 300,//-Dimensions.get('window').height,
+      duration: 300,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start(() => {
+      
+      if (onFinish) onFinish();
+    });
+    
+    Animated.timing(profileTranslateY, {
+      toValue: -300,//Dimensions.get('window').height,
+      duration: 80,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start();
+    
+  };
+
+
+
+  const submitotp = async () => {
     Keyboard.dismiss();
     setPhoto('');
     const otpValue = otp1.join('');
@@ -1013,31 +1172,32 @@ useEffect(() => {
             );
           }
         }
-        // setShowPopup1(false);
-        // setCurrentScreen('login');
-        // setcurrentScreenIninner('profile');
-                 // verifyAndContinyTranslateY2.setValue(-200);
-
-    // Slide in OTP form (from top to 0)
+        
     profileTranslateY.setValue(-300);
 
-      Animated.timing(verifyAndContinyTranslateY2, {
-        toValue: 300, // slide down off-screen
-        duration: 200,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }).start(()=>{
-    
-        setShowPopup1(false);
+    clicksubmitotp(()=>{
+      setShowPopup1(false);
         setCurrentScreen('login');
         setcurrentScreenIninner('profile');
-        Animated.timing(profileTranslateY, {
-            toValue: 0,
-            duration: 500,
-            easing: Easing.out(Easing.ease),
-            useNativeDriver: true,
-          }).start();
-      });
+    })
+
+      // Animated.timing(verifyAndContinyTranslateY2, {
+      //   toValue: 300, // slide down off-screen
+      //   duration: 200,
+      //   easing: Easing.out(Easing.ease),
+      //   useNativeDriver: true,
+      // }).start(()=>{
+    
+      //   setShowPopup1(false);
+      //   setCurrentScreen('login');
+      //   setcurrentScreenIninner('profile');
+      //   Animated.timing(profileTranslateY, {
+      //       toValue: 0,
+      //       duration: 500,
+      //       easing: Easing.out(Easing.ease),
+      //       useNativeDriver: true,
+      //     }).start();
+      // });
       } else {
         showToast(data?.message || 'OTP verification failed', 'error');
       }
@@ -1180,6 +1340,13 @@ useEffect(() => {
       
       if (onFinish) onFinish();
     });
+    Animated.timing(slideUp, {
+      toValue: 50,//-Dimensions.get('window').height,
+      duration: 100,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: true,
+    }).start(() => {
+    });
     Animated.timing(loginTranslateY, {
       toValue: 300,//Dimensions.get('window').height,
       duration: 100,
@@ -1188,44 +1355,6 @@ useEffect(() => {
     }).start();
     
   };
-
-  // const goToForgotPassword = () => {
-  //   Keyboard.dismiss();
-    
-  //   // resetPasswordtranslateY.setValue(Dimensions.get('window').height);
-  //   Animated.parallel([
-  //       // Slide login down
-  //   Animated.timing(loginTranslateY, {
-  //         toValue: 300, // move login view to bottom
-  //         duration: 300, // same duration for both
-  //         easing:  Easing.linear,
-  //         useNativeDriver: true,
-  //       }),
-  //       // Slide reset password up
-  //       Animated.timing(resetPasswordtranslateY, {
-  //         toValue: 0, // slide reset password view to actual position
-  //         duration: 300, // same duration
-  //         // easing: Easing.linear,
-  //         useNativeDriver: true,
-  //       }),
-  //       // Fade out text and back icon (optional)
-  //       Animated.timing(textAndBackOpacity, {   
-  //         toValue: 0,
-  //     duration: 300,
-  //     useNativeDriver: true,
-  //       }),
-  //     ]).start(() => {
-        
-  //       setTextandBackIcon(false);
-  //       setUsername('');
-  //       setPassword('');
-  //       setIsPasswordVisible(false);
-  //       setCurrentScreen('login');
-  //       setcurrentScreenIninner('forgotpassword');
-  //     });
-   
-    
-  // };
 
   const goToForgotPassword = (onFinish?: () => void) => {
     Animated.timing(loginTranslateY, {
@@ -1237,6 +1366,15 @@ useEffect(() => {
       
       if (onFinish) onFinish();
     });
+    Animated.timing(slideUp, {
+      toValue: 300,//-Dimensions.get('window').height,
+      duration: 300,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start(() => {
+      
+      
+    });
     Animated.timing(resetPasswordtranslateY, {
       toValue: -300,//Dimensions.get('window').height,
       duration: 80,
@@ -1245,6 +1383,9 @@ useEffect(() => {
     }).start();
     
   };
+
+
+  
 
   const heightAnim = useRef(new Animated.Value(0)).current;
   const [contentHeight, setContentHeight] = useState(
@@ -1260,13 +1401,6 @@ useEffect(() => {
           easing: Easing.out(Easing.exp),
           useNativeDriver: false,
         }).start();
-        
-        // Animated.spring(heightAnim, {
-        //     toValue: contentHeight + 30, // overshoot a bit
-        //     friction: 100,
-        //     tension: 1000,
-        //     useNativeDriver: false,
-        //   }).start();
       } else {
         Animated.timing(heightAnim, {
           toValue: contentHeight + 30,
@@ -1274,12 +1408,6 @@ useEffect(() => {
           easing: Easing.out(Easing.exp),
           useNativeDriver: false,
         }).start();
-        // Animated.spring(heightAnim, {
-        //     toValue: contentHeight+ 30, // overshoot a bit
-        //     friction: 10,
-        //     tension: 1000,
-        //     useNativeDriver: false,
-        //   }).start();
       }
     }
   }, [contentHeight]);
@@ -1302,46 +1430,46 @@ useEffect(() => {
       }).start();
   };
 
-  const ClickBackToSendOTP1 = (onFinish?: () => void) => {
-    Keyboard.dismiss();
+  // const ClickBackToSendOTP1 = (onFinish?: () => void) => {
+  //   Keyboard.dismiss();
   
-    Animated.parallel([
-      // OTP slides up & fades out
-      Animated.timing(verifyAndContinyTranslateY2, {
-        toValue: -300,
-        duration: 400,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-    //   Animated.timing(otpOpacity, {
-    //     toValue: 0,
-    //     duration: 350,
-    //     easing: Easing.linear,
-    //     useNativeDriver: true,
-    //   }),
+  //   Animated.parallel([
+  //     // OTP slides up & fades out
+  //     Animated.timing(verifyAndContinyTranslateY2, {
+  //       toValue: -300,
+  //       duration: 400,
+  //       easing: Easing.linear,
+  //       useNativeDriver: true,
+  //     }),
+  //   //   Animated.timing(otpOpacity, {
+  //   //     toValue: 0,
+  //   //     duration: 350,
+  //   //     easing: Easing.linear,
+  //   //     useNativeDriver: true,
+  //   //   }),
   
-      // Verify Email slides in from bottom & fades in
-      Animated.timing(verifyAndContinyTranslateY1, {
-        toValue: 0,
-        duration: 450,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-    //   Animated.timing(verifyOpacity, {
-    //     toValue: 1,
-    //     duration: 400,
-    //     easing: Easing.linear,
-    //     useNativeDriver: true,
-    //   }),
-    ]).start(() => {
-      // cleanup & state updates after animation
-      setShowOtp(false);
-      setverifyimageLoaded(true);
-      setCurrentScreen('login');
-      setcurrentScreenIninner('verify');
-      if (onFinish) onFinish();
-    });
-  };
+  //     // Verify Email slides in from bottom & fades in
+  //     Animated.timing(verifyAndContinyTranslateY1, {
+  //       toValue: 0,
+  //       duration: 450,
+  //       easing: Easing.linear,
+  //       useNativeDriver: true,
+  //     }),
+  //   //   Animated.timing(verifyOpacity, {
+  //   //     toValue: 1,
+  //   //     duration: 400,
+  //   //     easing: Easing.linear,
+  //   //     useNativeDriver: true,
+  //   //   }),
+  //   ]).start(() => {
+  //     // cleanup & state updates after animation
+  //     setShowOtp(false);
+  //     setverifyimageLoaded(true);
+  //     setCurrentScreen('login');
+  //     setcurrentScreenIninner('verify');
+  //     if (onFinish) onFinish();
+  //   });
+  // };
   
 //   const ClickBackToSendOTP1 = (onFinish?: () => void) => {
 
@@ -1567,7 +1695,7 @@ useEffect(() => {
       style={{ width: '100%', height: '100%' }}
       resizeMode="cover"
     >
-      {/* {Platform.OS === 'android' ? (
+      {Platform.OS === 'android' ? (
         <>
           <BackgroundAnimation_Android />
         </>
@@ -1588,7 +1716,7 @@ useEffect(() => {
             />
           </View>
         </>
-      )} */}
+      )}
       <View
         style={{
           flex: 1,
@@ -1762,7 +1890,7 @@ useEffect(() => {
                       renderItem={({ item }) => (
                         <TouchableOpacity
                           style={selectlang_styles.languageItem}
-                          onPress={() => handleLanguageSelect(item)}
+                          onPress={() => {handleLanguageSelect(item);slideUp.setValue(100);}}
                         >
                           <View
                             style={{
@@ -1841,9 +1969,11 @@ useEffect(() => {
                 }}
               >
                 {currentScreenIninner === 'login' && (
+                  
                   <TouchableOpacity
                     style={{ zIndex: 1000 }}
                     onPress={() => {
+                      translateY.setValue(-100);
                       setSelected(null);
                       setCurrentScreen('language');
                     }}
@@ -1889,7 +2019,9 @@ useEffect(() => {
                 }}
               >
                 <Animated.View
-                  style={[Styles.cardView, { height: heightAnim }]}
+                  style={[Styles.cardView, { height: heightAnim },
+
+                  ]}
                 >
                   <View
                     onLayout={e => {
@@ -1987,8 +2119,6 @@ useEffect(() => {
                               allowFontScaling={false}
                               style={Styles.forgetPasswordText}
                               onPress={() => {
-                                // goToForgotPassword();
-
                                 goToForgotPassword(() => {
                                   setTextandBackIcon(false);
                                   setUsername('');
@@ -2184,6 +2314,7 @@ useEffect(() => {
                               onPress={() => {
                                 Keyboard.dismiss();
                                 resetPasswordtranslateY.setValue(0);
+                                slideUp.setValue(100);
                                 ClickFPGoBack_slideOutToTop(() => {
                                   Animated.timing(textAndBackOpacity, {
                                     toValue: 1, // fade in
@@ -2722,18 +2853,6 @@ useEffect(() => {
                                       setverifyimageLoaded(true);
                                     });
 
-                                    // Keyboard.dismiss();
-                                    // verifyAndContinyTranslateY1.setValue(-300); // below screen ❌ wrong direction
-                                    // verifyAndContinyTranslateY2.setValue(300);  // currently on screen ❌ wrong
-                                    // ClickBackToSendOTP1();  // visible
-                                    // verifyOpacity.setValue(0);
-                                    // otpOpacity.setValue(1);
-                                    // Click_SENDOTP_TO_SIGNUPSCREEN(() => {
-                                    //   setCurrentScreen('login');
-                                    //   setcurrentScreenIninner('signup');
-                                    //   setShowOtp(false);
-                                    //   setverifyimageLoaded(true);
-                                    // });
                                   }}
                                 >
                                   <Text
@@ -2931,49 +3050,41 @@ useEffect(() => {
                                 </Text>
                                 <TouchableOpacity
                                   onPress={() => {
-                                    // verifyAndContinyTranslateY1.setValue(300); // below screen
-                                    // verifyAndContinyTranslateY2.setValue(0);
-                                    // // setOTPTranslatY.setValue(300);
-                                    // ClickBackToSendOTP1(() => {
-                                    //   //   setCurrentScreen('login');
-                                    //   // setcurrentScreenIninner('sendOTP');
-                                    //     setCurrentScreen('login');
-                                    //     setcurrentScreenIninner('verify');
-                                    //     setverifyimageLoaded(true)
-                                    //     setShowOtp(false);
-                                    // });
-
                                     Keyboard.dismiss();
-                                    // Set correct starting positions
-                                    verifyAndContinyTranslateY1.setValue(300);
-                                    verifyAndContinyTranslateY2.setValue(0);
+                                  
+                                    Animated.timing(verifyAndContinyTranslateY2, {
+                                      toValue: -200,
+                                      duration: 500,
+                                      easing: Easing.in(Easing.ease),
+                                      useNativeDriver: true,
+                                    }).start(() => {
+                                      setShowOtp(true); 
+                                      verifyAndContinyTranslateY2.setValue(-200);
+                                      Animated.timing(verifyAndContinyTranslateY1, {
+                                        toValue: -200,
+                                        duration: 500,
+                                        easing: Easing.out(Easing.ease),
+                                        useNativeDriver: true,
+                                      }).start();
+                                      setTimeout(() => {
+                                      verifyinputs.current[0]?.focus();
+                                
+                                    }, 300);
+                                    Animated.sequence([
+                                      Animated.spring(verifyAndContinyTranslateY1, {
+                                        toValue: 0, // bounce upward
+                                        friction: 3.5,  // lower = bouncier
+                                        tension: 0, // controls snap
+                                        useNativeDriver: true,
+                                      }),
+                                    ]).start();
 
-                                    // Run animation
-                                    Animated.parallel([
-                                      Animated.timing(
-                                        verifyAndContinyTranslateY1,
-                                        {
-                                          toValue: 0,
-                                          duration: 400,
-                                          easing: Easing.linear,
-                                          useNativeDriver: true,
-                                        },
-                                      ),
-                                      Animated.timing(
-                                        verifyAndContinyTranslateY2,
-                                        {
-                                          toValue: -300,
-                                          duration: 400,
-                                          easing: Easing.linear,
-                                          useNativeDriver: true,
-                                        },
-                                      ),
-                                    ]).start(() => {
                                       setShowOtp(false);
                                       setverifyimageLoaded(true);
                                       setCurrentScreen('login');
                                       setcurrentScreenIninner('verify');
                                     });
+
                                   }}
                                 >
                                   <Text
@@ -3130,7 +3241,7 @@ useEffect(() => {
                                 width: '100%',
                                 alignItems: 'center',
                               }}
-                              blurType="light"
+                              blurType="dark"
                               blurAmount={Platform.OS === 'ios' ? 5 : 100}
                               reducedTransparencyFallbackColor={
                                 Platform.OS === 'ios'

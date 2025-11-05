@@ -319,8 +319,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     //top: 10,
     //right: 10,
-    top: (Platform.OS === 'ios'? 10: 20),
-    right: (Platform.OS === 'ios'? 10: 20),
+    top: (Platform.OS === 'ios'? 20: 20),
+    right: (Platform.OS === 'ios'? 20: 20),
 
     width: 44,
     height: 44,

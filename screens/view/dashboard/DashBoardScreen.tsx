@@ -36,6 +36,7 @@ import MessagesScreen from './MessageScreen';
 import { Constant } from '../../utils/Constant';
 import TransactionHistoryScreen from './TransactionHistoryScreen';
 import { BlurView } from '@react-native-community/blur';
+import BottomNavigation from '../../utils/component/BottomNavigation';
 
 const mylistings = require('../../../assets/images/mylistingicon.png');
 const mylistings1 = require('../../../assets/images/favourite.png');
@@ -125,7 +126,7 @@ const AddScreenContent: React.FC<
   AddScreenContentProps & { products: any[] }
 > = ({ navigation, products }) => (
   <View style={styles.tabContent3}>
-    <Text allowFontScaling={false} style={[styles.tabContentText3,{paddingBottom:16}]}>List Product</Text>
+    <Text allowFontScaling={false} style={[styles.tabContentText3,{paddingBottom:(Platform.OS === 'ios'? 0 : 16)}]}>List Product</Text>
     <AnimatedSlideUp>
       <FlatList
         data={products}
@@ -1043,6 +1044,10 @@ return (
             </TouchableOpacity>
           ))}
         </Animated.View>
+        
+
+
+      
       </View>
       <NewCustomToastContainer />
     </ImageBackground>
@@ -1357,7 +1362,7 @@ const styles = StyleSheet.create({
   tabContent3: {
     flex: 1,
     padding: 20,
-    paddingTop: Platform.OS === 'ios' ? 60 : 50,
+    paddingTop: Platform.OS === 'ios' ? '11%' : 50,
   },
   tabContentText3: {
     color: '#fff',
