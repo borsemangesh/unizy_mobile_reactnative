@@ -40,6 +40,7 @@ import EditPreviewThumbnail from './dashboard/EditPreviewThumbnail';
 import EditPreviewDetailed from './dashboard/EditPreviewDetailed';
 import UserProfileScreen from './dashboard/UserProfileScreen';
 import EditProfile from './dashboard/EditProfile';
+import ProfileCard from './dashboard/ProfileCard';
 
 const Stack = createNativeStackNavigator();
 
@@ -337,6 +338,16 @@ export const Navigation = () => {
             presentation: 'fullScreenModal',
           }}
         />
+
+  <Stack.Screen
+          name="ProfileCard"
+          component={ProfileCard}
+          options={{
+            headerShown: false,
+            presentation: 'fullScreenModal',
+          }}
+        />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
