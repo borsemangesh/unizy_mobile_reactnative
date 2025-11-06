@@ -11,7 +11,7 @@ import {
 type NotificationCardProps = {
   tag?: string;
   infoTitle: string;
-  reviewText?: string;
+  reviewText?: { text: string; bold: boolean }[];
   productImage: ImageSourcePropType;
   isfeature?: boolean;
   navigation: any;
@@ -21,7 +21,7 @@ type NotificationCardProps = {
 
 const NotificationCard: React.FC<NotificationCardProps> = ({
   infoTitle,
-  reviewText = '',
+  reviewText = [],
   productImage,
   navigation,
   typeid,
@@ -33,22 +33,46 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
   return (
     <TouchableOpacity
       style={styles.card}
-      onPress={() =>  navigation.navigate('SearchDetails', { id: typeid ,name:typename},{animation: 'none'})}
+      onPress={() =>
+        navigation.navigate(
+          'SearchDetails',
+          { id: typeid, name: typename },
+          { animation: 'none' },
+        )
+      }
       activeOpacity={0.8}
     >
-     <View style={styles.row}>
+      <View style={styles.row}>
         <View style={styles.imgcontainer}>
-      <Image source={productImage} style={styles.image} resizeMode="cover" />
-     </View>
-        <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
-    </View>
+          <Image
+            source={productImage}
+            style={styles.image}
+            resizeMode="cover"
+          />
+        </View>
+        <Text allowFontScaling={false} style={styles.title}>
+          {infoTitle}
+        </Text>
+      </View>
 
-
-  <View style={styles.bottomContent}>
+      {/* <View style={styles.bottomContent}>
       <Text allowFontScaling={false} style={styles.reviewText} numberOfLines={3}>
         {reviewText}
       </Text>
-  </View>
+  </View> */}
+
+      <View style={styles.bottomContent}>
+        <Text>
+          {reviewText.map((part, index) => (
+            <Text
+              key={index}
+              style={part.bold ? styles.reviewText_bold : styles.reviewText}
+            >
+              {part.text}
+            </Text>
+          ))}
+        </Text>
+      </View>
     </TouchableOpacity>
   );
 };
@@ -72,15 +96,18 @@ imgcontainer:{
     },
 
 bottomContent: {
- // marginTop:2,
+ marginTop:10,
+//  marginVertical:10
 },
   card: {
     backgroundColor: 'rgba(255,255,255,0.08)',
     borderRadius: 24,
     padding: 16,
     marginVertical: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    
+
+    // borderWidth: 1,
+    // borderColor: 'rgba(255,255,255,0.1)',
   },
   row: {
     flexDirection: 'row',
@@ -110,6 +137,15 @@ bottomContent: {
     marginTop: 8,
     fontFamily: 'Urbanist-Medium',
     fontWeight:500,
+    lineHeight: 20,
+  },
+
+    reviewText_bold: {
+    fontSize: 14,
+    color: '#FFFFFFE0',
+    marginTop: 8,
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight:600,
     lineHeight: 20,
   },
 });

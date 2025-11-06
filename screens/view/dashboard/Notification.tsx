@@ -72,7 +72,7 @@ const displayListOfProduct = async (pageNum: number) => {
     const pagesize = 10;
     let url = `${MAIN_URL.baseUrl}user/mynotification?page=${pageNum}&pagesize=${pagesize}`;
     
-    const token = await AsyncStorage.getItem('userToken');
+    const token = await AsyncStorage.getItem('userToken'); 
     if (!token) return;
 
     const response = await fetch(url, {
@@ -90,6 +90,11 @@ const displayListOfProduct = async (pageNum: number) => {
       setIsLoading(false);
 
       const newData = jsonResponse?.data?.notifications ?? [];
+
+      console.log("newData.........",newData);
+      console.log("token.........",token);
+      console.log("url---------",url);
+        
 
       if (pageNum === 1) {
         setNotificationList(newData);
@@ -166,6 +171,23 @@ const renderItem = ({ item }: { item: any }) => {
     return <Text allowFontScaling={false} style={styles.dateHeading}>{item.displayDate}</Text>;
   }
 
+
+  
+
+  
+  const parts = item.content.split(/\*\*([^*]+)\*\*/g);
+
+  const formattedParts = parts.map((part: string, index: number) => {
+    const isBold = index % 2 === 1;
+    return { text: part, bold: isBold };
+  });
+
+
+  console.log("parts...",formattedParts);
+  
+// };
+
+
   const productImage = require('../../../assets/images/bellicon.png');
 
   return (
@@ -173,7 +195,8 @@ const renderItem = ({ item }: { item: any }) => {
       <NotificationCard
         infoTitle={item.title}
         productImage={productImage}
-        reviewText={item.content}
+        // reviewText={formattedParts}
+          reviewText={formattedParts}
         navigation={navigation}
         typeid={item.metadata.id}
         typename='Product'
@@ -201,7 +224,7 @@ const renderItem = ({ item }: { item: any }) => {
           </View>
         </View>
 
-    <View>
+        <View>
    
        
     <FlatList
@@ -250,7 +273,7 @@ dateHeading:{
     fontSize:12,
     fontFamily: 'Urbanist-SemiBold',
     fontWeight:500,
-    marginLeft:12
+    marginLeft:6
     },
 
   background: { 

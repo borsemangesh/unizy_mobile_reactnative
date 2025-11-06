@@ -13,6 +13,8 @@ type MessagesIndividualScreenProps ={
 
 const MessagesIndividualScreen = ({navigation}:MessagesIndividualScreenProps) => {
 
+
+
     const [messageText, setMessageText] = useState('');
 
   return (
