@@ -23,6 +23,10 @@ import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import SearchListProductCard from '../../utils/SearchListProductCard';
 import SearchTutionCard from '../../utils/SearchTutionCard';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
+import NotificationCard from '../../utils/NotificationCard';
+import ReviewDetailCard from '../../utils/ReviewDetailCard';
+import MyOrderCard from '../../utils/MyOrderCard';
+
 
 type CreatedBy = {
   id: number;
@@ -144,6 +148,8 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
       url += `&category_id=${categoryId}`;
     }
 
+    console.log(url)
+
     const token = await AsyncStorage.getItem('userToken');
     if (!token) return;
 
@@ -204,140 +210,37 @@ const formatDate = (dateString: string | null | undefined) => {
   return `${day}-${month}-${year}`;
 };
 
-const handleBookmarkPress = async (productId: number) => {
-  try {
-    const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
-    let updatedBookmarks;
-
-    if (isCurrentlyBookmarked) {
-      updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
-    } else {
-      updatedBookmarks = [...bookmarkedIds, productId];
-    }
-
-    setBookmarkedIds(updatedBookmarks);
-
-    await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks));
-
-    if (isCurrentlyBookmarked) {
-      setFeaturelist(prevList => prevList.filter(item => item.id !== productId));
-    }
 
 
-    setBookmarkedIds(updatedBookmarks);
-    await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks));
+const renderItem = ({ item }: any) => {
+  const displayDate = formatDate(item.created_at);
+  const productImage =
+    item?.featurelist?.thumbnail
+      ? { uri: item.featurelist.thumbnail }
+      : require('../../../assets/images/drone.png');
 
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) return;
+  const displayPrice =
+    item?.featurelist?.price != null ? `$${item.featurelist.price}` : '$0.00';
+  const displayTitle = item?.featurelist?.title ?? 'Title';
 
-    const url = MAIN_URL.baseUrl + 'category/list-bookmark';
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ feature_id: productId }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log('Bookmark response:', data);
-
-  } catch (error) {
-    console.error('Bookmark error:', error);
-
-    // Optional: revert bookmark if API call fails
-    setBookmarkedIds(prev =>
-      prev.includes(productId)
-        ? prev.filter(id => id !== productId)
-        : [...prev, productId]
-    );
-  }
-};
-
-
- const renderItem = ({ item, index }: { item: Feature; index: number }) => {
-  const isLastOddItem =
-    filteredFeatures.length % 2 !== 0 &&
-    index === filteredFeatures.length - 1;
-
-  const feature = item.featurelist;
-
-  const isBookmarked = bookmarkedIds.length > 0
-  ? bookmarkedIds.includes(item.id)  // after toggles
-  : feature.isbookmarked || feature.isbookmarked;
-
-  
-   let productImage: ImageSourcePropType | null = null;
-    let showInitials = false;
-    let initials = '';
-  
-    if (feature.profileshowinview) {
-      if (feature.createdby?.profile) {
-        productImage = { uri: feature.createdby.profile };
-      } else {
-        showInitials = true;
-        initials = `${feature.createdby?.firstname?.[0] ?? ''}${feature.createdby?.lastname?.[0] ?? ''}`;
-      }
-    } else {
-      if (feature.thumbnail) {
-        productImage = { uri: feature.thumbnail };
-      } else {
-        productImage = require('../../../assets/images/drone.png');
-      }
-    }
-    
+  // Example: decide purchase state based on backend data
+  const ispurchase = item?.order_status === 'fulfilled'; // or any other condition
 
   return (
-    <View
-      style={[
-        styles.itemContainer,
-        { flex: isLastOddItem ? 0.5: 0.5, marginRight: isLastOddItem ? 0.5 : 0.5 },
-      ]}
-    >
-       <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('MyProductDetails', { id: feature.id,name: selectedCategory.name === 'All' ? 'List' : selectedCategory.name, }) 
-            }
-            style={{ flex: 1 }}
-          >
-  
-         {feature.profileshowinview ? (
-              <SearchTutionCard
-                tag={feature.university?.name || 'University of Warwick'}
-                infoTitle={feature.title}
-                inforTitlePrice={`£ ${feature.price}`}
-                rating={feature.isfeatured ? '4.5' : '4.5'}
-                productImage={feature.createdby?.profile ? { uri: feature.createdby.profile } : undefined}
-                bookmark={feature.isbookmarked}
-                //bookmark={isBookmarked}
-                showInitials={showInitials}
-                initialsName={initials}
-                isfeature={feature.isfeatured}
-                applybookmark={() => handleBookmarkPress(feature.id)}
-                
-              />
-            ) : (
-              <SearchListProductCard
-                tag={feature.university?.name || 'University of Warwick'}
-                infoTitle={feature.title}
-                inforTitlePrice={`£ ${feature.price}`}
-                rating={feature.isfeatured ? '4.5' : '4.5'}
-                productImage={productImage ?? require('../../../assets/images/drone.png')}
-                bookmark={feature.isbookmarked}
-                //bookmark={bookmarkedIds.includes(item.id)}
-                isfeature={feature.isfeatured}
-                applybookmark={() => handleBookmarkPress(feature.id)}
-              />
-            )}
-      </TouchableOpacity>
+    <View style={styles.itemContainer}>
+      <MyOrderCard
+        infoTitle={displayTitle}
+        inforTitlePrice={displayPrice}
+        productImage={productImage}
+        shareid={item.id}
+        date={displayDate}
+        ispurchase={true}
+      />
     </View>
   );
 };
+
+
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -383,38 +286,43 @@ const handleBookmarkPress = async (productId: number) => {
         </ScrollView>
             
 
-        {/* FlatList */}
+        
         <FlatList
           data={filteredFeatures}
           keyExtractor={(item) => item.id.toString()}
-          numColumns={2}
-          columnWrapperStyle={styles.row1}
-          //contentContainerStyle={styles.listContainer}
           contentContainerStyle={[
-            styles.listContainer,{ paddingBottom: SCREEN_HEIGHT * 0.22 },
-            filteredFeatures?.length === 0 && { alignContent:'center',alignSelf:'center' ,width:'90%',height:'90%'}
+            styles.listContainer,
+            { paddingBottom: SCREEN_HEIGHT * 0.22 },
+            filteredFeatures?.length === 0 && {
+              alignContent: 'center',
+              alignSelf: 'center',
+              width: '90%',
+              height: '90%',
+            },
           ]}
           renderItem={renderItem}
-           ListFooterComponent={
+          ListFooterComponent={
             isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
           }
-            ListEmptyComponent={
-                !isLoading ? (
-                   <View style={styles.emptyWrapper}>
-                  <View style={styles.emptyContainer}>
-                    <Image
-                      source={require('../../../assets/images/noproduct.png')} // your image
-                      style={styles.emptyImage}
-                      resizeMode="contain"
-                    />
-                    <Text allowFontScaling={false} style={styles.emptyText}>
-                      No Orders found
-                    </Text>
-                  </View>
-                  </View>
-                ) : null
-              }
+          ListEmptyComponent={
+            !isLoading ? (
+              <View style={styles.emptyWrapper}>
+                <View style={styles.emptyContainer}>
+                  <Image
+                    source={require('../../../assets/images/noproduct.png')}
+                    style={styles.emptyImage}
+                    resizeMode="contain"
+                  />
+                  <Text allowFontScaling={false} style={styles.emptyText}>
+                    No Orders found
+                  </Text>
+                </View>
+              </View>
+            ) : null
+          }
         />
+
+        
         </View>
       </View>
       <NewCustomToastContainer/>

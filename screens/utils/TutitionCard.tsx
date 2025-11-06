@@ -350,15 +350,27 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
 
+  // rightText: {
+  //   fontSize: 18,
+  //   fontWeight: '600',
+  //   color: '#fff',
+  //   textAlign: 'center',
+  //   fontFamily: 'Urbanist-SemiBold',
+  //   position: 'absolute',
+  //   left:12
+   
+  // },
   rightText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#fff',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-SemiBold',
-    position: 'absolute',
-    left:12
-  },
+  position: 'absolute',
+  left: 12,
+  right: 12,         // give space on the right so it can expand
+  fontSize: 18,
+  fontWeight: '600',
+  color: '#fff',
+  textAlign: 'left',
+  fontFamily: 'Urbanist-SemiBold',
+  flexWrap: 'wrap',
+},
 
   // tag: {
   //   position: 'absolute',

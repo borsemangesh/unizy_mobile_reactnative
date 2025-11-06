@@ -1,18 +1,21 @@
 import { BlurView } from "@react-native-community/blur";
-import { TextStyle, TouchableOpacity, StyleSheet, Text, Platform } from "react-native";
+import { TouchableOpacity, StyleSheet, Text, Platform, View } from "react-native";
 
 type PayButtonProps = {
   amount: number | string; // price to display
   onPress: () => void;
   label?: string; // default "Pay"
-  textStyle?: TextStyle; // optional override for text
 };
 
-const PayButton = ({ amount, onPress, label = "Pay", textStyle }: PayButtonProps) => {
+const PayButton = ({ amount, onPress, label = "Pay" }: PayButtonProps) => {
   const formattedAmount = `£${Number(amount ?? 0).toFixed(2)}`;
 
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.7} style={styles.buttonContainer}>
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.7}
+      style={styles.buttonContainer}
+    >
       <BlurView
         style={StyleSheet.absoluteFill}
         blurType="light"
@@ -20,13 +23,23 @@ const PayButton = ({ amount, onPress, label = "Pay", textStyle }: PayButtonProps
         reducedTransparencyFallbackColor="transparent"
       />
 
-      <Text allowFontScaling={false} style={[styles.buttonText, textStyle]}>
-        {label} {formattedAmount}
+      <View style={styles.textWrapper}>
+
+      <Text allowFontScaling={false} style={styles.buttonText}>
+        <Text style={styles.labelText}>{label} </Text>
+        <Text style={styles.amountText}>{formattedAmount}</Text>
       </Text>
+      </View>
     </TouchableOpacity>
   );
 };
+
 const styles = StyleSheet.create({
+
+  textWrapper: {
+    backgroundColor: 'transparent',
+    zIndex: 1, // ensures text renders above BlurView cleanly
+  },
   buttonContainer: {
     width: '90%',
     height: 48,
@@ -40,19 +53,28 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 10,
     position: 'absolute',
-    bottom: (Platform.OS === 'ios'? 16 : 10),
+    bottom: Platform.OS === 'ios' ? 16 : 10,
   },
   buttonText: {
-    // color: '#000',
-    // fontSize: 16,
-    // fontWeight: 'bold',
-    color: '#002050ff',
     textAlign: 'center',
+    color: '#002050ff',
+    flexDirection: 'row',
+  },
+  labelText: {
+    color: '#002050',
     fontFamily: 'Urbanist-Medium',
     fontSize: 17,
-    fontWeight: 500,
+    fontWeight: '600',
     letterSpacing: 1,
-    opacity: 0.9
+    opacity:0.9
+  },
+  amountText: {
+    color: '#002050',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 17,
+    fontWeight: 700,
+    letterSpacing: 1,
+    opacity:0.9
   },
 });
 

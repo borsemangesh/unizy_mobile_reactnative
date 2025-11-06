@@ -793,21 +793,21 @@ const diff1 =commissionPrice1-priceValue1
            */}
 
            <Button
-      onPress={handleListPress}
-      title={(() => {
-        try {
-          const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
-          const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
+              onPress={handleListPress}
+              title={(() => {
+                try {
+                  const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+                  const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
 
-          if (isFeatured) {
-            return `List for £${diff1}`;
-          }
-          return 'List';
-        } catch (e) {
-          console.log('Error parsing storedForm:', e);
-          return 'List';
-        }
-      })()}
+                  if (isFeatured) {
+                    return `List for £${diff1}`;
+                  }
+                  return 'List';
+                } catch (e) {
+                  console.log('Error parsing storedForm:', e);
+                  return 'List';
+                }
+              })()}
 />
 
         <Modal
