@@ -472,6 +472,7 @@ export default function TutitionCard({
 
             <View style={styles.leftPortion}>
   {productImage && (productImage as ImageURISource).uri ? (
+    console.log("RPduct Image",productImage),
     // ✅ Show user’s actual image
     <Image
       source={productImage}

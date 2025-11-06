@@ -21,6 +21,7 @@ type MyListingCardProps = {
   shareid:number;
   catagory_id: number;
   catagory_name: string;
+  isactive?: boolean;
 };
 
 const MyListingCard: React.FC<MyListingCardProps> = ({
@@ -34,7 +35,8 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
   navigation,
   shareid,
   catagory_id,
-  catagory_name
+  catagory_name,
+  isactive = true
 }) => {
 //  console.log('Share ID in card:', shareid, catagory_id);
  return (
@@ -49,7 +51,10 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
         {infoTitle}
       </Text>
       {topRightText ? (
-        <View style={styles.topRightBadge}>
+        <View style={[
+          styles.topRightBadge,
+          { backgroundColor: isactive ? 'rgba(255, 255, 255, 0.18)' : 'rgba(0, 0, 0, 0.18)' },
+        ]}>
           <Text allowFontScaling={false} style={styles.topRightText}>{topRightText}</Text>
         </View>
       ) : null}
@@ -91,6 +96,7 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent:'center',
     borderRadius: 18,
     padding: 12,
     marginVertical: 6,

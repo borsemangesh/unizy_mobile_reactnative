@@ -501,10 +501,11 @@ const diff1 =commissionPrice1-priceValue1
           scrollEventThrottle={16}
         > */}
         <ScrollView
+        showsVerticalScrollIndicator={false}
             contentContainerStyle={[
              styles.scrollContainer,
                {
-               paddingBottom: screenHeight * 0.1 + insets.bottom, // 10% of screen + safe area
+              //  paddingBottom: screenHeight * 0.10 + insets.bottom, // 10% of screen + safe area
                 },
             ]}
              scrollEventThrottle={16}
@@ -808,6 +809,7 @@ const diff1 =commissionPrice1-priceValue1
           return 'List';
         }
       })()}
+      style={{position: 'absolute',bottom: 10}}
 />
 
         <Modal

@@ -299,11 +299,19 @@ return (
     </View>
   </View>
 
-    <View style={styles.editcard}>
+    {/* <View style={styles.editcard}>
           <Text allowFontScaling={false} style={styles.edittext}>Edit</Text>
         </View>
-    </View>
+    </View> */}
 
+<View style={styles.editcard}>
+      <TouchableOpacity onPress={() =>{navigation.navigate('EditProfile')}}>
+          <Text allowFontScaling={false} style={styles.edittext}>Edit</Text>
+          </TouchableOpacity>
+        </View>
+        
+
+    </View>
     
 
     <View style={styles.listContainer}>

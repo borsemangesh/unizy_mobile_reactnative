@@ -791,6 +791,9 @@ return (
 
     const data = await response.json();
     console.log('Bookmark response:', data);
+    if (data?.message) {
+      showToast(data.message, data.statusCode === 200 ? 'success' : 'error');
+    }
 
     let updatedBookmarks;
     if (isCurrentlyBookmarked) {

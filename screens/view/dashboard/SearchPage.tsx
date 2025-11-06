@@ -552,7 +552,7 @@ const handleEndReached = useCallback(() => {
                                           resizeMode="contain"
                                         />
                                         <Text allowFontScaling={false} style={styles.emptyText}>
-                                          No Listings found
+                                          No Listings Found
                                         </Text>
                                       </View>
                                       </View>

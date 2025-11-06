@@ -181,7 +181,7 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
     >
       <View
         style={{
-          paddingTop: Platform.OS === 'ios' ? 70 : 70,
+          paddingTop: Platform.OS === 'ios' ? '15%' : 70,
           paddingLeft: 16,
           paddingRight: 16,
         }}
@@ -335,7 +335,7 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
           {/* <Button
             onPress={() => {
             navigation.navigate('PreviewDetailed');
-          }} title='Next'/> */}
+          }} title='Next' style={{position: 'absolute', bottom: 0}}/> */}
         </View>
       </View>
       <NewCustomToastContainer/>

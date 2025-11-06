@@ -105,6 +105,7 @@ const inputRef = useRef<TextInput>(null);
 
 const clickfilter = () => {
   setFilterVisible(true);
+  setTimeout(() => console.log("Filter open state:", isFilterVisible), 100);
 };
 
 function debounce<T extends (...args: any[]) => void>(func: T, delay: number) {
@@ -514,7 +515,7 @@ const handleEndReached = useCallback(() => {
                     resizeMode="contain"
                   />
                   <Text allowFontScaling={false} style={styles.emptyText}>
-                    No Listings found
+                    No Listings Found
                   </Text>
                 </View>
                 </View>
@@ -526,9 +527,11 @@ const handleEndReached = useCallback(() => {
       <FilterBottomSheet
         catagory_id={category_id}
         visible={isFilterVisible}
-        initialFilters={appliedFilter} 
-        //onClose={handleFilterClose}
-       onClose={() => setFilterVisible(false)}
+        initialFilters={appliedFilter}
+       onClose={() => {
+        console.log("Filter Colse click:  ",isFilterVisible);
+        setFilterVisible(false);}
+      }
         onApply={(filterBody) => handleFilterApply(filterBody)} from={0} to={0}/>
     <NewCustomToastContainer/>
     </ImageBackground>

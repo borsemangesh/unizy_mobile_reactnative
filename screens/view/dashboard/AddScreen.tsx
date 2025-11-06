@@ -179,6 +179,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           const sellerFields = json.data.filter(
             (item: any) => item.seller === true,
           );
+          console.log("AllData", json?.data);
           setFields(sellerFields);
         }
          if (response.status === 401 || response.status === 403) {
@@ -254,77 +255,74 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     ).padStart(2, '0')}-${today.getFullYear()}`;
   };
 
-
- const requestCameraPermission = async () => {
-  try {
+  const requestCameraPermission = async () => {
     if (Platform.OS === 'android') {
-      // Request Camera permission
-      const camera = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.CAMERA,
-        {
-          title: 'Camera Permission',
-          message: 'App needs access to your camera',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-
-      // Request Gallery permission (depends on Android version)
-      const gallery =
-        Platform.Version >= 33
-          ? await PermissionsAndroid.request(
-              PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
-            )
-          : await PermissionsAndroid.request(
-              PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-            );
-
-      if (
-        camera === PermissionsAndroid.RESULTS.GRANTED &&
-        gallery === PermissionsAndroid.RESULTS.GRANTED
-      ) {
-        // Alert.alert('Success', 'Camera and gallery permissions granted');
-        return true;
-      } else {
-        Alert.alert('Permission Denied', 'Camera or gallery permission denied');
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            title: 'Camera Permission',
+            message: 'App needs access to your camera',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        console.warn(err);
         return false;
       }
     } else {
-      // iOS Permissions
-      const permissionsToCheck = [
-        PERMISSIONS.IOS.CAMERA,
-        PERMISSIONS.IOS.PHOTO_LIBRARY,
-      ];
-
-      const results = await Promise.all(
-        permissionsToCheck.map(async (perm) => {
-          const status = await check(perm);
-          if (status === RESULTS.GRANTED) return true;
-          if (status === RESULTS.BLOCKED) {
-            console.warn(`${perm} is blocked. Enable it in Settings.`);
-            return false;
-          }
-          const req = await request(perm);
-          return req === RESULTS.GRANTED;
-        }),
-      );
-
-      if (results.every((r) => r === true)) {
-        //Alert.alert('Success', 'Camera and gallery permissions granted');
-        return true;
-      } else {
-        Alert.alert('Permission Denied', 'Camera or gallery permission denied');
-        return false;
-      }
+      return true;
     }
-  } catch (error) {
-    console.warn('Permission Error:', error);
-    return false;
-  }
-};
+  };
 
- 
+  // const requestCameraPermission = async () => {
+  //     if (Platform.OS === "android") {
+  //       try {
+  //         const granted = await PermissionsAndroid.request(
+  //           PermissionsAndroid.PERMISSIONS.CAMERA,
+  //           {
+  //             title: "Camera Permission",
+  //             message: "App needs access to your camera",
+  //             buttonNeutral: "Ask Me Later",
+  //             buttonNegative: "Cancel",
+  //             buttonPositive: "OK",
+  //           }
+  //         );
+  //         return granted === PermissionsAndroid.RESULTS.GRANTED;
+  //       } catch (err) {
+  //         console.warn(err);
+  //         return false;
+  //       }
+  //     } else if (Platform.OS === 'ios') {
+  //       try {
+  //         // Check current permission status first
+  //         const status = await check(PERMISSIONS.IOS.CAMERA);
+  //         if (status === RESULTS.GRANTED) {
+  //           return true;
+  //         }
+  //         const result = await request(PERMISSIONS.IOS.CAMERA);
+    
+  //         if (result === RESULTS.GRANTED) {
+  //           return true; 
+  //         } else if (result === RESULTS.BLOCKED) {
+  //           console.warn('Camera permission is blocked. Please enable it in Settings.');
+  //           return false;
+  //         } else {
+  //           return false; // Denied
+  //         }
+  //       } catch (err) {
+  //         console.warn(err);
+  //         return false;
+  //       }
+  //     } 
+      
+  //     else {
+  //       return true;
+  //     }
+  //   };
 
 
   const handlePreview = async () => {
@@ -513,7 +511,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
       // ---------------- TEXT FIELD ----------------
       case 'text': {
         const { param } = field;
-        const { field_name, keyboardtype, alias_name } = param;
+        const { field_name, keyboardtype, alias_name, placeholder } = param;
 
         const rawValue = formValues[param.id]?.value || '';
 
@@ -847,6 +845,11 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     }
   };
 
+  // Identify the featured toggle (boolean field) to render it separately from the main container
+  const featuredField = fields.find(
+    (f: any) => f?.param?.field_type?.toLowerCase() === 'boolean',
+  );
+
   return (
  
     <ImageBackground source={bgImage} style={styles.background}>
@@ -874,6 +877,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             <Text allowFontScaling={false} style={styles.unizyText}>
               {`List${productName ? ` ${productName} ` : ''}`}
             </Text>
+           
             <View style={{ width: 48 }} />
           </View>
         </View>
@@ -882,7 +886,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false} >
             
             <View style={styles.userRow}>
           <View style={{ width: '20%', alignItems: 'center', justifyContent: 'center' }}>
@@ -924,7 +928,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                   justifyContent: 'space-between',
                 }}
               >
-                <Text allowFontScaling={false} style={styles.userSub1}>Coventry</Text>
+                <Text allowFontScaling={false} style={styles.userSub2}>Coventry</Text>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -954,13 +958,29 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                   }),
                 }}
               >
-                <Text allowFontScaling={false} style={styles.productdetailstext}>Product Details</Text>
-                {fields.map(field => renderField(field))}
+              <Text allowFontScaling={false} style={styles.productdetailstext}>
+                {productName === 'Food'
+                  ? 'Dish Details'
+                  : `${productName ? `${productName} ` : ''}Details`}
+              </Text>                
+
+              {fields
+                  .filter(
+                    (f: any) =>
+                      f?.param?.field_type?.toLowerCase() !== 'boolean',
+                  )
+                  .map((field: any) => renderField(field))}
               </Animated.View>
             </View>
+            {/* Featured listing toggle rendered as a separate section */}
+            {featuredField && (
+              <View>
+                {renderField(featuredField)}
+              </View>
+            )}
           </ScrollView>
 
-          <Button title="Preview Details" onPress={() => handlePreview()} />
+          <Button title="Preview Details" onPress={() => handlePreview()}  style={{position: 'absolute', bottom: 0}}/>
         </KeyboardAvoidingView>
       </View>
 
@@ -970,12 +990,12 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
         visible={multiSelectModal.visible}
         ismultilple={multiSelectModal?.ismultilple}
         title={`Select ${multiSelectModal?.fieldLabel || 'Category'}`}
-        // subtitle={`Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your item.`}
         subtitle={
-          multiSelectModal?.ismultilple
-            ? `Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your listing.`
-            : `Select the ${multiSelectModal?.fieldLabel || 'category'} that best describes your listing.`
-        }
+            multiSelectModal?.ismultilple
+              ? `Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your listing.`
+              : `Select the ${multiSelectModal?.fieldLabel || 'category'} that best describes your listing.`
+          }
+        //subtitle={`Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your item.`}
         selectedValues={formValues[multiSelectModal.fieldId!]?.value}
         onClose={() =>
           setMultiSelectModal(prev => ({ ...prev, visible: false }))
@@ -1140,7 +1160,7 @@ dropdowncard:{
   },
   scrollContainer: {
     paddingHorizontal: 20,
-    paddingBottom: 80,
+    paddingBottom: (Platform.OS === 'ios' ? 70:80),
     paddingTop: 100,
   },
   userRow: {
@@ -1181,8 +1201,16 @@ dropdowncard:{
     lineHeight: 16,
     marginTop:4
   },
-   userSub1: {
+  userSub2: {
     color: 'rgba(255, 255, 255, 0.88)',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 12,
+    fontWeight: '500',
+    lineHeight: 16,
+    marginTop:1
+  },
+   userSub1: {
+    color: 'rgba(255, 255, 255, 0.48)',
     fontFamily: 'Urbanist-Medium',
     fontSize: 12,
     fontWeight: '500',

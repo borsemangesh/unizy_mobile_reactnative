@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
@@ -54,6 +53,9 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   const formattedDate = today.toLocaleDateString('en-GB');
   const displayDate = formattedDate.replace(/\//g, '-');
   const [photo, setPhoto] = useState<string | null>(null);
+  const [newdate,setnewdate]=useState('')
+  const [category,setcategory]=useState('')
+
 
   const [multiSelectModal, setMultiSelectModal] = useState<{
     visible: boolean;
@@ -96,8 +98,6 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   const [maxFeatureCap, setMaxFeatureCap] = useState(0);
   const route = useRoute<AddScreenRouteProp>();
   const { productId, productName, shareid } = route.params;
-
-  const [newdate, setNewDate] = useState('');
 
     const [deletedImageIds, setDeletedImageIds] = useState<string[]>([]);
 
@@ -312,7 +312,10 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
     
         if (json?.data) {
           const data = json.data;
-          setNewDate(data.createdat);
+          setnewdate(data.created_at);
+
+          setcategory(data.category.name)
+          
           const initialValues: any = {};
     
           // --- Basic Fields ---
@@ -451,10 +454,9 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   };
 
   const requestCameraPermission = async () => {
-    try {
-      if (Platform.OS === 'android') {
-        // Request Camera permission
-        const camera = await PermissionsAndroid.request(
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.CAMERA,
           {
             title: 'Camera Permission',
@@ -464,58 +466,13 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             buttonPositive: 'OK',
           },
         );
-  
-        // Request Gallery permission (depends on Android version)
-        const gallery =
-          Platform.Version >= 33
-            ? await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
-              )
-            : await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-              );
-  
-        if (
-          camera === PermissionsAndroid.RESULTS.GRANTED &&
-          gallery === PermissionsAndroid.RESULTS.GRANTED
-        ) {
-          // Alert.alert('Success', 'Camera and gallery permissions granted');
-          return true;
-        } else {
-          Alert.alert('Permission Denied', 'Camera or gallery permission denied');
-          return false;
-        }
-      } else {
-        // iOS Permissions
-        const permissionsToCheck = [
-          PERMISSIONS.IOS.CAMERA,
-          PERMISSIONS.IOS.PHOTO_LIBRARY,
-        ];
-  
-        const results = await Promise.all(
-          permissionsToCheck.map(async (perm) => {
-            const status = await check(perm);
-            if (status === RESULTS.GRANTED) return true;
-            if (status === RESULTS.BLOCKED) {
-              console.warn(`${perm} is blocked. Enable it in Settings.`);
-              return false;
-            }
-            const req = await request(perm);
-            return req === RESULTS.GRANTED;
-          }),
-        );
-  
-        if (results.every((r) => r === true)) {
-          //Alert.alert('Success', 'Camera and gallery permissions granted');
-          return true;
-        } else {
-          Alert.alert('Permission Denied', 'Camera or gallery permission denied');
-          return false;
-        }
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        console.warn(err);
+        return false;
       }
-    } catch (error) {
-      console.warn('Permission Error:', error);
-      return false;
+    } else {
+      return true;
     }
   };
   const handlePreview = async (latestFormValues: any) => {
@@ -732,15 +689,14 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
     console.log(`Deleted image with ID: ${fileId}`);
   };
 
-
   const formatDateWithDash = (dateString?: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+};
 
   const renderField = (field: any) => {
     // const { field_name, field_type, options, id, field_ismultilple } =field.param;
@@ -1200,7 +1156,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
               </View>
             </TouchableOpacity>
             <Text allowFontScaling={false} style={styles.unizyText}>
-              {`List${productName ? ` ${productName} ` : ''}`}
+              {`Edit${category ? ` ${category} ` : ''}`}
             </Text>
             <View style={{ width: 48 }} />
           </View>
@@ -1277,7 +1233,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                         style={{ height: 20, width: 20 }}
                       />
                       <Text allowFontScaling={false} style={styles.userSub1}>
-                      {formatDateWithDash(newdate)}
+                        {formatDateWithDash(newdate)}
                       </Text>
                     </View>
                   </View>
@@ -1299,7 +1255,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                   allowFontScaling={false}
                   style={styles.productdetailstext}
                 >
-                  Product Details
+                  {category === 'Food' ? 'Dish Details' : `${category ? `${category} Details` : ''}`}
                 </Text>
                 {fields.map(field => renderField(field))}
               </Animated.View>
