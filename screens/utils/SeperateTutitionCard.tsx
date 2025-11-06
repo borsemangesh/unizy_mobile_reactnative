@@ -64,6 +64,11 @@ export default function SeperateTutionCard({
 
       {isfeature && (
               <View style={styles.tagTopLeft}>
+                 <BlurView 
+                    blurType="light"
+                    blurAmount={100}
+                    style={[StyleSheet.absoluteFillObject,{borderRadius: 9}]}
+                    />
                 <Text allowFontScaling={false} style={styles.tagText}>Featured</Text>
               </View>
             )}
@@ -74,6 +79,14 @@ export default function SeperateTutionCard({
                           blurAmount={100}
                           style={[StyleSheet.absoluteFillObject,{borderRadius: 12}]}
                         />
+                        <LinearGradient
+                                                colors={[
+                                                  'rgba(0, 1, 102, 0.20)',   // center strong blue tint
+                                                  'rgba(0, 1, 102, 0.024)'  // outer faint blue tint
+                                                ]}
+                                                style={StyleSheet.absoluteFillObject}
+                                                useAngle={false} // radial
+                                              />
            <TouchableOpacity onPress={applybookmark}>
           <Image
             source={

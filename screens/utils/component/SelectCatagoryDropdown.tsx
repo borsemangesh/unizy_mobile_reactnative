@@ -125,14 +125,14 @@
 //               <View style={styles.header}>
 //                 <View style={styles.optionHeader}>
 //                   <View style={styles.checkboxImage}>
-//                     <Image
-//                       source={
-//                           ismultilple
-//                             ? require('../../../assets/images/checkboxicon.png')
-//                             : require('../../../assets/images/radiobuttonicon.png')
-//                         }
-//                       style={{ width: 24, height: 24 }}
-//                     />
+                    // <Image
+                    //   source={
+                    //       ismultilple
+                    //         ? require('../../../assets/images/checkboxicon.png')
+                    //         : require('../../../assets/images/radiobuttonicon.png')
+                    //     }
+                    //   style={{ width: 24, height: 24 }}
+                    // />
 //                   </View>
 //                   <Text allowFontScaling={false} style={styles.modelTextHeader}>{title}</Text>
 //                 </View>
@@ -717,8 +717,12 @@ const toggleCheckbox = (id: number) => {
               <View style={styles.header}>
                 <View style={styles.optionHeader}>
                   <View style={styles.checkboxImage}>
-                    <Image
-                      source={require('../../../assets/images/checkboxicon.png')}
+                      <Image
+                      source={
+                          ismultilple
+                            ? require('../../../assets/images/checkboxicon.png')
+                            : require('../../../assets/images/radiobuttonicon.png')
+                        }
                       style={{ width: 24, height: 24 }}
                     />
                   </View>

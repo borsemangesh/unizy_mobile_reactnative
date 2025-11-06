@@ -9,6 +9,7 @@ import {
   Platform,
   TouchableOpacity,
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
 type NewProductCardProps = {
   tag: string;
@@ -35,12 +36,54 @@ export default function SearchListProductCard({
     <View style={styles.card}>
       <View style={styles.imageContainer}>
         <Image source={productImage} style={styles.image} />
-        <View style={styles.tag}>
+
+
+        {/* <View style={styles.tag}>
           <Text allowFontScaling={false} style={styles.tagText}>{tag}</Text>
-        </View>
+        </View> */}
+
+ 
+
+<View style={styles.tag}>
+
+   <BlurView 
+      blurType="light"
+      blurAmount={100}
+    style={[StyleSheet.absoluteFillObject,{borderRadius: 9}]}
+      />
+      {/* <LinearGradient
+            colors={[
+              'rgba(255,255,255,0.18)', 
+              'rgba(255,255,255,0)' 
+            ]}
+            style={StyleSheet.absoluteFillObject}
+            start={{ x: 0.17, y: 0.06 }}
+            end={{ x: 1, y: 1 }}
+          /> */}
+          {/* <LinearGradient
+            colors={[
+              'rgba(0, 1, 102, 0.20)',   
+              'rgba(0, 1, 102, 0.024)'  
+            ]}
+            style={StyleSheet.absoluteFillObject}
+            useAngle={false} // radial
+          /> */}
+  
+       
+        <Text allowFontScaling={false} style={styles.tagText}>
+          {tag}
+        </Text>
+      </View>
 
        {isfeature && (
+
+      
         <View style={styles.tagTopLeft}>
+           <BlurView 
+            blurType="light"
+            blurAmount={100}
+          style={[StyleSheet.absoluteFillObject,{borderRadius: 9}]}
+            />
           <Text allowFontScaling={false} style={styles.tagText}>Featured</Text>
         </View>
       )}
@@ -69,6 +112,14 @@ export default function SearchListProductCard({
                           blurAmount={100}
                           style={[StyleSheet.absoluteFillObject,{borderRadius: 9}]}
                         />
+                        <LinearGradient
+                                                colors={[
+                                                  'rgba(0, 1, 102, 0.20)',   // center strong blue tint
+                                                  'rgba(0, 1, 102, 0.024)'  // outer faint blue tint
+                                                ]}
+                                                style={StyleSheet.absoluteFillObject}
+                                                useAngle={false} // radial
+                                              />
                   <TouchableOpacity onPress={applybookmark}>
                    <Image
                       source={
@@ -90,6 +141,8 @@ export default function SearchListProductCard({
             flexDirection: 'row',
             width: '90%',
             justifyContent: 'space-between',
+            paddingTop:6
+
           }}
         >
           <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
@@ -110,6 +163,7 @@ export default function SearchListProductCard({
           </View>
         </View>
       </View>
+
     </View>
   );
 }
@@ -126,7 +180,7 @@ const styles = StyleSheet.create({
     width: '95%',
     overflow: 'hidden',
     height: 'auto',
-    margin: 6,
+    //marginHorizontal: 6,
     paddingBottom: 10,
     borderWidth: 0.4,
     borderColor: '#ffffff11',
@@ -147,18 +201,21 @@ const styles = StyleSheet.create({
     borderRightColor: '#ffffff2e',
 
     boxSizing: 'border-box',
+    minHeight:226
   },
   imageContainer: {
     // width: 186,
     width: '100%',
-    height: 180,
+    height:200,
     position: 'relative',
-     padding: (Platform.OS === 'ios' ? 0 : 6),
+    padding: (Platform.OS === 'ios' ? 0 : 6),
+    //paddingTop: (Platform.OS === 'ios' ? 0 : 6),
   },
   image: {
     width: '100%',
     height: '100%',
     padding: (Platform.OS === 'ios'? 5: 12),
+    //paddingTop:(Platform.OS === 'ios'? 5: 12),
     borderRadius: 12,
     alignSelf: 'center',
     resizeMode: 'cover',
@@ -172,8 +229,8 @@ const styles = StyleSheet.create({
   bookmark: {
     overflow:'hidden',
     position: 'absolute',
-    top: Platform.OS === 'ios' ? 10 : 10,
-    right: Platform.OS === 'ios' ? 10 : 10,
+    top: Platform.OS === 'ios' ? 10 : 12,
+    right: Platform.OS === 'ios' ? 10 : 12,
      borderRadius: 12,
      backgroundColor:
        'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(101, 101, 101, 0.13) 0%, rgba(117, 117, 117, 0.1) 100%)',
@@ -212,15 +269,18 @@ const styles = StyleSheet.create({
     //bottom: 5,
     //right: 5,
 
-    bottom: Platform.OS === 'ios' ? 8 : 8,
-    right: Platform.OS === 'ios' ? 8 : 8,
-    //backgroundColor: '#fff',
-    backgroundColor: 'rgba(255,255,255,0.4)',
+    bottom: Platform.OS === 'ios' ? 8 : 10,
+    right: Platform.OS === 'ios' ? 8 : 10,
+    //backgroundColor: 'transparent',
+    //backgroundColor: 'rgba(255,255,255,0.4)',
+    backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
+
     borderRadius: 4,
     padding: 4,
     marginVertical: 4,
     marginHorizontal: 4,
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
+    overflow:'hidden'
   },
   tagText: {
     fontSize: 10,
@@ -232,21 +292,25 @@ const styles = StyleSheet.create({
   position: 'absolute',
   // top: 5,
   // left: 5,
-   top: Platform.OS === 'ios' ? 8 : 8,
-    left: Platform.OS === 'ios' ? 8 : 8,
-  backgroundColor: 'rgba(255,255,255,0.4)',
+   top: Platform.OS === 'ios' ? 8 : 10,
+    left: Platform.OS === 'ios' ? 8 : 10,
+  //backgroundColor: 'rgba(255,255,255,0.4)',
+  backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
   borderRadius: 4,
-  padding: 4,
+  //padding: 4,
+   paddingHorizontal: 6,
+  paddingVertical:2,
   marginVertical: 4,
   marginHorizontal: 4,
   boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
+  overflow:'hidden'
 },
   infoRow: {
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
     //backgroundColor: '#fff',
-    paddingHorizontal: 6,
+    paddingHorizontal: 2,
   },
   title: {
     fontSize: 12,

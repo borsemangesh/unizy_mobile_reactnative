@@ -790,6 +790,10 @@ return (
     const data = await response.json();
     console.log('Bookmark response:', data);
 
+    if (data?.message) {
+      showToast(data.message, data.statusCode === 200 ? 'success' : 'error');
+    }
+
     let updatedBookmarks;
     if (isCurrentlyBookmarked) {
       updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
@@ -970,17 +974,33 @@ return (
             contentContainerStyle={{ paddingBottom: 10 }} 
             showsVerticalScrollIndicator={false}
           >
-            <View style={{ flex: 1 }}>{renderActiveTabContent()}</View>
+            <View style={{ flex: 1}}>{renderActiveTabContent()}</View>
           </ScrollView>
         </KeyboardAvoidingView>
        
        
         <Animated.View
           style={[
-            styles.bottomTabContainer,
+            styles.bottomTabContainer,{position:'absolute',bottom:0},
             { transform: [{ translateY: bottomNaviationSlideupAnimation }] },
           ]}
         >
+
+          {/* <View style={[StyleSheet.absoluteFill, { borderRadius: 25, backgroundColor: 'transparent'}]}>
+            <BlurView
+              style={[StyleSheet.absoluteFill, { borderRadius: 25, backgroundColor: 'transparent',}]}
+              blurType='light'
+              //blurType={Platform.OS=='ios'? 'light' : 'dark'}
+              blurAmount={Platform.OS=='ios'? 1.5 : 1}
+              reducedTransparencyFallbackColor="rgba(15, 21 ,131,0.8)"
+              //overlayColor="rgba(15, 21 ,131,0.8)"
+            >
+
+              </BlurView>
+          </View>
+           */}
+
+
           <View style={{ height: 48 }}>
             <Animated.View
               style={[

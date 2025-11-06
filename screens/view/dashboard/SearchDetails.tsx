@@ -162,21 +162,23 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         style={{
           alignItems: 'center',
           justifyContent: 'center',
+          height:270,
+          width:'100%'
         }}
       >
         <View
           style={{
             alignItems: 'center',
             justifyContent: 'center',
-            paddingVertical: 20,
+            //paddingVertical: 20,
           }}
         >
           {profileUri ? (
             <Image
               source={{ uri: profileUri }}
               style={{
-                width: 160,
-                height: 160,
+                //width: 160,
+                height: 180,
                 borderRadius: 80,
               }}
               resizeMode="cover"
@@ -189,9 +191,9 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
             <View
               style={{
-                width: 160,
-                height: 160,
-                borderRadius: 80,
+                width: 180,
+                height: 180,
+                borderRadius: 90,
                 backgroundColor: '#8390D4',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -231,7 +233,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
             renderItem={({ item }) => (
               <Image
                 source={item.uri ? { uri: item.uri } : fallbackImage}
-                style={{ width: screenWidth, height: 250 }}
+                style={{ width: screenWidth, height: 270 }}
                 resizeMode="cover"
               />
             )}
@@ -255,7 +257,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     return (
       <Image
         source={images[0]?.uri ? { uri: images[0].uri } : fallbackImage}
-        style={{ width: screenWidth, height: 250 }}
+        style={{ width: screenWidth, height: 270 }}
         resizeMode="cover"
       />
     );
@@ -474,7 +476,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     source={require('../../../assets/images/calendar_icon.png')}
                     style={{ height: 16, width: 16 }}
                   />
-                  <Text allowFontScaling={false} style={styles.userSub}>
+                  <Text allowFontScaling={false} style={styles.datetext}>
                     Date Posted: {formatDate(detail?.created_at)}
                   </Text>
                 </View>
@@ -1192,20 +1194,28 @@ inactiveStepCircle: {
     height: 'auto',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.09) 100%)',
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+    //boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     borderRadius: 8,
     paddingLeft: 8,
     paddingRight: 8,
     paddingTop: 6,
     paddingBottom: 6,
-
+    marginTop:12,
     alignItems: 'center',
-    gap: 3,
+    gap: 4,
   },
 
   userSub: {
     color: 'rgba(255, 255, 255, 0.48)',
     fontFamily: 'Urbanist-Regular',
+    fontSize: 12,
+    fontWeight: '500',
+    lineHeight: 16,
+    letterSpacing: -0.24,
+  },
+   datetext: {
+    color: 'rgba(255, 255, 255, 0.48)',
+    fontFamily: 'Urbanist-Medium',
     fontSize: 12,
     fontWeight: '500',
     lineHeight: 16,
@@ -1291,7 +1301,7 @@ inactiveStepCircle: {
   },
   productDesHeding: {
     color: 'rgba(255, 255, 255, 0.72)',
-    fontFamily: 'Urbanist-Regular',
+    fontFamily: 'Urbanist-SemiBold',
     fontSize: 16,
     fontWeight: '600',
     fontStyle: 'normal',
@@ -1299,11 +1309,11 @@ inactiveStepCircle: {
   },
   productDesc: {
     color: 'rgba(255, 255, 255, 0.64)',
-    fontFamily: 'Urbanist-Regular',
+    fontFamily: 'Urbanist-Medium',
     fontSize: 14,
     fontWeight: '500',
-    fontStyle: 'normal',
-    lineHeight: 20,
+    //fontStyle: 'normal',
+    lineHeight: 18,
   },
   productDeatilsHeading: {
     color: 'rgba(255, 255, 255, 0.88)',
@@ -1320,16 +1330,16 @@ inactiveStepCircle: {
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 20,
     fontWeight: '600',
-    fontStyle: 'normal',
+    //fontStyle: 'normal',
     letterSpacing: -0.4,
     lineHeight: 24,
   },
   priceText: {
     color: '#fff',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 17,
-    fontWeight: 500,
-    letterSpacing: 1,
+    fontFamily: 'Urbanist-Bold',
+    fontSize: 20,
+    fontWeight: 700,
+    letterSpacing: -0.1,
   },
   priceText1: {
     color: '#002050',

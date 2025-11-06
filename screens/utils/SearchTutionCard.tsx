@@ -43,8 +43,8 @@ export default function SearchTutionCard({
         {showInitials ? (
          
           <Image
-            source={require('../../assets/images/featurebg.png')}
-            style={[{width: '220%',height:'220%',resizeMode: 'cover'}]}
+            source={require('../../assets/images/tutionbg.png')}
+            style={styles.profileimage}
             // style={{resizeMode: 'contain'}}
             resizeMode="cover"
           />
@@ -59,21 +59,38 @@ export default function SearchTutionCard({
         )}
 
         <View style={styles.tag}>
+          <BlurView 
+                blurType="light"
+                blurAmount={100}
+              style={[StyleSheet.absoluteFillObject,{borderRadius: 9}]}
+                />
           <Text allowFontScaling={false} style={styles.tagText}>{tag}</Text>
         </View>
 
       {isfeature && (
               <View style={styles.tagTopLeft}>
+
+                <BlurView 
+                  blurType="light"
+                  blurAmount={100}
+                  style={[StyleSheet.absoluteFillObject,{borderRadius: 9}]}
+                />
+                
                 <Text allowFontScaling={false} style={styles.tagText}>Featured</Text>
               </View>
             )}
        
         <View style={styles.bookmark1}>
         <BlurView 
-                          blurType="light"
-                          blurAmount={100}
-                          style={[StyleSheet.absoluteFillObject,{borderRadius: 12}]}
-                        />
+          blurType="light"
+          blurAmount={100}
+          style={[StyleSheet.absoluteFillObject,{borderRadius: 12}]}
+          />
+          <LinearGradient
+            colors={[ 'rgba(0, 1, 102, 0.20)','rgba(0, 1, 102, 0.024)']}
+            style={StyleSheet.absoluteFillObject}
+            useAngle={false} 
+            />
            <TouchableOpacity onPress={applybookmark}>
           <Image
             source={
@@ -87,7 +104,8 @@ export default function SearchTutionCard({
         </View>
       </View>
 
-      <View style={styles.infoRow}>
+
+<View style={styles.infoRow}>
         <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
 
         <View
@@ -95,6 +113,8 @@ export default function SearchTutionCard({
             flexDirection: 'row',
             width: '90%',
             justifyContent: 'space-between',
+            paddingTop:6
+
           }}
         >
           <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
@@ -103,31 +123,56 @@ export default function SearchTutionCard({
               flexDirection: 'row',
               alignContent: 'center',
               alignItems: 'center',
+              gap: 4,
             }}
           >
-            <Image source={require('../../assets/images/staricon.png')} style={styles.image1} />
-            <Text allowFontScaling={false}  style={styles.ratingText}>{rating}</Text>
+            <Image
+              source={require('../../assets/images/staricon.png')}
+              style={styles.image1}
+            />
+
+            <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
           </View>
         </View>
       </View>
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-   tagTopLeft: {
+//    tagTopLeft: {
+//   position: 'absolute',
+//   //top: 5,
+//  // left: 5,
+//   top: Platform.OS === 'ios' ? 8 : 8,
+//     left: Platform.OS === 'ios' ? 8 : 8,
+//   backgroundColor: 'rgba(255,255,255,0.4)',
+//   borderRadius: 4,
+//   padding: 4,
+//   marginVertical: 4,
+//   marginHorizontal: 4,
+//   boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
+// },
+
+  tagTopLeft: {
   position: 'absolute',
-  //top: 5,
- // left: 5,
-  top: Platform.OS === 'ios' ? 8 : 8,
-    left: Platform.OS === 'ios' ? 8 : 8,
-  backgroundColor: 'rgba(255,255,255,0.4)',
+  // top: 5,
+  // left: 5,
+   top: Platform.OS === 'ios' ? 8 : 10,
+    left: Platform.OS === 'ios' ? 8 : 10,
+  //backgroundColor: 'rgba(255,255,255,0.4)',
+  backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
   borderRadius: 4,
-  padding: 4,
+  paddingHorizontal: 6,
+  paddingVertical:2,
   marginVertical: 4,
   marginHorizontal: 4,
   boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
+  overflow:'hidden'
 },
+
+
 
     initialsCircle: {
     width: 80,
@@ -140,15 +185,16 @@ const styles = StyleSheet.create({
     position: 'absolute'
   },
   initialsText: {
-    fontSize: 28,
-    fontWeight: "700",
+    fontSize: 32,
+    fontWeight: "600",
     color: "#fff",
    fontFamily: 'Urbanist-SemiBold',
+   lineHeight:38
   },
-  card: {
+ card: {
     borderRadius: 16,
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    // backgroundColor:
+    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
 
     shadowColor: '#000',
     shadowOpacity: 0.15,
@@ -156,13 +202,13 @@ const styles = StyleSheet.create({
     width: '95%',
     overflow: 'hidden',
     height: 'auto',
-    margin: 6,
+    //marginHorizontal: 6,
     paddingBottom: 10,
     borderWidth: 0.4,
-    //borderColor: '#ffffff11',
+    borderColor: '#ffffff11',
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-    // backgroundColor:
-    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderEndEndRadius: 15,
     borderStartEndRadius: 15,
     borderTopLeftRadius: 15,
@@ -175,59 +221,93 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
-    padding: (Platform.OS === 'ios' ? 5 : 6),
 
     boxSizing: 'border-box',
+    minHeight:226
   },
-  imageContainer: {
-    // width: 186,
-    backgroundColor: 'rgba(154, 154, 255, 0.12)',
-    width: '100%',       
-    height: 166,            
-    overflow: 'hidden',       
-    justifyContent: 'center', 
-    alignItems: 'center',
-    borderWidth: 0.4,
-    //borderColor: '#ffffff11',
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
+  // imageContainer: {
+  //   backgroundColor: 'rgba(154, 154, 255, 0.12)',
+  //   width: '100%',       
+  //   height: 180,            
+  //   overflow: 'hidden',       
+  //   justifyContent: 'center', 
+  //   alignItems: 'center',
+    // borderWidth: 0.4,
+    // boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
+    // borderBlockStartColor: '#ffffff2e',
+    // borderBlockColor: '#ffffff2e',
 
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-    borderEndEndRadius: 15,
-    borderStartEndRadius: 15,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-    borderBottomStartRadius: 15,
+    // borderTopColor: '#ffffff2e',
+    // borderBottomColor: '#ffffff2e',
+    // borderLeftColor: '#ffffff2e',
+    // borderRightColor: '#ffffff2e',
+  //   borderEndEndRadius: 15,
+  //   borderStartEndRadius: 15,
+  //   borderTopLeftRadius: 15,
+  //   borderTopRightRadius: 15,
+  //   borderBottomStartRadius: 15,
       
-  },
+  // },
   
+  // image: {
+  //   width: '100%',
+  //   height: '100%',
+  //   padding: (Platform.OS === 'ios' ? 4 : 12),
+  //   borderRadius: 12,
+  //   alignSelf: 'center',
+  //   resizeMode: 'stretch'
+  // },
+
+    imageContainer: {
+    // width: 186,
+    width: '100%',
+    height:200,
+    position: 'relative',
+    //padding: (Platform.OS === 'ios' ? 0 : 6),
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 6,
+  },
   image: {
     width: '100%',
     height: '100%',
-    
-    padding: (Platform.OS === 'ios' ? 4 : 12),
+    padding: (Platform.OS === 'ios'? 5: 12),
     borderRadius: 12,
-    //borderColor:'000',
-    // borderWidth:2,
-    alignSelf: 'center',
-    resizeMode: 'stretch'
+    resizeMode: 'contain',
+    //borderWidth: 0.4,
+    //boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
+    // borderBlockStartColor: '#ffffff2e',
+    // borderBlockColor: '#ffffff2e',
+    // borderTopColor: '#ffffff2e',
+    // borderBottomColor: '#ffffff2e',
+    // borderLeftColor: '#ffffff2e',
+    // borderRightColor: '#ffffff2e',
   },
 
+   profileimage: {
+    width: '100%',
+    height: '100%',
+    padding: (Platform.OS === 'ios'? 5: 12),
+    borderRadius: 12,
+    // boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
+    // borderBlockStartColor: '#ffffff2e',
+    // borderBlockColor: '#ffffff2e',
+
+    // borderTopColor: '#ffffff2e',
+    // borderBottomColor: '#ffffff2e',
+    // borderLeftColor: '#ffffff2e',
+    // borderRightColor: '#ffffff2e',
+    overflow:'hidden'
+  },
   image1: {
     width: 10,
     height: 10,
     resizeMode:'contain'
   },
   bookmark1: {
-
-
     position: 'absolute',
-    top: Platform.OS === 'ios' ? 10 : 10,
-    right: Platform.OS === 'ios' ? 10 : 10,
+    top: Platform.OS === 'ios' ? 10 : 12,
+    right: Platform.OS === 'ios' ? 10 : 12,
     overflow:'hidden',
     borderRadius: 12,
     backgroundColor:
@@ -250,27 +330,22 @@ const styles = StyleSheet.create({
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
   },
-  // bookmark: {
-  //   position: 'absolute',
-  //   top: 10,
-  //   right: 10,
-  //   borderRadius: 20,
-  //   padding: 6,
-  // },
-  tag: {
+ 
+    tag: {
     position: 'absolute',
-   // bottom: 5,
-    //right: 5,
-    bottom: Platform.OS === 'ios' ? 8 : 3,
-    right: Platform.OS === 'ios' ? 8 : 3,
-    //backgroundColor: '#fff',
-    backgroundColor: 'rgba(255,255,255,0.4)',
+    bottom: Platform.OS === 'ios' ? 8 : 10,
+    right: Platform.OS === 'ios' ? 8 : 10,
+    backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
     borderRadius: 4,
-    padding: 4,
+    paddingHorizontal: 6,
+    paddingVertical:2,
     marginVertical: 4,
     marginHorizontal: 4,
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
+    overflow:'hidden'
   },
+
+
   tagText: {
     fontSize: 10,
     fontFamily: 'Urbanist-SemiBold',
@@ -282,8 +357,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     //backgroundColor: '#fff',
-    paddingHorizontal: 6,
-    paddingTop:6
+    paddingHorizontal: 2,
+    
   },
   title: {
     fontSize: 12,

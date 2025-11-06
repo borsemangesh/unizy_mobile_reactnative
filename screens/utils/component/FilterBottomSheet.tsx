@@ -292,7 +292,22 @@ const handleClose = () => {
             alias_name: f.alias_name,
             options: dropdownSelections[f.id],
           };
-        } else if (f.alias_name?.toLowerCase() === 'price') {
+        } 
+        // else if (f.alias_name?.toLowerCase() === 'price') {
+        //   return {
+        //     id: f.id,
+        //     field_name: f.field_name,
+        //     field_type: f.field_type,
+        //     alias_name: f.alias_name,
+        //     options: [priceRange.min, priceRange.max],
+        //   };
+        // }
+        else if (f.alias_name?.toLowerCase() === 'price') {
+        const defaultMin = f.minvalue ?? 0;
+        const defaultMax = f.maxvalue ?? 100;
+
+        // ✅ Only submit price filter if user changed slider values
+        if (priceRange.min !== defaultMin || priceRange.max !== defaultMax) {
           return {
             id: f.id,
             field_name: f.field_name,
@@ -301,6 +316,9 @@ const handleClose = () => {
             options: [priceRange.min, priceRange.max],
           };
         }
+
+        return null; // ✅ Don't send price filter if unchanged
+      }
         return null;
       })
       .filter(Boolean);

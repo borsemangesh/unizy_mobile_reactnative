@@ -399,7 +399,7 @@ export const Styles = StyleSheet.create({
     fontWeight: '600',
     lineHeight: 19,
     textDecorationStyle: 'solid',
-    marginTop: 10,
+    //marginTop: 10,
     opacity: 2,
     textShadowColor: 'rgba(255,255,255,0.6)',
     textShadowOffset: { width: 0, height: 0 },

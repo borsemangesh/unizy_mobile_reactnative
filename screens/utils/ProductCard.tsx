@@ -34,37 +34,34 @@ export default function ProductCard({
       <View style={styles.imageContainer}>
         <Image source={productImage} style={styles.image} resizeMode="cover" />
 
-        {/* Tag */}
         <View style={styles.tag}>
-          <Text allowFontScaling={false} style={styles.tagText}>{tag}</Text>
-        </View>
-
-        {/* Bookmark */}
-        
-        {/* <View style={[styles.bookmark,{opacity: 0.9}]}>
-                <BlurView 
+          <BlurView 
                   blurType="light"
                   blurAmount={100}
                   style={StyleSheet.absoluteFillObject}
                 />
-          <TouchableOpacity onPress={onBookmarkPress}>
-           <Image
-              source={
-                isBookmarked
-                  ? require("../../assets/images/favourite_filled.png") // bookmarked
-                  : require("../../assets/images/favourite.png") // not bookmarked
-              }
-              style={styles.bookmarkIcon}
-            />
-          </TouchableOpacity>
-        </View> */}
 
+          {/* <LinearGradient
+          colors={[
+            'rgba(255,255,255,0.48)', 
+            'rgba(255,255,255,0)' 
+          ]}
+          style={StyleSheet.absoluteFillObject}
+          start={{ x: 0.17, y: 0.06 }}
+          end={{ x: 1, y: 1 }}
+        /> */}
+      
+        <Text allowFontScaling={false} style={styles.tagText}>
+          {tag}
+        </Text>
+      </View>
 
         <View style={[styles.bookmark]}>
            <BlurView 
                   blurType="light"
                   blurAmount={100}
                   style={StyleSheet.absoluteFillObject}
+                  
                 />
         <LinearGradient
           colors={[
@@ -72,7 +69,9 @@ export default function ProductCard({
             'rgba(0, 1, 102, 0.024)'  // outer faint blue tint
           ]}
           style={StyleSheet.absoluteFillObject}
-          useAngle={false} // radial
+          useAngle={false}
+          
+
         />
 
         <TouchableOpacity onPress={onBookmarkPress}>
@@ -158,9 +157,12 @@ const styles = StyleSheet.create({
     padding: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
+    //backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow:'0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     height: 29,
+    overflow:'hidden',
+    //elevation:6
   },
 
   tagText: {

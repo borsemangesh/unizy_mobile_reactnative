@@ -12,6 +12,7 @@ import {
   StatusBar,
   ActivityIndicator,
   ImageSourcePropType,
+  Dimensions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -23,7 +24,7 @@ import { useRoute, RouteProp } from '@react-navigation/native';
 import SearchListProductCard from '../../utils/SearchListProductCard';
 import FilterBottomSheet from '../../utils/component/FilterBottomSheet';
 import SearchTutionCard from '../../utils/SearchTutionCard';
-import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
+import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
 type CreatedBy = {
   id: number;
   firstname: string;
@@ -86,7 +87,8 @@ const [isLoading, setIsLoading] = useState(false);
 const [hasMore, setHasMore] = useState(true); // whether more pages exist
 const [isFilterVisible, setFilterVisible] = useState(false);
 const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
-
+ const SCREEN_HEIGHT = Dimensions.get('window').height;
+ 
   useEffect(() => {
   const loadBookmarks = async () => {
     const saved = await AsyncStorage.getItem('bookmarkedIds');
@@ -199,6 +201,9 @@ const handleBookmarkPress = async (productId: number) => {
 
     const data = await response.json();
     console.log('Bookmark response:', data);
+    if (data?.message) {
+      showToast(data.message, data.statusCode === 200 ? 'success' : 'error');
+    }
 
     let updatedBookmarks;
     if (isCurrentlyBookmarked) {
@@ -291,8 +296,53 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
   );
 };
 
-const handleFilterApply = async (filterBody: any) => {
+// const handleFilterApply = async (filterBody: any) => {
+//   try {
+//     setIsLoading(true);
+
+//     const token = await AsyncStorage.getItem('userToken');
+//     if (!token) return;
+
+//     const url = `${MAIN_URL.baseUrl}category/filter-apply`;
+
+//     //const url = 'http://65.0.99.229:4320/category/filter-apply';
+
+//     const response = await fetch(url, {
+//       method: 'POST',
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(filterBody),
+//     });
+
+//     const jsonResponse = await response.json();
+//     console.log('Filter Apply Response:', jsonResponse);
+
+//     if (jsonResponse.statusCode === 200) {
+//       const filteredFeatures = jsonResponse.data.features;
+//       setFeaturelist(filteredFeatures);
+//       setHasMore(filteredFeatures.length === 20);
+//       setPage(2);
+//     }
+//     if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
+//           setIsLoading(false);
+//           navigation.reset({
+//           index: 0,
+//           routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+//         });
+//         }
+//   } catch (err) {
+//     console.log('Error applying filters:', err);
+//   } finally {
+//     setIsLoading(false);
+//   }
+// };
+
+
+const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
   try {
+    if (isLoading) return;
     setIsLoading(true);
 
     const token = await AsyncStorage.getItem('userToken');
@@ -300,7 +350,13 @@ const handleFilterApply = async (filterBody: any) => {
 
     const url = `${MAIN_URL.baseUrl}category/filter-apply`;
 
-    //const url = 'http://65.0.99.229:4320/category/filter-apply';
+    const body = {
+      ...filterBody,
+      page: pageNum,
+      pagesize: 20,
+    };
+
+    console.log('Filter Apply Body:', body);
 
     const response = await fetch(url, {
       method: 'POST',
@@ -308,25 +364,29 @@ const handleFilterApply = async (filterBody: any) => {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(filterBody),
+      body: JSON.stringify(body),
     });
 
     const jsonResponse = await response.json();
     console.log('Filter Apply Response:', jsonResponse);
 
     if (jsonResponse.statusCode === 200) {
-      const filteredFeatures = jsonResponse.data.features;
-      setFeaturelist(filteredFeatures);
+      const filteredFeatures = jsonResponse.data.features || [];
+
+      if (pageNum === 1) {
+        setFeaturelist(filteredFeatures);
+      } else {
+        setFeaturelist(prev => [...prev, ...filteredFeatures]);
+      }
+
       setHasMore(filteredFeatures.length === 20);
-      setPage(2);
+      setPage(prev => prev + 1);
+    } else if (jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+      });
     }
-    if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
-          setIsLoading(false);
-          navigation.reset({
-          index: 0,
-          routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
-        });
-        }
   } catch (err) {
     console.log('Error applying filters:', err);
   } finally {
@@ -358,7 +418,7 @@ const handleFilterApply = async (filterBody: any) => {
         </View>
 
         {/* Search Bar */}
-        <View style={{ flexDirection: 'row', paddingHorizontal: 16 }}>
+        <View style={{ flexDirection: 'row', paddingHorizontal: 16 ,marginVertical:8}}>
           <View style={styles.search_container}>
             <Image source={searchIcon} style={styles.searchIcon} />
            <TextInput
@@ -400,7 +460,11 @@ const handleFilterApply = async (filterBody: any) => {
         keyExtractor={item => item.id.toString()}
         numColumns={2}
         columnWrapperStyle={styles.row1}
-        contentContainerStyle={styles.listContainer}
+        contentContainerStyle={[
+            styles.listContainer,{ paddingBottom: SCREEN_HEIGHT * 0.05 },
+            featurelist?.length === 0 && { alignContent:'center',alignSelf:'center' ,width:'90%',height:'100%'}
+          ]}
+        //contentContainerStyle={styles.listContainer}
         renderItem={renderItem}
         onEndReached={() => {
             if (search.trim().length > 0) {
@@ -411,13 +475,22 @@ const handleFilterApply = async (filterBody: any) => {
         ListFooterComponent={
             isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
           }
-          ListEmptyComponent={
-            !isLoading ? ( 
-              <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
-                No products found
-              </Text>
-            ) : null
-          }
+           ListEmptyComponent={
+                                    !isLoading ? (
+                                       <View style={styles.emptyWrapper}>
+                                      <View style={styles.emptyContainer}>
+                                        <Image
+                                          source={require('../../../assets/images/noproduct.png')} // your image
+                                          style={styles.emptyImage}
+                                          resizeMode="contain"
+                                        />
+                                        <Text allowFontScaling={false} style={styles.emptyText}>
+                                          No Listings found
+                                        </Text>
+                                      </View>
+                                      </View>
+                                    ) : null
+                                  }
           />
       </View>
 
@@ -430,7 +503,10 @@ const handleFilterApply = async (filterBody: any) => {
         catagory_id={category_id}
         visible={isFilterVisible}
         onClose={() => setFilterVisible(false)}
-        onApply={(filterBody) => handleFilterApply(filterBody)} from={0} to={0}/>
+        //onApply={(filterBody) => handleFilterApply(filterBody)} from={0} to={0}
+        onApply={(filterBody) => handleFilterApply(filterBody, 1)}
+        from={0} to={0}
+        />
     <NewCustomToastContainer/>
     </ImageBackground>
   );
@@ -441,6 +517,41 @@ export default SearchPage;
 const styles = StyleSheet.create({
   background: { flex: 1, width: '100%', height: '100%' },
   fullScreenContainer: { flex: 1 },
+
+  
+   emptyWrapper: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      width:'100%'
+    },
+
+ 
+   emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width:'100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderWidth: 0.3,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius:24,
+    overflow:'hidden',
+    //minHeight:'80%',
+   marginBottom:20,
+  },
+  emptyImage: {
+    width: 50,
+    height: 50,
+    marginBottom: 20,
+  },
+  emptyText: {
+    fontSize: 20,
+    color: '#fff',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight:600
+  },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : 25,
     paddingBottom: 12,
@@ -476,6 +587,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 40,
+    minHeight:48,
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
@@ -488,9 +600,14 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   listContainer: {
-    marginLeft: 10,
-    marginRight: 20,
+    // marginLeft: 10,
+    // marginRight: 10,
+    // paddingTop: 10,
+    marginLeft: 8,
+    marginRight: 5,
     paddingTop: 10,
+    gap:16
+
   },
   row1: {
     // flexDirection: 'row',

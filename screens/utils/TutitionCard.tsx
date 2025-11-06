@@ -126,6 +126,12 @@ export default function TutitionCard({
 
              
               <View style={styles.tag}>
+                 <BlurView 
+                                  blurType="light"
+                                  blurAmount={100}
+                                  style={StyleSheet.absoluteFillObject}
+                                />
+                
                 <Text allowFontScaling={false} style={styles.tagText}>{tag}</Text>
               </View>
 
@@ -354,10 +360,27 @@ const styles = StyleSheet.create({
     left:12
   },
 
-  tag: {
+  // tag: {
+  //   position: 'absolute',
+  //   bottom: 10,
+  //   right: 10,  
+  //   borderRadius: 12,
+  //   paddingHorizontal: 8,
+  //   paddingVertical: 4,
+  //   zIndex: 2,
+  //   padding: 8,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.34) 0%, rgba(255, 255, 255, 0.10) 100%)',
+  //   boxShadow:'0 2px 8px 0 rgba(0, 0, 0, 0.17)',
+  //   height: 29,
+  // },
+
+
+   tag: {
     position: 'absolute',
     bottom: 10,
-    right: 10,  
+    right: 10,    
     borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -365,20 +388,20 @@ const styles = StyleSheet.create({
     padding: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.34) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow:'0 2px 8px 0 rgba(0, 0, 0, 0.17)',
+    backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
+    //backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow:'0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     height: 29,
+    overflow:'hidden',
+    //elevation:6
   },
 
+
   tagText: {
-    // fontSize: 11,
-    // fontWeight: '600',
-    // color: '#000',
     color:'rgba(0, 0, 0, 0.80)',
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600,
     fontSize: 11,
-   // fontStyle: 'normal',
     lineHeight:16,
   },
 

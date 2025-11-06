@@ -208,7 +208,7 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                 storedForm[13]?.value === 'true' ? (
                   <>
                     <Text allowFontScaling={false} style={styles.newtext}>
-                      Feature Listing Preview
+                      Featured Listing Preview
                     </Text>
                     <PreviewCard
                       tag="University of Warwick"
