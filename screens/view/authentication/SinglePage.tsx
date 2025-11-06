@@ -755,18 +755,22 @@ useEffect(() => {
         showToast(Constant.OTP_ID_MISSING, 'error');
         return;
       }
-
+      
       const url = MAIN_URL.baseUrl + 'user/signup-otpverify';
+      console.log(url)
+      const body = {
+        otp_id: Number(otp_id),
+        otp: otpValue,
+      };
+
+      console.log("📩 OTP request JSON:", JSON.stringify(body)); // Log JSON string
 
       const res = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          otp_id: Number(otp_id),
-          otp: otpValue,
-        }),
+        body: JSON.stringify(body),
       });
 
       const data = await res.json();
@@ -974,13 +978,12 @@ useEffect(() => {
 
     try {
       const otp_id = await AsyncStorage.getItem('otp_id');
-      const order_id =await AsyncStorage.getItem('otp_id')
       if (!otp_id) {
         showToast(Constant.OTP_ID_MISSING, 'error');
         return;
       }
 
-      const url = MAIN_URL.baseUrl + 'verify-post-order-otp';
+      const url = MAIN_URL.baseUrl + 'user/student-otpverify';
 
       const res = await fetch(url, {
         method: 'POST',
@@ -1095,74 +1098,74 @@ useEffect(() => {
   };
   //profile
 
-  // const requestCameraPermission = async () => {
-  //   if (Platform.OS === 'android') {
-  //     try {
-  //       const granted = await PermissionsAndroid.request(
-  //         PermissionsAndroid.PERMISSIONS.CAMERA,
-  //         {
-  //           title: 'Camera Permission',
-  //           message: 'App needs access to your camera',
-  //           buttonNeutral: 'Ask Me Later',
-  //           buttonNegative: 'Cancel',
-  //           buttonPositive: 'OK',
-  //         },
-  //       );
-  //       return granted === PermissionsAndroid.RESULTS.GRANTED;
-  //     } catch (err) {
-  //       console.warn(err);
-  //       return false;
-  //     }
-  //   } else {
-  //     return true;
-  //   }
-  // };
-
   const requestCameraPermission = async () => {
-    if (Platform.OS === "android") {
+    if (Platform.OS === 'android') {
       try {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.CAMERA,
           {
-            title: "Camera Permission",
-            message: "App needs access to your camera",
-            buttonNeutral: "Ask Me Later",
-            buttonNegative: "Cancel",
-            buttonPositive: "OK",
-          }
+            title: 'Camera Permission',
+            message: 'App needs access to your camera',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
         );
         return granted === PermissionsAndroid.RESULTS.GRANTED;
       } catch (err) {
         console.warn(err);
         return false;
       }
-    } else if (Platform.OS === 'ios') {
-      try {
-        // Check current permission status first
-        const status = await check(PERMISSIONS.IOS.CAMERA);
-        if (status === RESULTS.GRANTED) {
-          return true;
-        }
-        const result = await request(PERMISSIONS.IOS.CAMERA);
-  
-        if (result === RESULTS.GRANTED) {
-          return true; 
-        } else if (result === RESULTS.BLOCKED) {
-          console.warn('Camera permission is blocked. Please enable it in Settings.');
-          return false;
-        } else {
-          return false; // Denied
-        }
-      } catch (err) {
-        console.warn(err);
-        return false;
-      }
-    } 
-    
-    else {
+    } else {
       return true;
     }
   };
+
+  // const requestCameraPermission = async () => {
+  //   if (Platform.OS === "android") {
+  //     try {
+  //       const granted = await PermissionsAndroid.request(
+  //         PermissionsAndroid.PERMISSIONS.CAMERA,
+  //         {
+  //           title: "Camera Permission",
+  //           message: "App needs access to your camera",
+  //           buttonNeutral: "Ask Me Later",
+  //           buttonNegative: "Cancel",
+  //           buttonPositive: "OK",
+  //         }
+  //       );
+  //       return granted === PermissionsAndroid.RESULTS.GRANTED;
+  //     } catch (err) {
+  //       console.warn(err);
+  //       return false;
+  //     }
+  //   } else if (Platform.OS === 'ios') {
+  //     try {
+  //       // Check current permission status first
+  //       const status = await check(PERMISSIONS.IOS.CAMERA);
+  //       if (status === RESULTS.GRANTED) {
+  //         return true;
+  //       }
+  //       const result = await request(PERMISSIONS.IOS.CAMERA);
+  
+  //       if (result === RESULTS.GRANTED) {
+  //         return true; 
+  //       } else if (result === RESULTS.BLOCKED) {
+  //         console.warn('Camera permission is blocked. Please enable it in Settings.');
+  //         return false;
+  //       } else {
+  //         return false; // Denied
+  //       }
+  //     } catch (err) {
+  //       console.warn(err);
+  //       return false;
+  //     }
+  //   } 
+    
+  //   else {
+  //     return true;
+  //   }
+  // };
 
   const loginTranslateY = useRef(
     new Animated.Value(0),

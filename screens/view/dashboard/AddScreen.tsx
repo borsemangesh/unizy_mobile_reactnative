@@ -967,7 +967,12 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
         visible={multiSelectModal.visible}
         ismultilple={multiSelectModal?.ismultilple}
         title={`Select ${multiSelectModal?.fieldLabel || 'Category'}`}
-        subtitle={`Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your item.`}
+        subtitle={
+            multiSelectModal?.ismultilple
+              ? `Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your listing.`
+              : `Select the ${multiSelectModal?.fieldLabel || 'category'} that best describes your listing.`
+          }
+        //subtitle={`Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your item.`}
         selectedValues={formValues[multiSelectModal.fieldId!]?.value}
         onClose={() =>
           setMultiSelectModal(prev => ({ ...prev, visible: false }))

@@ -1,5 +1,7 @@
+import { BlurView } from "@react-native-community/blur";
 import React from "react";
 import { View, Text, Image, StyleSheet, ImageSourcePropType, Platform } from "react-native";
+import LinearGradient from "react-native-linear-gradient";
 
 
 type NewProductCardProps = {
@@ -21,19 +23,45 @@ export default function NewProductCard({tag,infoTitle,inforTitlePrice,rating,pro
           style={styles.image}
         />
         <View style={styles.tag}>
+           <BlurView 
+              blurType="light"
+              blurAmount={100}
+              style={StyleSheet.absoluteFillObject}
+          />
           <Text allowFontScaling={false} style={styles.tagText}>{tag}</Text>
         </View>
         {/* </LinearGradient> */}
       
-        <View style={styles.bookmark1}>
+        {/* <View style={styles.bookmark1}>
           <Image
             source={require('../../assets/images/newbookmark.png')}
             style={{ width: 36, height: 36 }}
           />
+        </View> */}
+
+        <View style={styles.bookmark1}>
+          <BlurView 
+                                blurType="light"
+                                blurAmount={100}
+                                style={StyleSheet.absoluteFillObject}
+                              />
+            <LinearGradient
+                        colors={[
+                          'rgba(0, 1, 102, 0.20)',   // center strong blue tint
+                          'rgba(0, 1, 102, 0.024)'  // outer faint blue tint
+                        ]}
+                        style={StyleSheet.absoluteFillObject}
+                        useAngle={false} // radial
+               />
+
+          <Image
+            source={require('../../assets/images/favourite.png')}
+            style={{ width: 20, height: 20 }}
+          />
         </View>
       </View>
 {/* require('../../assets/images/bookmark.png') */}
-      <View style={styles.infoRow}>
+      {/* <View style={styles.infoRow}>
         <View>
           <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
           <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
@@ -46,7 +74,38 @@ export default function NewProductCard({tag,infoTitle,inforTitlePrice,rating,pro
 
         <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
       </View>
-      </View>
+      </View> */}
+
+
+        <View style={styles.infoRow}>
+              <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
+      
+              <View
+                style={{
+                  flexDirection: 'row',
+                  width: '90%',
+                  justifyContent: 'space-between',
+                  paddingTop:2
+                }}
+              >
+                <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignContent: 'center',
+                    alignItems: 'center',
+                    gap: 4,
+                  }}
+                >
+                  <Image
+                    source={require('../../assets/images/staricon.png')}
+                    style={styles.image1}
+                  />
+      
+                  <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
+                </View>
+              </View>
+            </View>
      
     </View>
   );
@@ -94,10 +153,32 @@ const styles = StyleSheet.create({
   },
   bookmark1: {
     position: 'absolute',
-    top: (Platform.OS === 'ios' ? 15 : 5),
-    right: (Platform.OS === 'ios' ? 15 : 5),
-    borderRadius: 20,
+    top: (Platform.OS === 'ios' ? 15 : 10),
+    right: (Platform.OS === 'ios' ? 15 : 10),
+    //borderRadius: 20,
+    height:36,
+    width:36,
+     alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    borderRadius: 12,
+     backgroundColor:
+       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(101, 101, 101, 0.13) 0%, rgba(117, 117, 117, 0.1) 100%)',
+   
+    display: 'flex',
+    boxShadow: '0 2px 5px 0 rgba(109, 109, 109, 0.2)',
+    borderWidth: 0.5,
+    borderColor: '#ffffff2e',
     
+    borderBlockStartColor: '#ffffff2e',
+    borderBlockColor: '#ffffff2e',
+
+    borderTopColor: '#ffffff2e',
+    borderBottomColor: '#ffffff2e',
+    borderLeftColor: '#ffffff2e',
+    borderRightColor: '#ffffff2e',
+    overflow:'hidden'
   },
    bookmark: {
     position: 'absolute',
@@ -111,13 +192,16 @@ const styles = StyleSheet.create({
     bottom: (Platform.OS === 'ios' ? 16 : 8),
     right:(Platform.OS === 'ios' ? 16 : 8),
     //backgroundColor: '#fff',
-    backgroundColor:'rgba(255,255,255,0.4)',
+    //backgroundColor:'rgba(255,255,255,0.4)',
+    overflow:'hidden',
     borderRadius: 4,
     padding: 4,
     marginVertical:4,
     marginHorizontal:4,
      boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
      //overflow:'hidden'
+    backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
+
   },
   tagText: {
     fontSize: 10,
@@ -126,18 +210,27 @@ const styles = StyleSheet.create({
     color: '#000',
     
   },
+  // infoRow: {
+  //   flexDirection: 'row',
+  //   justifyContent: 'space-between',
+  //   alignItems: 'center',
+  //   //backgroundColor: '#fff',
+  //   paddingHorizontal:12,
+  //   //paddingVertical:6
+  // },
   infoRow: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
     //backgroundColor: '#fff',
-    paddingHorizontal:6,
+    paddingHorizontal: 2,
   },
   title: {
     fontSize: 12,
     fontWeight: '600',
     color: '#fff',
     fontFamily: 'Urbanist-SemiBold',
+    width: '90%',
   },
    title1: {
     fontSize: 12,

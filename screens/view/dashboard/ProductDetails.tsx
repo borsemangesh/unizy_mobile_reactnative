@@ -13,6 +13,7 @@ import {
   ActivityIndicator,
   ImageSourcePropType,
   Pressable,
+  Dimensions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -23,7 +24,7 @@ import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import SearchListProductCard from '../../utils/SearchListProductCard';
 import FilterBottomSheet from '../../utils/component/FilterBottomSheet';
 import SearchTutionCard from '../../utils/SearchTutionCard';
-import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
+import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
 import SeperateTutionCard from '../../utils/SeperateTutitionCard';
 type CreatedBy = {
   id: number;
@@ -89,7 +90,7 @@ const [isFilterVisible, setFilterVisible] = useState(false);
 const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
 const inputRef = useRef<TextInput>(null);
 const [appliedFilter, setAppliedFilter] = useState(null);
-
+ const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 
   useEffect(() => {
@@ -115,41 +116,48 @@ const debouncedSearch = useRef(
   debounce((text: string) => {
     setPage(1);
     setHasMore(true);
-    displayListOfProduct(1); 
-  }, 50)
+    //displayListOfProduct(1); 
+    displayListOfProduct(1, text);
+  }, 350)
 ).current;
 
-  
-//   useFocusEffect(
-//   useCallback(() => {
-//     displayListOfProduct(); // refresh whenever screen regains focus
-//   }, [])
-// );
+
+useEffect(() => {
+  if (appliedFilter) {
+    console.log("🎯 Filter active, fetching filtered data...");
+    setPage(1);
+    setHasMore(true);
+    setFeaturelist([]);
+    handleFilterApply(appliedFilter);
+  }
+}, [appliedFilter]);
 
 useFocusEffect(
   useCallback(() => {
     if (appliedFilter) {
-      // ✅ just fetch with filter
-      displayListOfProduct(1, appliedFilter);
-    } else {
-      // ✅ only clear if NO filter
-      setPage(1);
-      setHasMore(true);
-      setFeaturelist([]);
-      displayListOfProduct(1);
+      console.log("🔁 Returning with filter active — keeping filter results");
+      return;
     }
+
+    console.log("📍 No filter — normal fetch on focus");
+    setPage(1);
+    setHasMore(true);
+    setFeaturelist([]);
+    displayListOfProduct(1, search);
   }, [appliedFilter])
 );
-
-
-  const displayListOfProduct = async (pageNum: number = 1,filterBody = appliedFilter) => {
+  const displayListOfProduct = async (
+  pageNum: number = 1,
+  searchText: string = search,
+  filterBody = appliedFilter,
+) => {
   if (isLoading || !hasMore) return;
 
   try {
     setIsLoading(true);
 
     const body = {
-      search: search,
+      search: searchText,
       page: pageNum,
       pagesize: 20,
       category_id: category_id,
@@ -158,6 +166,7 @@ useFocusEffect(
     console.log(body)
 
     const url = MAIN_URL.baseUrl + 'category/feature-list/search';
+    console.log(url)
     const token = await AsyncStorage.getItem('userToken');
     if (!token) return;
 
@@ -266,6 +275,7 @@ const handleBookmarkPress = async (productId: number) => {
 
     const data = await response.json();
     console.log('Bookmark response:', data);
+    showToast(data.message, data.statusCode === 200 ? 'success' : 'error');
 
   } catch (error) {
     console.error('Bookmark error:', error);
@@ -328,7 +338,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
         style={{ flex: 1 }}
       >
         {item.profileshowinview ? (
-        <SeperateTutionCard
+        <SearchTutionCard
            tag={item.university?.name || 'University of Warwick'}
           infoTitle={item.title}
           inforTitlePrice={`£ ${item.price}`}
@@ -424,7 +434,7 @@ const handleFilterApply = async (filterBody: any) => {
         </View>
 
         {/* Search Bar */}
-        <View style={{ flexDirection: 'row', paddingHorizontal: 16 }}>
+        <View style={{ flexDirection: 'row', paddingHorizontal: 16 ,marginVertical:8}}>
          
           <Pressable
             style={styles.search_container}
@@ -465,28 +475,38 @@ const handleFilterApply = async (filterBody: any) => {
         keyExtractor={item => item.id.toString()}
         numColumns={2}
         columnWrapperStyle={styles.row1}
-        contentContainerStyle={styles.listContainer}
+        
+        contentContainerStyle={[
+            //styles.listContainer,
+            styles.listContainer,{ paddingBottom: SCREEN_HEIGHT * 0.05 },
+            featurelist?.length === 0 && { alignContent:'center',alignSelf:'center' ,width:'90%',height:'90%'}
+          ]}
         renderItem={renderItem}
-        onEndReached={() => displayListOfProduct(page)} // fetch next page
+        //onEndReached={() => displayListOfProduct(page)} \
+        onEndReached={() => displayListOfProduct(page, search)}
         onEndReachedThreshold={0.5} // adjust when to trigger
         ListFooterComponent={
             isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
           }
           ListEmptyComponent={
-            !isLoading ? ( // ✅ only show if not loading
-              <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
-                No products found
-              </Text>
-            ) : null
-          }
+                          !isLoading ? (
+                             <View style={styles.emptyWrapper}>
+                            <View style={styles.emptyContainer}>
+                              <Image
+                                source={require('../../../assets/images/noproduct.png')} // your image
+                                style={styles.emptyImage}
+                                resizeMode="contain"
+                              />
+                              <Text allowFontScaling={false} style={styles.emptyText}>
+                                No Listings found
+                              </Text>
+                            </View>
+                            </View>
+                          ) : null
+                        }
           />
       </View>
 
-      {/* <FilterBottomSheet
-        catagory_id={category_id}
-        visible={isFilterVisible}
-        onClose={() => setFilterVisible(false)}
-      /> */}
       <FilterBottomSheet
         catagory_id={category_id}
         visible={isFilterVisible}
@@ -502,8 +522,48 @@ const handleFilterApply = async (filterBody: any) => {
 export default ProductDetails;
 
 const styles = StyleSheet.create({
-  background: { flex: 1, width: '100%', height: '100%' },
-  fullScreenContainer: { flex: 1 },
+
+   emptyWrapper: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      width:'100%'
+    },
+
+ 
+   emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width:'100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderWidth: 0.3,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius:24,
+    overflow:'hidden',
+    //minHeight:'80%',
+   marginBottom:20,
+  },
+  emptyImage: {
+    width: 50,
+    height: 50,
+    marginBottom: 20,
+  },
+  emptyText: {
+    fontSize: 20,
+    color: '#fff',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight:600
+  },
+  background: {
+     flex: 1, 
+     width: '100%',
+      height: '100%' 
+    },
+  fullScreenContainer: { 
+    flex: 1
+   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : 50,
     paddingBottom: 12,
@@ -522,7 +582,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
+    //boxShadow: 'rgba(255, 255, 255, 0.12)  inset -1px 0px 5px 1px inset ',
+
+   boxShadow:
+      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
     height: 48,
@@ -543,18 +606,24 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     width: '84%',
+    minHeight:48,
     marginEnd: 8,
   },
   searchIcon: { margin: 10, height: 24, width: 24 },
   searchBar: {
     fontSize: 17,
     color: '#fff',
+    paddingLeft:2
   },
   listContainer: {
-    marginLeft: 10,
-    marginRight: 20,
+    // marginLeft: 10,
+    // marginRight: 10,
+    // paddingTop: 10,
+    // paddingBottom:20,
+    marginLeft: 8,
+    marginRight: 5,
     paddingTop: 10,
-    paddingBottom:20
+    gap:16
   },
   row1: {
     // flexDirection: 'row',

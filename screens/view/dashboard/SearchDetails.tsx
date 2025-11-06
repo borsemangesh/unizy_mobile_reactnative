@@ -162,21 +162,23 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         style={{
           alignItems: 'center',
           justifyContent: 'center',
+          height:270,
+          width:'100%'
         }}
       >
         <View
           style={{
             alignItems: 'center',
             justifyContent: 'center',
-            paddingVertical: 20,
+            //paddingVertical: 20,
           }}
         >
           {profileUri ? (
             <Image
               source={{ uri: profileUri }}
               style={{
-                width: 160,
-                height: 160,
+                //width: 160,
+                height: 180,
                 borderRadius: 80,
               }}
               resizeMode="cover"
@@ -189,9 +191,9 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
             <View
               style={{
-                width: 160,
-                height: 160,
-                borderRadius: 80,
+                width: 180,
+                height: 180,
+                borderRadius: 90,
                 backgroundColor: '#8390D4',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -231,7 +233,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
             renderItem={({ item }) => (
               <Image
                 source={item.uri ? { uri: item.uri } : fallbackImage}
-                style={{ width: screenWidth, height: 250 }}
+                style={{ width: screenWidth, height: 270 }}
                 resizeMode="cover"
               />
             )}
@@ -255,7 +257,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     return (
       <Image
         source={images[0]?.uri ? { uri: images[0].uri } : fallbackImage}
-        style={{ width: screenWidth, height: 250 }}
+        style={{ width: screenWidth, height: 270 }}
         resizeMode="cover"
       />
     );
