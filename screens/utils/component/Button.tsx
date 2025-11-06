@@ -42,13 +42,16 @@ const styles = StyleSheet.create({
     // color: '#000',
     // fontSize: 16,
     // fontWeight: 'bold',
-    color: '#002050ff',
+    color: '#002050',
     textAlign: 'center',
     fontFamily: 'Urbanist-Medium',
     fontSize: 17,
     fontWeight: 500,
     letterSpacing: 1,
-    opacity: 0.9
+    opacity: 0.9,
+    textShadowColor: 'transparent',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 0,
   },
 });
 

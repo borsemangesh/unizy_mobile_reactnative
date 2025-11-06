@@ -17,8 +17,11 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { useRoute } from '@react-navigation/native';
-import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
-import { useState, useEffect, useRef } from 'react';
+import {
+  NewCustomToastContainer,
+  showToast,
+} from '../../utils/component/NewCustomToastManager';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import { Constant } from '../../utils/Constant';
 
@@ -27,7 +30,6 @@ type ListingDetailsProps = {
 };
 const bgImage = require('../../../assets/images/backimg.png');
 const ListingDetails = ({ navigation }: ListingDetailsProps) => {
-
   const [showPopup1, setShowPopup1] = useState(false);
   const closePopup1 = () => setShowPopup1(false);
 
@@ -37,89 +39,88 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
   const scrollY1 = new Animated.Value(0);
   const route = useRoute();
   //const { shareid } = route.params as { shareid: number };
-  const { shareid = 1 } = (route.params as { shareid?: number }) || {}
-  const { catagory_id = 0 } = (route.params as { catagory_id?: number }) || {}
-   const { catagory_name = '' } = (route.params as { catagory_name?: string }) || {}
+  const { shareid = 1 } = (route.params as { shareid?: number }) || {};
+  const { catagory_id = 0 } = (route.params as { catagory_id?: number }) || {};
+  const { catagory_name = '' } =
+    (route.params as { catagory_name?: string }) || {};
 
   const inputs = useRef<Array<TextInput | null>>([]);
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [showConfirm, setShowConfirm] = useState(false);
 
-const [selectedOrderId, setSelectedOrderId] = useState(null);
-const [otp, setOtp] = useState(['', '', '', '']);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [otp, setOtp] = useState(['', '', '', '']);
+
+  const fetchDetails = useCallback(async () => {
+    try {
+      console.log('shareidListDetails:', shareid, catagory_id);
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) return;
+      const url = `${MAIN_URL.baseUrl}category/mylisting-details/${shareid}`;
+      console.log('APIListingDetailsurl: ', url);
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+        },
+      });
+
+      const result = await response.json();
+      console.log('APIListingDetailsResponse: ', result);
+      if (response.ok) {
+        setData(result.data);
+      } else {
+        console.error('Error:', result.message || 'Failed to fetch details');
+      }
+    } catch (error) {
+      console.error('API Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [shareid, catagory_id]);
 
   useEffect(() => {
-    const fetchDetails = async () => {
-      try {
-        console.log('shareidListDetails:', shareid, catagory_id);
-         const token = await AsyncStorage.getItem('userToken');
-        if (!token) return;
-        const url = `${MAIN_URL.baseUrl}category/mylisting-details/${shareid}`;
-        console.log("APIListingDetailsurl: ", url );
-
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json',
-          },
-        });
-
-        const result = await response.json();
-         console.log("APIListingDetailsResponse: ", result );
-        if (response.ok) {
-          setData(result.data);
-        } else {
-          console.error('Error:', result.message || 'Failed to fetch details');
-        }
-      } catch (error) {
-        console.error('API Error:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchDetails();
-  }, [shareid]);
-
+  }, [fetchDetails]);
 
   const handleDeactivate = async () => {
-  try {
-    
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) return;
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) return;
 
-    const url2 = `${MAIN_URL.baseUrl}category/feature/active-inactive`;
-    console.log(url2)
-    const response = await fetch(url2, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, 
-      },
-      body: JSON.stringify({
-        product_id: shareid, 
-      }),
-    });
+      const url2 = `${MAIN_URL.baseUrl}category/feature/active-inactive`;
+      const response = await fetch(url2, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          product_id: shareid,
+        }),
+      });
 
-    const data1 = await response.json();
-    console.log("API Response List details:", data1);
+      const data1 = await response.json();
+      console.log('API Response List details:', data1);
 
-    if (data1.message) {
-      showToast(data1.message, data1.statusCode === 200 ? 'success' : 'error');
-      //navigation.goBack();
-      setTimeout(() => {
-          navigation.goBack();
-        }, 5200); 
-    } else {
-      showToast("Something went wrong", "error");
+      if (data1.message) {
+        showToast(
+          data1.message,
+          data1.statusCode === 200 ? 'success' : 'error',
+        );
+        // Refresh details so status updates immediately
+        await fetchDetails();
+      } else {
+        showToast('Something went wrong', 'error');
+      }
+    } catch (error) {
+      console.error('❌ API Error:', error);
+      showToast('Failed to update product status', 'error');
     }
-    
-  } catch (error) {
-    console.error("❌ API Error:", error);
-    showToast("Failed to update product status",'error');
-  }
-};
+  };
 
   const handleChange = (text: string, index: number) => {
     const newOtp = [...otp];
@@ -133,10 +134,9 @@ const [otp, setOtp] = useState(['', '', '', '']);
     }
   };
 
-
   const otpverify = async () => {
     Keyboard.dismiss();
-    
+
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
@@ -154,16 +154,14 @@ const [otp, setOtp] = useState(['', '', '', '']);
       const url = MAIN_URL.baseUrl + 'transaction/verify-post-order-otp';
 
       const createPayload = {
-          orderid:'KX5WHMSX',
-          otp: '123456',
-          //otp:otpValue,
-          //orderid:selectedOrderId,
-          
+        orderid: 'KX5WHMSX',
+        otp: '123456',
+        //otp:otpValue,
+        //orderid:selectedOrderId,
       };
 
-    console.log(url);
-    console.log(createPayload)
-      
+      console.log(url);
+      console.log(createPayload);
 
       const res = await fetch(url, {
         method: 'POST',
@@ -180,7 +178,6 @@ const [otp, setOtp] = useState(['', '', '', '']);
       if (data?.statusCode === 200) {
         showToast(data.message, 'success');
         setShowPopup2(true);
-
       } else {
         showToast(data?.message, 'error');
       }
@@ -190,15 +187,14 @@ const [otp, setOtp] = useState(['', '', '', '']);
     }
   };
 
-
-const formatDateWithDash = (dateString?: string) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-  const year = date.getFullYear();
-  return `${day}-${month}-${year}`;
-};
+  const formatDateWithDash = (dateString?: string) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
@@ -301,7 +297,7 @@ const formatDateWithDash = (dateString?: string) => {
                 </View>
               </View>
 
-              {/* <View style={styles.carddivider} /> */}
+              <View style={styles.carddivider} />
 
               {Array.isArray(data?.buyers) &&
                 data.buyers.map((buyer: any, index: number) => (
@@ -443,9 +439,9 @@ const formatDateWithDash = (dateString?: string) => {
                           }}
                           //onPress={() => setShowPopup1(true)}
                           onPress={() => {
-                          setSelectedOrderId(buyer.orderid); // store selected orderid in state
-                          setShowPopup1(true);
-                        }}
+                            setSelectedOrderId(buyer.orderid); // store selected orderid in state
+                            setShowPopup1(true);
+                          }}
                         >
                           <Text allowFontScaling={false} style={styles.status}>
                             Enter OTP
@@ -460,19 +456,28 @@ const formatDateWithDash = (dateString?: string) => {
         </View>
 
         <View style={styles.bottomview}>
-          <TouchableOpacity style={styles.cancelBtn} onPress={handleDeactivate}>
-           <Text allowFontScaling={false} style={styles.cancelText}>
-          {data?.list?.isactive ? "Deactivate" : "Activate"}
-        </Text>
+          <TouchableOpacity
+            style={styles.cancelBtn}
+            onPress={() => {
+              if (data?.list?.isactive) {
+                setShowConfirm(true);
+              } else {
+                handleDeactivate();
+              }
+            }}
+          >
+            <Text allowFontScaling={false} style={styles.cancelText}>
+              {data?.list?.isactive ? 'Deactivate' : 'Activate'}
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={[styles.cancelBtn, { backgroundColor: '#ffffffa7' }]}
             onPress={() => {
-              if(data?.list?.ispurchased){
-                 showToast("can not edit",'error');
+              if (data?.list?.ispurchased) {
+                showToast('can not edit', 'error');
                 return;
-              } 
+              }
               navigation.replace(
                 'EditListScreen',
                 {
@@ -493,9 +498,7 @@ const formatDateWithDash = (dateString?: string) => {
           </TouchableOpacity>
         </View>
 
-
-
-         <Modal
+        <Modal
           visible={showPopup1}
           transparent
           animationType="fade"
@@ -523,38 +526,35 @@ const formatDateWithDash = (dateString?: string) => {
                 />
 
                 <View style={styles.popupContainer}>
-                  <Text
-                    allowFontScaling={false}
-                    style={styles.mainheader}>
+                  <Text allowFontScaling={false} style={styles.mainheader}>
                     Enter Delivery OTP
                   </Text>
 
-                  <Text
-                    allowFontScaling={false}
-                    style={styles.subheader}>
-                    Please enter the 6-digit OTP shared by the buyer to confirm delivery.
+                  <Text allowFontScaling={false} style={styles.subheader}>
+                    Please enter the 6-digit OTP shared by the buyer to confirm
+                    delivery.
                   </Text>
 
-                   <View style={styles.otpContainer}>
-                        {[0, 1, 2, 3,4,5].map((_, index) => (
-                          <TextInput
-                            key={index}
-                            ref={(ref) => {
-                              inputs.current[index] = ref;
-                            }}
-                            style={styles.otpBox}
-                            keyboardType="number-pad"
-                            maxLength={1}
-                            onChangeText={(text) => {
-                              const digit = text.replace(/[^0-9]/g, '');
-                              handleChange(digit, index);
-                            }}
-                            returnKeyType="next"
-                            textAlign="center"
-                            secureTextEntry={true}
-                          />
-                        ))}
-                      </View>
+                  <View style={styles.otpContainer}>
+                    {[0, 1, 2, 3, 4, 5].map((_, index) => (
+                      <TextInput
+                        key={index}
+                        ref={ref => {
+                          inputs.current[index] = ref;
+                        }}
+                        style={styles.otpBox}
+                        keyboardType="number-pad"
+                        maxLength={1}
+                        onChangeText={text => {
+                          const digit = text.replace(/[^0-9]/g, '');
+                          handleChange(digit, index);
+                        }}
+                        returnKeyType="next"
+                        textAlign="center"
+                        secureTextEntry={true}
+                      />
+                    ))}
+                  </View>
 
                   <TouchableOpacity
                     style={styles.loginButton}
@@ -584,7 +584,7 @@ const formatDateWithDash = (dateString?: string) => {
           </TouchableWithoutFeedback>
         </Modal>
 
-<Modal
+        <Modal
           visible={showPopup2}
           transparent
           animationType="fade"
@@ -617,28 +617,29 @@ const formatDateWithDash = (dateString?: string) => {
                     style={styles.logo}
                     resizeMode="contain"
                   />
-                  <Text
-                    allowFontScaling={false}
-                    style={styles.mainheader}
-                  >
+                  <Text allowFontScaling={false} style={styles.mainheader}>
                     Order Fulfilled!
                   </Text>
-                  <Text
-                    allowFontScaling={false}
-                    style={styles.subheader1}>
+                  <Text allowFontScaling={false} style={styles.subheader1}>
                     Delivery Verified
                   </Text>
                   <Text
                     allowFontScaling={false}
-                    style={[styles.subheader1,{marginTop:0}]}>
+                    style={[styles.subheader1, { marginTop: 0 }]}
+                  >
                     The payment of $10 has been transferred to your account.
                   </Text>
                   <TouchableOpacity
                     style={styles.loginButton}
-                    onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})}}
+                    onPress={() => {
+                      navigation.replace('Dashboard', {
+                        AddScreenBackactiveTab: 'Home',
+                        isNavigate: false,
+                      });
+                    }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText}>
-                     Done
+                      Done
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -647,8 +648,67 @@ const formatDateWithDash = (dateString?: string) => {
           </TouchableWithoutFeedback>
         </Modal>
 
+        {/* Confirm Deactivate Modal (only shown when currently active) */}
+        <Modal
+          visible={showConfirm}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowConfirm(false)}
+        >
+          <TouchableWithoutFeedback onPress={() => setShowConfirm(false)}>
+            <View style={styles.overlay}>
+              <BlurView
+                style={{
+                  flex: 1,
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                  alignItems: 'center',
+                }}
+                blurType="light"
+                blurAmount={10}
+                reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+              >
+                <View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                  ]}
+                />
 
+                <View style={styles.popupContainer}>
+                  <Text allowFontScaling={false} style={styles.mainheader}>
+                    Listing Deactivate
+                  </Text>
+                  <Text allowFontScaling={false} style={styles.subheader}>
+                    Are you sure you want to deactivate this listing?
+                  </Text>
 
+                  <TouchableOpacity
+                    style={styles.loginButton}
+                    onPress={async () => {
+                      await handleDeactivate();
+                      setShowConfirm(false);
+                    }}
+                  >
+                    <Text allowFontScaling={false} style={styles.loginText}>
+                      Deactivate
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.loginButton1}
+                    onPress={() => setShowConfirm(false)}
+                  >
+                    <Text allowFontScaling={false} style={styles.loginText1}>
+                      Cancel
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </BlurView>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
       </View>
       <NewCustomToastContainer />
     </ImageBackground>
@@ -656,37 +716,36 @@ const formatDateWithDash = (dateString?: string) => {
 };
 
 const styles = StyleSheet.create({
-
   otpContainer: {
-  flexDirection: 'row',
-  justifyContent: 'space-evenly',
-  width: '100%',
-  alignSelf: 'center',
-  gap: 6, // works in RN 0.71+, otherwise use marginRight
-  marginTop:16
-},
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    width: '100%',
+    alignSelf: 'center',
+    gap: 6, // works in RN 0.71+, otherwise use marginRight
+    marginTop: 16,
+  },
 
-otpBox: {
-  width: 48,
-  height: 48,
-  borderRadius: 12,
-  paddingTop: 8,
-  paddingRight: 12,
-  paddingBottom: 8,
-  paddingLeft: 12,
-  textAlign: 'center',
-  fontSize: 18,
-  color: '#fff',
-  fontWeight: '600',
-  borderWidth: 1,
-  borderColor: '#ffffff2c',
-  elevation: 0,
-  backgroundColor:
+  otpBox: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    paddingTop: 8,
+    paddingRight: 12,
+    paddingBottom: 8,
+    paddingLeft: 12,
+    textAlign: 'center',
+    fontSize: 18,
+    color: '#fff',
+    fontWeight: '600',
+    borderWidth: 1,
+    borderColor: '#ffffff2c',
+    elevation: 0,
+    backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.29) 100%)',
     boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 0px 15px 1px',
-},
+  },
 
-  mainheader:{
+  mainheader: {
     color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 18,
@@ -694,25 +753,23 @@ otpBox: {
     letterSpacing: -0.4,
     lineHeight: 28,
   },
-   subheader:{
+  subheader: {
     color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-Regular',
     fontSize: 14,
     fontWeight: '400',
-    textAlign:'center',
-    marginTop:6
+    textAlign: 'center',
+    marginTop: 6,
   },
-  
-    subheader1:{
+
+  subheader1: {
     color: 'rgba(255, 255, 255, 0.48)',
     fontFamily: 'Urbanist-Regular',
     fontSize: 14,
     fontWeight: '400',
-    textAlign:'center',
-    marginTop:6
+    textAlign: 'center',
+    marginTop: 6,
   },
-  
-
 
   logo: {
     width: 64,
@@ -720,7 +777,7 @@ otpBox: {
     marginBottom: 20,
   },
 
-    loginText: {
+  loginText: {
     color: '#002050',
     textAlign: 'center',
     fontFamily: 'Urbanist-Medium',
@@ -771,7 +828,7 @@ otpBox: {
     borderColor: '#ffffff2c',
   },
 
- popupContainer: {
+  popupContainer: {
     width: '85%',
     padding: 20,
     borderRadius: 24,
@@ -789,15 +846,15 @@ otpBox: {
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
 
-
   background: {
-     flex: 1,
-      width: '100%', 
-      height: '100%' },
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
   fullScreenContainer: {
-     flex: 1 
-    },
-   header: {
+    flex: 1,
+  },
+  header: {
     paddingTop: Platform.OS === 'ios' ? 50 : 50,
     paddingBottom: 12,
     paddingHorizontal: 16,
@@ -827,10 +884,10 @@ otpBox: {
     flex: 1,
     textAlign: 'center',
     fontWeight: '600',
+    fontFamily: 'Urbanist-SemiBold',
   },
 
-   card: {
-   
+  card: {
     padding: 12,
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderRadius: 24,
@@ -842,14 +899,14 @@ otpBox: {
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',    
+    justifyContent: 'space-between',
   },
-  lebleHeader:{
+  lebleHeader: {
     color: 'rgba(255, 255, 255, 0.72)',
     fontSize: 14,
     fontWeight: '500',
     letterSpacing: -0.28,
-    lineHeight:16,
+    lineHeight: 16,
     fontFamily: 'Urbanist-Medium',
   },
   status: {
@@ -857,98 +914,93 @@ otpBox: {
     fontSize: 14,
     fontWeight: '600',
     letterSpacing: -0.28,
-    lineHeight:16,
+    lineHeight: 16,
     fontFamily: 'Urbanist-SemiBold',
   },
-   image: {
+  image: {
     width: 72,
     height: 76,
     borderRadius: 16,
   },
-  univercitycontainer:{
+  univercitycontainer: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  productlebleHeader:{
+  productlebleHeader: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontSize: 14,
     fontWeight: '500',
     letterSpacing: -0.24,
-    lineHeight:16,
+    lineHeight: 16,
     fontFamily: 'Urbanist-SemiBold',
-    paddingTop: 10
+    paddingTop: 10,
   },
-  productlableprice:{
+  productlableprice: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontSize: 14,
     fontWeight: '500',
     letterSpacing: -0.24,
-    lineHeight:16,
+    lineHeight: 16,
     fontFamily: 'Urbanist-SemiBold',
-
   },
-  universitylable:{
-    
+  universitylable: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontSize: 12,
     fontWeight: '500',
     letterSpacing: -0.24,
-    lineHeight:16,
+    lineHeight: 16,
     fontFamily: 'Urbanist-Medium',
-
   },
-  datetlable:{
+  datetlable: {
     marginLeft: 10,
     color: 'rgba(255, 255, 255, 0.88)',
     fontSize: 12,
     fontWeight: '500',
     letterSpacing: -0.24,
-    lineHeight:16,
+    lineHeight: 16,
     fontFamily: 'Urbanist-Medium',
-
-
   },
-  carddivider:{
-        display:'flex',
-        flexDirection:'row',
-        justifyContent:'space-between',
-        alignItems:'center',
-        width: '90%',
-        height: 1.5,
-        // backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-        // boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-        borderStyle: 'dashed',
-        borderBottomWidth: 1,
-        // : 'rgba(255, 255, 255, 0.20)',
-        borderBottomColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-        
-    },
-    cardconstinerdivider:{
-        display:'flex',
-        flexDirection:'row',
-        justifyContent:'space-between',
-        alignItems:'center',
-        width: '100%',
-        height: 1.5,
-        borderStyle: 'dashed',
-        borderBottomWidth: 1,
-        borderBottomColor: '#76c1f0ff',
-    },
-    sellerHeaderlable: {
-        color: 'rgba(255, 255, 255, 0.88)',
+  carddivider: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '90%',
+    height: 1.5,
+    // backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    // boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+    borderStyle: 'dashed',
+    borderBottomWidth: 1,
+    // : 'rgba(255, 255, 255, 0.20)',
+    borderBottomColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+  },
+  cardconstinerdivider: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    height: 1.5,
+    borderStyle: 'dashed',
+    borderBottomWidth: 1,
+    borderBottomColor: '#4169B8',
+  },
+  sellerHeaderlable: {
+    color: 'rgba(255, 255, 255, 0.88)',
     fontSize: 14,
     fontWeight: '500',
     letterSpacing: -0.24,
-    lineHeight:16,
+    lineHeight: 16,
     fontFamily: 'Urbanist-SemiBold',
-  
-    },
-     scrollContainer: {
+  },
+  scrollContainer: {
     paddingBottom: 180,
     // paddingTop: 90,
     // paddingHorizontal: 20,
-    paddingHorizontal: 16 ,width: '100%'
+    paddingHorizontal: 16,
+    width: '100%',
   },
   bottomview: {
     position: 'absolute',
@@ -963,7 +1015,7 @@ otpBox: {
     bottom: 0,
     marginBottom: Platform.OS === 'ios' ? 10 : 20,
   },
-   cancelBtn: {
+  cancelBtn: {
     flex: 1,
     marginRight: 8,
     padding: 12,
@@ -985,7 +1037,7 @@ otpBox: {
 
     boxSizing: 'border-box',
   },
-    cancelText: {
+  cancelText: {
     color: 'rgba(255, 255, 255, 0.48)',
     fontFamily: 'Urbanist-Regular',
     fontSize: 16,
@@ -993,7 +1045,6 @@ otpBox: {
     fontStyle: 'normal',
     letterSpacing: 0.17,
     lineHeight: 22,
-    
   },
 });
 

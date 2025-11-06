@@ -844,6 +844,11 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     }
   };
 
+  // Identify the featured toggle (boolean field) to render it separately from the main container
+  const featuredField = fields.find(
+    (f: any) => f?.param?.field_type?.toLowerCase() === 'boolean',
+  );
+
   return (
  
     <ImageBackground source={bgImage} style={styles.background}>
@@ -871,6 +876,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             <Text allowFontScaling={false} style={styles.unizyText}>
               {`List${productName ? ` ${productName} ` : ''}`}
             </Text>
+           
             <View style={{ width: 48 }} />
           </View>
         </View>
@@ -921,7 +927,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                   justifyContent: 'space-between',
                 }}
               >
-                <Text allowFontScaling={false} style={styles.userSub1}>Coventry</Text>
+                <Text allowFontScaling={false} style={styles.userSub2}>Coventry</Text>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -951,10 +957,21 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                   }),
                 }}
               >
-                <Text allowFontScaling={false} style={styles.productdetailstext}>Product Details</Text>
-                {fields.map(field => renderField(field))}
+                <Text allowFontScaling={false} style={styles.productdetailstext}>{`${productName ? ` ${productName} ` : ''}Details`}</Text>
+                {fields
+                  .filter(
+                    (f: any) =>
+                      f?.param?.field_type?.toLowerCase() !== 'boolean',
+                  )
+                  .map((field: any) => renderField(field))}
               </Animated.View>
             </View>
+            {/* Featured listing toggle rendered as a separate section */}
+            {featuredField && (
+              <View>
+                {renderField(featuredField)}
+              </View>
+            )}
           </ScrollView>
 
           <Button title="Preview Details" onPress={() => handlePreview()} />
@@ -1178,8 +1195,16 @@ dropdowncard:{
     lineHeight: 16,
     marginTop:4
   },
-   userSub1: {
+  userSub2: {
     color: 'rgba(255, 255, 255, 0.88)',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 12,
+    fontWeight: '500',
+    lineHeight: 16,
+    marginTop:1
+  },
+   userSub1: {
+    color: 'rgba(255, 255, 255, 0.48)',
     fontFamily: 'Urbanist-Medium',
     fontSize: 12,
     fontWeight: '500',
