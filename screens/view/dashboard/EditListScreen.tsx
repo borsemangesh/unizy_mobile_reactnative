@@ -1047,6 +1047,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
               <ToggleButton
   value={toggleValue}
+  disabled={true}
   onValueChange={val => {
     // Block only when toggle is currently true and user tries to turn it off
     
@@ -1062,7 +1063,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             <View style={styles.textbg}>
               <Image
                 source={require('../../../assets/images/info_icon.png')}
-                style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+                style={{ width: 48, height: 48, marginRight: 8, marginTop: 2 }}
               />
 
               <View style={{ flex: 1 }}>
@@ -1133,6 +1134,11 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         return null;
     }
   };
+
+  // Identify the featured toggle (boolean field) to render it separately from the main container
+  const featuredField = fields.find(
+    (f: any) => f?.param?.field_type?.toLowerCase() === 'boolean',
+  );
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -1254,9 +1260,20 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                 >
                   Product Details
                 </Text>
-                {fields.map(field => renderField(field))}
+                {fields
+                  .filter(
+                    (f: any) =>
+                      f?.param?.field_type?.toLowerCase() !== 'boolean',
+                  )
+                  .map((field: any) => renderField(field))}
               </Animated.View>
             </View>
+            {/* Featured listing toggle rendered as a separate section */}
+            {featuredField && (
+              <View>
+                {renderField(featuredField)}
+              </View>
+            )}
           </ScrollView>
 
           <Button
@@ -1382,7 +1399,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   backIconRow: {
-    padding: 12,
+    padding: 10,
     borderRadius: 40,
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
@@ -1413,6 +1430,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 80,
     paddingTop: 100,
+   
   },
   userRow: {
     flexDirection: 'row',
@@ -1730,7 +1748,7 @@ const styles = StyleSheet.create({
 
   categoryTagWrapper: {
     borderRadius: 12,
-    paddingHorizontal: 4,
+    paddingHorizontal: 1,
     paddingVertical: 4,
   },
 

@@ -275,7 +275,8 @@ const MyListing = ({ navigation }: MyListingProps) => {
               </View>
             </TouchableOpacity>
 
-            <Text style={styles.unizyText}>My Listings</Text>
+            <Text allowFontScaling={false} style={styles.unizyText}>My Listings</Text>
+              <View style={{ width: 48 }} />
           </Animated.View>
         </View>
         {/* List */}
@@ -355,12 +356,10 @@ export default MyListing;
 const styles = StyleSheet.create({
   tabcard: {
     minHeight: 38,
-   
     paddingVertical: 10,
     paddingHorizontal: 16,
-
     marginRight: 6,
-    marginLeft:10,
+    marginLeft:1,
     borderWidth: 0.4,
     borderColor: '#ffffff11',
     backgroundColor:
@@ -395,7 +394,7 @@ const styles = StyleSheet.create({
     boxSizing: 'border-box',
     paddingVertical: 10,
     paddingHorizontal: 16,
-    marginRight: 6,
+    marginRight: 8,
   },
   tabtext: {
     color: '#fff', // selected tab text color
@@ -468,7 +467,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
-    marginRight: 12,
+    // marginRight: 12,
   },
   search_container: {
     flexDirection: 'row',
@@ -503,7 +502,8 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     flex: 1,
-    marginHorizontal: 4,
+    marginHorizontal: 0,
+    marginTop:12
   },
   scrollView: {
     paddingBottom: 20,

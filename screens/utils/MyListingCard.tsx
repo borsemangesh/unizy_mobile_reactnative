@@ -53,9 +53,18 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
       {topRightText ? (
         <View style={[
           styles.topRightBadge,
-          { backgroundColor: isactive ? 'rgba(255, 255, 255, 0.18)' : 'rgba(0, 0, 0, 0.18)' },
+          { backgroundColor: isactive ? 'rgba(255, 255, 255, 0.18)' : 'rgba(0, 0, 0, 0.18)',
+           },
         ]}>
-          <Text allowFontScaling={false} style={styles.topRightText}>{topRightText}</Text>
+          <Text
+    allowFontScaling={false}
+    style={[
+      styles.topRightText,
+      {
+        color: isactive ? '#b4e6ffc6' : '#868CD5', // 👈 change text color based on active state
+      },
+    ]}
+  >{topRightText}</Text>
         </View>
       ) : null}
     </View>
@@ -95,11 +104,10 @@ export default MyListingCard;
 const styles = StyleSheet.create({
   wrapper: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent:'center',
-    borderRadius: 18,
+  
+    borderRadius: 16,
     padding: 12,
-    marginVertical: 6,
+    // marginVertical: 8,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     borderWidth: 0.3,
     borderColor: 'rgba(255, 255, 255, 0.08)',
@@ -108,20 +116,23 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   image: {
-    width: 80,
-    height: 80,
-    borderRadius: 16,
+    width: 72,
+    height: 72,
+    borderRadius: 12,
   },
   content: {
     flex: 1,
     paddingLeft: 12,
+   
     justifyContent: 'center',
+
   },
   title: {
     fontSize: 14,
     color: '#fff',
     fontFamily: 'Urbanist-SemiBold',
     fontWeight:600,
+  
   },
   price: {
     fontSize: 14,
@@ -132,11 +143,11 @@ const styles = StyleSheet.create({
   priceRow: {
   flexDirection: 'row',
   alignItems: 'center',
-  marginTop: 6,
+  // marginTop: 6,
   gap: 8, 
 },
   metaRow: {
-    marginTop: 6,
+    // marginTop: 6,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
@@ -175,6 +186,7 @@ titleRow: {
   flexDirection: 'row',
   justifyContent: 'space-between', // title left, text right
   alignItems: 'center',
+  gap:8
 },
 
 topRightText: {
