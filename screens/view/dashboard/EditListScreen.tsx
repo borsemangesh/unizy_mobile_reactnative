@@ -55,6 +55,8 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   const displayDate = formattedDate.replace(/\//g, '-');
   const [photo, setPhoto] = useState<string | null>(null);
   const [newdate,setnewdate]=useState('')
+  const [category,setcategory]=useState('')
+
 
   const [multiSelectModal, setMultiSelectModal] = useState<{
     visible: boolean;
@@ -312,6 +314,8 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         if (json?.data) {
           const data = json.data;
           setnewdate(data.created_at);
+
+          setcategory(data.category.name)
           
           const initialValues: any = {};
     
@@ -1153,7 +1157,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
               </View>
             </TouchableOpacity>
             <Text allowFontScaling={false} style={styles.unizyText}>
-              {`List${productName ? ` ${productName} ` : ''}`}
+              {`Edit${category ? ` ${category} ` : ''}`}
             </Text>
             <View style={{ width: 48 }} />
           </View>
@@ -1252,7 +1256,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                   allowFontScaling={false}
                   style={styles.productdetailstext}
                 >
-                  Product Details
+                  {category === 'Food' ? 'Dish Details' : `${category ? `${category} Details` : ''}`}
                 </Text>
                 {fields.map(field => renderField(field))}
               </Animated.View>
@@ -1770,3 +1774,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+

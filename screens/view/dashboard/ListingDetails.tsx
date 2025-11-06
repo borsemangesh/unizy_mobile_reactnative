@@ -677,8 +677,13 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                 />
 
                 <View style={styles.popupContainer}>
+                  <Image
+                    source={require('../../../assets/images/alerticon.png')}
+                    style={styles.logo}
+                    resizeMode="contain"
+                    />
                   <Text allowFontScaling={false} style={styles.mainheader}>
-                    Listing Deactivate
+                     Deactivate Listing
                   </Text>
                   <Text allowFontScaling={false} style={styles.subheader}>
                     Are you sure you want to deactivate this listing?
@@ -748,10 +753,11 @@ const styles = StyleSheet.create({
   mainheader: {
     color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-SemiBold',
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '600',
     letterSpacing: -0.4,
     lineHeight: 28,
+
   },
   subheader: {
     color: 'rgba(255, 255, 255, 0.80)',
@@ -769,6 +775,8 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     textAlign: 'center',
     marginTop: 6,
+    letterSpacing: -0.28,
+    lineHeight: 19.6,
   },
 
   logo: {

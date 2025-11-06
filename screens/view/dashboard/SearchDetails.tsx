@@ -18,9 +18,8 @@ import { BlurView } from '@react-native-community/blur';
 import { useRoute } from '@react-navigation/native';
 import { MAIN_URL } from '../../utils/APIConstant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { showToast } from '../../utils/toast';
+import {NewCustomToastContainer,showToast,} from '../../utils/component/NewCustomToastManager';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 import Button from '../../utils/component/Button';
 import PayButton from '../../utils/component/PayButton';
 
@@ -173,13 +172,13 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
             //paddingVertical: 20,
           }}
         >
-          {profileUri ? (
+          {detail?.createdby?.profile ? (
             <Image
-              source={{ uri: profileUri }}
+              source={{ uri: detail?.createdby?.profile }}
               style={{
-                //width: '100%',
+                width: 180,
                 height: 180,
-                borderRadius: 80,
+                borderRadius: 90,
               }}
               resizeMode="cover"
               onError={() => {
@@ -292,6 +291,9 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
       const data = await response.json();
       console.log('Bookmark response:', data);
+      if (data?.message) {
+        showToast(data.message, data.statusCode === 200 ? 'success' : 'error');
+      }
 
       // 3️⃣ Update bookmarkedIds for persistence
       let updatedBookmarks;

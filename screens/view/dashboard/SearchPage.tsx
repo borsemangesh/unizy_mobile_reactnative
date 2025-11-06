@@ -485,7 +485,7 @@ const handleFilterApply = async (filterBody: any) => {
                                           resizeMode="contain"
                                         />
                                         <Text allowFontScaling={false} style={styles.emptyText}>
-                                          No Listings found
+                                          No Listings Found
                                         </Text>
                                       </View>
                                       </View>

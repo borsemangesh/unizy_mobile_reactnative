@@ -788,11 +788,12 @@ return (
     }
 
     const data = await response.json();
+    if (data?.message) {
+          showToast(data.message, data.statusCode === 200 ? 'success' : 'error');
+        }
     console.log('Bookmark response:', data);
 
-    if (data?.message) {
-      showToast(data.message, data.statusCode === 200 ? 'success' : 'error');
-    }
+    
 
     let updatedBookmarks;
     if (isCurrentlyBookmarked) {

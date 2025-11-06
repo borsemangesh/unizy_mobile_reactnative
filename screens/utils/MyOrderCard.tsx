@@ -181,6 +181,16 @@ const MyOrderCard: React.FC<MyOrderCardProps> = ({
   date,
   ispurchase,
 }) => {
+
+
+const handleViewTransaction = () => {
+   //navigation.navigate('TransactionDetail', { shareid });
+  };
+
+  const handleWriteReview = () => {
+      //navigation.navigate('AddReview', { shareid });
+  };
+
   return (
     <TouchableOpacity style={styles.card} activeOpacity={0.8}>
       {/* Top Row: Image + Title + Price + Status */}
@@ -216,16 +226,22 @@ const MyOrderCard: React.FC<MyOrderCardProps> = ({
       <View style={styles.dashedLine} />
 
       {/* Buttons Section */}
-      {ispurchase ? (
+       {ispurchase ? (
         // Fulfilled card => Two buttons
         <View style={styles.buttonRow}>
-          <TouchableOpacity style={styles.primaryButton}>
+          <TouchableOpacity
+            style={styles.primaryButton}
+            activeOpacity={0.7}
+            onPress={handleViewTransaction}>
             <Text allowFontScaling={false} style={styles.btnText}>
               View in Transactions
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.secondaryButton}>
+          <TouchableOpacity
+            style={styles.secondaryButton}
+            activeOpacity={0.7}
+            onPress={handleWriteReview}>
             <Text allowFontScaling={false} style={styles.btnTextSecondary}>
               Write a Review
             </Text>
@@ -233,7 +249,10 @@ const MyOrderCard: React.FC<MyOrderCardProps> = ({
         </View>
       ) : (
         // Awaiting card => One button
-        <TouchableOpacity style={styles.singleButton}>
+        <TouchableOpacity
+          style={styles.singleButton}
+          activeOpacity={0.7}
+          onPress={handleViewTransaction}>
           <Text allowFontScaling={false} style={styles.btnText}>
             View in Transactions
           </Text>

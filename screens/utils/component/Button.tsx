@@ -24,7 +24,7 @@ const Button = ({ onPress, title = 'Click' }: ButtonProps) => {
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    width: '100%',
+    width: '95%',
     height: 48,
     justifyContent: 'center',
     alignItems: 'center',

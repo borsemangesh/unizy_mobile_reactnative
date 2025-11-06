@@ -957,8 +957,13 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                   }),
                 }}
               >
-                <Text allowFontScaling={false} style={styles.productdetailstext}>{`${productName ? ` ${productName} ` : ''}Details`}</Text>
-                {fields
+              <Text allowFontScaling={false} style={styles.productdetailstext}>
+                {productName === 'Food'
+                  ? 'Dish Details'
+                  : `${productName ? `${productName} ` : ''}Details`}
+              </Text>                
+
+              {fields
                   .filter(
                     (f: any) =>
                       f?.param?.field_type?.toLowerCase() !== 'boolean',
