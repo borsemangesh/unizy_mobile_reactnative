@@ -165,42 +165,83 @@ useEffect(() => {
   const [showPopup1, setShowPopup1] = useState(false);
   const closePopup1 = () => setShowPopup1(false);
 
+  
   const animateGreeting = () => {
     greetingOpacity.setValue(0);
-    greetingScale.setValue(0.5);
+    greetingScale.setValue(0.8);
 
     Animated.sequence([
       Animated.parallel([
         Animated.timing(greetingOpacity, {
           toValue: 1,
-          duration: 1500,
+          duration: 600,
           easing: Easing.linear,
           useNativeDriver: true,
         }),
         Animated.timing(greetingScale, {
           toValue: 1,
-          duration: 1500,
+          duration: 600,
           easing: Easing.linear,
           useNativeDriver: true,
         }),
       ]),
-      Animated.delay(4500),
+      Animated.delay(600),
       Animated.parallel([
         Animated.timing(greetingOpacity, {
           toValue: 0,
-          duration: 1500,
+          duration: 600,
           easing: Easing.in(Easing.ease),
           useNativeDriver: true,
         }),
         Animated.timing(greetingScale, {
           toValue: 0.8,
-          duration: 1500,
+          duration: 600,
           easing: Easing.in(Easing.ease),
           useNativeDriver: true,
         }),
       ]),
     ]).start();
   };
+
+  // const animateGreeting = () => {
+  //   greetingOpacity.setValue(0);
+  //   greetingScale.setValue(0.1);
+  
+  //   Animated.sequence([
+  //     Animated.parallel([
+  //       // Bounce in opacity using timing to 1
+  //       Animated.timing(greetingOpacity, {
+  //         toValue: 1,
+  //         duration: 100,
+  //         easing: Easing.linear,
+  //         useNativeDriver: true,
+  //       }),
+  //       // Bounce scale using spring
+  //       Animated.spring(greetingScale, {
+  //         toValue: 1,
+  //         friction: 3.5, // lower = bouncier
+  //         tension: 40,   // higher = faster snap
+  //         useNativeDriver: true,
+  //       }),
+  //     ]),
+  //     Animated.delay(5500),
+  //     Animated.parallel([
+  //       Animated.timing(greetingOpacity, {
+  //         toValue: 0,
+  //         duration: 100,
+  //         easing: Easing.in(Easing.ease),
+  //         useNativeDriver: true,
+  //       }),
+  //       Animated.spring(greetingScale, {
+  //         toValue: 0.8,
+  //         friction: 3,
+  //         tension: 20,
+  //         useNativeDriver: true,
+  //       }),
+  //     ]),
+  //   ]).start();
+  // };
+  
 
 
   //   Signup Screen
@@ -500,7 +541,7 @@ useEffect(() => {
           prevIndex + 1 < greetings.length ? prevIndex + 1 : 0,
         );
         animateGreeting();
-      }, 4500);
+      }, 1800);
 
       return () => {
         clearInterval(interval);
@@ -1253,74 +1294,83 @@ useEffect(() => {
   };
   //profile
 
-  const requestCameraPermission = async () => {
-    if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.CAMERA,
-          {
-            title: 'Camera Permission',
-            message: 'App needs access to your camera',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        );
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } catch (err) {
-        console.warn(err);
-        return false;
-      }
-    } else {
-      return true;
-    }
-  };
-
   // const requestCameraPermission = async () => {
-  //   if (Platform.OS === "android") {
+  //   if (Platform.OS === 'android') {
   //     try {
   //       const granted = await PermissionsAndroid.request(
   //         PermissionsAndroid.PERMISSIONS.CAMERA,
   //         {
-  //           title: "Camera Permission",
-  //           message: "App needs access to your camera",
-  //           buttonNeutral: "Ask Me Later",
-  //           buttonNegative: "Cancel",
-  //           buttonPositive: "OK",
-  //         }
+  //           title: 'Camera Permission',
+  //           message: 'App needs access to your camera',
+  //           buttonNeutral: 'Ask Me Later',
+  //           buttonNegative: 'Cancel',
+  //           buttonPositive: 'OK',
+  //         },
   //       );
   //       return granted === PermissionsAndroid.RESULTS.GRANTED;
   //     } catch (err) {
   //       console.warn(err);
   //       return false;
   //     }
-  //   } else if (Platform.OS === 'ios') {
-  //     try {
-  //       // Check current permission status first
-  //       const status = await check(PERMISSIONS.IOS.CAMERA);
-  //       if (status === RESULTS.GRANTED) {
-  //         return true;
-  //       }
-  //       const result = await request(PERMISSIONS.IOS.CAMERA);
-  
-  //       if (result === RESULTS.GRANTED) {
-  //         return true; 
-  //       } else if (result === RESULTS.BLOCKED) {
-  //         console.warn('Camera permission is blocked. Please enable it in Settings.');
-  //         return false;
-  //       } else {
-  //         return false; // Denied
-  //       }
-  //     } catch (err) {
-  //       console.warn(err);
-  //       return false;
-  //     }
-  //   } 
-    
-  //   else {
+  //   } else {
   //     return true;
   //   }
   // };
+
+  const requestCameraPermission = async () => {
+    if (Platform.OS === "android") {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            title: "Camera Permission",
+            message: "App needs access to your camera",
+            buttonNeutral: "Ask Me Later",
+            buttonNegative: "Cancel",
+            buttonPositive: "OK",
+          }
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        console.warn(err);
+        return false;
+      }
+    } else if (Platform.OS === 'ios') {
+      try {
+        // Check current permission status first
+        const status = await check(PERMISSIONS.IOS.CAMERA);
+        if (status === RESULTS.GRANTED) {
+          return true;
+        }
+        const result = await request(PERMISSIONS.IOS.CAMERA);
+  
+        if (result === RESULTS.GRANTED) {
+          return true; 
+        } else if (result === RESULTS.BLOCKED) {
+          console.warn('Camera permission is blocked. Please enable it in Settings.');
+          return false;
+        } else {
+          return false; // Denied
+        }
+      } catch (err) {
+        console.warn(err);
+        return false;
+      }
+       // iOS Permissions
+      //  const loc = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+      //  const photo = await request(PERMISSIONS.IOS.PHOTO_LIBRARY);
+
+      //  if (loc === RESULTS.GRANTED && photo === RESULTS.GRANTED) {
+      //    Alert.alert('Success', 'All permissions granted');
+      //  } else {
+      //    Alert.alert('Permission Denied', 'Some permissions are denied');
+      //  }
+    } 
+    
+    else {
+      return true;
+    }
+  };
 
   const loginTranslateY = useRef(
     new Animated.Value(0),
@@ -1695,7 +1745,7 @@ useEffect(() => {
       style={{ width: '100%', height: '100%' }}
       resizeMode="cover"
     >
-      {Platform.OS === 'android' ? (
+      {/* {Platform.OS === 'android' ? (
         <>
           <BackgroundAnimation_Android />
         </>
@@ -1716,7 +1766,7 @@ useEffect(() => {
             />
           </View>
         </>
-      )}
+      )} */}
       <View
         style={{
           flex: 1,
@@ -2166,7 +2216,7 @@ useEffect(() => {
                                   fontWeight: 400,
                                   lineHeight: 19,
                                   marginTop: Platform.OS === 'ios' ? 0 : 10,
-                                  paddingBottom: Platform.OS === 'ios' ? 8 : 10,
+                                  paddingBottom: Platform.OS === 'ios' ? 9 : 10,
                                 }}
                               >
                                 Don't have an account?

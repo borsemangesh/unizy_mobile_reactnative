@@ -402,7 +402,7 @@ export const Styles = StyleSheet.create({
     lineHeight: 19,
     textDecorationStyle: 'solid',
     marginTop: (Platform.OS === 'ios' ? 0 : 10),
-    paddingBottom: (Platform.OS === 'ios' ? 8 : 10),
+    paddingBottom: (Platform.OS === 'ios' ? 9 :10),
     opacity: 2,
     textShadowColor: 'rgba(255,255,255,0.6)',
     textShadowOffset: { width: 0, height: 0 },

@@ -1,6 +1,6 @@
 
 import React, { useEffect } from "react";
-import { LogBox, StatusBar, View, StyleSheet, ImageBackground } from "react-native";
+import { LogBox, StatusBar, View, StyleSheet, ImageBackground, Platform, PermissionsAndroid, Alert } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Navigation } from "./screens/view/Navigation";
 import { enableScreens } from "react-native-screens";
@@ -10,11 +10,56 @@ import { StripeProvider } from '@stripe/stripe-react-native';
 import { Constant } from "./screens/utils/Constant";
 // import messaging from '@react-native-firebase/messaging';
 import notifee, { AndroidImportance } from '@notifee/react-native';
+import { PERMISSIONS, RESULTS, request } from "react-native-permissions";
 
 
 function App() {
   LogBox.ignoreAllLogs();
   enableScreens();
+
+  useEffect(() => {
+    requestAllPermissions();
+  }, []);
+
+  const requestAllPermissions = async () => {
+    try {
+      if (Platform.OS === 'android') {
+        // Android Permissions
+        const location = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        );
+        const gallery =
+          Platform.Version >= 33
+            ? await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+              )
+            : await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+              );
+
+        if (
+          location === PermissionsAndroid.RESULTS.GRANTED &&
+          gallery === PermissionsAndroid.RESULTS.GRANTED
+        ) {
+          Alert.alert('Success', 'All permissions granted');
+        } else {
+          Alert.alert('Permission Denied', 'Some permissions are denied');
+        }
+      } else {
+        // iOS Permissions
+        const loc = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+        const photo = await request(PERMISSIONS.IOS.PHOTO_LIBRARY);
+
+        if (loc === RESULTS.GRANTED && photo === RESULTS.GRANTED) {
+          // Alert.alert('Success', 'All permissions granted');
+        } else {
+          Alert.alert('Permission Denied', 'Some permissions are denied');
+        }
+      }
+    } catch (error) {
+      console.warn(error);
+    }
+  };
 
   // useEffect(() => {
   //   const setupFCM = async () => {
