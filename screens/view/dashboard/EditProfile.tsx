@@ -365,8 +365,9 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
       if (response.ok) {
         // Alert.alert('Success', 'Image uploaded successfully!');
+         showToast('Image uploaded successfully', 'success');
 
-        showToast(data?.message, 'success');
+        // showToast(data?.message, 'success');
       } else {
         // Alert.alert('Error', data?.message || 'Failed to upload image');
         showToast(data?.message, 'error');
@@ -613,12 +614,15 @@ const [save_otp, setSaveOtp] = useState(0);
                   style={{
                     flex: 1,
                     color: '#fff',
-                    fontSize: 14,
                     backgroundColor: 'transparent',
                     borderWidth: 0,
                     borderRadius: 10,
                     paddingVertical: 10,
                     paddingHorizontal: 12,
+                    fontFamily:'Urbanist-Regular',
+                    fontSize:16,
+                    fontWeight:400
+
                   }}
                   value={userMeta.email || ''}
                   onChangeText={text =>
@@ -668,12 +672,15 @@ const [save_otp, setSaveOtp] = useState(0);
                   style={{
                     flex: 1,
                     color: '#fff',
-                    fontSize: 14,
+                    // fontSize: 14,
                     backgroundColor: 'transparent',
                     borderWidth: 0,
                     borderRadius: 10,
                     paddingVertical: 10,
                     paddingHorizontal: 10,
+                    fontFamily:'Urbanist-Regular',
+                    fontSize:16,
+                    fontWeight:400
                   }}
                   //  value={userMeta.email || ''}
                   value={userMeta.student_email || ''}
@@ -787,14 +794,15 @@ const [save_otp, setSaveOtp] = useState(0);
 
               <View style={styles.popupContainer}>
                 <Text allowFontScaling={false} style={styles.mainheader}>
-                  Verify Personal Email ID
+                  {emailName === 'personalEmail' ? 'Verify Personal Email ID' : 'Verify Student Email ID'}                 
                 </Text>
 
               <Text allowFontScaling={false} style={styles.subheader}>
-  We have sent a 4-digit code to {
-    emailName === 'personalEmail' ? userMeta.email : userMeta.student_email
-  }
-</Text>
+                 We have sent a 4-digit code to{' '}
+                 <Text style={{ fontFamily: 'Urbanist-SemiBold', fontWeight: '400', }}>
+                   {emailName === 'personalEmail' ? userMeta.email : userMeta.student_email}
+                 </Text>                
+                </Text>
 
                 <View style={styles.otpContainer}>
                   {[0, 1, 2, 3].map((_, index) => (
@@ -1092,10 +1100,12 @@ const styles = StyleSheet.create({
   blurCard: {
     marginTop: 16,
     borderRadius: 24,
-    padding: 16,
+    // padding: 16,
     // marginBottom:16,
 
     // overflow: 'hidden',
+    paddingHorizontal:16,
+    paddingVertical:12,
     backgroundColor: 'rgba(255,255,255,0.08)',
   },
   inputGroup: {
@@ -1109,7 +1119,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginBottom: 6,
     opacity: 0.9,
-    fontFamily: 'Urbanist',
+    fontFamily: 'Urbanist-Regular',
+    fontWeight:400,
+    // marginLeft:10
   },
   input: {
     backgroundColor: 'rgba(255,255,255,0.1)',
@@ -1118,6 +1130,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     color: '#fff',
     height: 44,
+    fontFamily:'Urbanist-Regular',
+    fontSize:16,
+    fontWeight:400
+    
     // width:329
   },
   saveButton: {
@@ -1335,8 +1351,8 @@ const styles = StyleSheet.create({
 
   mainheader: {
   fontFamily: 'Urbanist-SemiBold',
-   fontWeight: '600',
-  marginBottom: 10,
+   fontWeight: '500',
+  // marginBottom: 10,
   fontSize: 20,
  
   color: '#fff',
