@@ -369,21 +369,65 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
   );
 };
 
-const handleFilterApply = async (filterBody: any) => {
-  try {
-    setAppliedFilter(filterBody); 
-    setIsLoading(true);
-    setFeaturelist([]); 
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) return;
+// const handleFilterApply = async (filterBody: any) => {
+//   try {
+//     setAppliedFilter(filterBody); 
+//     setIsLoading(true);
+//     setFeaturelist([]); 
+//     const token = await AsyncStorage.getItem('userToken');
+//     if (!token) return;
 
     
 
-    const url = `${MAIN_URL.baseUrl}category/filter-apply`;
+//     const url = `${MAIN_URL.baseUrl}category/filter-apply`;
 
+//     console.log(url)
+
+//     //const url = 'http://65.0.99.229:4320/category/filter-apply';
+
+//     const response = await fetch(url, {
+//       method: 'POST',
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(filterBody),
+//     });
+
+//     const jsonResponse = await response.json();
+//     console.log('Filter Apply Response:', jsonResponse);
+
+//     if (jsonResponse.statusCode === 200) {
+//       const filteredFeatures = jsonResponse.data.features;
+//       setFeaturelist(filteredFeatures);
+//       setHasMore(filteredFeatures.length === 20);
+//       setPage(2);
+//     }
+//   } catch (err) {
+//     console.log('Error applying filters:', err);
+//   } finally {
+//     setIsLoading(false);
+//   }
+// };
+
+const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
+  try {
+    if (isLoading) return;
+    setIsLoading(true);
+
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) return;
+
+    const url = `${MAIN_URL.baseUrl}category/filter-apply`;
     console.log(url)
 
-    //const url = 'http://65.0.99.229:4320/category/filter-apply';
+    const body = {
+      ...filterBody,
+      page: pageNum,
+      pagesize: 20,
+    };
+
+    console.log('Filter Apply Body:', body);
 
     const response = await fetch(url, {
       method: 'POST',
@@ -391,17 +435,28 @@ const handleFilterApply = async (filterBody: any) => {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(filterBody),
+      body: JSON.stringify(body),
     });
 
     const jsonResponse = await response.json();
     console.log('Filter Apply Response:', jsonResponse);
 
     if (jsonResponse.statusCode === 200) {
-      const filteredFeatures = jsonResponse.data.features;
-      setFeaturelist(filteredFeatures);
+      const filteredFeatures = jsonResponse.data.features || [];
+
+      if (pageNum === 1) {
+        setFeaturelist(filteredFeatures);
+      } else {
+        setFeaturelist(prev => [...prev, ...filteredFeatures]);
+      }
+
       setHasMore(filteredFeatures.length === 20);
-      setPage(2);
+      setPage(prev => prev + 1);
+    } else if (jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+      });
     }
   } catch (err) {
     console.log('Error applying filters:', err);
@@ -512,8 +567,11 @@ const handleFilterApply = async (filterBody: any) => {
         visible={isFilterVisible}
         initialFilters={appliedFilter} 
         //onClose={handleFilterClose}
-       onClose={() => setFilterVisible(false)}
-        onApply={(filterBody) => handleFilterApply(filterBody)} from={0} to={0}/>
+        onClose={() => setFilterVisible(false)}
+        //onApply={(filterBody) => handleFilterApply(filterBody)} from={0} to={0}
+        onApply={(filterBody) => handleFilterApply(filterBody, 1)}
+        from={0} to={0}
+        />
     <NewCustomToastContainer/>
     </ImageBackground>
   );
