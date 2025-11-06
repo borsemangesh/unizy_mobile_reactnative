@@ -54,6 +54,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   const formattedDate = today.toLocaleDateString('en-GB');
   const displayDate = formattedDate.replace(/\//g, '-');
   const [photo, setPhoto] = useState<string | null>(null);
+  const [newdate,setnewdate]=useState('')
 
   const [multiSelectModal, setMultiSelectModal] = useState<{
     visible: boolean;
@@ -310,6 +311,8 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
     
         if (json?.data) {
           const data = json.data;
+          setnewdate(data.created_at);
+          
           const initialValues: any = {};
     
           // --- Basic Fields ---
@@ -682,6 +685,15 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
     console.log(`Deleted image with ID: ${fileId}`);
   };
+
+  const formatDateWithDash = (dateString?: string) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+};
 
   const renderField = (field: any) => {
     // const { field_name, field_type, options, id, field_ismultilple } =field.param;
@@ -1218,7 +1230,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                         style={{ height: 20, width: 20 }}
                       />
                       <Text allowFontScaling={false} style={styles.userSub1}>
-                        {getCurrentDate()}
+                        {formatDateWithDash(newdate)}
                       </Text>
                     </View>
                   </View>

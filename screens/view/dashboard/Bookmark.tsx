@@ -13,6 +13,7 @@ import {
   ScrollView,
   ActivityIndicator,
   ImageSourcePropType,
+  Dimensions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -21,7 +22,8 @@ const bgImage = require('../../../assets/images/backimg.png');
 import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import SearchListProductCard from '../../utils/SearchListProductCard';
 import SearchTutionCard from '../../utils/SearchTutionCard';
-import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
+import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type CreatedBy = {
   id: number;
@@ -83,7 +85,9 @@ const Bookmark = ({ navigation }: BookmarkProps)  => {
     const [featurelist, setFeaturelist] = useState<Feature[]>([]);  
     const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-  const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
+    const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
+    const SCREEN_HEIGHT = Dimensions.get('window').height;
+    const insets = useSafeAreaInsets();
 
   useEffect(() => {
   const loadBookmarks = async () => {
@@ -152,6 +156,8 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
         'Content-Type': 'application/json',
       },
     });
+
+
 
     const jsonResponse = await response.json();
     console.log('API Response:', jsonResponse);
@@ -229,6 +235,8 @@ const handleBookmarkPress = async (productId: number) => {
     if (!token) return;
 
     const url = MAIN_URL.baseUrl + 'category/list-bookmark';
+    console.log(url)
+    console.log(productId)
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -244,6 +252,11 @@ const handleBookmarkPress = async (productId: number) => {
 
     const data = await response.json();
     console.log('Bookmark response:', data);
+    if (data?.message) {
+      showToast(data.message, data.statusCode === 200 ? 'success' : 'error');
+    }
+
+    displayListOfProduct(selectedCategory?.id ?? null, 1);
 
   } catch (error) {
     console.error('Bookmark error:', error);
@@ -316,7 +329,7 @@ const handleBookmarkPress = async (productId: number) => {
                 showInitials={showInitials}
                 initialsName={initials}
                 isfeature={feature.isfeatured}
-                applybookmark={() => handleBookmarkPress(item.id)}
+                applybookmark={() => handleBookmarkPress(feature.id)}
                 
               />
             ) : (
@@ -329,7 +342,7 @@ const handleBookmarkPress = async (productId: number) => {
                 bookmark={feature.isbookmarked}
                 //bookmark={bookmarkedIds.includes(item.id)}
                 isfeature={feature.isfeatured}
-                applybookmark={() => handleBookmarkPress(item.id)}
+                applybookmark={() => handleBookmarkPress(feature.id)}
               />
             )}
       </TouchableOpacity>
@@ -356,7 +369,7 @@ const handleBookmarkPress = async (productId: number) => {
           </View>
         </View>
 
-    <View>
+    <View >
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -381,28 +394,45 @@ const handleBookmarkPress = async (productId: number) => {
                  );
                })}
         </ScrollView>
-            
+        </View>     
 
         {/* FlatList */}
         <FlatList
           data={filteredFeatures}
           keyExtractor={(item) => item.id.toString()}
           numColumns={2}
-          columnWrapperStyle={styles.row1}
-          contentContainerStyle={styles.listContainer}
+          //columnWrapperStyle={styles.row1}
+          columnWrapperStyle={{
+            justifyContent: 'space-between',
+            //marginBottom:1
+          }}
+          scrollEnabled={filteredFeatures?.length > 0} 
+          contentContainerStyle={[
+            styles.listContainer,{ paddingBottom: SCREEN_HEIGHT * 0.05 },
+            filteredFeatures?.length === 0 && { alignContent:'center',alignSelf:'center' ,width:'90%',height:'90%'}
+          ]}
           renderItem={renderItem}
            ListFooterComponent={
             isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
           }
-          ListEmptyComponent={
-            !isLoading ? ( 
-              <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
-                No products found
-              </Text>
-            ) : null
-          }
+         ListEmptyComponent={
+                         !isLoading ? (
+                          <View style={styles.emptyWrapper}>
+                           <View style={styles.emptyContainer}>
+                             <Image
+                               source={require('../../../assets/images/noproduct.png')} // your image
+                               style={styles.emptyImage}
+                               resizeMode="contain"
+                             />
+                             <Text allowFontScaling={false} style={styles.emptyText}>
+                               No Listings found
+                             </Text>
+                           </View>
+                           </View>
+                         ) : null
+                       }
         />
-        </View>
+       
       </View>
       <NewCustomToastContainer/>
     </ImageBackground>
@@ -412,6 +442,40 @@ const handleBookmarkPress = async (productId: number) => {
 export default Bookmark;
 
 const styles = StyleSheet.create({
+  
+    emptyWrapper: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      width:'100%'
+    },
+
+ 
+   emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width:'100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderWidth: 0.3,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius:24,
+    overflow:'hidden',
+    //minHeight:'80%',
+   marginBottom:20,
+  },
+  emptyImage: {
+    width: 50,
+    height: 50,
+    marginBottom: 20,
+  },
+  emptyText: {
+    fontSize: 20,
+    color: '#fff',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight:600
+  },
  tabcard: {
   minHeight:38,
     paddingVertical: 10,
@@ -521,14 +585,17 @@ const styles = StyleSheet.create({
     width: '85%',
   },
   listContainer: {
-    marginLeft: 10,
-    marginRight: 20,
+    marginLeft: 8,
+    marginRight: 5,
     paddingTop: 10,
-    paddingBottom:160
+   // paddingBottom:10
+      gap:16
+ 
   },
   row1: {
     // flexDirection: 'row',
     // justifyContent: 'flex-start',
+    //paddingBottom:1
   },
   itemContainer: {
     flex: 1,
