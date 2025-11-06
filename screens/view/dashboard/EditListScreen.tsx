@@ -451,9 +451,10 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   };
 
   const requestCameraPermission = async () => {
-    if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(
+    try {
+      if (Platform.OS === 'android') {
+        // Request Camera permission
+        const camera = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.CAMERA,
           {
             title: 'Camera Permission',
@@ -463,13 +464,58 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             buttonPositive: 'OK',
           },
         );
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } catch (err) {
-        console.warn(err);
-        return false;
+  
+        // Request Gallery permission (depends on Android version)
+        const gallery =
+          Platform.Version >= 33
+            ? await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+              )
+            : await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+              );
+  
+        if (
+          camera === PermissionsAndroid.RESULTS.GRANTED &&
+          gallery === PermissionsAndroid.RESULTS.GRANTED
+        ) {
+          // Alert.alert('Success', 'Camera and gallery permissions granted');
+          return true;
+        } else {
+          Alert.alert('Permission Denied', 'Camera or gallery permission denied');
+          return false;
+        }
+      } else {
+        // iOS Permissions
+        const permissionsToCheck = [
+          PERMISSIONS.IOS.CAMERA,
+          PERMISSIONS.IOS.PHOTO_LIBRARY,
+        ];
+  
+        const results = await Promise.all(
+          permissionsToCheck.map(async (perm) => {
+            const status = await check(perm);
+            if (status === RESULTS.GRANTED) return true;
+            if (status === RESULTS.BLOCKED) {
+              console.warn(`${perm} is blocked. Enable it in Settings.`);
+              return false;
+            }
+            const req = await request(perm);
+            return req === RESULTS.GRANTED;
+          }),
+        );
+  
+        if (results.every((r) => r === true)) {
+          //Alert.alert('Success', 'Camera and gallery permissions granted');
+          return true;
+        } else {
+          Alert.alert('Permission Denied', 'Camera or gallery permission denied');
+          return false;
+        }
       }
-    } else {
-      return true;
+    } catch (error) {
+      console.warn('Permission Error:', error);
+      return false;
     }
   };
   const handlePreview = async (latestFormValues: any) => {

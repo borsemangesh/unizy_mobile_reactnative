@@ -86,13 +86,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
 
 const [page, setPage] = useState(1);
 const [isLoading, setIsLoading] = useState(false);
-const [hasMore, setHasMore] = useState(true); // whether more pages exist
+const [hasMore, setHasMore] = useState(true); 
 const [isFilterVisible, setFilterVisible] = useState(false);
 const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
 const inputRef = useRef<TextInput>(null);
-const [appliedFilter, setAppliedFilter] = useState(null);
  const SCREEN_HEIGHT = Dimensions.get('window').height;
 
+
+ const [appliedFilter, setAppliedFilter] = useState<any | null>(null);
 
   useEffect(() => {
   const loadBookmarks = async () => {
@@ -117,21 +118,9 @@ const debouncedSearch = useRef(
   debounce((text: string) => {
     setPage(1);
     setHasMore(true);
-    //displayListOfProduct(1); 
     displayListOfProduct(1, text);
   }, 350)
 ).current;
-
-
-useEffect(() => {
-  if (appliedFilter) {
-    console.log("🎯 Filter active, fetching filtered data...");
-    setPage(1);
-    setHasMore(true);
-    setFeaturelist([]);
-    handleFilterApply(appliedFilter);
-  }
-}, [appliedFilter]);
 
 useFocusEffect(
   useCallback(() => {
@@ -150,115 +139,73 @@ useFocusEffect(
   const displayListOfProduct = async (
   pageNum: number = 1,
   searchText: string = search,
-  filterBody = appliedFilter,
 ) => {
   if (isLoading || !hasMore) return;
 
-  try {
-    setIsLoading(true);
-
-    const body = {
-      search: searchText,
-      page: pageNum,
-      pagesize: 20,
-      category_id: category_id,
-    };
-
-    console.log(body)
-
-    const url = MAIN_URL.baseUrl + 'category/feature-list/search';
-    console.log(url)
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) return;
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-
-    const jsonResponse = await response.json();
-    console.log('API Response:', jsonResponse);
-
-    if (jsonResponse.statusCode === 200) {
-      const newFeatures = jsonResponse.data.features;
-
-      if (pageNum === 1) {
-        setFeaturelist(newFeatures);
-      } else {
-        setFeaturelist(prev => [...prev, ...newFeatures]);
-      }
-
-      setHasMore(newFeatures.length === 20); 
-      setPage(prev => prev + 1);
-    }
-    if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
-          setIsLoading(false);
-          navigation.reset({
-          index: 0,
-          routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
-        });
+    try {
+      setIsLoading(true);
+  
+      const body = {
+        search: searchText,
+        page: pageNum,
+        pagesize: 20,
+        category_id: category_id,
+      };
+  
+      console.log(body)
+  
+      const url = MAIN_URL.baseUrl + 'category/feature-list/search';
+      console.log(url)
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) return;
+  
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+  
+      const jsonResponse = await response.json();
+      console.log('API Response:', jsonResponse);
+  
+      if (jsonResponse.statusCode === 200) {
+        const newFeatures = jsonResponse.data.features;
+  
+        if (pageNum === 1) {
+          setFeaturelist(newFeatures);
+        } else {
+          setFeaturelist(prev => [...prev, ...newFeatures]);
         }
-  } catch (err) {
-    console.log('Error:', err);
-  } finally {
-    setIsLoading(false);
-  }
+  
+        setHasMore(newFeatures.length === 20); 
+        setPage(prev => prev + 1);
+      }
+      if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
+            setIsLoading(false);
+            navigation.reset({
+            index: 0,
+            routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+          });
+          }
+    } catch (err) {
+      console.log('Error:', err);
+    } finally {
+      setIsLoading(false);
+    }
 };
-
-// const handleBookmarkPress = async (productId: number) => {
-//   try {
-//     const token = await AsyncStorage.getItem('userToken');
-//     if (!token) return;
-
-//     const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
-
-//     const url = MAIN_URL.baseUrl + 'category/list-bookmark';
-//     const response = await fetch(url, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         'Authorization': `Bearer ${token}`,
-//       },
-//       body: JSON.stringify({ feature_id: productId }),
-//     });
-
-//     if (!response.ok) {
-//       throw new Error(`HTTP error! status: ${response.status}`);
-//     }
-
-//     const data = await response.json();
-//     console.log('Bookmark response:', data);
-
-//     let updatedBookmarks;
-//     if (isCurrentlyBookmarked) {
-//       updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
-//     } else {
-//       updatedBookmarks = [...bookmarkedIds, productId];
-//     }
-
-//     setBookmarkedIds(updatedBookmarks);
-//     await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks)); // persist locally
-
-//   } catch (error) {
-//     console.error('Bookmark error:', error);
-//   }
-// };
 
 const handleBookmarkPress = async (productId: number) => {
   try {
     setFeaturelist(prevList =>
       prevList.map(item =>
         item.id === productId
-          ? { ...item, isbookmarked: !item.isbookmarked } // toggle local bookmark
+          ? { ...item, isbookmarked: !item.isbookmarked }
           : item
       )
     );
-
-    // 2️⃣ Send API request
     const token = await AsyncStorage.getItem('userToken');
     if (!token) return;
 
@@ -370,64 +317,33 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
   );
 };
 
-// const handleFilterApply = async (filterBody: any) => {
-//   try {
-//     setAppliedFilter(filterBody); 
-//     setIsLoading(true);
-//     setFeaturelist([]); 
-//     const token = await AsyncStorage.getItem('userToken');
-//     if (!token) return;
-
-    
-
-//     const url = `${MAIN_URL.baseUrl}category/filter-apply`;
-
-//     console.log(url)
-
-//     //const url = 'http://65.0.99.229:4320/category/filter-apply';
-
-//     const response = await fetch(url, {
-//       method: 'POST',
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(filterBody),
-//     });
-
-//     const jsonResponse = await response.json();
-//     console.log('Filter Apply Response:', jsonResponse);
-
-//     if (jsonResponse.statusCode === 200) {
-//       const filteredFeatures = jsonResponse.data.features;
-//       setFeaturelist(filteredFeatures);
-//       setHasMore(filteredFeatures.length === 20);
-//       setPage(2);
-//     }
-//   } catch (err) {
-//     console.log('Error applying filters:', err);
-//   } finally {
-//     setIsLoading(false);
-//   }
-// };
-
-const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
+const handleFilterApply = async (filterBody: any) => {
+  console.log("Display the Filter apply", filterBody);
   try {
-    if (isLoading) return;
+    setAppliedFilter(filterBody); 
     setIsLoading(true);
-
+    setFeaturelist([]); 
     const token = await AsyncStorage.getItem('userToken');
     if (!token) return;
 
-    const url = `${MAIN_URL.baseUrl}category/filter-apply`;
 
-    const body = {
+    const newFilterBody = {
       ...filterBody,
-      page: pageNum,
+      page: 1,
       pagesize: 20,
+      search: search,
     };
 
-    console.log('Filter Apply Body:', body);
+    console.log("NewFilterBody:", newFilterBody);
+
+    setAppliedFilter(newFilterBody);
+    
+
+    const url = `${MAIN_URL.baseUrl}category/filter-apply`;
+
+    console.log(url)
+
+    //const url = 'http://65.0.99.229:4320/category/filter-apply';
 
     const response = await fetch(url, {
       method: 'POST',
@@ -435,28 +351,17 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(newFilterBody),
     });
 
     const jsonResponse = await response.json();
     console.log('Filter Apply Response:', jsonResponse);
 
     if (jsonResponse.statusCode === 200) {
-      const filteredFeatures = jsonResponse.data.features || [];
-
-      if (pageNum === 1) {
-        setFeaturelist(filteredFeatures);
-      } else {
-        setFeaturelist(prev => [...prev, ...filteredFeatures]);
-      }
-
+      const filteredFeatures = jsonResponse.data.features;
+      setFeaturelist(filteredFeatures);
       setHasMore(filteredFeatures.length === 20);
-      setPage(prev => prev + 1);
-    } else if (jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403) {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
-      });
+      setPage(2);
     }
   } catch (err) {
     console.log('Error applying filters:', err);
@@ -464,6 +369,62 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
     setIsLoading(false);
   }
 };
+
+const loadMoreFilteredResults = async () => {
+  if (!appliedFilter || isLoading || !hasMore) return;
+
+  try {
+    setIsLoading(true);
+
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) return;
+
+    // Create a copy and increment page
+    const nextFilterBody = {
+      ...appliedFilter,
+      page: page, // use the current state page
+      search: search,
+    };
+
+    const url = `${MAIN_URL.baseUrl}category/filter-apply`;
+    console.log('Fetching next filter page:', nextFilterBody);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(nextFilterBody),
+    });
+
+    const jsonResponse = await response.json();
+    console.log('Next Page Filter Response:', jsonResponse);
+
+    if (jsonResponse.statusCode === 200) {
+      const moreFeatures = jsonResponse.data.features || [];
+      setFeaturelist(prev => [...prev, ...moreFeatures]);
+      setHasMore(moreFeatures.length === 20);
+      setPage(prev => prev + 1); // increment for next call
+    }
+  } catch (err) {
+    console.log('Error loading more filtered results:', err);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+const handleEndReached = useCallback(() => {
+
+  if (isLoading || !hasMore) return;
+
+  if (appliedFilter) {
+    loadMoreFilteredResults();
+  } 
+  else if (search.trim().length > 0) {
+    displayListOfProduct(page, search);
+  }
+}, [isLoading, hasMore, appliedFilter, search, page]);
 
 
   return (
@@ -500,6 +461,7 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
               ref={inputRef}
               allowFontScaling={false}
               style={styles.searchBar}
+              selectionColor="white"
               placeholder="Search"
               placeholderTextColor="#ccc"
               //onChangeText={setSearch}
@@ -537,28 +499,27 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
             featurelist?.length === 0 && { alignContent:'center',alignSelf:'center' ,width:'90%',height:'90%'}
           ]}
         renderItem={renderItem}
-        //onEndReached={() => displayListOfProduct(page)} \
-        onEndReached={() => displayListOfProduct(page, search)}
-        onEndReachedThreshold={0.5} // adjust when to trigger
+        onEndReached={handleEndReached}
+        onEndReachedThreshold={0.5}
         ListFooterComponent={
             isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
           }
           ListEmptyComponent={
-                          !isLoading ? (
-                             <View style={styles.emptyWrapper}>
-                            <View style={styles.emptyContainer}>
-                              <Image
-                                source={require('../../../assets/images/noproduct.png')} // your image
-                                style={styles.emptyImage}
-                                resizeMode="contain"
-                              />
-                              <Text allowFontScaling={false} style={styles.emptyText}>
-                                No Listings found
-                              </Text>
-                            </View>
-                            </View>
-                          ) : null
-                        }
+              !isLoading ? (
+                  <View style={styles.emptyWrapper}>
+                <View style={styles.emptyContainer}>
+                  <Image
+                    source={require('../../../assets/images/noproduct.png')} // your image
+                    style={styles.emptyImage}
+                    resizeMode="contain"
+                  />
+                  <Text allowFontScaling={false} style={styles.emptyText}>
+                    No Listings found
+                  </Text>
+                </View>
+                </View>
+              ) : null
+            }
           />
       </View>
 
@@ -568,7 +529,7 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
         initialFilters={appliedFilter} 
         //onClose={handleFilterClose}
        onClose={() => setFilterVisible(false)}
-        onApply={(filterBody) => handleFilterApply(filterBody,1)} from={0} to={0}/>
+        onApply={(filterBody) => handleFilterApply(filterBody)} from={0} to={0}/>
     <NewCustomToastContainer/>
     </ImageBackground>
   );
@@ -664,17 +625,18 @@ const styles = StyleSheet.create({
     minHeight:48,
     marginEnd: 8,
   },
-  searchIcon: { margin: 10, height: 24, width: 24 },
+  searchIcon: { 
+    height: 24, width: 24,
+    marginLeft: 12,
+  },
   searchBar: {
     fontSize: 17,
     color: '#fff',
-    paddingLeft:2
+    width: '80%',
+    height: '100%',
+    marginLeft: 8,
   },
   listContainer: {
-    // marginLeft: 10,
-    // marginRight: 10,
-    // paddingTop: 10,
-    // paddingBottom:20,
     marginLeft: 8,
     marginRight: 5,
     paddingTop: 10,

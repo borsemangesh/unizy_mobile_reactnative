@@ -1,6 +1,3 @@
-
-
-
 // import {
 //   Modal,
 //   View,
@@ -28,7 +25,7 @@
 //   onApply: (filters: any) => void; // 👈 new callback
 //   from: number;
 //   to: number;
-  
+
 // }
 // const FilterBottomSheet = ({
 //   catagory_id,
@@ -105,7 +102,6 @@
 
 //   };
 
-
 //   const renderRightContent = () => {
 //     const currentFilter = filters.find(f => f.field_name === selectedTab);
 //     if (!currentFilter) return null;
@@ -113,7 +109,7 @@
 //     if (currentFilter.field_type === 'dropdown') {
 //       return (
 //         <ScrollView
-        
+
 //           style={{ flexGrow: 0, paddingBottom: 10 }}
 //           showsVerticalScrollIndicator={false}
 //         >
@@ -155,7 +151,7 @@
 //           ))}
 //         </ScrollView>
 //       );
-//     } 
+//     }
 //     else if (currentFilter.alias_name === 'price') {
 //       return (
 //         <View style={{zIndex: 999,position: 'relative'}}>
@@ -167,7 +163,7 @@
 //           <RangeSlider
 //             min={currentFilter.minvalue }
 //             max={currentFilter.maxvalue}
-            
+
 //             step={1}
 //             low={sliderLow}
 //             high={sliderHigh}
@@ -201,11 +197,11 @@
 //                   backgroundColor: '#fff',
 //                   borderRadius: 2,
 //                 }}
-                
+
 //               />
 //             )}
 //           />
-     
+
 //           </View>
 //         </View>
 //       );
@@ -258,7 +254,7 @@
 //   return (
 //     <View  style={[StyleSheet.absoluteFillObject, { zIndex: 999, display: visible ? 'flex' : 'none' }]}>
 //       <BlurView
-//         // style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%'}} 
+//         // style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%'}}
 //         style={[StyleSheet.absoluteFillObject]}
 //         blurType="dark"
 //         blurAmount={Platform.OS === 'ios' ? 3 : 4}
@@ -350,7 +346,7 @@
 //                   </TouchableOpacity>
 //                 </View>
 //               </View>
-             
+
 //             </View>
 //              </TouchableWithoutFeedback>
 //           </View>
@@ -509,7 +505,7 @@
 //     //backgroundColor: '#5d5c5c0b',
 
 //     backgroundColor: 'rgba(0, 0, 0, 0.07)',
-    
+
 //   },
 //   modelTextHeader: {
 //     color: 'rgba(255, 255, 255, 0.88)',
@@ -606,7 +602,6 @@
 //     textAlign: 'center',
 //   },
 
-  
 // });
 
 // export default FilterBottomSheet;
@@ -633,7 +628,6 @@ import RangeSlider from 'rn-range-slider';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import Button from './Button';
 
-
 interface FilterBottomSheetProps {
   catagory_id: number;
   visible: boolean;
@@ -641,15 +635,14 @@ interface FilterBottomSheetProps {
   onApply: (filters: any) => void; // 👈 new callback
   from: number;
   to: number;
-  initialFilters?: any; 
-  
+  initialFilters?: any;
 }
 const FilterBottomSheet = ({
   catagory_id,
   visible,
   onClose,
   onApply,
-  initialFilters
+  initialFilters,
 }: FilterBottomSheetProps) => {
   const [filters, setFilters] = useState<any[]>([]);
   const [selectedTab, setSelectedTab] = useState<string | null>(null);
@@ -661,8 +654,6 @@ const FilterBottomSheet = ({
   const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
   const [sliderLow, setSliderLow] = useState(priceRange.min);
   const [sliderHigh, setSliderHigh] = useState(priceRange.max);
-
-
 
   const fetchFilters = async () => {
     try {
@@ -688,7 +679,7 @@ const FilterBottomSheet = ({
             item.field_type?.toLowerCase() === 'dropdown' ||
             item.alias_name?.toLowerCase() === 'price',
         );
-        console.log("Current Filter: "+ dynamicFilters);
+        console.log('Current Filter: ' + dynamicFilters);
         setFilters(dynamicFilters);
         //if (dynamicFilters.length) setSelectedTab(dynamicFilters[0].field_name);
         if (!selectedTab && dynamicFilters.length) {
@@ -705,24 +696,27 @@ const FilterBottomSheet = ({
   }, [visible]);
 
   useEffect(() => {
-  if (visible && initialFilters?.filters?.length > 0) {
-    const savedDropdowns: any = {};
+    if (visible && initialFilters?.filters?.length > 0) {
+      const savedDropdowns: any = {};
 
-    initialFilters.filters.forEach((f:any) => {
-      if (f.field_type === 'dropdown') {
-        savedDropdowns[f.id] = f.options;
-      }
+      initialFilters.filters.forEach((f: any) => {
+        if (f.field_type === 'dropdown') {
+          savedDropdowns[f.id] = f.options;
+        }
 
-      if (f.alias_name?.toLowerCase() === 'price' && Array.isArray(f.options)) {
-        setPriceRange({ min: f.options[0], max: f.options[1] });
-        setSliderLow(f.options[0]);
-        setSliderHigh(f.options[1]);
-      }
-    });
+        if (
+          f.alias_name?.toLowerCase() === 'price' &&
+          Array.isArray(f.options)
+        ) {
+          setPriceRange({ min: f.options[0], max: f.options[1] });
+          setSliderLow(f.options[0]);
+          setSliderHigh(f.options[1]);
+        }
+      });
 
-    setDropdownSelections(savedDropdowns);
-  }
-}, [visible, initialFilters]);
+      setDropdownSelections(savedDropdowns);
+    }
+  }, [visible, initialFilters]);
 
   const handleTabPress = (tabName: string) => {
     setSelectedTab(tabName);
@@ -739,49 +733,51 @@ const FilterBottomSheet = ({
     });
   };
 
-const handleClearFilters = () => {
-  setDropdownSelections({});
-  setPriceRange({ min: 0, max: 10000 });
-  setSliderLow(0);
-  setSliderHigh(10000);
-  //setSelectedTab(null);
-  //onClose();
-};
-//  const handleClose = () => {
-//   onClose(); // ✅ Only close, no reset
-// };
-
-const handleClose = () => {
-  // ✅ Restore last applied filters when cancelling
-  if (initialFilters?.filters?.length > 0) {
-    const savedDropdowns: Record<number, number[]> = {};
-
-    initialFilters.filters.forEach((f: any) => {
-      if (f.field_type === "dropdown" && Array.isArray(f.options)) {
-        savedDropdowns[f.id] = f.options;
-      }
-
-      if (f.alias_name?.toLowerCase() === "price" && Array.isArray(f.options)) {
-        const [min, max] = f.options;
-        setPriceRange({ min, max });
-        setSliderLow(min);
-        setSliderHigh(max);
-      }
-    });
-
-    setDropdownSelections(savedDropdowns);
-  } else {
-    // ✅ No previous filters → reset to default clean state
+  const handleClearFilters = () => {
     setDropdownSelections({});
     setPriceRange({ min: 0, max: 10000 });
     setSliderLow(0);
     setSliderHigh(10000);
-  }
+    //setSelectedTab(null);
+    //onClose();
+  };
+  //  const handleClose = () => {
+  //   onClose(); // ✅ Only close, no reset
+  // };
 
-  onClose(); // Close sheet after restoring UI
-};
+  const handleClose = () => {
+    // ✅ Restore last applied filters when cancelling
+    if (initialFilters?.filters?.length > 0) {
+      const savedDropdowns: Record<number, number[]> = {};
 
- 
+      initialFilters.filters.forEach((f: any) => {
+        if (f.field_type === 'dropdown' && Array.isArray(f.options)) {
+          savedDropdowns[f.id] = f.options;
+        }
+
+        if (
+          f.alias_name?.toLowerCase() === 'price' &&
+          Array.isArray(f.options)
+        ) {
+          const [min, max] = f.options;
+          setPriceRange({ min, max });
+          setSliderLow(min);
+          setSliderHigh(max);
+        }
+      });
+
+      setDropdownSelections(savedDropdowns);
+    } else {
+      // ✅ No previous filters → reset to default clean state
+      setDropdownSelections({});
+      setPriceRange({ min: 0, max: 10000 });
+      setSliderLow(0);
+      setSliderHigh(10000);
+    }
+
+    onClose(); // Close sheet after restoring UI
+  };
+
   const renderRightContent = () => {
     const currentFilter = filters.find(f => f.field_name === selectedTab);
     if (!currentFilter) return null;
@@ -789,9 +785,7 @@ const handleClose = () => {
     if (currentFilter.field_type === 'dropdown') {
       return (
         <ScrollView
-        
-          style={{ flexGrow: 0, paddingTop: 10 ,
-            }}
+          style={{ flexGrow: 0, paddingTop: 10 }}
           showsVerticalScrollIndicator={false}
         >
           {currentFilter.options.map((opt: any) => (
@@ -819,74 +813,78 @@ const handleClose = () => {
               >
                 {dropdownSelections[currentFilter.id]?.includes(opt.id) && (
                   <Image
-                        source={require('../../../assets/images/tickicon.png')}
-                                        style={styles.tickImage}
-                                        resizeMode="contain"/>  )}
+                    source={require('../../../assets/images/tickicon.png')}
+                    style={styles.tickImage}
+                    resizeMode="contain"
+                  />
+                )}
               </View>
-                          <Text
-                            allowFontScaling={false}
-                            numberOfLines={3}
-                            style={[styles.filtertitleFilteryBy, {
-                              flexShrink: 1,
-                              flexGrow: 1,
-                            }]}
-                          >
-              {opt.option_name || opt.name}
-              
-            </Text>
-               
+              <Text
+                allowFontScaling={false}
+                numberOfLines={3}
+                style={[
+                  styles.filtertitleFilteryBy,
+                  {
+                    flexShrink: 1,
+                    flexGrow: 1,
+                  },
+                ]}
+              >
+                {opt.option_name || opt.name}
+              </Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
       );
-    } 
-    
-    else if (currentFilter.alias_name === 'price') {
-  return (
-    <View style={{ zIndex: 999, position: 'relative' }}>
-      <Text allowFontScaling={false} style={{ color: 'white', marginBottom: 10 }}>
-        Range: {sliderLow} - {sliderHigh}
-      </Text>
+    } else if (currentFilter.alias_name === 'price') {
+      return (
+        <View style={{ zIndex: 999, position: 'relative' }}>
+          <Text
+            allowFontScaling={false}
+            style={{ color: 'white', marginBottom: 10 }}
+          >
+            Range: {sliderLow} - {sliderHigh}
+          </Text>
 
-      <View style={{ paddingHorizontal: 20, paddingTop: 30, paddingBottom: 20 }}>
-        <MultiSlider
-          values={[sliderLow, sliderHigh]}
-          sliderLength={150}
-
-          min={currentFilter?.minvalue ?? 0}
-          max={currentFilter?.maxvalue ?? 100}
-          step={1}
-          onValuesChange={(values) => {
-            const [low, high] = values;
-            setSliderLow(low);
-            setSliderHigh(high);
-            setPriceRange({ min: low, max: high })
-          }}
-
-          selectedStyle={{
-            backgroundColor: '#fff',
-          }}
-          unselectedStyle={{
-            backgroundColor: '#888',
-          }}
-          containerStyle={{
-            height: 'auto',
-          }}
-          trackStyle={{
-            height: 4,
-            borderRadius: 2,
-          }}
-          markerStyle={{
-            height: 20,
-            width: 20,
-            borderRadius: 10,
-            backgroundColor: '#fff',
-          }}
-        />
-      </View>
-    </View>
-  );
-}
+          <View
+            style={{ paddingHorizontal: 20, paddingTop: 30, paddingBottom: 20 }}
+          >
+            <MultiSlider
+              values={[sliderLow, sliderHigh]}
+              sliderLength={150}
+              min={currentFilter?.minvalue ?? 0}
+              max={currentFilter?.maxvalue ?? 100}
+              step={1}
+              onValuesChange={values => {
+                const [low, high] = values;
+                setSliderLow(low);
+                setSliderHigh(high);
+                setPriceRange({ min: low, max: high });
+              }}
+              selectedStyle={{
+                backgroundColor: '#fff',
+              }}
+              unselectedStyle={{
+                backgroundColor: '#888',
+              }}
+              containerStyle={{
+                height: 'auto',
+              }}
+              trackStyle={{
+                height: 4,
+                borderRadius: 2,
+              }}
+              markerStyle={{
+                height: 20,
+                width: 20,
+                borderRadius: 10,
+                backgroundColor: '#fff',
+              }}
+            />
+          </View>
+        </View>
+      );
+    }
 
     return null;
   };
@@ -951,26 +949,26 @@ const handleClose = () => {
         //   };
         // }
         else if (f.alias_name?.toLowerCase() === 'price') {
-        const defaultMin = f.minvalue ?? 0;
-        const defaultMax = f.maxvalue ?? 100;
- 
-        // ✅ Only submit price filter if user changed slider values
-        if (priceRange.min !== defaultMin || priceRange.max !== defaultMax) {
-          return {
-            id: f.id,
-            field_name: f.field_name,
-            field_type: f.field_type,
-            alias_name: f.alias_name,
-            options: [priceRange.min, priceRange.max],
-          };
+          const defaultMin = f.minvalue ?? 0;
+          const defaultMax = f.maxvalue ?? 100;
+
+          // ✅ Only submit price filter if user changed slider values
+          if (priceRange.min !== defaultMin || priceRange.max !== defaultMax) {
+            return {
+              id: f.id,
+              field_name: f.field_name,
+              field_type: f.field_type,
+              alias_name: f.alias_name,
+              options: [priceRange.min, priceRange.max],
+            };
+          }
+
+          return null; // ✅ Don't send price filter if unchanged
         }
- 
-        return null; // ✅ Don't send price filter if unchanged
-      }
         return null;
       })
       .filter(Boolean);
- 
+
     const filterBody = {
       filters: selectedFilters,
       page: 1,
@@ -978,17 +976,20 @@ const handleClose = () => {
       search: '',
       category_id: catagory_id,
     };
- 
+
     console.log('Selected filter body:', JSON.stringify(filterBody, null, 2));
     onApply(filterBody);
     onClose();
-   //handleClose()
+    //handleClose()
   };
 
   return (
-    
-
-    <View  style={[StyleSheet.absoluteFillObject, { zIndex: 999, display: visible ? 'flex' : 'none' }]}>
+    <View
+      style={[
+        StyleSheet.absoluteFillObject,
+        { zIndex: 999, display: visible ? 'flex' : 'none' },
+      ]}
+    >
       <BlurView
         style={[StyleSheet.absoluteFillObject]}
         blurType="dark"
@@ -1001,137 +1002,161 @@ const handleClose = () => {
         transparent
         onRequestClose={handleClose}
       >
-          <View style={{
-            flex: 1, justifyContent: 'flex-end', backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(34, 30, 252, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)'
-          }}>
-           
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'flex-end',
+            backgroundColor:
+              'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(34, 30, 252, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
+          }}
+        >
+          <View style={styles.overlay}>
+            <TouchableWithoutFeedback onPress={handleClose}>
+              <View style={StyleSheet.absoluteFillObject} />
+            </TouchableWithoutFeedback>
+            <View style={[styles.modelcontainer]}>
+              <BlurView
+                style={[
+                  {
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    borderRadius: 30,
+                  },
+                ]}
+                blurType="dark"
+                blurAmount={Platform.OS === 'ios' ? 10 : 100}
+                //blurAmount={Platform.OS === 'ios' ? 100 : 100}
+                pointerEvents="none"
+                reducedTransparencyFallbackColor="white"
+              />
 
-            <View style={styles.overlay}>
-               <TouchableWithoutFeedback onPress={handleClose}>
-                <View style={StyleSheet.absoluteFillObject} />
-              </TouchableWithoutFeedback>
-              <View style={[styles.modelcontainer]}>
-
-              
-                <BlurView
-                  style={[
-                    {
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0, borderRadius: 30,
-                    }
-
-                  ]}
-                  blurType="dark"
-                  blurAmount={(Platform.OS === 'ios' ? 10 : 100)}
-                  //blurAmount={Platform.OS === 'ios' ? 100 : 100}
-                  pointerEvents='none'
-                  reducedTransparencyFallbackColor="white"
+              <View style={styles.modeltitleContainer1}>
+                <View
+                  style={{
+                    width: 50,
+                    height: 4,
+                    backgroundColor: '#000228',
+                    borderRadius: 2,
+                    alignSelf: 'center',
+                    marginTop: 8,
+                  }}
                 />
-
-               
-                
-                <View style={styles.modeltitleContainer1}>
-                
-                   <View
-                    style={{
-                      width: 50,
-                      height: 4,
-                      backgroundColor: '#000228',
-                      borderRadius: 2,
-                      alignSelf: 'center',
-                      marginTop:8
-                    }}
-                  />
-                 
-                  <View style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    paddingTop:16,
-                  }}>
-                 <Text allowFontScaling={false} style={styles.modelTextHeader}>Filters</Text>
-                  <TouchableOpacity
-                    onPress={handleClearFilters}
-                  >
-                    <Text allowFontScaling={false} style={styles.clearAll}>Clear all</Text>
-                  </TouchableOpacity>
-                  </View>
-                </View>
 
                 <View
                   style={{
-                    flex: 1,
                     flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    paddingTop: 16,
                   }}
                 >
-                  <View style={styles.modelLeftSideContainer}>
-                    {filters.map(f => (
-                      <TouchableOpacity
-                        key={f.field_name}
-                        onPress={() => handleTabPress(f.field_name)}
-                        style={
-                          selectedTab === f.field_name
-                            ? styles.activeTab
-                            : styles.inactiveTab
-                        }
-                      >
-                        <Text
+                  <Text allowFontScaling={false} style={styles.modelTextHeader}>
+                    Filters
+                  </Text>
+                  <TouchableOpacity onPress={handleClearFilters}>
+                    <Text allowFontScaling={false} style={styles.clearAll}>
+                      Clear all
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: 'row',
+                }}
+              >
+                <View style={styles.modelLeftSideContainer}>
+                  {filters.map(f => (
+                    <TouchableOpacity
+                      key={f.field_name}
+                      onPress={() => handleTabPress(f.field_name)}
+                      style={
+                        selectedTab === f.field_name
+                          ? styles.activeTab
+                          : styles.inactiveTab
+                      }
+                    >
+                      <Text
                         allowFontScaling={false}
                         style={[
                           styles.filtertitle,
                           selectedTab === f.field_name
-                            ? styles.activeTabText     // ✅ Selected text style
-                            : styles.inactiveTabText   // ✅ Unselected text style
+                            ? styles.activeTabText // ✅ Selected text style
+                            : styles.inactiveTabText, // ✅ Unselected text style
                         ]}
                       >
                         {f.field_name}
                       </Text>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                  <ScrollView
-                style={{ flex: 1, backgroundColor: (Platform.OS === 'ios' ? 'rgba(188, 200, 255, 0.19) ':'rgba(255, 255, 255, 0.07)')}}
-                contentContainerStyle={{ padding: 16, paddingBottom: 20 }}
-                showsVerticalScrollIndicator={false}
-              >
-                <Text allowFontScaling={false} style={styles.filterHeadTitle}>
-                  {selectedTab}
-                </Text>
-                {renderRightContent()}
-              </ScrollView>
+                    </TouchableOpacity>
+                  ))}
                 </View>
-
-                <View style={styles.bottomview}>
-                  
-                  <TouchableOpacity style={styles.cancelBtn} onPress={handleClose}>
-                    <Text allowFontScaling={false} style={styles.cancelText}>Cancel</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[styles.loginButton, {}]}
-                    onPress={handleApply}
-                  >
-                    <Text allowFontScaling={false} style={[styles.sendText]}>Apply</Text>
-                  </TouchableOpacity>
-                  {/* <Button title="Apply" onPress={handleApply} /> */}
-                </View>
+                <ScrollView
+                  style={{
+                    flex: 1,
+                    backgroundColor:
+                      Platform.OS === 'ios'
+                        ? 'rgba(188, 200, 255, 0.19) '
+                        : 'rgba(255, 255, 255, 0.07)',
+                  }}
+                  contentContainerStyle={{ padding: 16, paddingBottom: 0 }}
+                  showsVerticalScrollIndicator={false}
+                >
+                  <Text allowFontScaling={false} style={styles.filterHeadTitle}>
+                    {selectedTab}
+                  </Text>
+                  {renderRightContent()}
+                </ScrollView>
               </View>
-             
+
+              <View style={styles.bottomview}>
+                {/* <View style={{flexDirection: 'row', justifyContent: 'space-between'}}> */}
+
+                
+                <Button
+                  title="Cancel"
+                  onPress={handleClose}
+                  style={
+                    {minHeight: 48,
+                    width: '49%',
+                    borderRadius: 40,
+                    backgroundColor:
+                      'rgba(71, 71, 71, 0.17)',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 2px 8px 0 rgba(75, 75, 75, 0.19)',}}
+                />
+                <Button
+                  title="Apply"
+                  onPress={handleApply}
+                  style={{
+                    minHeight: 48,
+                    width: '49%',
+                    borderRadius: 40,
+                    backgroundColor:
+                      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(197, 196, 196, 0.49) 0%, rgba(255, 255, 255, 0.32) 100%)',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 2px 8px 0 rgba(75, 75, 75, 0.19)',}}
+                />
+                 
+              </View>
             </View>
           </View>
-
+        </View>
       </Modal>
     </View>
-                 
   );
 };
 
 const styles = StyleSheet.create({
- tickImage:{
-   height:24,
-   width:24
+  tickImage: {
+    height: 24,
+    width: 24,
   },
 
   modeltitleContainer: {
@@ -1144,15 +1169,15 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
   },
   modeltitleContainer1: {
-  width: '100%',
-  paddingHorizontal: 26,
-  paddingBottom:16,
-  // backgroundColor: 'rgba(55, 132, 248, 0.25)',
-  backgroundColor: (Platform.OS === 'ios'? 'rgba(37, 76, 176, 0.18)': 'rgba(0, 0, 0, 0.07)') ,
-  borderTopLeftRadius: 30,
-  borderTopRightRadius: 30,
-  
-},
+    width: '100%',
+    paddingHorizontal: 26,
+    paddingBottom: 16,
+    // backgroundColor: 'rgba(55, 132, 248, 0.25)',
+    backgroundColor:
+      Platform.OS === 'ios' ? 'rgba(37, 76, 176, 0.18)' : 'rgba(0, 0, 0, 0.07)',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+  },
   broderTopLeftRightRadius_30: {
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
@@ -1167,8 +1192,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     alignItems: 'center',
     // opacity: 0.9,
-     overflow:'hidden'
-
+    overflow: 'hidden',
   },
   bottomview: {
     padding: 10,
@@ -1178,10 +1202,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingBottom: 20,
+    
     // backgroundColor: 'rgba(0, 0, 0, 0.001)',
-    backgroundColor: (Platform.OS === 'ios'? 'rgba(37, 76, 176, 0.18)': 'rgba(0, 0, 0, 0.07)') ,
+    // backgroundColor:
+    //   Platform.OS === 'ios' ? 'rgba(37, 76, 176, 0.18)' : 'rgba(0, 0, 0, 0.07)',
 
-    marginBottom:16
+    // marginBottom:16
+    position: 'absolute',
+    bottom: 0,
   },
   radioButtonSelected: {
     backgroundColor: 'white',
@@ -1210,14 +1238,14 @@ const styles = StyleSheet.create({
     shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25',
   },
   cancelBtn: {
-    minHeight:48,
+    minHeight: 48,
     flex: 1,
     marginRight: 8,
     paddingVertical: 8,
-    paddingHorizontal:12,
+    paddingHorizontal: 12,
     borderRadius: 40,
     //backgroundColor: 'rgba(138, 135, 135, 0.63)',
-     backgroundColor:
+    backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(197, 196, 196, 0.49) 0%, rgba(255, 255, 255, 0.32) 100%)',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1229,18 +1257,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.56)',
     borderColor: '#ffffff2c',
-    minHeight:48,
-     flex: 1,
+    minHeight: 48,
+    flex: 1,
     //marginRight: 8,
     paddingVertical: 8,
-    paddingHorizontal:12,
+    paddingHorizontal: 12,
     borderRadius: 50,
   },
 
   overlay: {
     flex: 1,
     justifyContent: 'flex-end',
-
   },
   activeTabText: {
     color: '#fff',
@@ -1250,16 +1277,15 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     width: '100%',
   },
-   inactiveTabText: {
-     color: 'rgba(255, 255, 255, 0.64)',
+  inactiveTabText: {
+    color: 'rgba(255, 255, 255, 0.64)',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 16,
     fontWeight: '600',
     fontStyle: 'normal',
     width: '100%',
   },
-   
-   
+
   filtertitle: {
     color: '#fff',
     fontFamily: 'Urbanist-SemiBold',
@@ -1301,8 +1327,8 @@ const styles = StyleSheet.create({
     width: '40%',
     height: '100%',
     padding: 16,
-    backgroundColor: (Platform.OS === 'ios'? 'rgba(37, 76, 176, 0.18)': 'rgba(0, 0, 0, 0.07)') ,
-    
+    backgroundColor:
+      Platform.OS === 'ios' ? 'rgba(37, 76, 176, 0.18)' : 'rgba(0, 0, 0, 0.07)',
   },
   modelTextHeader: {
     color: 'rgba(255, 255, 255, 0.88)',
@@ -1379,7 +1405,7 @@ const styles = StyleSheet.create({
     gap: 4,
     marginBottom: 5,
     boxShadow: 'rgba(255, 255, 255, 0.16) inset -1px 0px 4px 2px',
-    height:80,
+    height: 80,
   },
 
   filterTypeTab: {
@@ -1393,8 +1419,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     textAlign: 'center',
   },
-
-  
 });
 
 export default FilterBottomSheet;

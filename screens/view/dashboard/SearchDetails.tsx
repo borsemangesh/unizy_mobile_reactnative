@@ -1779,6 +1779,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
                onPress={() => {
                   if (navigation.canGoBack()) {
+                    console.log("can go back");
                     navigation.goBack(); // go to previous screen if available
                   } else {
                     navigation.replace('Dashboard', {

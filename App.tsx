@@ -10,16 +10,13 @@ import { StripeProvider } from '@stripe/stripe-react-native';
 import { Constant } from "./screens/utils/Constant";
 // import messaging from '@react-native-firebase/messaging';
 import notifee, { AndroidImportance } from '@notifee/react-native';
-import { PERMISSIONS, RESULTS, request } from "react-native-permissions";
+import { PERMISSIONS, RESULTS, check, request } from "react-native-permissions";
 
 
 function App() {
   LogBox.ignoreAllLogs();
   enableScreens();
 
-  useEffect(() => {
-    requestAllPermissions();
-  }, []);
 
   const requestAllPermissions = async () => {
     try {
@@ -46,14 +43,35 @@ function App() {
           Alert.alert('Permission Denied', 'Some permissions are denied');
         }
       } else {
-        // iOS Permissions
-        const loc = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-        const photo = await request(PERMISSIONS.IOS.PHOTO_LIBRARY);
+        // // iOS Permissions
+        // const loc = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+        // const photo = await request(PERMISSIONS.IOS.PHOTO_LIBRARY);
 
-        if (loc === RESULTS.GRANTED && photo === RESULTS.GRANTED) {
-          // Alert.alert('Success', 'All permissions granted');
-        } else {
-          Alert.alert('Permission Denied', 'Some permissions are denied');
+        // if (loc === RESULTS.GRANTED && photo === RESULTS.GRANTED) {
+        //   // Alert.alert('Success', 'All permissions granted');
+        // } else {
+        //   Alert.alert('Permission Denied', 'Some permissions are denied');
+        // }
+
+        try {
+          // Check current permission status first
+          const status = await check(PERMISSIONS.IOS.CAMERA);
+          if (status === RESULTS.GRANTED) {
+            return true;
+          }
+          const result = await request(PERMISSIONS.IOS.CAMERA);
+    
+          if (result === RESULTS.GRANTED) {
+            return true; 
+          } else if (result === RESULTS.BLOCKED) {
+            console.warn('Camera permission is blocked. Please enable it in Settings.');
+            return false;
+          } else {
+            return false; // Denied
+          }
+        } catch (err) {
+          console.warn(err);
+          return false;
         }
       }
     } catch (error) {
