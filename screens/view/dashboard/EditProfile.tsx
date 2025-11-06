@@ -34,6 +34,7 @@ import {
 } from 'react-native-image-picker';
 import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import Button from '../../utils/component/Button';
+import ProfileCard from './ProfileCard';
 
 type EditProfileProps = {
   navigation: any;
@@ -220,7 +221,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     const errors = validateForm();
     if (errors.length > 0) {
       // Alert.alert('Validation Error', errors.join('\n'));
-      showToast(errors.join('\n'), 'error');
+      showToast(errors[0], 'error');
       return;
     }
 
@@ -263,10 +264,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       const data = await response.json();
       console.log('data', data);
 
-      if (response.ok) {
-        // Alert.alert('Success', data.message);
+      if (response.ok) {        
         showToast(data.message, 'success');
-        navigation.goBack();
+       navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Profile',isNavigate: false})
+       
       } else {
         // Alert.alert(
         //   'Error',
@@ -337,6 +338,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     );
   };
 
+
   const handleUploadImage = async (image: Asset) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -365,7 +367,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
       if (response.ok) {
         // Alert.alert('Success', 'Image uploaded successfully!');
-         showToast('Image uploaded successfully', 'success');
+        showToast('Image uploaded successfully', 'success');
 
         // showToast(data?.message, 'success');
       } else {
@@ -380,43 +382,39 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
   //------------------------- to handel personal email ------------------------//
 
-  const handleUpdateEmail = (email: any) => {
-    // Optionally request verification code from backend here
-  };
 
   // const [emailModalVisible, setEmailModalVisible] = useState(false);
   // const [verificationCode, setVerificationCode] = useState(['', '', '', '']); // One input per digit
 
   const [otp, setOtp] = useState(['', '', '', '']);
 
-const [save_otp, setSaveOtp] = useState(0);
+  const [save_otp, setSaveOtp] = useState(0);
 
-  const sendOtp = async (res?:any) =>{
-    let flag = res
-    console.log("res---------",flag);
+  const sendOtp = async (res?: any) => {
+    let flag = res;
+    console.log('res---------', flag);
 
-    
-      try {
+    try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
         console.log('⚠️ Token not found. Cannot upload.');
         return;
       }
-      
-      const url = MAIN_URL.baseUrl + 'user/update-email';
-        let createPayload ;
-        if (flag == 'studentEmail') {
-          createPayload = {            
-            student_email: userMeta.student_email,
-          };
-        } else if (flag == 'personalEmail') {
-          createPayload = {
-            email: userMeta.email,
-          };
-        }
 
-  console.log("createPayload",createPayload);
-  
+      const url = MAIN_URL.baseUrl + 'user/update-email';
+      let createPayload;
+      if (flag == 'studentEmail') {
+        createPayload = {
+          student_email: userMeta.student_email,
+        };
+      } else if (flag == 'personalEmail') {
+        createPayload = {
+          email: userMeta.email,
+        };
+      }
+
+      console.log('createPayload', createPayload);
+
       const res = await fetch(url, {
         method: 'POST',
         headers: {
@@ -431,8 +429,8 @@ const [save_otp, setSaveOtp] = useState(0);
 
       if (data?.statusCode === 200) {
         // showToast(data.message, 'success');   change
-        setSaveOtp(data.data.otp_id);     
-        
+        setSaveOtp(data.data.otp_id);
+
         // setShowPopup2(true);
       } else {
         showToast(data?.message, 'error');
@@ -441,9 +439,7 @@ const [save_otp, setSaveOtp] = useState(0);
       console.error(err);
       // showToast(Constant.SOMTHING_WENT_WRONG, 'error');
     }
-  }
-
-
+  };
 
   const otpverify = async () => {
     Keyboard.dismiss();
@@ -459,14 +455,11 @@ const [save_otp, setSaveOtp] = useState(0);
 
       console.log('otpValue', otpValue);
 
-    
-
       const url = MAIN_URL.baseUrl + 'user/verify-update';
-      const createPayload = {  
-       otp: otpValue,
-       otp_id:save_otp
+      const createPayload = {
+        otp: otpValue,
+        otp_id: save_otp,
       };
-
 
       const res = await fetch(url, {
         method: 'POST',
@@ -510,9 +503,14 @@ const [save_otp, setSaveOtp] = useState(0);
   const [showPopup1, setShowPopup1] = useState(false);
   const closePopup1 = () => setShowPopup1(false);
 
-   const [emailName, setEmailName] = useState('');
+  const [emailName, setEmailName] = useState('');
 
   const inputs = useRef<Array<TextInput | null>>([]);
+
+  const [isUpdateDisabled_personal, setIsUpdateDisabled_personal] =
+    useState(true);
+  const [isUpdateDisabled, setIsUpdateDisabled] = useState(true);
+  const [updateText, setUpdateText] = useState('Update');
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -539,7 +537,6 @@ const [save_otp, setSaveOtp] = useState(0);
           style={{ flex: 1 }}
           showsVerticalScrollIndicator={false}
         >
-        
           <View style={styles.profileavatarContainer}>
             <View style={styles.profilebigCircle}>
               <TouchableOpacity>
@@ -560,8 +557,8 @@ const [save_otp, setSaveOtp] = useState(0);
               >
                 {/* assets\images\camera_icon.png */}
                 <Image
-                  source={require('../../../assets/images/camera_1.png')}
-                  // source={require('../../../assets/images/camera_icon.png')}
+                  // source={require('../../../assets/images/camera_1.png')}
+                  source={require('../../../assets/images/camera_icon.png')}
                   style={styles.profilecameraIcon}
                   resizeMode="contain"
                 />
@@ -572,12 +569,13 @@ const [save_otp, setSaveOtp] = useState(0);
           {/* Blur Glass Form */}
           <View style={styles.blurCard}>
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>First Name*</Text>
-              <TextInput
+              <Text style={styles.label} allowFontScaling={false}>First Name*</Text>
+              <TextInput 
                 value={userMeta.firstname || ''}
                 onChangeText={text =>
                   setUserMeta(prev => ({ ...prev, firstname: text }))
                 }
+                allowFontScaling={false}
                 style={styles.input}
                 placeholder="Enter First Name"
                 placeholderTextColor="#ccc"
@@ -585,21 +583,21 @@ const [save_otp, setSaveOtp] = useState(0);
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Last Name*</Text>
-              <TextInput
+              <Text style={styles.label} allowFontScaling={false}>Last Name*</Text>
+              <TextInput 
                 value={userMeta.lastname || ''}
                 onChangeText={text =>
                   setUserMeta(prev => ({ ...prev, lastname: text }))
                 }
+                allowFontScaling={false}
                 style={styles.input}
                 placeholder="Enter Last Name"
                 placeholderTextColor="#ccc"
               />
             </View>
-            
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Personal Email ID*</Text>
+              <Text style={styles.label} allowFontScaling={false}>Personal Email ID*</Text>
               <View
                 style={{
                   flexDirection: 'row',
@@ -610,7 +608,7 @@ const [save_otp, setSaveOtp] = useState(0);
                   minHeight: 44, // or any desired height
                 }}
               >
-                <TextInput
+                <TextInput 
                   style={{
                     flex: 1,
                     color: '#fff',
@@ -619,15 +617,16 @@ const [save_otp, setSaveOtp] = useState(0);
                     borderRadius: 10,
                     paddingVertical: 10,
                     paddingHorizontal: 12,
-                    fontFamily:'Urbanist-Regular',
-                    fontSize:16,
-                    fontWeight:400
-
+                    fontFamily: 'Urbanist-Regular',
+                    fontSize: 16,
+                    fontWeight: 400,
                   }}
+                  allowFontScaling={false}
                   value={userMeta.email || ''}
-                  onChangeText={text =>
-                    setUserMeta(prev => ({ ...prev, email: text }))
-                  }
+                  onChangeText={text => (
+                    setUserMeta(prev => ({ ...prev, email: text })),
+                    setIsUpdateDisabled_personal(false)
+                  )}
                   keyboardType="email-address"
                   placeholder="Enter Email"
                   placeholderTextColor="#ccc"
@@ -637,27 +636,35 @@ const [save_otp, setSaveOtp] = useState(0);
                     width: 70, // Fixed width – adjust as needed
                     height: 30,
                     // marginLeft: 12,
-                    backgroundColor:
-                      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
-                    boxShadow:
-                      'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+                    // backgroundColor:
+                    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
+
+                    backgroundColor: isUpdateDisabled_personal
+                      ? '#888' // Fallback color for disabled
+                      : 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
+                    // boxShadow:
+                    //   'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
                     borderColor: '#ffffff11',
                     borderRadius: 10,
                     justifyContent: 'center',
                     alignItems: 'center',
                     marginEnd: 8,
+                    opacity: isUpdateDisabled_personal ? 0.5 : 1,
                   }}
-
-                  onPress={() => (setShowPopup1(true),sendOtp('personalEmail'),setEmailName('personalEmail'))}
+                  disabled={isUpdateDisabled_personal}
+                  onPress={() => (
+                    setShowPopup1(true),
+                    sendOtp('personalEmail'),
+                    setEmailName('personalEmail')
+                  )}
                 >
-                  <Text style={styles.edittext}>Update</Text>
+                  <Text style={styles.edittext} allowFontScaling={false}>Update</Text>
                 </TouchableOpacity>
               </View>
             </View>
 
-          
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Student Email ID*</Text>
+              <Text style={styles.label} allowFontScaling={false} >Student Email ID*</Text>
               <View
                 style={{
                   flexDirection: 'row',
@@ -678,15 +685,18 @@ const [save_otp, setSaveOtp] = useState(0);
                     borderRadius: 10,
                     paddingVertical: 10,
                     paddingHorizontal: 10,
-                    fontFamily:'Urbanist-Regular',
-                    fontSize:16,
-                    fontWeight:400
+                    fontFamily: 'Urbanist-Regular',
+                    fontSize: 16,
+                    fontWeight: 400,
+                    
                   }}
+                  allowFontScaling={false}
                   //  value={userMeta.email || ''}
                   value={userMeta.student_email || ''}
-                  onChangeText={text =>
-                    setUserMeta(prev => ({ ...prev, student_email: text }))
-                  }
+                  onChangeText={text => (
+                    setUserMeta(prev => ({ ...prev, student_email: text })),
+                    setIsUpdateDisabled(false)
+                  )}
                   keyboardType="email-address"
                   placeholder="Enter Student Email"
                   placeholderTextColor="#ccc"
@@ -696,26 +706,37 @@ const [save_otp, setSaveOtp] = useState(0);
                     width: 70, // Fixed width – adjust as needed
                     height: 30,
                     // marginLeft: 12,
-                    backgroundColor:
-                      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
-                    boxShadow:
-                      'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+
+                    // backgroundColor:
+                    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
+
+                    backgroundColor: isUpdateDisabled
+                      ? '#888' // Fallback color for disabled
+                      : 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
+
                     borderColor: '#ffffff11',
                     borderRadius: 10,
                     justifyContent: 'center',
                     alignItems: 'center',
                     marginEnd: 4,
+                    opacity: isUpdateDisabled ? 0.5 : 1,
                   }}
-                  onPress={() => (setShowPopup1(true),sendOtp('studentEmail'),setEmailName('studentEmail'))}
+                  disabled={isUpdateDisabled}
+                  onPress={() => (
+                    setShowPopup1(true),
+                    sendOtp('studentEmail'),
+                    setEmailName('studentEmail')
+                  )}
                 >
-                  <Text style={styles.edittext}>Update</Text>
+                  <Text style={styles.edittext} allowFontScaling={false} >Update</Text>
                 </TouchableOpacity>
               </View>
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>City*</Text>
+              <Text style={styles.label} allowFontScaling={false}>City*</Text>
               <TextInput
+              allowFontScaling={false}
                 value={userMeta.city || ''}
                 onChangeText={text =>
                   setUserMeta(prev => ({ ...prev, city: text }))
@@ -727,12 +748,14 @@ const [save_otp, setSaveOtp] = useState(0);
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Postal Code*</Text>
+              <Text style={styles.label} allowFontScaling={false}>Postal Code*</Text>
               <TextInput
+              
                 value={userMeta.postal_code || ''}
                 onChangeText={text =>
                   setUserMeta(prev => ({ ...prev, postal_code: text }))
                 }
+                allowFontScaling={false}
                 style={styles.input}
                 keyboardType="numeric"
                 placeholder="Enter Postal Code"
@@ -745,7 +768,7 @@ const [save_otp, setSaveOtp] = useState(0);
         {/* <TouchableOpacity style={styles.saveButton} onPress={handleSaveProfile}>
           <Text style={styles.saveText}>Save Details</Text>
         </TouchableOpacity> */}
-        <Button       
+        <Button
           title="Save Details"
           onPress={() => {
             handleSaveProfile();
@@ -794,19 +817,29 @@ const [save_otp, setSaveOtp] = useState(0);
 
               <View style={styles.popupContainer}>
                 <Text allowFontScaling={false} style={styles.mainheader}>
-                  {emailName === 'personalEmail' ? 'Verify Personal Email ID' : 'Verify Student Email ID'}                 
+                  {emailName === 'personalEmail'
+                    ? 'Verify Personal Email ID'
+                    : 'Verify Student Email ID'}
                 </Text>
 
-              <Text allowFontScaling={false} style={styles.subheader}>
-                 We have sent a 4-digit code to{' '}
-                 <Text style={{ fontFamily: 'Urbanist-SemiBold', fontWeight: '400', }}>
-                   {emailName === 'personalEmail' ? userMeta.email : userMeta.student_email}
-                 </Text>                
+                <Text allowFontScaling={false} style={styles.subheader}>
+                  We have sent a 4-digit code to{' '}
+                  <Text allowFontScaling={false}
+                    style={{
+                      fontFamily: 'Urbanist-SemiBold',
+                      fontWeight: '400',
+                    }}
+                  >
+                    {emailName === 'personalEmail'
+                      ? userMeta.email
+                      : userMeta.student_email}
+                  </Text>
                 </Text>
 
                 <View style={styles.otpContainer}>
                   {[0, 1, 2, 3].map((_, index) => (
                     <TextInput
+                      allowFontScaling={false}
                       key={index}
                       ref={ref => {
                         inputs.current[index] = ref;
@@ -833,7 +866,7 @@ const [save_otp, setSaveOtp] = useState(0);
                   onPress={otpverify}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>
-                    Verify & Continue
+                    Verify
                   </Text>
                 </TouchableOpacity>
 
@@ -848,10 +881,15 @@ const [save_otp, setSaveOtp] = useState(0);
                          </Text>                       
                        </TouchableOpacity>  */}
 
-
-                       <Text style={[styles.subheader, { marginBottom: 6 }]}>
-  Didn’t receive a code? <Text style={{ color: '#FFFFFF7A' }}  onPress={() => sendOtp(emailName)}>Resend Code</Text>
-</Text>
+                <Text allowFontScaling={false} style={[styles.subheader, { marginBottom: 6 }]}>
+                  Didn’t receive a code?{' '}
+                  <Text allowFontScaling={false}
+                    style={{ color: '#FFFFFF7A' }}
+                    onPress={() => sendOtp(emailName)}
+                  >
+                    Resend Code
+                  </Text>
+                </Text>
 
                 {/* <Text allowFontScaling={false} style={styles.subheader}
                  onPress={() => sendOtp(emailName)}>
@@ -862,10 +900,10 @@ const [save_otp, setSaveOtp] = useState(0);
                   Entered wrong email? Go Back
                 </Text> */}
 
-                <Text style={styles.subheader}>
+                {/* <Text style={styles.subheader}>
   Entered wrong email?{' '}
   <Text style={{ color: '#FFFFFF7A' }} onPress={closePopup1}>Go Back</Text>
-</Text>
+</Text> */}
 
                 {/* <Text allowFontScaling={false} style={styles.subheader}>
                   Entered wrong email?{' '}
@@ -966,7 +1004,7 @@ const styles = StyleSheet.create({
     // 'angle' not a valid RN style — remove it
     opacity: 1,
     borderRadius: 24,
-    padding: 16,   
+    padding: 16,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 40 : 30,
@@ -1104,8 +1142,8 @@ const styles = StyleSheet.create({
     // marginBottom:16,
 
     // overflow: 'hidden',
-    paddingHorizontal:16,
-    paddingVertical:12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     backgroundColor: 'rgba(255,255,255,0.08)',
   },
   inputGroup: {
@@ -1120,7 +1158,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     opacity: 0.9,
     fontFamily: 'Urbanist-Regular',
-    fontWeight:400,
+    fontWeight: 400,
     // marginLeft:10
   },
   input: {
@@ -1130,10 +1168,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     color: '#fff',
     height: 44,
-    fontFamily:'Urbanist-Regular',
-    fontSize:16,
-    fontWeight:400
-    
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 16,
+    fontWeight: 400,
+
     // width:329
   },
   saveButton: {
@@ -1211,17 +1249,19 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    width: 40,
-    height: 40,
+    width: 30,
+    height: 30,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.6) 100%)',
   },
   profilecameraIcon: {
     width: 40,
     height: 40,
-    marginLeft: 5,
-    marginTop: 5,
+    marginLeft: -1,
+    marginTop: 3,
   },
 
   inputEmail: {
@@ -1300,7 +1340,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
   },
 
-  // -----------------to handel personal email--------------------//
+  // -----------------to handle personal email--------------------//
   overlay: {
     flex: 1,
     justifyContent: 'center',
@@ -1308,13 +1348,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
 
-//   overlay: {
-//   flex: 1,
-//   justifyContent: 'center',
-//   alignItems: 'center',
-//   backgroundColor: 'rgba(0,0,0,0.5)', // Slight darkening
-// },
-
+  //   overlay: {
+  //   flex: 1,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   backgroundColor: 'rgba(0,0,0,0.5)', // Slight darkening
+  // },
 
   popupContainer: {
     width: '90%',
@@ -1328,17 +1367,17 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.04)',
   },
 
-//   popupContainer: {
-//   backgroundColor: 'rgba(255,255,255,0.10)', // or your preferred glass color
-//   padding: 24,
-//   borderRadius: 18,
-//   width: '90%', // or maxWidth: 400 for big screens
-//   alignItems: 'center',
-//   shadowColor: '#000',
-//   shadowOpacity: 0.2,
-//   shadowRadius: 10,
-//   elevation: 8,
-// },
+  //   popupContainer: {
+  //   backgroundColor: 'rgba(255,255,255,0.10)', // or your preferred glass color
+  //   padding: 24,
+  //   borderRadius: 18,
+  //   width: '90%', // or maxWidth: 400 for big screens
+  //   alignItems: 'center',
+  //   shadowColor: '#000',
+  //   shadowOpacity: 0.2,
+  //   shadowRadius: 10,
+  //   elevation: 8,
+  // },
 
   // mainheader: {
   //   color: 'rgba(255, 255, 255, 0.80)',
@@ -1350,15 +1389,14 @@ const styles = StyleSheet.create({
   // },
 
   mainheader: {
-  fontFamily: 'Urbanist-SemiBold',
-   fontWeight: '500',
-  // marginBottom: 10,
-  fontSize: 20,
- 
-  color: '#fff',
-  textAlign: 'center',
-},
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: '500',
+    // marginBottom: 10,
+    fontSize: 20,
 
+    color: '#fff',
+    textAlign: 'center',
+  },
 
   subheader: {
     color: 'rgba(255, 255, 255, 0.80)',
@@ -1367,10 +1405,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     textAlign: 'center',
     marginTop: 20,
-   
   },
-
-
 
   subheader1: {
     color: 'rgba(255, 255, 255, 0.48)',
@@ -1439,14 +1474,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     gap: 8, // works in RN 0.71+, otherwise use marginRight
     marginTop: 16,
-    paddingHorizontal:20
+    paddingHorizontal: 20,
   },
 
-//   otpContainer: {
-//   flexDirection: 'row',
-//   justifyContent: 'center',
-//   marginBottom: 24,
-// },
+  //   otpContainer: {
+  //   flexDirection: 'row',
+  //   justifyContent: 'center',
+  //   marginBottom: 24,
+  // },
 
   otpBox: {
     width: 48,
@@ -1490,5 +1525,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 600,
     textAlign: 'center',
+  },
+    tabContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

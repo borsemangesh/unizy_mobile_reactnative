@@ -22,6 +22,7 @@ import {
 import { showToast } from '../../utils/toast';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 const bgImage = require('../../../assets/images/backimg.png');
@@ -84,6 +85,11 @@ useEffect(() => {
         const token = await AsyncStorage.getItem('userToken');
         const userId = await AsyncStorage.getItem('userId');
 
+
+        console.log("profile card page.... ",userId);
+        
+
+
         if (!token || !userId) {
           console.warn('Missing token or user ID in AsyncStorage');
           return;
@@ -115,6 +121,9 @@ useEffect(() => {
 
         if (response.ok) {
           const user = data.data;
+
+          console.log("user data .........",user);
+          
           setUserMeta({
             firstname: user.firstname ?? null,
             lastname: user.lastname ?? null,
@@ -143,6 +152,8 @@ useEffect(() => {
 
     fetchUserProfile();
   }, []);
+
+
 
 const renderItem = ({ item }: any) => {
   const isLogout = item.title.toLowerCase() === 'logout';
@@ -530,3 +541,4 @@ versionLabel: {
   },
  
 });
+
