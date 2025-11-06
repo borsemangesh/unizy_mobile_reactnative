@@ -102,7 +102,7 @@ const ProductItem: React.FC<ProductItemProps> = ({
       ]}
     >
       <Image source={item.icon} style={styles.cardIcon} />
-      <Text allowFontScaling={false} style={styles.cardText} numberOfLines={1}>
+      <Text allowFontScaling={false} style={styles.cardText} numberOfLines={0}>
         {item.name}
       </Text>
     </View>

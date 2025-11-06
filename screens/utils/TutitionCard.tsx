@@ -749,34 +749,17 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     position: 'relative',
   },
-
   rightText: {
+    position: 'absolute',
+    left: 12,
+    right: 12,         // give space on the right so it can expand
     fontSize: 18,
     fontWeight: '600',
     color: '#fff',
-    textAlign: 'center',
+    textAlign: 'left',
     fontFamily: 'Urbanist-SemiBold',
-    position: 'absolute',
-    left:12
+    flexWrap: 'wrap',
   },
-
-  // tag: {
-  //   position: 'absolute',
-  //   bottom: 10,
-  //   right: 10,  
-  //   borderRadius: 12,
-  //   paddingHorizontal: 8,
-  //   paddingVertical: 4,
-  //   zIndex: 2,
-  //   padding: 8,
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.34) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  //   boxShadow:'0 2px 8px 0 rgba(0, 0, 0, 0.17)',
-  //   height: 29,
-  // },
-
-
    tag: {
     position: 'absolute',
     bottom: 10,

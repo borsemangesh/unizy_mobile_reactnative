@@ -1,3 +1,4 @@
+
 // import {
 //   View,
 //   Text,
@@ -22,6 +23,7 @@
 // import { useSafeAreaInsets } from 'react-native-safe-area-context';
 // import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 // import Button from '../../utils/component/Button';
+// // import PayButton from '../../utils/component/PayButton';
 
 // type SearchDetailsProps = {
 //   navigation: any;
@@ -134,96 +136,17 @@
 //     return `${day}-${month}-${year}`;
 //   };
 
-//   // const renderImage = () => {
-//   //   const fallbackImage = require('../../../assets/images/drone.png');
+//   const handlePay = () => {
+//   navigation.navigate('PaymentScreen', {
+//     amount: Number(detail.price).toFixed(2),
+//     feature_id: id,
+//     nav: 'purchase',
+//     onSuccess: async () => {
+//       await purchaseProduct();
+//     }
+//   });
+// };
 
-//   //   if (detail?.profileshowinview) {
-//   //     const profileUri = detail?.createdby?.profile || null;
-//   //     const initials = `${detail?.createdby?.firstname?.[0] ?? ''}${detail?.createdby?.lastname?.[0] ?? ''}`.toUpperCase();
-
-//   //     return (
-//   //       <ImageBackground
-//   //       source={require('../../../assets/images/featurebg.png')} // your background image
-//   //       style={{
-//   //         alignItems: 'center',
-//   //         justifyContent: 'center',
-//   //       }}
-//   //     >
-//   //       <View
-//   //         style={{
-//   //           alignItems: 'center',
-//   //           justifyContent: 'center',
-//   //           marginVertical: 20,
-//   //         }}>
-
-//   //         <Image
-//   //           source={profileUri ? { uri: profileUri } : fallbackImage}
-//   //           style={{
-//   //             width: 160,
-//   //             height: 160,
-//   //             borderRadius: 80, // circular shape
-//   //             //borderWidth: 2,
-//   //             //borderColor: '#ddd',
-//   //           }}
-//   //           resizeMode="cover"
-//   //           onError={() => {
-//   //             console.log('Profile image failed to load');
-//   //             setImageUri(null);
-//   //           }}
-//   //         />
-
-//   //       </View>
-//   //        </ImageBackground>
-//   //     );
-//   //   }
-
-//   //   // ✅ Multiple images
-//   //   if (images.length > 1) {
-//   //     return (
-//   //       <View>
-//   //         <FlatList
-//   //           ref={flatListRef}
-//   //           data={images}
-//   //           horizontal
-//   //           pagingEnabled
-//   //           showsHorizontalScrollIndicator={false}
-//   //           keyExtractor={(_, index) => index.toString()}
-//   //           onScroll={onScroll}
-//   //           scrollEventThrottle={16}
-//   //           renderItem={({ item }) => (
-//   //             <Image
-//   //               source={item.uri ? { uri: item.uri } : fallbackImage}
-//   //               style={{ width: screenWidth, height: 250 }}
-//   //               resizeMode="cover"
-//   //             />
-//   //           )}
-//   //         />
-//   //         {/* Step Indicator */}
-//   //         <View style={styles.stepIndicatorContainer}>
-//   //           {images.map((_: any, index: Key | null | undefined) => (
-//   //             <View
-//   //               key={index}
-//   //               style={
-//   //                 index === activeIndex
-//   //                   ? styles.activeStepCircle
-//   //                   : styles.inactiveStepCircle
-//   //               }
-//   //             />
-//   //           ))}
-//   //         </View>
-//   //       </View>
-//   //     );
-//   //   }
-
-//   //   // ✅ Single image or fallback
-//   //   return (
-//   //     <Image
-//   //       source={images[0]?.uri ? { uri: images[0].uri } : fallbackImage}
-//   //       style={{ width: screenWidth, height: 250 }}
-//   //       resizeMode="cover"
-//   //     />
-//   //   );
-//   // };
 
 //   const renderImage = () => {
 //     const fallbackImage = require('../../../assets/images/drone.png');
@@ -240,21 +163,23 @@
 //         style={{
 //           alignItems: 'center',
 //           justifyContent: 'center',
+//           height:270,
+//           width:'100%'
 //         }}
 //       >
 //         <View
 //           style={{
 //             alignItems: 'center',
 //             justifyContent: 'center',
-//             paddingVertical: 20,
+//             //paddingVertical: 20,
 //           }}
 //         >
 //           {profileUri ? (
 //             <Image
 //               source={{ uri: profileUri }}
 //               style={{
-//                 width: 160,
-//                 height: 160,
+//                 //width: 160,
+//                 height: 180,
 //                 borderRadius: 80,
 //               }}
 //               resizeMode="cover"
@@ -267,9 +192,9 @@
 
 //             <View
 //               style={{
-//                 width: 160,
-//                 height: 160,
-//                 borderRadius: 80,
+//                 width: 180,
+//                 height: 180,
+//                 borderRadius: 90,
 //                 backgroundColor: '#8390D4',
 //                 alignItems: 'center',
 //                 justifyContent: 'center',
@@ -309,7 +234,7 @@
 //             renderItem={({ item }) => (
 //               <Image
 //                 source={item.uri ? { uri: item.uri } : fallbackImage}
-//                 style={{ width: screenWidth, height: 250 }}
+//                 style={{ width: screenWidth, height: 270 }}
 //                 resizeMode="cover"
 //               />
 //             )}
@@ -333,7 +258,7 @@
 //     return (
 //       <Image
 //         source={images[0]?.uri ? { uri: images[0].uri } : fallbackImage}
-//         style={{ width: screenWidth, height: 250 }}
+//         style={{ width: screenWidth, height: 270 }}
 //         resizeMode="cover"
 //       />
 //     );
@@ -463,6 +388,7 @@
 
 //                onPress={() => {
 //                   if (navigation.canGoBack()) {
+//                     console.log("can go back");
 //                     navigation.goBack(); // go to previous screen if available
 //                   } else {
 //                     navigation.replace('Dashboard', {
@@ -692,12 +618,15 @@
 //                     }}
 //                   >
 //                     <TouchableOpacity
-//                       onPress={() =>
-//                         navigation.navigate('ReviewDetails', {
-//                           category_id: detail?.category_id,
-//                           id: detail?.id,
-//                         })
-//                       }
+//                       disabled={!detail?.ispurchased}
+//                       onPress={() => {
+//                         if (detail?.ispurchased) {
+//                           navigation.navigate('ReviewDetails', {
+//                             category_id: detail?.category_id,
+//                             id: detail?.id,
+//                           });
+//                         }
+//                       }}
 //                       style={{ flexDirection: 'row', alignItems: 'center' , gap: 6,}}
 //                     >
 //                       <Image
@@ -739,7 +668,13 @@
 //                   >
 //                     <TouchableOpacity
 //                       style={{ flexDirection: 'row', alignItems: 'center' }}
-//                       onPress={() => setShowPopup(true)}
+//                        onPress={() => {
+//                       if (detail?.ispurchased) {
+//                         navigation.navigate("MessagesIndividualScreen");
+//                       } else {
+//                         setShowPopup(true);
+//                       }
+//                     }}
 //                     >
 //                       <Image
 //                         source={require('../../../assets/images/message_chat.png')}
@@ -766,8 +701,7 @@
 //           </View>
 //         </ScrollView>
 
-//         {/* Bottom */}
-//         <TouchableOpacity
+//         {/* <TouchableOpacity
 //           style={styles.previewBtn}
 //           //onPress={() => setShowPopup1(true)}
 
@@ -783,10 +717,19 @@
 //               £{Number(detail?.price ?? 0).toFixed(2)}
 //             </Text>
 //           </Text>
-//         </TouchableOpacity>
+//         </TouchableOpacity> */}
+        
 
-//         {/* <Button onPress={() => navigation.navigate('PaymentScreen')} title={"Pay "+ "£"+Number(detail?.price ?? 0).toFixed(2)} /> */}
-//         {/* </ScrollView> */}
+//         {/* <PayButton
+//           amount={Number(detail?.price).toFixed(2)}
+//           label="Buy Now"
+//           textStyle={{ fontFamily: 'Urbanist-Bold', fontSize: 18 }}
+//           onPress={handlePay}
+//       /> */}
+
+        
+//     <Button onPress={handlePay} title={"Pay "+ "£"+Number(detail?.price ?? 0).toFixed(2)} /> 
+
 
 //         <Modal
 //           visible={showPopup}
@@ -804,8 +747,8 @@
 //                   width: '100%',
 //                   alignItems: 'center',
 //                 }}
-//                 blurType="light"
-//                 blurAmount={5}
+//                 blurType="dark"
+//                 blurAmount={1000}
 //                 reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
 //               >
 //                 <View
@@ -883,7 +826,7 @@
 //                   alignItems: 'center',
 //                 }}
 //                 blurType="light"
-//                 blurAmount={2}
+//                 blurAmount={10}
 //                 reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
 //               >
 //                 <View
@@ -939,7 +882,7 @@
 //                     }}
 //                   >
 //                     <Text allowFontScaling={false} style={styles.loginText1}>
-//                       Chat with Sellar
+//                       Chat with Seller
 //                     </Text>
 //                   </TouchableOpacity>
 //                 </View>
@@ -994,49 +937,99 @@
 //     height: 25,
 //   },
 
+//   // stepIndicatorContainer: {
+//   //   flexDirection: 'row',
+//   //   justifyContent: 'center',
+//   //   alignItems: 'center',
+//   //   marginTop: 12,
+//   //   gap: 6,
+//   // },
+//   // stepCircle: {
+//   //   width: 12,
+//   //   height: 12,
+//   //   borderRadius: 16,
+//   //   backgroundColor: 'rgba(255, 255, 255, 0.3)',
+//   // },
+//   // activeStepCircle: {
+//   //   width: 12,
+//   //   height: 12,
+//   //   borderRadius: 40,
+//   //   backgroundColor: '#FFFFFF',
+//   //   borderColor: '#ffffff4e',
+//   //   borderWidth: 1,
+//   //   justifyContent: 'center',
+//   //   alignItems: 'center',
+//   //   shadowColor: '#000',
+//   //   shadowOffset: { width: 0, height: 1 },
+//   //   shadowOpacity: 0.25,
+//   //   shadowRadius: 3.33,
+//   //   elevation: 2,
+//   // },
+//   // inactiveStepCircle: {
+//   //   width: 12,
+//   //   height: 12,
+//   //   borderRadius: 40,
+//   //   backgroundColor: 'rgba(255, 255, 255, 0.2)', // fallback for radial-gradient
+//   //   borderColor: '#ffffff4e',
+//   //   borderWidth: 1,
+//   //   justifyContent: 'center',
+//   //   alignItems: 'center',
+//   //   shadowColor: '#000',
+//   //   shadowOffset: { width: 0, height: 1 },
+//   //   shadowOpacity: 0.25,
+//   //   shadowRadius: 3.33,
+//   //   elevation: 2,
+//   // },
+
 //   stepIndicatorContainer: {
-//     flexDirection: 'row',
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     marginTop: 12,
-//     gap: 6,
-//   },
-//   stepCircle: {
-//     width: 12,
-//     height: 12,
-//     borderRadius: 16,
-//     backgroundColor: 'rgba(255, 255, 255, 0.3)',
-//   },
-//   activeStepCircle: {
-//     width: 12,
-//     height: 12,
-//     borderRadius: 40,
-//     backgroundColor: '#FFFFFF',
-//     borderColor: '#ffffff4e',
-//     borderWidth: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     shadowColor: '#000',
-//     shadowOffset: { width: 0, height: 1 },
-//     shadowOpacity: 0.25,
-//     shadowRadius: 3.33,
-//     elevation: 2,
-//   },
-//   inactiveStepCircle: {
-//     width: 12,
-//     height: 12,
-//     borderRadius: 40,
-//     backgroundColor: 'rgba(255, 255, 255, 0.2)', // fallback for radial-gradient
-//     borderColor: '#ffffff4e',
-//     borderWidth: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     shadowColor: '#000',
-//     shadowOffset: { width: 0, height: 1 },
-//     shadowOpacity: 0.25,
-//     shadowRadius: 3.33,
-//     elevation: 2,
-//   },
+//   position: 'absolute',
+//   bottom: 12, // place above bottom edge of image
+//   alignSelf: 'center',
+//   flexDirection: 'row',
+//   justifyContent: 'center',
+//   alignItems: 'center',
+//   gap: 6,
+//   zIndex: 10, // ensures it's on top of image
+// },
+
+// stepCircle: {
+//   width: 12,
+//   height: 12,
+//   borderRadius: 16,
+//   backgroundColor: 'rgba(255, 255, 255, 0.3)',
+// },
+
+// activeStepCircle: {
+//   width: 12,
+//   height: 12,
+//   borderRadius: 40,
+//   backgroundColor: '#FFFFFF',
+//   borderColor: '#ffffff4e',
+//   borderWidth: 1,
+//   justifyContent: 'center',
+//   alignItems: 'center',
+//   shadowColor: '#000',
+//   shadowOffset: { width: 0, height: 1 },
+//   shadowOpacity: 0.25,
+//   shadowRadius: 3.33,
+//   elevation: 2,
+// },
+
+// inactiveStepCircle: {
+//   width: 12,
+//   height: 12,
+//   borderRadius: 40,
+//   backgroundColor: 'rgba(255, 255, 255, 0.2)',
+//   borderColor: '#ffffff4e',
+//   borderWidth: 1,
+//   justifyContent: 'center',
+//   alignItems: 'center',
+//   shadowColor: '#000',
+//   shadowOffset: { width: 0, height: 1 },
+//   shadowOpacity: 0.25,
+//   shadowRadius: 3.33,
+//   elevation: 2,
+// },
 //   unizyText: {
 //     color: '#FFFFFF',
 //     fontSize: 20,
@@ -1414,7 +1407,7 @@ import { showToast } from '../../utils/toast';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 import Button from '../../utils/component/Button';
-// import PayButton from '../../utils/component/PayButton';
+import PayButton from '../../utils/component/PayButton';
 
 type SearchDetailsProps = {
   navigation: any;
@@ -1779,7 +1772,6 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
                onPress={() => {
                   if (navigation.canGoBack()) {
-                    console.log("can go back");
                     navigation.goBack(); // go to previous screen if available
                   } else {
                     navigation.replace('Dashboard', {
@@ -1866,10 +1858,10 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
                 <View style={styles.datePosted}>
                   <Image
-                    source={require('../../../assets/images/calendar_icon.png')}
+                    source={require('../../../assets/images/calendar_icon1.png')}
                     style={{ height: 16, width: 16 }}
                   />
-                  <Text allowFontScaling={false} style={styles.userSub}>
+                  <Text allowFontScaling={false} style={styles.datetext}>
                     Date Posted: {formatDate(detail?.created_at)}
                   </Text>
                 </View>
@@ -1880,13 +1872,17 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
               <View style={styles.gap12}>
                 <Text
                   allowFontScaling={false}
-                  style={styles.productDeatilsHeading}
+                  style={styles.productDeatilsHeading1}
                 >
-                  Product Details
+                  {detail?.category?.name
+                ? detail.category.name === 'Food'
+                  ? 'Dish Details'
+                  : `${detail.category.name} Details`
+                : ''}
                 </Text>
 
                   {detail?.params?.map((param: Param) => (
-                    <View key={param.id} style={{ marginBottom: 2 }}>
+                    <View key={param.id} style={{ marginTop:4,marginBottom:0 }}>
                       {/* Param name */}
                       <Text allowFontScaling={false}style={styles.itemcondition}>{param.name}</Text>
 
@@ -1920,7 +1916,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     ) : (
                       <Text
                         allowFontScaling={false}
-                        style={[styles.new, { marginTop: 2 }]}
+                        style={[styles.new, { marginTop:0}]}
                       >
                         {param.param_value || '—'}
                       </Text>
@@ -1941,7 +1937,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                 </Text>
 
                 {/* User Info */}
-                <View style={{ flexDirection: 'row' }}>
+                <View style={{ flexDirection: 'row',marginBottom:4 }}>
                   {/* <Image
                       source={
                         detail?.createdby?.profile
@@ -1969,7 +1965,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     </View>
                   )}
 
-                  <View style={{ width: '80%', gap: 4 }}>
+                  <View style={{ width: '80%', gap: 0 }}>
                     <Text allowFontScaling={false} style={styles.userName}>
                       {detail?.createdby
                         ? `${detail.createdby.firstname || ''} ${
@@ -1979,35 +1975,21 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     </Text>
 
                     <Text allowFontScaling={false} style={styles.univeritytext}>
-                      {detail?.createdby?.university_name ||
-                        'University of Warwick'}
+                      {detail?.university?.name
+                        ? `${detail.university.name},`
+                        : 'University of Warwick,'}
                     </Text>
-                    <Text
+                      <Text
                       allowFontScaling={false}
-                      style={[styles.univeritytext, { marginTop: -5 }]}
-                    >
+                      style={[styles.univeritytext, { marginTop: 0 }]}>
                       {'Coventry'}
                     </Text>
                   </View>
                 </View>
 
-                <View style={{ flexDirection: 'row', gap: 8 }}>
+                <View style={{ flexDirection: 'row' }}>
                   <View
-                    style={{
-                      borderRadius: 10,
-                      backgroundColor:
-                        'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-                      boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-                      display: 'flex',
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      gap: 4,
-                      padding: 16,
-
-                      width: '20%',
-                    }}
-                  >
+                    style={styles.bottombutton}>
                     <TouchableOpacity
                       disabled={!detail?.ispurchased}
                       onPress={() => {
@@ -2027,36 +2009,13 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
                       <Text
                         allowFontScaling={false}
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.48)',
-                          fontFamily: 'Urbanist-SemiBold',
-                          fontSize: 14,
-                          fontWeight: '600',
-                          fontStyle: 'normal',
-                          letterSpacing: -0.28,
-                          // paddingLeft:6
-                        }}
-                      >
+                        style={ styles.chattext}>
                         4.5
                       </Text>
                     </TouchableOpacity>
                   </View>
 
-                  <View
-                    style={{
-                      borderRadius: 10,
-                      backgroundColor:
-                        'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-                      boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-                      display: 'flex',
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      gap: 4,
-                      padding: 16,
-                      width: '80%',
-                    }}
-                  >
+                  <View style={[styles.chatcard, { marginLeft: 8 }]}>
                     <TouchableOpacity
                       style={{ flexDirection: 'row', alignItems: 'center' }}
                        onPress={() => {
@@ -2073,15 +2032,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       />
                       <Text
                         allowFontScaling={false}
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.48)',
-                          fontFamily: 'Urbanist-SemiBold',
-                          fontSize: 14,
-                          fontWeight: '600',
-                          fontStyle: 'normal',
-                          letterSpacing: -0.28,
-                        }}
-                      >
+                        style={styles.chattext}>
                         Chat with Seller
                       </Text>
                     </TouchableOpacity>
@@ -2108,18 +2059,17 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
               £{Number(detail?.price ?? 0).toFixed(2)}
             </Text>
           </Text>
-        </TouchableOpacity> */}
+        </TouchableOpacity>  */}
         
 
-        {/* <PayButton
+        <PayButton
           amount={Number(detail?.price).toFixed(2)}
-          label="Buy Now"
-          textStyle={{ fontFamily: 'Urbanist-Bold', fontSize: 18 }}
+          label="Pay"
           onPress={handlePay}
-      /> */}
+      /> 
 
         
-    <Button onPress={handlePay} title={"Pay "+ "£"+Number(detail?.price ?? 0).toFixed(2)} /> 
+    {/* <Button onPress={handlePay} title={"Pay "+ "£"+Number(detail?.price ?? 0).toFixed(2)} />  */}
 
 
         <Modal
@@ -2288,6 +2238,47 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 };
 
 const styles = StyleSheet.create({
+
+
+  chattext:{
+  color: 'rgba(255, 255, 255, 0.48)',
+  fontFamily: 'Urbanist-SemiBold',
+  fontSize: 14,
+  fontWeight: '600',
+  fontStyle: 'normal',
+  letterSpacing: -0.28,
+  },
+  chatcard:{
+  borderRadius: 10,
+    backgroundColor:'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    flex:1,
+    paddingHorizontal: 16,
+    paddingVertical:12,
+    height:'auto'
+    //width: '80%',
+  },
+
+  bottombutton:{
+ borderRadius: 10,
+  backgroundColor:'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+  gap: 4,
+  padding: 16,
+  //width: '20%',
+  paddingHorizontal: 16,
+  paddingVertical:12,
+  },
+
   initialsCircle: {
     backgroundColor: '#8390D4',
     alignItems: 'center',
@@ -2587,15 +2578,15 @@ inactiveStepCircle: {
     height: 'auto',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.09) 100%)',
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+    //boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     borderRadius: 8,
     paddingLeft: 8,
     paddingRight: 8,
     paddingTop: 6,
     paddingBottom: 6,
-
+    marginTop:12,
     alignItems: 'center',
-    gap: 3,
+    gap: 4,
   },
 
   userSub: {
@@ -2606,11 +2597,22 @@ inactiveStepCircle: {
     lineHeight: 16,
     letterSpacing: -0.24,
   },
-  univeritytext: {
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontFamily: 'Urbanist-Regular',
+   datetext: {
+    //color: 'rgba(255, 255, 255, 0.48)',
+    color:'#9CD6FF',
+    fontFamily: 'Urbanist-Medium',
     fontSize: 12,
     fontWeight: '500',
+    lineHeight: 16,
+    letterSpacing: -0.24,
+  },
+  univeritytext: {
+    color: 'rgba(255, 255, 255, 0.88)',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 12,
+    fontWeight: '500',
+    marginTop:4,
+    lineHeight:14
   },
   userName: {
     position: 'relative',
@@ -2618,7 +2620,7 @@ inactiveStepCircle: {
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 16,
     fontWeight: '600',
-    lineHeight: 24,
+    lineHeight: 20,
     letterSpacing: -0.32,
   },
   avatar: {
@@ -2626,9 +2628,10 @@ inactiveStepCircle: {
     height: 50,
     borderRadius: 25,
     marginRight: 12,
+    resizeMode:'cover'
   },
   gap12: {
-    gap: 12,
+    gap: 8,
   },
   gap4: {
     gap: 4,
@@ -2651,7 +2654,7 @@ inactiveStepCircle: {
   },
   itemcondition: {
     color: 'rgba(255, 255, 255, 0.72)',
-    fontFamily: 'Urbanist-Regular',
+    fontFamily: 'Urbanist-SemiBold',
     fontSize: 16,
     fontWeight: '600',
     fontStyle: 'normal',
@@ -2660,33 +2663,52 @@ inactiveStepCircle: {
   categoryContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+
   },
   catagoryText: {
-    fontFamily: 'Urbanist-Regular',
+    // fontFamily: 'Urbanist-Regular',
+    // fontSize: 12,
+    // fontWeight: '500',
+    // fontStyle: 'normal',
+    // lineHeight: 16,
+    // //color: '#fff',
+    // color:'#9CD6FF'
+    color:'#9CD6FF',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 12,
+    fontWeight: '500',
+    lineHeight: 16,
+    letterSpacing: -0.24,
+  },
+
+   catagoryText1: {
+    fontFamily: 'Urbanist-Medium',
     fontSize: 12,
     fontWeight: '500',
     fontStyle: 'normal',
-    lineHeight: 16,
-    color: '#fff',
+    lineHeight: 1.3,
+    //color: '#fff',
+    color:'#9CD6FF'
   },
   categoryTag: {
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    borderWidth: 0.9,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
-    borderBlockEndColor: 'rgba(255, 255, 255, 0.08)',
+    //borderWidth: 0.9,
+    //borderColor: 'rgba(255, 255, 255, 0.08)',
+    //borderBlockEndColor: 'rgba(255, 255, 255, 0.08)',
     color: 'rgba(255, 255, 255, 0.48)',
     borderRadius: 4,
     marginRight: 8,
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.23)',
+    //boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.23)',
     paddingLeft: 6,
     paddingRight: 6,
     paddingTop: 2,
     paddingBottom: 2,
+    marginTop:6
   },
   productDesHeding: {
     color: 'rgba(255, 255, 255, 0.72)',
-    fontFamily: 'Urbanist-Regular',
+    fontFamily: 'Urbanist-SemiBold',
     fontSize: 16,
     fontWeight: '600',
     fontStyle: 'normal',
@@ -2694,15 +2716,15 @@ inactiveStepCircle: {
   },
   productDesc: {
     color: 'rgba(255, 255, 255, 0.64)',
-    fontFamily: 'Urbanist-Regular',
+    fontFamily: 'Urbanist-Medium',
     fontSize: 14,
     fontWeight: '500',
-    fontStyle: 'normal',
-    lineHeight: 20,
+    //fontStyle: 'normal',
+    lineHeight: 18,
   },
   productDeatilsHeading: {
     color: 'rgba(255, 255, 255, 0.88)',
-    fontFamily: 'Urbanist-Regular',
+    fontFamily: 'Urbanist-SemiBold',
     fontSize: 18,
     fontWeight: '600',
     fontStyle: 'normal',
@@ -2710,21 +2732,30 @@ inactiveStepCircle: {
     letterSpacing: -0.36,
   },
 
+    productDeatilsHeading1: {
+    color: 'rgba(255, 255, 255, 0.88)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 18,
+    fontWeight: '600',
+    fontStyle: 'normal',
+    lineHeight: 22,
+    letterSpacing: -0.36,
+  },
   QuaddText: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 20,
     fontWeight: '600',
-    fontStyle: 'normal',
+    //fontStyle: 'normal',
     letterSpacing: -0.4,
     lineHeight: 24,
   },
   priceText: {
     color: '#fff',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 17,
-    fontWeight: 500,
-    letterSpacing: 1,
+    fontFamily: 'Urbanist-Bold',
+    fontSize: 20,
+    fontWeight: 700,
+    letterSpacing: -0.1,
   },
   priceText1: {
     color: '#002050',
