@@ -565,7 +565,7 @@ const styles = StyleSheet.create({
     flex: 1
    },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 50,
+    paddingTop: Platform.OS === 'ios' ? 50 : 40,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },

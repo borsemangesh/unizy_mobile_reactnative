@@ -1063,7 +1063,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             <View style={styles.textbg}>
               <Image
                 source={require('../../../assets/images/info_icon.png')}
-                style={{ width: 48, height: 48, marginRight: 8, marginTop: 2 }}
+                style={{ width: 13, height: 13, marginRight: 8, marginTop: 2 }}
               />
 
               <View style={{ flex: 1 }}>
@@ -1377,7 +1377,7 @@ const styles = StyleSheet.create({
   },
   header: {
     height: 100,
-    paddingTop: 40,
+     paddingTop: Platform.OS === 'ios' ? 50 : 50,
     paddingBottom: 12,
     paddingHorizontal: 16,
     justifyContent: 'center',

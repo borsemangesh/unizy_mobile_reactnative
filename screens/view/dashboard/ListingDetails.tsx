@@ -200,11 +200,21 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
       <View style={styles.fullScreenContainer}>
         {/* Header */}
         <View style={styles.header}>
-          <View style={styles.headerRow}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '100%',
+              zIndex: 10,
+              position: 'relative',
+            }}
+          >
             <TouchableOpacity
               onPress={() => {
                 navigation.goBack();
               }}
+              style={styles.backButtonContainer}
             >
               <View style={styles.backIconRow}>
                 <Image
@@ -216,7 +226,6 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
             <Text allowFontScaling={false} style={styles.unizyText}>
               Listing Details
             </Text>
-            <View style={{ width: 48 }} />
           </View>
         </View>
 
@@ -241,15 +250,55 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
               {/* Card */}
               <View style={styles.card}>
                 <View style={{ flexDirection: 'row' }}>
-                  <Image
-                    source={{
-                      uri: data?.list?.profileshowinview
-                        ? data?.list?.createdby?.profile
-                        : data?.list?.thumbnail,
-                    }}
-                    style={styles.image}
-                    resizeMode="cover"
-                  />
+                  {(() => {
+                    // Check if category is housekeeping or tuition
+                    const categoryName = data?.list?.category?.name || '';
+                    const isProfileCategory = categoryName?.toLowerCase() === 'house keeping' || categoryName?.toLowerCase() === 'tuition';
+                    const profilePhoto = data?.list?.createdby?.profile;
+                    const firstName = data?.list?.createdby?.firstname;
+                    const lastName = data?.list?.createdby?.lastname;
+                    
+                    // Get initials helper function
+                    const getInitials = (first: string | null = '', last: string | null = '') => {
+                      const f = first?.trim()?.charAt(0)?.toUpperCase() || '';
+                      const l = last?.trim()?.charAt(0)?.toUpperCase() || '';
+                      return (f + l) || '?';
+                    };
+                    
+                    // Determine what to show
+                    const shouldShowProfile = isProfileCategory && profilePhoto;
+                    const shouldShowInitials = isProfileCategory && !profilePhoto;
+                    
+                    if (shouldShowInitials) {
+                      return (
+                        <View style={styles.initialsCircle}>
+                          <Text allowFontScaling={false} style={styles.initialsText}>
+                            {getInitials(firstName, lastName)}
+                          </Text>
+                        </View>
+                      );
+                    } else if (shouldShowProfile) {
+                      return (
+                        <Image
+                          source={{ uri: profilePhoto }}
+                          style={styles.image}
+                          resizeMode="cover"
+                        />
+                      );
+                    } else {
+                      return (
+                        <Image
+                          source={{
+                            uri: data?.list?.profileshowinview
+                              ? data?.list?.createdby?.profile
+                              : data?.list?.thumbnail,
+                          }}
+                          style={styles.image}
+                          resizeMode="cover"
+                        />
+                      );
+                    }
+                  })()}
                   <View style={{ marginLeft: 10, gap: 8 }}>
                     <Text
                       allowFontScaling={false}
@@ -855,18 +904,39 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 50,
-    paddingBottom: 12,
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    zIndex: 20,
+   paddingTop: Platform.OS === 'ios' ? 50 : 55, 
+    paddingBottom: Platform.OS === 'ios' ? 16 : 12,
     paddingHorizontal: 16,
+    justifyContent: 'center',
+    overflow: 'hidden',
+    flexDirection: 'row',
+    alignItems: 'center',
+    elevation: 0,
+    backgroundColor: 'transparent',
+    borderBottomWidth: 0,
+    shadowOpacity: 0,
+    shadowColor: 'transparent',
+    alignSelf: 'center',
+    minHeight: Platform.OS === 'ios' ? 80 : 88,
+  },
+  backButtonContainer: {
+    position: 'absolute',
+    left: 0,
+    zIndex: 11,
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   backIconRow: {
-    padding: 12,
+    width: 48,
+    height: 48,
     borderRadius: 40,
-
+    padding: 12,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -875,16 +945,14 @@ const styles = StyleSheet.create({
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
   },
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
-    flex: 1,
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
+    width: '100%',
   },
 
   card: {
@@ -921,6 +989,21 @@ const styles = StyleSheet.create({
     width: 72,
     height: 76,
     borderRadius: 16,
+  },
+  initialsCircle: {
+    backgroundColor: '#8390D4',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 72,
+    height: 76,
+    borderRadius: 16,
+  },
+  initialsText: {
+    color: '#fff',
+    fontSize: 28,
+    fontWeight: 600,
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
   },
   univercitycontainer: {
     display: 'flex',
@@ -997,10 +1080,11 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     paddingBottom: 180,
-    // paddingTop: 90,
-    // paddingHorizontal: 20,
+    paddingTop: Platform.OS === 'ios' ? 100 : 90,
     paddingHorizontal: 16,
-    width: '100%',
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    alignSelf: 'center',
+    marginTop:12
   },
   bottomview: {
     position: 'absolute',

@@ -38,6 +38,12 @@ type Feature = {
   price: number;
   thumbnail: string;
   university: university;
+  category?: { id: number; name: string };
+  createdby?: { 
+    profile?: string | null;
+    firstname?: string | null;
+    lastname?: string | null;
+  };
 };
 type university = {
   id: number;
@@ -173,6 +179,11 @@ const MyListing = ({ navigation }: MyListingProps) => {
     const productImage = item.thumbnail
       ? { uri: item.thumbnail }
       : require('../../../assets/images/drone.png');
+    
+    // Get category name from item or find from categories list
+    const categoryName = item.category?.name || 
+      categories.find(cat => cat.id === item.category_id)?.name || 
+      '';
 
     return (
       <View style={[styles.itemContainer]}>
@@ -189,6 +200,10 @@ const MyListing = ({ navigation }: MyListingProps) => {
           catagory_id={item.category_id}
           catagory_name={item.title}
           isactive={item.isactive}
+          categoryName={categoryName}
+          profilePhoto={item.createdby?.profile || null}
+          firstName={item.createdby?.firstname || null}
+          lastName={item.createdby?.lastname || null}
         />
       </View>
     );
@@ -257,6 +272,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
               justifyContent: 'center',
               width: '100%',
               zIndex: 10,
+              position: 'relative',
             }}
           >
             <TouchableOpacity
@@ -266,6 +282,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
                   isNavigate: false,
                 })
               }
+              style={styles.backButtonContainer}
             >
               <View style={styles.backIconRow}>
                 <Image
@@ -276,7 +293,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
             </TouchableOpacity>
 
             <Text allowFontScaling={false} style={styles.unizyText}>My Listings</Text>
-              <View style={{ width: 48 }} />
           </Animated.View>
         </View>
         {/* List */}
@@ -286,32 +302,38 @@ const MyListing = ({ navigation }: MyListingProps) => {
             renderItem={renderItem}
             keyExtractor={(item, index) => index.toString()}
             ListHeaderComponent={
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                {categories.map((cat, index) => {
-                  const isSelected = selectedCategory.name === cat.name;
-                  return (
-                    <TouchableOpacity
-                      key={index}
-                      onPress={() => setSelectedCategory(cat)}
-                    >
-                      <View
-                        style={isSelected ? styles.tabcard : styles.tabcard1}
+              <View style={styles.categoryTabsContainer}>
+                <ScrollView 
+                  horizontal 
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.categoryTabsScrollContent}
+                >
+                  {categories.map((cat, index) => {
+                    const isSelected = selectedCategory.name === cat.name;
+                    return (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => setSelectedCategory(cat)}
                       >
-                        <Text
-                          allowFontScaling={false}
-                          style={isSelected ? styles.tabtext : styles.othertext}
+                        <View
+                          style={isSelected ? styles.tabcard : styles.tabcard1}
                         >
-                          {cat.name}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  );
-                })}
-              </ScrollView>
+                          <Text
+                            allowFontScaling={false}
+                            style={isSelected ? styles.tabtext : styles.othertext}
+                          >
+                            {cat.name}
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </ScrollView>
+              </View>
             }
             contentContainerStyle={[
               styles.listContainer,
-              { paddingTop: Platform.OS === 'ios' ? 160 : 120 },
+              { paddingTop: Platform.OS === 'ios' ? 160 : 100 },
             ]}
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { y: scrollY } } }],
@@ -354,12 +376,21 @@ const MyListing = ({ navigation }: MyListingProps) => {
 export default MyListing;
 
 const styles = StyleSheet.create({
+  categoryTabsContainer: {
+    // paddingHorizontal: 16,
+    marginBottom: 12,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+
+  },
+  categoryTabsScrollContent: {
+    paddingRight: 16,
+  },
   tabcard: {
+
     minHeight: 38,
     paddingVertical: 10,
     paddingHorizontal: 16,
-    marginRight: 6,
-    marginLeft:1,
+    marginRight: 8,
     borderWidth: 0.4,
     borderColor: '#ffffff11',
     backgroundColor:
@@ -370,14 +401,10 @@ const styles = StyleSheet.create({
   },
   tabcard1: {
     minHeight: 38,
-    
     borderWidth: 0.4,
     borderColor: '#ffffff',
-
-    // boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
     borderEndEndRadius: 10,
     borderStartEndRadius: 10,
     borderTopLeftRadius: 10,
@@ -385,12 +412,10 @@ const styles = StyleSheet.create({
     borderBottomStartRadius: 10,
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
-
     borderTopColor: '#ffffff2e',
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
-
     boxSizing: 'border-box',
     paddingVertical: 10,
     paddingHorizontal: 16,
@@ -426,10 +451,10 @@ const styles = StyleSheet.create({
   header: {
     position: 'absolute',
     top: 0,
-    width: '100%',
+    width: Platform.OS === 'ios' ? 393 : '100%',
     zIndex: 20,
-    paddingTop: Platform.OS === 'ios' ? 42 : 50,
-    paddingBottom:8,
+   paddingTop: Platform.OS === 'ios' ? 50 : 40 ,
+    paddingBottom: Platform.OS === 'ios' ? 16 : 12,
     paddingHorizontal: 16,
     justifyContent: 'center',
     overflow: 'hidden', // IMPORTANT for MaskedView
@@ -440,15 +465,23 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
     shadowOpacity: 0,
     shadowColor: 'transparent',
+    alignSelf: 'center',
+    minHeight: Platform.OS === 'ios' ? 80 : 88,
+  },
+  backButtonContainer: {
+    position: 'absolute',
+    left: 0,
+    zIndex: 11,
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   backIconRow: {
-    padding: 12,
+    width: 48,
+    height: 48,
     borderRadius: 40,
-
+    padding: 12,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -457,17 +490,14 @@ const styles = StyleSheet.create({
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
   },
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
-    flex: 1,
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
-    // marginRight: 12,
+    width: '100%',
   },
   search_container: {
     flexDirection: 'row',
@@ -490,20 +520,22 @@ const styles = StyleSheet.create({
     width: '85%',
   },
   listContainer: {
-    marginLeft: 10,
-    marginRight: 10,
+    paddingHorizontal: 16,
     paddingTop: 10,
-    //paddingBottom:40,
     paddingBottom: Platform.OS === 'ios' ? 40 : 80,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    alignSelf: 'center',
+  },
+  row: {
+    justifyContent: 'space-between',
+    paddingHorizontal: 0,
   },
   row1: {
     // flexDirection: 'row',
     // justifyContent: 'flex-start',
   },
   itemContainer: {
-    flex: 1,
-    marginHorizontal: 0,
-    marginTop:12
+    width: '100%',
   },
   scrollView: {
     paddingBottom: 20,
