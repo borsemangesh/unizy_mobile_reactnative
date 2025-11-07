@@ -152,6 +152,28 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         console.warn(err);
         return false;
       }
+    } else if (Platform.OS === 'ios') {
+      try {
+        const status = await check(PERMISSIONS.IOS.CAMERA);
+        if (status === RESULTS.GRANTED) {
+          return true;
+        }
+        const result = await request(PERMISSIONS.IOS.CAMERA);
+
+        if (result === RESULTS.GRANTED) {
+          return true;
+        } else if (result === RESULTS.BLOCKED) {
+          console.warn(
+            'Camera permission is blocked. Please enable it in Settings.',
+          );
+          return false;
+        } else {
+          return false; // Denied
+        }
+      } catch (err) {
+        console.warn(err);
+        return false;
+      }
     } else {
       return true;
     }
@@ -196,11 +218,20 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   // ---------------------  Update data method call -----------------//
 
   const handleSaveProfile = async () => {
+
+
+
     const errors = validateForm();
     if (errors.length > 0) {
       // Alert.alert('Validation Error', errors.join('\n'));
       showToast(errors[0], 'error');
       return;
+    }else if(!isUpdateDisabled_personal) {
+        showToast('Please verify your personal email Id', 'error');
+          return;
+    }else if(!isUpdateDisabled){
+        showToast('Please verify your student email Id', 'error');
+          return;
     }
 
     try {
@@ -611,18 +642,18 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 />
                 <TouchableOpacity
                   style={{
-                    width: 70, // Fixed width – adjust as needed
-                    height: 30,
+                    width: 32, // Fixed width – adjust as needed
+                    height: 32,
                     // marginLeft: 12,
                     // backgroundColor:
                     //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
 
                     backgroundColor: isUpdateDisabled_personal
-                      ? '#888' // Fallback color for disabled
+                      ? '#99999980' // Fallback color for disabled
                       : 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
-                    // boxShadow:
-                    //   'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
-                    borderColor: '#ffffff11',
+                       boxShadow: isUpdateDisabled_personal  ? '' :
+                      'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+                     borderColor: isUpdateDisabled_personal  ? '' :  '#ffffff11', 
                     borderRadius: 10,
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -636,7 +667,22 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     setEmailName('personalEmail')
                   )}
                 >
-                  <Text style={styles.edittext} allowFontScaling={false}>Update</Text>
+                  {/* <Text style={styles.edittext} allowFontScaling={false}>Update</Text>
+                   
+
+
+                  <TouchableOpacity
+                style={styles.profilecameraButton}
+                onPress={handleSelectImage}
+              >
+                {/* assets\images\camera_icon.png */}
+                <Image                  
+                  source={require('../../../assets/images/editcontained.png')}
+                  style={styles.updateIcon}
+                  resizeMode="contain"
+                />
+              {/* </TouchableOpacity> */}
+
                 </TouchableOpacity>
               </View>
             </View>
@@ -681,18 +727,19 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 />
                 <TouchableOpacity
                   style={{
-                    width: 70, // Fixed width – adjust as needed
-                    height: 30,
+                    width: 32, // Fixed width – adjust as needed
+                    height: 32,
                     // marginLeft: 12,
 
                     // backgroundColor:
                     //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
 
                     backgroundColor: isUpdateDisabled
-                      ? '#888' // Fallback color for disabled
+                      ? '#99999980' // Fallback color for disabled
                       : 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
-
-                    borderColor: '#ffffff11',
+                      boxShadow: isUpdateDisabled  ? '' :
+                      'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+                     borderColor: isUpdateDisabled  ? '' :  '#ffffff11',                   
                     borderRadius: 10,
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -706,7 +753,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     setEmailName('studentEmail')
                   )}
                 >
-                  <Text style={styles.edittext} allowFontScaling={false} >Update</Text>
+                  <Image                  
+                  source={require('../../../assets/images/editcontained.png')}
+                  style={styles.updateIcon}
+                  resizeMode="contain"
+                />
                 </TouchableOpacity>
               </View>
             </View>
@@ -1121,11 +1172,12 @@ const styles = StyleSheet.create({
 
     // overflow: 'hidden',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 16,
     backgroundColor: 'rgba(255,255,255,0.08)',
+    gap: 12
   },
   inputGroup: {
-    marginBottom: 14,
+    // marginBottom: 14,
     height: 64,
     // paddingHorizontal:8,
     // paddingVertical:12
@@ -1240,6 +1292,13 @@ const styles = StyleSheet.create({
     height: 40,
     marginLeft: -1,
     marginTop: 3,
+  },
+
+   updateIcon: {
+    width: 16,
+    height: 16,
+    // marginLeft: -1,
+    // marginTop: 3,
   },
 
   inputEmail: {
@@ -1498,10 +1557,10 @@ const styles = StyleSheet.create({
   },
 
   edittext: {
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14,
+    // fontFamily: 'Urbanist-SemiBold',
+    // fontSize: 14,
     color: '#fff',
-    fontWeight: 600,
+    // fontWeight: 600,
     textAlign: 'center',
   },
     tabContent: {

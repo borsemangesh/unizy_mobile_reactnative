@@ -478,7 +478,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                 showToast('can not edit', 'error');
                 return;
               }
-              navigation.replace(
+              navigation.navigate(
                 'EditListScreen',
                 {
                   productId: catagory_id,

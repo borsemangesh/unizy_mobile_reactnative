@@ -196,6 +196,11 @@ export default function PreviewCard({tag,infoTitle,inforTitlePrice,rating,produc
 
  
         <View style={styles.tag}>
+        <BlurView 
+              blurType="light"
+              blurAmount={100}
+              style={StyleSheet.absoluteFillObject}
+          />
           <Text allowFontScaling={false} style={styles.tagText}>{tag}</Text>
         </View>
         {/* </LinearGradient> */}
@@ -381,7 +386,7 @@ const styles = StyleSheet.create({
     marginHorizontal:8,
      boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
      //overflow:'hidden'
-    backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
+     backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
 
   },
   tagText: {

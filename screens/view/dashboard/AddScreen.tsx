@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
@@ -878,12 +880,13 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               {`List${productName ? ` ${productName} ` : ''}`}
             </Text>
            
-            <View style={{ width: 48 }} />
+            <View style={{ width: 48,backgroundColor: 'red' }} />
           </View>
         </View>
 
+       
         <KeyboardAvoidingView
-          style={{ flex: 1 }}
+          style={{ flex: 1 ,marginTop: 10}}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
           <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false} >
@@ -980,7 +983,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             )}
           </ScrollView>
 
-          <Button title="Preview Details" onPress={() => handlePreview()}  style={{position: 'absolute', bottom: 0}}/>
+          <Button title="Preview Details" onPress={() => handlePreview()} />
         </KeyboardAvoidingView>
       </View>
 
@@ -1096,7 +1099,7 @@ dropdowncard:{
   },
   header: {
     height: 100,
-    paddingTop: 40,
+    paddingTop: (Platform.OS === 'ios' ? 48 : 40),
     paddingBottom: 12,
     paddingHorizontal: 16,
     justifyContent: 'center',
@@ -1106,7 +1109,9 @@ dropdowncard:{
     right: 0,
     zIndex: 10,
     overflow: 'hidden',
-    backgroundColor:'transparent'
+    backgroundColor:'transparent',
+   
+  
     
   },
 //   header: {
@@ -1124,6 +1129,9 @@ dropdowncard:{
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    width: '100%',
+    marginLeft:8.9,
+    marginTop: 2
   },
   backBtn: {
     width: 30,
@@ -1160,7 +1168,7 @@ dropdowncard:{
   },
   scrollContainer: {
     paddingHorizontal: 20,
-    paddingBottom: (Platform.OS === 'ios' ? 70:80),
+    paddingBottom: (Platform.OS === 'ios' ? 95:80),
     paddingTop: 100,
   },
   userRow: {

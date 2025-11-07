@@ -809,7 +809,7 @@ const diff1 =commissionPrice1-priceValue1
           return 'List';
         }
       })()}
-      style={{position: 'absolute',bottom: 10}}
+  
 />
 
         <Modal

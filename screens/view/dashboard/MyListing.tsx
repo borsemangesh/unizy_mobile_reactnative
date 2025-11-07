@@ -673,21 +673,21 @@ const MyListing = ({ navigation }: MyListingProps) => {
 
         {/* Header */}
         <View style={styles.header}>
-          {/* Progressive Blur Layer - fades in on scroll, blur starts from bottom */}
+         
           <Animated.View
             style={[
               StyleSheet.absoluteFill,
               {
                 opacity: scrollY.interpolate({
                   inputRange: [0, 80],
-                  outputRange: [0, 1], // Invisible at top, visible when scrolled
+                  outputRange: [0, 1], 
                   extrapolate: 'clamp',
                 }),
               },
             ]}
             pointerEvents="none"
           >
-            {/* BlurView - matches backdrop-filter: blur(5px) */}
+            
             <BlurView
               style={StyleSheet.absoluteFill}
               blurType={Platform.OS === 'ios' ? 'light' : 'light'}
@@ -695,12 +695,12 @@ const MyListing = ({ navigation }: MyListingProps) => {
               reducedTransparencyFallbackColor="transparent"
             />
 
-            {/* Gradient overlay to fade out blur smoothly from top to bottom */}
+            
             <LinearGradient
               colors={[
-                'rgba(0, 50, 150, 0.3)', // Top: More opaque (less blur visible)
-                'rgba(0, 50, 150, 0.6)', // Middle: Less opaque
-                'transparent', // Bottom: Transparent (full blur visible)
+                'rgba(0, 50, 150, 0.3)', 
+                'rgba(0, 50, 150, 0.6)',
+                'transparent', 
               ]}
               start={{ x: 0, y: 0 }}
               end={{ x: 0, y: 1 }}
@@ -708,7 +708,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
             />
           </Animated.View>
 
-          {/* Header Content - stays on top */}
           <Animated.View
             style={{
               flexDirection: 'row',
@@ -737,6 +736,21 @@ const MyListing = ({ navigation }: MyListingProps) => {
             <Text style={styles.unizyText}>My Listings</Text>
           </Animated.View>
         </View>
+
+        {/* <View style={styles.header}>
+          <View style={styles.headerRow}>
+            <TouchableOpacity onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})}}>
+              <View style={styles.backIconRow}>
+                <Image
+                  source={require('../../../assets/images/back.png')}
+                  style={{ height: 24, width: 24 }}
+                />
+              </View>
+            </TouchableOpacity>
+            <Text allowFontScaling={false} style={styles.unizyText}>My Listings</Text>
+            <View style={{ width: 48 }} />
+          </View>
+        </View> */}
         {/* List */}
         <View style={{ flex: 1 }}>
           <Animated.FlatList

@@ -48,11 +48,19 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
 
   return (
     <View style={{ height: '100%', display: 'flex', flex: 1, width: '100%' }}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <View style={styles.headerRow}>
           <Text allowFontScaling={false} style={styles.unizyText}>Messages</Text>
         </View>
-      </View>
+      </View> */}
+
+<View style={styles.header}>
+<View style={styles.headerRow}>
+  <Text allowFontScaling={false} style={styles.unizyText}>
+  Messages
+  </Text>
+</View>
+</View>
 
       <View style={styles.chatConainter}>
         <View style={[styles.search_container]}>
@@ -199,7 +207,7 @@ const styles = StyleSheet.create({
       alignItems: 'center',
    },
   chatConainter: {
-    top: 90,
+    top: 20,
     minHeight: '100%',
     width: '100%',
     paddingHorizontal: 16,
@@ -240,21 +248,37 @@ const styles = StyleSheet.create({
     paddingBottom: 80,
     paddingTop: 0,
   },
+  // header: {
+  //   height: 100,
+  //   // paddingTop: 40,
+  //   justifyContent: 'center',
+  //   position: 'absolute',
+  //   top: 10,
+  //   left: 0,
+  //   right: 0,
+  //   zIndex: 10,
+  //   // bottom: 0,
+  //   overflow: 'hidden',
+  // },
   header: {
-    height: 100,
-    // paddingTop: 40,
-    justifyContent: 'center',
-    position: 'absolute',
-    top: 10,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-    // bottom: 0,
-    overflow: 'hidden',
+    paddingTop: Platform.OS === 'ios' ? '14%' : 50,
+    // paddingBottom: 12,
+    paddingHorizontal: 16,
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+
+  unizyText: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    flex: 1,
+    textAlign: 'center',
+    fontWeight: '600',
+     fontFamily: 'Urbanist-SemiBold',
+     width: '100%',
+
   },
   backBtn: {
     width: 30,
@@ -281,14 +305,14 @@ const styles = StyleSheet.create({
     fontSize: 26,
     color: '#fff',
   },
-  unizyText: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    flex: 1,
-    fontWeight: '600',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-SemiBold',
-  },
+  // unizyText: {
+  //   color: '#FFFFFF',
+  //   fontSize: 20,
+  //   flex: 1,
+  //   fontWeight: '600',
+  //   textAlign: 'center',
+  //   fontFamily: 'Urbanist-SemiBold',
+  // },
 });
 
 export default MessagesScreen;

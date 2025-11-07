@@ -114,7 +114,6 @@ type TransactionScreenProps = {
 
 const SearchScreenContent = (navigation: TransactionScreenProps) => (
   <View style={styles.tabContent}>
-    {/* <Text allowFontScaling={false} style={styles.tabContentText}>🔎 Search Layout</Text> */}
     <TransactionHistoryScreen navigation ={navigation}/>
   </View>
 );
@@ -132,12 +131,16 @@ const AddScreenContent: React.FC<
         data={products}
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity       
+          <TouchableOpacity
             onPress={() => {
+              if(Platform.OS === 'ios') {
               navigation.replace('AddScreen', {
                 productId: item.id,
                 productName: item.name,
-              },{ animation: 'none' });
+              })
+            } else {
+              navigation.navigate('AddScreen', {productId: item.id, productName: item.name});
+            }
             }}
           >
             <View style={styles.card}>
@@ -970,7 +973,15 @@ return (
                 onChangeText={setSearch}
                 value={search}
                 allowFontScaling={false}
-                onFocus={() => navigation.navigate('SearchPage',{ animation: 'none' ,from: 'Dashboard'})}
+                onFocus={() => {
+                  if(Platform.OS === 'ios'){
+                    navigation.replace('SearchPage',{ animation: 'none' ,from: 'Dashboard'})
+                  } else {
+                    navigation.navigate('SearchPage',{ animation: 'none' ,from: 'Dashboard'})
+                  }
+                }
+                 
+              }
               />
             </Animated.View>
           </View>
@@ -1272,8 +1283,8 @@ const styles = StyleSheet.create({
 
   productsWrapper: {
     flexDirection: 'column',
-    //paddingHorizontal: 12,
-    marginHorizontal:12
+    paddingHorizontal: 12,
+    marginHorizontal:1
   },
 
   row: {

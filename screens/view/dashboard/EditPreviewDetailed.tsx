@@ -2243,7 +2243,7 @@ const dataArray = nonImageFields
           <View style={styles.headerRow}>
             <TouchableOpacity
               style={styles.backBtn}
-              onPress={() => navigation.replace('EditPreviewThumbnail')}
+              onPress={() => navigation.goBack()}//navigation.replace('EditPreviewThumbnail')}
             >
               <View style={styles.backIconRow}>
                 <Image
