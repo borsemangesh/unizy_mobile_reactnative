@@ -87,6 +87,7 @@ imgcontainer:{
     borderRadius: 12, 
     padding:8,
     alignItems:'center',
+   
     borderWidth: 0.4,
     borderColor: '#ffffff11',
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
@@ -114,9 +115,10 @@ bottomContent: {
     alignItems: 'flex-start',
   },
   image: {
-    width: 24,
-    height: 24,
-    resizeMode:'contain'
+    width: 20,
+    height: 20,
+    resizeMode:'contain',
+    marginTop:2  
     
   },
   
@@ -127,13 +129,14 @@ bottomContent: {
     fontFamily: 'Urbanist-SemiBold',
     marginBottom: 4,
     alignSelf:'center',
-    marginLeft:6
+    marginLeft:8,
+    
   },
  
   
   reviewText: {
     fontSize: 14,
-    color: '#FFFFFFE0',
+    color: '#FFFFFFCC',
     marginTop: 8,
     fontFamily: 'Urbanist-Medium',
     fontWeight:500,

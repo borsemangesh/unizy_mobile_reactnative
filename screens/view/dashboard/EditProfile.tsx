@@ -112,6 +112,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             postal_code: user.postal_code ?? null,
           });
           setPhoto(user.profile);
+          setInitialEmail(user.student_email ?? '');
+          setInitialPersonalEmail(user.email ?? '');
         } else {
           console.warn(
             'Failed to fetch user profile:',
@@ -223,6 +225,12 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       // Alert.alert('Validation Error', errors.join('\n'));
       showToast(errors[0], 'error');
       return;
+    } else if (!isUpdateDisabled_personal) {
+      showToast('Please verify your personal email Id', 'error');
+      return;
+    } else if (!isUpdateDisabled) {
+      showToast('Please verify your student email Id', 'error');
+      return;
     }
 
     try {
@@ -264,10 +272,12 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       const data = await response.json();
       console.log('data', data);
 
-      if (response.ok) {        
+      if (response.ok) {
         showToast(data.message, 'success');
-       navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Profile',isNavigate: false})
-       
+        navigation.replace('Dashboard', {
+          AddScreenBackactiveTab: 'Profile',
+          isNavigate: false,
+        });
       } else {
         // Alert.alert(
         //   'Error',
@@ -338,7 +348,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     );
   };
 
-
   const handleUploadImage = async (image: Asset) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -381,7 +390,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   };
 
   //------------------------- to handel personal email ------------------------//
-
 
   // const [emailModalVisible, setEmailModalVisible] = useState(false);
   // const [verificationCode, setVerificationCode] = useState(['', '', '', '']); // One input per digit
@@ -512,6 +520,12 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   const [isUpdateDisabled, setIsUpdateDisabled] = useState(true);
   const [updateText, setUpdateText] = useState('Update');
 
+  //  email: userMeta.email,
+  // student_email: userMeta.student_email,
+
+  const [initialEmail, setInitialEmail] = useState(''); // store original email
+  const [initialPersonalEmail, setInitialPersonalEmail] = useState(''); // store original email
+
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
@@ -569,8 +583,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           {/* Blur Glass Form */}
           <View style={styles.blurCard}>
             <View style={styles.inputGroup}>
-              <Text style={styles.label} allowFontScaling={false}>First Name*</Text>
-              <TextInput 
+              <Text style={styles.label} allowFontScaling={false}>
+                First Name*
+              </Text>
+              <TextInput
                 value={userMeta.firstname || ''}
                 onChangeText={text =>
                   setUserMeta(prev => ({ ...prev, firstname: text }))
@@ -583,8 +599,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label} allowFontScaling={false}>Last Name*</Text>
-              <TextInput 
+              <Text style={styles.label} allowFontScaling={false}>
+                Last Name*
+              </Text>
+              <TextInput
                 value={userMeta.lastname || ''}
                 onChangeText={text =>
                   setUserMeta(prev => ({ ...prev, lastname: text }))
@@ -597,7 +615,9 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label} allowFontScaling={false}>Personal Email ID*</Text>
+              <Text style={styles.label} allowFontScaling={false}>
+                Personal Email ID*
+              </Text>
               <View
                 style={{
                   flexDirection: 'row',
@@ -608,7 +628,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   minHeight: 44, // or any desired height
                 }}
               >
-                <TextInput 
+                <TextInput
                   style={{
                     flex: 1,
                     color: '#fff',
@@ -623,28 +643,38 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   }}
                   allowFontScaling={false}
                   value={userMeta.email || ''}
-                  onChangeText={text => (
-                    setUserMeta(prev => ({ ...prev, email: text })),
-                    setIsUpdateDisabled_personal(false)
-                  )}
+                  onChangeText={text => {
+                    setUserMeta(prev => ({ ...prev, email: text }));
+                    if (text === initialPersonalEmail) {
+                      console.log('condition_true (unchanged)');
+                      setIsUpdateDisabled_personal(true);
+                    } else {
+                      console.log('condition_false (changed)');
+                      setIsUpdateDisabled_personal(false);
+                    }
+
+                    console.log('text ---', text);
+                    console.log('initialEmail ----', initialEmail);
+                  }}
                   keyboardType="email-address"
                   placeholder="Enter Email"
                   placeholderTextColor="#ccc"
                 />
                 <TouchableOpacity
                   style={{
-                    width: 70, // Fixed width – adjust as needed
-                    height: 30,
+                    width: 32, // Fixed width – adjust as needed
+                    height: 32,
                     // marginLeft: 12,
                     // backgroundColor:
                     //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
 
                     backgroundColor: isUpdateDisabled_personal
-                      ? '#888' // Fallback color for disabled
+                      ? '#99999980' // Fallback color for disabled
                       : 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
-                    // boxShadow:
-                    //   'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
-                    borderColor: '#ffffff11',
+                    boxShadow: isUpdateDisabled_personal
+                      ? ''
+                      : 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+                    borderColor: isUpdateDisabled_personal ? '' : '#ffffff11',
                     borderRadius: 10,
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -658,13 +688,29 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     setEmailName('personalEmail')
                   )}
                 >
-                  <Text style={styles.edittext} allowFontScaling={false}>Update</Text>
+                  {/* <Text style={styles.edittext} allowFontScaling={false}>Update</Text>
+                   
+
+
+                  <TouchableOpacity
+                style={styles.profilecameraButton}
+                onPress={handleSelectImage}
+              >
+                {/* assets\images\camera_icon.png */}
+                  <Image
+                    source={require('../../../assets/images/editcontained.png')}
+                    style={styles.updateIcon}
+                    resizeMode="contain"
+                  />
+                  {/* </TouchableOpacity> */}
                 </TouchableOpacity>
               </View>
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label} allowFontScaling={false} >Student Email ID*</Text>
+              <Text style={styles.label} allowFontScaling={false}>
+                Student Email ID*
+              </Text>
               <View
                 style={{
                   flexDirection: 'row',
@@ -688,33 +734,45 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     fontFamily: 'Urbanist-Regular',
                     fontSize: 16,
                     fontWeight: 400,
-                    
                   }}
                   allowFontScaling={false}
                   //  value={userMeta.email || ''}
                   value={userMeta.student_email || ''}
-                  onChangeText={text => (
-                    setUserMeta(prev => ({ ...prev, student_email: text })),
-                    setIsUpdateDisabled(false)
-                  )}
+                  onChangeText={text => {
+                    setUserMeta(prev => ({ ...prev, student_email: text }));
+
+                    // Compare against the ORIGINAL email, not previous state
+                    if (text === initialEmail) {
+                      console.log('condition_true (unchanged)');
+                      setIsUpdateDisabled(true);
+                    } else {
+                      console.log('condition_false (changed)');
+                      setIsUpdateDisabled(false);
+                    }
+
+                    console.log('text ---', text);
+                    console.log('initialEmail ----', initialEmail);
+                  }}
                   keyboardType="email-address"
                   placeholder="Enter Student Email"
                   placeholderTextColor="#ccc"
                 />
                 <TouchableOpacity
                   style={{
-                    width: 70, // Fixed width – adjust as needed
-                    height: 30,
+                    width: 32, // Fixed width – adjust as needed
+                    height: 32,
                     // marginLeft: 12,
 
                     // backgroundColor:
                     //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
 
                     backgroundColor: isUpdateDisabled
-                      ? '#888' // Fallback color for disabled
+                      ? '#99999980' // Fallback color for disabled
                       : 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
-
-                    borderColor: '#ffffff11',
+                    boxShadow: isUpdateDisabled
+                      ? ''
+                      : 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+                    borderColor: isUpdateDisabled ? '' : '#ffffff11',
                     borderRadius: 10,
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -728,15 +786,21 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     setEmailName('studentEmail')
                   )}
                 >
-                  <Text style={styles.edittext} allowFontScaling={false} >Update</Text>
+                  <Image
+                    source={require('../../../assets/images/editcontained.png')}
+                    style={styles.updateIcon}
+                    resizeMode="contain"
+                  />
                 </TouchableOpacity>
               </View>
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label} allowFontScaling={false}>City*</Text>
+              <Text style={styles.label} allowFontScaling={false}>
+                City*
+              </Text>
               <TextInput
-              allowFontScaling={false}
+                allowFontScaling={false}
                 value={userMeta.city || ''}
                 onChangeText={text =>
                   setUserMeta(prev => ({ ...prev, city: text }))
@@ -748,9 +812,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label} allowFontScaling={false}>Postal Code*</Text>
+              <Text style={styles.label} allowFontScaling={false}>
+                Postal Code*
+              </Text>
               <TextInput
-              
                 value={userMeta.postal_code || ''}
                 onChangeText={text =>
                   setUserMeta(prev => ({ ...prev, postal_code: text }))
@@ -824,7 +889,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
                 <Text allowFontScaling={false} style={styles.subheader}>
                   We have sent a 4-digit code to{' '}
-                  <Text allowFontScaling={false}
+                  <Text
+                    allowFontScaling={false}
                     style={{
                       fontFamily: 'Urbanist-SemiBold',
                       fontWeight: '400',
@@ -881,9 +947,13 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                          </Text>                       
                        </TouchableOpacity>  */}
 
-                <Text allowFontScaling={false} style={[styles.subheader, { marginBottom: 6 }]}>
+                <Text
+                  allowFontScaling={false}
+                  style={[styles.subheader, { marginBottom: 6 }]}
+                >
                   Didn’t receive a code?{' '}
-                  <Text allowFontScaling={false}
+                  <Text
+                    allowFontScaling={false}
                     style={{ color: '#FFFFFF7A' }}
                     onPress={() => sendOtp(emailName)}
                   >
@@ -1143,11 +1213,12 @@ const styles = StyleSheet.create({
 
     // overflow: 'hidden',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 16,
     backgroundColor: 'rgba(255,255,255,0.08)',
+    gap: 12,
   },
   inputGroup: {
-    marginBottom: 14,
+    // marginBottom: 14,
     height: 64,
     // paddingHorizontal:8,
     // paddingVertical:12
@@ -1262,6 +1333,13 @@ const styles = StyleSheet.create({
     height: 40,
     marginLeft: -1,
     marginTop: 3,
+  },
+
+  updateIcon: {
+    width: 16,
+    height: 16,
+    // marginLeft: -1,
+    // marginTop: 3,
   },
 
   inputEmail: {
@@ -1520,13 +1598,13 @@ const styles = StyleSheet.create({
   },
 
   edittext: {
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14,
+    // fontFamily: 'Urbanist-SemiBold',
+    // fontSize: 14,
     color: '#fff',
-    fontWeight: 600,
+    // fontWeight: 600,
     textAlign: 'center',
   },
-    tabContent: {
+  tabContent: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
