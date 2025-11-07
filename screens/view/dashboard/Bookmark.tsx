@@ -946,7 +946,7 @@ const handleBookmarkPress = async (productId: number) => {
           scrollEnabled={filteredFeatures?.length > 0} 
           contentContainerStyle={[
             styles.listContainer,{ paddingBottom: SCREEN_HEIGHT * 0.05 },
-            filteredFeatures?.length === 0 && { alignContent:'center',alignSelf:'center' ,width:'90%',height:'90%'}
+            filteredFeatures?.length === 0 && { alignContent:'center',alignSelf:'center' ,width:'90%',height:'100%'}
           ]}
           renderItem={renderItem}
            ListFooterComponent={
@@ -998,8 +998,8 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.08)',
     borderRadius:24,
     overflow:'hidden',
-    //minHeight:'80%',
-   marginBottom:20,
+  
+  //  marginBottom:20,
   },
   emptyImage: {
     width: 50,

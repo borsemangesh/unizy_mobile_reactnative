@@ -224,7 +224,7 @@ const clickBack = () =>{
 return (
    
       <View style={styles.fullScreenContainer}>
-        {/* <View style={styles.header}>
+        <View style={styles.header}>
       <View style={styles.headerRow}>
         <TouchableOpacity
           style={styles.backBtn}
@@ -245,19 +245,10 @@ return (
         <Text allowFontScaling={false} style={styles.unizyText}>Profile</Text>
         <View style={{ width: 48 }} />
       </View>
-    </View> */}
-
-<View style={styles.header}>
-<View style={styles.headerRow}>
-  <Text allowFontScaling={false} style={styles.unizyText}>
-  Profile
-  </Text>
-</View>
-</View>
+    </View>
 
 
-
-    <View style={{ paddingTop: 20,marginHorizontal:6 }}> 
+    <View style={{ paddingTop: (Platform.OS === 'ios'? 100:120),marginHorizontal:6 }}> 
         
   <View style={styles.userRow}>
     <View style={{ width: 88 ,alignSelf:'center',height:88}}>
@@ -556,17 +547,19 @@ const styles = StyleSheet.create({
   },
 
   initialsCircle:{
- backgroundColor: '#8390D4',
-  alignItems: 'center',
-  justifyContent: 'center',
-   width: 80,
-    height: 80,
-    borderRadius: 40,
+    backgroundColor: '#8390D4',
+    alignItems: 'center',
+    justifyContent: 'center',
+    
+
+    width: 88,
+    height: 88,
+    borderRadius: 20,
     marginRight: 12,
   },
   initialsText:{
    color: '#fff',
-  fontSize: 18,
+  fontSize: 36,
   fontWeight:600,
   textAlign: 'center',
   fontFamily: 'Urbanist-SemiBold',
@@ -636,27 +629,18 @@ versionLabel: {
   fullScreenContainer: {
     flex: 1,
   },
-  // header: {
-  //   height: 100,
-  //   paddingTop: 40,
-  //   paddingBottom: 12,
-  //   paddingHorizontal: 16,
-  //   justifyContent: 'center',
-  //   position: 'absolute',
-  //   top: 0,
-  //   left: 0,
-  //   right: 0,
-  //   zIndex: 10,
-  //   overflow: 'hidden',
-  // },
-  // headerRow: {
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  // },
   header: {
-    paddingTop: Platform.OS === 'ios' ? '14%' : 50,
-    // paddingBottom: 12,
+    height: 100,
+    paddingTop: 40,
+    paddingBottom: 12,
     paddingHorizontal: 16,
+    justifyContent: 'center',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+    overflow: 'hidden',
   },
   headerRow: {
     flexDirection: 'row',

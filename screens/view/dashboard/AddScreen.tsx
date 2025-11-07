@@ -518,10 +518,14 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
         const rawValue = formValues[param.id]?.value || '';
 
         const isPriceField = alias_name?.toLowerCase() === 'price';
+        // const placeholderText =
+        //   alias_name?.toLowerCase() === 'price'
+        //     ? `£ ${alias_name}`
+        //     : alias_name || field_name;
         const placeholderText =
-          alias_name?.toLowerCase() === 'price'
-            ? `£ ${alias_name}`
-            : alias_name || field_name;
+        alias_name?.toLowerCase() === 'price'
+          ? `£ Enter ${field_name}`
+          : `Enter ${field_name}`;
 
         let rnKeyboardType:
           | 'default'
@@ -588,8 +592,12 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
       case 'multi-line-text': {
         const { param } = field;
         const { field_name, keyboardtype, alias_name } = param;
-        const placeholderText = alias_name || field_name;
+        // const placeholderText = alias_name || field_name;
 
+        const placeholderText =
+        alias_name?.toLowerCase() === 'price'
+          ? `£ Enter ${field_name}`
+          : `Enter ${field_name}`;
         let rnKeyboardType:
           | 'default'
           | 'numeric'

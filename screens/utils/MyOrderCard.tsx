@@ -1,157 +1,3 @@
-// import React from 'react';
-// import {
-//   View,
-//   Text,
-//   Image,
-//   StyleSheet,
-//   ImageSourcePropType,
-//   TouchableOpacity,
-// } from 'react-native';
-
-// type MyOrderCardProps = {
-//   tag?: string;
-//   infoTitle: string;
-//   inforTitlePrice: string;
-//   reviewText?: string;
-//   productImage: ImageSourcePropType;
-//   navigation?: any;
-//   shareid: number;
-//   date:string,
-//   ispurchase:boolean
-// };
-
-// const MyOrderCard: React.FC<MyOrderCardProps> = ({
-//   infoTitle,
-//   inforTitlePrice,
-//   reviewText = '',
-//   productImage,
-//   navigation,
-//   shareid,
-//   date,
-//   ispurchase
-// }) => {
-  
-
-//   return (
-//     <TouchableOpacity
-//       style={styles.card}
-//      // onPress={() => navigation.navigate('ListingDetails', { shareid })}
-//       activeOpacity={0.8}
-//     >
-//      <View style={styles.row}>
-//       <Image source={productImage} style={styles.image} resizeMode="cover" />
-//       <View style={styles.details}>
-//         <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
-//         <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
-//         <Text allowFontScaling={false} style={styles.date}>{date}
-//         </Text>
-//       </View>
-//     </View>
-
-//   <View style={styles.dashedLine} />
-
-//   <View style={styles.bottomContent}>
-
-
-  
-//   </View>
- 
-//     </TouchableOpacity>
-//   );
-// };
-
-// export default MyOrderCard;
-
-// const styles = StyleSheet.create({
-
-//   dashedLine: {
-//   borderBottomWidth: 1,
-//   borderColor: '#e6e3e3ff',
-//   borderStyle: 'dashed',
-//   marginTop:12,
-//   marginBottom:12,
-  
-//   },
-
-//   topRow: {
-//   flexDirection: 'row',
-//   justifyContent: 'space-between',
-//   alignItems: 'center',
-// },
-
-// reviewerName: {
-//   fontSize: 14,
-//   color: '#FFFFFFE0',
-//   fontWeight: '600',
-//   fontFamily: 'Urbanist-SemiBold',
-//   flex: 1,
-//   marginRight: 8,
-// },
-// bottomContent: {
-//  // marginTop:2,
-// },
-//   card: {
-//     backgroundColor: 'rgba(255,255,255,0.08)',
-//     borderRadius: 16,
-//     padding: 12,
-//     marginVertical: 8,
-//     borderWidth: 1,
-//     marginHorizontal:8,
-//     borderColor: 'rgba(255,255,255,0.1)',
-//   },
-//   row: {
-//     flexDirection: 'row',
-//     alignItems: 'flex-start',
-//   },
-//   image: {
-//     width: 70,
-//     height: 70,
-//     borderRadius: 14,
-//   },
-//   details: {
-//     flex: 1,
-//     marginLeft: 12,
-//   },
-//   title: {
-//     fontSize: 14,
-//     color: '#FFFFFFE0',
-//     fontWeight: '600',
-//     fontFamily: 'Urbanist-SemiBold',
-//     marginBottom: 4,
-//   },
-//   price: {
-//     fontSize: 14,
-//     color: '#FFFFFFE0',
-//     fontWeight: '600',
-//     fontFamily: 'Urbanist-SemiBold',
-//   },
-//   date: {
-//     fontSize: 12,
-//     color: '#FFFFFFE0',
-//     marginTop: 6,
-//     fontFamily: 'Urbanist-Medium',
-//     fontWeight:500,
-//   },
-//   starsRow: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-   
-//   },
-//   star: {
-//     width: 16, // adjust to match your design
-//     height: 16,
-//     marginRight: 4,
-//   },
-//   reviewText: {
-//     fontSize: 14,
-//     color: '#FFFFFFE0',
-//     marginTop: 8,
-//     fontFamily: 'Urbanist-Regular',
-//     fontWeight:400,
-//     lineHeight: 18,
-//   },
-// });
-
 import React from 'react';
 import {
   View,
@@ -168,6 +14,7 @@ type MyOrderCardProps = {
   productImage: ImageSourcePropType;
   navigation?: any;
   shareid: number;
+  category_id: number;
   date: string;
   ispurchase: boolean; // true => fulfilled, false => awaiting delivery
 };
@@ -180,15 +27,17 @@ const MyOrderCard: React.FC<MyOrderCardProps> = ({
   shareid,
   date,
   ispurchase,
+  category_id,
 }) => {
 
 
 const handleViewTransaction = () => {
    //navigation.navigate('TransactionDetail', { shareid });
+   navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false})
   };
 
   const handleWriteReview = () => {
-      //navigation.navigate('AddReview', { shareid });
+      navigation.navigate('AddReview', {category_id:category_id,feature_id:shareid});
   };
 
   return (
@@ -224,6 +73,8 @@ const handleViewTransaction = () => {
 
       {/* Dotted Line */}
       <View style={styles.dashedLine} />
+
+       <View style={styles.dashedLine1} />
 
       {/* Buttons Section */}
        {ispurchase ? (
@@ -269,23 +120,26 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.08)',
     borderRadius: 16,
     padding: 12,
-    marginVertical: 8,
+    //marginVertical: 4,
     marginHorizontal: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    //borderWidth: 1,
+    //borderColor: 'rgba(255,255,255,0.1)',
   },
   row: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+   // alignItems: 'flex-start',
+   alignItems: 'stretch',
+   paddingBottom:6
   },
   image: {
-    width: 75,
-    height: 80,
+    width: 72,
+    height: 72,
     borderRadius: 14,
   },
   details: {
     flex: 1,
     marginLeft: 12,
+    justifyContent: 'space-between', 
   },
   title: {
     fontSize: 14,
@@ -310,20 +164,34 @@ const styles = StyleSheet.create({
   },
   statusText: {
     fontSize: 11,
-    color:'#9CD6FF',
+    color:'#ABC7FF',
     fontFamily: 'Urbanist-Medium',
   },
   dashedLine: {
     borderBottomWidth: 1,
-    borderColor: '#e6e3e3ff',
+    borderColor: '#6592D4',
     borderStyle: 'dashed',
-    marginVertical: 8,
+    //paddingVertical: 10,
+    //marginVertical:6,
+    width: '100%',
+    opacity: 0, 
+    
+  },
+
+  dashedLine1: {
+    borderBottomWidth: 1,
+    borderColor: '#5b70abff',
+    borderStyle: 'dashed',
+    //paddingVertical: 10,
+    marginVertical:6,
+    width: '100%',
+    
   },
   // Buttons section
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 12,
+    gap: 8,
   },
  
 
@@ -373,16 +241,17 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
   },
   btnText: {
-    color:'#9CD6FF',
+    color:'#ABC7FF',
     fontWeight:500,
     fontSize: 13,
     fontFamily: 'Urbanist-Medium',
+    letterSpacing:0.5
   },
   btnTextSecondary: {
     color: '#002050',
     fontWeight:500,
     fontSize: 13,
     fontFamily: 'Urbanist-Medium',
+    letterSpacing:0.5
   },
 });
-

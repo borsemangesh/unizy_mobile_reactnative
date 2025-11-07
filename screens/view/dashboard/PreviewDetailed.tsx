@@ -79,6 +79,7 @@ interface Category {
     student_email: string | null;
     university_name:string|null
     category?: Category | null;
+    
   }
 
   const flatListRef = useRef(null);
@@ -466,6 +467,9 @@ const calculatedPrice1 = priceValue1 + commissionAmount1;
 const maxAllowedPrice1 = priceValue1 + maxCap1;
 const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2);
 const diff1 =commissionPrice1-priceValue1
+
+
+
   
 
   return (
@@ -501,64 +505,120 @@ const diff1 =commissionPrice1-priceValue1
           scrollEventThrottle={16}
         > */}
         <ScrollView
-        showsVerticalScrollIndicator={false}
             contentContainerStyle={[
              styles.scrollContainer,
                {
-              //  paddingBottom: screenHeight * 0.10 + insets.bottom, // 10% of screen + safe area
+               paddingBottom: screenHeight * 0.1 + insets.bottom, // 10% of screen + safe area
                 },
             ]}
              scrollEventThrottle={16}
             >
-       {storedForm?.[6]?.value?.length > 1 ? (
-          <View>
-            <FlatList
-              ref={flatListRef}
-              data={storedForm[6].value}
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              keyExtractor={(item, index) => index.toString()}
-              onScroll={onScroll}
-              scrollEventThrottle={16}
-              renderItem={({ item }) => (
-                <Image
-                  source={{ uri: item.uri }}
-                  style={{ width: screenWidth, height: 250 }}
-                  resizeMode="cover"
-                />
-              )}
-            />
 
-            {/* Custom Step Indicator */}
-            <View style={styles.stepIndicatorContainer}>
-              {storedForm[6].value.map((_: any, index: number) => {
-                const isActive = index === activeIndex;
-                return (
-                  <View
-                    key={index}
-                    style={
-                      isActive
-                        ? styles.activeStepCircle
-                        : styles.inactiveStepCircle
-                    }
-                  />
-                );
-              })}
-            </View>
-          </View>
-        ) : (
-          <Image
-            source={
-              storedForm?.[6]?.value?.[0]?.uri
-                ? { uri: storedForm[6].value[0].uri }
-                : require('../../../assets/images/drone.png')
-            }
-            style={{ width: '100%', height: 250 }}
-            resizeMode="cover"
-          />
-        )}
-                  <View style={{ flex: 1, padding: 16 }}>
+
+            {(userMeta?.category?.id === 2 || userMeta?.category?.id === 5)? (
+              // ✅ Profile-based image for id 2 or 5
+              <ImageBackground
+                source={require('../../../assets/images/featurebg.png')}
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: 250,
+                  width: '100%',
+                }}
+              >
+                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                  {userMeta?.profile? (
+                    <Image
+                      source={{ uri: userMeta?.profile }}
+                      style={{
+                        width: 160,
+                        height: 160,
+                        borderRadius: 80,
+                      }}
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    <View
+                      style={{
+                        width: 160,
+                        height: 160,
+                        borderRadius: 80,
+                        backgroundColor: '#8390D4',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <Text
+                        allowFontScaling={false}
+                        style={{
+                          fontSize: 70,
+                          color: '#FFF',
+                          fontWeight: '600',
+                          textAlign: 'center',
+                          fontFamily: 'Urbanist-SemiBold',
+                        }}
+                      >
+                        {`${userMeta?.firstname?.[0] ?? ''}${
+                          userMeta?.lastname?.[0] ?? ''
+                        }`.toUpperCase() || 'NA'}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+              </ImageBackground>
+            ) : storedForm?.[6]?.value?.length > 1 ? (
+              // ✅ Multiple images (carousel + step indicator)
+              <View>
+                <FlatList
+                  ref={flatListRef}
+                  data={storedForm[6].value}
+                  horizontal
+                  pagingEnabled
+                  showsHorizontalScrollIndicator={false}
+                  keyExtractor={(item, index) => index.toString()}
+                  onScroll={onScroll}
+                  scrollEventThrottle={16}
+                  renderItem={({ item }) => (
+                    <Image
+                      source={{ uri: item.uri }}
+                      style={{ width: screenWidth, height: 250 }}
+                      resizeMode="cover"
+                    />
+                  )}
+                />
+
+                {/* Custom Step Indicator */}
+                <View style={styles.stepIndicatorContainer}>
+                  {storedForm[6].value.map((_: any, index: number) => {
+                    const isActive = index === activeIndex;
+                    return (
+                      <View
+                        key={index}
+                        style={
+                          isActive
+                            ? styles.activeStepCircle
+                            : styles.inactiveStepCircle
+                        }
+                      />
+                    );
+                  })}
+                </View>
+              </View>
+            ) : (
+              // ✅ Single fallback image
+              <Image
+                source={
+                  storedForm?.[6]?.value?.[0]?.uri
+                    ? { uri: storedForm[6].value[0].uri }
+                    : require('../../../assets/images/drone.png')
+                }
+                style={{ width: '100%', height: 250 }}
+                resizeMode="cover"
+              />
+            )}
+
+     
+            <View style={{ flex: 1, padding: 16 }}>
             <View style={styles.card}>
               <View style={{ gap: 8 }}>
                 <Text allowFontScaling={false} style={styles.QuaddText}>
@@ -595,8 +655,11 @@ const diff1 =commissionPrice1-priceValue1
 
           <View style={styles.card}>
           <View style={styles.gap12}>
-            <Text allowFontScaling={false} style={styles.productDeatilsHeading}>Product Details</Text>
-
+        <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
+          {userMeta?.category?.name === 'Food'
+            ? 'Dish Details'
+            : `${userMeta?.category?.name ?? ''} Details`}
+        </Text>
             <View style={{ gap: 12 }}>
               {fields.map(field => {
                 const fieldId = field.param.id;
@@ -794,22 +857,21 @@ const diff1 =commissionPrice1-priceValue1
            */}
 
            <Button
-      onPress={handleListPress}
-      title={(() => {
-        try {
-          const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
-          const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
+              onPress={handleListPress}
+              title={(() => {
+                try {
+                  const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+                  const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
 
-          if (isFeatured) {
-            return `List for £${diff1}`;
-          }
-          return 'List';
-        } catch (e) {
-          console.log('Error parsing storedForm:', e);
-          return 'List';
-        }
-      })()}
-  
+                  if (isFeatured) {
+                    return `List for £${diff1.toFixed(2)}`;
+                  }
+                  return 'List';
+                } catch (e) {
+                  console.log('Error parsing storedForm:', e);
+                  return 'List';
+                }
+              })()}
 />
 
         <Modal
@@ -1049,10 +1111,11 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent:'center'
   },
   fullScreenContainer: {
     flex: 1,
-    marginTop: 30,
+    //marginTop: 30,
   },
 
   loginText: {

@@ -147,8 +147,8 @@ const toggleCheckbox = (id: number) => {
           <View
             style={{
               width: '100%',
-              minHeight: screenHeight * 0.2, 
-              maxHeight: screenHeight * 0.6,
+              // minHeight: screenHeight * 0.2, 
+              // maxHeight: screenHeight * 0.6,
               paddingHorizontal: 10,
 
               backgroundColor: (Platform.OS === 'ios' ? 'rgba(2, 6, 131, 0.26)' : 'none')
@@ -166,7 +166,8 @@ const toggleCheckbox = (id: number) => {
                     style={{
                       // marginBottom: 10,
                       paddingHorizontal: 10,
-                      marginTop: 10,
+                      paddingVertical: 4,width: '100%',
+
                     }}
                     key={index}
                   >
@@ -215,6 +216,10 @@ const toggleCheckbox = (id: number) => {
                             lineHeight: 18,
                             letterSpacing: -0.28,
                             fontFamily: 'Urbanist-SemiBold',
+                            width: '100%',
+                            backgroundColor: 'red',
+                            
+                            
 
                           }}
                         >
@@ -308,6 +313,7 @@ const styles = StyleSheet.create({
   height: 19,
   justifyContent: 'center',
   alignItems: 'center',
+
 },
   checkboxContainer: {
     //width: 19,

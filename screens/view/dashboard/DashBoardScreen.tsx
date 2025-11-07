@@ -17,6 +17,7 @@ import {
   KeyboardAvoidingView,
   NativeSyntheticEvent,
   NativeScrollEvent,
+  ActivityIndicator,
 } from 'react-native';
 
 const bgImage = require('../../../assets/images/backimg.png');
@@ -82,6 +83,8 @@ const iconMap: Record<string, any> = {
   Tuition: require('../../../assets/images/book.png'),
   'House Keeping': require('../../../assets/images/housekeeping.png'),
 };
+
+
 
 const ProductItem: React.FC<ProductItemProps> = ({
   navigation,
@@ -214,6 +217,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   const { width } = Dimensions.get('window');
 
 const scrollViewRef = useRef<ScrollView>(null);
+const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setIsNav(route.params?.isNavigate);
@@ -325,6 +329,7 @@ const scrollViewRef = useRef<ScrollView>(null);
 
         if (json.statusCode === 200) {
           setFeatures(json.data.features || []);
+          setIsLoading(false);
         }
         if(json.statusCode === 401 || json.statusCode === 403){
           navigation.reset({
@@ -334,6 +339,9 @@ const scrollViewRef = useRef<ScrollView>(null);
         }
       } catch (err) {
         console.log('❌ Error fetching features:', err);
+        setIsLoading(false);
+      }finally {
+        setIsLoading(false);
       }
     };
 
@@ -822,67 +830,212 @@ return (
 
   const renderActiveTabContent = () => {
     switch (activeTab) {
+      // case 'Home':
+      //   return (
+      //     <>
+      //       <View style={styles.productsWrapper}>{renderProducts()}</View>
+      //       <Animated.View
+      //         style={{
+      //           transform: [{ translateY: cardSlideupAnimation }],
+      //         }}
+      //       >
+      //         {' '}
+      //         <Text allowFontScaling={false} style={styles.featuredText}>Featured Listings</Text>
+      //       </Animated.View>
+      //       <ScrollView
+      //        directionalLockEnabled={true} 
+      //         style={{ paddingHorizontal: 0,marginLeft:8 }}
+      //         horizontal
+      //         showsVerticalScrollIndicator={false}
+      //         showsHorizontalScrollIndicator={false}
+      //       >
+      //         {features.map(item => (
+      //           <Animated.View
+      //             key={item.id}
+      //             style={{
+      //               transform: [{ translateY: cardSlideupAnimation }],
+      //             }}
+      //           >
+      //             {item.profileshowinview ? (
+      //               <TutitionCard
+      //                 tag={item.university?.name || 'University of Warwick'}
+      //                 title={item.title}
+      //                 infoTitle={`${item.createdby?.firstname || ''} ${
+      //                   item.createdby?.lastname || ''
+      //                 }`}
+      //                 inforTitlePrice={`£ ${item.price}`}
+      //                 rating="4.5"
+      //                 productImage={{ uri: item.createdby?.profile }}
+      //                 onBookmarkPress={() => handleBookmarkPress(item.id)}
+      //                 isBookmarked={item.isbookmarked}
+      //                 onpress={() =>{
+      //                   navigation.navigate('SearchDetails', { id: item.id },{ animation: 'none' })
+      //                 }}
+      //               />
+      //             ) : (
+      //               <ProductCard
+      //                 tag={item.university?.name || 'University of Warwick'}
+      //                 infoTitle={item.title}
+      //                 inforTitlePrice={`£ ${item.price}`}
+      //                 rating="4.5"
+      //                 productImage={{ uri: item.thumbnail }}
+      //                 onBookmarkPress={() => handleBookmarkPress(item.id)}
+      //                isBookmarked={item.isbookmarked}
+      //                 onpress={() =>{
+      //                   navigation.replace('SearchDetails', { id: item.id },{ animation: 'none' })
+      //                 }}
+      //               />
+      //             )}
+      //           </Animated.View>
+      //         ))}
+      //       </ScrollView>
+      //     </>
+      //   );
       case 'Home':
-        return (
-          <>
-            <View style={styles.productsWrapper}>{renderProducts()}</View>
+  return (
+    <>
+      <View style={styles.productsWrapper}>{renderProducts()}</View>
+
+      <Animated.View
+        style={{
+          transform: [{ translateY: cardSlideupAnimation }],
+        }}
+      >
+        <Text allowFontScaling={false} style={styles.featuredText}>
+          Featured Listings
+        </Text>
+      </Animated.View>
+
+      {/* {features.length === 0 ? (
+        // 👇 No Listings Found section
+        <View style={styles.emptyWrapper}>
+          <View style={styles.emptyContainer}>
+            <Image
+              source={require('../../../assets/images/noproduct.png')}
+              style={styles.emptyImage}
+              resizeMode="contain"
+            />
+            <Text allowFontScaling={false} style={styles.emptyText}>
+              No Listings Found
+            </Text>
+          </View>
+        </View>
+      ) : (
+        // 👇 Show scrollable cards if data exists
+        <ScrollView
+          directionalLockEnabled={true}
+          style={{ paddingHorizontal: 0, marginLeft: 8 }}
+          horizontal
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+        >
+          {features.map((item) => (
             <Animated.View
+              key={item.id}
               style={{
                 transform: [{ translateY: cardSlideupAnimation }],
               }}
             >
-              {' '}
-              <Text allowFontScaling={false} style={styles.featuredText}>Featured Listings</Text>
-            </Animated.View>
-            <ScrollView
-             directionalLockEnabled={true} 
-              style={{ paddingHorizontal: 0,marginLeft:8 }}
-              horizontal
-              showsVerticalScrollIndicator={false}
-              showsHorizontalScrollIndicator={false}
-            >
-              {features.map(item => (
-                <Animated.View
-                  key={item.id}
-                  style={{
-                    transform: [{ translateY: cardSlideupAnimation }],
+              {item.profileshowinview ? (
+                <TutitionCard
+                  tag={item.university?.name || 'University of Warwick'}
+                  title={item.title}
+                  infoTitle={`${item.createdby?.firstname || ''} ${
+                    item.createdby?.lastname || ''
+                  }`}
+                  inforTitlePrice={`£ ${item.price}`}
+                  rating="4.5"
+                  productImage={{ uri: item.createdby?.profile }}
+                  onBookmarkPress={() => handleBookmarkPress(item.id)}
+                  isBookmarked={item.isbookmarked}
+                  onpress={() => {
+                    navigation.navigate('SearchDetails', { id: item.id }, { animation: 'none' });
                   }}
-                >
-                  {item.profileshowinview ? (
-                    <TutitionCard
-                      tag={item.university?.name || 'University of Warwick'}
-                      title={item.title}
-                      infoTitle={`${item.createdby?.firstname || ''} ${
-                        item.createdby?.lastname || ''
-                      }`}
-                      inforTitlePrice={`£ ${item.price}`}
-                      rating="4.5"
-                      productImage={{ uri: item.createdby?.profile }}
-                      onBookmarkPress={() => handleBookmarkPress(item.id)}
-                      isBookmarked={item.isbookmarked}
-                      onpress={() =>{
-                        navigation.navigate('SearchDetails', { id: item.id },{ animation: 'none' })
-                      }}
-                    />
-                  ) : (
-                    <ProductCard
-                      tag={item.university?.name || 'University of Warwick'}
-                      infoTitle={item.title}
-                      inforTitlePrice={`£ ${item.price}`}
-                      rating="4.5"
-                      productImage={{ uri: item.thumbnail }}
-                      onBookmarkPress={() => handleBookmarkPress(item.id)}
-                     isBookmarked={item.isbookmarked}
-                      onpress={() =>{
-                        navigation.replace('SearchDetails', { id: item.id },{ animation: 'none' })
-                      }}
-                    />
-                  )}
-                </Animated.View>
-              ))}
-            </ScrollView>
-          </>
-        );
+                />
+              ) : (
+                <ProductCard
+                  tag={item.university?.name || 'University of Warwick'}
+                  infoTitle={item.title}
+                  inforTitlePrice={`£ ${item.price}`}
+                  rating="4.5"
+                  productImage={{ uri: item.thumbnail }}
+                  onBookmarkPress={() => handleBookmarkPress(item.id)}
+                  isBookmarked={item.isbookmarked}
+                  onpress={() => {
+                    navigation.replace('SearchDetails', { id: item.id }, { animation: 'none' });
+                  }}
+                />
+              )}
+            </Animated.View>
+          ))}
+           */}
+           {isLoading ? (
+  // 👇 Loading state
+  <View style={styles.emptyWrapper}>
+    <ActivityIndicator size="large" color="#999" />
+  </View>
+) : features.length === 0 ? (
+  // 👇 No Listings Found
+  <View style={styles.emptyWrapper}>
+    <View style={styles.emptyContainer}>
+      <Image
+        source={require('../../../assets/images/noproduct.png')}
+        style={styles.emptyImage}
+        resizeMode="contain"
+      />
+      <Text allowFontScaling={false} style={styles.emptyText}>
+        No Listings Found
+      </Text>
+    </View>
+  </View>
+) : (
+  // 👇 Show scrollable cards if data exists
+  <ScrollView
+    directionalLockEnabled
+    style={{ paddingHorizontal: 0, marginLeft: 8 }}
+    horizontal
+    showsVerticalScrollIndicator={false}
+    showsHorizontalScrollIndicator={false}
+  >
+    {features.map((item) => (
+      <Animated.View
+        key={item.id}
+        style={{ transform: [{ translateY: cardSlideupAnimation }] }}
+      >
+        {item.profileshowinview ? (
+          <TutitionCard
+            tag={item.university?.name || 'University of Warwick'}
+            title={item.title}
+            infoTitle={`${item.createdby?.firstname || ''} ${item.createdby?.lastname || ''}`}
+            inforTitlePrice={`£ ${item.price}`}
+            rating="4.5"
+            productImage={{ uri: item.createdby?.profile }}
+            onBookmarkPress={() => handleBookmarkPress(item.id)}
+            isBookmarked={item.isbookmarked}
+            onpress={() => {
+              navigation.navigate('SearchDetails', { id: item.id }, { animation: 'none' });
+            }}
+          />
+        ) : (
+          <ProductCard
+            tag={item.university?.name || 'University of Warwick'}
+            infoTitle={item.title}
+            inforTitlePrice={`£ ${item.price}`}
+            rating="4.5"
+            productImage={{ uri: item.thumbnail }}
+            onBookmarkPress={() => handleBookmarkPress(item.id)}
+            isBookmarked={item.isbookmarked}
+            onpress={() => {
+              navigation.replace('SearchDetails', { id: item.id }, { animation: 'none' });
+            }}
+          />
+        )}
+      </Animated.View>
+    ))}
+  </ScrollView>
+)}
+    </>
+  );
       case 'Search':
         return <SearchScreenContent  navigation={navigation}/>;
       case 'Add':
@@ -1401,7 +1554,7 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.02) -1px 10px 5px 10px',
+    // boxShadow: 'rgba(255, 255, 255, 0.02) -1px 10px 5px 10px',
   },
   cardIcon1: {
     width: 32.5,
@@ -1440,4 +1593,43 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.15) 100%)',
     boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.51)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.51)inset 0.99px 0.88px 0.90px 0px',
   },
+
+  emptyWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width:'100%',
+    paddingLeft:16,
+    paddingRight:16,
+    minHeight:230
+    
+  },
+
+
+ emptyContainer: {
+  //flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+  width:'100%',
+  height: (Platform.OS === 'ios' ? 290 : 300),
+  backgroundColor: 'rgba(255, 255, 255, 0.06)',
+  borderWidth: 0.3,
+  borderColor: 'rgba(255, 255, 255, 0.08)',
+  borderRadius:24,
+  overflow:'hidden',
+  //minHeight:'80%',
+ marginBottom:20,
+},
+emptyImage: {
+  width: 50,
+  height: 50,
+  marginBottom: 20,
+},
+emptyText: {
+  fontSize: 20,
+  color: '#fff',
+  textAlign: 'center',
+  fontFamily: 'Urbanist-SemiBold',
+  fontWeight:600
+},
 });
