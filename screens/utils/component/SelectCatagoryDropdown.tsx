@@ -217,7 +217,6 @@ const toggleCheckbox = (id: number) => {
                             letterSpacing: -0.28,
                             fontFamily: 'Urbanist-SemiBold',
                             width: '100%',
-                            backgroundColor: 'red',
                             
                             
 
