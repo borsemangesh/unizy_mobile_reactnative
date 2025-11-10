@@ -360,52 +360,53 @@ export default function TransactionHistoryScreen(
             </View>
           ))
         ) : selectedTab === 'Sales' ? (
-          // Sales UI (different layout)
-          transactions.map((section, idx) => (
-            <>
-              <View style={styles.chargesCard}>
-                {/* <Text>Overall Earnings </Text> */}
+          // ✅ Sales UI (fixed so Overall Earnings shows only once)
+          <>
+            {/* 🔹 Overall Earnings — show only once */}
+            <View style={styles.chargesCard}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  gap: 10,
+                  alignItems: 'center',
+                  width: '100%',
+                }}
+              >
+                <View style={styles.imgcontainer}>
+                  <Image
+                    source={totalEaning}
+                    style={styles.image}
+                    resizeMode="cover"
+                  />
+                </View>
                 <View
                   style={{
                     flexDirection: 'row',
-                    gap: 10,
                     alignItems: 'center',
-                    width: '100%'
+                    flex: 1,
+                    gap: 10,
+                    justifyContent: 'space-between',
+                    padding: 1,
                   }}
                 >
-                  <View style={styles.imgcontainer}>
-                      <Image
-                        source={totalEaning}
-                        style={styles.image}
-                        resizeMode="cover"
-                      />
-                    </View>
-                  <View
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      flex: 1,
-                      gap: 10,
-                      justifyContent: 'space-between',
-                      padding: 1
-                    }}
-                  >
-                    
-                    <Text allowFontScaling={false} style={styles.Overall_Earnings_value}>
+                  <Text allowFontScaling={false} style={styles.Overall_Earnings_value}>
                     Overall Earnings
-                    </Text>
-
-                  <Text allowFontScaling={false} style={styles.Overall_Earnings_title}>
-                   {`$`+overallEarning}
                   </Text>
-                  </View>
+        
+                  <Text allowFontScaling={false} style={styles.Overall_Earnings_title}>
+                    {`$` + overallEarning}
+                  </Text>
                 </View>
               </View>
+            </View>
+        
+            {/* 🔹 Sales transactions — loop through each section */}
+            {transactions.map((section, idx) => (
               <View key={idx} style={styles.section}>
                 <Text allowFontScaling={false} style={styles.dateText}>
                   {section.date}
                 </Text>
+        
                 {section.items.map((item, i) => (
                   <View key={i} style={styles.salesCard}>
                     <View
@@ -413,7 +414,6 @@ export default function TransactionHistoryScreen(
                         flexDirection: 'row',
                         gap: 10,
                         justifyContent: 'space-between',
-                        alignContent: 'center',
                         alignItems: 'center',
                       }}
                     >
@@ -421,9 +421,6 @@ export default function TransactionHistoryScreen(
                         style={{
                           flexDirection: 'row',
                           alignItems: 'center',
-                          alignSelf: 'center',
-                          justifyContent: 'space-between',
-                          alignContent: 'center',
                           gap: 12,
                         }}
                       >
@@ -436,21 +433,20 @@ export default function TransactionHistoryScreen(
                         </View>
                         <Text style={styles.salesTitle}>{item.title}</Text>
                       </View>
-                      <TouchableOpacity
-                        onPress={() => {
-                          setFilterVisible(true);
-                        }}
-                      >
-                        <Text
-                          allowFontScaling={false}
-                          style={styles.allDetails}
-                        >
+        
+                      <TouchableOpacity onPress={() => 
+                        {
+                          //setFilterVisible(true)
+
+                        }}>
+                        <Text allowFontScaling={false} style={styles.allDetails}>
                           All Details
                         </Text>
                       </TouchableOpacity>
                     </View>
-
+        
                     <View style={styles.cardconstinerdivider} />
+        
                     <View
                       style={{
                         flexDirection: 'row',
@@ -481,9 +477,10 @@ export default function TransactionHistoryScreen(
                   </View>
                 ))}
               </View>
-            </>
-          ))
-        ) : (
+            ))}
+          </>
+        ) 
+         : (
           // Charges UI (different layout)
           transactions.map((section, idx) => (
             <View key={idx} style={styles.section}>
