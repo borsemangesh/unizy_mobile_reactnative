@@ -338,8 +338,8 @@ export default function TransactionHistoryScreen(
                         {item.status}
                       </Text>
                     </View>
-                    <View style={styles.codeBox}>
-                      <Text allowFontScaling={false} style={styles.codeText}>
+                    <View style={[styles.codeBox,{backgroundColor: (item.status !== "Completed"?'rgba(255, 255, 255, 0.34)' : 'rgba(255,255,255,0.15)' )}]}>
+                      <Text allowFontScaling={false} style={[styles.codeText,{color: (item.status !== "Completed" ?'#FFFFFF' : 'rgba(255,255,255,0.15)' )}]}>
                         {item.order_otp}
                       </Text>
                     </View>
