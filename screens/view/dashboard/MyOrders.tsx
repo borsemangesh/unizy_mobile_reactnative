@@ -67,6 +67,8 @@ type Feature = {
     createdby: CreatedBy;
     university:university;
     isbookmarked:boolean;
+    isReviewGiven: boolean,
+
   };
 };
 type university={
@@ -165,15 +167,15 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
     console.log('API Response:', jsonResponse);
     if (jsonResponse.statusCode === 200) {
 
-      // const features = jsonResponse.data.features;
-      // const bookmarkedFeatures = features.filter((f: { featurelist: { isbookmarked: any; }; }) => f.featurelist.isbookmarked);
+     const allItems =jsonResponse?.data?.categories?.flatMap((cat: any) => cat.items) ?? [];
       setIsLoading(false);
       if (pageNum === 1) {
         
-        setFeaturelist(jsonResponse.data.features);
-        //setFeaturelist(bookmarkedFeatures)
+        //setFeaturelist(jsonResponse.data.features);
+        setFeaturelist(allItems)
       } else {
-        setFeaturelist(prev => [...prev, ...jsonResponse.data.features]);
+        //setFeaturelist(prev => [...prev, ...jsonResponse.data.features]);
+        setFeaturelist(prev => [...prev, ...allItems]);
       }
     } 
     else if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
@@ -270,8 +272,13 @@ const renderItem = ({ item }: any) => {
     item?.featurelist?.price != null ? `$${item.featurelist.price}` : '$0.00';
   const displayTitle = item?.featurelist?.title ?? 'Title';
 
-  // Example: decide purchase state based on backend data
-  const ispurchase = item?.order_status === 'fulfilled'; // or any other condition
+  let isPurchase;
+
+  if (item?.order_status === 'Awaiting Delivery') {
+    isPurchase = false;
+  } else {
+    isPurchase = true;
+  }
 
   return (
     <View style={styles.itemContainer}>
@@ -279,11 +286,15 @@ const renderItem = ({ item }: any) => {
         infoTitle={displayTitle}
         inforTitlePrice={displayPrice}
         productImage={productImage}
-        shareid={item.id}
+        shareid={item.featurelist?.id}
         date={displayDate}
-        ispurchase={true}
+        ispurchase={isPurchase}
+        //ispurchase={true}
         navigation={navigation}
         category_id={item?.featurelist?.category_id}
+        profileshowinview={item?.featurelist?.profileshowinview}
+        createdby={item?.featurelist?.createdby}
+        isreviewadded={item?.featurelist?.isReviewGiven}
       />
     </View>
   );
@@ -486,10 +497,12 @@ dateHeading:{
      width: '100%',
       height: '100%' },
   fullScreenContainer: {
-     flex: 1
+     flex: 1,
+     marginTop:10
      },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 25,
+    //paddingTop: Platform.OS === 'ios' ? 50 : 25,
+    paddingTop: Platform.OS === 'ios' ? 40 : 30,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },

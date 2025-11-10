@@ -8,6 +8,24 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+type CreatedBy = {
+  id: number;
+  firstname: string;
+  lastname: string;
+  email: string;
+  postal_code: string;
+  password: string;
+  student_email: string;
+  university_name: string | null;
+  profile: string;
+  reset_password_token: string | null;
+  reset_password_expires: string | null;
+  isactive: boolean;
+  created_at: string;
+  updated_at: string;
+  role_id: number;
+};
+
 type MyOrderCardProps = {
   infoTitle: string;
   inforTitlePrice: string;
@@ -16,7 +34,10 @@ type MyOrderCardProps = {
   shareid: number;
   category_id: number;
   date: string;
-  ispurchase: boolean; // true => fulfilled, false => awaiting delivery
+  ispurchase: boolean;
+  profileshowinview:boolean 
+  createdby:CreatedBy,
+  isreviewadded:boolean
 };
 
 const MyOrderCard: React.FC<MyOrderCardProps> = ({
@@ -28,8 +49,46 @@ const MyOrderCard: React.FC<MyOrderCardProps> = ({
   date,
   ispurchase,
   category_id,
+  profileshowinview,
+  createdby,
+  isreviewadded,
+
 }) => {
 
+
+   const getInitials = (firstname?: string, lastname?: string) => {
+    if (!firstname && !lastname) return '';
+    return `${firstname?.[0] ?? ''}${lastname?.[0] ?? ''}`.toUpperCase();
+  };
+
+   const renderProfileSection = () => {
+    if (profileshowinview) {
+      if (createdby?.profile) {
+        // Case 1: profile URL present
+        return (
+          <Image
+            source={{ uri: createdby.profile }}
+            style={styles.image}
+            resizeMode="cover"
+          />
+        );
+      } else {
+        // Case 2: show initials
+        return (
+          <View style={styles.initialsCircle}>
+            <Text allowFontScaling={false} style={styles.initialsText}>
+              {getInitials(createdby?.firstname, createdby?.lastname)}
+            </Text>
+          </View>
+        );
+      }
+    } else {
+      // Case 3: fallback to product image
+      return (
+        <Image source={productImage} style={styles.image} resizeMode="cover" />
+      );
+    }
+  };
 
 const handleViewTransaction = () => {
    //navigation.navigate('TransactionDetail', { shareid });
@@ -44,7 +103,8 @@ const handleViewTransaction = () => {
     <TouchableOpacity style={styles.card} activeOpacity={0.8}>
       {/* Top Row: Image + Title + Price + Status */}
       <View style={styles.row}>
-        <Image source={productImage} style={styles.image} resizeMode="cover" />
+        {/* <Image source={productImage} style={styles.image} resizeMode="cover" /> */}
+        {renderProfileSection()}
 
         <View style={styles.details}>
           <Text allowFontScaling={false} style={styles.title}>
@@ -76,9 +136,7 @@ const handleViewTransaction = () => {
 
        <View style={styles.dashedLine1} />
 
-      {/* Buttons Section */}
-       {ispurchase ? (
-        // Fulfilled card => Two buttons
+       {ispurchase && !isreviewadded ? (
         <View style={styles.buttonRow}>
           <TouchableOpacity
             style={styles.primaryButton}
@@ -135,6 +193,7 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: 14,
+  
   },
   details: {
     flex: 1,
@@ -193,9 +252,25 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: 8,
   },
+
+  initialsCircle:{
+    backgroundColor: '#8390D4',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 72,
+    height: 72,
+    borderRadius: 14,
+    //marginRight: 12,
+    overflow:'hidden'
+  },
+  initialsText:{
+   color: '#fff',
+  fontSize: 30,
+  fontWeight:600,
+  textAlign: 'center',
+  fontFamily: 'Urbanist-SemiBold',
+  },
  
-
-
   singleButton: {
     display: 'flex',
     width: '100%',

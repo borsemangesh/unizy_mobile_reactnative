@@ -154,10 +154,10 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
       const url = MAIN_URL.baseUrl + 'transaction/verify-post-order-otp';
 
       const createPayload = {
-        orderid: 'KX5WHMSX',
-        otp: '123456',
-        //otp:otpValue,
-        //orderid:selectedOrderId,
+        //orderid: 'KX5WHMSX',
+        //otp: '123456',
+        otp:otpValue,
+        orderid:selectedOrderId,
       };
 
       console.log(url);

@@ -73,7 +73,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const insets = useSafeAreaInsets();
   const { height: screenHeight } = Dimensions.get('window');
-
+ const SCREEN_HEIGHT = Dimensions.get('window').height;
   type Category = {
     id: number | null;
     name: string;
@@ -330,10 +330,20 @@ const MyListing = ({ navigation }: MyListingProps) => {
                 </ScrollView>
               </View>
             }
+            // contentContainerStyle={[
+            //   styles.listContainer,
+            //   { paddingTop: Platform.OS === 'ios' ? 160 : 100 },
+            // ]}
             contentContainerStyle={[
-              styles.listContainer,
-              { paddingTop: Platform.OS === 'ios' ? 160 : 100 },
-            ]}
+            styles.listContainer,
+            { paddingTop: Platform.OS === 'ios' ? 160 : 100, },
+            featureList?.length === 0 && {
+              alignContent: 'center',
+              alignSelf: 'center',
+              width: '100%',
+              height: '100%',
+            },
+          ]}
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { y: scrollY } } }],
               { useNativeDriver: false },
@@ -354,16 +364,32 @@ const MyListing = ({ navigation }: MyListingProps) => {
                 />
               ) : null
             }
-            ListEmptyComponent={
-              !isLoading ? (
-                <Text
-                  allowFontScaling={false}
-                  style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}
-                >
-                  No Listings Found
-                </Text>
-              ) : null
-            }
+            // ListEmptyComponent={
+            //   !isLoading ? (
+            //     <Text
+            //       allowFontScaling={false}
+            //       style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}
+            //     >
+            //       No Listings Found
+            //     </Text>
+            //   ) : null
+            // }
+               ListEmptyComponent={
+                        !isLoading ? (
+                          <View style={styles.emptyWrapper}>
+                            <View style={styles.emptyContainer}>
+                              <Image
+                                source={require('../../../assets/images/noproduct.png')}
+                                style={styles.emptyImage}
+                                resizeMode="contain"
+                              />
+                              <Text allowFontScaling={false} style={styles.emptyText}>
+                                No Listings Found
+                              </Text>
+                            </View>
+                          </View>
+                        ) : null
+                      }
           />
         </View>
       </View>
@@ -375,6 +401,40 @@ const MyListing = ({ navigation }: MyListingProps) => {
 export default MyListing;
 
 const styles = StyleSheet.create({
+
+    emptyWrapper: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      width:'100%'
+    },
+
+ 
+   emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width:'100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderWidth: 0.3,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius:24,
+    overflow:'hidden',
+    //minHeight:'80%',
+   //marginBottom:20,
+  },
+  emptyImage: {
+    width: 50,
+    height: 50,
+    marginBottom: 20,
+  },
+  emptyText: {
+    fontSize: 20,
+    color: '#fff',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight:600
+  },
   categoryTabsContainer: {
     // paddingHorizontal: 16,
     marginBottom: 12,
@@ -521,8 +581,8 @@ const styles = StyleSheet.create({
   listContainer: {
     paddingHorizontal: 16,
     paddingTop: 10,
-    paddingBottom: Platform.OS === 'ios' ? 40 : 80,
-    width: Platform.OS === 'ios' ? 393 : '100%',
+    paddingBottom: Platform.OS === 'ios' ? 40 : 20,
+    //width: Platform.OS === 'ios' ? 393 : '100%',
     alignSelf: 'center',
   },
   row: {

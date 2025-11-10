@@ -27,7 +27,7 @@ import { NewCustomToastContainer, showToast } from '../../utils/component/NewCus
 import StarRating from '../../utils/StarRating';
 import AddRating from '../../utils/AddRating';
 import { BlurView } from '@react-native-community/blur';
-
+import Button from '../../utils/component/Button';
 
 type AddReviewProps = {
   navigation: any;
@@ -73,7 +73,14 @@ const AddReview : React.FC<AddReviewProps> = ({ navigation }) =>{
           console.log('No token found');
           return;
         }
+        console.log(category_id)
 
+    const createPayload = {
+        rating: rating,
+        comment: username,
+        feature_id: feature_id,
+      };
+      console.log(createPayload)
         
     const url1 = `${MAIN_URL.baseUrl}category/users/reviews/${category_id}`;
 
@@ -84,16 +91,12 @@ const AddReview : React.FC<AddReviewProps> = ({ navigation }) =>{
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          rating: rating,
-          comment: username,
-          feature_id: feature_id,
-        }),
+        body: JSON.stringify(createPayload)
       });
 
       const result = await response.json();
 
-      if (response.ok && result.statusCode === 200) {
+      if (result.statusCode === 200) {
         console.log('Review saved:', result);
         showToast(result.message)
         setShowPopup1(true); 
@@ -161,9 +164,10 @@ const AddReview : React.FC<AddReviewProps> = ({ navigation }) =>{
          </View>
         
 
-        <TouchableOpacity onPress={handleSubmit} style={styles.previewBtn} >
+        {/* <TouchableOpacity onPress={handleSubmit} style={styles.previewBtn} >
             <Text allowFontScaling={false} style={styles.payText}>Submit Review </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+         <Button title="Submit Review" onPress={() => handleSubmit()} />
 
    <Modal
         visible={showPopup1}
@@ -474,10 +478,11 @@ const styles = StyleSheet.create({
      width: '100%',
       height: '100%' },
   fullScreenContainer: {
-     flex: 1
+     flex: 1,
+     marginTop:10,
      },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 25,
+    paddingTop: Platform.OS === 'ios' ? 50 : 30,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },

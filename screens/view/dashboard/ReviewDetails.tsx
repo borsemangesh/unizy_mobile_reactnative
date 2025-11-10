@@ -586,10 +586,11 @@ const styles = StyleSheet.create({
      width: '100%',
       height: '100%' },
   fullScreenContainer: {
-     flex: 1
+     flex: 1,
+     marginTop:10
      },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 25,
+    paddingTop: Platform.OS === 'ios' ? 50 : 30,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },

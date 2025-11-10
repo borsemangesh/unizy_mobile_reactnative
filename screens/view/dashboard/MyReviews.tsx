@@ -23,18 +23,47 @@ import { NewCustomToastContainer } from '../../utils/component/NewCustomToastMan
 import MyReviewCard from '../../utils/MyReviewCard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+type CreatedBy = {
+  id: number;
+  firstname: string;
+  lastname: string;
+  email: string;
+  postal_code: string;
+  password: string;
+  student_email: string;
+  university_name: string | null;
+  profile: string;
+  reset_password_token: string | null;
+  reset_password_expires: string | null;
+  isactive: boolean;
+  created_at: string;
+  updated_at: string;
+  role_id: number;
+};
+
+
 type Feature = {
-id: number,
-created_by: number,
-category_id: number,
-created_at: any,
-updated_at: string,
-isactive: boolean,
-isfeatured: boolean,
-title: string,
-price: number,
-thumbnail: string,
-university:university;
+  id: number;
+  added_by: number;
+  featurelist_id: number;
+  created_at: string;
+ 
+  featurelist: {
+    id: number;
+    created_by: number;
+    category_id: number;
+    created_at: string | null;
+    updated_at: string;
+    isactive: boolean;
+    isfeatured: boolean;
+    title: string;
+    price: number;
+    thumbnail: string;
+    profileshowinview:boolean;
+    createdby: CreatedBy;
+    university:university;
+    isbookmarked:boolean;
+  };
 };
 type university={
   id:number,
@@ -137,10 +166,9 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
   }
 };
 
-const filteredFeatures: Feature[] = featurelist
-  .filter((item) =>
-    (item.title ?? '').toLowerCase().includes(search.toLowerCase())
-  )
+const filteredFeatures: Feature[] = featurelist.filter(item =>
+  (item.featurelist?.title ?? '').toLowerCase().includes(search.toLowerCase())
+);
 
 const formatDate = (dateString: string | null | undefined) => {
   if (!dateString || dateString.trim() === '') return '01-01-2025';
@@ -158,18 +186,16 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
   const isLastOddItem =
     filteredFeatures.length % 2 !== 0 &&
     index === filteredFeatures.length - 1;
-      const displayDate = formatDate(item.created_at);
+      const displayDate = formatDate(item.featurelist?.created_at);
 
+  const productImage =
+    item?.featurelist?.thumbnail
+      ? { uri: item.featurelist.thumbnail }
+      : require('../../../assets/images/drone.png');
 
-    const displayTitle =
-    item.title && item.title.trim() !== '' ? item.title : 'Title';
-    
-    const displayPrice = item.price != null ? item.price : 0;
-
-
-    const productImage = item.thumbnail
-  ? { uri: item.thumbnail }
-  : require('../../../assets/images/drone.png');
+  const displayPrice =
+    item?.featurelist?.price != null ? `$£{item.featurelist.price}` : '£0.00';
+  const displayTitle = item?.featurelist?.title ?? 'Title';
 
   return (
     <View
@@ -179,13 +205,15 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
     >
       <MyReviewCard
         infoTitle={displayTitle}
-        inforTitlePrice={`£ ${displayPrice}`} 
+        inforTitlePrice={displayPrice} 
         rating={'3'} 
         productImage={productImage}
         reviewText='This drone is awesome! Super easy to fly even though it’s my first one. Totally worth it for the price.'
         //navigation={navigation}
         shareid={item.id}
         date={displayDate}
+        createdby={item.featurelist?.createdby}
+        profileshowinview={item.featurelist?.profileshowinview}
       />
     </View>
   );
@@ -245,7 +273,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
                {
                paddingBottom: screenHeight * 0.2 + insets.bottom,     
                 },
-                featureList?.length === 0 && { alignContent:'center',alignSelf:'center' ,width:'90%',height:'90%'}
+                featureList?.length === 0 && { alignContent:'center',alignSelf:'center' ,width:'90%',height:'100%'}
             ]}
         keyExtractor={(item, index) => index.toString()}
         onEndReachedThreshold={0.5}
@@ -306,7 +334,7 @@ const styles = StyleSheet.create({
     borderRadius:24,
     overflow:'hidden',
     //minHeight:'80%',
-   marginBottom:20,
+   //marginBottom:20,
   },
   emptyImage: {
     width: 50,
