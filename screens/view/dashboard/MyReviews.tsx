@@ -122,10 +122,11 @@ useEffect(() => {
 const displayListOfProduct = async (categoryId: number | null, pageNum: number) => {
   try {
     const pagesize = 10;
-    let url = `${MAIN_URL.baseUrl}category/mylisting?page=${pageNum}&pagesize=${pagesize}`;
+    let url = `${MAIN_URL.baseUrl}category/myreview?page=${pageNum}&pagesize=${pagesize}`;
     if (categoryId) {
       url += `&category_id=${categoryId}`;
     }
+    
 
     const token = await AsyncStorage.getItem('userToken');
     if (!token) return;
@@ -139,15 +140,18 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
     });
 
     const jsonResponse = await response.json();
-    // console.log('API Response:', jsonResponse);
 
+    const reviews = jsonResponse.data ?? [];
     if (jsonResponse.statusCode === 200) {
       setIsLoading(false);
-      if (pageNum === 1) {
-        setFeatureList(jsonResponse.data.features);
-      } else {
-        setFeatureList(prev => [...prev, ...jsonResponse.data.features]);
-      }
+      setFeatureList(reviews);
+      // if (pageNum === 1) {
+      //   //setFeatureList(jsonResponse.data.features);
+      //   setFeatureList(reviews);
+      // } else {
+      //   //setFeatureList(prev => [...prev, ...jsonResponse.data.features]);
+      //    setFeatureList(prev => [...prev, ...reviews]);
+      // }
     } else if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
           setIsLoading(false);
           navigation.reset({
@@ -182,38 +186,90 @@ const formatDate = (dateString: string | null | undefined) => {
   return `${day}-${month}-${year}`;
 };
 
-const renderItem = ({ item, index }: { item: Feature; index: number }) => {
+// const renderItem = ({ item, index }: { item: Feature; index: number }) => {
+//   const isLastOddItem =
+//     filteredFeatures.length % 2 !== 0 &&
+//     index === filteredFeatures.length - 1;
+//       const displayDate = formatDate(item.featurelist?.created_at);
+
+//   const productImage =
+//     item?.featurelist?.thumbnail
+//       ? { uri: item.featurelist.thumbnail }
+//       : require('../../../assets/images/drone.png');
+
+//   const displayPrice =
+//     item?.featurelist?.price != null ? `$£{item.featurelist.price}` : '£0.00';
+//   const displayTitle = item?.featurelist?.title ?? 'Title';
+
+//   //const displayrating = item?.featurelist?.created_at
+
+//   const comment = item?.featurelist?.title
+
+//   return (
+//     <View
+//       style={[
+//         styles.itemContainer,
+//       ]}
+//     >
+//       <MyReviewCard
+//         infoTitle={displayTitle}
+//         inforTitlePrice={displayPrice} 
+//         rating={'3'} 
+//         productImage={productImage}
+//         reviewText={comment}
+//         //navigation={navigation}
+//         shareid={item.id}
+//         date={displayDate}
+//         createdby={item.featurelist?.createdby}
+//         profileshowinview={item.featurelist?.profileshowinview}
+//       />
+//     </View>
+//   );
+// };
+
+
+const renderItem = ({ item, index }: { item: any; index: number }) => {
+  // Handle odd last item if you have a two-column layout
   const isLastOddItem =
     filteredFeatures.length % 2 !== 0 &&
     index === filteredFeatures.length - 1;
-      const displayDate = formatDate(item.featurelist?.created_at);
 
-  const productImage =
-    item?.featurelist?.thumbnail
-      ? { uri: item.featurelist.thumbnail }
-      : require('../../../assets/images/drone.png');
+  // Extract feature details
+  const feature = item?.feature;
+  const displayDate = formatDate(item?.created_at);
+
+  const productImage = feature?.thumbnail
+    ? { uri: feature.thumbnail }
+    : require('../../../assets/images/drone.png');
 
   const displayPrice =
-    item?.featurelist?.price != null ? `$£{item.featurelist.price}` : '£0.00';
-  const displayTitle = item?.featurelist?.title ?? 'Title';
+    feature?.price != null ? `£${feature.price}` : '£0.00';
+  const displayTitle = feature?.title ?? 'Title';
+  const rating = item?.rating?.toString() ?? '0';
+  const comment = item?.comment ?? '';
+
+  const createdby = feature?.created_by ?? null;
+  const profileshowinview =
+    feature?.category_id === 2 || feature?.category_id === 5 ? true : false;
 
   return (
     <View
       style={[
         styles.itemContainer,
+        isLastOddItem && { marginRight: 'auto' },
       ]}
     >
       <MyReviewCard
         infoTitle={displayTitle}
-        inforTitlePrice={displayPrice} 
-        rating={'3'} 
+        inforTitlePrice={displayPrice}
+        rating={rating}
         productImage={productImage}
-        reviewText='This drone is awesome! Super easy to fly even though it’s my first one. Totally worth it for the price.'
-        //navigation={navigation}
+        reviewText={comment}
         shareid={item.id}
         date={displayDate}
-        createdby={item.featurelist?.createdby}
-        profileshowinview={item.featurelist?.profileshowinview}
+        createdby={createdby}
+        profileshowinview={profileshowinview}
+       
       />
     </View>
   );

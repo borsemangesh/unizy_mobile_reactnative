@@ -17,6 +17,8 @@ import {
   Modal,
   TouchableWithoutFeedback,
   Dimensions,
+  KeyboardAvoidingView,
+  Keyboard,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -32,8 +34,6 @@ import Button from '../../utils/component/Button';
 type AddReviewProps = {
   navigation: any;
 };
-
-
 
 type RootStackParamList = {
   AddReview: { category_id: number,feature_id:number};
@@ -114,6 +114,14 @@ const AddReview : React.FC<AddReviewProps> = ({ navigation }) =>{
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
+
+       <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={{ flex: 1 }}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0} // adjust if header overlaps
+    >
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+
       <View style={styles.fullScreenContainer}>
         {/* Header */}
         <View style={styles.header}>
@@ -133,7 +141,7 @@ const AddReview : React.FC<AddReviewProps> = ({ navigation }) =>{
             <View style={{ width: 48 }} />
           </View>
         </View>
-    <View>
+        <View>
         </View>
 
           <View style={styles.innercontainer}>
@@ -235,8 +243,10 @@ const AddReview : React.FC<AddReviewProps> = ({ navigation }) =>{
         </TouchableWithoutFeedback>
       </Modal>
 
-
+    
       </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
       <NewCustomToastContainer/>
     </ImageBackground>
   );

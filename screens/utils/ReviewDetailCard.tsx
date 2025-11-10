@@ -51,7 +51,9 @@ const ReviewDetailCard: React.FC<ReviewDetailCardProps> = ({
       </View>
     </View>
 
-  <View style={styles.dashedLine} />
+   <View style={styles.dashedLine} />
+   
+   <View style={styles.dashedLine1} />
 
   <View style={styles.bottomContent}>
   
@@ -87,13 +89,25 @@ export default ReviewDetailCard;
 
 const styles = StyleSheet.create({
 
-  dashedLine: {
-  borderBottomWidth: 1,
-  borderColor: '#e6e3e3ff',
-  borderStyle: 'dashed',
-  marginTop:12,
-  marginBottom:12,
-  
+    dashedLine: {
+    borderBottomWidth: 1,
+    borderColor: '#6592D4',
+    borderStyle: 'dashed',
+    //paddingVertical: 10,
+    //marginVertical:6,
+    width: '100%',
+    opacity: 0, 
+    
+  },
+
+  dashedLine1: {
+    borderBottomWidth: 1,
+    borderColor: '#5b70abff',
+    borderStyle: 'dashed',
+    //paddingVertical: 10,
+    marginVertical:6,
+    width: '100%',
+    
   },
 
   topRow: {
@@ -125,6 +139,7 @@ bottomContent: {
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
+    paddingBottom:6
   },
   image: {
     width: 70,
@@ -158,6 +173,7 @@ bottomContent: {
   starsRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingTop:6
    
   },
   star: {
