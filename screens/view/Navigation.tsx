@@ -40,6 +40,7 @@ import EditPreviewThumbnail from './dashboard/EditPreviewThumbnail';
 import EditPreviewDetailed from './dashboard/EditPreviewDetailed';
 import UserProfileScreen from './dashboard/UserProfileScreen';
 import EditProfile from './dashboard/EditProfile';
+import ViewListingDetails from './dashboard/ViewListingDetails';
 
 const Stack = createNativeStackNavigator();
 
@@ -255,6 +256,11 @@ export const Navigation = () => {
         <Stack.Screen
           name="MyListing"
           component={MyListing}
+          options={{ headerShown: false, presentation: 'fullScreenModal' }}
+        />
+        <Stack.Screen
+          name="ViewListingDetails"
+          component={ViewListingDetails}
           options={{ headerShown: false, presentation: 'fullScreenModal' }}
         />
         <Stack.Screen

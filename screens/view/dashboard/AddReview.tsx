@@ -27,7 +27,7 @@ import { NewCustomToastContainer, showToast } from '../../utils/component/NewCus
 import StarRating from '../../utils/StarRating';
 import AddRating from '../../utils/AddRating';
 import { BlurView } from '@react-native-community/blur';
-
+import Button from '../../utils/component/Button';
 
 type AddReviewProps = {
   navigation: any;
@@ -73,25 +73,30 @@ const AddReview : React.FC<AddReviewProps> = ({ navigation }) =>{
           console.log('No token found');
           return;
         }
+        console.log(category_id)
 
+    const createPayload = {
+        rating: rating,
+        comment: username,
+        feature_id: feature_id,
+      };
+      console.log(createPayload)
         
-    const url1 = `${MAIN_URL.baseUrl}category/users/${userId}/review`;
+    const url1 = `${MAIN_URL.baseUrl}category/users/reviews/${category_id}`;
+
+    console.log(url1)
       const response = await fetch(url1, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          rating: rating,
-          comment: username,
-          feature_id: feature_id,
-        }),
+        body: JSON.stringify(createPayload)
       });
 
       const result = await response.json();
 
-      if (response.ok && result.statusCode === 200) {
+      if (result.statusCode === 200) {
         console.log('Review saved:', result);
         showToast(result.message)
         setShowPopup1(true); 
@@ -136,7 +141,7 @@ const AddReview : React.FC<AddReviewProps> = ({ navigation }) =>{
              <Text allowFontScaling={false} style={styles.sublabel}>Slide across the stars to rate this product</Text>
          </View>
 
-        <View style={{ paddingHorizontal: 16, marginTop:12,marginBottom: 12, alignItems: 'center' }}>
+        <View style={{ paddingHorizontal: 16, marginTop:16,marginBottom: 20, alignItems: 'center' }}>
         {/* <AddRating starSize={40} /> */}
 
         <AddRating starSize={40} onChange={setRating} />
@@ -159,9 +164,10 @@ const AddReview : React.FC<AddReviewProps> = ({ navigation }) =>{
          </View>
         
 
-        <TouchableOpacity onPress={handleSubmit} style={styles.previewBtn} >
+        {/* <TouchableOpacity onPress={handleSubmit} style={styles.previewBtn} >
             <Text allowFontScaling={false} style={styles.payText}>Submit Review </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+         <Button title="Submit Review" onPress={() => handleSubmit()} />
 
    <Modal
         visible={showPopup1}
@@ -321,7 +327,8 @@ const styles = StyleSheet.create({
     fontSize: 18, 
     fontWeight: '600', 
     fontFamily: 'Urbanist-SemiBold',
-    textAlign:'center'
+    marginTop:8
+    //textAlign:'center'
     },
 
     sublabel:{
@@ -329,7 +336,8 @@ const styles = StyleSheet.create({
     fontSize: 14, 
     fontWeight: '600',
     fontFamily: 'Urbanist-Medium',
-    textAlign:'center'
+    //textAlign:'center'
+    marginTop:4
     },
     innercontainer:{
          paddingHorizontal: 16, 
@@ -367,6 +375,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     fontStyle: 'normal',
     color:"#fff",
+    paddingLeft:12
 
   },
    payText: {
@@ -469,10 +478,11 @@ const styles = StyleSheet.create({
      width: '100%',
       height: '100%' },
   fullScreenContainer: {
-     flex: 1
+     flex: 1,
+     marginTop:10,
      },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 25,
+    paddingTop: Platform.OS === 'ios' ? 50 : 30,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },

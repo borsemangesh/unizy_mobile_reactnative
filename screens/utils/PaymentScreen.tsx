@@ -140,15 +140,42 @@ const PaymentScreen :React.FC<PaymentScreenProps> = ({ navigation }) => {
   
 
 
-   const openSheet = async () => {
-    const { error } = await presentPaymentSheet();
+  //  const openSheet = async () => {
+  //   const { error } = await presentPaymentSheet();
 
-    if (error) {
-      showToast(`Payment failed: ${error.message}`);
-    } else {
-      showToast("Payment successful!");
+  //   if (error) {
+  //     showToast(`Payment failed: ${error.message}`);
+  //   } else {
+  //     showToast("Payment successful!");
+  //     if (onSuccess) await onSuccess();
+  //     navigation.goBack();
+  //   }
+  // };
+  const openSheet = async () => {
+    try {
+      const { error } = await presentPaymentSheet();
+  
+      if (error) {
+        if (error.code === 'Canceled') {
+          console.log('User cancelled payment');
+          navigation.goBack();
+          return;
+        }
+  
+        // 👇 Other payment or network errors
+        console.log('Payment failed:', error);
+        showToast(`Payment failed: ${error.message}`, 'error');
+        return;
+      }
+  
+      // ✅ Payment succeeded
+      showToast('Payment successful!');
       if (onSuccess) await onSuccess();
       navigation.goBack();
+  
+    } catch (e) {
+      console.error('Unexpected error during payment:', e);
+      showToast('Something went wrong. Please try again.', 'error');
     }
   };
 

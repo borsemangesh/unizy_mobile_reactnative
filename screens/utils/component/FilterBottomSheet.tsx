@@ -627,6 +627,8 @@ import Button from './Button';
 import FilterButton from './FilterButton';
 import FilterButtonApply from './FilterButtonApply';
 
+
+type PriceRange = { min: number; max: number } | null;
 interface FilterBottomSheetProps {
   catagory_id: number;
   visible: boolean;
@@ -654,6 +656,47 @@ const FilterBottomSheet = ({
   const [sliderLow, setSliderLow] = useState(priceRange.min);
   const [sliderHigh, setSliderHigh] = useState(priceRange.max);
 
+  const [defaultPriceRange, setDefaultPriceRange] = useState({ min: 0, max: 10000 });
+
+
+const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(null);
+
+  // const fetchFilters = async () => {
+  //   try {
+  //     const token = await AsyncStorage.getItem('userToken');
+  //     if (!token) return;
+
+  //     const body = { category_id: catagory_id };
+  //     const url = MAIN_URL.baseUrl + 'category/feature/filter';
+
+  //     const res = await fetch(url, {
+  //       method: 'POST',
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(body),
+  //     });
+
+  //     const data = await res.json();
+  //     if (data.statusCode === 200) {
+  //       const dynamicFilters = data.data.filter(
+  //         (item: any) =>
+  //           item.field_type?.toLowerCase() === 'dropdown' ||
+  //           item.alias_name?.toLowerCase() === 'price',
+  //       );
+  //       console.log('Current Filter: ' + dynamicFilters);
+  //       setFilters(dynamicFilters);
+  //       if (!selectedTab && dynamicFilters.length) {
+  //         setSelectedTab(dynamicFilters[0].field_name);
+  //       }
+  //     }
+  //   } catch (err) {
+  //     console.log('Error fetching filters:', err);
+  //   }
+  // };
+
+
   const fetchFilters = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -678,8 +721,29 @@ const FilterBottomSheet = ({
             item.field_type?.toLowerCase() === 'dropdown' ||
             item.alias_name?.toLowerCase() === 'price',
         );
-        console.log('Current Filter: ' + dynamicFilters);
+        console.log("Current Filter: "+ dynamicFilters);
         setFilters(dynamicFilters);
+
+
+        const priceFilter = dynamicFilters.find(
+            (item: any) => item.alias_name?.toLowerCase() === 'price'
+          );
+
+          if (priceFilter) {
+            const newRange = {
+              min: priceFilter.minvalue ?? 0,
+              max: priceFilter.maxvalue ?? 10000,
+            };
+           // setPriceRange(newRange);
+           // setDefaultPriceRange(newRange);
+            
+             if (!lastAppliedPriceRange) {
+            setPriceRange(newRange);
+            setDefaultPriceRange(newRange);
+            setSliderLow(newRange.min);
+            setSliderHigh(newRange.max);
+          }
+          }
         if (!selectedTab && dynamicFilters.length) {
           setSelectedTab(dynamicFilters[0].field_name);
         }
@@ -702,13 +766,12 @@ const FilterBottomSheet = ({
           savedDropdowns[f.id] = f.options;
         }
 
-        if (
-          f.alias_name?.toLowerCase() === 'price' &&
-          Array.isArray(f.options)
-        ) {
-          setPriceRange({ min: f.options[0], max: f.options[1] });
-          setSliderLow(f.options[0]);
-          setSliderHigh(f.options[1]);
+        if (f.alias_name?.toLowerCase() === 'price' && Array.isArray(f.options)) {
+          const [minVal, maxVal] = f.options;
+          setPriceRange({ min: minVal, max: maxVal });
+          setSliderLow(minVal);
+          setSliderHigh(maxVal);
+          setLastAppliedPriceRange({ min: minVal, max: maxVal }); // ✅ added
         }
       });
 
@@ -733,44 +796,71 @@ const FilterBottomSheet = ({
 
   const handleClearFilters = () => {
     setDropdownSelections({});
-    setPriceRange({ min: 0, max: 10000 });
-    setSliderLow(0);
-    setSliderHigh(10000);
+    setPriceRange(defaultPriceRange);  // ✅ reset from API range
+    setSliderLow(defaultPriceRange.min);
+    setSliderHigh(defaultPriceRange.max);
+    //setSelectedTab(null);
+    //onClose();
   };
  
 
   const handleClose = () => {
-
+    // ✅ Restore last applied filters when cancelling
     if (initialFilters?.filters?.length > 0) {
       const savedDropdowns: Record<number, number[]> = {};
-
+  
       initialFilters.filters.forEach((f: any) => {
-        if (f.field_type === 'dropdown' && Array.isArray(f.options)) {
+        if (f.field_type === "dropdown" && Array.isArray(f.options)) {
           savedDropdowns[f.id] = f.options;
         }
-
-        if (
-          f.alias_name?.toLowerCase() === 'price' &&
-          Array.isArray(f.options)
-        ) {
+  
+        if (f.alias_name?.toLowerCase() === "price" && Array.isArray(f.options)) {
           const [min, max] = f.options;
           setPriceRange({ min, max });
           setSliderLow(min);
           setSliderHigh(max);
         }
       });
-
+  
       setDropdownSelections(savedDropdowns);
     } else {
-
       setDropdownSelections({});
-      setPriceRange({ min: 0, max: 10000 });
-      setSliderLow(0);
-      setSliderHigh(10000);
+      setPriceRange(defaultPriceRange);  // ✅ reset from API range
+      setSliderLow(defaultPriceRange.min);
+      setSliderHigh(defaultPriceRange.max);
     }
-
-    onClose(); 
+  
+    onClose(); // Close sheet after restoring UI
   };
+
+//  const handleClose = () => {
+//   // ✅ Restore last applied filters when cancelling
+//   if (initialFilters?.filters?.length > 0) {
+//     const savedDropdowns: Record<number, number[]> = {};
+
+//     initialFilters.filters.forEach((f: any) => {
+//       if (f.field_type === "dropdown" && Array.isArray(f.options)) {
+//         savedDropdowns[f.id] = f.options;
+//       }
+
+//       if (f.alias_name?.toLowerCase() === "price" && Array.isArray(f.options)) {
+//         const [min, max] = f.options;
+//         setPriceRange({ min, max });
+//         setSliderLow(min);
+//         setSliderHigh(max);
+//       }
+//     });
+
+//     setDropdownSelections(savedDropdowns);
+//   } else {
+//     setDropdownSelections({});
+//     setPriceRange(defaultPriceRange);  // ✅ reset from API range
+//     setSliderLow(defaultPriceRange.min);
+//     setSliderHigh(defaultPriceRange.max);
+//   }
+
+//   onClose(); // Close sheet after restoring UI
+// };
 
   const renderRightContent = () => {
     const currentFilter = filters.find(f => f.field_name === selectedTab);
@@ -830,31 +920,79 @@ const FilterBottomSheet = ({
           ))}
         </ScrollView>
       );
-    } else if (currentFilter.alias_name === 'price') {
+    } 
+    // else if (currentFilter.alias_name === 'price') {
+    //   return (
+    //     <View style={{ zIndex: 999, position: 'relative' }}>
+    //       <Text
+    //         allowFontScaling={false}
+    //         style={{ color: 'white', marginBottom: 10 }}
+    //       >
+    //         Range: {sliderLow} - {sliderHigh}
+    //       </Text>
+
+    //       <View
+    //         style={{ paddingHorizontal: 20, paddingTop: 30, paddingBottom: 20 }}
+    //       >
+    //         <MultiSlider
+    //           values={[sliderLow, sliderHigh]}
+    //           sliderLength={150}
+    //           min={currentFilter?.minvalue ?? 0}
+    //           max={currentFilter?.maxvalue ?? 100}
+    //           step={1}
+    //           onValuesChange={values => {
+    //             const [low, high] = values;
+    //             setSliderLow(low);
+    //             setSliderHigh(high);
+    //             setPriceRange({ min: low, max: high });
+    //           }}
+    //           selectedStyle={{
+    //             backgroundColor: '#fff',
+    //           }}
+    //           unselectedStyle={{
+    //             backgroundColor: '#888',
+    //           }}
+    //           containerStyle={{
+    //             height: 'auto',
+    //           }}
+    //           trackStyle={{
+    //             height: 4,
+    //             borderRadius: 2,
+    //           }}
+    //           markerStyle={{
+    //             height: 20,
+    //             width: 20,
+    //             borderRadius: 10,
+    //             backgroundColor: '#fff',
+    //           }}
+    //         />
+    //       </View>
+    //     </View>
+    //   );
+    // }
+
+    else if (currentFilter.alias_name === 'price') {
       return (
         <View style={{ zIndex: 999, position: 'relative' }}>
-          <Text
-            allowFontScaling={false}
-            style={{ color: 'white', marginBottom: 10 }}
-          >
+          <Text allowFontScaling={false} style={{ color: 'white', marginBottom: 10 }}>
             Range: {sliderLow} - {sliderHigh}
           </Text>
-
-          <View
-            style={{ paddingHorizontal: 20, paddingTop: 30, paddingBottom: 20 }}
-          >
+    
+          <View style={{ paddingHorizontal: 20, paddingTop: 30, paddingBottom: 20 }}>
             <MultiSlider
               values={[sliderLow, sliderHigh]}
               sliderLength={150}
+    
               min={currentFilter?.minvalue ?? 0}
               max={currentFilter?.maxvalue ?? 100}
               step={1}
-              onValuesChange={values => {
+              onValuesChange={(values) => {
                 const [low, high] = values;
                 setSliderLow(low);
                 setSliderHigh(high);
-                setPriceRange({ min: low, max: high });
+                setPriceRange({ min: low, max: high })
               }}
+    
               selectedStyle={{
                 backgroundColor: '#fff',
               }}
@@ -921,6 +1059,53 @@ const FilterBottomSheet = ({
   //  //handleClose()
   // };
 
+  // const handleApply = () => {
+  //   const selectedFilters = filters
+  //     .map(f => {
+  //       if (f.field_type === 'dropdown' && dropdownSelections[f.id]?.length) {
+  //         return {
+  //           id: f.id,
+  //           field_name: f.field_name,
+  //           field_type: f.field_type,
+  //           alias_name: f.alias_name,
+  //           options: dropdownSelections[f.id],
+  //         };
+  //       }
+    
+  //       else if (f.alias_name?.toLowerCase() === 'price') {
+  //         const defaultMin = f.minvalue ?? 0;
+  //         const defaultMax = f.maxvalue ?? 100;
+
+          
+  //         if (priceRange.min !== defaultMin || priceRange.max !== defaultMax) {
+  //           return {
+  //             id: f.id,
+  //             field_name: f.field_name,
+  //             field_type: f.field_type,
+  //             alias_name: f.alias_name,
+  //             options: [priceRange.min, priceRange.max],
+  //           };
+  //         }
+
+  //         return null; 
+  //       }
+  //       return null;
+  //     })
+  //     .filter(Boolean);
+
+  //   const filterBody = {
+  //     filters: selectedFilters,
+  //     page: 1,
+  //     pagesize: 10,
+  //     search: '',
+  //     category_id: catagory_id,
+  //   };
+
+  //   console.log('Selected filter body:', JSON.stringify(filterBody, null, 2));
+  //   onApply(filterBody);
+  //   onClose();
+  // };
+  
   const handleApply = () => {
     const selectedFilters = filters
       .map(f => {
@@ -932,29 +1117,41 @@ const FilterBottomSheet = ({
             alias_name: f.alias_name,
             options: dropdownSelections[f.id],
           };
-        }
-    
+        } 
         else if (f.alias_name?.toLowerCase() === 'price') {
-          const defaultMin = f.minvalue ?? 0;
-          const defaultMax = f.maxvalue ?? 100;
-
-          
-          if (priceRange.min !== defaultMin || priceRange.max !== defaultMax) {
-            return {
-              id: f.id,
-              field_name: f.field_name,
-              field_type: f.field_type,
-              alias_name: f.alias_name,
-              options: [priceRange.min, priceRange.max],
-            };
+            const defaultMin = f.minvalue ?? 0;
+            const defaultMax = f.maxvalue ?? 10000;
+  
+            const prevMin = lastAppliedPriceRange?.min ?? defaultMin;
+            const prevMax = lastAppliedPriceRange?.max ?? defaultMax;
+  
+            if (priceRange.min !== prevMin || priceRange.max !== prevMax) {
+              return {
+                id: f.id,
+                field_name: f.field_name,
+                field_type: f.field_type,
+                alias_name: f.alias_name,
+                options: [priceRange.min, priceRange.max],
+              };
+            }
+  
+            // ✅ If unchanged but previously applied range exists, include it
+            if (lastAppliedPriceRange) {
+              return {
+                id: f.id,
+                field_name: f.field_name,
+                field_type: f.field_type,
+                alias_name: f.alias_name,
+                options: [lastAppliedPriceRange.min, lastAppliedPriceRange.max],
+              };
+            }
+  
+            return null;
           }
-
-          return null; 
-        }
         return null;
       })
       .filter(Boolean);
-
+  
     const filterBody = {
       filters: selectedFilters,
       page: 1,
@@ -962,9 +1159,13 @@ const FilterBottomSheet = ({
       search: '',
       category_id: catagory_id,
     };
-
+  
     console.log('Selected filter body:', JSON.stringify(filterBody, null, 2));
     onApply(filterBody);
+  
+    // ✅ Save current applied range for next reopen
+    setLastAppliedPriceRange(priceRange);
+  
     onClose();
   };
 

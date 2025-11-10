@@ -154,10 +154,10 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
       const url = MAIN_URL.baseUrl + 'transaction/verify-post-order-otp';
 
       const createPayload = {
-        orderid: 'KX5WHMSX',
-        otp: '123456',
-        //otp:otpValue,
-        //orderid:selectedOrderId,
+        // orderid: 'KX5WHMSX',
+        // otp: '123456',
+        otp:otpValue,
+        orderid:selectedOrderId,
       };
 
       console.log(url);
@@ -488,6 +488,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                           </Text>
                         </TouchableOpacity>
                       </View>
+
                     )}
                   </View>
                 ))}
@@ -788,8 +789,8 @@ const styles = StyleSheet.create({
   },
 
   otpBox: {
-    width: 48,
-    height: 48,
+    width: (Platform.OS === 'ios' ? 40 : 48),
+    height: (Platform.OS === 'ios' ? 40 : 48),
     borderRadius: 12,
     paddingTop: 8,
     paddingRight: 12,
@@ -1077,7 +1078,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#5d5c5c14',
     zIndex: 10,
-    bottom: 0,
+    bottom: (Platform.OS === 'ios' ? 15 : 10),
     marginBottom: Platform.OS === 'ios' ? 10 : 20,
   },
   cancelBtn: {

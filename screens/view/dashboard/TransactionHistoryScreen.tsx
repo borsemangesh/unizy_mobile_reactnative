@@ -12,14 +12,18 @@ import {
   Dimensions,
   Animated,
   Easing,
+  FlatList,
 } from 'react-native';
 import { MAIN_URL } from '../../utils/APIConstant';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import SalesAllDetailsDropdown from '../../utils/component/SalesAllDetailsDropdown';
 
 type TransactionPropos = {
   navigation: any;
 };
 
 interface TransactionItem {
+  // feature_id: number;
   title: string;
   price: string;
   status: string;
@@ -28,6 +32,7 @@ interface TransactionItem {
   university?: string;
   viewUrl?: string;
   order_otp: number;
+  featureId: number;
 }
 
 interface TransactionSection {
@@ -36,9 +41,12 @@ interface TransactionSection {
 }
 
 const productImage = require('../../../assets/images/producticon.png');
+const totalEaning = require('../../../assets/images/totalearnings.png');
 export default function TransactionHistoryScreen(
   navigation: TransactionPropos,
 ) {
+
+  const navigation1: NavigationProp<any> = useNavigation();
   const [selectedTab, setSelectedTab] = useState('Purchases');
   const [transactions, setTransactions] = useState<TransactionSection[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,8 +64,10 @@ export default function TransactionHistoryScreen(
   const bubbleX = useRef(new Animated.Value(0)).current;
 
   const [activeTab, setActiveTab] = useState<string>('Purchases');
+  const [overallEarning,setOverallEarning] = useState(0);
 
   const tabs = [{ key: 'Purchases' }, { key: 'Sales' }, { key: 'Charges' }];
+  const [isFilterVisible, setFilterVisible] = useState(false);
 
   useEffect(() => {
     if (activeTab === 'Purchases') {
@@ -113,6 +123,7 @@ export default function TransactionHistoryScreen(
           url = `${MAIN_URL.baseUrl}transaction/charges`;
         }
 
+        console.log("TokenTransaction: ",token);
         const response = await fetch(url, {
           method: 'GET',
           headers: {
@@ -141,33 +152,26 @@ export default function TransactionHistoryScreen(
         let formatted: TransactionSection[] = [];
 
         if (selectedTab === 'Purchases' && Array.isArray(json.data)) {
-          // Purchases API response
-          const grouped = json.data.reduce(
-            (acc: Record<string, TransactionItem[]>, item: any) => {
-              const date = item.created_at.split('T')[0];
-              if (!acc[date]) acc[date] = [];
-              acc[date].push({
-                title: item.title,
-                price: `$${item.amount}`,
-                status: item.order_status,
-                code: item.payment_status,
-                seller: item.purchased_from,
-                order_otp: item.order_otp,
-                university: item.university_name, 
-              });
-              return acc;
-            },
-            {},
-          );
-
-          formatted = Object.keys(grouped).map(date => ({
-            date,
-            items: grouped[date],
+          formatted = json.data.map((section: any) => ({
+            date: section.date,
+            items: section.transactions.map((item: any) => ({
+              title: item.title,
+              price: `$${item.amount}`,
+              status: item.order_status,        // Show order status like "Awaiting Delivery"
+              code: item.status,                // Payment status (e.g. "succeeded")
+              seller: item.purchased_from,      // Who you bought from
+              university: item.university_name, // University name
+              order_otp: item.order_otp,        // OTP for verification
+            })),
           }));
+       
         }  if (selectedTab === 'Sales' && json.data?.sales_history) {
+          console.log("OverallEarning: ",json.data.total_earning);
+          setOverallEarning(json.data.total_earning),
           // Sales API response
           formatted = json.data.sales_history.map((section: any) => ({
             date: section.date,
+           
             items: section.transactions.map((item: any) => ({
               title: item.title,
               price: `$${item.amount}`,
@@ -177,17 +181,33 @@ export default function TransactionHistoryScreen(
               university: item.university_name, // extra data if needed
             })),
           }));
-        }  if (selectedTab === 'Charges' && json.data?.charges_history) {
-          // Charges API response
+        }  
+        // if (selectedTab === 'Charges' && json.data?.charges_history) {
+        //   // Charges API response
+        //   formatted = json.data.transactions.map((section: any) => ({
+        //     date: section.date,
+        //     items: section.transactions.map((item: any) => ({
+        //       // feature_id: item.feature_id,
+        //       title: item.title,
+        //       price: `$${item.listing_fee}`,
+        //       status: item.payment_status,
+        //       code: '', // no code in charges example
+        //       featureId: item.feature_id,
+        //       viewListingUrl: item.view_listing_url,
+        //     })),
+        //   }));
+        // }
+        if (selectedTab === 'Charges' && json.data?.charges_history) {
           formatted = json.data.charges_history.map((section: any) => ({
             date: section.date,
             items: section.transactions.map((item: any) => ({
               title: item.title,
               price: `$${item.listing_fee}`,
               status: item.payment_status,
-              code: '', // no code in charges example
-              featureId: item.feature_id,
-              viewListingUrl: item.view_listing_url,
+              code: '',
+              featureId: item.feature_id,           // ✅ Correct field name
+              viewUrl: item.view_listing_url,       // ✅ Matches your interface
+              order_otp: 0,                         // placeholder to satisfy your interface
             })),
           }));
         }
@@ -210,15 +230,7 @@ export default function TransactionHistoryScreen(
     fetchTransactions();
   }, [selectedTab]); 
 
-  const handleForceLogout = async () => {
-    console.log('User inactive or unauthorized — logging out');
-    await AsyncStorage.clear();
-    // navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
-  };
-  function alert(arg0: string): void {
-    throw new Error('Function not implemented.');
-  }
-
+  
   return (
     <View style={{ width: '100%', paddingHorizontal: 16 }}>
       <View style={styles.header}>
@@ -333,13 +345,15 @@ export default function TransactionHistoryScreen(
                     </View>
                   </View>
 
-
                   <View style={styles.cardconstinerdivider} />
-                  <View style={{flexDirection:'row',gap: 4}}>
+                  <View style={{ flexDirection: 'row', gap: 4 }}>
                     <Text style={styles.sellerText}>Purchased from</Text>
-                    <Text allowFontScaling={false} style={styles.sellerTextName}>
-                     {item.seller} ({item.university})
-                  </Text>
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.sellerTextName}
+                    >
+                      {item.seller} ({item.university})
+                    </Text>
                   </View>
                 </View>
               ))}
@@ -348,79 +362,126 @@ export default function TransactionHistoryScreen(
         ) : selectedTab === 'Sales' ? (
           // Sales UI (different layout)
           transactions.map((section, idx) => (
-            <View key={idx} style={styles.section}>
-              <Text allowFontScaling={false} style={styles.dateText}>
-                {section.date}
-              </Text>
-              {section.items.map((item, i) => (
-                <View key={i} style={styles.salesCard}>
+            <>
+              <View style={styles.chargesCard}>
+                {/* <Text>Overall Earnings </Text> */}
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    gap: 10,
+                    alignItems: 'center',
+                    width: '100%'
+                  }}
+                >
+                  <View style={styles.imgcontainer}>
+                      <Image
+                        source={totalEaning}
+                        style={styles.image}
+                        resizeMode="cover"
+                      />
+                    </View>
                   <View
                     style={{
+                      display: 'flex',
                       flexDirection: 'row',
+                      alignItems: 'center',
+                      flex: 1,
                       gap: 10,
                       justifyContent: 'space-between',
-                      alignContent:'center',
-                      alignItems:'center'
-
+                      padding: 1
                     }}
                   >
+                    
+                    <Text allowFontScaling={false} style={styles.Overall_Earnings_value}>
+                    Overall Earnings
+                    </Text>
+
+                  <Text allowFontScaling={false} style={styles.Overall_Earnings_title}>
+                   {`$`+overallEarning}
+                  </Text>
+                  </View>
+                </View>
+              </View>
+              <View key={idx} style={styles.section}>
+                <Text allowFontScaling={false} style={styles.dateText}>
+                  {section.date}
+                </Text>
+                {section.items.map((item, i) => (
+                  <View key={i} style={styles.salesCard}>
                     <View
                       style={{
                         flexDirection: 'row',
-                        alignItems: 'center',
-                        alignSelf: 'center',
+                        gap: 10,
                         justifyContent: 'space-between',
-                        alignContent:'center',
-                        gap: 12,
+                        alignContent: 'center',
+                        alignItems: 'center',
                       }}
                     >
-                      <View style={styles.imgcontainer}>
-                        <Image
-                          source={productImage}
-                          style={styles.image}
-                          resizeMode="cover"
-                        />
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          alignSelf: 'center',
+                          justifyContent: 'space-between',
+                          alignContent: 'center',
+                          gap: 12,
+                        }}
+                      >
+                        <View style={styles.imgcontainer}>
+                          <Image
+                            source={productImage}
+                            style={styles.image}
+                            resizeMode="cover"
+                          />
+                        </View>
+                        <Text style={styles.salesTitle}>{item.title}</Text>
                       </View>
-                      <Text style={styles.salesTitle}>{item.title}</Text>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setFilterVisible(true);
+                        }}
+                      >
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.allDetails}
+                        >
+                          All Details
+                        </Text>
+                      </TouchableOpacity>
                     </View>
-                    <TouchableOpacity>
-                      <Text allowFontScaling={false} style={styles.allDetails}>
-                        All Details
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
 
-                  <View style={styles.cardconstinerdivider} />
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <Text
-                      allowFontScaling={false}
+                    <View style={styles.cardconstinerdivider} />
+                    <View
                       style={{
-                        color: '#FFFFFF',
-                        fontFamily: 'Urbanist-SemiBold',
-                        fontSize: 12,
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
                       }}
                     >
-                      Total Order: {item.seller}
-                    </Text>
-                    <Text
-                      allowFontScaling={false}
-                      style={{
-                        color: '#FFFFFF',
-                        fontFamily: 'Urbanist-SemiBold',
-                        fontSize: 12,
-                      }}
-                    >
-                      Total Earnings: {item.price}
-                    </Text>
+                      <Text
+                        allowFontScaling={false}
+                        style={{
+                          color: '#5cc9f0',
+                          fontFamily: 'Urbanist-SemiBold',
+                          fontSize: 12,
+                        }}
+                      >
+                        Total Order: {item.seller}
+                      </Text>
+                      <Text
+                        allowFontScaling={false}
+                        style={{
+                          color: '#5cc9f0',
+                          fontFamily: 'Urbanist-SemiBold',
+                          fontSize: 12,
+                        }}
+                      >
+                        Total Earnings: {item.price}
+                      </Text>
+                    </View>
                   </View>
-                </View>
-              ))}
-            </View>
+                ))}
+              </View>
+            </>
           ))
         ) : (
           // Charges UI (different layout)
@@ -461,34 +522,40 @@ export default function TransactionHistoryScreen(
                       </Text>
                     </View>
                     <TouchableOpacity
-                    onPress={() => {
-                      // navigation.navigate('MyListing');
-                    }}
-                  >
-                    <Text
-                      allowFontScaling={false}
-                      style={{
-                        color: '#ffffffff',
-                        fontFamily: 'Urbanist-SemiBold',
-                        fontSize: 12,
-                        marginTop: 10,
+                      onPress={() => {
+                        console.log("Fetature ID: "+ item.featureId);
+                        navigation1.navigate('ViewListingDetails',{ shareid: item.featureId });
                       }}
                     >
-                      View Listing
-                    </Text>
+                      <Text
+                        allowFontScaling={false}
+                        style={{
+                          color: '#ffffffff',
+                          fontFamily: 'Urbanist-SemiBold',
+                          fontSize: 12,
+                          marginTop: 10,
+                        }}
+                      >
+                        View Listing
+                      </Text>
                     </TouchableOpacity>
                   </View>
                   <View style={styles.cardconstinerdivider} />
                   <Text style={styles.viewListing}>
                     Featured Listing Fee: {item.price}
                   </Text>
-                  
                 </View>
               ))}
             </View>
           ))
         )}
       </ScrollView>
+      <SalesAllDetailsDropdown
+        catagory_id={5}
+        visible={isFilterVisible}
+        onClose={() => setFilterVisible(false)} onApply={function (filters: any): void {
+          throw new Error('Function not implemented.');
+        } } from={0} to={0}        />
     </View>
   );
 }
@@ -725,13 +792,27 @@ const styles = StyleSheet.create({
   chargesCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     padding: 12,
-    // marginBottom: 12,
+    marginBottom: 12,
     borderRadius: 18,
     gap: 12,
   },
   chargesTitle: {
     fontWeight: '700',
     fontSize: 16,
+    color: '#fff',
+    marginBottom: 5,
+    fontFamily: 'Urbanist-SemiBold',
+  },
+  Overall_Earnings_value:{
+    fontWeight: '600',
+    fontSize: 17,
+    color: '#fff',
+    marginBottom: 5,
+    fontFamily: 'Urbanist-SemiBold',
+  },
+  Overall_Earnings_title:{
+    fontWeight: '600',
+    fontSize: 20,
     color: '#fff',
     marginBottom: 5,
     fontFamily: 'Urbanist-SemiBold',

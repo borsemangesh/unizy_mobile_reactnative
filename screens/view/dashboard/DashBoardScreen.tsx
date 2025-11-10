@@ -115,7 +115,7 @@ type TransactionScreenProps = {
   navigation: any;
 };
 
-const SearchScreenContent = (navigation: TransactionScreenProps) => (
+const SearchScreenContent = ({navigation}: TransactionScreenProps) => (
   <View style={styles.tabContent}>
     <TransactionHistoryScreen navigation ={navigation}/>
   </View>
@@ -1171,8 +1171,7 @@ return (
               reducedTransparencyFallbackColor="rgba(15, 21 ,131,0.8)"
               overlayColor="rgba(15, 21 ,131,0.8)"
             >
-              <View style={{opacity: 0.4, backgroundColor: 'rgba(0, 3, 65, 0.98)', width: '100%', height: '100%',}}></View>
-
+              <View style={{opacity:(Platform.OS === 'ios' ?0.4 :0), backgroundColor: 'rgba(0, 3, 65, 0.98)', width: '100%', height: '100%',}}></View>
               </BlurView>
           </View>
                     
