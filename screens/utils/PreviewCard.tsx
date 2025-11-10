@@ -25,6 +25,12 @@ export default function PreviewCard({tag,infoTitle,inforTitlePrice,rating,produc
 
  
         <View style={styles.tag}>
+          <BlurView 
+              blurType="light"
+              blurAmount={100}
+              style={StyleSheet.absoluteFillObject}
+              />
+
           <Text allowFontScaling={false} style={styles.tagText}>{tag}</Text>
         </View>
         {/* </LinearGradient> */}
@@ -38,10 +44,10 @@ export default function PreviewCard({tag,infoTitle,inforTitlePrice,rating,produc
 
           <View style={styles.bookmark1}>
             <BlurView 
-                                blurType="light"
-                                blurAmount={100}
-                                style={StyleSheet.absoluteFillObject}
-                              />
+              blurType="light"
+              blurAmount={100}
+              style={StyleSheet.absoluteFillObject}
+              />
             <LinearGradient
                         colors={[
                           'rgba(0, 1, 102, 0.20)',   // center strong blue tint
@@ -82,7 +88,6 @@ export default function PreviewCard({tag,infoTitle,inforTitlePrice,rating,produc
                           flexDirection: 'row',
                           width: '90%',
                           justifyContent: 'space-between',
-              
                         }}
                       >
                         <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
@@ -116,18 +121,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#5973c1ff',
     marginHorizontal: 8,
     // shadow for iOS
-    shadowColor: '#000',
+    //shadowColor: '#000',
     shadowOpacity: 0.15,
-    shadowRadius: 8,
+    //shadowRadius: 8,
     overflow: 'hidden',
     height:290,
-    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 15px 15px 6px',
+    //boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 15px 15px 6px',
   },
   imageContainer: {
     width: '100%',
     height: 230,
     position: 'relative',
-    padding:(Platform.OS === 'ios' ? 0 : 12),
+    paddingHorizontal:(Platform.OS === 'ios' ? 0 : 12),
+    paddingTop:(Platform.OS === 'ios' ? 0 : 12),
+    paddingBottom:(Platform.OS === 'ios' ? 0 : 4),
   },
   image: {
     width: '100%',
@@ -212,6 +219,8 @@ const styles = StyleSheet.create({
      //overflow:'hidden'
     backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
 
+    //backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
+
   },
   tagText: {
     fontSize: 11,
@@ -243,7 +252,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#fff',
     fontFamily: 'Urbanist-SemiBold',
-    marginBottom: 2,
+     marginBottom: -2,
     width:'90%'
   },
    title1: {
@@ -251,7 +260,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: '#000',
     fontFamily: 'Urbanist-Regular',
-    marginBottom: 2,
+    marginBottom: -2,
   },
   price: {
     fontSize: 17,

@@ -538,7 +538,7 @@ const styles = StyleSheet.create({
     borderRadius:24,
     overflow:'hidden',
     //minHeight:'80%',
-   marginBottom:20,
+   //marginBottom:20,
   },
   emptyImage: {
     width: 50,

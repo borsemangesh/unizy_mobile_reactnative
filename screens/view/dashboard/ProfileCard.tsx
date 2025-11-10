@@ -18,11 +18,13 @@ import {
   Easing,
   Platform,
   FlatList,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { showToast } from '../../utils/toast';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 import { useFocusEffect } from '@react-navigation/native';
+import { BlurView } from '@react-native-community/blur';
 
 
 const bgImage = require('../../../assets/images/backimg.png');
@@ -67,6 +69,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
 const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
 const [expanded, setExpanded] = useState(false);
 const animatedHeight = useRef(new Animated.Value(0)).current;
+ const [showConfirm, setShowConfirm] = useState(false);
 
 useEffect(() => {
   if (expanded) {
@@ -164,12 +167,13 @@ const renderItem = ({ item }: any) => {
       style={styles.cardContainer}
       onPress={async () => {
         if (isLogout) {      
-        await AsyncStorage.setItem('ISLOGIN', 'false');
-        // showToast('User Logout Successfully','success')
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'SinglePage', params: { resetToLogin: true , logoutMessage: 'User Logout Successfully'} }],
-        });
+        // await AsyncStorage.setItem('ISLOGIN', 'false');
+        // navigation.reset({
+        //   index: 0,
+        //   routes: [{ name: 'SinglePage', params: { resetToLogin: true , logoutMessage: 'User Logout Successfully'} }],
+        // });
+
+        setShowConfirm(true); 
       }
         else if (item.title === 'My Orders') {
           navigation.navigate('MyOrders'); 
@@ -244,10 +248,10 @@ return (
     </View>
 
 
-    <View style={{ paddingTop: 120 }}> 
+    <View style={{ paddingTop: 120,marginHorizontal:6 }}> 
         
   <View style={styles.userRow}>
-    <View style={{ width: '20%' ,alignSelf:'center'}}>
+    <View style={{ width: 88 ,alignSelf:'center',height:88}}>
     {userMeta?.profile ? (
       <Image
         source={{ uri: userMeta.profile }}
@@ -265,7 +269,7 @@ return (
     )}
   </View>
 
-  <View style={{ width: '60%', position: 'relative' }}>
+  <View style={{ width: '60%', position: 'relative',paddingLeft:12 }}>
     {/* Name + Edit on top row */}
     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
       <Text allowFontScaling={false} style={styles.userName}>
@@ -330,8 +334,88 @@ return (
       />
         
     </View>  
+
+
       
       </View>
+
+       <Modal
+          visible={showConfirm}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowConfirm(false)}
+        >
+          <TouchableWithoutFeedback onPress={() => setShowConfirm(false)}>
+            <View style={styles.overlay}>
+              <BlurView
+                style={{
+                  flex: 1,
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                  alignItems: 'center',
+                }}
+                blurType="light"
+                blurAmount={10}
+                reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+              >
+                <View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                  ]}
+                />
+
+                <View style={styles.popupContainer}>
+                  <Image
+                    source={require('../../../assets/images/alert_logout.png')}
+                    style={styles.logo}
+                    resizeMode="contain"
+                    />
+                  <Text allowFontScaling={false} style={styles.mainheader}>
+                     Confirm Logout
+                  </Text>
+                  <Text allowFontScaling={false} style={styles.subheader}>
+                    Are you sure you want to log out from your account?
+                  </Text>
+
+                   <TouchableOpacity
+                      style={styles.loginButton}
+                            onPress={async () => {
+                              setShowConfirm(false);
+                              await AsyncStorage.setItem('ISLOGIN', 'false');
+                              navigation.reset({
+                                index: 0,
+                                routes: [
+                                  {
+                                    name: 'SinglePage',
+                                    params: {
+                                      resetToLogin: true,
+                                      logoutMessage: 'User Logout Successfully',
+                                    },
+                                  },
+                                ],
+                              });
+                            }}
+                >
+                    <Text allowFontScaling={false} style={styles.loginText}>
+                      Log out
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.loginButton1}
+                    onPress={() => setShowConfirm(false)}
+                  >
+                    <Text allowFontScaling={false} style={styles.loginText1}>
+                      Cancel
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </BlurView>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
       <NewCustomToastContainer/>
       </View>
    
@@ -342,16 +426,110 @@ export default ProfileCard;
 
 const styles = StyleSheet.create({
 
+  logo: {
+    width: 64,
+    height: 64,
+    marginBottom: 20,
+  },
+
+    popupContainer: {
+    width: '85%',
+    padding: 20,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'center',
+    overflow: 'hidden',
+
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+  },
+
+  mainheader: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 20,
+    fontWeight: '600',
+    letterSpacing: -0.4,
+    lineHeight: 28,
+
+  },
+  subheader: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginTop: 6,
+  },
+
+  loginText: {
+    color: '#002050',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: 500,
+    letterSpacing: 1,
+    width: '100%',
+  },
+  loginText1: {
+    color: '#FFFFFF7A',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: 500,
+    letterSpacing: 1,
+    width: '100%',
+  },
+
+  loginButton: {
+    display: 'flex',
+    width: '100%',
+    height: 52,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 100,
+    paddingTop: 6,
+    paddingBottom: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.56)',
+    marginTop: 20,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+  },
+
+  loginButton1: {
+    display: 'flex',
+    width: '100%',
+    height: 52,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 100,
+    paddingTop: 6,
+    paddingBottom: 6,
+    backgroundColor: 'rgba(170, 169, 176, 0.56)',
+    marginTop: 8,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+  },
+
+
+  overlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+
   editcard:{
-     paddingVertical: 8,
+    paddingVertical: 8,
     paddingHorizontal: 16,
-    marginRight: 8,
+    marginRight:12,
     borderColor: '#ffffff11',
     borderRadius:10,
     boxSizing: 'border-box',
-    gap:10,
-    width:'20%',
-
+    //gap:10,
+    alignSelf: 'flex-start',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
     boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px', 
@@ -369,17 +547,19 @@ const styles = StyleSheet.create({
   },
 
   initialsCircle:{
- backgroundColor: '#8390D4',
-  alignItems: 'center',
-  justifyContent: 'center',
-   width: 50,
-    height: 50,
-    borderRadius: 25,
+    backgroundColor: '#8390D4',
+    alignItems: 'center',
+    justifyContent: 'center',
+    
+
+    width: 88,
+    height: 88,
+    borderRadius: 20,
     marginRight: 12,
   },
   initialsText:{
    color: '#fff',
-  fontSize: 18,
+  fontSize: 36,
   fontWeight:600,
   textAlign: 'center',
   fontFamily: 'Urbanist-SemiBold',
@@ -417,8 +597,8 @@ versionLabel: {
     backgroundColor: 'rgba(255,255,255,0.06)',
     borderRadius: 12,
     padding: 12,
-    height:50,
-    marginTop:6,
+    minHeight:52,
+    //marginTop:6,
 
     
   },
@@ -502,13 +682,21 @@ versionLabel: {
     paddingTop: 100,
   },
   userRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 6,
-    padding: 12,
-    borderRadius: 24,
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    marginHorizontal:16
+    // flexDirection: 'row',
+    // alignItems: 'flex-start',
+     marginBottom: 6,
+    // padding: 12,
+    // borderRadius: 24,
+    // backgroundColor: 'rgba(255, 255, 255, 0.06)',
+     marginHorizontal:16,
+      flexDirection: 'row',
+      alignItems: 'center', // 👈 ensures vertical alignment stays correct
+      justifyContent: 'space-between',
+      padding: 12,
+      //marginTop: 10,
+      borderRadius: 24,
+      backgroundColor: 'rgba(255, 255, 255, 0.06)',
+
   },
   productdetails: {
     marginTop: 10,
@@ -518,9 +706,9 @@ versionLabel: {
     overflow: 'hidden',
   },
   avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 88,
+    height: 88,
+    borderRadius: 20,
     marginRight: 12,
   },
   userName: {

@@ -50,8 +50,10 @@ const FilterBottomSheet = ({
   >({});
 
   const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
+  const [defaultPriceRange, setDefaultPriceRange] = useState({ min: 0, max: 10000 });
   const [sliderLow, setSliderLow] = useState(priceRange.min);
   const [sliderHigh, setSliderHigh] = useState(priceRange.max);
+
 
 
 
@@ -81,7 +83,20 @@ const FilterBottomSheet = ({
         );
         console.log("Current Filter: "+ dynamicFilters);
         setFilters(dynamicFilters);
-        //if (dynamicFilters.length) setSelectedTab(dynamicFilters[0].field_name);
+
+
+        const priceFilter = dynamicFilters.find(
+            (item: any) => item.alias_name?.toLowerCase() === 'price'
+          );
+
+          if (priceFilter) {
+            const newRange = {
+              min: priceFilter.minvalue ?? 0,
+              max: priceFilter.maxvalue ?? 10000,
+            };
+            setPriceRange(newRange);
+            setDefaultPriceRange(newRange); // ✅ store original API range
+          }
         if (!selectedTab && dynamicFilters.length) {
           setSelectedTab(dynamicFilters[0].field_name);
         }
@@ -130,17 +145,23 @@ const FilterBottomSheet = ({
     });
   };
 
+// const handleClearFilters = () => {
+//   setDropdownSelections({});
+//   setPriceRange({ min: 0, max: 10000 });
+//   setSliderLow(0);
+//   setSliderHigh(10000);
+//   //setSelectedTab(null);
+//   //onClose();
+// };
+
 const handleClearFilters = () => {
   setDropdownSelections({});
-  setPriceRange({ min: 0, max: 10000 });
-  setSliderLow(0);
-  setSliderHigh(10000);
+  setPriceRange(defaultPriceRange);  // ✅ reset from API range
+  setSliderLow(defaultPriceRange.min);
+  setSliderHigh(defaultPriceRange.max);
   //setSelectedTab(null);
   //onClose();
 };
-//  const handleClose = () => {
-//   onClose(); // ✅ Only close, no reset
-// };
 
 const handleClose = () => {
   // ✅ Restore last applied filters when cancelling
@@ -162,11 +183,10 @@ const handleClose = () => {
 
     setDropdownSelections(savedDropdowns);
   } else {
-    // ✅ No previous filters → reset to default clean state
     setDropdownSelections({});
-    setPriceRange({ min: 0, max: 10000 });
-    setSliderLow(0);
-    setSliderHigh(10000);
+    setPriceRange(defaultPriceRange);  // ✅ reset from API range
+    setSliderLow(defaultPriceRange.min);
+    setSliderHigh(defaultPriceRange.max);
   }
 
   onClose(); // Close sheet after restoring UI
@@ -278,6 +298,66 @@ const handleClose = () => {
   );
 }
 
+// else if (currentFilter.alias_name === 'price') {
+//   // Only render when the priceRange is set from API (avoid showing default 0–10000)
+//   if (!priceRange || priceRange.max === 10000) {
+//     return (
+//       <View style={{ alignItems: 'center', paddingVertical: 20 }}>
+//         <Text allowFontScaling={false} style={{ color: 'white' }}>
+//           Loading price range...
+//         </Text>
+//       </View>
+//     );
+//   }
+
+//   return (
+//     <View style={{ zIndex: 999, position: 'relative' }}>
+//       <Text
+//         allowFontScaling={false}
+//         style={{ color: 'white', marginBottom: 10 }}
+//       >
+//         Range: {sliderLow} - {sliderHigh}
+//       </Text>
+
+//       <View style={{ paddingHorizontal: 20, paddingTop: 30, paddingBottom: 20 }}>
+//         <MultiSlider
+//           values={[sliderLow, sliderHigh]}
+//           sliderLength={150}
+//           min={priceRange.min}
+//           max={priceRange.max}
+//           step={1}
+//           onValuesChange={(values) => {
+//             const [low, high] = values;
+//             setSliderLow(low);
+//             setSliderHigh(high);
+//             setPriceRange({ min: low, max: high });
+//           }}
+//           selectedStyle={{
+//             backgroundColor: '#fff',
+//           }}
+//           unselectedStyle={{
+//             backgroundColor: '#888',
+//           }}
+//           containerStyle={{
+//             height: 'auto',
+//           }}
+//           trackStyle={{
+//             height: 4,
+//             borderRadius: 2,
+//           }}
+//           markerStyle={{
+//             height: 20,
+//             width: 20,
+//             borderRadius: 10,
+//             backgroundColor: '#fff',
+//           }}
+//         />
+//       </View>
+//     </View>
+//   );
+// }
+
+
     return null;
   };
 
@@ -293,15 +373,6 @@ const handleClose = () => {
             options: dropdownSelections[f.id],
           };
         } 
-        // else if (f.alias_name?.toLowerCase() === 'price') {
-        //   return {
-        //     id: f.id,
-        //     field_name: f.field_name,
-        //     field_type: f.field_type,
-        //     alias_name: f.alias_name,
-        //     options: [priceRange.min, priceRange.max],
-        //   };
-        // }
         else if (f.alias_name?.toLowerCase() === 'price') {
         const defaultMin = f.minvalue ?? 0;
         const defaultMax = f.maxvalue ?? 100;

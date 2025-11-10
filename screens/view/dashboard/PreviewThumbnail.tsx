@@ -17,6 +17,9 @@ import NewProductCard from '../../utils/NewProductCard';
 import PreviewCard from '../../utils/PreviewCard';
 import Button from '../../utils/component/Button';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
+import NewFeatureCard from '../../utils/NewFeatureCard';
+import NewTutitionCard from '../../utils/NewTutionCard';
+import SeperateTutionCard from '../../utils/SeperateTutitionCard';
 
 type PreviewThumbnailProps = {
   navigation: any;
@@ -46,12 +49,21 @@ interface UserMeta {
   profile: string | null;
   student_email: string | null;
   category?: Category | null;
+  university_name?:string|null
 }
 
 const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
 
   const [storedForm, setStoredForm] = useState<any | null>(null);
 const [categoryDetails, setCategoryDetails] = useState<CategoryDetailsType | null>(null);
+const [uniname, setUniname] = useState<string>(''); // initialize with empty string
+const [categoryId, setCategoryId] = useState<number | null>(null);
+
+
+const [fullName, setFullName] = useState('');
+const [initials, setInitials] = useState('');
+const [profile,setProfile] = useState('');
+
 
 // useEffect(() => {
 //   const fetchStoredData = async () => {
@@ -96,10 +108,23 @@ useEffect(() => {
       const storedUserMeta = await AsyncStorage.getItem('userMeta');
       if (storedUserMeta) {
         const parsedUserMeta: UserMeta = JSON.parse(storedUserMeta);
+        setUniname(parsedUserMeta?.university_name ?? '');
+        setCategoryId(parsedUserMeta?.category?.id ?? null); 
+        setProfile(parsedUserMeta?.profile ?? '')
+
+        const full = `${parsedUserMeta?.firstname } ${parsedUserMeta?.lastname}`.trim();
+        setFullName(full);
+
+        // Create initials (first letter of each, uppercased)
+        const init = `${parsedUserMeta?.firstname?.charAt(0) ?? ''}${parsedUserMeta?.lastname ?.charAt(0) ?? ''}`.toUpperCase();
+        setInitials(init);
+
+
+
         console.log('Stored User Meta:', parsedUserMeta);
 
         if (parsedUserMeta.category) {
-          const { commission, max_cappund,feature_fee, max_feature_cap} = parsedUserMeta.category;
+          const { commission, max_cappund,feature_fee, max_feature_cap,} = parsedUserMeta.category;
           setCategoryDetails({ commission: commission ?? '0', max_cappund: max_cappund ?? '0',feature_fee:feature_fee ?? '0' ,max_feature_cap:max_feature_cap ?? '0'});
           console.log('Category Details set:', { commission, max_cappund });
         } else {
@@ -209,52 +234,71 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
         <View style={{ height: '100%' }}>
          
          
-        
-    {/* <View style={styles.productCarddisplay}>
+  <View style={styles.productCarddisplay}>
   {storedForm ? (
     <>
-      {(storedForm[13]?.value === true || storedForm[13]?.value === 'true') ? (
-        <PreviewCard
-          tag="University of Warwick"
-          infoTitle={titleValue} // from alias
-          inforTitlePrice={`£${commissionPrice}`} // from alias
-          rating={storedForm[12]?.value || '4.5'}
-          productImage={
-            imageArray.length > 0
-              ? { uri: imageArray[0].uri }
-              : require('../../../assets/images/drone.png')
-          }
-        />
-      ) : (
-        <NewProductCard
-          tag="University of Warwick"
-          infoTitle={titleValue} 
-          inforTitlePrice={`£${commissionPrice1}`} 
-          rating={storedForm[12]?.value || '4.5'}
-          productImage={
-            imageArray.length > 0
-              ? { uri: imageArray[0].uri }
-              : require('../../../assets/images/drone.png')
-          }
-        />
-      )}
-    </>
-  ) : (
-    <Text style={{ color: '#fff', textAlign: 'center' }}>Loading...</Text>
-  )}
-</View> */}
+      {categoryId === 2 || categoryId === 5 ? (
+        storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
+          // 🔹 CASE 1A: Category 2 or 5, Featured = true
+          <>
+            <Text
+              allowFontScaling={false}
+              style={[styles.newtext, { paddingBottom: 6 }]}
+            >
+              Featured Listing Preview
+            </Text>
+            <NewTutitionCard
+              tag={uniname}
+              title={titleValue}
+              infoTitle={fullName}
+              inforTitlePrice={`£${commissionPrice}`}
+              rating={storedForm[12]?.value || '4.5'}
+              productImage={{ uri: profile }}
+              isBookmarked={false}
+            />
 
-
-<View style={styles.productCarddisplay}>
-  {storedForm ? (
-    <>
-      {storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
+            <Text
+              allowFontScaling={false}
+              style={[styles.newtext1, { paddingBottom: 6 }]}
+            >
+              Regular Listing Preview
+            </Text>
+            <SeperateTutionCard
+                tag={uniname}
+                infoTitle={titleValue}
+                rating={storedForm[12]?.value || '4.5'}
+                inforTitlePrice={`£${commissionPrice}`}
+                productImage={{ uri: profile }}
+                bookmark={false}
+                showInitials={!profile || profile === null || profile.trim() === ''}
+              isfeature={true} initialsName={initials}            />
+          </>
+        ) : (
+          // 🔹 CASE 1B: Category 2 or 5, Featured = false
+          <SeperateTutionCard
+            tag={uniname}
+                infoTitle={titleValue}
+                rating={storedForm[12]?.value || '4.5'}
+                inforTitlePrice={`£${commissionPrice}`}
+                productImage={profile ? { uri: profile } : undefined}
+                bookmark={false}
+                showInitials={!profile || profile === null || profile.trim() === ''}
+                isfeature={false} initialsName={initials} 
+          />
+        )
+      ) : storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
+        // 🔹 CASE 2A: Other categories, Featured = true
         <>
-        <Text allowFontScaling={false} style={[styles.newtext,{paddingBottom:6}]}>Featured Listing Preview</Text>
+          <Text
+            allowFontScaling={false}
+            style={[styles.newtext, { paddingBottom: 6 }]}
+          >
+            Featured Listing Preview
+          </Text>
           <PreviewCard
-            tag="University of Warwick"
-            infoTitle={titleValue} // from alias
-            inforTitlePrice={`£${commissionPrice}`} // from alias
+            tag={uniname}
+            infoTitle={titleValue}
+            inforTitlePrice={`£${commissionPrice}`}
             rating={storedForm[12]?.value || '4.5'}
             productImage={
               imageArray.length > 0
@@ -262,9 +306,14 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
                 : require('../../../assets/images/drone.png')
             }
           />
-          <Text allowFontScaling={false} style={[styles.newtext1,{paddingBottom:6}]}>Regular Listing Preview</Text>
-          <NewProductCard
-            tag="University of Warwick"
+          <Text
+            allowFontScaling={false}
+            style={[styles.newtext1, { paddingBottom: 6 }]}
+          >
+            Regular Listing Preview
+          </Text>
+          <NewFeatureCard
+            tag={uniname}
             infoTitle={titleValue}
             inforTitlePrice={`£${commissionPrice}`}
             rating={storedForm[12]?.value || '4.5'}
@@ -276,11 +325,11 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
           />
         </>
       ) : (
-       
+        // 🔹 CASE 2B: Other categories, Featured = false
         <NewProductCard
-          tag="University of Warwick"
-          infoTitle={titleValue} // from alias
-          inforTitlePrice={`£${commissionPrice}`} // from alias
+          tag={uniname}
+          infoTitle={titleValue}
+          inforTitlePrice={`£${commissionPrice}`}
           rating={storedForm[12]?.value || '4.5'}
           productImage={
             imageArray.length > 0
@@ -291,9 +340,18 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
       )}
     </>
   ) : (
-    <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center' }}>Loading...</Text>
+    <Text
+      allowFontScaling={false}
+      style={{ color: '#fff', textAlign: 'center' }}
+    >
+      Loading...
+    </Text>
   )}
 </View>
+
+
+
+
 
            <View
                   style={styles.textbg}

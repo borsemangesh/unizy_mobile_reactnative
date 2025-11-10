@@ -1230,7 +1230,7 @@ const handleEndReached = useCallback(() => {
         contentContainerStyle={[
             //styles.listContainer,
             styles.listContainer,{ paddingBottom: SCREEN_HEIGHT * 0.05 },
-            featurelist?.length === 0 && { alignContent:'center',alignSelf:'center' ,width:'90%',height:'90%'}
+            featurelist?.length === 0 && { alignContent:'center',alignSelf:'center' ,width:'90%',height:'100%'}
           ]}
         renderItem={renderItem}
         onEndReached={handleEndReached}
@@ -1292,7 +1292,7 @@ const styles = StyleSheet.create({
     borderRadius:24,
     overflow:'hidden',
     //minHeight:'80%',
-   marginBottom:20,
+   //marginBottom:20,
   },
   emptyImage: {
     width: 50,

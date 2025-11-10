@@ -241,15 +241,55 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
               {/* Card */}
               <View style={styles.card}>
                 <View style={{ flexDirection: 'row' }}>
-                  <Image
-                    source={{
-                      uri: data?.list?.profileshowinview
-                        ? data?.list?.createdby?.profile
-                        : data?.list?.thumbnail,
-                    }}
-                    style={styles.image}
-                    resizeMode="cover"
-                  />
+                  {(() => {
+                    // Check if category is housekeeping or tuition
+                    const categoryName = data?.list?.category?.name || '';
+                    const isProfileCategory = categoryName?.toLowerCase() === 'house keeping' || categoryName?.toLowerCase() === 'tuition';
+                    const profilePhoto = data?.list?.createdby?.profile;
+                    const firstName = data?.list?.createdby?.firstname;
+                    const lastName = data?.list?.createdby?.lastname;
+                   
+                    // Get initials helper function
+                    const getInitials = (first: string | null = '', last: string | null = '') => {
+                      const f = first?.trim()?.charAt(0)?.toUpperCase() || '';
+                      const l = last?.trim()?.charAt(0)?.toUpperCase() || '';
+                      return (f + l) || '?';
+                    };
+                   
+                    // Determine what to show
+                    const shouldShowProfile = isProfileCategory && profilePhoto;
+                    const shouldShowInitials = isProfileCategory && !profilePhoto;
+                   
+                    if (shouldShowInitials) {
+                      return (
+                        <View style={styles.initialsCircle}>
+                          <Text allowFontScaling={false} style={styles.initialsText}>
+                            {getInitials(firstName, lastName)}
+                          </Text>
+                        </View>
+                      );
+                    } else if (shouldShowProfile) {
+                      return (
+                        <Image
+                          source={{ uri: profilePhoto }}
+                          style={styles.image}
+                          resizeMode="cover"
+                        />
+                      );
+                    } else {
+                      return (
+                        <Image
+                          source={{
+                            uri: data?.list?.profileshowinview
+                              ? data?.list?.createdby?.profile
+                              : data?.list?.thumbnail,
+                          }}
+                          style={styles.image}
+                          resizeMode="cover"
+                        />
+                      );
+                    }
+                  })()}
                   <View style={{ marginLeft: 10, gap: 8 }}>
                     <Text
                       allowFontScaling={false}
@@ -296,9 +336,9 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                   </Text>
                 </View>
               </View>
-
+ 
               <View style={styles.carddivider} />
-
+ 
               {Array.isArray(data?.buyers) &&
                 data.buyers.map((buyer: any, index: number) => (
                   <View key={index} style={styles.card}>
@@ -332,7 +372,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                           Sale Details
                         </Text>
                       </View>
-
+ 
                       {/* ✅ STATUS BADGE - only if otpverified */}
                       {buyer.otpverified && (
                         <View
@@ -365,9 +405,9 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                         </View>
                       )}
                     </View>
-
+ 
                     <View style={styles.cardconstinerdivider} />
-
+ 
                     {/* BUYER DETAILS */}
                     <View style={styles.listingtyperow}>
                       <Text allowFontScaling={false} style={styles.lebleHeader}>
@@ -377,7 +417,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                         {buyer.firstname} {buyer.lastname}
                       </Text>
                     </View>
-
+ 
                     <View style={styles.listingtyperow}>
                       <Text allowFontScaling={false} style={styles.lebleHeader}>
                         Buyer’s University:
@@ -386,7 +426,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                         {buyer.university}
                       </Text>
                     </View>
-
+ 
                     <View style={styles.listingtyperow}>
                       <Text allowFontScaling={false} style={styles.lebleHeader}>
                         City:
@@ -395,7 +435,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                         {buyer.city}
                       </Text>
                     </View>
-
+ 
                     <View style={styles.listingtyperow}>
                       <Text allowFontScaling={false} style={styles.lebleHeader}>
                         Sold On:
@@ -411,7 +451,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                         })}
                       </Text>
                     </View>
-
+ 
                     <View style={styles.listingtyperow}>
                       <Text allowFontScaling={false} style={styles.lebleHeader}>
                         Sold For:
@@ -420,9 +460,9 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                         ${buyer.price}
                       </Text>
                     </View>
-
+ 
                     <View style={styles.cardconstinerdivider} />
-
+ 
                     {/* 🔢 Enter OTP Button - only if NOT verified */}
                     {!buyer.otpverified && (
                       <View
@@ -720,7 +760,24 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
   );
 };
 
+
 const styles = StyleSheet.create({
+
+  initialsCircle: {
+    backgroundColor: '#8390D4',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 72,
+    height: 76,
+    borderRadius: 16,
+  },
+  initialsText: {
+    color: '#fff',
+    fontSize: 28,
+    fontWeight: 600,
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
+  },
   otpContainer: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',

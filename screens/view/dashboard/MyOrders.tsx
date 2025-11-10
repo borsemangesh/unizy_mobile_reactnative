@@ -209,10 +209,57 @@ const formatDate = (dateString: string | null | undefined) => {
   const year = date.getFullYear();
   return `${day}-${month}-${year}`;
 };
+const formatDate1 = (dateString: string) => {
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const month = date.toLocaleString('default', { month: 'long' });
+  const year = date.getFullYear();
+
+  let suffix = 'th';
+  if (day % 10 === 1 && day % 100 !== 11) suffix = 'st';
+  else if (day % 10 === 2 && day % 100 !== 12) suffix = 'nd';
+  else if (day % 10 === 3 && day % 100 !== 13) suffix = 'rd';
+
+  return `${day}${suffix} ${month} ${year}`;
+};
 
 
+const groupByDate = (data: any[]) => {
+  const grouped: any[] = [];
+  let lastDate: string | null = null;
+
+  data.forEach((item) => {
+    const displayDate = formatDate1(item.created_at);
+
+    if (displayDate !== lastDate) {
+      grouped.push({
+        type: 'date',
+        id: `date-${displayDate}`,
+        displayDate,
+      });
+      lastDate = displayDate;
+    }
+
+    grouped.push({
+      ...item,
+      type: 'item',
+    });
+  });
+
+  return grouped;
+};
+
+const groupedOrders = groupByDate(filteredFeatures);
 
 const renderItem = ({ item }: any) => {
+
+  if (item.type === 'date') {
+    return (
+      <Text allowFontScaling={false} style={styles.dateHeading}>
+        {item.displayDate}
+      </Text>
+    );
+  }
   const displayDate = formatDate(item.created_at);
   const productImage =
     item?.featurelist?.thumbnail
@@ -235,6 +282,8 @@ const renderItem = ({ item }: any) => {
         shareid={item.id}
         date={displayDate}
         ispurchase={true}
+        navigation={navigation}
+        category_id={item?.featurelist?.category_id}
       />
     </View>
   );
@@ -288,16 +337,16 @@ const renderItem = ({ item }: any) => {
 
         
         <FlatList
-          data={filteredFeatures}
+          data={groupedOrders}
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={[
             styles.listContainer,
             { paddingBottom: SCREEN_HEIGHT * 0.22 },
-            filteredFeatures?.length === 0 && {
+            groupedOrders?.length === 0 && {
               alignContent: 'center',
               alignSelf: 'center',
               width: '90%',
-              height: '90%',
+              height: '100%',
             },
           ]}
           renderItem={renderItem}
@@ -314,7 +363,7 @@ const renderItem = ({ item }: any) => {
                     resizeMode="contain"
                   />
                   <Text allowFontScaling={false} style={styles.emptyText}>
-                    No Orders found
+                    No Orders Found
                   </Text>
                 </View>
               </View>
@@ -334,6 +383,14 @@ export default MyOrders;
 
 const styles = StyleSheet.create({
 
+dateHeading:{
+    color:'#fff',
+    fontSize:12,
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight:500,
+    marginLeft:12,
+    marginTop:16
+    },
 
    emptyWrapper: {
       flex: 1,
@@ -354,7 +411,7 @@ const styles = StyleSheet.create({
     borderRadius:24,
     overflow:'hidden',
     //minHeight:'80%',
-   marginBottom:20,
+   //marginBottom:20,
   },
   emptyImage: {
     width: 50,
@@ -485,9 +542,13 @@ const styles = StyleSheet.create({
     // paddingTop: 10,
     // paddingBottom:160
      marginLeft: 8,
-    marginRight: 5,
-    paddingTop: 10,
-    gap:16
+    marginRight: 8,
+    marginTop:-12,
+    marginBottom:12,
+    
+    
+    
+    //gap:16
 
   },
   row1: {
@@ -496,6 +557,7 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     flex: 1,
-    marginHorizontal: 4,
+    marginTop: 8,
+    
   },
 });

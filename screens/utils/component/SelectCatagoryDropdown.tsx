@@ -663,12 +663,15 @@ const toggleCheckbox = (id: number) => {
       // backdropColor={'rgba(0, 0, 0, 0.5)'}
       onRequestClose={onClose}
     >
-      <TouchableWithoutFeedback onPress={onClose}>
+    
     <View style={{ flex: 1,justifyContent: 'flex-end', }}>
 
        
 
       <View style={styles.overlay}>
+         <TouchableWithoutFeedback onPress={onClose}>
+            <View style={StyleSheet.absoluteFillObject} />
+             </TouchableWithoutFeedback>
         <View style={styles.modelcontainer}>
           <BlurView
           blurType={Platform.OS === 'ios' ? 'light' : 'dark'}
@@ -836,7 +839,6 @@ const toggleCheckbox = (id: number) => {
       </View>
       </View>
     
-      </TouchableWithoutFeedback>
     </Modal>
     </View>
   );

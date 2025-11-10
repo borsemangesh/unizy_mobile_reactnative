@@ -819,68 +819,153 @@ return (
 
   const renderActiveTabContent = () => {
     switch (activeTab) {
+      // case 'Home':
+      //   return (
+      //     <>
+      //       <View style={styles.productsWrapper}>{renderProducts()}</View>
+      //       <Animated.View
+      //         style={{
+      //           transform: [{ translateY: cardSlideupAnimation }],
+      //         }}
+      //       >
+      //         {' '}
+      //         <Text allowFontScaling={false} style={styles.featuredText}>Featured Listings</Text>
+      //       </Animated.View>
+      //       <ScrollView
+      //        directionalLockEnabled={true} 
+      //         style={{ paddingHorizontal: 0,marginLeft:8 }}
+      //         horizontal
+      //         showsVerticalScrollIndicator={false}
+      //         showsHorizontalScrollIndicator={false}
+      //       >
+      //         {features.map(item => (
+      //           <Animated.View
+      //             key={item.id}
+      //             style={{
+      //               transform: [{ translateY: cardSlideupAnimation }],
+      //             }}
+      //           >
+      //             {item.profileshowinview ? (
+      //               <TutitionCard
+      //                 tag={item.university?.name || 'University of Warwick'}
+      //                 title={item.title}
+      //                 infoTitle={`${item.createdby?.firstname || ''} ${
+      //                   item.createdby?.lastname || ''
+      //                 }`}
+      //                 inforTitlePrice={`£ ${item.price}`}
+      //                 rating="4.5"
+      //                 productImage={{ uri: item.createdby?.profile }}
+      //                 onBookmarkPress={() => handleBookmarkPress(item.id)}
+      //                 isBookmarked={item.isbookmarked}
+      //                 onpress={() =>{
+      //                   navigation.navigate('SearchDetails', { id: item.id },{ animation: 'none' })
+      //                 }}
+      //               />
+      //             ) : (
+      //               <ProductCard
+      //                 tag={item.university?.name || 'University of Warwick'}
+      //                 infoTitle={item.title}
+      //                 inforTitlePrice={`£ ${item.price}`}
+      //                 rating="4.5"
+      //                 productImage={{ uri: item.thumbnail }}
+      //                 onBookmarkPress={() => handleBookmarkPress(item.id)}
+      //                isBookmarked={item.isbookmarked}
+      //                 onpress={() =>{
+      //                   navigation.replace('SearchDetails', { id: item.id },{ animation: 'none' })
+      //                 }}
+      //               />
+      //             )}
+      //           </Animated.View>
+      //         ))}
+      //       </ScrollView>
+      //     </>
+      //   );
+
       case 'Home':
-        return (
-          <>
-            <View style={styles.productsWrapper}>{renderProducts()}</View>
+  return (
+    <>
+      <View style={styles.productsWrapper}>{renderProducts()}</View>
+
+      <Animated.View
+        style={{
+          transform: [{ translateY: cardSlideupAnimation }],
+        }}
+      >
+        <Text allowFontScaling={false} style={styles.featuredText}>
+          Featured Listings
+        </Text>
+      </Animated.View>
+
+      {features.length === 0 ? (
+        // 👇 No Listings Found section
+        <View style={styles.emptyWrapper}>
+          <View style={styles.emptyContainer}>
+            <Image
+              source={require('../../../assets/images/noproduct.png')}
+              style={styles.emptyImage}
+              resizeMode="contain"
+            />
+            <Text allowFontScaling={false} style={styles.emptyText}>
+              No Listings Found
+            </Text>
+          </View>
+        </View>
+      ) : (
+        // 👇 Show scrollable cards if data exists
+        <ScrollView
+          directionalLockEnabled={true}
+          style={{ paddingHorizontal: 0, marginLeft: 8 }}
+          horizontal
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+        >
+          {features.map((item) => (
             <Animated.View
+              key={item.id}
               style={{
                 transform: [{ translateY: cardSlideupAnimation }],
               }}
             >
-              {' '}
-              <Text allowFontScaling={false} style={styles.featuredText}>Featured Listings</Text>
-            </Animated.View>
-            <ScrollView
-             directionalLockEnabled={true} 
-              style={{ paddingHorizontal: 0,marginLeft:8 }}
-              horizontal
-              showsVerticalScrollIndicator={false}
-              showsHorizontalScrollIndicator={false}
-            >
-              {features.map(item => (
-                <Animated.View
-                  key={item.id}
-                  style={{
-                    transform: [{ translateY: cardSlideupAnimation }],
+              {item.profileshowinview ? (
+                <TutitionCard
+                  tag={item.university?.name || 'University of Warwick'}
+                  title={item.title}
+                  infoTitle={`${item.createdby?.firstname || ''} ${
+                    item.createdby?.lastname || ''
+                  }`}
+                  inforTitlePrice={`£ ${item.price}`}
+                  rating="4.5"
+                  productImage={{ uri: item.createdby?.profile }}
+                  onBookmarkPress={() => handleBookmarkPress(item.id)}
+                  isBookmarked={item.isbookmarked}
+                  onpress={() => {
+                    navigation.navigate('SearchDetails', { id: item.id }, { animation: 'none' });
                   }}
-                >
-                  {item.profileshowinview ? (
-                    <TutitionCard
-                      tag={item.university?.name || 'University of Warwick'}
-                      title={item.title}
-                      infoTitle={`${item.createdby?.firstname || ''} ${
-                        item.createdby?.lastname || ''
-                      }`}
-                      inforTitlePrice={`£ ${item.price}`}
-                      rating="4.5"
-                      productImage={{ uri: item.createdby?.profile }}
-                      onBookmarkPress={() => handleBookmarkPress(item.id)}
-                      isBookmarked={item.isbookmarked}
-                      onpress={() =>{
-                        navigation.navigate('SearchDetails', { id: item.id },{ animation: 'none' })
-                      }}
-                    />
-                  ) : (
-                    <ProductCard
-                      tag={item.university?.name || 'University of Warwick'}
-                      infoTitle={item.title}
-                      inforTitlePrice={`£ ${item.price}`}
-                      rating="4.5"
-                      productImage={{ uri: item.thumbnail }}
-                      onBookmarkPress={() => handleBookmarkPress(item.id)}
-                     isBookmarked={item.isbookmarked}
-                      onpress={() =>{
-                        navigation.replace('SearchDetails', { id: item.id },{ animation: 'none' })
-                      }}
-                    />
-                  )}
-                </Animated.View>
-              ))}
-            </ScrollView>
-          </>
-        );
-      case 'Search':
+                />
+              ) : (
+                <ProductCard
+                  tag={item.university?.name || 'University of Warwick'}
+                  infoTitle={item.title}
+                  inforTitlePrice={`£ ${item.price}`}
+                  rating="4.5"
+                  productImage={{ uri: item.thumbnail }}
+                  onBookmarkPress={() => handleBookmarkPress(item.id)}
+                  isBookmarked={item.isbookmarked}
+                  onpress={() => {
+                    navigation.replace('SearchDetails', { id: item.id }, { animation: 'none' });
+                  }}
+                />
+              )}
+            </Animated.View>
+          ))}
+        </ScrollView>
+      )}
+    </>
+  );
+
+      
+      
+        case 'Search':
         return <SearchScreenContent  navigation={navigation}/>;
       case 'Add':
         return <AddScreenContent navigation={navigation} products={products} />;
@@ -1100,6 +1185,45 @@ return (
 export default DashBoardScreen;
 
 const styles = StyleSheet.create({
+
+   emptyWrapper: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      width:'100%',
+      paddingLeft:16,
+      paddingRight:16,
+      minHeight:230
+      
+    },
+
+ 
+   emptyContainer: {
+    //flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width:'100%',
+    height: 320,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderWidth: 0.3,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius:24,
+    overflow:'hidden',
+    //minHeight:'80%',
+   marginBottom:20,
+  },
+  emptyImage: {
+    width: 50,
+    height: 50,
+    marginBottom: 20,
+  },
+  emptyText: {
+    fontSize: 20,
+    color: '#fff',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight:600
+  },
 
    stepCircle: {
     width: 12,
@@ -1328,7 +1452,7 @@ bottomTabContainerBlur: {
   productsWrapper: {
     flexDirection: 'column',
     //paddingHorizontal: 12,
-    marginHorizontal:12
+    marginHorizontal:12,
   },
 
   row: {

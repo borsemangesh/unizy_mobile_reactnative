@@ -22,6 +22,10 @@ import {NewCustomToastContainer,showToast,} from '../../utils/component/NewCusto
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Button from '../../utils/component/Button';
 import PayButton from '../../utils/component/PayButton';
+import LinearGradient from 'react-native-linear-gradient';
+
+import CircleButton from '../../utils/component/CircleButton'; 
+
 
 type SearchDetailsProps = {
   navigation: any;
@@ -399,13 +403,27 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                 }}
                 // onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})}}
                 >
-                
+                {/* <LinearGradient
+                  colors={['#ffffff5c', '#ffffff2e', '#ffffff1a', '#ffffff5c']} // 4-color gradient
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.gradientBorder}
+                > */}
+               
+               
+               
                 <View style={styles.backIconRow}>
                   <Image
                     source={require('../../../assets/images/back.png')}
                     style={{ height: 24, width: 24 }}
                   />
                 </View>
+
+            {/* <CircleButton /> */}
+                
+
+               
+
               </TouchableOpacity>
               <Text allowFontScaling={false} style={styles.unizyText}>
                 {detail?.category?.name
@@ -1395,7 +1413,32 @@ inactiveStepCircle: {
     width: 24,
     height: 24,
   },
-  backIconRow: {
+  // backIconRow: {
+  //   //padding: 12,
+  //   borderRadius: 40,
+
+  //   backgroundColor:
+  //     'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+  //   boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
+  //   borderWidth: 0.4,
+  //   borderColor: '#ffffff2c',
+  //   height: 48,
+  //   width: 48,
+
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  // },
+
+
+  // backIconRow: {
+  //   width: 48,
+  //   height: 48,
+  //   //backgroundColor: '#010DA4',
+  //   borderRadius: 10,
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  // },
+    backIconRow: {
     //padding: 12,
     borderRadius: 40,
 
@@ -1403,13 +1446,33 @@ inactiveStepCircle: {
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
     borderWidth: 0.4,
-    borderColor: '#ffffff2c',
+    //borderColor: '#ffffff2c',
+    
     height: 48,
     width: 48,
 
     justifyContent: 'center',
     alignItems: 'center',
+
+      borderColor: '#ffffff2e',
+    
+    // borderBlockStartColor: '#ffffff2e',
+    // borderBlockColor: '#ffffff2e',
+
+    // borderTopColor: '#ffffff5c',
+    // borderBottomColor: '#ffffff2e',
+    // borderLeftColor: '#ffffff2e',
+    // borderRightColor: '#ffffff2e',
   },
+
+  //  gradientBorder: {
+  //   height: 48,
+  //   width: 48,
+  //   borderRadius: 40,
+  //   padding: 1, // border thickness
+  // },
+
+
   previewThumbnail: {
     color: '#FFF',
     textAlign: 'center',

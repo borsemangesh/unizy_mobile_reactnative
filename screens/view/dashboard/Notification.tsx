@@ -84,7 +84,7 @@ const displayListOfProduct = async (pageNum: number) => {
     });
 
     const jsonResponse = await response.json();
-    // console.log('API Response:', jsonResponse);
+     console.log('API Response:', jsonResponse);
 
    if (jsonResponse.statusCode === 200) {
       setIsLoading(false);
@@ -172,9 +172,6 @@ const renderItem = ({ item }: { item: any }) => {
   }
 
 
-  
-
-  
   const parts = item.content.split(/\*\*([^*]+)\*\*/g);
 
   const formattedParts = parts.map((part: string, index: number) => {
