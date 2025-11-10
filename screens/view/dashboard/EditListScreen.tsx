@@ -55,7 +55,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   const displayDate = formattedDate.replace(/\//g, '-');
   const [photo, setPhoto] = useState<string | null>(null);
   const [newdate,setnewdate]=useState('')
-
+  const [category,setcategory]=useState('')
   const [multiSelectModal, setMultiSelectModal] = useState<{
     visible: boolean;
     ismultilple: boolean;
@@ -312,7 +312,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         if (json?.data) {
           const data = json.data;
           setnewdate(data.created_at);
-          
+          setcategory(data.category.name)
           const initialValues: any = {};
     
           // --- Basic Fields ---
@@ -1158,8 +1158,11 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                 />
               </View>
             </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>
+            {/* <Text allowFontScaling={false} style={styles.unizyText}>
               {`List${productName ? ` ${productName} ` : ''}`}
+            </Text> */}
+             <Text allowFontScaling={false} style={styles.unizyText}>
+              {`Edit${category ? ` ${category} ` : ''}`}
             </Text>
             <View style={{ width: 48 }} />
           </View>
@@ -1254,12 +1257,19 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                   }),
                 }}
               >
-                <Text
+                {/* <Text
                   allowFontScaling={false}
                   style={styles.productdetailstext}
                 >
                   Product Details
+                </Text> */}
+                 <Text
+                  allowFontScaling={false}
+                  style={styles.productdetailstext}
+                >
+                  {category === 'Food' ? 'Dish Details' : `${category ? `${category} Details` : ''}`}
                 </Text>
+ 
                 {fields
                   .filter(
                     (f: any) =>

@@ -1,5 +1,5 @@
-
 import React, { useEffect, useState, useRef, useCallback } from 'react';
+import 'react-native-reanimated'; 
 import {
   Image,
   ImageBackground,
@@ -15,8 +15,15 @@ import {
   ScrollView,
   ActivityIndicator,
   Dimensions,
-  Animated,
 } from 'react-native';
+import MaskedView from '@react-native-masked-view/masked-view';
+import Animated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  interpolate,
+} from 'react-native-reanimated';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 const bgImage = require('../../../assets/images/backimg.png');
@@ -39,7 +46,7 @@ type Feature = {
   thumbnail: string;
   university: university;
   category?: { id: number; name: string };
-  createdby?: { 
+  createdby?: {
     profile?: string | null;
     firstname?: string | null;
     lastname?: string | null;
@@ -53,13 +60,7 @@ type university = {
 type MyListingProps = {
   navigation: any;
 };
-interface AnimatedBlurViewProps {
-  scrollY: Animated.Value;
-  blurValue: number;
-}
 
-// THEN the MyListing component
-// REPLACE your entire component with this simplified version
 
 const MyListing = ({ navigation }: MyListingProps) => {
   const [featurelist, setFeaturelist] = useState<Feature[]>([]);
@@ -80,7 +81,20 @@ const MyListing = ({ navigation }: MyListingProps) => {
     name: string;
   };
 
-  const scrollY = useRef(new Animated.Value(0)).current;
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: event => {
+      'worklet';
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  const animatedBlurStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 100], [0, 1], 'clamp');
+    return { opacity };
+  });
 
   const [categories, setCategories] = useState<Category[]>([
     { id: null, name: 'All' },
@@ -179,10 +193,11 @@ const MyListing = ({ navigation }: MyListingProps) => {
     const productImage = item.thumbnail
       ? { uri: item.thumbnail }
       : require('../../../assets/images/drone.png');
-    
+
     // Get category name from item or find from categories list
-    const categoryName = item.category?.name || 
-      categories.find(cat => cat.id === item.category_id)?.name || 
+    const categoryName =
+      item.category?.name ||
+      categories.find(cat => cat.id === item.category_id)?.name ||
       '';
 
     return (
@@ -227,73 +242,52 @@ const MyListing = ({ navigation }: MyListingProps) => {
           barStyle="dark-content"
         />
 
-        {/* Header */}
-        <View style={styles.header}>
-          {/* Progressive Blur Layer - fades in on scroll, blur starts from bottom */}
-          <Animated.View
-            style={[
-              StyleSheet.absoluteFill,
-              {
-                opacity: scrollY.interpolate({
-                  inputRange: [0, 80],
-                  outputRange: [0, 1], // Invisible at top, visible when scrolled
-                  extrapolate: 'clamp',
-                }),
-              },
-            ]}
-            pointerEvents="none"
+        {/* Header with Blur only at top */}
+        <Animated.View style={[styles.headerWrapper, animatedBlurStyle]} pointerEvents="none">
+          {/* Blur layer only at top with gradient fade */}
+          <MaskedView
+            style={StyleSheet.absoluteFill}
+            maskElement={
+              <LinearGradient
+                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                locations={[0, 0.8]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            }
           >
-            {/* BlurView - matches backdrop-filter: blur(5px) */}
             <BlurView
               style={StyleSheet.absoluteFill}
-              blurType={Platform.OS === 'ios' ? 'light' : 'light'}
-              blurAmount={5}
-              reducedTransparencyFallbackColor="transparent"
+              blurType="light"
+              blurAmount={35}
+              reducedTransparencyFallbackColor="rgba(255,255,255,0.1)"
             />
+          </MaskedView>
+        </Animated.View>
 
-            {/* Gradient overlay to fade out blur smoothly from top to bottom */}
-            <LinearGradient
-              colors={[
-                'rgba(0, 50, 150, 0.3)', // Top: More opaque (less blur visible)
-                'rgba(0, 50, 150, 0.6)', // Middle: Less opaque
-                'transparent', // Bottom: Transparent (full blur visible)
-              ]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 0, y: 1 }}
-              style={StyleSheet.absoluteFill}
-            />
-          </Animated.View>
-
-          {/* Header Content - stays on top */}
-          <Animated.View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '100%',
-              zIndex: 10,
-              position: 'relative',
-            }}
+        {/* Header Content */}
+        <View style={styles.headerContent} pointerEvents="box-none">
+          <TouchableOpacity
+            onPress={() =>
+              navigation.replace('Dashboard', {
+                AddScreenBackactiveTab: 'Home',
+                isNavigate: false,
+              })
+            }
+            style={styles.backButtonContainer}
           >
-            <TouchableOpacity
-              onPress={() =>
-                navigation.replace('Dashboard', {
-                  AddScreenBackactiveTab: 'Home',
-                  isNavigate: false,
-                })
-              }
-              style={styles.backButtonContainer}
-            >
-              <View style={styles.backIconRow}>
-                <Image
-                  source={require('../../../assets/images/back.png')}
-                  style={{ height: 24, width: 24 }}
-                />
-              </View>
-            </TouchableOpacity>
+            <View style={styles.backIconRow}>
+              <Image
+                source={require('../../../assets/images/back.png')}
+                style={{ height: 24, width: 24 }}
+              />
+            </View>
+          </TouchableOpacity>
 
-            <Text allowFontScaling={false} style={styles.unizyText}>My Listings</Text>
-          </Animated.View>
+          <Text allowFontScaling={false} style={styles.unizyText}>
+            My Listings
+          </Text>
         </View>
         {/* List */}
         <View style={{ flex: 1 }}>
@@ -302,11 +296,12 @@ const MyListing = ({ navigation }: MyListingProps) => {
             renderItem={renderItem}
             keyExtractor={(item, index) => index.toString()}
             ListHeaderComponent={
-              <View style={styles.categoryTabsContainer}>
-                <ScrollView 
-                  horizontal 
+              <View style={styles.categoryTabsContainer} pointerEvents="box-none">
+                <ScrollView
+                  horizontal
                   showsHorizontalScrollIndicator={false}
                   contentContainerStyle={styles.categoryTabsScrollContent}
+                  nestedScrollEnabled={true}
                 >
                   {categories.map((cat, index) => {
                     const isSelected = selectedCategory.name === cat.name;
@@ -314,13 +309,16 @@ const MyListing = ({ navigation }: MyListingProps) => {
                       <TouchableOpacity
                         key={index}
                         onPress={() => setSelectedCategory(cat)}
+                        activeOpacity={0.7}
                       >
                         <View
                           style={isSelected ? styles.tabcard : styles.tabcard1}
                         >
                           <Text
                             allowFontScaling={false}
-                            style={isSelected ? styles.tabtext : styles.othertext}
+                            style={
+                              isSelected ? styles.tabtext : styles.othertext
+                            }
                           >
                             {cat.name}
                           </Text>
@@ -335,11 +333,9 @@ const MyListing = ({ navigation }: MyListingProps) => {
               styles.listContainer,
               { paddingTop: Platform.OS === 'ios' ? 160 : 100 },
             ]}
-            onScroll={Animated.event(
-              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-              { useNativeDriver: false },
-            )}
-            scrollEventThrottle={16}
+           onScroll={scrollHandler}
+           scrollEventThrottle={16}
+
             onEndReachedThreshold={0.5}
             onEndReached={() => {
               const nextPage = page + 1;
@@ -371,22 +367,24 @@ const MyListing = ({ navigation }: MyListingProps) => {
       <NewCustomToastContainer />
     </ImageBackground>
   );
-}
+};
 
 export default MyListing;
 
 const styles = StyleSheet.create({
-  categoryTabsContainer: {
-    // paddingHorizontal: 16,
-    marginBottom: 12,
-    width: Platform.OS === 'ios' ? 393 : '100%',
+categoryTabsContainer: {
+  width: '100%',
+  marginBottom: 12,
+  marginTop: 12,
+},
 
-  },
-  categoryTabsScrollContent: {
-    paddingRight: 16,
-  },
+categoryTabsScrollContent: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingRight: 16,
+},
+
   tabcard: {
-
     minHeight: 38,
     paddingVertical: 10,
     paddingHorizontal: 16,
@@ -398,6 +396,28 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     boxShadow:
       'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+  },
+  headerWrapper: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    height: Platform.OS === 'ios' ? 220 : 200,
+    zIndex: 10,
+    overflow: 'hidden',
+    alignSelf: 'center',
+    pointerEvents: 'none',
+  },
+  headerContent: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 50 : 40,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
   },
   tabcard1: {
     minHeight: 38,
@@ -441,7 +461,6 @@ const styles = StyleSheet.create({
   },
   fullScreenContainer: {
     flex: 1,
-    marginTop: 10,
   },
   // header: {
   //   paddingTop: Platform.OS === 'ios' ? 42 : 50,
@@ -453,7 +472,7 @@ const styles = StyleSheet.create({
     top: 0,
     width: Platform.OS === 'ios' ? 393 : '100%',
     zIndex: 20,
-   paddingTop: Platform.OS === 'ios' ? 50 : 40 ,
+     paddingTop: Platform.OS === 'ios' ? 50 : 40 ,
     paddingBottom: Platform.OS === 'ios' ? 16 : 12,
     paddingHorizontal: 16,
     justifyContent: 'center',
@@ -470,8 +489,10 @@ const styles = StyleSheet.create({
   },
   backButtonContainer: {
     position: 'absolute',
-    left: 0,
+    left: 16,
     zIndex: 11,
+    top:7,
+    
   },
   headerRow: {
     flexDirection: 'row',
@@ -498,6 +519,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     width: '100%',
+    marginTop:17
   },
   search_container: {
     flexDirection: 'row',
@@ -540,8 +562,4 @@ const styles = StyleSheet.create({
   scrollView: {
     paddingBottom: 20,
   },
-})
-
-     
-
-     
+});
