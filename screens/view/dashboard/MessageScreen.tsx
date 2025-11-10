@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState } from 'react';
 import {
   FlatList,
   Image,
@@ -10,6 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { MAIN_URL } from '../../utils/APIConstant';
 
 type MessageScreenProps = {
   navigation: any;
@@ -17,34 +19,107 @@ type MessageScreenProps = {
 const MessagesScreen = ({ navigation }: MessageScreenProps) => {
   const searchIcon = require('../../../assets/images/searchicon.png');
   const [search, setSearch] = useState('');
-  const [studentList, setStudentList] = useState([]);
+  const [studentList, setStudentList] = useState<any>(null);
 
-  const chatData = [
-    {
-      id: '1',
-      name: 'Student name',
-      message: 'Can you tell me a bit about the co..',
-      time: '9:41 AM',
-      unreadCount: 1,
-      image: require('../../../assets/images/user.jpg'),
-    },
-    {
-      id: '2',
-      name: 'Student name',
-      message: 'Hi there, can we discuss the timmings for this..',
-      time: '8:22 AM',
-      unreadCount: 3,
-      image: require('../../../assets/images/user.jpg'),
-    },
-    {
-      id: '3',
-      name: 'Student name',
-      message: 'Hi there, can we discuss the timmings for this..',
-      time: 'Yesterday',
-      unreadCount: 0,
-      image: require('../../../assets/images/user.jpg'),
-    },
-  ];
+  // const chatData = [
+  //   {
+  //     id: '1',
+  //     name: 'Student name',
+  //     message: 'Can you tell me a bit about the co..',
+  //     time: '9:41 AM',
+  //     unreadCount: 1,
+  //     image: require('../../../assets/images/user.jpg'),
+  //   },
+  //   {
+  //     id: '2',
+  //     name: 'Student name',
+  //     message: 'Hi there, can we discuss the timmings for this..',
+  //     time: '8:22 AM',
+  //     unreadCount: 3,
+  //     image: require('../../../assets/images/user.jpg'),
+  //   },
+  //   {
+  //     id: '3',
+  //     name: 'Student name',
+  //     message: 'Hi there, can we discuss the timmings for this..',
+  //     time: 'Yesterday',
+  //     unreadCount: 0,
+  //     image: require('../../../assets/images/user.jpg'),
+  //   },
+  // ];
+
+
+
+  
+  useEffect(() => {
+  const fetchUserChatData = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const userId = await AsyncStorage.getItem('userId');  
+      
+
+      if (!token || !userId) {
+        console.warn('Missing token or user ID in AsyncStorage');
+        return;
+      }
+
+      const url = `${MAIN_URL.baseUrl}twilio/mychats`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.warn('Token fetch failed:', data.message);
+        return;
+      }
+
+      const UserData = data.data;
+      setStudentList(UserData)
+
+
+      console.log("UserData--------------------",UserData);
+      
+
+
+      // console.log("chatData",chatData);
+
+
+      
+
+
+    } catch (error) {
+      console.error('Chat setup failed:', error);
+    }
+  };
+
+  fetchUserChatData();
+}, []);
+
+
+const formatTime = (dateString: string) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
+
+
+
+  const getInitials = (firstName = '', lastName = '') => {
+  const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
+  const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
+  return (f + l) || '?';
+};
+
 
   return (
     <View style={{ height: '100%', display: 'flex', flex: 1, width: '100%' }}>
@@ -71,9 +146,9 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
 
         <View style={{ flex: 1 }}>
           <FlatList
-            data={chatData}
-            keyExtractor={item => item.id}
-            renderItem={({ item }) => (
+            data={studentList}
+            keyExtractor={chat => chat.id}
+            renderItem={({}) => (
               <TouchableOpacity
                 onPress={() => {
                   navigation.navigate('MessagesIndividualScreen', {
@@ -84,10 +159,33 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
               >
                 <View>
                   {/* Chat Row */}
-                  <View
+
+                  {studentList?.map((chat: any, index: number) => (
+                  <View key={index}
                     style={styles.chatRow}
                   >
-                    <Image source={item.image}  style={styles.chatImage}  />
+
+                      {chat.members?.profile ? (
+      <Image
+        source={{ uri: chat.members?.profile}}
+        style={styles.chatImage} 
+      />
+    ) : (
+      <View style={styles.initialsCircle}>
+        <Text allowFontScaling={false} style={styles.initialsText}>
+          {getInitials(
+
+            
+           chat?.members?.firstname ?? 'A',
+            chat?.members?.lastname ?? 'W'
+          )}
+        </Text>
+      </View>
+    )}
+
+
+
+                    {/* <Image source={chat.members?.profile}  style={styles.chatImage}  /> */}
 
                     <View style={{ flex: 1 }}>
                       <View
@@ -106,7 +204,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
                             fontFamily: 'Urbanist-SemiBold',
                           }}
                         >
-                          {item.name}
+                           {chat?.members?.firstname}{chat?.members?.lastname}
                         </Text>
                         <Text
                         allowFontScaling={false}
@@ -117,7 +215,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
                             fontFamily: 'Urbanist-SemiBold',
                           }}
                         >
-                          {item.time}
+                        {formatTime(chat?.last_message?.dateCreated)}
                         </Text>
                       </View>
 
@@ -141,10 +239,10 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
                             flex: 1,
                           }}
                         >
-                          {item.message}
+                          {chat?.last_message?.body}
                         </Text>
 
-                        {item.unreadCount > 0 && (
+                        {/* {item.unreadCount > 0 && ( */}
                           <Text
                           allowFontScaling={false}
                             style={{
@@ -163,13 +261,13 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
                               borderRadius: 100,
                             }}
                           >
-                            {item.unreadCount}
+                            {/* {item.unreadCount} */}
                           </Text>
-                        )}
+                        {/* )} */}
                       </View>
                     </View>
                   </View>
-
+                  ))}
                   {/* Divider Line */}
                   <View
                     style={{
@@ -190,6 +288,24 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
 };
 
 const styles = StyleSheet.create({
+
+  initialsCircle:{
+ backgroundColor: '#8390D4',
+  alignItems: 'center',
+  justifyContent: 'center',
+   width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 12,
+  },
+  initialsText:{
+   color: '#fff',
+  fontSize: 18,
+  fontWeight:600,
+  textAlign: 'center',
+  fontFamily: 'Urbanist-SemiBold',
+  },
+
     chatImage:{ width: 50, height: 50, borderRadius: 100 },
     chatRow:{
       width: '100%',
