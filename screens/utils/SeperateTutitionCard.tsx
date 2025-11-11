@@ -24,108 +24,6 @@ type SeperateTutionCardProps = {
   applybookmark?: () => void; 
 };
 
-// export default function SeperateTutionCard({
-//   tag,
-//   infoTitle,
-//   inforTitlePrice,
-//   rating,
-//   productImage,
-//   bookmark,
-//   showInitials,
-//   initialsName,
-//   isfeature,
-//   applybookmark
-// }: SeperateTutionCardProps) {
-  
-//   return (
-//     <View style={styles.card}>
-//          <View style={styles.imageContainer}>
-//       {/* Product image */}
-//       {productImage ? (
-//         <Image source={productImage} style={styles.image} resizeMode="cover" />
-//       ) : (
-//         <View style={styles.initialsCircle}>
-//           <Text allowFontScaling={false} style={styles.initialsText}>
-//             {initialsName}
-//           </Text>
-//         </View>
-//       )}
-
-//       {/* Optional overlay background (feature bg) */}
-       
-
-//       {/* Tag and bookmark icons */}
-//       <View style={styles.tag}>
-//         <BlurView
-//           blurType="light"
-//           blurAmount={100}
-//           style={[StyleSheet.absoluteFillObject, { borderRadius: 9 }]}
-//         />
-//         <Text allowFontScaling={false} style={styles.tagText}>{tag}</Text>
-//       </View>
-
-//       {isfeature && (
-//         <View style={styles.tagTopLeft}>
-//           <BlurView
-//             blurType="light"
-//             blurAmount={100}
-//             style={[StyleSheet.absoluteFillObject, { borderRadius: 9 }]}
-//           />
-//           <Text allowFontScaling={false} style={styles.tagText}>Featured</Text>
-//         </View>
-//       )}
-
-//       <View style={styles.bookmark1}>
-//         <BlurView
-//           blurType="light"
-//           blurAmount={100}
-//           style={[StyleSheet.absoluteFillObject, { borderRadius: 12 }]}
-//         />
-//         <LinearGradient
-//           colors={['rgba(0, 1, 102, 0.20)', 'rgba(0, 1, 102, 0.024)']}
-//           style={StyleSheet.absoluteFillObject}
-//         />
-//         <TouchableOpacity onPress={applybookmark}>
-//           <Image
-//             source={
-//               bookmark
-//                 ? require('../../assets/images/favourite_filled.png')
-//                 : require('../../assets/images/favourite.png')
-//             }
-//             style={{ width: 20, height: 20 }}
-//           />
-//         </TouchableOpacity>
-//       </View>
-//     </View>
-
-
-//       <View style={styles.infoRow}>
-//         <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
-
-//         <View
-//           style={{
-//             flexDirection: 'row',
-//             width: '90%',
-//             justifyContent: 'space-between',
-//           }}
-//         >
-//           <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
-//           <View
-//             style={{
-//               flexDirection: 'row',
-//               alignContent: 'center',
-//               alignItems: 'center',
-//                           gap: 4,
-//             }}
-//           >
-//             <Image source={require('../../assets/images/staricon.png')} style={styles.image1} />
-//             <Text allowFontScaling={false}  style={styles.ratingText}>{rating}</Text>
-//           </View>
-//         </View>
-//       </View>
-//     </View>
-//   );
-// }
 
 export default function SeperateTutionCard({
   tag,
@@ -426,13 +324,21 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     marginHorizontal: 4,
     //boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
-    overflow:'hidden'
+    overflow:'hidden',
+    alignSelf: 'flex-end', // 👈 ensures the View wraps the text
+    flexShrink: 1,
+
+    maxWidth: '80%',   // restrict width relative to parent
+    flexWrap: 'wrap',  // allow wrapping
   },
   tagText: {
     fontSize: 10,
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: '600',
     color: '#000',
+    textAlign: 'right',
+    flexShrink: 1,
+    width:'100%'
   },
   infoRow: {
     flexDirection: 'column',

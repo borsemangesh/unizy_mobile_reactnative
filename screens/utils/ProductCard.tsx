@@ -392,9 +392,16 @@ const styles = StyleSheet.create({
     backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
     //backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow:'0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    height: 29,
+    // height: 29,
+    minHeight: 29,
     overflow:'hidden',
     //elevation:6
+
+    alignSelf: 'flex-end', // 👈 ensures the View wraps the text
+    flexShrink: 1,    
+    alignContent:'center',
+    maxWidth: (Platform.OS == 'ios'? '58%': '56%'),   // restrict width relative to parent
+    flexWrap: 'wrap'
   },
 
   tagText: {
@@ -403,7 +410,12 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     fontSize: 11,
     fontStyle: 'normal',
-    lineHeight:16,
+    lineHeight:14,
+    width:'100%',
+    textAlign: 'right',
+    flexShrink: 1,
+  textAlignVertical: 'center', 
+  includeFontPadding: false,
   },
   bookmark: {
     position: "absolute",

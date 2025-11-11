@@ -670,7 +670,13 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     marginHorizontal: 4,
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
-    overflow:'hidden'
+    overflow:'hidden',
+    alignSelf: 'flex-end', // 👈 ensures the View wraps the text
+    flexShrink: 1,    
+    // position: 'absolute',
+
+    maxWidth: '80%',   // restrict width relative to parent
+    flexWrap: 'wrap',
   },
 
 
@@ -679,6 +685,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: '600',
     color: '#000',
+    textAlign: 'right',
+    flexShrink: 1,
+    width:'100%'
+    
   },
   infoRow: {
     flexDirection: 'column',

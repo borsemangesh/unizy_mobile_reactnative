@@ -89,8 +89,8 @@ const [isFilterVisible, setFilterVisible] = useState(false);
 const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
  const SCREEN_HEIGHT = Dimensions.get('window').height;
 
-
- const [appliedFilter, setAppliedFilter] = useState<any | null>(null);
+ const [isFilterMode, setIsFilterMode] = useState(false);
+const [lastFilterBody, setLastFilterBody] = useState<any>(null);
  
   useEffect(() => {
   const loadBookmarks = async () => {
@@ -168,17 +168,30 @@ const clickfilter = () => {
   );
 
 
- const handleSearchChange = (text: string) => {
-    setSearch(text);
-    if (text.trim().length > 0) {
-      debouncedSearch(text);
-    } else {
-      setFeaturelist([]);
-      setHasMore(true);
-      setPage(1);
-    }
-  };
+//  const handleSearchChange = (text: string) => {
+//     setSearch(text);
+//     if (text.trim().length > 0) {
+//       debouncedSearch(text);
+//     } else {
+//       setFeaturelist([]);
+//       setHasMore(true);
+//       setPage(1);
+//     }
+//   };
 
+
+const handleSearchChange = (text: string) => {
+  setSearch(text);
+  setIsFilterMode(false); // reset filter mode
+
+  if (text.trim().length > 0) {
+    debouncedSearch(text);
+  } else {
+    setFeaturelist([]);
+    setHasMore(true);
+    setPage(1);
+  }
+};
 
 
 const handleBookmarkPress = async (productId: number) => {
@@ -299,33 +312,60 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
   );
 };
 
-const handleFilterApply = async (filterBody: any) => {
-  console.log("Display the Filter apply", filterBody);
+// const handleFilterApply = async (filterBody: any) => {
+//   try {
+//     setIsLoading(true);
+
+//     const token = await AsyncStorage.getItem('userToken');
+//     if (!token) return;
+
+//     const url = `${MAIN_URL.baseUrl}category/filter-apply`;
+
+//     //const url = 'http://65.0.99.229:4320/category/filter-apply';
+
+//     const response = await fetch(url, {
+//       method: 'POST',
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(filterBody),
+//     });
+
+//     const jsonResponse = await response.json();
+//     console.log('Filter Apply Response:', jsonResponse);
+
+//     if (jsonResponse.statusCode === 200) {
+//       const filteredFeatures = jsonResponse.data.features;
+//       setFeaturelist(filteredFeatures);
+//       setHasMore(filteredFeatures.length === 20);
+//       setPage(2);
+//     }
+//     if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
+//           setIsLoading(false);
+//           navigation.reset({
+//           index: 0,
+//           routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+//         });
+//         }
+//   } catch (err) {
+//     console.log('Error applying filters:', err);
+//   } finally {
+//     setIsLoading(false);
+//   }
+// };
+
+const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
   try {
-    setAppliedFilter(filterBody); 
     setIsLoading(true);
-    setFeaturelist([]); 
+    setIsFilterMode(true);
+    setLastFilterBody(filterBody);
+
     const token = await AsyncStorage.getItem('userToken');
     if (!token) return;
 
-
-    const newFilterBody = {
-      ...filterBody,
-      page: 1,
-      pagesize: 20,
-      search: search,
-    };
-
-    console.log("NewFilterBody:", newFilterBody);
-
-    setAppliedFilter(newFilterBody);
-    
-
     const url = `${MAIN_URL.baseUrl}category/filter-apply`;
-
-    console.log(url)
-
-    //const url = 'http://65.0.99.229:4320/category/filter-apply';
+    const body = { ...filterBody, page: pageNum, pagesize: 20 };
 
     const response = await fetch(url, {
       method: 'POST',
@@ -333,17 +373,23 @@ const handleFilterApply = async (filterBody: any) => {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(newFilterBody),
+      body: JSON.stringify(body),
     });
 
     const jsonResponse = await response.json();
     console.log('Filter Apply Response:', jsonResponse);
 
     if (jsonResponse.statusCode === 200) {
-      const filteredFeatures = jsonResponse.data.features;
-      setFeaturelist(filteredFeatures);
+      const filteredFeatures = jsonResponse.data.features || [];
+
+      if (pageNum === 1) {
+        setFeaturelist(filteredFeatures);
+      } else {
+        setFeaturelist(prev => [...prev, ...filteredFeatures]);
+      }
+
       setHasMore(filteredFeatures.length === 20);
-      setPage(2);
+      setPage(prev => prev + 1);
     }
   } catch (err) {
     console.log('Error applying filters:', err);
@@ -353,118 +399,6 @@ const handleFilterApply = async (filterBody: any) => {
 };
 
 
-const loadMoreFilteredResults = async () => {
-  if (!appliedFilter || isLoading || !hasMore) return;
-
-  try {
-    setIsLoading(true);
-
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) return;
-
-    // Create a copy and increment page
-    const nextFilterBody = {
-      ...appliedFilter,
-      page: page, // use the current state page
-      search: search,
-    };
-
-    const url = `${MAIN_URL.baseUrl}category/filter-apply`;
-    console.log('Fetching next filter page:', nextFilterBody);
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(nextFilterBody),
-    });
-
-    const jsonResponse = await response.json();
-    console.log('Next Page Filter Response:', jsonResponse);
-
-    if (jsonResponse.statusCode === 200) {
-      const moreFeatures = jsonResponse.data.features || [];
-      setFeaturelist(prev => [...prev, ...moreFeatures]);
-      setHasMore(moreFeatures.length === 20);
-      setPage(prev => prev + 1); // increment for next call
-    }
-  } catch (err) {
-    console.log('Error loading more filtered results:', err);
-  } finally {
-    setIsLoading(false);
-  }
-};
-
-const handleEndReached = useCallback(() => {
-
-  if (isLoading || !hasMore) return;
-
-  if (appliedFilter) {
-    loadMoreFilteredResults();
-  } 
-  else if (search.trim().length > 0) {
-    displayListOfProduct(page, search);
-  }
-}, [isLoading, hasMore, appliedFilter, search, page]);
-
-
-
-
-// const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
-//   try {
-//     if (isLoading) return;
-//     setIsLoading(true);
-
-//     const token = await AsyncStorage.getItem('userToken');
-//     if (!token) return;
-
-//     const url = `${MAIN_URL.baseUrl}category/filter-apply`;
-
-//     const body = {
-//       ...filterBody,
-//       page: pageNum,
-//       pagesize: 20,
-//     };
-
-//     console.log('Filter Apply Body:', body);
-
-//     const response = await fetch(url, {
-//       method: 'POST',
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(body),
-//     });
-
-//     const jsonResponse = await response.json();
-//     console.log('Filter Apply Response:', jsonResponse);
-
-//     if (jsonResponse.statusCode === 200) {
-//       const filteredFeatures = jsonResponse.data.features || [];
-
-//       if (pageNum === 1) {
-//         setFeaturelist(filteredFeatures);
-//       } else {
-//         setFeaturelist(prev => [...prev, ...filteredFeatures]);
-//       }
-
-//       setHasMore(filteredFeatures.length === 20);
-//       setPage(prev => prev + 1);
-//     } else if (jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403) {
-//       navigation.reset({
-//         index: 0,
-//         routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
-//       });
-//     }
-//   } catch (err) {
-//     console.log('Error applying filters:', err);
-//   } finally {
-//     setIsLoading(false);
-//   }
-// };
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -537,7 +471,20 @@ const handleEndReached = useCallback(() => {
           ]}
         //contentContainerStyle={styles.listContainer}
         renderItem={renderItem}
-        onEndReached={handleEndReached}
+        // onEndReached={() => {
+        //     if (search.trim().length > 0) {
+        //     displayListOfProduct(page, search);
+        //     }
+        // }}
+        onEndReached={() => {
+        if (isLoading || !hasMore) return;
+
+        if (isFilterMode && lastFilterBody) {
+          handleFilterApply(lastFilterBody, page);
+        } else if (search.trim().length > 0) {
+          displayListOfProduct(page, search);
+        }
+      }}
         onEndReachedThreshold={0.5} 
         ListFooterComponent={
             isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
@@ -560,11 +507,16 @@ const handleEndReached = useCallback(() => {
                                   }
           />
       </View>
+
+     
       <FilterBottomSheet
         catagory_id={category_id}
         visible={isFilterVisible}
         onClose={() => setFilterVisible(false)}
-        onApply={(filterBody) => handleFilterApply(filterBody)} from={0} to={0}/>
+        onApply={(filterBody) => handleFilterApply(filterBody)} from={0} to={0}
+        //onApply={(filterBody) => handleFilterApply(filterBody, 1)}
+        //from={0} to={0}
+        />
     <NewCustomToastContainer/>
     </ImageBackground>
   );

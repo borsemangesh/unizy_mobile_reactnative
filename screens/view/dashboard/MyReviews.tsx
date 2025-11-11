@@ -870,46 +870,6 @@ const formatDate = (dateString: string | null | undefined) => {
   return `${day}-${month}-${year}`;
 };
 
-// const renderItem = ({ item, index }: { item: Feature; index: number }) => {
-//   const isLastOddItem =
-//     filteredFeatures.length % 2 !== 0 &&
-//     index === filteredFeatures.length - 1;
-//       const displayDate = formatDate(item.featurelist?.created_at);
-
-//   const productImage =
-//     item?.featurelist?.thumbnail
-//       ? { uri: item.featurelist.thumbnail }
-//       : require('../../../assets/images/drone.png');
-
-//   const displayPrice =
-//     item?.featurelist?.price != null ? `$£{item.featurelist.price}` : '£0.00';
-//   const displayTitle = item?.featurelist?.title ?? 'Title';
-
-//   //const displayrating = item?.featurelist?.created_at
-
-//   const comment = item?.featurelist?.title
-
-//   return (
-//     <View
-//       style={[
-//         styles.itemContainer,
-//       ]}
-//     >
-//       <MyReviewCard
-//         infoTitle={displayTitle}
-//         inforTitlePrice={displayPrice} 
-//         rating={'3'} 
-//         productImage={productImage}
-//         reviewText={comment}
-//         //navigation={navigation}
-//         shareid={item.id}
-//         date={displayDate}
-//         createdby={item.featurelist?.createdby}
-//         profileshowinview={item.featurelist?.profileshowinview}
-//       />
-//     </View>
-//   );
-// };
 
 
 const renderItem = ({ item, index }: { item: any; index: number }) => {
@@ -932,7 +892,7 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
   const rating = item?.rating?.toString() ?? '0';
   const comment = item?.comment ?? '';
 
-  const createdby = feature?.created_by ?? null;
+  const createdby = feature?.createdby ?? null;
   const profileshowinview =
     feature?.category_id === 2 || feature?.category_id === 5 ? true : false;
 

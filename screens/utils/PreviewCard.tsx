@@ -387,13 +387,26 @@ const styles = StyleSheet.create({
      boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
      //overflow:'hidden'
      backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
-
+     minHeight: 29,
+     //elevation:6
+ 
+     alignSelf: 'flex-end', // 👈 ensures the View wraps the text
+     flexShrink: 1,    
+     alignContent:'center',
+     maxWidth: '56%',   // restrict width relative to parent
+     flexWrap: 'wrap'
   },
   tagText: {
     fontSize: 11,
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: '600',
     color: '#000',
+    lineHeight:14,
+    width:'100%',
+    textAlign: 'right',
+    flexShrink: 1,
+    textAlignVertical: 'center', 
+    includeFontPadding: false,
     
   },
   // infoRow: {
