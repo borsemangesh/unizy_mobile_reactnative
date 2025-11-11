@@ -13,6 +13,7 @@ import {
   Animated,
   Easing,
   FlatList,
+  ImageSourcePropType,
 } from 'react-native';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -33,6 +34,8 @@ interface TransactionItem {
   viewUrl?: string;
   order_otp: number;
   featureId: number;
+  category_logo:string;
+  feature_idNew: number;
 }
 
 interface TransactionSection {
@@ -68,6 +71,8 @@ export default function TransactionHistoryScreen(
 
   const tabs = [{ key: 'Purchases' }, { key: 'Sales' }, { key: 'Charges' }];
   const [isFilterVisible, setFilterVisible] = useState(false);
+  const [SalesImageUrl, setSalesImageUrl] = useState('');
+
 
   useEffect(() => {
     if (activeTab === 'Purchases') {
@@ -105,6 +110,9 @@ export default function TransactionHistoryScreen(
       useNativeDriver: true,
     }).start();
   }, [activeTab, bubbleX, tabWidth]);
+
+
+
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -155,59 +163,50 @@ export default function TransactionHistoryScreen(
           formatted = json.data.map((section: any) => ({
             date: section.date,
             items: section.transactions.map((item: any) => ({
-              title: item.title,
-              price: `$${item.amount}`,
+              title: item.title ,
+              price: `£ ${item.amount}`,
               status: item.order_status,        // Show order status like "Awaiting Delivery"
               code: item.status,                // Payment status (e.g. "succeeded")
               seller: item.purchased_from,      // Who you bought from
               university: item.university_name, // University name
               order_otp: item.order_otp,        // OTP for verification
+              category_logo: item.category_logo,
             })),
           }));
        
         }  if (selectedTab === 'Sales' && json.data?.sales_history) {
-          console.log("OverallEarning: ",json.data.total_earning);
           setOverallEarning(json.data.total_earning),
           // Sales API response
           formatted = json.data.sales_history.map((section: any) => ({
+           
             date: section.date,
            
             items: section.transactions.map((item: any) => ({
               title: item.title,
-              price: `$${item.amount}`,
+              price: `£ ${item.amount}`,
               status: item.status,
               code: '', // no code in sales example
               seller: item.sold_to,
               university: item.university_name, // extra data if needed
+              category_logo: item.category_logo,
+              feature_idNew: item.id,
+              featureId: item.id,  
             })),
           }));
         }  
-        // if (selectedTab === 'Charges' && json.data?.charges_history) {
-        //   // Charges API response
-        //   formatted = json.data.transactions.map((section: any) => ({
-        //     date: section.date,
-        //     items: section.transactions.map((item: any) => ({
-        //       // feature_id: item.feature_id,
-        //       title: item.title,
-        //       price: `$${item.listing_fee}`,
-        //       status: item.payment_status,
-        //       code: '', // no code in charges example
-        //       featureId: item.feature_id,
-        //       viewListingUrl: item.view_listing_url,
-        //     })),
-        //   }));
-        // }
         if (selectedTab === 'Charges' && json.data?.charges_history) {
           formatted = json.data.charges_history.map((section: any) => ({
             date: section.date,
             items: section.transactions.map((item: any) => ({
               title: item.title,
-              price: `$${item.listing_fee}`,
+              price: `£ ${item.listing_fee}`,
               status: item.payment_status,
               code: '',
               featureId: item.feature_id,           // ✅ Correct field name
               viewUrl: item.view_listing_url,       // ✅ Matches your interface
               order_otp: 0,                         // placeholder to satisfy your interface
+              category_logo: item.category_logo,
+              feature_idNew: item.feature_id
             })),
           }));
         }
@@ -230,10 +229,89 @@ export default function TransactionHistoryScreen(
     fetchTransactions();
   }, [selectedTab]); 
 
+
+  const getFormattedDate = (dateString: string) => {
+    const parts = dateString.split(" "); 
+    if (parts.length !== 3) return dateString; 
+  
+    const [dayStr, monthStr, yearStr] = parts;
+    const day = parseInt(dayStr);
+  
+    if (isNaN(day)) return dateString;
+  
+    const suffix =
+      day % 10 === 1 && day !== 11
+        ? "st"
+        : day % 10 === 2 && day !== 12
+        ? "nd"
+        : day % 10 === 3 && day !== 13
+        ? "rd"
+        : "th";
+  
+    const formatted = `${day}${suffix} ${monthStr} ${yearStr}`;
+    return formatted;
+  };
+
+  const [catagoryid,setCatagoryid] = useState(0)
+
+  const [salesData, setSalesData] = useState<any[]>([]);
+
+  const fetchSalesHistory = async (catagory_id: number) => {
+    try {
+      // Get user token
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        console.log('No token found');
+        return;
+      }
+  
+      // Construct the URL
+      const url = `${MAIN_URL.baseUrl}transaction/sales-history?feature_id=${catagory_id}`;
+      console.log('SalesHistory URL:', url);
+  
+      // Make the API call
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      // Handle response status codes
+      if (response.status === 401 || response.status === 403) {
+        // handleForceLogout();
+        return;
+      }
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      // Parse the JSON response
+      const json = await response.json();
+      console.log("SalesHistory Response:", json);
+  
+      if (json.statusCode === 401 || json.statusCode === 403) {
+        // handleForceLogout();
+        return;
+      }
+  
+      // Update the sales data
+      setSalesData(json);
+      setFilterVisible(true);
+  
+    } catch (err) {
+      console.log('Error fetching sales history:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   
   return (
     <View style={{ width: '100%', paddingHorizontal: 16 }}>
-      <View style={styles.header}>
+      <View style={[styles.header]}>
         <View style={styles.headerRow}>
           <Text allowFontScaling={false} style={styles.unizyText}>
             Transaction History
@@ -285,19 +363,32 @@ export default function TransactionHistoryScreen(
       </View>
 
       <ScrollView
-        style={{ width: '100%' }}
+        style={{ width: '100%', paddingBottom: 60 }}
         showsVerticalScrollIndicator={false}
       >
         {transactions.length === 0 ? (
-          <Text style={{ textAlign: 'center', marginTop: 20, color: '#aaa' }}>
-            No transactions found.
-          </Text>
+          // <Text style={{ textAlign: 'center', marginTop: 20, color: '#aaa' }}>
+          //   No transactions found.
+          // </Text>
+
+          <View style={styles.emptyWrapper}>
+            <View style={styles.emptyContainer}>
+              <Image
+                source={require('../../../assets/images/noproduct.png')}
+                style={styles.emptyImage}
+                resizeMode="contain"
+              />
+              <Text allowFontScaling={false} style={styles.emptyText}>
+              No transactions found
+              </Text>
+            </View>
+          </View>
         ) : selectedTab === 'Purchases' ? (
           // Purchases UI (your current UI)
           transactions.map((section, idx) => (
             <View key={idx} style={styles.section}>
               <Text allowFontScaling={false} style={styles.dateText}>
-                {section.date}
+                {getFormattedDate(section.date)}
               </Text>
               {section.items.map((item, i) => (
                 <View key={i} style={styles.card}>
@@ -312,17 +403,18 @@ export default function TransactionHistoryScreen(
                       >
                         <View style={styles.imgcontainer}>
                           <Image
-                            source={productImage}
+                            // source={item.category_logo}
+                            source={{ uri: item.category_logo }}
                             style={styles.image}
                             resizeMode="cover"
                           />
                         </View>
-                        <View>
+                        <View style={{gap: 4}}>
                           <Text
                             allowFontScaling={false}
                             style={styles.itemTitle}
                           >
-                            {item.title}
+                            {item.title.length > 24 ? `${item.title.substring(0, 24)}...` : item.title}
                           </Text>
                           <Text allowFontScaling={false} style={styles.price}>
                             {item.price}
@@ -338,8 +430,29 @@ export default function TransactionHistoryScreen(
                         {item.status}
                       </Text>
                     </View>
-                    <View style={[styles.codeBox,{backgroundColor: (item.status !== "Completed"?'rgba(255, 255, 255, 0.34)' : 'rgba(255,255,255,0.15)' )}]}>
-                      <Text allowFontScaling={false} style={[styles.codeText,{color: (item.status !== "Completed" ?'#FFFFFF' : 'rgba(255,255,255,0.15)' )}]}>
+                    <View
+                      style={[
+                        styles.codeBox,
+                        {
+                          backgroundColor:
+                            item.status !== 'Completed'
+                              ? 'rgba(255, 255, 255, 0.34)'
+                              : 'rgba(255,255,255,0.15)',
+                        },
+                      ]}
+                    >
+                      <Text
+                        allowFontScaling={false}
+                        style={[
+                          styles.codeText,
+                          {
+                            color:
+                              item.status !== 'Completed'
+                                ? '#FFFFFF'
+                                : 'rgba(255,255,255,0.15)',
+                          },
+                        ]}
+                      >
                         {item.order_otp}
                       </Text>
                     </View>
@@ -348,12 +461,20 @@ export default function TransactionHistoryScreen(
                   <View style={styles.cardconstinerdivider} />
                   <View style={{ flexDirection: 'row', gap: 4 }}>
                     <Text style={styles.sellerText}>Purchased from</Text>
+                    <View style={{ flexDirection: 'row' }}>
                     <Text
                       allowFontScaling={false}
                       style={styles.sellerTextName}
                     >
-                      {item.seller} ({item.university})
+                      {item.seller} 
                     </Text>
+                    <Text allowFontScaling={false}
+                      style={[styles.sellerTextName,{marginLeft: 6}]}>
+                     ({item.university})
+                    </Text>
+
+                    </View>
+                   
                   </View>
                 </View>
               ))}
@@ -389,24 +510,30 @@ export default function TransactionHistoryScreen(
                     padding: 1,
                   }}
                 >
-                  <Text allowFontScaling={false} style={styles.Overall_Earnings_value}>
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.Overall_Earnings_value}
+                  >
                     Overall Earnings
                   </Text>
-        
-                  <Text allowFontScaling={false} style={styles.Overall_Earnings_title}>
-                    {`$` + overallEarning}
+
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.Overall_Earnings_title}
+                  >
+                    {`£ ` + overallEarning}
                   </Text>
                 </View>
               </View>
             </View>
-        
+
             {/* 🔹 Sales transactions — loop through each section */}
             {transactions.map((section, idx) => (
               <View key={idx} style={styles.section}>
                 <Text allowFontScaling={false} style={styles.dateText}>
-                  {section.date}
+                {getFormattedDate(section.date)}
                 </Text>
-        
+
                 {section.items.map((item, i) => (
                   <View key={i} style={styles.salesCard}>
                     <View
@@ -426,27 +553,35 @@ export default function TransactionHistoryScreen(
                       >
                         <View style={styles.imgcontainer}>
                           <Image
-                            source={productImage}
+                            // source={item.category_logo}
+                            source={{ uri: item.category_logo }}
                             style={styles.image}
                             resizeMode="cover"
                           />
                         </View>
-                        <Text style={styles.salesTitle}>{item.title}</Text>
+                        <Text style={styles.salesTitle}>{item.title.length > 24 ? `${item.title.substring(0, 24)}...` : item.title}</Text>
                       </View>
-        
-                      <TouchableOpacity onPress={() => 
-                        {
-                          //setFilterVisible(true)
 
-                        }}>
-                        <Text allowFontScaling={false} style={styles.allDetails}>
+                      <TouchableOpacity
+                            onPress={() => {
+                              setSalesImageUrl(item.category_logo);
+                              console.log("FeatureID: ",item.featureId);
+                              setCatagoryid(item.featureId);
+                              // setFilterVisible(true);
+                              fetchSalesHistory(item.featureId);
+                            }}
+                          >
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.allDetails}
+                        >
                           All Details
                         </Text>
                       </TouchableOpacity>
                     </View>
-        
+
                     <View style={styles.cardconstinerdivider} />
-        
+
                     <View
                       style={{
                         flexDirection: 'row',
@@ -479,13 +614,12 @@ export default function TransactionHistoryScreen(
               </View>
             ))}
           </>
-        ) 
-         : (
+        ) : (
           // Charges UI (different layout)
           transactions.map((section, idx) => (
             <View key={idx} style={styles.section}>
               <Text allowFontScaling={false} style={styles.dateText}>
-                {section.date}
+              {getFormattedDate(section.date)}
               </Text>
               {section.items.map((item, i) => (
                 <View key={i} style={styles.chargesCard}>
@@ -506,7 +640,8 @@ export default function TransactionHistoryScreen(
                     >
                       <View style={styles.imgcontainer}>
                         <Image
-                          source={productImage}
+                          // source={item.category_logo}
+                          source={{ uri: item.category_logo }}
                           style={styles.image}
                           resizeMode="cover"
                         />
@@ -515,13 +650,15 @@ export default function TransactionHistoryScreen(
                         allowFontScaling={false}
                         style={styles.chargesTitle}
                       >
-                        {item.title}
+                        {item.title.length > 24 ? `${item.title.substring(0, 24)}...` : item.title}
                       </Text>
                     </View>
                     <TouchableOpacity
                       onPress={() => {
-                        console.log("Fetature ID: "+ item.featureId);
-                        navigation1.navigate('ViewListingDetails',{ shareid: item.featureId });
+                        console.log('Fetature ID: ' + item.featureId);
+                        navigation1.navigate('ViewListingDetails', {
+                          shareid: item.featureId,
+                        });
                       }}
                     >
                       <Text
@@ -548,16 +685,51 @@ export default function TransactionHistoryScreen(
         )}
       </ScrollView>
       <SalesAllDetailsDropdown
-        catagory_id={5}
+        catagory_id={catagoryid}
         visible={isFilterVisible}
-        onClose={() => setFilterVisible(false)} onApply={function (filters: any): void {
-          throw new Error('Function not implemented.');
-        } } from={0} to={0}        />
+        onClose={() => setFilterVisible(false)}
+        SalesImageUrl={SalesImageUrl}
+        salesDataResponse={salesData}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  emptyWrapper: {
+    // flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width:'100%',
+    paddingLeft:16,
+    paddingRight:16,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width:'100%',
+    height: (Platform.OS === 'ios' ? 290 : 300),
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderWidth: 0.3,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius:24,
+    overflow:'hidden',
+    minHeight:'80%',
+   marginBottom:20,
+  },
+  emptyImage: {
+    width: 50,
+    height: 50,
+    marginBottom: 20,
+  },
+  emptyText: {
+    fontSize: 20,
+    color: '#fff',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight:600
+  },
   cardconstinerdivider: {
     // marginTop: 10,
     display: 'flex',
@@ -624,16 +796,10 @@ const styles = StyleSheet.create({
     boxShadow:
       '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25),rgba(76, 112, 242, 0.18) inset 0px -1.761px 0px 100px',
   },
-  tabText: {
-    color: '#DCE3FF',
-    fontSize: 15,
-  },
-  activeTabText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
+
   _section: {
     marginBottom: 25,
+    marginTop: 0,
   },
   get section() {
     return this._section;
@@ -829,7 +995,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: 42,
-    marginBottom: Platform.OS === 'ios' ? 30 : 30,
+    marginBottom: Platform.OS === 'ios' ? 20 : 30,
     borderRadius: 50,
     alignSelf: 'center',
     padding: 4,
