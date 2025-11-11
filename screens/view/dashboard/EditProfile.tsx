@@ -18,6 +18,7 @@ import {
   Modal,
   TouchableWithoutFeedback,
   Keyboard,
+  KeyboardAvoidingView,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const bgImage = require('../../../assets/images/backimg.png');
@@ -35,6 +36,7 @@ import {
 import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import Button from '../../utils/component/Button';
 import ProfileCard from './ProfileCard';
+import ButtonNew from '../../utils/component/ButtonNew';
 
 type EditProfileProps = {
   navigation: any;
@@ -546,6 +548,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             <View style={{ width: 48 }} />
           </View>
         </View>
+        <KeyboardAvoidingView
+          style={{ flex: 1 ,marginTop: 10}}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
         <ScrollView
           contentContainerStyle={{ paddingBottom: 40 }}
           style={{ flex: 1 }}
@@ -829,6 +835,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             </View>
           </View>
         </ScrollView>
+        </KeyboardAvoidingView>
         {/* Save Button */}
         {/* <TouchableOpacity style={styles.saveButton} onPress={handleSaveProfile}>
           <Text style={styles.saveText}>Save Details</Text>
@@ -841,16 +848,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         />
       </View>
       <NewCustomToastContainer />
-
-      {/* Blur effect when modal is open */}
-      {/* {emailModalVisible && (
-    <BlurView
-      style={styles.absoluteBlur}
-      blurType="light"     // or 'dark', 'extraLight', etc.
-      blurAmount={25}      // adjust for stronger blur
-      reducedTransparencyFallbackColor="white"
-    />
-  )} */}
 
       <Modal
         visible={showPopup1}
@@ -1077,7 +1074,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 40 : 30,
+    paddingTop: Platform.OS === 'ios' ? '6%' : 30,
     paddingBottom: 12,
     // paddingHorizontal: 16,
   },

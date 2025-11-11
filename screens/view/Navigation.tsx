@@ -266,7 +266,8 @@ export const Navigation = () => {
         <Stack.Screen
           name="ListingDetails"
           component={ListingDetails}
-          options={{ headerShown: false, presentation: 'fullScreenModal' }}
+          key={Math.random().toString()}
+          options={{ headerShown: false, presentation: 'fullScreenModal' } }
         />
         <Stack.Screen
           name="SearchPage"

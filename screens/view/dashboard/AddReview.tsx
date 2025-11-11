@@ -17,6 +17,8 @@ import {
   Modal,
   TouchableWithoutFeedback,
   Dimensions,
+  KeyboardAvoidingView,
+  Keyboard,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -133,9 +135,9 @@ const AddReview : React.FC<AddReviewProps> = ({ navigation }) =>{
             <View style={{ width: 48 }} />
           </View>
         </View>
-    <View>
-        </View>
-
+      
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+  <View style={{ flex: 1 }}>
           <View style={styles.innercontainer}>
             <Text allowFontScaling={false} style={styles.mainlabel}>How many stars would you give?</Text>
              <Text allowFontScaling={false} style={styles.sublabel}>Slide across the stars to rate this product</Text>
@@ -159,10 +161,12 @@ const AddReview : React.FC<AddReviewProps> = ({ navigation }) =>{
                 multiline={true}
                 value={username}
                 onChangeText={usernameText => setUsername(usernameText)}
+                onSubmitEditing={Keyboard.dismiss}
               />
             </View>
          </View>
-        
+        </View>
+        </TouchableWithoutFeedback>
 
         {/* <TouchableOpacity onPress={handleSubmit} style={styles.previewBtn} >
             <Text allowFontScaling={false} style={styles.payText}>Submit Review </Text>
@@ -368,14 +372,16 @@ const styles = StyleSheet.create({
     marginTop:6
   },
   personalEmailID_TextInput: {
-    width: '93%',
+    width: '98%',
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
     fontSize: 17,
     lineHeight: 22,
     fontStyle: 'normal',
     color:"#fff",
-    paddingLeft:12
+    paddingLeft:12,
+    height: '100%'
+  
 
   },
    payText: {
@@ -482,7 +488,7 @@ const styles = StyleSheet.create({
      marginTop:10,
      },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 30,
+    paddingTop: Platform.OS === 'ios' ? '9%' : 30,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },

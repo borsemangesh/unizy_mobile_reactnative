@@ -270,7 +270,8 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
 //  console.log('Share ID in card:', shareid, catagory_id);
  return (
   <TouchableOpacity style={styles.wrapper} onPress={() => {
-    navigation.navigate('ListingDetails',{ shareid ,catagory_id,catagory_name});
+    console.log(navigation.getState());
+    navigation.navigate('ListingDetails',{ shareid ,catagory_id,catagory_name,key: String(Math.random()) });
   }}>
     <View style={styles.container}>
       {/* Image View */}
