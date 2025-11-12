@@ -246,8 +246,7 @@
 //   //   }
 //   // };
 
-
-//   //This is old version which is working for when you change something in form data  
+//   //This is old version which is working for when you change something in form data
 
 //   const handleListPress = async () => {
 //     console.log('🔵 handleListPress called');
@@ -417,7 +416,6 @@
 //     }
 //   };
 
-
 // // const handleListPress = async () => {
 // //   console.log('🔵 handleListPress called');
 
@@ -550,9 +548,6 @@
 // //   }
 // // };
 
-
-
-
 //   const getCurrentDate = () => {
 //     const today = new Date();
 //     return `${String(today.getDate()).padStart(2, '0')}-${String(
@@ -619,7 +614,7 @@
 //             </Text>
 //           </View>
 //         </View>
-//         {/* 
+//         {/*
 //      <ScrollView
 //           contentContainerStyle={styles.scrollContainer}
 //           onScroll={Animated.event([
@@ -1480,8 +1475,7 @@
 // });
 
 // export default EditPreviewDetailed;
-
-
+import { SquircleView } from 'react-native-figma-squircle';
 import {
   View,
   Text,
@@ -1490,13 +1484,24 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
+  StatusBar,
   ScrollView,
-  Animated,
   Modal,
   Dimensions,
   FlatList,
   SafeAreaView,
 } from 'react-native';
+
+import Animated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  interpolate,
+  interpolateColor,
+  useDerivedValue,
+} from 'react-native-reanimated';
+import LinearGradient from 'react-native-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
 import { Key, useEffect, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import { showToast } from '../../utils/toast';
@@ -1522,10 +1527,84 @@ const itemOptions = [
 ];
 
 const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: event => {
+      'worklet';
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+  const animatedBlurStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+    return { opacity };
+  });
+
+  const animatedButtonStyle = useAnimatedStyle(() => {
+    'worklet';
+    const borderColor = interpolateColor(
+      scrollY.value,
+      [0, 300],
+      ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+    );
+    const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
+    return {
+      borderColor,
+      backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+    };
+  });
+
+  const animatedIconStyle = useAnimatedStyle(() => {
+    'worklet';
+
+    const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
+
+    const tintColor = interpolateColor(
+      scrollY.value,
+      [0, 150],
+      ['#FFFFFF', '#002050'],
+    );
+
+    return {
+      opacity,
+      tintColor,
+    };
+  });
+
+  const blurAmount = useDerivedValue(() =>
+    interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+  );
+ const animatedStaticBackgroundStyle = useAnimatedStyle(() => {
+    'worklet';
+    return {
+      opacity: interpolate(
+        scrollY.value,
+        [0, 30],
+        [1, 0],
+        'clamp',
+      ),
+      backgroundColor: 'rgba(255,255,255,0.1)',
+      borderRadius: 40,
+    };
+  });
+
+  const animatedBlurViewStyle = useAnimatedStyle(() => {
+    'worklet';
+    return {
+      opacity: interpolate(
+        scrollY.value,
+        [0, 50],
+        [0, 1],
+        'clamp',
+      ),
+    };
+  });
+
   const [showPopup, setShowPopup] = useState(false);
   const closePopup = () => setShowPopup(false);
-  const [scrollY, setScrollY] = useState(0);
-  const scrollY1 = new Animated.Value(0);
+  // const [scrollY, setScrollY] = useState(0);
+  const scrollY1 = useSharedValue(0);
 
   const [storedForm, setStoredForm] = useState<any | null>(null);
   const screenWidth = Dimensions.get('window').width;
@@ -1730,8 +1809,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
   //   }
   // };
 
-
-  //This is old version which is working for when you change something in form data  
+  //This is old version which is working for when you change something in form data
 
   const handleListPress = async () => {
     console.log('🔵 handleListPress called');
@@ -1788,16 +1866,17 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
       console.log('✅ Image fields:', imageFields);
 
       // --- Build data array safely ---
-const dataArray = nonImageFields
-  .filter(([key, obj]) => !isNaN(Number(key)))
-  .map(([key, obj]) => {
-    const val = obj.value;
-    return {
-      id: Number(key),
-      param_value: val !== undefined && val !== null && val !== '' ? val : null,
-    };
-  })
-  .filter(item => item.param_value !== null); // ✅ only keep filled values
+      const dataArray = nonImageFields
+        .filter(([key, obj]) => !isNaN(Number(key)))
+        .map(([key, obj]) => {
+          const val = obj.value;
+          return {
+            id: Number(key),
+            param_value:
+              val !== undefined && val !== null && val !== '' ? val : null,
+          };
+        })
+        .filter(item => item.param_value !== null); // ✅ only keep filled values
 
       console.log('✅ Data array for create API:', dataArray);
 
@@ -1837,7 +1916,7 @@ const dataArray = nonImageFields
       if (!feature_id) {
         console.log('❌ feature_id not returned from create API.');
         showToast('feature_id missing in response');
-        return
+        return;
       }
 
       // const imageFieldsWithStatus = Object.entries(formData)
@@ -1855,82 +1934,91 @@ const dataArray = nonImageFields
 
       // console.log("ImagesFiledWithStatus", imageFieldsWithStatus);
 
+      const storedDataImages = await AsyncStorage.getItem('deletedImagesId');
+      const deletedImageIds = storedDataImages
+        ? JSON.parse(storedDataImages).deleted_image_ids || []
+        : [];
 
+      for (const [param_id, images] of imageFields) {
+        if (!Array.isArray(images)) {
+          console.warn(`⚠️ images is not an array for param_id=${param_id}`);
+          continue;
+        }
 
-   
+        console.log(`Step 7: Uploading images for param_id=${param_id}`);
 
-  const storedDataImages = await AsyncStorage.getItem('deletedImagesId');
-  const deletedImageIds = storedDataImages ? JSON.parse(storedDataImages).deleted_image_ids || [] : [];
+        for (const image of images) {
+          // Defensive check
+          if (!image || !image.uri) {
+            console.warn(
+              `⚠️ Invalid image data for param_id=${param_id}`,
+              image,
+            );
+            continue;
+          }
 
+          // Skip deleted images
+          if (deletedImageIds.includes(image.id)) {
+            console.log(
+              `Skipping upload for deleted image with ID: ${image.id}`,
+            );
+            continue;
+          }
 
-  for (const [param_id, images] of imageFields) {
-    if (!Array.isArray(images)) {
-      console.warn(`⚠️ images is not an array for param_id=${param_id}`);
-      continue;
-    }
+          console.log(
+            `🟡 Preparing upload for image under param_id=${param_id}:`,
+            image,
+          );
 
-    console.log(`Step 7: Uploading images for param_id=${param_id}`);
+          // Prepare FormData
+          const data = new FormData();
+          data.append('files', {
+            uri: image.uri,
+            type: image.type || 'image/jpeg',
+            name: image.name,
+          } as any);
+          data.append('feature_id', feature_id);
+          data.append('param_id', param_id);
 
-    for (const image of images) {
-      // Defensive check
-      if (!image || !image.uri) {
-        console.warn(`⚠️ Invalid image data for param_id=${param_id}`, image);
-        continue;
+          // Add deleted IDs payload
+          data.append('deleted_image_ids', JSON.stringify(deletedImageIds));
+
+          console.log('✅ FormData prepared for upload', JSON.stringify(data));
+
+          const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-update`;
+
+          const uploadRes = await fetch(uploadUrl, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              // DO NOT manually set 'Content-Type' here for FormData!
+            },
+            body: data,
+          });
+
+          console.log(`✅ Upload completed. Status: ${uploadRes.status}`);
+
+          let uploadJson;
+          try {
+            uploadJson = await uploadRes.json();
+          } catch (err) {
+            console.error('❌ Failed to parse upload response as JSON', err);
+          }
+
+          console.log('✅ Upload response JSON:', uploadJson);
+
+          if (!uploadRes.ok) {
+            console.log(
+              `❌ Upload failed for ${image.name} (param_id=${param_id})`,
+            );
+            showToast(`Failed to upload image ${image.name}`);
+          } else {
+            console.log(
+              `✅ Upload success for ${image.name} (param_id=${param_id})`,
+            );
+          }
+        }
       }
-
-      // Skip deleted images
-      if (deletedImageIds.includes(image.id)) {
-        console.log(`Skipping upload for deleted image with ID: ${image.id}`);
-        continue;
-      }
-
-      console.log(`🟡 Preparing upload for image under param_id=${param_id}:`, image);
-
-      // Prepare FormData
-      const data = new FormData();
-      data.append('files', {
-        uri: image.uri,
-        type: image.type || 'image/jpeg',
-        name: image.name,
-      } as any);
-      data.append('feature_id', feature_id);
-      data.append('param_id', param_id);
-
-      // Add deleted IDs payload
-      data.append('deleted_image_ids', JSON.stringify(deletedImageIds));
-
-      console.log('✅ FormData prepared for upload', JSON.stringify(data));
-
-      const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-update`;
-
-      const uploadRes = await fetch(uploadUrl, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          // DO NOT manually set 'Content-Type' here for FormData!
-        },
-        body: data,
-      });
-
-      console.log(`✅ Upload completed. Status: ${uploadRes.status}`);
-
-      let uploadJson;
-      try {
-        uploadJson = await uploadRes.json();
-      } catch (err) {
-        console.error('❌ Failed to parse upload response as JSON', err);
-      }
-
-      console.log('✅ Upload response JSON:', uploadJson);
-
-      if (!uploadRes.ok) {
-        console.log(`❌ Upload failed for ${image.name} (param_id=${param_id})`);
-        showToast(`Failed to upload image ${image.name}`);
-      } else {
-        console.log(`✅ Upload success for ${image.name} (param_id=${param_id})`);
-      }
-    }
-  }
 
       // for (const [param_id, images] of imageFields) {
       //   console.log(`Step 7: Uploading images for param_id=${param_id}`);
@@ -1993,10 +2081,10 @@ const dataArray = nonImageFields
       //         file_id: image.id,
       //         status: 'deleted',
       //       };
-      
+
       //       // 🟢 Log the delete body
       //       console.log('🗑️ DELETE Image Body:', JSON.stringify(deleteBody, null, 2));
-      
+
       //       const deleteRes = await fetch(deleteUrl, {
       //         method: 'POST', // or PATCH if your API uses it
       //         headers: {
@@ -2005,10 +2093,10 @@ const dataArray = nonImageFields
       //         },
       //         body: JSON.stringify(deleteBody),
       //       });
-      
+
       //       const deleteJson = await deleteRes.json();
       //       console.log('🗑️ DELETE Response:', deleteJson);
-      
+
       //     } else if (image.status === 'new') {
       //       // ✅ Upload new image
       //     const data = new FormData();
@@ -2020,7 +2108,7 @@ const dataArray = nonImageFields
       //     data.append('feature_id', feature_id);
       //     data.append('param_id', param_id);
       //       data.append('status', 'new');
-      
+
       //       // 🟢 Log FormData content (debug-friendly)
       //       console.log('🆕 Uploading New Image Body:');
       //       console.log({
@@ -2044,8 +2132,6 @@ const dataArray = nonImageFields
       //   }
       // }
 
-      
-
       console.log('✅ All uploads done. Showing toast.');
       showToast('All data uploaded successfully');
       setShowPopup(true);
@@ -2055,141 +2141,137 @@ const dataArray = nonImageFields
     }
   };
 
+  // const handleListPress = async () => {
+  //   console.log('🔵 handleListPress called');
 
-// const handleListPress = async () => {
-//   console.log('🔵 handleListPress called');
+  //   try {
+  //     console.log('Step 1: Fetching formData1 from AsyncStorage...');
+  //     const storedData = await AsyncStorage.getItem('formData1');
+  //     console.log('✅ AsyncStorage.getItem(formData1) result:', storedData);
 
-//   try {
-//     console.log('Step 1: Fetching formData1 from AsyncStorage...');
-//     const storedData = await AsyncStorage.getItem('formData1');
-//     console.log('✅ AsyncStorage.getItem(formData1) result:', storedData);
+  //     if (!storedData) {
+  //       console.log('⚠️ No form data found in storage');
+  //       showToast('No form data found');
+  //       return;
+  //     }
 
-//     if (!storedData) {
-//       console.log('⚠️ No form data found in storage');
-//       showToast('No form data found');
-//       return;
-//     }
+  //     const formData: Record<string, { value: any; alias_name: string | null }> = JSON.parse(storedData);
+  //     console.log('✅ Parsed formData:', formData);
 
-//     const formData: Record<string, { value: any; alias_name: string | null }> = JSON.parse(storedData);
-//     console.log('✅ Parsed formData:', formData);
+  //     console.log('Step 2: Fetching userToken...');
+  //     const token = await AsyncStorage.getItem('userToken');
+  //     const productId1 = await AsyncStorage.getItem('selectedProductId');
+  //     const shareid = await AsyncStorage.getItem('shareid');
 
-//     console.log('Step 2: Fetching userToken...');
-//     const token = await AsyncStorage.getItem('userToken');
-//     const productId1 = await AsyncStorage.getItem('selectedProductId');
-//     const shareid = await AsyncStorage.getItem('shareid');
+  //     if (!token) {
+  //       console.log('⚠️ Token not found. Cannot upload.');
+  //       return;
+  //     }
 
-//     if (!token) {
-//       console.log('⚠️ Token not found. Cannot upload.');
-//       return;
-//     }
+  //     console.log('Step 3: Splitting formData...');
 
-//     console.log('Step 3: Splitting formData...');
+  //     // Identify image fields
+  //     const imageFields = Object.entries(formData)
+  //       .filter(([key, obj]) => Array.isArray(obj.value) && obj.value.every((item: any) => item?.uri))
+  //       .map(([key, obj]) => [key, obj.value as ImageField[]]) as [string, ImageField[]][];
 
-//     // Identify image fields
-//     const imageFields = Object.entries(formData)
-//       .filter(([key, obj]) => Array.isArray(obj.value) && obj.value.every((item: any) => item?.uri))
-//       .map(([key, obj]) => [key, obj.value as ImageField[]]) as [string, ImageField[]][];
+  //     const nonImageFields = Object.entries(formData).filter(([key, obj]) => !Array.isArray(obj.value));
 
-//     const nonImageFields = Object.entries(formData).filter(([key, obj]) => !Array.isArray(obj.value));
+  //     console.log('✅ Non-image fields:', nonImageFields);
+  //     console.log('✅ Image fields:', imageFields);
 
-//     console.log('✅ Non-image fields:', nonImageFields);
-//     console.log('✅ Image fields:', imageFields);
+  //     // --- Step 4: Build numeric params for data[]
+  //     const dataArray = nonImageFields
+  //       .filter(([key]) => !isNaN(Number(key))) // only numeric keys
+  //       .map(([key, obj]) => ({
+  //         id: Number(key),
+  //         param_value: obj.value,
+  //       }));
 
-//     // --- Step 4: Build numeric params for data[]
-//     const dataArray = nonImageFields
-//       .filter(([key]) => !isNaN(Number(key))) // only numeric keys
-//       .map(([key, obj]) => ({
-//         id: Number(key),
-//         param_value: obj.value,
-//       }));
+  //     console.log('✅ Data array for create API:', dataArray);
 
-//     console.log('✅ Data array for create API:', dataArray);
+  //     // --- Step 5: Always include title and description from formData
+  //     const mainFields = ['title', 'description'].map((field) => ({
+  //       id: field,
+  //       param_value: formData[field]?.value ?? '', // fallback to empty string if not defined
+  //     }));
 
-//     // --- Step 5: Always include title and description from formData
-//     const mainFields = ['title', 'description'].map((field) => ({
-//       id: field,
-//       param_value: formData[field]?.value ?? '', // fallback to empty string if not defined
-//     }));
+  //     const createPayload = {
+  //       category_id: productId1,
+  //       data: [...dataArray, ...mainFields],
+  //     };
 
-//     const createPayload = {
-//       category_id: productId1,
-//       data: [...dataArray, ...mainFields],
-//     };
+  //     console.log('Step 5: Calling create API with payload:', JSON.stringify(createPayload, null, 2));
 
-//     console.log('Step 5: Calling create API with payload:', JSON.stringify(createPayload, null, 2));
+  //     // --- Step 6: Call API ---
+  //     const createRes = await fetch(`${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`, {
+  //       method: 'PATCH',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //       body: JSON.stringify(createPayload),
+  //     });
 
-//     // --- Step 6: Call API ---
-//     const createRes = await fetch(`${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`, {
-//       method: 'PATCH',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         Authorization: `Bearer ${token}`,
-//       },
-//       body: JSON.stringify(createPayload),
-//     });
+  //     console.log(`✅ Create API status: ${createRes.status}`);
+  //     const createJson = await createRes.json();
+  //     console.log('✅ Create API response:', createJson);
 
-//     console.log(`✅ Create API status: ${createRes.status}`);
-//     const createJson = await createRes.json();
-//     console.log('✅ Create API response:', createJson);
+  //     if (!createRes.ok) {
+  //       showToast('Failed to create feature list');
+  //       return;
+  //     }
 
-//     if (!createRes.ok) {
-//       showToast('Failed to create feature list');
-//       return;
-//     }
+  //     const feature_id = createJson?.data?.id;
+  //     if (!feature_id) {
+  //       console.log('❌ feature_id not returned from create API.');
+  //       showToast('feature_id missing in response');
+  //       return;
+  //     }
 
-//     const feature_id = createJson?.data?.id;
-//     if (!feature_id) {
-//       console.log('❌ feature_id not returned from create API.');
-//       showToast('feature_id missing in response');
-//       return;
-//     }
+  //     console.log('✅ feature_id from create API:', feature_id);
 
-//     console.log('✅ feature_id from create API:', feature_id);
+  //     // --- Step 7: Upload images ---
+  //     for (const [param_id, images] of imageFields) {
+  //       console.log(`Uploading images for param_id=${param_id}`);
 
-//     // --- Step 7: Upload images ---
-//     for (const [param_id, images] of imageFields) {
-//       console.log(`Uploading images for param_id=${param_id}`);
+  //       for (const image of images) {
+  //         const data = new FormData();
+  //         data.append('files', {
+  //           uri: image.uri,
+  //           type: image.type || 'image/jpeg',
+  //           name: image.name,
+  //         } as any);
+  //         data.append('feature_id', feature_id);
+  //         data.append('param_id', param_id);
 
-//       for (const image of images) {
-//         const data = new FormData();
-//         data.append('files', {
-//           uri: image.uri,
-//           type: image.type || 'image/jpeg',
-//           name: image.name,
-//         } as any);
-//         data.append('feature_id', feature_id);
-//         data.append('param_id', param_id);
+  //         const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-upload`;
+  //         const uploadRes = await fetch(uploadUrl, {
+  //           method: 'POST',
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //           body: data,
+  //         });
 
-//         const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-upload`;
-//         const uploadRes = await fetch(uploadUrl, {
-//           method: 'POST',
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//           },
-//           body: data,
-//         });
+  //         console.log(`✅ Upload completed for ${image.name}, status: ${uploadRes.status}`);
+  //         const uploadJson = await uploadRes.json();
+  //         console.log('✅ Upload response JSON:', uploadJson);
 
-//         console.log(`✅ Upload completed for ${image.name}, status: ${uploadRes.status}`);
-//         const uploadJson = await uploadRes.json();
-//         console.log('✅ Upload response JSON:', uploadJson);
+  //         if (!uploadRes.ok) {
+  //           showToast(`Failed to upload image ${image.name}`);
+  //         }
+  //       }
+  //     }
 
-//         if (!uploadRes.ok) {
-//           showToast(`Failed to upload image ${image.name}`);
-//         }
-//       }
-//     }
-
-//     console.log('✅ All uploads done.');
-//     showToast('All data uploaded successfully');
-//     setShowPopup(true);
-//   } catch (error) {
-//     console.log('❌ Error in handleListPress:', error);
-//     showToast('Error uploading data');
-//   }
-// };
-
-
-
+  //     console.log('✅ All uploads done.');
+  //     showToast('All data uploaded successfully');
+  //     setShowPopup(true);
+  //   } catch (error) {
+  //     console.log('❌ Error in handleListPress:', error);
+  //     showToast('Error uploading data');
+  //   }
+  // };
 
   const getCurrentDate = () => {
     const today = new Date();
@@ -2239,7 +2321,7 @@ const dataArray = nonImageFields
       resizeMode="cover"
     >
       <View style={styles.fullScreenContainer}>
-        <View style={styles.header}>
+        {/* <View style={styles.header}>
           <View style={styles.headerRow}>
             <TouchableOpacity
               style={styles.backBtn}
@@ -2256,7 +2338,90 @@ const dataArray = nonImageFields
               Preview Details
             </Text>
           </View>
+        </View> */}
+        <StatusBar
+          translucent
+          backgroundColor="transparent"
+          barStyle="light-content"
+        />
+
+        {/* Header with Blur only at top */}
+        <Animated.View
+          style={[styles.headerWrapper, animatedBlurStyle]}
+          pointerEvents="none"
+        >
+          {/* Blur layer only at top with gradient fade */}
+          <MaskedView
+            style={StyleSheet.absoluteFill}
+            maskElement={
+              <LinearGradient
+                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                locations={[0, 0.8]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            }
+          >
+            <BlurView
+              style={StyleSheet.absoluteFill}
+              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+              blurAmount={Platform.OS === 'ios' ? 45 : 45}
+              overlayColor="rgba(255,255,255,0.05)"
+              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+            />
+            <LinearGradient
+              colors={[
+                'rgba(255, 255, 255, 0.45)',
+                'rgba(255, 255, 255, 0.02)',
+                'rgba(255, 255, 255, 0.02)',
+              ]}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+            />
+          </MaskedView>
+        </Animated.View>
+
+        {/* Header Content */}
+        <View style={styles.headerContent} pointerEvents="box-none">
+         <TouchableOpacity
+              style={styles.backBtn}
+              onPress={() => navigation.replace('EditPreviewThumbnail')}
+            >
+            <Animated.View
+              style={[styles.blurButtonWrapper, animatedButtonStyle]}
+            >
+              {/* Static background (visible when scrollY = 0) */}
+              <Animated.View
+                style={[StyleSheet.absoluteFill, animatedStaticBackgroundStyle]}
+              />
+
+              {/* Blur view fades in as scroll increases */}
+              <Animated.View
+                style={[StyleSheet.absoluteFill, animatedBlurViewStyle]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
+                />
+              </Animated.View>
+
+              {/* Back Icon */}
+              <Animated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 24, width: 24 }, animatedIconStyle]}
+              />
+            </Animated.View>
+          </TouchableOpacity>
+
+          <Text allowFontScaling={false} style={styles.unizyText}>
+            Preview Details
+          </Text>
         </View>
+
         {/* 
      <ScrollView
           contentContainerStyle={styles.scrollContainer}
@@ -2267,7 +2432,7 @@ const dataArray = nonImageFields
           ])}
           scrollEventThrottle={16}
         > */}
-        <ScrollView
+        {/* <ScrollView
           contentContainerStyle={[
             styles.scrollContainer,
             {
@@ -2275,7 +2440,12 @@ const dataArray = nonImageFields
             },
           ]}
           scrollEventThrottle={16}
-        >
+        > */}
+        <Animated.ScrollView
+                    contentContainerStyle={styles.scrollContainer}
+                    onScroll={scrollHandler}
+                    scrollEventThrottle={16}
+                  >
           {storedForm?.[6]?.value?.length > 1 ? (
             <View>
               <FlatList
@@ -2325,7 +2495,15 @@ const dataArray = nonImageFields
             />
           )}
           <View style={{ flex: 1, padding: 16 }}>
-            <View style={styles.card}>
+            {/* <View style={styles.card}> */}
+            <SquircleView
+              style={styles.card}
+              squircleParams={{
+                cornerSmoothing: 1,
+                cornerRadius: 24,
+                fillColor: 'rgba(255, 255, 255, 0.06)',
+              }}
+            >
               <View style={{ gap: 8 }}>
                 <Text allowFontScaling={false} style={styles.QuaddText}>
                   {titleValue}
@@ -2351,7 +2529,15 @@ const dataArray = nonImageFields
                   {descriptionvalue}
                 </Text>
 
-                <View style={styles.datePosted}>
+                {/* <View style={styles.datePosted}> */}
+                <SquircleView
+                  style={styles.datePosted}
+                  squircleParams={{
+                    cornerSmoothing: 1,
+                    cornerRadius: 8,
+                    fillColor: 'rgba(255, 255, 255, 0.06)',
+                  }}
+                >
                   <Image
                     source={require('../../../assets/images/calendar_icon.png')}
                     style={{ height: 16, width: 16 }}
@@ -2359,9 +2545,9 @@ const dataArray = nonImageFields
                   <Text allowFontScaling={false} style={styles.userSub}>
                     Date Posted: {getCurrentDate()}
                   </Text>
-                </View>
+                </SquircleView>
               </View>
-            </View>
+            </SquircleView>
 
             <View style={styles.card}>
               <View style={styles.gap12}>
@@ -2564,7 +2750,7 @@ const dataArray = nonImageFields
               </View>
             </View>
           </View>
-        </ScrollView>
+        </Animated.ScrollView>
         {/* Bottom */}
         <TouchableOpacity style={styles.previewBtn} onPress={handleListPress}>
           {/* <Text style={styles.previewText}>List</Text> */}
@@ -2687,7 +2873,7 @@ const dataArray = nonImageFields
                       //   }),
                       // );
                       // navigation.goBack();
-                      navigation.replace('MyListing',{ animation: 'none' });
+                      navigation.replace('MyListing', { animation: 'none' });
 
                       setShowPopup(false);
                     } catch (err) {
@@ -2710,6 +2896,41 @@ const dataArray = nonImageFields
 };
 
 const styles = StyleSheet.create({
+ headerWrapper: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    height: Platform.OS === 'ios' ? 180 : 180,
+    zIndex: 10,
+    overflow: 'hidden',
+    alignSelf: 'center',
+    pointerEvents: 'none',
+  },
+  headerContent: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 40 : 10,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
+  },
+  blurButtonWrapper: {
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+  },
+
+
   initialsCircle: {
     backgroundColor: '#8390D4',
     alignItems: 'center',
@@ -2769,14 +2990,15 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
-    marginTop: 20,
     // height: 50,
     textAlignVertical: 'center',
   },
   backBtn: {
     width: 30,
+    left:14,
     justifyContent: 'center',
     alignItems: 'center',
+   
   },
 
   header: {

@@ -1,5 +1,6 @@
 // MyListingCard.tsx
 import React from 'react';
+import { SquircleView } from 'react-native-figma-squircle';
 import {
   View,
   Text,
@@ -8,6 +9,7 @@ import {
   ImageSourcePropType,
   TouchableOpacity,
 } from 'react-native';
+import { red } from 'react-native-reanimated/lib/typescript/Colors';
 
 type MyListingCardProps = {
   tag: string;
@@ -61,13 +63,29 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
   const shouldShowInitials = isProfileCategory && !profilePhoto;
 
 //  console.log('Share ID in card:', shareid, catagory_id);
- return (
-  <TouchableOpacity style={styles.wrapper} onPress={() => {
+ return ( 
+  <SquircleView
+      style={styles.wrapper}
+      squircleParams={{
+        cornerSmoothing: 1,
+        cornerRadius: 18,
+        fillColor: 'rgba(255, 255, 255, 0.06)',
+      }}
+    >
+  <TouchableOpacity  onPress={() => {
     navigation.navigate('ListingDetails',{ shareid ,catagory_id,catagory_name});
   }}>
     <View style={styles.container}>
       {/* Image View */}
-      <View style={styles.imageContainer}>
+      {/* <View style={styles.imageContainer}> */}
+        <SquircleView
+      style={styles.imageContainer}
+      squircleParams={{
+        cornerSmoothing: 1,
+        cornerRadius: 18,
+      }}
+>
+
         {shouldShowInitials ? (
           <View style={styles.initialsCircle}>
             <Text allowFontScaling={false} style={styles.initialsText}>
@@ -79,14 +97,12 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
         ) : (
           <Image source={productImage} style={styles.image} resizeMode="cover" />
         )}
-      </View>
-
+  </SquircleView>
       {/* Content View - Title, Price, University, Date */}
       <View style={styles.contentContainer}>
         <Text allowFontScaling={false} style={styles.title} numberOfLines={2}>
           {infoTitle}
         </Text>
-
         <View style={styles.priceRow}>
           <Text allowFontScaling={false} style={styles.price} numberOfLines={1}>
             {inforTitlePrice}
@@ -134,6 +150,7 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
       ) : null}
     </View>
   </TouchableOpacity>
+  </SquircleView>
 );
 };
 
@@ -141,10 +158,8 @@ export default MyListingCard;
 
 const styles = StyleSheet.create({
   wrapper: {
-    borderRadius: 18,
     padding: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    borderWidth: 0.3,
+    // backgroundColor: 'rgba(255, 255, 255, 0.06)',
     borderColor: 'rgba(255, 255, 255, 0.08)',
     color: 'rgba(255, 255, 255, 0.48)',
     width: '100%',
@@ -157,11 +172,14 @@ const styles = StyleSheet.create({
   imageContainer: {
     width: 72,
     height: 72,
+     overflow:'hidden',
+     borderRadius:12,
   },
   image: {
     width: 72,
     height: 72,
     borderRadius: 12,
+
   },
   contentContainer: {
     flex: 1,

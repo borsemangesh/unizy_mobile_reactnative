@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect, useRef } from 'react';
+import { SquircleView } from 'react-native-figma-squircle';
 import {
   View,
   Text,
@@ -11,9 +11,20 @@ import {
   TextInput,
   Alert,
   KeyboardAvoidingView,
-  Animated,
+  StatusBar,
   Dimensions,
 } from 'react-native';
+import { Animated as RNAnimated } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  interpolateColor,
+  useDerivedValue,
+  withTiming,
+  interpolate,
+  useAnimatedScrollHandler,
+} from 'react-native-reanimated';
+import { BlurView } from '@react-native-community/blur';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImageResizer from 'react-native-image-resizer';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
@@ -22,6 +33,8 @@ import { MAIN_URL } from '../../utils/APIConstant';
 // import { showToast } from '../../utils/toast';
 import ToggleButton from '../../utils/component/ToggleButton';
 import Button from '../../utils/component/Button';
+import LinearGradient from 'react-native-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
 import SelectCatagoryDropdown from '../../utils/component/SelectCatagoryDropdown';
 import {
   NewCustomToastContainer,
@@ -46,6 +59,81 @@ type RootStackParamList = {
 type AddScreenRouteProp = RouteProp<RootStackParamList, 'AddScreen'>;
 
 const EditListScreen = ({ navigation }: AddScreenContentProps) => {
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: event => {
+      'worklet';
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+  const animatedBlurStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+    return { opacity };
+  });
+
+  const animatedButtonStyle = useAnimatedStyle(() => {
+    'worklet';
+    const borderColor = interpolateColor(
+      scrollY.value,
+      [0, 300],
+      ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+    );
+    const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
+    return {
+      borderColor,
+      backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+    };
+  });
+
+  const animatedIconStyle = useAnimatedStyle(() => {
+    'worklet';
+
+    const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
+
+    const tintColor = interpolateColor(
+      scrollY.value,
+      [0, 150],
+      ['#FFFFFF', '#002050'],
+    );
+
+    return {
+      opacity,
+      tintColor,
+    };
+  });
+
+  const blurAmount = useDerivedValue(() =>
+    interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+  );
+
+  const animatedStaticBackgroundStyle = useAnimatedStyle(() => {
+    'worklet';
+    return {
+      opacity: interpolate(
+        scrollY.value,
+        [0, 30],
+        [1, 0],
+        'clamp',
+      ),
+      backgroundColor: 'rgba(255,255,255,0.1)',
+      borderRadius: 40,
+    };
+  });
+
+  const animatedBlurViewStyle = useAnimatedStyle(() => {
+    'worklet';
+    return {
+      opacity: interpolate(
+        scrollY.value,
+        [0, 50],
+        [0, 1],
+        'clamp',
+      ),
+    };
+  });
+
   const [formValues, setFormValues] = useState<any>({});
   const [fields, setFields] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,8 +142,9 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   const formattedDate = today.toLocaleDateString('en-GB');
   const displayDate = formattedDate.replace(/\//g, '-');
   const [photo, setPhoto] = useState<string | null>(null);
-  const [newdate,setnewdate]=useState('')
-  const [category,setcategory]=useState('')
+  const [newdate, setnewdate] = useState('');
+  const [category, setcategory] = useState('');
+  const [categoryId, setCategoryId] = useState<number | null>(null);
   const [multiSelectModal, setMultiSelectModal] = useState<{
     visible: boolean;
     ismultilple: boolean;
@@ -69,7 +158,12 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   >([]);
 
   const screenHeight = Dimensions.get('window').height;
-  const [slideUp1] = useState(new Animated.Value(0));
+  const slideUp1 = useSharedValue(0);
+
+  const animatedSlideUpStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: slideUp1.value }],
+    opacity: interpolate(slideUp1.value, [-screenHeight, 0], [0, 1]),
+  }));
 
   interface Category {
     id: number;
@@ -98,8 +192,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   const route = useRoute<AddScreenRouteProp>();
   const { productId, productName, shareid } = route.params;
 
-    const [deletedImageIds, setDeletedImageIds] = useState<string[]>([]);
-
+  const [deletedImageIds, setDeletedImageIds] = useState<string[]>([]);
 
   useEffect(() => {
     console.log('Product ID: ', productId, productName, shareid);
@@ -161,7 +254,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
           );
         }
         await AsyncStorage.setItem('selectedProductId', String(productId));
-        await AsyncStorage.setItem('shareid',String(shareid))
+        await AsyncStorage.setItem('shareid', String(shareid));
 
         if (json?.data) {
           const sellerFields = json.data.filter(
@@ -220,20 +313,18 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
     //       const data = json.data;
     //       const initialValues: any = {};
 
-          
     //       initialValues.title = { value: data.title || '' };
     //       initialValues.price = { value: data.price || '' };
     //       initialValues.description = { value: data.description || '' };
 
     //       initialValues.isfeatured = { value: !!data.isfeatured };
 
-          
     //       if (Array.isArray(data.params)) {
     //         data.params.forEach((param: any) => {
     //           const fieldType = param.field_type?.toLowerCase();
 
     //           if (fieldType === 'dropdown') {
-                
+
     //             if (Array.isArray(param.param_value)) {
     //               initialValues[param.id] = {
     //                 value: param.param_value.map((v: any) => Number(v)),
@@ -279,20 +370,19 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
     //   }
     // };
 
-
     const fetchListDetails = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
-    
+
         if (!token) {
           console.log('No token found');
           return;
         }
-    
+
         const url = `${MAIN_URL.baseUrl}category/feature-detail/${shareid}`;
         console.log('DetailsURL:', url);
         console.log('Token:', token);
-    
+
         const response = await fetch(url, {
           method: 'GET',
           headers: {
@@ -300,24 +390,31 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             Authorization: `Bearer ${token}`,
           },
         });
-    
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-    
+
         const json = await response.json();
         console.log('✅ API Response Details:', json);
         await AsyncStorage.setItem('selectedProductId', String(productId));
-    
+
         if (json?.data) {
           const data = json.data;
           setnewdate(data.created_at);
-          setcategory(data.category.name)
+          setcategory(data.category.name);
+          setCategoryId(data.category.id || data.category_id || null);
           const initialValues: any = {};
-    
+
           // --- Basic Fields ---
-          initialValues.title = { value: data.title || '', alias_name: 'title' };
-          initialValues.price = { value: data.originalprice || '', alias_name: 'price' };
+          initialValues.title = {
+            value: data.title || '',
+            alias_name: 'title',
+          };
+          initialValues.price = {
+            value: data.originalprice || '',
+            alias_name: 'price',
+          };
           initialValues.description = {
             value: data.description || '',
             alias_name: 'description',
@@ -326,16 +423,16 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             value: !!data.isfeatured,
             alias_name: 'isfeatured',
           };
-    
+
           // --- Dynamic Params ---
           if (Array.isArray(data.params)) {
             data.params.forEach((param: any) => {
               const fieldType = param.field_type?.toLowerCase();
-    
+
               const baseField = {
                 alias_name: param.alias_name || null,
               };
-    
+
               if (fieldType === 'dropdown') {
                 if (Array.isArray(param.param_value)) {
                   initialValues[param.id] = {
@@ -357,7 +454,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
               }
             });
           }
-    
+
           // --- Files / Images ---
           if (Array.isArray(data.files) && data.files.length > 0) {
             const mappedImages = data.files.map((file: any) => ({
@@ -367,20 +464,22 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             }));
             setUploadedImages(mappedImages);
           }
-        
-    
+
           // ✅ Update state + persist data
           setFormValues(initialValues);
-          await AsyncStorage.setItem('formData1', JSON.stringify(initialValues));
-    
+          await AsyncStorage.setItem(
+            'formData1',
+            JSON.stringify(initialValues),
+          );
+
           console.log('✅ Stored formData1:', initialValues);
         }
-    
+
         if (response.status === 401 || response.status === 403) {
           handleForceLogout();
           return;
         }
-    
+
         if (json.statusCode === 401 || json.statusCode === 403) {
           handleForceLogout();
           return;
@@ -391,7 +490,6 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         setLoading(false);
       }
     };
-    
 
     const handleForceLogout = async () => {
       console.log('User inactive or unauthorized — logging out');
@@ -405,17 +503,16 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   }, []);
 
   const [expanded, setExpanded] = useState(false);
-  const animatedHeight = useRef(new Animated.Value(0)).current;
+  const animatedHeight = useSharedValue(0);
 
   useEffect(() => {
-    if (expanded) {
-      Animated.timing(animatedHeight, {
-        toValue: 1,
-        duration: 800, // slow expansion
-        useNativeDriver: false, // height cannot use native driver
-      }).start();
-    }
+    animatedHeight.value = withTiming(expanded ? 1 : 0, { duration: 800 });
   }, [expanded]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    height: interpolate(animatedHeight.value, [0, 1], [0, 200]),
+    opacity: interpolate(animatedHeight.value, [0, 1], [0, 1]),
+  }));
 
   const handleValueChange = (
     fieldId: number,
@@ -537,7 +634,6 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
       navigation.navigate('EditPreviewThumbnail');
     } catch (error) {
-      
       showToast('Failed to save form data');
     }
   };
@@ -585,7 +681,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                     name,
                     status: 'new', // mark as new image
                   };
-  
+
                   setUploadedImages(prev => [...prev, newImage]);
                 }
               },
@@ -627,7 +723,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                     name,
                     status: 'new', // mark as new
                   };
-  
+
                   setUploadedImages(prev => [...prev, newImage]);
                 }
               },
@@ -687,13 +783,13 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   };
 
   const formatDateWithDash = (dateString?: string) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-  const year = date.getFullYear();
-  return `${day}-${month}-${year}`;
-};
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
 
   const renderField = (field: any) => {
     // const { field_name, field_type, options, id, field_ismultilple } =field.param;
@@ -1003,7 +1099,9 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                         }
                         }
                       > */}
-                       <TouchableOpacity onPress={() => handleDeleteImage(file.id)}>
+                      <TouchableOpacity
+                        onPress={() => handleDeleteImage(file.id)}
+                      >
                         <Image source={deleteIcon} style={styles.deleteIcon} />
                       </TouchableOpacity>
                     </View>
@@ -1033,34 +1131,51 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
         // ✅ Read the value from formValues (default false)
         // const toggleValue = !!formValues[param.]?.value;
-        const  toggleValue  = formValues[param.id]?.value ??formValues[alias_name]?.value ??formValues[field_name]?.value ??'';
+        const toggleValue =
+          formValues[param.id]?.value ??
+          formValues[alias_name]?.value ??
+          formValues[field_name]?.value ??
+          '';
 
         console.log('toggleValue', toggleValue);
-        
-        
 
         return (
-          <View key={field.id} style={styles.featurecard}>
+          // <View key={field.id} style={styles.featurecard}>
+          <SquircleView
+            key={field.id}
+            style={styles.featurecard}
+            squircleParams={{
+              cornerSmoothing: 1,
+              cornerRadius: 18,
+              fillColor: 'rgba(255, 255, 255, 0.06)',
+            }}
+          >
             {/* Label + toggle */}
             <View style={styles.featuredRow}>
               {renderLabel1(field_name, field.mandatory)}
 
               <ToggleButton
-  value={toggleValue}
-  disabled={true}
-  onValueChange={val => {
-    // Block only when toggle is currently true and user tries to turn it off
-    
-    
+                value={toggleValue}
+                disabled={true}
+                onValueChange={val => {
+                  // Block only when toggle is currently true and user tries to turn it off
 
-    // Otherwise, allow toggle
-    handleValueChange(id, alias_name, val);
-  }}
-/>
+                  // Otherwise, allow toggle
+                  handleValueChange(id, alias_name, val);
+                }}
+              />
             </View>
 
             {/* Info section */}
-            <View style={styles.textbg}>
+            {/* <View style={styles.textbg}> */}
+            <SquircleView
+              style={styles.textbg}
+              squircleParams={{
+                cornerSmoothing: 1,
+                cornerRadius: 12,
+                fillColor: 'rgba(255, 255, 255, 0.06)',
+              }}
+            >
               <Image
                 source={require('../../../assets/images/info_icon.png')}
                 style={{ width: 13, height: 13, marginRight: 8, marginTop: 2 }}
@@ -1082,8 +1197,9 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                   (whichever is lower).
                 </Text>
               </View>
-            </View>
-          </View>
+            </SquircleView>
+            {/* </View> */}
+          </SquircleView>
         );
       }
 
@@ -1143,8 +1259,8 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-        <View style={styles.header}>
-          <View style={styles.headerRow}>
+        {/* <View style={styles.header}> */}
+        {/* <View style={styles.headerRow}>
             <TouchableOpacity
               style={styles.backBtn}
               onPress={() => {
@@ -1161,19 +1277,118 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             {/* <Text allowFontScaling={false} style={styles.unizyText}>
               {`List${productName ? ` ${productName} ` : ''}`}
             </Text> */}
-             <Text allowFontScaling={false} style={styles.unizyText}>
+        {/* <Text allowFontScaling={false} style={styles.unizyText}>
               {`Edit${category ? ` ${category} ` : ''}`}
             </Text>
             <View style={{ width: 48 }} />
-          </View>
+          </View> */}
+        {/* </View> */}
+        <StatusBar
+          translucent
+          backgroundColor="transparent"
+          barStyle="light-content"
+        />
+
+        {/* Header with Blur only at top */}
+        <Animated.View
+          style={[styles.headerWrapper, animatedBlurStyle]}
+          pointerEvents="none"
+        >
+          {/* Blur layer only at top with gradient fade */}
+          <MaskedView
+            style={StyleSheet.absoluteFill}
+            maskElement={
+              <LinearGradient
+                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                locations={[0, 0.8]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            }
+          >
+            <BlurView
+              style={StyleSheet.absoluteFill}
+              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+              blurAmount={Platform.OS === 'ios' ? 45 : 45}
+              overlayColor="rgba(255,255,255,0.05)"
+              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+            />
+            <LinearGradient
+              colors={[
+                'rgba(255, 255, 255, 0.45)',
+                'rgba(255, 255, 255, 0.02)',
+                'rgba(255, 255, 255, 0.02)',
+              ]}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+            />
+          </MaskedView>
+        </Animated.View>
+
+        {/* Header Content */}
+        <View style={styles.headerContent} pointerEvents="box-none">
+           <TouchableOpacity
+              style={styles.backBtn}
+              onPress={() => {
+                navigation.navigate('ListingDetails', {
+                  shareid: shareid,
+                  catagory_id: categoryId || 0,
+                  catagory_name: category || '',
+                });
+              }}
+            >
+              <Animated.View
+                style={[styles.blurButtonWrapper, animatedButtonStyle]}
+              >
+              {/* Static background (visible when scrollY = 0) */}
+              <Animated.View
+                style={[StyleSheet.absoluteFill, animatedStaticBackgroundStyle]}
+              />
+
+              {/* Blur view fades in as scroll increases */}
+              <Animated.View
+                style={[StyleSheet.absoluteFill, animatedBlurViewStyle]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
+                />
+              </Animated.View>
+
+              {/* Back Icon */}
+              <Animated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 24, width: 24 }, animatedIconStyle]}
+              />
+            </Animated.View>
+          </TouchableOpacity>
+          <Text allowFontScaling={false} style={styles.unizyText}>
+            {`Edit${category ? ` ${category} ` : ''}`}
+          </Text>
         </View>
 
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <View style={styles.userRow}>
+          <Animated.ScrollView
+            contentContainerStyle={styles.scrollContainer}
+            onScroll={scrollHandler}
+            scrollEventThrottle={16}
+          >
+            {/* <View style={styles.userRow}> */}
+            <SquircleView
+              style={styles.userRow}
+              squircleParams={{
+                cornerSmoothing: 1,
+                cornerRadius: 24,
+                fillColor: 'rgba(255, 255, 255, 0.06)',
+              }}
+            >
               <View
                 style={{
                   width: '20%',
@@ -1245,10 +1460,11 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                   </View>
                 </View>
               </View>
-            </View>
+              {/* </View> */}
+            </SquircleView>
 
             <View style={styles.productdetails}>
-              <Animated.View
+              {/* <Animated.View
                 style={{
                   transform: [{ translateY: slideUp1 }],
                   opacity: slideUp1.interpolate({
@@ -1257,19 +1473,39 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                   }),
                 }}
               >
-                {/* <Text
+                <Text
                   allowFontScaling={false}
                   style={styles.productdetailstext}
                 >
                   Product Details
-                </Text> */}
-                 <Text
+                </Text>
+                <Text
                   allowFontScaling={false}
                   style={styles.productdetailstext}
                 >
-                  {category === 'Food' ? 'Dish Details' : `${category ? `${category} Details` : ''}`}
+                  {category === 'Food'
+                    ? 'Dish Details'
+                    : `${category ? `${category} Details` : ''}`}
                 </Text>
- 
+
+                {fields
+                  .filter(
+                    (f: any) =>
+                      f?.param?.field_type?.toLowerCase() !== 'boolean',
+                  )
+                  .map((field: any) => renderField(field))}
+              </Animated.View> */}
+
+              <Animated.View style={animatedSlideUpStyle}>
+                <Text
+                  allowFontScaling={false}
+                  style={styles.productdetailstext}
+                >
+                  {category === 'Food'
+                    ? 'Dish Details'
+                    : `${category ? `${category} Details` : ''}`}
+                </Text>
+
                 {fields
                   .filter(
                     (f: any) =>
@@ -1279,12 +1515,8 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
               </Animated.View>
             </View>
             {/* Featured listing toggle rendered as a separate section */}
-            {featuredField && (
-              <View>
-                {renderField(featuredField)}
-              </View>
-            )}
-          </ScrollView>
+            {featuredField && <View>{renderField(featuredField)}</View>}
+          </Animated.ScrollView>
 
           <Button
             title="Preview Details"
@@ -1320,6 +1552,40 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 export default EditListScreen;
 
 const styles = StyleSheet.create({
+  blurButtonWrapper: {
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+  },
+  headerContent: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 50 : 40,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
+  },
+  headerWrapper: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    height: Platform.OS === 'ios' ? 180 : 180,
+    zIndex: 10,
+    overflow: 'hidden',
+    alignSelf: 'center',
+    pointerEvents: 'none',
+  },
+
   initialsCircle: {
     backgroundColor: '#8390D4',
     alignItems: 'center',
@@ -1338,7 +1604,7 @@ const styles = StyleSheet.create({
   },
   featurecard: {
     paddingHorizontal: 16,
-    borderRadius: 12,
+    borderRadius: 18,
     padding: 12,
     marginTop: 12,
     gap: 10,
@@ -1387,7 +1653,7 @@ const styles = StyleSheet.create({
   },
   header: {
     height: 100,
-     paddingTop: Platform.OS === 'ios' ? 50 : 50,
+    paddingTop: Platform.OS === 'ios' ? 50 : 50,
     paddingBottom: 12,
     paddingHorizontal: 16,
     justifyContent: 'center',
@@ -1404,6 +1670,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   backBtn: {
+    left:16,
     width: 30,
     justifyContent: 'center',
     alignItems: 'center',
@@ -1440,7 +1707,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 80,
     paddingTop: 100,
-   
   },
   userRow: {
     flexDirection: 'row',
@@ -1655,7 +1921,7 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
     padding: 6,
-    borderWidth: 0.5,
+
     borderEndEndRadius: 12,
     borderStartEndRadius: 12,
     borderTopLeftRadius: 12,

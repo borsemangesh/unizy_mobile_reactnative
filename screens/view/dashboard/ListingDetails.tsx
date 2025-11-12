@@ -7,16 +7,28 @@ import {
   StyleSheet,
   Platform,
   ScrollView,
-  Animated,
+  StatusBar,
   Modal,
   TouchableWithoutFeedback,
   TextInput,
   Keyboard,
 } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  interpolate,
+  interpolateColor,
+  useDerivedValue,
+} from 'react-native-reanimated';
 // import { showToast } from '../../utils/toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { useRoute } from '@react-navigation/native';
+import { SquircleView } from 'react-native-figma-squircle';
+
+import LinearGradient from 'react-native-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
 import {
   NewCustomToastContainer,
   showToast,
@@ -30,13 +42,89 @@ type ListingDetailsProps = {
 };
 const bgImage = require('../../../assets/images/backimg.png');
 const ListingDetails = ({ navigation }: ListingDetailsProps) => {
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: event => {
+      'worklet';
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+  const animatedBlurStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+    return { opacity };
+  });
+
+  const animatedButtonStyle = useAnimatedStyle(() => {
+    'worklet';
+    const borderColor = interpolateColor(
+      scrollY.value,
+      [0, 300],
+      ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+    );
+    const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
+    return {
+      borderColor,
+      backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+    };
+  });
+
+  const animatedIconStyle = useAnimatedStyle(() => {
+    'worklet';
+
+    const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
+
+    const tintColor = interpolateColor(
+      scrollY.value,
+      [0, 150],
+      ['#FFFFFF', '#002050'],
+    );
+
+    return {
+      opacity,
+      tintColor,
+    };
+  });
+
+  const blurAmount = useDerivedValue(() =>
+    interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+  );
+
+  const animatedStaticBackgroundStyle = useAnimatedStyle(() => {
+    'worklet';
+    return {
+      opacity: interpolate(
+        scrollY.value,
+        [0, 30],
+        [1, 0],
+        'clamp',
+      ),
+      backgroundColor: 'rgba(255,255,255,0.1)',
+      borderRadius: 40,
+    };
+  });
+
+  const animatedBlurViewStyle = useAnimatedStyle(() => {
+    'worklet';
+    return {
+      opacity: interpolate(
+        scrollY.value,
+        [0, 50],
+        [0, 1],
+        'clamp',
+      ),
+    };
+  });
+
   const [showPopup1, setShowPopup1] = useState(false);
   const closePopup1 = () => setShowPopup1(false);
 
   const [showPopup2, setShowPopup2] = useState(false);
   const closePopup2 = () => setShowPopup2(false);
 
-  const scrollY1 = new Animated.Value(0);
+  const scrollY1 = useSharedValue(0);
+
   const route = useRoute();
   //const { shareid } = route.params as { shareid: number };
   const { shareid = 1 } = (route.params as { shareid?: number }) || {};
@@ -198,45 +286,95 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-        {/* Header */}
-        <View style={styles.header}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '100%',
-              zIndex: 10,
-              position: 'relative',
-            }}
+        <StatusBar
+          translucent
+          backgroundColor="transparent"
+          barStyle="light-content"
+        />
+
+        {/* Header with Blur only at top */}
+        <Animated.View
+          style={[styles.headerWrapper, animatedBlurStyle]}
+          pointerEvents="none"
+        >
+          {/* Blur layer only at top with gradient fade */}
+          <MaskedView
+            style={StyleSheet.absoluteFill}
+            maskElement={
+              <LinearGradient
+                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                locations={[0, 0.8]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            }
           >
-            <TouchableOpacity
-              onPress={() => {
-                navigation.goBack();
+            <BlurView
+              style={StyleSheet.absoluteFill}
+              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+              blurAmount={Platform.OS === 'ios' ? 45 : 45}
+              overlayColor="rgba(255,255,255,0.05)"
+              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+            />
+            <LinearGradient
+              colors={[
+                'rgba(255, 255, 255, 0.45)',
+                'rgba(255, 255, 255, 0.02)',
+                'rgba(255, 255, 255, 0.02)',
+              ]}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+            />
+          </MaskedView>
+        </Animated.View>
+
+        {/* Header Content */}
+        <View style={styles.headerContent} pointerEvents="box-none">
+          <TouchableOpacity
+           onPress={() => {
+                navigation.replace('MyListing');
               }}
               style={styles.backButtonContainer}
+          >
+            <Animated.View
+              style={[styles.blurButtonWrapper, animatedButtonStyle]}
             >
-              <View style={styles.backIconRow}>
-                <Image
-                  source={require('../../../assets/images/back.png')}
-                  style={{ height: 24, width: 24 }}
+              {/* Static background (visible when scrollY = 0) */}
+              <Animated.View
+                style={[StyleSheet.absoluteFill, animatedStaticBackgroundStyle]}
+              />
+
+              {/* Blur view fades in as scroll increases */}
+              <Animated.View
+                style={[StyleSheet.absoluteFill, animatedBlurViewStyle]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
                 />
-              </View>
-            </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>
-              Listing Details
-            </Text>
-          </View>
+              </Animated.View>
+
+              {/* Back Icon */}
+              <Animated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 24, width: 24 }, animatedIconStyle]}
+              />
+            </Animated.View>
+          </TouchableOpacity>
+
+          <Text allowFontScaling={false} style={styles.unizyText}>
+           Listing Details
+          </Text>
         </View>
 
         <View>
-          <ScrollView
+          <Animated.ScrollView
             contentContainerStyle={styles.scrollContainer}
-            onScroll={Animated.event([
-              {
-                nativeEvent: { contentOffset: { y: scrollY1 } },
-              },
-            ])}
+            onScroll={scrollHandler}
             scrollEventThrottle={16}
           >
             <View
@@ -248,31 +386,48 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
               }}
             >
               {/* Card */}
-              <View style={styles.card}>
+              {/* <View style={styles.card}> */}
+              <SquircleView
+                style={styles.card}
+                squircleParams={{
+                  cornerSmoothing: 1,
+                  cornerRadius: 24,
+                  fillColor: 'rgba(255, 255, 255, 0.06)',
+                }}
+              >
                 <View style={{ flexDirection: 'row' }}>
                   {(() => {
                     // Check if category is housekeeping or tuition
                     const categoryName = data?.list?.category?.name || '';
-                    const isProfileCategory = categoryName?.toLowerCase() === 'house keeping' || categoryName?.toLowerCase() === 'tuition';
+                    const isProfileCategory =
+                      categoryName?.toLowerCase() === 'house keeping' ||
+                      categoryName?.toLowerCase() === 'tuition';
                     const profilePhoto = data?.list?.createdby?.profile;
                     const firstName = data?.list?.createdby?.firstname;
                     const lastName = data?.list?.createdby?.lastname;
-                    
+
                     // Get initials helper function
-                    const getInitials = (first: string | null = '', last: string | null = '') => {
+                    const getInitials = (
+                      first: string | null = '',
+                      last: string | null = '',
+                    ) => {
                       const f = first?.trim()?.charAt(0)?.toUpperCase() || '';
                       const l = last?.trim()?.charAt(0)?.toUpperCase() || '';
-                      return (f + l) || '?';
+                      return f + l || '?';
                     };
-                    
+
                     // Determine what to show
                     const shouldShowProfile = isProfileCategory && profilePhoto;
-                    const shouldShowInitials = isProfileCategory && !profilePhoto;
-                    
+                    const shouldShowInitials =
+                      isProfileCategory && !profilePhoto;
+
                     if (shouldShowInitials) {
                       return (
                         <View style={styles.initialsCircle}>
-                          <Text allowFontScaling={false} style={styles.initialsText}>
+                          <Text
+                            allowFontScaling={false}
+                            style={styles.initialsText}
+                          >
                             {getInitials(firstName, lastName)}
                           </Text>
                         </View>
@@ -344,13 +499,23 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     {data?.list?.isactive ? 'Active' : 'Inactive'}
                   </Text>
                 </View>
-              </View>
+                {/* </View> */}
+              </SquircleView>
 
               <View style={styles.carddivider} />
 
               {Array.isArray(data?.buyers) &&
                 data.buyers.map((buyer: any, index: number) => (
-                  <View key={index} style={styles.card}>
+                  // <View key={index} style={styles.card}>
+                  <SquircleView
+                    key={index}
+                    style={styles.card}
+                    squircleParams={{
+                      cornerSmoothing: 1,
+                      cornerRadius: 24,
+                      fillColor: 'rgba(255, 255, 255, 0.06)',
+                    }}
+                  >
                     {/* HEADER */}
                     <View
                       style={{
@@ -498,10 +663,11 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                         </TouchableOpacity>
                       </View>
                     )}
-                  </View>
+                    {/* </View> */}
+                  </SquircleView>
                 ))}
             </View>
-          </ScrollView>
+          </Animated.ScrollView>
         </View>
 
         <View style={styles.bottomview}>
@@ -765,6 +931,39 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 };
 
 const styles = StyleSheet.create({
+  headerWrapper: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    height: Platform.OS === 'ios' ? 180 : 180,
+    zIndex: 10,
+    overflow: 'hidden',
+    alignSelf: 'center',
+    pointerEvents: 'none',
+  },
+  headerContent: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 50 : 58,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
+  },
+  blurButtonWrapper: {
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+  },
   otpContainer: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
@@ -908,7 +1107,7 @@ const styles = StyleSheet.create({
     top: 0,
     width: Platform.OS === 'ios' ? 393 : '100%',
     zIndex: 20,
-   paddingTop: Platform.OS === 'ios' ? 50 : 55, 
+    paddingTop: Platform.OS === 'ios' ? 50 : 55,
     paddingBottom: Platform.OS === 'ios' ? 16 : 12,
     paddingHorizontal: 16,
     justifyContent: 'center',
@@ -925,7 +1124,7 @@ const styles = StyleSheet.create({
   },
   backButtonContainer: {
     position: 'absolute',
-    left: 0,
+    left: 16,
     zIndex: 11,
   },
   headerRow: {
@@ -958,10 +1157,10 @@ const styles = StyleSheet.create({
   card: {
     padding: 12,
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    borderRadius: 24,
     overflow: 'hidden',
     gap: 10,
     width: '100%',
+    borderRadius: 24,
   },
   listingtyperow: {
     width: '100%',
@@ -1084,7 +1283,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     width: Platform.OS === 'ios' ? 393 : '100%',
     alignSelf: 'center',
-    marginTop:12
+    marginTop: 20,
   },
   bottomview: {
     position: 'absolute',

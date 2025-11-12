@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import ProductCard from '../../utils/ProductCard';
-
+import { SquircleView } from 'react-native-figma-squircle';
 import { showToast } from '../../utils/toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
@@ -260,7 +260,15 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
             )}
           </View>
 
-          <View style={styles.textbg}>
+          {/* <View style={styles.textbg}> */}
+          <SquircleView
+            style={styles.textbg}
+            squircleParams={{
+              cornerSmoothing: 1,
+              cornerRadius: 12,
+              fillColor: 'rgba(255, 255, 255, 0.06)',
+            }}
+          >
             <Image
               source={require('../../../assets/images/info_icon.png')}
               style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
@@ -277,7 +285,8 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                 will be added to the entered price.
               </Text>
             </View>
-          </View>
+            {/* </View> */}
+          </SquircleView>
 
           <TouchableOpacity
             style={styles.nextButton}
@@ -322,7 +331,7 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
     padding: 6,
-    borderWidth: 0.5,
+
     borderEndEndRadius: 12,
     borderStartEndRadius: 12,
     borderTopLeftRadius: 12,
