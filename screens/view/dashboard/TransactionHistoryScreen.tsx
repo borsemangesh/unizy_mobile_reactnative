@@ -255,6 +255,7 @@ export default function TransactionHistoryScreen(
   const [catagoryid,setCatagoryid] = useState(0)
 
   const [salesData, setSalesData] = useState<any[]>([]);
+  const [salesTitle, setSalesTitle] = useState('');
 
   const fetchSalesHistory = async (catagory_id: number) => {
     try {
@@ -569,6 +570,7 @@ export default function TransactionHistoryScreen(
                               setCatagoryid(item.featureId);
                               // setFilterVisible(true);
                               fetchSalesHistory(item.featureId);
+                              setSalesTitle(item.title);
                             }}
                           >
                         <Text
@@ -690,6 +692,7 @@ export default function TransactionHistoryScreen(
         onClose={() => setFilterVisible(false)}
         SalesImageUrl={SalesImageUrl}
         salesDataResponse={salesData}
+        dropDowntitle ={salesTitle}
       />
     </View>
   );

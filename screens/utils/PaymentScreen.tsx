@@ -27,41 +27,41 @@ const PaymentScreen :React.FC<PaymentScreenProps> = ({ navigation }) => {
   const [cardDetails, setCardDetails] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [clientSecret, setClientSecret] = useState(null);
-
+ 
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
-
+ 
   const route = useRoute<PaymentScreenRouteProp>();
     const { amount,feature_id,nav } = route.params;
-    
+   
     const {onSuccess} =route.params;
-
-
+ 
+ 
     console.log(amount)
-
+ 
   const handlePayPress = async () => {
-
+ 
     setLoading(true);
-
+ 
     try {
      const token = await AsyncStorage.getItem('userToken');
      if (!token) return;
-
+ 
      
-
+ 
       let url = MAIN_URL.baseUrl + "transaction/feature-payment-create";
       let body: any = { amount };
-
+ 
       if (nav !== 'add') {
         url = MAIN_URL.baseUrl + "transaction/post-order-create";
-        body = { 
+        body = {
           amount,
           feature_id: feature_id
         };
       }
-
+ 
       console.log(url)
       console.log(body)
-      
+     
       //const url = MAIN_URL.baseUrl+"transaction/feature-payment-create"
       const response = await fetch(url, {
         method: 'POST',
@@ -71,23 +71,23 @@ const PaymentScreen :React.FC<PaymentScreenProps> = ({ navigation }) => {
       },
         body: JSON.stringify(body)
       });
-
+ 
      
       const responseJson = await response.json();
       console.log("API Response JSON:", responseJson);
-      const clientSecret = responseJson.data; 
+      const clientSecret = responseJson.data;
       const ephemeralKey = responseJson.metadata?.ephemeralKey;
       const customerId = responseJson.metadata?.customerId;
       const paymentintent_id = responseJson.metadata?.paymentIntentId;
-
-
+ 
+ 
     if (clientSecret) {
       console.log('Payment successful:', clientSecret);
-      showToast('Payment successful:','success')
-
+      //showToast('Payment successful:','success')
+ 
       await AsyncStorage.setItem("paymentintent_id", paymentintent_id);
       // const pi = clientSecret as any; // ✅ cast it
-
+ 
       //   const paymentData = {
       //     transactionId: pi.id,
       //     status: pi.status,
@@ -97,37 +97,46 @@ const PaymentScreen :React.FC<PaymentScreenProps> = ({ navigation }) => {
       //   };
       // await AsyncStorage.setItem("last_payment", JSON.stringify(paymentData));
       // console.log("Stored payment:", paymentData);
-
+ 
       return {
         clientSecret,
         ephemeralKey,
         customerId
       };
-
-    } 
+ 
+    }
   }catch (err) {
       Alert.alert('Payment error', (err as Error).message);
     } finally {
       setLoading(false);
     }
   };
-
-
+ 
+ 
   const initializePaymentSheet = async () => {
   const result = await handlePayPress();
   if (!result) return; // safeguard
-
+ 
   const { clientSecret, ephemeralKey, customerId } = result;
-
+ 
   const { error } = await initPaymentSheet({
     customerId: customerId,
     customerEphemeralKeySecret: ephemeralKey,
     paymentIntentClientSecret: clientSecret,
-    allowsDelayedPaymentMethods: true,
     merchantDisplayName: "Your Company",
+ 
+ 
+  //applePay: true,
+  //   googlePay: {
+  //   merchantCountryCode: "US",  // your country
+  //   //currencyCode: "INR",        // your currency
+  //   testEnv: true,              // set false in production
+  // },
+   
+    allowsDelayedPaymentMethods: true,
   });
-
-
+ 
+ 
   if (!error) {
       setLoading(false);
       openSheet();
@@ -136,53 +145,61 @@ const PaymentScreen :React.FC<PaymentScreenProps> = ({ navigation }) => {
       showToast("Failed to init payment sheet", "error");
     }
 };
-
-  
-
-
+ 
+ 
+ 
+ 
   //  const openSheet = async () => {
   //   const { error } = await presentPaymentSheet();
-
+ 
   //   if (error) {
+  //     if (error.code === 'Canceled') {
+  //     // 👇 User dismissed payment sheet manually
+  //     console.log('User cancelled payment');
+  //     navigation.goBack(); // ✅ Return to previous screen
+  //     return;
+  //   }
   //     showToast(`Payment failed: ${error.message}`);
-  //   } else {
+  //   }
+  // else {
   //     showToast("Payment successful!");
   //     if (onSuccess) await onSuccess();
   //     navigation.goBack();
   //   }
   // };
-  const openSheet = async () => {
-    try {
-      const { error } = await presentPaymentSheet();
-  
-      if (error) {
-        if (error.code === 'Canceled') {
-          console.log('User cancelled payment');
-          navigation.goBack();
-          return;
-        }
-  
-        // 👇 Other payment or network errors
-        console.log('Payment failed:', error);
-        showToast(`Payment failed: ${error.message}`, 'error');
+ 
+ const openSheet = async () => {
+  try {
+    const { error } = await presentPaymentSheet();
+ 
+    if (error) {
+      if (error.code === 'Canceled') {
+        console.log('User cancelled payment');
+        navigation.goBack();
         return;
       }
-  
-      // ✅ Payment succeeded
-      showToast('Payment successful!');
-      if (onSuccess) await onSuccess();
-      navigation.goBack();
-  
-    } catch (e) {
-      console.error('Unexpected error during payment:', e);
-      showToast('Something went wrong. Please try again.', 'error');
+ 
+      // 👇 Other payment or network errors
+      console.log('Payment failed:', error);
+      showToast(`Payment failed: ${error.message}`, 'error');
+      return;
     }
-  };
-
+ 
+    // ✅ Payment succeeded
+    showToast('Payment successful!');
+    if (onSuccess) await onSuccess();
+    navigation.goBack();
+ 
+  } catch (e) {
+    console.error('Unexpected error during payment:', e);
+    showToast('Something went wrong. Please try again.', 'error');
+  }
+};
+ 
   useEffect(() => {
     initializePaymentSheet();
   }, []);
-
+ 
    return (
     <ImageBackground
       source={require("../../assets/images/backimg.png")} // ✅ Your background image

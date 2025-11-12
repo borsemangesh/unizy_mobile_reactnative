@@ -439,6 +439,7 @@ interface FilterBottomSheetProps {
   onClose: () => void;
   SalesImageUrl: string;
   salesDataResponse: any[];
+  dropDowntitle: string; 
 }
 
 const SalesAllDetailsDropdown = ({
@@ -446,7 +447,8 @@ const SalesAllDetailsDropdown = ({
   visible,
   onClose,
   SalesImageUrl,
-  salesDataResponse
+  salesDataResponse,
+  dropDowntitle
 
 }: FilterBottomSheetProps) => {
   
@@ -717,7 +719,7 @@ const SalesAllDetailsDropdown = ({
                   <View style={styles.imgcontainer}>
                     <Image source={{ uri: SalesImageUrl }}style={styles.image} resizeMode="cover" />
                   </View>
-                  <Text style={styles.salesTitle}>Full House Cleaning</Text>
+                  <Text style={styles.salesTitle}>{dropDowntitle}</Text>
                 </View>
 
                 <View style={styles.cardconstinerdivider} />
