@@ -64,7 +64,7 @@ export default function SearchTutionCard({
                 blurAmount={100}
               style={[StyleSheet.absoluteFillObject,{borderRadius: 9}]}
                 />
-          <Text allowFontScaling={false} style={styles.tagText}>{tag}</Text>
+          <Text allowFontScaling={false}numberOfLines={2} style={styles.tagText}>{tag}</Text>
         </View>
 
       {isfeature && (
@@ -331,14 +331,41 @@ const styles = StyleSheet.create({
     borderRightColor: '#ffffff2e',
   },
  
+  //   tag: {
+  //     alignSelf: 'flex-end', // 👈 ensures the View wraps the text
+  //   flexShrink: 1,    
+  //   position: 'absolute',
+
+  //   maxWidth: '80%',   // restrict width relative to parent
+  //   flexWrap: 'wrap', 
+  //   bottom: Platform.OS === 'ios' ? 8 : 10,
+  //   right: Platform.OS === 'ios' ? 8 : 10,
+  //   backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
+  //   borderRadius: 4,
+  //   paddingHorizontal: 6,
+  //   paddingVertical:2,
+  //   marginVertical: 4,
+  //   marginHorizontal: 4,
+  //   boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
+  //   overflow:'hidden'
+  // },
+
     tag: {
+    alignSelf: 'flex-end', // 👈 ensures the View wraps the text
+    flexShrink: 1,    
     position: 'absolute',
+
+    maxWidth: '80%',   // restrict width relative to parent
+    flexWrap: 'wrap',  // allow wrapping
+
     bottom: Platform.OS === 'ios' ? 8 : 10,
     right: Platform.OS === 'ios' ? 8 : 10,
+    //backgroundColor: 'transparent',
+    //backgroundColor: 'rgba(255,255,255,0.4)',
     backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
+
     borderRadius: 4,
-    paddingHorizontal: 6,
-    paddingVertical:2,
+    padding: 4,
     marginVertical: 4,
     marginHorizontal: 4,
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
@@ -346,11 +373,23 @@ const styles = StyleSheet.create({
   },
 
 
+  // tagText: {
+  //   fontSize: 10,
+  //   fontFamily: 'Urbanist-SemiBold',
+  //   fontWeight: '600',
+  //   color: '#000',
+  // },
+
   tagText: {
     fontSize: 10,
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: '600',
     color: '#000',
+    textAlign: 'right',
+    flexShrink: 1,
+    //flexWrap: 'wrap',
+    width:'100%'
+    
   },
   infoRow: {
     flexDirection: 'column',

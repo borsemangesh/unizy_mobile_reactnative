@@ -65,6 +65,9 @@ const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(n
       const body = { category_id: catagory_id };
       const url = MAIN_URL.baseUrl + 'category/feature/filter';
 
+      console.log(body)
+      console.log(url)
+
       const res = await fetch(url, {
         method: 'POST',
         headers: {
@@ -81,7 +84,7 @@ const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(n
             item.field_type?.toLowerCase() === 'dropdown' ||
             item.alias_name?.toLowerCase() === 'price',
         );
-        console.log("Current Filter: "+ dynamicFilters);
+      //console.log("Current Filter: " + JSON.stringify(dynamicFilters, null, 2));
         setFilters(dynamicFilters);
 
 
@@ -312,114 +315,10 @@ const handleClose = () => {
   );
 }
 
-// else if (currentFilter.alias_name === 'price') {
-//   // Only render when the priceRange is set from API (avoid showing default 0–10000)
-//   if (!priceRange || priceRange.max === 10000) {
-//     return (
-//       <View style={{ alignItems: 'center', paddingVertical: 20 }}>
-//         <Text allowFontScaling={false} style={{ color: 'white' }}>
-//           Loading price range...
-//         </Text>
-//       </View>
-//     );
-//   }
-
-//   return (
-//     <View style={{ zIndex: 999, position: 'relative' }}>
-//       <Text
-//         allowFontScaling={false}
-//         style={{ color: 'white', marginBottom: 10 }}
-//       >
-//         Range: {sliderLow} - {sliderHigh}
-//       </Text>
-
-//       <View style={{ paddingHorizontal: 20, paddingTop: 30, paddingBottom: 20 }}>
-//         <MultiSlider
-//           values={[sliderLow, sliderHigh]}
-//           sliderLength={150}
-//           min={priceRange.min}
-//           max={priceRange.max}
-//           step={1}
-//           onValuesChange={(values) => {
-//             const [low, high] = values;
-//             setSliderLow(low);
-//             setSliderHigh(high);
-//             setPriceRange({ min: low, max: high });
-//           }}
-//           selectedStyle={{
-//             backgroundColor: '#fff',
-//           }}
-//           unselectedStyle={{
-//             backgroundColor: '#888',
-//           }}
-//           containerStyle={{
-//             height: 'auto',
-//           }}
-//           trackStyle={{
-//             height: 4,
-//             borderRadius: 2,
-//           }}
-//           markerStyle={{
-//             height: 20,
-//             width: 20,
-//             borderRadius: 10,
-//             backgroundColor: '#fff',
-//           }}
-//         />
-//       </View>
-//     </View>
-//   );
-// }
-
 
     return null;
   };
 
-  // const handleApply = () => {
-  //   const selectedFilters = filters
-  //     .map(f => {
-  //       if (f.field_type === 'dropdown' && dropdownSelections[f.id]?.length) {
-  //         return {
-  //           id: f.id,
-  //           field_name: f.field_name,
-  //           field_type: f.field_type,
-  //           alias_name: f.alias_name,
-  //           options: dropdownSelections[f.id],
-  //         };
-  //       } 
-  //       else if (f.alias_name?.toLowerCase() === 'price') {
-  //       const defaultMin = f.minvalue ?? 0;
-  //       const defaultMax = f.maxvalue ?? 100;
-
-  //       if (priceRange.min !== defaultMin || priceRange.max !== defaultMax) {
-  //         return {
-  //           id: f.id,
-  //           field_name: f.field_name,
-  //           field_type: f.field_type,
-  //           alias_name: f.alias_name,
-  //           options: [priceRange.min, priceRange.max],
-  //         };
-  //       }
-
-  //       return null; 
-  //     }
-  //       return null;
-  //     })
-  //     .filter(Boolean);
-
-  //   const filterBody = {
-  //     filters: selectedFilters,
-  //     page: 1,
-  //     pagesize: 10,
-  //     search: '',
-  //     category_id: catagory_id,
-  //   };
-
-  //   console.log('Selected filter body:', JSON.stringify(filterBody, null, 2));
-  //   onApply(filterBody);
-  //   onClose();
-  //  //handleClose()
-  // };
 
 const handleApply = () => {
   const selectedFilters = filters
@@ -616,38 +515,6 @@ const handleApply = () => {
                     <Text allowFontScaling={false} style={[styles.sendText]}>Apply</Text>
                   </TouchableOpacity>
                 </View>
-
-           {/* <View style={styles.bottomview}>
-                <FilterButton
-                  title="Cancel"
-                  onPress={handleClose}
-                  style={{
-                    minHeight: 48,
-                    width: '49%',
-                    borderRadius: 40,
-                    backgroundColor: 'rgba(0, 0, 0, 0.38)',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: '0 2px 8px 0 rgba(75, 75, 75, 0.19)',
-                  }}
-                />
-                <FilterButtonApply
-                  title="Apply"
-                  onPress={handleApply}
-                  style={{
-                    minHeight: 48,
-                    width: '49%',
-                    borderRadius: 40,
-                    backgroundColor:
-                      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(197, 196, 196, 0.49) 0%, rgba(255, 255, 255, 0.32) 100%)',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: '0 2px 8px 0 rgba(75, 75, 75, 0.19)',
-                  }}
-                />
-              </View>
- */}
-
                 
               </View>
              

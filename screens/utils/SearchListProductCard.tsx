@@ -44,33 +44,15 @@ export default function SearchListProductCard({
 
  
 
-<View style={styles.tag}>
+      <View style={styles.tag}>
 
    <BlurView 
       blurType="light"
       blurAmount={100}
     style={[StyleSheet.absoluteFillObject,{borderRadius: 9}]}
       />
-      {/* <LinearGradient
-            colors={[
-              'rgba(255,255,255,0.18)', 
-              'rgba(255,255,255,0)' 
-            ]}
-            style={StyleSheet.absoluteFillObject}
-            start={{ x: 0.17, y: 0.06 }}
-            end={{ x: 1, y: 1 }}
-          /> */}
-          {/* <LinearGradient
-            colors={[
-              'rgba(0, 1, 102, 0.20)',   
-              'rgba(0, 1, 102, 0.024)'  
-            ]}
-            style={StyleSheet.absoluteFillObject}
-            useAngle={false} // radial
-          /> */}
-  
-       
-        <Text allowFontScaling={false} style={styles.tagText}>
+
+        <Text allowFontScaling={false} numberOfLines={2} style={styles.tagText}>
           {tag}
         </Text>
       </View>
@@ -88,23 +70,7 @@ export default function SearchListProductCard({
         </View>
       )}
       
-       {/* <View style={[styles.bookmark1,{opacity: 0.9}]}>
-             <BlurView 
-                  blurType="light"
-                  blurAmount={100}
-                  style={StyleSheet.absoluteFillObject}
-                />
-          <TouchableOpacity onPress={applybookmark}>
-          <Image
-              source={
-                bookmark
-                  ? require("../../assets/images/favourite_filled.png") // bookmarked
-                  : require("../../assets/images/favourite.png") // not bookmarked
-              }
-               style={{ width: 16, height: 16 }}
-            />
-            </TouchableOpacity>
-        </View> */}
+      
 
          <View style={[styles.bookmark]}>
                         <BlurView 
@@ -265,9 +231,12 @@ const styles = StyleSheet.create({
   //   padding: 6,
   // },
   tag: {
+    alignSelf: 'flex-end', // 👈 ensures the View wraps the text
+    flexShrink: 1,    
     position: 'absolute',
-    //bottom: 5,
-    //right: 5,
+
+    maxWidth: '80%',   // restrict width relative to parent
+    flexWrap: 'wrap',  // allow wrapping
 
     bottom: Platform.OS === 'ios' ? 8 : 10,
     right: Platform.OS === 'ios' ? 8 : 10,
@@ -287,6 +256,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: '600',
     color: '#000',
+    textAlign: 'right',
+    flexShrink: 1,
+    //flexWrap: 'wrap',
+    width:'100%'
+    
+    
   },
   tagTopLeft: {
   position: 'absolute',

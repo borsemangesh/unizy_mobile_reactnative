@@ -47,46 +47,25 @@ export default function TutitionCard({
         {/* Image */}
         <View style={styles.imageContainer}>
           <View style={styles.splitRow}>
-            {/* <View style={styles.leftPortion}>
-              
-              {productImage && (productImage as ImageURISource).uri ? (
-                <Image
-                  source={productImage}
-                  style={styles.leftImage}
-                  resizeMode="cover"
-                />
-              ) : (
-                <View style={styles.initialsCircle}>
-                  <Text allowFontScaling={false} style={styles.initialsText}>
-                    {infoTitle
-                      ? infoTitle
-                          .split(' ')
-                          .map(n => n[0])
-                          .join('')
-                          .toUpperCase()
-                      : '?'}
-                  </Text>
-                </View>
-              )}
-            </View> */}
+           
 
             <View style={styles.leftPortion}>
-  {productImage && (productImage as ImageURISource).uri ? (
-    // ✅ Show user’s actual image
-    <Image
-      source={productImage}
-      style={styles.leftImage}
-      resizeMode="cover"
-    />
-  ) : (
-    // ✅ When showing initials, apply same background as right portion
-    <View style={styles.initialsContainer}>
-       <Image
-      source={require('../../assets/images/featurebg.png')}
-      style={styles.initialsBackground}
-      resizeMode="cover"
-    />
-     <View
+          {productImage && (productImage as ImageURISource).uri ? (
+            // ✅ Show user’s actual image
+            <Image
+              source={productImage}
+              style={styles.leftImage}
+              resizeMode="cover"
+            />
+          ) : (
+            // ✅ When showing initials, apply same background as right portion
+            <View style={styles.initialsContainer}>
+              <Image
+              source={require('../../assets/images/featurebg.png')}
+              style={styles.initialsBackground}
+              resizeMode="cover"
+            />
+            <View
               style={{
                 ...StyleSheet.absoluteFillObject, // covers the image fully
                 backgroundColor: 'rgba(255, 255, 255, 0.07)', // black overlay, 35% opacity
@@ -125,34 +104,6 @@ export default function TutitionCard({
               <Text allowFontScaling={false} style={styles.rightText}>{infoTitle}</Text>
 
              
-              <View style={styles.tag}>
-                 <BlurView 
-                                  blurType="light"
-                                  blurAmount={100}
-                                  style={StyleSheet.absoluteFillObject}
-                                />
-                
-                <Text allowFontScaling={false} style={styles.tagText}>{tag}</Text>
-              </View>
-
-              
-              {/* <View style={[styles.bookmark, { opacity: 0.9 }]}>
-                <BlurView
-                  blurType="light"
-                  blurAmount={100}
-                  style={StyleSheet.absoluteFillObject}
-                />
-                <TouchableOpacity onPress={onBookmarkPress}>
-                  <Image
-                    source={
-                      isBookmarked
-                        ? require('../../assets/images/favourite_filled.png')
-                        : require('../../assets/images/favourite.png')
-                    }
-                    style={styles.bookmarkIcon}
-                  />
-                </TouchableOpacity>
-              </View> */}
 
                <View style={[styles.bookmark]}>
                          <BlurView 
@@ -182,6 +133,16 @@ export default function TutitionCard({
                     </View>
             </View>
           </View>
+
+           <View style={styles.tag}>
+                 <BlurView 
+                   blurType="light"
+                  blurAmount={100}
+                  style={StyleSheet.absoluteFillObject}
+                />
+                
+                <Text allowFontScaling={false} numberOfLines={0} style={styles.tagText}>{tag}</Text>
+              </View>
         </View>
 
         {/* Info */}
@@ -392,7 +353,7 @@ const styles = StyleSheet.create({
    tag: {
     position: 'absolute',
     bottom: 10,
-    right: 10,    
+    right: 24,    
     borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -403,9 +364,16 @@ const styles = StyleSheet.create({
     backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
     //backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow:'0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    height: 29,
     overflow:'hidden',
     //elevation:6
+
+    minHeight:29,
+    alignSelf: 'flex-end', // 👈 ensures the View wraps the text
+    flexShrink: 1,    
+    alignContent:'center',
+    maxWidth: '56%',   // restrict width relative to parent
+    //flexWrap: 'wrap', 
+
   },
 
 
@@ -414,7 +382,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600,
     fontSize: 11,
-    lineHeight:16,
+    lineHeight:14,
+    width:'100%',
+    flexShrink: 1,
+    textAlign: 'right',
+    textAlignVertical: 'center', 
+    includeFontPadding: false,    
   },
 
   bookmark: {

@@ -1022,6 +1022,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
         {item.profileshowinview ? (
         <SearchTutionCard
            tag={item.university?.name || 'University of Warwick'}
+          //tag='London School of Economics and Political Science'
           infoTitle={item.title}
           inforTitlePrice={`£ ${item.price}`}
           rating={item.isfeatured ? '4.5' : '4.5'}
@@ -1035,7 +1036,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
         />
       ) : (
         <SearchListProductCard
-           tag={item.university?.name || 'University of Warwick'}
+          tag={item.university?.name || 'University of Warwick'}
           infoTitle={item.title}
           inforTitlePrice={`£ ${item.price}`}
           rating={item.isfeatured ? '4.5' : '4.5'}

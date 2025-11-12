@@ -8,6 +8,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+import { SquircleView } from 'react-native-figma-squircle';
+ 
+
 type CreatedBy = {
   id: number;
   firstname: string;
@@ -67,19 +70,38 @@ const MyReviewCard: React.FC<MyReviewCardProps> = ({
       if (profileshowinview) {
         if (createdby?.profile) {
           return (
+             <SquircleView
+              style={styles.image}
+              squircleParams={{
+                cornerSmoothing: 1,
+                cornerRadius: 14,
+                fillColor: 'rgba(255, 255, 255, 0.08)',
+              }}>
             <Image
               source={{ uri: createdby.profile }}
               style={styles.image}
               resizeMode="cover"
             />
+            </SquircleView>
           );
         } else {
           return (
+
+             <SquircleView
+              style={styles.initialsCircle}
+              squircleParams={{
+                cornerSmoothing: 1,
+                cornerRadius: 14,
+                fillColor: '#8390D4',
+              }}>
             <View style={styles.initialsCircle}>
+             
               <Text allowFontScaling={false} style={styles.initialsText}>
                 {getInitials(createdby?.firstname, createdby?.lastname)}
               </Text>
+             
             </View>
+             </SquircleView>
           );
         }
       } else {
@@ -90,11 +112,23 @@ const MyReviewCard: React.FC<MyReviewCardProps> = ({
     };
   
   return (
-    <TouchableOpacity
-      style={styles.card}
+
+     <TouchableOpacity
       activeOpacity={0.8}
     >
+    
+    <SquircleView
+      style={styles.card}
+      squircleParams={{
+        cornerSmoothing: 1,
+        cornerRadius: 18,
+        fillColor: 'rgba(255, 255, 255, 0.08)',
+      }}
+ 
+    >
+   
      <View style={styles.row}>
+      
       {renderProfileSection()}
       <View style={styles.details}>
         <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
@@ -125,6 +159,8 @@ const MyReviewCard: React.FC<MyReviewCardProps> = ({
       </Text>
     ) : null}
   </View>
+      </SquircleView>
+
     </TouchableOpacity>
   );
 };
@@ -159,11 +195,12 @@ bottomContent: {
 },
   card: {
     backgroundColor: 'rgba(255,255,255,0.08)',
-    borderRadius: 16,
+    borderRadius: 18,
     padding: 12,
     marginVertical: 8,
     //borderWidth: 1,
     //borderColor: 'rgba(255,255,255,0.1)',
+    overflow:'hidden'
   },
   row: {
     flexDirection: 'row',
@@ -174,6 +211,7 @@ bottomContent: {
     width: 70,
     height: 70,
     borderRadius: 14,
+    overflow:'hidden'
   },
     initialsCircle:{
     backgroundColor: '#8390D4',

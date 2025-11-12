@@ -140,9 +140,17 @@ const AddScreenContent: React.FC<
             }}
           >
             <View style={styles.card}>
-              <View style={styles.iconBackground}>
+              {/* <View style={styles.iconBackground}>
                 <Image source={item.icon} style={styles.cardIcon1} />
-              </View>
+              </View> */}
+
+               <ImageBackground
+                source={require('../../../assets/images/cardbg.png')} // 👈 your background image
+                style={styles.iconBackground}> 
+
+                <Image source={item.icon} style={styles.cardIcon1} />
+               
+               </ImageBackground> 
 
               <View style={styles.cardTextContainer}>
                 <Text allowFontScaling={false} style={styles.cardTitle}>{item.name}</Text>
@@ -151,6 +159,8 @@ const AddScreenContent: React.FC<
             </View>
           </TouchableOpacity>
         )}
+        ItemSeparatorComponent={() => <View style={{ height: 16 }} />} // 👈 adds 16px space
+        contentContainerStyle={{ marginTop:20 }} // optional top & bottom padding
       />
     </AnimatedSlideUp>
   </View>
@@ -929,6 +939,7 @@ return (
               {item.profileshowinview ? (
                 <TutitionCard
                   tag={item.university?.name || 'University of Warwick'}
+                
                   title={item.title}
                   infoTitle={`${item.createdby?.firstname || ''} ${
                     item.createdby?.lastname || ''
@@ -1544,12 +1555,12 @@ bottomTabContainerBlur: {
   tabContent3: {
     flex: 1,
     padding: 20,
-    paddingTop: Platform.OS === 'ios' ? 60 : 50,
+    paddingTop: Platform.OS === 'ios' ? 60 : 40,
   },
   tabContentText3: {
     color: '#fff',
     fontSize: 20,
-    marginVertical: 12,
+    //marginVertical: 12,
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600,
@@ -1560,22 +1571,23 @@ bottomTabContainerBlur: {
     flexDirection: 'row',
     //backgroundColor: '#ffffff20', // semi-transparent for dark bg
     borderRadius: 24,
-    padding: 12,
-    marginTop: 10,
-    marginBottom: 10,
+    paddingHorizontal: 16,
+    paddingVertical:16,
     alignItems: 'center',
+    justifyContent:'center',
+    flex:1,
 
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
+    //borderWidth: 0.4,
+   // borderColor: '#ffffff2c',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.02) -1px 10px 5px 10px',
+    //boxShadow: 'rgba(255, 255, 255, 0.02) -1px 10px 5px 10px',
   },
   cardIcon1: {
-    width: 32.5,
-    height: 32.5,
+    width: 36,
+    height: 36,
     //marginRight: 12,
-    resizeMode: 'contain',
+    resizeMode: 'center',
   },
   cardTextContainer: {
     flex: 1,
@@ -1601,11 +1613,15 @@ bottomTabContainerBlur: {
     alignItems: 'center',
     marginRight: 12,
     paddingVertical: 8,
+   // marginTop:4,
 
-    //borderWidth: 0.4,
+
+    borderWidth: 0.4,
     borderColor: 'transparent',
+
+    overflow:'hidden',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.15) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.51)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.51)inset 0.99px 0.88px 0.90px 0px',
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.25)',
   },
 });

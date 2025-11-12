@@ -28,7 +28,7 @@ export default function NewProductCard({tag,infoTitle,inforTitlePrice,rating,pro
               blurAmount={100}
               style={StyleSheet.absoluteFillObject}
           />
-          <Text allowFontScaling={false} style={styles.tagText}>{tag}</Text>
+          <Text allowFontScaling={false} numberOfLines={0} style={styles.tagText}>{tag}</Text>
         </View>
         {/* </LinearGradient> */}
       
@@ -215,12 +215,21 @@ tagTopLeft: {
      //overflow:'hidden'
     backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
 
+    alignSelf: 'flex-end', // 👈 ensures the View wraps the text
+    flexShrink: 1,    
+
+    maxWidth: '80%',   // restrict width relative to parent
+    flexWrap: 'wrap',
   },
   tagText: {
     fontSize: 10,
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: '600',
     color: '#000',
+     textAlign: 'right',
+    flexShrink: 1,
+    //flexWrap: 'wrap',
+    width:'100%'
     
   },
   // infoRow: {

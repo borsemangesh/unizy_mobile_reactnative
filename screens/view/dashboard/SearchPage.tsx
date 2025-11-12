@@ -88,6 +88,9 @@ const [hasMore, setHasMore] = useState(true); // whether more pages exist
 const [isFilterVisible, setFilterVisible] = useState(false);
 const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
  const SCREEN_HEIGHT = Dimensions.get('window').height;
+
+ const [isFilterMode, setIsFilterMode] = useState(false);
+const [lastFilterBody, setLastFilterBody] = useState<any>(null);
  
   useEffect(() => {
   const loadBookmarks = async () => {
@@ -165,17 +168,30 @@ const clickfilter = () => {
   );
 
 
- const handleSearchChange = (text: string) => {
-    setSearch(text);
-    if (text.trim().length > 0) {
-      debouncedSearch(text);
-    } else {
-      setFeaturelist([]);
-      setHasMore(true);
-      setPage(1);
-    }
-  };
+//  const handleSearchChange = (text: string) => {
+//     setSearch(text);
+//     if (text.trim().length > 0) {
+//       debouncedSearch(text);
+//     } else {
+//       setFeaturelist([]);
+//       setHasMore(true);
+//       setPage(1);
+//     }
+//   };
 
+
+const handleSearchChange = (text: string) => {
+  setSearch(text);
+  setIsFilterMode(false); // reset filter mode
+
+  if (text.trim().length > 0) {
+    debouncedSearch(text);
+  } else {
+    setFeaturelist([]);
+    setHasMore(true);
+    setPage(1);
+  }
+};
 
 
 const handleBookmarkPress = async (productId: number) => {
@@ -296,53 +312,8 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
   );
 };
 
-const handleFilterApply = async (filterBody: any) => {
-  try {
-    setIsLoading(true);
-
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) return;
-
-    const url = `${MAIN_URL.baseUrl}category/filter-apply`;
-
-    //const url = 'http://65.0.99.229:4320/category/filter-apply';
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(filterBody),
-    });
-
-    const jsonResponse = await response.json();
-    console.log('Filter Apply Response:', jsonResponse);
-
-    if (jsonResponse.statusCode === 200) {
-      const filteredFeatures = jsonResponse.data.features;
-      setFeaturelist(filteredFeatures);
-      setHasMore(filteredFeatures.length === 20);
-      setPage(2);
-    }
-    if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
-          setIsLoading(false);
-          navigation.reset({
-          index: 0,
-          routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
-        });
-        }
-  } catch (err) {
-    console.log('Error applying filters:', err);
-  } finally {
-    setIsLoading(false);
-  }
-};
-
-
-// const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
+// const handleFilterApply = async (filterBody: any) => {
 //   try {
-//     if (isLoading) return;
 //     setIsLoading(true);
 
 //     const token = await AsyncStorage.getItem('userToken');
@@ -350,13 +321,7 @@ const handleFilterApply = async (filterBody: any) => {
 
 //     const url = `${MAIN_URL.baseUrl}category/filter-apply`;
 
-//     const body = {
-//       ...filterBody,
-//       page: pageNum,
-//       pagesize: 20,
-//     };
-
-//     console.log('Filter Apply Body:', body);
+//     //const url = 'http://65.0.99.229:4320/category/filter-apply';
 
 //     const response = await fetch(url, {
 //       method: 'POST',
@@ -364,35 +329,75 @@ const handleFilterApply = async (filterBody: any) => {
 //         Authorization: `Bearer ${token}`,
 //         'Content-Type': 'application/json',
 //       },
-//       body: JSON.stringify(body),
+//       body: JSON.stringify(filterBody),
 //     });
 
 //     const jsonResponse = await response.json();
 //     console.log('Filter Apply Response:', jsonResponse);
 
 //     if (jsonResponse.statusCode === 200) {
-//       const filteredFeatures = jsonResponse.data.features || [];
-
-//       if (pageNum === 1) {
-//         setFeaturelist(filteredFeatures);
-//       } else {
-//         setFeaturelist(prev => [...prev, ...filteredFeatures]);
-//       }
-
+//       const filteredFeatures = jsonResponse.data.features;
+//       setFeaturelist(filteredFeatures);
 //       setHasMore(filteredFeatures.length === 20);
-//       setPage(prev => prev + 1);
-//     } else if (jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403) {
-//       navigation.reset({
-//         index: 0,
-//         routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
-//       });
+//       setPage(2);
 //     }
+//     if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
+//           setIsLoading(false);
+//           navigation.reset({
+//           index: 0,
+//           routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+//         });
+//         }
 //   } catch (err) {
 //     console.log('Error applying filters:', err);
 //   } finally {
 //     setIsLoading(false);
 //   }
 // };
+
+const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
+  try {
+    setIsLoading(true);
+    setIsFilterMode(true);
+    setLastFilterBody(filterBody);
+
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) return;
+
+    const url = `${MAIN_URL.baseUrl}category/filter-apply`;
+    const body = { ...filterBody, page: pageNum, pagesize: 20 };
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    const jsonResponse = await response.json();
+    console.log('Filter Apply Response:', jsonResponse);
+
+    if (jsonResponse.statusCode === 200) {
+      const filteredFeatures = jsonResponse.data.features || [];
+
+      if (pageNum === 1) {
+        setFeaturelist(filteredFeatures);
+      } else {
+        setFeaturelist(prev => [...prev, ...filteredFeatures]);
+      }
+
+      setHasMore(filteredFeatures.length === 20);
+      setPage(prev => prev + 1);
+    }
+  } catch (err) {
+    console.log('Error applying filters:', err);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
 
   return (
@@ -466,11 +471,20 @@ const handleFilterApply = async (filterBody: any) => {
           ]}
         //contentContainerStyle={styles.listContainer}
         renderItem={renderItem}
+        // onEndReached={() => {
+        //     if (search.trim().length > 0) {
+        //     displayListOfProduct(page, search);
+        //     }
+        // }}
         onEndReached={() => {
-            if (search.trim().length > 0) {
-            displayListOfProduct(page, search);
-            }
-        }}
+        if (isLoading || !hasMore) return;
+
+        if (isFilterMode && lastFilterBody) {
+          handleFilterApply(lastFilterBody, page);
+        } else if (search.trim().length > 0) {
+          displayListOfProduct(page, search);
+        }
+      }}
         onEndReachedThreshold={0.5} 
         ListFooterComponent={
             isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
@@ -494,11 +508,7 @@ const handleFilterApply = async (filterBody: any) => {
           />
       </View>
 
-      {/* <FilterBottomSheet
-        catagory_id={category_id}
-        visible={isFilterVisible}
-        onClose={() => setFilterVisible(false)}
-      /> */}
+     
       <FilterBottomSheet
         catagory_id={category_id}
         visible={isFilterVisible}

@@ -650,28 +650,25 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     </TouchableOpacity>
                   </View>
 
-                  <View style={[styles.chatcard, { marginLeft: 8 }]}>
-                    <TouchableOpacity
-                      style={{ flexDirection: 'row', alignItems: 'center' }}
-                       onPress={() => {
-                      if (detail?.ispurchased) {
-                        navigation.navigate("MessagesIndividualScreen");
-                      } else {
-                        setShowPopup(true);
-                      }
-                    }}
-                    >
-                      <Image
-                        source={require('../../../assets/images/message_chat.png')}
-                        style={{ height: 16, width: 16, marginRight: 6 }}
-                      />
-                      <Text
-                        allowFontScaling={false}
-                        style={styles.chattext}>
-                        Chat with Seller
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
+                  <TouchableOpacity
+                  style={[styles.chatcard, { marginLeft: 8, flexDirection: 'row', alignItems: 'center' }]}
+                  activeOpacity={0.8}
+                  onPress={() => {
+                    if (detail?.ispurchased) {
+                      navigation.navigate("MessagesIndividualScreen");
+                    } else {
+                      setShowPopup(true);
+                    }
+                  }}
+                >
+                  <Image
+                    source={require('../../../assets/images/message_chat.png')}
+                    style={{ height: 16, width: 16, marginRight: 4 }}
+                  />
+                  <Text allowFontScaling={false} style={styles.chattext}>
+                    Chat with Seller
+                  </Text>
+                </TouchableOpacity>
                 </View>
               </View>
             </View>

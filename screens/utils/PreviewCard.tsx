@@ -31,7 +31,7 @@ export default function PreviewCard({tag,infoTitle,inforTitlePrice,rating,produc
               style={StyleSheet.absoluteFillObject}
               />
 
-          <Text allowFontScaling={false} style={styles.tagText}>{tag}</Text>
+          <Text allowFontScaling={false} numberOfLines={0} style={styles.tagText}>{tag}</Text>
         </View>
         {/* </LinearGradient> */}
       
@@ -206,8 +206,8 @@ const styles = StyleSheet.create({
   // },
   tag: {
     position: 'absolute',
-    bottom: (Platform.OS === 'ios' ? 16 : 16),
-    right:(Platform.OS === 'ios' ? 16 : 16),
+    bottom: (Platform.OS === 'ios' ? 16 : 4),
+    right:(Platform.OS === 'ios' ? 16 : 12),
     //backgroundColor: '#fff',
     //backgroundColor:'rgba(255,255,255,0.4)',
     overflow:'hidden',
@@ -219,7 +219,14 @@ const styles = StyleSheet.create({
      //overflow:'hidden'
     backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
 
-    //backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
+    minHeight: 29,
+    //elevation:6
+
+    alignSelf: 'flex-end', // 👈 ensures the View wraps the text
+    flexShrink: 1,    
+    alignContent:'center',
+    maxWidth: '56%',   // restrict width relative to parent
+    flexWrap: 'wrap'
 
   },
   tagText: {
@@ -227,6 +234,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: '600',
     color: '#000',
+
+     lineHeight:14,
+    width:'100%',
+    textAlign: 'right',
+    flexShrink: 1,
+    textAlignVertical: 'center', 
+    includeFontPadding: false,   
     
   },
   // infoRow: {

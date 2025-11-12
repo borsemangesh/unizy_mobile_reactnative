@@ -248,7 +248,8 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
               Featured Listing Preview
             </Text>
             <NewTutitionCard
-              tag={uniname}
+             // tag={uniname}
+             tag='London School of Economics and Political Science'
               title={titleValue}
               infoTitle={fullName}
               inforTitlePrice={`£${commissionPrice}`}
@@ -264,7 +265,8 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
               Regular Listing Preview
             </Text>
             <SeperateTutionCard
-                tag={uniname}
+                //tag={uniname}
+                tag='London School of Economics and Political Science'
                 infoTitle={titleValue}
                 rating={storedForm[12]?.value || '4.5'}
                 inforTitlePrice={`£${commissionPrice}`}
@@ -276,7 +278,8 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
         ) : (
           // 🔹 CASE 1B: Category 2 or 5, Featured = false
           <SeperateTutionCard
-            tag={uniname}
+               // tag={uniname}
+               tag='London School of Economics and Political Science'
                 infoTitle={titleValue}
                 rating={storedForm[12]?.value || '4.5'}
                 inforTitlePrice={`£${commissionPrice}`}
@@ -296,7 +299,7 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
             Featured Listing Preview
           </Text>
           <PreviewCard
-            tag={uniname}
+           tag={uniname}
             infoTitle={titleValue}
             inforTitlePrice={`£${commissionPrice}`}
             rating={storedForm[12]?.value || '4.5'}
