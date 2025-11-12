@@ -84,6 +84,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         });
         const json = await res.json();
         setDetail(json.data);
+        console.log("json.data------",json.data);
+        
 
         if (res.status === 401 || res.status === 403) {
           handleForceLogout();
@@ -668,7 +670,18 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       style={{ flexDirection: 'row', alignItems: 'center' }}
                        onPress={() => {
                       if (detail?.ispurchased) {
-                        navigation.navigate("MessagesIndividualScreen");
+                        navigation.navigate("MessagesIndividualScreen",{
+                          animation: 'none',
+                          sellerData: {
+                            featureId: detail.id, 
+                            firstname: detail.createdby.firstname,
+                            lastname:  detail.createdby.firstname,                          
+                            profile:  detail.createdby.profile,
+                            universityName:"Reamaning"
+
+                          },
+                          source: 'sellerPage', // 👈 another flag
+                        });
                       } else {
                         setShowPopup(true);
                       }

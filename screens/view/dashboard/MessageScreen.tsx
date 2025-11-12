@@ -79,6 +79,9 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
         return;
       }
 
+      console.log("data",data);
+      
+
       const UserData = data.data;
       setStudentList(UserData)
 
@@ -148,20 +151,24 @@ const formatTime = (dateString: string) => {
           <FlatList
             data={studentList}
             keyExtractor={chat => chat.id}
-            renderItem={({}) => (
+            renderItem={({item: chat}) => (
               <TouchableOpacity
                 onPress={() => {
                   navigation.navigate('MessagesIndividualScreen', {
                     animation: 'none',
+                     members: chat.members, 
+                     userConvName:chat.conv_name,
+                     currentUserIdList:chat.current_user_id,
+                     source: 'chatList'
                   });
                   // navigation.replace('MessagesIndividualScreen', { animation: 'none' });
                 }}
               >
                 <View>
                   {/* Chat Row */}
-
-                  {studentList?.map((chat: any, index: number) => (
-                  <View key={index}
+                {/* key={index} */}
+                  {/* {studentList?.map((chat: any, index: number) => ( */}
+                  <View 
                     style={styles.chatRow}
                   >
 
@@ -204,7 +211,7 @@ const formatTime = (dateString: string) => {
                             fontFamily: 'Urbanist-SemiBold',
                           }}
                         >
-                           {chat?.members?.firstname}{chat?.members?.lastname}
+                           {chat?.members?.firstname} {chat?.members?.lastname}
                         </Text>
                         <Text
                         allowFontScaling={false}
@@ -261,13 +268,13 @@ const formatTime = (dateString: string) => {
                               borderRadius: 100,
                             }}
                           >
-                            {/* {item.unreadCount} */}
+                            {chat?.unreadcount}
                           </Text>
                         {/* )} */}
                       </View>
                     </View>
                   </View>
-                  ))}
+                  {/* ))} */}
                   {/* Divider Line */}
                   <View
                     style={{
