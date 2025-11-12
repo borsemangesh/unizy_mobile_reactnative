@@ -125,7 +125,7 @@ const AddScreenContent: React.FC<
   AddScreenContentProps & { products: any[] }
 > = ({ navigation, products }) => (
   <View style={styles.tabContent3}>
-    <Text allowFontScaling={false} style={[styles.tabContentText3,{paddingBottom:16}]}>List Product</Text>
+    <Text allowFontScaling={false} style={[styles.tabContentText3]}>List Product</Text>
     <AnimatedSlideUp>
       <FlatList
         data={products}
@@ -1542,8 +1542,8 @@ bottomTabContainerBlur: {
 
   tabContent: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    //justifyContent: 'center',
+    //alignItems: 'center',
   },
   tabContentText: {
     color: '#fff',
@@ -1555,15 +1555,22 @@ bottomTabContainerBlur: {
   tabContent3: {
     flex: 1,
     padding: 20,
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
+    paddingTop: Platform.OS === 'ios' ? 50 : 50,
+    paddingBottom: 16,
+  
+    
   },
   tabContentText3: {
+    marginTop:11,
     color: '#fff',
     fontSize: 20,
     //marginVertical: 12,
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600,
+    paddingBottom:16,
+    alignSelf:'center',
+    paddingRight:5
   },
 
   card: {

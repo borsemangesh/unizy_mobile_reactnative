@@ -479,40 +479,32 @@ const diff1 =commissionPrice1-priceValue1
       resizeMode="cover"
     >
       <View style={styles.fullScreenContainer}>
+       
         <View style={styles.header}>
-          <View style={styles.headerRow}>
-            <TouchableOpacity
-              style={styles.backBtn}
-              onPress={() => navigation.replace('PreviewThumbnail')}>
-              <View style={styles.backIconRow}>
-                <Image
-                  source={require('../../../assets/images/back.png')}
-                  style={{ height: 24, width: 24 }}
-                />
-              </View>
-            </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>Preview Details</Text>
+           <View style={styles.headerRow}>
+         <TouchableOpacity onPress={() => navigation.replace('PreviewThumbnail')}>          
+         <View style={styles.backIconRow}>
+           <Image
+              source={require('../../../assets/images/back.png')}
+               style={{ height: 24, width: 24 }}/>
+            </View>
+          </TouchableOpacity>
+        <Text allowFontScaling={false} style={styles.unizyText}>Preview Details</Text>
+          <View style={{ width: 48 }} />
           </View>
         </View>
-{/* 
-     <ScrollView
-          contentContainerStyle={styles.scrollContainer}
-          onScroll={Animated.event([
-            {
-              nativeEvent: { contentOffset: { y: scrollY1 } },
-            },
-          ])}
-          scrollEventThrottle={16}
-        > */}
-        <ScrollView
+              
+
+      <ScrollView
             contentContainerStyle={[
              styles.scrollContainer,
                {
-               paddingBottom: screenHeight * 0.1 + insets.bottom, // 10% of screen + safe area
+               paddingBottom: (Platform.OS === 'ios'? 70:screenHeight * 0.08 + insets.bottom), // 10% of screen + safe area
                 },
             ]}
              scrollEventThrottle={16}
             >
+
 
 
             {(userMeta?.category?.id === 2 || userMeta?.category?.id === 5)? (
@@ -522,7 +514,7 @@ const diff1 =commissionPrice1-priceValue1
                 style={{
                   alignItems: 'center',
                   justifyContent: 'center',
-                  height: 250,
+                  height: 270,
                   width: '100%',
                 }}
               >
@@ -531,18 +523,18 @@ const diff1 =commissionPrice1-priceValue1
                     <Image
                       source={{ uri: userMeta?.profile }}
                       style={{
-                        width: 160,
-                        height: 160,
-                        borderRadius: 80,
+                        width: 180,
+                        height: 180,
+                        borderRadius: 90,
                       }}
                       resizeMode="cover"
                     />
                   ) : (
                     <View
                       style={{
-                        width: 160,
-                        height: 160,
-                        borderRadius: 80,
+                        width: 180,
+                        height: 180,
+                        borderRadius: 90,
                         backgroundColor: '#8390D4',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -581,7 +573,7 @@ const diff1 =commissionPrice1-priceValue1
                   renderItem={({ item }) => (
                     <Image
                       source={{ uri: item.uri }}
-                      style={{ width: screenWidth, height: 250 }}
+                      style={{ width: screenWidth, height: 270 }}
                       resizeMode="cover"
                     />
                   )}
@@ -612,14 +604,14 @@ const diff1 =commissionPrice1-priceValue1
                     ? { uri: storedForm[6].value[0].uri }
                     : require('../../../assets/images/drone.png')
                 }
-                style={{ width: '100%', height: 250 }}
+                style={{ width: '100%', height: 270 }}
                 resizeMode="cover"
               />
             )}
 
      
             <View style={{ flex: 1, padding: 16 }}>
-            <View style={styles.card}>
+            <View style={styles.card1}>
               <View style={{ gap: 8 }}>
                 <Text allowFontScaling={false} style={styles.QuaddText}>
                   {titleValue}
@@ -645,10 +637,10 @@ const diff1 =commissionPrice1-priceValue1
 
                 <View style={styles.datePosted}>
                   <Image
-                    source={require('../../../assets/images/calendar_icon.png')}
+                    source={require('../../../assets/images/calendar_icon1.png')}
                     style={{ height: 16, width: 16 }}
                   />
-                  <Text allowFontScaling={false} style={styles.userSub}>Date Posted: {getCurrentDate()}</Text>
+                  <Text allowFontScaling={false} style={styles.datetext}>Date Posted: {getCurrentDate()}</Text>
                 </View>
               </View>
             </View>
@@ -660,11 +652,11 @@ const diff1 =commissionPrice1-priceValue1
             ? 'Dish Details'
             : `${userMeta?.category?.name ?? ''} Details`}
         </Text>
-            <View style={{ gap: 12 }}>
+           
+            {/* <View style={{ gap: 12 }}>
               {fields.map(field => {
                 const fieldId = field.param.id;
 
-                // Skip Title, Description, Price, Images, Featured
                 const skipAliases = ['title', 'description', 'price'];
                 if (
                   skipAliases.includes(field.param.alias_name ?? '') ||
@@ -696,10 +688,8 @@ const diff1 =commissionPrice1-priceValue1
 
                 return (
                   <View key={fieldId} style={{ gap: 6 }}>
-                    {/* Label */}
                     <Text allowFontScaling={false}style={styles.detailLabel}>{field.param.field_name}</Text>
 
-                    {/* Values */}
                     <View style={styles.categoryContainer}>
                       {displayValues.map((val, idx) => (
                         <View key={idx} style={styles.categoryTag}>
@@ -710,19 +700,78 @@ const diff1 =commissionPrice1-priceValue1
                   </View>
                 );
               })}
-            </View>
+            </View> */}
+
+            <View style={{ gap: 12 }}>
+                {fields.map(field => {
+                  const fieldId = field.param.id;
+
+                  const skipAliases = ['title', 'description', 'price'];
+                  if (
+                    skipAliases.includes(field.param.alias_name ?? '') ||
+                    ['Image', 'boolean'].includes(field.param.field_type)
+                  )
+                    return null;
+
+                  const storedValue = storedForm?.[fieldId]?.value;
+                  if (storedValue == null) return null;
+
+                  let displayValues: string[] = [];
+
+                  if (field.param.field_type === 'dropdown') {
+                    if (Array.isArray(storedValue)) {
+                      displayValues = storedValue
+                        .map((id: number) =>
+                          field.param.options.find((opt: any) => opt.id === id)?.option_name
+                        )
+                        .filter(Boolean) as string[];
+                    } else {
+                      const option = field.param.options.find((opt: any) => opt.id === storedValue);
+                      if (option) displayValues = [option.option_name];
+                    }
+                  } else if (Array.isArray(storedValue)) {
+                    displayValues = storedValue.map(String);
+                  } else {
+                    displayValues = [String(storedValue)];
+                  }
+
+                  return (
+                    <View key={fieldId} style={{  }}>
+                      <Text allowFontScaling={false} style={styles.detailLabel}>
+                        {field.param.field_name}
+                      </Text>
+
+                      {field.param.field_type === 'dropdown' ? (
+                        <View style={styles.categoryContainer}>
+                          {displayValues.map((val, idx) => (
+                            <View key={idx} style={styles.categoryTag}>
+                              <Text allowFontScaling={false} style={styles.catagoryText}>
+                                {val}
+                              </Text>
+                            </View>
+                          ))}
+                        </View>
+                      ) : (
+                        <Text allowFontScaling={false} style={[styles.new, { marginTop:0}]}>
+                          {displayValues.join(', ')}
+                        </Text>
+                      )}
+                    </View>
+                  );
+                })}
+              </View>
+
           </View>
         </View>
 
 
 
-            {/* Selaer details */}
+          
             <View style={styles.card}>
               <View style={{ gap: 12 }}>
                 <Text allowFontScaling={false} style={styles.productDeatilsHeading}>Seller Details</Text>
 
-                <View style={{ flexDirection: 'row' }}>
-                  {/* <Image source={profileImg} style={styles.avatar} /> */}
+                <View style={{ flexDirection: 'row',marginBottom:4  }}>
 
                   {userMeta?.profile ? (
                     <Image
@@ -740,88 +789,37 @@ const diff1 =commissionPrice1-priceValue1
                     </View>
                   )}
 
-                  <View style={{ width: '80%', gap: 4 }}>
+                  <View style={{ width: '80%' }}>
                     <Text allowFontScaling={false} style={styles.userName}>
                     {`${userMeta?.firstname ?? ''} ${userMeta?.lastname ?? ''}`.trim()}
                   </Text>
                     <Text allowFontScaling={false} style={styles.univeritytext}>
                       {userMeta?.university_name || 'University of Warwick,'}
                     </Text>
-                    <Text allowFontScaling={false} style={[styles.univeritytext, { marginTop: -5 }]}>
+                    <Text allowFontScaling={false} style={[styles.univeritytext,]}>
                       Coventry
                     </Text>
                   </View>
                 </View>
 
 
-                <View style={{ flexDirection: 'row', gap: 8 }}>
-                  <View
-                    style={{
-                      borderRadius: 10,
-                      backgroundColor:
-                        'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-                      boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-                      display: 'flex',
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      gap: 4,
-                      padding: 16,
-
-                      width: '20%',
-                    }}
-                  >
+                <View style={{ flexDirection: 'row' }}>
+                 <View style={styles.bottombutton}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' , gap: 6,}}>
                     <Image
                       source={require('../../../assets/images/staricon.png')}
                       style={{ height: 16, width: 16 }}
                     />
 
-                    <Text
-                    allowFontScaling={false}
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.48)',
-                        fontFamily: 'Urbanist-SemiBold',
-                        fontSize: 14,
-                        fontWeight: '600',
-                        fontStyle: 'normal',
-                        letterSpacing: -0.28,
-                      }}
-                    >
-                      4.5
-                    </Text>
+                    <Text allowFontScaling={false} style={ styles.chattext}>4.5</Text>
                   </View>
-                  <View
-                    style={{
-                      borderRadius: 10,
-                      backgroundColor:
-                        'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-                      boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-                      display: 'flex',
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      gap: 4,
-                      padding: 16,
-                      width: '80%',
-                    }}
-                  >
+                  </View>
+                   <View style={[styles.chatcard, { marginLeft: 8, flexDirection: 'row', alignItems: 'center'}]}>
                     <Image
                       source={require('../../../assets/images/message_chat.png')}
-                      style={{ height: 16, width: 16 }}
+                      style={{ height: 16, width: 16, marginRight: 4 }}
                     />
-                    <Text
-                    allowFontScaling={false}
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.48)',
-                        fontFamily: 'Urbanist-SemiBold',
-                        fontSize: 14,
-                        fontWeight: '600',
-                        fontStyle: 'normal',
-                        letterSpacing: -0.28,
-                      }}
-                    >
-                      Chat with Seller
-                    </Text>
+                   <Text allowFontScaling={false} style={styles.chattext}>Chat with Seller</Text>
                   </View>
                 </View>
               </View>
@@ -829,33 +827,7 @@ const diff1 =commissionPrice1-priceValue1
           </View>
         </ScrollView>
 
-        {/* <TouchableOpacity style={styles.previewBtn} onPress={handleListPress}>
-
-        <Text allowFontScaling={false} style={styles.previewText}>
-        {(() => {
-          try {
-            const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
-            const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
-
-            if (isFeatured) {
-              return (
-                <>
-                  List for{' '}
-                  <Text allowFontScaling={false} style={styles.priceText1}>£</Text>
-                  <Text allowFontScaling={false} style={styles.priceText1}>{diff1}</Text>
-                </>
-              );
-            }
-            return 'List';
-          } catch (e) {
-            console.log('Error parsing storedForm:', e);
-            return 'List';
-          }
-        })()}
-      </Text>
-      </TouchableOpacity>
-           */}
-
+        
            <Button
               onPress={handleListPress}
               title={(() => {
@@ -981,22 +953,131 @@ const diff1 =commissionPrice1-priceValue1
 
 const styles = StyleSheet.create({
 
-    initialsCircle:{
- backgroundColor: '#8390D4',
-  alignItems: 'center',
+    chattext:{
+  color: 'rgba(255, 255, 255, 0.48)',
+  fontFamily: 'Urbanist-SemiBold',
+  fontSize: 14,
+  fontWeight: '600',
+  fontStyle: 'normal',
+  letterSpacing: -0.28,
+  },
+  chatcard:{
+  borderRadius: 10,
+    backgroundColor:'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    flex:1,
+    paddingHorizontal: 16,
+    paddingVertical:12,
+    height:'auto'
+    //width: '80%',
+  },
+
+  bottombutton:{
+  borderRadius: 10,
+  backgroundColor:'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+  display: 'flex',
+  flexDirection: 'row',
   justifyContent: 'center',
-   width: 50,
+  alignItems: 'center',
+  gap: 4,
+  padding: 16,
+  //width: '20%',
+  paddingHorizontal: 16,
+  paddingVertical:12,
+  },
+
+
+  initialsCircle: {
+    backgroundColor: '#8390D4',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 50,
     height: 50,
     borderRadius: 25,
     marginRight: 12,
   },
-  initialsText:{
-   color: '#fff',
-  fontSize: 18,
-  fontWeight:600,
-  textAlign: 'center',
-  fontFamily: 'Urbanist-SemiBold',
+  initialsText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 600,
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
   },
+
+   catagoryText: {
+    color:'#9CD6FF',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 12,
+    fontWeight: '500',
+    lineHeight: 16,
+    letterSpacing: -0.24,
+  },
+
+   catagoryText1: {
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 12,
+    fontWeight: '500',
+    fontStyle: 'normal',
+    lineHeight: 1.3,
+    //color: '#fff',
+    color:'#9CD6FF'
+  },
+  categoryTag: {
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    //borderWidth: 0.9,
+    //borderColor: 'rgba(255, 255, 255, 0.08)',
+    //borderBlockEndColor: 'rgba(255, 255, 255, 0.08)',
+    color: 'rgba(255, 255, 255, 0.48)',
+    borderRadius: 4,
+    marginRight: 8,
+    //boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.23)',
+    paddingLeft: 6,
+    paddingRight: 6,
+    paddingTop: 2,
+    paddingBottom: 2,
+    marginTop:6
+  },
+
+   productDesHeding: {
+    color: 'rgba(255, 255, 255, 0.72)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 16,
+    fontWeight: '600',
+    fontStyle: 'normal',
+    lineHeight: 22,
+  },
+  productDesc: {
+    color: 'rgba(255, 255, 255, 0.64)',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 14,
+    fontWeight: '500',
+    //fontStyle: 'normal',
+    lineHeight: 18,
+  },
+
+//     initialsCircle:{
+//  backgroundColor: '#8390D4',
+//   alignItems: 'center',
+//   justifyContent: 'center',
+//    width: 50,
+//     height: 50,
+//     borderRadius: 25,
+//     marginRight: 12,
+//   },
+//   initialsText:{
+//    color: '#fff',
+//   fontSize: 18,
+//   fontWeight:600,
+//   textAlign: 'center',
+//   fontFamily: 'Urbanist-SemiBold',
+//   },
 
 
     priceText1: {
@@ -1021,7 +1102,7 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   detailLabel: {
-     color: 'rgba(255, 255, 255, 0.72)',
+    color: 'rgba(255, 255, 255, 0.72)',
     fontFamily: 'Urbanist-Regular',
     fontSize: 16,
     fontWeight: '600',
@@ -1035,35 +1116,48 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     flex: 1,
   },
-  unizyText: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    flex: 1,
-    fontWeight: '600',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-SemiBold',
-    marginTop: 20,
-    // height: 50,
-    textAlignVertical: 'center',
-  },
+  
   backBtn: {
     width: 30,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
+
   header: {
-    height: 70,
-    paddingTop: 15,
+    paddingTop: Platform.OS === 'ios' ? 50 : 50,
     paddingBottom: 12,
     paddingHorizontal: 16,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backIconRow: {
+    padding: 12,
+    borderRadius: 40,
+
+    display: 'flex',
     justifyContent: 'center',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-    // overflow: 'hidden',
+    alignItems: 'center',
+    backgroundColor:
+      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+    //boxShadow: 'rgba(255, 255, 255, 0.12)  inset -1px 0px 5px 1px inset ',
+
+   boxShadow:
+      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    height: 48,
+    width: 48,
+  },
+  unizyText: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    flex: 1,
+    textAlign: 'center',
+    fontWeight: '600',
+    fontFamily: 'Urbanist-SemiBold',
   },
   stepIndicatorContainer: {
     flexDirection: 'row',
@@ -1108,11 +1202,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.33,
     elevation: 2,
   },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent:'center'
-  },
+
   fullScreenContainer: {
     flex: 1,
     //marginTop: 30,
@@ -1203,8 +1293,8 @@ const styles = StyleSheet.create({
     bottom: 10,
   },
   scrollContainer: {
-    paddingBottom: 70,
-    paddingTop: 90,
+    paddingBottom: (Platform.OS === 'ios' ? 70:50),
+    //paddingTop: 90,
     // paddingHorizontal: 20,
   },
 
@@ -1213,17 +1303,26 @@ const styles = StyleSheet.create({
     height: 'auto',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.09) 100%)',
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+    //boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     borderRadius: 8,
     paddingLeft: 8,
     paddingRight: 8,
     paddingTop: 6,
     paddingBottom: 6,
-    marginTop:6,
+    marginTop:12,
     alignItems: 'center',
     gap: 3,
   },
 
+    datetext: {
+    //color: 'rgba(255, 255, 255, 0.48)',
+    color:'#9CD6FF',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 12,
+    fontWeight: '500',
+    lineHeight: 16,
+    letterSpacing: -0.24,
+  },
   userSub: {
     color: 'rgba(255, 255, 255, 0.48)',
     fontFamily: 'Urbanist-Regular',
@@ -1247,11 +1346,18 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     letterSpacing: -0.32,
   },
+  // avatar: {
+  //   width: 50,
+  //   height: 50,
+  //   borderRadius: 25,
+  //   marginRight: 12,
+  // },
   avatar: {
     width: 50,
     height: 50,
     borderRadius: 25,
     marginRight: 12,
+    resizeMode:'cover'
   },
   gap12: {
     gap: 12,
@@ -1287,45 +1393,45 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
-  catagoryText: {
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 12,
-    fontWeight: '500',
-    fontStyle: 'normal',
-    lineHeight: 16,
-    color: '#fff',
-  },
-  categoryTag: {
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    borderWidth: 0.9,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
-    borderBlockEndColor: 'rgba(255, 255, 255, 0.08)',
-    color: 'rgba(255, 255, 255, 0.48)',
-    borderRadius: 4,
-    marginRight: 8,
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.23)',
-    paddingLeft: 6,
-    paddingRight: 6,
-    paddingTop: 2,
-    paddingBottom: 2,
-  },
-  productDesHeding: {
-    color: 'rgba(255, 255, 255, 0.72)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 16,
-    fontWeight: '600',
-    fontStyle: 'normal',
-    lineHeight: 22,
-  },
-  productDesc: {
-    color: 'rgba(255, 255, 255, 0.64)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 14,
-    fontWeight: '500',
-    fontStyle: 'normal',
-    lineHeight: 20,
-  },
+  // catagoryText: {
+  //   fontFamily: 'Urbanist-Regular',
+  //   fontSize: 12,
+  //   fontWeight: '500',
+  //   fontStyle: 'normal',
+  //   lineHeight: 16,
+  //   color: '#fff',
+  // },
+  // categoryTag: {
+  //   backgroundColor:
+  //     'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.10) 100%)',
+  //   borderWidth: 0.9,
+  //   borderColor: 'rgba(255, 255, 255, 0.08)',
+  //   borderBlockEndColor: 'rgba(255, 255, 255, 0.08)',
+  //   color: 'rgba(255, 255, 255, 0.48)',
+  //   borderRadius: 4,
+  //   marginRight: 8,
+  //   boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.23)',
+  //   paddingLeft: 6,
+  //   paddingRight: 6,
+  //   paddingTop: 2,
+  //   paddingBottom: 2,
+  // },
+  // productDesHeding: {
+  //   color: 'rgba(255, 255, 255, 0.72)',
+  //   fontFamily: 'Urbanist-Regular',
+  //   fontSize: 16,
+  //   fontWeight: '600',
+  //   fontStyle: 'normal',
+  //   lineHeight: 22,
+  // },
+  // productDesc: {
+  //   color: 'rgba(255, 255, 255, 0.64)',
+  //   fontFamily: 'Urbanist-Regular',
+  //   fontSize: 14,
+  //   fontWeight: '500',
+  //   fontStyle: 'normal',
+  //   lineHeight: 20,
+  // },
   productDeatilsHeading: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-SemiBold',
@@ -1336,22 +1442,50 @@ const styles = StyleSheet.create({
     letterSpacing: -0.36,
   },
 
-  QuaddText: {
+  // QuaddText: {
+  //   color: 'rgba(255, 255, 255, 0.88)',
+  //   fontFamily: 'Urbanist-SemiBold',
+  //   fontSize: 20,
+  //   fontWeight: '600',
+  //   letterSpacing: -0.4,
+  //   lineHeight: 24,
+  // },
+  // priceText: {
+  //   color: '#fff',
+  //   fontFamily: 'Urbanist-SemiBold',
+  //   fontSize: 20,
+  //   fontWeight: '700',
+  //   letterSpacing: -0.4,
+  //   lineHeight: 24,
+  // },
+
+    QuaddText: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 20,
     fontWeight: '600',
+    //fontStyle: 'normal',
     letterSpacing: -0.4,
     lineHeight: 24,
   },
   priceText: {
     color: '#fff',
-    fontFamily: 'Urbanist-SemiBold',
+    fontFamily: 'Urbanist-Bold',
     fontSize: 20,
-    fontWeight: '700',
-    letterSpacing: -0.4,
-    lineHeight: 24,
+    fontWeight: 700,
+    letterSpacing: -0.1,
   },
+  
+
+  // card: {
+  //   flexDirection: 'column',
+  //   marginBottom: 6,
+  //   padding: 16,
+  //   borderRadius: 24,
+  //   backgroundColor: 'rgba(255, 255, 255, 0.06)',
+  //   gap: 12,
+  //   marginTop: 12
+  // },
 
   card: {
     flexDirection: 'column',
@@ -1360,29 +1494,38 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     gap: 12,
-    marginTop: 12
+    marginTop:6
+  },
+    card1: {
+    flexDirection: 'column',
+    marginBottom: 6,
+    padding: 16,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    gap: 10,
+    marginTop:6
   },
   h24_w24: {
     width: 24,
     height: 24,
   },
-  backIconRow: {
-    padding: 12,
-    borderRadius: 40,
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
-    position: 'absolute',
-    top: -10,
-    left: 0,
-    right: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  // backIconRow: {
+  //   padding: 12,
+  //   borderRadius: 40,
+  //   backgroundColor:
+  //     'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+  //   boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
+  //   borderWidth: 0.4,
+  //   borderColor: '#ffffff2c',
+  //   height: 48,
+  //   width: 48,
+  //   position: 'absolute',
+  //   top: -10,
+  //   left: 0,
+  //   right: 0,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  // },
   previewThumbnail: {
     color: '#FFF',
     textAlign: 'center',

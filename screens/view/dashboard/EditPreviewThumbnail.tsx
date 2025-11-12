@@ -63,11 +63,18 @@ const [categoryId, setCategoryId] = useState<number | null>(null);
 const [fullName, setFullName] = useState('');
 const [initials, setInitials] = useState('');
 const [profile,setProfile] = useState('');
+const [featureitem,setfeatureitem] =useState(false)
 
   useEffect(() => {
     const fetchStoredData = async () => {
       try {
         // 1️⃣ Fetch stored form data
+        const storedValue = await AsyncStorage.getItem('isfeatured');
+        if (storedValue !== null) {
+          setfeatureitem(JSON.parse(storedValue));
+        } else {
+          setfeatureitem(false);
+        }
         const storedData = await AsyncStorage.getItem('formData1');
         if (storedData) {
           const parsedData = JSON.parse(storedData);
@@ -123,18 +130,7 @@ const [profile,setProfile] = useState('');
     alias_name: string | null;
   };
 
-  // const getValueByAlias = (
-  //   formData: Record<string, FormEntry> | null,
-  //   alias: string,
-  // ): any => {
-  //   if (!formData) return null;
-
-  //   const entry = Object.values(formData).find(
-  //     item => item.alias_name === alias,
-  //   ) as FormEntry | undefined;
-
-  //   return entry ? entry.value : null;
-  // };
+  
   const getValueByAlias = (
     formData: Record<string, FormEntry> | null,
     alias: string,
@@ -225,70 +221,13 @@ const [profile,setProfile] = useState('');
 
         <View style={{ height: '100%' }}>
          
-          {/* <View style={styles.productCarddisplay}>
-            {storedForm ? (
-              <>
-                {storedForm[13]?.value === true ||
-                storedForm[13]?.value === 'true' ? (
-                  <>
-                    <Text allowFontScaling={false} style={styles.newtext}>
-                      Featured Listing Preview
-                    </Text>
-                    <PreviewCard
-                      tag="University of Warwick"
-                      infoTitle={titleValue} // from alias
-                      inforTitlePrice={`£${commissionPrice}`} // from alias
-                      rating={storedForm[12]?.value || '4.5'}
-                      productImage={
-                        imageArray.length > 0
-                          ? { uri: imageArray[0].uri }
-                          : require('../../../assets/images/drone.png')
-                      }
-                    />
-                    <Text allowFontScaling={false} style={styles.newtext1}>
-                      Regular Listing Preview
-                    </Text>
-                    <NewProductCard
-                      tag="University of Warwick"
-                      infoTitle={titleValue}
-                      inforTitlePrice={`£${commissionPrice}`}
-                      rating={storedForm[12]?.value || '4.5'}
-                      productImage={
-                        imageArray.length > 0
-                          ? { uri: imageArray[0].uri }
-                          : require('../../../assets/images/drone.png')
-                      }
-                    />
-                  </>
-                ) : (
-                  <NewProductCard
-                    tag="University of Warwick"
-                    infoTitle={titleValue} // from alias
-                    inforTitlePrice={`£${commissionPrice}`} // from alias
-                    rating={storedForm[12]?.value || '4.5'}
-                    productImage={
-                      imageArray.length > 0
-                        ? { uri: imageArray[0].uri }
-                        : require('../../../assets/images/drone.png')
-                    }
-                  />
-                )}
-              </>
-            ) : (
-              <Text
-                allowFontScaling={false}
-                style={{ color: '#fff', textAlign: 'center' }}
-              >
-                Loading...
-              </Text>
-            )}
-          </View> */}
+        
 
            <View style={styles.productCarddisplay}>
             {storedForm ? (
               <>
                 {categoryId === 2 || categoryId === 5 ? (
-                  storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
+                  (!!storedForm[13]?.value === true || featureitem) ? (
                     // 🔹 CASE 1A: Category 2 or 5, Featured = true
                     <>
                       <Text
@@ -336,7 +275,7 @@ const [profile,setProfile] = useState('');
                           isfeature={false} initialsName={initials} 
                     />
                   )
-                ) : storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
+                ) :  (!!storedForm[13]?.value === true || featureitem) ? (
                   // 🔹 CASE 2A: Other categories, Featured = true
                   <>
                     <Text

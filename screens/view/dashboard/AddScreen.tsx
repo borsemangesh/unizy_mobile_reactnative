@@ -35,6 +35,7 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 // import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
 import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import { BlurView } from '@react-native-community/blur';
+import SelectCatagoryDropdown_IOS from '../../utils/component/SelectCatagoryDropdown_IOS';
 
 
 const bgImage = require('../../../assets/images/backimg.png');
@@ -42,6 +43,9 @@ const profileImg = require('../../../assets/images/user.jpg');
 const uploadIcon = require('../../../assets/images/upload.png'); 
 const fileIcon = require('../../../assets/images/file.png'); 
 const deleteIcon = require('../../../assets/images/delete.png'); 
+const uploadIcon1 = require('../../../assets/images/fileupload.png'); 
+
+
 
 type AddScreenContentProps = {
   navigation: any;
@@ -112,6 +116,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const [maxFeatureCap, setMaxFeatureCap] = useState(0);
   const route = useRoute<AddScreenRouteProp>();
   const { productId, productName } = route.params;
+
+  const { height } = Dimensions.get('window');
+  const bottomPadding = height * 0.0005;
 
   
   useEffect(() => {
@@ -279,51 +286,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     }
   };
 
-  // const requestCameraPermission = async () => {
-  //     if (Platform.OS === "android") {
-  //       try {
-  //         const granted = await PermissionsAndroid.request(
-  //           PermissionsAndroid.PERMISSIONS.CAMERA,
-  //           {
-  //             title: "Camera Permission",
-  //             message: "App needs access to your camera",
-  //             buttonNeutral: "Ask Me Later",
-  //             buttonNegative: "Cancel",
-  //             buttonPositive: "OK",
-  //           }
-  //         );
-  //         return granted === PermissionsAndroid.RESULTS.GRANTED;
-  //       } catch (err) {
-  //         console.warn(err);
-  //         return false;
-  //       }
-  //     } else if (Platform.OS === 'ios') {
-  //       try {
-  //         // Check current permission status first
-  //         const status = await check(PERMISSIONS.IOS.CAMERA);
-  //         if (status === RESULTS.GRANTED) {
-  //           return true;
-  //         }
-  //         const result = await request(PERMISSIONS.IOS.CAMERA);
-    
-  //         if (result === RESULTS.GRANTED) {
-  //           return true; 
-  //         } else if (result === RESULTS.BLOCKED) {
-  //           console.warn('Camera permission is blocked. Please enable it in Settings.');
-  //           return false;
-  //         } else {
-  //           return false; // Denied
-  //         }
-  //       } catch (err) {
-  //         console.warn(err);
-  //         return false;
-  //       }
-  //     } 
-      
-  //     else {
-  //       return true;
-  //     }
-  //   };
+
 
 
   const handlePreview = async () => {
@@ -742,7 +705,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               style={styles.uploadButton}
               onPress={handleImageSelect}
             >
-              <Image source={uploadIcon} style={styles.uploadIcon} />
+              <Image source={uploadIcon1} style={styles.uploadIcon} />
               <Text allowFontScaling={false} style={styles.uploadText}>Upload {field_name}</Text>
             </TouchableOpacity>
     {uploadedImages.length > 0 && (
@@ -755,14 +718,16 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                         flexDirection: 'row',
                         justifyContent: 'space-between',
                         alignItems: 'center',
-                        padding: 10,
+                        paddingRight: 6,
+                        paddingVertical:6,
+                        paddingLeft:8
                       }}
                     >
                       <View
                         style={{
                           flexDirection: 'row',
                           alignItems: 'center',
-                          gap: 10,
+                          gap: 8,
                           flex: 1,
                         }}
                       >
@@ -772,7 +737,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                         />
                         <Image
                           source={fileIcon}
-                          style={{ width: 20, height: 20, marginRight: 5 }}
+                          style={{ width: 32, height: 32, marginRight: 5 }}
                         />
                         <Text
                         allowFontScaling={false}
@@ -864,39 +829,31 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
  
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-        {/* Header */}
-        <View style={styles.header}>
-            {/* <BlurView
-            style={StyleSheet.absoluteFill}
-            blurType="light"       // or 'dark' for darker backgrounds
-            blurAmount={10}        // intensity
-            reducedTransparencyFallbackColor="transparent" // fallback on Android
-          /> */}
-          <View style={styles.headerRow}>
-            <TouchableOpacity
-              style={styles.backBtn}
-              onPress={() => {navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Add', isNavigate:false })}}
-            >
-              <View style={styles.backIconRow}>
-                <Image
-                  source={require('../../../assets/images/back.png')}
-                  style={{ height: 24, width: 24 }}
-                />
-              </View>
-            </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>
-              {`List${productName ? ` ${productName} ` : ''}`}
-            </Text>
-           
-            <View style={{ width: 48 }} />
-          </View>
-        </View>
+       
+          <View style={styles.header}>
+            <View style={styles.headerRow}>
+            <TouchableOpacity onPress={() => {navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Add', isNavigate:false })}}>
+               <View style={styles.backIconRow}>
+                  <Image
+                    source={require('../../../assets/images/back.png')}
+                    style={{ height: 24, width: 24 }}
+                    />
+                </View>
+                </TouchableOpacity>
+              <Text allowFontScaling={false} style={styles.unizyText}>{`List${productName ? ` ${productName} ` : ''}`}</Text>
+                <View style={{ width: 48 }} />
+                  </View>
+                </View>
+        
 
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <ScrollView contentContainerStyle={[
+            styles.scrollContainer,
+            { paddingBottom: height * 0.1 }, // 0.05% of screen height
+          ]}>
             
             <View style={styles.userRow}>
           <View style={{ width: '20%', alignItems: 'center', justifyContent: 'center' }}>
@@ -947,10 +904,10 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                   }}
                 >
                   <Image
-                    source={require('../../../assets/images/calendar_icon.png')}
+                    source={require('../../../assets/images/calendar_icon1.png')}
                     style={{ height: 20, width: 20 }}
                   />
-                  <Text allowFontScaling={false} style={styles.userSub1}>{getCurrentDate()}</Text>
+                  <Text allowFontScaling={false} style={styles.dateText}>{getCurrentDate()}</Text>
                 </View>
               </View>
             </View>
@@ -988,14 +945,18 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 {renderField(featuredField)}
               </View>
             )}
-          </ScrollView>
-
-          <Button title="Preview Details" onPress={() => handlePreview()} />
+          </ScrollView>         
         </KeyboardAvoidingView>
+        <Button title="Preview Details" onPress={() => handlePreview()} />
+
       </View>
+       
 
 
-      <SelectCatagoryDropdown
+{Platform.OS === 'android' ? (
+        <>
+
+<SelectCatagoryDropdown
         options={multiSelectOptions}
         visible={multiSelectModal.visible}
         ismultilple={multiSelectModal?.ismultilple}
@@ -1017,6 +978,58 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           }));
         }}
       />
+
+        </>
+      ):(
+        <>
+
+          <SelectCatagoryDropdown_IOS
+              options={multiSelectOptions}
+              visible={multiSelectModal.visible}
+              ismultilple={multiSelectModal?.ismultilple}
+              title={`Select ${multiSelectModal?.fieldLabel || 'Category'}`}
+              subtitle={
+                  multiSelectModal?.ismultilple
+                    ? `Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your listing.`
+                    : `Select the ${multiSelectModal?.fieldLabel || 'category'} that best describes your listing.`
+                }
+              //subtitle={`Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your item.`}
+              selectedValues={formValues[multiSelectModal.fieldId!]?.value}
+              onClose={() =>
+                setMultiSelectModal(prev => ({ ...prev, visible: false }))
+              }
+              onSelect={(selectedIds: number[] | number) => {
+                setFormValues((prev: any) => ({
+                  ...prev,
+                  [multiSelectModal.fieldId!]: { value: selectedIds },
+                }));
+              }}
+            />
+        </>
+      )}
+
+      {/* <SelectCatagoryDropdown
+        options={multiSelectOptions}
+        visible={multiSelectModal.visible}
+        ismultilple={multiSelectModal?.ismultilple}
+        title={`Select ${multiSelectModal?.fieldLabel || 'Category'}`}
+        subtitle={
+            multiSelectModal?.ismultilple
+              ? `Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your listing.`
+              : `Select the ${multiSelectModal?.fieldLabel || 'category'} that best describes your listing.`
+          }
+        //subtitle={`Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your item.`}
+        selectedValues={formValues[multiSelectModal.fieldId!]?.value}
+        onClose={() =>
+          setMultiSelectModal(prev => ({ ...prev, visible: false }))
+        }
+        onSelect={(selectedIds: number[] | number) => {
+          setFormValues((prev: any) => ({
+            ...prev,
+            [multiSelectModal.fieldId!]: { value: selectedIds },
+          }));
+        }}
+      /> */}
       <NewCustomToastContainer />
 
     </ImageBackground>
@@ -1104,74 +1117,99 @@ dropdowncard:{
   fullScreenContainer: {
     flex: 1,
   },
-  header: {
-    height: 100,
-    paddingTop: 40,
+
+
+   header: {
+    paddingTop: Platform.OS === 'ios' ? 50 : 50,
     paddingBottom: 12,
     paddingHorizontal: 16,
-    justifyContent: 'center',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-    overflow: 'hidden',
-    backgroundColor:'transparent'
-    
   },
-//   header: {
-//   position: 'absolute',
-//   top: 0,
-//   left: 0,
-//   right: 0,
-//   zIndex: 10,
-//   height: 100,
-//   paddingHorizontal: 16,
-//   paddingTop: 40,
-//   paddingBottom: 12,
-//   justifyContent: 'flex-end',
-// },
   headerRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backBtn: {
-    width: 30,
-    justifyContent: 'center',
     alignItems: 'center',
   },
   backIconRow: {
     padding: 12,
     borderRadius: 40,
+
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
+    //boxShadow: 'rgba(255, 255, 255, 0.12)  inset -1px 0px 5px 1px inset ',
+
+   boxShadow:
+      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
     height: 48,
     width: 48,
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backArrow: {
-    fontSize: 26,
-    color: '#fff',
   },
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
     flex: 1,
-    fontWeight: '600',
     textAlign: 'center',
+    fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
   },
+  // header: {
+  //   height: 100,
+  //   paddingTop: 40,
+  //   paddingBottom: 12,
+  //   paddingHorizontal: 16,
+  //   justifyContent: 'center',
+  //   position: 'absolute',
+  //   top: 0,
+  //   left: 0,
+  //   right: 0,
+  //   zIndex: 10,
+  //   overflow: 'hidden',
+  //   backgroundColor:'transparent'
+    
+  // },
+
+  // headerRow: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  // },
+  backBtn: {
+    width: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  // backIconRow: {
+  //   padding: 12,
+  //   borderRadius: 40,
+  //   backgroundColor:
+  //     'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+  //   boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
+  //   borderWidth: 0.4,
+  //   borderColor: '#ffffff2c',
+  //   height: 48,
+  //   width: 48,
+  //   position: 'absolute',
+  //   left: 0,
+  //   right: 0,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  // },
+  backArrow: {
+    fontSize: 26,
+    color: '#fff',
+  },
+  // unizyText: {
+  //   color: '#FFFFFF',
+  //   fontSize: 20,
+  //   flex: 1,
+  //   fontWeight: '600',
+  //   textAlign: 'center',
+  //   fontFamily: 'Urbanist-SemiBold',
+  // },
   scrollContainer: {
     paddingHorizontal: 20,
-    paddingBottom: 80,
-    paddingTop: 100,
+    //paddingBottom: 80,
   },
   userRow: {
     flexDirection: 'row',
@@ -1180,10 +1218,11 @@ dropdowncard:{
     padding: 12,
     borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    marginTop:12
   },
   productdetails: {
     marginTop: 10,
-    padding: 12,
+    padding: 16,
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderRadius: 24,
     overflow: 'hidden',
@@ -1193,6 +1232,7 @@ dropdowncard:{
     height: 50,
     borderRadius: 25,
     marginRight: 12,
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
   },
   userName: {
     position: 'relative',
@@ -1200,7 +1240,7 @@ dropdowncard:{
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 16,
     fontWeight: '600',
-    lineHeight: 24,
+    lineHeight: 22,
     letterSpacing: -0.32,
   },
   userSub: {
@@ -1208,7 +1248,7 @@ dropdowncard:{
     fontFamily: 'Urbanist-Medium',
     fontSize: 12,
     fontWeight: '500',
-    lineHeight: 16,
+    lineHeight: 14,
     marginTop:4
   },
   userSub2: {
@@ -1227,14 +1267,22 @@ dropdowncard:{
     lineHeight: 16,
     marginTop:1
   },
+
+   
   dateText: {
-    color: '#ccc',
-    fontSize: 12,
+    fontSize: 14,
+    fontWeight: '500',
+    lineHeight: 16,
+    marginTop:1,
+    color:'#9CD6FF',
+    fontFamily: 'Urbanist-SemiBold',
+   
+    letterSpacing: -0.24,
   },
   uploadButton: {
-    height: 40,
+    height: 44,
     gap: 10,
-    marginTop: 10,
+    marginTop: 2,
     alignSelf: 'stretch',
     borderRadius: 12,
     borderWidth: 0.9,
@@ -1251,7 +1299,7 @@ dropdowncard:{
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.32)',
-    borderRadius: 7,
+    borderRadius: 12,
     borderWidth: 0.4,
     borderColor: '#ffffff33',
     marginTop: 10,
@@ -1274,7 +1322,8 @@ dropdowncard:{
      mixBlendMode: 'normal',
   },
   uploadText: {
-    color: 'rgba(255, 255, 255, 0.48)',
+    //color: 'rgba(255, 255, 255, 0.48)',
+    color:'#ACE3FF',
     fontSize: 14,
      mixBlendMode: 'normal',
      fontFamily: 'Urbanist-Medium',
@@ -1307,7 +1356,7 @@ dropdowncard:{
     fontStyle: 'normal',
     letterSpacing: -0.32,
     lineHeight: 24,
-    paddingStart: 5,
+    //paddingStart: 5,
   },
   deleteBtn: {
     width: 32,
@@ -1316,9 +1365,9 @@ dropdowncard:{
     alignItems: 'center',
   },
   deleteIcon: {
-    width: 32,
-    height: 32,
-    resizeMode: 'contain',
+    width: 44,
+    height: 44,
+    resizeMode: 'center',
   },
   threedots: {
     width: 20,
@@ -1343,7 +1392,7 @@ dropdowncard:{
   },
   productTextView: {
     gap: 4,
-    marginTop: 10,
+    marginTop: 12,
   },
 
   input: {

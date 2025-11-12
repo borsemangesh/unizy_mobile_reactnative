@@ -248,7 +248,7 @@ return (
     </View>
 
 
-    <View style={{ paddingTop: 120,marginHorizontal:6 }}> 
+    <View style={{ paddingTop: 12,marginHorizontal:6 }}> 
         
   <View style={styles.userRow}>
     <View style={{ width: 88 ,alignSelf:'center',height:88}}>
@@ -550,8 +550,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#8390D4',
     alignItems: 'center',
     justifyContent: 'center',
-    
-
     width: 88,
     height: 88,
     borderRadius: 20,
@@ -626,47 +624,79 @@ versionLabel: {
     width: '100%',
     height: '100%',
   },
-  fullScreenContainer: {
-    flex: 1,
-  },
+
+   fullScreenContainer: { 
+    flex: 1
+   },
   header: {
-    height: 100,
-    paddingTop: 40,
+    paddingTop: Platform.OS === 'ios' ? 50 : 50,
     paddingBottom: 12,
     paddingHorizontal: 16,
-    justifyContent: 'center',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-    overflow: 'hidden',
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
+  backIconRow: {
+    padding: 12,
+    borderRadius: 40,
+
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:
+      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+    //boxShadow: 'rgba(255, 255, 255, 0.12)  inset -1px 0px 5px 1px inset ',
+
+   boxShadow:
+      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    height: 48,
+    width: 48,
+  },
+ 
+  // fullScreenContainer: {
+  //   flex: 1,
+  // },
+  // header: {
+  //   height: 100,
+  //   paddingTop: 40,
+  //   paddingBottom: 12,
+  //   paddingHorizontal: 16,
+  //   justifyContent: 'center',
+  //   position: 'absolute',
+  //   top: 0,
+  //   left: 0,
+  //   right: 0,
+  //   zIndex: 10,
+  //   overflow: 'hidden',
+  // },
+  // headerRow: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  // },
   backBtn: {
     width: 30,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  backIconRow: {
-    padding: 12,
-    borderRadius: 40,
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  // backIconRow: {
+  //   padding: 12,
+  //   borderRadius: 40,
+  //   backgroundColor:
+  //     'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+  //   boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
+  //   borderWidth: 0.4,
+  //   borderColor: '#ffffff2c',
+  //   height: 48,
+  //   width: 48,
+  //   position: 'absolute',
+  //   left: 0,
+  //   right: 0,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  // },
  
   unizyText: {
     color: '#FFFFFF',

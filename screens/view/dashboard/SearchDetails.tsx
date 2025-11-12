@@ -400,16 +400,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       isNavigate: false,
                     });
                   }
-                }}
-                // onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})}}
-                >
-                {/* <LinearGradient
-                  colors={['#ffffff5c', '#ffffff2e', '#ffffff1a', '#ffffff5c']} // 4-color gradient
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={styles.gradientBorder}
-                > */}
-               
+                }}>
+             
                
                
                 <View style={styles.backIconRow}>
@@ -417,13 +409,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     source={require('../../../assets/images/back.png')}
                     style={{ height: 24, width: 24 }}
                   />
-                </View>
-
-            {/* <CircleButton /> */}
-                
-
-               
-
+                </View>                
               </TouchableOpacity>
               <Text allowFontScaling={false} style={styles.unizyText}>
                 {detail?.category?.name
@@ -435,7 +421,6 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     handleBookmarkPress(id);
                 }}>
               <View style={styles.MylistingsBackground}>
-                {/* <Image source={mylistings1} style={styles.iconSmall} /> */}
                 <Image
                   source={
                     detail?.isbookmarked
@@ -449,16 +434,10 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
           </View>
         </View>
 
-          <ScrollView
-            contentContainerStyle={[
-              styles.scrollContainer,
-              {
-                paddingBottom:(Platform.OS === 'ios' ?screenHeight * 0.1 + -40:  screenHeight * 0.1 + insets.bottom),
-                marginTop:16 // 10% of screen + safe area
-              },
-            ]}
-            scrollEventThrottle={16}
-          >
+           <ScrollView
+              contentContainerStyle={[
+              styles.scrollContainer,{paddingBottom: screenHeight * 0.1 + insets.bottom, } ]}
+                       scrollEventThrottle={16}>
             {renderImage()}
 
           <View style={{ flex: 1, padding: 16 }}>
@@ -561,7 +540,6 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
               </View>
             </View>
 
-            {/* Selaer details */}
             <View style={styles.card}>
               <View style={{ gap: 12 }}>
                 <Text
@@ -571,16 +549,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                   Seller Details
                 </Text>
 
-                {/* User Info */}
                 <View style={{ flexDirection: 'row',marginBottom:4 }}>
-                  {/* <Image
-                      source={
-                        detail?.createdby?.profile
-                          ? { uri: detail.createdby.profile }
-                          : require('../../../assets/images/user.jpg')
-                      }
-                      style={styles.avatar}
-                    /> */}
+                 
                   {detail?.createdby?.profile ? (
                     <Image
                       source={{ uri: detail.createdby.profile }}
@@ -672,27 +642,12 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                 </View>
               </View>
             </View>
+
+            
           </View>
         </ScrollView>
 
-        {/* <TouchableOpacity
-          style={styles.previewBtn}
-          //onPress={() => setShowPopup1(true)}
-
-          onPress={() => navigation.navigate('PaymentScreen',{amount:Number(detail.price).toFixed(2),feature_id:id,nav:'purchase',onSuccess: async () => {
-          await purchaseProduct();
-        },})}
-        >
-          <Text allowFontScaling={false} style={{ textAlign: 'center' }}>
-            <Text allowFontScaling={false} style={styles.payText}>
-              Pay{' '}
-            </Text>
-            <Text allowFontScaling={false} style={styles.priceText1}>
-              £{Number(detail?.price ?? 0).toFixed(2)}
-            </Text>
-          </Text>
-        </TouchableOpacity>  */}
-        
+      
 
         <PayButton
           amount={Number(detail?.price).toFixed(2)}
@@ -872,6 +827,46 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 const styles = StyleSheet.create({
 
 
+  fullScreenContainer: { 
+    flex: 1
+   },
+  header: {
+    paddingTop: Platform.OS === 'ios' ? 50 : 50,
+    paddingBottom: 12,
+    paddingHorizontal: 16,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backIconRow: {
+    padding: 12,
+    borderRadius: 40,
+
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:
+      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+    //boxShadow: 'rgba(255, 255, 255, 0.12)  inset -1px 0px 5px 1px inset ',
+
+   boxShadow:
+      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    height: 48,
+    width: 48,
+  },
+  unizyText: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    flex: 1,
+    fontWeight: '600',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
+  },
+
+
   chattext:{
   color: 'rgba(255, 255, 255, 0.48)',
   fontFamily: 'Urbanist-SemiBold',
@@ -951,49 +946,7 @@ const styles = StyleSheet.create({
     height: 25,
   },
 
-  // stepIndicatorContainer: {
-  //   flexDirection: 'row',
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   marginTop: 12,
-  //   gap: 6,
-  // },
-  // stepCircle: {
-  //   width: 12,
-  //   height: 12,
-  //   borderRadius: 16,
-  //   backgroundColor: 'rgba(255, 255, 255, 0.3)',
-  // },
-  // activeStepCircle: {
-  //   width: 12,
-  //   height: 12,
-  //   borderRadius: 40,
-  //   backgroundColor: '#FFFFFF',
-  //   borderColor: '#ffffff4e',
-  //   borderWidth: 1,
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   shadowColor: '#000',
-  //   shadowOffset: { width: 0, height: 1 },
-  //   shadowOpacity: 0.25,
-  //   shadowRadius: 3.33,
-  //   elevation: 2,
-  // },
-  // inactiveStepCircle: {
-  //   width: 12,
-  //   height: 12,
-  //   borderRadius: 40,
-  //   backgroundColor: 'rgba(255, 255, 255, 0.2)', // fallback for radial-gradient
-  //   borderColor: '#ffffff4e',
-  //   borderWidth: 1,
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   shadowColor: '#000',
-  //   shadowOffset: { width: 0, height: 1 },
-  //   shadowOpacity: 0.25,
-  //   shadowRadius: 3.33,
-  //   elevation: 2,
-  // },
+ 
 
   stepIndicatorContainer: {
   position: 'absolute',
@@ -1044,15 +997,7 @@ inactiveStepCircle: {
   shadowRadius: 3.33,
   elevation: 2,
 },
-  unizyText: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    flex: 1,
-    fontWeight: '600',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-SemiBold',
-    // paddingTop: 20,
-  },
+ 
   backBtn: {
     width: 48,
     height: 48,
@@ -1060,29 +1005,8 @@ inactiveStepCircle: {
     alignItems: 'center',
   },
 
-  header: {
-    height: 70,
-    paddingTop: (Platform.OS === 'ios' ? 40: 40),
-    //paddingBottom: 12,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-    position: 'absolute',
-   top: Platform.OS === 'ios' ? 10 : 10, 
-  // bottom:Platform.OS === 'ios' ? 20 : 10,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-    // overflow: 'hidden',
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  fullScreenContainer: {
-    flex: 1,
-    marginTop: Platform.OS === 'ios' ? 25 : 0,
-  },
-
+ 
+  
   loginText: {
     color: '#002050',
     textAlign: 'center',
@@ -1200,8 +1124,8 @@ inactiveStepCircle: {
     bottom: 10,
   },
   scrollContainer: {
-    paddingBottom: 280,
-    paddingTop: 90,
+    paddingBottom: 80,
+   // paddingTop: 90,
     // paddingHorizontal: 20,
   },
 
@@ -1298,13 +1222,6 @@ inactiveStepCircle: {
 
   },
   catagoryText: {
-    // fontFamily: 'Urbanist-Regular',
-    // fontSize: 12,
-    // fontWeight: '500',
-    // fontStyle: 'normal',
-    // lineHeight: 16,
-    // //color: '#fff',
-    // color:'#9CD6FF'
     color:'#9CD6FF',
     fontFamily: 'Urbanist-Medium',
     fontSize: 12,
@@ -1325,9 +1242,6 @@ inactiveStepCircle: {
   categoryTag: {
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    //borderWidth: 0.9,
-    //borderColor: 'rgba(255, 255, 255, 0.08)',
-    //borderBlockEndColor: 'rgba(255, 255, 255, 0.08)',
     color: 'rgba(255, 255, 255, 0.48)',
     borderRadius: 4,
     marginRight: 8,
@@ -1410,65 +1324,7 @@ inactiveStepCircle: {
     width: 24,
     height: 24,
   },
-  // backIconRow: {
-  //   //padding: 12,
-  //   borderRadius: 40,
-
-  //   backgroundColor:
-  //     'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-  //   boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-  //   borderWidth: 0.4,
-  //   borderColor: '#ffffff2c',
-  //   height: 48,
-  //   width: 48,
-
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  // },
-
-
-  // backIconRow: {
-  //   width: 48,
-  //   height: 48,
-  //   //backgroundColor: '#010DA4',
-  //   borderRadius: 10,
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  // },
-    backIconRow: {
-    //padding: 12,
-    borderRadius: 40,
-
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-    borderWidth: 0.4,
-    //borderColor: '#ffffff2c',
-    
-    height: 48,
-    width: 48,
-
-    justifyContent: 'center',
-    alignItems: 'center',
-
-      borderColor: '#ffffff2e',
-    
-    // borderBlockStartColor: '#ffffff2e',
-    // borderBlockColor: '#ffffff2e',
-
-    // borderTopColor: '#ffffff5c',
-    // borderBottomColor: '#ffffff2e',
-    // borderLeftColor: '#ffffff2e',
-    // borderRightColor: '#ffffff2e',
-  },
-
-  //  gradientBorder: {
-  //   height: 48,
-  //   width: 48,
-  //   borderRadius: 40,
-  //   padding: 1, // border thickness
-  // },
-
+ 
 
   previewThumbnail: {
     color: '#FFF',

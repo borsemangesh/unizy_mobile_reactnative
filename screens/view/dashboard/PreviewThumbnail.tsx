@@ -3,6 +3,7 @@ import {
   Image,
   ImageBackground,
   Platform,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -20,6 +21,8 @@ import { NewCustomToastContainer } from '../../utils/component/NewCustomToastMan
 import NewFeatureCard from '../../utils/NewFeatureCard';
 import NewTutitionCard from '../../utils/NewTutionCard';
 import SeperateTutionCard from '../../utils/SeperateTutitionCard';
+import LinearGradient from 'react-native-linear-gradient';
+import { BlurView } from '@react-native-community/blur';
 
 type PreviewThumbnailProps = {
   navigation: any;
@@ -204,241 +207,302 @@ const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2
       style={{ width: '100%', height: '100%' }}
       resizeMode="cover"
     >
-      <View
-        style={{
-          paddingTop: Platform.OS === 'ios' ? 70 : 70,
-          paddingLeft: 16,
-          paddingRight: 16,
-        }}
-      >
-        <TouchableOpacity
-          style={{ zIndex: 1 }}
-          onPress={() => {
-            // navigation.replace('AddScreen',{
-            //   productId:1,
-            //   name: "name",
-            // });
+          <View style={styles.fullScreenContainer}>
+           <View style={styles.header}>
+              <View style={styles.headerRow}>
+            <TouchableOpacity onPress={() => {
              navigation.goBack();
-          }}
-        >
-          <View style={styles.backIconRow}>
-            <Image
-              source={require('../../../assets/images/back.png')}
-              style={styles.h24_w24}
-            />
-          </View>
-        </TouchableOpacity>
-
-        <Text allowFontScaling={false} style={styles.previewThumbnail}>Preview Thumbnail</Text>
-
-        <View style={{ height: '100%' }}>
+          }}>          
+            <View style={styles.backIconRow}>
+              <Image
+                 source={require('../../../assets/images/back.png')}
+                  style={{ height: 24, width: 24 }}/>
+               </View>
+             </TouchableOpacity>
+           <Text allowFontScaling={false} style={styles.unizyText}>Preview Thumbnail</Text>
+             <View style={{ width: 48 }} />
+             </View>
+           </View>
          
+         <ScrollView
+            style={{ flex: 1 }}
+              contentContainerStyle={{ flexGrow: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingBottom: 180, }}
+              showsVerticalScrollIndicator={false} >
          
-  <View style={styles.productCarddisplay}>
-  {storedForm ? (
-    <>
-      {categoryId === 2 || categoryId === 5 ? (
-        storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
-          // 🔹 CASE 1A: Category 2 or 5, Featured = true
-          <>
-            <Text
-              allowFontScaling={false}
-              style={[styles.newtext, { paddingBottom: 6 }]}
-            >
-              Featured Listing Preview
-            </Text>
-            <NewTutitionCard
-             // tag={uniname}
-             tag='London School of Economics and Political Science'
-              title={titleValue}
-              infoTitle={fullName}
-              inforTitlePrice={`£${commissionPrice}`}
-              rating={storedForm[12]?.value || '4.5'}
-              productImage={{ uri: profile }}
-              isBookmarked={false}
-            />
-
-            <Text
-              allowFontScaling={false}
-              style={[styles.newtext1, { paddingBottom: 6 }]}
-            >
-              Regular Listing Preview
-            </Text>
-            <SeperateTutionCard
-                //tag={uniname}
-                tag='London School of Economics and Political Science'
-                infoTitle={titleValue}
-                rating={storedForm[12]?.value || '4.5'}
-                inforTitlePrice={`£${commissionPrice}`}
-                productImage={{ uri: profile }}
-                bookmark={false}
-                showInitials={!profile || profile === null || profile.trim() === ''}
-              isfeature={true} initialsName={initials}            />
-          </>
-        ) : (
-          // 🔹 CASE 1B: Category 2 or 5, Featured = false
-          <SeperateTutionCard
-               // tag={uniname}
-               tag='London School of Economics and Political Science'
-                infoTitle={titleValue}
-                rating={storedForm[12]?.value || '4.5'}
-                inforTitlePrice={`£${commissionPrice}`}
-                productImage={profile ? { uri: profile } : undefined}
-                bookmark={false}
-                showInitials={!profile || profile === null || profile.trim() === ''}
-                isfeature={false} initialsName={initials} 
-          />
-        )
-      ) : storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
-        // 🔹 CASE 2A: Other categories, Featured = true
-        <>
-          <Text
-            allowFontScaling={false}
-            style={[styles.newtext, { paddingBottom: 6 }]}
-          >
-            Featured Listing Preview
-          </Text>
-          <PreviewCard
-           tag={uniname}
-            infoTitle={titleValue}
-            inforTitlePrice={`£${commissionPrice}`}
-            rating={storedForm[12]?.value || '4.5'}
-            productImage={
-              imageArray.length > 0
-                ? { uri: imageArray[0].uri }
-                : require('../../../assets/images/drone.png')
-            }
-          />
-          <Text
-            allowFontScaling={false}
-            style={[styles.newtext1, { paddingBottom: 6 }]}
-          >
-            Regular Listing Preview
-          </Text>
-          <NewFeatureCard
-            tag={uniname}
-            infoTitle={titleValue}
-            inforTitlePrice={`£${commissionPrice}`}
-            rating={storedForm[12]?.value || '4.5'}
-            productImage={
-              imageArray.length > 0
-                ? { uri: imageArray[0].uri }
-                : require('../../../assets/images/drone.png')
-            }
-          />
-        </>
-      ) : (
-        // 🔹 CASE 2B: Other categories, Featured = false
-        <NewProductCard
-          tag={uniname}
-          infoTitle={titleValue}
-          inforTitlePrice={`£${commissionPrice}`}
-          rating={storedForm[12]?.value || '4.5'}
-          productImage={
-            imageArray.length > 0
-              ? { uri: imageArray[0].uri }
-              : require('../../../assets/images/drone.png')
-          }
-        />
-      )}
-    </>
-  ) : (
-    <Text
-      allowFontScaling={false}
-      style={{ color: '#fff', textAlign: 'center' }}
-    >
-      Loading...
-    </Text>
-  )}
-</View>
-
-
-
-
-
-           <View
-                  style={styles.textbg}
-                >
-                  <Image
-                    source={require('../../../assets/images/info_icon.png')} 
-                    style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
-                  />
-          
-                  {/* Texts */}
-                  {/* <View style={{ flex: 1 }}>
-                    <Text allowFontScaling={false} style={styles.importantText1}>Important:</Text>
-                    <Text allowFontScaling={false} style={styles.importantText}>
-                       A {categoryDetails?.commission ?? '0'}% commission or a maximum of £{categoryDetails?.max_cappund ?? '0'}, whichever is lower, will be added to the entered price.
+          <View style={styles.productCarddisplay}>
+          {storedForm ? (
+            <>
+              {categoryId === 2 || categoryId === 5 ? (
+                storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
+                  // 🔹 CASE 1A: Category 2 or 5, Featured = true
+                  <>
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.newtext}
+                    >
+                      Featured Listing Preview
                     </Text>
-                  </View> */}
+                    <NewTutitionCard
+                    // tag={uniname}
+                    tag='London School of Economics and Political Science'
+                      title={titleValue}
+                      infoTitle={fullName}
+                      inforTitlePrice={`£${commissionPrice}`}
+                      rating={storedForm[12]?.value || '4.5'}
+                      productImage={{ uri: profile }}
+                      isBookmarked={false}
+                    />
 
-                  <View style={{ flex: 1 }}>
-                                  <Text allowFontScaling={false} style={styles.importantText1}>Important:</Text>
-                                <Text allowFontScaling={false} style={styles.importantText}>
-                                  A
-                                  <Text allowFontScaling={false} style={styles.importantText1}> {categoryDetails?.commission ?? '0'}%</Text> commission or a maximum of
-                                  <Text allowFontScaling={false} style={styles.importantText1}> £{categoryDetails?.max_cappund ?? '0'}</Text> , whichever is lower, will be added to the entered price.
-                                </Text>
-                                </View>
-
-
-                </View>
-
-
-          <TouchableOpacity
-            style={styles.nextButton}
-            onPress={() => {
-              navigation.navigate('PreviewDetailed');
-            }}
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.newtext1}
+                    >
+                      Regular Listing Preview
+                    </Text>
+                    <SeperateTutionCard
+                        //tag={uniname}
+                        tag='London School of Economics and Political Science'
+                        infoTitle={titleValue}
+                        rating={storedForm[12]?.value || '4.5'}
+                        inforTitlePrice={`£${commissionPrice}`}
+                        productImage={{ uri: profile }}
+                        bookmark={false}
+                        showInitials={!profile || profile === null || profile.trim() === ''}
+                      isfeature={true} initialsName={initials}            />
+                  </>
+                ) : (
+                  // 🔹 CASE 1B: Category 2 or 5, Featured = false
+                  <SeperateTutionCard
+                      // tag={uniname}
+                      tag='London School of Economics and Political Science'
+                        infoTitle={titleValue}
+                        rating={storedForm[12]?.value || '4.5'}
+                        inforTitlePrice={`£${commissionPrice}`}
+                        productImage={profile ? { uri: profile } : undefined}
+                        bookmark={false}
+                        showInitials={!profile || profile === null || profile.trim() === ''}
+                        isfeature={false} initialsName={initials} 
+                  />
+                )
+              ) : storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
+                // 🔹 CASE 2A: Other categories, Featured = true
+                <>
+                  <Text
+                    allowFontScaling={false}
+                    style={[styles.newtext]}
+                  >
+                    Featured Listing Preview
+                  </Text>
+                  <PreviewCard
+                  tag={uniname}
+                    infoTitle={titleValue}
+                    inforTitlePrice={`£${commissionPrice}`}
+                    rating={storedForm[12]?.value || '4.5'}
+                    productImage={
+                      imageArray.length > 0
+                        ? { uri: imageArray[0].uri }
+                        : require('../../../assets/images/drone.png')
+                    }
+                  />
+                  <Text
+                    allowFontScaling={false}
+                    style={[styles.newtext1, {}]}
+                  >
+                    Regular Listing Preview
+                  </Text>
+                  <NewFeatureCard
+                    tag={uniname}
+                    infoTitle={titleValue}
+                    inforTitlePrice={`£${commissionPrice}`}
+                    rating={storedForm[12]?.value || '4.5'}
+                    productImage={
+                      imageArray.length > 0
+                        ? { uri: imageArray[0].uri }
+                        : require('../../../assets/images/drone.png')
+                    }
+                  />
+                </>
+              ) : (
+                <NewProductCard
+                  tag={uniname}
+                  infoTitle={titleValue}
+                  inforTitlePrice={`£${commissionPrice}`}
+                  rating={storedForm[12]?.value || '4.5'}
+                  productImage={
+                    imageArray.length > 0
+                      ? { uri: imageArray[0].uri }
+                      : require('../../../assets/images/drone.png')
+                  }
+                />
+              )}
+            </>
+          ) : (
+            <Text
+              allowFontScaling={false}
+              style={{ color: '#fff', textAlign: 'center' }}
             >
-            <Text allowFontScaling={false} style={styles.nextText}>Next</Text>
-          </TouchableOpacity>
-          {/* <Button
-            onPress={() => {
-            navigation.navigate('PreviewDetailed');
-          }} title='Next'/> */}
+              Loading...
+            </Text>
+          )}
         </View>
+        </ScrollView>
+        
+            <View style={styles.bottomFixed}>
+
+            <View style={styles.textbg}>
+               {/* <BlurView 
+                      blurType="light"
+                      blurAmount={100}
+                  
+                      style={StyleSheet.absoluteFillObject} />
+                      <LinearGradient
+                        colors={[
+                          'rgba(0, 1, 102, 0.20)',   // center strong blue tint
+                          'rgba(0, 1, 102, 0.024)'  // outer faint blue tint
+                        ]}
+                      
+                        style={StyleSheet.absoluteFillObject}
+                        useAngle={false} // radial
+                      /> */}
+              
+              <Image
+                source={require('../../../assets/images/info_icon.png')}
+                style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+              />
+              <View style={{ flex: 1 }}>
+                <Text allowFontScaling={false} style={styles.importantText1}>
+                  Important:
+                </Text>
+                <Text allowFontScaling={false} style={styles.importantText}>
+                  A
+                  <Text allowFontScaling={false} style={styles.importantText1}>
+                    {' '}
+                    {categoryDetails?.commission ?? '0'}%
+                  </Text>{' '}
+                  commission or a maximum of
+                  <Text allowFontScaling={false} style={styles.importantText1}>
+                    {' '}
+                    £{categoryDetails?.max_cappund ?? '0'}
+                  </Text>
+                  , whichever is lower, will be added to the entered price.
+                </Text>
+              </View>
+            </View>
+            
+        <Button
+          title="Next"
+          onPress={() => navigation.navigate('PreviewDetailed')}
+        />
       </View>
+    </View>
       <NewCustomToastContainer/>
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+
+bottomFixed: {
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  right: 0,
+
+  paddingVertical: 10,
+  //paddingHorizontal: 16,
+  //borderTopWidth: 0.5,
+ // borderTopColor: '#444',
+},
+ header: {
+    paddingTop: Platform.OS === 'ios' ? 50 : 50,
+    paddingBottom: 12,
+    paddingHorizontal: 16,
+  },
+   fullScreenContainer: {
+    flex: 1,
+    //marginTop: 30,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backIconRow: {
+    padding: 12,
+    borderRadius: 40,
+
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:
+      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+    //boxShadow: 'rgba(255, 255, 255, 0.12)  inset -1px 0px 5px 1px inset ',
+
+   boxShadow:
+      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    height: 48,
+    width: 48,
+  },
+ unizyText: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    flex: 1,
+    textAlign: 'center',
+    fontWeight: '600',
+    fontFamily: 'Urbanist-SemiBold',
+  },
+
+
   newtext:{
      color: '#fff',
     fontSize: 16,
-    margin: 6,
+    marginHorizontal: 6,
+    marginVertical:16,
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600,
   },
  newtext1:{
      color: '#fff',
     fontSize: 16,
-    marginTop: 12,
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600,
+    marginHorizontal: 6,
+    marginTop:24,
+    marginBottom:16
+
   },
  textbg:{
+    overflow:'hidden',
+
+  alignContent:'center',
+  alignSelf:'center',
+  width:'90%',
  flexDirection: 'row',
           alignItems: 'flex-start',
-          backgroundColor:
-            'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
-          boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-          padding: 6,
-          borderWidth:0.5,
-            borderEndEndRadius: 12,
-            borderStartEndRadius: 12,
-            borderTopLeftRadius: 12,
-            borderTopRightRadius: 12,
-            borderBottomStartRadius: 12,
-            borderBlockStartColor: '#ffffff31',
-            borderBlockColor: '#ffffff31',
-            borderTopColor: '#ffffff31',
-            borderBottomColor: '#ffffff31',
-            borderLeftColor: '#ffffff31',
-            borderRightColor: '#ffffff31',
-            marginBottom:2
+backgroundColor:'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
+  boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+  padding: 6,
+  borderWidth:0.5,
+  borderEndEndRadius: 12,
+  borderStartEndRadius: 12,
+  borderTopLeftRadius: 12,
+  borderTopRightRadius: 12,
+  borderBottomStartRadius: 12,
+  borderBlockStartColor: '#ffffff31',
+  borderBlockColor: '#ffffff31',
+  borderTopColor: '#ffffff31',
+  borderBottomColor: '#ffffff31',
+  borderLeftColor: '#ffffff31',
+  borderRightColor: '#ffffff31',
+  marginBottom:80,
+
+  //  backgroundColor:
+  //     'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+  //   boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18)',
             
   },
   importantText: {
@@ -470,28 +534,12 @@ const styles = StyleSheet.create({
   },
   productCarddisplay: {
     display: 'flex',
-    height: '78%',
+    height: '100%',
     alignContent: 'center',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  backIconRow: {
-    padding: 12,
-    borderRadius: 40,
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
-    position: 'absolute',
-    top: -10,
-    left: 0,
-    right: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+ 
   previewThumbnail: {
     color: '#FFF',
     textAlign: 'center',
