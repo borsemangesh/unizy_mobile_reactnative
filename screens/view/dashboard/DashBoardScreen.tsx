@@ -116,7 +116,7 @@ type TransactionScreenProps = {
 };
 
 const SearchScreenContent = ({navigation}: TransactionScreenProps) => (
-  <View style={styles.tabContent}>
+  <View >
     <TransactionHistoryScreen navigation ={navigation}/>
   </View>
 );
@@ -124,32 +124,74 @@ type AddScreenContentProps = {
   navigation: any;
 };
 
+// const AddScreenContent: React.FC<
+//   AddScreenContentProps & { products: any[] }
+// > = ({ navigation, products }) => (
+//   <View style={styles.tabContent3}>
+//     <Text allowFontScaling={false} style={[styles.tabContentText3,{paddingBottom:(Platform.OS === 'ios'? 0 : 16)}]}>List Product</Text>
+//     <AnimatedSlideUp>
+//       <FlatList
+//         data={products}
+//         keyExtractor={item => item.id.toString()}
+//         renderItem={({ item }) => (
+//           <TouchableOpacity
+//             onPress={() => {
+//               if(Platform.OS === 'ios') {
+//               navigation.replace('AddScreen', {
+//                 productId: item.id,
+//                 productName: item.name,
+//               })
+//             } else {
+//               navigation.navigate('AddScreen', {productId: item.id, productName: item.name});
+//             }
+//             }}
+//           >
+//             <View style={styles.card}>
+//               <View style={styles.iconBackground}>
+//                 <Image source={item.icon} style={styles.cardIcon1} />
+//               </View>
+
+//               <View style={styles.cardTextContainer}>
+//                 <Text allowFontScaling={false} style={styles.cardTitle}>{item.name}</Text>
+//                 <Text allowFontScaling={false} style={styles.cardDescription}>{item.description}</Text>
+//               </View>
+//             </View>
+//           </TouchableOpacity>
+//         )}
+//       />
+//     </AnimatedSlideUp>
+//   </View>
+// );
 const AddScreenContent: React.FC<
   AddScreenContentProps & { products: any[] }
 > = ({ navigation, products }) => (
   <View style={styles.tabContent3}>
-    <Text allowFontScaling={false} style={[styles.tabContentText3,{paddingBottom:(Platform.OS === 'ios'? 0 : 16)}]}>List Product</Text>
+    <Text allowFontScaling={false} style={[styles.tabContentText3]}>List Product</Text>
     <AnimatedSlideUp>
       <FlatList
         data={products}
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity
+          <TouchableOpacity       
             onPress={() => {
-              if(Platform.OS === 'ios') {
               navigation.replace('AddScreen', {
                 productId: item.id,
                 productName: item.name,
-              })
-            } else {
-              navigation.navigate('AddScreen', {productId: item.id, productName: item.name});
-            }
+              },{ animation: 'none' });
             }}
           >
             <View style={styles.card}>
-              <View style={styles.iconBackground}>
+              {/* <View style={styles.iconBackground}>
                 <Image source={item.icon} style={styles.cardIcon1} />
-              </View>
+              </View> */}
+
+               <ImageBackground
+                source={require('../../../assets/images/cardbg.png')} // 👈 your background image
+                style={styles.iconBackground}> 
+
+                <Image source={item.icon} style={styles.cardIcon1} />
+               
+               </ImageBackground> 
 
               <View style={styles.cardTextContainer}>
                 <Text allowFontScaling={false} style={styles.cardTitle}>{item.name}</Text>
@@ -158,6 +200,8 @@ const AddScreenContent: React.FC<
             </View>
           </TouchableOpacity>
         )}
+        ItemSeparatorComponent={() => <View style={{ height: 16 }} />} // 👈 adds 16px space
+        contentContainerStyle={{ marginTop:20 }} // optional top & bottom padding
       />
     </AnimatedSlideUp>
   </View>
@@ -179,7 +223,7 @@ type ProfileScreenContentProps = {
   navigation: any;
 };
 const ProfileScreenContent = ({ navigation }: ProfileScreenContentProps) => (
-  <View style={styles.tabContent}>
+  <View style={{flex: 1}}>
     <ProfileCard navigation={navigation} />
   </View>
 );
@@ -1073,7 +1117,7 @@ return (
           <View
             style={[
               styles.header,
-              { paddingTop: Platform.OS === 'ios' ? '12%' : 40 },
+              { paddingTop: Platform.OS === 'ios' ? '13.7%' : 40 },
             ]}
           >
             <Animated.View
@@ -1150,7 +1194,7 @@ return (
             contentContainerStyle={{ paddingBottom: 10 }} 
             showsVerticalScrollIndicator={false}
           >
-            <View style={{ flex: 1,paddingTop: Platform.OS === 'ios' ? 4 : 0 }}>{renderActiveTabContent()}</View>
+            <View style={{ flex: 1,paddingTop: Platform.OS === 'ios' ? 0 : 0 }}>{renderActiveTabContent()}</View>
           </ScrollView>
 
         </KeyboardAvoidingView>
@@ -1292,7 +1336,8 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     fontSize: 17,
     color: '#fff',
-    width: '80%',
+    width: '90%',
+    height: 40,
   },
 
   bottomTabContainer: {
@@ -1515,8 +1560,8 @@ const styles = StyleSheet.create({
 
   tabContent: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
   tabContentText: {
     color: '#fff',
@@ -1527,8 +1572,9 @@ const styles = StyleSheet.create({
 
   tabContent3: {
     flex: 1,
-    padding: 20,
-    paddingTop: Platform.OS === 'ios' ? '11%' : 50,
+    padding: (Platform.OS === 'ios' ? 16 :20),
+    paddingTop: Platform.OS === 'ios' ? '15.2%'  : 50,
+
   },
   tabContentText3: {
     color: '#fff',
@@ -1544,22 +1590,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     //backgroundColor: '#ffffff20', // semi-transparent for dark bg
     borderRadius: 24,
-    padding: 12,
-    marginTop: 10,
-    marginBottom: 10,
+    paddingHorizontal: 16,
+    paddingVertical:16,
     alignItems: 'center',
+    justifyContent:'center',
+    flex:1,
 
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
+    //borderWidth: 0.4,
+   // borderColor: '#ffffff2c',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
-    // boxShadow: 'rgba(255, 255, 255, 0.02) -1px 10px 5px 10px',
+    //boxShadow: 'rgba(255, 255, 255, 0.02) -1px 10px 5px 10px',
   },
   cardIcon1: {
-    width: 32.5,
-    height: 32.5,
+    width: 36,
+    height: 36,
     //marginRight: 12,
-    resizeMode: 'contain',
+    resizeMode: 'center',
   },
   cardTextContainer: {
     flex: 1,
@@ -1580,17 +1627,17 @@ const styles = StyleSheet.create({
   iconBackground: {
     width: 75,
     height: 62,
-    borderRadius: 16, // adjust for rounded square / circle
+    borderRadius: 16, 
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
     paddingVertical: 8,
-
-    //borderWidth: 0.4,
+    borderWidth: 0.4,
     borderColor: 'transparent',
+    overflow:'hidden',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.15) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.51)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.51)inset 0.99px 0.88px 0.90px 0px',
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.25)',
   },
 
   emptyWrapper: {

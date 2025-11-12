@@ -27,7 +27,7 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({ value, onValueChange, disab
   const translateX = animValue.interpolate({
     inputRange: [0, 1],
     //outputRange: [2, 32], 
-     outputRange: [2, 52 - 26 - 2], // left padding to right padding
+     outputRange: [0, 52 - 26 - 4], // left padding to right padding
 
   });
 

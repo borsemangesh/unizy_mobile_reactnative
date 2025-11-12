@@ -2726,6 +2726,7 @@ const dataArray = nonImageFields
                     try {
                       await AsyncStorage.removeItem('formData1');
                       await AsyncStorage.removeItem('selectedProductId');
+                      await AsyncStorage.removeItem('isfeatured');
                       console.log('✅ formData cleared from AsyncStorage');
 
                       // navigation.dispatch(

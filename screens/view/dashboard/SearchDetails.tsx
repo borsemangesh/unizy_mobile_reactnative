@@ -451,34 +451,35 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
             contentContainerStyle={[
               styles.scrollContainer,
               {
-                paddingBottom:(Platform.OS === 'ios' ?screenHeight * 0.1 + -40:  screenHeight * 0.1 + insets.bottom),
-                marginTop:16 // 10% of screen + safe area
+                paddingBottom:(Platform.OS === 'ios' ?screenHeight * 0.1:  screenHeight * 0.1 + insets.bottom),
+                marginTop:(Platform.OS === 'ios' ? 34 : 16) // 10% of screen + safe area
               },
             ]}
             scrollEventThrottle={16}
           >
             {renderImage()}
 
-          <View style={{ flex: 1, padding: 16 }}>
+          <View style={{ flex: 1, gap: 12,paddingHorizontal: 16 ,marginTop: 16 }}>
             <View style={styles.card}>
-              <View style={{ gap: 8 }}>
+              
                 {detail && (
                   <>
+                  <View style={{gap:10}}>
                     <Text allowFontScaling={false} style={styles.QuaddText}>
                       {detail.title}
                     </Text>
                     <Text allowFontScaling={false} style={styles.priceText}>
                       £{Number(detail.price).toFixed(2)}
                     </Text>
+                    </View>
                   </>
                 )}
-              </View>
               <View
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'flex-start',
-                  gap: 2,
+                  // gap: 2,
                   alignSelf: 'stretch',
                 }}
               >
@@ -622,7 +623,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
                 <View style={{ flexDirection: 'row' }}>
                   <View
-                    style={styles.bottombutton}>
+                    style={[styles.bottombutton,{width: 69}]}>
                     <TouchableOpacity
                       disabled={!detail?.ispurchased}
                       onPress={() => {
@@ -633,11 +634,11 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                           });
                         }
                       }}
-                      style={{ flexDirection: 'row', alignItems: 'center' , gap: 6,}}
+                      style={{ flexDirection: 'row', alignItems: 'center' ,justifyContent: 'center',gap: 0}}
                     >
                       <Image
                         source={require('../../../assets/images/staricon.png')}
-                        style={{ height: 16, width: 16 }}
+                        style={{ height: 16, width: 16, tintColor: 'rgba(220, 221, 250, 0.72)', marginRight: 6 }}
                       />
 
                       <Text
@@ -650,7 +651,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
                   <View style={[styles.chatcard, { marginLeft: 8 }]}>
                     <TouchableOpacity
-                      style={{ flexDirection: 'row', alignItems: 'center' }}
+                      style={{ flexDirection: 'row', alignItems: 'center',width: '100%',height: '100%' ,justifyContent: 'center'}}
                        onPress={() => {
                       if (detail?.ispurchased) {
                         navigation.navigate("MessagesIndividualScreen");
@@ -891,10 +892,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
     flex:1,
-    paddingHorizontal: 16,
-    paddingVertical:12,
-    height:'auto'
-    //width: '80%',
+    // paddingHorizontal: 16,
+    // paddingVertical:12,
+    height:'100%',
+    width: '80%',
   },
 
   bottombutton:{
@@ -1062,14 +1063,13 @@ inactiveStepCircle: {
   },
 
   header: {
-    height: 70,
-    paddingTop: (Platform.OS === 'ios' ? 40: 40),
-    //paddingBottom: 12,
+
+    paddingTop: (Platform.OS === 'ios' ? '15.2%': 40),
+
     paddingHorizontal: 16,
     justifyContent: 'center',
     position: 'absolute',
-   top: Platform.OS === 'ios' ? 10 : 10, 
-  // bottom:Platform.OS === 'ios' ? 20 : 10,
+   top:  Platform.OS === 'ios' ? 0 : 10, 
     left: 0,
     right: 0,
     zIndex: 10,
@@ -1081,7 +1081,7 @@ inactiveStepCircle: {
   },
   fullScreenContainer: {
     flex: 1,
-    marginTop: Platform.OS === 'ios' ? 25 : 0,
+    // marginTop: Platform.OS === 'ios' ? 25 : 0,
   },
 
   loginText: {
@@ -1201,7 +1201,7 @@ inactiveStepCircle: {
     bottom: 10,
   },
   scrollContainer: {
-    paddingBottom: 280,
+    // paddingBottom: 90,
     paddingTop: 90,
     // paddingHorizontal: 20,
   },
@@ -1400,12 +1400,10 @@ inactiveStepCircle: {
 
   card: {
     flexDirection: 'column',
-    marginBottom: 6,
     padding: 16,
     borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     gap: 12,
-    marginTop:6
   },
   h24_w24: {
     width: 24,

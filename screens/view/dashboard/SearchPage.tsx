@@ -423,7 +423,7 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
         </View>
 
         {/* Search Bar */}
-        <View style={{ flexDirection: 'row', paddingHorizontal: 16 ,marginVertical:8}}>
+        <View style={{ flexDirection: 'row',paddingHorizontal: 16,gap: 8}}>
           <View style={styles.search_container}>
             <Image source={searchIcon} style={styles.searchIcon} />
            <TextInput
@@ -447,7 +447,6 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
                 }}
                 />
           </View>
-          <View>
             <TouchableOpacity
               onPress={() => {
                 clickfilter();
@@ -457,7 +456,6 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
                 <Image source={mylistings} style={styles.iconSmall} />
               </View>
             </TouchableOpacity>
-          </View>
         </View>
 
       <FlatList
@@ -467,15 +465,11 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
         columnWrapperStyle={styles.row1}
         contentContainerStyle={[
             styles.listContainer,{ paddingBottom: SCREEN_HEIGHT * 0.05 },
-            featurelist?.length === 0 && { alignContent:'center',alignSelf:'center' ,width:'90%',height:'100%'}
+            featurelist?.length === 0 && { alignContent:'center',alignSelf:'center' ,width:'100%',height:'100%'}
           ]}
-        //contentContainerStyle={styles.listContainer}
+
         renderItem={renderItem}
-        // onEndReached={() => {
-        //     if (search.trim().length > 0) {
-        //     displayListOfProduct(page, search);
-        //     }
-        // }}
+      
         onEndReached={() => {
         if (isLoading || !hasMore) return;
 
@@ -534,7 +528,8 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      width:'100%'
+      width:'100%',
+      paddingHorizontal:16
     },
 
  
@@ -564,8 +559,8 @@ const styles = StyleSheet.create({
     fontWeight:600
   },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 25,
-    paddingBottom: 12,
+    paddingTop: Platform.OS === 'ios' ? '15.2%'  : 50,
+    // paddingBottom: 12,
     paddingHorizontal: 16,
   },
   headerRow: {
@@ -595,20 +590,46 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   search_container: {
+    // flexDirection: 'row',
+    // alignItems: 'center',
+    // borderRadius: 40,
+    // minHeight:48,
+    // boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+    // backgroundColor:
+    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    // width: '84%',
+    // marginEnd: 8,
+
+    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 40,
-    minHeight:48,
+    alignSelf: 'stretch',
+    borderRadius: 50,
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    paddingVertical: 4,
+    padding: (Platform.OS === 'ios'? 12:0),
+    marginTop:(Platform.OS === 'ios' ? 16:20),
+    height: 48,
+    gap: 8,
     width: '84%',
-    marginEnd: 8,
   },
-  searchIcon: { margin: 10, height: 24, width: 24 },
+  searchIcon: { 
+    // margin: 10, 
+    // height: 24, 
+    // width: 24 
+  
+    padding: (Platform.OS === 'ios'? 0:5),
+    margin: (Platform.OS === 'ios'? 0:10),
+    height: 24,
+    width: 24,
+  },
   searchBar: {
     fontSize: 17,
     color: '#fff',
+    fontFamily: 'Urbanist-Medium',
+    fontWeight: 500,
   },
   listContainer: {
     // marginLeft: 10,
@@ -617,7 +638,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     marginRight: 5,
     paddingTop: 10,
-    gap:16
+    // gap:16
 
   },
   row1: {
@@ -663,6 +684,7 @@ const styles = StyleSheet.create({
     borderLeftColor: '#ffffff5d',
     borderRightColor: '#ffffff36',
     borderWidth: 0.3,
+    marginTop: 18,
   },
   iconSmall: {
     width: 24,

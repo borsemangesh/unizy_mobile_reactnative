@@ -941,12 +941,18 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
         </View>
 
     <View>
-     <ScrollView
+     {/* <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         style={{ marginVertical: 6 ,}}
         contentContainerStyle={{ paddingHorizontal: 16,paddingVertical:10, gap: 4,  }}
-      >
+      > */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+       
+        contentContainerStyle={{ paddingVertical: 12, paddingHorizontal: 16,gap: 4  }}
+            >
         {categories.map((cat, index) => {
           const isSelected = selectedCategory.name === cat.name;
           return (
@@ -1109,10 +1115,9 @@ tabcard: {
       height: '100%' },
   fullScreenContainer: {
      flex: 1,
-     marginTop: 10
      },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 40 : 30,
+    paddingTop: Platform.OS === 'ios' ? '15.2%'  : 50,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },

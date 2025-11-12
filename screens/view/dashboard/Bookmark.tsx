@@ -910,9 +910,8 @@ const handleBookmarkPress = async (productId: number) => {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        style={{ marginVertical: 6 ,}}
        
-        contentContainerStyle={{ paddingHorizontal: 16,paddingVertical:10, gap: 4,  }}
+        contentContainerStyle={{ paddingVertical: 12, paddingHorizontal: 16,gap: 4  }}
             >
           
        {categories.map((cat, index) => {
@@ -946,7 +945,7 @@ const handleBookmarkPress = async (productId: number) => {
           scrollEnabled={filteredFeatures?.length > 0} 
           contentContainerStyle={[
             styles.listContainer,{ paddingBottom: SCREEN_HEIGHT * 0.05 },
-            filteredFeatures?.length === 0 && { alignContent:'center',alignSelf:'center' ,width:'90%',height:'100%'}
+            filteredFeatures?.length === 0 && { alignContent:'center',alignSelf:'center' ,width:'100%',height:'100%'}
           ]}
           renderItem={renderItem}
            ListFooterComponent={
@@ -984,7 +983,9 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      width:'100%'
+      width:'100%',
+      paddingHorizontal: 14,
+      marginTop: -5
     },
 
  
@@ -1074,7 +1075,7 @@ const styles = StyleSheet.create({
      flex: 1
      },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 50,
+    paddingTop: Platform.OS === 'ios' ? '15.2%'  : 50,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },
@@ -1125,8 +1126,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     marginRight: 5,
     paddingTop: 10,
-   // paddingBottom:10
-      gap:16
+      gap:16,
  
   },
   row1: {

@@ -309,9 +309,11 @@ export default function TransactionHistoryScreen(
     }
   };
 
+
+  const [isSelected, setIsSelected] = useState(false);
   
   return (
-    <View style={{ width: '100%', paddingHorizontal: 16 }}>
+    <View style={{ flex: 1, paddingHorizontal: 16 }}>
       <View style={[styles.header]}>
         <View style={styles.headerRow}>
           <Text allowFontScaling={false} style={styles.unizyText}>
@@ -331,35 +333,73 @@ export default function TransactionHistoryScreen(
             ]}
           />
         </View>
+        {tabs.map(({ key }, index) => (
+          <React.Fragment key={key}>
+            <TouchableOpacity
+              style={[
+                styles.tabItem,
+                { width: tabWidth, alignItems: 'center' },
+              ]}
+              onPress={() => {
+                setActiveTab(key as any);
+                setSelectedTab(key);
+                console.log('Key: ', key);
+              }}
+            >
+              <View style={styles.iconWrapper}>
+                <Text
+                  allowFontScaling={false}
+                  style={{
+                    fontSize: 14,
+                    fontFamily: 'Urbanist-SemiBold',
+                    color:
+                      key === selectedTab
+                        ? '#FFFFFF'
+                        : 'rgba(158, 229, 255, 0.91)',
+                    lineHeight: 18,
+                    letterSpacing: 0.25,
+                    textAlign: 'center',
+                  }}
+                >
+                  {key}
+                </Text>
+              </View>
+            </TouchableOpacity>
 
-        {tabs.map(({ key }) => (
-          <TouchableOpacity
-            key={key}
-            style={[styles.tabItem, { width: tabWidth }]}
-            onPress={() => {
-              setActiveTab(key as any);
-              setSelectedTab(key);
-            }}
-          >
-            <View style={styles.iconWrapper}>
-              <Text
-                allowFontScaling={false}
-                style={{
-                  fontSize: 14,
-                  fontFamily: 'Urbanist-SemiBold',
-                  color:
-                    key === selectedTab
-                      ? '#FFFFFF'
-                      : 'rgba(158, 229, 255, 0.91)',
-                  lineHeight: 18,
-                  letterSpacing: 0.25,
-                  textAlign: 'center',
-                }}
-              >
-                {key}
-              </Text>
-            </View>
-          </TouchableOpacity>
+            {/* Divider after Purchases (only show if Purchases is NOT selected) */}
+            {key === 'Purchases' &&
+              index !== tabs.length - 1 &&
+              selectedTab !== 'Purchases' &&
+              selectedTab !== 'Sales' && (
+                <View
+                  style={{
+                    position: 'absolute',
+                    left: '34%',
+                    height: '60%',
+                    width: 1,
+                    backgroundColor: 'rgba(158, 229, 255, 0.3)',
+                    marginHorizontal: 4,
+                  }}
+                />
+              )}
+
+            {/* Divider after Sales */}
+            {key === 'Sales' &&
+              index !== tabs.length - 1 &&
+              selectedTab !== 'Sales' &&
+              selectedTab !== 'Charges' && (
+                <View
+                  style={{
+                    position: 'absolute',
+                    right: '34%',
+                    height: '60%',
+                    width: 1,
+                    backgroundColor: 'rgba(158, 229, 255, 0.3)',
+                    marginHorizontal: 4,
+                  }}
+                />
+              )}
+          </React.Fragment>
         ))}
       </View>
 
@@ -368,9 +408,7 @@ export default function TransactionHistoryScreen(
         showsVerticalScrollIndicator={false}
       >
         {transactions.length === 0 ? (
-          // <Text style={{ textAlign: 'center', marginTop: 20, color: '#aaa' }}>
-          //   No transactions found.
-          // </Text>
+         
 
           <View style={styles.emptyWrapper}>
             <View style={styles.emptyContainer}>
@@ -380,7 +418,7 @@ export default function TransactionHistoryScreen(
                 resizeMode="contain"
               />
               <Text allowFontScaling={false} style={styles.emptyText}>
-              No transactions found
+                No transactions found
               </Text>
             </View>
           </View>
@@ -410,12 +448,14 @@ export default function TransactionHistoryScreen(
                             resizeMode="cover"
                           />
                         </View>
-                        <View style={{gap: 4}}>
+                        <View style={{ gap: 4 }}>
                           <Text
                             allowFontScaling={false}
                             style={styles.itemTitle}
                           >
-                            {item.title.length > 24 ? `${item.title.substring(0, 24)}...` : item.title}
+                            {item.title.length > 24
+                              ? `${item.title.substring(0, 24)}...`
+                              : item.title}
                           </Text>
                           <Text allowFontScaling={false} style={styles.price}>
                             {item.price}
@@ -463,19 +503,19 @@ export default function TransactionHistoryScreen(
                   <View style={{ flexDirection: 'row', gap: 4 }}>
                     <Text style={styles.sellerText}>Purchased from</Text>
                     <View style={{ flexDirection: 'row' }}>
-                    <Text
-                      allowFontScaling={false}
-                      style={styles.sellerTextName}
-                    >
-                      {item.seller} 
-                    </Text>
-                    <Text allowFontScaling={false}
-                      style={[styles.sellerTextName,{marginLeft: 6}]}>
-                     ({item.university})
-                    </Text>
-
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.sellerTextName}
+                      >
+                        {item.seller}
+                      </Text>
+                      <Text
+                        allowFontScaling={false}
+                        style={[styles.sellerTextName, { marginLeft: 6 }]}
+                      >
+                        ({item.university})
+                      </Text>
                     </View>
-                   
                   </View>
                 </View>
               ))}
@@ -532,7 +572,7 @@ export default function TransactionHistoryScreen(
             {transactions.map((section, idx) => (
               <View key={idx} style={styles.section}>
                 <Text allowFontScaling={false} style={styles.dateText}>
-                {getFormattedDate(section.date)}
+                  {getFormattedDate(section.date)}
                 </Text>
 
                 {section.items.map((item, i) => (
@@ -560,19 +600,23 @@ export default function TransactionHistoryScreen(
                             resizeMode="cover"
                           />
                         </View>
-                        <Text style={styles.salesTitle}>{item.title.length > 24 ? `${item.title.substring(0, 24)}...` : item.title}</Text>
+                        <Text style={styles.salesTitle}>
+                          {item.title.length > 24
+                            ? `${item.title.substring(0, 24)}...`
+                            : item.title}
+                        </Text>
                       </View>
 
                       <TouchableOpacity
-                            onPress={() => {
-                              setSalesImageUrl(item.category_logo);
-                              console.log("FeatureID: ",item.featureId);
-                              setCatagoryid(item.featureId);
-                              // setFilterVisible(true);
-                              fetchSalesHistory(item.featureId);
-                              setSalesTitle(item.title);
-                            }}
-                          >
+                        onPress={() => {
+                          setSalesImageUrl(item.category_logo);
+                          console.log('FeatureID: ', item.featureId);
+                          setCatagoryid(item.featureId);
+                          // setFilterVisible(true);
+                          fetchSalesHistory(item.featureId);
+                          setSalesTitle(item.title);
+                        }}
+                      >
                         <Text
                           allowFontScaling={false}
                           style={styles.allDetails}
@@ -621,7 +665,7 @@ export default function TransactionHistoryScreen(
           transactions.map((section, idx) => (
             <View key={idx} style={styles.section}>
               <Text allowFontScaling={false} style={styles.dateText}>
-              {getFormattedDate(section.date)}
+                {getFormattedDate(section.date)}
               </Text>
               {section.items.map((item, i) => (
                 <View key={i} style={styles.chargesCard}>
@@ -652,7 +696,9 @@ export default function TransactionHistoryScreen(
                         allowFontScaling={false}
                         style={styles.chargesTitle}
                       >
-                        {item.title.length > 24 ? `${item.title.substring(0, 24)}...` : item.title}
+                        {item.title.length > 24
+                          ? `${item.title.substring(0, 24)}...`
+                          : item.title}
                       </Text>
                     </View>
                     <TouchableOpacity
@@ -692,7 +738,7 @@ export default function TransactionHistoryScreen(
         onClose={() => setFilterVisible(false)}
         SalesImageUrl={SalesImageUrl}
         salesDataResponse={salesData}
-        dropDowntitle ={salesTitle}
+        dropDowntitle={salesTitle}
       />
     </View>
   );
@@ -700,26 +746,30 @@ export default function TransactionHistoryScreen(
 
 const styles = StyleSheet.create({
   emptyWrapper: {
-    // flex: 1,
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     width:'100%',
-    paddingLeft:16,
-    paddingRight:16,
+    height: '100%',
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     width:'100%',
-    height: (Platform.OS === 'ios' ? 290 : 300),
+    height: (Platform.OS === 'ios' ? 570: 300),
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     borderWidth: 0.3,
     borderColor: 'rgba(255, 255, 255, 0.08)',
     borderRadius:24,
     overflow:'hidden',
-    minHeight:'80%',
-   marginBottom:20,
+  
+    minHeight:'100%',
+  
+  //  marginBottom:20,
+
+
+//  marginBottom:20,
   },
   emptyImage: {
     width: 50,
@@ -745,19 +795,15 @@ const styles = StyleSheet.create({
     height: 2,
     // backgroundColor: 'rgba(169, 211, 255, 0.08)',
     borderColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(135, 189, 251, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)',
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)',
   },
 
   imgcontainer: {
-    width: 44,
-    height: 44,
     borderRadius: 10,
-    // padding: 8,
-    paddingTop: 9,
-    paddingBottom: 8,
+    padding: 8,
+    paddingTop: 8,
     paddingLeft: 12,
     paddingRight: 12,
-
     alignItems: 'center',
     borderWidth: 0.4,
     borderColor: '#ffffff11',
@@ -777,22 +823,6 @@ const styles = StyleSheet.create({
     // paddingTop: 70,
     paddingHorizontal: 15,
   },
-
-  tabContainer: {
-    flexDirection: 'row',
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    borderRadius: 30,
-    // padding: 5,
-    marginBottom: 16,
-    marginTop: 15,
-    padding: 5,
-  },
-  tabButton: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 8,
-    borderRadius: 25,
-  },
   activeTabButton: {
     backgroundColor: 'rgba(255, 255, 255, 0.16)',
   
@@ -801,7 +831,7 @@ const styles = StyleSheet.create({
   },
 
   _section: {
-    marginBottom: 25,
+    marginBottom: 14,
     marginTop: 0,
   },
   get section() {
@@ -822,7 +852,6 @@ const styles = StyleSheet.create({
     gap: 12,
     padding: 12,
     borderRadius: 18,
-    width: '100%',
     marginBottom: 8,
   },
   row: {
@@ -855,10 +884,12 @@ const styles = StyleSheet.create({
   statusRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    
+    gap: 2
   },
 
   header: {
-    paddingTop: Platform.OS === 'ios' ? '16%' : 50,
+    paddingTop: Platform.OS === 'ios' ? '19.5%'  : 50,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },
@@ -879,9 +910,6 @@ const styles = StyleSheet.create({
   },
   statusBox: {
     backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    // paddingVertical: 5,
-    // paddingHorizontal: 10,
-    // borderRadius: 8,
     paddingTop: 2,
     paddingBottom: 2,
     paddingLeft: 6,
@@ -896,6 +924,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: '600',
     letterSpacing: 0,
+    lineHeight: 15.6,
   },
   codeBox: {
     backgroundColor: 'rgba(255,255,255,0.15)',
@@ -906,8 +935,6 @@ const styles = StyleSheet.create({
     paddingRight: 12,
     borderRadius: 6,
     justifyContent:'center'
-
-
   },
   codeText: {
     color: '#fff',
@@ -915,7 +942,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     letterSpacing: 4,
     fontFamily: 'Urbanist-SemiBold',
-    
   },
   sellerText: {
     color: '#FFFFFF',
@@ -994,6 +1020,7 @@ const styles = StyleSheet.create({
   //Tabls
 
   bottomTabContainer: {
+   
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1001,9 +1028,9 @@ const styles = StyleSheet.create({
     marginBottom: Platform.OS === 'ios' ? 20 : 30,
     borderRadius: 50,
     alignSelf: 'center',
-    padding: 4,
+    // padding: 4,
     borderWidth: 0.4,
-    margin: 4,
+    // margin: 4,
     borderColor: 'transparent',
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23), -0.90px -0.80px 1px 0px rgba(255, 255, 255, 0.19)inset, 0.90px 0.80px 0.90px 0px rgba(255, 255, 255, 0.19)inset',
     // backgroundColor: 'rgba(0, 23, 128, 0.49)',
@@ -1014,19 +1041,13 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
     borderBottomStartRadius: 50,
-    // borderBlockStartColor: '#ffffff2e',
-    // borderBlockColor: '#ffffff2e',
-    // borderTopColor: '#ffffff2e',
-    // borderBottomColor: '#ffffff2e',
-    // borderLeftColor: '#ffffff2e',
-    // borderRightColor: '#ffffff2e',
     boxSizing: 'border-box',
     zIndex: 100,
     marginTop: 20,
   },
   bubble: {
   
-    height: '93%',
+    height: 38,//'93%',
     backgroundColor: 'rgba(255, 255, 255, 0.16)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18)',
     position: 'absolute',
@@ -1044,8 +1065,9 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
-    marginTop: 2,
-    marginLeft: 3,
+    // marginTop: 2,
+    marginLeft: 2,
+
   },
 
   tabItem: {

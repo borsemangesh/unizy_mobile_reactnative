@@ -261,8 +261,8 @@ const styles = StyleSheet.create({
   //   overflow: 'hidden',
   // },
   header: {
-    paddingTop: Platform.OS === 'ios' ? '14%' : 50,
-    // paddingBottom: 12,
+    paddingTop: Platform.OS === 'ios' ? '17.5%'  : 50,
+    paddingBottom: 12,
     paddingHorizontal: 16,
   },
   headerRow: {

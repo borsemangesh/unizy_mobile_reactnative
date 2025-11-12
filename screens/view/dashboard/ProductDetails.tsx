@@ -451,7 +451,7 @@ const handleEndReached = useCallback(() => {
         </View>
 
         {/* Search Bar */}
-        <View style={{ flexDirection: 'row', paddingHorizontal: 16 ,marginVertical:8}}>
+        <View style={{ flexDirection: 'row',paddingHorizontal: 16,gap: 8 }}>
          
           <Pressable
             style={styles.search_container}
@@ -584,8 +584,8 @@ const styles = StyleSheet.create({
     flex: 1
    },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 50,
-    paddingBottom: 12,
+    paddingTop: Platform.OS === 'ios' ? '15.2%'  : 50,
+    // paddingBottom: 12,
     paddingHorizontal: 16,
   },
   headerRow: {
@@ -609,6 +609,7 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
     height: 48,
     width: 48,
+
   },
   unizyText: {
     color: '#FFFFFF',
@@ -618,26 +619,47 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   search_container: {
+    // flexDirection: 'row',
+    // alignItems: 'center',
+    // borderRadius: 40,
+    // boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+    // backgroundColor:
+    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    // width: '84%',
+    // minHeight:48,
+    // marginEnd: 8,
+    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 40,
+    alignSelf: 'stretch',
+    borderRadius: 50,
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    paddingVertical: 4,
+    padding: (Platform.OS === 'ios'? 12:0),
+    marginTop:(Platform.OS === 'ios' ? 16:20),
+    height: 48,
+    gap: 8,
     width: '84%',
-    minHeight:48,
-    marginEnd: 8,
   },
   searchIcon: { 
-    height: 24, width: 24,
-    marginLeft: 12,
+    
+    padding: (Platform.OS === 'ios'? 0:5),
+    margin: (Platform.OS === 'ios'? 0:10),
+    height: 24,
+    width: 24,
   },
   searchBar: {
+    // fontSize: 17,
+    // color: '#fff',
+    // width: '80%',
+    // height: '100%',
+    // marginLeft: 8,
     fontSize: 17,
     color: '#fff',
-    width: '80%',
-    height: '100%',
-    marginLeft: 8,
+    fontFamily: 'Urbanist-Medium',
+    fontWeight: 500,
   },
   listContainer: {
     marginLeft: 8,
@@ -688,6 +710,7 @@ const styles = StyleSheet.create({
     borderLeftColor: '#ffffff5d',
     borderRightColor: '#ffffff36',
     borderWidth: 0.3,
+    marginTop: 18,
   },
   iconSmall: {
     width: 24,

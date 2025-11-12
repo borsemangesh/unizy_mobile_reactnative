@@ -1832,6 +1832,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   const [photo, setPhoto] = useState<string | null>(null);
   const [newdate,setnewdate]=useState('')
   const [category,setcategory]=useState('')
+  const [featureitem,setfeatureitem] =useState(false)
   const [multiSelectModal, setMultiSelectModal] = useState<{
     visible: boolean;
     ismultilple: boolean;
@@ -2087,6 +2088,8 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
     
         if (json?.data) {
           const data = json.data;
+          setfeatureitem(data.isfeatured)
+          await AsyncStorage.setItem('isfeatured', JSON.stringify(data.isfeatured));
           setnewdate(data.created_at);
           setcategory(data.category.name)
           const initialValues: any = {};

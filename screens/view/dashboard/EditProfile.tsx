@@ -54,6 +54,7 @@ interface UserMeta {
 
 const EditProfile = ({ navigation }: EditProfileProps) => {
   const [photo, setPhoto] = useState<string | null>(null);
+  const [newphoto, setNewPhoto] = useState<string | null>(null);
   const [userMeta, setUserMeta] = useState<UserMeta>({
     firstname: '',
     lastname: '',
@@ -317,8 +318,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 if (response.didCancel) return;
                 if (response.assets && response.assets[0].uri) {
                   setPhoto(response.assets[0].uri);
-                  handleUploadImage(response.assets[0]);
+                  setNewPhoto(response.assets[0].uri);
+                  // handleUploadImage(response.assets[0]);
                 }
+            
               },
             );
           },
@@ -335,7 +338,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 if (response.didCancel) return;
                 if (response.assets && response.assets[0].uri) {
                   setPhoto(response.assets[0].uri);
-                  handleUploadImage(response.assets[0]);
+                  setNewPhoto(response.assets[0].uri);
+                  // handleUploadImage(response.assets[0]);
                 }
               },
             );
@@ -350,21 +354,74 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     );
   };
 
-  const handleUploadImage = async (image: Asset) => {
+
+
+  // const handleUploadImage = async (image: Asset) => {
+  //   try {
+  //     if(image==null){
+  //       handleSaveProfile();
+  //       return
+  //     }
+  //     const token = await AsyncStorage.getItem('userToken');
+  //     const userId = await AsyncStorage.getItem('userId');
+  //     const url = `${MAIN_URL.baseUrl}user/update-profile`;
+
+  //     const formData = new FormData();
+  //     formData.append('file', {
+  //       uri: image.uri,
+  //       type: image.type,
+  //       name: image.fileName || `profile_${userId}.jpg`,
+  //     });
+  //     // Optionally append userId or other fields if needed by backend
+  //     formData.append('userId', userId);
+
+  //     const response = await fetch(url, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'multipart/form-data',
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //       body: formData,
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (response.ok) {
+  //       // Alert.alert('Success', 'Image uploaded successfully!');
+  //       showToast('Image uploaded successfully', 'success');
+
+  //       // showToast(data?.message, 'success');
+  //     } else {
+  //       // Alert.alert('Error', data?.message || 'Failed to upload image');
+  //       showToast(data?.message, 'error');
+  //     }
+  //   } catch (error) {
+  //     // Alert.alert('Error', 'Unexpected error during upload');
+  //     showToast('Unexpected error during upload', 'error');
+  //   }
+  // };
+
+  const handleUploadImage = async (imageUri: string | null) => {
     try {
+      if (!imageUri) {
+        // No new image selected → just save profile
+        await handleSaveProfile();
+        return;
+      }
+  
       const token = await AsyncStorage.getItem('userToken');
       const userId = await AsyncStorage.getItem('userId');
       const url = `${MAIN_URL.baseUrl}user/update-profile`;
-
+  
       const formData = new FormData();
       formData.append('file', {
-        uri: image.uri,
-        type: image.type,
-        name: image.fileName || `profile_${userId}.jpg`,
-      });
-      // Optionally append userId or other fields if needed by backend
+        uri: imageUri,
+        type: 'image/jpeg',
+        name: `profile_${userId}.jpg`,
+      } as any);
+  
       formData.append('userId', userId);
-
+  
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -373,21 +430,19 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         },
         body: formData,
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
-        // Alert.alert('Success', 'Image uploaded successfully!');
         showToast('Image uploaded successfully', 'success');
-
-        // showToast(data?.message, 'success');
+        // After successful image upload → save other profile details
+        await handleSaveProfile();
       } else {
-        // Alert.alert('Error', data?.message || 'Failed to upload image');
-        showToast(data?.message, 'error');
+        showToast(data?.message || 'Failed to upload image', 'error');
       }
     } catch (error) {
-      // Alert.alert('Error', 'Unexpected error during upload');
       showToast('Unexpected error during upload', 'error');
+      console.error('Upload error:', error);
     }
   };
 
@@ -843,7 +898,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         <Button
           title="Save Details"
           onPress={() => {
-            handleSaveProfile();
+            // handleSaveProfile();
+            handleUploadImage(newphoto);
           }}
         />
       </View>
@@ -1060,23 +1116,17 @@ const styles = StyleSheet.create({
 
   background: {
     flex: 1,
-    width: '100%',
-    height: '100%',
   },
   fullScreenContainer: {
     flex: 1,
-    marginTop: 10,
-    // width: 361,
-    // height: 476,
-    // 'angle' not a valid RN style — remove it
-    opacity: 1,
-    borderRadius: 24,
-    padding: 16,
   },
   header: {
-    paddingTop: Platform.OS === 'ios' ? '6%' : 30,
+    // paddingTop: Platform.OS === 'ios' ? '6%' : 30,
+    // paddingBottom: 12,
+    // // paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'ios' ? '15.2%'  : 50,
     paddingBottom: 12,
-    // paddingHorizontal: 16,
+    paddingHorizontal: 16,
   },
   headerRow: {
     flexDirection: 'row',

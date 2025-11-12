@@ -39,6 +39,13 @@ const styles = StyleSheet.create({
   textWrapper: {
     backgroundColor: 'transparent',
     zIndex: 1, // ensures text renders above BlurView cleanly
+  width: '100%',
+  height: '100%',
+  alignItems: 'center',
+  alignSelf: 'center',
+  justifyContent: 'center',
+  
+    
   },
   buttonContainer: {
     width: '90%',
@@ -54,11 +61,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     position: 'absolute',
     bottom: Platform.OS === 'ios' ? 16 : 10,
+
   },
   buttonText: {
     textAlign: 'center',
     color: '#002050ff',
     flexDirection: 'row',
+    
+
   },
   labelText: {
     color: '#002050',

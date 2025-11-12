@@ -305,7 +305,14 @@ const renderItem = ({ item }: any) => {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerRow}>
-            <TouchableOpacity onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Profile',isNavigate: false})}}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.replace('Dashboard', {
+                  AddScreenBackactiveTab: 'Profile',
+                  isNavigate: false,
+                });
+              }}
+            >
               <View style={styles.backIconRow}>
                 <Image
                   source={require('../../../assets/images/back.png')}
@@ -313,76 +320,78 @@ const renderItem = ({ item }: any) => {
                 />
               </View>
             </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>My Orders</Text>
+            <Text allowFontScaling={false} style={styles.unizyText}>
+              My Orders
+            </Text>
             <View style={{ width: 48 }} />
           </View>
         </View>
 
-    <View>
-      <ScrollView
+        <View>
+          <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-             style={{ marginVertical: 6 ,}}
-            contentContainerStyle={{ paddingHorizontal: 16,paddingVertical:10, gap: 4,  }}
-            >
-          
-       {categories.map((cat, index) => {
-                 const isSelected = selectedCategory.name === cat.name;
-                 return (
-                   <View key={index}>
-                     <TouchableOpacity
-                       onPress={() => setSelectedCategory(cat)}
-                       style={isSelected ? styles.tabcard : styles.tabcard1}>
-                       <Text allowFontScaling={false} style={isSelected ? styles.tabtext : styles.othertext}>
-                         {cat.name}
-                       </Text>
-                     </TouchableOpacity>
-                   </View>
-                 );
-               })}
-        </ScrollView>
-            
-
-        
-        <FlatList
-          data={groupedOrders}
-          keyExtractor={(item) => item.id.toString()}
-          contentContainerStyle={[
-            styles.listContainer,
-            { paddingBottom: SCREEN_HEIGHT * 0.22 },
-            groupedOrders?.length === 0 && {
-              alignContent: 'center',
-              alignSelf: 'center',
-              width: '90%',
-              height: '100%',
-            },
-          ]}
-          renderItem={renderItem}
-          ListFooterComponent={
-            isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
-          }
-          ListEmptyComponent={
-            !isLoading ? (
-              <View style={styles.emptyWrapper}>
-                <View style={styles.emptyContainer}>
-                  <Image
-                    source={require('../../../assets/images/noproduct.png')}
-                    style={styles.emptyImage}
-                    resizeMode="contain"
-                  />
-                  <Text allowFontScaling={false} style={styles.emptyText}>
-                    No Orders Found
-                  </Text>
+            contentContainerStyle={{
+              paddingVertical: 12, paddingHorizontal: 16,gap: 4
+            }}
+          >
+            {categories.map((cat, index) => {
+              const isSelected = selectedCategory.name === cat.name;
+              return (
+                <View key={index}>
+                  <TouchableOpacity
+                    onPress={() => setSelectedCategory(cat)}
+                    style={isSelected ? styles.tabcard : styles.tabcard1}
+                  >
+                    <Text
+                      allowFontScaling={false}
+                      style={isSelected ? styles.tabtext : styles.othertext}
+                    >
+                      {cat.name}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
-              </View>
-            ) : null
-          }
-        />
+              );
+            })}
+          </ScrollView>
 
-        
+          <FlatList
+            data={groupedOrders}
+            keyExtractor={item => item.id.toString()}
+            contentContainerStyle={[
+              styles.listContainer,
+              { paddingBottom: SCREEN_HEIGHT * 0.22 },
+              groupedOrders?.length === 0 && {
+                alignContent: 'center',
+                alignSelf: 'center',
+                width: '90%',
+                height: '100%',
+              },
+            ]}
+            renderItem={renderItem}
+            ListFooterComponent={
+              isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
+            }
+            ListEmptyComponent={
+              !isLoading ? (
+                <View style={styles.emptyWrapper}>
+                  <View style={styles.emptyContainer}>
+                    <Image
+                      source={require('../../../assets/images/noproduct.png')}
+                      style={styles.emptyImage}
+                      resizeMode="contain"
+                    />
+                    <Text allowFontScaling={false} style={styles.emptyText}>
+                      No Orders Found
+                    </Text>
+                  </View>
+                </View>
+              ) : null
+            }
+          />
         </View>
       </View>
-      <NewCustomToastContainer/>
+      <NewCustomToastContainer />
     </ImageBackground>
   );
 };
@@ -496,7 +505,7 @@ dateHeading:{
      flex: 1
      },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 25,
+    paddingTop: Platform.OS === 'ios' ? '15.2%'  : 50,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },
