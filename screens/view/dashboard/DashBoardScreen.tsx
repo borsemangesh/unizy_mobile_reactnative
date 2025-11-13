@@ -18,7 +18,20 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   ActivityIndicator,
+  StatusBar,
 } from 'react-native';
+
+
+import AnimatedReanimated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  interpolate,
+  interpolateColor,
+  useDerivedValue,
+} from 'react-native-reanimated';
+// import LinearGradient from 'react-native-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
 
 const bgImage = require('../../../assets/images/backimg.png');
 import ProductCard from '../../utils/ProductCard';
@@ -116,7 +129,7 @@ type TransactionScreenProps = {
 };
 
 const SearchScreenContent = ({navigation}: TransactionScreenProps) => (
-  <View >
+  <View  style={{flex: 1}}>
     <TransactionHistoryScreen navigation ={navigation}/>
   </View>
 );
@@ -750,6 +763,10 @@ const handleScrollEnd = (e: { nativeEvent: { contentOffset: { x: number } } }) =
   setActiveIndex(index);
 };
 
+
+
+
+
 return (
   <View>
     <Animated.ScrollView
@@ -874,67 +891,6 @@ return (
 
   const renderActiveTabContent = () => {
     switch (activeTab) {
-      // case 'Home':
-      //   return (
-      //     <>
-      //       <View style={styles.productsWrapper}>{renderProducts()}</View>
-      //       <Animated.View
-      //         style={{
-      //           transform: [{ translateY: cardSlideupAnimation }],
-      //         }}
-      //       >
-      //         {' '}
-      //         <Text allowFontScaling={false} style={styles.featuredText}>Featured Listings</Text>
-      //       </Animated.View>
-      //       <ScrollView
-      //        directionalLockEnabled={true} 
-      //         style={{ paddingHorizontal: 0,marginLeft:8 }}
-      //         horizontal
-      //         showsVerticalScrollIndicator={false}
-      //         showsHorizontalScrollIndicator={false}
-      //       >
-      //         {features.map(item => (
-      //           <Animated.View
-      //             key={item.id}
-      //             style={{
-      //               transform: [{ translateY: cardSlideupAnimation }],
-      //             }}
-      //           >
-      //             {item.profileshowinview ? (
-      //               <TutitionCard
-      //                 tag={item.university?.name || 'University of Warwick'}
-      //                 title={item.title}
-      //                 infoTitle={`${item.createdby?.firstname || ''} ${
-      //                   item.createdby?.lastname || ''
-      //                 }`}
-      //                 inforTitlePrice={`£ ${item.price}`}
-      //                 rating="4.5"
-      //                 productImage={{ uri: item.createdby?.profile }}
-      //                 onBookmarkPress={() => handleBookmarkPress(item.id)}
-      //                 isBookmarked={item.isbookmarked}
-      //                 onpress={() =>{
-      //                   navigation.navigate('SearchDetails', { id: item.id },{ animation: 'none' })
-      //                 }}
-      //               />
-      //             ) : (
-      //               <ProductCard
-      //                 tag={item.university?.name || 'University of Warwick'}
-      //                 infoTitle={item.title}
-      //                 inforTitlePrice={`£ ${item.price}`}
-      //                 rating="4.5"
-      //                 productImage={{ uri: item.thumbnail }}
-      //                 onBookmarkPress={() => handleBookmarkPress(item.id)}
-      //                isBookmarked={item.isbookmarked}
-      //                 onpress={() =>{
-      //                   navigation.replace('SearchDetails', { id: item.id },{ animation: 'none' })
-      //                 }}
-      //               />
-      //             )}
-      //           </Animated.View>
-      //         ))}
-      //       </ScrollView>
-      //     </>
-      //   );
       case 'Home':
   return (
     <>
@@ -949,70 +905,6 @@ return (
           Featured Listings
         </Text>
       </Animated.View>
-
-      {/* {features.length === 0 ? (
-        // 👇 No Listings Found section
-        <View style={styles.emptyWrapper}>
-          <View style={styles.emptyContainer}>
-            <Image
-              source={require('../../../assets/images/noproduct.png')}
-              style={styles.emptyImage}
-              resizeMode="contain"
-            />
-            <Text allowFontScaling={false} style={styles.emptyText}>
-              No Listings Found
-            </Text>
-          </View>
-        </View>
-      ) : (
-        // 👇 Show scrollable cards if data exists
-        <ScrollView
-          directionalLockEnabled={true}
-          style={{ paddingHorizontal: 0, marginLeft: 8 }}
-          horizontal
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-        >
-          {features.map((item) => (
-            <Animated.View
-              key={item.id}
-              style={{
-                transform: [{ translateY: cardSlideupAnimation }],
-              }}
-            >
-              {item.profileshowinview ? (
-                <TutitionCard
-                  tag={item.university?.name || 'University of Warwick'}
-                  title={item.title}
-                  infoTitle={`${item.createdby?.firstname || ''} ${
-                    item.createdby?.lastname || ''
-                  }`}
-                  inforTitlePrice={`£ ${item.price}`}
-                  rating="4.5"
-                  productImage={{ uri: item.createdby?.profile }}
-                  onBookmarkPress={() => handleBookmarkPress(item.id)}
-                  isBookmarked={item.isbookmarked}
-                  onpress={() => {
-                    navigation.navigate('SearchDetails', { id: item.id }, { animation: 'none' });
-                  }}
-                />
-              ) : (
-                <ProductCard
-                  tag={item.university?.name || 'University of Warwick'}
-                  infoTitle={item.title}
-                  inforTitlePrice={`£ ${item.price}`}
-                  rating="4.5"
-                  productImage={{ uri: item.thumbnail }}
-                  onBookmarkPress={() => handleBookmarkPress(item.id)}
-                  isBookmarked={item.isbookmarked}
-                  onpress={() => {
-                    navigation.replace('SearchDetails', { id: item.id }, { animation: 'none' });
-                  }}
-                />
-              )}
-            </Animated.View>
-          ))}
-           */}
            {isLoading ? (
   // 👇 Loading state
   <View style={styles.emptyWrapper}>
@@ -1110,6 +1002,60 @@ return (
     navigation.replace('MyListing',{ animation: 'none' });
   };
 
+
+  
+
+
+const scrollY = useSharedValue(0);
+
+const scrollHandler = useAnimatedScrollHandler({
+  onScroll: event => {
+    'worklet';
+    scrollY.value = event.contentOffset.y;
+  },
+});
+
+const animatedBlurStyle = useAnimatedStyle(() => {
+  'worklet';
+  const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+  return { opacity };
+});
+
+const animatedButtonStyle = useAnimatedStyle(() => {
+  'worklet';
+  const borderColor = interpolateColor(
+    scrollY.value,
+    [0, 300],
+    ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+  );
+  const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
+  return {
+    borderColor,
+    backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+  };
+});
+
+const animatedIconStyle = useAnimatedStyle(() => {
+  'worklet';
+  const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
+  const tintColor = interpolateColor(
+    scrollY.value,
+    [0, 150],
+    ['#FFFFFF', '#002050'],
+  );
+  return {
+    opacity,
+    tintColor,
+  };
+});
+
+const blurAmount = useDerivedValue(() =>
+  interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+);
+
+
+
+
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
@@ -1189,13 +1135,179 @@ return (
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} 
         >
-          <ScrollView
+          {/* <ScrollView
             style={{ flex: 1 }}
             contentContainerStyle={{ paddingBottom: 10 }} 
             showsVerticalScrollIndicator={false}
           >
             <View style={{ flex: 1,paddingTop: Platform.OS === 'ios' ? 0 : 0 }}>{renderActiveTabContent()}</View>
-          </ScrollView>
+          </ScrollView> */}
+
+
+
+
+{activeTab === 'Search' ? (
+  <View style={{ flex: 1, }}>
+    <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
+
+    {/* 🔹 Animated Blur Header */}
+    <AnimatedReanimated.View
+      style={[
+        {
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: Platform.OS === 'ios' ? 100 : 120,
+          zIndex: 10,
+        },
+        animatedBlurStyle, // fades in blur based on scroll
+      ]}
+      pointerEvents="none"
+    >
+      <MaskedView
+        style={StyleSheet.absoluteFill}
+        maskElement={
+          <LinearGradient
+            colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+            locations={[0, 0.8]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            style={StyleSheet.absoluteFill}
+          />
+        }
+      >
+        <BlurView
+          style={StyleSheet.absoluteFill}
+          blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+          blurAmount={Platform.OS === 'ios' ? 10 : 45}
+          reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+        />
+        <LinearGradient
+          colors={[
+            'rgba(255, 255, 255, 0.45)',
+            'rgba(255, 255, 255, 0.02)',
+            'rgba(255, 255, 255, 0.02)',
+          ]}
+          style={StyleSheet.absoluteFill}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+        />
+      </MaskedView>
+    </AnimatedReanimated.View>
+
+    {/* 🔹 Header Content */}
+    <View
+      style={{
+        position: 'absolute',
+        top: Platform.OS === 'ios' ? 70 : 60,
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 16,
+        zIndex: 11,
+        alignSelf: 'center',
+      }}
+      pointerEvents="box-none"
+    >
+      <Text
+        allowFontScaling={false}
+        style={{
+          color: '#FFFFFF',
+          fontSize: 20,
+          flex: 1,
+          textAlign: 'center',
+          fontWeight: '600',
+          fontFamily: 'Urbanist-SemiBold',
+          width: '100%',
+        }}
+      >
+        Transaction History
+      </Text>
+    </View>
+
+    
+
+    {/* 🔹 Scrollable content that drives animation */}
+    <AnimatedReanimated.ScrollView
+      scrollEventThrottle={16}
+      onScroll={scrollHandler}
+      style={{
+        flex: 1,
+        paddingTop: Platform.OS === 'ios' ? 140 : 120, // space under header
+      }}
+      contentContainerStyle={{ paddingBottom: 40 }}
+      showsVerticalScrollIndicator={false}
+    >
+      <SearchScreenContent navigation={navigation} />
+    </AnimatedReanimated.ScrollView>
+  </View>
+) : (
+  // 🔹 All other tabs stay the same
+  <ScrollView
+    style={{ flex: 1 }}
+    contentContainerStyle={{ paddingBottom: 10 }}
+    showsVerticalScrollIndicator={false}
+  >
+    <View style={{ flex: 1 }}>{renderActiveTabContent()}</View>
+  </ScrollView>
+)}
+
+
+
+
+          {/* {activeTab === 'Search' ? (
+            
+            <View style={{ flex: 1,}}>
+              <View
+                style={{
+                  position: 'absolute',
+                  top: Platform.OS === 'ios' ? 70 : 60,
+                  width: Platform.OS === 'ios' ? '100%' : '100%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  paddingHorizontal: 16,
+                  zIndex: 11,
+                  alignSelf: 'center',
+                  pointerEvents: 'box-none',
+                }}
+              >
+                <Text
+                  allowFontScaling={false}
+                  style={{
+                    color: '#FFFFFF',
+                    fontSize: 20,
+                    flex: 1,
+                    textAlign: 'center',
+                    fontWeight: '600',
+                     fontFamily: 'Urbanist-SemiBold',
+                     width: '100%',
+                  }}
+                >
+                  Transaction History
+                </Text>
+              </View>
+
+              <ScrollView
+                style={{
+                  flex: 1,// space under header
+                }}
+                showsVerticalScrollIndicator={false}
+              >
+                <SearchScreenContent navigation={navigation} />
+              </ScrollView>
+            </View>
+          ) : (
+            <ScrollView
+              style={{ flex: 1 }}
+              contentContainerStyle={{ paddingBottom: 10 }}
+              showsVerticalScrollIndicator={false}
+            >
+              <View style={{ flex: 1 }}>{renderActiveTabContent()}</View>
+            </ScrollView>
+          )} */}
 
         </KeyboardAvoidingView>
         
@@ -1255,9 +1367,6 @@ return (
           ))}
         </Animated.View>
         
-
-
-      
       </View>
       <NewCustomToastContainer />
     </ImageBackground>
@@ -1267,6 +1376,53 @@ return (
 export default DashBoardScreen;
 
 const styles = StyleSheet.create({
+
+
+
+
+  headerWrapper: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? '100%' : '100%',
+    height: Platform.OS === 'ios' ? 180 : 180,
+    zIndex: 10,
+    overflow: 'hidden',
+    alignSelf: 'center',
+    pointerEvents: 'none',
+  },
+  headerContent: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 70 : 60,
+    width: Platform.OS === 'ios' ? '100%' : '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
+  },
+  backButtonContainer: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 11,
+    //top: 7,
+  },
+  blurButtonWrapper: {
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+  },
+
+
+
+
 
    stepCircle: {
     width: 12,

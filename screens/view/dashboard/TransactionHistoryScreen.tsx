@@ -41,6 +41,7 @@ interface TransactionItem {
 
 interface TransactionSection {
   date: string;
+  total_sales: number;
   items: TransactionItem[];
 }
 
@@ -112,9 +113,6 @@ export default function TransactionHistoryScreen(
     }).start();
   }, [activeTab, bubbleX, tabWidth]);
 
-
-
-
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
@@ -165,7 +163,7 @@ export default function TransactionHistoryScreen(
             date: section.date,
             items: section.transactions.map((item: any) => ({
               title: item.title ,
-              price: `£ ${item.amount}`,
+              price: `£${item.amount}`,
               status: item.order_status,        // Show order status like "Awaiting Delivery"
               code: item.status,                // Payment status (e.g. "succeeded")
               seller: item.purchased_from,      // Who you bought from
@@ -181,10 +179,10 @@ export default function TransactionHistoryScreen(
           formatted = json.data.sales_history.map((section: any) => ({
            
             date: section.date,
-           
+           total_sales: section.total_sales,
             items: section.transactions.map((item: any) => ({
               title: item.title,
-              price: `£ ${item.amount}`,
+              price: `£${item.amount}`,
               status: item.status,
               code: '', // no code in sales example
               seller: item.sold_to,
@@ -193,6 +191,7 @@ export default function TransactionHistoryScreen(
               category_logo: item.category_logo,
               feature_idNew: item.id,
               featureId: item.id,  
+              total_sales: item.total_sales,
             })),
           }));
         }  
@@ -201,7 +200,7 @@ export default function TransactionHistoryScreen(
             date: section.date,
             items: section.transactions.map((item: any) => ({
               title: item.title,
-              price: `£ ${item.listing_fee}`,
+              price: `£${item.listing_fee}`,
               status: item.payment_status,
               code: '',
               featureId: item.feature_id,           // ✅ Correct field name
@@ -315,14 +314,9 @@ export default function TransactionHistoryScreen(
   const [isSelected, setIsSelected] = useState(false);
   
   return (
-    <View style={{ flex: 1, paddingHorizontal: 16 }}>
-      <View style={[styles.header]}>
-        <View style={styles.headerRow}>
-          <Text allowFontScaling={false} style={styles.unizyText}>
-            Transaction History
-          </Text>
-        </View>
-      </View>
+   
+   
+    <View style={[{flex: 1, paddingHorizontal: 16 ,height: '100%',width: '100%'},]}>
       <View style={[styles.bottomTabContainer]}>
         <View style={[{ height: 38 }]}>
           <Animated.View
@@ -502,24 +496,17 @@ export default function TransactionHistoryScreen(
                   </View>
 
                   <View style={styles.cardconstinerdivider} />
-                  <View style={{ flexDirection: 'row', gap: 4 }}>
-                    <View style={{ flexDirection: 'row' }}>
-                      <Text  allowFontScaling={false} style={{    
-                        color: 'rgba(255, 255, 255, 0.64)',
-                        fontSize: 12,
-                        fontWeight: '600',
-                        // marginTop: 10,
-                        fontFamily: 'Urbanist-SemiBold',}}>
-                          Purchased from </Text>
-                      
-                      <Text
+                  <View style={{ flexDirection: 'row', }}>
+                    <Text style={styles.sellerText}>Purchased from</Text>
+                    <Text
                         allowFontScaling={false}
-                        style={[styles.sellerTextName, { }]}
-                      >
-                       {item.seller} ({item.university})
+                        style={[styles.sellerTextName]}
+                      > {`${(item.seller+ " (" + item.university + ")").length > 100
+                          ? (item.seller+ " (" + item.university + ")").substring(0, 200) + "..."
+                          : (item.seller+ " (" + item.university + ")")}`}
                       </Text>
-                    </View>
                   </View>
+ 
                 </View>
               ))}
             </View>
@@ -540,7 +527,9 @@ export default function TransactionHistoryScreen(
                 <View style={styles.imgcontainer}>
                   <Image
                     source={totalEaning}
-                    style={styles.image}
+                    style={{ width: 28,
+                      height: 28,
+                    resizeMode: 'cover'}}
                     resizeMode="cover"
                   />
                 </View>
@@ -640,17 +629,17 @@ export default function TransactionHistoryScreen(
                       <Text
                         allowFontScaling={false}
                         style={{
-                          color: '#9CDDFF',
+                          color: '#B2EBFF',
                           fontFamily: 'Urbanist-SemiBold',
                           fontSize: 12,
                         }}
                       >
-                        Total Order: {transactions.length}
+                        Total Order: {section.total_sales}
                       </Text>
                       <Text
                         allowFontScaling={false}
                         style={{
-                          color: '#9CDDFF',
+                          color: '#B2EBFF',
                           fontFamily: 'Urbanist-SemiBold',
                           fontSize: 12,
                         }}
@@ -1053,7 +1042,7 @@ const styles = StyleSheet.create({
     borderBottomStartRadius: 50,
     boxSizing: 'border-box',
     zIndex: 100,
-    marginTop: 20,
+    marginTop: -14,
   },
   bubble: {
   

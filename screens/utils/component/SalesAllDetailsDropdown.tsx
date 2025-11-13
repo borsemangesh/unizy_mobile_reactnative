@@ -557,6 +557,7 @@ const SalesAllDetailsDropdown = ({
     // Render the sales data
     return (
 
+     
       <ScrollView style={{ flexGrow: 0, paddingTop: 10 }} showsVerticalScrollIndicator={false}>
         {Array.isArray(salesData) && salesData.length > 0 ? (
   salesData.map((buyer, index) => (
@@ -663,7 +664,7 @@ const SalesAllDetailsDropdown = ({
     <View
       style={[
         StyleSheet.absoluteFillObject,
-        { zIndex: 999, display: visible ? 'flex' : 'none', height: '200%' },
+        { marginTop: -140, zIndex: 9999, display: visible ? 'flex' : 'none', height: '200%' },
       ]}
     >
       <BlurView

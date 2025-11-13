@@ -20,10 +20,12 @@ import { MAIN_URL } from '../../utils/APIConstant';
 
 const bgImage = require('../../../assets/images/backimg.png');
 import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
-
+import SearchListProductCard from '../../utils/SearchListProductCard';
+import SearchTutionCard from '../../utils/SearchTutionCard';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
-
+import NotificationCard from '../../utils/NotificationCard';
 import MyOrderCard from '../../utils/MyOrderCard';
+
 
 type CreatedBy = {
   id: number;
@@ -207,7 +209,11 @@ const formatDate = (dateString: string | null | undefined) => {
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const year = date.getFullYear();
   return `${day}-${month}-${year}`;
+
 };
+
+
+
 const formatDate1 = (dateString: string) => {
   const date = new Date(dateString);
   const day = date.getDate();
@@ -224,34 +230,50 @@ const formatDate1 = (dateString: string) => {
 
 
 const groupByDate = (data: any[]) => {
-  const grouped: any[] = [];
-  let lastDate: string | null = null;
+  // Step 1: Group items by formatted date
+  const groupedMap: Record<string, any[]> = {};
 
-  data.forEach((item) => {
+  data.forEach(item => {
     const displayDate = formatDate1(item.created_at);
-
-    if (displayDate !== lastDate) {
-      grouped.push({
-        type: 'date',
-        id: `date-${displayDate}`,
-        displayDate,
-      });
-      lastDate = displayDate;
+    if (!groupedMap[displayDate]) {
+      groupedMap[displayDate] = [];
     }
-
-    grouped.push({
+    groupedMap[displayDate].push({
       ...item,
       type: 'item',
     });
   });
 
-  return grouped;
+  // Step 2: Sort date keys (newest first)
+  const sortedDates = Object.keys(groupedMap).sort((a, b) => {
+    const dateA = new Date(a);
+    const dateB = new Date(b);
+    return dateB.getTime() - dateA.getTime(); // descending
+  });
+
+  // Step 3: Sort items within each date descending by created_at
+  const groupedArray: any[] = [];
+  sortedDates.forEach(displayDate => {
+    const items = groupedMap[displayDate].sort((a, b) => {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+
+    groupedArray.push({
+      type: 'date',
+      id: `date-${displayDate}`,
+      displayDate,
+    });
+    groupedArray.push(...items);
+  });
+console.log(groupedArray.map(i => i.type === 'date' ? `📅 ${i.displayDate}` : `   🛍️ ${i.created_at}`));
+
+  return groupedArray;
 };
 
 const groupedOrders = groupByDate(filteredFeatures);
 
 const renderItem = ({ item }: any) => {
-
+ const displayDate = formatDate(item?.featurelist?.created_at);
   if (item.type === 'date') {
     return (
       <Text allowFontScaling={false} style={styles.dateHeading}>
@@ -259,7 +281,7 @@ const renderItem = ({ item }: any) => {
       </Text>
     );
   }
-  const displayDate = formatDate(item.created_at);
+ 
   const productImage =
     item?.featurelist?.thumbnail
       ? { uri: item.featurelist.thumbnail }
@@ -305,14 +327,7 @@ const renderItem = ({ item }: any) => {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerRow}>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.replace('Dashboard', {
-                  AddScreenBackactiveTab: 'Profile',
-                  isNavigate: false,
-                });
-              }}
-            >
+            <TouchableOpacity onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Profile',isNavigate: false})}}>
               <View style={styles.backIconRow}>
                 <Image
                   source={require('../../../assets/images/back.png')}
@@ -320,81 +335,80 @@ const renderItem = ({ item }: any) => {
                 />
               </View>
             </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>
-              My Orders
-            </Text>
+            <Text allowFontScaling={false} style={styles.unizyText}>My Orders</Text>
             <View style={{ width: 48 }} />
           </View>
         </View>
 
-        <View>
-          <ScrollView
+    <View>
+      <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{
-              paddingVertical: 12, paddingHorizontal: 16,gap: 4
-            }}
-          >
-            {categories.map((cat, index) => {
-              const isSelected = selectedCategory.name === cat.name;
-              return (
-                <View key={index}>
-                  <TouchableOpacity
-                    onPress={() => setSelectedCategory(cat)}
-                    style={isSelected ? styles.tabcard : styles.tabcard1}
-                  >
-                    <Text
-                      allowFontScaling={false}
-                      style={isSelected ? styles.tabtext : styles.othertext}
-                    >
-                      {cat.name}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              );
-            })}
-          </ScrollView>
+             style={{ marginVertical: 6 ,}}
+            contentContainerStyle={{ paddingHorizontal: 16,paddingVertical:10, gap: 4,  }}
+            >
+          
+       {categories.map((cat, index) => {
+                 const isSelected = selectedCategory.name === cat.name;
+                 return (
+                   <View key={index}>
+                     <TouchableOpacity
+                       onPress={() => setSelectedCategory(cat)}
+                       style={isSelected ? styles.tabcard : styles.tabcard1}>
+                       <Text allowFontScaling={false} style={isSelected ? styles.tabtext : styles.othertext}>
+                         {cat.name}
+                       </Text>
+                     </TouchableOpacity>
+                   </View>
+                 );
+               })}
+        </ScrollView>
+            
 
-          <FlatList
-            data={groupedOrders}
-            keyExtractor={item => item.id.toString()}
-            contentContainerStyle={[
-              styles.listContainer,
-              { paddingBottom: SCREEN_HEIGHT * 0.22 },
-              groupedOrders?.length === 0 && {
-                alignContent: 'center',
-                alignSelf: 'center',
-                width: '90%',
-                height: '100%',
-              },
-            ]}
-            renderItem={renderItem}
-            ListFooterComponent={
-              isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
-            }
-            ListEmptyComponent={
-              !isLoading ? (
-                <View style={styles.emptyWrapper}>
-                  <View style={styles.emptyContainer}>
-                    <Image
-                      source={require('../../../assets/images/noproduct.png')}
-                      style={styles.emptyImage}
-                      resizeMode="contain"
-                    />
-                    <Text allowFontScaling={false} style={styles.emptyText}>
-                      No Orders Found
-                    </Text>
-                  </View>
+        
+        <FlatList
+          data={groupedOrders}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={[
+            styles.listContainer,
+            { paddingBottom: SCREEN_HEIGHT * 0.22 },
+            groupedOrders?.length === 0 && {
+              alignContent: 'center',
+              alignSelf: 'center',
+              width: '90%',
+              height: '100%',
+            },
+          ]}
+          renderItem={renderItem}
+          ListFooterComponent={
+            isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
+          }
+          ListEmptyComponent={
+            !isLoading ? (
+              <View style={styles.emptyWrapper}>
+                <View style={styles.emptyContainer}>
+                  <Image
+                    source={require('../../../assets/images/noproduct.png')}
+                    style={styles.emptyImage}
+                    resizeMode="contain"
+                  />
+                  <Text allowFontScaling={false} style={styles.emptyText}>
+                    No Orders Found
+                  </Text>
                 </View>
-              ) : null
-            }
-          />
+              </View>
+            ) : null
+          }
+        />
+
+        
         </View>
       </View>
-      <NewCustomToastContainer />
+      <NewCustomToastContainer/>
     </ImageBackground>
   );
 };
+
 export default MyOrders;
 
 const styles = StyleSheet.create({
@@ -502,10 +516,12 @@ dateHeading:{
      width: '100%',
       height: '100%' },
   fullScreenContainer: {
-     flex: 1
+     flex: 1,
+     marginTop:10
      },
   header: {
-    paddingTop: Platform.OS === 'ios' ? '15.2%'  : 50,
+    //paddingTop: Platform.OS === 'ios' ? 50 : 25,
+    paddingTop: Platform.OS === 'ios' ? 40 : 30,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },
@@ -559,7 +575,7 @@ dateHeading:{
     // paddingBottom:160
      marginLeft: 8,
     marginRight: 8,
-    marginTop:(Platform.OS === 'ios'? -6: 12),
+    marginTop:-12,
     marginBottom:12,
     
     

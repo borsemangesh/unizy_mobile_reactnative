@@ -616,7 +616,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       <Text
                       allowFontScaling={false}
                       style={[styles.univeritytext, { marginTop: 0 }]}>
-                      {'Coventry'}
+                      {detail?.createdby?.city  || ''}
                     </Text>
                   </View>
                 </View>
@@ -624,7 +624,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                 <View style={{ flexDirection: 'row' }}>
                   <View
                     style={[styles.bottombutton,{width: 69}]}>
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                       disabled={!detail?.ispurchased}
                       onPress={() => {
                         if (detail?.ispurchased) {
@@ -635,6 +635,18 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                         }
                       }}
                       style={{ flexDirection: 'row', alignItems: 'center' ,justifyContent: 'center',gap: 0}}
+                    > */}
+                    <TouchableOpacity
+                      //disabled={!detail?.ispurchased}
+                      onPress={() => {
+                          navigation.navigate('ReviewDetails', {
+                            category_id: detail?.category_id,
+                            id: detail?.id,
+                            purchase:detail?.ispurchased
+                          });
+                        
+                      }}
+                      style={{ flexDirection: 'row', alignItems: 'center' , gap: 6,}}
                     >
                       <Image
                         source={require('../../../assets/images/staricon.png')}

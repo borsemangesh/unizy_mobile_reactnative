@@ -22,6 +22,10 @@ const bgImage = require('../../../assets/images/backimg.png');
 import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 import StarRating from '../../utils/StarRating';
+import ReviewDetailCard from '../../utils/ReviewDetailCard';
+import MyReviewCard from '../../utils/MyReviewCard';
+import Button from '../../utils/component/Button';
+
 
 
 type ReviewDetailsProps = {
@@ -29,7 +33,7 @@ type ReviewDetailsProps = {
 };
 
 type RootStackParamList = {
-  ReviewDetails: { category_id: number ,id:number};
+  ReviewDetails: { category_id: number ,id:number,purchase:boolean};
 };
 
 type ReviewDetailsRouteProp = RouteProp<RootStackParamList, 'ReviewDetails'>;
@@ -41,6 +45,7 @@ const ReviewDetails : React.FC<ReviewDetailsProps> = ({ navigation }) => {
    const route = useRoute<ReviewDetailsRouteProp>();
     const { category_id } = route.params;
     const {id} =route.params;
+    const {purchase} = route.params;
    const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalReviews, setTotalReviews] = useState(0);
@@ -56,25 +61,32 @@ const ReviewDetails : React.FC<ReviewDetailsProps> = ({ navigation }) => {
       { id: null, name: 'All' }
     ]);
     const [selectedCategory, setSelectedCategory] = useState<Category>({ id: null, name: 'All' });
-
-  // useEffect(() => {
-  //   const loadCategories = async () => {
-  //     const stored = await AsyncStorage.getItem('categories');
-  //     if (stored) {
-  //       const parsed = JSON.parse(stored); 
-  //       const catObjects = [
-  //         { id: null, name: 'All' }, 
-  //         ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
-  //       ];
-  //       setCategories(catObjects);
-  //       setSelectedCategory(catObjects[0]); 
-  //     }
-  //   };
-  //   loadCategories();
-  // }, []);
+const [showButton, setShowButton] = useState(false);
 
 
-  useEffect(() => {
+//   useEffect(() => {
+//   const loadCategories = async () => {
+//     const stored = await AsyncStorage.getItem('categories');
+//     if (stored) {
+//       const parsed = JSON.parse(stored);
+
+//       const catObjects = [
+//         { id: null, name: 'All' },
+//         ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
+//       ];
+
+//       setCategories(catObjects);
+
+//       const matchedCategory = catObjects.find(
+//         (c: any) => c.id === category_id
+//       );
+//       setSelectedCategory(matchedCategory ?? catObjects[0]);
+//     }
+//   };
+//   loadCategories();
+// }, [category_id]);
+
+useEffect(() => {
   const loadCategories = async () => {
     const stored = await AsyncStorage.getItem('categories');
     if (stored) {
@@ -91,10 +103,26 @@ const ReviewDetails : React.FC<ReviewDetailsProps> = ({ navigation }) => {
         (c: any) => c.id === category_id
       );
       setSelectedCategory(matchedCategory ?? catObjects[0]);
+
+      if (purchase === true && matchedCategory) {
+        setShowButton(true);
+      } else {
+        setShowButton(false);
+      }
     }
   };
+
   loadCategories();
-}, [category_id]);
+}, [category_id, purchase]);
+
+useEffect(() => {
+  if (selectedCategory?.id !== category_id) {
+    setShowButton(false);
+  } else if (purchase === true) {
+    setShowButton(true);
+  }
+}, [selectedCategory, category_id, purchase]);
+
 
   useEffect(() => {
   fetchReviews();
@@ -138,6 +166,9 @@ const ReviewDetails : React.FC<ReviewDetailsProps> = ({ navigation }) => {
         //   : defaultProfile,
         profileImg:defaultProfile,
         comment: item.comment,
+         date: item.created_at,
+        featureTitle: item.feature_title,
+        categoryName: item.category_name
       }));
 
       setUsers(formattedUsers);
@@ -161,37 +192,83 @@ type User = {
 };
 
 
-const renderItem = ({ item }: any) => (
-  <View style={styles.userRow}>
-    {/* Top row: Image + Name/Sub + Star */}
-    <View style={{ flexDirection: 'row', width: '100%' }}>
-      {/* Image column */}
-      <View style={{ width: 60, alignItems: 'center' }}>
-        <Image source={item.profileImg} style={styles.avatar} />
-      </View>
+// const renderItem = ({ item }: any) => (
+//   <View style={styles.userRow}>
+//     {/* Top row: Image + Name/Sub + Star */}
+//     <View style={{ flexDirection: 'row', width: '100%' }}>
+//       {/* Image column */}
+//       <View style={{ width: 60, alignItems: 'center' }}>
+//         <Image source={item.profileImg} style={styles.avatar} />
+//       </View>
 
-      {/* Name/Sub + Star column */}
-      <View style={{ flex: 1, paddingLeft: 10, justifyContent: 'flex-start' }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-          <View>
-            <Text allowFontScaling={false} style={styles.userName}>{item.name}</Text>
-            <Text allowFontScaling={false} style={styles.userSub}>{item.university}</Text>
-          </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Image
-              source={require('../../../assets/images/staricon.png')}
-              style={{ height: 16, width: 16, marginRight: 4 ,tintColor: 'rgba(140, 225, 255, 0.9)',}}
-            />
-            <Text allowFontScaling={false} style={styles.ratingText}>{item.rating}</Text>
-          </View>
-        </View>
+//       {/* Name/Sub + Star column */}
+//       <View style={{ flex: 1, paddingLeft: 10, justifyContent: 'flex-start' }}>
+//         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+//           <View>
+//             <Text allowFontScaling={false} style={styles.userName}>{item.name}</Text>
+//             <Text allowFontScaling={false} style={styles.userSub}>{item.university}</Text>
+//           </View>
+//           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+//             <Image
+//               source={require('../../../assets/images/staricon.png')}
+//               style={{ height: 16, width: 16, marginRight: 4 ,tintColor: 'rgba(140, 225, 255, 0.9)',}}
+//             />
+//             <Text allowFontScaling={false} style={styles.ratingText}>{item.rating}</Text>
+//           </View>
+//         </View>
 
-        {/* Comment below */}
-        <Text allowFontScaling={false} style={[styles.bottomText, { marginTop: 4 }]}>{item.comment}</Text>
-      </View>
+//         {/* Comment below */}
+//         <Text allowFontScaling={false} style={[styles.bottomText, { marginTop: 4 }]}>{item.comment}</Text>
+//       </View>
+//     </View>
+//   </View>
+// );
+
+const formatDate = (dateString: string | null | undefined) => {
+  if (!dateString || dateString.trim() === '') return '01-01-2025';
+
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return '01-01-2025';
+
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+};
+
+
+const renderItem = ({ item}: any) => {
+  // const isLastOddItem =
+  //   filteredFeatures.length % 2 !== 0 &&
+  //   index === filteredFeatures.length - 1;
+  const displayDate = formatDate(item.created_at);
+  const productImage = item.profileImg ?? require('../../../assets/images/drone.png');
+  const displayPrice = item.price != null ? item.price : 0;
+  const displayTitle = item.featureTitle ?? 'Title';
+  const displayRating = item.rating?.toString() ?? '0';
+  const displayReview = item.comment ?? '';
+  const reviewer_name = item.reviewer_name ?? '';
+
+  return (
+    <View
+      style={[
+        styles.itemContainer,
+      ]}
+    >
+      <ReviewDetailCard
+         infoTitle={displayTitle}
+        inforTitlePrice={item.categoryName ?? ''}
+        rating={displayRating}
+        productImage={productImage}
+        reviewText={displayReview}
+        shareid={item.id}
+        date={displayDate}
+        reviewer={item.name}
+      />
     </View>
-  </View>
-);
+  );
+};
+
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -253,6 +330,13 @@ const renderItem = ({ item }: any) => (
 
         </View>
 
+        <ScrollView
+        showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 40 }}
+          overScrollMode="never"
+          bounces={false}
+        >
+
         <View style={{ paddingHorizontal: 16, marginBottom: 12, alignItems: 'center' }}>
       <Text allowFontScaling={false} style={{ fontSize: 60, fontWeight: '700', color: '#fff', marginBottom: 4 }}>
         {averageRating}
@@ -285,9 +369,21 @@ const renderItem = ({ item }: any) => (
       />
     </View>
 
-    <TouchableOpacity style={styles.previewBtn} onPress={() =>{navigation.navigate('AddReview',{category_id:category_id,feature_id:id})}} >
-            <Text allowFontScaling={false} style={styles.payText}>Write a Review </Text>
-          </TouchableOpacity>
+    </ScrollView>
+
+    {/* <Button onPress={() =>{navigation.navigate('AddReview',{category_id:category_id,feature_id:id})}} title={"Write a Review"} />  */}
+      {showButton && (
+            <Button
+              title="Write a Review"
+              onPress={() =>
+                navigation.navigate('AddReview', {
+                  category_id: category_id,
+                  feature_id: id,
+                })
+              }
+            />
+          )}
+  
 
       </View>
       <NewCustomToastContainer/>
@@ -298,6 +394,10 @@ const renderItem = ({ item }: any) => (
 export default ReviewDetails;
 
 const styles = StyleSheet.create({
+   itemContainer: {
+    flex: 1,
+    marginHorizontal: 4,
+  },
 
   subrating:{
     color: 'rgba(140, 225, 255, 0.9)',
@@ -518,10 +618,11 @@ const styles = StyleSheet.create({
      width: '100%',
       height: '100%' },
   fullScreenContainer: {
-     flex: 1
+     flex: 1,
+     marginTop:10
      },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 25,
+    paddingTop: Platform.OS === 'ios' ? 50 : 30,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },

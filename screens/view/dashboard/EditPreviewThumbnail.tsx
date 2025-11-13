@@ -3,6 +3,7 @@ import {
   Image,
   ImageBackground,
   Platform,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -64,17 +65,18 @@ const [fullName, setFullName] = useState('');
 const [initials, setInitials] = useState('');
 const [profile,setProfile] = useState('');
 const [featureitem,setfeatureitem] =useState(false)
+
   useEffect(() => {
     const fetchStoredData = async () => {
       try {
         // 1️⃣ Fetch stored form data
-        const storedData = await AsyncStorage.getItem('formData1');
         const storedValue = await AsyncStorage.getItem('isfeatured');
         if (storedValue !== null) {
           setfeatureitem(JSON.parse(storedValue));
         } else {
           setfeatureitem(false);
         }
+        const storedData = await AsyncStorage.getItem('formData1');
         if (storedData) {
           const parsedData = JSON.parse(storedData);
           console.log('Stored Form Data:', parsedData);
@@ -129,18 +131,7 @@ const [featureitem,setfeatureitem] =useState(false)
     alias_name: string | null;
   };
 
-  // const getValueByAlias = (
-  //   formData: Record<string, FormEntry> | null,
-  //   alias: string,
-  // ): any => {
-  //   if (!formData) return null;
-
-  //   const entry = Object.values(formData).find(
-  //     item => item.alias_name === alias,
-  //   ) as FormEntry | undefined;
-
-  //   return entry ? entry.value : null;
-  // };
+  
   const getValueByAlias = (
     formData: Record<string, FormEntry> | null,
     alias: string,
@@ -160,13 +151,7 @@ const [featureitem,setfeatureitem] =useState(false)
   };
 
   const titleValue = getValueByAlias(storedForm, 'title') || 'No Title';
-  //const priceValue = getValueByAlias(storedForm, 'price') || '0';
   const imageArray = storedForm?.[6]?.value || [];
-
-  // console.log(priceValue)
-  // const commisionprice = priceValue + priceValue * 0.12;
-  // const featurecommisionprice = priceValue + priceValue * 0.8;
-
   const raw = getValueByAlias(storedForm, 'price') ?? '0';
   const priceValue = parseFloat(String(raw)) || 0;
 
@@ -180,7 +165,6 @@ const [featureitem,setfeatureitem] =useState(false)
     2,
   );
 
-  ///feature
 
   const raw1 = getValueByAlias(storedForm, 'price') ?? '0';
   const priceValue1 = parseFloat(String(raw1)) || 0;
@@ -204,38 +188,36 @@ const [featureitem,setfeatureitem] =useState(false)
       style={{ width: '100%', height: '100%' }}
       resizeMode="cover"
     >
-      <View
-        style={{
-          paddingTop: Platform.OS === 'ios' ? 70 : 50,
-          paddingLeft: 16,
-          paddingRight: 16,
-        }}
-      >
-        <TouchableOpacity
-          style={{ zIndex: 1 }}
-          onPress={() => {
-            navigation.goBack();
-          }}
-        >
-          <View style={styles.backIconRow}>
-            <Image
-              source={require('../../../assets/images/back.png')}
-              style={styles.h24_w24}
-            />
-          </View>
-        </TouchableOpacity>
+      <View style={styles.fullScreenContainer}>
+        
+         <View style={styles.header}>
+                      <View style={styles.headerRow}>
+                    <TouchableOpacity onPress={() => {
+                     navigation.goBack();
+                  }}>          
+                    <View style={styles.backIconRow}>
+                      <Image
+                         source={require('../../../assets/images/back.png')}
+                          style={{ height: 24, width: 24 }}/>
+                       </View>
+                     </TouchableOpacity>
+                   <Text allowFontScaling={false} style={styles.unizyText}>Preview Thumbnail</Text>
+                     <View style={{ width: 48 }} />
+                     </View>
+                   </View>
 
-        <Text allowFontScaling={false} style={styles.previewThumbnail}>
-          Preview Thumbnail
-        </Text>
-
-        <View style={{ height: '100%' }}>
-
-           <View style={styles.productCarddisplay}>
+         <ScrollView
+            style={{ flex: 1 }}
+              contentContainerStyle={{ flexGrow: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingBottom: 180, }}
+              showsVerticalScrollIndicator={false} >
+            <View style={styles.productCarddisplay}>
             {storedForm ? (
               <>
                 {categoryId === 2 || categoryId === 5 ? (
-                  (!!storedForm[13]?.value === true || featureitem)? (
+                  (!!storedForm[13]?.value === true || featureitem) ? (
                     // 🔹 CASE 1A: Category 2 or 5, Featured = true
                     <>
                       <Text
@@ -271,7 +253,6 @@ const [featureitem,setfeatureitem] =useState(false)
                         isfeature={true} initialsName={initials}            />
                     </>
                   ) : (
-                    // 🔹 CASE 1B: Category 2 or 5, Featured = false
                     <SeperateTutionCard
                       tag={uniname}
                           infoTitle={titleValue}
@@ -283,8 +264,7 @@ const [featureitem,setfeatureitem] =useState(false)
                           isfeature={false} initialsName={initials} 
                     />
                   )
-                ) : (!!storedForm[13]?.value === true || featureitem)? (
-                  // 🔹 CASE 2A: Other categories, Featured = true
+                ) :  (!!storedForm[13]?.value === true || featureitem) ? (
                   <>
                     <Text
                       allowFontScaling={false}
@@ -322,7 +302,6 @@ const [featureitem,setfeatureitem] =useState(false)
                     />
                   </>
                 ) : (
-                  // 🔹 CASE 2B: Other categories, Featured = false
                   <NewProductCard
                     tag={uniname}
                     infoTitle={titleValue}
@@ -345,28 +324,11 @@ const [featureitem,setfeatureitem] =useState(false)
               </Text>
             )}
           </View>
+          </ScrollView>
           
 
-          <View style={styles.textbg}>
-            <Image
-              source={require('../../../assets/images/info_icon.png')}
-              style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
-            />
-
-            {/* Texts */}
-            <View style={{ flex: 1 }}>
-              <Text allowFontScaling={false} style={styles.importantText1}>
-                Important:
-              </Text>
-              <Text allowFontScaling={false} style={styles.importantText}>
-                A {categoryDetails?.commission ?? '0'}% commission or a maximum
-                of £{categoryDetails?.max_cappund ?? '0'}, whichever is lower,
-                will be added to the entered price.
-              </Text>
-            </View>
-          </View>
-
-          <TouchableOpacity
+         
+          {/* <TouchableOpacity
             style={styles.nextButton}
             onPress={() => {
               navigation.navigate('EditPreviewDetailed');
@@ -375,54 +337,147 @@ const [featureitem,setfeatureitem] =useState(false)
             <Text allowFontScaling={false} style={styles.nextText}>
               Next
             </Text>
-          </TouchableOpacity>
-          {/* <Button
-            onPress={() => {
-            navigation.navigate('PreviewDetailed');
-          }} title='Next'/> */}
-        </View>
+          </TouchableOpacity> */}
+           <View style={styles.bottomFixed}>
+
+            <View style={styles.textbg}>
+             
+              <Image
+                source={require('../../../assets/images/info_icon.png')}
+                style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+              />
+              <View style={{ flex: 1 }}>
+                <Text allowFontScaling={false} style={styles.importantText1}>
+                  Important:
+                </Text>
+                <Text allowFontScaling={false} style={styles.importantText}>
+                  A
+                  <Text allowFontScaling={false} style={styles.importantText1}>
+                    {' '}
+                    {categoryDetails?.commission ?? '0'}%
+                  </Text>{' '}
+                  commission or a maximum of
+                  <Text allowFontScaling={false} style={styles.importantText1}>
+                    {' '}
+                    £{categoryDetails?.max_cappund ?? '0'}
+                  </Text>
+                  , whichever is lower, will be added to the entered price.
+                </Text>
+              </View>
+            </View>
+            
+        <Button
+          title="Next"
+          onPress={() => navigation.navigate('EditPreviewDetailed')}
+        />
       </View>
+        </View>
       <NewCustomToastContainer />
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  newtext: {
-    color: '#ccc',
+
+    newtext:{
+     color: '#fff',
     fontSize: 16,
-    margin: 6,
+    marginHorizontal: 6,
+    marginVertical:16,
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600,
   },
-  newtext1: {
-    color: '#ccc',
+ newtext1:{
+     color: '#fff',
     fontSize: 16,
-    marginTop: 12,
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600,
+    marginHorizontal: 6,
+    marginTop:24,
+    marginBottom:16
+
   },
-  textbg: {
+ textbg:{
+    overflow:'hidden',
+
+  alignContent:'center',
+  alignSelf:'center',
+  width:'90%',
+ flexDirection: 'row',
+          alignItems: 'flex-start',
+backgroundColor:'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
+  boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+  padding: 6,
+  borderWidth:0.5,
+  borderEndEndRadius: 12,
+  borderStartEndRadius: 12,
+  borderTopLeftRadius: 12,
+  borderTopRightRadius: 12,
+  borderBottomStartRadius: 12,
+  borderBlockStartColor: '#ffffff31',
+  borderBlockColor: '#ffffff31',
+  borderTopColor: '#ffffff31',
+  borderBottomColor: '#ffffff31',
+  borderLeftColor: '#ffffff31',
+  borderRightColor: '#ffffff31',
+  marginBottom:80,
+
+ 
+            
+  },
+
+  bottomFixed: {
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  right: 0,
+
+  paddingVertical: 10,
+  //paddingHorizontal: 16,
+  //borderTopWidth: 0.5,
+ // borderTopColor: '#444',
+},
+ header: {
+    paddingTop: Platform.OS === 'ios' ? 50 : 50,
+    paddingBottom: 12,
+    paddingHorizontal: 16,
+  },
+   fullScreenContainer: {
+    flex: 1,
+    //marginTop: 30,
+  },
+  headerRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-    padding: 6,
-    borderWidth: 0.5,
-    borderEndEndRadius: 12,
-    borderStartEndRadius: 12,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-    borderBottomStartRadius: 12,
-    borderBlockStartColor: '#ffffff31',
-    borderBlockColor: '#ffffff31',
-    borderTopColor: '#ffffff31',
-    borderBottomColor: '#ffffff31',
-    borderLeftColor: '#ffffff31',
-    borderRightColor: '#ffffff31',
-    marginBottom: 2,
+    alignItems: 'center',
   },
+  backIconRow: {
+    padding: 12,
+    borderRadius: 40,
+
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:
+      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+    //boxShadow: 'rgba(255, 255, 255, 0.12)  inset -1px 0px 5px 1px inset ',
+
+   boxShadow:
+      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    height: 48,
+    width: 48,
+  },
+ unizyText: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    flex: 1,
+    textAlign: 'center',
+    fontWeight: '600',
+    fontFamily: 'Urbanist-SemiBold',
+  },
+
+ 
   importantText: {
     color: '#ccc',
     fontSize: 12,
@@ -452,25 +507,8 @@ const styles = StyleSheet.create({
   },
   productCarddisplay: {
     display: 'flex',
-    height: '78%',
+    height: '100%',
     alignContent: 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backIconRow: {
-    padding: 12,
-    borderRadius: 40,
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
-    position: 'absolute',
-    top: -10,
-    left: 0,
-    right: 0,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -513,7 +551,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.56)',
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
-    marginTop: (Platform.OS === 'ios' ? 0 : 10),
+    marginTop: 10,
   },
   nextText: {
     color: '#002050',
