@@ -12,6 +12,7 @@ import {
   Dimensions,
   FlatList,
   SafeAreaView,
+  StatusBar,
 } from 'react-native';
 import { Key, useEffect, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
@@ -22,6 +23,16 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CommonActions } from '@react-navigation/native';
 import Button from '../../utils/component/Button';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
+import AnimatedReanimated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  interpolate,
+  interpolateColor,
+  useDerivedValue,
+} from 'react-native-reanimated';
+import LinearGradient from 'react-native-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
 
 
 type previewDetailsProps = {
@@ -42,7 +53,6 @@ const itemOptions = [
 const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const [showPopup, setShowPopup] = useState(false);
   const closePopup = () => setShowPopup(false);
-  const [scrollY, setScrollY] = useState(0);
   const scrollY1 = new Animated.Value(0);
 
   const [storedForm, setStoredForm] = useState<any | null>(null);
@@ -59,6 +69,53 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 const formattedDate = `${today.getDate().toString().padStart(2, '0')}-${(today.getMonth() + 1)
   .toString()
   .padStart(2, '0')}-${today.getFullYear()}`;
+
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: event => {
+      'worklet';
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  const animatedBlurStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+    return { opacity };
+  });
+
+  const animatedButtonStyle = useAnimatedStyle(() => {
+    'worklet';
+    const borderColor = interpolateColor(
+      scrollY.value,
+      [0, 300],
+      ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+    );
+    const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
+    return {
+      borderColor,
+      backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+    };
+  });
+
+  const animatedIconStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
+    const tintColor = interpolateColor(
+      scrollY.value,
+      [0, 150],
+      ['#FFFFFF', '#002050'],
+    );
+    return {
+      opacity,
+      tintColor,
+    };
+  });
+
+  const blurAmount = useDerivedValue(() =>
+    interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+  );
 
 interface Category {
   id: number;
@@ -475,20 +532,108 @@ const diff1 =commissionPrice1-priceValue1
       resizeMode="cover"
     >
       <View style={styles.fullScreenContainer}>
-        <View style={styles.header}>
-          <View style={styles.headerRow}>
-            <TouchableOpacity
-              style={styles.backBtn}
-              onPress={() => navigation.replace('PreviewThumbnail')}>
-              <View style={styles.backIconRow}>
-                <Image
-                  source={require('../../../assets/images/back.png')}
-                  style={{ height: 24, width: 24 }}
+        <StatusBar
+          translucent
+          backgroundColor="transparent"
+          barStyle="light-content"
+        />
+
+        {/* Header with Blur only at top */}
+        <AnimatedReanimated.View
+          style={[styles.headerWrapper, animatedBlurStyle]}
+          pointerEvents="none"
+        >
+          {/* Blur layer only at top with gradient fade */}
+          <MaskedView
+            style={StyleSheet.absoluteFill}
+            maskElement={
+              <LinearGradient
+                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                locations={[0, 0.8]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            }
+          >
+            <BlurView
+              style={StyleSheet.absoluteFill}
+              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+              blurAmount={Platform.OS === 'ios' ? 45 : 45}
+              overlayColor="rgba(255,255,255,0.05)"
+              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+            />
+            <LinearGradient
+              colors={[
+                'rgba(255, 255, 255, 0.45)',
+                'rgba(255, 255, 255, 0.02)',
+                'rgba(255, 255, 255, 0.02)',
+              ]}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+            />
+          </MaskedView>
+        </AnimatedReanimated.View>
+
+        {/* Header Content */}
+        <View style={styles.headerContent} pointerEvents="box-none">
+          <TouchableOpacity
+            onPress={() => navigation.replace('PreviewThumbnail')}
+            style={styles.backButtonContainer}
+            activeOpacity={0.7}
+          >
+            <AnimatedReanimated.View
+              style={[styles.blurButtonWrapper, animatedButtonStyle]}
+            >
+              {/* Static background (visible when scrollY = 0) */}
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 30],
+                      [1, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 40,
+                  })),
+                ]}
+              />
+
+              {/* Blur view fades in as scroll increases */}
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 50],
+                      [0, 1],
+                      'clamp',
+                    ),
+                  })),
+                ]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
                 />
-              </View>
-            </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>Preview Details</Text>
-          </View>
+              </AnimatedReanimated.View>
+
+              {/* Back Icon */}
+              <AnimatedReanimated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 24, width: 24 }, animatedIconStyle]}
+              />
+            </AnimatedReanimated.View>
+          </TouchableOpacity>
+
+          <Text allowFontScaling={false} style={styles.unizyText}>Preview Details</Text>
         </View>
 {/* 
      <ScrollView
@@ -500,14 +645,16 @@ const diff1 =commissionPrice1-priceValue1
           ])}
           scrollEventThrottle={16}
         > */}
-        <ScrollView
+        <AnimatedReanimated.ScrollView
             contentContainerStyle={[
              styles.scrollContainer,
                {
                paddingBottom: screenHeight * 0.1 + insets.bottom, // 10% of screen + safe area
+               paddingTop: Platform.OS === 'ios' ? 160 : 100,
                 },
             ]}
              scrollEventThrottle={16}
+             onScroll={scrollHandler}
             >
        {storedForm?.[6]?.value?.length > 1 ? (
           <View>
@@ -553,7 +700,7 @@ const diff1 =commissionPrice1-priceValue1
                 ? { uri: storedForm[6].value[0].uri }
                 : require('../../../assets/images/drone.png')
             }
-            style={{ width: '100%', height: 250 }}
+            style={{ width: '100%', height: 250 ,marginTop:12}}
             resizeMode="cover"
           />
         )}
@@ -763,7 +910,7 @@ const diff1 =commissionPrice1-priceValue1
               </View>
             </View>
           </View>
-        </ScrollView>
+        </AnimatedReanimated.ScrollView>
 
         {/* <TouchableOpacity style={styles.previewBtn} onPress={handleListPress}>
 
@@ -971,16 +1118,53 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     flex: 1,
   },
+  headerWrapper: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    height: Platform.OS === 'ios' ? 180 : 180,
+    zIndex: 10,
+    overflow: 'hidden',
+    alignSelf: 'center',
+    pointerEvents: 'none',
+  },
+  headerContent: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 50 : 44,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
+  },
+  backButtonContainer: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 11,
+    top: 7,
+  },
+  blurButtonWrapper: {
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+  },
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
-    flex: 1,
-    fontWeight: '600',
     textAlign: 'center',
+    fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
-    marginTop: 20,
-    // height: 50,
-    textAlignVertical: 'center',
+    width: '100%',
+    marginTop: 17,
   },
   backBtn: {
     width: 30,
@@ -1050,7 +1234,6 @@ const styles = StyleSheet.create({
   },
   fullScreenContainer: {
     flex: 1,
-    marginTop: 30,
   },
 
   loginText: {
@@ -1139,7 +1322,6 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     paddingBottom: 70,
-    paddingTop: 90,
     // paddingHorizontal: 20,
   },
 

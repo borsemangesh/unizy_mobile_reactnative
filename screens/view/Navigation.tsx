@@ -41,8 +41,16 @@ import EditPreviewDetailed from './dashboard/EditPreviewDetailed';
 import UserProfileScreen from './dashboard/UserProfileScreen';
 import EditProfile from './dashboard/EditProfile';
 import ProfileCard from './dashboard/ProfileCard';
-
+import StripeOnboardingComplete from './dashboard/StripeOnboardingComplete';
 const Stack = createNativeStackNavigator();
+const linking = {
+  prefixes: ['unizyapp://'],
+  config: {
+    screens: {
+      StripeOnboardingComplete: 'onboarding-complete',
+    },
+  },
+};
 
 export const Navigation = () => {
   const [initialRoute, setInitialRoute] = useState<null | string>(null);
@@ -50,7 +58,7 @@ export const Navigation = () => {
 
   enableScreens();
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking}>
       <Stack.Navigator
         initialRouteName="SinglePage"
         screenOptions={{ headerShown: false, animation: 'none' }}
@@ -109,8 +117,8 @@ export const Navigation = () => {
             presentation: 'fullScreenModal',
           }}
         />
-        
-<Stack.Screen
+
+        <Stack.Screen
           name="EditPreviewThumbnail"
           component={EditPreviewThumbnail}
           options={{
@@ -120,8 +128,7 @@ export const Navigation = () => {
           }}
         />
 
-
-<Stack.Screen
+        <Stack.Screen
           name="UserProfileScreen"
           component={UserProfileScreen}
           options={{
@@ -130,7 +137,7 @@ export const Navigation = () => {
             presentation: 'fullScreenModal',
           }}
         />
-        
+
         <Stack.Screen
           name="EditPreviewDetailed"
           component={EditPreviewDetailed}
@@ -339,7 +346,7 @@ export const Navigation = () => {
           }}
         />
 
-  <Stack.Screen
+        <Stack.Screen
           name="ProfileCard"
           component={ProfileCard}
           options={{
@@ -348,6 +355,11 @@ export const Navigation = () => {
           }}
         />
 
+        <Stack.Screen
+          name="StripeOnboardingComplete"
+          component={StripeOnboardingComplete}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -663,8 +663,8 @@ const styles = StyleSheet.create({
   },
   categoryTabsContainer: {
     width: '100%',
-    marginBottom: 12,
-    marginTop: 12,
+    marginBottom: 0,
+    marginTop: 16,
   },
   categoryTabsScrollContent: {
     flexDirection: 'row',
