@@ -36,6 +36,7 @@ interface TransactionItem {
   featureId: number;
   category_logo:string;
   feature_idNew: number;
+  amount: string;
 }
 
 interface TransactionSection {
@@ -187,6 +188,7 @@ export default function TransactionHistoryScreen(
               status: item.status,
               code: '', // no code in sales example
               seller: item.sold_to,
+              amount: item.amount,
               university: item.university_name, // extra data if needed
               category_logo: item.category_logo,
               feature_idNew: item.id,
@@ -355,7 +357,7 @@ export default function TransactionHistoryScreen(
                     color:
                       key === selectedTab
                         ? '#FFFFFF'
-                        : 'rgba(158, 229, 255, 0.91)',
+                        : '#89C7FF',
                     lineHeight: 18,
                     letterSpacing: 0.25,
                     textAlign: 'center',
@@ -366,7 +368,7 @@ export default function TransactionHistoryScreen(
               </View>
             </TouchableOpacity>
 
-            {/* Divider after Purchases (only show if Purchases is NOT selected) */}
+           
             {key === 'Purchases' &&
               index !== tabs.length - 1 &&
               selectedTab !== 'Purchases' &&
@@ -442,7 +444,6 @@ export default function TransactionHistoryScreen(
                       >
                         <View style={styles.imgcontainer}>
                           <Image
-                            // source={item.category_logo}
                             source={{ uri: item.category_logo }}
                             style={styles.image}
                             resizeMode="cover"
@@ -466,7 +467,7 @@ export default function TransactionHistoryScreen(
                   </View>
 
                   <View style={styles.statusRow}>
-                    <View style={styles.statusBox}>
+                    <View style={[styles.statusBox]}>
                       <Text allowFontScaling={false} style={styles.statusText}>
                         {item.status}
                       </Text>
@@ -475,9 +476,10 @@ export default function TransactionHistoryScreen(
                       style={[
                         styles.codeBox,
                         {
+                          height: 28,
                           backgroundColor:
                             item.status !== 'Completed'
-                              ? 'rgba(255, 255, 255, 0.34)'
+                              ? 'rgba(255, 255, 255, 0.06)'
                               : 'rgba(255,255,255,0.15)',
                         },
                       ]}
@@ -489,7 +491,7 @@ export default function TransactionHistoryScreen(
                           {
                             color:
                               item.status !== 'Completed'
-                                ? '#FFFFFF'
+                                ? '#9CD6FF'
                                 : 'rgba(255,255,255,0.15)',
                           },
                         ]}
@@ -501,19 +503,20 @@ export default function TransactionHistoryScreen(
 
                   <View style={styles.cardconstinerdivider} />
                   <View style={{ flexDirection: 'row', gap: 4 }}>
-                    <Text style={styles.sellerText}>Purchased from</Text>
                     <View style={{ flexDirection: 'row' }}>
+                      <Text  allowFontScaling={false} style={{    
+                        color: 'rgba(255, 255, 255, 0.64)',
+                        fontSize: 12,
+                        fontWeight: '600',
+                        // marginTop: 10,
+                        fontFamily: 'Urbanist-SemiBold',}}>
+                          Purchased from </Text>
+                      
                       <Text
                         allowFontScaling={false}
-                        style={styles.sellerTextName}
+                        style={[styles.sellerTextName, { }]}
                       >
-                        {item.seller}
-                      </Text>
-                      <Text
-                        allowFontScaling={false}
-                        style={[styles.sellerTextName, { marginLeft: 6 }]}
-                      >
-                        ({item.university})
+                       {item.seller} ({item.university})
                       </Text>
                     </View>
                   </View>
@@ -562,7 +565,7 @@ export default function TransactionHistoryScreen(
                     allowFontScaling={false}
                     style={styles.Overall_Earnings_title}
                   >
-                    {`£ ` + overallEarning}
+                    {`£` + overallEarning}
                   </Text>
                 </View>
               </View>
@@ -637,17 +640,17 @@ export default function TransactionHistoryScreen(
                       <Text
                         allowFontScaling={false}
                         style={{
-                          color: '#5cc9f0',
+                          color: '#9CDDFF',
                           fontFamily: 'Urbanist-SemiBold',
                           fontSize: 12,
                         }}
                       >
-                        Total Order: {item.seller}
+                        Total Order: {transactions.length}
                       </Text>
                       <Text
                         allowFontScaling={false}
                         style={{
-                          color: '#5cc9f0',
+                          color: '#9CDDFF',
                           fontFamily: 'Urbanist-SemiBold',
                           fontSize: 12,
                         }}
@@ -716,6 +719,8 @@ export default function TransactionHistoryScreen(
                           fontFamily: 'Urbanist-SemiBold',
                           fontSize: 12,
                           marginTop: 10,
+
+    textDecorationLine: 'underline', 
                         }}
                       >
                         View Listing
@@ -798,20 +803,21 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)',
   },
 
-  imgcontainer: {
-    borderRadius: 10,
-    padding: 8,
-    paddingTop: 8,
-    paddingLeft: 12,
-    paddingRight: 12,
-    alignItems: 'center',
+  imgcontainer:{
+    width: 44,
+    height: 44,
+    borderRadius: 12, 
+    padding:8,
+    alignItems:'center',
+    alignSelf: 'center',
+    justifyContent: 'center',
     borderWidth: 0.4,
     borderColor: '#ffffff11',
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
     backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(42, 126, 223, 0.67) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxSizing: 'border-box',
-  },
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxSizing: 'border-box'
+    },
   image: {
     width: 24,
     height: 24,
@@ -831,7 +837,7 @@ const styles = StyleSheet.create({
   },
 
   _section: {
-    marginBottom: 14,
+    marginBottom: 8,
     marginTop: 0,
   },
   get section() {
@@ -859,13 +865,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   itemTitle: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '500',
+    color: 'rgba(255, 255, 255, 0.88)',
+    fontSize: 17,
+    fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
   },
   price: {
-    color: '#fff',
+    color: 'rgba(255, 255, 255, 0.88)',
     fontSize: 14,
     marginTop: 2,
     fontWeight: '600',
@@ -884,7 +890,7 @@ const styles = StyleSheet.create({
   statusRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    
+    alignItems: 'center',
     gap: 2
   },
 
@@ -916,10 +922,11 @@ const styles = StyleSheet.create({
     paddingRight: 6,
     gap:12,
     borderRadius: 4,
-    justifyContent:'center'
+    justifyContent:'center',
+    height: 20,
   },
   statusText: {
-    color: '#fff',
+    color: '#9CDDFF',
     fontSize: 12,
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: '600',
@@ -932,7 +939,7 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     paddingBottom: 0,
     paddingLeft: 12,
-    paddingRight: 12,
+    paddingRight: 8,
     borderRadius: 6,
     justifyContent:'center'
   },
@@ -947,30 +954,34 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '600',
-    // marginTop: 10,
     fontFamily: 'Urbanist-SemiBold',
   },
   sellerTextName: {
-    color: '#52aff1',
-    fontSize: 12,
+    color: '#9CD6FF',
+ fontSize: 12,
     fontWeight: '600',
     // marginTop: 10,
     fontFamily: 'Urbanist-SemiBold',
+  },
+  sellerText_New:{
+    color: '#FFFFFF',
+    fontSize: 12,
+       fontWeight: '600',
+       // marginTop: 10,
+       fontFamily: 'Urbanist-SemiBold',
   },
 
   salesCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     padding: 12,
-    marginBottom: 12,
+    marginBottom: 5,
     borderRadius: 18,
     gap: 12,
   },
   salesTitle: {
     fontWeight: '600',
     fontSize: 17,
-    color: '#fff',
-    marginBottom: 5,
-    letterSpacing: 1,
+    color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-SemiBold',
   },
   allDetails: {
@@ -979,6 +990,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 12,
+    textDecorationLine: 'underline', 
   },
 
   chargesCard: {
@@ -999,14 +1011,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 17,
     color: '#fff',
-    marginBottom: 5,
     fontFamily: 'Urbanist-SemiBold',
   },
   Overall_Earnings_title:{
     fontWeight: '600',
     fontSize: 20,
     color: '#fff',
-    marginBottom: 5,
     fontFamily: 'Urbanist-SemiBold',
   },
   viewListing: {
