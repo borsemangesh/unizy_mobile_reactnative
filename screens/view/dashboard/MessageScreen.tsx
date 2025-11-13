@@ -48,87 +48,97 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
   //   },
   // ];
 
-
-
-  
   useEffect(() => {
-  const fetchUserChatData = async () => {
-    try {
-      const token = await AsyncStorage.getItem('userToken');
-      const userId = await AsyncStorage.getItem('userId');  
-      
+    const fetchUserChatData = async () => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        const userId = await AsyncStorage.getItem('userId');
 
-      if (!token || !userId) {
-        console.warn('Missing token or user ID in AsyncStorage');
-        return;
+        if (!token || !userId) {
+          console.warn('Missing token or user ID in AsyncStorage');
+          return;
+        }
+
+        const url = `${MAIN_URL.baseUrl}twilio/mychats`;
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          console.warn('Token fetch failed:', data.message);
+          return;
+        }
+
+        console.log('data', data);
+
+        const UserData = data.data;
+        setStudentList(UserData);
+
+        console.log('UserData--------------------', UserData);
+
+        // console.log("chatData",chatData);
+      } catch (error) {
+        console.error('Chat setup failed:', error);
       }
+    };
 
-      const url = `${MAIN_URL.baseUrl}twilio/mychats`;
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
+    fetchUserChatData();
+  }, []);
+
+  const formatTime = (dateString: string) => {
+    // if (!dateString) return "";
+    // const date = new Date(dateString);
+    // return date.toLocaleTimeString([], {
+    //   hour: "2-digit",
+    //   minute: "2-digit",
+    //   hour12: true,
+    // });
+
+    if (!dateString) return '';
+
+    const date = new Date(dateString);
+    const today = new Date();
+
+    // Strip time to compare only the day, month, year
+    const isToday =
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear();
+
+    if (isToday) {
+      return date.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        console.warn('Token fetch failed:', data.message);
-        return;
-      }
-
-      console.log("data",data);
-      
-
-      const UserData = data.data;
-      setStudentList(UserData)
-
-
-      console.log("UserData--------------------",UserData);
-      
-
-
-      // console.log("chatData",chatData);
-
-
-      
-
-
-    } catch (error) {
-      console.error('Chat setup failed:', error);
+    } else {
+      return date.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      }); // Example: 29/01/2025
     }
   };
 
-  fetchUserChatData();
-}, []);
-
-
-const formatTime = (dateString: string) => {
-  if (!dateString) return "";
-  const date = new Date(dateString);
-  return date.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  });
-};
-
-
-
   const getInitials = (firstName = '', lastName = '') => {
-  const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
-  const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
-  return (f + l) || '?';
-};
-
+    const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
+    const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
+    return f + l || '?';
+  };
 
   return (
     <View style={{ height: '100%', display: 'flex', flex: 1, width: '100%' }}>
       <View style={styles.header}>
         <View style={styles.headerRow}>
-          <Text allowFontScaling={false} style={styles.unizyText}>Messages</Text>
+          <Text allowFontScaling={false} style={styles.unizyText}>
+            Messages
+          </Text>
         </View>
       </View>
 
@@ -136,7 +146,7 @@ const formatTime = (dateString: string) => {
         <View style={[styles.search_container]}>
           <Image source={searchIcon} style={styles.searchIcon} />
           <TextInput
-          allowFontScaling={false}
+            allowFontScaling={false}
             style={styles.searchBar}
             placeholder="Search"
             placeholderTextColor="#ccc"
@@ -146,51 +156,52 @@ const formatTime = (dateString: string) => {
             // onFocus={() => navigation.navigate('SearchPage',{ animation: 'none' })}
           />
         </View>
+          <ScrollView
+                  contentContainerStyle={{ paddingBottom: 40 }}
+                  style={{ flex: 1 }}
+                  showsVerticalScrollIndicator={false}
+                >
 
         <View style={{ flex: 1 }}>
           <FlatList
             data={studentList}
             keyExtractor={chat => chat.id}
-            renderItem={({item: chat}) => (
+            renderItem={({ item: chat }) => (
               <TouchableOpacity
                 onPress={() => {
                   navigation.navigate('MessagesIndividualScreen', {
                     animation: 'none',
-                     members: chat.members, 
-                     userConvName:chat.conv_name,
-                     currentUserIdList:chat.current_user_id,
-                     source: 'chatList'
+                    members: chat.members,
+                    userConvName: chat.conv_name,
+                    currentUserIdList: chat.current_user_id,
+                    source: 'chatList',
                   });
                   // navigation.replace('MessagesIndividualScreen', { animation: 'none' });
                 }}
               >
                 <View>
                   {/* Chat Row */}
-                {/* key={index} */}
+                  {/* key={index} */}
                   {/* {studentList?.map((chat: any, index: number) => ( */}
-                  <View 
-                    style={styles.chatRow}
-                  >
-
-                      {chat.members?.profile ? (
-      <Image
-        source={{ uri: chat.members?.profile}}
-        style={styles.chatImage} 
-      />
-    ) : (
-      <View style={styles.initialsCircle}>
-        <Text allowFontScaling={false} style={styles.initialsText}>
-          {getInitials(
-
-            
-           chat?.members?.firstname ?? 'A',
-            chat?.members?.lastname ?? 'W'
-          )}
-        </Text>
-      </View>
-    )}
-
-
+                  <View style={styles.chatRow}>
+                    {chat.members?.profile ? (
+                      <Image
+                        source={{ uri: chat.members?.profile }}
+                        style={styles.chatImage}
+                      />
+                    ) : (
+                      <View style={styles.initialsCircle}>
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.initialsText}
+                        >
+                          {getInitials(
+                            chat?.members?.firstname ?? 'A',
+                            chat?.members?.lastname ?? 'W',
+                          )}
+                        </Text>
+                      </View>
+                    )}
 
                     {/* <Image source={chat.members?.profile}  style={styles.chatImage}  /> */}
 
@@ -203,7 +214,7 @@ const formatTime = (dateString: string) => {
                         }}
                       >
                         <Text
-                        allowFontScaling={false}
+                          allowFontScaling={false}
                           style={{
                             fontSize: 16,
                             fontWeight: '600',
@@ -211,18 +222,18 @@ const formatTime = (dateString: string) => {
                             fontFamily: 'Urbanist-SemiBold',
                           }}
                         >
-                           {chat?.members?.firstname} {chat?.members?.lastname}
+                          {chat?.members?.firstname} {chat?.members?.lastname}
                         </Text>
                         <Text
-                        allowFontScaling={false}
+                          allowFontScaling={false}
                           style={{
-                            fontSize: 14,
+                            fontSize: 12,
                             fontWeight: '500',
-                            color: '#FFFFFF',
-                            fontFamily: 'Urbanist-SemiBold',
+                            color: '#FFFFFFA3',
+                            fontFamily: 'Urbanist-Medium',
                           }}
                         >
-                        {formatTime(chat?.last_message?.dateCreated)}
+                          {formatTime(chat?.last_message?.dateCreated)}
                         </Text>
                       </View>
 
@@ -235,13 +246,13 @@ const formatTime = (dateString: string) => {
                         }}
                       >
                         <Text
-                        allowFontScaling={false}
+                          allowFontScaling={false}
                           numberOfLines={1}
                           ellipsizeMode="tail"
                           style={{
-                            fontSize: 15,
+                            fontSize: 12,
                             fontWeight: '500',
-                            color: '#FFFFFF',
+                            color: '#FFFFFFE0',
                             fontFamily: 'Urbanist-Medium',
                             flex: 1,
                           }}
@@ -250,26 +261,26 @@ const formatTime = (dateString: string) => {
                         </Text>
 
                         {/* {item.unreadCount > 0 && ( */}
-                          <Text
+                        <Text
                           allowFontScaling={false}
-                            style={{
-                              fontSize: 14,
-                              fontWeight: '600',
-                              color: '#FFFFFF',
-                              fontFamily: 'Urbanist-Medium',
-                              backgroundColor: 'rgba(255, 255, 255, 0.14)',
-                              shadowColor: '#000',
-                              shadowOffset: { width: 0, height: 2 },
-                              shadowOpacity: 0.3,
-                              shadowRadius: 3,
-                              padding: 5,
-                              width: 30,
-                              textAlign: 'center',
-                              borderRadius: 100,
-                            }}
-                          >
-                            {chat?.unreadcount}
-                          </Text>
+                          style={{
+                            fontSize: 14,
+                            fontWeight: '600',
+                            color: '#FFFFFF',
+                            fontFamily: 'Urbanist-Medium',
+                            backgroundColor: 'rgba(255, 255, 255, 0.14)',
+                            shadowColor: '#000',
+                            shadowOffset: { width: 0, height: 2 },
+                            shadowOpacity: 0.3,
+                            shadowRadius: 3,
+                            padding: 5,
+                            width: 30,
+                            textAlign: 'center',
+                            borderRadius: 100,
+                          }}
+                        >
+                          {chat?.unreadcount}
+                        </Text>
                         {/* )} */}
                       </View>
                     </View>
@@ -289,38 +300,38 @@ const formatTime = (dateString: string) => {
             )}
           />
         </View>
+        </ScrollView>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-
-  initialsCircle:{
- backgroundColor: '#8390D4',
-  alignItems: 'center',
-  justifyContent: 'center',
-   width: 50,
+  initialsCircle: {
+    backgroundColor: '#8390D4',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 50,
     height: 50,
     borderRadius: 25,
     marginRight: 12,
   },
-  initialsText:{
-   color: '#fff',
-  fontSize: 18,
-  fontWeight:600,
-  textAlign: 'center',
-  fontFamily: 'Urbanist-SemiBold',
+  initialsText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 600,
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
   },
 
-    chatImage:{ width: 50, height: 50, borderRadius: 100 },
-    chatRow:{
-      width: '100%',
-      flexDirection: 'row',
-      gap: 10,
-      marginTop: 10,
-      alignItems: 'center',
-   },
+  chatImage: { width: 50, height: 50, borderRadius: 100 },
+  chatRow: {
+    width: '100%',
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 10,
+    alignItems: 'center',
+  },
   chatConainter: {
     top: 90,
     minHeight: '100%',

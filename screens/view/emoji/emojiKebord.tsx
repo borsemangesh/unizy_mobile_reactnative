@@ -64,10 +64,10 @@ const demoStyles = StyleSheet.create({
         marginBottom: 20,
     },
     emojiPickerContainer: {
-        height: Dimensions.get('window').height * 0.4, 
+        height: Dimensions.get('window').height * 0.3, 
         width: '100%',
         backgroundColor: '#34478dff',
-        paddingVertical: 10,
+        paddingVertical: 0,
     },
     emojiItem: {
         flex: 1,
