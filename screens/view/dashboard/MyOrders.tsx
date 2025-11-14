@@ -1,3 +1,4 @@
+
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Image,
@@ -24,7 +25,22 @@ import SearchListProductCard from '../../utils/SearchListProductCard';
 import SearchTutionCard from '../../utils/SearchTutionCard';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 import NotificationCard from '../../utils/NotificationCard';
+import ReviewDetailCard from '../../utils/ReviewDetailCard';
 import MyOrderCard from '../../utils/MyOrderCard';
+import { SquircleView } from 'react-native-figma-squircle';
+
+
+import Animated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  interpolate,
+  interpolateColor,
+  useDerivedValue,
+} from 'react-native-reanimated';
+import { BlurView } from '@react-native-community/blur';
+import LinearGradient from 'react-native-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
 
 
 type CreatedBy = {
@@ -91,6 +107,56 @@ const MyOrders = ({ navigation }: MyOrdersProps)  => {
     const [isLoading, setIsLoading] = useState(false);
   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
  const SCREEN_HEIGHT = Dimensions.get('window').height;
+  const { height: screenHeight } = Dimensions.get('window');
+const [isLoadingMore, setIsLoadingMore] = useState(false);
+   const scrollY = useSharedValue(0);
+  
+   const scrollHandler = useAnimatedScrollHandler({
+     onScroll: event => {
+       'worklet';
+       scrollY.value = event.contentOffset.y;
+     },
+   });
+  
+   const animatedBlurStyle = useAnimatedStyle(() => {
+     'worklet';
+     const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+     return { opacity };
+   });
+  
+   const animatedButtonStyle = useAnimatedStyle(() => {
+     'worklet';
+     const borderColor = interpolateColor(
+       scrollY.value,
+       [0, 300],
+       ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+     );
+     const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
+     return {
+       borderColor,
+       backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+     };
+   });
+   const animatedIconStyle = useAnimatedStyle(() => {
+     'worklet';
+  
+     const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
+  
+     const tintColor = interpolateColor(
+       scrollY.value,
+       [0, 150],
+       ['#FFFFFF', '#002050'],
+     );
+  
+     return {
+       opacity,
+       tintColor,
+     };
+   });
+  
+   const blurAmount = useDerivedValue(() =>
+     interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+   );
 
   useEffect(() => {
   const loadBookmarks = async () => {
@@ -272,7 +338,7 @@ console.log(groupedArray.map(i => i.type === 'date' ? `📅 ${i.displayDate}` : 
 
 const groupedOrders = groupByDate(filteredFeatures);
 
-const renderItem = ({ item }: any) => {
+const renderItem = ({ item, index }: { item: any; index: number }) => {
  const displayDate = formatDate(item?.featurelist?.created_at);
   if (item.type === 'date') {
     return (
@@ -324,8 +390,9 @@ const renderItem = ({ item }: any) => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-        {/* Header */}
-        <View style={styles.header}>
+       
+       
+        {/* <View style={styles.header}>
           <View style={styles.headerRow}>
             <TouchableOpacity onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Profile',isNavigate: false})}}>
               <View style={styles.backIconRow}>
@@ -338,71 +405,202 @@ const renderItem = ({ item }: any) => {
             <Text allowFontScaling={false} style={styles.unizyText}>My Orders</Text>
             <View style={{ width: 48 }} />
           </View>
-        </View>
+        </View> */}
 
-    <View>
-      <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-             style={{ marginVertical: 6 ,}}
-            contentContainerStyle={{ paddingHorizontal: 16,paddingVertical:10, gap: 4,  }}
-            >
-          
-       {categories.map((cat, index) => {
-                 const isSelected = selectedCategory.name === cat.name;
-                 return (
-                   <View key={index}>
-                     <TouchableOpacity
-                       onPress={() => setSelectedCategory(cat)}
-                       style={isSelected ? styles.tabcard : styles.tabcard1}>
-                       <Text allowFontScaling={false} style={isSelected ? styles.tabtext : styles.othertext}>
-                         {cat.name}
-                       </Text>
-                     </TouchableOpacity>
-                   </View>
-                 );
-               })}
-        </ScrollView>
-            
-
+          <StatusBar
+                 translucent
+                 backgroundColor="transparent"
+                 barStyle="light-content"
+               />
         
-        <FlatList
-          data={groupedOrders}
-          keyExtractor={(item) => item.id.toString()}
-          contentContainerStyle={[
-            styles.listContainer,
-            { paddingBottom: SCREEN_HEIGHT * 0.22 },
-            groupedOrders?.length === 0 && {
-              alignContent: 'center',
-              alignSelf: 'center',
-              width: '90%',
-              height: '100%',
-            },
-          ]}
-          renderItem={renderItem}
-          ListFooterComponent={
-            isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
-          }
-          ListEmptyComponent={
-            !isLoading ? (
-              <View style={styles.emptyWrapper}>
-                <View style={styles.emptyContainer}>
-                  <Image
-                    source={require('../../../assets/images/noproduct.png')}
-                    style={styles.emptyImage}
-                    resizeMode="contain"
-                  />
-                  <Text allowFontScaling={false} style={styles.emptyText}>
-                    No Orders Found
-                  </Text>
-                </View>
+               <Animated.View
+                 style={[styles.headerWrapper, animatedBlurStyle]}
+                 pointerEvents="none"
+               >
+                 <MaskedView
+                   style={StyleSheet.absoluteFill}
+                   maskElement={
+                     <LinearGradient
+                       colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                       locations={[0, 0.8]}
+                       start={{ x: 0, y: 0 }}
+                       end={{ x: 0, y: 1 }}
+                       style={StyleSheet.absoluteFill}
+                     />
+                   }
+                 >
+                   <BlurView
+                     style={StyleSheet.absoluteFill}
+                     blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+                     blurAmount={Platform.OS === 'ios' ? 45 : 45}
+                    //  overlayColor="rgba(255,255,255,0.05)"
+                     reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+                   />
+                   <LinearGradient
+                     colors={[
+                       'rgba(255, 255, 255, 0.45)',
+                       'rgba(255, 255, 255, 0.02)',
+                       'rgba(255, 255, 255, 0.02)',
+                     ]}
+                     style={StyleSheet.absoluteFill}
+                     start={{ x: 0, y: 0 }}
+                     end={{ x: 0, y: 1 }}
+                   />
+                 </MaskedView>
+               </Animated.View>
+        
+               <View style={styles.headerContent} pointerEvents="box-none">
+                 <TouchableOpacity
+                   onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Profile',isNavigate: false})}}
+                   style={styles.backButtonContainer}
+                   activeOpacity={0.7}
+                 >
+                   <Animated.View
+                     style={[styles.blurButtonWrapper, animatedButtonStyle]}
+                   >
+                     <Animated.View
+                       style={[
+                         StyleSheet.absoluteFill,
+                         useAnimatedStyle(() => ({
+                           opacity: interpolate(
+                             scrollY.value,
+                             [0, 30],
+                             [1, 0],
+                             'clamp',
+                           ),
+                           backgroundColor: 'rgba(255,255,255,0.1)',
+                           borderRadius: 40,
+                         })),
+                       ]}
+                     />
+        
+                     <Animated.View
+                       style={[
+                         StyleSheet.absoluteFill,
+                         useAnimatedStyle(() => ({
+                           opacity: interpolate(
+                             scrollY.value,
+                             [0, 50],
+                             [0, 1],
+                             'clamp',
+                           ),
+                         })),
+                       ]}
+                     >
+                       <BlurView
+                         style={StyleSheet.absoluteFill}
+                         blurType="light"
+                         blurAmount={10}
+                         reducedTransparencyFallbackColor="transparent"
+                       />
+                     </Animated.View>
+        
+                     {/* Back Icon */}
+                     <Animated.Image
+                       source={require('../../../assets/images/back.png')}
+                       style={[{ height: 24, width: 24 }, animatedIconStyle]}
+                     />
+                   </Animated.View>
+                 </TouchableOpacity>
+        
+                 <Text allowFontScaling={false} style={styles.unizyText}>
+                   My Orders
+                 </Text>
+               </View>
+
+        <Animated.FlatList
+            data={groupedOrders}
+            renderItem={renderItem}
+            keyExtractor={(item, index) => {
+              'worklet';
+              return index.toString();
+            }}
+            ListHeaderComponent={
+              <View
+                style={styles.categoryTabsContainer}
+                pointerEvents="box-none"
+              >
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.categoryTabsScrollContent}
+                  nestedScrollEnabled={true}
+                >
+                  {categories.map((cat, index) => {
+                    const isSelected = selectedCategory.name === cat.name;
+                    return (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => setSelectedCategory(cat)}
+                        activeOpacity={0.7}
+                      >
+                       
+                        <SquircleView
+                          style={isSelected ? styles.tabcard : styles.tabcard1}
+                          squircleParams={{
+                            cornerSmoothing: 1,
+                            cornerRadius: 10,
+                            fillColor: isSelected
+                              ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)'
+                              : 'rgba(255, 255, 255, 0.06)',
+                          }}
+                        >
+                          <Text
+                            allowFontScaling={false}
+                            style={
+                              isSelected ? styles.tabtext : styles.othertext
+                            }
+                          >
+                            {cat.name}
+                          </Text>
+                          {/* </View> */}
+                        </SquircleView>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </ScrollView>
               </View>
-            ) : null
-          }
-        />
+            }
+            contentContainerStyle={[
+              styles.listContainer,
+              { paddingTop: Platform.OS === 'ios' ? 120 : 100 },
+            ]}
+            onScroll={scrollHandler}
+            scrollEventThrottle={16}
+            onEndReachedThreshold={0.5}
+            onEndReached={() => {
+              const nextPage = page + 1;
+              setPage(nextPage);
+              displayListOfProduct(selectedCategory?.id ?? null, nextPage);
+            }}
+            ListFooterComponent={
+              isLoadingMore ? (
+                <ActivityIndicator
+                  size="small"
+                  color="#fff"
+                  style={{ marginVertical: 12 }}
+                />
+              ) : null
+            }
+            ListEmptyComponent={
+              !isLoading ? (
+               <View style={[styles.emptyWrapper,{minHeight: screenHeight - (Platform.OS === 'ios' ? 225 : 150), }]}>
+                          <View style={styles.emptyContainer}>
+                            <Image
+                              source={require('../../../assets/images/noproduct.png')} // your image
+                              style={styles.emptyImage}
+                              resizeMode="contain"
+                            />
+                            <Text allowFontScaling={false} style={styles.emptyText}>
+                              No Orders Found
+                            </Text>
+                          </View>
+                          </View>
+              ) : null
+            }
+          />
 
         
-        </View>
       </View>
       <NewCustomToastContainer/>
     </ImageBackground>
@@ -412,6 +610,81 @@ const renderItem = ({ item }: any) => {
 export default MyOrders;
 
 const styles = StyleSheet.create({
+
+  categoryTabsContainer: {
+    width: '100%',
+    marginBottom: 12,
+    marginTop: 12,
+    paddingLeft: 10,
+  },
+ 
+  categoryTabsScrollContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingRight: 16,
+  },
+
+    blurButtonWrapper: {
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+  },
+
+  header: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    zIndex: 20,
+    paddingTop: Platform.OS === 'ios' ? 50 : 40,
+    paddingBottom: Platform.OS === 'ios' ? 16 : 12,
+    paddingHorizontal: 16,
+    justifyContent: 'center',
+    overflow: 'hidden', // IMPORTANT for MaskedView
+    flexDirection: 'row',
+    alignItems: 'center',
+    elevation: 0,
+    backgroundColor: 'transparent',
+    borderBottomWidth: 0,
+    shadowOpacity: 0,
+    shadowColor: 'transparent',
+    alignSelf: 'center',
+    minHeight: Platform.OS === 'ios' ? 80 : 88,
+  },
+  backButtonContainer: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 11,
+    top: 7,
+  },
+
+   headerWrapper: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    height: Platform.OS === 'ios' ? 180 : 180,
+    zIndex: 10,
+    overflow: 'hidden',
+    alignSelf: 'center',
+    pointerEvents: 'none',
+  },
+  headerContent: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? '6%' : 40,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
+  },
 
 dateHeading:{
     color:'#fff',
@@ -440,8 +713,7 @@ dateHeading:{
     borderColor: 'rgba(255, 255, 255, 0.08)',
     borderRadius:24,
     overflow:'hidden',
-    //minHeight:'80%',
-   //marginBottom:20,
+  
   },
   emptyImage: {
     width: 50,
@@ -517,14 +789,8 @@ dateHeading:{
       height: '100%' },
   fullScreenContainer: {
      flex: 1,
-     marginTop:10
+    //  marginTop:10
      },
-  header: {
-    //paddingTop: Platform.OS === 'ios' ? 50 : 25,
-    paddingTop: Platform.OS === 'ios' ? 40 : 30,
-    paddingBottom: 12,
-    paddingHorizontal: 16,
-  },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -544,13 +810,22 @@ dateHeading:{
     height: 48,
     width: 48,
   },
-  unizyText: {
+  // unizyText: {
+  //   color: '#FFFFFF',
+  //   fontSize: 20,
+  //   flex: 1,
+  //   textAlign: 'center',
+  //   fontWeight: '600',
+  //    fontFamily: 'Urbanist-SemiBold',
+  // },
+   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
-    flex: 1,
     textAlign: 'center',
     fontWeight: '600',
-     fontFamily: 'Urbanist-SemiBold',
+    fontFamily: 'Urbanist-SemiBold',
+    width: '100%',
+    marginTop: 17,
   },
   search_container: {
     flexDirection: 'row',
@@ -569,23 +844,15 @@ dateHeading:{
     width: '85%',
   },
   listContainer: {
-    // marginLeft: 10,
-    // marginRight: 20,
-    // paddingTop: 10,
-    // paddingBottom:160
-     marginLeft: 8,
-    marginRight: 8,
-    marginTop:-12,
-    marginBottom:12,
-    
-    
-    
-    //gap:16
-
+    // marginLeft: 8,
+   // marginRight: 8,
+    //marginTop:-12,
+   // marginBottom:12,
+    marginLeft: 10,
+    marginRight: 10,
+    paddingBottom: 10,
   },
   row1: {
-    // flexDirection: 'row',
-    // justifyContent: 'flex-start',
   },
   itemContainer: {
     flex: 1,

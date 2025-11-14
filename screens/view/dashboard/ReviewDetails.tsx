@@ -25,6 +25,7 @@ import StarRating from '../../utils/StarRating';
 import ReviewDetailCard from '../../utils/ReviewDetailCard';
 import MyReviewCard from '../../utils/MyReviewCard';
 import Button from '../../utils/component/Button';
+import { InfoToast } from 'react-native-toast-message';
 
 
 
@@ -159,16 +160,16 @@ useEffect(() => {
       const formattedUsers: User[] = reviews.map((item: any) => ({
         id: item.id.toString(),
         name: item.reviewer_name,
-        university: item.reviewer?.university_name ?? "Unknown University",
+        university: item?.university_name ?? "Unknown University",
         rating: item.rating,
-        // profileImg: item.reviewer?.profile
-        //   ? { uri: IMAGE_BASE + item.reviewer.profile }
-        //   : defaultProfile,
-        profileImg:defaultProfile,
+        userprofile:item?.reviewer_image ,
+        productimage:item?.feature_image,
         comment: item.comment,
          date: item.created_at,
         featureTitle: item.feature_title,
-        categoryName: item.category_name
+        categoryName: item.category_name,
+        category_id:item.category_id,
+        price:item.price
       }));
 
       setUsers(formattedUsers);
@@ -187,42 +188,10 @@ type User = {
   name: string;
   university: string;
   rating: number;
-  profileImg: any; // URL or require()
+  profileImg: any; 
   comment: string;
 };
 
-
-// const renderItem = ({ item }: any) => (
-//   <View style={styles.userRow}>
-//     {/* Top row: Image + Name/Sub + Star */}
-//     <View style={{ flexDirection: 'row', width: '100%' }}>
-//       {/* Image column */}
-//       <View style={{ width: 60, alignItems: 'center' }}>
-//         <Image source={item.profileImg} style={styles.avatar} />
-//       </View>
-
-//       {/* Name/Sub + Star column */}
-//       <View style={{ flex: 1, paddingLeft: 10, justifyContent: 'flex-start' }}>
-//         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-//           <View>
-//             <Text allowFontScaling={false} style={styles.userName}>{item.name}</Text>
-//             <Text allowFontScaling={false} style={styles.userSub}>{item.university}</Text>
-//           </View>
-//           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-//             <Image
-//               source={require('../../../assets/images/staricon.png')}
-//               style={{ height: 16, width: 16, marginRight: 4 ,tintColor: 'rgba(140, 225, 255, 0.9)',}}
-//             />
-//             <Text allowFontScaling={false} style={styles.ratingText}>{item.rating}</Text>
-//           </View>
-//         </View>
-
-//         {/* Comment below */}
-//         <Text allowFontScaling={false} style={[styles.bottomText, { marginTop: 4 }]}>{item.comment}</Text>
-//       </View>
-//     </View>
-//   </View>
-// );
 
 const formatDate = (dateString: string | null | undefined) => {
   if (!dateString || dateString.trim() === '') return '01-01-2025';
@@ -237,38 +206,64 @@ const formatDate = (dateString: string | null | undefined) => {
 };
 
 
-const renderItem = ({ item}: any) => {
-  // const isLastOddItem =
-  //   filteredFeatures.length % 2 !== 0 &&
-  //   index === filteredFeatures.length - 1;
-  const displayDate = formatDate(item.created_at);
-  const productImage = item.profileImg ?? require('../../../assets/images/drone.png');
-  const displayPrice = item.price != null ? item.price : 0;
+// const renderItem = ({ item}: any) => {
+
+//   const displayDate = formatDate(item.created_at);
+//   const productImage = item.profileImg ?? require('../../../assets/images/drone.png');
+//   const displayPrice = item.price != null ? item.price : 0;
+//   const displayTitle = item.featureTitle ?? 'Title';
+//   const displayRating = item.rating?.toString() ?? '0';
+//   const displayReview = item.comment ?? '';
+//   const reviewer_name = item.reviewer_name ?? '';
+//   const profileshow = item?.category_id === 2 || item?.category_id === 5;
+
+
+//   return (
+//     <View
+//       style={[
+//         styles.itemContainer,
+//       ]}
+//     >
+//       <ReviewDetailCard
+//         infoTitle={displayTitle}
+//         inforTitlePrice={item.categoryName ?? ''}
+//         rating={displayRating}
+//         reviewText={displayReview}
+//        shareid={item.id}
+//         date={displayDate}
+//         reviewer={item.name} 
+//         category_id={item.category_id}
+//         reviewer_image={item.reviewer_image}
+//         feature_image={item.feature_image}
+
+
+//       />
+//     </View>
+//   );
+// };
+
+
+const renderItem = ({ item }: any) => {
+  const displayDate = formatDate(item.date);
   const displayTitle = item.featureTitle ?? 'Title';
-  const displayRating = item.rating?.toString() ?? '0';
-  const displayReview = item.comment ?? '';
-  const reviewer_name = item.reviewer_name ?? '';
 
   return (
-    <View
-      style={[
-        styles.itemContainer,
-      ]}
-    >
+    <View style={styles.itemContainer}>
       <ReviewDetailCard
-         infoTitle={displayTitle}
-        inforTitlePrice={item.categoryName ?? ''}
-        rating={displayRating}
-        productImage={productImage}
-        reviewText={displayReview}
+        infoTitle={displayTitle}
+        inforTitlePrice={`£${item.price ?? ''}`}
+        rating={item.rating?.toString() ?? '0'}
+        reviewText={item.comment ?? ''}
         shareid={item.id}
         date={displayDate}
-        reviewer={item.name}
+        reviewer_name={item.name}
+        category_id={item.category_id}
+        reviewer_image={item.userprofile}
+        feature_image={item.productimage}
       />
     </View>
   );
 };
-
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -276,16 +271,7 @@ const renderItem = ({ item}: any) => {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerRow}>
-            <TouchableOpacity onPress={() =>
-              // navigation.replace('SearchDetails', {
-              //   id,
-              //   category_id,
-              // })
-              {
-                navigation.goBack()
-
-              }
-            }>
+            <TouchableOpacity onPress={() =>{navigation.goBack()}}>
               <View style={styles.backIconRow}>
                 <Image
                   source={require('../../../assets/images/back.png')}
@@ -345,19 +331,19 @@ const renderItem = ({ item}: any) => {
      <StarRating rating={averageRating} starSize={24} />
 
      <Text allowFontScaling={false} style={styles.reviewcount}>{totalReviews} Reviews</Text>
-</View>
+      </View>
 
-  <View style={styles.innercontainer}>
-  <Text allowFontScaling={false} style={styles.mainlabel}>Reviews</Text>
+        <View style={styles.innercontainer}>
+        <Text allowFontScaling={false} style={styles.mainlabel}>Reviews</Text>
 
-  <View style={{ flexDirection: 'row', alignItems: 'center',}}>
-    <Image
-      source={require('../../../assets/images/staricon.png')}
-      style={{ width: 16, height: 16, marginRight: 4 ,tintColor:  'rgba(140, 225, 255, 0.9)',}}
-    />
-    <Text allowFontScaling={false} style={styles.subrating}>{averageRating} ({totalReviews})</Text>
-  </View>
-</View>
+        <View style={{ flexDirection: 'row', alignItems: 'center',}}>
+          <Image
+            source={require('../../../assets/images/staricon.png')}
+            style={{ width: 16, height: 16, marginRight: 4 ,tintColor:  'rgba(140, 225, 255, 0.9)',}}
+          />
+          <Text allowFontScaling={false} style={styles.subrating}>{averageRating} ({totalReviews})</Text>
+        </View>
+      </View>
         
 
     <View style={{ flex: 1 }}>
@@ -371,7 +357,6 @@ const renderItem = ({ item}: any) => {
 
     </ScrollView>
 
-    {/* <Button onPress={() =>{navigation.navigate('AddReview',{category_id:category_id,feature_id:id})}} title={"Write a Review"} />  */}
       {showButton && (
             <Button
               title="Write a Review"

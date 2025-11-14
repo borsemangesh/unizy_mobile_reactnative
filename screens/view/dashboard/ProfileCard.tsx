@@ -223,19 +223,20 @@ const clickBack = () =>{
 
 return (
   <View style={styles.fullScreenContainer}>
-    <View style={[styles.header]}>
+    {/* <View style={[styles.header]}>
       <View style={styles.headerRow}>
         <Text allowFontScaling={false} style={styles.unizyText}>
           Profile
         </Text>
       </View>
-    </View>
+    </View> */}
 
     <View
       style={{
-        paddingTop: Platform.OS === 'ios' ? '31.9%' : 120,
+        paddingTop: Platform.OS === 'ios' ? '0%' : 120,
         marginHorizontal: 16,
         gap: 24,
+        marginTop: -16,
       }}
     >
       <View style={styles.userRow}>

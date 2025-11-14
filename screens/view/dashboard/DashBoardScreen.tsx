@@ -1146,11 +1146,11 @@ const blurAmount = useDerivedValue(() =>
 
 
 
-{activeTab === 'Search' ? (
+{/* {activeTab === 'Search' ? (
   <View style={{ flex: 1, }}>
     <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
 
-    {/* 🔹 Animated Blur Header */}
+   
     <AnimatedReanimated.View
       style={[
         {
@@ -1161,7 +1161,7 @@ const blurAmount = useDerivedValue(() =>
           height: Platform.OS === 'ios' ? 100 : 120,
           zIndex: 10,
         },
-        animatedBlurStyle, // fades in blur based on scroll
+        animatedBlurStyle, 
       ]}
       pointerEvents="none"
     >
@@ -1196,7 +1196,7 @@ const blurAmount = useDerivedValue(() =>
       </MaskedView>
     </AnimatedReanimated.View>
 
-    {/* 🔹 Header Content */}
+   
     <View
       style={{
         position: 'absolute',
@@ -1229,13 +1229,13 @@ const blurAmount = useDerivedValue(() =>
 
     
 
-    {/* 🔹 Scrollable content that drives animation */}
+  
     <AnimatedReanimated.ScrollView
       scrollEventThrottle={16}
       onScroll={scrollHandler}
       style={{
         flex: 1,
-        paddingTop: Platform.OS === 'ios' ? 140 : 120, // space under header
+        paddingTop: Platform.OS === 'ios' ? 140 : 120, 
       }}
       contentContainerStyle={{ paddingBottom: 40 }}
       showsVerticalScrollIndicator={false}
@@ -1252,7 +1252,106 @@ const blurAmount = useDerivedValue(() =>
   >
     <View style={{ flex: 1 }}>{renderActiveTabContent()}</View>
   </ScrollView>
+)} */}
+
+{activeTab === 'Search' || activeTab === 'Profile' ? (
+  <View style={{ flex: 1 }}>
+    <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
+
+    {/* 🔹 Animated Blur Header */}
+    <AnimatedReanimated.View
+      style={[
+        {
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: Platform.OS === 'ios' ? 100 : 120,
+          zIndex: 10,
+        },
+        animatedBlurStyle,
+      ]}
+      pointerEvents="none"
+    >
+      <MaskedView
+        style={StyleSheet.absoluteFill}
+        maskElement={
+          <LinearGradient
+            colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+            locations={[0, 0.8]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            style={StyleSheet.absoluteFill}
+          />
+        }
+      >
+        <BlurView
+          style={StyleSheet.absoluteFill}
+          blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+          blurAmount={Platform.OS === 'ios' ? 10 : 45}
+          reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+        />
+        <LinearGradient
+          colors={[
+            'rgba(255,255,255,0.45)',
+            'rgba(255,255,255,0.02)',
+            'rgba(255,255,255,0.02)',
+          ]}
+          style={StyleSheet.absoluteFill}
+        />
+      </MaskedView>
+    </AnimatedReanimated.View>
+
+    {/* 🔹 Dynamic Header Title */}
+    <View
+      style={{
+        position: 'absolute',
+        top: Platform.OS === 'ios' ? 70 : 60,
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 16,
+        zIndex: 11,
+      }}
+    >
+      <Text
+        allowFontScaling={false}
+        style={{
+          color: '#fff',
+          fontSize: 20,
+          fontWeight: '600',
+          fontFamily: 'Urbanist-SemiBold',
+        }}
+      >
+        {activeTab === 'Search' ? 'Transaction History' : 'Profile'}
+      </Text>
+    </View>
+
+    {/* 🔹 Scroll section */}
+    <AnimatedReanimated.ScrollView
+      scrollEventThrottle={16}
+      onScroll={scrollHandler}
+      style={{
+        flex: 1,
+        paddingTop: Platform.OS === 'ios' ? 140 : 120,
+      }}
+      showsVerticalScrollIndicator={false}
+    >
+      {activeTab === 'Search' ? (
+        <SearchScreenContent navigation={navigation} />
+      ) : (
+        <ProfileScreenContent navigation={navigation} />
+      )}
+    </AnimatedReanimated.ScrollView>
+  </View>
+) : (
+  // other tabs (Home, Add, etc)
+  <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+    {renderActiveTabContent()}
+  </ScrollView>
 )}
+
 
 
 
