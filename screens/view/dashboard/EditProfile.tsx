@@ -1698,6 +1698,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           setPhoto(user.profile);
           setInitialEmail(user.student_email ?? '');
           setInitialPersonalEmail(user.email ?? '');
+          setInitialEmail(user.student_email ?? '');
+          setInitialPersonalEmail(user.email ?? '');
         } else {
           console.warn(
             'Failed to fetch user profile:',
@@ -1807,6 +1809,12 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     const errors = validateForm();
     if (errors.length > 0) {
       showToast(errors[0], 'error');
+      return;
+    } else if (!isUpdateDisabled_personal) {
+      showToast('Please verify your personal email Id', 'error');
+      return;
+    } else if (!isUpdateDisabled) {
+      showToast('Please verify your student email Id', 'error');
       return;
     } else if (!isUpdateDisabled_personal) {
       showToast('Please verify your personal email Id', 'error');
@@ -2075,6 +2083,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       if (data?.statusCode === 200) {
         // showToast(data.message, 'success');
         setShowPopup1(false);
+        setIsUpdateDisabled(true)
+        setIsUpdateDisabled_personal(true)
         // setShowPopup2(true);
       } else {
         showToast(data?.message, 'error');
@@ -2110,6 +2120,12 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     useState(true);
   const [isUpdateDisabled, setIsUpdateDisabled] = useState(true);
   const [updateText, setUpdateText] = useState('Update');
+
+  //  email: userMeta.email,
+  // student_email: userMeta.student_email,
+
+  const [initialEmail, setInitialEmail] = useState(''); // store original email
+  const [initialPersonalEmail, setInitialPersonalEmail] = useState(''); // store original email
 
   //  email: userMeta.email,
   // student_email: userMeta.student_email,
@@ -2182,6 +2198,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 First Name*
               </Text>
               <TextInput
+              <Text style={styles.label} allowFontScaling={false}>
+                First Name*
+              </Text>
+              <TextInput
                 value={userMeta.firstname || ''}
                 onChangeText={text =>
                   setUserMeta(prev => ({ ...prev, firstname: text }))
@@ -2194,6 +2214,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             </View>
 
             <View style={styles.inputGroup}>
+              <Text style={styles.label} allowFontScaling={false}>
+                Last Name*
+              </Text>
+              <TextInput
               <Text style={styles.label} allowFontScaling={false}>
                 Last Name*
               </Text>
@@ -2213,6 +2237,9 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
               <Text style={styles.label} allowFontScaling={false}>
                 Personal Email ID*
               </Text>
+              <Text style={styles.label} allowFontScaling={false}>
+                Personal Email ID*
+              </Text>
               <View
                 style={{
                   flexDirection: 'row',
@@ -2223,6 +2250,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   minHeight: 44, // or any desired height
                 }}
               >
+                <TextInput
                 <TextInput
                   style={{
                     flex: 1,
@@ -2251,6 +2279,19 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     console.log('text ---', text);
                     console.log('initialEmail ----', initialEmail);
                   }}
+                  onChangeText={text => {
+                    setUserMeta(prev => ({ ...prev, email: text }));
+                    if (text === initialPersonalEmail) {
+                      console.log('condition_true (unchanged)');
+                      setIsUpdateDisabled_personal(true);
+                    } else {
+                      console.log('condition_false (changed)');
+                      setIsUpdateDisabled_personal(false);
+                    }
+
+                    console.log('text ---', text);
+                    console.log('initialEmail ----', initialEmail);
+                  }}
                   keyboardType="email-address"
                   placeholder="Enter Email"
                   placeholderTextColor="#ccc"
@@ -2259,13 +2300,20 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   style={{
                     width: 32, // Fixed width – adjust as needed
                     height: 32,
+                    width: 32, // Fixed width – adjust as needed
+                    height: 32,
                     // marginLeft: 12,
                     // backgroundColor:
                     //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
 
                     backgroundColor: isUpdateDisabled_personal
                       ? '#99999980' // Fallback color for disabled
+                      ? '#99999980' // Fallback color for disabled
                       : 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
+                    boxShadow: isUpdateDisabled_personal
+                      ? ''
+                      : 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+                    borderColor: isUpdateDisabled_personal ? '' : '#ffffff11',
                     boxShadow: isUpdateDisabled_personal
                       ? ''
                       : 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
@@ -2298,11 +2346,29 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     resizeMode="contain"
                   />
                   {/* </TouchableOpacity> */}
+                  {/* <Text style={styles.edittext} allowFontScaling={false}>Update</Text>
+                   
+
+
+                  <TouchableOpacity
+                style={styles.profilecameraButton}
+                onPress={handleSelectImage}
+              >
+                {/* assets\images\camera_icon.png */}
+                  <Image
+                    source={require('../../../assets/images/editcontained.png')}
+                    style={styles.updateIcon}
+                    resizeMode="contain"
+                  />
+                  {/* </TouchableOpacity> */}
                 </TouchableOpacity>
               </View>
             </View>
 
             <View style={styles.inputGroup}>
+              <Text style={styles.label} allowFontScaling={false}>
+                Student Email ID*
+              </Text>
               <Text style={styles.label} allowFontScaling={false}>
                 Student Email ID*
               </Text>
@@ -2348,12 +2414,29 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     console.log('text ---', text);
                     console.log('initialEmail ----', initialEmail);
                   }}
+                  onChangeText={text => {
+                    setUserMeta(prev => ({ ...prev, student_email: text }));
+
+                    // Compare against the ORIGINAL email, not previous state
+                    if (text === initialEmail) {
+                      console.log('condition_true (unchanged)');
+                      setIsUpdateDisabled(true);
+                    } else {
+                      console.log('condition_false (changed)');
+                      setIsUpdateDisabled(false);
+                    }
+
+                    console.log('text ---', text);
+                    console.log('initialEmail ----', initialEmail);
+                  }}
                   keyboardType="email-address"
                   placeholder="Enter Student Email"
                   placeholderTextColor="#ccc"
                 />
                 <TouchableOpacity
                   style={{
+                    width: 32, // Fixed width – adjust as needed
+                    height: 32,
                     width: 32, // Fixed width – adjust as needed
                     height: 32,
                     // marginLeft: 12,
@@ -2363,7 +2446,12 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
                     backgroundColor: isUpdateDisabled
                       ? '#99999980' // Fallback color for disabled
+                      ? '#99999980' // Fallback color for disabled
                       : 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
+                    boxShadow: isUpdateDisabled
+                      ? ''
+                      : 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+                    borderColor: isUpdateDisabled ? '' : '#ffffff11',
                     boxShadow: isUpdateDisabled
                       ? ''
                       : 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
@@ -2386,6 +2474,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     style={styles.updateIcon}
                     resizeMode="contain"
                   />
+                  <Image
+                    source={require('../../../assets/images/editcontained.png')}
+                    style={styles.updateIcon}
+                    resizeMode="contain"
+                  />
                 </TouchableOpacity>
               </View>
             </View>
@@ -2394,7 +2487,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
               <Text style={styles.label} allowFontScaling={false}>
                 City*
               </Text>
+              <Text style={styles.label} allowFontScaling={false}>
+                City*
+              </Text>
               <TextInput
+                allowFontScaling={false}
                 allowFontScaling={false}
                 value={userMeta.city || ''}
                 onChangeText={text =>
@@ -2407,6 +2504,9 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             </View>
 
             <View style={styles.inputGroup}>
+              <Text style={styles.label} allowFontScaling={false}>
+                Postal Code*
+              </Text>
               <Text style={styles.label} allowFontScaling={false}>
                 Postal Code*
               </Text>
@@ -2477,6 +2577,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   We have sent a 4-digit code to{' '}
                   <Text
                     allowFontScaling={false}
+                  <Text
+                    allowFontScaling={false}
                     style={{
                       fontFamily: 'Urbanist-SemiBold',
                       fontWeight: '400',
@@ -2537,7 +2639,13 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   allowFontScaling={false}
                   style={[styles.subheader, { marginBottom: 6 }]}
                 >
+                <Text
+                  allowFontScaling={false}
+                  style={[styles.subheader, { marginBottom: 6 }]}
+                >
                   Didn’t receive a code?{' '}
+                  <Text
+                    allowFontScaling={false}
                   <Text
                     allowFontScaling={false}
                     style={{ color: '#FFFFFF7A' }}
@@ -2794,10 +2902,13 @@ const styles = StyleSheet.create({
     // overflow: 'hidden',
     paddingHorizontal: 16,
     paddingVertical: 16,
+    paddingVertical: 16,
     backgroundColor: 'rgba(255,255,255,0.08)',
+    gap: 12,
     gap: 12,
   },
   inputGroup: {
+    // marginBottom: 14,
     // marginBottom: 14,
     height: 64,
     // paddingHorizontal:8,
@@ -2913,6 +3024,13 @@ const styles = StyleSheet.create({
     height: 40,
     marginLeft: -1,
     marginTop: 3,
+  },
+
+  updateIcon: {
+    width: 16,
+    height: 16,
+    // marginLeft: -1,
+    // marginTop: 3,
   },
 
   updateIcon: {
@@ -3180,10 +3298,14 @@ const styles = StyleSheet.create({
   edittext: {
     // fontFamily: 'Urbanist-SemiBold',
     // fontSize: 14,
+    // fontFamily: 'Urbanist-SemiBold',
+    // fontSize: 14,
     color: '#fff',
+    // fontWeight: 600,
     // fontWeight: 600,
     textAlign: 'center',
   },
+  tabContent: {
   tabContent: {
     flex: 1,
     justifyContent: 'center',

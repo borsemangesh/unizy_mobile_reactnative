@@ -166,9 +166,16 @@ const groupByDate = (data: NotificationItem[]) => {
 const groupedList = groupByDate(filteredNotifications);
 
 
-const renderItem = ({ item }: { item: any }) => {
+const renderItem = ({ item ,index  }: { item: any ;index: number }) => {
   if (item.type === 'date') {
-    return <Text allowFontScaling={false} style={styles.dateHeading}>{item.displayDate}</Text>;
+    return (
+      <Text
+      allowFontScaling={false}
+      style={[styles.dateHeading, index === 0 ? null : { marginTop: 16 }]} // add marginTop here
+    >
+      {item.displayDate}
+    </Text>
+    )
   }
 
 
@@ -225,12 +232,14 @@ const renderItem = ({ item }: { item: any }) => {
    
        
     <FlatList
+    showsVerticalScrollIndicator={false}
+  showsHorizontalScrollIndicator={false}
             data={groupedList}
             renderItem={renderItem}
             contentContainerStyle={[
                  styles.listContainer,
-                   {
-                   paddingBottom: screenHeight * 0.2 + insets.bottom, 
+                   {                   
+                   paddingBottom: screenHeight * 0.150 + insets.bottom, 
                     },
                 ]}
             keyExtractor={(item, index) => `${item.type}-${index}`}
@@ -270,7 +279,8 @@ dateHeading:{
     fontSize:12,
     fontFamily: 'Urbanist-SemiBold',
     fontWeight:500,
-    marginLeft:6
+    marginLeft:6,
+    marginBottom:8
     },
 
   background: { 
@@ -329,7 +339,7 @@ dateHeading:{
     marginLeft: 10,
     marginRight: 10,
     paddingTop: 10,
-    //paddingBottom:80,
+    // paddingBottom:80,
   },
   
   itemContainer: {
