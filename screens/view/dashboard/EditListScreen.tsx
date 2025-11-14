@@ -12,6 +12,7 @@ import {
   KeyboardAvoidingView,
   Animated,
   Dimensions,
+  StatusBar,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImageResizer from 'react-native-image-resizer';
@@ -31,11 +32,24 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import SelectCatagoryDropdown_IOS from '../../utils/component/SelectCatagoryDropdown_IOS';
 
+import AnimatedReanimated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  interpolate,
+  interpolateColor,
+  useDerivedValue,
+} from 'react-native-reanimated';
+import LinearGradient from 'react-native-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
+import { BlurView } from '@react-native-community/blur';
+
 const bgImage = require('../../../assets/images/backimg.png');
-const profileImg = require('../../../assets/images/user.jpg');
-const uploadIcon = require('../../../assets/images/upload.png');
-const fileIcon = require('../../../assets/images/file.png');
-const deleteIcon = require('../../../assets/images/delete.png');
+const profileImg = require('../../../assets/images/user.jpg'); 
+const uploadIcon = require('../../../assets/images/upload.png'); 
+const fileIcon = require('../../../assets/images/file.png'); 
+const deleteIcon = require('../../../assets/images/delete.png'); 
+const uploadIcon1 = require('../../../assets/images/fileupload.png'); 
 
 type AddScreenContentProps = {
   navigation: any;
@@ -70,7 +84,6 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   >([]);
 
   const screenHeight = Dimensions.get('window').height;
-  const [slideUp1] = useState(new Animated.Value(0));
 
   interface Category {
     id: number;
@@ -91,6 +104,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
     student_email: string | null;
     university_name: string | null;
     category?: Category | null;
+    city?: string | null;
   }
 
   const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
@@ -98,8 +112,59 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   const [maxFeatureCap, setMaxFeatureCap] = useState(0);
   const route = useRoute<AddScreenRouteProp>();
   const { productId, productName, shareid } = route.params;
+  const [deletedImageIds, setDeletedImageIds] = useState<string[]>([]);
 
-    const [deletedImageIds, setDeletedImageIds] = useState<string[]>([]);
+  const { height } = Dimensions.get('window');
+  const bottomPadding = height * 0.0005;
+
+  const [slideUp1] = useState(new Animated.Value(0));
+  
+    const scrollY = useSharedValue(0);
+  
+    const scrollHandler = useAnimatedScrollHandler({
+      onScroll: event => {
+        'worklet';
+        scrollY.value = event.contentOffset.y;
+      },
+    });
+  
+    const animatedBlurStyle = useAnimatedStyle(() => {
+      'worklet';
+      const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+      return { opacity };
+    });
+  
+    const animatedButtonStyle = useAnimatedStyle(() => {
+      'worklet';
+      const borderColor = interpolateColor(
+        scrollY.value,
+        [0, 300],
+        ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+      );
+      const redOpacity = interpolate(scrollY.value, [0, 100], [0, 0.15], 'clamp');
+      return {
+        borderColor,
+        backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+      };
+    });
+  
+    const animatedIconStyle = useAnimatedStyle(() => {
+      'worklet';
+      const opacity = interpolate(scrollY.value, [0, 100], [0.8, 1], 'clamp');
+      const tintColor = interpolateColor(
+        scrollY.value,
+        [0, 150],
+        ['#FFFFFF', '#002050'],
+      );
+      return {
+        opacity,
+        tintColor,
+      };
+    });
+  
+    const blurAmount = useDerivedValue(() =>
+      interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+    );
 
 
   useEffect(() => {
@@ -147,6 +212,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             student_email: json.metadata.student_email ?? null,
             university_name: json.metadata.university_name ?? null,
             category: json.metadata.category ?? null, //
+            city:json.metadata.city ?? null,
           });
 
           await AsyncStorage.setItem(
@@ -158,6 +224,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
               student_email: json.metadata.student_email ?? null,
               university_name: json.metadata.university_name ?? null,
               category: json.metadata.category ?? null, //
+              city:json.metadata.city ?? null,
             }),
           );
         }
@@ -225,6 +292,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
           setcategory(data.category.name)
 
           await AsyncStorage.setItem('isfeatured', JSON.stringify(data.isfeatured));
+          await AsyncStorage.setItem('newDate',data.created_at)
 
           const initialValues: any = {};
     
@@ -319,6 +387,9 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
   const [expanded, setExpanded] = useState(false);
   const animatedHeight = useRef(new Animated.Value(0)).current;
+
+   
+  
 
   useEffect(() => {
     if (expanded) {
@@ -609,12 +680,9 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 };
 
   const renderField = (field: any) => {
-    // const { field_name, field_type, options, id, field_ismultilple } =field.param;
-    // const fieldType = field_type.toLowerCase();
-    //  const ism = field_ismultilple;
-    // console.log('fieldType', ism);
+   
     const param = field?.param;
-    if (!param) return null; // skip if param is missing
+    if (!param) return null; 
 
     const fieldType = param.field_type?.toLowerCase() ?? '';
     const field_ismultilple = param.ismultilple ?? false;
@@ -641,11 +709,15 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         console.log('formValues: ', formValues);
 
         const isPriceField = alias_name?.toLowerCase() === 'price';
-        // console.log('rowValue: ', rawValue);
+        // const placeholderText =
+        //   alias_name?.toLowerCase() === 'price'
+        //     ? `£ ${alias_name}`
+        //     : alias_name || field_name;
         const placeholderText =
-          alias_name?.toLowerCase() === 'price'
-            ? `£ ${alias_name}`
-            : alias_name || field_name;
+        alias_name?.toLowerCase() === 'price'
+          ? `£ Enter ${field_name}`
+          : `Enter ${field_name}`;
+
 
         let rnKeyboardType:
           | 'default'
@@ -675,7 +747,6 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
         return (
           <View key={field.id} style={styles.productTextView}>
-            {/* <Text style={styles.textstyle}>{field_name}</Text> */}
             {renderLabel(field_name, field.mandatory)}
             <TextInput
               allowFontScaling={false}
@@ -683,8 +754,8 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                 styles.personalEmailID_TextInput,
                 styles.login_container,
                 {
-                  textAlignVertical: 'center', // centers text vertically on Android
-                  paddingVertical: 0, // prevents padding changes on focus
+                  textAlignVertical: 'center',
+                  paddingVertical: 0, 
                 },
               ]}
               placeholder={placeholderText}
@@ -711,7 +782,11 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
       case 'multi-line-text': {
         const { param } = field;
         const { field_name, keyboardtype, alias_name } = param;
-        const placeholderText = alias_name || field_name;
+       // const placeholderText = alias_name || field_name;
+    const placeholderText =
+          alias_name?.toLowerCase() === 'price'
+            ? `£ Enter ${field_name}`
+            : `Enter ${field_name}`;
 
         let rnKeyboardType:
           | 'default'
@@ -862,7 +937,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
               style={styles.uploadButton}
               onPress={handleImageSelect}
             >
-              <Image source={uploadIcon} style={styles.uploadIcon} />
+             <Image source={uploadIcon1} style={styles.uploadIcon} />
               <Text allowFontScaling={false} style={styles.uploadText}>
                 Upload {field_name}
               </Text>
@@ -892,9 +967,9 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                           source={require('../../../assets/images/sixdots.png')}
                           style={styles.threedots}
                         />
-                        <Image
+                         <Image
                           source={fileIcon}
-                          style={{ width: 20, height: 20, marginRight: 5 }}
+                          style={{ width: 32, height: 32, marginRight: 5 }}
                         />
                         <Text
                           allowFontScaling={false}
@@ -906,16 +981,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                         </Text>
                       </View>
 
-                      {/* <TouchableOpacity
-                        onPress={() =>{
-                          setUploadedImages(prev =>
-                            prev.filter(img => img.id !== file.id),
-                          )
-                          
-
-                        }
-                        }
-                      > */}
+                    
                        <TouchableOpacity onPress={() => handleDeleteImage(file.id)}>
                         <Image source={deleteIcon} style={styles.deleteIcon} />
                       </TouchableOpacity>
@@ -1056,109 +1122,203 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-        <View style={styles.header}>
-          <View style={styles.headerRow}>
-            <TouchableOpacity
-              style={styles.backBtn}
-              onPress={() => {
-                navigation.goBack();
-              }}
+         {/* <View style={styles.header}>
+                    <View style={styles.headerRow}>
+                    <TouchableOpacity  onPress={() => {navigation.goBack();}}>
+                       <View style={styles.backIconRow}>
+                          <Image
+                            source={require('../../../assets/images/back.png')}
+                            style={{ height: 24, width: 24 }}
+                            />
+                        </View>
+                        </TouchableOpacity>
+                      <Text allowFontScaling={false} style={styles.unizyText}>
+                        {`Edit${category ? ` ${category} ` : ''}`}
+                      </Text>
+                        <View style={{ width: 48 }} />
+                          </View>
+          </View> */}
+
+
+     <StatusBar
+          translucent
+          backgroundColor="transparent"
+          barStyle="light-content"
+        />
+
+        {/* Header with Blur only at top */}
+        <AnimatedReanimated.View
+          style={[styles.headerWrapper, animatedBlurStyle]}
+          pointerEvents="none"
+        >
+          {/* Blur layer only at top with gradient fade */}
+          <MaskedView
+            style={StyleSheet.absoluteFill}
+            maskElement={
+              <LinearGradient
+                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                locations={[0, 0.8]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            }
+          >
+            <BlurView
+              style={StyleSheet.absoluteFill}
+              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+              blurAmount={Platform.OS === 'ios' ? 45 : 45}
+              overlayColor="rgba(255,255,255,0.05)"
+              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+            />
+            <LinearGradient
+              colors={[
+                'rgba(255, 255, 255, 0.45)',
+                'rgba(255, 255, 255, 0.02)',
+                'rgba(255, 255, 255, 0.02)',
+              ]}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+            />
+          </MaskedView>
+        </AnimatedReanimated.View>
+
+        {/* Header Content */}
+        <View style={styles.headerContent} pointerEvents="box-none">
+          <TouchableOpacity
+             onPress={() => {navigation.goBack()}}
+            style={styles.backButtonContainer}
+            activeOpacity={0.7}
+          >
+            <AnimatedReanimated.View
+              style={[styles.blurButtonWrapper, animatedButtonStyle]}
             >
-              <View style={styles.backIconRow}>
-                <Image
-                  source={require('../../../assets/images/back.png')}
-                  style={{ height: 24, width: 24 }}
+              {/* Static background (visible when scrollY = 0) */}
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 30],
+                      [1, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 40,
+                  })),
+                ]}
+              />
+
+              {/* Blur view fades in as scroll increases */}
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 50],
+                      [0, 1],
+                      'clamp',
+                    ),
+                  })),
+                ]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
                 />
-              </View>
-            </TouchableOpacity>
-            {/* <Text allowFontScaling={false} style={styles.unizyText}>
-              {`List${productName ? ` ${productName} ` : ''}`}
-            </Text> */}
-             <Text allowFontScaling={false} style={styles.unizyText}>
-              {`Edit${category ? ` ${category} ` : ''}`}
-            </Text>
-            <View style={{ width: 48 }} />
-          </View>
+              </AnimatedReanimated.View>
+
+              {/* Back Icon */}
+              <AnimatedReanimated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 24, width: 24 }, animatedIconStyle]}
+              />
+            </AnimatedReanimated.View>
+          </TouchableOpacity>
+
+          <Text allowFontScaling={false} style={styles.unizyText}>
+           {`Edit${category ? ` ${category} ` : ''}`}
+          </Text>
         </View>
+
+
+
 
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <View style={styles.userRow}>
-              <View
-                style={{
-                  width: '20%',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                {userMeta?.profile ? (
-                  <Image
-                    source={{ uri: userMeta.profile }}
-                    style={styles.avatar}
-                  />
-                ) : (
-                  <View style={styles.initialsCircle}>
-                    <Text allowFontScaling={false} style={styles.initialsText}>
-                      {getInitials(
-                        userMeta?.firstname ?? 'Alan',
-                        userMeta?.lastname ?? 'Walker',
-                      )}
-                    </Text>
-                  </View>
-                )}
-              </View>
-
-              <View style={{ width: '80%' }}>
-                <Text allowFontScaling={false} style={styles.userName}>
-                  {userMeta
-                    ? `${userMeta.firstname ?? ''} ${
-                        userMeta.lastname ?? ''
-                      }`.trim()
-                    : 'Alan Walker'}
-                </Text>
-
-                <View
-                  style={{
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    display: 'flex',
-                    alignItems: 'stretch',
-                  }}
-                >
-                  <Text allowFontScaling={false} style={styles.userSub}>
-                    {userMeta?.university_name || 'University of Warwick,'}
-                  </Text>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <Text allowFontScaling={false} style={styles.userSub1}>
-                      Coventry
-                    </Text>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 3,
-                      }}
-                    >
-                      <Image
-                        source={require('../../../assets/images/calendar_icon.png')}
-                        style={{ height: 20, width: 20 }}
-                      />
-                      <Text allowFontScaling={false} style={styles.userSub1}>
-                        {formatDateWithDash(newdate)}
+           <AnimatedReanimated.ScrollView 
+                    scrollEventThrottle={16}
+                    onScroll={scrollHandler}
+                    contentContainerStyle={[
+                      styles.scrollContainer,
+                      { paddingBottom: height * 0.1 }, // 0.05% of screen height
+                    ]}>
+            
+              <View style={styles.userRow}>
+                      <View style={{ width: '20%', alignItems: 'center', justifyContent: 'center' }}>
+                        {userMeta?.profile ? (
+                          <Image
+                            source={{ uri: userMeta.profile }}
+                            style={styles.avatar}
+                          />
+                        ) : (
+                          <View style={styles.initialsCircle}>
+                            <Text allowFontScaling={false} style={styles.initialsText}>
+                              {getInitials(userMeta?.firstname ?? 'Alan', userMeta?.lastname ?? 'Walker')}
+                            </Text>
+                          </View>
+                        )}
+                      </View>
+            
+                      <View style={{ width: '80%' }}>
+                        <Text allowFontScaling={false} style={styles.userName}>
+                          {userMeta
+                            ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''}`.trim()
+                            : 'Alan Walker'}
+                        </Text>
+            
+                        <View
+                          style={{
+                            flexDirection: 'column',
+                            justifyContent: 'space-between',
+                            display: 'flex',
+                            alignItems: 'stretch',
+                          }}
+                        >
+                          <Text allowFontScaling={false} style={styles.userSub}>
+                        {userMeta?.university_name || 'University of Warwick,'}
                       </Text>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              justifyContent: 'space-between',
+                            }}
+                          >
+                            <Text allowFontScaling={false} style={styles.userSub2}>{userMeta?.city || ''}</Text>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                gap: 3,
+                              }}
+                            >
+                              <Image
+                                source={require('../../../assets/images/calendar_icon1.png')}
+                                style={{ height: 20, width: 20 }}
+                              />
+                              <Text allowFontScaling={false} style={styles.dateText}>{formatDateWithDash(newdate)}</Text>
+                            </View>
+                          </View>
+                        </View>
+                      </View>
                     </View>
-                  </View>
-                </View>
-              </View>
-            </View>
 
             <View style={styles.productdetails}>
               <Animated.View
@@ -1197,7 +1357,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                 {renderField(featuredField)}
               </View>
             )}
-          </ScrollView>
+          </AnimatedReanimated.ScrollView >
 
           <Button
             title="Preview Details"
@@ -1206,27 +1366,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         </KeyboardAvoidingView>
       </View>
 
-      {/* <SelectCatagoryDropdown
-        options={multiSelectOptions}
-        visible={multiSelectModal.visible}
-        ismultilple={multiSelectModal?.ismultilple}
-        title={`Select ${multiSelectModal?.fieldLabel || 'Category'}`}
-        subtitle={
-            multiSelectModal?.ismultilple
-              ? `Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your listing.`
-              : `Select the ${multiSelectModal?.fieldLabel || 'category'} that best describes your listing.`
-          }
-        selectedValues={formValues[multiSelectModal.fieldId!]?.value}
-        onClose={() =>
-          setMultiSelectModal(prev => ({ ...prev, visible: false }))
-        }
-        onSelect={(selectedIds: number[] | number) => {
-          setFormValues((prev: any) => ({
-            ...prev,
-            [multiSelectModal.fieldId!]: { value: selectedIds },
-          }));
-        }}
-      /> */}
+   
 
       {Platform.OS === 'android' ? (
         <>
@@ -1290,6 +1430,134 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 export default EditListScreen;
 
 const styles = StyleSheet.create({
+
+   headerWrapper: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? '100%' : '100%',
+    height: Platform.OS === 'ios' ? 180 : 180,
+    zIndex: 10,
+    overflow: 'hidden',
+    alignSelf: 'center',
+    pointerEvents: 'none',
+  },
+  headerContent: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 50 : 60,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
+  },
+  backButtonContainer: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 11,
+    //top: 7,
+  },
+  blurButtonWrapper: {
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+  },
+
+   
+
+    imagelistcard: {
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.32)',
+    borderRadius: 12,
+    borderWidth: 0.4,
+    borderColor: '#ffffff33',
+    marginTop: 10,
+  },
+
+
+
+    fileIcon: {
+    width: 30,
+    height: 30,
+    resizeMode: 'contain',
+    marginRight: 8,
+  },
+  fileName: {
+    color: 'rgba(255, 255, 255, 0.88)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 16,
+    fontWeight: '500',
+    fontStyle: 'normal',
+    letterSpacing: -0.32,
+    lineHeight: 24,
+    //paddingStart: 5,
+  },
+  deleteBtn: {
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  deleteIcon: {
+    width: 44,
+    height: 44,
+    resizeMode: 'center',
+  },
+  threedots: {
+    width: 20,
+    height: 20,
+    resizeMode: 'contain',
+  },
+    avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 12,
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+  },
+  userName: {
+    position: 'relative',
+    color: 'rgba(255, 255, 255, 0.88)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 16,
+    fontWeight: '600',
+    lineHeight: 22,
+    letterSpacing: -0.32,
+  },
+  userSub: {
+    color: 'rgba(255, 255, 255, 0.88)',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 12,
+    fontWeight: '500',
+    lineHeight: 14,
+    marginTop:4
+  },
+  userSub2: {
+    color: 'rgba(255, 255, 255, 0.88)',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 12,
+    fontWeight: '500',
+    lineHeight: 16,
+    marginTop:1
+  },
+   userSub1: {
+    color: 'rgba(255, 255, 255, 0.48)',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 12,
+    fontWeight: '500',
+    lineHeight: 16,
+    marginTop:1
+  },
+
   initialsCircle: {
     backgroundColor: '#8390D4',
     alignItems: 'center',
@@ -1352,65 +1620,58 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  fullScreenContainer: {
+
+    fullScreenContainer: {
     flex: 1,
   },
   header: {
-    height: 100,
-     paddingTop: Platform.OS === 'ios' ? 50 : 50,
+    paddingTop: Platform.OS === 'ios' ? 50 : 50,
     paddingBottom: 12,
     paddingHorizontal: 16,
-    justifyContent: 'center',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-    overflow: 'hidden',
-    backgroundColor: 'transparent',
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  backBtn: {
-    width: 30,
+  backIconRow: {
+    padding: 12,
+    borderRadius: 40,
+
+    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  backIconRow: {
-    padding: 10,
-    borderRadius: 40,
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
+
+   boxShadow:
+      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
     height: 48,
     width: 48,
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backArrow: {
-    fontSize: 26,
-    color: '#fff',
   },
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
     flex: 1,
-    fontWeight: '600',
     textAlign: 'center',
+    fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
   },
-  scrollContainer: {
-    paddingHorizontal: 20,
+ 
+   backBtn: {
+    width: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+ 
+  // scrollContainer: {
+  //   paddingHorizontal: 16,
+  // },
+   scrollContainer: {
+    paddingHorizontal: 16,
     paddingBottom: 80,
-    paddingTop: 100,
-   
+    paddingTop: Platform.OS === 'ios' ? 160 : 100,
   },
   userRow: {
     flexDirection: 'row',
@@ -1419,53 +1680,29 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    marginTop:12,
   },
   productdetails: {
     marginTop: 10,
-    padding: 12,
+    padding: 16,
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderRadius: 24,
     overflow: 'hidden',
   },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 12,
-  },
-  userName: {
-    position: 'relative',
-    color: 'rgba(255, 255, 255, 0.88)',
+  
+   dateText: {
+    fontSize: 14,
+    fontWeight: '500',
+    lineHeight: 16,
+    marginTop:1,
+    color:'#9CD6FF',
     fontFamily: 'Urbanist-SemiBold',
-    fontSize: 16,
-    fontWeight: '600',
-    lineHeight: 24,
-    letterSpacing: -0.32,
+    letterSpacing: -0.24,
   },
-  userSub: {
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 12,
-    fontWeight: '500',
-    lineHeight: 16,
-    marginTop: 4,
-  },
-  userSub1: {
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 12,
-    fontWeight: '500',
-    lineHeight: 16,
-    marginTop: 1,
-  },
-  dateText: {
-    color: '#ccc',
-    fontSize: 12,
-  },
-  uploadButton: {
-    height: 40,
+   uploadButton: {
+    height: 44,
     gap: 10,
-    marginTop: 10,
+    marginTop: 2,
     alignSelf: 'stretch',
     borderRadius: 12,
     borderWidth: 0.9,
@@ -1478,15 +1715,7 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
   },
-  imagelistcard: {
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.32)',
-    borderRadius: 7,
-    borderWidth: 0.4,
-    borderColor: '#ffffff33',
-    marginTop: 10,
-  },
+ 
 
   productdetailstext: {
     color: 'rgba(255, 255, 255, 0.88)',
@@ -1497,24 +1726,21 @@ const styles = StyleSheet.create({
     letterSpacing: -0.36,
   },
 
-  uploadIcon: {
+ uploadIcon: {
     width: 20,
     height: 20,
     marginRight: 8,
     resizeMode: 'contain',
-    mixBlendMode: 'normal',
+     mixBlendMode: 'normal',
   },
-  uploadText: {
-    color: 'rgba(255, 255, 255, 0.48)',
+    uploadText: {
+    //color: 'rgba(255, 255, 255, 0.48)',
+    color:'#ACE3FF',
     fontSize: 14,
-    mixBlendMode: 'normal',
-    fontFamily: 'Urbanist-Medium',
-    fontWeight: 500,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#ccc',
-    marginVertical: 4,
+     mixBlendMode: 'normal',
+     fontFamily: 'Urbanist-Medium',
+     fontWeight:500,
+     
   },
 
   filecard: {
@@ -1523,38 +1749,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
   },
 
-  fileIcon: {
-    width: 30,
-    height: 30,
-    resizeMode: 'contain',
-    marginRight: 8,
-  },
-  fileName: {
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 16,
-    fontWeight: '500',
-    fontStyle: 'normal',
-    letterSpacing: -0.32,
-    lineHeight: 24,
-    paddingStart: 5,
-  },
-  deleteBtn: {
-    width: 32,
-    height: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  deleteIcon: {
-    width: 32,
-    height: 32,
-    resizeMode: 'contain',
-  },
-  threedots: {
-    width: 20,
-    height: 20,
-    resizeMode: 'contain',
-  },
+ 
   textstyle: {
     color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-Regular',
@@ -1571,10 +1766,11 @@ const styles = StyleSheet.create({
     fontSize: 17,
     paddingLeft: 4,
   },
-  productTextView: {
+ productTextView: {
     gap: 4,
-    marginTop: 10,
+    marginTop: 12,
   },
+
 
   input: {
     backgroundColor: 'rgba(255,255,255,0.1)',
@@ -1679,7 +1875,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
 
-  login_container: {
+   login_container: {
     display: 'flex',
     height: 40,
     gap: 10,
@@ -1704,8 +1900,8 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     fontStyle: 'normal',
     color: '#fff',
+    minHeight:40
   },
-
   pickerContainer: {
     borderRadius: 12,
     borderWidth: 0.6,

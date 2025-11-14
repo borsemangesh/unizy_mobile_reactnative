@@ -41,17 +41,17 @@ export default function NewProductCard({tag,infoTitle,inforTitlePrice,rating,pro
 
         <View style={styles.bookmark1}>
           <BlurView 
-                                blurType="light"
-                                blurAmount={100}
-                                style={StyleSheet.absoluteFillObject}
-                              />
+              blurType="light"
+              blurAmount={100}
+              style={StyleSheet.absoluteFillObject}
+              />
             <LinearGradient
-                        colors={[
-                          'rgba(0, 1, 102, 0.20)',   // center strong blue tint
-                          'rgba(0, 1, 102, 0.024)'  // outer faint blue tint
-                        ]}
-                        style={StyleSheet.absoluteFillObject}
-                        useAngle={false} // radial
+                colors={[
+                  'rgba(0, 1, 102, 0.20)',   // center strong blue tint
+                  'rgba(0, 1, 102, 0.024)'  // outer faint blue tint
+                  ]}
+                style={StyleSheet.absoluteFillObject}
+                useAngle={false} // radial
                />
 
           <Image

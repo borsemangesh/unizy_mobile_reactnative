@@ -41,7 +41,6 @@ const styles = StyleSheet.create({
     zIndex: 1, // ensures text renders above BlurView cleanly
   },
   buttonContainer: {
-    width: '90%',
     height: 48,
     justifyContent: 'center',
     alignItems: 'center',
@@ -53,7 +52,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 10,
     position: 'absolute',
-    bottom: Platform.OS === 'ios' ? 16 : 10,
+    bottom: (Platform.OS === 'ios'? 16 : 10),
+    left: 16,
+    right: 16,
   },
   buttonText: {
     textAlign: 'center',

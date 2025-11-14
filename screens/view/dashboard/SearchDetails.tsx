@@ -587,7 +587,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       <Text
                       allowFontScaling={false}
                       style={[styles.univeritytext, { marginTop: 0 }]}>
-                      {'Coventry'}
+                      {detail?.createdby?.city  || ''}
                     </Text>
                   </View>
                 </View>
@@ -596,14 +596,14 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                   <View
                     style={styles.bottombutton}>
                     <TouchableOpacity
-                      disabled={!detail?.ispurchased}
+                      //disabled={!detail?.ispurchased}
                       onPress={() => {
-                        if (detail?.ispurchased) {
                           navigation.navigate('ReviewDetails', {
                             category_id: detail?.category_id,
                             id: detail?.id,
+                            purchase:detail?.ispurchased
                           });
-                        }
+                        
                       }}
                       style={{ flexDirection: 'row', alignItems: 'center' , gap: 6,}}
                     >

@@ -121,6 +121,15 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
       showToast('Failed to update product status', 'error');
     }
   };
+  useEffect(() => {
+  if (showPopup1) {
+    const timer = setTimeout(() => {
+      inputs.current[0]?.focus();
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }
+}, [showPopup1]);
 
   const handleChange = (text: string, index: number) => {
     const newOtp = [...otp];
@@ -239,8 +248,8 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
               }}
             >
               {/* Card */}
-              <View style={styles.card}>
-                <View style={{ flexDirection: 'row' }}>
+              <View style={[styles.card,{marginTop:10}]}>
+                <View style={{ flexDirection: 'row' ,alignItems:'center'}}>
                   {(() => {
                     // Check if category is housekeeping or tuition
                     const categoryName = data?.list?.category?.name || '';
@@ -311,6 +320,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                       >
                         {data?.list?.createdby?.university_name}
                       </Text>
+                      <Text  allowFontScaling={false} style={styles.datetlable}>.</Text>
                       <Text allowFontScaling={false} style={styles.datetlable}>
                         {formatDateWithDash(data?.list?.created_at)}
                       </Text>
@@ -337,8 +347,11 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                 </View>
               </View>
  
+              {/* <View style={styles.carddivider} /> */}
+              {Array.isArray(data?.buyers) && data.buyers.length > 0 && (
               <View style={styles.carddivider} />
- 
+            )}
+            
               {Array.isArray(data?.buyers) &&
                 data.buyers.map((buyer: any, index: number) => (
                   <View key={index} style={styles.card}>
@@ -457,13 +470,14 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                         Sold For:
                       </Text>
                       <Text allowFontScaling={false} style={styles.status}>
-                        ${buyer.price}
+                        £{buyer.price}
                       </Text>
                     </View>
  
+                  {!buyer.otpverified && (
                     <View style={styles.cardconstinerdivider} />
+                  )}
  
-                    {/* 🔢 Enter OTP Button - only if NOT verified */}
                     {!buyer.otpverified && (
                       <View
                         style={{
@@ -483,7 +497,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                             setShowPopup1(true);
                           }}
                         >
-                          <Text allowFontScaling={false} style={styles.status}>
+                          <Text allowFontScaling={false} style={styles.status1}>
                             Enter OTP
                           </Text>
                         </TouchableOpacity>
@@ -515,7 +529,8 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
             style={[styles.cancelBtn, { backgroundColor: '#ffffffa7' }]}
             onPress={() => {
               if (data?.list?.ispurchased) {
-                showToast('can not edit', 'error');
+                //showToast('can not edit', 'error');
+                showToast('Purchased item can’t be edited.', 'error');
                 return;
               }
               navigation.replace(
@@ -768,8 +783,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: 72,
-    height: 76,
-    borderRadius: 16,
+    height: 72,
+    borderRadius: 14,
   },
   initialsText: {
     color: '#fff',
@@ -982,10 +997,19 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     fontFamily: 'Urbanist-SemiBold',
   },
+  status1: {
+    color: 'rgba(255, 255, 255, 0.88)',
+    fontSize: 14,
+    fontWeight: '600',
+    letterSpacing: -0.28,
+    lineHeight: 16,
+    fontFamily: 'Urbanist-SemiBold',
+    padding:10
+  },
   image: {
     width: 72,
-    height: 76,
-    borderRadius: 16,
+    height: 72,
+    borderRadius: 14,
   },
   univercitycontainer: {
     display: 'flex',
@@ -1025,6 +1049,16 @@ const styles = StyleSheet.create({
     letterSpacing: -0.24,
     lineHeight: 16,
     fontFamily: 'Urbanist-Medium',
+  },
+   dottext: {
+    marginLeft: 10,
+    color: 'rgba(255, 255, 255, 0.88)',
+    fontSize: 12,
+    fontWeight: '500',
+    letterSpacing: -0.24,
+    lineHeight: 16,
+    fontFamily: 'Urbanist-Medium',
+    alignSelf:'center'
   },
   carddivider: {
     display: 'flex',

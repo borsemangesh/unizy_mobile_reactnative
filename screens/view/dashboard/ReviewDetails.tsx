@@ -33,7 +33,7 @@ type ReviewDetailsProps = {
 };
 
 type RootStackParamList = {
-  ReviewDetails: { category_id: number ,id:number};
+  ReviewDetails: { category_id: number ,id:number,purchase:boolean};
 };
 
 type ReviewDetailsRouteProp = RouteProp<RootStackParamList, 'ReviewDetails'>;
@@ -45,6 +45,7 @@ const ReviewDetails : React.FC<ReviewDetailsProps> = ({ navigation }) => {
    const route = useRoute<ReviewDetailsRouteProp>();
     const { category_id } = route.params;
     const {id} =route.params;
+    const {purchase} = route.params;
    const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalReviews, setTotalReviews] = useState(0);
@@ -60,25 +61,32 @@ const ReviewDetails : React.FC<ReviewDetailsProps> = ({ navigation }) => {
       { id: null, name: 'All' }
     ]);
     const [selectedCategory, setSelectedCategory] = useState<Category>({ id: null, name: 'All' });
-
-  // useEffect(() => {
-  //   const loadCategories = async () => {
-  //     const stored = await AsyncStorage.getItem('categories');
-  //     if (stored) {
-  //       const parsed = JSON.parse(stored); 
-  //       const catObjects = [
-  //         { id: null, name: 'All' }, 
-  //         ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
-  //       ];
-  //       setCategories(catObjects);
-  //       setSelectedCategory(catObjects[0]); 
-  //     }
-  //   };
-  //   loadCategories();
-  // }, []);
+const [showButton, setShowButton] = useState(false);
 
 
-  useEffect(() => {
+//   useEffect(() => {
+//   const loadCategories = async () => {
+//     const stored = await AsyncStorage.getItem('categories');
+//     if (stored) {
+//       const parsed = JSON.parse(stored);
+
+//       const catObjects = [
+//         { id: null, name: 'All' },
+//         ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
+//       ];
+
+//       setCategories(catObjects);
+
+//       const matchedCategory = catObjects.find(
+//         (c: any) => c.id === category_id
+//       );
+//       setSelectedCategory(matchedCategory ?? catObjects[0]);
+//     }
+//   };
+//   loadCategories();
+// }, [category_id]);
+
+useEffect(() => {
   const loadCategories = async () => {
     const stored = await AsyncStorage.getItem('categories');
     if (stored) {
@@ -95,10 +103,26 @@ const ReviewDetails : React.FC<ReviewDetailsProps> = ({ navigation }) => {
         (c: any) => c.id === category_id
       );
       setSelectedCategory(matchedCategory ?? catObjects[0]);
+
+      if (purchase === true && matchedCategory) {
+        setShowButton(true);
+      } else {
+        setShowButton(false);
+      }
     }
   };
+
   loadCategories();
-}, [category_id]);
+}, [category_id, purchase]);
+
+useEffect(() => {
+  if (selectedCategory?.id !== category_id) {
+    setShowButton(false);
+  } else if (purchase === true) {
+    setShowButton(true);
+  }
+}, [selectedCategory, category_id, purchase]);
+
 
   useEffect(() => {
   fetchReviews();
@@ -308,7 +332,7 @@ const renderItem = ({ item}: any) => {
 
         <ScrollView
         showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 20 }}
+          contentContainerStyle={{ paddingBottom: 40 }}
           overScrollMode="never"
           bounces={false}
         >
@@ -347,11 +371,19 @@ const renderItem = ({ item}: any) => {
 
     </ScrollView>
 
-    <Button onPress={() =>{navigation.navigate('AddReview',{category_id:category_id,feature_id:id})}} title={"Write a Review"} /> 
-
-    {/* <TouchableOpacity style={styles.previewBtn} onPress={() =>{navigation.navigate('AddReview',{category_id:category_id,feature_id:id})}} >
-            <Text allowFontScaling={false} style={styles.payText}>Write a Review </Text>
-          </TouchableOpacity> */}
+    {/* <Button onPress={() =>{navigation.navigate('AddReview',{category_id:category_id,feature_id:id})}} title={"Write a Review"} />  */}
+      {showButton && (
+            <Button
+              title="Write a Review"
+              onPress={() =>
+                navigation.navigate('AddReview', {
+                  category_id: category_id,
+                  feature_id: id,
+                })
+              }
+            />
+          )}
+  
 
       </View>
       <NewCustomToastContainer/>

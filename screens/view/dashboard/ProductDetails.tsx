@@ -1274,6 +1274,8 @@ export default ProductDetails;
 
 const styles = StyleSheet.create({
 
+  
+
    emptyWrapper: {
       flex: 1,
       justifyContent: 'center',

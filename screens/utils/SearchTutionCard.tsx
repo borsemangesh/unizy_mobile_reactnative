@@ -64,7 +64,7 @@ export default function SearchTutionCard({
                 blurAmount={100}
               style={[StyleSheet.absoluteFillObject,{borderRadius: 9}]}
                 />
-          <Text allowFontScaling={false}numberOfLines={2} style={styles.tagText}>{tag}</Text>
+          <Text allowFontScaling={false}numberOfLines={0} style={styles.tagText}>{tag}</Text>
         </View>
 
       {isfeature && (

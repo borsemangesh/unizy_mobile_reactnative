@@ -52,7 +52,7 @@ export default function SearchListProductCard({
     style={[StyleSheet.absoluteFillObject,{borderRadius: 9}]}
       />
 
-        <Text allowFontScaling={false} numberOfLines={2} style={styles.tagText}>
+        <Text allowFontScaling={false} numberOfLines={0} style={styles.tagText}>
           {tag}
         </Text>
       </View>

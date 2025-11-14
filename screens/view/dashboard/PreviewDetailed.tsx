@@ -12,6 +12,7 @@ import {
   Dimensions,
   FlatList,
   SafeAreaView,
+  StatusBar,
 } from 'react-native';
 import { Key, useEffect, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
@@ -23,6 +24,16 @@ import { CommonActions } from '@react-navigation/native';
 import Button from '../../utils/component/Button';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 
+import AnimatedReanimated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  interpolate,
+  interpolateColor,
+  useDerivedValue,
+} from 'react-native-reanimated';
+import LinearGradient from 'react-native-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
 
 type previewDetailsProps = {
   navigation: any;
@@ -42,7 +53,6 @@ const itemOptions = [
 const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const [showPopup, setShowPopup] = useState(false);
   const closePopup = () => setShowPopup(false);
-  const [scrollY, setScrollY] = useState(0);
   const scrollY1 = new Animated.Value(0);
 
   const [storedForm, setStoredForm] = useState<any | null>(null);
@@ -50,7 +60,8 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
   const insets = useSafeAreaInsets(); // Safe area insets
-  const { height: screenHeight } = Dimensions.get('window');
+
+  const { height } = Dimensions.get('window');
 
   const [fields, setFields] = useState<any[]>([]); // seller fields from API
   const today = new Date();
@@ -79,6 +90,7 @@ interface Category {
     student_email: string | null;
     university_name:string|null
     category?: Category | null;
+    city?:string | null;
     
   }
 
@@ -145,6 +157,56 @@ const titleValue = getValueByAlias(storedForm, 'title') || 'No Title';
 const descriptionvalue= getValueByAlias(storedForm,'description') || 'No Description'
 
 
+ const screenHeight = Dimensions.get('window').height;
+  const [slideUp1] = useState(new Animated.Value(0));
+
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: event => {
+      'worklet';
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  const animatedBlurStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+    return { opacity };
+  });
+
+  const animatedButtonStyle = useAnimatedStyle(() => {
+    'worklet';
+    const borderColor = interpolateColor(
+      scrollY.value,
+      [0, 300],
+      ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+    );
+    const redOpacity = interpolate(scrollY.value, [0, 100], [0, 0.15], 'clamp');
+    return {
+      borderColor,
+      backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+    };
+  });
+
+  const animatedIconStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 100], [0.8, 1], 'clamp');
+    const tintColor = interpolateColor(
+      scrollY.value,
+      [0, 150],
+      ['#FFFFFF', '#002050'],
+    );
+    return {
+      opacity,
+      tintColor,
+    };
+  });
+
+  const blurAmount = useDerivedValue(() =>
+    interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+  );
+
 
   const onScroll = (event: {
     nativeEvent: { contentOffset: { x: number } };
@@ -188,6 +250,8 @@ const descriptionvalue= getValueByAlias(storedForm,'description') || 'No Descrip
             student_email: json.metadata.student_email ?? null,
             university_name:json.metadata.university_name ?? null,
             category: json.metadata.category ?? null,
+            city:json.metadata.city ?? null, // 
+
           });
 
           await AsyncStorage.setItem(
@@ -199,6 +263,7 @@ const descriptionvalue= getValueByAlias(storedForm,'description') || 'No Descrip
               student_email: json.metadata.student_email ?? null,
               university_name:json.metadata.university_name ?? null,
               category: json.metadata.category ?? null,
+              city:json.metadata.city ?? null, // 
             }),
           );
         }
@@ -255,19 +320,7 @@ const listProduct = async () => {
  //setShowPopup(true);
   try {
 
-
-    // const data = await AsyncStorage.getItem("last_payment");
-    // if (!data) {
-    //       console.log("No payment data found");
-    //       return null;
-    //   }
-
-
-    // const paymentData = JSON.parse(data);
-
     const paymentintent_id= await AsyncStorage.getItem("paymentintent_id");
-
-
     console.log('Step 1: Fetching formData from AsyncStorage...');
     const storedData = await AsyncStorage.getItem('formData');
     console.log('✅ AsyncStorage.getItem(formData) result:', storedData);
@@ -480,7 +533,7 @@ const diff1 =commissionPrice1-priceValue1
     >
       <View style={styles.fullScreenContainer}>
        
-        <View style={styles.header}>
+        {/* <View style={styles.header}>
            <View style={styles.headerRow}>
          <TouchableOpacity onPress={() => navigation.replace('PreviewThumbnail')}>          
          <View style={styles.backIconRow}>
@@ -492,23 +545,130 @@ const diff1 =commissionPrice1-priceValue1
         <Text allowFontScaling={false} style={styles.unizyText}>Preview Details</Text>
           <View style={{ width: 48 }} />
           </View>
-        </View>
-              
+        </View> */}
 
-      <ScrollView
-            contentContainerStyle={[
-             styles.scrollContainer,
-               {
-               paddingBottom: (Platform.OS === 'ios'? 70:screenHeight * 0.08 + insets.bottom), // 10% of screen + safe area
-                },
-            ]}
-             scrollEventThrottle={16}
+
+ <StatusBar
+          translucent
+          backgroundColor="transparent"
+          barStyle="light-content"
+        />
+
+        {/* Header with Blur only at top */}
+        <AnimatedReanimated.View
+          style={[styles.headerWrapper, animatedBlurStyle]}
+          pointerEvents="none"
+        >
+          {/* Blur layer only at top with gradient fade */}
+          <MaskedView
+            style={StyleSheet.absoluteFill}
+            maskElement={
+              <LinearGradient
+                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                locations={[0, 0.8]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            }
+          >
+            <BlurView
+              style={StyleSheet.absoluteFill}
+              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+              blurAmount={Platform.OS === 'ios' ? 45 : 45}
+              overlayColor="rgba(255,255,255,0.05)"
+              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+            />
+            <LinearGradient
+              colors={[
+                'rgba(255, 255, 255, 0.45)',
+                'rgba(255, 255, 255, 0.02)',
+                'rgba(255, 255, 255, 0.02)',
+              ]}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+            />
+          </MaskedView>
+        </AnimatedReanimated.View>
+
+        {/* Header Content */}
+        <View style={styles.headerContent} pointerEvents="box-none">
+          <TouchableOpacity
+            onPress={() => navigation.replace('PreviewThumbnail')}
+            style={styles.backButtonContainer}
+            activeOpacity={0.7}
+          >
+            <AnimatedReanimated.View
+              style={[styles.blurButtonWrapper, animatedButtonStyle]}
             >
+              {/* Static background (visible when scrollY = 0) */}
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 30],
+                      [1, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 40,
+                  })),
+                ]}
+              />
+
+              {/* Blur view fades in as scroll increases */}
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 50],
+                      [0, 1],
+                      'clamp',
+                    ),
+                  })),
+                ]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
+                />
+              </AnimatedReanimated.View>
+
+              {/* Back Icon */}
+              <AnimatedReanimated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 24, width: 24 }, animatedIconStyle]}
+              />
+            </AnimatedReanimated.View>
+          </TouchableOpacity>
+
+          <Text allowFontScaling={false} style={styles.unizyText}>
+            Preview Details
+          </Text>
+        </View>
 
 
+
+              
+  
+          <AnimatedReanimated.ScrollView 
+               scrollEventThrottle={16}
+               onScroll={scrollHandler}
+               contentContainerStyle={[
+                 styles.scrollContainer,
+                 { paddingBottom: height * 0.1 }, // 0.05% of screen height
+               ]}>
+
+                <View style={{marginTop:12}}>
 
             {(userMeta?.category?.id === 2 || userMeta?.category?.id === 5)? (
-              // ✅ Profile-based image for id 2 or 5
               <ImageBackground
                 source={require('../../../assets/images/featurebg.png')}
                 style={{
@@ -516,6 +676,8 @@ const diff1 =commissionPrice1-priceValue1
                   justifyContent: 'center',
                   height: 270,
                   width: '100%',
+                  
+                  
                 }}
               >
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
@@ -559,7 +721,7 @@ const diff1 =commissionPrice1-priceValue1
                 </View>
               </ImageBackground>
             ) : storedForm?.[6]?.value?.length > 1 ? (
-              // ✅ Multiple images (carousel + step indicator)
+             
               <View>
                 <FlatList
                   ref={flatListRef}
@@ -597,7 +759,7 @@ const diff1 =commissionPrice1-priceValue1
                 </View>
               </View>
             ) : (
-              // ✅ Single fallback image
+            
               <Image
                 source={
                   storedForm?.[6]?.value?.[0]?.uri
@@ -608,7 +770,7 @@ const diff1 =commissionPrice1-priceValue1
                 resizeMode="cover"
               />
             )}
-
+          </View>
      
             <View style={{ flex: 1, padding: 16 }}>
             <View style={styles.card1}>
@@ -630,7 +792,12 @@ const diff1 =commissionPrice1-priceValue1
                   alignSelf: 'stretch',
                 }}
               >
-                <Text allowFontScaling={false} style={styles.productDesHeding}>Product Description</Text>
+                <Text allowFontScaling={false} style={styles.productDesHeding}>
+                {userMeta?.category?.name === 'Food'
+                  ? 'Dish Description'
+                  : `${userMeta?.category?.name ?? ''} Description`}
+              </Text>
+                
                 <Text allowFontScaling={false} style={styles.productDesc}>
                   {descriptionvalue}
                 </Text>
@@ -652,56 +819,6 @@ const diff1 =commissionPrice1-priceValue1
             ? 'Dish Details'
             : `${userMeta?.category?.name ?? ''} Details`}
         </Text>
-           
-            {/* <View style={{ gap: 12 }}>
-              {fields.map(field => {
-                const fieldId = field.param.id;
-
-                const skipAliases = ['title', 'description', 'price'];
-                if (
-                  skipAliases.includes(field.param.alias_name ?? '') ||
-                  ['Image', 'boolean'].includes(field.param.field_type)
-                )
-                  return null;
-
-                const storedValue = storedForm?.[fieldId]?.value;
-                if (storedValue == null) return null;
-
-                let displayValues: string[] = [];
-
-                if (field.param.field_type === 'dropdown') {
-                  if (Array.isArray(storedValue)) {
-                    displayValues = storedValue
-                      .map((id: number) =>
-                        field.param.options.find((opt: any) => opt.id === id)?.option_name
-                      )
-                      .filter(Boolean) as string[];
-                  } else {
-                    const option = field.param.options.find((opt: any) => opt.id === storedValue);
-                    if (option) displayValues = [option.option_name];
-                  }
-                } else if (Array.isArray(storedValue)) {
-                  displayValues = storedValue.map(String);
-                } else {
-                  displayValues = [String(storedValue)];
-                }
-
-                return (
-                  <View key={fieldId} style={{ gap: 6 }}>
-                    <Text allowFontScaling={false}style={styles.detailLabel}>{field.param.field_name}</Text>
-
-                    <View style={styles.categoryContainer}>
-                      {displayValues.map((val, idx) => (
-                        <View key={idx} style={styles.categoryTag}>
-                          <Text allowFontScaling={false}style={styles.catagoryText}>{val}</Text>
-                        </View>
-                      ))}
-                    </View>
-                  </View>
-                );
-              })}
-            </View> */}
-
             <View style={{ gap: 12 }}>
                 {fields.map(field => {
                   const fieldId = field.param.id;
@@ -737,7 +854,7 @@ const diff1 =commissionPrice1-priceValue1
 
                   return (
                     <View key={fieldId} style={{  }}>
-                      <Text allowFontScaling={false} style={styles.detailLabel}>
+                      <Text allowFontScaling={false} style={styles.detailLabel1}>
                         {field.param.field_name}
                       </Text>
 
@@ -763,10 +880,7 @@ const diff1 =commissionPrice1-priceValue1
 
           </View>
         </View>
-
-
-
-          
+   
             <View style={styles.card}>
               <View style={{ gap: 12 }}>
                 <Text allowFontScaling={false} style={styles.productDeatilsHeading}>Seller Details</Text>
@@ -797,7 +911,7 @@ const diff1 =commissionPrice1-priceValue1
                       {userMeta?.university_name || 'University of Warwick,'}
                     </Text>
                     <Text allowFontScaling={false} style={[styles.univeritytext,]}>
-                      Coventry
+                    {userMeta?.city || ''}
                     </Text>
                   </View>
                 </View>
@@ -825,8 +939,7 @@ const diff1 =commissionPrice1-priceValue1
               </View>
             </View>
           </View>
-        </ScrollView>
-
+        </AnimatedReanimated.ScrollView>
         
            <Button
               onPress={handleListPress}
@@ -952,6 +1065,48 @@ const diff1 =commissionPrice1-priceValue1
 };
 
 const styles = StyleSheet.create({
+
+  
+    headerWrapper: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? '100%' : '100%',
+    height: Platform.OS === 'ios' ? 180 : 180,
+    zIndex: 10,
+    overflow: 'hidden',
+    alignSelf: 'center',
+    pointerEvents: 'none',
+  },
+  headerContent: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 50 : 60,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
+  },
+  backButtonContainer: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 11,
+    //top: 7,
+  },
+  blurButtonWrapper: {
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+  },
+
 
     chattext:{
   color: 'rgba(255, 255, 255, 0.48)',
@@ -1109,6 +1264,15 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     lineHeight: 22,
   },
+   detailLabel1: {
+    color: 'rgba(255, 255, 255, 0.72)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 16,
+    fontWeight: '600',
+    fontStyle: 'normal',
+    lineHeight: 22,
+  },
+  
   detailValue: {
     fontSize: 14,
     fontWeight: '400',
@@ -1292,10 +1456,16 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 10,
   },
-  scrollContainer: {
-    paddingBottom: (Platform.OS === 'ios' ? 70:50),
-    //paddingTop: 90,
-    // paddingHorizontal: 20,
+  // scrollContainer: {
+  //   //paddingBottom: (Platform.OS === 'ios' ? 70:50),
+  //   //paddingTop: 90,
+  //   // paddingHorizontal: 20,
+  // },
+
+    scrollContainer: {
+    //paddingHorizontal: 20,
+    paddingBottom: 80,
+    paddingTop: Platform.OS === 'ios' ? 160 : 100,
   },
 
   datePosted: {
@@ -1381,9 +1551,17 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     lineHeight: 20,
   },
-  itemcondition: {
+  // itemcondition: {
+  //   color: 'rgba(255, 255, 255, 0.72)',
+  //   fontFamily: 'Urbanist-Regular',
+  //   fontSize: 16,
+  //   fontWeight: '600',
+  //   fontStyle: 'normal',
+  //   lineHeight: 22,
+  // },
+   itemcondition: {
     color: 'rgba(255, 255, 255, 0.72)',
-    fontFamily: 'Urbanist-Regular',
+    fontFamily: 'Urbanist-SemiBold',
     fontSize: 16,
     fontWeight: '600',
     fontStyle: 'normal',
