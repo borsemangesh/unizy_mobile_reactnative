@@ -104,15 +104,19 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
 
       const json = await response.json();
 
-      if (json?.statusCode === 200) {
+      if (json?.statusCode === 200 && json.data.onboardingLink) {
         const onboardingLink = json?.data?.onboardingLink;
 
-        if (onboardingLink) {
-          Linking.openURL(onboardingLink);
-        } else {
-          Alert.alert('Error', 'Onboarding link not found.');
-        }
-      } else {
+        navigation.navigate("StripeOnboardingScreen", {
+        onboardingUrl: onboardingLink,
+      });
+      
+      } 
+      else if(json?.data?.stripeAccount?.isboardcomplete)
+      {
+            navigation.navigate("AccountDeatils", { showSuccess: true })
+      }
+      else {
         Alert.alert('Error', json?.message || 'Something went wrong.');
       }
     } catch (error) {

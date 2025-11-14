@@ -42,12 +42,16 @@ import UserProfileScreen from './dashboard/UserProfileScreen';
 import EditProfile from './dashboard/EditProfile';
 import ProfileCard from './dashboard/ProfileCard';
 import StripeOnboardingComplete from './dashboard/StripeOnboardingComplete';
+import StripeOnboardingScreen from './dashboard/StripeOnboardingScreen';
+import AccountDetails from './dashboard/AccountDetails';
+import StripeOnboardingCancel from './dashboard/StripeOnboardingCancel';
 const Stack = createNativeStackNavigator();
 const linking = {
   prefixes: ['unizyapp://'],
   config: {
     screens: {
       StripeOnboardingComplete: 'onboarding-complete',
+      StripeOnboardingCancel: 'onboarding-cancel',
     },
   },
 };
@@ -358,6 +362,24 @@ export const Navigation = () => {
         <Stack.Screen
           name="StripeOnboardingComplete"
           component={StripeOnboardingComplete}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="StripeOnboardingScreen"
+          component={StripeOnboardingScreen}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="AccountDeatils"
+          component={AccountDetails}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="StripeOnboardingCancel"
+          component={StripeOnboardingCancel}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

@@ -1,28 +1,22 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 type StripeOnboardingCompleteProps = {
   navigation: any;
 };
 
 export default function StripeOnboardingComplete({ navigation }: StripeOnboardingCompleteProps) {
-
   useEffect(() => {
     console.log("Stripe onboarding completed!");
-
-    setTimeout(() => {
-      navigation.navigate("ProfileCard");
-    }, 2000);
-
-  }, []);
-
+    // Navigate directly to AccountDetails with showSuccess flag
+    // The success popup will be shown in AccountDetails page
+    navigation.replace("AccountDeatils", { showSuccess: true });
+  }, [navigation]);
+  
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Stripe onboarding completed!</Text>
-    </View>
+    <View style={styles.container} />
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
