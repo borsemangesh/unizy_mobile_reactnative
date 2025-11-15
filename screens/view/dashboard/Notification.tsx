@@ -197,9 +197,6 @@ const renderItem = ({ item ,index  }: { item: any ;index: number }) => {
       <NotificationCard
         infoTitle={item.title}
         productImage={productImage}
-        // reviewText={formattedParts}
-          reviewText={formattedParts}
-        // reviewText={formattedParts}
           reviewText={formattedParts}
         navigation={navigation}
         typeid={item.metadata.id}
@@ -232,8 +229,6 @@ const renderItem = ({ item ,index  }: { item: any ;index: number }) => {
    
        
     <FlatList
-    showsVerticalScrollIndicator={false}
-  showsHorizontalScrollIndicator={false}
     showsVerticalScrollIndicator={false}
   showsHorizontalScrollIndicator={false}
             data={groupedList}
@@ -283,14 +278,13 @@ dateHeading:{
     fontWeight:500,
     marginLeft:6,
     marginBottom:8
-    marginLeft:6,
-    marginBottom:8
     },
  
   background: {
     flex: 1,
      width: '100%',
-      height: '100%' },
+      height: '100%'
+     },
   fullScreenContainer: {
      flex: 1,
      marginTop: 10

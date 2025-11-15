@@ -351,15 +351,14 @@ export const Navigation = () => {
           }}
         />
 
-        <Stack.Screen
-      <Stack.Screen
-          name="ProfileCard"
+        {/* <Stack.Screen
+           name="ProfileCard"
           component={ProfileCard}
           options={{
             headerShown: false,
             presentation: 'fullScreenModal',
           }}
-        />
+        /> */}
         <Stack.Screen
           name="ViewListingDetails"
           component={ViewListingDetails}

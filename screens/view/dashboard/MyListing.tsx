@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { SquircleView } from 'react-native-figma-squircle';
 import 'react-native-reanimated';
-import { SquircleView } from 'react-native-figma-squircle';
-import 'react-native-reanimated';
 import {
   Image,
   ImageBackground,
@@ -19,7 +17,7 @@ import {
   ActivityIndicator,
   Dimensions,
 } from 'react-native';
- 
+
 import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
@@ -39,7 +37,7 @@ import { NewCustomToastContainer } from '../../utils/component/NewCustomToastMan
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
- 
+
 type Feature = {
   id: number;
   created_by: number;
@@ -58,22 +56,16 @@ type Feature = {
     firstname?: string | null;
     lastname?: string | null;
   };
-  category?: { id: number; name: string };
-  createdby?: {
-    profile?: string | null;
-    firstname?: string | null;
-    lastname?: string | null;
-  };
 };
 type university = {
   id: number;
   name: string;
 };
- 
+
 type MyListingProps = {
   navigation: any;
 };
- 
+
 const MyListing = ({ navigation }: MyListingProps) => {
   const [featurelist, setFeaturelist] = useState<Feature[]>([]);
   const [search, setSearch] = useState<string>('');
@@ -87,27 +79,27 @@ const MyListing = ({ navigation }: MyListingProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const insets = useSafeAreaInsets();
   const { height: screenHeight } = Dimensions.get('window');
- 
+
   type Category = {
     id: number | null;
     name: string;
   };
- 
+
   const scrollY = useSharedValue(0);
- 
+
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: event => {
       'worklet';
       scrollY.value = event.contentOffset.y;
     },
   });
- 
+
   const animatedBlurStyle = useAnimatedStyle(() => {
     'worklet';
     const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
     return { opacity };
   });
- 
+
   const animatedButtonStyle = useAnimatedStyle(() => {
     'worklet';
     const borderColor = interpolateColor(
@@ -123,21 +115,21 @@ const MyListing = ({ navigation }: MyListingProps) => {
   });
   const animatedIconStyle = useAnimatedStyle(() => {
     'worklet';
- 
+
     const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
- 
+
     const tintColor = interpolateColor(
       scrollY.value,
       [0, 150],
       ['#FFFFFF', '#002050'],
     );
- 
+
     return {
       opacity,
       tintColor,
     };
   });
- 
+
   const blurAmount = useDerivedValue(() =>
     interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
   );
@@ -148,16 +140,16 @@ const MyListing = ({ navigation }: MyListingProps) => {
     id: null,
     name: 'All',
   });
- 
+
   useFocusEffect(
     useCallback(() => {
       setPage(1);
       displayListOfProduct(selectedCategory?.id ?? null, 1);
- 
+
       return () => {};
     }, []),
   );
- 
+
   useEffect(() => {
     const loadCategories = async () => {
       const stored = await AsyncStorage.getItem('categories');
@@ -173,12 +165,12 @@ const MyListing = ({ navigation }: MyListingProps) => {
     };
     loadCategories();
   }, []);
- 
+
   useEffect(() => {
     setPage(1);
     displayListOfProduct(selectedCategory?.id ?? null, 1);
   }, [selectedCategory]);
- 
+
   const displayListOfProduct = async (
     categoryId: number | null,
     pageNum: number,
@@ -189,10 +181,10 @@ const MyListing = ({ navigation }: MyListingProps) => {
       if (categoryId) {
         url += `&category_id=${categoryId}`;
       }
- 
+
       const token = await AsyncStorage.getItem('userToken');
       if (!token) return;
- 
+
       const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -200,9 +192,9 @@ const MyListing = ({ navigation }: MyListingProps) => {
           'Content-Type': 'application/json',
         },
       });
- 
+
       const jsonResponse = await response.json();
- 
+
       if (jsonResponse.statusCode === 200) {
         setIsLoading(false);
         if (pageNum === 1) {
@@ -227,7 +219,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
       console.log('Error:', err);
     }
   };
- 
+
   const renderItem = useCallback(
     ({ item, index }: { item: Feature; index: number }) => {
       const displayDate = formatDate(item.created_at);
@@ -237,13 +229,13 @@ const MyListing = ({ navigation }: MyListingProps) => {
       const productImage = item.thumbnail
         ? { uri: item.thumbnail }
         : require('../../../assets/images/drone.png');
- 
+
       // Get category name from item or find from categories list
       const categoryName =
         item.category?.name ||
         categories.find(cat => cat.id === item.category_id)?.name ||
         '';
- 
+
       return (
         <View style={[styles.itemContainer]}>
           <MyListingCard
@@ -269,7 +261,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
     },
     [categories, navigation],
   );
- 
+
   const formatDate = (dateString: string | null | undefined) => {
     if (!dateString || dateString.trim() === '') return '01-01-2025';
     const date = new Date(dateString);
@@ -286,9 +278,8 @@ const MyListing = ({ navigation }: MyListingProps) => {
           translucent
           backgroundColor="transparent"
           barStyle="light-content"
-          barStyle="light-content"
         />
- 
+
         {/* Header with Blur only at top */}
         <Animated.View
           style={[styles.headerWrapper, animatedBlurStyle]}
@@ -311,11 +302,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
               style={StyleSheet.absoluteFill}
               blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
               blurAmount={Platform.OS === 'ios' ? 45 : 45}
-              overlayColor="rgba(255,255,255,0.05)"
-              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
-              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
-              blurAmount={Platform.OS === 'ios' ? 45 : 45}
-              overlayColor="rgba(255,255,255,0.05)"
+              // overlayColor="rgba(255,255,255,0.05)"
               reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
             />
             <LinearGradient
@@ -323,18 +310,14 @@ const MyListing = ({ navigation }: MyListingProps) => {
                 'rgba(255, 255, 255, 0.45)',
                 'rgba(255, 255, 255, 0.02)',
                 'rgba(255, 255, 255, 0.02)',
-                'rgba(255, 255, 255, 0.45)',
-                'rgba(255, 255, 255, 0.02)',
-                'rgba(255, 255, 255, 0.02)',
               ]}
-              style={StyleSheet.absoluteFill}
               style={StyleSheet.absoluteFill}
               start={{ x: 0, y: 0 }}
               end={{ x: 0, y: 1 }}
             />
           </MaskedView>
         </Animated.View>
- 
+
         {/* Header Content */}
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
@@ -366,7 +349,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
                   })),
                 ]}
               />
- 
+
               {/* Blur view fades in as scroll increases */}
               <Animated.View
                 style={[
@@ -388,7 +371,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
                   reducedTransparencyFallbackColor="transparent"
                 />
               </Animated.View>
- 
+
               {/* Back Icon */}
               <Animated.Image
                 source={require('../../../assets/images/back.png')}
@@ -396,21 +379,16 @@ const MyListing = ({ navigation }: MyListingProps) => {
               />
             </Animated.View>
           </TouchableOpacity>
- 
+
           <Text allowFontScaling={false} style={styles.unizyText}>
             My Listings
           </Text>
         </View>
         {/* List */}
-        
         <View style={{ flex: 1 }}>
           <Animated.FlatList
             data={featureList}
             renderItem={renderItem}
-            keyExtractor={(item, index) => {
-              'worklet';
-              return index.toString();
-            }}
             keyExtractor={(item, index) => {
               'worklet';
               return index.toString();
@@ -462,59 +440,11 @@ const MyListing = ({ navigation }: MyListingProps) => {
                   })}
                 </ScrollView>
               </View>
-              <View
-                style={styles.categoryTabsContainer}
-                pointerEvents="box-none"
-              >
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={styles.categoryTabsScrollContent}
-                  nestedScrollEnabled={true}
-                >
-                  {categories.map((cat, index) => {
-                    const isSelected = selectedCategory.name === cat.name;
-                    return (
-                      <TouchableOpacity
-                        key={index}
-                        onPress={() => setSelectedCategory(cat)}
-                        activeOpacity={0.7}
-                      >
-                        {/* <View
-                          style={isSelected ? styles.tabcard : styles.tabcard1}
-                        > */}
-                        <SquircleView
-                          style={isSelected ? styles.tabcard : styles.tabcard1}
-                          squircleParams={{
-                            cornerSmoothing: 1,
-                            cornerRadius: 10,
-                            fillColor: isSelected
-                              ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)'
-                              : 'rgba(255, 255, 255, 0.06)',
-                          }}
-                        >
-                          <Text
-                            allowFontScaling={false}
-                            style={
-                              isSelected ? styles.tabtext : styles.othertext
-                            }
-                          >
-                            {cat.name}
-                          </Text>
-                          {/* </View> */}
-                        </SquircleView>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </ScrollView>
-              </View>
             }
             contentContainerStyle={[
               styles.listContainer,
-              { paddingTop: Platform.OS === 'ios' ? 160 : 100 },
-              { paddingTop: Platform.OS === 'ios' ? 160 : 100 },
+              { paddingTop: Platform.OS === 'ios' ? 120 : 100 },
             ]}
-            onScroll={scrollHandler}
             onScroll={scrollHandler}
             scrollEventThrottle={16}
             onEndReachedThreshold={0.5}
@@ -549,16 +479,16 @@ const MyListing = ({ navigation }: MyListingProps) => {
     </ImageBackground>
   );
 };
- 
+
 export default MyListing;
- 
+
 const styles = StyleSheet.create({
   categoryTabsContainer: {
     width: '100%',
     marginBottom: 12,
     marginTop: 12,
   },
- 
+
   categoryTabsScrollContent: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -580,14 +510,12 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 16,
     marginRight: 8,
- 
+
     borderColor: '#ffffff11',
     // backgroundColor:
     //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    // backgroundColor:
-    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderRadius: 10,
- 
+
     boxShadow:
       'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
   },
@@ -613,31 +541,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'box-none',
   },
-  headerWrapper: {
-    position: 'absolute',
-    top: 0,
-    width: Platform.OS === 'ios' ? 393 : '100%',
-    height: Platform.OS === 'ios' ? 180 : 180,
-    zIndex: 10,
-    overflow: 'hidden',
-    alignSelf: 'center',
-    pointerEvents: 'none',
-  },
-  headerContent: {
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? 50 : 40,
-    width: Platform.OS === 'ios' ? 393 : '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-    zIndex: 11,
-    alignSelf: 'center',
-    pointerEvents: 'box-none',
-  },
   tabcard1: {
     minHeight: 38,
- 
+
     borderColor: '#ffffff',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
@@ -656,7 +562,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 16,
     marginRight: 8,
-    marginRight: 8,
   },
   tabtext: {
     color: '#fff', // selected tab text color
@@ -670,7 +575,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
   },
- 
+
   background: {
     flex: 1,
     width: '100%',
@@ -688,10 +593,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     width: Platform.OS === 'ios' ? 393 : '100%',
-    width: Platform.OS === 'ios' ? 393 : '100%',
     zIndex: 20,
-    paddingTop: Platform.OS === 'ios' ? 50 : 40,
-    paddingBottom: Platform.OS === 'ios' ? 16 : 12,
     paddingTop: Platform.OS === 'ios' ? 50 : 40,
     paddingBottom: Platform.OS === 'ios' ? 16 : 12,
     paddingHorizontal: 16,
@@ -712,14 +614,6 @@ const styles = StyleSheet.create({
     left: 16,
     zIndex: 11,
     top: 7,
-    alignSelf: 'center',
-    minHeight: Platform.OS === 'ios' ? 80 : 88,
-  },
-  backButtonContainer: {
-    position: 'absolute',
-    left: 16,
-    zIndex: 11,
-    top: 7,
   },
   headerRow: {
     flexDirection: 'row',
@@ -728,20 +622,15 @@ const styles = StyleSheet.create({
   backIconRow: {
     width: 48,
     height: 48,
-    width: 48,
-    height: 48,
     borderRadius: 40,
-    padding: 12,
     padding: 12,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
       backgroundColor:
-      backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
     borderWidth: 0.4,
-   
    
     borderColor: '#ffffff2c',
   },
@@ -751,8 +640,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
-    width: '100%',
-    marginTop: 17,
     width: '100%',
     marginTop: 17,
   },
@@ -778,15 +665,8 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     paddingHorizontal: 16,
-    paddingHorizontal: 16,
     paddingTop: 10,
     paddingBottom: Platform.OS === 'ios' ? 40 : 80,
-    width: Platform.OS === 'ios' ? 393 : '100%',
-    alignSelf: 'center',
-  },
-  row: {
-    justifyContent: 'space-between',
-    paddingHorizontal: 0,
     width: Platform.OS === 'ios' ? 393 : '100%',
     alignSelf: 'center',
   },
@@ -799,7 +679,6 @@ const styles = StyleSheet.create({
     // justifyContent: 'flex-start',
   },
   itemContainer: {
-    width: '100%',
     width: '100%',
   },
   scrollView: {

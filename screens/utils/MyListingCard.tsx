@@ -207,7 +207,6 @@
 
 // MyListingCard.tsx
 import React from 'react';
-import { SquircleView } from 'react-native-figma-squircle';
 import {
   View,
   Text,
@@ -216,7 +215,6 @@ import {
   ImageSourcePropType,
   TouchableOpacity,
 } from 'react-native';
-import { red } from 'react-native-reanimated/lib/typescript/Colors';
 
 type MyListingCardProps = {
   tag: string;
@@ -231,10 +229,6 @@ type MyListingCardProps = {
   catagory_id: number;
   catagory_name: string;
   isactive?: boolean;
-  categoryName?: string;
-  profilePhoto?: string | null;
-  firstName?: string | null;
-  lastName?: string | null;
   categoryName?: string;
   profilePhoto?: string | null;
   firstName?: string | null;
@@ -258,11 +252,6 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
   profilePhoto = null,
   firstName = null,
   lastName = null,
-  isactive = true,
-  categoryName = '',
-  profilePhoto = null,
-  firstName = null,
-  lastName = null,
 }) => {
   // Check if category is housekeeping or tuition
   const isProfileCategory = categoryName?.toLowerCase() === 'house keeping' || categoryName?.toLowerCase() === 'tuition';
@@ -278,32 +267,11 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
   const shouldShowProfile = isProfileCategory && profilePhoto;
   const shouldShowInitials = isProfileCategory && !profilePhoto;
 
-  // Check if category is housekeeping or tuition
-  const isProfileCategory = categoryName?.toLowerCase() === 'house keeping' || categoryName?.toLowerCase() === 'tuition';
-  
-  // Get initials helper function
-  const getInitials = (first: string | null = '', last: string | null = '') => {
-    const f = first?.trim()?.charAt(0)?.toUpperCase() || '';
-    const l = last?.trim()?.charAt(0)?.toUpperCase() || '';
-    return (f + l) || '?';
-  };
-
-  // Determine what image to show
-  const shouldShowProfile = isProfileCategory && profilePhoto;
-  const shouldShowInitials = isProfileCategory && !profilePhoto;
-
 //  console.log('Share ID in card:', shareid, catagory_id);
- return ( 
-  <SquircleView
-      style={styles.wrapper}
-      squircleParams={{
-        cornerSmoothing: 1,
-        cornerRadius: 18,
-        fillColor: 'rgba(255, 255, 255, 0.06)',
-      }}
-    >
-  <TouchableOpacity  onPress={() => {
-    navigation.navigate('ListingDetails',{ shareid ,catagory_id,catagory_name});
+ return (
+  <TouchableOpacity style={styles.wrapper} onPress={() => {
+    console.log(navigation.getState());
+    navigation.navigate('ListingDetails',{ shareid ,catagory_id,catagory_name,key: String(Math.random()) });
   }}>
     <View style={styles.container}>
       {/* Image View */}
@@ -373,43 +341,7 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
         </View>
       ) : null}
     </View>
-        <View style={styles.metaRow}>
-          <Text allowFontScaling={false} style={styles.tag} numberOfLines={1}>
-            {tag}
-          </Text>
-          {rating ? (
-            <>
-              <Text allowFontScaling={false} style={styles.dot}> • </Text>
-              <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
-            </>
-          ) : null}
-        </View>
-      </View>
-
-      {/* Status View */}
-      {topRightText ? (
-        <View style={styles.statusContainer}>
-          <View style={[
-            styles.topRightBadge,
-            { backgroundColor: isactive ? 'rgba(97, 179, 255, 0.2)' : 'rgba(134, 140, 213, 0.2)' },
-          ]}>
-            <Text
-              allowFontScaling={false}
-              style={[
-                styles.topRightText,
-                {
-                  color: isactive ? '#b4e6ff' : '#868CD5',
-                },
-              ]}
-            >
-              {topRightText}
-            </Text>
-          </View>
-        </View>
-      ) : null}
-    </View>
   </TouchableOpacity>
-  </SquircleView>
 );
 };
 
@@ -440,10 +372,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   contentContainer: {
-  contentContainer: {
     flex: 1,
-    marginLeft: 10,
-    marginRight: 10,
     marginLeft: 10,
     marginRight: 10,
   },
@@ -453,23 +382,14 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600,
 
-    fontWeight: 600,
-
   },
   price: {
     fontSize: 14,
     color: '#fff',
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600,
-    fontWeight: 600,
   },
   priceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 8,
-    flexWrap: 'wrap',
-    minHeight: 22,
-  },
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 8,
@@ -484,14 +404,9 @@ const styles = StyleSheet.create({
   },
   statusContainer: {
     alignSelf: 'flex-start',
-    marginTop: 8,
-  },
-  statusContainer: {
-    alignSelf: 'flex-start',
   },
   tag: {
     fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.7)',
     color: 'rgba(255, 255, 255, 0.7)',
     fontWeight: '500',
     fontFamily: 'Urbanist-Medium',
@@ -505,20 +420,12 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: 12,
     color: 'rgba(255, 255, 255, 0.7)',
-    color: 'rgba(255, 255, 255, 0.7)',
     fontWeight: '500',
     fontFamily: 'Urbanist-Medium',
   },
 
 
 topRightBadge: {
-  paddingHorizontal: 8,
-  paddingVertical: 4,
-  borderRadius: 6,
-  alignItems: 'center',
-  justifyContent: 'center',
-  alignSelf: 'flex-start',
-  marginTop: 0,
   paddingHorizontal: 8,
   paddingVertical: 4,
   borderRadius: 6,
@@ -544,8 +451,6 @@ featureBadge: {
     justifyContent: 'center',
     marginLeft: 8,
   
-    marginLeft: 8,
-  
 },
 
 featureText: {
@@ -556,24 +461,7 @@ featureText: {
 },
 dot: {
   color: 'rgba(255, 255, 255, 0.7)',
-  color: 'rgba(255, 255, 255, 0.7)',
   fontSize: 12,
-  marginHorizontal: 4,
-},
-initialsCircle: {
-  backgroundColor: '#8390D4',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: 72,
-  height: 72,
-  borderRadius: 12,
-},
-initialsText: {
-  color: '#fff',
-  fontSize: 28,
-  fontWeight: 600,
-  textAlign: 'center',
-  fontFamily: 'Urbanist-SemiBold',
   marginHorizontal: 4,
 },
 initialsCircle: {

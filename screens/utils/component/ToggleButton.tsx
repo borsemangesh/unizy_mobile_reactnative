@@ -2,12 +2,12 @@
 // import { TouchableOpacity, Animated, StyleSheet } from "react-native";
  
 // interface ToggleButtonProps {
-//   value: boolean;                              
-//   onValueChange: (value: boolean) => void;     
+//   value: boolean;
+//   onValueChange: (value: boolean) => void;
+//   disabled?: boolean;
 // }
  
-
-// const ToggleButton: React.FC<ToggleButtonProps> = ({ value, onValueChange }) => {
+// const ToggleButton: React.FC<ToggleButtonProps> = ({ value, onValueChange, disabled = false }) => {
 //   const [animValue] = useState(new Animated.Value(value ? 1 : 0));
 
 //   useEffect(() => {
@@ -19,6 +19,8 @@
 //   }, [value]);
 
 //   const toggleSwitch = () => {
+//     if (disabled) return;
+//     if (disabled) return;
 //     onValueChange(!value);
 //   };
 
@@ -26,7 +28,7 @@
 //   const translateX = animValue.interpolate({
 //     inputRange: [0, 1],
 //     //outputRange: [2, 32], 
-//      outputRange: [2, 52 - 26 - 2], // left padding to right padding
+//      outputRange: [0, 52 - 26 - 4], // left padding to right padding
 
 //   });
 
@@ -43,8 +45,12 @@
 //   });
 
 //   return (
-//     <TouchableOpacity onPress={toggleSwitch} activeOpacity={1}>
-//       <Animated.View style={[styles.container, { backgroundColor: innerBgColor }]}>
+      
+//     <TouchableOpacity onPress={toggleSwitch} activeOpacity={1} disabled={disabled}>
+//       <Animated.View style={[
+//         styles.container,
+//         { backgroundColor: innerBgColor, opacity: disabled ? 0.6 : 1 },
+//       ]}>
 //         {/* Circle */}
 //         <Animated.View
 //           style={[
@@ -77,7 +83,8 @@
 
  
 // export default ToggleButton;
- 
+
+
 
 import React, { useState, useEffect } from "react";
 import { TouchableOpacity, Animated, StyleSheet } from "react-native";
@@ -100,7 +107,6 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({ value, onValueChange, disab
   }, [value]);
 
   const toggleSwitch = () => {
-    if (disabled) return;
     if (disabled) return;
     onValueChange(!value);
   };
@@ -126,11 +132,6 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({ value, onValueChange, disab
   });
 
   return (
-    <TouchableOpacity onPress={toggleSwitch} activeOpacity={1} disabled={disabled}>
-      <Animated.View style={[
-        styles.container,
-        { backgroundColor: innerBgColor, opacity: disabled ? 0.6 : 1 },
-      ]}>
     <TouchableOpacity onPress={toggleSwitch} activeOpacity={1} disabled={disabled}>
       <Animated.View style={[
         styles.container,
