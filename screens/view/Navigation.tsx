@@ -41,6 +41,7 @@ import EditPreviewDetailed from './dashboard/EditPreviewDetailed';
 import UserProfileScreen from './dashboard/UserProfileScreen';
 import EditProfile from './dashboard/EditProfile';
 import ProfileCard from './dashboard/ProfileCard';
+import { navigationRef } from './NavigationService';
 
 const Stack = createNativeStackNavigator();
 
@@ -50,7 +51,7 @@ export const Navigation = () => {
 
   enableScreens();
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator
         initialRouteName="SinglePage"
         screenOptions={{ headerShown: false, animation: 'none' }}

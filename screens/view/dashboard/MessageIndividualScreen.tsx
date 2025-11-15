@@ -22,7 +22,9 @@ import { MAIN_URL } from '../../utils/APIConstant';
 import { Client as TwilioChatClient } from '@twilio/conversations';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import EmojiKeyboard from '../emoji/emojiKebord';
-import { InteractionManager } from 'react-native';
+import { InteractionManager, PanResponder } from 'react-native';
+// @ts-ignore - react-native-vector-icons types
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImage = require('../../../assets/images/user.jpg');
@@ -38,11 +40,6 @@ interface chatMeta {
   body: string | null;
   createdAt: Date | null;
 }
-
-// const MessagesIndividualScreen = ({ navigation }: MessagesIndividualScreenProps) => {
-//   // const [photo, setPhoto] = useState<string | null>(null);
-
-// };
 
 type RouteParams = {
   source?: 'chatList' | 'sellerPage';
@@ -77,11 +74,9 @@ const MessagesIndividualScreen = ({
   console.log('source', source);
   console.log('convName', userConvName);
 
-  const [chatMeta, setchatMeta] = useState<chatMeta>({
-    author: '',
-    body: '',
-    createdAt: null,
-  });
+  console.log('currentUserIdList----',currentUserIdList);
+  
+
 
   // const [twilioToken, setTwilioToken] = useState<any>(null);
 
@@ -102,25 +97,138 @@ const MessagesIndividualScreen = ({
   const [isEmojiPickerVisible, setIsEmojiPickerVisible] = useState(false);
 
   const { width, height } = Dimensions.get('window');
-  // const keyboardHeight = height * 0.35; // Must match the height defined in styles.emojiPickerContainer
-  const animatedValue = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef<FlatList>(null);
+  const textInputRef = useRef<TextInput>(null);
+  const emojiTranslateY = useRef(new Animated.Value(0)).current;
 
+  // Move constants before they're used
+  const WINDOW_HEIGHT = Dimensions.get('window').height;
+  const INPUT_BAR_HEIGHT = Platform.OS === 'ios' ? 70 : 64;
+  const DEFAULT_EMOJI_HEIGHT = Math.round(WINDOW_HEIGHT * 0.35);
+
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [lastKeyboardHeight, setLastKeyboardHeight] = useState(0);
+  
+  // Emoji keyboard height will match text keyboard height when available
+  const EMOJI_PICKER_HEIGHT = lastKeyboardHeight > 0 ? lastKeyboardHeight : DEFAULT_EMOJI_HEIGHT;
+
+  // Disable navigation gestures when emoji keyboard is open
   useEffect(() => {
-    Animated.timing(animatedValue, {
-      toValue: isEmojiPickerVisible ? 0 : keyboardHeight,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
+    navigation.setOptions({
+      gestureEnabled: !isEmojiPickerVisible,
+    });
+  }, [isEmojiPickerVisible, navigation]);
+
+  // const [loading, setLoading] = useState(true);
+
+  // Emoji picker animation - use dynamic height
+  useEffect(() => {
+    const emojiHeight = lastKeyboardHeight > 0 ? lastKeyboardHeight : EMOJI_PICKER_HEIGHT;
+    
+    if (isEmojiPickerVisible) {
+      // Animate in when becoming visible
+      emojiTranslateY.setValue(emojiHeight);
+      Animated.spring(emojiTranslateY, {
+        toValue: 0,
+        useNativeDriver: true,
+        tension: 100,
+        friction: 8,
+      }).start();
+    } else {
+      // Animate out when hiding
+      Animated.spring(emojiTranslateY, {
+        toValue: emojiHeight,
+        useNativeDriver: true,
+        tension: 100,
+        friction: 8,
+      }).start();
+    }
+  }, [isEmojiPickerVisible, lastKeyboardHeight]);
+
+  // PanResponder for swipe down gesture only - ignores horizontal swipes
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => false,
+      onMoveShouldSetPanResponder: (_, gestureState) => {
+        // STRICTLY only respond to vertical downward swipes
+        // Completely ignore horizontal swipes (left/right)
+        const verticalMovement = Math.abs(gestureState.dy);
+        const horizontalMovement = Math.abs(gestureState.dx);
+        const isVerticalSwipe = verticalMovement > horizontalMovement;
+        const isDownwardSwipe = gestureState.dy > 15; // Minimum threshold
+        
+        // Only activate if it's clearly a vertical downward swipe
+        return isVerticalSwipe && isDownwardSwipe;
+      },
+      onPanResponderGrant: () => {
+        // Gesture started
+      },
+      onPanResponderMove: (_, gestureState) => {
+        // Only move if it's a downward vertical gesture
+        const isVertical = Math.abs(gestureState.dy) > Math.abs(gestureState.dx);
+        if (isVertical && gestureState.dy > 0) {
+          emojiTranslateY.setValue(gestureState.dy);
+        }
+      },
+      onPanResponderRelease: (_, gestureState) => {
+        // Check if it's a valid vertical downward swipe
+        const isVertical = Math.abs(gestureState.dy) > Math.abs(gestureState.dx);
+        const shouldClose = isVertical && (gestureState.dy > 50 || gestureState.vy > 0.5);
+
+        if (shouldClose && isEmojiPickerVisible) {
+          // Close emoji keyboard
+          const emojiHeight = lastKeyboardHeight > 0 ? lastKeyboardHeight : EMOJI_PICKER_HEIGHT;
+          Animated.spring(emojiTranslateY, {
+            toValue: emojiHeight,
+            useNativeDriver: true,
+            tension: 100,
+            friction: 8,
+          }).start(() => {
+            setIsEmojiPickerVisible(false);
+          });
+        } else {
+          // Spring back
+          Animated.spring(emojiTranslateY, {
+            toValue: 0,
+            useNativeDriver: true,
+            tension: 100,
+            friction: 8,
+          }).start();
+        }
+      },
+    })
+  ).current;
+
+  // Auto-focus text input when emoji keyboard closes (except when button is clicked or on initial mount)
+  const shouldAutoFocusRef = useRef(true);
+  const isInitialMountRef = useRef(true);
+  
+  useEffect(() => {
+    // Skip auto-focus on initial mount
+    if (isInitialMountRef.current) {
+      isInitialMountRef.current = false;
+      return;
+    }
+    
+    // Only auto-focus if emoji keyboard was just closed (not on initial mount)
+    if (!isEmojiPickerVisible && shouldAutoFocusRef.current) {
+      // Emoji keyboard closed - focus text input
+      const timer = setTimeout(() => {
+        textInputRef.current?.focus();
+      }, 200);
+      return () => clearTimeout(timer);
+    }
+    shouldAutoFocusRef.current = true; // Reset for next time
   }, [isEmojiPickerVisible]);
 
-  // const handleEmojiPress = () => {
-  //   setIsEmojiPickerVisible(prev => !prev);
-  //   Keyboard.dismiss();
-  // };
-
   const handleEmojiSelected = (char: string) => {
-    setMessageText(prevText => prevText + char);
+    if (char === 'DELETE') {
+      // Delete last character
+      setMessageText(prevText => prevText.slice(0, -1));
+    } else {
+      setMessageText(prevText => prevText + char);
+    }
   };
 
   // ----------------------------------------------------------
@@ -144,6 +252,12 @@ const MessagesIndividualScreen = ({
         const data = await response.json();
         if (!response.ok) throw new Error(data.message);
 
+      
+      // const twillioToken :any = await AsyncStorage.getItem('twillioToken');
+
+      console.log("data",data.data.token);
+      
+   
         const client = new TwilioChatClient(data.data.token);
         setChatClient(client);
       } catch (err) {
@@ -157,13 +271,15 @@ const MessagesIndividualScreen = ({
   // STEP 2: Fetch or Create Conversation
   // ----------------------------------------------------------
   useEffect(() => {
+
     if (!chatClient) return;
 
     let isMounted = true;
-    const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+    // const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
     const fetchConversation = async () => {
       try {
+        //  setLoading(true);  
         const token = await AsyncStorage.getItem('userToken');
         const userId = await AsyncStorage.getItem('userId');
 
@@ -205,6 +321,8 @@ const MessagesIndividualScreen = ({
           }
         }
 
+          console.log("convoppppppppppp",convName);
+
         let convo;
         try {
           convo = await chatClient.getConversationByUniqueName(convName);
@@ -214,6 +332,9 @@ const MessagesIndividualScreen = ({
 
         if (!convo) return;
 
+      
+        
+
         const participants = await convo.getParticipants();
         const alreadyJoined = participants.some(
           (p: any) => p.identity === userId,
@@ -222,6 +343,7 @@ const MessagesIndividualScreen = ({
 
         if (!isMounted) return;
         setConversation(convo);
+      
         setCheckUser(
           source === 'chatList'
             ? currentUserIdList
@@ -250,8 +372,11 @@ const MessagesIndividualScreen = ({
 
         console.log('messagesPage----------', messagesPage.items);
         setMessagesDateTime(messagesdate);
+        console.log("checkUser============______",checkUser);
+        
 
         setMessages(messagesPage.items);
+        // setLoading(false); 
       } catch (err) {
         console.error('Conversation setup failed:', err);
       }
@@ -263,6 +388,10 @@ const MessagesIndividualScreen = ({
       isMounted = false;
     };
   }, [chatClient]);
+
+
+ 
+
 
   // ----------------------------------------------------------
   // STEP 3: Attach Twilio Message Listener (ONLY ONCE)
@@ -290,13 +419,6 @@ const MessagesIndividualScreen = ({
   // STEP 4: Send Message
   // ----------------------------------------------------------
   const handleSendMessage = async () => {
-    // if (!conversation || !messageText.trim()) return;
-    // try {
-    //   await conversation.sendMessage(messageText.trim());
-    //   setMessageText('');
-    // } catch (err) {
-    //   console.error('Send failed:', err);
-    // }
 
     if (!messageText.trim()) return;
 
@@ -380,13 +502,6 @@ const MessagesIndividualScreen = ({
   const getInitials = (firstName = '', lastName = '') =>
     (firstName?.[0] || '') + (lastName?.[0] || '');
 
-  const WINDOW_HEIGHT = Dimensions.get('window').height;
-  const INPUT_BAR_HEIGHT = Platform.OS === 'ios' ? 70 : 64; // adjust to your design
-  const EMOJI_PICKER_HEIGHT = Math.round(WINDOW_HEIGHT * 0.35);
-
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
-
   useEffect(() => {
     // Keyboard listeners to get keyboard height
     const showSub = Keyboard.addListener(
@@ -396,6 +511,10 @@ const MessagesIndividualScreen = ({
         // use endCoordinates.height for keyboard height
         const h = (e && e.endCoordinates && e.endCoordinates.height) || 0;
         setKeyboardHeight(h);
+        // Store the keyboard height for emoji keyboard
+        if (h > 0) {
+          setLastKeyboardHeight(h);
+        }
         // if keyboard opens, close emoji picker
         if (isEmojiPickerVisible) setIsEmojiPickerVisible(false);
       },
@@ -405,6 +524,7 @@ const MessagesIndividualScreen = ({
       () => {
         setKeyboardVisible(false);
         setKeyboardHeight(0);
+        // Keep lastKeyboardHeight for emoji keyboard sizing
       },
     );
 
@@ -413,16 +533,23 @@ const MessagesIndividualScreen = ({
       hideSub.remove();
     };
   }, [isEmojiPickerVisible, setIsEmojiPickerVisible]);
-
-  // compute bottom offset for emoji picker:
-  // if keyboard visible, we won't show emoji (we also auto-hide emoji when keyboard opens),
-  // otherwise emoji should be flush with bottom (occupying EMOJI_PICKER_HEIGHT),
-  // and the input bar should sit above it (so input bottom = EMOJI_PICKER_HEIGHT).
-  const emojiBottom = 0; // emoji anchored to bottom
-  const inputBarBottom = keyboardVisible
-    ? 0 // ⬅ LET KeyboardAvoidingView handle this
-    : isEmojiPickerVisible
-    ? EMOJI_PICKER_HEIGHT
+  
+  // Scroll to end when text keyboard opens to ensure messages are visible
+  useEffect(() => {
+    if (keyboardVisible && !isEmojiPickerVisible) {
+      // When text keyboard opens, scroll to the end to show messages
+      setTimeout(() => {
+        flatListRef.current?.scrollToEnd({ animated: true });
+      }, 150);
+    }
+  }, [keyboardVisible, isEmojiPickerVisible]);
+  
+  // Calculate input bar bottom position
+  // When emoji is visible, position above emoji keyboard
+  // When text keyboard is visible, KeyboardAvoidingView handles it
+  // When neither is visible, stay at bottom: 0
+  const inputBarBottom = isEmojiPickerVisible 
+    ? (lastKeyboardHeight > 0 ? lastKeyboardHeight : EMOJI_PICKER_HEIGHT)
     : 0;
 
   // for auto scroll
@@ -511,7 +638,12 @@ const MessagesIndividualScreen = ({
     return grouped;
   };
 
-  const groupedMessages = buildMessageList(messages);
+  const groupedMessages = React.useMemo(
+    () => buildMessageList(messages),
+    [messages]
+);
+
+  // const groupedMessages = buildMessageList(messages);
 
   console.log('groupedMessages=========', groupedMessages);
 
@@ -581,6 +713,7 @@ const MessagesIndividualScreen = ({
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+        enabled={!isEmojiPickerVisible}
       >
         <View style={{ flex: 1 }}>
           <FlatList
@@ -588,7 +721,7 @@ const MessagesIndividualScreen = ({
             keyExtractor={item => item.sid}
             renderItem={({ item }) => (
               <>
-                {item.type === 'date' && (
+                {/* {item.type === 'date' && (
                   <View style={{ alignItems: 'center', marginVertical: 10 }}>
                     <Text
                       style={{
@@ -633,8 +766,8 @@ const MessagesIndividualScreen = ({
                           borderBottomWidth: 8,
                           borderBottomColor: 'transparent',
                           alignSelf: 'flex-start',
-                          marginRight: 0,
-                          marginTop: 4,
+                          marginRight: -2,
+                          marginTop: 4,                   
                         }}
                       />
                     )}
@@ -670,7 +803,94 @@ const MessagesIndividualScreen = ({
                       />
                     )}
                   </View>
-                </View>
+                </View> */}
+
+
+                {item?.type === "date" ? (
+  <View style={{ alignItems: "center", marginVertical: 10 }}>
+    <Text  style={{
+                        color: '#FFFFFF7A',
+                        backgroundColor: '#00000029',
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
+                        borderRadius: 6,
+                        fontSize: 10,
+                        fontFamily: 'Urbanist-Medium',
+                        marginVertical: 10,
+                      }}>
+      {item?.date}
+    </Text>
+  </View>
+) : (
+  <View
+    style={[
+      styles.messageContainer,
+      item?.data?.state?.author == checkUser
+        ? styles.rightAlign
+        : styles.leftAlign,
+    ]}
+  >
+    <View
+      style={
+        item?.data?.state?.author === checkUser
+          ? styles.rightBubbleWrapper
+          : styles.leftBubbleWrapper
+      }
+    >
+      {/* Bubble arrow - LEFT */}
+      {item?.data?.state?.author != checkUser && (
+        <View
+          style={{
+            width: 0,
+            height: 0,
+            borderTopWidth: 8,
+            borderTopColor: "transparent",
+            borderRightWidth: 9,
+            borderRightColor: "#FFFFFF1F",
+            borderBottomWidth: 8,
+            borderBottomColor: "transparent",
+            alignSelf: "flex-start",
+            marginRight: -2,
+            marginTop: 4,
+          }}
+        />
+      )}
+
+      {/* Actual Chat Bubble */}
+      <View
+        style={[
+          styles.bubble,
+          item?.data?.state?.author == checkUser
+            ? styles.rightBubble
+            : styles.leftBubble,
+        ]}
+      >
+        <Text allowFontScaling={false} style={styles.messageText}>
+          {item?.data?.state?.body}
+        </Text>
+      </View>
+
+      {/* Bubble arrow - RIGHT */}
+      {item?.data?.state?.author == checkUser && (
+        <View
+          style={{
+            width: 0,
+            height: 0,
+            borderTopWidth: 8,
+            borderTopColor: "transparent",
+            borderLeftWidth: 9,
+            borderLeftColor: "#0000001F",
+            borderBottomWidth: 8,
+            borderBottomColor: "transparent",
+            alignSelf: "flex-start",
+            marginLeft: 0,
+            marginTop: 4,
+          }}
+        />
+      )}
+    </View>
+  </View>
+)}
               </>
             )}
             ref={flatListRef}
@@ -694,7 +914,7 @@ const MessagesIndividualScreen = ({
             contentContainerStyle={{
               paddingBottom:
                 INPUT_BAR_HEIGHT +
-                (isEmojiPickerVisible ? EMOJI_PICKER_HEIGHT : 0) +
+                (isEmojiPickerVisible ? EMOJI_PICKER_HEIGHT : 0) + // Don't add keyboardHeight here - KeyboardAvoidingView handles it
                 extraPadding,
               paddingTop: 8,
             }}
@@ -702,30 +922,35 @@ const MessagesIndividualScreen = ({
             showsVerticalScrollIndicator={false}
           />
 
-          {/* EMOJI PICKER PANEL - anchored to bottom */}
+          {/* EMOJI PICKER PANEL - with swipe gesture */}
           {isEmojiPickerVisible && (
-            <View
+            <Animated.View
               style={{
                 position: 'absolute',
-                bottom: emojiBottom,
+                bottom: 0,
                 left: 0,
                 right: 0,
                 height: EMOJI_PICKER_HEIGHT,
-                backgroundColor: '#34478dff',
+                backgroundColor: '#FFFFFF',
                 borderTopLeftRadius: 12,
                 borderTopRightRadius: 12,
                 zIndex: 999,
-                paddingVertical: 10,
+                transform: [{ translateY: emojiTranslateY }],
               }}
+              {...panResponder.panHandlers}
+              // Prevent navigation gestures when emoji keyboard is open
+              onStartShouldSetResponder={() => true}
+              onMoveShouldSetResponder={() => true}
+              onResponderTerminationRequest={() => false}
             >
-              {/* Your EmojiKeyboard component */}
-              <EmojiKeyboard
-                onEmojiSelected={emoji => {
-                  // add emoji to text
-                  handleEmojiSelected(emoji);
-                }}
-              />
-            </View>
+              <View style={{ flex: 1 }}>
+                <EmojiKeyboard
+                  onEmojiSelected={emoji => {
+                    handleEmojiSelected(emoji);
+                  }}
+                />
+              </View>
+            </Animated.View>
           )}
 
           {/* Input Bar - ALWAYS above keyboard or emoji panel */}
@@ -760,25 +985,50 @@ const MessagesIndividualScreen = ({
                   backgroundColor: '#ffffff66',
                 }}
               >
-                {/* Emoji button */}
+                {/* Emoji/Keyboard toggle button - WhatsApp style */}
                 <TouchableOpacity
                   onPress={() => {
-                    // toggle emoji panel
-                    // if keyboard visible, dismiss keyboard first
-                    if (keyboardVisible) {
-                      Keyboard.dismiss();
-                      // small timeout to let keyboard hide before showing emoji panel:
-                      setTimeout(() => setIsEmojiPickerVisible(s => !s), 100);
+                    if (isEmojiPickerVisible) {
+                      // Currently showing emoji keyboard - switch to text keyboard
+                      shouldAutoFocusRef.current = true; // Allow auto-focus
+                      setIsEmojiPickerVisible(false);
+                      // Focus text input to show keyboard and cursor
+                      setTimeout(() => {
+                        textInputRef.current?.focus();
+                      }, 150);
                     } else {
-                      setIsEmojiPickerVisible(s => !s);
+                      // Currently showing text keyboard or no keyboard - switch to emoji keyboard
+                      shouldAutoFocusRef.current = false; // Prevent auto-focus
+                      if (keyboardVisible) {
+                        // Dismiss text keyboard first
+                        Keyboard.dismiss();
+                        setTimeout(() => {
+                          setIsEmojiPickerVisible(true);
+                          textInputRef.current?.blur();
+                        }, 100);
+                      } else {
+                        // No keyboard visible - just show emoji keyboard
+                        setIsEmojiPickerVisible(true);
+                        textInputRef.current?.blur();
+                      }
                     }
                   }}
                   style={{ marginRight: 8 }}
                 >
-                  <Image
-                    source={smileyhappy}
-                    style={{ width: 24, height: 24, tintColor: '#fff' }}
-                  />
+                  {isEmojiPickerVisible ? (
+                    // Show keyboard icon when emoji keyboard is visible (like WhatsApp)
+                    <MaterialIcons
+                      name="keyboard"
+                      size={24}
+                      color="#fff"
+                    />
+                  ) : (
+                    // Show smiley icon when text keyboard is visible or no keyboard
+                    <Image
+                      source={smileyhappy}
+                      style={{ width: 24, height: 24, tintColor: '#fff' }}
+                    />
+                  )}
                 </TouchableOpacity>
 
                 <View
@@ -792,6 +1042,7 @@ const MessagesIndividualScreen = ({
 
                 {/* Text input */}
                 <TextInput
+                  ref={textInputRef}
                   allowFontScaling={false}
                   style={{
                     flex: 1,
@@ -804,8 +1055,11 @@ const MessagesIndividualScreen = ({
                   onChangeText={setMessageText}
                   value={messageText}
                   onFocus={() => {
-                    // when user focuses, hide emoji picker, show keyboard
-                    setIsEmojiPickerVisible(false);
+                    // When user taps on text input, hide emoji keyboard and show text keyboard
+                    // This matches WhatsApp behavior - tapping input always shows text keyboard
+                    if (isEmojiPickerVisible) {
+                      setIsEmojiPickerVisible(false);
+                    }
                   }}
                 />
               </View>
@@ -834,6 +1088,7 @@ const MessagesIndividualScreen = ({
       </KeyboardAvoidingView>
     </ImageBackground>
   );
+
 };
 
 export default MessagesIndividualScreen;
@@ -1000,7 +1255,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   leftBubble: {
-    backgroundColor: '#FFFFFF1F',
+    backgroundColor: '#2466c75e',
     borderRadius: 4,
   },
   rightBubble: {
@@ -1010,7 +1265,7 @@ const styles = StyleSheet.create({
   messageText: {
     fontFamily: 'Urbanist-Medium',
     color: '#FFFFFFE0',
-    fontSize: 14,
+    fontSize: 16,  // before 14,
     lineHeight: 17,
     fontWeight: '500',
     fontStyle: 'normal',

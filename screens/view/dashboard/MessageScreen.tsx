@@ -12,6 +12,7 @@ import {
   View,
 } from 'react-native';
 import { MAIN_URL } from '../../utils/APIConstant';
+import LottieView from 'lottie-react-native';
 
 type MessageScreenProps = {
   navigation: any;
@@ -48,8 +49,8 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
   //   },
   // ];
 
-  useEffect(() => {
-    const fetchUserChatData = async () => {
+  // useEffect(() => {
+    const fetchUserChatData = async (query: string = "") => {
       try {
         const token = await AsyncStorage.getItem('userToken');
         const userId = await AsyncStorage.getItem('userId');
@@ -59,7 +60,11 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
           return;
         }
 
-        const url = `${MAIN_URL.baseUrl}twilio/mychats`;
+        setLoading(true);
+
+        const url = `${MAIN_URL.baseUrl}twilio/mychats?search=${query}`;
+        console.log('url----------',url);
+        
         const response = await fetch(url, {
           method: 'GET',
           headers: {
@@ -78,18 +83,33 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
         console.log('data', data);
 
         const UserData = data.data;
-        setStudentList(UserData);
+        setStudentList(UserData.results);
+        setLoading(false); 
 
         console.log('UserData--------------------', UserData);
 
         // console.log("chatData",chatData);
       } catch (error) {
         console.error('Chat setup failed:', error);
+         setLoading(false);  
       }
     };
 
-    fetchUserChatData();
-  }, []);
+    // fetchUserChatData();
+  // }, []);
+
+  // 2️⃣ Load initial data
+useEffect(() => {
+  fetchUserChatData();
+}, []);
+
+  useEffect(() => {
+  const delay = setTimeout(() => {
+    fetchUserChatData(search);
+  }, 400); // 400ms delay
+
+  return () => clearTimeout(delay);
+}, [search]);
 
   const formatTime = (dateString: string) => {
     // if (!dateString) return "";
@@ -132,7 +152,27 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
     return f + l || '?';
   };
 
-  return (
+  const [loading, setLoading] = useState(true);
+
+  return loading ? (
+  // ---------- SHOW ONLY LOTTIE ----------
+  <View
+   style={[StyleSheet.absoluteFill]}
+  >
+    <LottieView
+      source={require('../../../assets/animations/lottielodder.json')}
+      autoPlay
+      loop
+      resizeMode="contain"
+       style={{
+        display:'flex',
+        width: '100%',
+        height: 900,
+      }}
+    />
+  </View>
+) : (
+  
     <View style={{ height: '100%', display: 'flex', flex: 1, width: '100%' }}>
       <View style={styles.header}>
         <View style={styles.headerRow}>
@@ -163,6 +203,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
                 >
 
         <View style={{ flex: 1 }}>
+
           <FlatList
             data={studentList}
             keyExtractor={chat => chat.id}
@@ -303,6 +344,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
         </ScrollView>
       </View>
     </View>
+    
   );
 };
 
