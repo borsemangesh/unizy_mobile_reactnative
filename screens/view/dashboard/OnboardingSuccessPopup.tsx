@@ -38,7 +38,7 @@ const OnboardingSuccessPopup: React.FC<Props> = ({ onClose, navigation }) => {
             resizeMode="contain"
           />
 
-          <Text style={styles.title}>Review Submitted Successfully!</Text>
+          <Text style={styles.title}> OnBorading  Successfully Completed!</Text>
      
         </View>
       </BlurView>

@@ -117,11 +117,23 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
   });
 
   const route = useRoute();
-  const { showSuccess = false } = (route.params as { showSuccess?: boolean }) || {};
+  const routeParams = route.params as { showSuccess?: boolean } | undefined;
+  const { showSuccess = false } = routeParams || {};
   
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  
+  // Debug log to check route params
+  useEffect(() => {
+    console.log('AccountDetails - Route params:', routeParams);
+    console.log('AccountDetails - showSuccess value:', showSuccess);
+  }, [routeParams, showSuccess]);
+  
+  // Debug log when popup state changes
+  useEffect(() => {
+    console.log('AccountDetails - showSuccessPopup state:', showSuccessPopup);
+  }, [showSuccessPopup]);
 
   const fetchAccountDetails = useCallback(async () => {
     try {
@@ -159,19 +171,37 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
 
   useEffect(() => {
     fetchAccountDetails();
-    // Show success popup only once when redirected from onboarding
+  }, [fetchAccountDetails]);
+
+  // Show success popup only once when redirected from onboarding
+  useEffect(() => {
     const checkAndShowPopup = async () => {
-      if (showSuccess) {
-        const popupShown = await AsyncStorage.getItem('onboardingSuccessPopupShown');
-        if (!popupShown) {
-          setShowSuccessPopup(true);
-          // Mark as shown so it won't show again
-          await AsyncStorage.setItem('onboardingSuccessPopupShown', 'true');
-        }
+      if (!showSuccess) {
+        return;
+      }
+      
+      // Check if popup was already shown for this session
+      const popupShown = await AsyncStorage.getItem('onboardingSuccessPopupShown');
+      console.log('Popup check - showSuccess:', showSuccess, 'popupShown:', popupShown);
+      
+      // Only show if not already shown
+      if (!popupShown || popupShown !== 'true') {
+        console.log('Showing success popup');
+        setShowSuccessPopup(true);
+        // Mark as shown so it won't show again
+        await AsyncStorage.setItem('onboardingSuccessPopupShown', 'true');
+      } else {
+        console.log('Popup already shown previously, skipping');
       }
     };
-    checkAndShowPopup();
-  }, [fetchAccountDetails, showSuccess]);
+    
+    // Add a small delay to ensure route params and component are ready
+    const timer = setTimeout(() => {
+      checkAndShowPopup();
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, [showSuccess]);
 
   const maskAccountNumber = (last4: string) => {
     if (!last4) return '****';

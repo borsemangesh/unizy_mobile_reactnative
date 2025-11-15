@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type StripeOnboardingCompleteProps = {
   navigation: any;
@@ -8,9 +9,14 @@ type StripeOnboardingCompleteProps = {
 export default function StripeOnboardingComplete({ navigation }: StripeOnboardingCompleteProps) {
   useEffect(() => {
     console.log("Stripe onboarding completed!");
-    // Navigate directly to AccountDetails with showSuccess flag
-    // The success popup will be shown in AccountDetails page
-    navigation.replace("AccountDeatils", { showSuccess: true });
+    // Clear the popup flag so it can show again for this completion
+    // This ensures the popup shows after each successful onboarding
+    AsyncStorage.removeItem('onboardingSuccessPopupShown').then(() => {
+      // Navigate directly to AccountDetails with showSuccess flag
+      // The success popup will be shown in AccountDetails page
+      console.log("Navigating to AccountDetails with showSuccess=true");
+      navigation.replace("AccountDeatils", { showSuccess: true });
+    });
   }, [navigation]);
   
   return (
