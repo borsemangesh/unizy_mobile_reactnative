@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   Alert,
   Animated,
@@ -24,6 +24,7 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import EmojiKeyboard from '../emoji/emojiKebord';
 import { InteractionManager, PanResponder } from 'react-native';
 import LottieView from 'lottie-react-native';
+import { BlurView } from '@react-native-community/blur';
 // @ts-ignore - react-native-vector-icons types
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
@@ -49,7 +50,7 @@ type RouteParams = {
     lastname: string;
     id: number;
     profile: string | null;
-    universityName: string;
+    university: {id:number,name:string};
   };
   userConvName: string;
   currentUserIdList: number;
@@ -97,6 +98,8 @@ const MessagesIndividualScreen = ({
 
   const [isEmojiPickerVisible, setIsEmojiPickerVisible] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
+  const [layoutReady, setLayoutReady] = useState(false);
+  const [kavKey, setKavKey] = useState(0);
 
   const { width, height } = Dimensions.get('window');
   const flatListRef = useRef<FlatList>(null);
@@ -107,6 +110,8 @@ const MessagesIndividualScreen = ({
   const WINDOW_HEIGHT = Dimensions.get('window').height;
   const INPUT_BAR_HEIGHT = Platform.OS === 'ios' ? 70 : 64;
   const DEFAULT_EMOJI_HEIGHT = Math.round(WINDOW_HEIGHT * 0.35);
+  // Consistent bottom spacing to match keyboard-open appearance
+  const BOTTOM_SPACING = Platform.OS === 'ios' ? 0 : 0; // Will be handled by padding
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
@@ -540,6 +545,9 @@ const MessagesIndividualScreen = ({
       () => {
         setKeyboardVisible(false);
         setKeyboardHeight(0);
+        // Force KeyboardAvoidingView to reset by changing key
+        // This ensures padding is fully removed
+        setKavKey(prev => prev + 1);
         // Keep lastKeyboardHeight for emoji keyboard sizing
       },
     );
@@ -560,13 +568,28 @@ const MessagesIndividualScreen = ({
     }
   }, [keyboardVisible, isEmojiPickerVisible]);
   
+  // Force layout recalculation after initial load completes
+  useEffect(() => {
+    if (!initialLoading && !layoutReady) {
+      // Use InteractionManager to ensure layout is ready
+      InteractionManager.runAfterInteractions(() => {
+        // Small delay to ensure KeyboardAvoidingView has measured layout
+        setTimeout(() => {
+          setLayoutReady(true);
+        }, 100);
+      });
+    }
+  }, [initialLoading, layoutReady]);
+  
   // Calculate input bar bottom position
   // When emoji is visible, position above emoji keyboard
   // When text keyboard is visible, KeyboardAvoidingView handles it
-  // When neither is visible, stay at bottom: 0
+  // When neither is visible, add small bottom offset to match keyboard-open spacing
+  // KeyboardAvoidingView adds padding when keyboard opens, creating visual space below input bar
+  // We add a small offset when closed to match that spacing
   const inputBarBottom = isEmojiPickerVisible 
     ? (lastKeyboardHeight > 0 ? lastKeyboardHeight : EMOJI_PICKER_HEIGHT)
-    : 0;
+    : (Platform.OS === 'ios' && !keyboardVisible && layoutReady ? 0 : 0); // Small offset to match keyboard-open appearance
 
   // for auto scroll
 
@@ -775,19 +798,31 @@ const MessagesIndividualScreen = ({
               {source === 'chatList' ? members?.lastname : sellerData.lastname}
             </Text>
             <Text allowFontScaling={false} style={styles.universityName}>
-              {members?.universityName ? members?.universityName : '-'}
+              {members?.university.name ? members?.university.name : '-'}
             </Text>
           </View>
         </TouchableOpacity>
       </View>
 
       <KeyboardAvoidingView
+        key={kavKey}
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
         enabled={!isEmojiPickerVisible}
       >
-        <View style={{ flex: 1 }}>
+        <View 
+          style={{ flex: 1 }}
+          onLayout={() => {
+            // Force layout recalculation on initial mount
+            if (!layoutReady && !initialLoading) {
+              // Use a small delay to ensure KeyboardAvoidingView has measured
+              setTimeout(() => {
+                setLayoutReady(true);
+              }, 50);
+            }
+          }}
+        >
           <FlatList
             data={groupedMessages}
             keyExtractor={item => item.sid}
@@ -922,7 +957,7 @@ const MessagesIndividualScreen = ({
             borderBottomWidth: 8,
             borderBottomColor: "transparent",
             alignSelf: "flex-start",
-            marginRight: -2,
+            marginRight: 0,
             marginTop: 4,
           }}
         />
@@ -1033,7 +1068,9 @@ const MessagesIndividualScreen = ({
               right: 0,
               bottom: inputBarBottom,
               paddingHorizontal: 16,
-              paddingVertical: Platform.OS === 'ios' ? 10 : 8,
+              paddingTop: Platform.OS === 'ios' ? 10 : 8,
+              paddingBottom: Platform.OS === 'ios' ? 10 : 8,
+              // Footer spacing will be handled by a spacer element below
               backgroundColor: 'transparent',
               zIndex: 1000,
             }}
@@ -1054,9 +1091,23 @@ const MessagesIndividualScreen = ({
                   borderRadius: 40,
                   paddingHorizontal: 16,
                   paddingVertical: 4,
-                  backgroundColor: '#ffffff66',
+                  overflow: 'hidden',
+                  position: 'relative',
                 }}
               >
+                <BlurView
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    borderRadius: 40,
+                  }}
+                  blurType="light"
+                  blurAmount={5}
+                  reducedTransparencyFallbackColor="#ffffff34"
+                />
                 {/* Emoji/Keyboard toggle button - WhatsApp style */}
                 <TouchableOpacity
                   onPress={() => {
@@ -1144,17 +1195,38 @@ const MessagesIndividualScreen = ({
                   width: 48,
                   height: 48,
                   borderRadius: 24,
-                  backgroundColor: '#ffffff66',
+                  overflow: 'hidden',
                   justifyContent: 'center',
                   alignItems: 'center',
+                  position: 'relative',
                 }}
               >
+                <BlurView
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    borderRadius: 24,
+                  }}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="#ffffff66"
+                />
                 <Image
                   source={require('../../../assets/images/sendmessage.png')}
-                  style={{ width: 22, height: 22, tintColor: '#fff' }}
+                  style={{ width: 22, height: 22, tintColor: '#fff', zIndex: 1 }}
                 />
               </TouchableOpacity>
             </View>
+            {/* Footer spacer - ensures consistent bottom spacing in all states */}
+            <View 
+              style={{
+                height: Platform.OS === 'ios' ? 10 : 8,
+                width: '100%',
+              }}
+            />
           </View>
         </View>
       </KeyboardAvoidingView>
