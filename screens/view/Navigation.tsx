@@ -42,8 +42,20 @@ import UserProfileScreen from './dashboard/UserProfileScreen';
 import EditProfile from './dashboard/EditProfile';
 import ProfileCard from './dashboard/ProfileCard';
 import ViewListingDetails from './dashboard/ViewListingDetails';
-
+import StripeOnboardingComplete from './dashboard/StripeOnboardingComplete';
+import StripeOnboardingScreen from './dashboard/StripeOnboardingScreen';
+import AccountDetails from './dashboard/AccountDetails';
+import StripeOnboardingCancel from './dashboard/StripeOnboardingCancel';
 const Stack = createNativeStackNavigator();
+const linking = {
+  prefixes: ['unizyapp://'],
+  config: {
+    screens: {
+      StripeOnboardingComplete: 'onboarding-complete',
+      StripeOnboardingCancel: 'onboarding-cancel',
+    },
+  },
+};
 
 export const Navigation = () => {
   const [initialRoute, setInitialRoute] = useState<null | string>(null);
@@ -51,7 +63,7 @@ export const Navigation = () => {
 
   enableScreens();
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking}>
       <Stack.Navigator
         initialRouteName="SinglePage"
         screenOptions={{ headerShown: false, animation: 'none' }}
@@ -110,8 +122,8 @@ export const Navigation = () => {
             presentation: 'fullScreenModal',
           }}
         />
-        
-<Stack.Screen
+
+        <Stack.Screen
           name="EditPreviewThumbnail"
           component={EditPreviewThumbnail}
           options={{
@@ -121,8 +133,7 @@ export const Navigation = () => {
           }}
         />
 
-
-<Stack.Screen
+        <Stack.Screen
           name="UserProfileScreen"
           component={UserProfileScreen}
           options={{
@@ -131,7 +142,7 @@ export const Navigation = () => {
             presentation: 'fullScreenModal',
           }}
         />
-        
+
         <Stack.Screen
           name="EditPreviewDetailed"
           component={EditPreviewDetailed}
@@ -340,6 +351,7 @@ export const Navigation = () => {
           }}
         />
 
+        <Stack.Screen
       <Stack.Screen
           name="ProfileCard"
           component={ProfileCard}
@@ -354,6 +366,29 @@ export const Navigation = () => {
           options={{ headerShown: false, presentation: 'fullScreenModal' }}
         />
 
+        <Stack.Screen
+          name="StripeOnboardingComplete"
+          component={StripeOnboardingComplete}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="StripeOnboardingScreen"
+          component={StripeOnboardingScreen}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="AccountDeatils"
+          component={AccountDetails}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="StripeOnboardingCancel"
+          component={StripeOnboardingCancel}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

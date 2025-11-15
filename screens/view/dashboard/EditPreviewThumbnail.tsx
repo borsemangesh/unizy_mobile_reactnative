@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 import ProductCard from '../../utils/ProductCard';
-
+import { SquircleView } from 'react-native-figma-squircle';
 import { showToast } from '../../utils/toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';

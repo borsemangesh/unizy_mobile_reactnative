@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState } from 'react';
 import {
   Image,
@@ -22,12 +20,12 @@ import { NewCustomToastContainer } from '../../utils/component/NewCustomToastMan
 import NotificationCard from '../../utils/NotificationCard';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-
+ 
+ 
 type NotificationProps = {
   navigation: any;
 };
-
+ 
 type NotificationItem = {
   id: number;
   user_id: number;
@@ -44,13 +42,13 @@ type NotificationItem = {
     name: string;
   };
 };
-
-
-
+ 
+ 
+ 
 const Notification = ({ navigation }: NotificationProps)  => {
-
+ 
      const [notificationList, setNotificationList] = useState<NotificationItem[]>([]);
-
+ 
      const [search, setSearch] = useState<string>('');
      const [page, setPage] = useState(1);
      const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -58,15 +56,15 @@ const Notification = ({ navigation }: NotificationProps)  => {
      const [isLoading, setIsLoading] = useState(false);
      const insets = useSafeAreaInsets(); // Safe area insets
      const { height: screenHeight } = Dimensions.get('window');
-    
-
-
+   
+ 
+ 
 useEffect(() => {
   setPage(1);
   displayListOfProduct(1);
 }, []);
-
-
+ 
+ 
 const displayListOfProduct = async (pageNum: number) => {
   try {
     const pagesize = 10;
@@ -74,7 +72,7 @@ const displayListOfProduct = async (pageNum: number) => {
     
     const token = await AsyncStorage.getItem('userToken'); 
     if (!token) return;
-
+ 
     const response = await fetch(url, {
       method: 'GET',
       headers: {
@@ -82,13 +80,13 @@ const displayListOfProduct = async (pageNum: number) => {
         'Content-Type': 'application/json',
       },
     });
-
+ 
     const jsonResponse = await response.json();
      console.log('API Response:', jsonResponse);
 
    if (jsonResponse.statusCode === 200) {
       setIsLoading(false);
-
+ 
       const newData = jsonResponse?.data?.notifications ?? [];
 
       console.log("newData.........",newData);
@@ -101,7 +99,7 @@ const displayListOfProduct = async (pageNum: number) => {
       } else {
         setNotificationList(prev => [...prev, ...newData]);
       }
-    } 
+    }
     else if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
           setIsLoading(false);
           navigation.reset({
@@ -109,7 +107,7 @@ const displayListOfProduct = async (pageNum: number) => {
           routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
         });
         }
-    
+   
     else {
       setIsLoading(false);
       // console.log('API Error:', jsonResponse.message);
@@ -119,32 +117,32 @@ const displayListOfProduct = async (pageNum: number) => {
     console.log('Error:', err);
   }
 };
-
+ 
   const filteredNotifications: NotificationItem[] = notificationList.filter((item) =>
   (item.title ?? '').toLowerCase().includes(search.toLowerCase())
 );
-
+ 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
   const day = date.getDate();
   const month = date.toLocaleString('default', { month: 'long' });
   const year = date.getFullYear();
-
+ 
   let suffix = 'th';
   if (day % 10 === 1 && day % 100 !== 11) suffix = 'st';
   else if (day % 10 === 2 && day % 100 !== 12) suffix = 'nd';
   else if (day % 10 === 3 && day % 100 !== 13) suffix = 'rd';
-
+ 
   return `${day}${suffix} ${month} ${year}`;
 };
-
+ 
 const groupByDate = (data: NotificationItem[]) => {
   const grouped: any[] = [];
   let lastDate: string | null = null;
-
+ 
   data.forEach((item) => {
     const displayDate = formatDate(item.created_at);
-
+ 
     if (displayDate !== lastDate) {
       grouped.push({
         type: 'date',
@@ -153,16 +151,16 @@ const groupByDate = (data: NotificationItem[]) => {
       });
       lastDate = displayDate;
     }
-
+ 
     grouped.push({
       ...item,
       type: 'item'
     });
   });
-
+ 
   return grouped;
 };
-
+ 
 const groupedList = groupByDate(filteredNotifications);
 
 
@@ -193,12 +191,14 @@ const renderItem = ({ item ,index  }: { item: any ;index: number }) => {
 
 
   const productImage = require('../../../assets/images/bellicon.png');
-
+ 
   return (
     <View style={styles.itemContainer}>
       <NotificationCard
         infoTitle={item.title}
         productImage={productImage}
+        // reviewText={formattedParts}
+          reviewText={formattedParts}
         // reviewText={formattedParts}
           reviewText={formattedParts}
         navigation={navigation}
@@ -208,7 +208,7 @@ const renderItem = ({ item ,index  }: { item: any ;index: number }) => {
     </View>
   );
 };
-
+ 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
@@ -232,6 +232,8 @@ const renderItem = ({ item ,index  }: { item: any ;index: number }) => {
    
        
     <FlatList
+    showsVerticalScrollIndicator={false}
+  showsHorizontalScrollIndicator={false}
     showsVerticalScrollIndicator={false}
   showsHorizontalScrollIndicator={false}
             data={groupedList}
@@ -262,18 +264,18 @@ const renderItem = ({ item ,index  }: { item: any ;index: number }) => {
               ) : null
             }
           />
-
+ 
         </View>
       </View>
       <NewCustomToastContainer/>
     </ImageBackground>
   );
 };
-
+ 
 export default Notification;
-
+ 
 const styles = StyleSheet.create({
-
+ 
 dateHeading:{
     color:'#fff',
     fontSize:12,
@@ -281,9 +283,11 @@ dateHeading:{
     fontWeight:500,
     marginLeft:6,
     marginBottom:8
+    marginLeft:6,
+    marginBottom:8
     },
-
-  background: { 
+ 
+  background: {
     flex: 1,
      width: '100%',
       height: '100%' },
@@ -303,7 +307,7 @@ dateHeading:{
   backIconRow: {
     padding: 12,
     borderRadius: 40,
-
+ 
      display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -334,14 +338,15 @@ dateHeading:{
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
   },
-  
+ 
   listContainer: {
     marginLeft: 10,
     marginRight: 10,
     paddingTop: 10,
     // paddingBottom:80,
+    // paddingBottom:80,
   },
-  
+ 
   itemContainer: {
     flex: 1,
     marginHorizontal: 4,

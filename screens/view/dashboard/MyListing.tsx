@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { SquircleView } from 'react-native-figma-squircle';
 import 'react-native-reanimated';
+import { SquircleView } from 'react-native-figma-squircle';
+import 'react-native-reanimated';
 import {
   Image,
   ImageBackground,
@@ -50,6 +52,12 @@ type Feature = {
   price: number;
   thumbnail: string;
   university: university;
+  category?: { id: number; name: string };
+  createdby?: {
+    profile?: string | null;
+    firstname?: string | null;
+    lastname?: string | null;
+  };
   category?: { id: number; name: string };
   createdby?: {
     profile?: string | null;
@@ -278,6 +286,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
           translucent
           backgroundColor="transparent"
           barStyle="light-content"
+          barStyle="light-content"
         />
  
         {/* Header with Blur only at top */}
@@ -304,13 +313,21 @@ const MyListing = ({ navigation }: MyListingProps) => {
               blurAmount={Platform.OS === 'ios' ? 45 : 45}
               overlayColor="rgba(255,255,255,0.05)"
               reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+              blurAmount={Platform.OS === 'ios' ? 45 : 45}
+              overlayColor="rgba(255,255,255,0.05)"
+              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
             />
             <LinearGradient
               colors={[
                 'rgba(255, 255, 255, 0.45)',
                 'rgba(255, 255, 255, 0.02)',
                 'rgba(255, 255, 255, 0.02)',
+                'rgba(255, 255, 255, 0.45)',
+                'rgba(255, 255, 255, 0.02)',
+                'rgba(255, 255, 255, 0.02)',
               ]}
+              style={StyleSheet.absoluteFill}
               style={StyleSheet.absoluteFill}
               start={{ x: 0, y: 0 }}
               end={{ x: 0, y: 1 }}
@@ -394,7 +411,57 @@ const MyListing = ({ navigation }: MyListingProps) => {
               'worklet';
               return index.toString();
             }}
+            keyExtractor={(item, index) => {
+              'worklet';
+              return index.toString();
+            }}
             ListHeaderComponent={
+              <View
+                style={styles.categoryTabsContainer}
+                pointerEvents="box-none"
+              >
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.categoryTabsScrollContent}
+                  nestedScrollEnabled={true}
+                >
+                  {categories.map((cat, index) => {
+                    const isSelected = selectedCategory.name === cat.name;
+                    return (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => setSelectedCategory(cat)}
+                        activeOpacity={0.7}
+                      >
+                        {/* <View
+                          style={isSelected ? styles.tabcard : styles.tabcard1}
+                        > */}
+                        <SquircleView
+                          style={isSelected ? styles.tabcard : styles.tabcard1}
+                          squircleParams={{
+                            cornerSmoothing: 1,
+                            cornerRadius: 10,
+                            fillColor: isSelected
+                              ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)'
+                              : 'rgba(255, 255, 255, 0.06)',
+                          }}
+                        >
+                          <Text
+                            allowFontScaling={false}
+                            style={
+                              isSelected ? styles.tabtext : styles.othertext
+                            }
+                          >
+                            {cat.name}
+                          </Text>
+                          {/* </View> */}
+                        </SquircleView>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </ScrollView>
+              </View>
               <View
                 style={styles.categoryTabsContainer}
                 pointerEvents="box-none"
@@ -445,7 +512,9 @@ const MyListing = ({ navigation }: MyListingProps) => {
             contentContainerStyle={[
               styles.listContainer,
               { paddingTop: Platform.OS === 'ios' ? 160 : 100 },
+              { paddingTop: Platform.OS === 'ios' ? 160 : 100 },
             ]}
+            onScroll={scrollHandler}
             onScroll={scrollHandler}
             scrollEventThrottle={16}
             onEndReachedThreshold={0.5}
@@ -515,10 +584,34 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff11',
     // backgroundColor:
     //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    // backgroundColor:
+    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderRadius: 10,
  
     boxShadow:
       'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+  },
+  headerWrapper: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    height: Platform.OS === 'ios' ? 180 : 180,
+    zIndex: 10,
+    overflow: 'hidden',
+    alignSelf: 'center',
+    pointerEvents: 'none',
+  },
+  headerContent: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 50 : 40,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
   },
   headerWrapper: {
     position: 'absolute',
@@ -563,6 +656,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 16,
     marginRight: 8,
+    marginRight: 8,
   },
   tabtext: {
     color: '#fff', // selected tab text color
@@ -594,7 +688,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     width: Platform.OS === 'ios' ? 393 : '100%',
+    width: Platform.OS === 'ios' ? 393 : '100%',
     zIndex: 20,
+    paddingTop: Platform.OS === 'ios' ? 50 : 40,
+    paddingBottom: Platform.OS === 'ios' ? 16 : 12,
     paddingTop: Platform.OS === 'ios' ? 50 : 40,
     paddingBottom: Platform.OS === 'ios' ? 16 : 12,
     paddingHorizontal: 16,
@@ -615,6 +712,14 @@ const styles = StyleSheet.create({
     left: 16,
     zIndex: 11,
     top: 7,
+    alignSelf: 'center',
+    minHeight: Platform.OS === 'ios' ? 80 : 88,
+  },
+  backButtonContainer: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 11,
+    top: 7,
   },
   headerRow: {
     flexDirection: 'row',
@@ -623,15 +728,20 @@ const styles = StyleSheet.create({
   backIconRow: {
     width: 48,
     height: 48,
+    width: 48,
+    height: 48,
     borderRadius: 40,
+    padding: 12,
     padding: 12,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
       backgroundColor:
+      backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
     borderWidth: 0.4,
+   
    
     borderColor: '#ffffff2c',
   },
@@ -641,6 +751,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
+    width: '100%',
+    marginTop: 17,
     width: '100%',
     marginTop: 17,
   },
@@ -666,8 +778,15 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     paddingHorizontal: 16,
+    paddingHorizontal: 16,
     paddingTop: 10,
     paddingBottom: Platform.OS === 'ios' ? 40 : 80,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    alignSelf: 'center',
+  },
+  row: {
+    justifyContent: 'space-between',
+    paddingHorizontal: 0,
     width: Platform.OS === 'ios' ? 393 : '100%',
     alignSelf: 'center',
   },
@@ -680,6 +799,7 @@ const styles = StyleSheet.create({
     // justifyContent: 'flex-start',
   },
   itemContainer: {
+    width: '100%',
     width: '100%',
   },
   scrollView: {

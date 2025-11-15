@@ -6,14 +6,25 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
+  StatusBar,
   ScrollView,
-  Animated,
   Modal,
   Dimensions,
   FlatList,
   SafeAreaView,
   StatusBar,
 } from 'react-native';
+
+import Animated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  interpolate,
+  interpolateColor,
+  useDerivedValue,
+} from 'react-native-reanimated';
+import LinearGradient from 'react-native-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
 import { Key, useEffect, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import { showToast } from '../../utils/toast';
@@ -50,6 +61,80 @@ const itemOptions = [
 ];
 
 const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: event => {
+      'worklet';
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+  const animatedBlurStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+    return { opacity };
+  });
+
+  const animatedButtonStyle = useAnimatedStyle(() => {
+    'worklet';
+    const borderColor = interpolateColor(
+      scrollY.value,
+      [0, 300],
+      ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+    );
+    const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
+    return {
+      borderColor,
+      backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+    };
+  });
+
+  const animatedIconStyle = useAnimatedStyle(() => {
+    'worklet';
+
+    const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
+
+    const tintColor = interpolateColor(
+      scrollY.value,
+      [0, 150],
+      ['#FFFFFF', '#002050'],
+    );
+
+    return {
+      opacity,
+      tintColor,
+    };
+  });
+
+  const blurAmount = useDerivedValue(() =>
+    interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+  );
+ const animatedStaticBackgroundStyle = useAnimatedStyle(() => {
+    'worklet';
+    return {
+      opacity: interpolate(
+        scrollY.value,
+        [0, 30],
+        [1, 0],
+        'clamp',
+      ),
+      backgroundColor: 'rgba(255,255,255,0.1)',
+      borderRadius: 40,
+    };
+  });
+
+  const animatedBlurViewStyle = useAnimatedStyle(() => {
+    'worklet';
+    return {
+      opacity: interpolate(
+        scrollY.value,
+        [0, 50],
+        [0, 1],
+        'clamp',
+      ),
+    };
+  });
+
   const [showPopup, setShowPopup] = useState(false);
   const closePopup = () => setShowPopup(false);
   const scrollY1 = new Animated.Value(0);
@@ -360,16 +445,17 @@ const formatDateWithDash = (dateString?: string) => {
       console.log('✅ Image fields:', imageFields);
 
       // --- Build data array safely ---
-const dataArray = nonImageFields
-  .filter(([key, obj]) => !isNaN(Number(key)))
-  .map(([key, obj]) => {
-    const val = obj.value;
-    return {
-      id: Number(key),
-      param_value: val !== undefined && val !== null && val !== '' ? val : null,
-    };
-  })
-  .filter(item => item.param_value !== null); // ✅ only keep filled values
+      const dataArray = nonImageFields
+        .filter(([key, obj]) => !isNaN(Number(key)))
+        .map(([key, obj]) => {
+          const val = obj.value;
+          return {
+            id: Number(key),
+            param_value:
+              val !== undefined && val !== null && val !== '' ? val : null,
+          };
+        })
+        .filter(item => item.param_value !== null); // ✅ only keep filled values
 
       console.log('✅ Data array for create API:', dataArray);
 
@@ -409,7 +495,7 @@ const dataArray = nonImageFields
       if (!feature_id) {
         console.log('❌ feature_id not returned from create API.');
         showToast('feature_id missing in response');
-        return
+        return;
       }
 
       // const imageFieldsWithStatus = Object.entries(formData)
@@ -427,82 +513,91 @@ const dataArray = nonImageFields
 
       // console.log("ImagesFiledWithStatus", imageFieldsWithStatus);
 
+      const storedDataImages = await AsyncStorage.getItem('deletedImagesId');
+      const deletedImageIds = storedDataImages
+        ? JSON.parse(storedDataImages).deleted_image_ids || []
+        : [];
 
+      for (const [param_id, images] of imageFields) {
+        if (!Array.isArray(images)) {
+          console.warn(`⚠️ images is not an array for param_id=${param_id}`);
+          continue;
+        }
 
-   
+        console.log(`Step 7: Uploading images for param_id=${param_id}`);
 
-  const storedDataImages = await AsyncStorage.getItem('deletedImagesId');
-  const deletedImageIds = storedDataImages ? JSON.parse(storedDataImages).deleted_image_ids || [] : [];
+        for (const image of images) {
+          // Defensive check
+          if (!image || !image.uri) {
+            console.warn(
+              `⚠️ Invalid image data for param_id=${param_id}`,
+              image,
+            );
+            continue;
+          }
 
+          // Skip deleted images
+          if (deletedImageIds.includes(image.id)) {
+            console.log(
+              `Skipping upload for deleted image with ID: ${image.id}`,
+            );
+            continue;
+          }
 
-  for (const [param_id, images] of imageFields) {
-    if (!Array.isArray(images)) {
-      console.warn(`⚠️ images is not an array for param_id=${param_id}`);
-      continue;
-    }
+          console.log(
+            `🟡 Preparing upload for image under param_id=${param_id}:`,
+            image,
+          );
 
-    console.log(`Step 7: Uploading images for param_id=${param_id}`);
+          // Prepare FormData
+          const data = new FormData();
+          data.append('files', {
+            uri: image.uri,
+            type: image.type || 'image/jpeg',
+            name: image.name,
+          } as any);
+          data.append('feature_id', feature_id);
+          data.append('param_id', param_id);
 
-    for (const image of images) {
-      // Defensive check
-      if (!image || !image.uri) {
-        console.warn(`⚠️ Invalid image data for param_id=${param_id}`, image);
-        continue;
+          // Add deleted IDs payload
+          data.append('deleted_image_ids', JSON.stringify(deletedImageIds));
+
+          console.log('✅ FormData prepared for upload', JSON.stringify(data));
+
+          const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-update`;
+
+          const uploadRes = await fetch(uploadUrl, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              // DO NOT manually set 'Content-Type' here for FormData!
+            },
+            body: data,
+          });
+
+          console.log(`✅ Upload completed. Status: ${uploadRes.status}`);
+
+          let uploadJson;
+          try {
+            uploadJson = await uploadRes.json();
+          } catch (err) {
+            console.error('❌ Failed to parse upload response as JSON', err);
+          }
+
+          console.log('✅ Upload response JSON:', uploadJson);
+
+          if (!uploadRes.ok) {
+            console.log(
+              `❌ Upload failed for ${image.name} (param_id=${param_id})`,
+            );
+            showToast(`Failed to upload image ${image.name}`);
+          } else {
+            console.log(
+              `✅ Upload success for ${image.name} (param_id=${param_id})`,
+            );
+          }
+        }
       }
-
-      // Skip deleted images
-      if (deletedImageIds.includes(image.id)) {
-        console.log(`Skipping upload for deleted image with ID: ${image.id}`);
-        continue;
-      }
-
-      console.log(`🟡 Preparing upload for image under param_id=${param_id}:`, image);
-
-      // Prepare FormData
-      const data = new FormData();
-      data.append('files', {
-        uri: image.uri,
-        type: image.type || 'image/jpeg',
-        name: image.name,
-      } as any);
-      data.append('feature_id', feature_id);
-      data.append('param_id', param_id);
-
-      // Add deleted IDs payload
-      data.append('deleted_image_ids', JSON.stringify(deletedImageIds));
-
-      console.log('✅ FormData prepared for upload', JSON.stringify(data));
-
-      const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-update`;
-
-      const uploadRes = await fetch(uploadUrl, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          // DO NOT manually set 'Content-Type' here for FormData!
-        },
-        body: data,
-      });
-
-      console.log(`✅ Upload completed. Status: ${uploadRes.status}`);
-
-      let uploadJson;
-      try {
-        uploadJson = await uploadRes.json();
-      } catch (err) {
-        console.error('❌ Failed to parse upload response as JSON', err);
-      }
-
-      console.log('✅ Upload response JSON:', uploadJson);
-
-      if (!uploadRes.ok) {
-        console.log(`❌ Upload failed for ${image.name} (param_id=${param_id})`);
-        showToast(`Failed to upload image ${image.name}`);
-      } else {
-        console.log(`✅ Upload success for ${image.name} (param_id=${param_id})`);
-      }
-    }
-  }
 
       // for (const [param_id, images] of imageFields) {
       //   console.log(`Step 7: Uploading images for param_id=${param_id}`);
@@ -565,10 +660,10 @@ const dataArray = nonImageFields
       //         file_id: image.id,
       //         status: 'deleted',
       //       };
-      
+
       //       // 🟢 Log the delete body
       //       console.log('🗑️ DELETE Image Body:', JSON.stringify(deleteBody, null, 2));
-      
+
       //       const deleteRes = await fetch(deleteUrl, {
       //         method: 'POST', // or PATCH if your API uses it
       //         headers: {
@@ -577,10 +672,10 @@ const dataArray = nonImageFields
       //         },
       //         body: JSON.stringify(deleteBody),
       //       });
-      
+
       //       const deleteJson = await deleteRes.json();
       //       console.log('🗑️ DELETE Response:', deleteJson);
-      
+
       //     } else if (image.status === 'new') {
       //       // ✅ Upload new image
       //     const data = new FormData();
@@ -592,7 +687,7 @@ const dataArray = nonImageFields
       //     data.append('feature_id', feature_id);
       //     data.append('param_id', param_id);
       //       data.append('status', 'new');
-      
+
       //       // 🟢 Log FormData content (debug-friendly)
       //       console.log('🆕 Uploading New Image Body:');
       //       console.log({
@@ -615,8 +710,6 @@ const dataArray = nonImageFields
       //     }
       //   }
       // }
-
-      
 
       console.log('✅ All uploads done. Showing toast.');
       showToast('All data uploaded successfully');
@@ -1167,7 +1260,7 @@ const dataArray = nonImageFields
                       //   }),
                       // );
                       // navigation.goBack();
-                      navigation.replace('MyListing',{ animation: 'none' });
+                      navigation.replace('MyListing', { animation: 'none' });
 
                       setShowPopup(false);
                     } catch (err) {
@@ -1436,8 +1529,10 @@ const styles = StyleSheet.create({
  
   backBtn: {
     width: 30,
+    left:14,
     justifyContent: 'center',
     alignItems: 'center',
+   
   },
 
  

@@ -59,5 +59,6 @@ const styles = StyleSheet.create({
     zIndex: 9999,
     width: "100%",
     pointerEvents: "box-none",
+   
   },
 });

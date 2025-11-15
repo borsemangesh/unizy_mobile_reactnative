@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Platform,
   ScrollView,
-  Animated,
+  StatusBar,
   Modal,
   TouchableWithoutFeedback,
   TextInput,
@@ -15,10 +15,22 @@ import {
   StatusBar,
   Dimensions,
 } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  interpolate,
+  interpolateColor,
+  useDerivedValue,
+} from 'react-native-reanimated';
 // import { showToast } from '../../utils/toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { useRoute } from '@react-navigation/native';
+import { SquircleView } from 'react-native-figma-squircle';
+
+import LinearGradient from 'react-native-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
 import {
   NewCustomToastContainer,
   showToast,
@@ -43,13 +55,89 @@ type ListingDetailsProps = {
 };
 const bgImage = require('../../../assets/images/backimg.png');
 const ListingDetails = ({ navigation }: ListingDetailsProps) => {
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: event => {
+      'worklet';
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+  const animatedBlurStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+    return { opacity };
+  });
+
+  const animatedButtonStyle = useAnimatedStyle(() => {
+    'worklet';
+    const borderColor = interpolateColor(
+      scrollY.value,
+      [0, 300],
+      ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+    );
+    const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
+    return {
+      borderColor,
+      backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+    };
+  });
+
+  const animatedIconStyle = useAnimatedStyle(() => {
+    'worklet';
+
+    const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
+
+    const tintColor = interpolateColor(
+      scrollY.value,
+      [0, 150],
+      ['#FFFFFF', '#002050'],
+    );
+
+    return {
+      opacity,
+      tintColor,
+    };
+  });
+
+  const blurAmount = useDerivedValue(() =>
+    interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+  );
+
+  const animatedStaticBackgroundStyle = useAnimatedStyle(() => {
+    'worklet';
+    return {
+      opacity: interpolate(
+        scrollY.value,
+        [0, 30],
+        [1, 0],
+        'clamp',
+      ),
+      backgroundColor: 'rgba(255,255,255,0.1)',
+      borderRadius: 40,
+    };
+  });
+
+  const animatedBlurViewStyle = useAnimatedStyle(() => {
+    'worklet';
+    return {
+      opacity: interpolate(
+        scrollY.value,
+        [0, 50],
+        [0, 1],
+        'clamp',
+      ),
+    };
+  });
+
   const [showPopup1, setShowPopup1] = useState(false);
   const closePopup1 = () => setShowPopup1(false);
 
   const [showPopup2, setShowPopup2] = useState(false);
   const closePopup2 = () => setShowPopup2(false);
 
-  const scrollY1 = new Animated.Value(0);
+  const scrollY1 = useSharedValue(0);
+
   const route = useRoute();
   //const { shareid } = route.params as { shareid: number };
   const { shareid = 1 } = (route.params as { shareid?: number }) || {};
@@ -488,7 +576,16 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
             
               {Array.isArray(data?.buyers) &&
                 data.buyers.map((buyer: any, index: number) => (
-                  <View key={index} style={styles.card}>
+                  // <View key={index} style={styles.card}>
+                  <SquircleView
+                    key={index}
+                    style={styles.card}
+                    squircleParams={{
+                      cornerSmoothing: 1,
+                      cornerRadius: 24,
+                      fillColor: 'rgba(255, 255, 255, 0.06)',
+                    }}
+                  >
                     {/* HEADER */}
                     <View
                       style={{
@@ -637,7 +734,8 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                         </TouchableOpacity>
                       </View>
                     )}
-                  </View>
+                    {/* </View> */}
+                  </SquircleView>
                 ))}
             </View>
          </AnimatedReanimated.ScrollView>
@@ -1158,18 +1256,39 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 50,
-    paddingBottom: 12,
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    zIndex: 20,
+    paddingTop: Platform.OS === 'ios' ? 50 : 55,
+    paddingBottom: Platform.OS === 'ios' ? 16 : 12,
     paddingHorizontal: 16,
+    justifyContent: 'center',
+    overflow: 'hidden',
+    flexDirection: 'row',
+    alignItems: 'center',
+    elevation: 0,
+    backgroundColor: 'transparent',
+    borderBottomWidth: 0,
+    shadowOpacity: 0,
+    shadowColor: 'transparent',
+    alignSelf: 'center',
+    minHeight: Platform.OS === 'ios' ? 80 : 88,
+  },
+  backButtonContainer: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 11,
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   backIconRow: {
-    padding: 12,
+    width: 48,
+    height: 48,
     borderRadius: 40,
-
+    padding: 12,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -1178,13 +1297,10 @@ const styles = StyleSheet.create({
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
   },
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
-    flex: 1,
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
@@ -1194,10 +1310,10 @@ const styles = StyleSheet.create({
   card: {
     padding: 12,
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    borderRadius: 24,
     overflow: 'hidden',
     gap: 10,
     width: '100%',
+    borderRadius: 24,
   },
   listingtyperow: {
     width: '100%',
@@ -1231,6 +1347,14 @@ const styles = StyleSheet.create({
     padding:10
   },
   image: {
+    width: 72,
+    height: 72,
+    borderRadius: 14,
+  },
+  initialsCircle: {
+    backgroundColor: '#8390D4',
+    alignItems: 'center',
+    justifyContent: 'center',
     width: 72,
     height: 72,
     borderRadius: 14,

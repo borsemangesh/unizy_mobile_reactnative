@@ -1,4 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { SquircleView } from 'react-native-figma-squircle';
+import 'react-native-reanimated';
 import {
   Image,
   ImageBackground,
@@ -15,6 +17,17 @@ import {
   ImageSourcePropType,
   Dimensions,
 } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  interpolate,
+  interpolateColor,
+  useDerivedValue,
+} from 'react-native-reanimated';
+import { BlurView } from '@react-native-community/blur';
+import LinearGradient from 'react-native-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 
@@ -24,6 +37,7 @@ import SearchListProductCard from '../../utils/SearchListProductCard';
 import SearchTutionCard from '../../utils/SearchTutionCard';
 import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 type CreatedBy = {
   id: number;
@@ -105,6 +119,53 @@ const Bookmark = ({ navigation }: BookmarkProps)  => {
       { id: null, name: 'All' }
     ]);
     const [selectedCategory, setSelectedCategory] = useState<Category>({ id: null, name: 'All' });
+
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: event => {
+      'worklet';
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  const animatedBlurStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+    return { opacity };
+  });
+
+  const animatedButtonStyle = useAnimatedStyle(() => {
+    'worklet';
+    const borderColor = interpolateColor(
+      scrollY.value,
+      [0, 300],
+      ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+    );
+    const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
+    return {
+      borderColor,
+      backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+    };
+  });
+
+  const animatedIconStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
+    const tintColor = interpolateColor(
+      scrollY.value,
+      [0, 150],
+      ['#FFFFFF', '#002050'],
+    );
+    return {
+      opacity,
+      tintColor,
+    };
+  });
+
+  const blurAmount = useDerivedValue(() =>
+    interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+  );
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -353,20 +414,115 @@ const handleBookmarkPress = async (productId: number) => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.headerRow}>
-            <TouchableOpacity onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})}}>
-              <View style={styles.backIconRow}>
-                <Image
-                  source={require('../../../assets/images/back.png')}
-                  style={{ height: 24, width: 24 }}
+        <StatusBar
+          translucent
+          backgroundColor="transparent"
+          barStyle="light-content"
+        />
+
+        {/* Header with Blur only at top */}
+        <Animated.View
+          style={[styles.headerWrapper, animatedBlurStyle]}
+          pointerEvents="none"
+        >
+          {/* Blur layer only at top with gradient fade */}
+          <MaskedView
+            style={StyleSheet.absoluteFill}
+            maskElement={
+              <LinearGradient
+                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                locations={[0, 0.8]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            }
+          >
+            <BlurView
+              style={StyleSheet.absoluteFill}
+              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+              blurAmount={Platform.OS === 'ios' ? 45 : 45}
+              overlayColor="rgba(255,255,255,0.05)"
+              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+            />
+            <LinearGradient
+              colors={[
+                'rgba(255, 255, 255, 0.45)',
+                'rgba(255, 255, 255, 0.02)',
+                'rgba(255, 255, 255, 0.02)',
+              ]}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+            />
+          </MaskedView>
+        </Animated.View>
+
+        {/* Header Content */}
+        <View style={styles.headerContent} pointerEvents="box-none">
+          <TouchableOpacity
+            onPress={() =>
+              navigation.replace('Dashboard', {
+                AddScreenBackactiveTab: 'Home',
+                isNavigate: false,
+              })
+            }
+            style={styles.backButtonContainer}
+            activeOpacity={0.7}
+          >
+            <Animated.View
+              style={[styles.blurButtonWrapper, animatedButtonStyle]}
+            >
+              {/* Static background (visible when scrollY = 0) */}
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 30],
+                      [1, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 40,
+                  })),
+                ]}
+              />
+
+              {/* Blur view fades in as scroll increases */}
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 50],
+                      [0, 1],
+                      'clamp',
+                    ),
+                  })),
+                ]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
                 />
-              </View>
-            </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>Bookmarks</Text>
-            <View style={{ width: 48 }} />
-          </View>
+              </Animated.View>
+
+              {/* Back Icon */}
+              <Animated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 24, width: 24 }, animatedIconStyle]}
+              />
+            </Animated.View>
+          </TouchableOpacity>
+
+          <Text allowFontScaling={false} style={styles.unizyText}>
+            Bookmarks
+          </Text>
         </View>
 
     <View >
@@ -432,7 +588,7 @@ const handleBookmarkPress = async (productId: number) => {
         />
        
       </View>
-      <NewCustomToastContainer/>
+      <NewCustomToastContainer />
     </ImageBackground>
   );
 };
@@ -440,20 +596,17 @@ const handleBookmarkPress = async (productId: number) => {
 export default Bookmark;
 
 const styles = StyleSheet.create({
-  
-    emptyWrapper: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      width:'100%'
-    },
-
- 
-   emptyContainer: {
+  emptyWrapper: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    width:'100%',
+    width: '100%',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     borderWidth: 0.3,
     borderColor: 'rgba(255, 255, 255, 0.08)',
@@ -472,29 +625,46 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
-    fontWeight:600
+    fontWeight: 600,
   },
- tabcard: {
-  minHeight:38,
+  categoryTabsContainer: {
+    width: '100%',
+    marginBottom: 0,
+    marginTop: 16,
+  },
+  categoryTabsScrollContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingRight: 16,
+    paddingLeft: 16,
+    paddingVertical: 10,
+  },
+  blurButtonWrapper: {
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  tabcard: {
+    minHeight: 38,
     paddingVertical: 10,
     paddingHorizontal: 16,
     marginRight: 8,
-     borderWidth: 0.4,
     borderColor: '#ffffff11',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
-      borderRadius:10,
-    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',  
-},
+    borderRadius: 10,
+    boxShadow:
+      'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+  },
   tabcard1: {
-     minHeight:38,
-     borderWidth: 0.4,
-    borderColor: '#ffffff11',
-
-   // boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
+    minHeight: 38,
+    borderColor: '#ffffff',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
     borderEndEndRadius: 10,
     borderStartEndRadius: 10,
     borderTopLeftRadius: 10,
@@ -502,69 +672,89 @@ const styles = StyleSheet.create({
     borderBottomStartRadius: 10,
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
-
     borderTopColor: '#ffffff2e',
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
-
     boxSizing: 'border-box',
     paddingVertical: 10,
     paddingHorizontal: 16,
     marginRight: 8,
   },
   tabtext: {
-    color: '#fff',   // selected tab text color
+    color: '#fff',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
-    fontSize:14
-
+    fontSize: 14,
   },
   othertext: {
-    color: '#FFFFFF7A',   // unselected tab text color
+    color: '#FFFFFF7A',
     fontWeight: '600',
-     fontFamily: 'Urbanist-SemiBold',
-     fontSize:14
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 14,
   },
-
-  background: { 
+  background: {
     flex: 1,
-     width: '100%',
-      height: '100%' },
+    width: '100%',
+    height: '100%',
+  },
   fullScreenContainer: {
-     flex: 1
-     },
-  header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 50,
-    paddingBottom: 12,
+    flex: 1,
+  },
+  headerWrapper: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    height: Platform.OS === 'ios' ? 180 : 180,
+    zIndex: 10,
+    overflow: 'hidden',
+    alignSelf: 'center',
+    pointerEvents: 'none',
+  },
+  headerContent: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 50 : 40,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingHorizontal: 16,
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
+  },
+  backButtonContainer: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 11,
+    top: 7,
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   backIconRow: {
-    padding: 12,
+    width: 48,
+    height: 48,
     borderRadius: 40,
-
-     display: 'flex',
+    padding: 12,
+    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-      boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
+    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
   },
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
-    flex: 1,
     textAlign: 'center',
     fontWeight: '600',
-     fontFamily: 'Urbanist-SemiBold',
+    fontFamily: 'Urbanist-SemiBold',
+    width: '100%',
+    marginTop: 17,
   },
   search_container: {
     flexDirection: 'row',
@@ -576,24 +766,27 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
   },
-  searchIcon: { margin: 10, height: 24, width: 24 },
+  searchIcon: {
+    margin: 10,
+    height: 24,
+    width: 24,
+  },
   searchBar: {
     fontSize: 17,
     color: '#fff',
     width: '85%',
   },
   listContainer: {
-    marginLeft: 8,
-    marginRight: 5,
+    paddingHorizontal: 16,
     paddingTop: 10,
-   // paddingBottom:10
-      gap:16
- 
+    paddingBottom: Platform.OS === 'ios' ? 40 : 80,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    alignSelf: 'center',
+    gap: 16,
   },
   row1: {
     // flexDirection: 'row',
     // justifyContent: 'flex-start',
-    //paddingBottom:1
   },
   itemContainer: {
     flex: 1,
