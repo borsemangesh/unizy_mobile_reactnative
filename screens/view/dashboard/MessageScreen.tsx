@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
+  Dimensions,
   FlatList,
   Image,
   Platform,
@@ -21,6 +22,9 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
   const searchIcon = require('../../../assets/images/searchicon.png');
   const [search, setSearch] = useState('');
   const [studentList, setStudentList] = useState<any>(null);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const isInitialMount = useRef(true);
+  const { width, height } = Dimensions.get('window');
 
   // const chatData = [
   //   {
@@ -49,67 +53,107 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
   //   },
   // ];
 
-  // useEffect(() => {
-    const fetchUserChatData = async (query: string = "") => {
-      try {
-        const token = await AsyncStorage.getItem('userToken');
-        const userId = await AsyncStorage.getItem('userId');
+  const fetchUserChatData = async (query: string = "", isInitialLoad: boolean = false) => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const userId = await AsyncStorage.getItem('userId');
 
-        if (!token || !userId) {
-          console.warn('Missing token or user ID in AsyncStorage');
-          return;
+      if (!token || !userId) {
+        console.warn('Missing token or user ID in AsyncStorage');
+        if (isInitialLoad) {
+          // Show loader for at least 1 second even on error
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          setInitialLoading(false);
         }
-
-        setLoading(true);
-
-        const url = `${MAIN_URL.baseUrl}twilio/mychats?search=${query}`;
-        console.log('url----------',url);
-        
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          console.warn('Token fetch failed:', data.message);
-          return;
-        }
-
-        console.log('data', data);
-
-        const UserData = data.data;
-        setStudentList(UserData.results);
-        setLoading(false); 
-
-        console.log('UserData--------------------', UserData);
-
-        // console.log("chatData",chatData);
-      } catch (error) {
-        console.error('Chat setup failed:', error);
-         setLoading(false);  
+        return;
       }
-    };
+
+      // Only set initial loading on first load
+      if (isInitialLoad) {
+        setInitialLoading(true);
+        // Add a minimum delay to ensure loader is visible
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+
+      const url = `${MAIN_URL.baseUrl}twilio/mychats?search=${query}`;
+      
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.warn('Token fetch failed:', data.message);
+        if (isInitialLoad) {
+          // Show loader for at least 1 second even on error
+          const elapsedTime = 500; // Already waited 500ms
+          const remainingTime = Math.max(0, 1000 - elapsedTime);
+          if (remainingTime > 0) {
+            await new Promise(resolve => setTimeout(resolve, remainingTime));
+          }
+          setInitialLoading(false);
+        }
+        return;
+      }
+
+      const UserData = data.data;
+      setStudentList(UserData.results);
+      
+      if (isInitialLoad) {
+        // Ensure loader shows for at least 1 second total
+        const remainingTime = Math.max(0, 1000 - 500);
+        if (remainingTime > 0) {
+          await new Promise(resolve => setTimeout(resolve, remainingTime));
+        }
+        setInitialLoading(false);
+      }
+    } catch (error) {
+      console.error('Chat setup failed:', error);
+      if (isInitialLoad) {
+        // Show loader for at least 1 second even on error
+        const elapsedTime = 500; // Already waited 500ms if we got here
+        const remainingTime = Math.max(0, 1000 - elapsedTime);
+        if (remainingTime > 0) {
+          await new Promise(resolve => setTimeout(resolve, remainingTime));
+        }
+        setInitialLoading(false);
+      }
+    }
+  };
 
     // fetchUserChatData();
   // }, []);
 
-  // 2️⃣ Load initial data
-useEffect(() => {
-  fetchUserChatData();
-}, []);
-
+  // Load initial data
   useEffect(() => {
-  const delay = setTimeout(() => {
-    fetchUserChatData(search);
-  }, 400); // 400ms delay
+    fetchUserChatData('', true);
+  }, []);
 
-  return () => clearTimeout(delay);
-}, [search]);
+  // Search with debounce - NO loader
+  useEffect(() => {
+    // Skip on initial mount - let the initial load handle it
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
+    if (search === '') {
+      // If search is cleared, reload initial data without showing loader
+      fetchUserChatData('', false);
+      return;
+    }
+
+    const delay = setTimeout(() => {
+      fetchUserChatData(search, false);
+    }, 400);
+
+    return () => clearTimeout(delay);
+  }, [search]);
 
   const formatTime = (dateString: string) => {
     // if (!dateString) return "";
@@ -152,26 +196,62 @@ useEffect(() => {
     return f + l || '?';
   };
 
-  const [loading, setLoading] = useState(true);
+  if (initialLoading) {
+    return (
+      <View 
+        style={{
+          flex: 1,
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          width: width,
+          height: height,
+          backgroundColor: '#000069',
+          zIndex: 9999,
+          elevation: 9999,
+        }}
+      >
+        <LottieView
+          source={require('../../../assets/animations/lottielodder.json')}
+          autoPlay
+          loop
+          resizeMode="cover"
+          style={{
+            width: width,
+            height: height,
+          }}
+        />
+        {/* Overlay to hide watermark - covers bottom area where watermarks typically appear */}
+        <View
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: 100,
+            backgroundColor: '#000069',
+            zIndex: 10000,
+          }}
+        />
+        {/* Cover right side if watermark is in bottom-right corner */}
+        <View
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            right: 0,
+            width: 150,
+            height: 100,
+            backgroundColor: '#000069',
+            zIndex: 10000,
+          }}
+        />
+      </View>
+    );
+  }
 
-  return loading ? (
-  // ---------- SHOW ONLY LOTTIE ----------
-  <View
-   style={[StyleSheet.absoluteFill]}
-  >
-    <LottieView
-      source={require('../../../assets/animations/lottielodder.json')}
-      autoPlay
-      loop
-      resizeMode="contain"
-       style={{
-        display:'flex',
-        width: '100%',
-        height: 900,
-      }}
-    />
-  </View>
-) : (
+  return (
   
     <View style={{ height: '100%', display: 'flex', flex: 1, width: '100%' }}>
       <View style={styles.header}>
@@ -203,11 +283,11 @@ useEffect(() => {
                 >
 
         <View style={{ flex: 1 }}>
-
-          <FlatList
-            data={studentList}
-            keyExtractor={chat => chat.id}
-            renderItem={({ item: chat }) => (
+          {studentList && studentList.length > 0 ? (
+            <FlatList
+              data={studentList}
+              keyExtractor={chat => chat.id}
+              renderItem={({ item: chat }) => (
               <TouchableOpacity
                 onPress={() => {
                   navigation.navigate('MessagesIndividualScreen', {
@@ -339,10 +419,39 @@ useEffect(() => {
                 </View>
               </TouchableOpacity>
             )}
-          />
+            />
+          ) : null}
         </View>
         </ScrollView>
       </View>
+      {!initialLoading && search !== '' && (!studentList || studentList.length === 0) ? (
+        <View
+          style={{
+            position: 'absolute',
+            top: 190,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: width,
+            height: height - 190,
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            paddingTop: 10,
+            zIndex: 10,
+          }}
+        >
+          <View style={styles.emptyContainer}>
+            <Image
+              source={require('../../../assets/images/noproduct.png')}
+              style={styles.emptyImage}
+              resizeMode="contain"
+            />
+            <Text allowFontScaling={false} style={styles.emptyText}>
+              No Listings found
+            </Text>
+          </View>
+        </View>
+      ) : null}
     </View>
     
   );
@@ -464,6 +573,32 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
+  },
+  emptyContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '90%',
+    maxWidth: 400,
+    minHeight: '80%',
+    paddingVertical: 100,
+    paddingHorizontal: 30,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderWidth: 0.3,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 24,
+    overflow: 'hidden',
+  },
+  emptyImage: {
+    width: 50,
+    height: 50,
+    marginBottom: 20,
+  },
+  emptyText: {
+    fontSize: 20,
+    color: '#fff',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: 600,
   },
 });
 

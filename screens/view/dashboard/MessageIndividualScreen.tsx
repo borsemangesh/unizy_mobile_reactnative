@@ -23,6 +23,7 @@ import { Client as TwilioChatClient } from '@twilio/conversations';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import EmojiKeyboard from '../emoji/emojiKebord';
 import { InteractionManager, PanResponder } from 'react-native';
+import LottieView from 'lottie-react-native';
 // @ts-ignore - react-native-vector-icons types
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
@@ -95,6 +96,7 @@ const MessagesIndividualScreen = ({
   const [selectedEmoji, setSelectedEmoji] = useState('...');
 
   const [isEmojiPickerVisible, setIsEmojiPickerVisible] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
 
   const { width, height } = Dimensions.get('window');
   const flatListRef = useRef<FlatList>(null);
@@ -237,9 +239,13 @@ const MessagesIndividualScreen = ({
   useEffect(() => {
     const fetchTwilioToken = async () => {
       try {
+        setInitialLoading(true);
         const token = await AsyncStorage.getItem('userToken');
         const userId = await AsyncStorage.getItem('userId');
-        if (!token || !userId) return;
+        if (!token || !userId) {
+          setInitialLoading(false);
+          return;
+        }
 
         const response = await fetch(`${MAIN_URL.baseUrl}twilio/auth-token`, {
           method: 'GET',
@@ -250,7 +256,10 @@ const MessagesIndividualScreen = ({
         });
 
         const data = await response.json();
-        if (!response.ok) throw new Error(data.message);
+        if (!response.ok) {
+          setInitialLoading(false);
+          throw new Error(data.message);
+        }
 
       
       // const twillioToken :any = await AsyncStorage.getItem('twillioToken');
@@ -262,6 +271,7 @@ const MessagesIndividualScreen = ({
         setChatClient(client);
       } catch (err) {
         console.error('Twilio init failed:', err);
+        setInitialLoading(false);
       }
     };
     fetchTwilioToken();
@@ -317,6 +327,7 @@ const MessagesIndividualScreen = ({
               'Conversation create new conversation:',
               apiData.message,
             );
+            setInitialLoading(false);
             return;
           }
         }
@@ -330,7 +341,10 @@ const MessagesIndividualScreen = ({
           convo = await chatClient.createConversation({ uniqueName: convName });
         }
 
-        if (!convo) return;
+        if (!convo) {
+          setInitialLoading(false);
+          return;
+        }
 
       
         
@@ -376,9 +390,11 @@ const MessagesIndividualScreen = ({
         
 
         setMessages(messagesPage.items);
-        // setLoading(false); 
+        // Hide loader once messages are loaded
+        setInitialLoading(false);
       } catch (err) {
         console.error('Conversation setup failed:', err);
+        setInitialLoading(false);
       }
     };
 
@@ -646,6 +662,62 @@ const MessagesIndividualScreen = ({
   // const groupedMessages = buildMessageList(messages);
 
   console.log('groupedMessages=========', groupedMessages);
+
+  // Show Lottie loader until data is loaded
+  if (initialLoading) {
+    return (
+      <View 
+        style={{
+          flex: 1,
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          width: width,
+          height: height,
+          backgroundColor: '#000069',
+          zIndex: 9999,
+          elevation: 9999,
+        }}
+      >
+        <LottieView
+          source={require('../../../assets/animations/lottielodder.json')}
+          autoPlay
+          loop
+          resizeMode="cover"
+          style={{
+            width: width,
+            height: height,
+          }}
+        />
+        {/* Overlay to hide watermark - covers bottom area where watermarks typically appear */}
+        <View
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: 100,
+            backgroundColor: '#000069',
+            zIndex: 10000,
+          }}
+        />
+        {/* Cover right side if watermark is in bottom-right corner */}
+        <View
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            right: 0,
+            width: 150,
+            height: 100,
+            backgroundColor: '#000069',
+            zIndex: 10000,
+          }}
+        />
+      </View>
+    );
+  }
 
   return (
     <ImageBackground source={bgImage} style={{ flex: 1 }} resizeMode="cover">
