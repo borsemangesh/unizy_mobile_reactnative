@@ -35,6 +35,7 @@ const PaymentScreen :React.FC<PaymentScreenProps> = ({ navigation }) => {
     
     const {onSuccess} =route.params;
 
+    console.log('Payment screen opened')
 
     console.log(amount)
 

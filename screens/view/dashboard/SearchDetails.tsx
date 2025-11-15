@@ -11,6 +11,7 @@ import {
   Modal,
   Dimensions,
   FlatList,
+  StatusBar,
   TouchableWithoutFeedback,
 } from 'react-native';
 import { Key, useEffect, useRef, useState } from 'react';
@@ -24,7 +25,16 @@ import Button from '../../utils/component/Button';
 import PayButton from '../../utils/component/PayButton';
 import LinearGradient from 'react-native-linear-gradient';
 
-import CircleButton from '../../utils/component/CircleButton'; 
+import AnimatedReanimated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  interpolate,
+  interpolateColor,
+  useDerivedValue,
+} from 'react-native-reanimated';
+import MaskedView from '@react-native-masked-view/masked-view';
+import SelectFoodQuantity from '../../utils/component/SelectFoodQuantity'
 
 
 type SearchDetailsProps = {
@@ -55,22 +65,82 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
   const [showPopup1, setShowPopup1] = useState(false);
   const closePopup = () => setShowPopup(false);
   const closePopup1 = () => setShowPopup1(false);
-  const [scrollY, setScrollY] = useState(0);
   const scrollY1 = new Animated.Value(0);
   const route = useRoute();
   const { id } = route.params as { id: number };
   const { name } = route.params as { name: string };
   const [detail, setDetail] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
+  const [formValues, setFormValues] = useState<any>({});
   const screenWidth = Dimensions.get('window').width;
 
   const [imageUri, setImageUri] = useState<string | null>(null);
 
   const insets = useSafeAreaInsets(); // Safe area insets
-  const { height: screenHeight } = Dimensions.get('window');
 
   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
+
+    const { height } = Dimensions.get('window');
+   const screenHeight = Dimensions.get('window').height;
+    const [slideUp1] = useState(new Animated.Value(0));
+  
+    const scrollY = useSharedValue(0);
+  
+    const scrollHandler = useAnimatedScrollHandler({
+      onScroll: event => {
+        'worklet';
+        scrollY.value = event.contentOffset.y;
+      },
+    });
+  
+    const animatedBlurStyle = useAnimatedStyle(() => {
+      'worklet';
+      const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+      return { opacity };
+    });
+  
+    const animatedButtonStyle = useAnimatedStyle(() => {
+      'worklet';
+      const borderColor = interpolateColor(
+        scrollY.value,
+        [0, 300],
+        ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+      );
+      const redOpacity = interpolate(scrollY.value, [0, 100], [0, 0.15], 'clamp');
+      return {
+        borderColor,
+        backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+      };
+    });
+  
+    const animatedIconStyle = useAnimatedStyle(() => {
+      'worklet';
+      const opacity = interpolate(scrollY.value, [0, 100], [0.8, 1], 'clamp');
+      const tintColor = interpolateColor(
+        scrollY.value,
+        [0, 150],
+        ['#FFFFFF', '#002050'],
+      );
+      return {
+        opacity,
+        tintColor,
+      };
+    });
+  
+    const blurAmount = useDerivedValue(() =>
+      interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+    );
+
+      const [multiSelectModal, setMultiSelectModal] = useState<{
+        visible: boolean;
+        ismultilple: boolean;
+        fieldId?: number;
+        fieldLabel?: string;
+    
+      }>({ visible: false, ismultilple: false,});
+    
+      const [multiSelectOptions, setMultiSelectOptions] = useState<any[]>([]);
+
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -116,6 +186,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     };
     fetchDetails();
   }, [id]);
+
   const [isBookmarked, setIsBookmarked] = useState(false);
 
   const flatListRef = useRef<FlatList>(null);
@@ -130,6 +201,23 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     const index = Math.round(event.nativeEvent.contentOffset.x / screenWidth);
     setActiveIndex(index);
   };
+//  const quantityOptions = [
+//   { id: 1, option_name: "1" },
+//   { id: 2, option_name: "2" },
+//   { id: 3, option_name: "3" },
+//   { id: 4, option_name: "4" },
+//   { id: 5, option_name: "5" }
+// ]
+const quantityField = detail?.params?.find(
+  (p: { name: string }) => p.name === "Quantity"
+);
+
+const maxQty = Number(quantityField?.options?.[0]?.option_name) || 1;
+
+const quantityOptions = Array.from({ length: maxQty }, (_, i) => ({
+  id: i + 1,
+  option_name: String(i + 1),
+}));
 
   const formatDate = (dateString: string) => {
     if (!dateString) return '01-01-2025'; // fallback if null
@@ -141,6 +229,12 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
   };
 
   const handlePay = () => {
+
+  //    if (detail?.category?.name === 'Food') {
+  //   // open popup
+  //   setMultiSelectModal(prev => ({ ...prev, visible: true }));
+  //   return;
+  // }
   navigation.navigate('PaymentScreen', {
     amount: Number(detail.price).toFixed(2),
     feature_id: id,
@@ -151,6 +245,30 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
   });
 };
 
+// const handlePayConfirmed = () => {
+//   const quantityInfo = formValues[multiSelectModal.fieldId!];
+//   const payAmount = quantityInfo?.finalAmount ?? 0;
+
+//   navigation.navigate('PaymentScreen', {
+//     amount: payAmount.toFixed(2),
+//     feature_id: id,
+//     nav: 'purchase',
+//     onSuccess: async () => {
+//       await purchaseProduct();
+//     }
+//   });
+// };
+
+const handlePayConfirmed = (amount: number) => {
+  navigation.navigate('PaymentScreen', {
+    amount: amount.toFixed(2),
+    feature_id: id,
+    nav: 'purchase',
+    onSuccess: async () => {
+      await purchaseProduct();
+    }
+  });
+}
 
   const renderImage = () => {
     const fallbackImage = require('../../../assets/images/drone.png');
@@ -381,6 +499,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     }
   }
 
+  
+
     return (
       <ImageBackground
         source={require('../../../assets/images/backimg.png')}
@@ -388,59 +508,193 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         resizeMode="cover"
       >
         <View style={styles.fullScreenContainer}>
-          <View style={styles.header}>
-            <View style={styles.headerRow}>
-              <TouchableOpacity
-                style={styles.backBtn}
 
-               onPress={() => {
-                  if (navigation.canGoBack()) {
-                    navigation.goBack(); // go to previous screen if available
-                  } else {
-                    navigation.replace('Dashboard', {
-                      AddScreenBackactiveTab: 'Home',
-                      isNavigate: false,
-                    });
-                  }
-                }}>
-             
-               
-               
-                <View style={styles.backIconRow}>
-                  <Image
-                    source={require('../../../assets/images/back.png')}
-                    style={{ height: 24, width: 24 }}
+           <StatusBar
+                    translucent
+                    backgroundColor="transparent"
+                    barStyle="light-content"
                   />
-                </View>                
-              </TouchableOpacity>
-              <Text allowFontScaling={false} style={styles.unizyText}>
-                {detail?.category?.name
-                  ? `${detail.category.name} Details`
-                  : ''}
-              </Text>
-              <TouchableOpacity
-                onPress={() => {
-                    handleBookmarkPress(id);
-                }}>
-              <View style={styles.MylistingsBackground}>
-                <Image
-                  source={
-                    detail?.isbookmarked
-                      ? require('../../../assets/images/favourite_filled.png') // bookmarked
-                      : require('../../../assets/images/favourite.png') // not bookmarked
-                  }
-                  style={styles.iconSmall}
-                />
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
+          
+                  {/* Header with Blur only at top */}
+                  <AnimatedReanimated.View
+                    style={[styles.headerWrapper, animatedBlurStyle]}
+                    pointerEvents="none"
+                  >
+                    {/* Blur layer only at top with gradient fade */}
+                    <MaskedView
+                      style={StyleSheet.absoluteFill}
+                      maskElement={
+                        <LinearGradient
+                          colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                          locations={[0, 0.8]}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 0, y: 1 }}
+                          style={StyleSheet.absoluteFill}
+                        />
+                      }
+                    >
+                      <BlurView
+                        style={StyleSheet.absoluteFill}
+                        blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+                        blurAmount={Platform.OS === 'ios' ? 45 : 45}
+                        overlayColor="rgba(255,255,255,0.05)"
+                        reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+                      />
+                      <LinearGradient
+                        colors={[
+                          'rgba(255, 255, 255, 0.45)',
+                          'rgba(255, 255, 255, 0.02)',
+                          'rgba(255, 255, 255, 0.02)',
+                        ]}
+                        style={StyleSheet.absoluteFill}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0, y: 1 }}
+                      />
+                    </MaskedView>
+                  </AnimatedReanimated.View>
+          
+                  {/* Header Content */}
+                  <View style={styles.headerContent} pointerEvents="box-none">
+                    <TouchableOpacity
+                      onPress={() => {
+                      if (navigation.canGoBack()) {
+                        navigation.goBack(); // go to previous screen if available
+                      } else {
+                        navigation.replace('Dashboard', {
+                          AddScreenBackactiveTab: 'Home',
+                          isNavigate: false,
+                        });
+                      }
+                    }}
+                      style={styles.backButtonContainer}
+                      activeOpacity={0.7}
+                    >
+                      <AnimatedReanimated.View
+                        style={[styles.blurButtonWrapper, animatedButtonStyle]}
+                      >
+                        {/* Static background (visible when scrollY = 0) */}
+                        <AnimatedReanimated.View
+                          style={[
+                            StyleSheet.absoluteFill,
+                            useAnimatedStyle(() => ({
+                              opacity: interpolate(
+                                scrollY.value,
+                                [0, 30],
+                                [1, 0],
+                                'clamp',
+                              ),
+                              backgroundColor: 'rgba(255,255,255,0.1)',
+                              borderRadius: 40,
+                            })),
+                          ]}
+                        />
+          
+                        {/* Blur view fades in as scroll increases */}
+                        <AnimatedReanimated.View
+                          style={[
+                            StyleSheet.absoluteFill,
+                            useAnimatedStyle(() => ({
+                              opacity: interpolate(
+                                scrollY.value,
+                                [0, 50],
+                                [0, 1],
+                                'clamp',
+                              ),
+                            })),
+                          ]}
+                        >
+                          <BlurView
+                            style={StyleSheet.absoluteFill}
+                            blurType="light"
+                            blurAmount={10}
+                            reducedTransparencyFallbackColor="transparent"
+                          />
+                        </AnimatedReanimated.View>
+          
+                        {/* Back Icon */}
+                        <AnimatedReanimated.Image
+                          source={require('../../../assets/images/back.png')}
+                          style={[{ height: 24, width: 24 }, animatedIconStyle]}
+                        />
+                      </AnimatedReanimated.View>
+                    </TouchableOpacity>
+          
+                   <Text allowFontScaling={false} style={styles.unizyText}>
+                    {detail?.category?.name
+                      ? `${detail.category.name} Details`
+                      : ''}
+                  </Text>
 
-           <ScrollView
-              contentContainerStyle={[
-              styles.scrollContainer,{paddingBottom: screenHeight * 0.1 + insets.bottom, } ]}
-                       scrollEventThrottle={16}>
-            {renderImage()}
+                  <TouchableOpacity
+                      onPress={() => {
+                    handleBookmarkPress(id);
+                }}
+                      style={styles.rightButtoContainer}
+                      activeOpacity={0.7}
+                    >
+                      <AnimatedReanimated.View
+                        style={[styles.blurButtonWrapper, animatedButtonStyle]}
+                      >
+                        {/* Static background (visible when scrollY = 0) */}
+                        <AnimatedReanimated.View
+                          style={[
+                            StyleSheet.absoluteFill,
+                            useAnimatedStyle(() => ({
+                              opacity: interpolate(
+                                scrollY.value,
+                                [0, 30],
+                                [1, 0],
+                                'clamp',
+                              ),
+                              backgroundColor: 'rgba(255,255,255,0.1)',
+                              borderRadius: 40,
+                            })),
+                          ]}
+                        />
+          
+                        {/* Blur view fades in as scroll increases */}
+                        <AnimatedReanimated.View
+                          style={[
+                            StyleSheet.absoluteFill,
+                            useAnimatedStyle(() => ({
+                              opacity: interpolate(
+                                scrollY.value,
+                                [0, 50],
+                                [0, 1],
+                                'clamp',
+                              ),
+                            })),
+                          ]}
+                        >
+                          <BlurView
+                            style={StyleSheet.absoluteFill}
+                            blurType="light"
+                            blurAmount={10}
+                            reducedTransparencyFallbackColor="transparent"
+                          />
+                        </AnimatedReanimated.View>
+          
+                        {/* Back Icon */}
+                        <AnimatedReanimated.Image
+                          source={
+                            detail?.isbookmarked
+                              ? require('../../../assets/images/favourite_filled.png') // bookmarked
+                              : require('../../../assets/images/favourite.png') // not bookmarked
+                          }
+                          style={styles.iconSmall}
+                        />
+                      </AnimatedReanimated.View>
+                    </TouchableOpacity>
+                  </View>
+          
+
+              <AnimatedReanimated.ScrollView 
+                 scrollEventThrottle={16}
+                onScroll={scrollHandler}
+            contentContainerStyle={[styles.scrollContainer,{ paddingBottom: height * 0.07 }, 
+          ]}>
+            <View style={{marginTop:12}}>
+             {renderImage()}
 
           <View style={{ flex: 1, padding: 16 }}>
             <View style={styles.card}>
@@ -506,12 +760,6 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     {param.options && param.options.length > 0 ? (
                       <View style={styles.categoryContainer}>
                         {param.options
-                          // .filter(opt =>
-                          //   param.param_value
-                          //     ?.split(',')
-                          //     .map(v => v.trim())
-                          //     .includes(opt.option_id.toString()),
-                          // )
                           .filter(opt =>
                             (param.param_value?.toString() || '')
                               .split(',')
@@ -647,7 +895,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
             
           </View>
-        </ScrollView>
+          </View>
+        </AnimatedReanimated.ScrollView>
 
       
 
@@ -656,9 +905,36 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
           label="Pay"
           onPress={handlePay}
       /> 
+      {/* <PayButton
+        amount={detail?.category?.name === "Food" ? undefined : Number(detail?.price)}
+        label={detail?.category?.name === "Food" ? "Select Quantity" : "Pay"}
+        onPress={handlePay}
+      /> */}
 
-        
-    {/* <Button onPress={handlePay} title={"Pay "+ "£"+Number(detail?.price ?? 0).toFixed(2)} />  */}
+
+      <SelectFoodQuantity
+        options={quantityOptions}
+        visible={multiSelectModal.visible}   
+        ismultilple={false}
+        price={Number(detail?.price)}
+        title={'Select Quantitiy'}
+        subtitle={'Choose how many units you want to buy.'}
+        selectedValues={formValues[multiSelectModal.fieldId!]?.value}
+        onClose={() =>
+          setMultiSelectModal(prev => ({ ...prev, visible: false }))
+        }
+        continueToPay={handlePayConfirmed}
+      onSelect={(selectedIds) => {
+        const quantity = Array.isArray(selectedIds)
+          ? selectedIds[0] // fallback
+          : selectedIds;
+
+        setFormValues((prev: any) => ({
+          ...prev,
+          [multiSelectModal.fieldId!]: { value: quantity },
+        }));
+      }}
+      />
 
 
         <Modal
@@ -828,6 +1104,53 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
 const styles = StyleSheet.create({
 
+   headerWrapper: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? '100%' : '100%',
+    height: Platform.OS === 'ios' ? 180 : 180,
+    zIndex: 10,
+    overflow: 'hidden',
+    alignSelf: 'center',
+    pointerEvents: 'none',
+  },
+  headerContent: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 50 : 60,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
+  },
+  backButtonContainer: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 11,
+    //top: 7,
+  },
+  rightButtoContainer:{
+    position: 'absolute',
+    right: 16,
+    zIndex: 11,
+    //top: 7,
+  },
+  blurButtonWrapper: {
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+  },
+
+
 
   fullScreenContainer: { 
     flex: 1
@@ -944,8 +1267,8 @@ const styles = StyleSheet.create({
     borderWidth: 0.3,
   },
   iconSmall: {
-    width: 25,
-    height: 25,
+    width: 24,
+    height: 24,
   },
 
  
@@ -1125,10 +1448,16 @@ inactiveStepCircle: {
     position: 'absolute',
     bottom: 10,
   },
+  // scrollContainer: {
+  //   paddingBottom: 80,
+  //  // paddingTop: 90,
+  //   // paddingHorizontal: 20,
+  // },
+
   scrollContainer: {
+    //paddingHorizontal: 20,
     paddingBottom: 80,
-   // paddingTop: 90,
-    // paddingHorizontal: 20,
+    paddingTop: Platform.OS === 'ios' ? 160 : 100,
   },
 
   datePosted: {

@@ -2,13 +2,45 @@ import { BlurView } from "@react-native-community/blur";
 import { TouchableOpacity, StyleSheet, Text, Platform, View } from "react-native";
 
 type PayButtonProps = {
-  amount: number | string; // price to display
+  //amount: number | string; // price to display
+  amount?: number | string; 
   onPress: () => void;
   label?: string; // default "Pay"
 };
 
+// const PayButton = ({ amount, onPress, label = "Pay" }: PayButtonProps) => {
+//   const formattedAmount = `£${Number(amount ?? 0).toFixed(2)}`;
+
+//   return (
+//     <TouchableOpacity
+//       onPress={onPress}
+//       activeOpacity={0.7}
+//       style={styles.buttonContainer}
+//     >
+//       <BlurView
+//         style={StyleSheet.absoluteFill}
+//         blurType="light"
+//         blurAmount={2}
+//         reducedTransparencyFallbackColor="transparent"
+//       />
+
+//       <View style={styles.textWrapper}>
+
+//       <Text allowFontScaling={false} style={styles.buttonText}>
+//         <Text style={styles.labelText}>{label} </Text>
+//         <Text style={styles.amountText}>{formattedAmount}</Text>
+//       </Text>
+//       </View>
+//     </TouchableOpacity>
+//   );
+// };
+
+
 const PayButton = ({ amount, onPress, label = "Pay" }: PayButtonProps) => {
-  const formattedAmount = `£${Number(amount ?? 0).toFixed(2)}`;
+  const formattedAmount =
+    amount !== null && amount !== undefined
+      ? `£${Number(amount).toFixed(2)}`
+      : null;
 
   return (
     <TouchableOpacity
@@ -24,16 +56,18 @@ const PayButton = ({ amount, onPress, label = "Pay" }: PayButtonProps) => {
       />
 
       <View style={styles.textWrapper}>
+        <Text allowFontScaling={false} style={styles.buttonText}>
+          <Text style={styles.labelText}>{label}</Text>
 
-      <Text allowFontScaling={false} style={styles.buttonText}>
-        <Text style={styles.labelText}>{label} </Text>
-        <Text style={styles.amountText}>{formattedAmount}</Text>
-      </Text>
+          {/* only show amount if it exists */}
+          {formattedAmount && (
+            <Text style={styles.amountText}> {formattedAmount}</Text>
+          )}
+        </Text>
       </View>
     </TouchableOpacity>
   );
 };
-
 const styles = StyleSheet.create({
 
   textWrapper: {

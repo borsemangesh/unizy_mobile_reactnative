@@ -6,20 +6,32 @@ import {
   TextInput,
   View,
   TouchableOpacity,
-  FlatList,
   Platform,
   StyleSheet,
-  StatusBar,
   ScrollView,
-  ActivityIndicator,
-  Dimensions,
   PermissionsAndroid,
   Alert,
   Modal,
   TouchableWithoutFeedback,
   Keyboard,
   KeyboardAvoidingView,
+  StatusBar,
+  Dimensions,
+  Animated,
 } from 'react-native';
+
+import AnimatedReanimated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  interpolate,
+  interpolateColor,
+  useDerivedValue,
+} from 'react-native-reanimated';
+// import LinearGradient from 'react-native-linear-gradient';
+
+
+import MaskedView from '@react-native-masked-view/masked-view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const bgImage = require('../../../assets/images/backimg.png');
 import {
@@ -33,9 +45,10 @@ import {
   launchCamera,
   launchImageLibrary,
 } from 'react-native-image-picker';
-import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
+import { check, PERMISSIONS, request, RESULTS,openSettings } from 'react-native-permissions';
 import Button from '../../utils/component/Button';
 import ProfileCard from './ProfileCard';
+import LinearGradient from 'react-native-linear-gradient';
 
 type EditProfileProps = {
   navigation: any;
@@ -116,8 +129,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           setPhoto(user.profile);
           setInitialEmail(user.student_email ?? '');
           setInitialPersonalEmail(user.email ?? '');
-          setInitialEmail(user.student_email ?? '');
-          setInitialPersonalEmail(user.email ?? '');
         } else {
           console.warn(
             'Failed to fetch user profile:',
@@ -140,7 +151,53 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     fetchUserProfile();
   }, []);
 
+  // const requestCameraPermission = async () => {
+  //   if (Platform.OS === 'android') {
+  //     try {
+  //       const granted = await PermissionsAndroid.request(
+  //         PermissionsAndroid.PERMISSIONS.CAMERA,
+  //         {
+  //           title: 'Camera Permission',
+  //           message: 'App needs access to your camera',
+  //           buttonNeutral: 'Ask Me Later',
+  //           buttonNegative: 'Cancel',
+  //           buttonPositive: 'OK',
+  //         },
+  //       );
+  //       return granted === PermissionsAndroid.RESULTS.GRANTED;
+  //     } catch (err) {
+  //       console.warn(err);
+  //       return false;
+  //     }
+  //   } else if (Platform.OS === 'ios') {
+  //     try {
+  //       const status = await check(PERMISSIONS.IOS.CAMERA);
+  //       if (status === RESULTS.GRANTED) {
+  //         return true;
+  //       }
+  //       const result = await request(PERMISSIONS.IOS.CAMERA);
+
+  //       if (result === RESULTS.GRANTED) {
+  //         return true;
+  //       } else if (result === RESULTS.BLOCKED) {
+  //         console.warn(
+  //           'Camera permission is blocked. Please enable it in Settings.',
+  //         );
+  //         return false;
+  //       } else {
+  //         return false; // Denied
+  //       }
+  //     } catch (err) {
+  //       console.warn(err);
+  //       return false;
+  //     }
+  //   } else {
+  //     return true;
+  //   }
+  // };
+
   const requestCameraPermission = async () => {
+    // ANDROID
     if (Platform.OS === 'android') {
       try {
         const granted = await PermissionsAndroid.request(
@@ -153,36 +210,50 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             buttonPositive: 'OK',
           },
         );
+  
         return granted === PermissionsAndroid.RESULTS.GRANTED;
       } catch (err) {
         console.warn(err);
         return false;
       }
-    } else if (Platform.OS === 'ios') {
+    }
+  
+    // iOS
+    if (Platform.OS === 'ios') {
       try {
         const status = await check(PERMISSIONS.IOS.CAMERA);
-        if (status === RESULTS.GRANTED) {
-          return true;
-        }
-        const result = await request(PERMISSIONS.IOS.CAMERA);
-
-        if (result === RESULTS.GRANTED) {
-          return true;
-        } else if (result === RESULTS.BLOCKED) {
-          console.warn(
-            'Camera permission is blocked. Please enable it in Settings.',
-          );
-          return false;
-        } else {
-          return false; // Denied
+  
+        switch (status) {
+          case RESULTS.GRANTED:
+            return true;
+  
+          case RESULTS.DENIED:
+            // User denied previously → we can ask again
+            const result = await request(PERMISSIONS.IOS.CAMERA);
+            return result === RESULTS.GRANTED;
+  
+          case RESULTS.BLOCKED:
+            // User selected "Don't Allow" + "Don't ask again"
+            Alert.alert(
+              "Camera Permission Needed",
+              "Camera access is blocked. Please enable it in Settings.",
+              [
+                { text: "Open Settings", onPress: () => openSettings() },
+                { text: "Cancel", style: "cancel" },
+              ]
+            );
+            return false;
+  
+          default:
+            return false;
         }
       } catch (err) {
         console.warn(err);
         return false;
       }
-    } else {
-      return true;
     }
+  
+    return true;
   };
 
   //-----------------------Handel validation ---------------------//
@@ -227,12 +298,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     const errors = validateForm();
     if (errors.length > 0) {
       showToast(errors[0], 'error');
-      return;
-    } else if (!isUpdateDisabled_personal) {
-      showToast('Please verify your personal email Id', 'error');
-      return;
-    } else if (!isUpdateDisabled) {
-      showToast('Please verify your student email Id', 'error');
       return;
     } else if (!isUpdateDisabled_personal) {
       showToast('Please verify your personal email Id', 'error');
@@ -307,6 +372,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   //------------------ image upload functionality ---------------//
 
   const handleSelectImage = async () => {
+    console.log("Choose image")
     const hasPermission = await requestCameraPermission();
     if (!hasPermission) return;
     Alert.alert(
@@ -501,8 +567,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       if (data?.statusCode === 200) {
         // showToast(data.message, 'success');
         setShowPopup1(false);
-        setIsUpdateDisabled(true)
-        setIsUpdateDisabled_personal(true)
         // setShowPopup2(true);
       } else {
         showToast(data?.message, 'error');
@@ -539,16 +603,70 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   const [isUpdateDisabled, setIsUpdateDisabled] = useState(true);
   const [updateText, setUpdateText] = useState('Update');
 
+  //  email: userMeta.email,
+  // student_email: userMeta.student_email,
 
   const [initialEmail, setInitialEmail] = useState(''); // store original email
   const [initialPersonalEmail, setInitialPersonalEmail] = useState(''); // store original email
+
+
+  const screenHeight = Dimensions.get('window').height;
+  const [slideUp1] = useState(new Animated.Value(0));
+
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: event => {
+      'worklet';
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  const animatedBlurStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 100], [0, 1], 'clamp');
+    return { opacity };
+  });
+
+  const animatedButtonStyle = useAnimatedStyle(() => {
+    'worklet';
+    const borderColor = interpolateColor(
+      scrollY.value,
+      [0, 300],
+      ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+    );
+    const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
+    return {
+      borderColor,
+      backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+    };
+  });
+
+  const animatedIconStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
+    const tintColor = interpolateColor(
+      scrollY.value,
+      [0, 150],
+      ['#FFFFFF', '#002050'],
+    );
+    return {
+      opacity,
+      tintColor,
+    };
+  });
+
+  const blurAmount = useDerivedValue(() =>
+    interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+  );
+
 
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
         {/* Header */}
-        <View style={styles.header}>
+        {/* <View style={styles.header}>
           <View style={styles.headerRow}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <View style={styles.backIconRow}>
@@ -563,307 +681,413 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             </Text>
             <View style={{ width: 48 }} />
           </View>
+        </View> */}
+
+        <StatusBar
+          translucent
+          backgroundColor="transparent"
+          barStyle="light-content"
+        />
+
+        {/* Header with Blur only at top */}
+        <AnimatedReanimated.View
+          style={[styles.headerWrapper, animatedBlurStyle]}
+          pointerEvents="none"
+        >
+          {/* Blur layer only at top with gradient fade */}
+          <MaskedView
+            style={StyleSheet.absoluteFill}
+            maskElement={
+              <LinearGradient
+                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                locations={[0, 0.8]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            }
+          >
+            <BlurView
+              style={StyleSheet.absoluteFill}
+              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+              blurAmount={Platform.OS === 'ios' ? 45 : 45}
+              // overlayColor="rgba(255,255,255,0.05)"
+              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+            />
+            <LinearGradient
+              colors={[
+                'rgba(255, 255, 255, 0.45)',
+                'rgba(255, 255, 255, 0.02)',
+                'rgba(255, 255, 255, 0.02)',
+              ]}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+            />
+          </MaskedView>
+        </AnimatedReanimated.View>
+
+        {/* Header Content */}
+        <View style={styles.headerContent} pointerEvents="box-none">
+          <TouchableOpacity
+            onPress={() => {
+              navigation.replace('Dashboard', {
+                AddScreenBackactiveTab: 'Profile',
+                isNavigate: false,
+              });
+            }}
+            style={styles.backButtonContainer}
+            activeOpacity={0.7}
+          >
+            <AnimatedReanimated.View
+              style={[styles.blurButtonWrapper, animatedButtonStyle]}
+            >
+              {/* Static background (visible when scrollY = 0) */}
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 30],
+                      [1, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 40,
+                  })),
+                ]}
+              />
+
+              {/* Blur view fades in as scroll increases */}
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 50],
+                      [0, 1],
+                      'clamp',
+                    ),
+                  })),
+                ]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
+                />
+              </AnimatedReanimated.View>
+
+              {/* Back Icon */}
+              <AnimatedReanimated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 24, width: 24 }, animatedIconStyle]}
+              />
+            </AnimatedReanimated.View>
+          </TouchableOpacity>
+
+          <Text allowFontScaling={false} style={styles.unizyText}>
+            Edit Profile
+          </Text>
         </View>
+
         <KeyboardAvoidingView
-          style={{ flex: 1 ,marginTop: 10}}
+          style={{ flex: 1, marginTop: 0 }}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-        <ScrollView
-          contentContainerStyle={{ paddingBottom: 40 }}
-          style={{ flex: 1 }}
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={styles.profileavatarContainer}>
-            <View style={styles.profilebigCircle}>
-              <TouchableOpacity>
-                <Image
-                  source={
-                    photo
-                      ? { uri: photo }
-                      : require('../../../assets/images/add1.png')
-                  }
-                  style={styles.profilelogo}
-                  resizeMode="cover"
-                />
-              </TouchableOpacity>
+          <AnimatedReanimated.ScrollView
+            scrollEventThrottle={16}
+            onScroll={scrollHandler}
+            contentContainerStyle={[
+              styles.scrollContainer,
+              { paddingBottom: screenHeight * 0.1 }, 
+            ]}
+          >
+            <View style={styles.profileavatarContainer}>
+              <View style={styles.profilebigCircle}>
+                <TouchableOpacity>
+                  <Image
+                    source={
+                      photo
+                        ? { uri: photo }
+                        : require('../../../assets/images/add1.png')
+                    }
+                    style={styles.profilelogo}
+                    resizeMode="cover"
+                  />
+                </TouchableOpacity>
 
-              <TouchableOpacity
+                <TouchableOpacity
+                  style={styles.profilecameraButton}
+                  onPress={()=>{
+                    handleSelectImage();
+                  }}
+                >
+                  {/* assets\images\camera_icon.png */}
+                  <Image
+                    // source={require('../../../assets/images/camera_1.png')}
+                    source={require('../../../assets/images/camera_icon.png')}
+                    style={styles.profilecameraIcon}
+                    resizeMode="contain"
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+
+            <View style={styles.blurCard}>
+              <View style={styles.inputGroup}>
+                <Text style={styles.label} allowFontScaling={false}>
+                  First Name*
+                </Text>
+                <TextInput
+                  value={userMeta.firstname || ''}
+                  onChangeText={text =>
+                    setUserMeta(prev => ({ ...prev, firstname: text }))
+                  }
+                  allowFontScaling={false}
+                  style={styles.input}
+                  placeholder="Enter First Name"
+                  placeholderTextColor="#ccc"
+                />
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.label} allowFontScaling={false}>
+                  Last Name*
+                </Text>
+                <TextInput
+                  value={userMeta.lastname || ''}
+                  onChangeText={text =>
+                    setUserMeta(prev => ({ ...prev, lastname: text }))
+                  }
+                  allowFontScaling={false}
+                  style={styles.input}
+                  placeholder="Enter Last Name"
+                  placeholderTextColor="#ccc"
+                />
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.label} allowFontScaling={false}>
+                  Personal Email ID*
+                </Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(255,255,255,0.08)',
+                    borderRadius: 12,
+                    // paddingHorizontal: 12,
+                    minHeight: 44, // or any desired height
+                  }}
+                >
+                  <TextInput
+                    style={{
+                      flex: 1,
+                      color: '#fff',
+                      backgroundColor: 'transparent',
+                      borderWidth: 0,
+                      borderRadius: 10,
+                      paddingVertical: 10,
+                      paddingHorizontal: 12,
+                      fontFamily: 'Urbanist-Regular',
+                      fontSize: 16,
+                      fontWeight: 400,
+                    }}
+                    allowFontScaling={false}
+                    value={userMeta.email || ''}
+                    onChangeText={text => {
+                      setUserMeta(prev => ({ ...prev, email: text }));
+                      if (text === initialPersonalEmail) {
+                        console.log('condition_true (unchanged)');
+                        setIsUpdateDisabled_personal(true);
+                      } else {
+                        console.log('condition_false (changed)');
+                        setIsUpdateDisabled_personal(false);
+                      }
+
+                      console.log('text ---', text);
+                      console.log('initialEmail ----', initialEmail);
+                    }}
+                    keyboardType="email-address"
+                    placeholder="Enter Email"
+                    placeholderTextColor="#ccc"
+                  />
+                  <TouchableOpacity
+                    style={{
+                      width: 32, // Fixed width – adjust as needed
+                      height: 32,
+                      // marginLeft: 12,
+                      // backgroundColor:
+                      //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
+
+                      backgroundColor: isUpdateDisabled_personal
+                        ? '#99999980' // Fallback color for disabled
+                        : 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
+                      boxShadow: isUpdateDisabled_personal
+                        ? ''
+                        : 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+                      borderColor: isUpdateDisabled_personal ? '' : '#ffffff11',
+                      borderRadius: 10,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginEnd: 8,
+                      opacity: isUpdateDisabled_personal ? 0.5 : 1,
+                    }}
+                    disabled={isUpdateDisabled_personal}
+                    onPress={() => (
+                      setShowPopup1(true),
+                      sendOtp('personalEmail'),
+                      setEmailName('personalEmail')
+                    )}
+                  >
+                    {/* <Text style={styles.edittext} allowFontScaling={false}>Update</Text>
+                   
+
+
+                  <TouchableOpacity
                 style={styles.profilecameraButton}
                 onPress={handleSelectImage}
               >
                 {/* assets\images\camera_icon.png */}
-                <Image
-                  // source={require('../../../assets/images/camera_1.png')}
-                  source={require('../../../assets/images/camera_icon.png')}
-                  style={styles.profilecameraIcon}
-                  resizeMode="contain"
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
+                    <Image
+                      source={require('../../../assets/images/editcontained.png')}
+                      style={styles.updateIcon}
+                      resizeMode="contain"
+                    />
+                    {/* </TouchableOpacity> */}
+                  </TouchableOpacity>
+                </View>
+              </View>
 
-          {/* Blur Glass Form */}
-          <View style={styles.blurCard}>
-            <View style={styles.inputGroup}>
-              <Text style={styles.label} allowFontScaling={false}>
-                First Name*
-              </Text>
-             
-              <TextInput
-                value={userMeta.firstname || ''}
-                onChangeText={text =>
-                  setUserMeta(prev => ({ ...prev, firstname: text }))
-                }
-                allowFontScaling={false}
-                style={styles.input}
-                placeholder="Enter First Name"
-                placeholderTextColor="#ccc"
-              />
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.label} allowFontScaling={false}>
-                Last Name*
-              </Text>
-              
-              <TextInput
-                value={userMeta.lastname || ''}
-                onChangeText={text =>
-                  setUserMeta(prev => ({ ...prev, lastname: text }))
-                }
-                allowFontScaling={false}
-                style={styles.input}
-                placeholder="Enter Last Name"
-                placeholderTextColor="#ccc"
-              />
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.label} allowFontScaling={false}>
-                Personal Email ID*
-              </Text>
-              <Text style={styles.label} allowFontScaling={false}>
-                Personal Email ID*
-              </Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  backgroundColor: 'rgba(255,255,255,0.08)',
-                  borderRadius: 12,
-                  // paddingHorizontal: 12,
-                  minHeight: 44, // or any desired height
-                }}
-              >
-                <TextInput
+              <View style={styles.inputGroup}>
+                <Text style={styles.label} allowFontScaling={false}>
+                  Student Email ID*
+                </Text>
+                <View
                   style={{
-                    flex: 1,
-                    color: '#fff',
-                    backgroundColor: 'transparent',
-                    borderWidth: 0,
-                    borderRadius: 10,
-                    paddingVertical: 10,
-                    paddingHorizontal: 12,
-                    fontFamily: 'Urbanist-Regular',
-                    fontSize: 16,
-                    fontWeight: 400,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(255,255,255,0.08)',
+                    borderRadius: 12,
+                    paddingHorizontal: 4,
+                    minHeight: 44, // or any desired height
                   }}
-                  allowFontScaling={false}
-                  value={userMeta.email || ''}
-                  onChangeText={text => {
-                    setUserMeta(prev => ({ ...prev, email: text }));
-                    if (text === initialPersonalEmail) {
-                      console.log('condition_true (unchanged)');
-                      setIsUpdateDisabled_personal(true);
-                    } else {
-                      console.log('condition_false (changed)');
-                      setIsUpdateDisabled_personal(false);
-                    }
+                >
+                  <TextInput
+                    style={{
+                      flex: 1,
+                      color: '#fff',
+                      // fontSize: 14,
+                      backgroundColor: 'transparent',
+                      borderWidth: 0,
+                      borderRadius: 10,
+                      paddingVertical: 10,
+                      paddingHorizontal: 10,
+                      fontFamily: 'Urbanist-Regular',
+                      fontSize: 16,
+                      fontWeight: 400,
+                    }}
+                    allowFontScaling={false}
+                    //  value={userMeta.email || ''}
+                    value={userMeta.student_email || ''}
+                    onChangeText={text => {
+                      setUserMeta(prev => ({ ...prev, student_email: text }));
 
-                    console.log('text ---', text);
-                    console.log('initialEmail ----', initialEmail);
-                  }}
-                 
-                  keyboardType="email-address"
-                  placeholder="Enter Email"
+                      // Compare against the ORIGINAL email, not previous state
+                      if (text === initialEmail) {
+                        console.log('condition_true (unchanged)');
+                        setIsUpdateDisabled(true);
+                      } else {
+                        console.log('condition_false (changed)');
+                        setIsUpdateDisabled(false);
+                      }
+
+                      console.log('text ---', text);
+                      console.log('initialEmail ----', initialEmail);
+                    }}
+                    keyboardType="email-address"
+                    placeholder="Enter Student Email"
+                    placeholderTextColor="#ccc"
+                  />
+                  <TouchableOpacity
+                    style={{
+                      width: 32, // Fixed width – adjust as needed
+                      height: 32,
+                      // marginLeft: 12,
+
+                      // backgroundColor:
+                      //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
+
+                      backgroundColor: isUpdateDisabled
+                        ? '#99999980' // Fallback color for disabled
+                        : 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
+                      boxShadow: isUpdateDisabled
+                        ? ''
+                        : 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+                      borderColor: isUpdateDisabled ? '' : '#ffffff11',
+                      borderRadius: 10,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginEnd: 4,
+                      opacity: isUpdateDisabled ? 0.5 : 1,
+                    }}
+                    disabled={isUpdateDisabled}
+                    onPress={() => (
+                      setShowPopup1(true),
+                      sendOtp('studentEmail'),
+                      setEmailName('studentEmail')
+                    )}
+                  >
+                    <Image
+                      source={require('../../../assets/images/editcontained.png')}
+                      style={styles.updateIcon}
+                      resizeMode="contain"
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.label} allowFontScaling={false}>
+                  City*
+                </Text>
+                <TextInput
+                  allowFontScaling={false}
+                  value={userMeta.city || ''}
+                  onChangeText={text =>
+                    setUserMeta(prev => ({ ...prev, city: text }))
+                  }
+                  style={styles.input}
+                  placeholder="Enter City"
                   placeholderTextColor="#ccc"
                 />
-                <TouchableOpacity
-                  style={{
-                    width: 32, // Fixed width – adjust as needed
-                    height: 32,
-                    backgroundColor: isUpdateDisabled_personal
-                      ? '#99999980' // Fallback color for disabled
-                      : 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
-                    boxShadow: isUpdateDisabled_personal
-                      ? ''
-                      : 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
-                    borderColor: isUpdateDisabled_personal ? '' : '#ffffff11',
-                    borderRadius: 10,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginEnd: 8,
-                    opacity: isUpdateDisabled_personal ? 0.5 : 1,
-                  }}
-                  disabled={isUpdateDisabled_personal}
-                  onPress={() => (
-                    setShowPopup1(true),
-                    sendOtp('personalEmail'),
-                    setEmailName('personalEmail')
-                  )}
-                >
-                
-                  <Image
-                    source={require('../../../assets/images/editcontained.png')}
-                    style={styles.updateIcon}
-                    resizeMode="contain"
-                  />
-                 
-                  <Image
-                    source={require('../../../assets/images/editcontained.png')}
-                    style={styles.updateIcon}
-                    resizeMode="contain"
-                  />
-                  {/* </TouchableOpacity> */}
-                </TouchableOpacity>
               </View>
-            </View>
 
-            <View style={styles.inputGroup}>
-              <Text style={styles.label} allowFontScaling={false}>
-                Student Email ID*
-              </Text>
-              <Text style={styles.label} allowFontScaling={false}>
-                Student Email ID*
-              </Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  backgroundColor: 'rgba(255,255,255,0.08)',
-                  borderRadius: 12,
-                  paddingHorizontal: 4,
-                  minHeight: 44, // or any desired height
-                }}
-              >
+              <View style={styles.inputGroup}>
+                <Text style={styles.label} allowFontScaling={false}>
+                  Postal Code*
+                </Text>
                 <TextInput
-                  style={{
-                    flex: 1,
-                    color: '#fff',
-                    // fontSize: 14,
-                    backgroundColor: 'transparent',
-                    borderWidth: 0,
-                    borderRadius: 10,
-                    paddingVertical: 10,
-                    paddingHorizontal: 10,
-                    fontFamily: 'Urbanist-Regular',
-                    fontSize: 16,
-                    fontWeight: 400,
-                  }}
+                  value={userMeta.postal_code || ''}
+                  onChangeText={text =>
+                    setUserMeta(prev => ({ ...prev, postal_code: text }))
+                  }
                   allowFontScaling={false}
-                  //  value={userMeta.email || ''}
-                  value={userMeta.student_email || ''}
-                  onChangeText={text => {
-                    setUserMeta(prev => ({ ...prev, student_email: text }));
-
-                    // Compare against the ORIGINAL email, not previous state
-                    if (text === initialEmail) {
-                      console.log('condition_true (unchanged)');
-                      setIsUpdateDisabled(true);
-                    } else {
-                      console.log('condition_false (changed)');
-                      setIsUpdateDisabled(false);
-                    }
-
-                    console.log('text ---', text);
-                    console.log('initialEmail ----', initialEmail);
-                  }}
-                 
-                  keyboardType="email-address"
-                  placeholder="Enter Student Email"
+                  style={styles.input}
+                  keyboardType="numeric"
+                  placeholder="Enter Postal Code"
                   placeholderTextColor="#ccc"
                 />
-                <TouchableOpacity
-                  style={{
-                    width: 32, // Fixed width – adjust as needed
-                    height: 32,
-                  
-
-                    backgroundColor: isUpdateDisabled
-                      ? '#99999980' // Fallback color for disabled
-                      : 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
-                    boxShadow: isUpdateDisabled
-                      ? ''
-                      : 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
-                    borderColor: isUpdateDisabled ? '' : '#ffffff11',
-                    borderRadius: 10,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginEnd: 4,
-                    opacity: isUpdateDisabled ? 0.5 : 1,
-                  }}
-                  disabled={isUpdateDisabled}
-                  onPress={() => (
-                    setShowPopup1(true),
-                    sendOtp('studentEmail'),
-                    setEmailName('studentEmail')
-                  )}
-                >
-                  <Image
-                    source={require('../../../assets/images/editcontained.png')}
-                    style={styles.updateIcon}
-                    resizeMode="contain"
-                  />
-                
-                </TouchableOpacity>
               </View>
             </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.label} allowFontScaling={false}>
-                City*
-              </Text>
-              <Text style={styles.label} allowFontScaling={false}>
-                City*
-              </Text>
-              <TextInput
-                allowFontScaling={false}
-                value={userMeta.city || ''}
-                onChangeText={text =>
-                  setUserMeta(prev => ({ ...prev, city: text }))
-                }
-                style={styles.input}
-                placeholder="Enter City"
-                placeholderTextColor="#ccc"
-              />
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.label} allowFontScaling={false}>
-                Postal Code*
-              </Text>
-              <Text style={styles.label} allowFontScaling={false}>
-                Postal Code*
-              </Text>
-              <TextInput
-                value={userMeta.postal_code || ''}
-                onChangeText={text =>
-                  setUserMeta(prev => ({ ...prev, postal_code: text }))
-                }
-                allowFontScaling={false}
-                style={styles.input}
-                keyboardType="numeric"
-                placeholder="Enter Postal Code"
-                placeholderTextColor="#ccc"
-              />
-            </View>
-          </View>
-        </ScrollView>
+          </AnimatedReanimated.ScrollView>
         </KeyboardAvoidingView>
-        {/* Save Button */}
-        {/* <TouchableOpacity style={styles.saveButton} onPress={handleSaveProfile}>
-          <Text style={styles.saveText}>Save Details</Text>
-        </TouchableOpacity> */}
+       
         <Button
           title="Save Details"
           onPress={() => {
@@ -877,7 +1101,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         visible={showPopup1}
         transparent={true}
         animationType="fade"
-        // onRequestClose={closePopup1}
         onRequestClose={() => {}}
       >
         <TouchableWithoutFeedback onPress={closePopup1}>
@@ -910,7 +1133,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
                 <Text allowFontScaling={false} style={styles.subheader}>
                   We have sent a 4-digit code to{' '}
-                  
                   <Text
                     allowFontScaling={false}
                     style={{
@@ -973,9 +1195,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   allowFontScaling={false}
                   style={[styles.subheader, { marginBottom: 6 }]}
                 >
-               
                   Didn’t receive a code?{' '}
-                 
                   <Text
                     allowFontScaling={false}
                     style={{ color: '#FFFFFF7A' }}
@@ -985,6 +1205,29 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   </Text>
                 </Text>
 
+                {/* <Text allowFontScaling={false} style={styles.subheader}
+                 onPress={() => sendOtp(emailName)}>
+                  Didn’t receive a code? Resend Code
+                </Text> */}
+                {/* 
+                <Text allowFontScaling={false} style={styles.subheader}>
+                  Entered wrong email? Go Back
+                </Text> */}
+
+                {/* <Text style={styles.subheader}>
+  Entered wrong email?{' '}
+  <Text style={{ color: '#FFFFFF7A' }} onPress={closePopup1}>Go Back</Text>
+</Text> */}
+
+                {/* <Text allowFontScaling={false} style={styles.subheader}>
+                  Entered wrong email?{' '}
+                  <Text
+                    style={styles.subheader}
+                    onPress={closePopup1} // or your handler
+                  >
+                    Go Back
+                  </Text>
+                </Text> */}
               </View>
             </BlurView>
           </View>
@@ -997,6 +1240,54 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 export default EditProfile;
 
 const styles = StyleSheet.create({
+
+  scrollContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 80,
+    paddingTop: Platform.OS === 'ios' ? 120: 100,
+  },
+
+
+  headerWrapper: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? '100%' : '100%',
+    height: Platform.OS === 'ios' ? 180 : 180,
+    zIndex: 10,
+    overflow: 'hidden',
+    alignSelf: 'center',
+    pointerEvents: 'none',
+  },
+  headerContent: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 70 : 60,
+    width: Platform.OS === 'ios' ? '100%' : '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
+  },
+  backButtonContainer: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 11,
+    //top: 7,
+  },
+  blurButtonWrapper: {
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+  },
+
   tabcard: {
     paddingVertical: 8,
     paddingHorizontal: 16,
@@ -1203,14 +1494,16 @@ const styles = StyleSheet.create({
   blurCard: {
     marginTop: 16,
     borderRadius: 24,
+    // padding: 16,
+    // marginBottom:16,
+
+    // overflow: 'hidden',
     paddingHorizontal: 16,
     paddingVertical: 16,
     backgroundColor: 'rgba(255,255,255,0.08)',
     gap: 12,
-    
   },
   inputGroup: {
-    // marginBottom: 14,
     // marginBottom: 14,
     height: 64,
     // paddingHorizontal:8,
@@ -1334,8 +1627,6 @@ const styles = StyleSheet.create({
     // marginLeft: -1,
     // marginTop: 3,
   },
-
-
 
   inputEmail: {
     flex: 1, // THIS PART IS MOST IMPORTANT!!
@@ -1595,14 +1886,10 @@ const styles = StyleSheet.create({
   edittext: {
     // fontFamily: 'Urbanist-SemiBold',
     // fontSize: 14,
-    // fontFamily: 'Urbanist-SemiBold',
-    // fontSize: 14,
     color: '#fff',
-    // fontWeight: 600,
     // fontWeight: 600,
     textAlign: 'center',
   },
- 
   tabContent: {
     flex: 1,
     justifyContent: 'center',

@@ -7,6 +7,9 @@ import {
   ImageSourcePropType,
   TouchableOpacity,
 } from 'react-native';
+import { SquircleView } from 'react-native-figma-squircle';
+
+
 
 type ReviewDetailCardProps = {
   tag?: string;
@@ -14,11 +17,14 @@ type ReviewDetailCardProps = {
   inforTitlePrice: string;
   rating: string; // e.g., "3"
   reviewText?: string;
-  productImage: ImageSourcePropType;
   navigation?: any;
   shareid: number;
   date:string,
-  reviewer:string
+  reviewer_name:string,
+  category_id:number
+  reviewer_image?:string
+  feature_image?:string,
+ 
 };
 
 const ReviewDetailCard: React.FC<ReviewDetailCardProps> = ({
@@ -26,14 +32,57 @@ const ReviewDetailCard: React.FC<ReviewDetailCardProps> = ({
   inforTitlePrice,
   rating = '0',
   reviewText = '',
-  productImage,
   navigation,
   shareid,
   date,
-  reviewer
+  reviewer_name,
+  category_id,
+  reviewer_image,
+  feature_image
+
 }) => {
   const fullStar = require('../../assets/images/starfill.png'); 
   const emptyStar = require('../../assets/images/starempty.png'); 
+
+  const getInitials = (fullName?: string): string => {
+  if (!fullName) return '';
+
+  const parts = fullName.trim().split(' ').filter(Boolean);
+
+  if (parts.length === 0) return '';
+  if (parts.length === 1) return parts[0][0].toUpperCase();
+
+  // First letter + last letter
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+};
+  
+     const renderProfileSection = () => {
+      if (category_id===2 || category_id===5) {
+        if (reviewer_image) {
+          return (  
+            <Image
+              source={{ uri: reviewer_image }}
+              style={styles.image}
+              resizeMode="cover"
+            />
+          );
+        } else {
+          return (
+            <View style={styles.initialsCircle}>
+              <Text allowFontScaling={false} style={styles.initialsText}>
+                {getInitials(reviewer_name)}
+              </Text>
+             
+            </View>
+          );
+        }
+      } else {
+        return (
+          <Image source={{ uri: feature_image }} style={styles.image} resizeMode="cover" />
+        );
+      }
+    };
+  
 
   return (
     <TouchableOpacity
@@ -42,7 +91,8 @@ const ReviewDetailCard: React.FC<ReviewDetailCardProps> = ({
       activeOpacity={0.8}
     >
      <View style={styles.row}>
-      <Image source={productImage} style={styles.image} resizeMode="cover" />
+      {/* <Image source={productImage} style={styles.image} resizeMode="cover" /> */}
+       {renderProfileSection()}
       <View style={styles.details}>
         <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
         <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
@@ -60,7 +110,7 @@ const ReviewDetailCard: React.FC<ReviewDetailCardProps> = ({
   {/* Top Row: Text Left, Stars Right */}
   <View style={styles.topRow}>
     <Text allowFontScaling={false} style={styles.reviewerName}>
-      {reviewer}
+      {reviewer_name}
     </Text>
 
     <View style={styles.starsRow}>
@@ -88,6 +138,24 @@ const ReviewDetailCard: React.FC<ReviewDetailCardProps> = ({
 export default ReviewDetailCard;
 
 const styles = StyleSheet.create({
+
+    initialsCircle:{
+    backgroundColor: '#8390D4',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 70,
+    height: 70,
+    borderRadius: 14,
+    //marginRight: 12,
+    overflow:'hidden'
+  },
+  initialsText:{
+   color: '#fff',
+  fontSize: 30,
+  fontWeight:600,
+  textAlign: 'center',
+  fontFamily: 'Urbanist-SemiBold',
+  },
 
     dashedLine: {
     borderBottomWidth: 1,
@@ -145,6 +213,7 @@ bottomContent: {
     width: 70,
     height: 70,
     borderRadius: 14,
+    overflow:'hidden'
   },
   details: {
     flex: 1,

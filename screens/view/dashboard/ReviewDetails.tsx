@@ -25,7 +25,18 @@ import StarRating from '../../utils/StarRating';
 import ReviewDetailCard from '../../utils/ReviewDetailCard';
 import MyReviewCard from '../../utils/MyReviewCard';
 import Button from '../../utils/component/Button';
-
+import { InfoToast } from 'react-native-toast-message';
+import Animated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  interpolate,
+  interpolateColor,
+  useDerivedValue,
+} from 'react-native-reanimated';
+import { BlurView } from '@react-native-community/blur';
+import LinearGradient from 'react-native-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
 
 
 type ReviewDetailsProps = {
@@ -50,6 +61,55 @@ const ReviewDetails : React.FC<ReviewDetailsProps> = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [totalReviews, setTotalReviews] = useState(0);
   const [averageRating, setAverageRating] = useState(0);
+
+   const scrollY = useSharedValue(0);
+   
+    const scrollHandler = useAnimatedScrollHandler({
+      onScroll: event => {
+        'worklet';
+        scrollY.value = event.contentOffset.y;
+      },
+    });
+   
+    const animatedBlurStyle = useAnimatedStyle(() => {
+      'worklet';
+      const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+      return { opacity };
+    });
+   
+    const animatedButtonStyle = useAnimatedStyle(() => {
+      'worklet';
+      const borderColor = interpolateColor(
+        scrollY.value,
+        [0, 300],
+        ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+      );
+      const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
+      return {
+        borderColor,
+        backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+      };
+    });
+    const animatedIconStyle = useAnimatedStyle(() => {
+      'worklet';
+   
+      const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
+   
+      const tintColor = interpolateColor(
+        scrollY.value,
+        [0, 150],
+        ['#FFFFFF', '#002050'],
+      );
+   
+      return {
+        opacity,
+        tintColor,
+      };
+    });
+   
+    const blurAmount = useDerivedValue(() =>
+      interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+    );
 
     type Category = {
       id: number | null; 
@@ -159,16 +219,16 @@ useEffect(() => {
       const formattedUsers: User[] = reviews.map((item: any) => ({
         id: item.id.toString(),
         name: item.reviewer_name,
-        university: item.reviewer?.university_name ?? "Unknown University",
+        university: item?.university_name ?? "Unknown University",
         rating: item.rating,
-        // profileImg: item.reviewer?.profile
-        //   ? { uri: IMAGE_BASE + item.reviewer.profile }
-        //   : defaultProfile,
-        profileImg:defaultProfile,
+        userprofile:item?.reviewer_image ,
+        productimage:item?.feature_image,
         comment: item.comment,
          date: item.created_at,
         featureTitle: item.feature_title,
-        categoryName: item.category_name
+        categoryName: item.category_name,
+        category_id:item.category_id,
+        price:item.price
       }));
 
       setUsers(formattedUsers);
@@ -187,42 +247,10 @@ type User = {
   name: string;
   university: string;
   rating: number;
-  profileImg: any; // URL or require()
+  profileImg: any; 
   comment: string;
 };
 
-
-// const renderItem = ({ item }: any) => (
-//   <View style={styles.userRow}>
-//     {/* Top row: Image + Name/Sub + Star */}
-//     <View style={{ flexDirection: 'row', width: '100%' }}>
-//       {/* Image column */}
-//       <View style={{ width: 60, alignItems: 'center' }}>
-//         <Image source={item.profileImg} style={styles.avatar} />
-//       </View>
-
-//       {/* Name/Sub + Star column */}
-//       <View style={{ flex: 1, paddingLeft: 10, justifyContent: 'flex-start' }}>
-//         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-//           <View>
-//             <Text allowFontScaling={false} style={styles.userName}>{item.name}</Text>
-//             <Text allowFontScaling={false} style={styles.userSub}>{item.university}</Text>
-//           </View>
-//           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-//             <Image
-//               source={require('../../../assets/images/staricon.png')}
-//               style={{ height: 16, width: 16, marginRight: 4 ,tintColor: 'rgba(140, 225, 255, 0.9)',}}
-//             />
-//             <Text allowFontScaling={false} style={styles.ratingText}>{item.rating}</Text>
-//           </View>
-//         </View>
-
-//         {/* Comment below */}
-//         <Text allowFontScaling={false} style={[styles.bottomText, { marginTop: 4 }]}>{item.comment}</Text>
-//       </View>
-//     </View>
-//   </View>
-// );
 
 const formatDate = (dateString: string | null | undefined) => {
   if (!dateString || dateString.trim() === '') return '01-01-2025';
@@ -237,72 +265,174 @@ const formatDate = (dateString: string | null | undefined) => {
 };
 
 
-const renderItem = ({ item}: any) => {
-  // const isLastOddItem =
-  //   filteredFeatures.length % 2 !== 0 &&
-  //   index === filteredFeatures.length - 1;
-  const displayDate = formatDate(item.created_at);
-  const productImage = item.profileImg ?? require('../../../assets/images/drone.png');
-  const displayPrice = item.price != null ? item.price : 0;
+// const renderItem = ({ item}: any) => {
+
+//   const displayDate = formatDate(item.created_at);
+//   const productImage = item.profileImg ?? require('../../../assets/images/drone.png');
+//   const displayPrice = item.price != null ? item.price : 0;
+//   const displayTitle = item.featureTitle ?? 'Title';
+//   const displayRating = item.rating?.toString() ?? '0';
+//   const displayReview = item.comment ?? '';
+//   const reviewer_name = item.reviewer_name ?? '';
+//   const profileshow = item?.category_id === 2 || item?.category_id === 5;
+
+
+//   return (
+//     <View
+//       style={[
+//         styles.itemContainer,
+//       ]}
+//     >
+//       <ReviewDetailCard
+//         infoTitle={displayTitle}
+//         inforTitlePrice={item.categoryName ?? ''}
+//         rating={displayRating}
+//         reviewText={displayReview}
+//        shareid={item.id}
+//         date={displayDate}
+//         reviewer={item.name} 
+//         category_id={item.category_id}
+//         reviewer_image={item.reviewer_image}
+//         feature_image={item.feature_image}
+
+
+//       />
+//     </View>
+//   );
+// };
+
+
+const renderItem = ({ item }: any) => {
+  const displayDate = formatDate(item.date);
   const displayTitle = item.featureTitle ?? 'Title';
-  const displayRating = item.rating?.toString() ?? '0';
-  const displayReview = item.comment ?? '';
-  const reviewer_name = item.reviewer_name ?? '';
 
   return (
-    <View
-      style={[
-        styles.itemContainer,
-      ]}
-    >
+    <View style={styles.itemContainer}>
       <ReviewDetailCard
-         infoTitle={displayTitle}
-        inforTitlePrice={item.categoryName ?? ''}
-        rating={displayRating}
-        productImage={productImage}
-        reviewText={displayReview}
+        infoTitle={displayTitle}
+        inforTitlePrice={`£${item.price ?? ''}`}
+        rating={item.rating?.toString() ?? '0'}
+        reviewText={item.comment ?? ''}
         shareid={item.id}
         date={displayDate}
-        reviewer={item.name}
+        reviewer_name={item.name}
+        category_id={item.category_id}
+        reviewer_image={item.userprofile}
+        feature_image={item.productimage}
       />
     </View>
   );
 };
 
-
   return (
     <ImageBackground source={bgImage} style={styles.background}>
-      <View style={styles.fullScreenContainer}>
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.headerRow}>
-            <TouchableOpacity onPress={() =>
-              // navigation.replace('SearchDetails', {
-              //   id,
-              //   category_id,
-              // })
-              {
-                navigation.goBack()
+      <View style={styles.fullScreenContainer}>  
+         <StatusBar
+                 translucent
+                 backgroundColor="transparent"
+                 barStyle="light-content"
+               />
+        
+               <Animated.View
+                 style={[styles.headerWrapper, animatedBlurStyle]}
+                 pointerEvents="none"
+               >
+                 <MaskedView
+                   style={StyleSheet.absoluteFill}
+                   maskElement={
+                     <LinearGradient
+                       colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                       locations={[0, 0.8]}
+                       start={{ x: 0, y: 0 }}
+                       end={{ x: 0, y: 1 }}
+                       style={StyleSheet.absoluteFill}
+                     />
+                   }
+                 >
+                   <BlurView
+                     style={StyleSheet.absoluteFill}
+                     blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+                     blurAmount={Platform.OS === 'ios' ? 45 : 45}
+                     overlayColor="rgba(255,255,255,0.05)"
+                     reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+                   />
+                   <LinearGradient
+                     colors={[
+                       'rgba(255, 255, 255, 0.45)',
+                       'rgba(255, 255, 255, 0.02)',
+                       'rgba(255, 255, 255, 0.02)',
+                     ]}
+                     style={StyleSheet.absoluteFill}
+                     start={{ x: 0, y: 0 }}
+                     end={{ x: 0, y: 1 }}
+                   />
+                 </MaskedView>
+               </Animated.View>
+        
+               <View style={styles.headerContent} pointerEvents="box-none">
+                 <TouchableOpacity
+                   onPress={() =>{navigation.goBack()}}
+                   style={styles.backButtonContainer}
+                   activeOpacity={0.7}
+                 >
+                   <Animated.View
+                     style={[styles.blurButtonWrapper, animatedButtonStyle]}
+                   >
+                     <Animated.View
+                       style={[
+                         StyleSheet.absoluteFill,
+                         useAnimatedStyle(() => ({
+                           opacity: interpolate(
+                             scrollY.value,
+                             [0, 30],
+                             [1, 0],
+                             'clamp',
+                           ),
+                           backgroundColor: 'rgba(255,255,255,0.1)',
+                           borderRadius: 40,
+                         })),
+                       ]}
+                     />
+        
+                     {/* Blur view fades in as scroll increases */}
+                     <Animated.View
+                       style={[
+                         StyleSheet.absoluteFill,
+                         useAnimatedStyle(() => ({
+                           opacity: interpolate(
+                             scrollY.value,
+                             [0, 50],
+                             [0, 1],
+                             'clamp',
+                           ),
+                         })),
+                       ]}
+                     >
+                       <BlurView
+                         style={StyleSheet.absoluteFill}
+                         blurType="light"
+                         blurAmount={10}
+                         reducedTransparencyFallbackColor="transparent"
+                       />
+                     </Animated.View>
+        
+                     {/* Back Icon */}
+                     <Animated.Image
+                       source={require('../../../assets/images/back.png')}
+                       style={[{ height: 24, width: 24 }, animatedIconStyle]}
+                     />
+                   </Animated.View>
+                 </TouchableOpacity>
+        
+                  <Text allowFontScaling={false} style={styles.unizyText}>
+                    {selectedCategory?.name === 'All'
+                      ? 'Reviews'
+                      : `${selectedCategory?.name} Reviews`}
+                  </Text>
+               </View>
 
-              }
-            }>
-              <View style={styles.backIconRow}>
-                <Image
-                  source={require('../../../assets/images/back.png')}
-                  style={{ height: 24, width: 24 }}
-                />
-              </View>
-            </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>
-            {selectedCategory?.name === 'All'
-              ? 'Reviews'
-              : `${selectedCategory?.name} Reviews`}
-          </Text>
-            <View style={{ width: 48 }} />
-          </View>
-        </View>
 
-    <View>
+
       <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -328,7 +458,6 @@ const renderItem = ({ item}: any) => {
         </ScrollView>
             
 
-        </View>
 
         <ScrollView
         showsVerticalScrollIndicator={false}
@@ -345,19 +474,19 @@ const renderItem = ({ item}: any) => {
      <StarRating rating={averageRating} starSize={24} />
 
      <Text allowFontScaling={false} style={styles.reviewcount}>{totalReviews} Reviews</Text>
-</View>
+      </View>
 
-  <View style={styles.innercontainer}>
-  <Text allowFontScaling={false} style={styles.mainlabel}>Reviews</Text>
+        <View style={styles.innercontainer}>
+        <Text allowFontScaling={false} style={styles.mainlabel}>Reviews</Text>
 
-  <View style={{ flexDirection: 'row', alignItems: 'center',}}>
-    <Image
-      source={require('../../../assets/images/staricon.png')}
-      style={{ width: 16, height: 16, marginRight: 4 ,tintColor:  'rgba(140, 225, 255, 0.9)',}}
-    />
-    <Text allowFontScaling={false} style={styles.subrating}>{averageRating} ({totalReviews})</Text>
-  </View>
-</View>
+        <View style={{ flexDirection: 'row', alignItems: 'center',}}>
+          <Image
+            source={require('../../../assets/images/staricon.png')}
+            style={{ width: 16, height: 16, marginRight: 4 ,tintColor:  'rgba(140, 225, 255, 0.9)',}}
+          />
+          <Text allowFontScaling={false} style={styles.subrating}>{averageRating} ({totalReviews})</Text>
+        </View>
+      </View>
         
 
     <View style={{ flex: 1 }}>
@@ -371,7 +500,8 @@ const renderItem = ({ item}: any) => {
 
     </ScrollView>
 
-    {/* <Button onPress={() =>{navigation.navigate('AddReview',{category_id:category_id,feature_id:id})}} title={"Write a Review"} />  */}
+    
+    
       {showButton && (
             <Button
               title="Write a Review"
@@ -394,6 +524,89 @@ const renderItem = ({ item}: any) => {
 export default ReviewDetails;
 
 const styles = StyleSheet.create({
+
+  unizyText: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    textAlign: 'center',
+    fontWeight: '600',
+    fontFamily: 'Urbanist-SemiBold',
+    width: '100%',
+    marginTop: 17,
+  },
+
+    header: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    zIndex: 20,
+    paddingTop: Platform.OS === 'ios' ? 50 : 40,
+    paddingBottom: Platform.OS === 'ios' ? 16 : 12,
+    paddingHorizontal: 16,
+    justifyContent: 'center',
+    overflow: 'hidden', // IMPORTANT for MaskedView
+    flexDirection: 'row',
+    alignItems: 'center',
+    elevation: 0,
+    backgroundColor: 'transparent',
+    borderBottomWidth: 0,
+    shadowOpacity: 0,
+    shadowColor: 'transparent',
+    alignSelf: 'center',
+    minHeight: Platform.OS === 'ios' ? 80 : 88,
+  },
+  backButtonContainer: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 11,
+    top: 7,
+  },
+
+   headerWrapper: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    height: Platform.OS === 'ios' ? 180 : 180,
+    zIndex: 10,
+    overflow: 'hidden',
+    alignSelf: 'center',
+    pointerEvents: 'none',
+  },
+  headerContent: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 50 : 40,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
+  },
+
+   categoryTabsContainer: {
+    width: '100%',
+    marginBottom: 12,
+    marginTop: 12,
+  },
+ 
+  categoryTabsScrollContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingRight: 16,
+  },
+  blurButtonWrapper: {
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+  },
    itemContainer: {
     flex: 1,
     marginHorizontal: 4,
@@ -621,11 +834,11 @@ const styles = StyleSheet.create({
      flex: 1,
      marginTop:10
      },
-  header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 30,
-    paddingBottom: 12,
-    paddingHorizontal: 16,
-  },
+  // header: {
+  //   paddingTop: Platform.OS === 'ios' ? 50 : 30,
+  //   paddingBottom: 12,
+  //   paddingHorizontal: 16,
+  // },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -645,14 +858,14 @@ const styles = StyleSheet.create({
     height: 48,
     width: 48,
   },
-  unizyText: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    flex: 1,
-    textAlign: 'center',
-    fontWeight: '600',
-     fontFamily: 'Urbanist-SemiBold',
-  },
+  // unizyText: {
+  //   color: '#FFFFFF',
+  //   fontSize: 20,
+  //   flex: 1,
+  //   textAlign: 'center',
+  //   fontWeight: '600',
+  //    fontFamily: 'Urbanist-SemiBold',
+  // },
   
 
 });

@@ -12,6 +12,8 @@ import {
   TouchableWithoutFeedback,
   TextInput,
   Keyboard,
+  StatusBar,
+  Dimensions,
 } from 'react-native';
 // import { showToast } from '../../utils/toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -24,6 +26,17 @@ import {
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import { Constant } from '../../utils/Constant';
+
+import AnimatedReanimated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  interpolate,
+  interpolateColor,
+  useDerivedValue,
+} from 'react-native-reanimated';
+import LinearGradient from 'react-native-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
 
 type ListingDetailsProps = {
   navigation: any;
@@ -48,9 +61,60 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showConfirm, setShowConfirm] = useState(false);
-
+  const { height } = Dimensions.get('window');
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [otp, setOtp] = useState(['', '', '', '']);
+
+   const screenHeight = Dimensions.get('window').height;
+    const [slideUp1] = useState(new Animated.Value(0));
+  
+    const scrollY = useSharedValue(0);
+  
+    const scrollHandler = useAnimatedScrollHandler({
+      onScroll: event => {
+        'worklet';
+        scrollY.value = event.contentOffset.y;
+      },
+    });
+  
+    const animatedBlurStyle = useAnimatedStyle(() => {
+      'worklet';
+      const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+      return { opacity };
+    });
+  
+    const animatedButtonStyle = useAnimatedStyle(() => {
+      'worklet';
+      const borderColor = interpolateColor(
+        scrollY.value,
+        [0, 300],
+        ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+      );
+      const redOpacity = interpolate(scrollY.value, [0, 100], [0, 0.15], 'clamp');
+      return {
+        borderColor,
+        backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+      };
+    });
+  
+    const animatedIconStyle = useAnimatedStyle(() => {
+      'worklet';
+      const opacity = interpolate(scrollY.value, [0, 100], [0.8, 1], 'clamp');
+      const tintColor = interpolateColor(
+        scrollY.value,
+        [0, 150],
+        ['#FFFFFF', '#002050'],
+      );
+      return {
+        opacity,
+        tintColor,
+      };
+    });
+  
+    const blurAmount = useDerivedValue(() =>
+      interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+    );
+  
 
   const fetchDetails = useCallback(async () => {
     try {
@@ -207,38 +271,108 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.headerRow}>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.goBack();
-              }}
+      <StatusBar translucent
+      backgroundColor="transparent"
+      barStyle="light-content"/>
+          <AnimatedReanimated.View
+            style={[styles.headerWrapper, animatedBlurStyle]}
+            pointerEvents="none"
             >
-              <View style={styles.backIconRow}>
-                <Image
-                  source={require('../../../assets/images/back.png')}
-                  style={{ height: 24, width: 24 }}
-                />
-              </View>
-            </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>
-              Listing Details
-            </Text>
-            <View style={{ width: 48 }} />
-          </View>
-        </View>
+      <MaskedView
+        style={StyleSheet.absoluteFill}
+        maskElement={
+        <LinearGradient
+        colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+        locations={[0, 0.8]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={StyleSheet.absoluteFill}
+        />
+        }
+        >
+         <BlurView
+          style={StyleSheet.absoluteFill}
+          blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+          blurAmount={Platform.OS === 'ios' ? 45 : 45}
+          overlayColor="rgba(255,255,255,0.05)"
+          reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+          />
+            <LinearGradient
+              colors={[
+              'rgba(255, 255, 255, 0.45)',
+               'rgba(255, 255, 255, 0.02)',
+              'rgba(255, 255, 255, 0.02)',
+              ]}
+            style={StyleSheet.absoluteFill}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            />
+          </MaskedView>
+       </AnimatedReanimated.View>
+           <View style={styles.headerContent} pointerEvents="box-none">
+                  <TouchableOpacity
+                    onPress={() => {navigation.goBack();}}
+                    style={styles.backButtonContainer}
+                    activeOpacity={0.7} >
+                    <AnimatedReanimated.View
+                      style={[styles.blurButtonWrapper, animatedButtonStyle]}>
+                      <AnimatedReanimated.View
+                        style={[
+                          StyleSheet.absoluteFill,
+                          useAnimatedStyle(() => ({
+                            opacity: interpolate(
+                              scrollY.value,
+                              [0, 30],
+                              [1, 0],
+                              'clamp',
+                            ),
+                            backgroundColor: 'rgba(255,255,255,0.1)',
+                            borderRadius: 40,
+                          })),
+                        ]}
+                      />
+        
+                      <AnimatedReanimated.View
+                        style={[
+                          StyleSheet.absoluteFill,
+                          useAnimatedStyle(() => ({
+                            opacity: interpolate(
+                              scrollY.value,
+                              [0, 50],
+                              [0, 1],
+                              'clamp',
+                            ),
+                          })),
+                        ]}
+                      >
+                        <BlurView
+                          style={StyleSheet.absoluteFill}
+                          blurType="light"
+                          blurAmount={10}
+                          reducedTransparencyFallbackColor="transparent"
+                        />
+                      </AnimatedReanimated.View>
+        
+                      {/* Back Icon */}
+                      <AnimatedReanimated.Image
+                        source={require('../../../assets/images/back.png')}
+                        style={[{ height: 24, width: 24 }, animatedIconStyle]}
+                      />
+                    </AnimatedReanimated.View>
+                  </TouchableOpacity>
+        
+                  <Text allowFontScaling={false} style={styles.unizyText}>
+                    Listing Details
+                  </Text>
+                </View>
 
-        <View>
-          <ScrollView
-            contentContainerStyle={styles.scrollContainer}
-            onScroll={Animated.event([
-              {
-                nativeEvent: { contentOffset: { y: scrollY1 } },
-              },
-            ])}
-            scrollEventThrottle={16}
-          >
+          <AnimatedReanimated.ScrollView 
+                    scrollEventThrottle={16}
+                    onScroll={scrollHandler}
+                    contentContainerStyle={[
+                      styles.scrollContainer,
+                      { paddingBottom: height * 0.01 }, // 0.05% of screen height
+                    ]}>
             <View
               style={{
                 gap: 16,
@@ -333,7 +467,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     Listing Type:
                   </Text>
                   <Text allowFontScaling={false} style={styles.status}>
-                    {data?.list?.isfeatured ? 'Featured' : 'Not Featured'}
+                    {data?.list?.isfeatured ? 'Featured' : 'Regular'}
                   </Text>
                 </View>
                 <View style={styles.listingtyperow}>
@@ -506,10 +640,9 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                   </View>
                 ))}
             </View>
-          </ScrollView>
-        </View>
+         </AnimatedReanimated.ScrollView>
 
-        <View style={styles.bottomview}>
+        {/* <View style={styles.bottomview}>
           <TouchableOpacity
             style={styles.cancelBtn}
             onPress={() => {
@@ -551,7 +684,56 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
               Edit Listing
             </Text>
           </TouchableOpacity>
+        </View> */}
+       
+        {(
+        !data?.list?.ispurchased ||
+        data?.list?.category_id === 2 ||
+        data?.list?.category_id === 5
+      ) && (
+        <View style={styles.bottomview}>
+          <TouchableOpacity
+            style={styles.cancelBtn}
+            onPress={() => {
+              if (data?.list?.isactive) {
+                setShowConfirm(true);
+              } else {
+                handleDeactivate();
+              }
+            }}
+          >
+            <Text allowFontScaling={false} style={styles.cancelText}>
+              {data?.list?.isactive ? 'Deactivate' : 'Activate'}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.cancelBtn, { backgroundColor: '#ffffffa7' }]}
+            onPress={() => {
+              if (!data?.list?.isactive) {
+                showToast('Purchased item can’t be edited.', 'error');
+                return;
+              }
+              navigation.replace(
+                'EditListScreen',
+                {
+                  productId: catagory_id,
+                  productName: catagory_name,
+                  shareid: shareid,
+                },
+                { animation: 'none' },
+              );
+            }}
+          >
+            <Text
+              allowFontScaling={false}
+              style={[styles.cancelText, { color: '#000000' }]}
+            >
+              Edit Listing
+            </Text>
+          </TouchableOpacity>
         </View>
+      )}
 
         <Modal
           visible={showPopup1}
@@ -778,6 +960,47 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 
 const styles = StyleSheet.create({
 
+    headerWrapper: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? '100%' : '100%',
+    height: Platform.OS === 'ios' ? 180 : 180,
+    zIndex: 10,
+    overflow: 'hidden',
+    alignSelf: 'center',
+    pointerEvents: 'none',
+  },
+  headerContent: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 50 : 60,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
+  },
+  backButtonContainer: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 11,
+    //top: 7,
+  },
+  blurButtonWrapper: {
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+  },
+
+
   initialsCircle: {
     backgroundColor: '#8390D4',
     alignItems: 'center',
@@ -965,6 +1188,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
+    //marginTop:17
   },
 
   card: {
@@ -1094,12 +1318,17 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     fontFamily: 'Urbanist-SemiBold',
   },
-  scrollContainer: {
-    paddingBottom: 180,
-    // paddingTop: 90,
-    // paddingHorizontal: 20,
+  // scrollContainer: {
+  //   paddingBottom: 180,
+  //   // paddingTop: 90,
+  //   // paddingHorizontal: 20,
+  //   paddingHorizontal: 16,
+  //   width: '100%',
+  // },
+   scrollContainer: {
     paddingHorizontal: 16,
-    width: '100%',
+    //paddingBottom: 80,
+    paddingTop: Platform.OS === 'ios' ? 160 : 100,
   },
   bottomview: {
     position: 'absolute',

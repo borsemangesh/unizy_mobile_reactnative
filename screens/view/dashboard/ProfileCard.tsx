@@ -222,204 +222,206 @@
 // };
 
 // return (
-   
-//       <View style={styles.fullScreenContainer}>
-//         <View style={styles.header}>
+//   <View style={styles.fullScreenContainer}>
+//     <View style={[styles.header]}>
 //       <View style={styles.headerRow}>
-//         <TouchableOpacity
-//           style={styles.backBtn}
-//           onPress={clickBack}
-//         >
-//           <View
-//               style={[
-//                 styles.backIconRow,
-//                 isHidden && { opacity: 0 },
-//               ]}
-//             >
-//             <Image
-//               source={require('../../../assets/images/back.png')}
-//               style={{ height: 24, width: 24 }}
-//             />
-//           </View>
-//         </TouchableOpacity>
-//         <Text allowFontScaling={false} style={styles.unizyText}>Profile</Text>
-//         <View style={{ width: 48 }} />
+//         <Text allowFontScaling={false} style={styles.unizyText}>
+//           Profile
+//         </Text>
 //       </View>
 //     </View>
 
-
-//     <View style={{ paddingTop: 12,marginHorizontal:6 }}> 
-        
-//   <View style={styles.userRow}>
-//     <View style={{ width: 88 ,alignSelf:'center',height:88}}>
-//     {userMeta?.profile ? (
-//       <Image
-//         source={{ uri: userMeta.profile }}
-//         style={styles.avatar}
-//       />
-//     ) : (
-//       <View style={styles.initialsCircle}>
-//         <Text allowFontScaling={false} style={styles.initialsText}>
-//           {getInitials(
-//             userMeta?.firstname ?? 'A',
-//             userMeta?.lastname ?? 'W'
+//     <View
+//       style={{
+//         paddingTop: Platform.OS === 'ios' ? '31.9%' : 120,
+//         marginHorizontal: 16,
+//         gap: 24,
+//       }}
+//     >
+//       <View style={styles.userRow}>
+//       <View style={{gap: 10}}>
+//           {userMeta?.profile ? (
+//             <Image source={{ uri: userMeta.profile }} style={styles.avatar} />
+//           ) : (
+//             <View style={styles.initialsCircle}>
+//               <Text allowFontScaling={false} style={styles.initialsText}>
+//                 {getInitials(
+//                   userMeta?.firstname ?? 'A',
+//                   userMeta?.lastname ?? 'W',
+//                 )}
+//               </Text>
+//             </View>
 //           )}
-//         </Text>
-//       </View>
-//     )}
-//   </View>
+//         </View>
 
-//   <View style={{ width: '60%', position: 'relative',paddingLeft:12 }}>
-//     {/* Name + Edit on top row */}
-//     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-//       <Text allowFontScaling={false} style={styles.userName}>
-//         {userMeta
-//           ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''}`.trim()
-//           : 'Loading...'}
-//       </Text>
-     
-//     </View>
+//         <View style={{}}>
+//           {/* Name + Edit on top row */}
+//           <View
+//             style={{
+//               flexDirection: 'row',
+//               justifyContent: 'space-between',
+//               alignItems: 'center',
+//             }}
+//           >
+//             <Text allowFontScaling={false} style={styles.userName}>
+//               {userMeta
+//                 ? `${userMeta.firstname ?? ''} ${
+//                     userMeta.lastname ?? ''
+//                   }`.trim()
+//                 : 'Loading...'}
+//             </Text>
+//           </View>
 
-//     {/* Details below name */}
-//     <View style={{ flexDirection: 'column', gap: 6, marginTop: 4 }}>
-//       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-//         <Image
-//           source={require('../../../assets/images/buildings.png')}
-//           style={{ width: 16, height: 16 }}
-//         />
-//         <Text allowFontScaling={false} style={styles.userSub}>
-//           {userMeta?.university_name || 'University Name'}
-//         </Text>
-//       </View>
+//           {/* Details below name */}
+//           <View style={{ flexDirection: 'column', gap: 6, marginTop: 4 }}>
+//             <View
+//               style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
+//             >
+//               <Image
+//                 source={require('../../../assets/images/buildings.png')}
+//                 style={{ width: 16, height: 16 }}
+//               />
+//               {/* <Text allowFontScaling={false} style={styles.userSub}>
+//                 {userMeta?.university_name || 'University Name'}
+//               </Text> */}
+//               <Text allowFontScaling={false} style={styles.userSub}>
+//                 {userMeta?.university_name
+//                   ? userMeta.university_name.length > 25
+//                     ? userMeta.university_name.slice(0, 25) + '…'
+//                     : userMeta.university_name
+//                   : 'University Name'}
+//               </Text>
+//             </View>
 
-//       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-//         <Image
-//           source={require('../../../assets/images/sms.png')}
-//           style={{ width: 16, height: 16 }}
-//         />
-//         <Text allowFontScaling={false} style={styles.userSub}>
-//           {userMeta?.email || 'studentname@gmail.com'}
-//         </Text>
-//       </View>
+//             <View
+//               style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
+//             >
+//               <Image
+//                 source={require('../../../assets/images/sms.png')}
+//                 style={{ width: 16, height: 16 }}
+//               />
+//               <Text allowFontScaling={false} style={styles.userSub}>
+//                 {userMeta?.email || 'studentname@gmail.com'}
+//               </Text>
+//             </View>
 
-//       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-//         <Image
-//           source={require('../../../assets/images/sms.png')}
-//           style={{ width: 16, height: 16 }}
-//         />
-//         <Text allowFontScaling={false} style={styles.userSub}>
-//           {userMeta?.student_email || 'studentname@university.ac.uk'}
-//         </Text>
-//       </View>
-//     </View>
-//   </View>
+//             <View
+//               style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
+//             >
+//               <Image
+//                 source={require('../../../assets/images/sms.png')}
+//                 style={{ width: 16, height: 16 }}
+//               />
+//               <Text allowFontScaling={false} style={styles.userSub}>
+//                 {userMeta?.student_email || 'studentname@university.ac.uk'}
+//               </Text>
+//             </View>
+//           </View>
+//         </View>
 
-        
-//     <View style={styles.editcard}>
-//       <TouchableOpacity onPress={() =>{navigation.navigate('EditProfile')}}>
-//           <Text allowFontScaling={false} style={styles.edittext}>Edit</Text>
+//         <View style={styles.editcard}>
+//           <TouchableOpacity
+//             onPress={() => {
+//               navigation.navigate('EditProfile');
+//             }}
+//           >
+//             <Text allowFontScaling={false} style={styles.edittext}>
+//               Edit
+//             </Text>
 //           </TouchableOpacity>
 //         </View>
-        
+//       </View>
 
+//       <View style={styles.listContainer}>
+//         <FlatList
+//           data={cardData}
+//           keyExtractor={item => item.id}
+//           renderItem={renderItem}
+//           ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+//         />
+//       </View>
 //     </View>
-    
 
-//     <View style={styles.listContainer}>
-//       <FlatList
-//         data={cardData}
-//         keyExtractor={(item) => item.id}
-//         renderItem={renderItem}
-//         ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-//       />
-        
-//     </View>  
+//     <Modal
+//       visible={showConfirm}
+//       transparent
+//       animationType="fade"
+//       onRequestClose={() => setShowConfirm(false)}
+//     >
+//       <TouchableWithoutFeedback onPress={() => setShowConfirm(false)}>
+//         <View style={styles.overlay}>
+//           <BlurView
+//             style={{
+//               flex: 1,
+//               alignContent: 'center',
+//               justifyContent: 'center',
+//               width: '100%',
+//               alignItems: 'center',
+//             }}
+//             blurType="light"
+//             blurAmount={10}
+//             reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+//           >
+//             <View
+//               style={[
+//                 StyleSheet.absoluteFill,
+//                 { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+//               ]}
+//             />
 
+//             <View style={styles.popupContainer}>
+//               <Image
+//                 source={require('../../../assets/images/alert_logout.png')}
+//                 style={styles.logo}
+//                 resizeMode="contain"
+//               />
+//               <Text allowFontScaling={false} style={styles.mainheader}>
+//                 Confirm Logout
+//               </Text>
+//               <Text allowFontScaling={false} style={styles.subheader}>
+//                 Are you sure you want to log out from your account?
+//               </Text>
 
-      
-//       </View>
-
-//        <Modal
-//           visible={showConfirm}
-//           transparent
-//           animationType="fade"
-//           onRequestClose={() => setShowConfirm(false)}
-//         >
-//           <TouchableWithoutFeedback onPress={() => setShowConfirm(false)}>
-//             <View style={styles.overlay}>
-//               <BlurView
-//                 style={{
-//                   flex: 1,
-//                   alignContent: 'center',
-//                   justifyContent: 'center',
-//                   width: '100%',
-//                   alignItems: 'center',
+//               <TouchableOpacity
+//                 style={styles.loginButton}
+//                 onPress={async () => {
+//                   setShowConfirm(false);
+//                   await AsyncStorage.setItem('ISLOGIN', 'false');
+//                   navigation.reset({
+//                     index: 0,
+//                     routes: [
+//                       {
+//                         name: 'SinglePage',
+//                         params: {
+//                           resetToLogin: true,
+//                           logoutMessage: 'User Logout Successfully',
+//                         },
+//                       },
+//                     ],
+//                   });
 //                 }}
-//                 blurType="light"
-//                 blurAmount={10}
-//                 reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
 //               >
-//                 <View
-//                   style={[
-//                     StyleSheet.absoluteFill,
-//                     { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-//                   ]}
-//                 />
+//                 <Text allowFontScaling={false} style={styles.loginText}>
+//                   Log out
+//                 </Text>
+//               </TouchableOpacity>
 
-//                 <View style={styles.popupContainer}>
-//                   <Image
-//                     source={require('../../../assets/images/alert_logout.png')}
-//                     style={styles.logo}
-//                     resizeMode="contain"
-//                     />
-//                   <Text allowFontScaling={false} style={styles.mainheader}>
-//                      Confirm Logout
-//                   </Text>
-//                   <Text allowFontScaling={false} style={styles.subheader}>
-//                     Are you sure you want to log out from your account?
-//                   </Text>
-
-//                    <TouchableOpacity
-//                       style={styles.loginButton}
-//                             onPress={async () => {
-//                               setShowConfirm(false);
-//                               await AsyncStorage.setItem('ISLOGIN', 'false');
-//                               navigation.reset({
-//                                 index: 0,
-//                                 routes: [
-//                                   {
-//                                     name: 'SinglePage',
-//                                     params: {
-//                                       resetToLogin: true,
-//                                       logoutMessage: 'User Logout Successfully',
-//                                     },
-//                                   },
-//                                 ],
-//                               });
-//                             }}
-//                 >
-//                     <Text allowFontScaling={false} style={styles.loginText}>
-//                       Log out
-//                     </Text>
-//                   </TouchableOpacity>
-
-//                   <TouchableOpacity
-//                     style={styles.loginButton1}
-//                     onPress={() => setShowConfirm(false)}
-//                   >
-//                     <Text allowFontScaling={false} style={styles.loginText1}>
-//                       Cancel
-//                     </Text>
-//                   </TouchableOpacity>
-//                 </View>
-//               </BlurView>
+//               <TouchableOpacity
+//                 style={styles.loginButton1}
+//                 onPress={() => setShowConfirm(false)}
+//               >
+//                 <Text allowFontScaling={false} style={styles.loginText1}>
+//                   Cancel
+//                 </Text>
+//               </TouchableOpacity>
 //             </View>
-//           </TouchableWithoutFeedback>
-//         </Modal>
-//       <NewCustomToastContainer/>
-//       </View>
-   
-//   );
+//           </BlurView>
+//         </View>
+//       </TouchableWithoutFeedback>
+//     </Modal>
+//     <NewCustomToastContainer />
+//   </View>
+// );
 // };
 
 // export default ProfileCard;
@@ -524,7 +526,6 @@
 //   editcard:{
 //     paddingVertical: 8,
 //     paddingHorizontal: 16,
-//     marginRight:12,
 //     borderColor: '#ffffff11',
 //     borderRadius:10,
 //     boxSizing: 'border-box',
@@ -534,6 +535,9 @@
 //       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
 //     boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px', 
   
+//     position: 'absolute',
+//     right:15,
+//     top: 15
 //   },
 
 //   edittext:{
@@ -553,7 +557,6 @@
 //     width: 88,
 //     height: 88,
 //     borderRadius: 20,
-//     marginRight: 12,
 //   },
 //   initialsText:{
 //    color: '#fff',
@@ -563,7 +566,7 @@
 //   fontFamily: 'Urbanist-SemiBold',
 //   },
 //   listContainer: {
-//     padding: 16,
+//     // padding: 16,
     
 //   },
 //   versionRow: {
@@ -624,79 +627,50 @@
 //     width: '100%',
 //     height: '100%',
 //   },
-
-//    fullScreenContainer: { 
-//     flex: 1
-//    },
+//   fullScreenContainer: {
+//     // flex: 1,
+//   },
 //   header: {
-//     paddingTop: Platform.OS === 'ios' ? 50 : 50,
-//     paddingBottom: 12,
-//     paddingHorizontal: 16,
+  
+//     paddingTop: (Platform.OS === 'ios' ? '15.2%': 50),
+
+//     justifyContent: 'center',
+//     position: 'absolute',
+//     alignItems: 'center',
+//     alignSelf: 'center',
+//    top:  Platform.OS === 'ios' ? 10 : 10, 
+//     left: 0,
+//     right: 0,
+//     zIndex: 10,
+//     overflow: 'hidden',
 //   },
 //   headerRow: {
 //     flexDirection: 'row',
 //     alignItems: 'center',
-//   },
-//   backIconRow: {
-//     padding: 12,
-//     borderRadius: 40,
-
-//     display: 'flex',
 //     justifyContent: 'center',
-//     alignItems: 'center',
-//     backgroundColor:
-//       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-//     //boxShadow: 'rgba(255, 255, 255, 0.12)  inset -1px 0px 5px 1px inset ',
 
-//    boxShadow:
-//       '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
-//     borderWidth: 0.4,
-//     borderColor: '#ffffff2c',
-//     height: 48,
-//     width: 48,
 //   },
- 
-//   // fullScreenContainer: {
-//   //   flex: 1,
-//   // },
-//   // header: {
-//   //   height: 100,
-//   //   paddingTop: 40,
-//   //   paddingBottom: 12,
-//   //   paddingHorizontal: 16,
-//   //   justifyContent: 'center',
-//   //   position: 'absolute',
-//   //   top: 0,
-//   //   left: 0,
-//   //   right: 0,
-//   //   zIndex: 10,
-//   //   overflow: 'hidden',
-//   // },
-//   // headerRow: {
-//   //   flexDirection: 'row',
-//   //   alignItems: 'center',
-//   // },
 //   backBtn: {
 //     width: 30,
 //     justifyContent: 'center',
 //     alignItems: 'center',
 //   },
-//   // backIconRow: {
-//   //   padding: 12,
-//   //   borderRadius: 40,
-//   //   backgroundColor:
-//   //     'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-//   //   boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-//   //   borderWidth: 0.4,
-//   //   borderColor: '#ffffff2c',
-//   //   height: 48,
-//   //   width: 48,
-//   //   position: 'absolute',
-//   //   left: 0,
-//   //   right: 0,
-//   //   justifyContent: 'center',
-//   //   alignItems: 'center',
-//   // },
+//   backIconRow: {
+//     padding: 12,
+//     borderRadius: 40,
+//     backgroundColor:
+//       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+//     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
+//     borderWidth: 0.4,
+//     borderColor: '#ffffff2c',
+//     height: 48,
+//     width: 48,
+//     position: 'absolute',
+//     left: 0,
+//     right: 0,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//   },
  
 //   unizyText: {
 //     color: '#FFFFFF',
@@ -712,21 +686,13 @@
 //     paddingTop: 100,
 //   },
 //   userRow: {
-//     // flexDirection: 'row',
-//     // alignItems: 'flex-start',
-//      marginBottom: 6,
-//     // padding: 12,
-//     // borderRadius: 24,
-//     // backgroundColor: 'rgba(255, 255, 255, 0.06)',
-//      marginHorizontal:16,
-//       flexDirection: 'row',
-//       alignItems: 'center', // 👈 ensures vertical alignment stays correct
-//       justifyContent: 'space-between',
-//       padding: 12,
-//       //marginTop: 10,
-//       borderRadius: 24,
-//       backgroundColor: 'rgba(255, 255, 255, 0.06)',
-
+//     flexDirection: 'row',
+//     alignItems: 'center', 
+//     // justifyContent: 'space-between',
+//     borderRadius: 24,
+//     backgroundColor: 'rgba(255, 255, 255, 0.06)',
+//     // gap: 10,
+//     padding: 12,
 //   },
 //   productdetails: {
 //     marginTop: 10,
@@ -759,8 +725,6 @@
 //   },
  
 // });
-
-
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect, useRef } from 'react';
@@ -851,12 +815,7 @@ useEffect(() => {
       try {
         const token = await AsyncStorage.getItem('userToken');
         const userId = await AsyncStorage.getItem('userId');
-
-
-        console.log("profile card page.... ",userId);
-        
-
-
+        console.log("profile card page.... ",userId)
         if (!token || !userId) {
           console.warn('Missing token or user ID in AsyncStorage');
           return;
@@ -987,19 +946,20 @@ const clickBack = () =>{
 
 return (
   <View style={styles.fullScreenContainer}>
-    <View style={[styles.header]}>
+    {/* <View style={[styles.header]}>
       <View style={styles.headerRow}>
         <Text allowFontScaling={false} style={styles.unizyText}>
           Profile
         </Text>
       </View>
-    </View>
+    </View> */}
 
     <View
       style={{
-        paddingTop: Platform.OS === 'ios' ? '31.9%' : 120,
+        paddingTop: Platform.OS === 'ios' ? '0%' : 0,
         marginHorizontal: 16,
         gap: 24,
+        marginTop: -16,
       }}
     >
       <View style={styles.userRow}>
@@ -1104,6 +1064,7 @@ return (
           ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
         />
       </View>
+       
     </View>
 
     <Modal
@@ -1396,7 +1357,7 @@ versionLabel: {
   },
   header: {
   
-    paddingTop: (Platform.OS === 'ios' ? '15.2%': 50),
+    paddingTop: (Platform.OS === 'ios' ? '15.2%': 40),
 
     justifyContent: 'center',
     position: 'absolute',
@@ -1457,6 +1418,7 @@ versionLabel: {
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     // gap: 10,
     padding: 12,
+    marginTop:12
   },
   productdetails: {
     marginTop: 10,

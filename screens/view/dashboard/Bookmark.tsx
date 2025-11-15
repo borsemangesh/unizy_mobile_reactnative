@@ -401,10 +401,8 @@ const handleBookmarkPress = async (productId: number) => {
           data={filteredFeatures}
           keyExtractor={(item) => item.id.toString()}
           numColumns={2}
-          //columnWrapperStyle={styles.row1}
           columnWrapperStyle={{
             justifyContent: 'space-between',
-            //marginBottom:1
           }}
           scrollEnabled={filteredFeatures?.length > 0} 
           contentContainerStyle={[
@@ -602,3 +600,5 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
 });
+
+
