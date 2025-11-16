@@ -38,7 +38,9 @@ const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
           return;
         }
 
-        const url = `${MAIN_URL.baseUrl}user/info`;
+
+      
+        const url = `${MAIN_URL.baseUrl}user/info?user_id=${106}`;
         console.log('url----------',url);
         
         const response = await fetch(url, {
@@ -50,6 +52,9 @@ const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
         });
 
         const data = await response.json();
+
+        console.log("data",data);
+        
 
         if (!response.ok) {
           console.warn('Token fetch failed:', data.message);
@@ -263,6 +268,7 @@ const styles = StyleSheet.create({
       color: '#DCE3FF',
       fontSize: 15,
       marginTop: 4,
+      textAlign: 'center',
     },
     buttonsContainer: {
       width: '100%',
@@ -295,8 +301,7 @@ const styles = StyleSheet.create({
       borderRadius: 12,
       padding: 12,
       height:50,
-      marginTop:6,
-  
+      marginTop:6,  
       
     },
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import {
   Image,
   ImageBackground,
@@ -63,7 +63,7 @@ type Feature = {
   added_by: number;
   featurelist_id: number;
   created_at: string;
- 
+  category?: string; // Category name from API for filtering
   featurelist: {
     id: number;
     created_by: number;
@@ -86,9 +86,22 @@ type university={
   name:string
 }
 
+type ApiListingItem = {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  category: string;
+  thumbnail: string | null;
+  created_at: string;
+};
+
 type UserListingProps = {
   navigation: any;
 };
+
+
+
 
 
 
@@ -97,14 +110,18 @@ const UserListing = ({ navigation }: UserListingProps)  => {
   const [search, setSearch] = useState<string>('');
     const [page, setPage] = useState(1);
     const pagesize = 10;
-    const [featurelist, setFeaturelist] = useState<Feature[]>([]);  
+    const [featurelist, setFeaturelist] = useState<Feature[]>([]);
+    const [allFeatures, setAllFeatures] = useState<Feature[]>([]); // Store all features for filtering
     const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
     const SCREEN_HEIGHT = Dimensions.get('window').height;
     const insets = useSafeAreaInsets();
-
-
+    
+    // Refs to prevent duplicate API calls
+    const isFetchingRef = useRef(false);
+    const categoryChangeRef = useRef(false);
+    const previousCategoryRef = useRef<string>('All');
 
     
   const { height: screenHeight } = Dimensions.get('window');
@@ -112,7 +129,7 @@ const [isLoadingMore, setIsLoadingMore] = useState(false);
    const scrollY = useSharedValue(0);
   
    const scrollHandler = useAnimatedScrollHandler({
-     onScroll: event => {
+     onScroll: (event) => {
        'worklet';
        scrollY.value = event.contentOffset.y;
      },
@@ -193,32 +210,96 @@ const [isLoadingMore, setIsLoadingMore] = useState(false);
     loadCategories();
   }, []);
 
+// Filter features based on selected category - NO API CALL, just filter existing data
+useEffect(() => {
+  if (allFeatures.length === 0) return;
+  
+  // Check if category actually changed
+  const categoryChanged = previousCategoryRef.current !== selectedCategory.name;
+  
+  if (categoryChanged) {
+    // Mark that category is changing to prevent onEndReached from firing
+    categoryChangeRef.current = true;
+    previousCategoryRef.current = selectedCategory.name;
+    
+    // Reset page to 1 when category changes
+    setPage(1);
+    
+    // Reset the flag after a delay
+    setTimeout(() => {
+      categoryChangeRef.current = false;
+    }, 1000);
+  }
+  
+  // Reset loading states when category changes
+  setIsLoadingMore(false);
+  setIsLoading(false);
+  
+  // Filter based on selected category - purely client-side, no API call
+  if (selectedCategory.name === 'All') {
+    // Show all features
+    setFeaturelist(allFeatures);
+  } else {
+    // Filter by category name
+    const filtered = allFeatures.filter(
+      (item) => item.category?.toLowerCase() === selectedCategory.name.toLowerCase()
+    );
+    setFeaturelist(filtered);
+  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [selectedCategory.name, allFeatures.length]); // Only depend on category name and data length
+
+// Fetch data on mount
 useEffect(() => {
   setPage(1);
-  displayListOfProduct(selectedCategory?.id ?? null, 1);
-}, [selectedCategory]);
+  displayListOfProduct(null, 1);
+}, []);
 
-
+// Fetch fresh data when screen comes into focus (only if no data exists)
 useFocusEffect(
   useCallback(() => {
-    setPage(1);
-    displayListOfProduct(selectedCategory?.id ?? null, 1);
-  }, [selectedCategory]) 
+    // Only fetch if we don't have data yet (initial load with loader)
+    // Don't refresh if data already exists to prevent unnecessary API calls
+    if (allFeatures.length === 0 && !isLoading && !isFetchingRef.current) {
+      setPage(1);
+      displayListOfProduct(null, 1, true); // Show loader on initial load
+    }
+  }, [allFeatures.length, isLoading]) 
 );
 
-const displayListOfProduct = async (categoryId: number | null, pageNum: number) => {
+const displayListOfProduct = async (categoryId: number | null, pageNum: number, showLoader: boolean = true) => {
+  // Prevent duplicate API calls
+  if (isFetchingRef.current) {
+    console.log('Already fetching, skipping duplicate call');
+    return;
+  }
+  
   try {
-   // setIsLoading(true);
-    const pagesize = 10;
+    isFetchingRef.current = true;
     
-    let url = `${MAIN_URL.baseUrl}category/mybookmark-list?page=${pageNum}&pagesize=${pagesize}`;
-    
-    if (categoryId) {
-      url += `&category_id=${categoryId}`;
+    // Only show main loader on first page load if showLoader is true, use isLoadingMore for pagination
+    if (pageNum === 1 && showLoader) {
+      setIsLoading(true);
+    } else if (pageNum > 1) {
+      setIsLoadingMore(true);
     }
+    const userId = await AsyncStorage.getItem('userId');
+    
+    let url = `${MAIN_URL.baseUrl}user/user-listing?user_id=${106}`;
 
+    // Add category filter if needed
+    // if (categoryId) {
+    //   url += `&category_id=${categoryId}`;
+    // }
+
+    console.log("url", url);
+    
     const token = await AsyncStorage.getItem('userToken');
-    if (!token) return;
+    if (!token) {
+      setIsLoading(false);
+      isFetchingRef.current = false;
+      return;
+    }
 
     const response = await fetch(url, {
       method: 'GET',
@@ -228,37 +309,122 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
       },
     });
 
-
-
     const jsonResponse = await response.json();
     console.log('API Response:', jsonResponse);
+    console.log('API Response data type:', typeof jsonResponse.data);
+    console.log('API Response data:', jsonResponse.data);
+    
     if (jsonResponse.statusCode === 200) {
-
-      // const features = jsonResponse.data.features;
-      // const bookmarkedFeatures = features.filter((f: { featurelist: { isbookmarked: any; }; }) => f.featurelist.isbookmarked);
-      setIsLoading(false);
-      if (pageNum === 1) {
-        
-        setFeaturelist(jsonResponse.data.features);
-        //setFeaturelist(bookmarkedFeatures)
+      // Handle different response structures
+      let dataArray: ApiListingItem[] = [];
+      
+      if (!jsonResponse.data) {
+        // If data is undefined or null
+        console.warn('API response data is undefined or null');
+        dataArray = [];
+      } else if (Array.isArray(jsonResponse.data)) {
+        // If data is directly an array
+        dataArray = jsonResponse.data;
+      } else if (jsonResponse.data && typeof jsonResponse.data === 'object' && Array.isArray(jsonResponse.data.listingsWithThumbnails)) {
+        // If data is an object with listingsWithThumbnails array (actual API structure)
+        dataArray = jsonResponse.data.listingsWithThumbnails;
+      } else if (jsonResponse.data && typeof jsonResponse.data === 'object' && Array.isArray(jsonResponse.data.data)) {
+        // If data is an object with a nested data array
+        dataArray = jsonResponse.data.data;
+      } else if (jsonResponse.data && typeof jsonResponse.data === 'object' && Array.isArray(jsonResponse.data.features)) {
+        // If data is an object with a features array
+        dataArray = jsonResponse.data.features;
+      } else if (jsonResponse.data && typeof jsonResponse.data === 'object' && Array.isArray(jsonResponse.data.list)) {
+        // If data is an object with a list array
+        dataArray = jsonResponse.data.list;
       } else {
-        setFeaturelist(prev => [...prev, ...jsonResponse.data.features]);
+        // Fallback: log the structure and use empty array
+        console.warn('Unexpected API response structure. Data:', jsonResponse.data);
+        console.warn('Data type:', typeof jsonResponse.data);
+        console.warn('Is array?', Array.isArray(jsonResponse.data));
+        dataArray = [];
+      }
+      
+      // Map the API response to the expected Feature structure
+      const mappedFeatures: Feature[] = dataArray.map((item: ApiListingItem) => ({
+        id: item.id,
+        added_by: 0, // Not provided by API
+        featurelist_id: item.id,
+        created_at: item.created_at,
+        category: item.category, // Store category name for filtering
+        featurelist: {
+          id: item.id,
+          created_by: 0, // Not provided by API
+          category_id: 0, // Can be mapped from category name if needed
+          created_at: item.created_at,
+          updated_at: item.created_at,
+          isactive: true,
+          isfeatured: false, // Default value
+          title: item.title,
+          price: item.price,
+          thumbnail: item.thumbnail || '',
+          profileshowinview: false, // Default - API doesn't provide this
+          createdby: {
+            id: 0,
+            firstname: '',
+            lastname: '',
+            email: '',
+            postal_code: '',
+            password: '',
+            student_email: '',
+            university_name: null,
+            profile: '',
+            reset_password_token: null,
+            reset_password_expires: null,
+            isactive: true,
+            created_at: '',
+            updated_at: '',
+            role_id: 0,
+          },
+          university: {
+            id: 0,
+            name: 'University of Warwick', // Default value
+          },
+          isbookmarked: bookmarkedIds.includes(item.id),
+        },
+      }));
+
+      setIsLoading(false);
+      setIsLoadingMore(false);
+      isFetchingRef.current = false;
+      
+      // Store all features (unfiltered) - prevent duplicates
+      if (pageNum === 1) {
+        setAllFeatures(mappedFeatures);
+      } else {
+        setAllFeatures(prev => {
+          // Get existing IDs to prevent duplicates
+          const existingIds = new Set(prev.map(item => item.id));
+          // Only add features that don't already exist
+          const newFeatures = mappedFeatures.filter(item => !existingIds.has(item.id));
+          return [...prev, ...newFeatures];
+        });
       }
     } 
-    else if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
-          setIsLoading(false);
-          navigation.reset({
-          index: 0,
-          routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
-        });
-        }
-    
+    else if (jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403) {
+      setIsLoading(false);
+      setIsLoadingMore(false);
+      isFetchingRef.current = false;
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+      });
+    }
     else {
       setIsLoading(false);
+      setIsLoadingMore(false);
+      isFetchingRef.current = false;
       console.log('API Error:', jsonResponse.message);
     }
   } catch (err) {
-    setIsLoading(true);
+    setIsLoading(false);
+    setIsLoadingMore(false);
+    isFetchingRef.current = false;
     console.log('Error:', err);
   }
 };
@@ -327,7 +493,7 @@ const handleBookmarkPress = async (productId: number) => {
       showToast(data.message, data.statusCode === 200 ? 'success' : 'error');
     }
 
-    displayListOfProduct(selectedCategory?.id ?? null, 1);
+    displayListOfProduct(selectedCategory?.id ?? null, 1, false); // Refresh without loader after bookmark
 
   } catch (error) {
     console.error('Bookmark error:', error);
@@ -588,7 +754,27 @@ const handleBookmarkPress = async (productId: number) => {
             scrollEventThrottle={16}
             onEndReachedThreshold={0.5}
             onEndReached={() => {
+              // Prevent duplicate pagination calls
+              if (isLoading || isLoadingMore || isFetchingRef.current) return;
+              
+              // Prevent pagination if category just changed (prevents API calls when switching to "All")
+              if (categoryChangeRef.current) {
+                return;
+              }
+              
+              // Don't paginate when filtering by specific category (client-side filtering)
+              // Only paginate when showing "All" categories
+              if (selectedCategory.name !== 'All') {
+                return;
+              }
+              
+              // Don't paginate if we don't have data yet
+              if (allFeatures.length === 0) {
+                return;
+              }
+              
               const nextPage = page + 1;
+              setIsLoadingMore(true);
               setPage(nextPage);
               displayListOfProduct(selectedCategory?.id ?? null, nextPage);
             }}
@@ -602,16 +788,16 @@ const handleBookmarkPress = async (productId: number) => {
               ) : null
             }
             ListEmptyComponent={
-              !isLoading ? (
+              !isLoading && featurelist.length === 0 ? (
                <View style={[styles.emptyWrapper,{minHeight: screenHeight - (Platform.OS === 'ios' ? 225 : 150), }]}>
                           <View style={styles.emptyContainer}>
                             <Image
-                              source={require('../../../assets/images/noproduct.png')} // your image
+                              source={require('../../../assets/images/noproduct.png')}
                               style={styles.emptyImage}
                               resizeMode="contain"
                             />
                             <Text allowFontScaling={false} style={styles.emptyText}>
-                              No Orders Found
+                              No Data Found
                             </Text>
                           </View>
                           </View>

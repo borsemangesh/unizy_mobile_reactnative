@@ -672,170 +672,160 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
   }
 
   return (
-    <View style={{ flex: 1, width: '100%', height: '100%',paddingHorizontal: 16 }}>
-        
-      
-
-          <FlatList
-            data={studentList || []}
-            // keyExtractor={(chat, index) => chat?.id?.toString() || index.toString()}
-            // onScroll={scrollHandler}
-            keyExtractor={(item, index) => {
-            'worklet';
-            return index.toString();
-          }}
-            // scrollEventThrottle={16}
-            ListHeaderComponent={
-              <View style={styles.search_container}>
-                <Image source={searchIcon} style={styles.searchIcon} />
-                <TextInput
-                  allowFontScaling={false}
-                  style={styles.searchBar}
-                  placeholder="Search"
-                  placeholderTextColor="#ccc"
-                  selectionColor={'#fff'}
-                  onChangeText={setSearch}
-                  value={search}
-                />
-              </View>
-            }
-            renderItem={({ item: chat }) => (
-              <ScrollView style={{ flex: 1 }}>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('MessagesIndividualScreen', {
-                    animation: 'none',
-                    members: chat.members,
-                    userConvName: chat.conv_name,
-                    currentUserIdList: chat.current_user_id,
-                    source: 'chatList',
-                  });
-                }}
-              >
-                <View>
-                  <View style={styles.chatRow}>
-                    {chat.members?.profile ? (
-                      <Image
-                        source={{ uri: chat.members?.profile }}
-                        style={styles.chatImage}
-                      />
-                    ) : (
-                      <View style={styles.initialsCircle}>
-                        <Text
-                          allowFontScaling={false}
-                          style={styles.initialsText}
-                        >
-                          {getInitials(
-                            chat?.members?.firstname ?? 'A',
-                            chat?.members?.lastname ?? 'W',
-                          )}
-                        </Text>
-                      </View>
-                    )}
-                    <View style={{ flex: 1 }}>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                          width: '100%',
-                        }}
-                      >
-                        <Text
-                          allowFontScaling={false}
-                          style={{
-                            fontSize: 16,
-                            fontWeight: '600',
-                            color: '#FFFFFF',
-                            fontFamily: 'Urbanist-SemiBold',
-                           
-                          }}
-                        >
-                          {chat?.members?.firstname} {chat?.members?.lastname}
-                        </Text>
-                        <Text
-                          allowFontScaling={false}
-                          style={{
-                            fontSize: 12,
-                            fontWeight: '500',
-                            color: '#FFFFFFA3',
-                            fontFamily: 'Urbanist-Medium',
-                          }}
-                        >
-                          {formatTime(chat?.last_message?.dateCreated)}
-                        </Text>
-                      </View>
-
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                          width: '100%',
-                          marginTop: 4,
-                        }}
-                      >
-                        <Text
-                          allowFontScaling={false}
-                          numberOfLines={1}
-                          ellipsizeMode="tail"
-                          style={{
-                            fontSize: 12,
-                            fontWeight: '500',
-                            color: '#FFFFFFE0',
-                            fontFamily: 'Urbanist-Medium',
-                            flex: 1,
-                          }}
-                        >
-                          {chat?.last_message?.body}
-                        </Text>
-                        <Text
-                          allowFontScaling={false}
-                          style={{
-                            fontSize: 14,
-                            fontWeight: '600',
-                            color: '#FFFFFF',
-                            fontFamily: 'Urbanist-Medium',
-                            backgroundColor: 'rgba(255, 255, 255, 0.14)',
-                            shadowColor: '#000',
-                             lineHeight: 35,   
-                            minHeight:35,
-                            minWidth:35,
-                            textAlign: 'center',
-                            borderRadius: 70,
-                            alignSelf:'center'
-                          }}
-                        >
-                          {chat?.unreadcount}
-                        </Text>
-                      </View>
-                    </View>
+    <View style={{ flex: 1, width: '100%', height: '100%' }}>
+      <FlatList
+        data={studentList || []}
+        keyExtractor={(item, index) => {
+          'worklet';
+          return index.toString();
+        }}
+        ListHeaderComponent={
+          <View style={styles.search_container}>
+            <Image source={searchIcon} style={styles.searchIcon} />
+            <TextInput
+              allowFontScaling={false}
+              style={styles.searchBar}
+              placeholder="Search"
+              placeholderTextColor="#ccc"
+              selectionColor={'#fff'}
+              onChangeText={setSearch}
+              value={search}
+            />
+          </View>
+        }
+        renderItem={({ item: chat }) => (
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('MessagesIndividualScreen', {
+                animation: 'none',
+                members: chat.members,
+                userConvName: chat.conv_name,
+                currentUserIdList: chat.current_user_id,
+                source: 'chatList',
+              });
+            }}
+          >
+            <View>
+              <View style={styles.chatRow}>
+                {chat.members?.profile ? (
+                  <Image
+                    source={{ uri: chat.members?.profile }}
+                    style={styles.chatImage}
+                  />
+                ) : (
+                  <View style={styles.initialsCircle}>
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.initialsText}
+                    >
+                      {getInitials(
+                        chat?.members?.firstname ?? 'A',
+                        chat?.members?.lastname ?? 'W',
+                      )}
+                    </Text>
                   </View>
+                )}
+                <View style={{ flex: 1 }}>
                   <View
                     style={{
-                      height: 1,
-                      backgroundColor: 'rgba(255,255,255,0.2)',
-                      marginTop: 10,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
                       width: '100%',
                     }}
-                  />
+                  >
+                  <Text
+                    allowFontScaling={false}
+                    style={{
+                      fontSize: 16,
+                      fontWeight: '600',
+                      color: '#FFFFFF',
+                      fontFamily: 'Urbanist-SemiBold',
+                    }}
+                  >
+                    {chat?.members?.firstname} {chat?.members?.lastname}
+                  </Text>
+                  <Text
+                    allowFontScaling={false}
+                    style={{
+                      fontSize: 12,
+                      fontWeight: '500',
+                      color: '#FFFFFFA3',
+                      fontFamily: 'Urbanist-Medium',
+                    }}
+                  >
+                    {formatTime(chat?.last_message?.dateCreated)}
+                  </Text>
+                  </View>
+
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      width: '100%',
+                      marginTop: 4,
+                    }}
+                  >
+                    <Text
+                      allowFontScaling={false}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                      style={{
+                        fontSize: 12,
+                        fontWeight: '500',
+                        color: '#FFFFFFE0',
+                        fontFamily: 'Urbanist-Medium',
+                        flex: 1,
+                      }}
+                    >
+                      {chat?.last_message?.body}
+                    </Text>
+                    <Text
+                      allowFontScaling={false}
+                      style={{
+                        fontSize: 14,
+                        fontWeight: '600',
+                        color: '#FFFFFF',
+                        fontFamily: 'Urbanist-Medium',
+                        backgroundColor: 'rgba(255, 255, 255, 0.14)',
+                        shadowColor: '#000',
+                        lineHeight: 35,
+                        minHeight: 35,
+                        minWidth: 35,
+                        textAlign: 'center',
+                        borderRadius: 70,
+                        alignSelf: 'center',
+                      }}
+                    >
+                      {chat?.unreadcount}
+                    </Text>
+                  </View>
                 </View>
-                
-              </TouchableOpacity>
-              </ScrollView>
-            )}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              paddingBottom: 250,
-              paddingTop: Platform.OS === 'ios' ? 120 : 10,
-              paddingHorizontal: 16,
-            }}
-            ListEmptyComponent={
-              !initialLoading ? (
-                <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
-                  No messages found
-                </Text>
-              ) : null
-            }
-          />
+              </View>
+              <View
+                style={{
+                  height: 1,
+                  backgroundColor: 'rgba(255,255,255,0.2)',
+                  marginTop: 10,
+                  width: '100%',
+                }}
+              />
+            </View>
+        </TouchableOpacity>
+        )}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: 250,
+          paddingTop: Platform.OS === 'ios' ? 120 : 10,
+          paddingHorizontal: 16,
+        }}
+        ListEmptyComponent={
+          !initialLoading ? (
+            <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
+              No messages found
+            </Text>
+          ) : null
+        }
+      />
       {/* {!initialLoading && search !== '' && (!studentList || studentList.length === 0) ? (
         <View
         pointerEvents="none"   
@@ -899,18 +889,15 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   search_container: {
-    // position: 'absolute',
-    top: Platform.OS === 'ios' ? '5%' : 0,
-    // left: 16,
-    // right: 16,
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 40,
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    // paddingVertical: 4,
-    // paddingHorizontal: 16,
+    paddingVertical: 4,
+    paddingHorizontal: 16,
+    marginBottom: 10,
     zIndex: 12,
   },
   searchIcon: {

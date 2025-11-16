@@ -185,12 +185,11 @@ useEffect(() => {
 const displayListOfProduct = async (categoryId: number | null, pageNum: number) => {
   try {
     const pagesize = 10;
-    let url = `${MAIN_URL.baseUrl}category/myreview?page=${pageNum}&pagesize=${pagesize}`;
-    if (categoryId) {
-      url += `&category_id=${categoryId}`;
-    }
+  
+    let url = `${MAIN_URL.baseUrl}user/user-review?user_id=64`;
+  
 
-    console.log(url)
+    console.log("test",url)
     
 
     const token = await AsyncStorage.getItem('userToken');
@@ -206,10 +205,20 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
 
     const jsonResponse = await response.json();
 
-    const reviews = jsonResponse.data ?? [];
+    console.log("jsonResponse",jsonResponse);
+    
+    // Extract formattedReviews from the response
+    const allReviews = jsonResponse.data?.formattedReviews ?? [];
+    
+    // Filter by category if categoryId is not null
+    let filteredReviews = allReviews;
+    if (categoryId !== null) {
+      filteredReviews = allReviews.filter((review: any) => review.category_id === categoryId);
+    }
+    
     if (jsonResponse.statusCode === 200) {
       setIsLoading(false);
-      setFeatureList(reviews);
+      setFeatureList(filteredReviews);
       // if (pageNum === 1) {
       //   //setFeatureList(jsonResponse.data.features);
       //   setFeatureList(reviews);
@@ -235,9 +244,11 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
   }
 };
 
-const filteredFeatures: Feature[] = featurelist.filter(item =>
-  (item.featurelist?.title ?? '').toLowerCase().includes(search.toLowerCase())
-);
+// Filter reviews by search text and category
+const filteredFeatures = featureList.filter((item: any) => {
+  const title = item?.feature_title ?? item?.feature?.title ?? '';
+  return title.toLowerCase().includes(search.toLowerCase());
+});
 
 const formatDate = (dateString: string | null | undefined) => {
   if (!dateString || dateString.trim() === '') return '01-01-2025';
@@ -258,22 +269,31 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
     filteredFeatures.length % 2 !== 0 &&
     index === filteredFeatures.length - 1;
 
+  // Handle both old structure (item.feature) and new structure (flat item)
   const feature = item?.feature;
+  const categoryId = item?.category_id ?? feature?.category_id ?? null;
   const displayDate = formatDate(item?.created_at);
 
+  // Use feature thumbnail if available, otherwise default
   const productImage = feature?.thumbnail
     ? { uri: feature.thumbnail }
     : require('../../../assets/images/drone.png');
 
+  // Use feature price if available, otherwise default
   const displayPrice =
     feature?.price != null ? `£${feature.price}` : '£0.00';
-  const displayTitle = feature?.title ?? 'Title';
+  
+  // Use feature title or feature_title from flat structure
+  const displayTitle = feature?.title ?? item?.feature_title ?? 'Title';
   const rating = item?.rating?.toString() ?? '0';
   const comment = item?.comment ?? '';
 
+  // Use feature createdby if available, otherwise null
   const createdby = feature?.createdby ?? null;
+  
+  // profileshowinview based on category_id (2 = Tuition, 5 = ?)
   const profileshowinview =
-    feature?.category_id === 2 || feature?.category_id === 5 ? true : false;
+    categoryId === 2 || categoryId === 5 ? true : false;
 
   return (
     <View
@@ -403,7 +423,7 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
                  </Text>
                </View>
           <Animated.FlatList
-            data={featureList}
+            data={filteredFeatures}
             renderItem={renderItem}
             keyExtractor={(item, index) => {
               'worklet';
