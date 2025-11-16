@@ -1402,6 +1402,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
         showToast(data.message, 'success');
         setShowPopup2(true);
       } else {
+        setShowPopup1(false);
         showToast(data?.message, 'error');
       }
     } catch (err) {
@@ -1720,7 +1721,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                         Buyer’s University:
                       </Text>
                       <Text allowFontScaling={false} style={styles.status}>
-                        {buyer.university}
+                        {buyer.university_name}
                       </Text>
                     </View>
  
