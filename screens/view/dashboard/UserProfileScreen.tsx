@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useState } from 'react';
 import { FlatList, Image, ImageBackground, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { MAIN_URL } from '../../utils/APIConstant';
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImage = require('../../../assets/images/user.jpg');
@@ -22,12 +24,55 @@ type UserProfileScreenProps ={
 const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
 
     const [messageText, setMessageText] = useState('');
+    const [userList, setUserList] = useState<any>(null);
 
 
+    useEffect(() => {
+    const fetchUserChatData = async (query: string = "") => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        const userId = await AsyncStorage.getItem('userId');
 
+        if (!token || !userId) {
+          console.warn('Missing token or user ID in AsyncStorage');
+          return;
+        }
 
+        const url = `${MAIN_URL.baseUrl}user/info`;
+        console.log('url----------',url);
+        
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
 
-    const renderItem = ({ item }: any) => {
+        const data = await response.json();
+
+        if (!response.ok) {
+          console.warn('Token fetch failed:', data.message);
+          return;
+        }
+
+        console.log('data', data);
+
+        const UserData = data.data;
+       setUserList(UserData);
+
+        console.log('UserData--------------------', userList);
+
+        // console.log("chatData",chatData);
+      } catch (error) {
+        console.error('Chat setup failed:', error);
+      }
+    };
+
+    fetchUserChatData();
+  }, []);
+
+const renderItem = ({ item }: any) => {
       const isLogout = item.title.toLowerCase() === 'logout';
       const isVersion = item.title.toLowerCase() === 'app version';
     
@@ -36,10 +81,10 @@ const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
           style={styles.cardContainer}
           onPress={async () => {
            if (item.title === 'Allen Listings') {
-              navigation.navigate('MyOrders'); 
+              navigation.navigate('UserListing'); 
             } 
             else if (item.title === 'Allen Reviews') {
-              navigation.navigate('MyReviews'); 
+              navigation.navigate('UserReviews'); 
             } 
           }}
         >
@@ -59,10 +104,8 @@ const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
     };
 
 
-
-
-
-  return (
+ 
+return (
     <ImageBackground source={bgImage} style={{ flex: 1 }} resizeMode="cover">
      <View style={styles.fullScreenContainer}>
         {/* Header */}
@@ -88,11 +131,29 @@ const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
    
       {/* Profile Section */}
       <View style={styles.profileContainer}>
-      <Image source={profileImage} // Replace with real image URL
-          style={styles.profileImage}
-        />
-        <Text allowFontScaling={false} style={styles.nameText}>Alan Walker</Text>
-        <Text allowFontScaling={false} style={styles.subText}>University of Warwick, Coventry</Text>
+        {userList?.profileUrl ? (
+          <Image 
+            source={{ uri: userList.profileUrl }}
+            style={styles.profileImage}
+          />
+        ) : (
+          <Image 
+            source={profileImage}
+            style={styles.profileImage}
+          />
+        )}
+        <Text allowFontScaling={false} style={styles.nameText}>
+          {userList?.firstname || ''} {userList?.lastname || ''}
+        </Text>
+        <Text allowFontScaling={false} style={styles.subText}>
+          {userList?.university_name 
+            ? (userList?.city 
+                ? `${userList.university_name}, ${userList.city}`
+                : userList.university_name)
+            : userList?.city 
+              ? userList.city
+              : '-'}
+        </Text>
       </View>
       <View style={styles.listContainer}>
       <FlatList
@@ -106,6 +167,7 @@ const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
     </View>
     </ImageBackground>
   );
+
 };
 
 const styles = StyleSheet.create({

@@ -46,6 +46,9 @@ import StripeOnboardingComplete from './dashboard/StripeOnboardingComplete';
 import StripeOnboardingScreen from './dashboard/StripeOnboardingScreen';
 import AccountDetails from './dashboard/AccountDetails';
 import StripeOnboardingCancel from './dashboard/StripeOnboardingCancel';
+import { navigationRef } from './navigationRef';
+import UserReviews from './dashboard/UserReviews';
+import UserListing from './dashboard/UserListing';
 const Stack = createNativeStackNavigator();
 const linking = {
   prefixes: ['unizyapp://'],
@@ -63,7 +66,7 @@ export const Navigation = () => {
 
   enableScreens();
   return (
-    <NavigationContainer linking={linking}>
+    <NavigationContainer ref={navigationRef} linking={linking}>
       <Stack.Navigator
         initialRouteName="SinglePage"
         screenOptions={{ headerShown: false, animation: 'none' }}
@@ -306,6 +309,22 @@ export const Navigation = () => {
           }}
         />
 
+      <Stack.Screen
+              name="UserReviews"
+              component={UserReviews}
+              options={{
+                headerShown: false,
+                presentation: 'fullScreenModal',
+              }}
+            />
+             <Stack.Screen
+              name="UserListing"
+              component={UserListing}
+              options={{
+                headerShown: false,
+                presentation: 'fullScreenModal',
+              }}
+            />
         <Stack.Screen
           name="MyOrders"
           component={MyOrders}

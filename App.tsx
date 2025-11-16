@@ -1,6 +1,6 @@
 
 import React, { useEffect } from "react";
-import { LogBox, StatusBar, View, StyleSheet, ImageBackground } from "react-native";
+import { LogBox, StatusBar, View, StyleSheet, ImageBackground, Platform } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Navigation } from "./screens/view/Navigation";
 import { enableScreens } from "react-native-screens";
@@ -9,96 +9,305 @@ import Toast from "react-native-toast-message";
 import { StripeProvider } from '@stripe/stripe-react-native';
 import { Constant } from "./screens/utils/Constant";
 import messaging from '@react-native-firebase/messaging';
-import notifee, { AndroidImportance } from '@notifee/react-native';
+import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
+import { navigate } from "./screens/view/navigationRef";
 
 
 function App() {
   LogBox.ignoreAllLogs();
   enableScreens();
 
-  // useEffect(() => {
-  //   const setupFCM = async () => {
-  //     const authStatus = await messaging().requestPermission();
-  //     const enabled =
-  //       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-  //       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-  //     if (enabled) {
-  //       console.log("✅ Notification permission granted");
+//  useEffect(() => {
+//     const setupNotifications = async () => {
+//       // Request FCM permission
+//       const authStatus = await messaging().requestPermission();
+//       const enabled =
+//         authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+//         authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-  //       const token = await messaging().getToken();
-  //       console.log("🔥 FCM Token:", token);
-  //     } else {
-  //       console.log("❌ Notification permission denied");
-  //     }
-  //   };
+//       if (enabled) {
+//         console.log("✅ Notification permission granted");
+//         const token = await messaging().getToken();
+//         console.log("🔥 FCM Token:", token);
+//       } else {
+//         console.log("❌ Notification permission denied");
+//       }
 
-  //   // Foreground message listener
-  //   const unsubscribe = messaging().onMessage(async remoteMessage => {
-  //     console.log("📩 Foreground Message:", remoteMessage);
-  //     Toast.show({
-  //       type: "info",
-  //       text1: remoteMessage.notification?.title,
-  //       text2: remoteMessage.notification?.body,
-  //     });
-  //   });
+//       // Request Notifee permission
+//       await notifee.requestPermission();
 
-  //   setupFCM();
+//       // Create Android Notification channel
+//       await notifee.createChannel({
+//         id: 'default',
+//         name: 'Default Channel',
+//         importance: AndroidImportance.HIGH,
+//       });
+//     };
+//     const unsubscribe = messaging().onMessage(async remoteMessage => {
+//       console.log("📩 Foreground Message:", remoteMessage);
 
-  //   return unsubscribe;
-  // }, []);
+//       const title = remoteMessage.notification?.title || "Notification";
+//       const body = remoteMessage.notification?.body || "";
 
+//       // ✅ Show system notification in foreground
+//       await notifee.displayNotification({
+//         title,
+//         body,
+//         android: {
+//           channelId: 'default',
+//           pressAction: { id: 'default' },
+//         },
+//       });
+//     });
 
- useEffect(() => {
+//     setupNotifications();
 
-    const setupNotifications = async () => {
-      // Request FCM permission
-      const authStatus = await messaging().requestPermission();
-      const enabled =
-        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+//     return unsubscribe;
+//   }, []);
 
-      if (enabled) {
-        console.log("✅ Notification permission granted");
-        const token = await messaging().getToken();
-        console.log("🔥 FCM Token:", token);
-      } else {
-        console.log("❌ Notification permission denied");
+useEffect(() => {
+    let unsubscribe: (() => void) | null = null;
+    let unsubscribeForeground: (() => void) | null = null;
+
+    const initializeNotifications = async () => {
+      try {
+        // Request FCM permission
+        const authStatus = await messaging().requestPermission();
+        const enabled =
+          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+        if (enabled) {
+          console.log("✅ Notification permission granted");
+          const token = await messaging().getToken();
+          console.log("🔥 FCM Token:", token);
+        } else {
+          console.log("❌ Notification permission denied");
+        }
+
+        // Request Notifee permission
+        const notifeeSettings = await notifee.requestPermission();
+        console.log("🔔 Notifee permission:", notifeeSettings);
+
+        // Create Android Notification channel (must be done before displaying notifications)
+        if (Platform.OS === 'android') {
+          await notifee.createChannel({
+            id: 'default',
+            name: 'Default Channel',
+            importance: AndroidImportance.HIGH,
+            sound: 'default',
+          });
+          console.log("✅ Notification channel created");
+        }
+
+        // Set up foreground FCM listener AFTER channel is created
+        unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
+          console.log("📩 Foreground Message:", remoteMessage);
+
+          try {
+            const title = remoteMessage.notification?.title || remoteMessage.data?.title || "Notification";
+            const body = remoteMessage.notification?.body || "";
+            
+            // Parse the data.data string if it exists, otherwise use data object
+            let rawNotificationData: Record<string, any> = {};
+            if (remoteMessage.data?.data) {
+              try {
+                // If data.data is a string, parse it
+                if (typeof remoteMessage.data.data === 'string') {
+                  rawNotificationData = JSON.parse(remoteMessage.data.data);
+                } else {
+                  rawNotificationData = remoteMessage.data.data;
+                }
+              } catch (e) {
+                console.log("Could not parse data.data, using as is");
+                rawNotificationData = remoteMessage.data.data;
+              }
+            } else {
+              rawNotificationData = remoteMessage.data || {};
+            }
+
+            // ✅ Convert all data values to strings (Notifee requirement)
+            // Notifee requires all data values to be strings
+            const notificationData: { [key: string]: string } = {};
+            Object.keys(rawNotificationData).forEach((key) => {
+              const value = rawNotificationData[key];
+              if (value !== null && value !== undefined) {
+                // Convert to string - handle objects/arrays by stringifying
+                if (typeof value === 'object') {
+                  notificationData[key] = JSON.stringify(value);
+                } else {
+                  notificationData[key] = String(value);
+                }
+              }
+            });
+
+            console.log("📱 Displaying notification:", { title, body, data: notificationData });
+
+            // ✅ Show system notification in foreground
+            const notificationConfig: any = {
+              title,
+              body,
+              data: notificationData,
+            };
+
+            // Add platform-specific config
+            if (Platform.OS === 'android') {
+              notificationConfig.android = {
+                channelId: 'default',
+                pressAction: { 
+                  id: 'default',
+                },
+                importance: AndroidImportance.HIGH,
+                sound: 'default',
+              };
+            } else {
+              // iOS config
+              notificationConfig.ios = {
+                sound: 'default',
+              };
+            }
+
+            const notificationId = await notifee.displayNotification(notificationConfig);
+            console.log("✅ Notification displayed successfully with ID:", notificationId);
+          } catch (error) {
+            console.error("❌ Error displaying notification:", error);
+          }
+        });
+
+        // ✅ Foreground notification tap handler
+        unsubscribeForeground = notifee.onForegroundEvent(({ type, detail }) => {
+          if (type === EventType.PRESS) {
+            console.log("🟦 Notification tapped in foreground");
+            console.log("📋 Full detail object:", JSON.stringify(detail, null, 2));
+            
+            // The data field might be a JSON string or an object
+            let notificationData = detail.notification?.data;
+            
+            console.log('📋 Raw notification data:', notificationData);
+
+            if (notificationData) {
+              try {
+                // Helper function to parse string values that might be JSON
+                const parseValue = (value: any): any => {
+                  if (typeof value === 'string') {
+                    try {
+                      return JSON.parse(value);
+                    } catch {
+                      return value;
+                    }
+                  }
+                  return value;
+                };
+
+                // Parse the data field if it's a JSON string
+                if (typeof notificationData === 'string') {
+                  try {
+                    notificationData = JSON.parse(notificationData);
+                    console.log('📊 Parsed notification data:', notificationData);
+                  } catch (e) {
+                    console.warn('⚠️ Could not parse data as JSON:', e);
+                  }
+                }
+
+                // Also check if data itself contains a nested data field
+                if (notificationData?.data && typeof notificationData.data === 'string') {
+                  try {
+                    notificationData = JSON.parse(notificationData.data);
+                    console.log('📊 Parsed nested data field:', notificationData);
+                  } catch (e) {
+                    console.warn('⚠️ Could not parse nested data as JSON:', e);
+                  }
+                }
+
+                // Extract members - handle both object and array formats
+                let members = null;
+                if (notificationData?.members) {
+                  const parsedMembers = parseValue(notificationData.members);
+                  if (Array.isArray(parsedMembers)) {
+                    // If array, take the first member (the other user)
+                    members = parsedMembers[0];
+                  } else if (typeof parsedMembers === 'object' && parsedMembers !== null) {
+                    // If object, use it directly
+                    members = parsedMembers;
+                  }
+                }
+
+                // Transform members to match MessageIndividualScreen RouteParams structure
+                if (members) {
+                  members = {
+                    id: members.id || 0,
+                    firstname: members.firstname || '',
+                    lastname: members.lastname || '',
+                    profile: members.profile || null,
+                    university: {
+                      id: members.university?.id || 0,
+                      name: members.universityName || members.university?.name || ''
+                    }
+                  };
+                }
+
+                console.log("👤 Transformed members:", members);
+
+                // Extract conversation name
+                const userConvName = notificationData?.userConvName || 
+                                  notificationData?.conv_name || 
+                                  notificationData?.friendlyname || 
+                                  '';
+                
+                // Extract current user ID
+                let currentUserIdList = 0;
+                if (notificationData?.current_user_id) {
+                  currentUserIdList = Number(parseValue(notificationData.current_user_id));
+                } else if (notificationData?.from) {
+                  currentUserIdList = Number(parseValue(notificationData.from)) || 0;
+                }
+
+                // Validate required fields
+                if (!userConvName) {
+                  console.error("❌ Missing userConvName in notification data");
+                  return;
+                }
+
+                if (!members || !members.firstname) {
+                  console.error("❌ Missing or invalid members data in notification");
+                  return;
+                }
+
+                const params = {
+                  animation: 'none',
+                  members,
+                  userConvName,
+                  currentUserIdList,
+                  source: notificationData?.source ? parseValue(notificationData.source) : 'chatList',
+                };
+
+                console.log('📱 Final navigation params:', JSON.stringify(params, null, 2));
+
+                setTimeout(() => {
+                  navigate("MessagesIndividualScreen", params);
+                }, 1000);
+              } catch (error) {
+                console.error("❌ Error handling foreground notification tap:", error);
+              }
+            }
+          }
+        });
+      } catch (error) {
+        console.error("❌ Error initializing notifications:", error);
       }
-
-      // Request Notifee permission
-      await notifee.requestPermission();
-
-      // Create Android Notification channel
-      await notifee.createChannel({
-        id: 'default',
-        name: 'Default Channel',
-        importance: AndroidImportance.HIGH,
-      });
     };
 
-    // Foreground FCM listener
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      console.log("📩 Foreground Message:", remoteMessage);
+    initializeNotifications();
 
-      const title = remoteMessage.notification?.title || "Notification";
-      const body = remoteMessage.notification?.body || "";
-
-      // ✅ Show system notification in foreground
-      await notifee.displayNotification({
-        title,
-        body,
-        android: {
-          channelId: 'default',
-          pressAction: { id: 'default' },
-        },
-      });
-    });
-
-    setupNotifications();
-
-    return unsubscribe;
+    return () => {
+      if (unsubscribe) unsubscribe();
+      if (unsubscribeForeground) unsubscribeForeground();
+    };
   }, []);
+
+
+
 
   return (
     <StripeProvider publishableKey={Constant.PUBLIC_KEY}>
