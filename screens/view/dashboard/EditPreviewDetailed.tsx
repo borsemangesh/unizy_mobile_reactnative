@@ -1166,9 +1166,26 @@ const dataArray = nonImageFields
                       //     ],
                       //   }),
                       // );
-                      // navigation.goBack();
-                      navigation.replace('MyListing',{ animation: 'none' });
+                      console.log("NAVIGATIONSTACK: ",navigation.getState());
+                      navigation.reset({
+                        index: 0,
+                        routes: [
+                          {
+                            name: 'MyListing',
+                            params: { animation: 'none' }
+                          }
+                        ],
+                      });
 
+                      // navigation.reset({
+                      //   index: 1,
+                      //   routes: [
+                      //     { name: 'Home' },
+                      //     { name: 'MyListing' }
+                      //   ],
+                      // });
+                      // navigation.replace('MyListing',{ animation: 'none' });
+                      
                       setShowPopup(false);
                     } catch (err) {
                       console.log('❌ Error clearing formData:', err);

@@ -1,9 +1,11 @@
 import {
   Animated,
+  Dimensions,
   Image,
   ImageBackground,
   Platform,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -21,6 +23,19 @@ import { NewCustomToastContainer } from '../../utils/component/NewCustomToastMan
 import NewFeatureCard from '../../utils/NewFeatureCard';
 import SeperateTutionCard from '../../utils/SeperateTutitionCard';
 import NewTutitionCard from '../../utils/NewTutionCard';
+
+
+import AnimatedReanimated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  interpolate,
+  interpolateColor,
+  useDerivedValue,
+} from 'react-native-reanimated';
+import LinearGradient from 'react-native-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
+import { BlurView } from '@react-native-community/blur';
 
 type PreviewThumbnailProps = {
   navigation: any;
@@ -65,6 +80,60 @@ const [fullName, setFullName] = useState('');
 const [initials, setInitials] = useState('');
 const [profile,setProfile] = useState('');
 const [featureitem,setfeatureitem] =useState(false)
+
+
+
+const { height } = Dimensions.get('window');
+  const bottomPadding = height * 0.0005;
+
+  const [slideUp1] = useState(new Animated.Value(0));
+  
+    const scrollY = useSharedValue(0);
+  
+    const scrollHandler = useAnimatedScrollHandler({
+      onScroll: event => {
+        'worklet';
+        scrollY.value = event.contentOffset.y;
+      },
+    });
+  
+    const animatedBlurStyle = useAnimatedStyle(() => {
+      'worklet';
+      const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+      return { opacity };
+    });
+  
+    const animatedButtonStyle = useAnimatedStyle(() => {
+      'worklet';
+      const borderColor = interpolateColor(
+        scrollY.value,
+        [0, 300],
+        ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+      );
+      const redOpacity = interpolate(scrollY.value, [0, 100], [0, 0.15], 'clamp');
+      return {
+        borderColor,
+        backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+      };
+    });
+  
+    const animatedIconStyle = useAnimatedStyle(() => {
+      'worklet';
+      const opacity = interpolate(scrollY.value, [0, 100], [0.8, 1], 'clamp');
+      const tintColor = interpolateColor(
+        scrollY.value,
+        [0, 150],
+        ['#FFFFFF', '#002050'],
+      );
+      return {
+        opacity,
+        tintColor,
+      };
+    });
+  
+    const blurAmount = useDerivedValue(() =>
+      interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+    );
 
   useEffect(() => {
     const fetchStoredData = async () => {
@@ -190,7 +259,7 @@ const [featureitem,setfeatureitem] =useState(false)
     >
       <View style={styles.fullScreenContainer}>
         
-         <View style={styles.header}>
+         {/* <View style={styles.header}>
                       <View style={styles.headerRow}>
                     <TouchableOpacity onPress={() => {
                      navigation.goBack();
@@ -204,15 +273,129 @@ const [featureitem,setfeatureitem] =useState(false)
                    <Text allowFontScaling={false} style={styles.unizyText}>Preview Thumbnail</Text>
                      <View style={{ width: 48 }} />
                      </View>
-                   </View>
+                   </View> */}
 
-         <ScrollView
+<StatusBar
+          translucent
+          backgroundColor="transparent"
+          barStyle="light-content"
+        />
+
+        {/* Header with Blur only at top */}
+        <AnimatedReanimated.View
+          style={[styles.headerWrapper, animatedBlurStyle]}
+          pointerEvents="none"
+        >
+          {/* Blur layer only at top with gradient fade */}
+          <MaskedView
+            style={StyleSheet.absoluteFill}
+            maskElement={
+              <LinearGradient
+                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                locations={[0, 0.8]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            }
+          >
+            <BlurView
+              style={StyleSheet.absoluteFill}
+              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+              blurAmount={Platform.OS === 'ios' ? 45 : 45}
+              // overlayColor="rgba(255,255,255,0.05)"
+              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+            />
+            <LinearGradient
+              colors={[
+                'rgba(255, 255, 255, 0.45)',
+                'rgba(255, 255, 255, 0.02)',
+                'rgba(255, 255, 255, 0.02)',
+              ]}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+            />
+          </MaskedView>
+        </AnimatedReanimated.View>
+
+        {/* Header Content */}
+        <View style={styles.headerContent} pointerEvents="box-none">
+          <TouchableOpacity
+             onPress={() => { navigation.goBack();}}
+            style={styles.backButtonContainer}
+            activeOpacity={0.7}
+          >
+            <AnimatedReanimated.View
+              style={[styles.blurButtonWrapper, animatedButtonStyle]}
+            >
+              {/* Static background (visible when scrollY = 0) */}
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 30],
+                      [1, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 40,
+                  })),
+                ]}
+              />
+
+              {/* Blur view fades in as scroll increases */}
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 50],
+                      [0, 1],
+                      'clamp',
+                    ),
+                  })),
+                ]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
+                />
+              </AnimatedReanimated.View>
+
+              {/* Back Icon */}
+              <AnimatedReanimated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 24, width: 24 }, animatedIconStyle]}
+              />
+            </AnimatedReanimated.View>
+          </TouchableOpacity>
+
+          <Text allowFontScaling={false} style={styles.unizyText}>
+          Preview Thumbnail
+          </Text>
+        </View>
+
+         {/* <ScrollView
             style={{ flex: 1 }}
               contentContainerStyle={{ flexGrow: 1,
               alignItems: 'center',
               justifyContent: 'center',
               paddingBottom: 180, }}
-              showsVerticalScrollIndicator={false} >
+              showsVerticalScrollIndicator={false} > */}
+
+<AnimatedReanimated.ScrollView 
+                    scrollEventThrottle={16}
+                    onScroll={scrollHandler}
+                    contentContainerStyle={[
+                      styles.scrollContainer,
+                      { paddingBottom: height * 0.1, }, // 0.05% of screen height
+                    ]}>
             <View style={styles.productCarddisplay}>
             {storedForm ? (
               <>
@@ -324,7 +507,7 @@ const [featureitem,setfeatureitem] =useState(false)
               </Text>
             )}
           </View>
-          </ScrollView>
+          </AnimatedReanimated.ScrollView >
           
 
          
@@ -378,6 +561,52 @@ const [featureitem,setfeatureitem] =useState(false)
 };
 
 const styles = StyleSheet.create({
+  backButtonContainer: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 11,
+    //top: 7,
+  },
+  blurButtonWrapper: {
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+  },
+  headerWrapper: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? '100%' : '100%',
+    height: Platform.OS === 'ios' ? 180 : 180,
+    zIndex: 10,
+    overflow: 'hidden',
+    alignSelf: 'center',
+    pointerEvents: 'none',
+  },
+  headerContent: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? '8%': 60,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
+  },
+  scrollContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 80,
+    paddingTop: Platform.OS === 'ios' ? 120 : 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 
     newtext:{
      color: '#fff',

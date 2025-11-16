@@ -111,6 +111,7 @@ const MyOrders = ({ navigation }: MyOrdersProps)  => {
 const [isLoadingMore, setIsLoadingMore] = useState(false);
    const scrollY = useSharedValue(0);
   
+  
    const scrollHandler = useAnimatedScrollHandler({
      onScroll: event => {
        'worklet';
@@ -339,7 +340,7 @@ console.log(groupedArray.map(i => i.type === 'date' ? `📅 ${i.displayDate}` : 
 const groupedOrders = groupByDate(filteredFeatures);
 
 const renderItem = ({ item, index }: { item: any; index: number }) => {
- const displayDate = formatDate(item?.featurelist?.created_at);
+  const displayDate = formatDate(item?.created_at);
   if (item.type === 'date') {
     return (
       <Text allowFontScaling={false} style={styles.dateHeading}>
@@ -451,7 +452,9 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
         
                <View style={styles.headerContent} pointerEvents="box-none">
                  <TouchableOpacity
-                   onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Profile',isNavigate: false})}}
+                   onPress={() =>{
+                      navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Profile',isNavigate: false})
+                    }}
                    style={styles.backButtonContainer}
                    activeOpacity={0.7}
                  >

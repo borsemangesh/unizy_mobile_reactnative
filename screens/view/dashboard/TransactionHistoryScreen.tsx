@@ -74,6 +74,7 @@ export default function TransactionHistoryScreen(
   const tabs = [{ key: 'Purchases' }, { key: 'Sales' }, { key: 'Charges' }];
   const [isFilterVisible, setFilterVisible] = useState(false);
   const [SalesImageUrl, setSalesImageUrl] = useState('');
+  const { height } = Dimensions.get('window');
 
 
   useEffect(() => {
@@ -400,12 +401,9 @@ export default function TransactionHistoryScreen(
       </View>
 
       <ScrollView
-        style={{ width: '100%', paddingBottom: 60 }}
-        showsVerticalScrollIndicator={false}
-      >
+        style={{ width: '100%', paddingBottom: (Platform.OS === 'ios'? height * 0.1:height * 0.24)}}
+        showsVerticalScrollIndicator={false}>
         {transactions.length === 0 ? (
-         
-
           <View style={styles.emptyWrapper}>
             <View style={styles.emptyContainer}>
               <Image
@@ -496,10 +494,11 @@ export default function TransactionHistoryScreen(
                   </View>
 
                   <View style={styles.cardconstinerdivider} />
-                  <View style={{ flexDirection: 'row', }}>
+                  <View style={{ flexDirection: 'row',width: '80%' }}>
                     <Text style={styles.sellerText}>Purchased from</Text>
                     <Text
                         allowFontScaling={false}
+                        numberOfLines={2}
                         style={[styles.sellerTextName]}
                       > {`${(item.seller+ " (" + item.university + ")").length > 100
                           ? (item.seller+ " (" + item.university + ")").substring(0, 200) + "..."
@@ -554,7 +553,9 @@ export default function TransactionHistoryScreen(
                     allowFontScaling={false}
                     style={styles.Overall_Earnings_title}
                   >
-                    {`£` + overallEarning}
+                    {/* {`£` + overallEarning} */}
+                    {`£${Number(overallEarning).toFixed(2)}`}
+            
                   </Text>
                 </View>
               </View>

@@ -18,6 +18,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 import debounce from 'lodash.debounce';
 
+
+import Animated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  interpolate,
+  interpolateColor,
+  useDerivedValue,
+} from 'react-native-reanimated';
+import { BlurView } from '@react-native-community/blur';
+import LinearGradient from 'react-native-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
+
 const bgImage = require('../../../assets/images/backimg.png');
 const searchIcon = require('../../../assets/images/searchicon.png');
 import { useRoute, RouteProp } from '@react-navigation/native';
@@ -91,6 +104,56 @@ const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
 
  const [isFilterMode, setIsFilterMode] = useState(false);
 const [lastFilterBody, setLastFilterBody] = useState<any>(null);
+
+
+const scrollY = useSharedValue(0);
+  
+const scrollHandler = useAnimatedScrollHandler({
+  onScroll: event => {
+    'worklet';
+    scrollY.value = event.contentOffset.y;
+  },
+});
+
+const animatedBlurStyle = useAnimatedStyle(() => {
+  'worklet';
+  const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+  return { opacity };
+});
+
+const animatedButtonStyle = useAnimatedStyle(() => {
+  'worklet';
+  const borderColor = interpolateColor(
+    scrollY.value,
+    [0, 300],
+    ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+  );
+  const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
+  return {
+    borderColor,
+    backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+  };
+});
+const animatedIconStyle = useAnimatedStyle(() => {
+  'worklet';
+
+  const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
+
+  const tintColor = interpolateColor(
+    scrollY.value,
+    [0, 150],
+    ['#FFFFFF', '#002050'],
+  );
+
+  return {
+    opacity,
+    tintColor,
+  };
+});
+
+const blurAmount = useDerivedValue(() =>
+  interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+);
  
   useEffect(() => {
   const loadBookmarks = async () => {
@@ -101,7 +164,9 @@ const [lastFilterBody, setLastFilterBody] = useState<any>(null);
 }, []);
 
 const clickfilter = () => {
+  console.log("Filter PopUp: ", isFilterVisible);
   setFilterVisible(true);
+  console.log("Filter PopUpAfter: ", isFilterVisible);
 };
 
 
@@ -166,19 +231,6 @@ const clickfilter = () => {
     }, 500),
     []
   );
-
-
-//  const handleSearchChange = (text: string) => {
-//     setSearch(text);
-//     if (text.trim().length > 0) {
-//       debouncedSearch(text);
-//     } else {
-//       setFeaturelist([]);
-//       setHasMore(true);
-//       setPage(1);
-//     }
-//   };
-
 
 const handleSearchChange = (text: string) => {
   setSearch(text);
@@ -312,48 +364,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
   );
 };
 
-// const handleFilterApply = async (filterBody: any) => {
-//   try {
-//     setIsLoading(true);
 
-//     const token = await AsyncStorage.getItem('userToken');
-//     if (!token) return;
-
-//     const url = `${MAIN_URL.baseUrl}category/filter-apply`;
-
-//     //const url = 'http://65.0.99.229:4320/category/filter-apply';
-
-//     const response = await fetch(url, {
-//       method: 'POST',
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(filterBody),
-//     });
-
-//     const jsonResponse = await response.json();
-//     console.log('Filter Apply Response:', jsonResponse);
-
-//     if (jsonResponse.statusCode === 200) {
-//       const filteredFeatures = jsonResponse.data.features;
-//       setFeaturelist(filteredFeatures);
-//       setHasMore(filteredFeatures.length === 20);
-//       setPage(2);
-//     }
-//     if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
-//           setIsLoading(false);
-//           navigation.reset({
-//           index: 0,
-//           routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
-//         });
-//         }
-//   } catch (err) {
-//     console.log('Error applying filters:', err);
-//   } finally {
-//     setIsLoading(false);
-//   }
-// };
 
 const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
   try {
@@ -404,11 +415,16 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
         {/* Header */}
-        <View style={styles.header}>
+        {/* <View style={styles.header}>
           <View style={styles.headerRow}>
-            <TouchableOpacity onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})}}>
-          
-            
+            <TouchableOpacity
+              onPress={() => {
+                navigation.replace('Dashboard', {
+                  AddScreenBackactiveTab: 'Home',
+                  isNavigate: false,
+                });
+              }}
+            >
               <View style={styles.backIconRow}>
                 <Image
                   source={require('../../../assets/images/back.png')}
@@ -416,102 +432,300 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
                 />
               </View>
             </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>Search</Text>
+            <Text allowFontScaling={false} style={styles.unizyText}>
+              Search
+            </Text>
 
             <View style={{ width: 48 }} />
           </View>
-        </View>
+        </View> */}
 
-        {/* Search Bar */}
-        <View style={{ flexDirection: 'row',paddingHorizontal: 16,gap: 8}}>
-          <View style={styles.search_container}>
-            <Image source={searchIcon} style={styles.searchIcon} />
-           <TextInput
-                allowFontScaling={false}
-                style={styles.searchBar}
-                placeholder="Search"
-                placeholderTextColor="#ccc"
-                value={search}
-                onChangeText={handleSearchChange}
-                returnKeyType="search"
-                selectionColor="white"
-                autoFocus={true} 
-               onSubmitEditing={() => {
-                    if (search.trim().length > 0) {
-                    setPage(1);
-                    setHasMore(true);
-                    displayListOfProduct(1, search);
-                    } else {
-                    setFeaturelist([]);
-                    }
-                }}
-                />
-          </View>
-            <TouchableOpacity
-              onPress={() => {
-                clickfilter();
-              }}
+        <StatusBar
+          translucent
+          backgroundColor="transparent"
+          barStyle="light-content"
+        />
+
+        <Animated.View
+          style={[styles.headerWrapper, animatedBlurStyle]}
+          pointerEvents="none"
+        >
+          <MaskedView
+            style={StyleSheet.absoluteFill}
+            maskElement={
+              <LinearGradient
+                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                locations={[0, 0.8]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            }
+          >
+            <BlurView
+              style={StyleSheet.absoluteFill}
+              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+              blurAmount={Platform.OS === 'ios' ? 45 : 45}
+              //  overlayColor="rgba(255,255,255,0.05)"
+              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+            />
+            <LinearGradient
+              colors={[
+                'rgba(255, 255, 255, 0.45)',
+                'rgba(255, 255, 255, 0.02)',
+                'rgba(255, 255, 255, 0.02)',
+              ]}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+            />
+          </MaskedView>
+        </Animated.View>
+
+        <View style={styles.headerContent} pointerEvents="box-none">
+          <TouchableOpacity
+            onPress={() => {
+              navigation.replace('Dashboard', {
+                AddScreenBackactiveTab: 'Home',
+                isNavigate: false,
+              });
+              // navigation.goBack();
+            }}
+            style={styles.backButtonContainer}
+            activeOpacity={0.7}
+          >
+            <Animated.View
+              style={[styles.blurButtonWrapper, animatedButtonStyle]}
             >
-              <View style={styles.MylistingsBackground}>
-                <Image source={mylistings} style={styles.iconSmall} />
-              </View>
-            </TouchableOpacity>
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 30],
+                      [1, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 40,
+                  })),
+                ]}
+              />
+
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 50],
+                      [0, 1],
+                      'clamp',
+                    ),
+                  })),
+                ]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
+                />
+              </Animated.View>
+
+              {/* Back Icon */}
+              <Animated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 24, width: 24 }, animatedIconStyle]}
+              />
+            </Animated.View>
+          </TouchableOpacity>
+
+          <Text allowFontScaling={false} style={styles.unizyText}>
+          Search
+          </Text>
         </View>
 
-      <FlatList
-        data={featurelist}
-        keyExtractor={item => item.id.toString()}
-        numColumns={2}
-        columnWrapperStyle={styles.row1}
-        contentContainerStyle={[
-            styles.listContainer,{ paddingBottom: SCREEN_HEIGHT * 0.05 },
-            featurelist?.length === 0 && { alignContent:'center',alignSelf:'center' ,width:'100%',height:'100%'}
+        {/* <Animated.FlatList
+          data={featurelist}
+          // keyExtractor={item => item.id.toString()}
+          keyExtractor={(item, index) => {
+            item.id.toString();
+            'worklet';
+            return index.toString();
+          }}
+          numColumns={2}
+          columnWrapperStyle={styles.row1}
+          contentContainerStyle={[
+            styles.listContainer,
+            { paddingBottom: SCREEN_HEIGHT * 0.05 },
+            featurelist?.length === 0 && {
+              alignContent: 'center',
+              alignSelf: 'center',
+              width: '100%',
+              height: '100%',
+            },
           ]}
+          renderItem={renderItem}
+          ListHeaderComponent={
+            <View style={{ flexDirection: 'row', gap: 8 }}>
+              <View style={styles.search_container}>
+                <Image source={searchIcon} style={styles.searchIcon} />
+                <TextInput
+                  allowFontScaling={false}
+                  style={styles.searchBar}
+                  placeholder="Search"
+                  placeholderTextColor="#ccc"
+                  value={search}
+                  onChangeText={handleSearchChange}
+                  returnKeyType="search"
+                  selectionColor="white"
+                  autoFocus={true}
+                  onSubmitEditing={() => {
+                    if (search.trim().length > 0) {
+                      setPage(1);
+                      setHasMore(true);
+                      displayListOfProduct(1, search);
+                    } else {
+                      setFeaturelist([]);
+                    }
+                  }}
+                />
+              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  clickfilter();
+                }}
+              >
+                <View style={styles.MylistingsBackground}>
+                  <Image source={mylistings} style={styles.iconSmall} />
+                </View>
+              </TouchableOpacity>
+            </View>
+          }
+          onEndReached={() => {
+            if (isLoading || !hasMore) return;
 
-        renderItem={renderItem}
-      
-        onEndReached={() => {
-        if (isLoading || !hasMore) return;
-
-        if (isFilterMode && lastFilterBody) {
-          handleFilterApply(lastFilterBody, page);
-        } else if (search.trim().length > 0) {
-          displayListOfProduct(page, search);
-        }
-      }}
-        onEndReachedThreshold={0.5} 
-        ListFooterComponent={
+            if (isFilterMode && lastFilterBody) {
+              handleFilterApply(lastFilterBody, page);
+            } else if (search.trim().length > 0) {
+              displayListOfProduct(page, search);
+            }
+          }}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={
             isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
           }
-           ListEmptyComponent={
-                                    !isLoading ? (
-                                       <View style={styles.emptyWrapper}>
-                                      <View style={styles.emptyContainer}>
-                                        <Image
-                                          source={require('../../../assets/images/noproduct.png')} // your image
-                                          style={styles.emptyImage}
-                                          resizeMode="contain"
-                                        />
-                                        <Text allowFontScaling={false} style={styles.emptyText}>
-                                          No Listings Found
-                                        </Text>
-                                      </View>
-                                      </View>
-                                    ) : null
-                                  }
-          />
+          ListEmptyComponent={
+            !isLoading ? (
+              <View style={styles.emptyWrapper}>
+                <View style={styles.emptyContainer}>
+                  <Image
+                    source={require('../../../assets/images/noproduct.png')} // your image
+                    style={styles.emptyImage}
+                    resizeMode="contain"
+                  />
+                  <Text allowFontScaling={false} style={styles.emptyText}>
+                    No Listings Found
+                  </Text>
+                </View>
+              </View>
+            ) : null
+          }
+        /> */}
+
+        <Animated.FlatList
+          data={featurelist}
+          renderItem={renderItem}
+          numColumns={2}
+          onEndReachedThreshold={0.5}
+          columnWrapperStyle={styles.row1}
+          keyExtractor={(item, index) => {
+            'worklet';
+            return index.toString();
+          }}
+          ListHeaderComponent={
+            <View style={{ flexDirection: 'row', gap: 8 ,paddingHorizontal: 10}}>
+              <View style={styles.search_container}>
+                <Image source={searchIcon} style={styles.searchIcon} />
+                <TextInput
+                  allowFontScaling={false}
+                  style={styles.searchBar}
+                  placeholder="Search"
+                  placeholderTextColor="#ccc"
+                  value={search}
+                  onChangeText={handleSearchChange}
+                  returnKeyType="search"
+                  selectionColor="white"
+                  autoFocus={true}
+                  onSubmitEditing={() => {
+                    if (search.trim().length > 0) {
+                      setPage(1);
+                      setHasMore(true);
+                      displayListOfProduct(1, search);
+                    } else {
+                      setFeaturelist([]);
+                    }
+                  }}
+                />
+              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  clickfilter();
+                }}
+              >
+                <View style={styles.MylistingsBackground}>
+                  <Image source={mylistings} style={styles.iconSmall} />
+                </View>
+              </TouchableOpacity>
+            </View>
+          }
+          contentContainerStyle={[
+            styles.listContainer,
+            { paddingTop: Platform.OS === 'ios' ? 120 : 100 ,paddingBottom: 40},
+          ]}
+          onScroll={scrollHandler}
+          scrollEventThrottle={16}
+          onEndReached={() => {
+            if (isLoading || !hasMore) return;
+
+            if (isFilterMode && lastFilterBody) {
+              handleFilterApply(lastFilterBody, page);
+            } else if (search.trim().length > 0) {
+              displayListOfProduct(page, search);
+            }
+          }}
+          ListEmptyComponent={
+            !isLoading ? (
+              <View style={[styles.emptyWrapper,{minHeight: SCREEN_HEIGHT - (Platform.OS === 'ios' ? 225 : 150), }]}>
+                <View style={styles.emptyContainer}>
+                  <Image
+                    source={require('../../../assets/images/noproduct.png')} // your image
+                    style={styles.emptyImage}
+                    resizeMode="contain"
+                  />
+                  <Text allowFontScaling={false} style={styles.emptyText}>
+                    No Orders Found
+                  </Text>
+                </View>
+              </View>
+            ) : null
+          }
+        />
       </View>
 
-     
       <FilterBottomSheet
         catagory_id={category_id}
         visible={isFilterVisible}
         onClose={() => setFilterVisible(false)}
-        onApply={(filterBody) => handleFilterApply(filterBody)} from={0} to={0}
+        onApply={filterBody => handleFilterApply(filterBody)}
+        from={0}
+        to={0}
         //onApply={(filterBody) => handleFilterApply(filterBody, 1)}
         //from={0} to={0}
-        />
-    <NewCustomToastContainer/>
+      />
+      <NewCustomToastContainer />
     </ImageBackground>
   );
 };
@@ -520,17 +734,92 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
 export default SearchPage;
 
 const styles = StyleSheet.create({
+
+
+  header: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    zIndex: 20,
+    paddingTop: Platform.OS === 'ios' ? 50 : 40,
+    paddingBottom: Platform.OS === 'ios' ? 16 : 12,
+    paddingHorizontal: 16,
+    justifyContent: 'center',
+    overflow: 'hidden', // IMPORTANT for MaskedView
+    flexDirection: 'row',
+    alignItems: 'center',
+    elevation: 0,
+    backgroundColor: 'transparent',
+    borderBottomWidth: 0,
+    shadowOpacity: 0,
+    shadowColor: 'transparent',
+    alignSelf: 'center',
+    minHeight: Platform.OS === 'ios' ? 80 : 88,
+  },
+  backButtonContainer: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 11,
+    top: 7,
+  },
+
+   headerWrapper: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    height: Platform.OS === 'ios' ? 180 : 180,
+    zIndex: 10,
+    overflow: 'hidden',
+    alignSelf: 'center',
+    pointerEvents: 'none',
+  },
+  headerContent: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? '6%' : 40,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
+  },
+
+dateHeading:{
+    color:'#fff',
+    fontSize:12,
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight:500,
+    marginLeft:12,
+    marginTop:16
+    },
+    blurButtonWrapper: {
+      width: 48,
+      height: 48,
+      borderRadius: 40,
+      overflow: 'hidden',
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 0.4,
+      borderColor: '#ffffff2c',
+      backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+    },
+
+
   background: { flex: 1, width: '100%', height: '100%' },
   fullScreenContainer: { flex: 1 },
 
   
-   emptyWrapper: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      width:'100%',
-      paddingHorizontal:16
-    },
+  emptyWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width:'100%',
+    marginTop: 16,
+    paddingHorizontal: 10,
+  },
+
 
  
    emptyContainer: {
@@ -558,11 +847,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight:600
   },
-  header: {
-    paddingTop: Platform.OS === 'ios' ? '15.2%'  : 50,
-    // paddingBottom: 12,
-    paddingHorizontal: 16,
-  },
+  // header: {
+  //   paddingTop: Platform.OS === 'ios' ? '15.2%'  : 50,
+  //   // paddingBottom: 12,
+  //   paddingHorizontal: 16,
+  // },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -588,18 +877,10 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
     fontWeight: '600',
+    marginTop: 17
   },
   search_container: {
-    // flexDirection: 'row',
-    // alignItems: 'center',
-    // borderRadius: 40,
-    // minHeight:48,
-    // boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    // backgroundColor:
-    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    // width: '84%',
-    // marginEnd: 8,
-
+ 
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
@@ -608,18 +889,15 @@ const styles = StyleSheet.create({
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    paddingVertical: 4,
+    // paddingVertical: 4,
     padding: (Platform.OS === 'ios'? 12:0),
-    marginTop:(Platform.OS === 'ios' ? 16:20),
+    marginTop:(Platform.OS === 'ios' ? 5:20),
     height: 48,
     gap: 8,
     width: '84%',
   },
   searchIcon: { 
-    // margin: 10, 
-    // height: 24, 
-    // width: 24 
-  
+
     padding: (Platform.OS === 'ios'? 0:5),
     margin: (Platform.OS === 'ios'? 0:10),
     height: 24,
@@ -647,7 +925,9 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     flex: 1,
-    marginHorizontal: 4,
+    marginHorizontal: 8,
+    paddingBottom: 15,
+    paddingTop: 10
   },
   ylistingsBackground: {
     height: 48,
@@ -684,7 +964,7 @@ const styles = StyleSheet.create({
     borderLeftColor: '#ffffff5d',
     borderRightColor: '#ffffff36',
     borderWidth: 0.3,
-    marginTop: 18,
+    marginTop: 0,
   },
   iconSmall: {
     width: 24,

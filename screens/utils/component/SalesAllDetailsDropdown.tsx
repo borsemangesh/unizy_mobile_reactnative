@@ -705,7 +705,7 @@ const SalesAllDetailsDropdown = ({
                     height: 4,
                     borderRadius: 2,
                     alignSelf: 'center',
-                    backgroundColor: '#000228',
+                    backgroundColor: 'rgba(0, 2, 40, 0.21)',
                     marginTop: 8,
                   }}
                 />
@@ -750,9 +750,10 @@ const SalesAllDetailsDropdown = ({
                 </View>
               </View>
 
-              <View style={{ flex: 1, flexDirection: 'row' }}>
+              <View style={{ flex: 1, flexDirection: 'row', backgroundColor:
+  'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(0, 60, 163, 0.18) 0%, rgba(255, 255, 255, 0.03) 100%)',}}>
                 <ScrollView
-                  style={{ flex: 1, paddingHorizontal: 16 }}
+                  style={{ flex: 1, paddingHorizontal: 16, backgroundColor: 'rgba(1, 26, 86, 0.12)' }}
                   contentContainerStyle={{ paddingBottom: 70 }}
                   showsVerticalScrollIndicator={false}
                 >
@@ -837,7 +838,7 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
     backgroundColor:
       Platform.OS === 'ios'
-        ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(216, 229, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)'
+        ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(216, 229, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)'
         : 'rgba(0, 0, 0, 0.07)',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
@@ -850,6 +851,8 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     alignItems: 'center',
     overflow: 'hidden',
+    backgroundColor:
+  'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgb(0, 60, 163) 0%, rgba(255, 255, 255, 0.03) 100%)',
   },
   overlay: {
     flex: 1,

@@ -337,7 +337,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
     <View
       style={[
         styles.itemContainer,
-        { flex: isLastOddItem ? 0.5 : 0.5, marginRight: isLastOddItem ? 0.5 : 0.5 },
+        { flex: isLastOddItem ? 0.5 : 0.5, marginRight: isLastOddItem ? 0.5 : 0.5,paddingHorizontal: 4  },
       ]}
     >
 
@@ -714,7 +714,7 @@ const handleEndReached = useCallback(() => {
             onEndReachedThreshold={0.5}
             ListHeaderComponent={
               <View
-                style={{ flexDirection: 'row', gap: 8,paddingHorizontal: 10 }}
+                style={{ flexDirection: 'row', gap: 8,paddingHorizontal: 9 }}
               >
                 <Pressable
                   style={styles.search_container}
@@ -755,7 +755,7 @@ const handleEndReached = useCallback(() => {
             }
             contentContainerStyle={[
               styles.listContainer,
-              { paddingTop: Platform.OS === 'ios' ? 120 : 100 },
+              { paddingTop: Platform.OS === 'ios' ? 120 : 100 ,paddingBottom: 40},
             ]}
             onScroll={scrollHandler}
             scrollEventThrottle={16}
@@ -996,7 +996,7 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     paddingVertical: 4,
     padding: (Platform.OS === 'ios'? 12:0),
-    marginTop:(Platform.OS === 'ios' ? 6:20),
+    marginTop:(Platform.OS === 'ios' ? 5:20),
     height: 48,
     gap: 8,
     width: '84%',

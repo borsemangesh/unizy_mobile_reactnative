@@ -137,44 +137,6 @@ type AddScreenContentProps = {
   navigation: any;
 };
 
-// const AddScreenContent: React.FC<
-//   AddScreenContentProps & { products: any[] }
-// > = ({ navigation, products }) => (
-//   <View style={styles.tabContent3}>
-//     <Text allowFontScaling={false} style={[styles.tabContentText3,{paddingBottom:(Platform.OS === 'ios'? 0 : 16)}]}>List Product</Text>
-//     <AnimatedSlideUp>
-//       <FlatList
-//         data={products}
-//         keyExtractor={item => item.id.toString()}
-//         renderItem={({ item }) => (
-//           <TouchableOpacity
-//             onPress={() => {
-//               if(Platform.OS === 'ios') {
-//               navigation.replace('AddScreen', {
-//                 productId: item.id,
-//                 productName: item.name,
-//               })
-//             } else {
-//               navigation.navigate('AddScreen', {productId: item.id, productName: item.name});
-//             }
-//             }}
-//           >
-//             <View style={styles.card}>
-//               <View style={styles.iconBackground}>
-//                 <Image source={item.icon} style={styles.cardIcon1} />
-//               </View>
-
-//               <View style={styles.cardTextContainer}>
-//                 <Text allowFontScaling={false} style={styles.cardTitle}>{item.name}</Text>
-//                 <Text allowFontScaling={false} style={styles.cardDescription}>{item.description}</Text>
-//               </View>
-//             </View>
-//           </TouchableOpacity>
-//         )}
-//       />
-//     </AnimatedSlideUp>
-//   </View>
-// );
 const AddScreenContent: React.FC<
   AddScreenContentProps & { products: any[] }
 > = ({ navigation, products }) => (
@@ -194,12 +156,10 @@ const AddScreenContent: React.FC<
             }}
           >
             <View style={styles.card}>
-              {/* <View style={styles.iconBackground}>
-                <Image source={item.icon} style={styles.cardIcon1} />
-              </View> */}
+             
 
                <ImageBackground
-                source={require('../../../assets/images/cardbg.png')} // 👈 your background image
+                source={require('../../../assets/images/cardbg.png')} 
                 style={styles.iconBackground}> 
 
                 <Image source={item.icon} style={styles.cardIcon1} />
@@ -213,8 +173,8 @@ const AddScreenContent: React.FC<
             </View>
           </TouchableOpacity>
         )}
-        ItemSeparatorComponent={() => <View style={{ height: 16 }} />} // 👈 adds 16px space
-        contentContainerStyle={{ marginTop:20 }} // optional top & bottom padding
+        ItemSeparatorComponent={() => <View style={{ height: 16 }} />} 
+        contentContainerStyle={{ marginTop:20 }}
       />
     </AnimatedSlideUp>
   </View>
@@ -289,29 +249,6 @@ const [isLoading, setIsLoading] = useState(true);
           | 'Profile',
       );
     }
-
-    // const fetchFeatures = async () => {
-    //   try {
-    //     const token = await AsyncStorage.getItem('userToken');
-    //     if (!token) return;
-    //     const url1 = MAIN_URL.baseUrl + 'category/feature-list';
-
-    //     const res = await fetch(url1, {
-    //       headers: { Authorization: `Bearer ${token}` },
-    //     });
-
-    //     const json = await res.json();
-    //     console.log('✅ Features API response:', json);
-
-    //     if (json.statusCode === 200) {
-    //       setFeatures(json.data.features || []);
-    //     }
-    //   } catch (err) {
-    //     console.log('❌ Error fetching features:', err);
-    //   }
-    // };
-
-    // fetchFeatures();
 
     const fetchCategories = async () => {
       try {
@@ -1090,17 +1027,6 @@ const blurAmount = useDerivedValue(() =>
                 </View>
               </TouchableOpacity>
             </Animated.View>
-{/* 
-            <LiquidGlassView
-      style={[
-        { width: 200, height: 100, borderRadius: 20 },
-        !isLiquidGlassSupported && { backgroundColor: 'rgba(255,255,255,0.5)' }
-      ]}
-      interactive
-      effect="clear"
-    >
-      <Text style={{ fontWeight: '600' }}>Hello World</Text>
-    </LiquidGlassView> */}
 
             <Animated.View
               style={[
@@ -1135,124 +1061,6 @@ const blurAmount = useDerivedValue(() =>
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} 
         >
-          {/* <ScrollView
-            style={{ flex: 1 }}
-            contentContainerStyle={{ paddingBottom: 10 }} 
-            showsVerticalScrollIndicator={false}
-          >
-            <View style={{ flex: 1,paddingTop: Platform.OS === 'ios' ? 0 : 0 }}>{renderActiveTabContent()}</View>
-          </ScrollView> */}
-
-
-
-
-{/* {activeTab === 'Search' ? (
-  <View style={{ flex: 1, }}>
-    <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
-
-   
-    <AnimatedReanimated.View
-      style={[
-        {
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: Platform.OS === 'ios' ? 100 : 120,
-          zIndex: 10,
-        },
-        animatedBlurStyle, 
-      ]}
-      pointerEvents="none"
-    >
-      <MaskedView
-        style={StyleSheet.absoluteFill}
-        maskElement={
-          <LinearGradient
-            colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
-            locations={[0, 0.8]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }}
-            style={StyleSheet.absoluteFill}
-          />
-        }
-      >
-        <BlurView
-          style={StyleSheet.absoluteFill}
-          blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
-          blurAmount={Platform.OS === 'ios' ? 10 : 45}
-          reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
-        />
-        <LinearGradient
-          colors={[
-            'rgba(255, 255, 255, 0.45)',
-            'rgba(255, 255, 255, 0.02)',
-            'rgba(255, 255, 255, 0.02)',
-          ]}
-          style={StyleSheet.absoluteFill}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-        />
-      </MaskedView>
-    </AnimatedReanimated.View>
-
-   
-    <View
-      style={{
-        position: 'absolute',
-        top: Platform.OS === 'ios' ? 70 : 60,
-        width: '100%',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: 16,
-        zIndex: 11,
-        alignSelf: 'center',
-      }}
-      pointerEvents="box-none"
-    >
-      <Text
-        allowFontScaling={false}
-        style={{
-          color: '#FFFFFF',
-          fontSize: 20,
-          flex: 1,
-          textAlign: 'center',
-          fontWeight: '600',
-          fontFamily: 'Urbanist-SemiBold',
-          width: '100%',
-        }}
-      >
-        Transaction History
-      </Text>
-    </View>
-
-    
-
-  
-    <AnimatedReanimated.ScrollView
-      scrollEventThrottle={16}
-      onScroll={scrollHandler}
-      style={{
-        flex: 1,
-        paddingTop: Platform.OS === 'ios' ? 140 : 120, 
-      }}
-      contentContainerStyle={{ paddingBottom: 40 }}
-      showsVerticalScrollIndicator={false}
-    >
-      <SearchScreenContent navigation={navigation} />
-    </AnimatedReanimated.ScrollView>
-  </View>
-) : (
-  // 🔹 All other tabs stay the same
-  <ScrollView
-    style={{ flex: 1 }}
-    contentContainerStyle={{ paddingBottom: 10 }}
-    showsVerticalScrollIndicator={false}
-  >
-    <View style={{ flex: 1 }}>{renderActiveTabContent()}</View>
-  </ScrollView>
-)} */}
 
 {activeTab === 'Search' || activeTab === 'Profile' ? (
   <View style={{ flex: 1 }}>
@@ -1267,7 +1075,7 @@ const blurAmount = useDerivedValue(() =>
           left: 0,
           right: 0,
           height: Platform.OS === 'ios' ? 100 : 120,
-          zIndex: 10,
+          zIndex: 0,
         },
         animatedBlurStyle,
       ]}
@@ -1312,7 +1120,7 @@ const blurAmount = useDerivedValue(() =>
         alignItems: 'center',
         justifyContent: 'center',
         paddingHorizontal: 16,
-        zIndex: 11,
+        zIndex: 0,
       }}
     >
       <Text
@@ -1322,6 +1130,7 @@ const blurAmount = useDerivedValue(() =>
           fontSize: 20,
           fontWeight: '600',
           fontFamily: 'Urbanist-SemiBold',
+          zIndex: 9,
         }}
       >
         {activeTab === 'Search' ? 'Transaction History' : 'Profile'}

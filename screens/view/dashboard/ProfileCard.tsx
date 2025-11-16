@@ -176,17 +176,31 @@ const renderItem = ({ item }: any) => {
         setShowConfirm(true); 
       }
         else if (item.title === 'My Orders') {
-          navigation.navigate('MyOrders'); 
+          if(Platform.OS === 'ios'){
+            navigation.replace('MyOrders'); 
+          } else {
+            navigation.navigate('MyOrders'); 
+          }
+          
         } 
         else if (item.title === 'My Reviews') {
-          navigation.navigate('MyReviews'); 
+          if(Platform.OS === 'ios'){
+            navigation.replace('MyReviews'); 
+          } else {
+            navigation.navigate('MyReviews'); 
+          }
+          // navigation.navigate('MyReviews'); 
         } 
         else if (item.title === 'Help & Support') {
           navigation.navigate('HelpSupport'); 
         } 
 
         else if (item.title === 'Notifications') {
-          navigation.navigate('Notification'); 
+          if(Platform.OS === 'ios'){
+            navigation.replace('Notification'); 
+          } else {
+            navigation.navigate('Notification'); 
+          }
         } 
          else {
           console.log(item.title, 'pressed');
@@ -233,14 +247,14 @@ return (
 
     <View
       style={{
-        paddingTop: Platform.OS === 'ios' ? '0%' : 120,
+        paddingTop: Platform.OS === 'ios' ? '0%' : 20,
         marginHorizontal: 16,
         gap: 24,
         marginTop: -16,
       }}
     >
       <View style={styles.userRow}>
-      <View style={{gap: 10}}>
+        <View style={{ gap: 10 }}>
           {userMeta?.profile ? (
             <Image source={{ uri: userMeta.profile }} style={styles.avatar} />
           ) : (
@@ -255,7 +269,8 @@ return (
           )}
         </View>
 
-        <View style={{}}>
+        <View style={{
+               }}>
           {/* Name + Edit on top row */}
           <View
             style={{
@@ -276,7 +291,7 @@ return (
           {/* Details below name */}
           <View style={{ flexDirection: 'column', gap: 6, marginTop: 4 }}>
             <View
-              style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 8}}
             >
               <Image
                 source={require('../../../assets/images/buildings.png')}
@@ -318,19 +333,21 @@ return (
               </Text>
             </View>
           </View>
+       
         </View>
-
-        <View style={styles.editcard}>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('EditProfile');
-            }}
-          >
+        
+        <TouchableOpacity
+        style={{position: 'absolute',right: 15,top: 14,}}
+          onPress={() => {
+            navigation.navigate('EditProfile');
+          }}
+        >
+          <View style={styles.editcard}>
             <Text allowFontScaling={false} style={styles.edittext}>
               Edit
             </Text>
-          </TouchableOpacity>
-        </View>
+          </View>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.listContainer}>
@@ -535,10 +552,7 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
     boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px', 
-  
-    position: 'absolute',
-    right:15,
-    top: 15
+
   },
 
   edittext:{
@@ -558,6 +572,9 @@ const styles = StyleSheet.create({
     width: 88,
     height: 88,
     borderRadius: 20,
+
+    
+    marginRight: 12
   },
   initialsText:{
    color: '#fff',
