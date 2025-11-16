@@ -475,13 +475,6 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
     },
   });
 
-  const animatedBlurStyle = useAnimatedStyle(() => {
-    'worklet';
-    const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
-    return { opacity };
-  });
-
-
   const fetchUserChatData = async (query: string = "", isInitialLoad: boolean = false) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -531,7 +524,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
       }
 
       const UserData = data.data;
-      setStudentList(UserData.results);
+      setStudentList(UserData.result);
       
       if (isInitialLoad) {
         // Ensure loader shows for at least 1 second total
@@ -652,7 +645,6 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
             height: height,
           }}
         />
-        {/* Overlay to hide watermark - covers bottom area where watermarks typically appear */}
         <View
           style={{
             position: 'absolute',
@@ -664,7 +656,6 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
             zIndex: 10000,
           }}
         />
-        {/* Cover right side if watermark is in bottom-right corner */}
         <View
           style={{
             position: 'absolute',
@@ -681,71 +672,35 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
   }
 
   return (
-    <View style={{ flex: 1, width: '100%', height: '100%' }}>
-        <Animated.View
-          style={[styles.headerWrapper, animatedBlurStyle]}
-          pointerEvents="none"
-        >
-          <MaskedView
-            style={StyleSheet.absoluteFill}
-            maskElement={
-              <LinearGradient
-                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
-                locations={[0, 0.8]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={StyleSheet.absoluteFill}
-              />
-            }
-          >
-            <BlurView
-              style={StyleSheet.absoluteFill}
-              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
-              blurAmount={Platform.OS === 'ios' ? 45 : 45}
-              overlayColor="rgba(255,255,255,0.05)"
-              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
-            />
-            <LinearGradient
-              colors={[
-                'rgba(255, 255, 255, 0.45)',
-                'rgba(255, 255, 255, 0.02)',
-                'rgba(255, 255, 255, 0.02)',
-              ]}
-              style={StyleSheet.absoluteFill}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 0, y: 1 }}
-            />
-          </MaskedView>
-        </Animated.View>
+    <View style={{ flex: 1, width: '100%', height: '100%',paddingHorizontal: 16 }}>
+        
+      
 
-        <View style={styles.header} pointerEvents="box-none">
-          <View style={styles.headerRow}>
-            <Text allowFontScaling={false} style={styles.unizyText}>
-              Messages
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.search_container}>
-          <Image source={searchIcon} style={styles.searchIcon} />
-          <TextInput
-            allowFontScaling={false}
-            style={styles.searchBar}
-            placeholder="Search"
-            placeholderTextColor="#ccc"
-            selectionColor={'#fff'}
-            onChangeText={setSearch}
-            value={search}
-          />
-        </View>
-
-        <View>
-          <Animated.FlatList
+          <FlatList
             data={studentList || []}
-            keyExtractor={(chat, index) => chat?.id?.toString() || index.toString()}
-            onScroll={scrollHandler}
-            scrollEventThrottle={16}
+            // keyExtractor={(chat, index) => chat?.id?.toString() || index.toString()}
+            // onScroll={scrollHandler}
+            keyExtractor={(item, index) => {
+            'worklet';
+            return index.toString();
+          }}
+            // scrollEventThrottle={16}
+            ListHeaderComponent={
+              <View style={styles.search_container}>
+                <Image source={searchIcon} style={styles.searchIcon} />
+                <TextInput
+                  allowFontScaling={false}
+                  style={styles.searchBar}
+                  placeholder="Search"
+                  placeholderTextColor="#ccc"
+                  selectionColor={'#fff'}
+                  onChangeText={setSearch}
+                  value={search}
+                />
+              </View>
+            }
             renderItem={({ item: chat }) => (
+              <ScrollView style={{ flex: 1 }}>
               <TouchableOpacity
                 onPress={() => {
                   navigation.navigate('MessagesIndividualScreen', {
@@ -755,13 +710,9 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
                     currentUserIdList: chat.current_user_id,
                     source: 'chatList',
                   });
-                  // navigation.replace('MessagesIndividualScreen', { animation: 'none' });
                 }}
               >
                 <View>
-                  {/* Chat Row */}
-                  {/* key={index} */}
-                  {/* {studentList?.map((chat: any, index: number) => ( */}
                   <View style={styles.chatRow}>
                     {chat.members?.profile ? (
                       <Image
@@ -781,9 +732,6 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
                         </Text>
                       </View>
                     )}
-
-                    {/* <Image source={chat.members?.profile}  style={styles.chatImage}  /> */}
-
                     <View style={{ flex: 1 }}>
                       <View
                         style={{
@@ -839,8 +787,6 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
                         >
                           {chat?.last_message?.body}
                         </Text>
-
-                        {/* {item.unreadCount > 0 && ( */}
                         <Text
                           allowFontScaling={false}
                           style={{
@@ -860,12 +806,9 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
                         >
                           {chat?.unreadcount}
                         </Text>
-                        {/* )} */}
                       </View>
                     </View>
                   </View>
-                  {/* ))} */}
-                  {/* Divider Line */}
                   <View
                     style={{
                       height: 1,
@@ -877,11 +820,12 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
                 </View>
                 
               </TouchableOpacity>
+              </ScrollView>
             )}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{
-              paddingBottom: 40,
-              paddingTop: Platform.OS === 'ios' ? 190 : 180,
+              paddingBottom: 250,
+              paddingTop: Platform.OS === 'ios' ? 120 : 10,
               paddingHorizontal: 16,
             }}
             ListEmptyComponent={
@@ -892,22 +836,17 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
               ) : null
             }
           />
-        </View>
-      {!initialLoading && search !== '' && (!studentList || studentList.length === 0) ? (
+      {/* {!initialLoading && search !== '' && (!studentList || studentList.length === 0) ? (
         <View
+        pointerEvents="none"   
           style={{
-            position: 'absolute',
-            top: 190,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            width: width,
-            height: height - 190,
-            justifyContent: 'flex-start',
-            alignItems: 'center',
-            paddingTop: 10,
-            zIndex: 10,
-          }}
+          position: 'absolute',
+          top: 190,
+          left: 0,
+          right: 0,
+          alignItems: 'center',
+          paddingTop: 10,
+        }}
         >
           <View style={styles.emptyContainer}>
             <Image
@@ -916,11 +855,11 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
               resizeMode="contain"
             />
             <Text allowFontScaling={false} style={styles.emptyText}>
-              No Data found
+              No Messages found
             </Text>
           </View>
         </View>
-      ) : null}
+      ) : null} */}
     </View>
   );
 };
@@ -948,7 +887,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     gap: 10,
-    marginTop: 30,
+    marginTop: 10,
     alignItems: 'center',
   },
   searchBar: {
@@ -960,18 +899,18 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   search_container: {
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? 110 : 135,
-    left: 16,
-    right: 16,
+    // position: 'absolute',
+    top: Platform.OS === 'ios' ? '5%' : 0,
+    // left: 16,
+    // right: 16,
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 40,
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    paddingVertical: 4,
-    paddingHorizontal: 16,
+    // paddingVertical: 4,
+    // paddingHorizontal: 16,
     zIndex: 12,
   },
   searchIcon: {

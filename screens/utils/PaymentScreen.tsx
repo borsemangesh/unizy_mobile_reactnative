@@ -114,38 +114,39 @@ const PaymentScreen :React.FC<PaymentScreenProps> = ({ navigation }) => {
   };
 
 
-  const initializePaymentSheet = async () => {
-  const result = await handlePayPress();
-  if (!result) return; // safeguard
+//   const initializePaymentSheet = async () => {
+//   const result = await handlePayPress();
+//   console.log(result)
+//   if (!result) return; // safeguard
 
-  const { clientSecret, ephemeralKey, customerId } = result;
+//   const { clientSecret, ephemeralKey, customerId } = result;
 
-  const { error } = await initPaymentSheet({
-    customerId: customerId,
-    customerEphemeralKeySecret: ephemeralKey,
-    paymentIntentClientSecret: clientSecret,
-    merchantDisplayName: "Your Company",
+//   const { error } = await initPaymentSheet({
+//     customerId: customerId,
+//     customerEphemeralKeySecret: ephemeralKey,
+//     paymentIntentClientSecret: clientSecret,
+//     merchantDisplayName: "Your Company",
 
   
-  //applePay: true,
-  //   googlePay: {
-  //   merchantCountryCode: "US",  // your country
-  //   //currencyCode: "INR",        // your currency
-  //   testEnv: true,              // set false in production
-  // },
+//   //applePay: true,
+//   //   googlePay: {
+//   //   merchantCountryCode: "US",  // your country
+//   //   //currencyCode: "INR",        // your currency
+//   //   testEnv: true,              // set false in production
+//   // },
     
-    allowsDelayedPaymentMethods: true,
-  });
+//     allowsDelayedPaymentMethods: true,
+//   });
 
 
-  if (!error) {
-      setLoading(false);
-      openSheet();
-    } else {
-      setLoading(false);
-      showToast("Failed to init payment sheet", "error");
-    }
-};
+//   if (!error) {
+//       setLoading(false);
+//       openSheet();
+//     } else {
+//       setLoading(false);
+//       showToast("Failed to init payment sheet", "error");
+//     }
+// };
 
   
 
@@ -168,6 +169,57 @@ const PaymentScreen :React.FC<PaymentScreenProps> = ({ navigation }) => {
   //     navigation.goBack();
   //   }
   // };
+
+const initializePaymentSheet = async () => {
+  console.log("📌 initializePaymentSheet() triggered");
+
+  try {
+    console.log("➡️ Calling handlePayPress...");
+    const result = await handlePayPress();
+    console.log("✅ handlePayPress() response:", result);
+
+    if (!result) {
+      console.log("❌ handlePayPress returned null/undefined");
+      return;
+    }
+
+    const { clientSecret, ephemeralKey, customerId } = result;
+
+    console.log("📌 Extracted values:");
+    console.log("🔑 clientSecret:", clientSecret);
+    console.log("🔑 ephemeralKey:", ephemeralKey);
+    console.log("🧑 customerId:", customerId);
+
+    console.log("➡️ Initializing Payment Sheet...");
+    const { error } = await initPaymentSheet({
+      customerId: customerId,
+      customerEphemeralKeySecret: ephemeralKey,
+      paymentIntentClientSecret: clientSecret,
+      merchantDisplayName: "Your Company",
+      allowsDelayedPaymentMethods: true,
+    });
+
+    console.log("📌 initPaymentSheet() response:", error);
+
+    if (!error) {
+      console.log("🎉 Payment sheet initialized successfully!");
+      setLoading(false);
+
+      console.log("➡️ Opening payment sheet...");
+      openSheet();
+    } else {
+      console.log("❌ Failed to initialize payment sheet:", error);
+      setLoading(false);
+      showToast("Failed to init payment sheet", "error");
+    }
+  } catch (err) {
+    console.log("🔥 ERROR in initializePaymentSheet:", err);
+    setLoading(false);
+    showToast("Unexpected error occurred", "error");
+  }
+};
+
+
 
  const openSheet = async () => {
   try {

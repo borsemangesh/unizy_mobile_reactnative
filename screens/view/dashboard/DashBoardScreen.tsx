@@ -1072,7 +1072,7 @@ return (
             <View style={{ flex: 1}}>{renderActiveTabContent()}</View>
           </ScrollView> */}
 
-      {activeTab === 'Search' || activeTab === 'Profile' ? (
+      {activeTab === 'Search' || activeTab === 'Profile'  ||  activeTab === 'Bookmark' ? (
   <View style={{ flex: 1 }}>
     <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
 
@@ -1142,9 +1142,16 @@ return (
           fontFamily: 'Urbanist-SemiBold',
         }}
       >
-        {activeTab === 'Search' ? 'Transaction History' : 'Profile'}
-      </Text>
-    </View>
+        {/* {activeTab === 'Search' ? 'Transaction History' : 'Profile'} */}
+          {activeTab === 'Search' ? (
+          'Transaction History'
+          ) : activeTab === 'Profile' ? (
+            'Profile'
+          ) : activeTab === 'Bookmark' ? (
+          'Messages'
+          ) : null}
+                </Text>
+              </View>
 
     {/* 🔹 Scroll section */}
     <AnimatedReanimated.ScrollView
@@ -1156,11 +1163,13 @@ return (
       }}
       showsVerticalScrollIndicator={false}
     >
-      {activeTab === 'Search' ? (
-        <SearchScreenContent navigation={navigation} />
-      ) : (
-        <ProfileScreenContent navigation={navigation} />
-      )}
+     {activeTab === 'Search' ? (
+  <SearchScreenContent navigation={navigation} />
+) : activeTab === 'Profile' ? (
+  <ProfileScreenContent navigation={navigation} />
+) : activeTab === 'Bookmark' ? (
+  <BookmarkScreenContent navigation={navigation} />
+) : null}
     </AnimatedReanimated.ScrollView>
   </View>
 ) : (

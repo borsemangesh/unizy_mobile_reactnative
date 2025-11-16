@@ -1022,32 +1022,7 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-        {/* Header */}
-        {/* <View style={styles.header}>
-          <View style={styles.headerRow}>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.replace('Dashboard', {
-                  AddScreenBackactiveTab: 'Home',
-                  isNavigate: false,
-                });
-              }}
-            >
-              <View style={styles.backIconRow}>
-                <Image
-                  source={require('../../../assets/images/back.png')}
-                  style={{ height: 24, width: 24 }}
-                />
-              </View>
-            </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>
-              Search
-            </Text>
-
-            <View style={{ width: 48 }} />
-          </View>
-        </View> */}
-
+       
         <StatusBar
           translucent
           backgroundColor="transparent"
@@ -1074,7 +1049,7 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
               style={StyleSheet.absoluteFill}
               blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
               blurAmount={Platform.OS === 'ios' ? 45 : 45}
-              //  overlayColor="rgba(255,255,255,0.05)"
+              overlayColor="rgba(255,255,255,0.05)"
               reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
             />
             <LinearGradient
@@ -1154,95 +1129,6 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
           Search
           </Text>
         </View>
-
-        {/* <Animated.FlatList
-          data={featurelist}
-          // keyExtractor={item => item.id.toString()}
-          keyExtractor={(item, index) => {
-            item.id.toString();
-            'worklet';
-            return index.toString();
-          }}
-          numColumns={2}
-          columnWrapperStyle={styles.row1}
-          contentContainerStyle={[
-            styles.listContainer,
-            { paddingBottom: SCREEN_HEIGHT * 0.05 },
-            featurelist?.length === 0 && {
-              alignContent: 'center',
-              alignSelf: 'center',
-              width: '100%',
-              height: '100%',
-            },
-          ]}
-          renderItem={renderItem}
-          ListHeaderComponent={
-            <View style={{ flexDirection: 'row', gap: 8 }}>
-              <View style={styles.search_container}>
-                <Image source={searchIcon} style={styles.searchIcon} />
-                <TextInput
-                  allowFontScaling={false}
-                  style={styles.searchBar}
-                  placeholder="Search"
-                  placeholderTextColor="#ccc"
-                  value={search}
-                  onChangeText={handleSearchChange}
-                  returnKeyType="search"
-                  selectionColor="white"
-                  autoFocus={true}
-                  onSubmitEditing={() => {
-                    if (search.trim().length > 0) {
-                      setPage(1);
-                      setHasMore(true);
-                      displayListOfProduct(1, search);
-                    } else {
-                      setFeaturelist([]);
-                    }
-                  }}
-                />
-              </View>
-              <TouchableOpacity
-                onPress={() => {
-                  clickfilter();
-                }}
-              >
-                <View style={styles.MylistingsBackground}>
-                  <Image source={mylistings} style={styles.iconSmall} />
-                </View>
-              </TouchableOpacity>
-            </View>
-          }
-          onEndReached={() => {
-            if (isLoading || !hasMore) return;
-
-            if (isFilterMode && lastFilterBody) {
-              handleFilterApply(lastFilterBody, page);
-            } else if (search.trim().length > 0) {
-              displayListOfProduct(page, search);
-            }
-          }}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={
-            isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
-          }
-          ListEmptyComponent={
-            !isLoading ? (
-              <View style={styles.emptyWrapper}>
-                <View style={styles.emptyContainer}>
-                  <Image
-                    source={require('../../../assets/images/noproduct.png')} // your image
-                    style={styles.emptyImage}
-                    resizeMode="contain"
-                  />
-                  <Text allowFontScaling={false} style={styles.emptyText}>
-                    No Listings Found
-                  </Text>
-                </View>
-              </View>
-            ) : null
-          }
-        /> */}
-
         <Animated.FlatList
           data={featurelist}
           renderItem={renderItem}
@@ -1330,8 +1216,6 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
         onApply={filterBody => handleFilterApply(filterBody)}
         from={0}
         to={0}
-        //onApply={(filterBody) => handleFilterApply(filterBody, 1)}
-        //from={0} to={0}
       />
       <NewCustomToastContainer />
     </ImageBackground>
@@ -1428,8 +1312,6 @@ dateHeading:{
     paddingHorizontal: 10,
   },
 
-
- 
    emptyContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -1440,8 +1322,6 @@ dateHeading:{
     borderColor: 'rgba(255, 255, 255, 0.08)',
     borderRadius:24,
     overflow:'hidden',
-    //minHeight:'80%',
-   //marginBottom:20,
   },
   emptyImage: {
     width: 50,

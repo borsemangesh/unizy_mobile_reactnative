@@ -858,9 +858,6 @@ headerContent: {
  
   },
   row1: {
-    // flexDirection: 'row',
-    // justifyContent: 'flex-start',
-    //paddingBottom:1
   },
   itemContainer: {
     flex: 1,

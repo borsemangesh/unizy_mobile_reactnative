@@ -230,11 +230,7 @@ const quantityOptions = Array.from({ length: maxQty }, (_, i) => ({
 
   const handlePay = () => {
 
-  //    if (detail?.category?.name === 'Food') {
-  //   // open popup
-  //   setMultiSelectModal(prev => ({ ...prev, visible: true }));
-  //   return;
-  // }
+
   navigation.navigate('PaymentScreen', {
     amount: Number(detail.price).toFixed(2),
     feature_id: id,
@@ -874,9 +870,25 @@ const handlePayConfirmed = (amount: number) => {
                   style={[styles.chatcard, { marginLeft: 8, flexDirection: 'row', alignItems: 'center' }]}
                   activeOpacity={0.8}
                   onPress={() => {
+                    // if (detail?.ispurchased) {
+                    //   navigation.navigate("MessagesIndividualScreen");
+                    // }
                     if (detail?.ispurchased) {
-                      navigation.navigate("MessagesIndividualScreen");
-                    } else {
+                        navigation.navigate("MessagesIndividualScreen",{
+                          animation: 'none',
+                          sellerData: {
+                            featureId: detail.id, 
+                            firstname: detail.createdby.firstname,
+                            lastname:  detail.createdby.lastname,                          
+                            profile:  detail.createdby.profile,
+                            universityName:"Reamaning"
+
+                          },
+                          source: 'sellerPage', // 👈 another flag
+                        });
+                      }
+                    
+                    else {
                       setShowPopup(true);
                     }
                   }}

@@ -1202,6 +1202,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    maxWidth:'90%'
   },
   productlebleHeader: {
     color: 'rgba(255, 255, 255, 0.88)',
