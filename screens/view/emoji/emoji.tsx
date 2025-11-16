@@ -1,7 +1,6 @@
-export const emoji = [
+ export const emoji = [
 
-  // 😀 Faces & Emotions
-  { char: '😀', name: 'Grinning Face' },
+ { char: '😀', name: 'Grinning Face' },
   { char: '😁', name: 'Beaming Face With Smiling Eyes' },
   { char: '😂', name: 'Face With Tears of Joy' },
   { char: '🤣', name: 'Rolling on the Floor Laughing' },
