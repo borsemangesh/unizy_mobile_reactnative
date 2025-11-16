@@ -503,15 +503,15 @@ const renderItem = ({ item }: any) => {
     </ScrollView> */}
 
     <Animated.FlatList
-  data={users}
-  renderItem={renderItem}
-  keyExtractor={(item) => item.id.toString()}
-  onScroll={scrollHandler}
-  scrollEventThrottle={16}
-  contentContainerStyle={{
-    paddingTop: Platform.OS === "ios" ? 160 : 110,
-    paddingBottom: 40,
-  }}
+      data={users}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.id.toString()}
+      onScroll={scrollHandler}
+      scrollEventThrottle={16}
+      contentContainerStyle={{
+        paddingTop: Platform.OS === "ios" ? 160 : 110,
+        paddingBottom: Platform.OS === "ios" ? 160 :80,
+      }}
   
   ListHeaderComponent={
     <>

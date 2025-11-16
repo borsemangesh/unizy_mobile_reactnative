@@ -243,6 +243,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
         showToast(data.message, 'success');
         setShowPopup2(true);
       } else {
+        setShowPopup1(false)
         showToast(data?.message, 'error');
       }
     } catch (err) {
