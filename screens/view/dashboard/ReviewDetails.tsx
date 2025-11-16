@@ -14,6 +14,7 @@ import {
   ActivityIndicator,
   ImageSourcePropType,
   ListRenderItem,
+  Dimensions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -61,8 +62,9 @@ const ReviewDetails : React.FC<ReviewDetailsProps> = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [totalReviews, setTotalReviews] = useState(0);
   const [averageRating, setAverageRating] = useState(0);
-
+  const { height: screenHeight } = Dimensions.get('window');
    const scrollY = useSharedValue(0);
+   const [isLoading, setIsLoading] = useState(false);
    
     const scrollHandler = useAnimatedScrollHandler({
       onScroll: event => {
@@ -433,7 +435,7 @@ const renderItem = ({ item }: any) => {
 
 
 
-      <ScrollView
+      {/* <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             style={{ marginVertical: 10 }}
@@ -498,7 +500,114 @@ const renderItem = ({ item }: any) => {
       />
     </View>
 
-    </ScrollView>
+    </ScrollView> */}
+
+    <Animated.FlatList
+  data={users}
+  renderItem={renderItem}
+  keyExtractor={(item) => item.id.toString()}
+  onScroll={scrollHandler}
+  scrollEventThrottle={16}
+  contentContainerStyle={{
+    paddingTop: Platform.OS === "ios" ? 160 : 110,
+    paddingBottom: 40,
+  }}
+  
+  ListHeaderComponent={
+    <>
+      {/* Category Tabs */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 10, paddingVertical: 10 }}
+      >
+        {categories.map((cat, index) => {
+          const isSelected = selectedCategory.name === cat.name;
+          return (
+            <TouchableOpacity
+              key={index}
+              onPress={() => setSelectedCategory(cat)}
+              style={isSelected ? styles.tabcard : styles.tabcard1}
+            >
+              <Text
+                allowFontScaling={false}
+                style={isSelected ? styles.tabtext : styles.othertext}
+              >
+                {cat.name}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+
+      {/* Rating Summary */}
+      <View
+        style={{
+          paddingHorizontal: 16,
+          marginBottom: 12,
+          alignItems: "center",
+        }}
+      >
+        <Text
+          allowFontScaling={false}
+          style={{
+            fontSize: 60,
+            fontWeight: "700",
+            color: "#fff",
+            marginBottom: 4,
+          }}
+        >
+          {averageRating}
+        </Text>
+
+        <StarRating rating={averageRating} starSize={24} />
+
+        <Text allowFontScaling={false} style={styles.reviewcount}>
+          {totalReviews} Reviews
+        </Text>
+      </View>
+
+      {/* Review Header */}
+      <View style={styles.innercontainer}>
+        <Text allowFontScaling={false} style={styles.mainlabel}>
+          Reviews
+        </Text>
+
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Image
+            source={require("../../../assets/images/staricon.png")}
+            style={{
+              width: 16,
+              height: 16,
+              marginRight: 4,
+              tintColor: "rgba(140, 225, 255, 0.9)",
+            }}
+          />
+          <Text allowFontScaling={false} style={styles.subrating}>
+            {averageRating} ({totalReviews})
+          </Text>
+        </View>
+      </View>
+    </>
+  }
+
+  ListEmptyComponent={
+               !isLoading ? (
+                <View style={[styles.emptyWrapper,{height: screenHeight - (Platform.OS === 'ios' ? 160 : 350), }]}>
+                           <View style={styles.emptyContainer}>
+                             <Image
+                               source={require('../../../assets/images/noproduct.png')} // your image
+                               style={styles.emptyImage}
+                               resizeMode="contain"
+                             />
+                             <Text allowFontScaling={false} style={styles.emptyText}>
+                               No Reviews found
+                             </Text>
+                           </View>
+                           </View>
+               ) : null
+             }
+/>
 
     
     
@@ -524,6 +633,41 @@ const renderItem = ({ item }: any) => {
 export default ReviewDetails;
 
 const styles = StyleSheet.create({
+  
+    emptyWrapper: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      width:'100%'
+
+    },
+
+   emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width:'100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderWidth: 0.3,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius:24,
+    overflow:'hidden',
+    //minHeight:'80%',
+   //marginBottom:20,
+  },
+  emptyImage: {
+    width: 50,
+    height: 50,
+    marginBottom: 20,
+  },
+  emptyText: {
+    fontSize: 20,
+    color: '#fff',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight:600
+  },
+
 
   unizyText: {
     color: '#FFFFFF',
@@ -832,7 +976,7 @@ const styles = StyleSheet.create({
       height: '100%' },
   fullScreenContainer: {
      flex: 1,
-     marginTop:10
+     //marginTop:10
      },
   // header: {
   //   paddingTop: Platform.OS === 'ios' ? 50 : 30,

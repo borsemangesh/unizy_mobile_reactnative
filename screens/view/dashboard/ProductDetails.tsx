@@ -1926,24 +1926,6 @@ const handleEndReached = useCallback(() => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-        {/* Header */}
-        {/* <View style={styles.header}>
-          <View style={styles.headerRow}>
-            <TouchableOpacity onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})}}>
-          
-            
-              <View style={styles.backIconRow}>
-                <Image
-                  source={require('../../../assets/images/back.png')}
-                  style={{ height: 24, width: 24 }}
-                />
-              </View>
-            </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>{`${category_name}s`}</Text>
-
-            <View style={{ width: 48 }} />
-          </View>
-        </View> */}
               <StatusBar
                  translucent
                  backgroundColor="transparent"
@@ -2044,93 +2026,6 @@ const handleEndReached = useCallback(() => {
                  <Text allowFontScaling={false} style={styles.unizyText}>{`${category_name}s`}</Text>
                </View>
 
-        {/* Search Bar */}
-
-        {/* <Animated.FlatList
-          data={featurelist}
-          keyExtractor={(item, index) => {
-            item.id.toString()
-            'worklet';
-            return index.toString();
-          }}
-          // keyExtractor={item => item.id.toString()}
-          numColumns={2}
-          columnWrapperStyle={styles.row1}
-          contentContainerStyle={[
-            //styles.listContainer,
-            // styles.listContainer,
-            // { paddingBottom: SCREEN_HEIGHT * 0.05 },
-            styles.listContainer,
-            { paddingTop: Platform.OS === 'ios' ? 120 : 100 },
-            featurelist?.length === 0 && {
-              alignContent: 'center',
-              alignSelf: 'center',
-              width: '90%',
-              height: '100%',
-            },
-          ]}
-          renderItem={renderItem}
-          onEndReached={handleEndReached}
-          onEndReachedThreshold={0.5}
-          ListHeaderComponent={
-            <View
-              style={{ flexDirection: 'row', gap: 8 }}
-            >
-              <Pressable
-                style={styles.search_container}
-                onPress={() => inputRef.current?.focus()}
-              >
-                <Image source={searchIcon} style={styles.searchIcon} />
-                <TextInput
-                  ref={inputRef}
-                  allowFontScaling={false}
-                  style={styles.searchBar}
-                  selectionColor="white"
-                  placeholder="Search"
-                  placeholderTextColor="#ccc"
-                  //onChangeText={setSearch}
-                  onChangeText={text => {
-                    setSearch(text);
-                    debouncedSearch(text);
-                  }}
-                  value={search}
-                />
-              </Pressable>
-
-              <View>
-                <TouchableOpacity
-                  onPress={() => {
-                    clickfilter();
-                  }}
-                >
-                  <View style={styles.MylistingsBackground}>
-                    <Image source={mylistings} style={styles.iconSmall} />
-                  </View>
-                </TouchableOpacity>
-              </View>
-            </View>
-          }
-          ListFooterComponent={
-            isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
-          }
-          ListEmptyComponent={
-            !isLoading ? (
-              <View style={styles.emptyWrapper}>
-                <View style={styles.emptyContainer}>
-                  <Image
-                    source={require('../../../assets/images/noproduct.png')} // your image
-                    style={styles.emptyImage}
-                    resizeMode="contain"
-                  />
-                  <Text allowFontScaling={false} style={styles.emptyText}>
-                    No Listings Found
-                  </Text>
-                </View>
-              </View>
-            ) : null
-          }
-        /> */}
-
 
         <Animated.FlatList
             data={featurelist}
@@ -2186,31 +2081,11 @@ const handleEndReached = useCallback(() => {
             }
             contentContainerStyle={[
               styles.listContainer,
-              { paddingTop: Platform.OS === 'ios' ? 120 : 100 },
+              { paddingTop: Platform.OS === 'ios' ? 120 : 100 ,paddingBottom:40},
             ]}
             onScroll={scrollHandler}
             scrollEventThrottle={16}
-            // onEndReached={() => {
-            //   const nextPage = page + 1;
-            //   setPage(nextPage);
-            //   displayListOfProduct(selectedCategory?.id ?? null, nextPage);
-            // }}
-            // ListEmptyComponent={
-            //   !isLoading ? (
-            //    <View style={[styles.emptyWrapper,{minHeight: SCREEN_HEIGHT - (Platform.OS === 'ios' ? 225 : 150), }]}>
-            //               <View style={styles.emptyContainer}>
-            //                 <Image
-            //                   source={require('../../../assets/images/noproduct.png')} // your image
-            //                   style={styles.emptyImage}
-            //                   resizeMode="contain"
-            //                 />
-            //                 <Text allowFontScaling={false} style={styles.emptyText}>
-            //                   No Reviews found
-            //                 </Text>
-            //               </View>
-            //               </View>
-            //   ) : null
-            // }
+          
             ListEmptyComponent={
               !isLoading ? (
                 <View style={[styles.emptyWrapper,{minHeight: SCREEN_HEIGHT - (Platform.OS === 'ios' ? 225 : 150), }]}>

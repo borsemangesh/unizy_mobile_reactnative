@@ -338,7 +338,7 @@ console.log(groupedArray.map(i => i.type === 'date' ? `📅 ${i.displayDate}` : 
 const groupedOrders = groupByDate(filteredFeatures);
 
 const renderItem = ({ item, index }: { item: any; index: number }) => {
- const displayDate = formatDate(item?.featurelist?.created_at);
+ const displayDate = formatDate(item?.created_at);
   if (item.type === 'date') {
     return (
       <Text allowFontScaling={false} style={styles.dateHeading}>

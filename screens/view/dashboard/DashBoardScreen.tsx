@@ -1085,7 +1085,7 @@ return (
           left: 0,
           right: 0,
           height: Platform.OS === 'ios' ? 100 : 120,
-          zIndex: 10,
+          zIndex: 0,
         },
         animatedBlurStyle,
       ]}
@@ -1130,7 +1130,7 @@ return (
         alignItems: 'center',
         justifyContent: 'center',
         paddingHorizontal: 16,
-        zIndex: 11,
+        zIndex: 0,
       }}
     >
       <Text
