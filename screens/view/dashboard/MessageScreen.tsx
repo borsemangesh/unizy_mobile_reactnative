@@ -447,6 +447,7 @@ import { MAIN_URL } from '../../utils/APIConstant';
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
@@ -464,6 +465,9 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
   const [initialLoading, setInitialLoading] = useState(true);
   const isInitialMount = useRef(true);
   const { width, height } = Dimensions.get('window');
+  const insets = useSafeAreaInsets();
+  const SCREEN_HEIGHT = height;
+  const INNER_SCREEN_HEIGHT = height - insets.top - insets.bottom;
 
   // Animated hooks for blur effect
   const scrollY = useSharedValue(0);
@@ -783,10 +787,19 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
           paddingHorizontal: 16,
         }}
         ListEmptyComponent={
-          !initialLoading ? (
-            <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
-              No messages found
-            </Text>
+          !initialLoading && (!studentList || studentList.length === 0) ? (
+            <View style={[styles.emptyWrapper, { minHeight: INNER_SCREEN_HEIGHT - (Platform.OS === 'ios' ? 225 : 150) }]}>
+              <View style={styles.emptyContainer}>
+                <Image
+                  source={require('../../../assets/images/noproduct.png')}
+                  style={styles.emptyImage}
+                  resizeMode="contain"
+                />
+                <Text allowFontScaling={false} style={styles.emptyText}>
+                  No Data Found
+                </Text>
+              </View>
+            </View>
           ) : null
         }
         />
@@ -949,14 +962,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
   },
-  emptyContainer: {
+  emptyWrapper: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    width: '90%',
-    maxWidth: 400,
-    minHeight: '80%',
-    paddingVertical: 100,
-    paddingHorizontal: 30,
+    width: '100%',
+    paddingHorizontal: 0,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     borderWidth: 0.3,
     borderColor: 'rgba(255, 255, 255, 0.08)',

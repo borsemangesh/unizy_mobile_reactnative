@@ -2493,7 +2493,7 @@ const MessagesIndividualScreen = ({
 
       <KeyboardAvoidingView
         key={kavKey}
-        style={{ flex: 1 }}
+        style={{ flex: 1}}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
         enabled={!isEmojiPickerVisible}
@@ -2585,7 +2585,7 @@ const MessagesIndividualScreen = ({
                
 
                 {item?.type === "date" ? (
-  <View style={{ alignItems: "center", marginVertical: 10 ,paddingTop:60}}>
+  <View style={{ alignItems: "center", marginVertical: 10 }}>
     <Text  style={{
                         color: '#FFFFFF7A',
                         backgroundColor: '#00000029',
@@ -2709,7 +2709,12 @@ const MessagesIndividualScreen = ({
               viewportHeightRef.current = height;
               updateBlurState();
             }}
-            contentContainerStyle={contentContainerStyle}
+     contentContainerStyle={{
+  ...contentContainerStyle,
+  paddingBottom: 120,
+  paddingTop:(isEmojiPickerVisible || keyboardVisible) ? 80 : 105,
+}}
+
             showsVerticalScrollIndicator={false}
           />
 
@@ -3114,7 +3119,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#FFFFFF',
     marginTop: 2,
-    maxWidth:'85%'
+    maxWidth:'86%',
+    
   },
   backIconStyle: {
     width: 30,
