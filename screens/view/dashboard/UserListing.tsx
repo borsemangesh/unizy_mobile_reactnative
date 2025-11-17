@@ -101,12 +101,25 @@ type UserListingProps = {
 };
 
 
-
+type RouteParams = {
+  source?: 'chatList' | 'sellerPage';
+  members: {
+    firstname: string;
+    lastname: string;
+    id: number;
+    profile: string | null;
+    university: {id:number,name:string};
+  };  
+};
 
 
 
 
 const UserListing = ({ navigation }: UserListingProps)  => {
+ const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
+    const { members } =   route.params;
+
+
   const [search, setSearch] = useState<string>('');
     const [page, setPage] = useState(1);
     const pagesize = 10;
@@ -283,9 +296,12 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number, 
     } else if (pageNum > 1) {
       setIsLoadingMore(true);
     }
-    const userId = await AsyncStorage.getItem('userId');
+    // const userId = await AsyncStorage.getItem('userId');
     
-    let url = `${MAIN_URL.baseUrl}user/user-listing?user_id=${106}`;
+    let url = `${MAIN_URL.baseUrl}user/user-listing?user_id=${members.id}`;
+
+ 
+    
 
     // Add category filter if needed
     // if (categoryId) {
@@ -687,7 +703,7 @@ const handleBookmarkPress = async (productId: number) => {
                  </TouchableOpacity>
         
                  <Text allowFontScaling={false} style={styles.unizyText}>
-                   Allen Listings
+                   {members.firstname} Listings
                  </Text>
                </View>
 

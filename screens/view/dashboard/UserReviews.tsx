@@ -36,6 +36,7 @@ import Animated, {
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
+import { RouteProp, useRoute } from '@react-navigation/native';
 
 type CreatedBy = {
   id: number;
@@ -88,8 +89,25 @@ type UserReviewsProps = {
   navigation: any;
 };
 
+type RouteParams = {
+  source?: 'chatList' | 'sellerPage';
+  members: {
+    firstname: string;
+    lastname: string;
+    id: number;
+    profile: string | null;
+    university: {id:number,name:string};
+  };  
+};
+
+
 
 const UserReviews = ({ navigation }: UserReviewsProps)  => {
+
+
+ const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
+    const { members } =   route.params;
+
   const [featurelist, setFeaturelist] = useState<Feature[]>([]);
   const [search, setSearch] = useState<string>('');
   const [page, setPage] = useState(1);
@@ -105,6 +123,12 @@ const UserReviews = ({ navigation }: UserReviewsProps)  => {
   id: number | null; 
   name: string;
 };
+
+
+
+
+    
+
 
   const scrollY = useSharedValue(0);
  
@@ -176,6 +200,9 @@ useEffect(() => {
   loadCategories();
 }, []);
 
+
+
+
 useEffect(() => {
   setPage(1);
   displayListOfProduct(selectedCategory?.id ?? null, 1);
@@ -185,9 +212,11 @@ useEffect(() => {
 const displayListOfProduct = async (categoryId: number | null, pageNum: number) => {
   try {
     const pagesize = 10;
+
   
-    let url = `${MAIN_URL.baseUrl}user/user-review?user_id=64`;
+    let url = `${MAIN_URL.baseUrl}user/user-review?user_id=${members.id}`;
   
+        console.log('members',members);
 
     console.log("test",url)
     
@@ -419,7 +448,7 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
                  </TouchableOpacity>
         
                  <Text allowFontScaling={false} style={styles.unizyText}>
-                   Allen Reviews
+                   {members.firstname} Reviews 
                  </Text>
                </View>
           <Animated.FlatList

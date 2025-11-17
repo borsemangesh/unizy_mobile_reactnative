@@ -2356,12 +2356,21 @@ const MessagesIndividualScreen = ({
           </TouchableOpacity>
           <TouchableOpacity
             style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}
-            onPress={() => navigation.navigate('UserProfileScreen')}
+            // onPress={() => navigation.navigate('UserProfileScreen')}
+
+             onPress={() => {
+              navigation.navigate('UserProfileScreen', {
+                animation: 'none',              
+                members: members,
+                source: 'chatList',
+              });
+            }}
           >
             {source === 'chatList' ? (
               members?.profile ? (
                 <Image
                   source={{ uri: members?.profile }}
+            
                   style={styles.profileImage}
                 />
               ) : (

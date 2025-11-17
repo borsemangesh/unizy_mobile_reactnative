@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { FlatList, Image, ImageBackground, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { MAIN_URL } from '../../utils/APIConstant';
+import { RouteProp, useRoute } from '@react-navigation/native';
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImage = require('../../../assets/images/user.jpg');
@@ -12,12 +13,33 @@ const arrowIcon = require('../../../assets/images/nextarrow.png');
 
 
 
+type RouteParams = {
+  source?: 'chatList' | 'sellerPage';
+  members: {
+    firstname: string;
+    lastname: string;
+    id: number;
+    profile: string | null;
+    university: {id:number,name:string};
+  };  
+};
+
 
 type UserProfileScreenProps ={
   navigation: any;
 }
 
 const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
+
+  console.log("hiii");
+  
+
+   const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
+    const { members } =   route.params;
+
+      console.log("currentUserIdList----",members);
+      
+  
 
     const [messageText, setMessageText] = useState('');
     const [userList, setUserList] = useState<any>(null);
@@ -36,8 +58,11 @@ const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
 
 
       
-        const url = `${MAIN_URL.baseUrl}user/info?user_id=${userId}`;
+        const url = `${MAIN_URL.baseUrl}user/info?user_id=${members.id}`;
         console.log('url----------',url);
+        
+      console.log("currentUserIdListfdgfgdfg----",members);
+
         
         const response = await fetch(url, {
           method: 'GET',
@@ -82,10 +107,22 @@ const renderItem = ({ item }: any) => {
           style={styles.cardContainer}
           onPress={async () => {
            if (item.id === '2') {
-              navigation.navigate('UserListing'); 
+              // navigation.navigate('UserListing'); 
+              //  onPress={() => {
+              navigation.navigate('UserListing', {
+                animation: 'none',              
+                members: members,
+                source: 'chatList',
+              });
+            // }}
             } 
             else if (item.id === '1') {
-              navigation.navigate('UserReviews'); 
+              // navigation.navigate('UserReviews'); 
+              navigation.navigate('UserReviews', {
+                animation: 'none',              
+                members: members,
+                source: 'chatList',
+              });
             } 
           }}
         >
