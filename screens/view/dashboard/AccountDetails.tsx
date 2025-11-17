@@ -12,6 +12,7 @@ import {
   TouchableWithoutFeedback,
   TextInput,
   Keyboard,
+  Alert,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -30,6 +31,7 @@ import MaskedView from '@react-native-masked-view/masked-view';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import { Constant } from '../../utils/Constant';
+import Button from '../../utils/component/Button';
 import {
   NewCustomToastContainer,
   showToast,
@@ -122,6 +124,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
   
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [buttonLoading, setButtonLoading] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   
   // Debug log to check route params
@@ -207,6 +210,79 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
     if (!last4) return '****';
     return `****${last4}`;
   };
+
+  // Get all primary banks (all banks with default_for_currency: true)
+  const getPrimaryBanks = () => {
+    if (!data?.stripeAccount?.merchant) return [];
+    const merchants = Array.isArray(data.stripeAccount.merchant) 
+      ? data.stripeAccount.merchant 
+      : [data.stripeAccount.merchant];
+    const primaryBanks = merchants.filter((bank: any) => bank.default_for_currency === true);
+    console.log('Primary Banks:', primaryBanks);
+    return primaryBanks;
+  };
+
+  // Get other banks (all banks without default_for_currency: true)
+  const getOtherBanks = () => {
+    if (!data?.stripeAccount?.merchant) return [];
+    const merchants = Array.isArray(data.stripeAccount.merchant) 
+      ? data.stripeAccount.merchant 
+      : [data.stripeAccount.merchant];
+    const otherBanks = merchants.filter((bank: any) => !bank.default_for_currency);
+    console.log('Other Banks:', otherBanks);
+    console.log('Total merchants:', merchants.length, 'Primary banks count:', getPrimaryBanks().length, 'Other banks count:', otherBanks.length);
+    return otherBanks;
+  };
+
+  const handleAddBank = useCallback(async () => {
+    try {
+      setButtonLoading(true);
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        showToast('Please login to continue', 'error');
+        setButtonLoading(false);
+        return;
+      }
+
+      const url = `${MAIN_URL.baseUrl}transaction/account-onboarding-link`;
+      console.log('API Account Link URL: ', url);
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+        },
+      });
+
+      const result = await response.json();
+      console.log('API Account Link Response: ', result);
+      console.log('Account Link URL from response: ', result.data?.url);
+
+      if (response.ok && result.statusCode === 200) {
+        const accountLinkUrl = result.data?.url;
+        
+        if (accountLinkUrl) {
+          console.log('Navigating to StripeOnboardingScreen with URL:', accountLinkUrl);
+          // Navigate to StripeOnboardingScreen with the URL (same as onboarding flow)
+          navigation.navigate('StripeOnboardingScreen', {
+            onboardingUrl: accountLinkUrl,
+          });
+        } else {
+          console.error('Account link URL not found in response data');
+          showToast('Account link URL not found in response', 'error');
+        }
+      } else {
+        console.error('Error:', result.message || 'Failed to fetch account link');
+        showToast(result.message || 'Failed to fetch account link', 'error');
+      }
+    } catch (error) {
+      console.error('API Error:', error);
+      showToast(Constant.SOMTHING_WENT_WRONG || 'Something went wrong', 'error');
+    } finally {
+      setButtonLoading(false);
+    }
+  }, [navigation]);
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -350,7 +426,13 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                     Name:
                   </Text>
                   <Text allowFontScaling={false} style={styles.status}>
-                    {data?.stripeAccount?.merchant?.name || 'N/A'}
+                    {(() => {
+                      const merchants = data?.stripeAccount?.merchant;
+                      if (Array.isArray(merchants) && merchants.length > 0) {
+                        return merchants[0]?.name || 'N/A';
+                      }
+                      return merchants?.name || 'N/A';
+                    })()}
                   </Text>
                 </View>
 
@@ -359,75 +441,210 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                     Email:
                   </Text>
                   <Text allowFontScaling={false} style={styles.status}>
-                    {data?.stripeAccount?.merchant?.email || 'N/A'}
+                    {(() => {
+                      const merchants = data?.stripeAccount?.merchant;
+                      if (Array.isArray(merchants) && merchants.length > 0) {
+                        return merchants[0]?.email || 'N/A';
+                      }
+                      return merchants?.email || 'N/A';
+                    })()}
                   </Text>
                 </View>
               </SquircleView>
 
               <View style={styles.carddivider} />
 
-              {/* Bank Details Card */}
-              <SquircleView
-                style={styles.card}
-                squircleParams={{
-                  cornerSmoothing: 1,
-                  cornerRadius: 24,
-                  fillColor: 'rgba(255, 255, 255, 0.06)',
-                }}
-              >
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: 4,
+              {/* Primary Bank Section */}
+              {getPrimaryBanks().length > 0 && (
+                <>
+                  {getPrimaryBanks().map((bank: any, index: number) => (
+                    <View key={`primary-${index}`} style={{ width: '100%', gap: 16 }}>
+                      <SquircleView
+                        style={styles.card}
+                        squircleParams={{
+                          cornerSmoothing: 1,
+                          cornerRadius: 24,
+                          fillColor: 'rgba(255, 255, 255, 0.06)',
+                        }}
+                      >
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: 4,
+                          }}
+                        >
+                          <Image
+                            source={require('../../../assets/images/sellerfile.png')}
+                            style={{ width: 24, height: 24 }}
+                            resizeMode="cover"
+                          />
+                          <Text
+                            allowFontScaling={false}
+                            style={styles.sellerHeaderlable}
+                          >
+                            Bank Details
+                          </Text>
+                        </View>
+
+                        <View style={styles.cardconstinerdivider} />
+
+                        <View style={styles.listingtyperow}>
+                          <Text allowFontScaling={false} style={styles.lebleHeader}>
+                            Bank Name:
+                          </Text>
+                          <Text allowFontScaling={false} style={styles.status}>
+                            {bank.bank_name || 'N/A'}
+                          </Text>
+                        </View>
+
+                        <View style={styles.listingtyperow}>
+                          <Text allowFontScaling={false} style={styles.lebleHeader}>
+                            Account Number:
+                          </Text>
+                          <Text allowFontScaling={false} style={styles.status}>
+                            {bank.last4
+                              ? maskAccountNumber(bank.last4)
+                              : 'N/A'}
+                          </Text>
+                        </View>
+
+                        <View style={styles.listingtyperow}>
+                          <Text allowFontScaling={false} style={styles.lebleHeader}>
+                            Sort Code:
+                          </Text>
+                          <Text allowFontScaling={false} style={styles.status}>
+                            {bank.routing_number || 'N/A'}
+                          </Text>
+                        </View>
+                      </SquircleView>
+                      {index < getPrimaryBanks().length - 1}
+                    </View>
+                  ))}
+                </>
+              )}
+            
+              {/* Other Banks Section */}
+              {getOtherBanks().length > 0 && (
+                <>
+                  {getPrimaryBanks().length > 0 && <View style={styles.carddivider} />}
+
+                  {getOtherBanks().map((bank: any, index: number) => (
+                    <View key={index} style={{ width: '100%', gap: 16 }}>
+                      <SquircleView
+                        style={styles.card}
+                        squircleParams={{
+                          cornerSmoothing: 1,
+                          cornerRadius: 24,
+                          fillColor: 'rgba(255, 255, 255, 0.06)',
+                        }}
+                      >
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: 4,
+                          }}
+                        >
+                          <Image
+                            source={require('../../../assets/images/sellerfile.png')}
+                            style={{ width: 24, height: 24 }}
+                            resizeMode="cover"
+                          />
+                          <Text
+                            allowFontScaling={false}
+                            style={styles.sellerHeaderlable}
+                          >
+                            Bank Details
+                          </Text>
+                        </View>
+
+                        <View style={styles.cardconstinerdivider} />
+
+                        <View style={styles.listingtyperow}>
+                          <Text allowFontScaling={false} style={styles.lebleHeader}>
+                            Bank Name:
+                          </Text>
+                          <Text allowFontScaling={false} style={styles.status}>
+                            {bank.bank_name || 'N/A'}
+                          </Text>
+                        </View>
+
+                        <View style={styles.listingtyperow}>
+                          <Text allowFontScaling={false} style={styles.lebleHeader}>
+                            Account Number:
+                          </Text>
+                          <Text allowFontScaling={false} style={styles.status}>
+                            {bank.last4
+                              ? maskAccountNumber(bank.last4)
+                              : 'N/A'}
+                          </Text>
+                        </View>
+
+                        <View style={styles.listingtyperow}>
+                          <Text allowFontScaling={false} style={styles.lebleHeader}>
+                            Sort Code:
+                          </Text>
+                          <Text allowFontScaling={false} style={styles.status}>
+                            {bank.routing_number || 'N/A'}
+                          </Text>
+                        </View>
+                      </SquircleView>
+                      {index < getOtherBanks().length - 1 && <View style={styles.carddivider} />}
+                    </View>
+                  ))}
+                </>
+              )}
+
+              {/* No Bank Details Message */}
+              {getPrimaryBanks().length === 0 && getOtherBanks().length === 0 && (
+                <SquircleView
+                  style={styles.card}
+                  squircleParams={{
+                    cornerSmoothing: 1,
+                    cornerRadius: 24,
+                    fillColor: 'rgba(255, 255, 255, 0.06)',
                   }}
                 >
-                  <Image
-                    source={require('../../../assets/images/sellerfile.png')}
-                    style={{ width: 24, height: 24 }}
-                    resizeMode="cover"
-                  />
-                  <Text
-                    allowFontScaling={false}
-                    style={styles.sellerHeaderlable}
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      gap: 4,
+                    }}
                   >
-                    Bank Details
-                  </Text>
-                </View>
+                    <Image
+                      source={require('../../../assets/images/sellerfile.png')}
+                      style={{ width: 24, height: 24 }}
+                      resizeMode="cover"
+                    />
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.sellerHeaderlable}
+                    >
+                      Bank Details
+                    </Text>
+                  </View>
 
-                <View style={styles.cardconstinerdivider} />
+                  <View style={styles.cardconstinerdivider} />
 
-                <View style={styles.listingtyperow}>
-                  <Text allowFontScaling={false} style={styles.lebleHeader}>
-                    Bank Name:
-                  </Text>
-                  <Text allowFontScaling={false} style={styles.status}>
-                    {data?.stripeAccount?.merchant?.bank_name || 'N/A'}
-                  </Text>
-                </View>
-
-                <View style={styles.listingtyperow}>
-                  <Text allowFontScaling={false} style={styles.lebleHeader}>
-                    Account Number:
-                  </Text>
-                  <Text allowFontScaling={false} style={styles.status}>
-                    {data?.stripeAccount?.merchant?.last4
-                      ? maskAccountNumber(data.stripeAccount.merchant.last4)
-                      : 'N/A'}
-                  </Text>
-                </View>
-
-                <View style={styles.listingtyperow}>
-                  <Text allowFontScaling={false} style={styles.lebleHeader}>
-                    Sort Code:
-                  </Text>
-                  <Text allowFontScaling={false} style={styles.status}>
-                    {data?.stripeAccount?.merchant?.routing_number || 'N/A'}
-                  </Text>
-                </View>
-              </SquircleView>
+                  <View style={styles.listingtyperow}>
+                    <Text allowFontScaling={false} style={styles.status}>
+                      No bank details available. Please add your bank account.
+                    </Text>
+                  </View>
+                </SquircleView>
+              )}
             </View>
           </Animated.ScrollView>
+        </View>
+
+        {/* Fixed Bottom Button */}
+        <View style={styles.bottomButtonContainer}>
+          <Button 
+            title={buttonLoading ? "Loading..." : "Edit Bank Details"} 
+            onPress={buttonLoading ? () => {} : handleAddBank}
+          />
         </View>
       </View>
 
@@ -487,6 +704,20 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
 }
 export default AccountDetails
 const styles = StyleSheet.create({
+    addButton: {
+    height: 52,
+    borderRadius: 100,
+    backgroundColor: "rgba(255,255,255,0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 0.5,
+    borderColor: "#ffffff3a",
+  },
+  addButtonText: {
+    color: "#002050",
+    fontSize: 17,
+    fontFamily: "Urbanist-Bold",
+  },
   headerWrapper: {
     position: 'absolute',
     top: 0,
@@ -617,12 +848,25 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
   },
   scrollContainer: {
-    paddingBottom: 180,
+    paddingBottom: 100,
     paddingTop: Platform.OS === 'ios' ? 100 : 90,
     paddingHorizontal: 16,
     width: Platform.OS === 'ios' ? 393 : '100%',
     alignSelf: 'center',
     marginTop: 20,
+  },
+  bottomButtonContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 16,
+    paddingBottom: Platform.OS === 'ios' ? 34 : 20,
+    paddingTop: 16,
+    backgroundColor: 'transparent',
+    zIndex: 5,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    alignSelf: 'center',
   },
   overlay: {
     flex: 1,
@@ -686,5 +930,18 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     letterSpacing: 1,
     width: '100%',
+  },
+  sectionHeader: {
+    width: '100%',
+    paddingVertical: 12,
+    paddingHorizontal: 4,
+    marginTop: 8,
+  },
+  sectionHeaderText: {
+    color: 'rgba(255, 255, 255, 0.88)',
+    fontSize: 16,
+    fontWeight: '600',
+    fontFamily: 'Urbanist-SemiBold',
+    letterSpacing: -0.32,
   },
 });
