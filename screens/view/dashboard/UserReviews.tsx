@@ -54,32 +54,50 @@ type CreatedBy = {
   created_at: string;
   updated_at: string;
   role_id: number;
+  city?: string;
+  university_id?: number;
+  stripe_customer_id?: string;
 };
 
-
-type Feature = {
-  id: number;
-  added_by: number;
-  featurelist_id: number;
-  created_at: string;
+// type Feature = {
+//   id: number;
+//   added_by: number;
+//   featurelist_id: number;
+//   created_at: string;
  
-  featurelist: {
-    id: number;
-    created_by: number;
-    category_id: number;
-    created_at: string | null;
-    updated_at: string;
-    isactive: boolean;
-    isfeatured: boolean;
-    title: string;
-    price: number;
-    thumbnail: string;
-    profileshowinview:boolean;
-    createdby: CreatedBy;
-    university:university;
-    isbookmarked:boolean;
-  };
+//   featurelist: {
+//     id: number;
+//     created_by: number;
+//     category_id: number;
+//     created_at: string | null;
+//     updated_at: string;
+//     isactive: boolean;
+//     isfeatured: boolean;
+//     title: string;
+//     price: number;
+//     thumbnail: string;
+//     profileshowinview:boolean;
+//     createdby: CreatedBy;
+//     university:university;
+//     isbookmarked:boolean;
+//   };
+// };
+
+type ReviewItem = {
+  id: number;
+  rating: number;
+  comment: string;
+  created_at: string;
+  feature_id: number;
+  feature_title: string;
+  category_id: number;
+  category_name: string;
+  thumbnail: string;
+  profileshowinview: boolean;
+  createdby: CreatedBy;
+  price:number
 };
+
 type university={
   id:number,
   name:string
@@ -108,7 +126,7 @@ const UserReviews = ({ navigation }: UserReviewsProps)  => {
  const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
     const { members } =   route.params;
 
-  const [featurelist, setFeaturelist] = useState<Feature[]>([]);
+  const [featurelist, setFeaturelist] = useState<ReviewItem[]>([]);
   const [search, setSearch] = useState<string>('');
   const [page, setPage] = useState(1);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -123,12 +141,10 @@ const UserReviews = ({ navigation }: UserReviewsProps)  => {
   id: number | null; 
   name: string;
 };
-
-
-
-
-    
-
+const [categories, setCategories] = useState<Category[]>([
+  { id: null, name: 'All' }
+]);
+const [selectedCategory, setSelectedCategory] = useState<Category>({ id: null, name: 'All' });
 
   const scrollY = useSharedValue(0);
  
@@ -179,10 +195,8 @@ const UserReviews = ({ navigation }: UserReviewsProps)  => {
     interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
   );
 
-const [categories, setCategories] = useState<Category[]>([
-  { id: null, name: 'All' }
-]);
-const [selectedCategory, setSelectedCategory] = useState<Category>({ id: null, name: 'All' });
+
+
 
 useEffect(() => {
   const loadCategories = async () => {
@@ -200,27 +214,71 @@ useEffect(() => {
   loadCategories();
 }, []);
 
-
-
-
 useEffect(() => {
   setPage(1);
   displayListOfProduct(selectedCategory?.id ?? null, 1);
 }, [selectedCategory]);
 
 
+// const displayListOfProduct = async (categoryId: number | null, pageNum: number) => {
+//   try {
+//     const pagesize = 10;
+//     //let url = `${MAIN_URL.baseUrl}category/myreview?page=${pageNum}&pagesize=${pagesize}`;
+//     let url = `${MAIN_URL.baseUrl}user/user-review?page=${pageNum}&pagesize=${pagesize}&user_id=109`;
+//     if (categoryId) {
+//       url += `&category_id=${categoryId}`;
+//     }
+
+//     console.log(url)
+    
+
+//     const token = await AsyncStorage.getItem('userToken');
+//     if (!token) return;
+
+//     const response = await fetch(url, {
+//       method: 'GET',
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//         'Content-Type': 'application/json',
+//       },
+//     });
+
+//     const jsonResponse = await response.json();
+//     console.log("HEADERS:", JSON.stringify(jsonResponse, null, 2));
+
+//     const reviews = jsonResponse.data ?? [];
+//     if (jsonResponse.statusCode === 200) {
+//       setIsLoading(false);
+//       setFeatureList(reviews);
+    
+//     } else if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
+//           setIsLoading(false);
+//           navigation.reset({
+//           index: 0,
+//           routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+//         });
+//         }
+    
+//     else {
+//       setIsLoading(false);
+//       // console.log('API Error:', jsonResponse.message);
+//     }
+//   } catch (err) {
+//     setIsLoading(false);
+//     console.log('Error:', err);
+//   }
+// };
+
 const displayListOfProduct = async (categoryId: number | null, pageNum: number) => {
   try {
     const pagesize = 10;
+    let url = `${MAIN_URL.baseUrl}user/user-review?page=${pageNum}&pagesize=${pagesize}&user_id=109`;
 
-  
-    let url = `${MAIN_URL.baseUrl}user/user-review?user_id=${members.id}`;
-  
-        console.log('members',members);
+    if (categoryId) {
+      url += `&category_id=${categoryId}`;
+    }
 
-    console.log("test",url)
-    
-
+    console.log(url)
     const token = await AsyncStorage.getItem('userToken');
     if (!token) return;
 
@@ -233,96 +291,119 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
     });
 
     const jsonResponse = await response.json();
+    //console.log("API:", JSON.stringify(jsonResponse, null, 2));
 
-    console.log("jsonResponse",jsonResponse);
-    
-    // Extract formattedReviews from the response
-    const allReviews = jsonResponse.data?.formattedReviews ?? [];
-    
-    // Filter by category if categoryId is not null
-    let filteredReviews = allReviews;
-    if (categoryId !== null) {
-      filteredReviews = allReviews.filter((review: any) => review.category_id === categoryId);
-    }
-    
+    const reviews: ReviewItem[] = jsonResponse.data?.features ?? [];
+
     if (jsonResponse.statusCode === 200) {
       setIsLoading(false);
-      setFeatureList(filteredReviews);
-      // if (pageNum === 1) {
-      //   //setFeatureList(jsonResponse.data.features);
-      //   setFeatureList(reviews);
-      // } else {
-      //   //setFeatureList(prev => [...prev, ...jsonResponse.data.features]);
-      //    setFeatureList(prev => [...prev, ...reviews]);
-      // }
-    } else if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
-          setIsLoading(false);
-          navigation.reset({
-          index: 0,
-          routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
-        });
-        }
-    
+      setFeatureList(reviews);   // <-- Now correct array
+    } 
+    else if (jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403) {
+      setIsLoading(false);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+      });
+    } 
     else {
       setIsLoading(false);
-      // console.log('API Error:', jsonResponse.message);
     }
+
   } catch (err) {
     setIsLoading(false);
     console.log('Error:', err);
   }
 };
 
-// Filter reviews by search text and category
-const filteredFeatures = featureList.filter((item: any) => {
-  const title = item?.feature_title ?? item?.feature?.title ?? '';
-  return title.toLowerCase().includes(search.toLowerCase());
-});
 
-const formatDate = (dateString: string | null | undefined) => {
-  if (!dateString || dateString.trim() === '') return '01-01-2025';
+
+const filteredFeatures = featurelist.filter(item =>
+  (item.feature_title ?? '').toLowerCase().includes(search.toLowerCase())
+);
+
+const formatDate = (dateString?: string) => {
+  if (!dateString) return "";
 
   const date = new Date(dateString);
-  if (isNaN(date.getTime())) return '01-01-2025';
+  if (isNaN(date.getTime())) return "";
 
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = date.getDate();
+  const monthShort = date.toLocaleString("default", { month: "short" });
   const year = date.getFullYear();
-  return `${day}-${month}-${year}`;
+
+  let suffix = "th";
+  if (day % 10 === 1 && day !== 11) suffix = "st";
+  else if (day % 10 === 2 && day !== 12) suffix = "nd";
+  else if (day % 10 === 3 && day !== 13) suffix = "rd";
+
+  return `${day}${suffix} ${monthShort} ${year}`;
 };
 
 
+// const renderItem = ({ item, index }: { item: any; index: number }) => {
+//   const isLastOddItem =
+//     filteredFeatures.length % 2 !== 0 &&
+//     index === filteredFeatures.length - 1;
 
-const renderItem = ({ item, index }: { item: any; index: number }) => {
+//   const feature = item?.feature;
+//   const displayDate = formatDate(item?.created_at);
+
+//   const productImage = feature?.thumbnail
+//     ? { uri: feature.thumbnail }
+//     : require('../../../assets/images/drone.png');
+
+//   const displayPrice =
+//     feature?.price != null ? `£${feature.price}` : '£0.00';
+//   const displayTitle = feature?.title ?? 'Title';
+//   const rating = item?.rating?.toString() ?? '0';
+//   const comment = item?.comment ?? '';
+
+//   const createdby = feature?.createdby ?? null;
+//   const profileshowinview =
+//     feature?.category_id === 2 || feature?.category_id === 5 ? true : false;
+
+//   return (
+//     <View
+//       style={[
+//         styles.itemContainer,
+//         isLastOddItem && { marginRight: 'auto' },
+//       ]}
+//     >
+//       <MyReviewCard
+//         infoTitle={displayTitle}
+//         inforTitlePrice={displayPrice}
+//         rating={rating}
+//         productImage={productImage}
+//         reviewText={comment}
+//         shareid={item.id}
+//         date={displayDate}
+//         createdby={createdby}
+//         profileshowinview={profileshowinview}
+       
+//       />
+//     </View>
+//   );
+// };
+
+const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
   const isLastOddItem =
     filteredFeatures.length % 2 !== 0 &&
     index === filteredFeatures.length - 1;
 
-  // Handle both old structure (item.feature) and new structure (flat item)
-  const feature = item?.feature;
-  const categoryId = item?.category_id ?? feature?.category_id ?? null;
-  const displayDate = formatDate(item?.created_at);
+  const displayDate = formatDate(item.created_at);
 
-  // Use feature thumbnail if available, otherwise default
-  const productImage = feature?.thumbnail
-    ? { uri: feature.thumbnail }
+  const productImage = item.thumbnail
+    ? { uri: item.thumbnail }
     : require('../../../assets/images/drone.png');
 
-  // Use feature price if available, otherwise default
-  const displayPrice =
-    feature?.price != null ? `£${feature.price}` : '£0.00';
-  
-  // Use feature title or feature_title from flat structure
-  const displayTitle = feature?.title ?? item?.feature_title ?? 'Title';
-  const rating = item?.rating?.toString() ?? '0';
-  const comment = item?.comment ?? '';
+  const displayPrice = item.price
+  const displayTitle = item.feature_title ?? "Title";
+  const rating = item.rating?.toString() ?? "0";
+  const comment = item.comment ?? '';
 
-  // Use feature createdby if available, otherwise null
-  const createdby = feature?.createdby ?? null;
-  
-  // profileshowinview based on category_id (2 = Tuition, 5 = ?)
-  const profileshowinview =
-    categoryId === 2 || categoryId === 5 ? true : false;
+  const createdby = item.createdby ?? null;
+  const profileshowinview = item.profileshowinview ?? false;
 
   return (
     <View
@@ -341,7 +422,6 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
         date={displayDate}
         createdby={createdby}
         profileshowinview={profileshowinview}
-       
       />
     </View>
   );
@@ -395,7 +475,7 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
         
                <View style={styles.headerContent} pointerEvents="box-none">
                  <TouchableOpacity
-                   onPress={() => navigation.goBack()}
+                   onPress={() => { navigation.goBack();}}
                    style={styles.backButtonContainer}
                    activeOpacity={0.7}
                  >
@@ -448,11 +528,11 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
                  </TouchableOpacity>
         
                  <Text allowFontScaling={false} style={styles.unizyText}>
-                   {members.firstname} Reviews 
+                   {members.firstname} Reviews
                  </Text>
                </View>
           <Animated.FlatList
-            data={filteredFeatures}
+            data={featureList}
             renderItem={renderItem}
             keyExtractor={(item, index) => {
               'worklet';
@@ -537,7 +617,7 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
                               resizeMode="contain"
                             />
                             <Text allowFontScaling={false} style={styles.emptyText}>
-                              No Reviews found
+                              No Reviews Found
                             </Text>
                           </View>
                           </View>
@@ -549,6 +629,10 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
       <NewCustomToastContainer/>
     </ImageBackground>
   );
+
+
+
+
 };
 
 export default UserReviews;

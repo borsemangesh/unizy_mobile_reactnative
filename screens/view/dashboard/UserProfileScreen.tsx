@@ -31,16 +31,8 @@ type UserProfileScreenProps ={
 
 const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
 
-  console.log("hiii");
-  
-
    const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
     const { members } =   route.params;
-
-      console.log("currentUserIdList----",members);
-      
-  
-
     const [messageText, setMessageText] = useState('');
     const [userList, setUserList] = useState<any>(null);
 
@@ -56,14 +48,9 @@ const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
           return;
         }
 
-
-      
         const url = `${MAIN_URL.baseUrl}user/info?user_id=${members.id}`;
         console.log('url----------',url);
-        
-      console.log("currentUserIdListfdgfgdfg----",members);
-
-        
+      
         const response = await fetch(url, {
           method: 'GET',
           headers: {
@@ -73,23 +60,13 @@ const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
         });
 
         const data = await response.json();
-
-        console.log("data",data);
-        
-
         if (!response.ok) {
           console.warn('Token fetch failed:', data.message);
           return;
         }
 
-        console.log('data', data);
-
-        const UserData = data.data;
+      const UserData = data.data;
        setUserList(UserData);
-
-        console.log('UserData--------------------', userList);
-
-        // console.log("chatData",chatData);
       } catch (error) {
         console.error('Chat setup failed:', error);
       }
@@ -97,6 +74,12 @@ const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
 
     fetchUserChatData();
   }, []);
+
+const getInitials = (firstName = '', lastName = '') => {
+  const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
+  const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
+  return (f + l) || '?';
+};
 
 const renderItem = ({ item }: any) => {
       const isLogout = item.title.toLowerCase() === 'logout';
@@ -107,17 +90,15 @@ const renderItem = ({ item }: any) => {
           style={styles.cardContainer}
           onPress={async () => {
            if (item.id === '2') {
-              // navigation.navigate('UserListing'); 
-              //  onPress={() => {
+             
               navigation.navigate('UserListing', {
                 animation: 'none',              
                 members: members,
                 source: 'chatList',
               });
-            // }}
+           
             } 
             else if (item.id === '1') {
-              // navigation.navigate('UserReviews'); 
               navigation.navigate('UserReviews', {
                 animation: 'none',              
                 members: members,
@@ -162,7 +143,6 @@ return (
           <View style={styles.headerRow}>
             <TouchableOpacity onPress={() =>{
               navigation.goBack();
-              // navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})
               }}>
               <View style={styles.backIconRow}>
                 <Image
@@ -178,9 +158,8 @@ return (
 
         <View style={styles.container}>
    
-      {/* Profile Section */}
       <View style={styles.profileContainer}>
-        {userList?.profileUrl ? (
+        {/* {userList?.profileUrl ? (
           <Image 
             source={{ uri: userList.profileUrl }}
             style={styles.profileImage}
@@ -190,7 +169,25 @@ return (
             source={profileImage}
             style={styles.profileImage}
           />
+        )} */}
+
+          {userList?.profileUrl ? (
+          <Image
+            source={{ uri: userList.profileUrl }}
+            style={styles.profileImage}
+          />
+        ) : (
+          <View style={styles.initialsCircle}>
+            <Text allowFontScaling={false} style={styles.initialsText}>
+              {getInitials(
+                userList?.firstname ?? '',
+                userList?.lastname ?? 'W'
+              )}
+            </Text>
+          </View>
         )}
+
+
         <Text allowFontScaling={false} style={styles.nameText}>
           {userList?.firstname || ''} {userList?.lastname || ''}
         </Text>
@@ -220,6 +217,23 @@ return (
 };
 
 const styles = StyleSheet.create({
+
+   initialsCircle:{
+    backgroundColor: '#8390D4',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    marginBottom: 15,
+  },
+  initialsText:{
+   color: '#fff',
+    fontSize: 44,
+    fontWeight:600,
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
+  },
  
   fullScreenContainer: {
     flex: 1
@@ -257,10 +271,6 @@ const styles = StyleSheet.create({
        fontFamily: 'Urbanist-SemiBold',
     },
 
-
-
-
-
     listContainer: {
       padding: 16,
       
@@ -276,7 +286,7 @@ const styles = StyleSheet.create({
       marginLeft: 12,
       fontSize: 14,
       fontWeight: '600',
-      color: '#fff',
+      color: 'rgba(255,255,255,0.88)',
        fontFamily: 'Urbanist-SemiBold',
     },
 
@@ -305,14 +315,19 @@ const styles = StyleSheet.create({
     },
     nameText: {
       color: '#fff',
-      fontSize: 22,
-      fontWeight: '600',
+      fontSize: 24,
+      //fontWeight: '600',
+      fontFamily: 'Urbanist-SemiBold',
+      fontWeight:600
     },
     subText: {
-      color: '#DCE3FF',
-      fontSize: 15,
-      marginTop: 4,
+      color: 'rgba(255,255,255,0.72)',
+      fontSize: 14,
+      marginTop:12,
       textAlign: 'center',
+      paddingHorizontal:16,
+      fontFamily: 'Urbanist-Medium',
+      fontWeight:500
     },
     buttonsContainer: {
       width: '100%',

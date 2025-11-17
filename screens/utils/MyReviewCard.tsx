@@ -33,7 +33,7 @@ type CreatedBy = {
 type MyReviewCardProps = {
   tag?: string;
   infoTitle: string;
-  inforTitlePrice: string;
+  inforTitlePrice: number;
   rating: string; // e.g., "3"
   reviewText?: string;
   productImage: ImageSourcePropType;
@@ -132,7 +132,7 @@ const MyReviewCard: React.FC<MyReviewCardProps> = ({
       {renderProfileSection()}
       <View style={styles.details}>
         <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
-        <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
+        <Text allowFontScaling={false} style={styles.price}>£{inforTitlePrice}</Text>
         <Text allowFontScaling={false} style={styles.date}>{date}
         </Text>
       </View>

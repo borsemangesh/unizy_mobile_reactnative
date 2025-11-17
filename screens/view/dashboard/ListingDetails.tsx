@@ -252,14 +252,28 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
     }
   };
 
-  const formatDateWithDash = (dateString?: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); 
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
+ const formatDateWithDash = (dateString?: string) => {
+  if (!dateString) return "";
+
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "";
+
+  const day = date.getDate();
+
+  // Add suffix: st, nd, rd, th
+  let suffix = "th";
+  if (day % 10 === 1 && day !== 11) suffix = "st";
+  else if (day % 10 === 2 && day !== 12) suffix = "nd";
+  else if (day % 10 === 3 && day !== 13) suffix = "rd";
+
+  // Short month name (Jan, Feb, Mar...)
+  const monthShort = date
+    .toLocaleString("default", { month: "short" }); // "Nov"
+
+  const year = date.getFullYear();
+
+  return `${day}${suffix} ${monthShort} ${year}`;
+};
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
@@ -377,21 +391,18 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
               <View style={[styles.card,{marginTop:10}]}>
                 <View style={{ flexDirection: 'row' ,alignItems:'center'}}>
                   {(() => {
-                    // Check if category is housekeeping or tuition
                     const categoryName = data?.list?.category?.name || '';
                     const isProfileCategory = categoryName?.toLowerCase() === 'house keeping' || categoryName?.toLowerCase() === 'tuition';
                     const profilePhoto = data?.list?.createdby?.profile;
                     const firstName = data?.list?.createdby?.firstname;
                     const lastName = data?.list?.createdby?.lastname;
                    
-                    // Get initials helper function
                     const getInitials = (first: string | null = '', last: string | null = '') => {
                       const f = first?.trim()?.charAt(0)?.toUpperCase() || '';
                       const l = last?.trim()?.charAt(0)?.toUpperCase() || '';
                       return (f + l) || '?';
                     };
                    
-                    // Determine what to show
                     const shouldShowProfile = isProfileCategory && profilePhoto;
                     const shouldShowInitials = isProfileCategory && !profilePhoto;
                    
@@ -430,40 +441,22 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                       allowFontScaling={false}
                       style={styles.productlebleHeader}
                     >
-                      {' '}
                       {data?.list?.title}
                     </Text>
-                    <Text
-                      allowFontScaling={false}
-                      style={styles.productlableprice}
-                    >
+                    <View style={styles.rightSection}>
+                    <Text allowFontScaling={false} style={styles.productlableprice}>
                       £{data?.list?.price}
                     </Text>
+                     <Text allowFontScaling={false} style={styles.datetlable}>
+                    {formatDateWithDash(data?.list?.created_at)}
+                  </Text>
+                  </View>
                   
-                    {/* <View style={styles.univercitycontainer}>
-                      <Text
-                        allowFontScaling={false}
-                        style={styles.universitylable}
-                      >
-                        {data?.list?.createdby?.university_name}
-                      </Text>
-                      <Text  allowFontScaling={false} style={styles.datetlable}>.</Text>
-                      <Text allowFontScaling={false} style={styles.datetlable}>
-                        {formatDateWithDash(data?.list?.created_at)}
-                      </Text>
-                    </View> */}
 
             <View style={styles.univercitycontainer}>
               <Text allowFontScaling={false} style={styles.universitylable}>
                 {data?.list?.createdby?.university_name}
               </Text>
-
-              <View style={styles.rightSection}>
-                <Text allowFontScaling={false} style={styles.datetlable}>.</Text>
-                <Text allowFontScaling={false} style={styles.datetlable}>
-                  {formatDateWithDash(data?.list?.created_at)}
-                </Text>
-              </View>
             </View>
 
                   </View>
@@ -1230,22 +1223,15 @@ const styles = StyleSheet.create({
     height: 72,
     borderRadius: 14,
   },
-  // univercitycontainer: {
-  //   display: 'flex',
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-between',
-  //   maxWidth:'90%'
-  // },
 
   univercitycontainer: {
-  flexDirection: 'row',
-  flexWrap: 'wrap',
-  maxWidth: '90%',
+  maxWidth: '85%',
 },
 rightSection: {
   flexDirection: 'row',
-  alignItems: 'center',
-  marginLeft: 'auto',   // ⬅️ Forces date to stay right
+  //justifyContent: 'space-between',
+  //alignItems: 'center',
+  width: '100%',
 },
   productlebleHeader: {
     color: 'rgba(255, 255, 255, 0.88)',
@@ -1264,35 +1250,26 @@ rightSection: {
     lineHeight: 16,
     fontFamily: 'Urbanist-SemiBold',
   },
-  // universitylable: {
-  //   color: 'rgba(255, 255, 255, 0.88)',
-  //   fontSize: 12,
-  //   fontWeight: '500',
-  //   letterSpacing: -0.24,
-  //   lineHeight: 16,
-  //   fontFamily: 'Urbanist-Medium',
-
-
-  // },
-  universitylable: {
-  flexShrink: 1,    // ⬅️ This allows wrapping
-  flexGrow: 1,      // ⬅️ Takes as much space as needed
+  
+universitylable: {
+  color: 'rgba(255, 255, 255, 0.88)',
+  fontSize: 14,
+  fontFamily: 'Urbanist-Medium',
+  flexShrink: 1,
+  flexWrap: 'wrap',
+  width: '100%',
+},
+datetlable: {
   color: 'rgba(255, 255, 255, 0.88)',
   fontSize: 12,
   fontWeight: '500',
   letterSpacing: -0.24,
   lineHeight: 16,
   fontFamily: 'Urbanist-Medium',
+  textAlign: 'right',
+  marginLeft: 'auto', 
+  flexShrink: 1,      
 },
-  datetlable: {
-    marginLeft: 10,
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontSize: 12,
-    fontWeight: '500',
-    letterSpacing: -0.24,
-    lineHeight: 16,
-    fontFamily: 'Urbanist-Medium',
-  },
    dottext: {
     marginLeft: 10,
     color: 'rgba(255, 255, 255, 0.88)',

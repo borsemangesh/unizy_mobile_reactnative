@@ -58,83 +58,150 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
   const shouldShowInitials = isProfileCategory && !profilePhoto;
 
  return (
-  <TouchableOpacity style={styles.wrapper} onPress={() => {
-    console.log(navigation.getState());
-    navigation.navigate('ListingDetails',{ shareid ,catagory_id,catagory_name,key: String(Math.random()) });
-  }}>
-    <View style={styles.container}>
-      <View style={styles.imageContainer}>
-        {shouldShowInitials ? (
-          <View style={styles.initialsCircle}>
-            <Text allowFontScaling={false} style={styles.initialsText}>
-              {getInitials(firstName, lastName)}
-            </Text>
-          </View>
-        ) : shouldShowProfile ? (
-          <Image source={{ uri: profilePhoto! }} style={styles.image} resizeMode="cover" />
-        ) : (
-          <Image source={productImage} style={styles.image} resizeMode="cover" />
-        )}
-      </View>
+ <TouchableOpacity
+     style={styles.wrapper}
+     onPress={() => {
+       console.log(navigation.getState());
+       navigation.navigate('ListingDetails', {
+         shareid,
+         catagory_id,
+         catagory_name,
+         key: String(Math.random()),
+       });
+     }}
+   >
+     <View style={styles.container}>
+       <View style={styles.imageContainer}>
+         {shouldShowInitials ? (
+           <View style={styles.initialsCircle}>
+             <Text allowFontScaling={false} style={styles.initialsText}>
+               {getInitials(firstName, lastName)}
+             </Text>
+           </View>
+         ) : shouldShowProfile ? (
+           <Image
+             source={{ uri: profilePhoto! }}
+             style={styles.image}
+             resizeMode="cover"
+           />
+         ) : (
+           <Image
+             source={productImage}
+             style={styles.image}
+             resizeMode="cover"
+           />
+         )}
+       </View>
 
-      <View style={styles.contentContainer}>
-        <Text allowFontScaling={false} style={styles.title} numberOfLines={2}>
-          {infoTitle}
-        </Text>
+       <View style={styles.contentContainer}>
+         <View
+           style={{
+             flexDirection: 'row',
+             justifyContent: 'space-between',
+           }}
+         >
+           <Text
+             allowFontScaling={false}
+             style={styles.title}
+             numberOfLines={2}
+           >
+             {infoTitle}
+           </Text>
+           {topRightText ? (
+             <View style={styles.statusContainer}>
+               <View
+                 style={[
+                   styles.topRightBadge,
+                   {
+                     backgroundColor: isactive
+                       ? 'rgba(97, 179, 255, 0.2)'
+                       : 'rgba(134, 140, 213, 0.2)',
+                   },
+                 ]}
+               >
+                 <Text
+                   allowFontScaling={false}
+                   style={[
+                     styles.topRightText,
+                     {
+                       color: isactive ? '#b4e6ff' : '#868CD5',
+                     },
+                   ]}
+                 >
+                   {topRightText}
+                 </Text>
+               </View>
+             </View>
+           ) : null}
+         </View>
 
-        <View style={styles.priceRow}>
-          <Text allowFontScaling={false} style={styles.price} numberOfLines={1}>
-            {inforTitlePrice}
-          </Text>
-          {isfeature && (
-            <View style={styles.featureBadge}>
-              <Text allowFontScaling={false} style={styles.featureText}>Featured</Text>
-            </View>
-          )}
-        </View>
+         <View style={styles.priceRow}>
+          <View style={{flexDirection:'row'}}>
+           <Text
+             allowFontScaling={false}
+             style={styles.price}
+             numberOfLines={1}
+           >
+             {inforTitlePrice}
+           </Text>
+           {isfeature && (
+             <View style={styles.featureBadge}>
+               <Text allowFontScaling={false} style={styles.featureText}>
+                 Featured
+               </Text>
+             </View>
+           )}
+           </View>
+           {rating ? (
+             <>
+               <Text allowFontScaling={false} style={styles.ratingText}>
+                 {rating}
+               </Text>
+             </>
+           ) : null}
+         </View>
 
-        <View style={styles.metaRow}>
-          <Text allowFontScaling={false} style={styles.tag} numberOfLines={0}>
-            {tag}
-          </Text>
-          {rating ? (
-            <>
-              <Text allowFontScaling={false} style={styles.dot}> • </Text>
-              <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
-            </>
-          ) : null}
-        </View>
-      </View>
-
-      {/* Status View */}
-      {topRightText ? (
-        <View style={styles.statusContainer}>
-          <View style={[
-            styles.topRightBadge,
-            { backgroundColor: isactive ? 'rgba(97, 179, 255, 0.2)' : 'rgba(134, 140, 213, 0.2)' },
-          ]}>
-            <Text
-              allowFontScaling={false}
-              style={[
-                styles.topRightText,
-                {
-                  color: isactive ? '#b4e6ff' : '#868CD5',
-                },
-              ]}
-            >
-              {topRightText}
-            </Text>
-          </View>
-        </View>
-      ) : null}
-    </View>
-  </TouchableOpacity>
+         <View style={styles.metaRow}>
+           <Text allowFontScaling={false} style={styles.tag} numberOfLines={2}>
+             {tag}
+           </Text>
+         </View>
+       </View>
+     </View>
+   </TouchableOpacity>
 );
 };
 
 export default MyListingCard;
 
 const styles = StyleSheet.create({
+
+contentContainer: {
+    flex: 1,
+    marginLeft: 10,
+    width: '100%',
+    //marginRight: 10,
+    gap: 8
+  },
+
+
+ priceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    // marginTop: 8,
+    flexWrap: 'wrap',
+    minHeight: 22,
+    justifyContent: 'space-between'
+
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    // marginTop: 8,
+    
+  },
+
   wrapper: {
     borderRadius: 18,
     padding: 12,
@@ -147,22 +214,23 @@ const styles = StyleSheet.create({
   },
   container: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   imageContainer: {
     width: 72,
     height: 72,
+    resizeMode:'center'
   },
   image: {
     width: 72,
     height: 72,
     borderRadius: 12,
   },
-  contentContainer: {
-    flex: 1,
-    marginLeft: 10,
-    marginRight: 10,
-  },
+  // contentContainer: {
+  //   flex: 1,
+  //   marginLeft: 10,
+  //   marginRight: 10,
+  // },
   title: {
     fontSize: 14,
     color: '#fff',
@@ -176,20 +244,20 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600,
   },
-  priceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 8,
-    flexWrap: 'wrap',
-    minHeight: 22,
-  },
-  metaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    marginTop: 8,
+  // priceRow: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   marginTop: 8,
+  //   flexWrap: 'wrap',
+  //   minHeight: 22,
+  // },
+  // metaRow: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   justifyContent: 'flex-start',
+  //   marginTop: 8,
     
-  },
+  // },
   statusContainer: {
     alignSelf: 'flex-start',
   },
@@ -198,6 +266,7 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.7)',
     fontWeight: '500',
     fontFamily: 'Urbanist-Medium',
+    maxWidth:'88%'
     
   },
   ratingWrap: {
@@ -211,7 +280,8 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.7)',
     fontWeight: '500',
     fontFamily: 'Urbanist-Medium',
-    marginRight:5
+    marginRight:5,
+    textAlign:'right'
   },
 
 

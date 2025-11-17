@@ -66,13 +66,13 @@ function App() {
 //     return unsubscribe;
 //   }, []);
 
+
 useEffect(() => {
     let unsubscribe: (() => void) | null = null;
     let unsubscribeForeground: (() => void) | null = null;
 
     const initializeNotifications = async () => {
       try {
-        // Request FCM permission
         const authStatus = await messaging().requestPermission();
         const enabled =
           authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
@@ -86,11 +86,9 @@ useEffect(() => {
           console.log("❌ Notification permission denied");
         }
 
-        // Request Notifee permission
         const notifeeSettings = await notifee.requestPermission();
         console.log("🔔 Notifee permission:", notifeeSettings);
 
-        // Create Android Notification channel (must be done before displaying notifications)
         if (Platform.OS === 'android') {
           await notifee.createChannel({
             id: 'default',
@@ -101,7 +99,6 @@ useEffect(() => {
           console.log("✅ Notification channel created");
         }
 
-        // Set up foreground FCM listener AFTER channel is created
         unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
           console.log("📩 Foreground Message:", remoteMessage);
 
@@ -109,11 +106,9 @@ useEffect(() => {
             const title = remoteMessage.notification?.title || remoteMessage.data?.title || "Notification";
             const body = remoteMessage.notification?.body || "";
             
-            // Parse the data.data string if it exists, otherwise use data object
             let rawNotificationData: Record<string, any> = {};
             if (remoteMessage.data?.data) {
               try {
-                // If data.data is a string, parse it
                 if (typeof remoteMessage.data.data === 'string') {
                   rawNotificationData = JSON.parse(remoteMessage.data.data);
                 } else {
@@ -126,14 +121,10 @@ useEffect(() => {
             } else {
               rawNotificationData = remoteMessage.data || {};
             }
-
-            // ✅ Convert all data values to strings (Notifee requirement)
-            // Notifee requires all data values to be strings
             const notificationData: { [key: string]: string } = {};
             Object.keys(rawNotificationData).forEach((key) => {
               const value = rawNotificationData[key];
               if (value !== null && value !== undefined) {
-                // Convert to string - handle objects/arrays by stringifying
                 if (typeof value === 'object') {
                   notificationData[key] = JSON.stringify(value);
                 } else {
@@ -144,14 +135,12 @@ useEffect(() => {
 
             console.log("📱 Displaying notification:", { title, body, data: notificationData });
 
-            // ✅ Show system notification in foreground
             const notificationConfig: any = {
               title,
               body,
               data: notificationData,
             };
 
-            // Add platform-specific config
             if (Platform.OS === 'android') {
               notificationConfig.android = {
                 channelId: 'default',
@@ -162,7 +151,6 @@ useEffect(() => {
                 sound: 'default',
               };
             } else {
-              // iOS config
               notificationConfig.ios = {
                 sound: 'default',
               };
@@ -177,20 +165,17 @@ useEffect(() => {
           }
         });
 
-        // ✅ Foreground notification tap handler
         unsubscribeForeground = notifee.onForegroundEvent(({ type, detail }) => {
           if (type === EventType.PRESS) {
             console.log("🟦 Notification tapped in foreground");
             console.log("📋 Full detail object:", JSON.stringify(detail, null, 2));
             
-            // The data field might be a JSON string or an object
             let notificationData = detail.notification?.data;
             
             console.log('📋 Raw notification data:', notificationData);
 
             if (notificationData) {
               try {
-                // Helper function to parse string values that might be JSON
                 const parseValue = (value: any): any => {
                   if (typeof value === 'string') {
                     try {
@@ -202,7 +187,6 @@ useEffect(() => {
                   return value;
                 };
 
-                // Parse the data field if it's a JSON string
                 if (typeof notificationData === 'string') {
                   try {
                     notificationData = JSON.parse(notificationData);
@@ -212,7 +196,6 @@ useEffect(() => {
                   }
                 }
 
-                // Also check if data itself contains a nested data field
                 if (notificationData?.data && typeof notificationData.data === 'string') {
                   try {
                     notificationData = JSON.parse(notificationData.data);
@@ -222,20 +205,16 @@ useEffect(() => {
                   }
                 }
 
-                // Extract members - handle both object and array formats
                 let members = null;
                 if (notificationData?.members) {
                   const parsedMembers = parseValue(notificationData.members);
                   if (Array.isArray(parsedMembers)) {
-                    // If array, take the first member (the other user)
                     members = parsedMembers[0];
                   } else if (typeof parsedMembers === 'object' && parsedMembers !== null) {
-                    // If object, use it directly
                     members = parsedMembers;
                   }
                 }
 
-                // Transform members to match MessageIndividualScreen RouteParams structure
                 if (members) {
                   members = {
                     id: members.id || 0,
@@ -251,13 +230,11 @@ useEffect(() => {
 
                 console.log("👤 Transformed members:", members);
 
-                // Extract conversation name
                 const userConvName = notificationData?.userConvName || 
                                   notificationData?.conv_name || 
                                   notificationData?.friendlyname || 
                                   '';
                 
-                // Extract current user ID
                 let currentUserIdList = 0;
                 if (notificationData?.current_user_id) {
                   currentUserIdList = Number(parseValue(notificationData.current_user_id));

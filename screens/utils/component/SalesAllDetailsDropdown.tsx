@@ -950,7 +950,21 @@ const SalesAllDetailsDropdown = ({
   const [salesData, setSalesData] = useState<any[]>([]);// Holds the sales data
   const [loading, setLoading] = useState<boolean>(false); // Loading state
   
+const formatPurchaseDate = (dateString: string) => {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "";
 
+  const day = date.getDate();
+  const month = date.toLocaleString("default", { month: "short" });
+  const year = date.getFullYear();
+
+  let suffix = "th";
+  if (day % 10 === 1 && day !== 11) suffix = "st";
+  else if (day % 10 === 2 && day !== 12) suffix = "nd";
+  else if (day % 10 === 3 && day !== 13) suffix = "rd";
+
+  return `${day}${suffix} ${month} ${year}`;
+};
 
 
   const fetchSalesHistory = async (catagory_id: number) => {
@@ -1122,7 +1136,8 @@ const SalesAllDetailsDropdown = ({
               fontSize: 12,
             }}
           >
-            {new Date(buyer.purchase_date).toLocaleDateString()}
+           {formatPurchaseDate(buyer.purchase_date)}
+
           </Text>
         </View>
       </View>

@@ -88,11 +88,8 @@ useEffect(() => {
         const token = await AsyncStorage.getItem('userToken');
         const userId = await AsyncStorage.getItem('userId');
 
-
         console.log("profile card page.... ",userId);
         
-
-
         if (!token || !userId) {
           console.warn('Missing token or user ID in AsyncStorage');
           return;
@@ -274,8 +271,6 @@ const openStripeOnboarding = async () => {
 
 return (
   <View style={styles.fullScreenContainer}>
-   
-
     <View
       style={{
         paddingTop: Platform.OS === 'ios' ? '0%' : 20,
@@ -300,9 +295,7 @@ return (
           )}
         </View>
 
-        <View style={{
-               }}>
-          {/* Name + Edit on top row */}
+        <View style={{}}>
           <View
             style={{
               flexDirection: 'row',
@@ -600,9 +593,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 88,
     height: 88,
-    borderRadius: 20,
-
-    
+    borderRadius: 20,   
     marginRight: 12
   },
   initialsText:{

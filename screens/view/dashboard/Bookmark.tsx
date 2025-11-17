@@ -160,7 +160,7 @@ const [isLoadingMore, setIsLoadingMore] = useState(false);
 
 
 
-  useEffect(() => {
+useEffect(() => {
   const loadBookmarks = async () => {
     const saved = await AsyncStorage.getItem('bookmarkedIds');
     if (saved) setBookmarkedIds(JSON.parse(saved));
@@ -208,9 +208,7 @@ useFocusEffect(
 
 const displayListOfProduct = async (categoryId: number | null, pageNum: number) => {
   try {
-   // setIsLoading(true);
     const pagesize = 10;
-    
     let url = `${MAIN_URL.baseUrl}category/mybookmark-list?page=${pageNum}&pagesize=${pagesize}`;
     
     if (categoryId) {
@@ -233,14 +231,11 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
     const jsonResponse = await response.json();
     console.log('API Response:', jsonResponse);
     if (jsonResponse.statusCode === 200) {
-
-      // const features = jsonResponse.data.features;
-      // const bookmarkedFeatures = features.filter((f: { featurelist: { isbookmarked: any; }; }) => f.featurelist.isbookmarked);
       setIsLoading(false);
       if (pageNum === 1) {
         
         setFeaturelist(jsonResponse.data.features);
-        //setFeaturelist(bookmarkedFeatures)
+        
       } else {
         setFeaturelist(prev => [...prev, ...jsonResponse.data.features]);
       }
@@ -424,7 +419,7 @@ const handleBookmarkPress = async (productId: number) => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-<StatusBar
+        <StatusBar
                  translucent
                  backgroundColor="transparent"
                  barStyle="light-content"

@@ -221,7 +221,7 @@ const SelectCatagoryDropdown = ({
                             fontSize: 16,
                             marginLeft: 10,
                             fontWeight: '600',
-                            lineHeight: 18,
+                            lineHeight: 22,
                             letterSpacing: -0.28,
                             fontFamily: 'Urbanist-SemiBold',
 

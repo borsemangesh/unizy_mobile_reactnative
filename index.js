@@ -30,16 +30,11 @@ notifee.onBackgroundEvent(async ({ type, detail }) => {
   if (type === EventType.PRESS) {
     console.log("🟦 Notification tapped in background/quit");
 
-    console.log("detailfdjgfjglgldfgh----",detail);
-    
-    
-    // The data field might be a JSON string or an object
     let notificationData = detail.notification?.data;
     
     console.log('📋 Raw notification data:', notificationData);
     
     try {
-      // Helper function to parse string values that might be JSON
       const parseValue = (value) => {
         if (typeof value === 'string') {
           try {
@@ -51,7 +46,6 @@ notifee.onBackgroundEvent(async ({ type, detail }) => {
         return value;
       };
 
-      // Parse the data field if it's a JSON string
       if (typeof notificationData === 'string') {
         try {
           notificationData = JSON.parse(notificationData);
@@ -61,7 +55,6 @@ notifee.onBackgroundEvent(async ({ type, detail }) => {
         }
       }
 
-      // Also check if data itself contains a nested data field
       if (notificationData?.data && typeof notificationData.data === 'string') {
         try {
           notificationData = JSON.parse(notificationData.data);
@@ -71,20 +64,15 @@ notifee.onBackgroundEvent(async ({ type, detail }) => {
         }
       }
 
-      // Extract members - handle both object and array formats
       let members = null;
       if (notificationData?.members) {
         const parsedMembers = parseValue(notificationData.members);
         if (Array.isArray(parsedMembers)) {
-          // If array, take the first member (the other user)
           members = parsedMembers[0];
         } else if (typeof parsedMembers === 'object' && parsedMembers !== null) {
-          // If object, use it directly
           members = parsedMembers;
         }
       }
-
-      // Transform members to match MessageIndividualScreen RouteParams structure
       if (members) {
         members = {
           id: members.id || 0,
@@ -100,13 +88,11 @@ notifee.onBackgroundEvent(async ({ type, detail }) => {
 
       console.log("👤 Transformed members:", members);
 
-      // Extract conversation name
       const userConvName = notificationData?.userConvName || 
                           notificationData?.conv_name || 
                           notificationData?.friendlyname || 
                           '';
       
-      // Extract current user ID
       let currentUserIdList = 0;
       if (notificationData?.current_user_id) {
         currentUserIdList = Number(parseValue(notificationData.current_user_id));
@@ -114,7 +100,6 @@ notifee.onBackgroundEvent(async ({ type, detail }) => {
         currentUserIdList = Number(parseValue(notificationData.from)) || 0;
       }
 
-      // Validate required fields
       if (!userConvName) {
         console.error("❌ Missing userConvName in notification data");
         return;
@@ -135,7 +120,6 @@ notifee.onBackgroundEvent(async ({ type, detail }) => {
 
       console.log('📱 Final navigation params:', JSON.stringify(params, null, 2));
 
-      // Use navigate function which has built-in retry logic
       setTimeout(() => {
         navigate("MessagesIndividualScreen", params);
       }, 1500);

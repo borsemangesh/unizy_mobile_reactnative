@@ -1,5 +1,6 @@
 import { BlurView } from "@react-native-community/blur";
 import { TouchableOpacity, StyleSheet, Text, Platform, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type PayButtonProps = {
   //amount: number | string; // price to display
@@ -41,13 +42,13 @@ const PayButton = ({ amount, onPress, label = "Pay" }: PayButtonProps) => {
     amount !== null && amount !== undefined
       ? `£${Number(amount).toFixed(2)}`
       : null;
-
+  const insets = useSafeAreaInsets();
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      activeOpacity={0.7}
-      style={styles.buttonContainer}
-    >
+    <TouchableOpacity onPress={onPress} activeOpacity={0.7} style={[
+            styles.buttonContainer,
+            { bottom: insets.bottom + 10 } 
+          ]}>
+
       <BlurView
         style={StyleSheet.absoluteFill}
         blurType="light"
@@ -86,7 +87,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 10,
     position: 'absolute',
-    bottom: (Platform.OS === 'ios'? 16 : 10),
+    //bottom: (Platform.OS === 'ios'? 16 : 10),
     left: 16,
     right: 16,
   },

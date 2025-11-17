@@ -20,6 +20,8 @@ import {
   StatusBar
 } from 'react-native';
 
+import DeviceInfo from 'react-native-device-info';
+
 import AnimatedReanimated, {
   useSharedValue,
   useAnimatedScrollHandler,
@@ -417,7 +419,7 @@ const scrollViewRef = useRef<ScrollView>(null);
 
     const token = await AsyncStorage.getItem('userToken');
     if (!token) return;
-
+    const deviceId = await DeviceInfo.getUniqueId();
     const url1 = MAIN_URL.baseUrl + 'user/devicetoken';
     console.log('📤 FCM URL:', url1);
     const fcmToken = await messaging().getToken();
@@ -425,6 +427,7 @@ const scrollViewRef = useRef<ScrollView>(null);
     const requestBody = {
           device_token: fcmToken,
           device_type  : Platform.OS,
+          device_id:deviceId
         };
     console.log('Body:', JSON.stringify(requestBody));
     const response = await fetch(url1, {

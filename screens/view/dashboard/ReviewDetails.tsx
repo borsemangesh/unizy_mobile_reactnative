@@ -253,19 +253,27 @@ type User = {
   comment: string;
 };
 
-
-const formatDate = (dateString: string | null | undefined) => {
-  if (!dateString || dateString.trim() === '') return '01-01-2025';
+ const formatDate = (dateString?: string) => {
+  if (!dateString) return "";
 
   const date = new Date(dateString);
-  if (isNaN(date.getTime())) return '01-01-2025';
+  if (isNaN(date.getTime())) return "";
 
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = date.getDate();
+
+  let suffix = "th";
+  if (day % 10 === 1 && day !== 11) suffix = "st";
+  else if (day % 10 === 2 && day !== 12) suffix = "nd";
+  else if (day % 10 === 3 && day !== 13) suffix = "rd";
+
+  // Short month name (Jan, Feb, Mar...)
+  const monthShort = date
+    .toLocaleString("default", { month: "short" }); // "Nov"
+
   const year = date.getFullYear();
-  return `${day}-${month}-${year}`;
-};
 
+  return `${day}${suffix} ${monthShort} ${year}`;
+};
 
 // const renderItem = ({ item}: any) => {
 

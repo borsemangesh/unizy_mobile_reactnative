@@ -231,27 +231,51 @@ export default function TransactionHistoryScreen(
   }, [selectedTab]); 
 
 
+  // const getFormattedDate = (dateString: string) => {
+  //   const parts = dateString.split(" "); 
+  //   if (parts.length !== 3) return dateString; 
+  
+  //   const [dayStr, monthStr, yearStr] = parts;
+  //   const day = parseInt(dayStr);
+  
+  //   if (isNaN(day)) return dateString;
+  
+  //   const suffix =
+  //     day % 10 === 1 && day !== 11
+  //       ? "st"
+  //       : day % 10 === 2 && day !== 12
+  //       ? "nd"
+  //       : day % 10 === 3 && day !== 13
+  //       ? "rd"
+  //       : "th";
+  
+  //   const formatted = `${day}${suffix} ${monthStr} ${yearStr}`;
+  //   return formatted;
+  // };
   const getFormattedDate = (dateString: string) => {
-    const parts = dateString.split(" "); 
-    if (parts.length !== 3) return dateString; 
-  
-    const [dayStr, monthStr, yearStr] = parts;
-    const day = parseInt(dayStr);
-  
-    if (isNaN(day)) return dateString;
-  
-    const suffix =
-      day % 10 === 1 && day !== 11
-        ? "st"
-        : day % 10 === 2 && day !== 12
-        ? "nd"
-        : day % 10 === 3 && day !== 13
-        ? "rd"
-        : "th";
-  
-    const formatted = `${day}${suffix} ${monthStr} ${yearStr}`;
-    return formatted;
-  };
+  const parts = dateString.split(" ");
+  if (parts.length !== 3) return dateString;
+
+  const [dayStr, monthStr, yearStr] = parts;
+  const day = parseInt(dayStr);
+
+  if (isNaN(day)) return dateString;
+
+  // Add suffix
+  const suffix =
+    day % 10 === 1 && day !== 11
+      ? "st"
+      : day % 10 === 2 && day !== 12
+      ? "nd"
+      : day % 10 === 3 && day !== 13
+      ? "rd"
+      : "th";
+
+  // Convert full month to short month
+  const shortMonth = monthStr.substring(0, 3);
+
+  return `${day}${suffix} ${shortMonth} ${yearStr}`;
+};
 
   const [catagoryid,setCatagoryid] = useState(0)
 
