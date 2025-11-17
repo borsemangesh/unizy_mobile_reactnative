@@ -706,7 +706,7 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
                     resizeMode="contain"
                   />
                   <Text allowFontScaling={false} style={styles.emptyText}>
-                    No Orders Found
+                    No Listings Found
                   </Text>
                 </View>
               </View>

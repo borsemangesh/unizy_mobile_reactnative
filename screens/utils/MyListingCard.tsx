@@ -306,13 +306,24 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
           )}
         </View>
 
-        <View style={styles.metaRow}>
+        {/* <View style={styles.metaRow}>
           <Text allowFontScaling={false} style={styles.tag} numberOfLines={1}>
             {tag}
           </Text>
           {rating ? (
             <>
               <Text allowFontScaling={false} style={styles.dot}> • </Text>
+              <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
+            </>
+          ) : null}
+        </View> */}
+        <View style={styles.metaRow}>
+          <Text allowFontScaling={false} style={styles.tag} numberOfLines={0}>
+            {tag}
+          </Text>
+          {rating ? (
+            <>
+              <Text allowFontScaling={false} style={styles.dot}>•</Text>
               <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
             </>
           ) : null}
@@ -348,6 +359,34 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
 export default MyListingCard;
 
 const styles = StyleSheet.create({
+
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    marginTop: 8,
+    
+  },
+tag: {
+    fontSize: 12,
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontWeight: '500',
+    fontFamily: 'Urbanist-Medium',
+    
+  },
+dot: {
+  color: 'rgba(255, 255, 255, 0.7)',
+  fontSize: 12,
+  marginHorizontal:1,
+  marginLeft: 1
+},
+  ratingText: {
+    fontSize: 12,
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontWeight: '500',
+    fontFamily: 'Urbanist-Medium',
+    marginRight:5
+  },
   wrapper: {
     borderRadius: 18,
     padding: 12,
@@ -396,33 +435,33 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     minHeight: 22,
   },
-  metaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    marginTop: 8,
-  },
+  // metaRow: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   justifyContent: 'flex-start',
+  //   marginTop: 8,
+  // },
   statusContainer: {
     alignSelf: 'flex-start',
   },
-  tag: {
-    fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.7)',
-    fontWeight: '500',
-    fontFamily: 'Urbanist-Medium',
-  },
-  ratingWrap: {
-    marginLeft: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  ratingText: {
-    fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.7)',
-    fontWeight: '500',
-    fontFamily: 'Urbanist-Medium',
-  },
+  // tag: {
+  //   fontSize: 12,
+  //   color: 'rgba(255, 255, 255, 0.7)',
+  //   fontWeight: '500',
+  //   fontFamily: 'Urbanist-Medium',
+  // },
+  // ratingWrap: {
+  //   marginLeft: 8,
+  //   paddingHorizontal: 8,
+  //   paddingVertical: 4,
+  //   borderRadius: 12,
+  // },
+  // ratingText: {
+  //   fontSize: 12,
+  //   color: 'rgba(255, 255, 255, 0.7)',
+  //   fontWeight: '500',
+  //   fontFamily: 'Urbanist-Medium',
+  // },
 
 
 topRightBadge: {
@@ -459,11 +498,11 @@ featureText: {
   fontWeight: '500',
   fontFamily: 'Urbanist-Medium',
 },
-dot: {
-  color: 'rgba(255, 255, 255, 0.7)',
-  fontSize: 12,
-  marginHorizontal: 4,
-},
+// dot: {
+//   color: 'rgba(255, 255, 255, 0.7)',
+//   fontSize: 12,
+//   marginHorizontal: 4,
+// },
 initialsCircle: {
   backgroundColor: '#8390D4',
   alignItems: 'center',

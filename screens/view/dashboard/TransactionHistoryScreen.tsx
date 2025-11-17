@@ -941,7 +941,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
   },
   sellerText: {
-    color: '#FFFFFF',
+    color: 'rgba(255,255,255,0.64)',
     fontSize: 12,
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
