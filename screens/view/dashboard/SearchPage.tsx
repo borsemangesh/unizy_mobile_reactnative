@@ -1385,7 +1385,6 @@ dateHeading:{
     width: '84%',
   },
   searchIcon: { 
-
     padding: (Platform.OS === 'ios'? 0:5),
     margin: (Platform.OS === 'ios'? 0:10),
     height: 24,
@@ -1452,7 +1451,7 @@ dateHeading:{
     borderLeftColor: '#ffffff5d',
     borderRightColor: '#ffffff36',
     borderWidth: 0.3,
-    marginTop: 0,
+   marginTop:(Platform.OS === 'ios' ? 5:20),
   },
   iconSmall: {
     width: 24,

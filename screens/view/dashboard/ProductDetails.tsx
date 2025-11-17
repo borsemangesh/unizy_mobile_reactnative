@@ -2374,7 +2374,7 @@ const styles = StyleSheet.create({
     borderLeftColor: '#ffffff5d',
     borderRightColor: '#ffffff36',
     borderWidth: 0.3,
-    marginTop: 6,
+   marginTop:(Platform.OS === 'ios' ? 5:20),
   },
   iconSmall: {
     width: 24,

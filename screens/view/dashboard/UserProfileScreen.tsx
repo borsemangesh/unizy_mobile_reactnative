@@ -11,11 +11,7 @@ const smileyhappy = require('../../../assets/images/smileyhappy.png');
 const arrowIcon = require('../../../assets/images/nextarrow.png');
 
 
-const cardData = [
 
-  { id: '1', title: 'Allen Reviews',  image: require('../../../assets/images/ok.png') },
-  { id: '2', title: 'Allen Listings',image: require('../../../assets/images/mylistingicon.png') },
-];
 
 type UserProfileScreenProps ={
   navigation: any;
@@ -85,10 +81,10 @@ const renderItem = ({ item }: any) => {
         <TouchableOpacity
           style={styles.cardContainer}
           onPress={async () => {
-           if (item.title === 'Allen Listings') {
+           if (item.id === '1') {
               navigation.navigate('UserListing'); 
             } 
-            else if (item.title === 'Allen Reviews') {
+            else if (item.id === '2') {
               navigation.navigate('UserReviews'); 
             } 
           }}
@@ -109,7 +105,18 @@ const renderItem = ({ item }: any) => {
     };
 
 
- 
+ const cardData = [
+  {
+    id: '1',
+    title: `${userList?.firstname || ''} Reviews`,
+    image: require('../../../assets/images/ok.png'),
+  },
+  {
+    id: '2',
+    title: `${userList?.firstname || ''} Listings`,
+    image: require('../../../assets/images/mylistingicon.png'),
+  },
+];
 return (
     <ImageBackground source={bgImage} style={{ flex: 1 }} resizeMode="cover">
      <View style={styles.fullScreenContainer}>

@@ -557,11 +557,11 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                       </Text>
                     </View>
  
-                    <View style={styles.listingtyperow}>
+                    <View style={styles.listingtyperow1}>
                       <Text allowFontScaling={false} style={styles.lebleHeader}>
                         Buyer’s University:
                       </Text>
-                      <Text allowFontScaling={false} style={styles.status}>
+                      <Text allowFontScaling={false} numberOfLines={0} style={styles.unistatus}>
                         {buyer.university_name}
                       </Text>
                     </View>
@@ -1168,6 +1168,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
+   listingtyperow1: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    //justifyContent: 'space-between',
+  },
   lebleHeader: {
     color: 'rgba(255, 255, 255, 0.72)',
     fontSize: 14,
@@ -1183,6 +1189,17 @@ const styles = StyleSheet.create({
     letterSpacing: -0.28,
     lineHeight: 16,
     fontFamily: 'Urbanist-SemiBold',
+  },
+
+  unistatus: {
+    color: 'rgba(255, 255, 255, 0.88)',
+    fontSize: 14,
+    fontWeight: '600',
+    letterSpacing: -0.28,
+    lineHeight: 16,
+    fontFamily: 'Urbanist-SemiBold',
+    maxWidth:'70%',
+    textAlign:'right'
   },
   status1: {
     color: 'rgba(255, 255, 255, 0.88)',
@@ -1228,6 +1245,8 @@ const styles = StyleSheet.create({
     letterSpacing: -0.24,
     lineHeight: 16,
     fontFamily: 'Urbanist-Medium',
+        
+
   },
   datetlable: {
     marginLeft: 10,
