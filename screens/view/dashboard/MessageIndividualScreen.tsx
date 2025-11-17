@@ -1215,6 +1215,7 @@ const MessagesIndividualScreen = ({
   const hasScrollableContent = useSharedValue(false);
   const contentHeightRef = useRef(0);
   const viewportHeightRef = useRef(0);
+  const prevContentHeightRef = useRef(0); // Track previous content height to detect new messages
 
   // Function to check if content is scrollable and update blur
   const updateBlurState = () => {
@@ -1929,8 +1930,6 @@ const MessagesIndividualScreen = ({
           return timeB - timeA; // Newest first (for inverted list)
         });
       });
-      // With inverted FlatList, new messages appear at bottom automatically
-      // No need to scroll - inverted list keeps newest at bottom
     };
 
     conversation.on('messageAdded', handleNewMessage);
@@ -2335,12 +2334,12 @@ const MessagesIndividualScreen = ({
   const contentContainerStyle = React.useMemo(() => {
     // KeyboardAvoidingView already handles pushing content up when keyboard opens
     // So we only need minimal padding for the input bar itself, not the full keyboard height
-    let paddingBottom = 0;// Just enough to ensure last message is visible above input bar
+    let paddingBottom = INPUT_BAR_HEIGHT;// Just enough to ensure last message is visible above input bar
     
     if (keyboardVisible && !isEmojiPickerVisible) {
       // Text keyboard is open - KeyboardAvoidingView handles the push
       // We only need padding for the input bar, not the keyboard height
-     paddingBottom = 0; //
+      paddingBottom = INPUT_BAR_HEIGHT;
     } else if (isEmojiPickerVisible) {
       // Emoji picker is visible - KeyboardAvoidingView is disabled, so we need to add emoji picker height
       paddingBottom = EMOJI_PICKER_HEIGHT;
@@ -2678,8 +2677,31 @@ const MessagesIndividualScreen = ({
             keyboardShouldPersistTaps="handled"
             onContentSizeChange={(width, height) => {
               // Update content height and check if scrollable
+              const prevHeight = contentHeightRef.current;
               contentHeightRef.current = height;
               updateBlurState();
+              
+              // If content height increased (new message added), scroll to bottom
+              if (height > prevHeight && prevHeight > 0 && flatListRef.current) {
+                // New message was added - scroll to show it above keyboard
+                InteractionManager.runAfterInteractions(() => {
+                  setTimeout(() => {
+                    if (flatListRef.current) {
+                      try {
+                        // For inverted FlatList, scrollToOffset with 0 scrolls to bottom
+                        flatListRef.current.scrollToOffset({ offset: 0, animated: true });
+                      } catch (err) {
+                        // Fallback to scrollToEnd
+                        try {
+                          flatListRef.current.scrollToEnd({ animated: true });
+                        } catch (e) {
+                          console.warn('Scroll failed:', e);
+                        }
+                      }
+                    }
+                  }, 100);
+                });
+              }
             }}
             onLayout={(event) => {
               // Update viewport height and check if scrollable
