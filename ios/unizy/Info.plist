@@ -22,10 +22,13 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
+
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
@@ -41,6 +44,7 @@
 			</dict>
 		</dict>
 	</dict>
+
 	<key>NSCameraUsageDescription</key>
 	<string>This app requires access to your camera to allow taking photos.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
@@ -49,8 +53,10 @@
 	<string>This app requires access to your photo library to allow uploading and saving images.</string>
 	<key>NSRemoteNotificationUsageDescription</key>
 	<string>This app uses notifications for important alerts.</string>
+
 	<key>RCTNewArchEnabled</key>
 	<true/>
+
 	<key>UIAppFonts</key>
 	<array>
 		<string>MonumentExtended-Regular.otf</string>
@@ -74,31 +80,42 @@
 		<string>Urbanist-Thin.ttf</string>
 		<string>Urbanist-ThinItalic.ttf</string>
 	</array>
+
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
 		<string>processing</string>
 	</array>
+
+	<!-- 🔧 Required when "processing" background mode is used -->
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.unizyapp.background.processing</string>
+	</array>
+
 	<key>UILaunchStoryboardName</key>
 	<string></string>
+
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>arm64</string>
 	</array>
+
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+
 	<key>CFBundleURLTypes</key>
 	<array>
-	<dict>
-		<key>CFBundleURLSchemes</key>
-		<array>
-		<string>unizyapp</string>
-		</array>
-	</dict>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>unizyapp</string>
+			</array>
+		</dict>
 	</array>
 
 	<key>UIViewControllerBasedStatusBarAppearance</key>
