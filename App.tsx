@@ -12,10 +12,32 @@ import { Constant } from "./screens/utils/Constant";
 import notifee, { AndroidImportance } from '@notifee/react-native';
 import { PERMISSIONS, RESULTS, check, request } from "react-native-permissions";
 
+// import { Alert } from 'react-native';
+import messaging from '@react-native-firebase/messaging';
+
 
 function App() {
   LogBox.ignoreAllLogs();
   enableScreens();
+
+  async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  }
+
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    });
+
+    return unsubscribe;
+  }, []);
 
 
   const requestAllPermissions = async () => {
@@ -79,37 +101,37 @@ function App() {
     }
   };
 
-  // useEffect(() => {
-  //   const setupFCM = async () => {
-  //     const authStatus = await messaging().requestPermission();
-  //     const enabled =
-  //       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-  //       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  useEffect(() => {
+    const setupFCM = async () => {
+      const authStatus = await messaging().requestPermission();
+      const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-  //     if (enabled) {
-  //       console.log("✅ Notification permission granted");
+      if (enabled) {
+        console.log("✅ Notification permission granted");
 
-  //       const token = await messaging().getToken();
-  //       console.log("🔥 FCM Token:", token);
-  //     } else {
-  //       console.log("❌ Notification permission denied");
-  //     }
-  //   };
+        const token = await messaging().getToken();
+        console.log("🔥 FCM Token:", token);
+      } else {
+        console.log("❌ Notification permission denied");
+      }
+    };
 
-  //   // Foreground message listener
-  //   const unsubscribe = messaging().onMessage(async remoteMessage => {
-  //     console.log("📩 Foreground Message:", remoteMessage);
-  //     Toast.show({
-  //       type: "info",
-  //       text1: remoteMessage.notification?.title,
-  //       text2: remoteMessage.notification?.body,
-  //     });
-  //   });
+    // Foreground message listener
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      console.log("📩 Foreground Message:", remoteMessage);
+      Toast.show({
+        type: "info",
+        text1: remoteMessage.notification?.title,
+        text2: remoteMessage.notification?.body,
+      });
+    });
 
-  //   setupFCM();
+    setupFCM();
 
-  //   return unsubscribe;
-  // }, []);
+    return unsubscribe;
+  }, []);
 
 
 //  useEffect(() => {

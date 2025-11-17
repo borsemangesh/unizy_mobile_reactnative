@@ -35,7 +35,7 @@ import MaskedView from '@react-native-masked-view/masked-view';
 
 const bgImage = require('../../../assets/images/backimg.png');
 import ProductCard from '../../utils/ProductCard';
-// import messaging from "@react-native-firebase/messaging";
+import messaging from "@react-native-firebase/messaging";
 
 import AnimatedSlideUp from '../../utils/AnimatedSlideUp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -343,47 +343,47 @@ const [isLoading, setIsLoading] = useState(true);
   }, [])
 );
 
-//  useEffect(() => {
-//     sendDeviceTokenToServer();
-//   }, []);
+ useEffect(() => {
+    sendDeviceTokenToServer();
+  }, []);
 
 
-//   const sendDeviceTokenToServer = async () => {
-//     try {
+  const sendDeviceTokenToServer = async () => {
+    try {
 
-//     const token = await AsyncStorage.getItem('userToken');
-//     if (!token) return;
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) return;
 
-//     const url1 = MAIN_URL.baseUrl + 'user/devicetoken';
-//     console.log('📤 FCM URL:', url1);
-//     // const fcmToken = await messaging().getToken();
-//     // console.log('📤 FCM fcmToken:', fcmToken);
-//     const fcmToken = "";
-//     const requestBody = {
-//           device_token: fcmToken,
-//           device_type  : Platform.OS,
-//         };
-//     console.log('Body:', JSON.stringify(requestBody));
-//     const response = await fetch(url1, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         'Authorization': `Bearer ${token}`,
-//       },
-//       body: JSON.stringify(requestBody),
-//     });
+    const url1 = MAIN_URL.baseUrl + 'user/devicetoken';
+    console.log('📤 FCM URL:', url1);
+    const fcmToken = await messaging().getToken();
+    console.log('📤 FCM fcmToken:', fcmToken);
+    // const fcmToken = "";
+    const requestBody = {
+          device_token: fcmToken,
+          device_type  : Platform.OS,
+        };
+    console.log('Body:', JSON.stringify(requestBody));
+    const response = await fetch(url1, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(requestBody),
+    });
 
-//     if (response.ok) {
-//       console.log('✅ FCM token sent to server successfully');
-//     } else {
-//       const error = await response.text();
-//       console.log('❌ Server error:', error);
-//     }
-//   } catch (error) {
-//     console.error('❌ Error sending token to server:', error);
-//   }
+    if (response.ok) {
+      console.log('✅ FCM token sent to server successfully');
+    } else {
+      const error = await response.text();
+      console.log('❌ Server error:', error);
+    }
+  } catch (error) {
+    console.error('❌ Error sending token to server:', error);
+  }
 
-//   };
+  };
   
   const [isNav, setIsNav] = useState(true);
 

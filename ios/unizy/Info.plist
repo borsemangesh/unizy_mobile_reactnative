@@ -24,7 +24,7 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 
 	<key>FirebaseAppDelegateProxyEnabled</key>
-	<false/>
+	<true/>
 
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
