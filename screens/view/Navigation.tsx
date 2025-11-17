@@ -41,6 +41,10 @@ import EditPreviewDetailed from './dashboard/EditPreviewDetailed';
 import UserProfileScreen from './dashboard/UserProfileScreen';
 import EditProfile from './dashboard/EditProfile';
 import ViewListingDetails from './dashboard/ViewListingDetails';
+import StripeOnboardingScreen from './dashboard/StripeOnboardingScreen';
+import AccountDetails from './dashboard/AccountDetails';
+import StripeOnboardingCancel from './dashboard/StripeOnboardingCancel';
+import StripeOnboardingComplete from './dashboard/StripeOnboardingComplete';
 
 const Stack = createNativeStackNavigator();
 
@@ -75,7 +79,7 @@ export const Navigation = () => {
           options={{ headerShown: false }}
         />
 
-<Stack.Screen
+        <Stack.Screen
           name="EditProfile"
           component={EditProfile}
           options={{
@@ -118,8 +122,8 @@ export const Navigation = () => {
             presentation: 'fullScreenModal',
           }}
         />
-        
-<Stack.Screen
+
+        <Stack.Screen
           name="EditPreviewThumbnail"
           component={EditPreviewThumbnail}
           options={{
@@ -129,8 +133,7 @@ export const Navigation = () => {
           }}
         />
 
-
-<Stack.Screen
+        <Stack.Screen
           name="UserProfileScreen"
           component={UserProfileScreen}
           options={{
@@ -139,7 +142,7 @@ export const Navigation = () => {
             presentation: 'fullScreenModal',
           }}
         />
-        
+
         <Stack.Screen
           name="EditPreviewDetailed"
           component={EditPreviewDetailed}
@@ -267,7 +270,7 @@ export const Navigation = () => {
           name="ListingDetails"
           component={ListingDetails}
           key={Math.random().toString()}
-          options={{ headerShown: false, presentation: 'fullScreenModal' } }
+          options={{ headerShown: false, presentation: 'fullScreenModal' }}
         />
         <Stack.Screen
           name="SearchPage"
@@ -343,6 +346,30 @@ export const Navigation = () => {
             headerShown: false,
             presentation: 'fullScreenModal',
           }}
+        />
+
+        <Stack.Screen
+          name="StripeOnboardingComplete"
+          component={StripeOnboardingComplete}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="StripeOnboardingScreen"
+          component={StripeOnboardingScreen}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="AccountDeatils"
+          component={AccountDetails}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="StripeOnboardingCancel"
+          component={StripeOnboardingCancel}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>

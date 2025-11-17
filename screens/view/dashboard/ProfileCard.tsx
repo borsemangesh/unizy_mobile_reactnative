@@ -155,12 +155,63 @@ useEffect(() => {
 
     fetchUserProfile();
   }, []);
-
+  const openStripeOnboarding = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const response = await fetch(
+        `${MAIN_URL.baseUrl}transaction/account-detail`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+ 
+      const json = await response.json();
+ 
+      if (json?.statusCode === 200 && json.data.onboardingLink) {
+        const onboardingLink = json?.data?.onboardingLink;
+ 
+        if(Platform.OS === 'ios'){
+          navigation.replace("StripeOnboardingScreen", {
+            onboardingUrl: onboardingLink,
+          });
+        } else {
+          navigation.navigate("StripeOnboardingScreen", {
+            onboardingUrl: onboardingLink,
+          });
+      }
+       
+     
+      }
+      else if(json?.data?.stripeAccount?.isboardcomplete)
+      {
+            
+            if(Platform.OS === 'ios'){
+              navigation.replace("AccountDeatils", { showSuccess: true })
+            } else {
+              navigation.navigate("AccountDeatils", { showSuccess: true })
+          }
+      }
+      else {
+        Alert.alert('Error', json?.message || 'Something went wrong.');
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert('Error', error.message);
+      } else {
+        Alert.alert('Error', 'Something went wrong');
+      }
+    }
+  };
 
 
 const renderItem = ({ item }: any) => {
   const isLogout = item.title.toLowerCase() === 'logout';
   const isVersion = item.title.toLowerCase() === 'app version';
+ 
 
   return (
     <TouchableOpacity
@@ -201,6 +252,10 @@ const renderItem = ({ item }: any) => {
           } else {
             navigation.navigate('Notification'); 
           }
+          
+        }
+        else if(item.title === 'Payment Methods'){
+          openStripeOnboarding();
         } 
          else {
           console.log(item.title, 'pressed');
