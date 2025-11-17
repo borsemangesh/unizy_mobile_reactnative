@@ -40,7 +40,7 @@ const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
 
 
       
-        const url = `${MAIN_URL.baseUrl}user/info?user_id=${106}`;
+        const url = `${MAIN_URL.baseUrl}user/info?user_id=${userId}`;
         console.log('url----------',url);
         
         const response = await fetch(url, {

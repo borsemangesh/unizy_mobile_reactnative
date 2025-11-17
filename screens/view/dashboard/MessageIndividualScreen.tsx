@@ -1098,6 +1098,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -2140,10 +2141,27 @@ const MessagesIndividualScreen = ({
   }, [groupedMessages]);
 
   // Memoize content container style to ensure padding is applied on initial load
-  const contentContainerStyle = React.useMemo(() => ({
-    paddingTop: Platform.OS === 'ios' ? 160 : 150, // Header space at top
-    flexGrow: 1, // Ensure content takes full space
-  }), []);
+  // Include bottom padding that adjusts for keyboard/emoji picker state
+  // Since emoji keyboard works when we manually add height, we do the same for text keyboard
+  const contentContainerStyle = React.useMemo(() => {
+    const BASE_SPACING = 20;
+    let paddingBottom = INPUT_BAR_HEIGHT + BASE_SPACING;
+    
+    if (keyboardVisible && !isEmojiPickerVisible) {
+      // Text keyboard is open - add keyboard height to padding
+      // This ensures messages are visible above the keyboard (same approach as emoji picker)
+      paddingBottom = INPUT_BAR_HEIGHT + keyboardHeight + BASE_SPACING;
+    } else if (isEmojiPickerVisible) {
+      // Emoji picker is visible - add emoji picker height
+      paddingBottom = INPUT_BAR_HEIGHT + EMOJI_PICKER_HEIGHT + BASE_SPACING;
+    }
+    
+    return {
+      paddingTop: Platform.OS === 'ios' ? 160 : 150, // Header space at top
+      paddingBottom: paddingBottom, // Dynamic bottom padding for keyboard/emoji
+      flexGrow: 1, // Ensure content takes full space
+    };
+  }, [keyboardVisible, isEmojiPickerVisible, keyboardHeight, EMOJI_PICKER_HEIGHT]);
 
   // Scroll to bottom on initial load only - to show last message
   // Enhanced for smaller/older devices like Realme 2 Pro
@@ -2201,6 +2219,30 @@ const MessagesIndividualScreen = ({
       });
     }
   }, [initialLoading, groupedMessages.length, lastMessageIndex]); // Added dependencies
+
+  // Scroll to bottom when text keyboard opens to ensure last message is visible
+  useEffect(() => {
+    if (keyboardVisible && !isEmojiPickerVisible && flatListRef.current && groupedMessages.length > 0) {
+      // Use InteractionManager to ensure layout is complete
+      InteractionManager.runAfterInteractions(() => {
+        // Multiple attempts with delays to ensure scroll works on all devices
+        const scrollToBottom = () => {
+          if (flatListRef.current) {
+            flatListRef.current.scrollToEnd({ animated: true });
+            scrollY.value = 0;
+            initialScrollY.current = null;
+          }
+        };
+        
+        // Immediate attempt
+        scrollToBottom();
+        
+        // Additional attempts for devices that need more time
+        setTimeout(() => scrollToBottom(), 100);
+        setTimeout(() => scrollToBottom(), 300);
+      });
+    }
+  }, [keyboardVisible, isEmojiPickerVisible, groupedMessages.length]);
 
   // Removed: Scroll on keyboard open/close - let KeyboardAvoidingView handle natural adjustment like WhatsApp
   // The marginBottom on last message will adjust automatically via extraData re-render
@@ -2407,6 +2449,7 @@ const MessagesIndividualScreen = ({
             keyExtractor={(item, index) => item.sid || item.data?.sid || `item-${index}`}
             onScroll={scrollHandler}
             scrollEventThrottle={16}
+            scrollEnabled={!isEmojiPickerVisible} // Disable scrolling when emoji keyboard is open
             onScrollToIndexFailed={(info) => {
               // Fallback to scrollToEnd if scrollToIndex fails
               setTimeout(() => {
@@ -2579,6 +2622,24 @@ const MessagesIndividualScreen = ({
             contentContainerStyle={contentContainerStyle}
             showsVerticalScrollIndicator={false}
           />
+
+          {/* Touchable overlay to close emoji keyboard when tapping outside */}
+          {isEmojiPickerVisible && (
+            <Pressable
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: EMOJI_PICKER_HEIGHT + INPUT_BAR_HEIGHT,
+                zIndex: 998,
+                backgroundColor: 'transparent', // Transparent but still captures taps
+              }}
+              onPress={() => {
+                setIsEmojiPickerVisible(false);
+              }}
+            />
+          )}
 
           {/* EMOJI PICKER PANEL - instant appearance, no animation */}
           {isEmojiPickerVisible && (
