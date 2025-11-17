@@ -664,49 +664,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
             </View>
          </AnimatedReanimated.ScrollView>
 
-        {/* <View style={styles.bottomview}>
-          <TouchableOpacity
-            style={styles.cancelBtn}
-            onPress={() => {
-              if (data?.list?.isactive) {
-                setShowConfirm(true);
-              } else {
-                handleDeactivate();
-              }
-            }}
-          >
-            <Text allowFontScaling={false} style={styles.cancelText}>
-              {data?.list?.isactive ? 'Deactivate' : 'Activate'}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.cancelBtn, { backgroundColor: '#ffffffa7' }]}
-            onPress={() => {
-              if (data?.list?.ispurchased) {
-                //showToast('can not edit', 'error');
-                showToast('Purchased item can’t be edited.', 'error');
-                return;
-              }
-              navigation.replace(
-                'EditListScreen',
-                {
-                  productId: catagory_id,
-                  productName: catagory_name,
-                  shareid: shareid,
-                },
-                { animation: 'none' },
-              );
-            }}
-          >
-            <Text
-              allowFontScaling={false}
-              style={[styles.cancelText, { color: '#000000' }]}
-            >
-              Edit Listing
-            </Text>
-          </TouchableOpacity>
-        </View> */}
+       
        
         {(
         !data?.list?.ispurchased ||
