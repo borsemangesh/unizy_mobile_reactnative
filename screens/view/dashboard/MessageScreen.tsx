@@ -741,25 +741,27 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
                     >
                       {chat?.last_message?.body}
                     </Text>
-                    <Text
-                      allowFontScaling={false}
-                      style={{
-                        fontSize: 14,
-                        fontWeight: '600',
-                        color: '#FFFFFF',
-                        fontFamily: 'Urbanist-Medium',
-                        backgroundColor: 'rgba(255, 255, 255, 0.14)',
-                        shadowColor: '#000',
-                        lineHeight: 35,
-                        minHeight: 35,
-                        minWidth: 35,
-                        textAlign: 'center',
-                        borderRadius: 70,
-                        alignSelf: 'center',
-                      }}
-                    >
-                      {chat?.unreadcount}
-                    </Text>
+                    {chat?.unreadcount > 0 && (
+                      <Text
+                        allowFontScaling={false}
+                        style={{
+                          fontSize: 14,
+                          fontWeight: '600',
+                          color: '#FFFFFF',
+                          fontFamily: 'Urbanist-Medium',
+                          backgroundColor: 'rgba(255, 255, 255, 0.14)',
+                          shadowColor: '#000',
+                          lineHeight: 35,
+                          minHeight: 35,
+                          minWidth: 35,
+                          textAlign: 'center',
+                          borderRadius: 70,
+                          alignSelf: 'center',
+                        }}
+                      >
+                        {chat?.unreadcount}
+                      </Text>
+                    )}
                   </View>
                 </View>
               </View>
