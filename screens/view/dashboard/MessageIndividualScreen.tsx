@@ -1088,8 +1088,9 @@
 
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Dimensions,
   FlatList,
@@ -1113,7 +1114,6 @@ import { Client as TwilioChatClient } from '@twilio/conversations';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import EmojiKeyboard from '../emoji/emojiKebord';
 import { InteractionManager, PanResponder } from 'react-native';
-import LottieView from 'lottie-react-native';
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
@@ -1190,7 +1190,13 @@ const MessagesIndividualScreen = ({
   const [messageText, setMessageText] = useState('');
   // const [currentUserId, setCurrentUserId] = useState(null);
 
-  const [checkUser, setCheckUser] = useState(null);
+  const [checkUser, setCheckUser] = useState<string | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  
+  // Pagination state for WhatsApp-style loading
+  const [hasMoreMessages, setHasMoreMessages] = useState(true);
+  const [loadingOlderMessages, setLoadingOlderMessages] = useState(false);
+  const messagesPageRef = useRef<any>(null); // Store the messages page for pagination
 
   const [selectedEmoji, setSelectedEmoji] = useState('...');
 
@@ -1205,33 +1211,45 @@ const MessagesIndividualScreen = ({
   const emojiTranslateY = useRef(new RNAnimated.Value(0)).current;
 
   // Animated hooks for blur effect
-  const scrollY = useSharedValue(0);
-  const initialScrollY = useRef<number | null>(null); // Track initial scroll position
+  // Show blur when content height exceeds viewport (scrollable content exists)
+  const hasScrollableContent = useSharedValue(false);
+  const contentHeightRef = useRef(0);
+  const viewportHeightRef = useRef(0);
+
+  // Function to check if content is scrollable and update blur
+  const updateBlurState = () => {
+    if (contentHeightRef.current > 0 && viewportHeightRef.current > 0) {
+      hasScrollableContent.value = contentHeightRef.current > viewportHeightRef.current;
+    }
+  };
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       'worklet';
+      const contentH = event.contentSize.height;
+      const viewportH = event.layoutMeasurement.height;
       const currentY = event.contentOffset.y;
       
-      // Store initial scroll position (when at bottom)
-      if (initialScrollY.current === null) {
-        initialScrollY.current = currentY;
-      }
+      // Calculate if we're at the top (viewing oldest messages)
+      const maxScrollY = Math.max(0, contentH - viewportH);
+      const distanceFromTop = maxScrollY - currentY;
+      const isAtTop = distanceFromTop <= 10; // Small threshold for precision
       
-      // Only track upward scroll from initial position
-      // If currentY < initialScrollY, user is scrolling up (show blur)
-      // If currentY >= initialScrollY, user is at or below initial position (hide blur)
-      const scrollUpAmount = initialScrollY.current - currentY;
-      scrollY.value = Math.max(0, scrollUpAmount); // Only positive values (scrolling up)
+      // Show blur only if:
+      // 1. Content is scrollable (contentH > viewportH)
+      // 2. NOT at top (not viewing oldest messages)
+      // Hide blur only when fully scrolled to top
+      hasScrollableContent.value = (contentH > viewportH) && !isAtTop;
     },
   });
 
   const animatedBlurStyle = useAnimatedStyle(() => {
     'worklet';
-    // Only show blur when scrolling up from bottom (scrollY > 0)
-    // Interpolate from 0 to 300px of upward scroll
-    const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
-    return { opacity };
+    // Show blur (opacity = 1) when content is scrollable and not at top
+    // Hide blur (opacity = 0) only when fully scrolled to top (oldest messages)
+    return { 
+      opacity: hasScrollableContent.value ? 1 : 0 
+    };
   });
 
   // Move constants before they're used
@@ -1591,6 +1609,9 @@ const MessagesIndividualScreen = ({
           setInitialLoading(false);
           return;
         }
+        
+        // Store userId in state for message comparison
+        setCurrentUserId(String(userId));
 
         const response = await fetch(`${MAIN_URL.baseUrl}twilio/auth-token`, {
           method: 'GET',
@@ -1703,15 +1724,53 @@ const MessagesIndividualScreen = ({
         if (!isMounted) return;
         setConversation(convo);
       
+        // Convert to string to match Twilio's author format (author is typically userId as string)
         setCheckUser(
-          source === 'chatList'
-            ? currentUserIdList
-            : apiData?.data?.current_user_id || userId,
+          String(
+            source === 'chatList'
+              ? currentUserIdList
+              : apiData?.data?.current_user_id || userId
+          )
         );
 
-        const messagesPage = await convo.getMessages();
+        // Load all messages initially by fetching all pages
+        // Twilio pagination: nextPage() = newer messages, prevPage() = older messages
+        let allMessages: any[] = [];
+        let currentPage = await convo.getMessages();
+        allMessages = [...currentPage.items];
+        
+        console.log('Initial page loaded:', currentPage.items.length, 'hasPrevPage:', currentPage.hasPrevPage);
+        
+        // Load all older pages (prevPage gets older messages)
+        let pageCount = 1;
+        while (currentPage.hasPrevPage) {
+          try {
+            const prevPage = await currentPage.prevPage();
+            if (prevPage && prevPage.items && prevPage.items.length > 0) {
+              allMessages = [...allMessages, ...prevPage.items];
+              currentPage = prevPage;
+              pageCount++;
+              console.log(`Loaded older page ${pageCount}:`, prevPage.items.length, 'Total so far:', allMessages.length);
+            } else {
+              break;
+            }
+          } catch (error) {
+            console.error('Error loading previous page:', error);
+            break;
+          }
+        }
+        
+        console.log('Total messages loaded initially:', allMessages.length, 'from', pageCount, 'pages');
+        
+        // Store the last page (oldest messages) for pagination (to load even older messages if needed)
+        messagesPageRef.current = currentPage;
+        
+        // Check if there are more messages to load (older than what we have)
+        const hasMore = currentPage.hasPrevPage || false;
+        console.log('hasMoreMessages (older than loaded):', hasMore);
+        setHasMoreMessages(hasMore);
 
-        const messagesdate = messagesPage.items.map((msg: any) => {
+        const messagesdate = allMessages.map((msg: any) => {
           const createdAt = msg.dateCreated || msg.timestamp; // fallback if dateCreated missing
 
           return {
@@ -1728,16 +1787,16 @@ const MessagesIndividualScreen = ({
         });
 
         console.log('date time masg------', messagesdate);
-
-        console.log('messagesPage----------', messagesPage.items);
+        console.log('All messages loaded----------', allMessages.length);
         setMessagesDateTime(messagesdate);
         console.log("checkUser============______",checkUser);
         
-        // Sort messages chronologically (oldest first)
-        const sortedInitialMessages = [...messagesPage.items].sort((a, b) => {
+        // Sort messages chronologically (newest first for inverted FlatList)
+        // Inverted FlatList will display newest at bottom, oldest at top
+        const sortedInitialMessages = [...allMessages].sort((a, b) => {
           const timeA = new Date(a.dateCreated || a.timestamp).getTime();
           const timeB = new Date(b.dateCreated || b.timestamp).getTime();
-          return timeA - timeB; // Oldest first
+          return timeB - timeA; // Newest first (for inverted list)
         });
         setMessages(sortedInitialMessages);
         // Hide loader once messages are loaded
@@ -1760,27 +1819,118 @@ const MessagesIndividualScreen = ({
 
 
   // ----------------------------------------------------------
+  // Load older messages (pagination) - WhatsApp style
+  // ----------------------------------------------------------
+  const loadOlderMessages = useCallback(async () => {
+    if (!conversation || !hasMoreMessages || loadingOlderMessages) {
+      console.log('loadOlderMessages: Skipping - conversation:', !!conversation, 'hasMoreMessages:', hasMoreMessages, 'loadingOlderMessages:', loadingOlderMessages);
+      return;
+    }
+    
+    try {
+      setLoadingOlderMessages(true);
+      console.log('loadOlderMessages: Loading older messages...');
+      
+      // Get the previous page of messages
+      const prevPage = await messagesPageRef.current?.prevPage();
+      
+      if (!prevPage || !prevPage.items || prevPage.items.length === 0) {
+        console.log('loadOlderMessages: No more messages to load');
+        setHasMoreMessages(false);
+        setLoadingOlderMessages(false);
+        return;
+      }
+      
+      console.log('loadOlderMessages: Loaded', prevPage.items.length, 'older messages');
+      
+      // Store the new page for next pagination
+      messagesPageRef.current = prevPage;
+      
+      // Check if there are more messages
+      setHasMoreMessages(prevPage.hasNextPage || false);
+      
+      // Get existing message SIDs for deduplication
+      setMessages(prev => {
+        const existingSids = new Set(prev.map(msg => msg.sid));
+        
+        // Filter out duplicates from new messages
+        const newMessages = prevPage.items.filter((msg: any) => !existingSids.has(msg.sid));
+        
+        if (newMessages.length === 0) {
+          console.log('loadOlderMessages: All messages are duplicates');
+          setHasMoreMessages(false);
+          return prev; // No new messages, return previous state
+        }
+        
+        console.log('loadOlderMessages: Adding', newMessages.length, 'new messages');
+        
+        // Combine: existing messages + new older messages
+        // With inverted FlatList: newest at bottom (index 0), oldest at top (last index)
+        // New older messages should be added to the end of the array (will appear at top after inversion)
+        const combined = [...prev, ...newMessages];
+        
+        // Sort to maintain newest-first order (newest at start, oldest at end)
+        const sorted = combined.sort((a, b) => {
+          const timeA = new Date(a.dateCreated || a.timestamp).getTime();
+          const timeB = new Date(b.dateCreated || b.timestamp).getTime();
+          return timeB - timeA; // Newest first
+        });
+        
+        return sorted;
+      });
+      
+      // Scroll position is maintained automatically by FlatList when items are added
+      // Inverted FlatList correctly maintains position when appending to end
+      
+    } catch (error) {
+      console.error('Failed to load older messages:', error);
+      setHasMoreMessages(false);
+    } finally {
+      setLoadingOlderMessages(false);
+    }
+  }, [conversation, hasMoreMessages, loadingOlderMessages]);
+
+  // ----------------------------------------------------------
   // STEP 3: Attach Twilio Message Listener (ONLY ONCE)
   // ----------------------------------------------------------
   useEffect(() => {
     if (!conversation) return;
 
-    const handleNewMessage = (m: any) => {
-      console.log('New Twilio message:', m.body);
+    const handleNewMessage = async (m: any) => {
+      // Get userId from AsyncStorage to compare with message author
+      const userId = await AsyncStorage.getItem('userId');
+      if (userId && !currentUserId) {
+        setCurrentUserId(String(userId));
+      }
+      
+      const messageAuthor = m.author || m.state?.author || m.attributes?.author;
+      
+      console.log('New Twilio message:', {
+        body: m.body,
+        author: messageAuthor,
+        checkUser: checkUser,
+        currentUserId: currentUserId,
+        userId: userId,
+        isFromMe: String(messageAuthor) === String(checkUser) || String(messageAuthor) === String(currentUserId) || String(messageAuthor) === String(userId),
+        messageStructure: {
+          hasAuthor: !!m.author,
+          hasState: !!m.state,
+          hasStateAuthor: !!m.state?.author,
+        }
+      });
+      
       setMessages(prev => {
         if (prev.find(msg => msg.sid === m.sid)) return prev; // dedup
-        // Add new message and sort chronologically (oldest first)
+        // Add new message and sort chronologically (newest first for inverted FlatList)
         const updated = [...prev, m];
         return updated.sort((a, b) => {
           const timeA = new Date(a.dateCreated || a.timestamp).getTime();
           const timeB = new Date(b.dateCreated || b.timestamp).getTime();
-          return timeA - timeB; // Oldest first
+          return timeB - timeA; // Newest first (for inverted list)
         });
       });
-      // Scroll to bottom when new message arrives
-      setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: true });
-      }, 100);
+      // With inverted FlatList, new messages appear at bottom automatically
+      // No need to scroll - inverted list keeps newest at bottom
     };
 
     conversation.on('messageAdded', handleNewMessage);
@@ -1800,7 +1950,7 @@ const MessagesIndividualScreen = ({
     
     if (!filteredMessage) {
       // Show alert if message becomes empty after filtering
-      Alert.alert('Invalid Message', 'Messages cannot contain numbers or number words.');
+      // Alert.alert('Invalid Message', 'Messages cannot contain numbers or number words.');
       setMessageText(''); // Clear the input
       return;
     }
@@ -1844,7 +1994,13 @@ const MessagesIndividualScreen = ({
       }
 
       const convName = createData.data.conv_name;
-      setCheckUser(createData.data.current_user_id);
+      const currentUserIdFromApi = createData.data.current_user_id;
+      // Convert to string to match Twilio's author format (author is typically userId as string)
+      setCheckUser(String(currentUserIdFromApi));
+      // Also set currentUserId from AsyncStorage (this is what Twilio uses as identity)
+      if (userId) {
+        setCurrentUserId(String(userId));
+      }
       // setCurrentUserId(convName);
 
       // Get or create Twilio conversation
@@ -1866,19 +2022,24 @@ const MessagesIndividualScreen = ({
         else console.error('Join failed:', err);
       }
 
+      // Set conversation BEFORE sending message so the messageAdded listener is ready
+      setConversation(convo);
+
+      // Small delay to ensure the useEffect listener is set up
+      // This prevents race condition where message is sent before listener is ready
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       // Send the pending first message
+      // Twilio will trigger messageAdded event which will add the message automatically
       await convo.sendMessage(filteredMessage);
       console.log(
         'First message sent after conversation creation:',
         filteredMessage,
       );
 
-      setConversation(convo);
       setMessageText('');
-      setMessages(prev => [
-        ...prev,
-        { body: messageText.trim(), state: { author: userId } },
-      ]);
+      // Don't manually add message - let Twilio's messageAdded event handle it
+      // This ensures the message structure matches Twilio's format and appears correctly
     } catch (error) {
       console.error('Message send failed:', error);
     }
@@ -2081,15 +2242,24 @@ const MessagesIndividualScreen = ({
   //-------------- for set date wise messages -----------------//
 
   const formatMessageDate = (date: Date) => {
-    const today = new Date();
-    const yesterday = new Date();
-    yesterday.setDate(today.getDate() - 1);
-
     const d = new Date(date);
+    
+    // Get today's date in local timezone (reset time to midnight for accurate comparison)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Get yesterday's date
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    // Get message date in local timezone (reset time to midnight)
+    const messageDate = new Date(d);
+    messageDate.setHours(0, 0, 0, 0);
 
-    if (d.toDateString() === today.toDateString()) return 'Today';
+    // Compare dates (year, month, day only)
+    if (messageDate.getTime() === today.getTime()) return 'Today';
 
-    if (d.toDateString() === yesterday.toDateString()) return 'Yesterday';
+    if (messageDate.getTime() === yesterday.getTime()) return 'Yesterday';
 
     return d.toLocaleDateString('en-IN', {
       day: '2-digit',
@@ -2099,30 +2269,48 @@ const MessagesIndividualScreen = ({
   };
 
   const buildMessageList = (messages: any[]) => {
-    // Sort messages chronologically (oldest first) for normal FlatList
-    // This ensures newest messages appear at bottom (oldest at top, newest at bottom)
+    // Inverted FlatList: Array[0] appears at BOTTOM, Array[n] appears at TOP
+    // We want to display: date_oldest (top), msgs_oldest, date_newest, msgs_newest (bottom)
+    // So we need: Array[n] = date_oldest, Array[0] = msgs_newest
+    // Structure: [msg_newest, date_newest, ..., msg_oldest, date_oldest]
+    // When inverted: [date_oldest, msg_oldest, ..., date_newest, msg_newest] ✓
+    
+    if (messages.length === 0) return [];
+
+    // Sort messages oldest first for proper date grouping
     const sortedMessages = [...messages].sort((a, b) => {
       const timeA = new Date(a.dateCreated || a.timestamp).getTime();
       const timeB = new Date(b.dateCreated || b.timestamp).getTime();
       return timeA - timeB; // Oldest first
     });
 
-    let grouped: any[] = [];
+    const grouped: any[] = [];
     let lastDate: string | null = null;
 
+    // Build grouped array in oldest-first order: [date, msgs, date, msgs, ...]
     sortedMessages.forEach((msg, index) => {
       const created = msg.dateCreated || msg.timestamp;
       const dateLabel = formatMessageDate(new Date(created));
 
+      // Add date label when date changes (BEFORE messages of that date)
       if (lastDate !== dateLabel) {
-        grouped.push({ type: 'date', date: dateLabel, sid: `date-${dateLabel}-${index}` });
+        grouped.push({ 
+          type: 'date', 
+          date: dateLabel, 
+          sid: `date-${dateLabel}-${index}` 
+        });
         lastDate = dateLabel;
       }
 
+      // Add message
       grouped.push({ type: 'message', data: msg, sid: msg.sid || `msg-${index}` });
     });
 
-    return grouped;
+    // Now we have: [date_oldest, msg_oldest, ..., date_newest, msg_newest]
+    // Reverse: [date_newest, msg_newest, ..., date_oldest, msg_oldest]
+    // When inverted: [date_oldest, msg_oldest, ..., date_newest, msg_newest]
+    // Display: date_oldest (top), msg_oldest, ..., date_newest, msg_newest (bottom) ✓
+    return grouped.reverse();
   };
 
   const groupedMessages = React.useMemo(
@@ -2130,11 +2318,12 @@ const MessagesIndividualScreen = ({
     [messages]
   );
 
-  // Find the last message index (not date) for adding bottom padding
+  // Find the newest message index (not date) for adding bottom padding
+  // With inverted FlatList and reversed grouped array, newest message is at index 0
   const lastMessageIndex = React.useMemo(() => {
-    for (let i = groupedMessages.length - 1; i >= 0; i--) {
+    for (let i = 0; i < groupedMessages.length; i++) {
       if (groupedMessages[i]?.type === "message") {
-        return i;
+        return i; // First message in the reversed grouped array is the newest (at bottom after inversion)
       }
     }
     return -1;
@@ -2142,18 +2331,19 @@ const MessagesIndividualScreen = ({
 
   // Memoize content container style to ensure padding is applied on initial load
   // Include bottom padding that adjusts for keyboard/emoji picker state
-  // Since emoji keyboard works when we manually add height, we do the same for text keyboard
+  // Input bar is absolutely positioned, but we need minimal padding to ensure last message is visible
   const contentContainerStyle = React.useMemo(() => {
-    const BASE_SPACING = 20;
-    let paddingBottom = INPUT_BAR_HEIGHT + BASE_SPACING;
+    // KeyboardAvoidingView already handles pushing content up when keyboard opens
+    // So we only need minimal padding for the input bar itself, not the full keyboard height
+    let paddingBottom = 0;// Just enough to ensure last message is visible above input bar
     
     if (keyboardVisible && !isEmojiPickerVisible) {
-      // Text keyboard is open - add keyboard height to padding
-      // This ensures messages are visible above the keyboard (same approach as emoji picker)
-      paddingBottom = INPUT_BAR_HEIGHT + keyboardHeight + BASE_SPACING;
+      // Text keyboard is open - KeyboardAvoidingView handles the push
+      // We only need padding for the input bar, not the keyboard height
+     paddingBottom = 0; //
     } else if (isEmojiPickerVisible) {
-      // Emoji picker is visible - add emoji picker height
-      paddingBottom = INPUT_BAR_HEIGHT + EMOJI_PICKER_HEIGHT + BASE_SPACING;
+      // Emoji picker is visible - KeyboardAvoidingView is disabled, so we need to add emoji picker height
+      paddingBottom = EMOJI_PICKER_HEIGHT;
     }
     
     return {
@@ -2163,86 +2353,9 @@ const MessagesIndividualScreen = ({
     };
   }, [keyboardVisible, isEmojiPickerVisible, keyboardHeight, EMOJI_PICKER_HEIGHT]);
 
-  // Scroll to bottom on initial load only - to show last message
-  // Enhanced for smaller/older devices like Realme 2 Pro
-  useEffect(() => {
-    if (groupedMessages.length > 0 && !initialLoading && flatListRef.current) {
-      // Use InteractionManager to ensure layout is complete
-      InteractionManager.runAfterInteractions(() => {
-        // Multiple scroll attempts with increasing delays for device compatibility
-        const scrollToBottom = () => {
-          if (flatListRef.current) {
-            // Try scrollToEnd first
-            flatListRef.current.scrollToEnd({ animated: false });
-            
-            // Fallback: Try scrollToIndex with last index after a delay
-            setTimeout(() => {
-              if (flatListRef.current && lastMessageIndex >= 0) {
-                try {
-                  flatListRef.current.scrollToIndex({ 
-                    index: lastMessageIndex, 
-                    animated: false,
-                    viewPosition: 1 // Position at bottom of viewport
-                  });
-                } catch (e) {
-                  // If scrollToIndex fails, use scrollToEnd as fallback
-                  flatListRef.current?.scrollToEnd({ animated: false });
-                }
-              }
-            }, 100);
-          }
-        };
-        
-        // Immediate attempt
-        scrollToBottom();
-        
-        // Reset scrollY and initial position when at bottom
-        scrollY.value = 0;
-        initialScrollY.current = null;
-        
-        // Additional attempts for slower/smaller devices
-        setTimeout(() => {
-          scrollToBottom();
-          scrollY.value = 0;
-          initialScrollY.current = null;
-        }, 200);
-        setTimeout(() => {
-          scrollToBottom();
-          scrollY.value = 0;
-          initialScrollY.current = null;
-        }, 500);
-        setTimeout(() => {
-          scrollToBottom();
-          scrollY.value = 0;
-          initialScrollY.current = null;
-        }, 800); // Extra delay for Realme 2 Pro
-      });
-    }
-  }, [initialLoading, groupedMessages.length, lastMessageIndex]); // Added dependencies
-
-  // Scroll to bottom when text keyboard opens to ensure last message is visible
-  useEffect(() => {
-    if (keyboardVisible && !isEmojiPickerVisible && flatListRef.current && groupedMessages.length > 0) {
-      // Use InteractionManager to ensure layout is complete
-      InteractionManager.runAfterInteractions(() => {
-        // Multiple attempts with delays to ensure scroll works on all devices
-        const scrollToBottom = () => {
-          if (flatListRef.current) {
-            flatListRef.current.scrollToEnd({ animated: true });
-            scrollY.value = 0;
-            initialScrollY.current = null;
-          }
-        };
-        
-        // Immediate attempt
-        scrollToBottom();
-        
-        // Additional attempts for devices that need more time
-        setTimeout(() => scrollToBottom(), 100);
-        setTimeout(() => scrollToBottom(), 300);
-      });
-    }
-  }, [keyboardVisible, isEmojiPickerVisible, groupedMessages.length]);
+  // With inverted FlatList, newest messages are automatically at bottom
+  // No need to scroll on initial load - inverted list starts at bottom
+  // Blur effect is now based on content height vs viewport, not scroll position
 
   // Removed: Scroll on keyboard open/close - let KeyboardAvoidingView handle natural adjustment like WhatsApp
   // The marginBottom on last message will adjust automatically via extraData re-render
@@ -2251,65 +2364,31 @@ const MessagesIndividualScreen = ({
 
   console.log('groupedMessages=========', groupedMessages);
 
-  // Show Lottie loader until data is loaded
-  if (initialLoading) {
-    return (
-      <View 
-        style={{
-          flex: 1,
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          width: width,
-          height: height,
-          backgroundColor: '#000069',
-          zIndex: 9999,
-          elevation: 9999,
-        }}
-      >
-        <LottieView
-          source={require('../../../assets/animations/lottielodder.json')}
-          autoPlay
-          loop
-          resizeMode="cover"
-          style={{
-            width: width,
-            height: height,
-          }}
-        />
-        {/* Overlay to hide watermark - covers bottom area where watermarks typically appear */}
-        <View
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: 100,
-            backgroundColor: '#000069',
-            zIndex: 10000,
-          }}
-        />
-        {/* Cover right side if watermark is in bottom-right corner */}
-        <View
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            right: 0,
-            width: 150,
-            height: 100,
-            backgroundColor: '#000069',
-            zIndex: 10000,
-          }}
-        />
-      </View>
-    );
-  }
+  // Calculate header and input bar heights for loader positioning
+  const headerTop = Platform.OS === 'ios' ? 50 : 40;
+  const headerHeight = 100;
+  const headerTotalHeight = headerTop + headerHeight;
+  const inputBarHeight = INPUT_BAR_HEIGHT;
 
   return (
     <ImageBackground source={bgImage} style={{ flex: 1 }} resizeMode="cover">
       <View style={{ flex: 1 }}>
+        {initialLoading && (
+          <View 
+            style={{
+              position: 'absolute',
+              top: headerTotalHeight,
+              bottom: inputBarHeight,
+              left: 0,
+              right: 0,
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 999,
+            }}
+          >
+            <ActivityIndicator size="large" color="#FFFFFF" />
+          </View>
+        )}
         <Animated.View
           style={[styles.headerWrapper, animatedBlurStyle]}
           pointerEvents="none"
@@ -2428,37 +2507,27 @@ const MessagesIndividualScreen = ({
               // Use a small delay to ensure KeyboardAvoidingView has measured
               setTimeout(() => {
                 setLayoutReady(true);
-                
-                // Scroll to bottom when layout is ready (important for smaller devices)
-                if (flatListRef.current && groupedMessages.length > 0) {
-                  setTimeout(() => {
-                    flatListRef.current?.scrollToEnd({ animated: false });
-                    // Reset scrollY when at bottom
-                    scrollY.value = 0;
-                    initialScrollY.current = null;
-                  }, 150);
-                }
               }, 50);
-            }
-            
-            // Also scroll when layout changes (for device rotation, etc.)
-            if (layoutReady && flatListRef.current && groupedMessages.length > 0 && !keyboardVisible) {
-              setTimeout(() => {
-                flatListRef.current?.scrollToEnd({ animated: false });
-                // Reset scrollY when at bottom
-                scrollY.value = 0;
-                initialScrollY.current = null;
-              }, 100);
             }
           }}
         >
           <Animated.FlatList
             data={groupedMessages}
-            extraData={[keyboardVisible, isEmojiPickerVisible, lastMessageIndex, lastKeyboardHeight]} // Force re-render when keyboard/emoji state or keyboard height changes
+            inverted // WhatsApp-style: newest messages at bottom, scroll up to see older
+            extraData={[keyboardVisible, isEmojiPickerVisible, lastMessageIndex, lastKeyboardHeight, loadingOlderMessages]} // Force re-render when keyboard/emoji state or keyboard height changes
             keyExtractor={(item, index) => item.sid || item.data?.sid || `item-${index}`}
             onScroll={scrollHandler}
             scrollEventThrottle={16}
             scrollEnabled={!isEmojiPickerVisible} // Disable scrolling when emoji keyboard is open
+            onEndReached={loadOlderMessages} // Load older messages when scrolling to top (inverted list)
+            onEndReachedThreshold={0.3} // Trigger when 30% from top (more sensitive for better UX)
+            ListHeaderComponent={
+              loadingOlderMessages ? (
+                <View style={{ paddingVertical: 10, alignItems: 'center' }}>
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                </View>
+              ) : null
+            }
             onScrollToIndexFailed={(info) => {
               // Fallback to scrollToEnd if scrollToIndex fails
               setTimeout(() => {
@@ -2466,7 +2535,24 @@ const MessagesIndividualScreen = ({
               }, 100);
             }}
             renderItem={({ item, index }) => {
+              // Helper function to check if message is from current user
+              const isFromCurrentUser = (msg: any) => {
+                if (!msg || !msg.data) return false;
+                
+                // Get author from various possible locations in message structure
+                const author = msg.data.author || msg.data.state?.author || msg.data.attributes?.author;
+                
+                // Compare with both checkUser and currentUserId (as strings)
+                const authorStr = String(author || '');
+                const checkUserStr = String(checkUser || '');
+                const currentUserIdStr = String(currentUserId || '');
+                
+                // Return true if author matches either checkUser or currentUserId
+                return authorStr === checkUserStr || authorStr === currentUserIdStr;
+              };
+              
               const isLastMessage = index === lastMessageIndex;
+              const isMyMessage = isFromCurrentUser(item);
               // Calculate bottom padding for SAME HEIGHT across all three states:
               // 1. Default (no keyboard): INPUT_BAR_HEIGHT + spacing
               // 2. Text keyboard open: INPUT_BAR_HEIGHT + spacing (KeyboardAvoidingView handles keyboard push)
@@ -2477,21 +2563,22 @@ const MessagesIndividualScreen = ({
               // When emoji picker is visible, we need to add EMOJI_PICKER_HEIGHT to match the keyboard height
               // EMOJI_PICKER_HEIGHT should equal keyboardHeight for consistent appearance
               
-              const BASE_SPACING = 20;
+              // Minimal spacing between last message and input field
+              // Input bar is absolutely positioned, so we only need a tiny gap
+              const BASE_SPACING = 0; // No extra spacing - input bar handles positioning
               
               let bottomPadding;
               
               if (keyboardVisible && !isEmojiPickerVisible) {
                 // Text keyboard is open - KeyboardAvoidingView handles the push
-                // We only need input bar + spacing (same as default state)
-                bottomPadding = INPUT_BAR_HEIGHT + BASE_SPACING;
+                // No extra spacing needed since input bar is positioned above keyboard
+                bottomPadding = BASE_SPACING;
               } else if (isEmojiPickerVisible) {
-                // Emoji picker is visible - add emoji picker height to match keyboard height
-                // EMOJI_PICKER_HEIGHT should equal keyboardHeight for same visual height
-                bottomPadding = INPUT_BAR_HEIGHT + EMOJI_PICKER_HEIGHT + BASE_SPACING;
+                // Emoji picker is visible - add emoji picker height
+                bottomPadding = EMOJI_PICKER_HEIGHT + BASE_SPACING;
               } else {
-                // Default state (no keyboard) - just input bar + spacing
-                bottomPadding = INPUT_BAR_HEIGHT + BASE_SPACING;
+                // Default state (no keyboard) - no extra spacing, input bar is absolutely positioned
+                bottomPadding = BASE_SPACING;
               }
               
               return (
@@ -2499,14 +2586,14 @@ const MessagesIndividualScreen = ({
                
 
                 {item?.type === "date" ? (
-  <View style={{ alignItems: "center", marginVertical: 10 }}>
+  <View style={{ alignItems: "center", marginVertical: 10 ,paddingTop:60}}>
     <Text  style={{
                         color: '#FFFFFF7A',
                         backgroundColor: '#00000029',
                         paddingHorizontal: 8,
                         paddingVertical: 4,
                         borderRadius: 6,
-                        fontSize: 10,
+                        fontSize: 12,
                         fontFamily: 'Urbanist-Medium',
                         marginVertical: 10,
                       }}>
@@ -2517,7 +2604,7 @@ const MessagesIndividualScreen = ({
   <View
     style={[
       styles.messageContainer,
-      item?.data?.state?.author == checkUser
+      isMyMessage
         ? styles.rightAlign
         : styles.leftAlign,
       isLastMessage && { marginBottom: bottomPadding },
@@ -2525,13 +2612,13 @@ const MessagesIndividualScreen = ({
   >
     <View
       style={
-        item?.data?.state?.author === checkUser
+        isMyMessage
           ? styles.rightBubbleWrapper
           : styles.leftBubbleWrapper
       }
     >
       {/* Bubble arrow - LEFT */}
-      {item?.data?.state?.author != checkUser && (
+      {!isMyMessage && (
         <View
           style={{
             width: 0,
@@ -2539,7 +2626,7 @@ const MessagesIndividualScreen = ({
             borderTopWidth: 8,
             borderTopColor: "transparent",
             borderRightWidth: 9,
-            borderRightColor: "#FFFFFF1F",
+            borderRightColor: "#2466c75e",
             borderBottomWidth: 8,
             borderBottomColor: "transparent",
             alignSelf: "flex-start",
@@ -2553,18 +2640,18 @@ const MessagesIndividualScreen = ({
       <View
         style={[
           styles.bubble,
-          item?.data?.state?.author == checkUser
+          isMyMessage
             ? styles.rightBubble
             : styles.leftBubble,
         ]}
       >
         <Text allowFontScaling={false} style={styles.messageText}>
-          {item?.data?.state?.body}
+          {item?.data?.state?.body || item?.data?.body}
         </Text>
       </View>
 
       {/* Bubble arrow - RIGHT */}
-      {item?.data?.state?.author == checkUser && (
+      {isMyMessage && (
         <View
           style={{
             width: 0,
@@ -2589,44 +2676,16 @@ const MessagesIndividualScreen = ({
             }}
             ref={flatListRef}
             keyboardShouldPersistTaps="handled"
-            onContentSizeChange={() => {
-              // Scroll to bottom when content size changes (to show last message)
-              if (flatListRef.current && groupedMessages.length > 0) {
-                // Use requestAnimationFrame for better timing on all devices
-                requestAnimationFrame(() => {
-                  setTimeout(() => {
-                    if (flatListRef.current) {
-                      // Try scrollToEnd
-                      flatListRef.current.scrollToEnd({ animated: false });
-                      
-                      // Reset scrollY when at bottom to prevent blur from showing
-                      scrollY.value = 0;
-                      // Reset initial scroll position when content changes
-                      initialScrollY.current = null;
-                      
-                      // Fallback for smaller devices
-                      setTimeout(() => {
-                        if (flatListRef.current && lastMessageIndex >= 0) {
-                          try {
-                            flatListRef.current.scrollToIndex({ 
-                              index: lastMessageIndex, 
-                              animated: false,
-                              viewPosition: 1
-                            });
-                            // Reset scrollY after scrollToIndex
-                            scrollY.value = 0;
-                            initialScrollY.current = null;
-                          } catch (e) {
-                            flatListRef.current?.scrollToEnd({ animated: false });
-                            scrollY.value = 0;
-                            initialScrollY.current = null;
-                          }
-                        }
-                      }, 50);
-                    }
-                  }, 50);
-                });
-              }
+            onContentSizeChange={(width, height) => {
+              // Update content height and check if scrollable
+              contentHeightRef.current = height;
+              updateBlurState();
+            }}
+            onLayout={(event) => {
+              // Update viewport height and check if scrollable
+              const { height } = event.nativeEvent.layout;
+              viewportHeightRef.current = height;
+              updateBlurState();
             }}
             contentContainerStyle={contentContainerStyle}
             showsVerticalScrollIndicator={false}
@@ -2690,9 +2749,9 @@ const MessagesIndividualScreen = ({
               bottom: inputBarBottom,
               paddingHorizontal: 16,
               paddingTop: Platform.OS === 'ios' ? 10 : 8,
-              paddingBottom: Platform.OS === 'ios' ? 10 : 8,
+              paddingBottom: Platform.OS === 'ios' ? 10 : (keyboardVisible || isEmojiPickerVisible ? 8 : 34),
               // Footer spacing will be handled by a spacer element below
-              backgroundColor: 'transparent',
+              backgroundColor: 'transparent', 
               zIndex: 1000,
             }}
           >
@@ -2758,39 +2817,32 @@ const MessagesIndividualScreen = ({
                         // Dismiss text keyboard first, then show emoji picker
                         console.log('Dismissing keyboard first...');
                         Keyboard.dismiss();
+                        // Blur input to prevent text keyboard from showing
+                        textInputRef.current?.blur();
                         setTimeout(() => {
                           console.log('Setting emoji picker visible to true (after keyboard dismiss)');
                           setIsEmojiPickerVisible(true);
-                          // Focus input after emoji picker is shown
+                          // Reset flag after delay to allow normal behavior
                           setTimeout(() => {
-                            if (textInputRef.current) {
-                              textInputRef.current.focus();
-                            }
-                            // Reset flag after delay to prevent onFocus from closing emoji
-                            setTimeout(() => {
-                              isOpeningEmojiRef.current = false;
-                              console.log('Emoji keyboard visible, flag reset');
-                            }, 600);
-                          }, 300);
-                        }, 400);
+                            isOpeningEmojiRef.current = false;
+                            console.log('Emoji keyboard visible, flag reset');
+                          }, 500);
+                        }, 300);
                       } else {
                         // No keyboard visible - show emoji keyboard immediately
                         console.log('Setting emoji picker visible to true (no keyboard) - IMMEDIATE');
                         // Set state immediately - no delays
                         setIsEmojiPickerVisible(true);
                         console.log('State set to true, should render emoji picker now');
-                        // Focus input after short delay to keep cursor visible
+                        // Blur input after state is set to prevent text keyboard from showing
                         setTimeout(() => {
-                          if (textInputRef.current) {
-                            textInputRef.current.focus();
-                            console.log('Text input focused');
-                          }
-                          // Reset flag after delay to prevent onFocus from closing emoji
-                          setTimeout(() => {
-                            isOpeningEmojiRef.current = false;
-                            console.log('Emoji keyboard visible (no keyboard), flag reset');
-                          }, 600);
-                        }, 200);
+                          textInputRef.current?.blur();
+                        }, 50);
+                        // Reset flag after delay to allow normal behavior
+                        setTimeout(() => {
+                          isOpeningEmojiRef.current = false;
+                          console.log('Emoji keyboard visible (no keyboard), flag reset');
+                        }, 500);
                       }
                     }
                   }}
@@ -2876,7 +2928,7 @@ const MessagesIndividualScreen = ({
                       } else {
                         console.log('Not closing emoji picker - flags prevent it');
                       }
-                    }, 200);
+                    }, 300);
                   }}
                 />
               </View>
@@ -2914,10 +2966,10 @@ const MessagesIndividualScreen = ({
                 />
               </TouchableOpacity>
             </View>
-            {/* Footer spacer - ensures consistent bottom spacing in all states */}
+            {/* Footer spacer - minimal spacing */}
             <View 
               style={{
-                height: Platform.OS === 'ios' ? 10 : 8,
+                height: Platform.OS === 'ios' ? 4 : 4,
                 width: '100%',
               }}
             />
@@ -3040,7 +3092,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#FFFFFF',
     marginTop: 2,
-    maxWidth:'90%'
+    maxWidth:'85%'
   },
   backIconStyle: {
     width: 30,
@@ -3096,6 +3148,7 @@ const styles = StyleSheet.create({
   messageContainer: {
     // marginBottom: 50,
     paddingHorizontal: 6,
+    
     // gap: 10,
   },
   bubble: {
@@ -3115,17 +3168,23 @@ const styles = StyleSheet.create({
   },
   leftBubble: {
     backgroundColor: '#2466c75e',
-    borderRadius: 4,
+  borderTopLeftRadius: 3,
+  borderTopRightRadius: 6,
+  borderBottomLeftRadius: 6,
+  borderBottomRightRadius: 6,
   },
   rightBubble: {
     backgroundColor: '#0000001F',
-    borderRadius: 4,
+     borderTopLeftRadius: 6,
+  borderTopRightRadius: 3,
+  borderBottomLeftRadius: 6,
+  borderBottomRightRadius: 6,
   },
   messageText: {
     fontFamily: 'Urbanist-Medium',
     color: '#FFFFFFE0',
     fontSize: 16,  // before 14,
-    lineHeight: 17,
+    lineHeight: 19,
     fontWeight: '500',
     fontStyle: 'normal',
     letterSpacing: 0,

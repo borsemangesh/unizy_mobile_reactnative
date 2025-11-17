@@ -168,8 +168,10 @@ useEffect(() => {
               };
             }
 
-            const notificationId = await notifee.displayNotification(notificationConfig);
-            console.log("✅ Notification displayed successfully with ID:", notificationId);
+
+            // use for show message app is open 
+            // const notificationId = await notifee.displayNotification(notificationConfig);
+            // console.log("✅ Notification displayed successfully with ID:", notificationId);
           } catch (error) {
             console.error("❌ Error displaying notification:", error);
           }

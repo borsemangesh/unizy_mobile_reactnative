@@ -431,6 +431,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState, useRef } from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   FlatList,
   Image,
@@ -443,7 +444,6 @@ import {
   View,
 } from 'react-native';
 import { MAIN_URL } from '../../utils/APIConstant';
-import LottieView from 'lottie-react-native';
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
@@ -618,81 +618,43 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
     return f + l || '?';
   };
 
-  if (initialLoading) {
-    return (
-      <View 
-        style={{
-          flex: 1,
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          width: width,
-          height: height,
-          backgroundColor: '#000069',
-          zIndex: 9999,
-          elevation: 9999,
-        }}
-      >
-        <LottieView
-          source={require('../../../assets/animations/lottielodder.json')}
-          autoPlay
-          loop
-          resizeMode="cover"
-          style={{
-            width: width,
-            height: height,
-          }}
-        />
-        <View
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: 100,
-            backgroundColor: '#000069',
-            zIndex: 10000,
-          }}
-        />
-        <View
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            right: 0,
-            width: 150,
-            height: 100,
-            backgroundColor: '#000069',
-            zIndex: 10000,
-          }}
-        />
-      </View>
-    );
-  }
-
   return (
     <View style={{ flex: 1, width: '100%', height: '100%' }}>
-      <FlatList
-        data={studentList || []}
-        keyExtractor={(item, index) => {
-          'worklet';
-          return index.toString();
-        }}
-        ListHeaderComponent={
-          <View style={styles.search_container}>
-            <Image source={searchIcon} style={styles.searchIcon} />
-            <TextInput
-              allowFontScaling={false}
-              style={styles.searchBar}
-              placeholder="Search"
-              placeholderTextColor="#ccc"
-              selectionColor={'#fff'}
-              onChangeText={setSearch}
-              value={search}
-            />
-          </View>
-        }
+      {initialLoading ? (
+        <View 
+          style={{ 
+            position: 'absolute',
+            top: Platform.OS === 'ios' ? 120 : 320,
+            bottom: 200,
+            left: 0,
+            right: 0,
+            justifyContent: 'center', 
+            alignItems: 'center',
+          }}
+        >
+          <ActivityIndicator size="large" color="#FFFFFF" />
+        </View>
+      ) : (
+        <FlatList
+          data={studentList || []}
+          keyExtractor={(item, index) => {
+            'worklet';
+            return index.toString();
+          }}
+          ListHeaderComponent={
+            <View style={styles.search_container}>
+              <Image source={searchIcon} style={styles.searchIcon} />
+              <TextInput
+                allowFontScaling={false}
+                style={styles.searchBar}
+                placeholder="Search"
+                placeholderTextColor="#ccc"
+                selectionColor={'#fff'}
+                onChangeText={setSearch}
+                value={search}
+              />
+            </View>
+          }
         renderItem={({ item: chat }) => (
           <TouchableOpacity
             onPress={() => {
@@ -825,7 +787,8 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
             </Text>
           ) : null
         }
-      />
+        />
+      )}
       {/* {!initialLoading && search !== '' && (!studentList || studentList.length === 0) ? (
         <View
         pointerEvents="none"   
