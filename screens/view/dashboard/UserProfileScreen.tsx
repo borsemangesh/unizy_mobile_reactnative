@@ -81,10 +81,10 @@ const renderItem = ({ item }: any) => {
         <TouchableOpacity
           style={styles.cardContainer}
           onPress={async () => {
-           if (item.id === '1') {
+           if (item.id === '2') {
               navigation.navigate('UserListing'); 
             } 
-            else if (item.id === '2') {
+            else if (item.id === '1') {
               navigation.navigate('UserReviews'); 
             } 
           }}
