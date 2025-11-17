@@ -1092,10 +1092,18 @@ const handlePayConfirmed = (amount: number) => {
                   <TouchableOpacity
                     style={styles.loginButton1}
                     onPress={() => {
-                      navigation.replace('Dashboard', {
-                        AddScreenBackactiveTab: 'Home',
-                        isNavigate: false,
-                      });
+                       navigation.navigate("MessagesIndividualScreen",{
+                          animation: 'none',
+                          sellerData: {
+                            featureId: detail.id, 
+                            firstname: detail.createdby.firstname,
+                            lastname:  detail.createdby.lastname,                          
+                            profile:  detail.createdby.profile,
+                            universityName:"Reamaning"
+
+                          },
+                          source: 'sellerPage', // 👈 another flag
+                        });
                       setShowPopup1(false);
                     }}
                   >

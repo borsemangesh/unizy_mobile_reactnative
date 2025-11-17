@@ -439,7 +439,8 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     >
                       £{data?.list?.price}
                     </Text>
-                    <View style={styles.univercitycontainer}>
+                  
+                    {/* <View style={styles.univercitycontainer}>
                       <Text
                         allowFontScaling={false}
                         style={styles.universitylable}
@@ -450,7 +451,21 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                       <Text allowFontScaling={false} style={styles.datetlable}>
                         {formatDateWithDash(data?.list?.created_at)}
                       </Text>
-                    </View>
+                    </View> */}
+
+            <View style={styles.univercitycontainer}>
+              <Text allowFontScaling={false} style={styles.universitylable}>
+                {data?.list?.createdby?.university_name}
+              </Text>
+
+              <View style={styles.rightSection}>
+                <Text allowFontScaling={false} style={styles.datetlable}>.</Text>
+                <Text allowFontScaling={false} style={styles.datetlable}>
+                  {formatDateWithDash(data?.list?.created_at)}
+                </Text>
+              </View>
+            </View>
+
                   </View>
                 </View>
                 <View style={styles.cardconstinerdivider} />
@@ -1215,12 +1230,23 @@ const styles = StyleSheet.create({
     height: 72,
     borderRadius: 14,
   },
+  // univercitycontainer: {
+  //   display: 'flex',
+  //   flexDirection: 'row',
+  //   justifyContent: 'space-between',
+  //   maxWidth:'90%'
+  // },
+
   univercitycontainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    maxWidth:'90%'
-  },
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  maxWidth: '90%',
+},
+rightSection: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginLeft: 'auto',   // ⬅️ Forces date to stay right
+},
   productlebleHeader: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontSize: 14,
@@ -1238,16 +1264,26 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     fontFamily: 'Urbanist-SemiBold',
   },
-  universitylable: {
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontSize: 12,
-    fontWeight: '500',
-    letterSpacing: -0.24,
-    lineHeight: 16,
-    fontFamily: 'Urbanist-Medium',
-        
+  // universitylable: {
+  //   color: 'rgba(255, 255, 255, 0.88)',
+  //   fontSize: 12,
+  //   fontWeight: '500',
+  //   letterSpacing: -0.24,
+  //   lineHeight: 16,
+  //   fontFamily: 'Urbanist-Medium',
 
-  },
+
+  // },
+  universitylable: {
+  flexShrink: 1,    // ⬅️ This allows wrapping
+  flexGrow: 1,      // ⬅️ Takes as much space as needed
+  color: 'rgba(255, 255, 255, 0.88)',
+  fontSize: 12,
+  fontWeight: '500',
+  letterSpacing: -0.24,
+  lineHeight: 16,
+  fontFamily: 'Urbanist-Medium',
+},
   datetlable: {
     marginLeft: 10,
     color: 'rgba(255, 255, 255, 0.88)',
