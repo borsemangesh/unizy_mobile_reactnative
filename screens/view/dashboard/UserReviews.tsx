@@ -57,29 +57,7 @@ type CreatedBy = {
   stripe_customer_id?: string;
 };
 
-// type Feature = {
-//   id: number;
-//   added_by: number;
-//   featurelist_id: number;
-//   created_at: string;
- 
-//   featurelist: {
-//     id: number;
-//     created_by: number;
-//     category_id: number;
-//     created_at: string | null;
-//     updated_at: string;
-//     isactive: boolean;
-//     isfeatured: boolean;
-//     title: string;
-//     price: number;
-//     thumbnail: string;
-//     profileshowinview:boolean;
-//     createdby: CreatedBy;
-//     university:university;
-//     isbookmarked:boolean;
-//   };
-// };
+
 
 type ReviewItem = {
   id: number;
@@ -218,54 +196,7 @@ useEffect(() => {
 }, [selectedCategory]);
 
 
-// const displayListOfProduct = async (categoryId: number | null, pageNum: number) => {
-//   try {
-//     const pagesize = 10;
-//     //let url = `${MAIN_URL.baseUrl}category/myreview?page=${pageNum}&pagesize=${pagesize}`;
-//     let url = `${MAIN_URL.baseUrl}user/user-review?page=${pageNum}&pagesize=${pagesize}&user_id=109`;
-//     if (categoryId) {
-//       url += `&category_id=${categoryId}`;
-//     }
 
-//     console.log(url)
-    
-
-//     const token = await AsyncStorage.getItem('userToken');
-//     if (!token) return;
-
-//     const response = await fetch(url, {
-//       method: 'GET',
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//         'Content-Type': 'application/json',
-//       },
-//     });
-
-//     const jsonResponse = await response.json();
-//     console.log("HEADERS:", JSON.stringify(jsonResponse, null, 2));
-
-//     const reviews = jsonResponse.data ?? [];
-//     if (jsonResponse.statusCode === 200) {
-//       setIsLoading(false);
-//       setFeatureList(reviews);
-    
-//     } else if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
-//           setIsLoading(false);
-//           navigation.reset({
-//           index: 0,
-//           routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
-//         });
-//         }
-    
-//     else {
-//       setIsLoading(false);
-//       // console.log('API Error:', jsonResponse.message);
-//     }
-//   } catch (err) {
-//     setIsLoading(false);
-//     console.log('Error:', err);
-//   }
-// };
 
 const displayListOfProduct = async (categoryId: number | null, pageNum: number) => {
   try {
@@ -338,51 +269,6 @@ const formatDate = (dateString?: string) => {
   return `${day}${suffix} ${monthShort} ${year}`;
 };
 
-
-// const renderItem = ({ item, index }: { item: any; index: number }) => {
-//   const isLastOddItem =
-//     filteredFeatures.length % 2 !== 0 &&
-//     index === filteredFeatures.length - 1;
-
-//   const feature = item?.feature;
-//   const displayDate = formatDate(item?.created_at);
-
-//   const productImage = feature?.thumbnail
-//     ? { uri: feature.thumbnail }
-//     : require('../../../assets/images/drone.png');
-
-//   const displayPrice =
-//     feature?.price != null ? `£${feature.price}` : '£0.00';
-//   const displayTitle = feature?.title ?? 'Title';
-//   const rating = item?.rating?.toString() ?? '0';
-//   const comment = item?.comment ?? '';
-
-//   const createdby = feature?.createdby ?? null;
-//   const profileshowinview =
-//     feature?.category_id === 2 || feature?.category_id === 5 ? true : false;
-
-//   return (
-//     <View
-//       style={[
-//         styles.itemContainer,
-//         isLastOddItem && { marginRight: 'auto' },
-//       ]}
-//     >
-//       <MyReviewCard
-//         infoTitle={displayTitle}
-//         inforTitlePrice={displayPrice}
-//         rating={rating}
-//         productImage={productImage}
-//         reviewText={comment}
-//         shareid={item.id}
-//         date={displayDate}
-//         createdby={createdby}
-//         profileshowinview={profileshowinview}
-       
-//       />
-//     </View>
-//   );
-// };
 
 const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
   const isLastOddItem =
@@ -576,7 +462,6 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
                           >
                             {cat.name}
                           </Text>
-                          {/* </View> */}
                         </SquircleView>
                       </TouchableOpacity>
                     );
@@ -586,7 +471,7 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
             }
             contentContainerStyle={[
               styles.listContainer,
-              { paddingTop: Platform.OS === 'ios' ? 150 : 100 },
+              { paddingTop: Platform.OS === 'ios' ? 120 : 100 },
             ]}
             onScroll={scrollHandler}
             scrollEventThrottle={16}
@@ -678,7 +563,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '9%' : 40,
+    top: Platform.OS === 'ios' ? '6%' : 40,
     width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
     alignItems: 'center',

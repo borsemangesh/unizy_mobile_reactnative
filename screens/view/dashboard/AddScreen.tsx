@@ -334,6 +334,28 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     return `${day}${suffix} ${month} ${year}`;
   };
 
+  const pluralizeLabel = (label: string) => {
+    if (!label) return "";
+   
+    const words = label.trim().split(" ");
+    const lastWord = words[words.length - 1];
+    if (lastWord.toLowerCase().endsWith("s")) return label;
+   
+    let plural = lastWord;
+   
+    if (/(ch|sh|x|s|z)$/i.test(lastWord)) {
+      plural = lastWord + "es";
+    } else if (/[aeiou]y$/i.test(lastWord)) {
+      plural = lastWord + "s";
+    } else if (/y$/i.test(lastWord)) {
+      plural = lastWord.slice(0, -1) + "ies";
+    } else {
+      plural = lastWord + "s";
+    }
+    words[words.length - 1] = plural;
+    return words.join(" ");
+  };
+
   const requestCameraPermission = async () => {
     try {
       if (Platform.OS === 'android') {
@@ -1193,11 +1215,10 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
         ismultilple={multiSelectModal?.ismultilple}
         title={`Select ${multiSelectModal?.fieldLabel || 'Category'}`}
         subtitle={
-            multiSelectModal?.ismultilple
-              ? `Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your listing.`
-              : `Select the ${multiSelectModal?.fieldLabel || 'category'} that best describes your listing.`
-          }
-        //subtitle={`Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your item.`}
+          multiSelectModal?.ismultilple
+            ? `Pick all ${pluralizeLabel(multiSelectModal?.fieldLabel || 'Category')} that fit your listing.`
+            : `Select the ${multiSelectModal?.fieldLabel || 'category'} that best describes your listing.`
+        }
         selectedValues={formValues[multiSelectModal.fieldId!]?.value}
         onClose={() =>
           setMultiSelectModal(prev => ({ ...prev, visible: false }))
@@ -1220,10 +1241,10 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               ismultilple={multiSelectModal?.ismultilple}
               title={`Select ${multiSelectModal?.fieldLabel || 'Category'}`}
               subtitle={
-                  multiSelectModal?.ismultilple
-                    ? `Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your listing.`
-                    : `Select the ${multiSelectModal?.fieldLabel || 'category'} that best describes your listing.`
-                }
+                multiSelectModal?.ismultilple
+                  ? `Pick all ${pluralizeLabel(multiSelectModal?.fieldLabel || 'Category')} that fit your listing.`
+                  : `Select the ${multiSelectModal?.fieldLabel || 'category'} that best describes your listing.`
+              }
               //subtitle={`Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your item.`}
               selectedValues={formValues[multiSelectModal.fieldId!]?.value}
               onClose={() =>

@@ -908,6 +908,7 @@ dateHeading:{
     color: '#fff',
     fontFamily: 'Urbanist-Medium',
     fontWeight: 500,
+    width: '80%',
   },
   listContainer: {
     // marginLeft: 10,

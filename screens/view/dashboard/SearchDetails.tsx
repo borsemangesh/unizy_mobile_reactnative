@@ -35,6 +35,7 @@ import AnimatedReanimated, {
   useDerivedValue,
 } from 'react-native-reanimated';
 import MaskedView from '@react-native-masked-view/masked-view';
+import SelectFoodQuantity from '../../utils/component/SelectFoodQuantity'
 
 
 type SearchDetailsProps = {
@@ -71,7 +72,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
   const { name } = route.params as { name: string };
   const [detail, setDetail] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
+  const [formValues, setFormValues] = useState<any>({});
   const screenWidth = Dimensions.get('window').width;
 
   const [imageUri, setImageUri] = useState<string | null>(null);
@@ -131,6 +132,16 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
       interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
     );
 
+      const [multiSelectModal, setMultiSelectModal] = useState<{
+        visible: boolean;
+        ismultilple: boolean;
+        fieldId?: number;
+        fieldLabel?: string;
+    
+      }>({ visible: false, ismultilple: false,});
+    
+      const [multiSelectOptions, setMultiSelectOptions] = useState<any[]>([]);
+
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -148,6 +159,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         const json = await res.json();
         setDetail(json.data);
         console.log("json.data------",json.data);
+        console.log("details--------",json);
+        
         
 
         if (res.status === 401 || res.status === 403) {
@@ -176,6 +189,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     };
     fetchDetails();
   }, [id]);
+
   const [isBookmarked, setIsBookmarked] = useState(false);
 
   const flatListRef = useRef<FlatList>(null);
@@ -190,29 +204,85 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     const index = Math.round(event.nativeEvent.contentOffset.x / screenWidth);
     setActiveIndex(index);
   };
+//  const quantityOptions = [
+//   { id: 1, option_name: "1" },
+//   { id: 2, option_name: "2" },
+//   { id: 3, option_name: "3" },
+//   { id: 4, option_name: "4" },
+//   { id: 5, option_name: "5" }
+// ]
+const quantityField = detail?.params?.find(
+  (p: { name: string }) => p.name === "Quantity"
+);
+
+const maxQty = Number(quantityField?.options?.[0]?.option_name) || 1;
+
+const quantityOptions = Array.from({ length: maxQty }, (_, i) => ({
+  id: i + 1,
+  option_name: String(i + 1),
+}));
+
+  // const formatDate = (dateString: string) => {
+  //   if (!dateString) return '01-01-2025'; // fallback if null
+  //   const date = new Date(dateString);
+  //   const day = String(date.getDate()).padStart(2, '0');
+  //   const month = String(date.getMonth() + 1).padStart(2, '0');
+  //   const year = date.getFullYear();
+  //   return `${day}-${month}-${year}`;
+  // };
 
   const formatDate = (dateString?: string) => {
-    if (!dateString) return "";
-  
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "";
-  
-    const day = date.getDate();
-  
-    let suffix = "th";
-    if (day % 10 === 1 && day !== 11) suffix = "st";
-    else if (day % 10 === 2 && day !== 12) suffix = "nd";
-    else if (day % 10 === 3 && day !== 13) suffix = "rd";
-    const monthShort = date
-      .toLocaleString("default", { month: "short" }); // "Nov"
-  
-    const year = date.getFullYear();
-    return `${day}${suffix} ${monthShort} ${year}`;
-  };
+  if (!dateString) return "";
 
-  const handlePay = () => {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "";
+
+  const day = date.getDate();
+
+  let suffix = "th";
+  if (day % 10 === 1 && day !== 11) suffix = "st";
+  else if (day % 10 === 2 && day !== 12) suffix = "nd";
+  else if (day % 10 === 3 && day !== 13) suffix = "rd";
+
+  // Short month name (Jan, Feb, Mar...)
+  const monthShort = date
+    .toLocaleString("default", { month: "short" }); // "Nov"
+
+  const year = date.getFullYear();
+
+  return `${day}${suffix} ${monthShort} ${year}`;
+};
+
+//   const handlePay = () => {
+
+//   if (detail?.category?.name === 'Food') {
+//     setMultiSelectModal(prev => ({ ...prev, visible: true }));
+//     return;
+//   }
+//   navigation.navigate('PaymentScreen', {
+//     amount: Number(detail.price).toFixed(2),
+//     feature_id: id,
+//     nav: 'purchase',
+//     onSuccess: async () => {
+//       await purchaseProduct();
+//     }
+//   });
+// };
+
+
+const handlePay = (overrideAmount?: number) => {
+
+  // FOOD: No overrideAmount → open bottom sheet
+  if (detail?.category?.name === 'Food' && overrideAmount === undefined) {
+    setMultiSelectModal(prev => ({ ...prev, visible: true }));
+    return;
+  }
+
+  // NON-FOOD or FOOD (from bottom sheet with selected amount)
+  const amountToPay = overrideAmount ?? Number(detail.price).toFixed(2);
+
   navigation.navigate('PaymentScreen', {
-    amount: Number(detail.price).toFixed(2),
+    amount: amountToPay,
     feature_id: id,
     nav: 'purchase',
     onSuccess: async () => {
@@ -221,6 +291,16 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
   });
 };
 
+const handlePayConfirmed = (amount: number) => {
+  navigation.navigate('PaymentScreen', {
+    amount: amount.toFixed(2),
+    feature_id: id,
+    nav: 'purchase',
+    onSuccess: async () => {
+      await purchaseProduct();
+    }
+  });
+}
 
   const renderImage = () => {
     const fallbackImage = require('../../../assets/images/drone.png');
@@ -451,6 +531,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     }
   }
 
+  
+
     return (
       <ImageBackground
         source={require('../../../assets/images/backimg.png')}
@@ -487,6 +569,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                         style={StyleSheet.absoluteFill}
                         blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
                         blurAmount={Platform.OS === 'ios' ? 45 : 45}
+                        // overlayColor="rgba(255,255,255,0.05)"
                         reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
                       />
                       <LinearGradient
@@ -639,8 +722,9 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
               <AnimatedReanimated.ScrollView 
                  scrollEventThrottle={16}
+                 showsVerticalScrollIndicator={false}
                 onScroll={scrollHandler}
-            contentContainerStyle={[styles.scrollContainer,{ paddingBottom: height * 0.1 }, 
+            contentContainerStyle={[styles.scrollContainer,{ paddingBottom: height * 0.07 }, 
           ]}>
             <View style={{marginTop:12}}>
              {renderImage()}
@@ -822,14 +906,6 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                   <TouchableOpacity
                   style={[styles.chatcard, { marginLeft: 8, flexDirection: 'row', alignItems: 'center' }]}
                   activeOpacity={0.8}
-                  // onPress={() => {
-                   
-                  //   if (detail?.ispurchased) {
-                  //     navigation.navigate("MessagesIndividualScreen");
-                  //   } else {
-                  //     setShowPopup(true);
-                  //   }
-                  // }}
                   onPress={() => {
                     // if (detail?.ispurchased) {
                     //   navigation.navigate("MessagesIndividualScreen");
@@ -842,7 +918,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                             firstname: detail.createdby.firstname,
                             lastname:  detail.createdby.lastname,                          
                             profile:  detail.createdby.profile,
-                            universityName:"Reamaning"
+                            universityName:detail.university,
+                            id:detail.createdby.id,
 
                           },
                           source: 'sellerPage', // 👈 another flag
@@ -873,11 +950,46 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
       
 
-        <PayButton
+        {/* <PayButton
           amount={Number(detail?.price).toFixed(2)}
           label="Pay"
           onPress={handlePay}
-      /> 
+      />  */}
+      <PayButton
+        amount={detail?.category?.name === "Food" ? undefined : Number(detail?.price)}
+        label={detail?.category?.name === "Food" ? "Select Quantity" : "Pay"}
+        onPress={() => handlePay()}   // ALWAYS call without amount
+      />
+
+      <SelectFoodQuantity
+        totalcount={10}
+        options={quantityOptions}
+        visible={multiSelectModal.visible}   
+        price={Number(detail?.price)}
+        title={'Choose Quantitiy'}
+        subtitle={'Select the number of units you’d like to buy.'}
+        selectedValues={formValues[multiSelectModal.fieldId!]?.value}
+        onClose={() =>
+          setMultiSelectModal(prev => ({ ...prev, visible: false }))
+        }
+        //continueToPay={(finalAmount) => handlePay(finalAmount)}
+         continueToPay={(amount) => {
+          handlePay(amount);    // navigates first
+          setMultiSelectModal(prev => ({ ...prev, visible: false }));  // close after
+        }}
+
+      onSelect={(selectedIds) => {
+        const quantity = Array.isArray(selectedIds)
+          ? selectedIds[0] // fallback
+          : selectedIds;
+
+        setFormValues((prev: any) => ({
+          ...prev,
+          [multiSelectModal.fieldId!]: { value: quantity },
+        }));
+      }}
+      />
+
 
         <Modal
           visible={showPopup}
@@ -1007,7 +1119,6 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                   <TouchableOpacity
                     style={styles.loginButton}
                     onPress={() => {
-                      navigation.goBack();
                       navigation.replace('Dashboard', {
                         AddScreenBackactiveTab: 'Home',
                         isNavigate: false,
@@ -1022,29 +1133,22 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
                   <TouchableOpacity
                     style={styles.loginButton1}
-                    // onPress={() => {
-                    //   navigation.goBack();
-                    //   navigation.replace('Dashboard', {
-                    //     AddScreenBackactiveTab: 'Home',
-                    //     isNavigate: false,
-                    //   });
-                    //   setShowPopup1(false);
-                    // }}
                     onPress={() => {
-                      navigation.navigate("MessagesIndividualScreen",{
-                         animation: 'none',
-                         sellerData: {
-                           featureId: detail.id, 
-                           firstname: detail.createdby.firstname,
-                           lastname:  detail.createdby.lastname,                          
-                           profile:  detail.createdby.profile,
-                           universityName:"Reamaning"
+                       navigation.navigate("MessagesIndividualScreen",{
+                          animation: 'none',
+                          sellerData: {
+                            featureId: detail.id, 
+                            firstname: detail.createdby.firstname,
+                            lastname:  detail.createdby.lastname,                          
+                            profile:  detail.createdby.profile,
+                            universityName:detail.university,
+                            id:detail.createdby.id,
 
-                         },
-                         source: 'sellerPage', // 👈 another flag
-                       });
-                     setShowPopup1(false);
-                   }}
+                          },
+                          source: 'sellerPage', // 👈 another flag
+                        });
+                      setShowPopup1(false);
+                    }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText1}>
                       Chat with Seller

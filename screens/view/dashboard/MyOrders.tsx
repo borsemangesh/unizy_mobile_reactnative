@@ -266,81 +266,103 @@ const filteredFeatures: Feature[] = featurelist.filter(item =>
   (item.featurelist?.title ?? '').toLowerCase().includes(search.toLowerCase())
 );
 
-const formatDate = (dateString: string | null | undefined) => {
-  if (!dateString || dateString.trim() === '') return '01-01-2025';
-
+const formatDate = (dateString?: string) => {
+  if (!dateString) return "";
+ 
   const date = new Date(dateString);
-  if (isNaN(date.getTime())) return '01-01-2025';
-
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
+  if (isNaN(date.getTime())) return "";
+ 
+  const day = date.getDate();
+ 
+  let suffix = "th";
+  if (day % 10 === 1 && day !== 11) suffix = "st";
+  else if (day % 10 === 2 && day !== 12) suffix = "nd";
+  else if (day % 10 === 3 && day !== 13) suffix = "rd";
+ 
+  const monthShort = date
+    .toLocaleString("default", { month: "short" }); // "Nov"
+ 
   const year = date.getFullYear();
-  return `${day}-${month}-${year}`;
-
+ 
+  return `${day}${suffix} ${monthShort} ${year}`;
 };
-
-
-
+ 
+ 
 const formatDate1 = (dateString: string) => {
   const date = new Date(dateString);
+  if (isNaN(date.getTime())) return dateString;
+ 
   const day = date.getDate();
-  const month = date.toLocaleString('default', { month: 'long' });
+  const month = date.toLocaleString('default', { month: 'short' }); // <-- changed
   const year = date.getFullYear();
-
+ 
   let suffix = 'th';
   if (day % 10 === 1 && day % 100 !== 11) suffix = 'st';
   else if (day % 10 === 2 && day % 100 !== 12) suffix = 'nd';
   else if (day % 10 === 3 && day % 100 !== 13) suffix = 'rd';
-
+ 
   return `${day}${suffix} ${month} ${year}`;
 };
-
-
+ 
+ 
+ 
 const groupByDate = (data: any[]) => {
-  // Step 1: Group items by formatted date
   const groupedMap: Record<string, any[]> = {};
-
+ 
   data.forEach(item => {
+    const d = new Date(item.created_at);
+ 
+    // STEP 1: always create correct sortable date key
+    const rawDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
+      d.getDate()
+    ).padStart(2, '0')}`;
+ 
+    // Step 2: Pretty formatted for UI
     const displayDate = formatDate1(item.created_at);
-    if (!groupedMap[displayDate]) {
-      groupedMap[displayDate] = [];
+ 
+    if (!groupedMap[rawDate]) {
+      groupedMap[rawDate] = [];
     }
-    groupedMap[displayDate].push({
+ 
+    groupedMap[rawDate].push({
       ...item,
       type: 'item',
+      displayDate,
+      rawDate,
     });
   });
-
-  // Step 2: Sort date keys (newest first)
+ 
+  // Sort newest → oldest
   const sortedDates = Object.keys(groupedMap).sort((a, b) => {
-    const dateA = new Date(a);
-    const dateB = new Date(b);
-    return dateB.getTime() - dateA.getTime(); // descending
+    return new Date(b).getTime() - new Date(a).getTime();
   });
-
-  // Step 3: Sort items within each date descending by created_at
+ 
   const groupedArray: any[] = [];
-  sortedDates.forEach(displayDate => {
-    const items = groupedMap[displayDate].sort((a, b) => {
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    });
-
+ 
+  // Build final list
+  sortedDates.forEach(rawDate => {
+    const items = groupedMap[rawDate].sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+ 
     groupedArray.push({
       type: 'date',
-      id: `date-${displayDate}`,
-      displayDate,
+      id: `date-${rawDate}`,
+      displayDate: items[0].displayDate,
     });
+ 
     groupedArray.push(...items);
   });
-console.log(groupedArray.map(i => i.type === 'date' ? `📅 ${i.displayDate}` : `   🛍️ ${i.created_at}`));
-
+ 
   return groupedArray;
 };
-
+ 
+ 
+ 
 const groupedOrders = groupByDate(filteredFeatures);
-
+ 
 const renderItem = ({ item, index }: { item: any; index: number }) => {
-  const displayDate = formatDate(item?.created_at);
+ const displayDate = formatDate(item?.created_at);
   if (item.type === 'date') {
     return (
       <Text allowFontScaling={false} style={styles.dateHeading}>
@@ -353,19 +375,19 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
     item?.featurelist?.thumbnail
       ? { uri: item.featurelist.thumbnail }
       : require('../../../assets/images/drone.png');
-
+ 
   const displayPrice =
     item?.featurelist?.price != null ? `$${item.featurelist.price}` : '$0.00';
   const displayTitle = item?.featurelist?.title ?? 'Title';
-
+ 
   let isPurchase;
-
+ 
   if (item?.order_status === 'Awaiting Delivery') {
     isPurchase = false;
   } else {
     isPurchase = true;
   }
-
+ 
   return (
     <View style={styles.itemContainer}>
       <MyOrderCard
@@ -385,6 +407,7 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
     </View>
   );
 };
+ 
 
 
 

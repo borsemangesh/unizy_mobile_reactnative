@@ -238,42 +238,50 @@ const filteredFeatures: Feature[] = featurelist.filter(item =>
   (item.featurelist?.title ?? '').toLowerCase().includes(search.toLowerCase())
 );
 
-const formatDate = (dateString: string | null | undefined) => {
-  if (!dateString || dateString.trim() === '') return '01-01-2025';
 
+
+const formatDate = (dateString?: string) => {
+  if (!dateString) return "";
+ 
   const date = new Date(dateString);
-  if (isNaN(date.getTime())) return '01-01-2025';
-
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
+  if (isNaN(date.getTime())) return "";
+ 
+  const day = date.getDate();
+ 
+  let suffix = "th";
+  if (day % 10 === 1 && day !== 11) suffix = "st";
+  else if (day % 10 === 2 && day !== 12) suffix = "nd";
+  else if (day % 10 === 3 && day !== 13) suffix = "rd";
+ 
+  const monthShort = date
+    .toLocaleString("default", { month: "short" }); // "Nov"
+ 
   const year = date.getFullYear();
-  return `${day}-${month}-${year}`;
+ 
+  return `${day}${suffix} ${monthShort} ${year}`;
 };
-
-
 
 const renderItem = ({ item, index }: { item: any; index: number }) => {
   const isLastOddItem =
     filteredFeatures.length % 2 !== 0 &&
     index === filteredFeatures.length - 1;
-
+ 
   const feature = item?.feature;
   const displayDate = formatDate(item?.created_at);
-
+ 
   const productImage = feature?.thumbnail
     ? { uri: feature.thumbnail }
     : require('../../../assets/images/drone.png');
-
-  const displayPrice =
-    feature?.price != null ? `£${feature.price}` : '£0.00';
+ 
+  const displayPrice =feature.price
   const displayTitle = feature?.title ?? 'Title';
   const rating = item?.rating?.toString() ?? '0';
   const comment = item?.comment ?? '';
-
+ 
   const createdby = feature?.createdby ?? null;
   const profileshowinview =
     feature?.category_id === 2 || feature?.category_id === 5 ? true : false;
-
+ 
   return (
     <View
       style={[
@@ -296,7 +304,6 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
     </View>
   );
 };
-
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>

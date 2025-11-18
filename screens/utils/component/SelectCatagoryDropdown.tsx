@@ -506,7 +506,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontStyle: 'normal',
     letterSpacing: -0.34,
-    lineHeight: 19.6,
+    lineHeight: 22,
   },
   clearAll: {
     color: 'rgba(255, 255, 255, 0.54)',
