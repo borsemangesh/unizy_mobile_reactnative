@@ -114,10 +114,12 @@ function App() {
                 sound: 'default',
               };
             }
+            await notifee.displayNotification(notificationConfig);
           } catch (error) {
             console.error("❌ Error displaying notification:", error);
           }
         });
+       
 
         unsubscribeForeground = notifee.onForegroundEvent(({ type, detail }) => {
           if (type === EventType.PRESS) {
