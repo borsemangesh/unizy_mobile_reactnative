@@ -25,6 +25,7 @@ import { MAIN_URL } from '../../utils/APIConstant';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 import { useFocusEffect } from '@react-navigation/native';
 import { BlurView } from '@react-native-community/blur';
+import DeviceInfo from 'react-native-device-info';
 
 
 const bgImage = require('../../../assets/images/backimg.png');
@@ -422,7 +423,7 @@ return (
                 Are you sure you want to log out from your account?
               </Text>
 
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={styles.loginButton}
                 onPress={async () => {
                   setShowConfirm(false);
@@ -444,7 +445,64 @@ return (
                 <Text allowFontScaling={false} style={styles.loginText}>
                   Log out
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
+
+              <TouchableOpacity
+              style={styles.loginButton}
+              onPress={async () => {
+                try {
+                  const deviceId = await DeviceInfo.getUniqueId();
+                  const user_id = await AsyncStorage.getItem('userId'); // <-- your stored user id
+
+                  const body = {
+                    device_type: 'android',
+                    device_id: deviceId,
+                    user_id: Number(user_id),
+                  };
+
+                  const response = await fetch(`${MAIN_URL.baseUrl}user/delete-fcm-token`, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(body),
+                  });
+
+                  const apiData = await response.json();
+
+                  console.log("Logout API Response:", apiData);
+
+                  // If API success → proceed to logout
+                  if (apiData?.statusCode === 200) {
+                    setShowConfirm(false);
+                    await AsyncStorage.setItem('ISLOGIN', 'false');
+
+                    navigation.reset({
+                      index: 0,
+                      routes: [
+                        {
+                          name: 'SinglePage',
+                          params: {
+                            resetToLogin: true,
+                            logoutMessage: 'User Logout Successfully',
+                          },
+                        },
+                      ],
+                    });
+                  } else {
+                    showToast("Logout failed! Please try again.");
+                  }
+
+                } catch (error) {
+                 // console.log("Logout API Error:", error);
+                  console.log("Something went wrong. Try again!");
+                }
+              }}
+            >
+              <Text allowFontScaling={false} style={styles.loginText}>
+                Log out
+              </Text>
+            </TouchableOpacity>
 
               <TouchableOpacity
                 style={styles.loginButton1}

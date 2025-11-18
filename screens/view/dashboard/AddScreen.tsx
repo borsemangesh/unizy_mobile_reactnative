@@ -334,29 +334,94 @@ const getCurrentDate = () => {
   return `${day}${suffix} ${month} ${year}`;
 };
 
-  const requestCameraPermission = async () => {
-    if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.CAMERA,
-          {
-            title: 'Camera Permission',
-            message: 'App needs access to your camera',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
+ 
+
+const requestCameraPermission = async () => {
+    try {
+      if (Platform.OS === 'android') {
+        try {
+          // Request CAMERA
+          const cameraGranted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.CAMERA,
+            {
+              title: 'Camera Permission',
+              message: 'App needs access to your camera',
+              buttonNeutral: 'Ask Me Later',
+              buttonNegative: 'Cancel',
+              buttonPositive: 'OK',
+            }
+          );
+     
+          // Request Gallery Permission (Android 13+)
+          const readImagesGranted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+            {
+              title: 'Gallery Permission',
+              message: 'App needs access to your photos',
+              buttonNeutral: 'Ask Me Later',
+              buttonNegative: 'Cancel',
+              buttonPositive: 'OK',
+            }
+          ).catch(() => null);
+     
+          // Request for Android 12 and below
+          const readStorageGranted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+            {
+              title: 'Storage Permission',
+              message: 'App needs access to your gallery photos',
+              buttonNeutral: 'Ask Me Later',
+              buttonNegative: 'Cancel',
+              buttonPositive: 'OK',
+            }
+          ).catch(() => null);
+     
+          // Final permission result
+          const galleryGranted =
+            readImagesGranted === PermissionsAndroid.RESULTS.GRANTED ||
+            readStorageGranted === PermissionsAndroid.RESULTS.GRANTED;
+     
+          return (
+            cameraGranted === PermissionsAndroid.RESULTS.GRANTED &&
+            galleryGranted
+          );
+        } catch (err) {
+          console.warn(err);
+          return false;
+        }
+      } else {
+        // iOS Permissions
+        const permissionsToCheck = [
+          PERMISSIONS.IOS.CAMERA,
+          PERMISSIONS.IOS.PHOTO_LIBRARY,
+        ];
+  
+        const results = await Promise.all(
+          permissionsToCheck.map(async (perm) => {
+            const status = await check(perm);
+            if (status === RESULTS.GRANTED) return true;
+            if (status === RESULTS.BLOCKED) {
+              console.warn(`${perm} is blocked. Enable it in Settings.`);
+              return false;
+            }
+            const req = await request(perm);
+            return req === RESULTS.GRANTED;
+          }),
         );
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } catch (err) {
-        console.warn(err);
-        return false;
+  
+        if (results.every((r) => r === true)) {
+          //Alert.alert('Success', 'Camera and gallery permissions granted');
+          return true;
+        } else {
+          Alert.alert('Permission Denied', 'Camera or gallery permission denied');
+          return false;
+        }
       }
-    } else {
-      return true;
+    } catch (error) {
+      console.warn('Permission Error:', error);
+      return false;
     }
   };
-
 
 
 

@@ -377,7 +377,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     onScroll={scrollHandler}
                     contentContainerStyle={[
                       styles.scrollContainer,
-                      { paddingBottom: height * 0.1 }, // 0.05% of screen height
+                      { paddingBottom: height * 0.1 }, 
                     ]}>
             <View
               style={{
@@ -1231,7 +1231,7 @@ rightSection: {
   flexDirection: 'row',
   //justifyContent: 'space-between',
   //alignItems: 'center',
-  width: '100%',
+  width: '89%',
 },
   productlebleHeader: {
     color: 'rgba(255, 255, 255, 0.88)',

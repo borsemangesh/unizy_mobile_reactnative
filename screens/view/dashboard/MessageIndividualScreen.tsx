@@ -2470,7 +2470,7 @@ const MessagesIndividualScreen = ({
 
     return {
       paddingTop: Platform.OS === 'ios' ? 160 : 150, // Header space at top
-      paddingBottom: paddingBottom, // Dynamic bottom padding for keyboard/emoji
+      paddingBottom: 0, // Dynamic bottom padding for keyboard/emoji
       flexGrow: 1, // Ensure content takes full space
     };
   }, [

@@ -606,7 +606,7 @@ const handleBookmarkPress = async (productId: number) => {
                               resizeMode="contain"
                             />
                             <Text allowFontScaling={false} style={styles.emptyText}>
-                              No Orders Found
+                              No Bookmarks Found
                             </Text>
                           </View>
                           </View>
