@@ -1149,6 +1149,8 @@ type RouteParams = {
     id: number;
     profile: string | null;
     university: {id:number,name:string};
+    
+   
   };
   userConvName: string;
   currentUserIdList: number;
@@ -1158,7 +1160,8 @@ type RouteParams = {
     firstname: string;
     lastname: string;
     profile: string | null;
-    universityName: string;
+    universityName: {id:number,name:string};
+    id:number;
   };
 };
 
@@ -2439,8 +2442,8 @@ const MessagesIndividualScreen = ({
              onPress={() => {
               navigation.navigate('UserProfileScreen', {
                 animation: 'none',              
-                members: members,
-                source: 'chatList',
+                members: source == 'chatList' ? members : sellerData,
+                // source: 'chatList',
               });
             }}
           >
@@ -2485,7 +2488,7 @@ const MessagesIndividualScreen = ({
                 {source === 'chatList' ? members?.lastname : sellerData.lastname}
               </Text>
               <Text allowFontScaling={false} style={styles.universityName} numberOfLines={0}>
-                {members?.university?.name ? members?.university.name : '-'}
+                {source == 'chatList' ?members?.university.name : sellerData?.universityName.name}
               </Text>
             </View>
           </TouchableOpacity>

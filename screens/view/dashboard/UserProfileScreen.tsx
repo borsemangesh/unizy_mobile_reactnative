@@ -21,7 +21,8 @@ type RouteParams = {
     id: number;
     profile: string | null;
     university: {id:number,name:string};
-  };  
+  }; 
+    
 };
 
 
@@ -32,7 +33,10 @@ type UserProfileScreenProps ={
 const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
 
    const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
-    const { members } =   route.params;
+    const { members  } =   route.params;
+    console.log('members----',members);
+   
+    
     const [messageText, setMessageText] = useState('');
     const [userList, setUserList] = useState<any>(null);
 
@@ -47,7 +51,8 @@ const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
           console.warn('Missing token or user ID in AsyncStorage');
           return;
         }
-
+  
+        
         const url = `${MAIN_URL.baseUrl}user/info?user_id=${members.id}`;
         console.log('url----------',url);
       
@@ -60,6 +65,8 @@ const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
         });
 
         const data = await response.json();
+        console.log('data',data);
+        
         if (!response.ok) {
           console.warn('Token fetch failed:', data.message);
           return;
@@ -88,23 +95,23 @@ const renderItem = ({ item }: any) => {
       return (
         <TouchableOpacity
           style={styles.cardContainer}
-          onPress={async () => {
-           if (item.id === '2') {
-             
+          onPress={async () => {             
+           if (item.id === '2') {             
               navigation.navigate('UserListing', {
                 animation: 'none',              
-                members: members,
-                source: 'chatList',
+                members:  members               
               });
            
             } 
             else if (item.id === '1') {
               navigation.navigate('UserReviews', {
                 animation: 'none',              
-                members: members,
-                source: 'chatList',
+                members: members 
               });
-            } 
+
+
+            }
+         
           }}
         >
           <Image source={item.image} style={styles.cardImage} />

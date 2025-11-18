@@ -158,6 +158,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         const json = await res.json();
         setDetail(json.data);
         console.log("json.data------",json.data);
+        console.log("details--------",json);
+        
         
 
         if (res.status === 401 || res.status === 403) {
@@ -903,7 +905,8 @@ const handlePayConfirmed = (amount: number) => {
                             firstname: detail.createdby.firstname,
                             lastname:  detail.createdby.lastname,                          
                             profile:  detail.createdby.profile,
-                            universityName:"Reamaning"
+                            universityName:detail.university,
+                            id:detail.createdby.id,
 
                           },
                           source: 'sellerPage', // 👈 another flag
@@ -1121,7 +1124,8 @@ const handlePayConfirmed = (amount: number) => {
                             firstname: detail.createdby.firstname,
                             lastname:  detail.createdby.lastname,                          
                             profile:  detail.createdby.profile,
-                            universityName:"Reamaning"
+                            universityName:detail.university,
+                            id:detail.createdby.id,
 
                           },
                           source: 'sellerPage', // 👈 another flag
