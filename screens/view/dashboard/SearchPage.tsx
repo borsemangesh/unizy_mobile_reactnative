@@ -1378,23 +1378,27 @@ dateHeading:{
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     // paddingVertical: 4,
+
     padding: (Platform.OS === 'ios'? 12:0),
     marginTop:(Platform.OS === 'ios' ? 5:20),
     height: 48,
-    gap: 8,
     width: '84%',
+    
   },
   searchIcon: { 
     padding: (Platform.OS === 'ios'? 0:5),
     margin: (Platform.OS === 'ios'? 0:10),
     height: 24,
     width: 24,
+   
   },
   searchBar: {
     fontSize: 17,
     color: '#fff',
     fontFamily: 'Urbanist-Medium',
     fontWeight: 500,
+     width: '80%',
+
   },
   listContainer: {
     // marginLeft: 10,
