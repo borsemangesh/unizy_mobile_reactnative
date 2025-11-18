@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useState } from 'react';
 import { FlatList, Image, ImageBackground, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { MAIN_URL } from '../../utils/APIConstant';
+import { RouteProp, useRoute } from '@react-navigation/native';
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImage = require('../../../assets/images/user.jpg');
@@ -9,11 +12,18 @@ const smileyhappy = require('../../../assets/images/smileyhappy.png');
 const arrowIcon = require('../../../assets/images/nextarrow.png');
 
 
-const cardData = [
 
-  { id: '1', title: 'Allen Reviews',  image: require('../../../assets/images/ok.png') },
-  { id: '2', title: 'Allen Listings',image: require('../../../assets/images/mylistingicon.png') },
-];
+type RouteParams = {
+  source?: 'chatList' | 'sellerPage';
+  members: {
+    firstname: string;
+    lastname: string;
+    id: number;
+    profile: string | null;
+    university: {id:number,name:string};
+  };  
+};
+
 
 type UserProfileScreenProps ={
   navigation: any;
@@ -21,13 +31,57 @@ type UserProfileScreenProps ={
 
 const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
 
+   const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
+    const { members } =   route.params;
     const [messageText, setMessageText] = useState('');
+    const [userList, setUserList] = useState<any>(null);
 
 
+    useEffect(() => {
+    const fetchUserChatData = async (query: string = "") => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        const userId = await AsyncStorage.getItem('userId');
 
+        if (!token || !userId) {
+          console.warn('Missing token or user ID in AsyncStorage');
+          return;
+        }
 
+        const url = `${MAIN_URL.baseUrl}user/info?user_id=${members.id}`;
+        console.log('url----------',url);
+      
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
 
-    const renderItem = ({ item }: any) => {
+        const data = await response.json();
+        if (!response.ok) {
+          console.warn('Token fetch failed:', data.message);
+          return;
+        }
+
+      const UserData = data.data;
+       setUserList(UserData);
+      } catch (error) {
+        console.error('Chat setup failed:', error);
+      }
+    };
+
+    fetchUserChatData();
+  }, []);
+
+const getInitials = (firstName = '', lastName = '') => {
+  const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
+  const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
+  return (f + l) || '?';
+};
+
+const renderItem = ({ item }: any) => {
       const isLogout = item.title.toLowerCase() === 'logout';
       const isVersion = item.title.toLowerCase() === 'app version';
     
@@ -35,11 +89,21 @@ const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
         <TouchableOpacity
           style={styles.cardContainer}
           onPress={async () => {
-           if (item.title === 'Allen Listings') {
-              navigation.navigate('MyOrders'); 
+           if (item.id === '2') {
+             
+              navigation.navigate('UserListing', {
+                animation: 'none',              
+                members: members,
+                source: 'chatList',
+              });
+           
             } 
-            else if (item.title === 'Allen Reviews') {
-              navigation.navigate('MyReviews'); 
+            else if (item.id === '1') {
+              navigation.navigate('UserReviews', {
+                animation: 'none',              
+                members: members,
+                source: 'chatList',
+              });
             } 
           }}
         >
@@ -59,10 +123,19 @@ const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
     };
 
 
-
-
-
-  return (
+ const cardData = [
+  {
+    id: '1',
+    title: `${userList?.firstname || ''} Reviews`,
+    image: require('../../../assets/images/ok.png'),
+  },
+  {
+    id: '2',
+    title: `${userList?.firstname || ''} Listings`,
+    image: require('../../../assets/images/mylistingicon.png'),
+  },
+];
+return (
     <ImageBackground source={bgImage} style={{ flex: 1 }} resizeMode="cover">
      <View style={styles.fullScreenContainer}>
         {/* Header */}
@@ -70,7 +143,6 @@ const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
           <View style={styles.headerRow}>
             <TouchableOpacity onPress={() =>{
               navigation.goBack();
-              // navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})
               }}>
               <View style={styles.backIconRow}>
                 <Image
@@ -86,13 +158,48 @@ const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
 
         <View style={styles.container}>
    
-      {/* Profile Section */}
       <View style={styles.profileContainer}>
-      <Image source={profileImage} // Replace with real image URL
-          style={styles.profileImage}
-        />
-        <Text allowFontScaling={false} style={styles.nameText}>Alan Walker</Text>
-        <Text allowFontScaling={false} style={styles.subText}>University of Warwick, Coventry</Text>
+        {/* {userList?.profileUrl ? (
+          <Image 
+            source={{ uri: userList.profileUrl }}
+            style={styles.profileImage}
+          />
+        ) : (
+          <Image 
+            source={profileImage}
+            style={styles.profileImage}
+          />
+        )} */}
+
+          {userList?.profileUrl ? (
+          <Image
+            source={{ uri: userList.profileUrl }}
+            style={styles.profileImage}
+          />
+        ) : (
+          <View style={styles.initialsCircle}>
+            <Text allowFontScaling={false} style={styles.initialsText}>
+              {getInitials(
+                userList?.firstname ?? '',
+                userList?.lastname ?? 'W'
+              )}
+            </Text>
+          </View>
+        )}
+
+
+        <Text allowFontScaling={false} style={styles.nameText}>
+          {userList?.firstname || ''} {userList?.lastname || ''}
+        </Text>
+        <Text allowFontScaling={false} style={styles.subText}>
+          {userList?.university_name 
+            ? (userList?.city 
+                ? `${userList.university_name}, ${userList.city}`
+                : userList.university_name)
+            : userList?.city 
+              ? userList.city
+              : '-'}
+        </Text>
       </View>
       <View style={styles.listContainer}>
       <FlatList
@@ -106,9 +213,27 @@ const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
     </View>
     </ImageBackground>
   );
+
 };
 
 const styles = StyleSheet.create({
+
+   initialsCircle:{
+    backgroundColor: '#8390D4',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    marginBottom: 15,
+  },
+  initialsText:{
+   color: '#fff',
+    fontSize: 44,
+    fontWeight:600,
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
+  },
  
   fullScreenContainer: {
     flex: 1
@@ -146,10 +271,6 @@ const styles = StyleSheet.create({
        fontFamily: 'Urbanist-SemiBold',
     },
 
-
-
-
-
     listContainer: {
       padding: 16,
       
@@ -165,7 +286,7 @@ const styles = StyleSheet.create({
       marginLeft: 12,
       fontSize: 14,
       fontWeight: '600',
-      color: '#fff',
+      color: 'rgba(255,255,255,0.88)',
        fontFamily: 'Urbanist-SemiBold',
     },
 
@@ -194,13 +315,19 @@ const styles = StyleSheet.create({
     },
     nameText: {
       color: '#fff',
-      fontSize: 22,
-      fontWeight: '600',
+      fontSize: 24,
+      //fontWeight: '600',
+      fontFamily: 'Urbanist-SemiBold',
+      fontWeight:600
     },
     subText: {
-      color: '#DCE3FF',
-      fontSize: 15,
-      marginTop: 4,
+      color: 'rgba(255,255,255,0.72)',
+      fontSize: 14,
+      marginTop:12,
+      textAlign: 'center',
+      paddingHorizontal:16,
+      fontFamily: 'Urbanist-Medium',
+      fontWeight:500
     },
     buttonsContainer: {
       width: '100%',
@@ -233,8 +360,7 @@ const styles = StyleSheet.create({
       borderRadius: 12,
       padding: 12,
       height:50,
-      marginTop:6,
-  
+      marginTop:6,  
       
     },
 

@@ -812,11 +812,34 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                   <TouchableOpacity
                   style={[styles.chatcard, { marginLeft: 8, flexDirection: 'row', alignItems: 'center' }]}
                   activeOpacity={0.8}
-                  onPress={() => {
+                  // onPress={() => {
                    
+                  //   if (detail?.ispurchased) {
+                  //     navigation.navigate("MessagesIndividualScreen");
+                  //   } else {
+                  //     setShowPopup(true);
+                  //   }
+                  // }}
+                  onPress={() => {
+                    // if (detail?.ispurchased) {
+                    //   navigation.navigate("MessagesIndividualScreen");
+                    // }
                     if (detail?.ispurchased) {
-                      navigation.navigate("MessagesIndividualScreen");
-                    } else {
+                        navigation.navigate("MessagesIndividualScreen",{
+                          animation: 'none',
+                          sellerData: {
+                            featureId: detail.id, 
+                            firstname: detail.createdby.firstname,
+                            lastname:  detail.createdby.lastname,                          
+                            profile:  detail.createdby.profile,
+                            universityName:"Reamaning"
+
+                          },
+                          source: 'sellerPage', // 👈 another flag
+                        });
+                      }
+                    
+                    else {
                       setShowPopup(true);
                     }
                   }}
@@ -989,14 +1012,29 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
                   <TouchableOpacity
                     style={styles.loginButton1}
+                    // onPress={() => {
+                    //   navigation.goBack();
+                    //   navigation.replace('Dashboard', {
+                    //     AddScreenBackactiveTab: 'Home',
+                    //     isNavigate: false,
+                    //   });
+                    //   setShowPopup1(false);
+                    // }}
                     onPress={() => {
-                      navigation.goBack();
-                      navigation.replace('Dashboard', {
-                        AddScreenBackactiveTab: 'Home',
-                        isNavigate: false,
-                      });
-                      setShowPopup1(false);
-                    }}
+                      navigation.navigate("MessagesIndividualScreen",{
+                         animation: 'none',
+                         sellerData: {
+                           featureId: detail.id, 
+                           firstname: detail.createdby.firstname,
+                           lastname:  detail.createdby.lastname,                          
+                           profile:  detail.createdby.profile,
+                           universityName:"Reamaning"
+
+                         },
+                         source: 'sellerPage', // 👈 another flag
+                       });
+                     setShowPopup1(false);
+                   }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText1}>
                       Chat with Seller

@@ -1062,7 +1062,7 @@ const blurAmount = useDerivedValue(() =>
           keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} 
         >
 
-{activeTab === 'Search' || activeTab === 'Profile' ? (
+{activeTab === 'Search' || activeTab === 'Profile'  ||  activeTab === 'Bookmark' ? (
   <View style={{ flex: 1 }}>
     <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
 
@@ -1130,12 +1130,18 @@ const blurAmount = useDerivedValue(() =>
           fontSize: 20,
           fontWeight: '600',
           fontFamily: 'Urbanist-SemiBold',
-          zIndex: 9,
         }}
       >
-        {activeTab === 'Search' ? 'Transaction History' : 'Profile'}
-      </Text>
-    </View>
+        {/* {activeTab === 'Search' ? 'Transaction History' : 'Profile'} */}
+          {activeTab === 'Search' ? (
+          'Transaction History'
+          ) : activeTab === 'Profile' ? (
+            'Profile'
+          ) : activeTab === 'Bookmark' ? (
+          'Messages'
+          ) : null}
+                </Text>
+              </View>
 
     {/* 🔹 Scroll section */}
     <AnimatedReanimated.ScrollView
@@ -1147,11 +1153,13 @@ const blurAmount = useDerivedValue(() =>
       }}
       showsVerticalScrollIndicator={false}
     >
-      {activeTab === 'Search' ? (
-        <SearchScreenContent navigation={navigation} />
-      ) : (
-        <ProfileScreenContent navigation={navigation} />
-      )}
+     {activeTab === 'Search' ? (
+  <SearchScreenContent navigation={navigation} />
+) : activeTab === 'Profile' ? (
+  <ProfileScreenContent navigation={navigation} />
+) : activeTab === 'Bookmark' ? (
+  <BookmarkScreenContent navigation={navigation} />
+) : null}
     </AnimatedReanimated.ScrollView>
   </View>
 ) : (
@@ -1161,61 +1169,6 @@ const blurAmount = useDerivedValue(() =>
   </ScrollView>
 )}
 
-
-
-
-
-          {/* {activeTab === 'Search' ? (
-            
-            <View style={{ flex: 1,}}>
-              <View
-                style={{
-                  position: 'absolute',
-                  top: Platform.OS === 'ios' ? 70 : 60,
-                  width: Platform.OS === 'ios' ? '100%' : '100%',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  paddingHorizontal: 16,
-                  zIndex: 11,
-                  alignSelf: 'center',
-                  pointerEvents: 'box-none',
-                }}
-              >
-                <Text
-                  allowFontScaling={false}
-                  style={{
-                    color: '#FFFFFF',
-                    fontSize: 20,
-                    flex: 1,
-                    textAlign: 'center',
-                    fontWeight: '600',
-                     fontFamily: 'Urbanist-SemiBold',
-                     width: '100%',
-                  }}
-                >
-                  Transaction History
-                </Text>
-              </View>
-
-              <ScrollView
-                style={{
-                  flex: 1,// space under header
-                }}
-                showsVerticalScrollIndicator={false}
-              >
-                <SearchScreenContent navigation={navigation} />
-              </ScrollView>
-            </View>
-          ) : (
-            <ScrollView
-              style={{ flex: 1 }}
-              contentContainerStyle={{ paddingBottom: 10 }}
-              showsVerticalScrollIndicator={false}
-            >
-              <View style={{ flex: 1 }}>{renderActiveTabContent()}</View>
-            </ScrollView>
-          )} */}
 
         </KeyboardAvoidingView>
         

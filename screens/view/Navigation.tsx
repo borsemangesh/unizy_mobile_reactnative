@@ -45,6 +45,8 @@ import StripeOnboardingScreen from './dashboard/StripeOnboardingScreen';
 import AccountDetails from './dashboard/AccountDetails';
 import StripeOnboardingCancel from './dashboard/StripeOnboardingCancel';
 import StripeOnboardingComplete from './dashboard/StripeOnboardingComplete';
+import UserReviews from './dashboard/UserReviews';
+import UserListing from './dashboard/UserListing';
 
 const Stack = createNativeStackNavigator();
 
@@ -371,6 +373,22 @@ export const Navigation = () => {
           component={StripeOnboardingCancel}
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+              name="UserReviews"
+              component={UserReviews}
+              options={{
+                headerShown: false,
+                presentation: 'fullScreenModal',
+              }}
+            />
+             <Stack.Screen
+              name="UserListing"
+              component={UserListing}
+              options={{
+                headerShown: false,
+                presentation: 'fullScreenModal',
+              }}
+            />
       </Stack.Navigator>
     </NavigationContainer>
   );
