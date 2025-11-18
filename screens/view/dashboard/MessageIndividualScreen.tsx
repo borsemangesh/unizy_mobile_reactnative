@@ -1073,7 +1073,6 @@ const MessagesIndividualScreen = ({
                 });
               }
               
-              // Final window dimensions check
               const currentWindowHeight = Dimensions.get('window').height;
               const heightDiff = windowHeightRef.current - currentWindowHeight;
               if (heightDiff > 100) {
@@ -1086,12 +1085,9 @@ const MessagesIndividualScreen = ({
                 });
               }
             } catch (err) {
-              // Keyboard.metrics() might not be available
             }
           }, 400);
         }
-        
-        // if keyboard opens, close emoji picker
         if (isEmojiPickerVisible) setIsEmojiPickerVisible(false);
       },
     );
@@ -1101,20 +1097,14 @@ const MessagesIndividualScreen = ({
         setKeyboardVisible(false);
         setKeyboardHeight(0);
         
-        // Update window height reference when keyboard closes
-        // This ensures accurate calculation on next keyboard open
         if (Platform.OS === 'android') {
           setTimeout(() => {
             windowHeightRef.current = Dimensions.get('window').height;
           }, 100);
         }
-        
-        // Force KeyboardAvoidingView to reset by changing key
-        // This ensures padding is fully removed
+       
         setKavKey(prev => prev + 1);
-        // Keep lastKeyboardHeight for emoji keyboard sizing
-        // No scrolling needed - KeyboardAvoidingView handles natural adjustment
-        // FlatList will re-render automatically via extraData prop when keyboardVisible changes
+      
       },
     );
 
@@ -1124,12 +1114,9 @@ const MessagesIndividualScreen = ({
     };
   }, [isEmojiPickerVisible, setIsEmojiPickerVisible]);
   
-  // Force layout recalculation after initial load completes
   useEffect(() => {
     if (!initialLoading && !layoutReady) {
-      // Use InteractionManager to ensure layout is ready
       InteractionManager.runAfterInteractions(() => {
-        // Small delay to ensure KeyboardAvoidingView has measured layout
         setTimeout(() => {
           setLayoutReady(true);
         }, 100);
@@ -1137,37 +1124,25 @@ const MessagesIndividualScreen = ({
     }
   }, [initialLoading, layoutReady]);
   
-  // Calculate input bar bottom position
-  // When emoji is visible, position above emoji keyboard
-  // When text keyboard is visible, KeyboardAvoidingView handles it
-  // When neither is visible, add small bottom offset to match keyboard-open spacing
-  // KeyboardAvoidingView adds padding when keyboard opens, creating visual space below input bar
-  // We add a small offset when closed to match that spacing
+
   const inputBarBottom = isEmojiPickerVisible 
     ? (lastKeyboardHeight > 0 ? lastKeyboardHeight : EMOJI_PICKER_HEIGHT)
-    : (Platform.OS === 'ios' && !keyboardVisible && layoutReady ? 0 : 0); // Small offset to match keyboard-open appearance
+    : (Platform.OS === 'ios' && !keyboardVisible && layoutReady ? 0 : 0);
 
-  // Removed: Auto-scroll logic - inverted FlatList automatically shows newest messages at bottom
-  const [extraPadding] = useState(48); // gap for padding
-
-  //-------------- for set date wise messages -----------------//
+  const [extraPadding] = useState(48); 
 
   const formatMessageDate = (date: Date) => {
     const d = new Date(date);
     
-    // Get today's date in local timezone (reset time to midnight for accurate comparison)
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
-    // Get yesterday's date
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
     
-    // Get message date in local timezone (reset time to midnight)
     const messageDate = new Date(d);
     messageDate.setHours(0, 0, 0, 0);
 
-    // Compare dates (year, month, day only)
     if (messageDate.getTime() === today.getTime()) return 'Today';
 
     if (messageDate.getTime() === yesterday.getTime()) return 'Yesterday';
@@ -1180,30 +1155,22 @@ const MessagesIndividualScreen = ({
   };
 
   const buildMessageList = (messages: any[]) => {
-    // Inverted FlatList: Array[0] appears at BOTTOM, Array[n] appears at TOP
-    // We want to display: date_oldest (top), msgs_oldest, date_newest, msgs_newest (bottom)
-    // So we need: Array[n] = date_oldest, Array[0] = msgs_newest
-    // Structure: [msg_newest, date_newest, ..., msg_oldest, date_oldest]
-    // When inverted: [date_oldest, msg_oldest, ..., date_newest, msg_newest] ✓
     
     if (messages.length === 0) return [];
 
-    // Sort messages oldest first for proper date grouping
     const sortedMessages = [...messages].sort((a, b) => {
       const timeA = new Date(a.dateCreated || a.timestamp).getTime();
       const timeB = new Date(b.dateCreated || b.timestamp).getTime();
-      return timeA - timeB; // Oldest first
+      return timeA - timeB; 
     });
 
     const grouped: any[] = [];
     let lastDate: string | null = null;
 
-    // Build grouped array in oldest-first order: [date, msgs, date, msgs, ...]
     sortedMessages.forEach((msg, index) => {
       const created = msg.dateCreated || msg.timestamp;
       const dateLabel = formatMessageDate(new Date(created));
 
-      // Add date label when date changes (BEFORE messages of that date)
       if (lastDate !== dateLabel) {
         grouped.push({ 
           type: 'date', 
@@ -1212,15 +1179,9 @@ const MessagesIndividualScreen = ({
         });
         lastDate = dateLabel;
       }
-
-      // Add message
       grouped.push({ type: 'message', data: msg, sid: msg.sid || `msg-${index}` });
     });
 
-    // Now we have: [date_oldest, msg_oldest, ..., date_newest, msg_newest]
-    // Reverse: [date_newest, msg_newest, ..., date_oldest, msg_oldest]
-    // When inverted: [date_oldest, msg_oldest, ..., date_newest, msg_newest]
-    // Display: date_oldest (top), msg_oldest, ..., date_newest, msg_newest (bottom) ✓
     return grouped.reverse();
   };
 
@@ -1229,53 +1190,36 @@ const MessagesIndividualScreen = ({
     [messages]
   );
 
-  // Find the newest message index (not date) for adding bottom padding
-  // With inverted FlatList and reversed grouped array, newest message is at index 0
   const lastMessageIndex = React.useMemo(() => {
     for (let i = 0; i < groupedMessages.length; i++) {
       if (groupedMessages[i]?.type === "message") {
-        return i; // First message in the reversed grouped array is the newest (at bottom after inversion)
+        return i; 
       }
     }
     return -1;
   }, [groupedMessages]);
 
-  // Memoize content container style to ensure padding is applied on initial load
-  // Include bottom padding that adjusts for keyboard/emoji picker state
-  // Input bar is absolutely positioned, but we need minimal padding to ensure last message is visible
+
   const contentContainerStyle = React.useMemo(() => {
-    // KeyboardAvoidingView already handles pushing content up when keyboard opens
-    // So we only need minimal padding for the input bar itself, not the full keyboard height
-    let paddingBottom = INPUT_BAR_HEIGHT;// Just enough to ensure last message is visible above input bar
+    
+    let paddingBottom = INPUT_BAR_HEIGHT;
     
     if (keyboardVisible && !isEmojiPickerVisible) {
-      // Text keyboard is open - KeyboardAvoidingView handles the push
-      // We only need padding for the input bar, not the keyboard height
+     
       paddingBottom = INPUT_BAR_HEIGHT;
     } else if (isEmojiPickerVisible) {
-      // Emoji picker is visible - KeyboardAvoidingView is disabled, so we need to add emoji picker height
       paddingBottom = EMOJI_PICKER_HEIGHT;
     }
     
     return {
-      paddingTop: Platform.OS === 'ios' ? 160 : 150, // Header space at top
-      paddingBottom: 0, // Dynamic bottom padding for keyboard/emoji
-      flexGrow: 1, // Ensure content takes full space
-    };
+      paddingTop: Platform.OS === 'ios' ? 160 : 150, 
+      paddingBottom: 0, 
+      flexGrow: 1,
+    }
   }, [keyboardVisible, isEmojiPickerVisible, keyboardHeight, EMOJI_PICKER_HEIGHT]);
-
-  // With inverted FlatList, newest messages are automatically at bottom
-  // No need to scroll on initial load - inverted list starts at bottom
-  // Blur effect is now based on content height vs viewport, not scroll position
-
-  // Removed: Scroll on keyboard open/close - let KeyboardAvoidingView handle natural adjustment like WhatsApp
-  // The marginBottom on last message will adjust automatically via extraData re-render
-
-  // const groupedMessages = buildMessageList(messages);
 
   console.log('groupedMessages=========', groupedMessages);
 
-  // Calculate header and input bar heights for loader positioning
   const headerTop = Platform.OS === 'ios' ? 50 : 40;
   const headerHeight = 100;
   const headerTotalHeight = headerTop + headerHeight;
@@ -1320,6 +1264,7 @@ const MessagesIndividualScreen = ({
               style={StyleSheet.absoluteFill}
               blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
               blurAmount={Platform.OS === 'ios' ? 45 : 45}
+              // overlayColor="rgba(255,255,255,0.05)"
               reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
             />
             <LinearGradient
@@ -1404,9 +1349,9 @@ const MessagesIndividualScreen = ({
 
       <KeyboardAvoidingView
         key={kavKey}
-        style={{ flex: 1 }}
+        style={{ flex: 1 ,marginTop: (Platform.OS === 'ios'? 80: 0)}}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
         enabled={!isEmojiPickerVisible}
       >
         <View 
@@ -1693,6 +1638,7 @@ const MessagesIndividualScreen = ({
                 flexDirection: 'row',
                 alignItems: 'center',
                 width: '100%',
+                paddingBottom: 10
               }}
             >
               {/* Input bubble */}
@@ -1715,7 +1661,7 @@ const MessagesIndividualScreen = ({
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    borderRadius: 40,
+                    borderRadius: (Platform.OS === 'ios' ? 10 : 40),
                   }}
                   blurType="light"
                   blurAmount={5}
@@ -1800,7 +1746,7 @@ const MessagesIndividualScreen = ({
                 <View
                   style={{
                     width: 1,
-                    height: 20,
+                    height: 48,
                     backgroundColor: '#FFFFFF80',
                     marginHorizontal: 6,
                   }}
@@ -2052,7 +1998,7 @@ const styles = StyleSheet.create({
   },
   messageHeader: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? 50 : 40,
+    top: Platform.OS === 'ios' ?'6%' : 40,
     left: 0,
     right: 0,
     height: 100,
@@ -2175,19 +2121,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   emojiButton: {
-    // Adjust these to suit your layout; they ensure the area is clickable
     paddingHorizontal: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100%', // Take up the full height of search_container
+    height: '100%', 
   },
   mainContainer: {
     width: '100%',
-    // Make the container stick to the bottom
     position: 'absolute',
-    //  bottom: -400,
-    // The total height must cover the keyboard height + input bar height
-    // height:  80, // e.g., 80 is the height of your input bar
-    // overflow: 'hidden', // Ensures the keyboard is clipped when off-screen
+    
   },
 });

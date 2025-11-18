@@ -427,33 +427,91 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
     setFormValues((prev: any) => ({ ...prev, [fieldId]: updated }));
   };
 
-  const getCurrentDate = () => {
-    const today = new Date();
-    return `${String(today.getDate()).padStart(2, '0')}-${String(
-      today.getMonth() + 1,
-    ).padStart(2, '0')}-${today.getFullYear()}`;
-  };
 
   const requestCameraPermission = async () => {
-    if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.CAMERA,
-          {
-            title: 'Camera Permission',
-            message: 'App needs access to your camera',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
+    try {
+      if (Platform.OS === 'android') {
+        try {
+          // Request CAMERA
+          const cameraGranted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.CAMERA,
+            {
+              title: 'Camera Permission',
+              message: 'App needs access to your camera',
+              buttonNeutral: 'Ask Me Later',
+              buttonNegative: 'Cancel',
+              buttonPositive: 'OK',
+            }
+          );
+     
+          // Request Gallery Permission (Android 13+)
+          const readImagesGranted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+            {
+              title: 'Gallery Permission',
+              message: 'App needs access to your photos',
+              buttonNeutral: 'Ask Me Later',
+              buttonNegative: 'Cancel',
+              buttonPositive: 'OK',
+            }
+          ).catch(() => null);
+     
+          // Request for Android 12 and below
+          const readStorageGranted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+            {
+              title: 'Storage Permission',
+              message: 'App needs access to your gallery photos',
+              buttonNeutral: 'Ask Me Later',
+              buttonNegative: 'Cancel',
+              buttonPositive: 'OK',
+            }
+          ).catch(() => null);
+     
+          // Final permission result
+          const galleryGranted =
+            readImagesGranted === PermissionsAndroid.RESULTS.GRANTED ||
+            readStorageGranted === PermissionsAndroid.RESULTS.GRANTED;
+     
+          return (
+            cameraGranted === PermissionsAndroid.RESULTS.GRANTED &&
+            galleryGranted
+          );
+        } catch (err) {
+          console.warn(err);
+          return false;
+        }
+      } else {
+        // iOS Permissions
+        const permissionsToCheck = [
+          PERMISSIONS.IOS.CAMERA,
+          PERMISSIONS.IOS.PHOTO_LIBRARY,
+        ];
+  
+        const results = await Promise.all(
+          permissionsToCheck.map(async (perm) => {
+            const status = await check(perm);
+            if (status === RESULTS.GRANTED) return true;
+            if (status === RESULTS.BLOCKED) {
+              console.warn(`${perm} is blocked. Enable it in Settings.`);
+              return false;
+            }
+            const req = await request(perm);
+            return req === RESULTS.GRANTED;
+          }),
         );
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } catch (err) {
-        console.warn(err);
-        return false;
+  
+        if (results.every((r) => r === true)) {
+          //Alert.alert('Success', 'Camera and gallery permissions granted');
+          return true;
+        } else {
+          Alert.alert('Permission Denied', 'Camera or gallery permission denied');
+          return false;
+        }
       }
-    } else {
-      return true;
+    } catch (error) {
+      console.warn('Permission Error:', error);
+      return false;
     }
   };
   const handlePreview = async (latestFormValues: any) => {
@@ -671,13 +729,23 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   };
 
   const formatDateWithDash = (dateString?: string) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-  const year = date.getFullYear();
-  return `${day}-${month}-${year}`;
-};
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "";
+  
+    const day = date.getDate();
+  
+    let suffix = "th";
+    if (day % 10 === 1 && day !== 11) suffix = "st";
+    else if (day % 10 === 2 && day !== 12) suffix = "nd";
+    else if (day % 10 === 3 && day !== 13) suffix = "rd";
+  
+    const monthShort = date
+      .toLocaleString("default", { month: "short" }); // "Nov"
+  
+    const year = date.getFullYear();
+    return `${day}${suffix} ${monthShort} ${year}`;
+  };
 
   const renderField = (field: any) => {
    

@@ -485,9 +485,18 @@ const listProduct = async () => {
 
 const getCurrentDate = () => {
   const today = new Date();
-  return `${String(today.getDate()).padStart(2, '0')}-${String(
-    today.getMonth() + 1
-  ).padStart(2, '0')}-${today.getFullYear()}`;
+
+  const day = today.getDate();
+  const year = today.getFullYear();
+
+  const month = today.toLocaleString("default", { month: "short" });
+
+  let suffix = "th";
+  if (day % 10 === 1 && day !== 11) suffix = "st";
+  else if (day % 10 === 2 && day !== 12) suffix = "nd";
+  else if (day % 10 === 3 && day !== 13) suffix = "rd";
+
+  return `${day}${suffix} ${month} ${year}`;
 };
 
  const getInitials = (firstName = '', lastName = '') => {

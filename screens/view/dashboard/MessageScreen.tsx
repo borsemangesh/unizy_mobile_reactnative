@@ -214,6 +214,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
             return index.toString();
           }}
           ListHeaderComponent={
+       
             <View style={styles.search_container}>
               <Image source={searchIcon} style={styles.searchIcon} />
               <TextInput
@@ -363,30 +364,6 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
         }
         />
       )}
-      {/* {!initialLoading && search !== '' && (!studentList || studentList.length === 0) ? (
-        <View
-        pointerEvents="none"   
-          style={{
-          position: 'absolute',
-          top: 190,
-          left: 0,
-          right: 0,
-          alignItems: 'center',
-          paddingTop: 10,
-        }}
-        >
-          <View style={styles.emptyContainer}>
-            <Image
-              source={require('../../../assets/images/noproduct.png')}
-              style={styles.emptyImage}
-              resizeMode="contain"
-            />
-            <Text allowFontScaling={false} style={styles.emptyText}>
-              No Messages found
-            </Text>
-          </View>
-        </View>
-      ) : null} */}
     </View>
   );
 };

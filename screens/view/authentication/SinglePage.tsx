@@ -1299,36 +1299,54 @@ useEffect(() => {
   const requestCameraPermission = async () => {
     try {
       if (Platform.OS === 'android') {
-        // Request Camera permission
-        const camera = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.CAMERA,
-          {
-            title: 'Camera Permission',
-            message: 'App needs access to your camera',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        );
-  
-        // Request Gallery permission (depends on Android version)
-        const gallery =
-          Platform.Version >= 33
-            ? await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
-              )
-            : await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-              );
-  
-        if (
-          camera === PermissionsAndroid.RESULTS.GRANTED &&
-          gallery === PermissionsAndroid.RESULTS.GRANTED
-        ) {
-          // Alert.alert('Success', 'Camera and gallery permissions granted');
-          return true;
-        } else {
-          Alert.alert('Permission Denied', 'Camera or gallery permission denied');
+        try {
+          // Request CAMERA
+          const cameraGranted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.CAMERA,
+            {
+              title: 'Camera Permission',
+              message: 'App needs access to your camera',
+              buttonNeutral: 'Ask Me Later',
+              buttonNegative: 'Cancel',
+              buttonPositive: 'OK',
+            }
+          );
+     
+          // Request Gallery Permission (Android 13+)
+          const readImagesGranted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+            {
+              title: 'Gallery Permission',
+              message: 'App needs access to your photos',
+              buttonNeutral: 'Ask Me Later',
+              buttonNegative: 'Cancel',
+              buttonPositive: 'OK',
+            }
+          ).catch(() => null);
+     
+          // Request for Android 12 and below
+          const readStorageGranted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+            {
+              title: 'Storage Permission',
+              message: 'App needs access to your gallery photos',
+              buttonNeutral: 'Ask Me Later',
+              buttonNegative: 'Cancel',
+              buttonPositive: 'OK',
+            }
+          ).catch(() => null);
+     
+          // Final permission result
+          const galleryGranted =
+            readImagesGranted === PermissionsAndroid.RESULTS.GRANTED ||
+            readStorageGranted === PermissionsAndroid.RESULTS.GRANTED;
+     
+          return (
+            cameraGranted === PermissionsAndroid.RESULTS.GRANTED &&
+            galleryGranted
+          );
+        } catch (err) {
+          console.warn(err);
           return false;
         }
       } else {

@@ -231,16 +231,16 @@ export default function TransactionHistoryScreen(
     fetchTransactions();
   }, [selectedTab]); 
 
-
   const getFormattedDate = (dateString: string) => {
-    const parts = dateString.split(" "); 
-    if (parts.length !== 3) return dateString; 
+    const parts = dateString.split(" ");
+    if (parts.length !== 3) return dateString;
   
     const [dayStr, monthStr, yearStr] = parts;
     const day = parseInt(dayStr);
   
     if (isNaN(day)) return dateString;
   
+    // Add suffix
     const suffix =
       day % 10 === 1 && day !== 11
         ? "st"
@@ -250,10 +250,11 @@ export default function TransactionHistoryScreen(
         ? "rd"
         : "th";
   
-    const formatted = `${day}${suffix} ${monthStr} ${yearStr}`;
-    return formatted;
+    // Convert full month to short month
+    const shortMonth = monthStr.substring(0, 3);
+  
+    return `${day}${suffix} ${shortMonth} ${yearStr}`;
   };
-
   const [catagoryid,setCatagoryid] = useState(0)
 
   const [salesData, setSalesData] = useState<any[]>([]);
