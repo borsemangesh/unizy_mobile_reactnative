@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState } from 'react';
 import {
   Image,
@@ -272,7 +270,7 @@ useEffect(() => {
 const displayListOfProduct = async (categoryId: number | null, pageNum: number) => {
   try {
     const pagesize = 10;
-    let url = `${MAIN_URL.baseUrl}user/user-review?page=${pageNum}&pagesize=${pagesize}&user_id=109`;
+    let url = `${MAIN_URL.baseUrl}user/user-review?page=${pageNum}&pagesize=${pagesize}&user_id=${members.id}`;
 
     if (categoryId) {
       url += `&category_id=${categoryId}`;
@@ -457,7 +455,7 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
                      style={StyleSheet.absoluteFill}
                      blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
                      blurAmount={Platform.OS === 'ios' ? 45 : 45}
-                     overlayColor="rgba(255,255,255,0.05)"
+                    //  overlayColor="rgba(255,255,255,0.05)"
                      reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
                    />
                    <LinearGradient
@@ -588,7 +586,7 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
             }
             contentContainerStyle={[
               styles.listContainer,
-              { paddingTop: Platform.OS === 'ios' ? 160 : 100 },
+              { paddingTop: Platform.OS === 'ios' ? 150 : 100 },
             ]}
             onScroll={scrollHandler}
             scrollEventThrottle={16}
@@ -609,7 +607,7 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
             }
             ListEmptyComponent={
               !isLoading ? (
-               <View style={[styles.emptyWrapper,{minHeight: screenHeight - (Platform.OS === 'ios' ? 160 : 150), }]}>
+               <View style={[styles.emptyWrapper,{minHeight: screenHeight - (Platform.OS === 'ios' ? 230 : 150), }]}>
                           <View style={styles.emptyContainer}>
                             <Image
                               source={require('../../../assets/images/noproduct.png')} // your image
@@ -668,17 +666,7 @@ const styles = StyleSheet.create({
 
    headerWrapper: {
     position: 'absolute',
-    top: 0,
-    width: Platform.OS === 'ios' ? 393 : '100%',
-    height: Platform.OS === 'ios' ? 180 : 180,
-    zIndex: 10,
-    overflow: 'hidden',
-    alignSelf: 'center',
-    pointerEvents: 'none',
-  },
-  headerContent: {
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? 50 : 40,
+    top: Platform.OS === 'ios' ? '6%' : 40,
     width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -688,11 +676,23 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'box-none',
   },
+  headerContent: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? '9%' : 40,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    // paddingHorizontal: 16,
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
+  },
 
    categoryTabsContainer: {
     width: '100%',
     marginBottom: 12,
-    marginTop: 12,
+    paddingLeft: 10
   },
  
   categoryTabsScrollContent: {
@@ -716,7 +716,8 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      width:'100%'
+      width:'100%',
+      paddingHorizontal: 10,
     },
 
  

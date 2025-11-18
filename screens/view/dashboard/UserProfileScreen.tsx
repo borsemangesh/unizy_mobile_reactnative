@@ -239,9 +239,19 @@ const styles = StyleSheet.create({
     flex: 1
     },
     header: {
-      paddingTop: Platform.OS === 'ios' ? 50 : 50,
-      paddingBottom: 12,
-      paddingHorizontal: 16,
+      // paddingTop: Platform.OS === 'ios' ? 50 : 50,
+      // paddingBottom: 12,
+      // paddingHorizontal: 16,
+      position: 'absolute',
+  top: Platform.OS === 'ios' ? '6%' : 40,
+  width: Platform.OS === 'ios' ? 393 : '100%',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+  paddingHorizontal: 16,
+  zIndex: 11,
+  alignSelf: 'center',
+  pointerEvents: 'box-none',
     },
     headerRow: {
       flexDirection: 'row',
@@ -294,7 +304,7 @@ const styles = StyleSheet.create({
       // flex: 1,
       // backgroundColor: '#0047FF', // Gradient-like deep blue
       // alignItems: 'center',
-      // paddingTop: 80,
+      paddingTop: 120,
     },
   
     headerText: {
