@@ -1178,9 +1178,7 @@ const styles = StyleSheet.create({
   },
    listingtyperow1: {
     width: '100%',
-    display: 'flex',
     flexDirection: 'row',
-    //justifyContent: 'space-between',
   },
   lebleHeader: {
     color: 'rgba(255, 255, 255, 0.72)',
@@ -1206,8 +1204,9 @@ const styles = StyleSheet.create({
     letterSpacing: -0.28,
     lineHeight: 16,
     fontFamily: 'Urbanist-SemiBold',
-    maxWidth:'70%',
-    textAlign:'right'
+     flex: 1,           
+    textAlign: 'right', 
+    flexWrap: 'wrap',  
   },
   status1: {
     color: 'rgba(255, 255, 255, 0.88)',

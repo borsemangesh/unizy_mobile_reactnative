@@ -234,17 +234,6 @@ const filteredFeatures: Feature[] = featurelist.filter(item =>
   (item.featurelist?.title ?? '').toLowerCase().includes(search.toLowerCase())
 );
 
-// const formatDate = (dateString: string | null | undefined) => {
-//   if (!dateString || dateString.trim() === '') return '01-01-2025';
-
-//   const date = new Date(dateString);
-//   if (isNaN(date.getTime())) return '01-01-2025';
-
-//   const day = String(date.getDate()).padStart(2, '0');
-//   const month = String(date.getMonth() + 1).padStart(2, '0');
-//   const year = date.getFullYear();
-//   return `${day}-${month}-${year}`;
-// };
 
  const formatDate = (dateString?: string) => {
   if (!dateString) return "";

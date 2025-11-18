@@ -309,8 +309,15 @@ const groupByDate = (data: any[]) => {
   const groupedMap: Record<string, any[]> = {};
 
   data.forEach(item => {
-    const rawDate = formatDate(item.created_at);
-    const displayDate = formatDate1(item.created_at); 
+    const d = new Date(item.created_at);
+
+    // STEP 1: always create correct sortable date key
+    const rawDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
+      d.getDate()
+    ).padStart(2, '0')}`;
+
+    // Step 2: Pretty formatted for UI
+    const displayDate = formatDate1(item.created_at);
 
     if (!groupedMap[rawDate]) {
       groupedMap[rawDate] = [];
@@ -318,41 +325,37 @@ const groupByDate = (data: any[]) => {
 
     groupedMap[rawDate].push({
       ...item,
-      type: "item",
+      type: 'item',
       displayDate,
       rawDate,
     });
   });
 
-  // Step 2: Sort using rawDate → convert back to real Date YYYY-MM-DD
+  // Sort newest → oldest
   const sortedDates = Object.keys(groupedMap).sort((a, b) => {
-    const [dA, mA, yA] = a.split("-").map(Number);
-    const [dB, mB, yB] = b.split("-").map(Number);
-
-    return new Date(yB, mB - 1, dB).getTime() - new Date(yA, mA - 1, dA).getTime();
+    return new Date(b).getTime() - new Date(a).getTime();
   });
 
-  // Step 3: Sort items inside each date by created_at descending
   const groupedArray: any[] = [];
 
+  // Build final list
   sortedDates.forEach(rawDate => {
-    const items = groupedMap[rawDate].sort((a, b) => {
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    });
+    const items = groupedMap[rawDate].sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
 
-    // Push date header
     groupedArray.push({
-      type: "date",
+      type: 'date',
       id: `date-${rawDate}`,
       displayDate: items[0].displayDate,
     });
 
-    // Push items
     groupedArray.push(...items);
   });
 
   return groupedArray;
 };
+
 
 
 const groupedOrders = groupByDate(filteredFeatures);

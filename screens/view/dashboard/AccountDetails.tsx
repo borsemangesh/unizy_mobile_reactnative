@@ -335,12 +335,12 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
            onPress={() => {
-                if (navigation.canGoBack()) {
-                  navigation.goBack();
-                } else {
-                  navigation.replace('ProfileCard');
-                }
-              }}
+            if(Platform.OS === 'ios'){
+              navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Profile',isNavigate: false})
+            } else{
+              navigation.goBack();
+            }
+            }}
               style={styles.backButtonContainer}
           >
             <Animated.View

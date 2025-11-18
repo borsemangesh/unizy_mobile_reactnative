@@ -343,12 +343,7 @@ const formatDate = (dateString?: string) => {
         {/* Header Content */}
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
-            onPress={() =>
-              navigation.replace('Dashboard', {
-                AddScreenBackactiveTab: 'Home',
-                isNavigate: false,
-              })
-            }
+           onPress={() =>{navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})}}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >

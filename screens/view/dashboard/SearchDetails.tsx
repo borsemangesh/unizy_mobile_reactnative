@@ -252,25 +252,14 @@ const quantityOptions = Array.from({ length: maxQty }, (_, i) => ({
   return `${day}${suffix} ${monthShort} ${year}`;
 };
 
-  const handlePay = () => {
+//   const handlePay = () => {
 
-
-  navigation.navigate('PaymentScreen', {
-    amount: Number(detail.price).toFixed(2),
-    feature_id: id,
-    nav: 'purchase',
-    onSuccess: async () => {
-      await purchaseProduct();
-    }
-  });
-};
-
-// const handlePayConfirmed = () => {
-//   const quantityInfo = formValues[multiSelectModal.fieldId!];
-//   const payAmount = quantityInfo?.finalAmount ?? 0;
-
+//   if (detail?.category?.name === 'Food') {
+//     setMultiSelectModal(prev => ({ ...prev, visible: true }));
+//     return;
+//   }
 //   navigation.navigate('PaymentScreen', {
-//     amount: payAmount.toFixed(2),
+//     amount: Number(detail.price).toFixed(2),
 //     feature_id: id,
 //     nav: 'purchase',
 //     onSuccess: async () => {
@@ -278,6 +267,28 @@ const quantityOptions = Array.from({ length: maxQty }, (_, i) => ({
 //     }
 //   });
 // };
+
+
+const handlePay = (overrideAmount?: number) => {
+
+  // FOOD: No overrideAmount → open bottom sheet
+  if (detail?.category?.name === 'Food' && overrideAmount === undefined) {
+    setMultiSelectModal(prev => ({ ...prev, visible: true }));
+    return;
+  }
+
+  // NON-FOOD or FOOD (from bottom sheet with selected amount)
+  const amountToPay = overrideAmount ?? Number(detail.price).toFixed(2);
+
+  navigation.navigate('PaymentScreen', {
+    amount: amountToPay,
+    feature_id: id,
+    nav: 'purchase',
+    onSuccess: async () => {
+      await purchaseProduct();
+    }
+  });
+};
 
 const handlePayConfirmed = (amount: number) => {
   navigation.navigate('PaymentScreen', {
@@ -937,30 +948,34 @@ const handlePayConfirmed = (amount: number) => {
 
       
 
-        <PayButton
+        {/* <PayButton
           amount={Number(detail?.price).toFixed(2)}
           label="Pay"
           onPress={handlePay}
-      /> 
-      {/* <PayButton
+      />  */}
+      <PayButton
         amount={detail?.category?.name === "Food" ? undefined : Number(detail?.price)}
         label={detail?.category?.name === "Food" ? "Select Quantity" : "Pay"}
-        onPress={handlePay}
-      /> */}
-
+        onPress={() => handlePay()}   // ALWAYS call without amount
+      />
 
       <SelectFoodQuantity
+        totalcount={10}
         options={quantityOptions}
         visible={multiSelectModal.visible}   
-        ismultilple={false}
         price={Number(detail?.price)}
-        title={'Select Quantitiy'}
-        subtitle={'Choose how many units you want to buy.'}
+        title={'Choose Quantitiy'}
+        subtitle={'Select the number of units you’d like to buy.'}
         selectedValues={formValues[multiSelectModal.fieldId!]?.value}
         onClose={() =>
           setMultiSelectModal(prev => ({ ...prev, visible: false }))
         }
-        continueToPay={handlePayConfirmed}
+        //continueToPay={(finalAmount) => handlePay(finalAmount)}
+         continueToPay={(amount) => {
+          handlePay(amount);    // navigates first
+          setMultiSelectModal(prev => ({ ...prev, visible: false }));  // close after
+        }}
+
       onSelect={(selectedIds) => {
         const quantity = Array.isArray(selectedIds)
           ? selectedIds[0] // fallback

@@ -9,33 +9,6 @@ type PayButtonProps = {
   label?: string; // default "Pay"
 };
 
-// const PayButton = ({ amount, onPress, label = "Pay" }: PayButtonProps) => {
-//   const formattedAmount = `£${Number(amount ?? 0).toFixed(2)}`;
-
-//   return (
-//     <TouchableOpacity
-//       onPress={onPress}
-//       activeOpacity={0.7}
-//       style={styles.buttonContainer}
-//     >
-//       <BlurView
-//         style={StyleSheet.absoluteFill}
-//         blurType="light"
-//         blurAmount={2}
-//         reducedTransparencyFallbackColor="transparent"
-//       />
-
-//       <View style={styles.textWrapper}>
-
-//       <Text allowFontScaling={false} style={styles.buttonText}>
-//         <Text style={styles.labelText}>{label} </Text>
-//         <Text style={styles.amountText}>{formattedAmount}</Text>
-//       </Text>
-//       </View>
-//     </TouchableOpacity>
-//   );
-// };
-
 
 const PayButton = ({ amount, onPress, label = "Pay" }: PayButtonProps) => {
   const formattedAmount =

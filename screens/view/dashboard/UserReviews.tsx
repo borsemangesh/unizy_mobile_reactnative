@@ -272,7 +272,7 @@ useEffect(() => {
 const displayListOfProduct = async (categoryId: number | null, pageNum: number) => {
   try {
     const pagesize = 10;
-    let url = `${MAIN_URL.baseUrl}user/user-review?page=${pageNum}&pagesize=${pagesize}&user_id=109`;
+    let url = `${MAIN_URL.baseUrl}user/user-review?page=${pageNum}&pagesize=${pagesize}&user_id=${members.id}`;
 
     if (categoryId) {
       url += `&category_id=${categoryId}`;

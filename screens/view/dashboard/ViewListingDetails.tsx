@@ -1184,7 +1184,7 @@ const styles = StyleSheet.create({
   },
    listingtyperow1: {
     width: '100%',
-    display: 'flex',
+   // display: 'flex',
     flexDirection: 'row',
     //justifyContent: 'space-between',
   },
@@ -1212,8 +1212,10 @@ const styles = StyleSheet.create({
     letterSpacing: -0.28,
     lineHeight: 16,
     fontFamily: 'Urbanist-SemiBold',
-    maxWidth:'70%',
-    textAlign:'right'
+//    maxWidth:'70%',
+     flex: 1,           // takes remaining space
+  textAlign: 'right', // right aligned
+  flexWrap: 'wrap',  
   },
   status1: {
     color: 'rgba(255, 255, 255, 0.88)',

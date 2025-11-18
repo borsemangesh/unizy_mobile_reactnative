@@ -18,55 +18,6 @@ function App() {
   enableScreens();
 
 
-//  useEffect(() => {
-//     const setupNotifications = async () => {
-//       // Request FCM permission
-//       const authStatus = await messaging().requestPermission();
-//       const enabled =
-//         authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-//         authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-//       if (enabled) {
-//         console.log("✅ Notification permission granted");
-//         const token = await messaging().getToken();
-//         console.log("🔥 FCM Token:", token);
-//       } else {
-//         console.log("❌ Notification permission denied");
-//       }
-
-//       // Request Notifee permission
-//       await notifee.requestPermission();
-
-//       // Create Android Notification channel
-//       await notifee.createChannel({
-//         id: 'default',
-//         name: 'Default Channel',
-//         importance: AndroidImportance.HIGH,
-//       });
-//     };
-//     const unsubscribe = messaging().onMessage(async remoteMessage => {
-//       console.log("📩 Foreground Message:", remoteMessage);
-
-//       const title = remoteMessage.notification?.title || "Notification";
-//       const body = remoteMessage.notification?.body || "";
-
-//       // ✅ Show system notification in foreground
-//       await notifee.displayNotification({
-//         title,
-//         body,
-//         android: {
-//           channelId: 'default',
-//           pressAction: { id: 'default' },
-//         },
-//       });
-//     });
-
-//     setupNotifications();
-
-//     return unsubscribe;
-//   }, []);
-
-
 useEffect(() => {
     let unsubscribe: (() => void) | null = null;
     let unsubscribeForeground: (() => void) | null = null;
@@ -155,11 +106,6 @@ useEffect(() => {
                 sound: 'default',
               };
             }
-
-
-            // use for show message app is open 
-            // const notificationId = await notifee.displayNotification(notificationConfig);
-            // console.log("✅ Notification displayed successfully with ID:", notificationId);
           } catch (error) {
             console.error("❌ Error displaying notification:", error);
           }
@@ -241,8 +187,6 @@ useEffect(() => {
                 } else if (notificationData?.from) {
                   currentUserIdList = Number(parseValue(notificationData.from)) || 0;
                 }
-
-                // Validate required fields
                 if (!userConvName) {
                   console.error("❌ Missing userConvName in notification data");
                   return;

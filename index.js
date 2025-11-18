@@ -20,12 +20,10 @@ import messaging from '@react-native-firebase/messaging';
 import notifee, { EventType } from '@notifee/react-native';
 import { navigate } from './screens/view/NavigationService';
 
-// 1️⃣ Background FCM handler
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log("📩 Background FCM Message:", remoteMessage);
 });
 
-// 2️⃣ Background notification tap handler
 notifee.onBackgroundEvent(async ({ type, detail }) => {
   if (type === EventType.PRESS) {
     console.log("🟦 Notification tapped in background/quit");
