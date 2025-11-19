@@ -899,7 +899,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     allowFontScaling={false}
                     style={[styles.subheader1, { marginTop: 0 }]}
                   >
-                    The payment of $10 has been transferred to your account.
+                    The payment of £{data?.list?.price} has been transferred to your account.
                   </Text>
                   <TouchableOpacity
                     style={styles.loginButton}

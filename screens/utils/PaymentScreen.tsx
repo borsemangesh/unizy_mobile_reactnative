@@ -79,11 +79,12 @@ const PaymentScreen :React.FC<PaymentScreenProps> = ({ navigation }) => {
       const ephemeralKey = responseJson.metadata?.ephemeralKey;
       const customerId = responseJson.metadata?.customerId;
       const paymentintent_id = responseJson.metadata?.paymentIntentId;
+      const famount = responseJson.metadata?.amount;
  
  
     if (clientSecret) {
       console.log('Payment successful:', clientSecret);
-      //showToast('Payment successful:','success')
+      await AsyncStorage.setItem("finalamount", String(famount));
  
       await AsyncStorage.setItem("paymentintent_id", paymentintent_id);
       // const pi = clientSecret as any; // ✅ cast it

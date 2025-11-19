@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import PayButton from './PayButton';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface SelectFoodQuantityProps {
   options: { id: number; option_name: string }[];
@@ -48,14 +49,28 @@ const SelectFoodQuantity = ({
  const unitPrice = Number(price ?? 0);
   const totalPrice = unitPrice * count;
 
-const handleApply = () => {
+// const handleApply = () => {
  
+//   if (continueToPay) {
+//     const finalAmount = Number(totalPrice.toFixed(2));
+//     continueToPay(finalAmount);
+//   }
+
+// //  onClose();
+// };
+
+
+const handleApply = async () => {
+  try {
+    await AsyncStorage.setItem('quantitycount', String(count)); 
+  } catch (e) {
+    console.log('storage error', e);
+  }
+
   if (continueToPay) {
     const finalAmount = Number(totalPrice.toFixed(2));
     continueToPay(finalAmount);
   }
-
-//  onClose();
 };
   return (
     <View  style={[StyleSheet.absoluteFillObject,{zIndex: 999,display: visible ? 'flex' : 'none'}]}>

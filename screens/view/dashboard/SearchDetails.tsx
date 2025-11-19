@@ -79,6 +79,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
   const insets = useSafeAreaInsets(); // Safe area insets
 
+  const [famount,setfamout] = useState(0)
   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
 
     const { height } = Dimensions.get('window');
@@ -272,14 +273,14 @@ const quantityOptions = Array.from({ length: maxQty }, (_, i) => ({
 
 const handlePay = (overrideAmount?: number) => {
 
-  // FOOD: No overrideAmount → open bottom sheet
   if (detail?.category?.name === 'Food' && overrideAmount === undefined) {
     setMultiSelectModal(prev => ({ ...prev, visible: true }));
     return;
   }
 
-  // NON-FOOD or FOOD (from bottom sheet with selected amount)
   const amountToPay = overrideAmount ?? Number(detail.price).toFixed(2);
+
+  console.log("Final Amount",famount)
 
   navigation.navigate('PaymentScreen', {
     amount: amountToPay,
@@ -486,15 +487,29 @@ const handlePayConfirmed = (amount: number) => {
       console.log('⚠️ Token not found. Cannot upload.');
       return;
     }
+    const finalamount = await AsyncStorage.getItem('finalamount')
     const paymentintent_id= await AsyncStorage.getItem("paymentintent_id");
+    const quantity = await AsyncStorage.getItem("quantitycount")
+
+
+    console.log("COUNT",quantity)
+    console.log("AMOUNT",finalamount)
+
     try {
 
-      const createPayload = {
-          amount: Number(detail.price).toFixed(2), 
-          feature_id: id,
-          payment_id:paymentintent_id,
-          
-    };
+    //   const createPayload = {
+    //       //amount: Number(detail.price).toFixed(2), 
+    //       amount: Number(finalamount),
+    //       feature_id: id,
+    //       payment_id:paymentintent_id,      
+    // };
+
+    const createPayload = {
+    amount: Number(finalamount),
+    feature_id: id,
+    payment_id: paymentintent_id,
+  ...(detail?.category_id === 3 && { quantity: Number(quantity) })  
+};
 
     const url = `${MAIN_URL.baseUrl}transaction/post-order-complete`;
 

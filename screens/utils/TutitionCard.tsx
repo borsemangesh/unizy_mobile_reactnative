@@ -450,26 +450,24 @@ export default function TutitionCard({
       
 
             <View style={styles.leftPortion}>
-  {productImage && (productImage as ImageURISource).uri ? (
-    console.log("RPduct Image",productImage),
-    // ✅ Show user’s actual image
-    <Image
-      source={productImage}
-      style={styles.leftImage}
-      resizeMode="cover"
-    />
-  ) : (
-    // ✅ When showing initials, apply same background as right portion
-    <View style={styles.initialsContainer}>
-       <Image
-      source={require('../../assets/images/featurebg.png')}
-      style={styles.initialsBackground}
-      resizeMode="cover"
-    />
-     <View
+            {productImage && (productImage as ImageURISource).uri ? (
+            
+              <Image
+                source={productImage}
+                style={styles.leftImage}
+                resizeMode="cover"
+              />
+            ) : (
+              <View style={styles.initialsContainer}>
+                <Image
+                source={require('../../assets/images/featurebg.png')}
+                style={styles.initialsBackground}
+                resizeMode="cover"
+              />
+              <View
               style={{
-                ...StyleSheet.absoluteFillObject, // covers the image fully
-                backgroundColor: 'rgba(255, 255, 255, 0.07)', // black overlay, 35% opacity
+                ...StyleSheet.absoluteFillObject, 
+                backgroundColor: 'rgba(255, 255, 255, 0.07)',
               }}
             />
       <View style={styles.initialsCircle}>

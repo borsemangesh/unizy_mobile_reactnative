@@ -377,7 +377,7 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
       : require('../../../assets/images/drone.png');
  
   const displayPrice =
-    item?.featurelist?.price != null ? `$${item.featurelist.price}` : '$0.00';
+    item?.featurelist?.price != null ? `£${item.featurelist.price}` : '$0.00';
   const displayTitle = item?.featurelist?.title ?? 'Title';
  
   let isPurchase;
