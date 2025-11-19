@@ -24,7 +24,8 @@ type TransactionPropos = {
 };
 
 interface TransactionItem {
-  // feature_id: number;
+  total_earning: number;
+  total_orders:number
   title: string;
   price: string;
   status: string;
@@ -193,6 +194,8 @@ export default function TransactionHistoryScreen(
               feature_idNew: item.id,
               featureId: item.id,  
               total_sales: item.total_sales,
+              total_orders:item.total_orders,
+              total_earning:item.total_earning
             })),
           }));
         }  
@@ -636,7 +639,7 @@ export default function TransactionHistoryScreen(
                           fontSize: 12,
                         }}
                       >
-                        Total Order: {section.total_sales}
+                        Total Order: {item.total_orders}
                       </Text>
                       <Text
                         allowFontScaling={false}
@@ -646,7 +649,7 @@ export default function TransactionHistoryScreen(
                           fontSize: 12,
                         }}
                       >
-                        Total Earnings: {item.price}
+                        Total Earnings: {item.total_earning}
                       </Text>
                     </View>
                   </View>

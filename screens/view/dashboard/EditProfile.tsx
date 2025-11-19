@@ -267,7 +267,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       const userId = await AsyncStorage.getItem('userId');
   
       if (!token || !userId) {
-        showToast('User authentication missing.', 'error');
+        showToast('User authentication is missing.', 'error');
         return;
       }
 
@@ -314,7 +314,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           isNavigate: false,
         });
       } else {
-        showToast(data?.message || 'Failed to update profile', 'error');
+        showToast(data?.message || 'Failed to update profile.Please try again', 'error');
       }
     } catch (error) {
       console.error('Error during profile update:', error);
@@ -390,7 +390,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       const url = `${MAIN_URL.baseUrl}user/update-profile`;
   
       if (!token || !userId) {
-        showToast('User authentication missing.', 'error');
+        showToast('User authentication is missing.', 'error');
         return false;
       }
   
@@ -417,12 +417,12 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       if (response.ok) {
         return true; 
       } else {
-        showToast(data?.message || 'Failed to upload image', 'error');
+        showToast(data?.message || 'Failed to upload image.Please try again', 'error');
         return false; 
       }
     } catch (error) {
       console.error('Upload error:', error);
-      showToast('Unexpected error during upload', 'error');
+      showToast('Unexpected error occured during upload.Please try again', 'error');
       return false; 
     }
   };

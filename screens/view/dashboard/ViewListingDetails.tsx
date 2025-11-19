@@ -1,5 +1,4 @@
 
-  
 import {
   View,
   Text,
@@ -16,7 +15,9 @@ import {
   Keyboard,
   StatusBar,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
+// import { showToast } from '../../utils/toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { useRoute } from '@react-navigation/native';
@@ -38,6 +39,7 @@ import AnimatedReanimated, {
 } from 'react-native-reanimated';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
+import ButtonNew from '../../utils/component/ButtonNew';
 
 type ListingDetailsProps = {
   navigation: any;
@@ -176,9 +178,10 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
           data1.message,
           data1.statusCode === 200 ? 'success' : 'error',
         );
+        // Refresh details so status updates immediately
         await fetchDetails();
       } else {
-        showToast('Something went wrong', 'error');
+        showToast('Something went wrong.Please try again', 'error');
       }
     } catch (error) {
       console.error('❌ API Error:', error);
@@ -209,19 +212,27 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
 
   const otpverify = async () => {
     Keyboard.dismiss();
-
+    setLoading(true); 
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
         console.log('⚠️ Token not found. Cannot upload.');
+        setLoading(false);
         return;
       }
       const otpValue = otp.join('');
       const order_id = await AsyncStorage.getItem('last_order_id');
 
+      // if (!otp_id) {
+      //   showToast(Constant.OTP_ID_MISSING, 'error');
+      //   return;
+      // }
+
       const url = MAIN_URL.baseUrl + 'transaction/verify-post-order-otp';
 
       const createPayload = {
+        //orderid: 'KX5WHMSX',
+        //otp: '123456',
         otp:otpValue,
         orderid:selectedOrderId,
       };
@@ -242,42 +253,39 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
       console.log('OTP Verify Response:', data);
 
       if (data?.statusCode === 200) {
+        setLoading(false);
         showToast(data.message, 'success');
         setShowPopup2(true);
       } else {
-        setShowPopup1(false)
+        setLoading(false);
+        setShowPopup1(false);
         showToast(data?.message, 'error');
       }
     } catch (err) {
+      setLoading(false);
       console.error(err);
       showToast(Constant.SOMTHING_WENT_WRONG, 'error');
     }
   };
 
-
   const formatDateWithDash = (dateString?: string) => {
-  if (!dateString) return "";
-
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) return "";
-
-  const day = date.getDate();
-
-  // Add suffix: st, nd, rd, th
-  let suffix = "th";
-  if (day % 10 === 1 && day !== 11) suffix = "st";
-  else if (day % 10 === 2 && day !== 12) suffix = "nd";
-  else if (day % 10 === 3 && day !== 13) suffix = "rd";
-
-  // Short month name (Jan, Feb, Mar...)
-  const monthShort = date
-    .toLocaleString("default", { month: "short" }); // "Nov"
-
-  const year = date.getFullYear();
-
-  return `${day}${suffix} ${monthShort} ${year}`;
-};
-
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "";
+  
+    const day = date.getDate();
+  
+    let suffix = "th";
+    if (day % 10 === 1 && day !== 11) suffix = "st";
+    else if (day % 10 === 2 && day !== 12) suffix = "nd";
+    else if (day % 10 === 3 && day !== 13) suffix = "rd";
+  
+    const monthShort = date
+      .toLocaleString("default", { month: "short" }); // "Nov"
+  
+    const year = date.getFullYear();
+    return `${day}${suffix} ${monthShort} ${year}`;
+  };
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
@@ -379,11 +387,12 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
           <AnimatedReanimated.ScrollView 
                     scrollEventThrottle={16}
                     onScroll={scrollHandler}
+                    showsVerticalScrollIndicator={false}
                     contentContainerStyle={[
                       styles.scrollContainer,
                       { paddingBottom: Platform.select({
-                          ios: height * 0.01,
-                          android: height * 0.04, 
+                          ios: 90,
+                          android: height * 0.1, 
                         })}, 
                     ]}>
             <View
@@ -446,31 +455,30 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                       );
                     }
                   })()}
-
-                   <View style={{ marginLeft: 10, gap: 8 }}>
-                                      <Text
-                                        allowFontScaling={false}
-                                        style={styles.productlebleHeader}
-                                      >
-                                        {data?.list?.title}
-                                      </Text>
-                                      <View style={styles.rightSection}>
-                                      <Text allowFontScaling={false} style={styles.productlableprice}>
-                                        £{data?.list?.price}
-                                      </Text>
-                                       <Text allowFontScaling={false} style={styles.datetlable}>
-                                      {formatDateWithDash(data?.list?.created_at)}
-                                    </Text>
-                                    </View>
-                                    
-                  
-                              <View style={styles.univercitycontainer}>
-                                <Text allowFontScaling={false} style={styles.universitylable}>
-                                  {data?.list?.createdby?.university_name}
-                                </Text>
-                              </View>
+                  <View style={{ marginLeft: 10, gap: 8 }}>
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.productlebleHeader}
+                    >
+                      {data?.list?.title}
+                    </Text>
+                    <View style={styles.rightSection}>
+                    <Text allowFontScaling={false} style={styles.productlableprice}>
+                      £{data?.list?.price}
+                    </Text>
+                     <Text allowFontScaling={false} style={styles.datetlable}>
+                    {formatDateWithDash(data?.list?.created_at)}
+                  </Text>
                   </View>
+                  
 
+            <View style={styles.univercitycontainer}>
+              <Text allowFontScaling={false} style={styles.universitylable}>
+                {data?.list?.createdby?.university_name}
+              </Text>
+            </View>
+
+                  </View>
                 </View>
                 <View style={styles.cardconstinerdivider} />
                 <View style={styles.listingtyperow}>
@@ -490,8 +498,20 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                     {data?.list?.isactive ? 'Active' : 'Inactive'}
                   </Text>
                 </View>
+                 {data?.list?.category_id === 3 && data?.list?.isactive && (
+                                <View style={styles.listingtyperow}>
+                                  <Text allowFontScaling={false} style={styles.lebleHeader}>
+                                    Available Units:
+                                  </Text>
+                
+                                  <Text allowFontScaling={false} style={styles.status}>
+                                    {data?.list?.remaining_quantity}
+                                  </Text>
+                                </View>
+                              )}
               </View>
  
+              {/* <View style={styles.carddivider} /> */}
               {Array.isArray(data?.buyers) && data.buyers.length > 0 && (
               <View style={styles.carddivider} />
             )}
@@ -575,6 +595,14 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                       </Text>
                     </View>
  
+                    {/* <View style={styles.listingtyperow}>
+                      <Text allowFontScaling={false} style={styles.lebleHeader}>
+                        Buyer’s University:
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.status}>
+                        {buyer.university_name}
+                      </Text>
+                    </View> */}
                     <View style={styles.listingtyperow1}>
                       <Text allowFontScaling={false} style={styles.lebleHeader}>
                         Buyer’s University:
@@ -652,6 +680,88 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
             </View>
          </AnimatedReanimated.ScrollView>
 
+       
+       
+        {(
+        !data?.list?.ispurchased ||
+        data?.list?.category_id === 2 ||
+        data?.list?.category_id === 5
+      ) && (
+
+
+
+
+        <View style={styles.bottomview}>
+          <ButtonNew
+            // title='Deactivate'
+            title={data?.list?.isactive ? 'Deactivate' : 'Activate'}
+            textStyle={[styles.cancelText,{width: '100%'}]}
+
+            buttonStyle={[{
+              width:'48%',
+              boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
+              
+            backgroundColor:
+              'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.10) 100%)',
+            borderBlockStartColor: '#ffffff47',
+            borderBlockColor: '#ffffff47',
+        
+            borderTopColor: '#ffffff47',
+            borderBottomColor: '#ffffff47',
+            borderLeftColor: '#ffffff47',
+            borderRightColor: '#ffffff47',
+            boxSizing: 'border-box',}]}
+            onPress={() => {
+              if (data?.list?.isactive) {
+                setShowConfirm(true);
+              } else {
+                handleDeactivate();
+              }
+            }}/>
+          <ButtonNew
+          textStyle={{color: '#000000',
+          fontFamily: 'Urbanist-Regular',
+          fontSize: 16,
+          fontWeight: '500',
+          fontStyle: 'normal',
+          letterSpacing: 0.17,
+          lineHeight: 22,}}
+           buttonStyle={[{width: '48%', backgroundColor: '#ffffffa7' }]}
+            title=' Edit Listing'
+            onPress={() => {
+              if (!data?.list?.isactive) {
+                showToast('Purchased item can’t be edited.', 'error');
+                return;
+              }
+              if(Platform.OS === 'ios'){
+                navigation.navigate(
+                  'EditListScreen',
+                  {
+                    productId: catagory_id,
+                    productName: catagory_name,
+                    shareid: shareid,
+                  },
+                  { animation: 'none' },
+                );
+
+              } else {
+                navigation.replace(
+                  'EditListScreen',
+                  {
+                    productId: catagory_id,
+                    productName: catagory_name,
+                    shareid: shareid,
+                  },
+                  { animation: 'none' },
+                );
+
+              }
+              
+            }}/>
+
+        </View>
+      )}
+
         <Modal
           visible={showPopup1}
           transparent
@@ -678,6 +788,12 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                     { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
                   ]}
                 />
+
+                {loading && (
+                  <View style={styles.fullLoader}>
+                    <ActivityIndicator size="large" color="#fff" />
+                  </View>
+                )}
 
                 <View style={styles.popupContainer}>
                   <Text allowFontScaling={false} style={styles.mainheader}>
@@ -712,14 +828,8 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
 
                   <TouchableOpacity
                     style={styles.loginButton}
-                    // onPress={() => {
-                    //   setShowPopup2(true);
-                    //   }}
-                    onPress={otpverify}
-                  >
-                    <Text allowFontScaling={false} style={styles.loginText}>
-                      Verify
-                    </Text>
+                    onPress={otpverify}>
+                    <Text allowFontScaling={false} style={styles.loginText}>Verify</Text>                       
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -744,7 +854,9 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
           animationType="fade"
           onRequestClose={closePopup2}
         >
-          <TouchableWithoutFeedback onPress={closePopup2}>
+          <TouchableWithoutFeedback onPress={() => {
+                      navigation.replace('MyListing');
+                    }}>
             <View style={styles.overlay}>
               <BlurView
                 style={{
@@ -781,15 +893,12 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                     allowFontScaling={false}
                     style={[styles.subheader1, { marginTop: 0 }]}
                   >
-                    The payment of $10 has been transferred to your account.
+                    The payment of £{data?.list?.price} has been transferred to your account.
                   </Text>
                   <TouchableOpacity
                     style={styles.loginButton}
                     onPress={() => {
-                      navigation.replace('Dashboard', {
-                        AddScreenBackactiveTab: 'Home',
-                        isNavigate: false,
-                      });
+                       navigation.goBack();
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText}>
@@ -877,6 +986,72 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
 
 const styles = StyleSheet.create({
 
+   fullLoader: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    height: "100%",
+    width: "100%",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999,   // ensure it appears above modal content
+  },
+  rightSection: {
+    flexDirection: 'row',
+    //justifyContent: 'space-between',
+    //alignItems: 'center',
+    width: '89%',
+  },
+   productlableprice: {
+      color: 'rgba(255, 255, 255, 0.88)',
+      fontSize: 14,
+      fontWeight: '500',
+      letterSpacing: -0.24,
+      lineHeight: 16,
+      fontFamily: 'Urbanist-SemiBold',
+    },
+    
+  datetlable: {
+    color: 'rgba(255, 255, 255, 0.88)',
+    fontWeight: '500',
+    letterSpacing: -0.24,
+    lineHeight: 16,
+    fontFamily: 'Urbanist-Medium',
+    textAlign: 'right',
+    marginLeft: 'auto', 
+    flexShrink: 1,  
+    fontSize: 14,
+  },
+  univercitycontainer: {
+    maxWidth: '85%',
+  },
+  universitylable: {
+    color: 'rgba(255, 255, 255, 0.88)',
+    fontSize: 14,
+    fontFamily: 'Urbanist-Medium',
+    flexShrink: 1,
+    flexWrap: 'wrap',
+    width: '100%',
+  },
+  listingtyperow1: {
+    width: '100%',
+   // display: 'flex',
+    flexDirection: 'row',
+    //justifyContent: 'space-between',
+  },
+  unistatus: {
+    color: 'rgba(255, 255, 255, 0.88)',
+    fontSize: 14,
+    fontWeight: '600',
+    letterSpacing: -0.28,
+    lineHeight: 16,
+    fontFamily: 'Urbanist-SemiBold',
+//    maxWidth:'70%',
+     flex: 1,           // takes remaining space
+  textAlign: 'right', // right aligned
+  flexWrap: 'wrap',  
+  },
     headerWrapper: {
     position: 'absolute',
     top: 0,
@@ -889,7 +1064,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '9%' : 60,
+    top: Platform.OS === 'ios' ? '8.6%' : 60,
     width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -943,13 +1118,13 @@ const styles = StyleSheet.create({
   },
 
   otpBox: {
-    width: 48,
-    height: 48,
+    width:(Platform.OS === 'ios' ? 42: 48),
+    height: (Platform.OS === 'ios' ? 42: 48),
     borderRadius: 12,
     paddingTop: 8,
     paddingRight: 12,
     paddingBottom: 8,
-    paddingLeft: 12,
+    paddingLeft:  12,
     textAlign: 'center',
     fontSize: 18,
     color: '#fff',
@@ -1122,24 +1297,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  listingtyperow1: {
-    width: '100%',
-   // display: 'flex',
-    flexDirection: 'row',
-    //justifyContent: 'space-between',
-  },
-  unistatus: {
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontSize: 14,
-    fontWeight: '600',
-    letterSpacing: -0.28,
-    lineHeight: 16,
-    fontFamily: 'Urbanist-SemiBold',
-//    maxWidth:'70%',
-     flex: 1,           // takes remaining space
-  textAlign: 'right', // right aligned
-  flexWrap: 'wrap',  
-  },
   lebleHeader: {
     color: 'rgba(255, 255, 255, 0.72)',
     fontSize: 14,
@@ -1170,15 +1327,11 @@ const styles = StyleSheet.create({
     height: 72,
     borderRadius: 14,
   },
-
-  univercitycontainer: {
-  maxWidth: '85%',
-},
-rightSection: {
-  flexDirection: 'row',
- 
-  width: '89%',
-},
+  // univercitycontainer: {
+  //   display: 'flex',
+  //   flexDirection: 'row',
+  //   justifyContent: 'space-between',
+  // },
   productlebleHeader: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontSize: 14,
@@ -1188,34 +1341,7 @@ rightSection: {
     fontFamily: 'Urbanist-SemiBold',
     paddingTop: 10,
   },
-  productlableprice: {
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontSize: 14,
-    fontWeight: '500',
-    letterSpacing: -0.24,
-    lineHeight: 16,
-    fontFamily: 'Urbanist-SemiBold',
-  },
-  
-universitylable: {
-  color: 'rgba(255, 255, 255, 0.88)',
-  fontSize: 14,
-  fontFamily: 'Urbanist-Medium',
-  flexShrink: 1,
-  flexWrap: 'wrap',
-  width: '100%',
-},
-datetlable: {
-  color: 'rgba(255, 255, 255, 0.88)',
-  fontSize: 12,
-  fontWeight: '500',
-  letterSpacing: -0.24,
-  lineHeight: 16,
-  fontFamily: 'Urbanist-Medium',
-  textAlign: 'right',
-  marginLeft: 'auto', 
-  flexShrink: 1,      
-},
+ 
    dottext: {
     marginLeft: 10,
     color: 'rgba(255, 255, 255, 0.88)',
@@ -1231,40 +1357,25 @@ datetlable: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: '100%',
+    width: '90%',
+    marginLeft: 1,
+    height: (Platform.OS==='ios'? 1.5:1.5),
+    borderColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderStyle: 'solid',
-    borderBottomWidth: 1,
-    backgroundColor: Platform.OS === 'ios' ? 'rgba(67, 170, 234, 0.09)' : 'none',
-    height: 2,
-    marginTop: 10,
-    marginBottom: 10,
-    borderColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
+    borderWidth: (Platform.OS==='ios'? 0.9:1),
   },
   cardconstinerdivider: {
-    // display: 'flex',
-    // flexDirection: 'row',
-    // justifyContent: 'space-between',
-    // alignItems: 'center',
-    // width: '100%',
-    // height: 1.5,
-    // borderStyle: 'dashed',
-    // borderBottomWidth: 1,
-    // borderBottomColor: '#4169B8',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    borderStyle: 'dashed',
-    borderBottomWidth: 1,
-    backgroundColor: Platform.OS === 'ios' ? 'rgba(67, 170, 234, 0.09)' : 'none',
-    height: 2,
-    marginTop: 10,
-    marginBottom: 10,
-    borderColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)',
+ 
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  width: '100%',
+  height: (Platform.OS==='ios'? 2:1.5),
+  borderStyle: 'dashed',
+  borderBottomWidth:(Platform.OS==='ios'? 0.9:1),
+  // backgroundColor: 'rgba(169, 211, 255, 0.08)',
+  borderColor: (Platform.OS==='ios'?  'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)':'#4169B8'),
 
   },
   sellerHeaderlable: {
@@ -1285,24 +1396,26 @@ datetlable: {
    
     scrollContainer: {
       //paddingHorizontal: 20,
-      //paddingBottom: 80,
+      paddingBottom: 80,
       paddingTop: Platform.OS === 'ios' ? 120 : 100,
       paddingHorizontal: 16,
-     
-   
   },
   bottomview: {
     position: 'absolute',
     padding: 6,
-    width: '100%',
+    width: '95%',
     height: 60,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
+    alignContent: 'center',
+    alignSelf: 'center',
     backgroundColor: '#5d5c5c14',
     zIndex: 10,
-    bottom: 0,
+    bottom: (Platform.select({ ios: 10, android: -10 })),
     marginBottom: Platform.OS === 'ios' ? 10 : 20,
+  
   },
   cancelBtn: {
     flex: 1,
@@ -1337,6 +1450,4 @@ datetlable: {
   },
 });
 
-
 export default ViewListingDetails;
-  

@@ -15,6 +15,7 @@ import {
   Keyboard,
   StatusBar,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 // import { showToast } from '../../utils/toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -180,7 +181,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
         // Refresh details so status updates immediately
         await fetchDetails();
       } else {
-        showToast('Something went wrong', 'error');
+        showToast('Something went wrong.Please try again', 'error');
       }
     } catch (error) {
       console.error('❌ API Error:', error);
@@ -211,11 +212,12 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 
   const otpverify = async () => {
     Keyboard.dismiss();
-
+    setLoading(true); 
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
         console.log('⚠️ Token not found. Cannot upload.');
+        setLoading(false);
         return;
       }
       const otpValue = otp.join('');
@@ -251,13 +253,16 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
       console.log('OTP Verify Response:', data);
 
       if (data?.statusCode === 200) {
+        setLoading(false);
         showToast(data.message, 'success');
         setShowPopup2(true);
       } else {
+        setLoading(false);
         setShowPopup1(false);
         showToast(data?.message, 'error');
       }
     } catch (err) {
+      setLoading(false);
       console.error(err);
       showToast(Constant.SOMTHING_WENT_WRONG, 'error');
     }
@@ -493,6 +498,18 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     {data?.list?.isactive ? 'Active' : 'Inactive'}
                   </Text>
                 </View>
+
+                 {data?.list?.category_id === 3 && data?.list?.isactive && (
+                <View style={styles.listingtyperow}>
+                  <Text allowFontScaling={false} style={styles.lebleHeader}>
+                    Available Units:
+                  </Text>
+
+                  <Text allowFontScaling={false} style={styles.status}>
+                    {data?.list?.remaining_quantity}
+                  </Text>
+                </View>
+              )}
               </View>
  
               {/* <View style={styles.carddivider} /> */}
@@ -773,6 +790,12 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                   ]}
                 />
 
+                {loading && (
+                  <View style={styles.fullLoader}>
+                    <ActivityIndicator size="large" color="#fff" />
+                  </View>
+                )}
+
                 <View style={styles.popupContainer}>
                   <Text allowFontScaling={false} style={styles.mainheader}>
                     Enter Delivery OTP
@@ -806,14 +829,8 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 
                   <TouchableOpacity
                     style={styles.loginButton}
-                    // onPress={() => {
-                    //   setShowPopup2(true);
-                    //   }}
-                    onPress={otpverify}
-                  >
-                    <Text allowFontScaling={false} style={styles.loginText}>
-                      Verify
-                    </Text>
+                    onPress={otpverify}>
+                    <Text allowFontScaling={false} style={styles.loginText}>Verify</Text>                       
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -838,7 +855,9 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
           animationType="fade"
           onRequestClose={closePopup2}
         >
-          <TouchableWithoutFeedback onPress={closePopup2}>
+          <TouchableWithoutFeedback onPress={() => {
+                      navigation.replace('MyListing');
+                    }}>
             <View style={styles.overlay}>
               <BlurView
                 style={{
@@ -880,10 +899,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                   <TouchableOpacity
                     style={styles.loginButton}
                     onPress={() => {
-                      navigation.replace('Dashboard', {
-                        AddScreenBackactiveTab: 'Home',
-                        isNavigate: false,
-                      });
+                       navigation.replace('MyListing');
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText}>
@@ -970,6 +986,18 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 
 
 const styles = StyleSheet.create({
+
+   fullLoader: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    height: "100%",
+    width: "100%",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999,   // ensure it appears above modal content
+  },
   rightSection: {
     flexDirection: 'row',
     //justifyContent: 'space-between',
@@ -987,14 +1015,14 @@ const styles = StyleSheet.create({
     
   datetlable: {
     color: 'rgba(255, 255, 255, 0.88)',
-    fontSize: 12,
     fontWeight: '500',
     letterSpacing: -0.24,
     lineHeight: 16,
     fontFamily: 'Urbanist-Medium',
     textAlign: 'right',
     marginLeft: 'auto', 
-    flexShrink: 1,      
+    flexShrink: 1,  
+    fontSize: 14,
   },
   univercitycontainer: {
     maxWidth: '85%',
