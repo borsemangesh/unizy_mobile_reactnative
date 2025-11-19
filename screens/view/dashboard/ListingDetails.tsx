@@ -1350,17 +1350,17 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
   },
   cardconstinerdivider: {
-    display: 'flex',
+ 
+   display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
+    height: (Platform.OS==='ios'? 0 :1.5),
     borderStyle: 'dashed',
-    borderBottomWidth: 0.9,
-    height: 2,
-    // backgroundColor: 'rgba(169, 211, 255, 0.08)',
-    borderColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    borderBottomWidth: 1,
+    borderBottomColor: '#4169B8',
+
   },
   sellerHeaderlable: {
     color: 'rgba(255, 255, 255, 0.88)',
