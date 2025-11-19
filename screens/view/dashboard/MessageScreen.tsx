@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    marginRight: 12,
+    // marginRight: 12,
   },
   initialsText: {
     color: '#fff',
