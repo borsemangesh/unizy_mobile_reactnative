@@ -397,6 +397,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
         {/* List */}
         <View style={{ flex: 1 }}>
           <Animated.FlatList
+          
             data={featureList}
             renderItem={renderItem}
             keyExtractor={(item, index) => {

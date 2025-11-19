@@ -38,6 +38,7 @@ import AnimatedReanimated, {
 } from 'react-native-reanimated';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
+import ButtonNew from '../../utils/component/ButtonNew';
 
 type ListingDetailsProps = {
   navigation: any;
@@ -381,10 +382,11 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
           <AnimatedReanimated.ScrollView 
                     scrollEventThrottle={16}
                     onScroll={scrollHandler}
+                    showsVerticalScrollIndicator={false}
                     contentContainerStyle={[
                       styles.scrollContainer,
                       { paddingBottom: Platform.select({
-                          ios: height * 0.01,
+                          ios: 90,
                           android: height * 0.1, 
                         })}, 
                     ]}>
@@ -696,24 +698,44 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
         data?.list?.category_id === 2 ||
         data?.list?.category_id === 5
       ) && (
+
+
+
+
         <View style={styles.bottomview}>
-          <TouchableOpacity
-            style={styles.cancelBtn}
+          <ButtonNew
+            // title='Deactivate'
+            title={data?.list?.isactive ? 'Deactivate' : 'Activate'}
+            textStyle={[styles.cancelText]}
+
+            buttonStyle={[{width:'48%',  boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
+            backgroundColor:
+              'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.10) 100%)',
+            borderBlockStartColor: '#ffffff47',
+            borderBlockColor: '#ffffff47',
+        
+            borderTopColor: '#ffffff47',
+            borderBottomColor: '#ffffff47',
+            borderLeftColor: '#ffffff47',
+            borderRightColor: '#ffffff47',
+            boxSizing: 'border-box',}]}
             onPress={() => {
               if (data?.list?.isactive) {
                 setShowConfirm(true);
               } else {
                 handleDeactivate();
               }
-            }}
-          >
-            <Text allowFontScaling={false} style={styles.cancelText}>
-              {data?.list?.isactive ? 'Deactivate' : 'Activate'}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.cancelBtn, { backgroundColor: '#ffffffa7' }]}
+            }}/>
+          <ButtonNew
+          textStyle={{color: '#000000',
+          fontFamily: 'Urbanist-Regular',
+          fontSize: 16,
+          fontWeight: '500',
+          fontStyle: 'normal',
+          letterSpacing: 0.17,
+          lineHeight: 22,}}
+           buttonStyle={[{width: '48%', backgroundColor: '#ffffffa7' }]}
+            title=' Edit Listing'
             onPress={() => {
               if (!data?.list?.isactive) {
                 showToast('Purchased item can’t be edited.', 'error');
@@ -743,15 +765,8 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 
               }
               
-            }}
-          >
-            <Text
-              allowFontScaling={false}
-              style={[styles.cancelText, { color: '#000000' }]}
-            >
-              Edit Listing
-            </Text>
-          </TouchableOpacity>
+            }}/>
+
         </View>
       )}
 
@@ -1389,15 +1404,19 @@ const styles = StyleSheet.create({
   bottomview: {
     position: 'absolute',
     padding: 6,
-    width: '100%',
+    width: '95%',
     height: 60,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
+    alignContent: 'center',
+    alignSelf: 'center',
     backgroundColor: '#5d5c5c14',
     zIndex: 10,
-    bottom: 0,
+    bottom: (Platform.select({ ios: 10, android: -10 })),
     marginBottom: Platform.OS === 'ios' ? 10 : 20,
+  
   },
   cancelBtn: {
     flex: 1,

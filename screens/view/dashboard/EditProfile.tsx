@@ -47,8 +47,6 @@ import {
 } from 'react-native-image-picker';
 import { check, PERMISSIONS, request, RESULTS,openSettings } from 'react-native-permissions';
 import Button from '../../utils/component/Button';
-import ProfileCard from './ProfileCard';
-import ButtonNew from '../../utils/component/ButtonNew';
 import LinearGradient from 'react-native-linear-gradient';
 
 type EditProfileProps = {

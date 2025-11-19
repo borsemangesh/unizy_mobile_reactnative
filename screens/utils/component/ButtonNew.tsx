@@ -1,19 +1,20 @@
 import React from 'react';
-import { Platform, StyleSheet, Text, TouchableOpacity, ViewStyle, StyleProp } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, ViewStyle, TextStyle, StyleProp } from 'react-native';
 import { BlurView } from '@react-native-community/blur';
 
 type ButtonProps = {
   onPress: () => void;
   title?: string;
-  style?: StyleProp<ViewStyle>; // Allow external styles
+  buttonStyle?: StyleProp<ViewStyle>;  // external button container style
+  textStyle?: StyleProp<TextStyle>;    // external text style
 };
 
-const Button = ({ onPress, title = 'Click', style }: ButtonProps) => {
+const ButtonNew = ({ onPress, title = 'Click', buttonStyle, textStyle }: ButtonProps) => {
   return (
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.7}
-      style={[styles.buttonContainer, style]} // merge external styles
+      style={[styles.buttonContainer, buttonStyle]} // merge external button styles
     >
       <BlurView
         style={StyleSheet.absoluteFill}
@@ -21,7 +22,9 @@ const Button = ({ onPress, title = 'Click', style }: ButtonProps) => {
         blurAmount={2}
         reducedTransparencyFallbackColor="transparent"
       />
-      <Text allowFontScaling={false} style={styles.buttonText}>{title}</Text>
+      <Text allowFontScaling={false} style={[styles.buttonText, textStyle]}>
+        {title}
+      </Text>
     </TouchableOpacity>
   );
 };
@@ -39,8 +42,6 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
     alignSelf: 'center',
     marginBottom: 10,
-    // position: 'absolute',
-    // bottom: Platform.OS === 'ios' ? 16 : 10,
   },
   buttonText: {
     color: '#002050ff',
@@ -53,4 +54,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Button;
+export default ButtonNew;
