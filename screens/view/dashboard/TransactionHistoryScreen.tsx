@@ -319,9 +319,11 @@ export default function TransactionHistoryScreen(
   const [isSelected, setIsSelected] = useState(false);
   
   return (
-   
-   
-    <View style={[{flex: 1, paddingHorizontal: 16 ,height: '100%',width: '100%'},]}>
+    <View
+      style={[
+        { flex: 1, paddingHorizontal: 16, height: '100%', width: '100%' },
+      ]}
+    >
       <View style={[styles.bottomTabContainer]}>
         <View style={[{ height: 38 }]}>
           <Animated.View
@@ -353,10 +355,7 @@ export default function TransactionHistoryScreen(
                   style={{
                     fontSize: 14,
                     fontFamily: 'Urbanist-SemiBold',
-                    color:
-                      key === selectedTab
-                        ? '#FFFFFF'
-                        : '#89C7FF',
+                    color: key === selectedTab ? '#FFFFFF' : '#89C7FF',
                     lineHeight: 18,
                     letterSpacing: 0.25,
                     textAlign: 'center',
@@ -367,7 +366,6 @@ export default function TransactionHistoryScreen(
               </View>
             </TouchableOpacity>
 
-           
             {key === 'Purchases' &&
               index !== tabs.length - 1 &&
               selectedTab !== 'Purchases' &&
@@ -405,8 +403,12 @@ export default function TransactionHistoryScreen(
       </View>
 
       <ScrollView
-        style={{ width: '100%', paddingBottom: (Platform.OS === 'ios'? height * 0.1:height * 0.24)}}
-        showsVerticalScrollIndicator={false}>
+        style={{
+          width: '100%',
+          paddingBottom: Platform.OS === 'ios' ? height * 0.1 : height * 0.24,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
         {transactions.length === 0 ? (
           <View style={styles.emptyWrapper}>
             <View style={styles.emptyContainer}>
@@ -454,9 +456,31 @@ export default function TransactionHistoryScreen(
                               ? `${item.title.substring(0, 24)}...`
                               : item.title}
                           </Text>
-                          <Text allowFontScaling={false} style={styles.price}>
-                            {item.price}
-                          </Text>
+                          <View style={{flexDirection: 'row', gap: 4,width: '91%',justifyContent: 'space-between'}}>
+                            <Text allowFontScaling={false} style={styles.price}>
+                              {item.price}
+                            </Text>
+
+                            <View
+                              style={styles.statusBox}
+                            >
+                              <Text
+                                allowFontScaling={false}
+                                style={[
+                                  
+                                  {
+                                    color: '#9CD6FF',
+                                    fontWeight: '600',
+                                    fontSize: 12,
+                                    fontFamily: 'Urbanist-SemiBold',
+                                        
+                                  },
+                                ]}
+                              >
+                                2 units
+                              </Text>
+                            </View>
+                          </View>
                         </View>
                       </View>
                     </View>
@@ -498,18 +522,27 @@ export default function TransactionHistoryScreen(
                   </View>
 
                   <View style={styles.cardconstinerdivider} />
-                  <View style={{ flexDirection: 'row',width: '80%' }}>
+                  <View style={{ flexDirection: 'row', width: '80%' }}>
                     <Text style={styles.sellerText}>Purchased from</Text>
                     <Text
-                        allowFontScaling={false}
-                        numberOfLines={2}
-                        style={[styles.sellerTextName]}
-                      > {`${(item.seller+ " (" + item.university + ")").length > 100
-                          ? (item.seller+ " (" + item.university + ")").substring(0, 200) + "..."
-                          : (item.seller+ " (" + item.university + ")")}`}
-                      </Text>
+                      allowFontScaling={false}
+                      numberOfLines={2}
+                      style={[styles.sellerTextName]}
+                    >
+                      {' '}
+                      {`${
+                        (item.seller + ' (' + item.university + ')').length >
+                        100
+                          ? (
+                              item.seller +
+                              ' (' +
+                              item.university +
+                              ')'
+                            ).substring(0, 200) + '...'
+                          : item.seller + ' (' + item.university + ')'
+                      }`}
+                    </Text>
                   </View>
- 
                 </View>
               ))}
             </View>
@@ -530,9 +563,7 @@ export default function TransactionHistoryScreen(
                 <View style={styles.imgcontainer}>
                   <Image
                     source={totalEaning}
-                    style={{ width: 28,
-                      height: 28,
-                    resizeMode: 'cover'}}
+                    style={{ width: 28, height: 28, resizeMode: 'cover' }}
                     resizeMode="cover"
                   />
                 </View>
@@ -559,7 +590,6 @@ export default function TransactionHistoryScreen(
                   >
                     {/* {`£` + overallEarning} */}
                     {`£${Number(overallEarning).toFixed(2)}`}
-            
                   </Text>
                 </View>
               </View>
@@ -714,7 +744,7 @@ export default function TransactionHistoryScreen(
                           fontSize: 12,
                           marginTop: 10,
 
-    textDecorationLine: 'underline', 
+                          textDecorationLine: 'underline',
                         }}
                       >
                         View Listing
@@ -884,7 +914,7 @@ const styles = StyleSheet.create({
   },
   unitsBox: {
     backgroundColor: 'rgba(255,255,255,0.15)',
-    borderRadius: 10,
+    borderRadius: 4,
     paddingHorizontal: 10,
     paddingVertical: 4,
   },
