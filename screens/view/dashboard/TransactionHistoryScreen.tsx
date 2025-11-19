@@ -527,20 +527,9 @@ export default function TransactionHistoryScreen(
                     <Text
                       allowFontScaling={false}
                       numberOfLines={2}
-                      style={[styles.sellerTextName]}
+                      style={[styles.sellerTextName,{marginLeft: 4}]}
                     >
-                      {' '}
-                      {`${
-                        (item.seller + ' (' + item.university + ')').length >
-                        100
-                          ? (
-                              item.seller +
-                              ' (' +
-                              item.university +
-                              ')'
-                            ).substring(0, 200) + '...'
-                          : item.seller + ' (' + item.university + ')'
-                      }`}
+                      {item.seller} ({item.university})
                     </Text>
                   </View>
                 </View>
