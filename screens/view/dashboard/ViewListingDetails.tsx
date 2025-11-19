@@ -855,7 +855,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
           onRequestClose={closePopup2}
         >
           <TouchableWithoutFeedback onPress={() => {
-                      navigation.replace('MyListing');
+                      navigation.goBack();
                     }}>
             <View style={styles.overlay}>
               <BlurView
@@ -1352,7 +1352,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-Medium',
     alignSelf:'center'
   },
-  carddivider: {
+ carddivider: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
