@@ -1666,7 +1666,7 @@ const MessagesIndividualScreen = ({
                     flexDirection: 'row',
                     alignItems: 'center',
                     flex: 1,
-                    borderRadius: 10,
+                    borderRadius: (Platform.OS === 'ios' ? 40 : 40),
                     paddingHorizontal: 12,
                     paddingVertical: 8,
                     overflow: 'hidden',
@@ -2086,7 +2086,7 @@ const MessagesIndividualScreen = ({
                 paddingTop: Platform.OS === 'ios' ? 0 : 8,
                 paddingBottom:
                   Platform.OS === 'ios'
-                    ? 10
+                    ? keyboardVisible || isEmojiPickerVisible ?0:30 
                     : keyboardVisible || isEmojiPickerVisible
                     ? 8
                     : 34,
@@ -2202,7 +2202,7 @@ const MessagesIndividualScreen = ({
                         }
                       }
                     }}
-                    style={{ marginRight: 8 }}
+                    style={{ marginRight: (Platform.OS === 'ios'? 5 : 8) }}
                   >
                     {isEmojiPickerVisible ? (
                       // Show keyboard icon when emoji keyboard is visible (like WhatsApp)
@@ -2219,8 +2219,11 @@ const MessagesIndividualScreen = ({
                   <View
                     style={{
                       width: 1,
-                      height: 46,
-                      backgroundColor: '#ffffff',
+                      height:  30,
+                      marginTop: (Platform.OS === 'ios'? 5 : 0),
+                      marginBottom: (Platform.OS === 'ios'? 5 : 0),
+                      
+                      backgroundColor: 'rgba(255, 255, 255, 0.23)',
                       marginHorizontal: 6,
                     }}
                   />
@@ -2234,6 +2237,7 @@ const MessagesIndividualScreen = ({
                       color: '#fff',
                       fontFamily: 'Urbanist-Medium',
                       fontSize: 17,
+                      marginLeft: (Platform.OS === 'ios'? 5 : 0)
                     }}
                     placeholder="Message"
                     placeholderTextColor="#ccc"

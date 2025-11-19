@@ -682,7 +682,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
             textStyle={[styles.cancelText,{width: '100%'}]}
 
             buttonStyle={[{
-              width:'48%',
+              width:'49%',
               boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
               
             backgroundColor:
@@ -710,7 +710,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
           fontStyle: 'normal',
           letterSpacing: 0.17,
           lineHeight: 22,}}
-           buttonStyle={[{width: '48%', backgroundColor: '#ffffffa7' }]}
+           buttonStyle={[{width: '49%', backgroundColor: '#ffffffa7' }]}
             title=' Edit Listing'
             onPress={() => {
               if (!data?.list?.isactive) {

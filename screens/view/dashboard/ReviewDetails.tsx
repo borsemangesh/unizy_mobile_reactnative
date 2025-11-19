@@ -125,57 +125,36 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
     name: 'All',
   });
   const [showButton, setShowButton] = useState(false);
-
-  //   useEffect(() => {
-  //   const loadCategories = async () => {
-  //     const stored = await AsyncStorage.getItem('categories');
-  //     if (stored) {
-  //       const parsed = JSON.parse(stored);
-
-  //       const catObjects = [
-  //         { id: null, name: 'All' },
-  //         ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
-  //       ];
-
-  //       setCategories(catObjects);
-
-  //       const matchedCategory = catObjects.find(
-  //         (c: any) => c.id === category_id
-  //       );
-  //       setSelectedCategory(matchedCategory ?? catObjects[0]);
-  //     }
-  //   };
-  //   loadCategories();
-  // }, [category_id]);
+  const [categoriesLoaded, setCategoriesLoaded] = useState(false);
 
   useEffect(() => {
     const loadCategories = async () => {
       const stored = await AsyncStorage.getItem('categories');
+  
       if (stored) {
         const parsed = JSON.parse(stored);
-
+  
         const catObjects = [
           { id: null, name: 'All' },
           ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
         ];
-
+  
         setCategories(catObjects);
-
-        const matchedCategory = catObjects.find(
-          (c: any) => c.id === category_id,
-        );
+  
+        const matchedCategory = catObjects.find(c => c.id === category_id);
         setSelectedCategory(matchedCategory ?? catObjects[0]);
-
-        if (purchase === true && matchedCategory) {
+                if (purchase === true && matchedCategory) {
           setShowButton(true);
         } else {
           setShowButton(false);
         }
       }
+  
+      setCategoriesLoaded(true);
     };
-
+  
     loadCategories();
-  }, [category_id, purchase]);
+  }, [category_id,purchase]);
 
   useEffect(() => {
     if (selectedCategory?.id !== category_id) {
@@ -186,8 +165,9 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
   }, [selectedCategory, category_id, purchase]);
 
   useEffect(() => {
+    if (!categoriesLoaded) return;
     fetchReviews();
-  }, [selectedCategory]);
+  }, [selectedCategory, categoriesLoaded]);
 
   const fetchReviews = async () => {
     try {

@@ -415,32 +415,6 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-        {/* Header */}
-        {/* <View style={styles.header}>
-          <View style={styles.headerRow}>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.replace('Dashboard', {
-                  AddScreenBackactiveTab: 'Home',
-                  isNavigate: false,
-                });
-              }}
-            >
-              <View style={styles.backIconRow}>
-                <Image
-                  source={require('../../../assets/images/back.png')}
-                  style={{ height: 24, width: 24 }}
-                />
-              </View>
-            </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>
-              Search
-            </Text>
-
-            <View style={{ width: 48 }} />
-          </View>
-        </View> */}
-
         <StatusBar
           translucent
           backgroundColor="transparent"
@@ -984,7 +958,7 @@ dateHeading:{
     borderLeftColor: '#ffffff5d',
     borderRightColor: '#ffffff36',
     borderWidth: 0.3,
-    marginTop: (Platform.OS === 'ios'? 0:20),
+    marginTop: (Platform.OS === 'ios'? 5:20),
   },
   iconSmall: {
     width: 24,
