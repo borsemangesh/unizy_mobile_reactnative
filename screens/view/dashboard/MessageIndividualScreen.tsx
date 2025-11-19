@@ -1543,7 +1543,6 @@ const MessagesIndividualScreen = ({
             top: 0,
             left: 0,
             right: 0,
-            height: 10,
             zIndex: 1000,
             overflow: 'hidden',
             pointerEvents: 'none',
@@ -2221,7 +2220,7 @@ const MessagesIndividualScreen = ({
                     style={{
                       width: 1,
                       height: 46,
-                      backgroundColor: '#FFFFFF80',
+                      backgroundColor: '#ffffff',
                       marginHorizontal: 6,
                     }}
                   />
@@ -2367,7 +2366,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
     marginVertical: 4,
-
+    
     // position: 'relative',
   },
   leftTailContainer: {
@@ -2555,12 +2554,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-Medium',
     color: '#FFFFFFE0',
     fontSize: 16, // before 14,
-    lineHeight: 19,
+    lineHeight: 21,
     fontWeight: '500',
     fontStyle: 'normal',
     letterSpacing: 0,
     textAlignVertical: 'center',
     includeFontPadding: false,
+    
   },
 
   initialsCircle: {

@@ -14,6 +14,8 @@ const Button = ({ onPress, title = 'Click' }: ButtonProps) => {
         style={StyleSheet.absoluteFill}
         blurType="light"
         blurAmount={2}
+
+        pointerEvents="none"
         // REMOVE fallback color if you want absolutely NO background color
         reducedTransparencyFallbackColor="transparent"
       />

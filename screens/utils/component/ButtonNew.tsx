@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, ViewStyle, TextStyle, StyleProp } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, ViewStyle, TextStyle, StyleProp, View } from 'react-native';
 import { BlurView } from '@react-native-community/blur';
 
 type ButtonProps = {
@@ -11,6 +11,7 @@ type ButtonProps = {
 
 const ButtonNew = ({ onPress, title = 'Click', buttonStyle, textStyle }: ButtonProps) => {
   return (
+   
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.7}
@@ -20,11 +21,14 @@ const ButtonNew = ({ onPress, title = 'Click', buttonStyle, textStyle }: ButtonP
         style={StyleSheet.absoluteFill}
         blurType="light"
         blurAmount={2}
+        pointerEvents="none"
         reducedTransparencyFallbackColor="transparent"
       />
+      <View style={{width: '100%', height: '100%', justifyContent: 'center'}}>
       <Text allowFontScaling={false} style={[styles.buttonText, textStyle]}>
         {title}
       </Text>
+      </View>
     </TouchableOpacity>
   );
 };

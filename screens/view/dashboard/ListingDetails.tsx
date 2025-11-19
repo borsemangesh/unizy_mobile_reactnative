@@ -450,33 +450,6 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                       );
                     }
                   })()}
-                  {/* <View style={{ marginLeft: 10, gap: 8 }}>
-                    <Text
-                      allowFontScaling={false}
-                      style={styles.productlebleHeader}
-                    >
-                      {' '}
-                      {data?.list?.title}
-                    </Text>
-                    <Text
-                      allowFontScaling={false}
-                      style={styles.productlableprice}
-                    >
-                      £{data?.list?.price}
-                    </Text>
-                    <View style={styles.univercitycontainer}>
-                    <Text allowFontScaling={false} style={styles.universitylable}>
-                      {data?.list?.createdby?.university_name}
-                    </Text>
-      
-                    <View style={styles.rightSection}>
-                      <Text allowFontScaling={false} style={styles.datetlable}>.</Text>
-                      <Text allowFontScaling={false} style={styles.datetlable}>
-                        {formatDateWithDash(data?.list?.created_at)}
-                      </Text>
-                    </View>
-                  </View>
-                  </View> */}
                   <View style={{ marginLeft: 10, gap: 8 }}>
                     <Text
                       allowFontScaling={false}
@@ -706,9 +679,12 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
           <ButtonNew
             // title='Deactivate'
             title={data?.list?.isactive ? 'Deactivate' : 'Activate'}
-            textStyle={[styles.cancelText]}
+            textStyle={[styles.cancelText,{width: '100%'}]}
 
-            buttonStyle={[{width:'48%',  boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
+            buttonStyle={[{
+              width:'48%',
+              boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
+              
             backgroundColor:
               'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.10) 100%)',
             borderBlockStartColor: '#ffffff47',
@@ -1061,7 +1037,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '9%' : 60,
+    top: Platform.OS === 'ios' ? '8.6%' : 60,
     width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -1355,26 +1331,24 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '90%',
-    height: 1.5,
-    // backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    // boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-    borderStyle: 'dashed',
-    borderBottomWidth: 1,
-    // : 'rgba(255, 255, 255, 0.20)',
-    borderBottomColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    marginLeft: 1,
+    height: (Platform.OS==='ios'? 1.5:1.5),
+    borderColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    borderStyle: 'solid',
+    borderWidth: (Platform.OS==='ios'? 0.9:1),
   },
   cardconstinerdivider: {
  
-   display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    height: (Platform.OS==='ios'? 0 :1.5),
-    borderStyle: 'dashed',
-    borderBottomWidth: 1,
-    borderBottomColor: '#4169B8',
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  width: '100%',
+  height: (Platform.OS==='ios'? 2:1.5),
+  borderStyle: 'dashed',
+  borderBottomWidth:(Platform.OS==='ios'? 0.9:1),
+  // backgroundColor: 'rgba(169, 211, 255, 0.08)',
+  borderColor: (Platform.OS==='ios'?  'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)':'#4169B8'),
 
   },
   sellerHeaderlable: {
@@ -1398,8 +1372,6 @@ const styles = StyleSheet.create({
       paddingBottom: 80,
       paddingTop: Platform.OS === 'ios' ? 120 : 100,
       paddingHorizontal: 16,
-     
-   
   },
   bottomview: {
     position: 'absolute',

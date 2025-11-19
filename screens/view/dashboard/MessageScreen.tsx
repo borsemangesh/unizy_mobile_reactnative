@@ -7,6 +7,7 @@ import {
   FlatList,
   Image,
   Platform,
+  PlatformColor,
   ScrollView,
   StyleSheet,
   Text,
@@ -201,13 +202,14 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
       {initialLoading ? (
         <View 
           style={{ 
-            position: 'absolute',
-            top: Platform.OS === 'ios' ? 120 : 320,
-            bottom: 200,
+            // position: 'absolute',
+            top: Platform.OS === 'ios' ? '100%' : 320,
+            bottom: (Platform.OS === 'ios' ? 0 : 200),
             left: 0,
             right: 0,
             justifyContent: 'center', 
             alignItems: 'center',
+            height: (Platform.OS  === 'ios' ? 200 : 0)
           }}
         >
           <ActivityIndicator size="large" color="#FFFFFF" />
