@@ -51,6 +51,7 @@ import { Constant } from '../../utils/Constant';
 import TransactionHistoryScreen from './TransactionHistoryScreen';
 import { BlurView } from '@react-native-community/blur';
 import BottomNavigation from '../../utils/component/BottomNavigation';
+import DeviceInfo from 'react-native-device-info';
 
 const mylistings = require('../../../assets/images/mylistingicon.png');
 const mylistings1 = require('../../../assets/images/favourite.png');
@@ -347,21 +348,19 @@ const [isLoading, setIsLoading] = useState(true);
     sendDeviceTokenToServer();
   }, []);
 
-
-  const sendDeviceTokenToServer = async () => {
+const sendDeviceTokenToServer = async () => {
     try {
-
     const token = await AsyncStorage.getItem('userToken');
     if (!token) return;
-
+    const deviceId = await DeviceInfo.getUniqueId();
     const url1 = MAIN_URL.baseUrl + 'user/devicetoken';
     console.log('📤 FCM URL:', url1);
     const fcmToken = await messaging().getToken();
     console.log('📤 FCM fcmToken:', fcmToken);
-    // const fcmToken = "";
     const requestBody = {
           device_token: fcmToken,
           device_type  : Platform.OS,
+          device_id:deviceId
         };
     console.log('Body:', JSON.stringify(requestBody));
     const response = await fetch(url1, {

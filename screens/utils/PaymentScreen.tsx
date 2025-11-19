@@ -124,16 +124,7 @@ const PaymentScreen :React.FC<PaymentScreenProps> = ({ navigation }) => {
     customerId: customerId,
     customerEphemeralKeySecret: ephemeralKey,
     paymentIntentClientSecret: clientSecret,
-    merchantDisplayName: "Your Company",
- 
- 
-  //applePay: true,
-  //   googlePay: {
-  //   merchantCountryCode: "US",  // your country
-  //   //currencyCode: "INR",        // your currency
-  //   testEnv: true,              // set false in production
-  // },
-   
+    merchantDisplayName: "Your Company",  
     allowsDelayedPaymentMethods: true,
   });
  
@@ -180,14 +171,12 @@ const PaymentScreen :React.FC<PaymentScreenProps> = ({ navigation }) => {
         return;
       }
  
-      // 👇 Other payment or network errors
       console.log('Payment failed:', error);
-      showToast(`Payment failed: ${error.message}`, 'error');
+      showToast(`Payment failed: Please try again.`, 'error');
       return;
     }
  
-    // ✅ Payment succeeded
-    showToast('Payment successful!');
+    showToast('Payment completed successfully!');
     if (onSuccess) await onSuccess();
     navigation.goBack();
  

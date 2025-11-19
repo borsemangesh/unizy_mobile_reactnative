@@ -197,13 +197,13 @@ useEffect(() => {
           }
       }
       else {
-        Alert.alert('Error', json?.message || 'Something went wrong.');
+        Alert.alert('Error', json?.message || 'Something went wrong.Please try again');
       }
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert('Error', error.message);
       } else {
-        Alert.alert('Error', 'Something went wrong');
+        Alert.alert('Error', 'Something went wrong.Please try again');
       }
     }
   };
