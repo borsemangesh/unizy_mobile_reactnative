@@ -38,6 +38,7 @@ interface TransactionItem {
   category_logo:string;
   feature_idNew: number;
   amount: string;
+  purchased_quantity?:number
 }
 
 interface TransactionSection {
@@ -172,6 +173,7 @@ export default function TransactionHistoryScreen(
               university: item.university_name, // University name
               order_otp: item.order_otp,        // OTP for verification
               category_logo: item.category_logo,
+              purchased_quantity:item.purchased_quantity ?? 0
             })),
           }));
        
@@ -477,7 +479,7 @@ export default function TransactionHistoryScreen(
                                   },
                                 ]}
                               >
-                                2 units
+                                {item?.purchased_quantity} units
                               </Text>
                             </View>
                           </View>
@@ -523,7 +525,7 @@ export default function TransactionHistoryScreen(
 
                   <View style={styles.cardconstinerdivider} />
                   <View style={{ flexDirection: 'row', width: '80%' }}>
-                    <Text style={styles.sellerText}>Purchased from</Text>
+                   <Text style={styles.sellerText}>Purchased from</Text>
                     <Text
                       allowFontScaling={false}
                       numberOfLines={2}
@@ -1059,7 +1061,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: 42,
-    marginBottom: Platform.OS === 'ios' ? 20 : 30,
+    marginBottom: Platform.OS === 'ios' ? 15 : 15,
     borderRadius: 50,
     alignSelf: 'center',
     // padding: 4,
