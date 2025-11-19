@@ -38,6 +38,7 @@ import SearchListProductCard from '../../utils/SearchListProductCard';
 import FilterBottomSheet from '../../utils/component/FilterBottomSheet';
 import SearchTutionCard from '../../utils/SearchTutionCard';
 import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
+import FilterAndroid from '../../utils/component/FilterAndroid';
 type CreatedBy = {
   id: number;
   firstname: string;
@@ -715,16 +716,34 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
         />
       </View>
 
-      <FilterBottomSheet
+      {/* <FilterBottomSheet
         catagory_id={category_id}
         visible={isFilterVisible}
         onClose={() => setFilterVisible(false)}
         onApply={filterBody => handleFilterApply(filterBody)}
         from={0}
         to={0}
-        //onApply={(filterBody) => handleFilterApply(filterBody, 1)}
-        //from={0} to={0}
-      />
+      /> */}
+
+      {Platform.OS === 'ios' ? (
+        <FilterBottomSheet
+          catagory_id={category_id}
+          visible={isFilterVisible}
+          onClose={() => setFilterVisible(false)}
+          onApply={filterBody => handleFilterApply(filterBody)}
+          from={0}
+          to={0}
+        />
+      ) : (
+        <FilterAndroid
+          catagory_id={category_id}
+          visible={isFilterVisible}
+          onClose={() => setFilterVisible(false)}
+          onApply={filterBody => handleFilterApply(filterBody)}
+          from={0}
+          to={0} 
+        />
+      )}
       <NewCustomToastContainer />
     </ImageBackground>
   );
@@ -965,7 +984,7 @@ dateHeading:{
     borderLeftColor: '#ffffff5d',
     borderRightColor: '#ffffff36',
     borderWidth: 0.3,
-    marginTop: 0,
+    marginTop: (Platform.OS === 'ios'? 0:20),
   },
   iconSmall: {
     width: 24,

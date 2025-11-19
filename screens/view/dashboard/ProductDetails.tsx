@@ -40,6 +40,7 @@ import Animated, {
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
+import FilterAndroid from '../../utils/component/FilterAndroid';
 type CreatedBy = {
   id: number;
   firstname: string;
@@ -799,7 +800,7 @@ const handleEndReached = useCallback(() => {
           />
       </View>
 
-      <FilterBottomSheet
+      {/* <FilterBottomSheet
         catagory_id={category_id}
         visible={isFilterVisible}
         initialFilters={appliedFilter}
@@ -810,7 +811,36 @@ const handleEndReached = useCallback(() => {
         onApply={filterBody => handleFilterApply(filterBody)}
         from={0}
         to={0}
-      />
+      /> */}
+
+      {Platform.OS === 'ios' ? (
+        <FilterBottomSheet
+          catagory_id={category_id}
+          visible={isFilterVisible}
+          initialFilters={appliedFilter}
+          onClose={() => {
+            console.log('Filter Close click: ', isFilterVisible);
+            setFilterVisible(false);
+          }}
+          onApply={filterBody => handleFilterApply(filterBody)}
+          from={0}
+          to={0}
+        />
+      ) : (
+        <FilterAndroid
+          catagory_id={category_id}
+          visible={isFilterVisible}
+          initialFilters={appliedFilter}
+          onClose={() => {
+            console.log('Filter Close click: ', isFilterVisible);
+            setFilterVisible(false);
+          }}
+          onApply={filterBody => handleFilterApply(filterBody)}
+          from={0}   
+          to={0}     
+        />
+      )}
+
       <NewCustomToastContainer />
     </ImageBackground>
   );
@@ -1068,7 +1098,7 @@ const styles = StyleSheet.create({
     borderLeftColor: '#ffffff5d',
     borderRightColor: '#ffffff36',
     borderWidth: 0.3,
-    marginTop: 6,
+    marginTop: (Platform.OS === 'ios'? 6:20),
   },
   iconSmall: {
     width: 24,

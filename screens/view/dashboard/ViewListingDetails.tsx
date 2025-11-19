@@ -381,7 +381,10 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                     onScroll={scrollHandler}
                     contentContainerStyle={[
                       styles.scrollContainer,
-                      { paddingBottom: height * 0.1 }, // 0.05% of screen height
+                      { paddingBottom: Platform.select({
+                          ios: height * 0.01,
+                          android: height * 0.04, 
+                        })}, 
                     ]}>
             <View
               style={{

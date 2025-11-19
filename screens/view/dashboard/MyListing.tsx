@@ -79,6 +79,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const insets = useSafeAreaInsets();
   const { height: screenHeight } = Dimensions.get('window');
+  const { height } = Dimensions.get('window');
 
   type Category = {
     id: number | null;
@@ -452,7 +453,11 @@ const MyListing = ({ navigation }: MyListingProps) => {
             }
             contentContainerStyle={[
               styles.listContainer,
-              { paddingTop: Platform.OS === 'ios' ? 120 : 100 },
+              { paddingTop: Platform.OS === 'ios' ? 120 : 100, 
+                paddingBottom: Platform.select({
+                  ios: height * 0.01,
+                  android: height * 0.05, 
+                  })},
             ]}
             onScroll={scrollHandler}
             scrollEventThrottle={16}
@@ -675,7 +680,7 @@ const styles = StyleSheet.create({
   listContainer: {
     paddingHorizontal: 16,
     paddingTop: 10,
-    paddingBottom: Platform.OS === 'ios' ? 40 : 80,
+    //paddingBottom: Platform.OS === 'ios' ? 40 : 80,
     width: Platform.OS === 'ios' ? 393 : '100%',
     alignSelf: 'center',
   },
@@ -690,7 +695,5 @@ const styles = StyleSheet.create({
   itemContainer: {
     width: '100%',
   },
-  scrollView: {
-    paddingBottom: 20,
-  },
+ 
 });

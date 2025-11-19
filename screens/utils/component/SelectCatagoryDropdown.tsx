@@ -1,7 +1,3 @@
-
-//////////////////////////////////////////////
-// Android
-
 import { BlurView } from '@react-native-community/blur';
 import { useEffect, useState } from 'react';
 import {
@@ -43,40 +39,51 @@ const SelectCatagoryDropdown = ({
   const [selectedRadio, setSelectedRadio] = useState<number | null>(null); // For radio buttons
   const screenHeight = Dimensions.get('window').height;
 
-useEffect(() => {
-  if (visible) {
-    if (Array.isArray(selectedValues)) {
-      setSelectedCheckboxes(selectedValues);
-    } else if (selectedValues) {
-      setSelectedRadio(selectedValues);
-    } else {
-      setSelectedCheckboxes([]);
-      setSelectedRadio(null);
+  const [tempSelectedCheckboxes, setTempSelectedCheckboxes] = useState<number[]>([]);
+  const [tempSelectedRadio, setTempSelectedRadio] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (visible) {
+      if (Array.isArray(selectedValues)) {
+        setTempSelectedCheckboxes(selectedValues);
+      } else if (selectedValues) {
+        setTempSelectedRadio(selectedValues);
+      } else {
+        setTempSelectedCheckboxes([]);
+        setTempSelectedRadio(null);
+      }
     }
-  }
-}, [visible, selectedValues]);
+  }, [visible, selectedValues]);
 
-const toggleCheckbox = (id: number) => {
-  setSelectedCheckboxes(prevState => {
-    let updated;
-    if (prevState.includes(id)) {
-      updated = prevState.filter(item => item !== id);
-    } else {
-      updated = [...prevState, id];
-    }
-
-    onSelect(updated); 
-    return updated;
-  });
-};
-
-  const handleRadioButton = (id: number) => {
-    setSelectedRadio(id); 
-    onSelect(id);
+  const toggleCheckbox = (id: number) => {
+    setTempSelectedCheckboxes(prev =>
+      prev.includes(id)
+        ? prev.filter(item => item !== id)
+        : [...prev, id]
+    );
   };
 
+  const handleRadioButton = (id: number) => {
+    setTempSelectedRadio(id);
+  };
+
+  const handleApply = () => {
+    if (ismultilple) {
+      onSelect(tempSelectedCheckboxes);
+    } else if (tempSelectedRadio != null) {
+      onSelect(tempSelectedRadio);
+    }
+    onClose();
+  };
+
+  const handleCancel = () => {
+    // Just close — don’t commit changes
+    onClose();
+  };
+
+
   return (
-    <View onTouchCancel={onClose} style={[StyleSheet.absoluteFillObject,{zIndex: 999,display: visible ? 'flex' : 'none'}]}>
+    <View  style={[StyleSheet.absoluteFillObject,{zIndex: 999,display: visible ? 'flex' : 'none'}]}>
       <BlurView
       // style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%'}} 
       style={[StyleSheet.absoluteFillObject]}
@@ -91,15 +98,14 @@ const toggleCheckbox = (id: number) => {
       // backdropColor={'rgba(0, 0, 0, 0.5)'}
       onRequestClose={onClose}
     >
-    
+
     <View style={{ flex: 1,justifyContent: 'flex-end', }}>
 
-       
-
       <View style={styles.overlay}>
-         <TouchableWithoutFeedback onPress={onClose}>
-            <View style={StyleSheet.absoluteFillObject} />
-             </TouchableWithoutFeedback>
+
+  <TouchableWithoutFeedback onPress={onClose}>
+    <View style={StyleSheet.absoluteFillObject} />
+  </TouchableWithoutFeedback>
         <View style={styles.modelcontainer}>
           <BlurView
           blurType={Platform.OS === 'ios' ? 'light' : 'dark'}
@@ -120,22 +126,6 @@ const toggleCheckbox = (id: number) => {
           />
 
           <View style={styles.modeltitleContainer}>
-
-              {/* <LinearGradient
-                // colors={[
-                //   'rgba(255,255,255,0.03)', 'rgba(255,255,255,0.10)',
-                // ]}
-                colors={[
-                  'rgba(140, 151, 255, 0.05)',
-                  'rgba(0, 0, 248, 0.15)',
-                ]}
-                start={{ x: 0.175, y: 0.0625 }}
-                end={{ x: 1, y: 1 }}          
-                style={[
-                  styles.modeltitleContainer,
-                  { borderTopLeftRadius: 30, borderTopRightRadius: 30,},
-                ]}
-              > */}
               <View style={{width: '100%',alignSelf: 'center',alignItems: 'center',paddingBottom: 10}}>
               <View style={{height:5,backgroundColor: 'rgba(0, 0, 0, 0.57)',flexDirection: 'row',width: '15%',borderRadius: 10,top:-10}}/>
 
@@ -169,17 +159,16 @@ const toggleCheckbox = (id: number) => {
           <View
             style={{
               width: '100%',
-              minHeight: screenHeight * 0.2, 
+              minHeight: screenHeight * 0.1, 
               maxHeight: screenHeight * 0.6,
               paddingHorizontal: 10,
             }}
           >
-            <ScrollView  showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom:15 }}>
+            <ScrollView  showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom:16 }}>
               {options.map((option, index) => {
-                const isSelectedRadio = selectedRadio === option.id;
-                const isSelectedCheckbox = selectedCheckboxes.includes(
-                  option.id,
-                );
+              
+                const isSelectedRadio = tempSelectedRadio === option.id;
+                const isSelectedCheckbox = tempSelectedCheckboxes.includes(option.id);
 
                 return (
                   <View
@@ -232,7 +221,7 @@ const toggleCheckbox = (id: number) => {
                             fontSize: 16,
                             marginLeft: 10,
                             fontWeight: '600',
-                            lineHeight: 18,
+                            lineHeight: 22,
                             letterSpacing: -0.28,
                             fontFamily: 'Urbanist-SemiBold',
 
@@ -250,23 +239,27 @@ const toggleCheckbox = (id: number) => {
           </View>
           <View style={styles.cardconstinerdivider} />
           <View style={styles.bottomview}>
-            <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
-              <Text allowFontScaling={false} style={styles.cancelText}>Cancel</Text>
-            </TouchableOpacity>
+         
+              <TouchableOpacity style={styles.cancelBtn} onPress={handleCancel}>
+                  <Text style={styles.cancelText}>Cancel</Text>
+                </TouchableOpacity>
 
+           
             <TouchableOpacity
-              style={[styles.cancelBtn, { backgroundColor: '#ffffff4e' }]}
-              onPress={onClose}
-            >
-              <Text allowFontScaling={false} style={[styles.cancelText, { color: '#000000' }]}>
-                Apply
-              </Text>
-            </TouchableOpacity>
+                  style={[styles.cancelBtn, { backgroundColor: '#ffffff4e' }]}
+                  onPress={handleApply}
+                >
+                  <Text style={[styles.cancelText, { color: '#000000' }]}>
+                    Apply
+                  </Text>
+                </TouchableOpacity>
           </View>
         </View>
+
+
       </View>
+
       </View>
-    
     </Modal>
     </View>
   );
@@ -286,7 +279,7 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed',
     borderBottomWidth: 1,
     height: 1,
-    borderColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)'
+    borderColor: '#52577cff'
   },
   checkedBox: {
     //backgroundColor: '#ffffff',
@@ -409,12 +402,17 @@ const styles = StyleSheet.create({
     overflow:'hidden'
   },
   bottomview: {
-    padding: 10,
+    padding: 16,
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingBottom: (Platform.OS === 'ios' ? 40 : 10),
+    justifyContent: 'center',
+    paddingBottom: (Platform.OS === 'ios' ? 40 : 20),
+    paddingTop:16,
+    alignItems:'center',
+    alignContent:'center',
+    gap:8
+
   },
   radioButtonSelected: {
     backgroundColor: 'white',
@@ -438,8 +436,9 @@ const styles = StyleSheet.create({
     shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25',
   },
   cancelBtn: {
+    minHeight:48,
     flex: 1,
-    marginRight: 8,
+    //marginRight: 8,
     padding: 12,
     borderRadius: 50,
     // backgroundColor: 'gray',
@@ -538,10 +537,10 @@ const styles = StyleSheet.create({
   cancelText: {
     color: 'rgba(255, 255, 255, 0.48)',
     fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
+    fontSize: 20,
     fontWeight: '500',
     letterSpacing: 0.17,
-    lineHeight: 19.6,
+    //lineHeight: 19.6,
   },
 
   inactiveTab: {

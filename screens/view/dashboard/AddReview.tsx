@@ -155,7 +155,7 @@ const AddReview : React.FC<AddReviewProps> = ({ navigation }) =>{
         <View style={styles.login_container}>
               <TextInput
               allowFontScaling={false}
-                style={styles.personalEmailID_TextInput}
+                style={[styles.personalEmailID_TextInput, { textAlignVertical: 'top', paddingTop: 10 }]}
                 placeholder={'Tell other students what you liked, what could be better...'}
                 placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
                 multiline={true}
@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
     color:"#fff",
     paddingLeft:12,
     height: '100%'
-  
+    
 
   },
    payText: {

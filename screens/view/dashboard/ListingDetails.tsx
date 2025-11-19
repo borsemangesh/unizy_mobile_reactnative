@@ -383,7 +383,10 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     onScroll={scrollHandler}
                     contentContainerStyle={[
                       styles.scrollContainer,
-                      { paddingBottom: height * 0.01 }, // 0.05% of screen height
+                      { paddingBottom: Platform.select({
+                          ios: height * 0.01,
+                          android: height * 0.1, 
+                        })}, 
                     ]}>
             <View
               style={{
@@ -1347,15 +1350,6 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
   },
   cardconstinerdivider: {
-    // display: 'flex',
-    // flexDirection: 'row',
-    // justifyContent: 'space-between',
-    // alignItems: 'center',
-    // width: '100%',
-    // height: (Platform.OS === 'ios'? 0: 1.5),
-    // borderStyle: 'dashed',
-    // borderWidth: 1,
-    // borderColor: '#4169B8',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',

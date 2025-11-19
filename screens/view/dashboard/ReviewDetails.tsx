@@ -16,6 +16,7 @@ import {
   ActivityIndicator,
   ImageSourcePropType,
   ListRenderItem,
+  Dimensions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -59,6 +60,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [totalReviews, setTotalReviews] = useState(0);
   const [averageRating, setAverageRating] = useState(0);
+  const { height } = Dimensions.get('window');
 
   const scrollY = useSharedValue(0);
 
@@ -469,7 +471,10 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
           scrollEventThrottle={16}
           contentContainerStyle={{
             paddingTop: Platform.OS === 'ios' ? 120 : 110,
-            paddingBottom: 40,
+            paddingBottom: Platform.select({
+            ios: height * 0.01,
+            android: height * 0.1, 
+          }),
           }}
           ListHeaderComponent={
             <>
