@@ -225,6 +225,7 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
   try {
     const pagesize = 10;
     let url = `${MAIN_URL.baseUrl}user/user-listing?page=${pageNum}&pagesize=${pagesize}&user_id=${members.id}`;
+    let url = `${MAIN_URL.baseUrl}user/user-listing?page=${pageNum}&pagesize=${pagesize}&user_id=${members.id}`;
     //let url = `${MAIN_URL.baseUrl}user/user-listing?user_id=${members.id}`;
     
     if (categoryId) {
