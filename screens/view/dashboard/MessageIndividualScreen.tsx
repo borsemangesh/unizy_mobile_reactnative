@@ -2638,7 +2638,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     width: Platform.OS === 'ios' ? '100%' : '100%',
-    height: Platform.OS === 'ios' ? 180 : 180,
+    height: Platform.OS === 'ios' ? 110 : 180,
     zIndex: 10,
     overflow: 'hidden',
     alignSelf: 'center',
