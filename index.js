@@ -22,6 +22,23 @@ import { navigate } from './screens/view/NavigationService';
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log("📩 Background FCM Message:", remoteMessage);
+
+  const title = remoteMessage.notification?.title || remoteMessage.data?.title || "Notification";
+  const body = remoteMessage.notification?.body || remoteMessage.data?.body || "";
+
+  await notifee.displayNotification({
+    title,
+    body,
+    data: remoteMessage.data,
+    android: {
+      channelId: 'default',
+      sound: 'default',
+      pressAction: { id: 'default' }
+    },
+    ios: {
+      sound: 'default'
+    }
+  });
 });
 
 notifee.onBackgroundEvent(async ({ type, detail }) => {

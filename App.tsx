@@ -106,6 +106,7 @@ useEffect(() => {
                 sound: 'default',
               };
             }
+            await notifee.displayNotification(notificationConfig);
           } catch (error) {
             console.error("❌ Error displaying notification:", error);
           }

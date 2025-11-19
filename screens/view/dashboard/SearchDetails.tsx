@@ -960,7 +960,7 @@ const handlePayConfirmed = (amount: number) => {
       />
 
       <SelectFoodQuantity
-        totalcount={10}
+        totalcount={detail?.remaining_quantity}
         options={quantityOptions}
         visible={multiSelectModal.visible}   
         price={Number(detail?.price)}
