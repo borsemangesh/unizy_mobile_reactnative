@@ -39,7 +39,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     position: 'absolute',
     bottom: (Platform.OS === 'ios'? 16 : 10),
-  },
+    },
+
   buttonText: {
     // color: '#000',
     // fontSize: 16,

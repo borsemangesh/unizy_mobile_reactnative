@@ -530,15 +530,22 @@ const handlePayConfirmed = (amount: number) => {
 
 
       if (response.ok && data?.statusCode === 200) {
+
+        await AsyncStorage.removeItem('finalamount');
+        await AsyncStorage.removeItem('quantitycount');
+
+
       // Save order id to storage
       await AsyncStorage.setItem("last_order_id", data.data?.orderid?.toString() || "");
       await AsyncStorage.setItem("last_transaction_amount", data.data?.amount?.toString() || "");
       await AsyncStorage.setItem('order_otp',data.data?.order_otp?.toString() || "");
 
+
+
       showToast(" Purchased successfully!", "success");
       setShowPopup1(true)
     } else {
-      showToast(data?.message || "Something went wrong", "error");
+      showToast(data?.message || "Something went wrong.Please try again", "error");
     }
      
     } catch (err) {
@@ -746,7 +753,7 @@ const handlePayConfirmed = (amount: number) => {
 
           <View style={{ flex: 1, padding: 16 }}>
             <View style={styles.card}>
-              <View style={{ gap: 8 }}>
+              <View style={{  }}>
                 {detail && (
                   <>
                     <Text allowFontScaling={false} style={styles.QuaddText}>
@@ -754,10 +761,23 @@ const handlePayConfirmed = (amount: number) => {
                     </Text>
                     <Text allowFontScaling={false} style={styles.priceText}>
                       £{Number(detail.price).toFixed(2)}
-                    </Text>
+                    </Text>              
                   </>
                 )}
+                 {(detail?.category_id === 2 || detail?.category_id === 5) && (
+                    <View style={styles.datePosted1}>
+                      <Image
+                        source={require('../../../assets/images/duration_info.png')}
+                        style={{ height: 16, width: 16 }}
+                      />
+                      <Text allowFontScaling={false} style={styles.datetext1}>
+                      Service Duration:{' '}
+                      <Text style={styles.durationValue}>3 Hours</Text>
+                    </Text>
+                    </View>
+                  )}
               </View>
+             
               <View
                 style={{
                   display: 'flex',
@@ -1186,6 +1206,16 @@ const handlePayConfirmed = (amount: number) => {
 
 const styles = StyleSheet.create({
 
+  durationValue:{
+    color:'#FFF',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 12,
+    fontWeight: '600',
+    lineHeight: 16,
+    letterSpacing: -0.24,
+    paddingLeft:4
+  },
+
    headerWrapper: {
     position: 'absolute',
     top: 0,
@@ -1558,6 +1588,25 @@ inactiveStepCircle: {
     gap: 4,
   },
 
+    datePosted1: {
+    flexDirection: 'row',
+    height: 'auto',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.09) 100%)',
+    //boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+    borderRadius: 8,
+    paddingLeft: 8,
+    paddingRight: 8,
+     paddingTop: 6,
+    paddingBottom: 6,
+     marginTop:8,
+    //alignItems: 'center',
+    //gap: 4,
+    width:'auto',
+    alignSelf: 'flex-start', 
+  },
+
+
   userSub: {
     color: 'rgba(255, 255, 255, 0.48)',
     fontFamily: 'Urbanist-Regular',
@@ -1574,6 +1623,17 @@ inactiveStepCircle: {
     fontWeight: '500',
     lineHeight: 16,
     letterSpacing: -0.24,
+  },
+
+  datetext1: {
+    //color: 'rgba(255, 255, 255, 0.48)',
+    color:'#9CD6FF',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 12,
+    fontWeight: '500',
+    lineHeight: 16,
+    letterSpacing: -0.24,
+    paddingLeft:4
   },
   univeritytext: {
     color: 'rgba(255, 255, 255, 0.88)',
@@ -1715,6 +1775,7 @@ inactiveStepCircle: {
     fontSize: 20,
     fontWeight: 700,
     letterSpacing: -0.1,
+    paddingTop:8
   },
   priceText1: {
     color: '#002050',

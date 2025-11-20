@@ -68,56 +68,56 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [otp, setOtp] = useState(['', '', '', '']);
 
-   const screenHeight = Dimensions.get('window').height;
-    const [slideUp1] = useState(new Animated.Value(0));
-  
-    const scrollY = useSharedValue(0);
-  
-    const scrollHandler = useAnimatedScrollHandler({
-      onScroll: event => {
-        'worklet';
-        scrollY.value = event.contentOffset.y;
-      },
-    });
-  
-    const animatedBlurStyle = useAnimatedStyle(() => {
+  const screenHeight = Dimensions.get('window').height;
+  const [slideUp1] = useState(new Animated.Value(0));
+
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: event => {
       'worklet';
-      const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
-      return { opacity };
-    });
-  
-    const animatedButtonStyle = useAnimatedStyle(() => {
-      'worklet';
-      const borderColor = interpolateColor(
-        scrollY.value,
-        [0, 300],
-        ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
-      );
-      const redOpacity = interpolate(scrollY.value, [0, 100], [0, 0.15], 'clamp');
-      return {
-        borderColor,
-        backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
-      };
-    });
-  
-    const animatedIconStyle = useAnimatedStyle(() => {
-      'worklet';
-      const opacity = interpolate(scrollY.value, [0, 100], [0.8, 1], 'clamp');
-      const tintColor = interpolateColor(
-        scrollY.value,
-        [0, 150],
-        ['#FFFFFF', '#002050'],
-      );
-      return {
-        opacity,
-        tintColor,
-      };
-    });
-  
-    const blurAmount = useDerivedValue(() =>
-      interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  const animatedBlurStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+    return { opacity };
+  });
+
+  const animatedButtonStyle = useAnimatedStyle(() => {
+    'worklet';
+    const borderColor = interpolateColor(
+      scrollY.value,
+      [0, 300],
+      ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
     );
-  
+    const redOpacity = interpolate(scrollY.value, [0, 100], [0, 0.15], 'clamp');
+    return {
+      borderColor,
+      backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+    };
+  });
+
+  const animatedIconStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 100], [0.8, 1], 'clamp');
+    const tintColor = interpolateColor(
+      scrollY.value,
+      [0, 150],
+      ['#FFFFFF', '#002050'],
+    );
+    return {
+      opacity,
+      tintColor,
+    };
+  });
+
+  const blurAmount = useDerivedValue(() =>
+    interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+  );
+
 
   const fetchDetails = useCallback(async () => {
     try {
@@ -189,14 +189,14 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
     }
   };
   useEffect(() => {
-  if (showPopup1) {
-    const timer = setTimeout(() => {
-      inputs.current[0]?.focus();
-    }, 300);
+    if (showPopup1) {
+      const timer = setTimeout(() => {
+        inputs.current[0]?.focus();
+      }, 300);
 
-    return () => clearTimeout(timer);
-  }
-}, [showPopup1]);
+      return () => clearTimeout(timer);
+    }
+  }, [showPopup1]);
 
   const handleChange = (text: string, index: number) => {
     const newOtp = [...otp];
@@ -212,7 +212,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
 
   const otpverify = async () => {
     Keyboard.dismiss();
-    setLoading(true); 
+    setLoading(true);
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
@@ -233,8 +233,8 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
       const createPayload = {
         //orderid: 'KX5WHMSX',
         //otp: '123456',
-        otp:otpValue,
-        orderid:selectedOrderId,
+        otp: otpValue,
+        orderid: selectedOrderId,
       };
 
       console.log(url);
@@ -272,330 +272,332 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
     if (!dateString) return "";
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return "";
-  
+
     const day = date.getDate();
-  
+
     let suffix = "th";
     if (day % 10 === 1 && day !== 11) suffix = "st";
     else if (day % 10 === 2 && day !== 12) suffix = "nd";
     else if (day % 10 === 3 && day !== 13) suffix = "rd";
-  
+
     const monthShort = date
       .toLocaleString("default", { month: "short" }); // "Nov"
-  
+
     const year = date.getFullYear();
     return `${day}${suffix} ${monthShort} ${year}`;
   };
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-      <StatusBar translucent
-      backgroundColor="transparent"
-      barStyle="light-content"/>
-          <AnimatedReanimated.View
-            style={[styles.headerWrapper, animatedBlurStyle]}
-            pointerEvents="none"
-            >
-      <MaskedView
-        style={StyleSheet.absoluteFill}
-        maskElement={
-        <LinearGradient
-        colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
-        locations={[0, 0.8]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={StyleSheet.absoluteFill}
-        />
-        }
+        <StatusBar translucent
+          backgroundColor="transparent"
+          barStyle="light-content" />
+        <AnimatedReanimated.View
+          style={[styles.headerWrapper, animatedBlurStyle]}
+          pointerEvents="none"
         >
-         <BlurView
-          style={StyleSheet.absoluteFill}
-          blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
-          blurAmount={Platform.OS === 'ios' ? 45 : 45}
-          // overlayColor="rgba(255,255,255,0.05)"
-          reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
-          />
+          <MaskedView
+            style={StyleSheet.absoluteFill}
+            maskElement={
+              <LinearGradient
+                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                locations={[0, 0.8]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            }
+          >
+            <BlurView
+              style={StyleSheet.absoluteFill}
+              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+              blurAmount={Platform.OS === 'ios' ? 45 : 45}
+              // overlayColor="rgba(255,255,255,0.05)"
+              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+            />
             <LinearGradient
               colors={[
-              'rgba(255, 255, 255, 0.45)',
-               'rgba(255, 255, 255, 0.02)',
-              'rgba(255, 255, 255, 0.02)',
+                'rgba(255, 255, 255, 0.45)',
+                'rgba(255, 255, 255, 0.02)',
+                'rgba(255, 255, 255, 0.02)',
               ]}
-            style={StyleSheet.absoluteFill}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
             />
           </MaskedView>
-       </AnimatedReanimated.View>
-           <View style={styles.headerContent} pointerEvents="box-none">
-                  <TouchableOpacity
-                    onPress={() => {navigation.goBack();}}
-                    style={styles.backButtonContainer}
-                    activeOpacity={0.7} >
-                    <AnimatedReanimated.View
-                      style={[styles.blurButtonWrapper, animatedButtonStyle]}>
-                      <AnimatedReanimated.View
-                        style={[
-                          StyleSheet.absoluteFill,
-                          useAnimatedStyle(() => ({
-                            opacity: interpolate(
-                              scrollY.value,
-                              [0, 30],
-                              [1, 0],
-                              'clamp',
-                            ),
-                            backgroundColor: 'rgba(255,255,255,0.1)',
-                            borderRadius: 40,
-                          })),
-                        ]}
-                      />
-        
-                      <AnimatedReanimated.View
-                        style={[
-                          StyleSheet.absoluteFill,
-                          useAnimatedStyle(() => ({
-                            opacity: interpolate(
-                              scrollY.value,
-                              [0, 50],
-                              [0, 1],
-                              'clamp',
-                            ),
-                          })),
-                        ]}
-                      >
-                        <BlurView
-                          style={StyleSheet.absoluteFill}
-                          blurType="light"
-                          blurAmount={10}
-                          reducedTransparencyFallbackColor="transparent"
-                        />
-                      </AnimatedReanimated.View>
-        
-                      {/* Back Icon */}
-                      <AnimatedReanimated.Image
-                        source={require('../../../assets/images/back.png')}
-                        style={[{ height: 24, width: 24 }, animatedIconStyle]}
-                      />
-                    </AnimatedReanimated.View>
-                  </TouchableOpacity>
-        
-                  <Text allowFontScaling={false} style={styles.unizyText}>
-                    Listing Details
-                  </Text>
-                </View>
+        </AnimatedReanimated.View>
+        <View style={styles.headerContent} pointerEvents="box-none">
+          <TouchableOpacity
+            onPress={() => { navigation.goBack(); }}
+            style={styles.backButtonContainer}
+            activeOpacity={0.7} >
+            <AnimatedReanimated.View
+              style={[styles.blurButtonWrapper, animatedButtonStyle]}>
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 30],
+                      [1, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 40,
+                  })),
+                ]}
+              />
 
-          <AnimatedReanimated.ScrollView 
-                    scrollEventThrottle={16}
-                    onScroll={scrollHandler}
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={[
-                      styles.scrollContainer,
-                      { paddingBottom: Platform.select({
-                          ios: 90,
-                          android: height * 0.1, 
-                        })}, 
-                    ]}>
-            <View
-              style={{
-                gap: 16,
-                justifyContent: 'center',
-                alignItems: 'center',
-                width: '100%',
-              }}
-            >
-              {/* Card */}
-              <View style={[styles.card,{marginTop:10}]}>
-                <View style={{ flexDirection: 'row' ,alignItems:'center'}}>
-                  {(() => {
-                    // Check if category is housekeeping or tuition
-                    const categoryName = data?.list?.category?.name || '';
-                    const isProfileCategory = categoryName?.toLowerCase() === 'house keeping' || categoryName?.toLowerCase() === 'tuition';
-                    const profilePhoto = data?.list?.createdby?.profile;
-                    const firstName = data?.list?.createdby?.firstname;
-                    const lastName = data?.list?.createdby?.lastname;
-                   
-                    // Get initials helper function
-                    const getInitials = (first: string | null = '', last: string | null = '') => {
-                      const f = first?.trim()?.charAt(0)?.toUpperCase() || '';
-                      const l = last?.trim()?.charAt(0)?.toUpperCase() || '';
-                      return (f + l) || '?';
-                    };
-                   
-                    // Determine what to show
-                    const shouldShowProfile = isProfileCategory && profilePhoto;
-                    const shouldShowInitials = isProfileCategory && !profilePhoto;
-                   
-                    if (shouldShowInitials) {
-                      return (
-                        <View style={styles.initialsCircle}>
-                          <Text allowFontScaling={false} style={styles.initialsText}>
-                            {getInitials(firstName, lastName)}
-                          </Text>
-                        </View>
-                      );
-                    } else if (shouldShowProfile) {
-                      return (
-                        <Image
-                          source={{ uri: profilePhoto }}
-                          style={styles.image}
-                          resizeMode="cover"
-                        />
-                      );
-                    } else {
-                      return (
-                        <Image
-                          source={{
-                            uri: data?.list?.profileshowinview
-                              ? data?.list?.createdby?.profile
-                              : data?.list?.thumbnail,
-                          }}
-                          style={styles.image}
-                          resizeMode="cover"
-                        />
-                      );
-                    }
-                  })()}
-                  <View style={{ marginLeft: 10, gap: 8 }}>
-                    <Text
-                      allowFontScaling={false}
-                      style={styles.productlebleHeader}
-                    >
-                      {data?.list?.title}
-                    </Text>
-                    <View style={styles.rightSection}>
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 50],
+                      [0, 1],
+                      'clamp',
+                    ),
+                  })),
+                ]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
+                />
+              </AnimatedReanimated.View>
+
+              {/* Back Icon */}
+              <AnimatedReanimated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 24, width: 24 }, animatedIconStyle]}
+              />
+            </AnimatedReanimated.View>
+          </TouchableOpacity>
+
+          <Text allowFontScaling={false} style={styles.unizyText}>
+            Listing Details
+          </Text>
+        </View>
+
+        <AnimatedReanimated.ScrollView
+          scrollEventThrottle={16}
+          onScroll={scrollHandler}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={[
+            styles.scrollContainer,
+            {
+              paddingBottom: Platform.select({
+                ios: 90,
+                android: height * 0.1,
+              })
+            },
+          ]}>
+          <View
+            style={{
+              gap: 16,
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '100%',
+            }}
+          >
+            {/* Card */}
+            <View style={[styles.card, { marginTop: 10 }]}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                {(() => {
+                  // Check if category is housekeeping or tuition
+                  const categoryName = data?.list?.category?.name || '';
+                  const isProfileCategory = categoryName?.toLowerCase() === 'house keeping' || categoryName?.toLowerCase() === 'tuition';
+                  const profilePhoto = data?.list?.createdby?.profile;
+                  const firstName = data?.list?.createdby?.firstname;
+                  const lastName = data?.list?.createdby?.lastname;
+
+                  // Get initials helper function
+                  const getInitials = (first: string | null = '', last: string | null = '') => {
+                    const f = first?.trim()?.charAt(0)?.toUpperCase() || '';
+                    const l = last?.trim()?.charAt(0)?.toUpperCase() || '';
+                    return (f + l) || '?';
+                  };
+
+                  // Determine what to show
+                  const shouldShowProfile = isProfileCategory && profilePhoto;
+                  const shouldShowInitials = isProfileCategory && !profilePhoto;
+
+                  if (shouldShowInitials) {
+                    return (
+                      <View style={styles.initialsCircle}>
+                        <Text allowFontScaling={false} style={styles.initialsText}>
+                          {getInitials(firstName, lastName)}
+                        </Text>
+                      </View>
+                    );
+                  } else if (shouldShowProfile) {
+                    return (
+                      <Image
+                        source={{ uri: profilePhoto }}
+                        style={styles.image}
+                        resizeMode="cover"
+                      />
+                    );
+                  } else {
+                    return (
+                      <Image
+                        source={{
+                          uri: data?.list?.profileshowinview
+                            ? data?.list?.createdby?.profile
+                            : data?.list?.thumbnail,
+                        }}
+                        style={styles.image}
+                        resizeMode="cover"
+                      />
+                    );
+                  }
+                })()}
+                <View style={{ marginLeft: 10, gap: 8 }}>
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.productlebleHeader}
+                  >
+                    {data?.list?.title}
+                  </Text>
+                  <View style={styles.rightSection}>
                     <Text allowFontScaling={false} style={styles.productlableprice}>
                       £{data?.list?.price}
                     </Text>
-                     <Text allowFontScaling={false} style={styles.datetlable}>
-                    {formatDateWithDash(data?.list?.created_at)}
-                  </Text>
+                    <Text allowFontScaling={false} style={styles.datetlable}>
+                      {formatDateWithDash(data?.list?.created_at)}
+                    </Text>
                   </View>
-                  
 
-            <View style={styles.univercitycontainer}>
-              <Text allowFontScaling={false} style={styles.universitylable}>
-                {data?.list?.createdby?.university_name}
-              </Text>
+
+                  <View style={styles.univercitycontainer}>
+                    <Text allowFontScaling={false} style={styles.universitylable}>
+                      {data?.list?.createdby?.university_name}
+                    </Text>
+                  </View>
+
+                </View>
+              </View>
+              <View style={styles.cardconstinerdivider} />
+              <View style={styles.listingtyperow}>
+                <Text allowFontScaling={false} style={styles.lebleHeader}>
+                  Listing Type:
+                </Text>
+                <Text allowFontScaling={false} style={styles.status}>
+                  {data?.list?.isfeatured ? 'Featured' : 'Regular'}
+                </Text>
+              </View>
+              <View style={styles.listingtyperow}>
+                <Text allowFontScaling={false} style={styles.lebleHeader}>
+                  Listing Status:
+                </Text>
+                <Text allowFontScaling={false} style={styles.status}>
+                  {' '}
+                  {data?.list?.isactive ? 'Active' : 'Inactive'}
+                </Text>
+              </View>
+              {data?.list?.category_id === 3 && data?.list?.isactive && (
+                <View style={styles.listingtyperow}>
+                  <Text allowFontScaling={false} style={styles.lebleHeader}>
+                    Available Units:
+                  </Text>
+
+                  <Text allowFontScaling={false} style={styles.status}>
+                    {data?.list?.remaining_quantity}
+                  </Text>
+                </View>
+              )}
             </View>
 
-                  </View>
-                </View>
-                <View style={styles.cardconstinerdivider} />
-                <View style={styles.listingtyperow}>
-                  <Text allowFontScaling={false} style={styles.lebleHeader}>
-                    Listing Type:
-                  </Text>
-                  <Text allowFontScaling={false} style={styles.status}>
-                    {data?.list?.isfeatured ? 'Featured' : 'Regular'}
-                  </Text>
-                </View>
-                <View style={styles.listingtyperow}>
-                  <Text allowFontScaling={false} style={styles.lebleHeader}>
-                    Listing Status:
-                  </Text>
-                  <Text allowFontScaling={false} style={styles.status}>
-                    {' '}
-                    {data?.list?.isactive ? 'Active' : 'Inactive'}
-                  </Text>
-                </View>
-                 {data?.list?.category_id === 3 && data?.list?.isactive && (
-                                <View style={styles.listingtyperow}>
-                                  <Text allowFontScaling={false} style={styles.lebleHeader}>
-                                    Available Units:
-                                  </Text>
-                
-                                  <Text allowFontScaling={false} style={styles.status}>
-                                    {data?.list?.remaining_quantity}
-                                  </Text>
-                                </View>
-                              )}
-              </View>
- 
-              {/* <View style={styles.carddivider} /> */}
-              {Array.isArray(data?.buyers) && data.buyers.length > 0 && (
+            {/* <View style={styles.carddivider} /> */}
+            {Array.isArray(data?.buyers) && data.buyers.length > 0 && (
               <View style={styles.carddivider} />
             )}
-            
-              {Array.isArray(data?.buyers) &&
-                data.buyers.map((buyer: any, index: number) => (
-                  <View key={index} style={styles.card}>
-                    {/* HEADER */}
+
+            {Array.isArray(data?.buyers) &&
+              data.buyers.map((buyer: any, index: number) => (
+                <View key={index} style={styles.card}>
+                  {/* HEADER */}
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      gap: 4,
+                      justifyContent: buyer.otpverified
+                        ? 'space-between'
+                        : 'flex-start',
+                    }}
+                  >
                     <View
                       style={{
                         flexDirection: 'row',
                         alignItems: 'center',
                         gap: 4,
-                        justifyContent: buyer.otpverified
-                          ? 'space-between'
-                          : 'flex-start',
                       }}
                     >
+                      <Image
+                        source={require('../../../assets/images/sellerfile.png')}
+                        style={{ width: 24, height: 24 }}
+                        resizeMode="cover"
+                      />
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.sellerHeaderlable}
+                      >
+                        Sale Details
+                      </Text>
+                    </View>
+
+                    {/* ✅ STATUS BADGE - only if otpverified */}
+                    {buyer.otpverified && (
                       <View
                         style={{
                           flexDirection: 'row',
                           alignItems: 'center',
+                          backgroundColor: 'rgba(255, 255, 255, 0.18)',
+                          paddingHorizontal: 6,
+                          paddingVertical: 4,
+                          borderRadius: 6,
                           gap: 4,
                         }}
                       >
-                        <Image
-                          source={require('../../../assets/images/sellerfile.png')}
-                          style={{ width: 24, height: 24 }}
-                          resizeMode="cover"
-                        />
                         <Text
                           allowFontScaling={false}
-                          style={styles.sellerHeaderlable}
-                        >
-                          Sale Details
-                        </Text>
-                      </View>
- 
-                      {/* ✅ STATUS BADGE - only if otpverified */}
-                      {buyer.otpverified && (
-                        <View
                           style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            backgroundColor: 'rgba(255, 255, 255, 0.18)',
-                            paddingHorizontal: 6,
-                            paddingVertical: 4,
-                            borderRadius: 6,
-                            gap: 4,
+                            color: 'rgba(255, 255, 255, 0.88)',
+                            fontFamily: 'Urbanist-Regular',
+                            fontSize: 12,
+                            fontWeight: '600',
                           }}
                         >
-                          <Text
-                            allowFontScaling={false}
-                            style={{
-                              color: 'rgba(255, 255, 255, 0.88)',
-                              fontFamily: 'Urbanist-Regular',
-                              fontSize: 12,
-                              fontWeight: '600',
-                            }}
-                          >
-                            Completed
-                          </Text>
-                          <Image
-                            source={require('../../../assets/images/tick.png')}
-                            style={{ width: 12, height: 12 }}
-                            resizeMode="cover"
-                          />
-                        </View>
-                      )}
-                    </View>
- 
-                    <View style={styles.cardconstinerdivider} />
- 
-                    {/* BUYER DETAILS */}
-                    <View style={styles.listingtyperow}>
-                      <Text allowFontScaling={false} style={styles.lebleHeader}>
-                        Buyer Name:
-                      </Text>
-                      <Text allowFontScaling={false} style={styles.status}>
-                        {buyer.firstname} {buyer.lastname}
-                      </Text>
-                    </View>
- 
-                    {/* <View style={styles.listingtyperow}>
+                          Completed
+                        </Text>
+                        <Image
+                          source={require('../../../assets/images/tick.png')}
+                          style={{ width: 12, height: 12 }}
+                          resizeMode="cover"
+                        />
+                      </View>
+                    )}
+                  </View>
+
+                  <View style={styles.cardconstinerdivider} />
+
+                  {/* BUYER DETAILS */}
+                  <View style={styles.listingtyperow}>
+                    <Text allowFontScaling={false} style={styles.lebleHeader}>
+                      Buyer Name:
+                    </Text>
+                    <Text allowFontScaling={false} style={styles.status}>
+                      {buyer.firstname} {buyer.lastname}
+                    </Text>
+                  </View>
+
+                  {/* <View style={styles.listingtyperow}>
                       <Text allowFontScaling={false} style={styles.lebleHeader}>
                         Buyer’s University:
                       </Text>
@@ -603,164 +605,161 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                         {buyer.university_name}
                       </Text>
                     </View> */}
-                    <View style={styles.listingtyperow1}>
-                      <Text allowFontScaling={false} style={styles.lebleHeader}>
-                        Buyer’s University:
-                      </Text>
-                      <Text allowFontScaling={false} numberOfLines={0} style={styles.unistatus}>
-                        {buyer.university_name}
-                      </Text>
-                    </View>
- 
-                    <View style={styles.listingtyperow}>
-                      <Text allowFontScaling={false} style={styles.lebleHeader}>
-                        City:
-                      </Text>
-                      <Text allowFontScaling={false} style={styles.status}>
-                        {buyer.city}
-                      </Text>
-                    </View>
- 
-                    <View style={styles.listingtyperow}>
-                      <Text allowFontScaling={false} style={styles.lebleHeader}>
-                        Sold On:
-                      </Text>
-                      <Text allowFontScaling={false} style={styles.status}>
-                        {new Date(buyer.date).toLocaleString('en-GB', {
-                          month: 'short',
-                          day: '2-digit',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          hour12: true,
-                        })}
-                      </Text>
-                    </View>
- 
-                    <View style={styles.listingtyperow}>
-                      <Text allowFontScaling={false} style={styles.lebleHeader}>
-                        Sold For:
-                      </Text>
-                      <Text allowFontScaling={false} style={styles.status}>
-                        £{buyer.price}
-                      </Text>
-                    </View>
- 
+                  <View style={styles.listingtyperow1}>
+                    <Text allowFontScaling={false} style={styles.lebleHeader}>
+                      Buyer’s University:
+                    </Text>
+                    <Text allowFontScaling={false} numberOfLines={0} style={styles.unistatus}>
+                      {buyer.university_name}
+                    </Text>
+                  </View>
+
+                  <View style={styles.listingtyperow}>
+                    <Text allowFontScaling={false} style={styles.lebleHeader}>
+                      City:
+                    </Text>
+                    <Text allowFontScaling={false} style={styles.status}>
+                      {buyer.city}
+                    </Text>
+                  </View>
+
+                  <View style={styles.listingtyperow}>
+                    <Text allowFontScaling={false} style={styles.lebleHeader}>
+                      Sold On:
+                    </Text>
+                    <Text allowFontScaling={false} style={styles.status}>
+                      {new Date(buyer.date).toLocaleString('en-GB', {
+                        month: 'short',
+                        day: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true,
+                      })}
+                    </Text>
+                  </View>
+
+                  <View style={styles.listingtyperow}>
+                    <Text allowFontScaling={false} style={styles.lebleHeader}>
+                      Sold For:
+                    </Text>
+                    <Text allowFontScaling={false} style={styles.status}>
+                      £{buyer.price}
+                    </Text>
+                  </View>
+
                   {!buyer.otpverified && (
                     <View style={styles.cardconstinerdivider} />
                   )}
- 
-                    {!buyer.otpverified && (
-                      <View
+
+                  {!buyer.otpverified && (
+                    <View
+                      style={{
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <TouchableOpacity
                         style={{
+                          width: '100%',
                           justifyContent: 'center',
                           alignItems: 'center',
                         }}
+                        //onPress={() => setShowPopup1(true)}
+                        onPress={() => {
+                          setSelectedOrderId(buyer.orderid); // store selected orderid in state
+                          setShowPopup1(true);
+                        }}
                       >
-                        <TouchableOpacity
-                          style={{
-                            width: '100%',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                          }}
-                          //onPress={() => setShowPopup1(true)}
-                          onPress={() => {
-                            setSelectedOrderId(buyer.orderid); // store selected orderid in state
-                            setShowPopup1(true);
-                          }}
-                        >
-                          <Text allowFontScaling={false} style={styles.status1}>
-                            Enter OTP
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                    )}
-                  </View>
-                ))}
+                        <Text allowFontScaling={false} style={styles.status1}>
+                          Enter OTP
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                </View>
+              ))}
+          </View>
+        </AnimatedReanimated.ScrollView>
+
+        {/* {(
+          (data?.list?.category_id === 3 && data?.list?.remaining_quantity > 0) ||
+
+          (data?.list?.category_id !== 3 && (
+            !data?.list?.ispurchased ||
+            data?.list?.category_id === 2 ||
+            data?.list?.category_id === 5
+          ))
+        ) && (
+            <View style={styles.bottomview}>
+              <ButtonNew
+                title={data?.list?.isactive ? 'Deactivate' : 'Activate'}
+                textStyle={[styles.cancelText, { width: '100%' }]}
+                buttonStyle={[{
+                  width: '49%',
+                  boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
+                  backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.10) 100%)',
+                  borderBlockStartColor: '#ffffff47',
+                  borderBlockColor: '#ffffff47',
+                  borderTopColor: '#ffffff47',
+                  borderBottomColor: '#ffffff47',
+                  borderLeftColor: '#ffffff47',
+                  borderRightColor: '#ffffff47',
+                  boxSizing: 'border-box',
+                }]}
+                onPress={() => {
+                  if (data?.list?.isactive) {
+                    setShowConfirm(true);
+                  } else {
+                    handleDeactivate();
+                  }
+                }}
+              />
+
+              <ButtonNew
+                title="Edit Listing"
+                textStyle={{
+                  color: '#000000',
+                  fontFamily: 'Urbanist-Regular',
+                  fontSize: 16,
+                  fontWeight: '500',
+                  fontStyle: 'normal',
+                  letterSpacing: 0.17,
+                  lineHeight: 22,
+                }}
+                buttonStyle={[{ width: '49%', backgroundColor: '#ffffffa7' }]}
+                onPress={() => {
+                  if (!data?.list?.isactive) {
+                    showToast('Purchased item can’t be edited.', 'error');
+                    return;
+                  }
+
+                  if (Platform.OS === 'ios') {
+                    navigation.navigate(
+                      'EditListScreen',
+                      {
+                        productId: catagory_id,
+                        productName: catagory_name,
+                        shareid: shareid,
+                      },
+                      { animation: 'none' },
+                    );
+                  } else {
+                    navigation.replace(
+                      'EditListScreen',
+                      {
+                        productId: catagory_id,
+                        productName: catagory_name,
+                        shareid: shareid,
+                      },
+                      { animation: 'none' },
+                    );
+                  }
+                }}
+              />
             </View>
-         </AnimatedReanimated.ScrollView>
+          )} */}
 
-       
-       
-        {(
-        !data?.list?.ispurchased ||
-        data?.list?.category_id === 2 ||
-        data?.list?.category_id === 5
-      ) && (
-
-
-
-
-        <View style={styles.bottomview}>
-          <ButtonNew
-            // title='Deactivate'
-            title={data?.list?.isactive ? 'Deactivate' : 'Activate'}
-            textStyle={[styles.cancelText,{width: '100%'}]}
-
-            buttonStyle={[{
-              width:'48%',
-              boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-              
-            backgroundColor:
-              'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.10) 100%)',
-            borderBlockStartColor: '#ffffff47',
-            borderBlockColor: '#ffffff47',
-        
-            borderTopColor: '#ffffff47',
-            borderBottomColor: '#ffffff47',
-            borderLeftColor: '#ffffff47',
-            borderRightColor: '#ffffff47',
-            boxSizing: 'border-box',}]}
-            onPress={() => {
-              if (data?.list?.isactive) {
-                setShowConfirm(true);
-              } else {
-                handleDeactivate();
-              }
-            }}/>
-          <ButtonNew
-          textStyle={{color: '#000000',
-          fontFamily: 'Urbanist-Regular',
-          fontSize: 16,
-          fontWeight: '500',
-          fontStyle: 'normal',
-          letterSpacing: 0.17,
-          lineHeight: 22,}}
-           buttonStyle={[{width: '48%', backgroundColor: '#ffffffa7' }]}
-            title=' Edit Listing'
-            onPress={() => {
-              if (!data?.list?.isactive) {
-                showToast('Purchased item can’t be edited.', 'error');
-                return;
-              }
-              if(Platform.OS === 'ios'){
-                navigation.navigate(
-                  'EditListScreen',
-                  {
-                    productId: catagory_id,
-                    productName: catagory_name,
-                    shareid: shareid,
-                  },
-                  { animation: 'none' },
-                );
-
-              } else {
-                navigation.replace(
-                  'EditListScreen',
-                  {
-                    productId: catagory_id,
-                    productName: catagory_name,
-                    shareid: shareid,
-                  },
-                  { animation: 'none' },
-                );
-
-              }
-              
-            }}/>
-
-        </View>
-      )}
 
         <Modal
           visible={showPopup1}
@@ -829,7 +828,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                   <TouchableOpacity
                     style={styles.loginButton}
                     onPress={otpverify}>
-                    <Text allowFontScaling={false} style={styles.loginText}>Verify</Text>                       
+                    <Text allowFontScaling={false} style={styles.loginText}>Verify</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -855,8 +854,8 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
           onRequestClose={closePopup2}
         >
           <TouchableWithoutFeedback onPress={() => {
-                      navigation.goBack();
-                    }}>
+            navigation.goBack();
+          }}>
             <View style={styles.overlay}>
               <BlurView
                 style={{
@@ -898,7 +897,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                   <TouchableOpacity
                     style={styles.loginButton}
                     onPress={() => {
-                       navigation.goBack();
+                      navigation.goBack();
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText}>
@@ -944,9 +943,9 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                     source={require('../../../assets/images/alerticon.png')}
                     style={styles.logo}
                     resizeMode="contain"
-                    />
+                  />
                   <Text allowFontScaling={false} style={styles.mainheader}>
-                     Deactivate Listing
+                    Deactivate Listing
                   </Text>
                   <Text allowFontScaling={false} style={styles.subheader}>
                     Are you sure you want to deactivate this listing?
@@ -986,7 +985,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
 
 const styles = StyleSheet.create({
 
-   fullLoader: {
+  fullLoader: {
     position: "absolute",
     top: 0,
     left: 0,
@@ -1003,15 +1002,15 @@ const styles = StyleSheet.create({
     //alignItems: 'center',
     width: '89%',
   },
-   productlableprice: {
-      color: 'rgba(255, 255, 255, 0.88)',
-      fontSize: 14,
-      fontWeight: '500',
-      letterSpacing: -0.24,
-      lineHeight: 16,
-      fontFamily: 'Urbanist-SemiBold',
-    },
-    
+  productlableprice: {
+    color: 'rgba(255, 255, 255, 0.88)',
+    fontSize: 14,
+    fontWeight: '500',
+    letterSpacing: -0.24,
+    lineHeight: 16,
+    fontFamily: 'Urbanist-SemiBold',
+  },
+
   datetlable: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontWeight: '500',
@@ -1019,8 +1018,8 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     fontFamily: 'Urbanist-Medium',
     textAlign: 'right',
-    marginLeft: 'auto', 
-    flexShrink: 1,  
+    marginLeft: 'auto',
+    flexShrink: 1,
     fontSize: 14,
   },
   univercitycontainer: {
@@ -1036,7 +1035,7 @@ const styles = StyleSheet.create({
   },
   listingtyperow1: {
     width: '100%',
-   // display: 'flex',
+    // display: 'flex',
     flexDirection: 'row',
     //justifyContent: 'space-between',
   },
@@ -1047,12 +1046,12 @@ const styles = StyleSheet.create({
     letterSpacing: -0.28,
     lineHeight: 16,
     fontFamily: 'Urbanist-SemiBold',
-//    maxWidth:'70%',
-     flex: 1,           // takes remaining space
-  textAlign: 'right', // right aligned
-  flexWrap: 'wrap',  
+    //    maxWidth:'70%',
+    flex: 1,           // takes remaining space
+    textAlign: 'right', // right aligned
+    flexWrap: 'wrap',
   },
-    headerWrapper: {
+  headerWrapper: {
     position: 'absolute',
     top: 0,
     width: Platform.OS === 'ios' ? '100%' : '100%',
@@ -1118,13 +1117,13 @@ const styles = StyleSheet.create({
   },
 
   otpBox: {
-    width:(Platform.OS === 'ios' ? 42: 48),
-    height: (Platform.OS === 'ios' ? 42: 48),
+    width: (Platform.OS === 'ios' ? 42 : 48),
+    height: (Platform.OS === 'ios' ? 42 : 48),
     borderRadius: 12,
     paddingTop: 8,
     paddingRight: 12,
     paddingBottom: 8,
-    paddingLeft:  12,
+    paddingLeft: 12,
     textAlign: 'center',
     fontSize: 18,
     color: '#fff',
@@ -1320,7 +1319,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.28,
     lineHeight: 16,
     fontFamily: 'Urbanist-SemiBold',
-    padding:10
+    padding: 10
   },
   image: {
     width: 72,
@@ -1341,8 +1340,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     paddingTop: 10,
   },
- 
-   dottext: {
+
+  dottext: {
     marginLeft: 10,
     color: 'rgba(255, 255, 255, 0.88)',
     fontSize: 12,
@@ -1350,32 +1349,32 @@ const styles = StyleSheet.create({
     letterSpacing: -0.24,
     lineHeight: 16,
     fontFamily: 'Urbanist-Medium',
-    alignSelf:'center'
+    alignSelf: 'center'
   },
- carddivider: {
+  carddivider: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '90%',
     marginLeft: 1,
-    height: (Platform.OS==='ios'? 1.5:1.5),
+    height: (Platform.OS === 'ios' ? 1.5 : 1.5),
     borderColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderStyle: 'solid',
-    borderWidth: (Platform.OS==='ios'? 0.9:1),
+    borderWidth: (Platform.OS === 'ios' ? 0.9 : 1),
   },
   cardconstinerdivider: {
- 
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  width: '100%',
-  height: (Platform.OS==='ios'? 2:1.5),
-  borderStyle: 'dashed',
-  borderBottomWidth:(Platform.OS==='ios'? 0.9:1),
-  // backgroundColor: 'rgba(169, 211, 255, 0.08)',
-  borderColor: (Platform.OS==='ios'?  'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)':'#4169B8'),
+
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    height: (Platform.OS === 'ios' ? 2 : 1.5),
+    borderStyle: 'dashed',
+    borderBottomWidth: (Platform.OS === 'ios' ? 0.9 : 1),
+    // backgroundColor: 'rgba(169, 211, 255, 0.08)',
+    borderColor: (Platform.OS === 'ios' ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)' : '#4169B8'),
 
   },
   sellerHeaderlable: {
@@ -1393,12 +1392,12 @@ const styles = StyleSheet.create({
   //   paddingHorizontal: 16,
   //   width: '100%',
   // },
-   
-    scrollContainer: {
-      //paddingHorizontal: 20,
-      paddingBottom: 80,
-      paddingTop: Platform.OS === 'ios' ? 120 : 100,
-      paddingHorizontal: 16,
+
+  scrollContainer: {
+    //paddingHorizontal: 20,
+    paddingBottom: 80,
+    paddingTop: Platform.OS === 'ios' ? 120 : 100,
+    paddingHorizontal: 16,
   },
   bottomview: {
     position: 'absolute',
@@ -1415,7 +1414,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
     bottom: (Platform.select({ ios: 10, android: -10 })),
     marginBottom: Platform.OS === 'ios' ? 10 : 20,
-  
+
   },
   cancelBtn: {
     flex: 1,
