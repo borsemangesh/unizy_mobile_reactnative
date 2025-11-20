@@ -578,7 +578,7 @@ const handleBookmarkPress = async (productId: number) => {
             }
             contentContainerStyle={[
               styles.listContainer,
-              { paddingTop: Platform.OS === 'ios' ? 120 : 100 },
+              { paddingTop: Platform.OS === 'ios' ? 120 : 100 ,flexGrow:1},
             ]}
             onScroll={scrollHandler}
             scrollEventThrottle={16}
@@ -599,7 +599,7 @@ const handleBookmarkPress = async (productId: number) => {
             }
             ListEmptyComponent={
               !isLoading ? (
-               <View style={[styles.emptyWrapper,{minHeight: screenHeight - (Platform.OS === 'ios' ? 225 : 150), }]}>
+               <View style={[styles.emptyWrapper]}>
                           <View style={styles.emptyContainer}>
                             <Image
                               source={require('../../../assets/images/noproduct.png')} // your image
@@ -862,11 +862,11 @@ headerContent: {
     width: '85%',
   },
   listContainer: {
-    marginLeft: 8,
+    marginLeft: 5,
     marginRight: 5,
     paddingTop: 10,
-      gap:16,
- 
+    gap:16,
+    paddingBottom:10
   },
   row1: {
   },

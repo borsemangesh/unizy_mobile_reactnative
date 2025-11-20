@@ -147,7 +147,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
       setPage(1);
       displayListOfProduct(selectedCategory?.id ?? null, 1);
 
-      return () => {};
+      return () => { };
     }, []),
   );
 
@@ -265,22 +265,24 @@ const MyListing = ({ navigation }: MyListingProps) => {
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return "";
-  
+
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return "";
-  
+
     const day = date.getDate();
-  
+
     let suffix = "th";
     if (day % 10 === 1 && day !== 11) suffix = "st";
     else if (day % 10 === 2 && day !== 12) suffix = "nd";
     else if (day % 10 === 3 && day !== 13) suffix = "rd";
     const monthShort = date
       .toLocaleString("default", { month: "short" }); // "Nov"
-  
+
     const year = date.getFullYear();
     return `${day}${suffix} ${monthShort} ${year}`;
   };
+  const isEmpty = featureList.length === 0;
+
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
@@ -397,7 +399,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
         {/* List */}
         <View style={{ flex: 1 }}>
           <Animated.FlatList
-          
+
             data={featureList}
             renderItem={renderItem}
             keyExtractor={(item, index) => {
@@ -454,12 +456,18 @@ const MyListing = ({ navigation }: MyListingProps) => {
             }
             contentContainerStyle={[
               styles.listContainer,
-              { paddingTop: Platform.OS === 'ios' ? 120 : 100, 
-                paddingBottom: Platform.select({
-                  ios: height * 0.01,
-                  android: height * 0.05, 
-                  })},
+              {
+                paddingTop: Platform.OS === 'ios' ? 120 : 100,
+                paddingBottom: isEmpty
+                  ? 10                        // ⬅ remove padding when list is empty
+                  : Platform.select({
+                      ios: height * 0.01,   // ⬅ apply padding when list has data
+                      android: height * 0.04,
+                    }),
+                flexGrow: 1,
+              },
             ]}
+
             onScroll={scrollHandler}
             scrollEventThrottle={16}
             onEndReachedThreshold={0.5}
@@ -479,12 +487,18 @@ const MyListing = ({ navigation }: MyListingProps) => {
             }
             ListEmptyComponent={
               !isLoading ? (
-                <Text
-                  allowFontScaling={false}
-                  style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}
-                >
-                  No products found
-                </Text>
+                <View style={[styles.emptyWrapper]}>
+                  <View style={styles.emptyContainer}>
+                    <Image
+                      source={require('../../../assets/images/noproduct.png')} // your image
+                      style={styles.emptyImage}
+                      resizeMode="contain"
+                    />
+                    <Text allowFontScaling={false} style={styles.emptyText}>
+                      No Listings Found
+                    </Text>
+                  </View>
+                </View>
               ) : null
             }
           />
@@ -498,6 +512,41 @@ const MyListing = ({ navigation }: MyListingProps) => {
 export default MyListing;
 
 const styles = StyleSheet.create({
+
+  emptyWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%'
+  },
+
+
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderWidth: 0.3,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 24,
+    overflow: 'hidden',
+    //minHeight:'80%',
+    //marginBottom:20,
+  },
+  emptyImage: {
+    width: 50,
+    height: 50,
+    marginBottom: 20,
+  },
+  emptyText: {
+    fontSize: 20,
+    color: '#fff',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: 600
+  },
+
   categoryTabsContainer: {
     width: '100%',
     marginBottom: 12,
@@ -642,11 +691,11 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-      backgroundColor:
+    backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
     borderWidth: 0.4,
-   
+
     borderColor: '#ffffff2c',
   },
   unizyText: {
@@ -696,5 +745,5 @@ const styles = StyleSheet.create({
   itemContainer: {
     width: '100%',
   },
- 
+
 });

@@ -56,9 +56,9 @@ type CreatedBy = {
   updated_at: string;
   role_id: number;
 };
-type university={
-  id:number,
-  name:string
+type university = {
+  id: number,
+  name: string
 }
 
 type Feature = {
@@ -74,8 +74,8 @@ type Feature = {
   thumbnail: string;
   profileshowinview: boolean
   createdby: CreatedBy;
-  university:university;
-  isbookmarked:boolean
+  university: university;
+  isbookmarked: boolean
 };
 
 type SearchPageProps = {
@@ -83,7 +83,7 @@ type SearchPageProps = {
 };
 
 type RootStackParamList = {
-  SearchPage: { category_id: number ,category_name:string};
+  SearchPage: { category_id: number, category_name: string };
 };
 
 type SearchPageRouteProp = RouteProp<RootStackParamList, 'SearchPage'>;
@@ -94,135 +94,135 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
   const [search, setSearch] = useState<string>('');
   const route = useRoute<SearchPageRouteProp>();
   const { category_id } = route.params;
-  const {category_name} =route.params;
+  const { category_name } = route.params;
 
-const [page, setPage] = useState(1);
-const [isLoading, setIsLoading] = useState(false);
-const [hasMore, setHasMore] = useState(true); // whether more pages exist
-const [isFilterVisible, setFilterVisible] = useState(false);
-const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
- const SCREEN_HEIGHT = Dimensions.get('window').height;
+  const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true); // whether more pages exist
+  const [isFilterVisible, setFilterVisible] = useState(false);
+  const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
+  const SCREEN_HEIGHT = Dimensions.get('window').height;
 
- const [isFilterMode, setIsFilterMode] = useState(false);
-const [lastFilterBody, setLastFilterBody] = useState<any>(null);
+  const [isFilterMode, setIsFilterMode] = useState(false);
+  const [lastFilterBody, setLastFilterBody] = useState<any>(null);
 
 
-const scrollY = useSharedValue(0);
-  
-const scrollHandler = useAnimatedScrollHandler({
-  onScroll: event => {
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: event => {
+      'worklet';
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  const animatedBlurStyle = useAnimatedStyle(() => {
     'worklet';
-    scrollY.value = event.contentOffset.y;
-  },
-});
+    const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+    return { opacity };
+  });
 
-const animatedBlurStyle = useAnimatedStyle(() => {
-  'worklet';
-  const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
-  return { opacity };
-});
-
-const animatedButtonStyle = useAnimatedStyle(() => {
-  'worklet';
-  const borderColor = interpolateColor(
-    scrollY.value,
-    [0, 300],
-    ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
-  );
-  const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
-  return {
-    borderColor,
-    backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
-  };
-});
-const animatedIconStyle = useAnimatedStyle(() => {
-  'worklet';
-
-  const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
-
-  const tintColor = interpolateColor(
-    scrollY.value,
-    [0, 150],
-    ['#FFFFFF', '#002050'],
-  );
-
-  return {
-    opacity,
-    tintColor,
-  };
-});
-
-const blurAmount = useDerivedValue(() =>
-  interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
-);
- 
-  useEffect(() => {
-  const loadBookmarks = async () => {
-    const saved = await AsyncStorage.getItem('bookmarkedIds');
-    if (saved) setBookmarkedIds(JSON.parse(saved));
-  };
-  loadBookmarks();
-}, []);
-
-const clickfilter = () => {
-  console.log("Filter PopUp: ", isFilterVisible);
-  setFilterVisible(true);
-  console.log("Filter PopUpAfter: ", isFilterVisible);
-};
-
-
-
-  const displayListOfProduct = async (pageNum: number = 1,query = "") => {
-  if (isLoading || !hasMore) return;
-    if (!query.trim()) return;
-  try {
-    setIsLoading(true);
-
-    console.log('CID',category_id)
-
-    const body = {
-      search: query,
-      page: pageNum,
-      pagesize: 20,
-      category_id: category_id,
+  const animatedButtonStyle = useAnimatedStyle(() => {
+    'worklet';
+    const borderColor = interpolateColor(
+      scrollY.value,
+      [0, 300],
+      ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+    );
+    const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
+    return {
+      borderColor,
+      backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
     };
+  });
+  const animatedIconStyle = useAnimatedStyle(() => {
+    'worklet';
 
-    console.log('📤 Request Body:', JSON.stringify(body, null, 2));
+    const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
 
-    const url = MAIN_URL.baseUrl + 'category/feature-list/search';
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) return;
+    const tintColor = interpolateColor(
+      scrollY.value,
+      [0, 150],
+      ['#FFFFFF', '#002050'],
+    );
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
+    return {
+      opacity,
+      tintColor,
+    };
+  });
 
-    const jsonResponse = await response.json();
-    console.log('API Response:', jsonResponse);
+  const blurAmount = useDerivedValue(() =>
+    interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+  );
 
-    if (jsonResponse.statusCode === 200) {
-      const newFeatures = jsonResponse.data.features;
+  useEffect(() => {
+    const loadBookmarks = async () => {
+      const saved = await AsyncStorage.getItem('bookmarkedIds');
+      if (saved) setBookmarkedIds(JSON.parse(saved));
+    };
+    loadBookmarks();
+  }, []);
 
-      if (pageNum === 1) {
-        setFeaturelist(newFeatures);
-      } else {
-        setFeaturelist(prev => [...prev, ...newFeatures]);
+  const clickfilter = () => {
+    console.log("Filter PopUp: ", isFilterVisible);
+    setFilterVisible(true);
+    console.log("Filter PopUpAfter: ", isFilterVisible);
+  };
+
+
+
+  const displayListOfProduct = async (pageNum: number = 1, query = "") => {
+    if (isLoading || !hasMore) return;
+    if (!query.trim()) return;
+    try {
+      setIsLoading(true);
+
+      console.log('CID', category_id)
+
+      const body = {
+        search: query,
+        page: pageNum,
+        pagesize: 20,
+        category_id: category_id,
+      };
+
+      console.log('📤 Request Body:', JSON.stringify(body, null, 2));
+
+      const url = MAIN_URL.baseUrl + 'category/feature-list/search';
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) return;
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+
+      const jsonResponse = await response.json();
+      console.log('API Response:', jsonResponse);
+
+      if (jsonResponse.statusCode === 200) {
+        const newFeatures = jsonResponse.data.features;
+
+        if (pageNum === 1) {
+          setFeaturelist(newFeatures);
+        } else {
+          setFeaturelist(prev => [...prev, ...newFeatures]);
+        }
+
+        setHasMore(newFeatures.length === 20);
+        setPage(prev => prev + 1);
       }
-
-      setHasMore(newFeatures.length === 20); 
-      setPage(prev => prev + 1);
+    } catch (err) {
+      console.log('Error:', err);
+    } finally {
+      setIsLoading(false);
     }
-  } catch (err) {
-    console.log('Error:', err);
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
   const debouncedSearch = useCallback(
     debounce((text: string) => {
@@ -233,182 +233,184 @@ const clickfilter = () => {
     []
   );
 
-const handleSearchChange = (text: string) => {
-  setSearch(text);
-  setIsFilterMode(false); // reset filter mode
+  const handleSearchChange = (text: string) => {
+    setSearch(text);
+    setIsFilterMode(false); // reset filter mode
 
-  if (text.trim().length > 0) {
-    debouncedSearch(text);
-  } else {
-    setFeaturelist([]);
-    setHasMore(true);
-    setPage(1);
-  }
-};
-
-
-const handleBookmarkPress = async (productId: number) => {
-  try {
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) return;
-
-    const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
-
-    const url = MAIN_URL.baseUrl + 'category/list-bookmark';
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify({ feature_id: productId }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log('Bookmark response:', data);
-    if (data?.message) {
-      showToast(data.message, data.statusCode === 200 ? 'success' : 'error');
-    }
-
-    let updatedBookmarks;
-    if (isCurrentlyBookmarked) {
-      updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
+    if (text.trim().length > 0) {
+      debouncedSearch(text);
     } else {
-      updatedBookmarks = [...bookmarkedIds, productId];
+      setFeaturelist([]);
+      setHasMore(true);
+      setPage(1);
     }
+  };
 
-    setBookmarkedIds(updatedBookmarks);
-    await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks)); // persist locally
 
-  } catch (error) {
-    console.error('Bookmark error:', error);
-  }
-};
+  const handleBookmarkPress = async (productId: number) => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) return;
 
-  
+      const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
+
+      const url = MAIN_URL.baseUrl + 'category/list-bookmark';
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ feature_id: productId }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Bookmark response:', data);
+      if (data?.message) {
+        showToast(data.message, data.statusCode === 200 ? 'success' : 'error');
+      }
+
+      let updatedBookmarks;
+      if (isCurrentlyBookmarked) {
+        updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
+      } else {
+        updatedBookmarks = [...bookmarkedIds, productId];
+      }
+
+      setBookmarkedIds(updatedBookmarks);
+      await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks)); // persist locally
+
+    } catch (error) {
+      console.error('Bookmark error:', error);
+    }
+  };
+
+
   const filteredFeatures: Feature[] = featurelist.filter((item) =>
     item.title?.toLowerCase().includes(search.toLowerCase())
   );
 
+  const isEmpty = featurelist.length === 0;
 
-const renderItem = ({ item, index }: { item: Feature; index: number }) => {
-  const isLastOddItem =
-    filteredFeatures.length % 2 !== 0 &&
-    index === filteredFeatures.length - 1;
+  const renderItem = ({ item, index }: { item: Feature; index: number }) => {
+    const isLastOddItem =
+      filteredFeatures.length % 2 !== 0 &&
+      index === filteredFeatures.length - 1;
 
- let productImage: ImageSourcePropType | null = null;
-  let showInitials = false;
-  let initials = '';
+    let productImage: ImageSourcePropType | null = null;
+    let showInitials = false;
+    let initials = '';
 
-  if (item.profileshowinview) {
-    if (item.createdby?.profile) {
-      productImage = { uri: item.createdby.profile };
-    } else {
-      showInitials = true;
-      initials = `${item.createdby?.firstname?.[0] ?? ''}${item.createdby?.lastname?.[0] ?? ''}`;
-    }
-  } else {
-    if (item.thumbnail) {
-      productImage = { uri: item.thumbnail };
-    } else {
-      productImage = require('../../../assets/images/drone.png');
-    }
-  }
-  return (
-    <View
-      style={[
-        styles.itemContainer,
-        { flex: isLastOddItem ? 0.5 : 0.5, marginRight: isLastOddItem ? 0.5 : 0.5 },
-      ]}
-    >
-
-
-
-      <TouchableOpacity
-        onPress={() =>{
-          navigation.navigate('SearchDetails', { id: item.id ,name:category_name},{animation: 'none'})}
-          
-        }
-        style={{ flex: 1 }}
-      >
-        {item.profileshowinview ? (
-        <SearchTutionCard
-           tag={item.university?.name || 'University of Warwick'}
-          infoTitle={item.title}
-          inforTitlePrice={`£ ${item.price}`}
-          rating={item.isfeatured ? '4.5' : '4.5'}
-          showInitials={showInitials}
-          initialsName={initials.toUpperCase()}
-          productImage={item.createdby?.profile ? { uri: item.createdby.profile } : undefined}
-          bookmark={item.isbookmarked}
-          isfeature={item.isfeatured}
-          applybookmark={() => handleBookmarkPress(item.id)}
-        />
-      ) : (
-        <SearchListProductCard
-           tag={item.university?.name || 'University of Warwick'}
-          infoTitle={item.title}
-          inforTitlePrice={`£ ${item.price}`}
-          rating={item.isfeatured ? '4.5' : '4.5'}
-          productImage={productImage ?? require('../../../assets/images/drone.png')}
-          bookmark={item.isbookmarked}
-          isfeature={item.isfeatured}
-          applybookmark={() => handleBookmarkPress(item.id)}
-        />
-      )}
-      </TouchableOpacity>
-    </View>
-  );
-};
-
-
-
-const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
-  try {
-    setIsLoading(true);
-    setIsFilterMode(true);
-    setLastFilterBody(filterBody);
-
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) return;
-
-    const url = `${MAIN_URL.baseUrl}category/filter-apply`;
-    const body = { ...filterBody, page: pageNum, pagesize: 20 };
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-
-    const jsonResponse = await response.json();
-    console.log('Filter Apply Response:', jsonResponse);
-
-    if (jsonResponse.statusCode === 200) {
-      const filteredFeatures = jsonResponse.data.features || [];
-
-      if (pageNum === 1) {
-        setFeaturelist(filteredFeatures);
+    if (item.profileshowinview) {
+      if (item.createdby?.profile) {
+        productImage = { uri: item.createdby.profile };
       } else {
-        setFeaturelist(prev => [...prev, ...filteredFeatures]);
+        showInitials = true;
+        initials = `${item.createdby?.firstname?.[0] ?? ''}${item.createdby?.lastname?.[0] ?? ''}`;
       }
-
-      setHasMore(filteredFeatures.length === 20);
-      setPage(prev => prev + 1);
+    } else {
+      if (item.thumbnail) {
+        productImage = { uri: item.thumbnail };
+      } else {
+        productImage = require('../../../assets/images/drone.png');
+      }
     }
-  } catch (err) {
-    console.log('Error applying filters:', err);
-  } finally {
-    setIsLoading(false);
-  }
-};
+    return (
+      <View
+        style={[
+          styles.itemContainer,
+          { flex: isLastOddItem ? 0.5 : 0.5, marginRight: isLastOddItem ? 0.5 : 0.5 },
+        ]}
+      >
+
+
+
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('SearchDetails', { id: item.id, name: category_name }, { animation: 'none' })
+          }
+
+          }
+          style={{ flex: 1 }}
+        >
+          {item.profileshowinview ? (
+            <SearchTutionCard
+              tag={item.university?.name || 'University of Warwick'}
+              infoTitle={item.title}
+              inforTitlePrice={`£ ${item.price}`}
+              rating={item.isfeatured ? '4.5' : '4.5'}
+              showInitials={showInitials}
+              initialsName={initials.toUpperCase()}
+              productImage={item.createdby?.profile ? { uri: item.createdby.profile } : undefined}
+              bookmark={item.isbookmarked}
+              isfeature={item.isfeatured}
+              applybookmark={() => handleBookmarkPress(item.id)}
+            />
+          ) : (
+            <SearchListProductCard
+              tag={item.university?.name || 'University of Warwick'}
+              infoTitle={item.title}
+              inforTitlePrice={`£ ${item.price}`}
+              rating={item.isfeatured ? '4.5' : '4.5'}
+              productImage={productImage ?? require('../../../assets/images/drone.png')}
+              bookmark={item.isbookmarked}
+              isfeature={item.isfeatured}
+              applybookmark={() => handleBookmarkPress(item.id)}
+            />
+          )}
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+
+
+  const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
+    try {
+      setIsLoading(true);
+      setIsFilterMode(true);
+      setLastFilterBody(filterBody);
+
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) return;
+
+      const url = `${MAIN_URL.baseUrl}category/filter-apply`;
+      const body = { ...filterBody, page: pageNum, pagesize: 20 };
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+
+      const jsonResponse = await response.json();
+      console.log('Filter Apply Response:', jsonResponse);
+
+      if (jsonResponse.statusCode === 200) {
+        const filteredFeatures = jsonResponse.data.features || [];
+
+        if (pageNum === 1) {
+          setFeaturelist(filteredFeatures);
+        } else {
+          setFeaturelist(prev => [...prev, ...filteredFeatures]);
+        }
+
+        setHasMore(filteredFeatures.length === 20);
+        setPage(prev => prev + 1);
+      }
+    } catch (err) {
+      console.log('Error applying filters:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
 
 
@@ -518,97 +520,10 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-          Search
+            Search
           </Text>
         </View>
 
-        {/* <Animated.FlatList
-          data={featurelist}
-          // keyExtractor={item => item.id.toString()}
-          keyExtractor={(item, index) => {
-            item.id.toString();
-            'worklet';
-            return index.toString();
-          }}
-          numColumns={2}
-          columnWrapperStyle={styles.row1}
-          contentContainerStyle={[
-            styles.listContainer,
-            { paddingBottom: SCREEN_HEIGHT * 0.05 },
-            featurelist?.length === 0 && {
-              alignContent: 'center',
-              alignSelf: 'center',
-              width: '100%',
-              height: '100%',
-            },
-          ]}
-          renderItem={renderItem}
-          ListHeaderComponent={
-            <View style={{ flexDirection: 'row', gap: 8 }}>
-              <View style={styles.search_container}>
-                <Image source={searchIcon} style={styles.searchIcon} />
-                <TextInput
-                  allowFontScaling={false}
-                  style={styles.searchBar}
-                  placeholder="Search"
-                  placeholderTextColor="#ccc"
-                  value={search}
-                  onChangeText={handleSearchChange}
-                  returnKeyType="search"
-                  selectionColor="white"
-                  autoFocus={true}
-                  onSubmitEditing={() => {
-                    if (search.trim().length > 0) {
-                      setPage(1);
-                      setHasMore(true);
-                      displayListOfProduct(1, search);
-                    } else {
-                      setFeaturelist([]);
-                    }
-                  }}
-                />
-              </View>
-              <TouchableOpacity
-                onPress={() => {
-                  clickfilter();
-                }}
-              >
-                <View style={styles.MylistingsBackground}>
-                  <Image source={mylistings} style={styles.iconSmall} />
-                </View>
-              </TouchableOpacity>
-            </View>
-          }
-          onEndReached={() => {
-            if (isLoading || !hasMore) return;
-
-            if (isFilterMode && lastFilterBody) {
-              handleFilterApply(lastFilterBody, page);
-            } else if (search.trim().length > 0) {
-              displayListOfProduct(page, search);
-            }
-          }}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={
-            isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
-          }
-          ListEmptyComponent={
-            !isLoading ? (
-              <View style={styles.emptyWrapper}>
-                <View style={styles.emptyContainer}>
-                  <Image
-                    source={require('../../../assets/images/noproduct.png')} // your image
-                    style={styles.emptyImage}
-                    resizeMode="contain"
-                  />
-                  <Text allowFontScaling={false} style={styles.emptyText}>
-                    No Listings Found
-                  </Text>
-                </View>
-              </View>
-            ) : null
-          }
-        /> */}
 
         <Animated.FlatList
           data={featurelist}
@@ -621,7 +536,7 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
             return index.toString();
           }}
           ListHeaderComponent={
-            <View style={{ flexDirection: 'row', gap: 8 ,paddingHorizontal: 8}}>
+            <View style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 8 }}>
               <View style={styles.search_container}>
                 <Image source={searchIcon} style={styles.searchIcon} />
                 <TextInput
@@ -658,7 +573,7 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
           }
           contentContainerStyle={[
             styles.listContainer,
-            { paddingTop: Platform.OS === 'ios' ? 120 : 100 ,paddingBottom: 40},
+            { paddingTop: Platform.OS === 'ios' ? 120 : 100, paddingBottom: isEmpty ? 10 : 40, flexGrow: 1 },
           ]}
           onScroll={scrollHandler}
           scrollEventThrottle={16}
@@ -673,7 +588,7 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
           }}
           ListEmptyComponent={
             !isLoading ? (
-              <View style={[styles.emptyWrapper,{minHeight: SCREEN_HEIGHT - (Platform.OS === 'ios' ? 225 : 150), }]}>
+              <View style={[styles.emptyWrapper]}>
                 <View style={styles.emptyContainer}>
                   <Image
                     source={require('../../../assets/images/noproduct.png')} // your image
@@ -706,7 +621,7 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
           onClose={() => setFilterVisible(false)}
           onApply={filterBody => handleFilterApply(filterBody)}
           from={0}
-          to={0} 
+          to={0}
         />
       )}
       <NewCustomToastContainer />
@@ -747,7 +662,7 @@ const styles = StyleSheet.create({
     top: 7,
   },
 
-   headerWrapper: {
+  headerWrapper: {
     position: 'absolute',
     top: 0,
     width: Platform.OS === 'ios' ? 393 : '100%',
@@ -770,54 +685,54 @@ const styles = StyleSheet.create({
     pointerEvents: 'box-none',
   },
 
-dateHeading:{
-    color:'#fff',
-    fontSize:12,
+  dateHeading: {
+    color: '#fff',
+    fontSize: 12,
     fontFamily: 'Urbanist-SemiBold',
-    fontWeight:500,
-    marginLeft:12,
-    marginTop:16
-    },
-    blurButtonWrapper: {
-      width: 46,
-      height: 46,
-      borderRadius: 40,
-      overflow: 'hidden',
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderWidth: 0.4,
-      borderColor: '#ffffff2c',
-      backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
-    },
+    fontWeight: 500,
+    marginLeft: 12,
+    marginTop: 16
+  },
+  blurButtonWrapper: {
+    width: 46,
+    height: 46,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+  },
 
 
   background: { flex: 1, width: '100%', height: '100%' },
   fullScreenContainer: { flex: 1 },
 
-  
+
   emptyWrapper: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    width:'100%',
+    width: '100%',
     marginTop: 16,
     paddingHorizontal: 10,
   },
 
 
- 
-   emptyContainer: {
+
+  emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    width:'100%',
+    width: '100%',
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     borderWidth: 0.3,
     borderColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius:24,
-    overflow:'hidden',
+    borderRadius: 24,
+    overflow: 'hidden',
     //minHeight:'80%',
-   //marginBottom:20,
+    //marginBottom:20,
   },
   emptyImage: {
     width: 50,
@@ -829,7 +744,7 @@ dateHeading:{
     color: '#fff',
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
-    fontWeight:600
+    fontWeight: 600
   },
   // header: {
   //   paddingTop: Platform.OS === 'ios' ? '15.2%'  : 50,
@@ -864,7 +779,7 @@ dateHeading:{
     marginTop: 17
   },
   search_container: {
- 
+
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
@@ -874,16 +789,16 @@ dateHeading:{
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     // paddingVertical: 4,
-    padding: (Platform.OS === 'ios'? 12:0),
-    marginTop:(Platform.OS === 'ios' ? 4:20),
+    padding: (Platform.OS === 'ios' ? 12 : 0),
+    marginTop: (Platform.OS === 'ios' ? 4 : 20),
     height: 48,
     gap: 8,
     width: '84%',
   },
-  searchIcon: { 
+  searchIcon: {
 
-    padding: (Platform.OS === 'ios'? 0:5),
-    margin: (Platform.OS === 'ios'? 0:10),
+    padding: (Platform.OS === 'ios' ? 0 : 5),
+    margin: (Platform.OS === 'ios' ? 0 : 10),
     height: 24,
     width: 24,
   },
@@ -949,7 +864,7 @@ dateHeading:{
     borderLeftColor: '#ffffff5d',
     borderRightColor: '#ffffff36',
     borderWidth: 0.3,
-    marginTop: (Platform.OS === 'ios'? 4:20),
+    marginTop: (Platform.OS === 'ios' ? 4 : 20),
   },
   iconSmall: {
     width: 24,

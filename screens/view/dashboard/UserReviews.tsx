@@ -220,7 +220,6 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
     });
 
     const jsonResponse = await response.json();
-    //console.log("API:", JSON.stringify(jsonResponse, null, 2));
 
     const reviews: ReviewItem[] = jsonResponse.data?.features ?? [];
 
@@ -471,7 +470,7 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
             }
             contentContainerStyle={[
               styles.listContainer,
-              { paddingTop: Platform.OS === 'ios' ? 120 : 100 },
+              { paddingTop: Platform.OS === 'ios' ? 120 : 100,flexGrow:1 },
             ]}
             onScroll={scrollHandler}
             scrollEventThrottle={16}
@@ -492,7 +491,7 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
             }
             ListEmptyComponent={
               !isLoading ? (
-               <View style={[styles.emptyWrapper,{minHeight: screenHeight - (Platform.OS === 'ios' ? 230 : 150), }]}>
+               <View style={[styles.emptyWrapper]}>
                           <View style={styles.emptyContainer}>
                             <Image
                               source={require('../../../assets/images/noproduct.png')} // your image
@@ -734,7 +733,7 @@ tabcard: {
     marginLeft: 10,
     marginRight: 10,
     paddingTop: 10,
-    //paddingBottom:80,
+    paddingBottom: 10,
   },
   row1: {
     // flexDirection: 'row',

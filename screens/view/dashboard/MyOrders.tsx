@@ -589,7 +589,7 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
             }
             contentContainerStyle={[
               styles.listContainer,
-              { paddingTop: Platform.OS === 'ios' ? 120 : 100 },
+              { paddingTop: Platform.OS === 'ios' ? 120 : 100 ,flexGrow:1},
             ]}
             onScroll={scrollHandler}
             scrollEventThrottle={16}
@@ -610,7 +610,7 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
             }
             ListEmptyComponent={
               !isLoading ? (
-               <View style={[styles.emptyWrapper,{minHeight: screenHeight - (Platform.OS === 'ios' ? 225 : 150), }]}>
+               <View style={[styles.emptyWrapper]}>
                           <View style={styles.emptyContainer}>
                             <Image
                               source={require('../../../assets/images/noproduct.png')} // your image

@@ -534,56 +534,56 @@ const handleBookmarkPress = async (productId: number) => {
                 numColumns={2}
 
 
-            renderItem={renderItem}
-            ListHeaderComponent={
-              <View
-                style={styles.categoryTabsContainer}
-                pointerEvents="box-none"
-              >
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={styles.categoryTabsScrollContent}
-                  nestedScrollEnabled={true}
+              renderItem={renderItem}
+              ListHeaderComponent={
+                <View
+                  style={styles.categoryTabsContainer}
+                  pointerEvents="box-none"
                 >
-                  {categories.map((cat, index) => {
-                    const isSelected = selectedCategory.name === cat.name;
-                    return (
-                      <TouchableOpacity
-                        key={index}
-                        onPress={() => setSelectedCategory(cat)}
-                        activeOpacity={0.7}
-                      >
-                       
-                        <SquircleView
-                          style={isSelected ? styles.tabcard : styles.tabcard1}
-                          squircleParams={{
-                            cornerSmoothing: 1,
-                            cornerRadius: 10,
-                            fillColor: isSelected
-                              ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)'
-                              : 'rgba(255, 255, 255, 0.06)',
-                          }}
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={styles.categoryTabsScrollContent}
+                    nestedScrollEnabled={true}
+                  >
+                    {categories.map((cat, index) => {
+                      const isSelected = selectedCategory.name === cat.name;
+                      return (
+                        <TouchableOpacity
+                          key={index}
+                          onPress={() => setSelectedCategory(cat)}
+                          activeOpacity={0.7}
                         >
-                          <Text
-                            allowFontScaling={false}
-                            style={
-                              isSelected ? styles.tabtext : styles.othertext
-                            }
+                        
+                          <SquircleView
+                            style={isSelected ? styles.tabcard : styles.tabcard1}
+                            squircleParams={{
+                              cornerSmoothing: 1,
+                              cornerRadius: 10,
+                              fillColor: isSelected
+                                ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)'
+                                : 'rgba(255, 255, 255, 0.06)',
+                            }}
                           >
-                            {cat.name}
-                          </Text>
-                          {/* </View> */}
-                        </SquircleView>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </ScrollView>
-              </View>
-            }
+                            <Text
+                              allowFontScaling={false}
+                              style={
+                                isSelected ? styles.tabtext : styles.othertext
+                              }
+                            >
+                              {cat.name}
+                            </Text>
+                            {/* </View> */}
+                          </SquircleView>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </ScrollView>
+                </View>
+              }
             contentContainerStyle={[
               styles.listContainer,
-              { paddingTop: Platform.OS === 'ios' ? 120 : 100 },
+              { paddingTop: Platform.OS === 'ios' ? 120 : 100,flexGrow:1 },
             ]}
             onScroll={scrollHandler}
             scrollEventThrottle={16}
@@ -604,7 +604,7 @@ const handleBookmarkPress = async (productId: number) => {
             }
             ListEmptyComponent={
               !isLoading ? (
-               <View style={[styles.emptyWrapper,{minHeight: screenHeight - (Platform.OS === 'ios' ? 225 : 150), }]}>
+               <View style={[styles.emptyWrapper]}>
                           <View style={styles.emptyContainer}>
                             <Image
                               source={require('../../../assets/images/noproduct.png')} // your image
@@ -856,6 +856,7 @@ headerContent: {
     marginRight: 5,
     paddingTop: 10,
       gap:16,
+      paddingBottom:10
  
   },
   row1: {
