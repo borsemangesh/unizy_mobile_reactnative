@@ -303,15 +303,15 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
                       <Text
                         allowFontScaling={false}
                         style={{
-                          fontSize: 14,
+                          fontSize: 10,
                           fontWeight: '600',
                           color: '#FFFFFF',
                           fontFamily: 'Urbanist-Medium',
                           backgroundColor: 'rgba(255, 255, 255, 0.14)',
                           shadowColor: '#000',
-                          lineHeight: 35,
-                          minHeight: 35,
-                          minWidth: 35,
+                          lineHeight: 20,
+                          minHeight: 20,
+                          minWidth: 20,
                           textAlign: 'center',
                           borderRadius: 70,
                           alignSelf: 'center',
