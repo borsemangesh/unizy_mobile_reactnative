@@ -1516,6 +1516,8 @@ const MessagesIndividualScreen = ({
   const headerTotalHeight = headerTop + headerHeight;
   const inputBarHeight = INPUT_BAR_HEIGHT;
 
+  const isSendDisabled = initialLoading || !messageText.trim();
+
   return (
     <ImageBackground source={bgImage} style={{ flex: 1 }} resizeMode="cover">
          
@@ -2311,6 +2313,7 @@ const MessagesIndividualScreen = ({
                 {/* Send */}
                 <TouchableOpacity
                   onPress={handleSendMessage}
+                     disabled={isSendDisabled}
                   style={{
                     marginLeft: 8,
                     width: 48,
@@ -2320,6 +2323,7 @@ const MessagesIndividualScreen = ({
                     justifyContent: 'center',
                     alignItems: 'center',
                     position: 'relative',
+                     opacity: isSendDisabled ? 0.5 : 1, // 🔥 Disable UI Feedback
                   }}
                 >
                   <BlurView
