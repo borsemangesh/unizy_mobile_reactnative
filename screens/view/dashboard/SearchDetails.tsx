@@ -1158,11 +1158,27 @@ const handlePayConfirmed = (amount: number) => {
                   <TouchableOpacity
                     style={styles.loginButton}
                     onPress={() => {
-                      navigation.replace('Dashboard', {
-                        AddScreenBackactiveTab: 'Home',
-                        isNavigate: false,
+
+
+                      navigation.reset({
+                        index: 0,
+                        routes: [
+                          {
+                            name: 'Dashboard',
+                            params: {
+                              AddScreenBackactiveTab: 'Home',
+                              isNavigate: false,
+                            }
+                          }
+                        ],
                       });
                       setShowPopup1(false);
+
+                    //   navigation.replace('Dashboard', {
+                    //     AddScreenBackactiveTab: 'Home',
+                    //     isNavigate: false,
+                    //   });
+                    //   setShowPopup1(false);
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText}>
