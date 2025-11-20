@@ -133,40 +133,91 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
     return () => clearTimeout(delay);
   }, [search]);
 
+  // const formatTime = (dateString: string) => {
+  //   // if (!dateString) return "";
+  //   // const date = new Date(dateString);
+  //   // return date.toLocaleTimeString([], {
+  //   //   hour: "2-digit",
+  //   //   minute: "2-digit",
+  //   //   hour12: true,
+  //   // });
+
+  //   if (!dateString) return '';
+
+  //   const date = new Date(dateString);
+  //   const today = new Date();
+
+  //   // Strip time to compare only the day, month, year
+  //   const isToday =
+  //     date.getDate() === today.getDate() &&
+  //     date.getMonth() === today.getMonth() &&
+  //     date.getFullYear() === today.getFullYear();
+
+  //   if (isToday) {
+  //     return date.toLocaleTimeString([], {
+  //       hour: '2-digit',
+  //       minute: '2-digit',
+  //       hour12: true,
+  //     });
+  //   } else {
+  //     return date.toLocaleDateString('en-GB', {
+  //       day: '2-digit',
+  //       month: '2-digit',
+  //       year: 'numeric',
+  //     }); // Example: 29/01/2025
+  //   }
+  // };
+
+
   const formatTime = (dateString: string) => {
-    // if (!dateString) return "";
-    // const date = new Date(dateString);
-    // return date.toLocaleTimeString([], {
-    //   hour: "2-digit",
-    //   minute: "2-digit",
-    //   hour12: true,
-    // });
+  if (!dateString) return "";
 
-    if (!dateString) return '';
+  const date = new Date(dateString);
+  const today = new Date();
 
-    const date = new Date(dateString);
-    const today = new Date();
+  // Check for Today
+  const isToday =
+    date.getDate() === today.getDate() &&
+    date.getMonth() === today.getMonth() &&
+    date.getFullYear() === today.getFullYear();
 
-    // Strip time to compare only the day, month, year
-    const isToday =
-      date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear();
+  if (isToday) {
+    return date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  }
 
-    if (isToday) {
-      return date.toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true,
-      });
-    } else {
-      return date.toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-      }); // Example: 29/01/2025
+  // ---- Format: 20th Nov 2025 ----
+  
+  const day = date.getDate();
+
+  // Add ordinal suffix
+  const getSuffix = (n: number) => {
+    if (n > 3 && n < 21) return "th";
+    switch (n % 10) {
+      case 1:
+        return "st";
+      case 2:
+        return "nd";
+      case 3:
+        return "rd";
+      default:
+        return "th";
     }
   };
+
+  const suffix = getSuffix(day);
+
+  const month = date.toLocaleString("en-GB", { month: "short" });
+  const year = date.getFullYear();
+
+  return `${day}${suffix} ${month} ${year}`;
+};
+
+
+
 
   const getInitials = (firstName = '', lastName = '') => {
     const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
@@ -212,7 +263,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
               />
             </View>
           }
-        renderItem={({ item: chat }) => (
+        renderItem={({ item: chat,index  }) => (
           <TouchableOpacity
             onPress={() => {
               navigation.navigate('MessagesIndividualScreen', {
@@ -323,21 +374,23 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
                   </View>
                 </View>
               </View>
-              <View
-                style={{
-                  height: 1,
-                  backgroundColor: 'rgba(255,255,255,0.2)',
-                  marginTop: 10,
-                  width: '100%',
-                }}
-              />
+              {index !== studentList.length - 1 && (
+        <View
+          style={{
+            height: 1,
+            backgroundColor: 'rgba(255,255,255,0.2)',
+            marginTop: 10,
+            width: '100%',
+          }}
+        />
+      )}
             </View>
         </TouchableOpacity>
         )}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: 250,
-          paddingTop: Platform.OS === 'ios' ? 0 : 10,
+          paddingTop: Platform.OS === 'ios' ? 0 : 0,
           paddingHorizontal: 16,
         }}
         ListEmptyComponent={
@@ -414,7 +467,7 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     fontFamily: 'Urbanist-Medium',
-    marginLeft: -5,
+    marginRight: -5,
     fontWeight: 500,
     fontSize: 17,
     color: '#fff',
@@ -429,12 +482,12 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     paddingVertical: 4,
     paddingHorizontal: 16,
-    marginBottom: 10,
+    marginBottom: 15,
     zIndex: 12,
   },
   searchIcon: {
     padding: Platform.OS === 'ios' ? 0 : 5,
-    margin: 10,
+    // margin: 10,
     height: 24,
     width: 24,
   },

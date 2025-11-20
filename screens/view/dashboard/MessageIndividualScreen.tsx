@@ -1640,6 +1640,7 @@ const MessagesIndividualScreen = ({
                   }
                   
                  }}
+                   hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}  
                   style={{
                     width: 48,
                     height: 48,
@@ -1693,6 +1694,7 @@ const MessagesIndividualScreen = ({
                     blurType="light"
                     blurAmount={5}
                     reducedTransparencyFallbackColor="#ffffff34"
+
                   />
                 
                     {/* //----------------------Add Heder text -----------------------// */}
@@ -2314,6 +2316,7 @@ const MessagesIndividualScreen = ({
                 <TouchableOpacity
                   onPress={handleSendMessage}
                      disabled={isSendDisabled}
+                       hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}   
                   style={{
                     marginLeft: 8,
                     width: 48,
