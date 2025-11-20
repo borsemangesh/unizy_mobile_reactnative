@@ -395,7 +395,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
         }}
         ListEmptyComponent={
           !initialLoading && (!studentList || studentList.length === 0) ? (
-            <View style={[styles.emptyWrapper, { minHeight: INNER_SCREEN_HEIGHT - (Platform.OS === 'ios' ? 225 : 150) }]}>
+            <View style={[styles.emptyWrapper, { minHeight: INNER_SCREEN_HEIGHT - (Platform.OS === 'ios' ? 225 : 250) }]}>
               <View style={styles.emptyContainer}>
                 <Image
                   source={require('../../../assets/images/noproduct.png')}
@@ -484,7 +484,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     marginBottom: 15,
     zIndex: 12,
-    height: (Platform.OS === 'ios' ? 50 : 0),
+    height: (Platform.OS === 'ios' ? 50 : 50),
     gap: 8,
   },
   searchIcon: {

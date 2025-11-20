@@ -1378,32 +1378,82 @@ const MessagesIndividualScreen = ({
 
   //-------------- for set date wise messages -----------------//
 
+  // const formatMessageDate = (date: Date) => {
+  //   const d = new Date(date);
+  //   const today = new Date();
+  //   today.setHours(0, 0, 0, 0);
+  //   const yesterday = new Date(today);
+  //   yesterday.setDate(yesterday.getDate() - 1);
+  //   const messageDate = new Date(d);
+  //   messageDate.setHours(0, 0, 0, 0);
+  //   if (messageDate.getTime() === today.getTime()) return 'Today';
+  //   if (messageDate.getTime() === yesterday.getTime()) return 'Yesterday';
+  //   return d.toLocaleDateString('en-IN', {
+  //     day: '2-digit',
+  //     month: 'short',
+  //     year: 'numeric',
+  //   });
+  // };
+
+
+  // add new date format
   const formatMessageDate = (date: Date) => {
-    const d = new Date(date);
+  const d = new Date(date);
 
-    // Get today's date in local timezone (reset time to midnight for accurate comparison)
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+  // Today at midnight
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-    // Get yesterday's date
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
+  // Yesterday at midnight
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
 
-    // Get message date in local timezone (reset time to midnight)
-    const messageDate = new Date(d);
-    messageDate.setHours(0, 0, 0, 0);
+  // Message date at midnight
+  const messageDate = new Date(d);
+  messageDate.setHours(0, 0, 0, 0);
 
-    // Compare dates (year, month, day only)
-    if (messageDate.getTime() === today.getTime()) return 'Today';
+  // Today check
+  if (messageDate.getTime() === today.getTime()) {
+    return "Today";
+  }
 
-    if (messageDate.getTime() === yesterday.getTime()) return 'Yesterday';
+  // Yesterday check
+  if (messageDate.getTime() === yesterday.getTime()) {
+    return "Yesterday";
+  }
 
-    return d.toLocaleDateString('en-IN', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    });
+  // Format with suffix (st, nd, rd, th)
+  const day = d.getDate();
+
+  const getSuffix = (n: number) => {
+    if (n > 3 && n < 21) return "th";
+    switch (n % 10) {
+      case 1:
+        return "st";
+      case 2:
+        return "nd";
+      case 3:
+        return "rd";
+      default:
+        return "th";
+    }
   };
+
+  const suffix = getSuffix(day);
+
+  const month = d.toLocaleString("en-GB", { month: "short" });
+  const year = d.getFullYear();
+
+  // Final format: 20th Nov 2025
+  return `${day}${suffix} ${month} ${year}`;
+};
+
+
+
+
+
+
+
 
   const buildMessageList = (messages: any[]) => {
     // Inverted FlatList: Array[0] appears at BOTTOM, Array[n] appears at TOP
@@ -1630,7 +1680,8 @@ const MessagesIndividualScreen = ({
                      <TouchableOpacity
                  onPress={() => {
                   console.log("CHATBACK", navigation.getState());
-                  if(navigation.canGoBack()){
+                  if(Platform.OS === 'ios'){
+                      if(navigation.canGoBack()){
                       navigation.goBack();
                   } else {
                     navigation.replace('Dashboard', {
@@ -1638,6 +1689,14 @@ const MessagesIndividualScreen = ({
                       isNavigate: false,
                     });
                   }
+
+                  }else{
+                      navigation.replace('Dashboard', {
+                      AddScreenBackactiveTab: 'Bookmark',
+                      isNavigate: false,
+                    });
+                  }
+                
                   
                  }}
                    hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}  
