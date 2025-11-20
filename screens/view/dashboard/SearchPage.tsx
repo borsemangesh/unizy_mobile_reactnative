@@ -591,7 +591,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
           }
           contentContainerStyle={[
             styles.listContainer,
-            { paddingTop: Platform.OS === 'ios' ? 120 : 100, paddingBottom: isEmpty ? 10 : 40, flexGrow: 1 },
+            { paddingTop: Platform.OS === 'ios' ? 121 : 100, paddingBottom: isEmpty ? 10 : 40, flexGrow: 1 },
           ]}
           onScroll={scrollHandler}
           scrollEventThrottle={16}
@@ -692,7 +692,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '6.1%' : 40,
+    top: Platform.OS === 'ios' ? '6%' : 40,
     width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -701,6 +701,8 @@ const styles = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
+    marginTop: 2,
+    marginLeft: 1
   },
 
   dateHeading: {
@@ -809,7 +811,7 @@ const styles = StyleSheet.create({
     // paddingVertical: 4,
     padding: (Platform.OS === 'ios' ? 12 : 0),
     marginTop: (Platform.OS === 'ios' ? 4 : 20),
-    height: 48,
+    height: 50,
     gap: 8,
     width: '84%',
   },

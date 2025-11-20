@@ -1108,7 +1108,7 @@ const styles = StyleSheet.create({
     borderBottomStartRadius: 50,
     boxSizing: 'border-box',
     zIndex: 100,
-    marginTop: -14,
+    marginTop: -10,
   },
   bubble: {
   

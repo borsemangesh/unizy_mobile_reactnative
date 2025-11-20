@@ -999,7 +999,7 @@ const blurAmount = useDerivedValue(() =>
           <View
             style={[
               styles.header,
-              { paddingTop: Platform.OS === 'ios' ? '13.7%' : 40 },
+              { paddingTop: Platform.OS === 'ios' ? '13.7%': 40 },
             ]}
           >
             <Animated.View
@@ -1148,7 +1148,7 @@ const blurAmount = useDerivedValue(() =>
       onScroll={scrollHandler}
       style={{
         flex: 1,
-        paddingTop: Platform.OS === 'ios' ? 124 : 120,
+        paddingTop: Platform.OS === 'ios' ? 126 : 120,
       }}
       showsVerticalScrollIndicator={false}
     >
@@ -1462,8 +1462,8 @@ const styles = StyleSheet.create({
   },
 
   MylistingsBackground: {
-    height: 48,
-    width: 48,
+    height: 49,
+    width: 49,
 
     justifyContent: 'center',
     alignItems: 'center',
@@ -1473,11 +1473,12 @@ const styles = StyleSheet.create({
     boxShadow:
       '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
 
-    borderTopColor: '#ffffff5d',
-    borderBottomColor: '#ffffff36',
-    borderLeftColor: '#ffffff5d',
-    borderRightColor: '#ffffff36',
-    borderWidth: 0.3,
+    // borderTopColor: '#ffffff5d',
+    // borderBottomColor: '#ffffff36',
+    // borderLeftColor: '#ffffff5d',
+    // borderRightColor: '#ffffff36',
+    borderColor: '#ffffff36',
+    borderWidth: 0.5,
   },
   iconSmall: {
     width: 25,

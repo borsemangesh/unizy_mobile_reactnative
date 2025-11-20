@@ -485,7 +485,7 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
             }
             contentContainerStyle={[
               styles.listContainer,
-              { paddingTop: Platform.OS === 'ios' ? 120 : 100,flexGrow:1 },
+              { paddingTop: Platform.OS === 'ios' ? 125 : 100,flexGrow:1 },
             ]}
             onScroll={scrollHandler}
             scrollEventThrottle={16}
@@ -593,6 +593,8 @@ const styles = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
+    marginTop: 2,
+    marginLeft: 1
   },
 
    categoryTabsContainer: {

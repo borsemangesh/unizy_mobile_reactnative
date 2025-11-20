@@ -416,7 +416,7 @@ const renderItem = ({ item ,index  }: { item: any ;index: number }) => {
    
        
     <Animated.FlatList
-    onScroll={scrollHandler}
+            onScroll={scrollHandler}
             scrollEventThrottle={16}
             data={groupedList}
             renderItem={renderItem}
@@ -424,7 +424,8 @@ const renderItem = ({ item ,index  }: { item: any ;index: number }) => {
                  styles.listContainer,
                    {                   
                    paddingBottom: (Platform.OS === 'ios' ? 30:screenHeight * 0.150 + insets.bottom), 
-                    paddingTop: Platform.OS === 'ios' ? 120 : 130,
+                    paddingTop: Platform.OS === 'ios' ? 110 : 130,
+                    
                     },
                 ]}
             keyExtractor={(item, index) => `${item.type}-${index}`}
@@ -518,8 +519,8 @@ dateHeading:{
   },
   
   listContainer: {
-    marginLeft: 10,
-    marginRight: 10,
+    marginLeft: (Platform.OS === 'ios' ? 15 : 10),
+    marginRight: (Platform.OS === 'ios' ? 15 : 10),
     paddingTop: 10,
     marginTop:14
     // paddingBottom:80,
@@ -555,7 +556,7 @@ dateHeading:{
 
   header: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '5%' : 40,
+    top: Platform.OS === 'ios' ? '4%' : 40,
     left: 0,
     right: 0,
     height: 100,
@@ -569,6 +570,7 @@ dateHeading:{
     alignItems: 'center',
     paddingHorizontal: 16,
     justifyContent: 'space-between',
+ 
   },
   headerSpacer: {
     width: 48,

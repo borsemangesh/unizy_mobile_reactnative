@@ -589,7 +589,7 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
             }
             contentContainerStyle={[
               styles.listContainer,
-              { paddingTop: Platform.OS === 'ios' ? 120 : 100 ,flexGrow:1},
+              { paddingTop: Platform.OS === 'ios' ? 114 : 100 ,flexGrow:1},
             ]}
             onScroll={scrollHandler}
             scrollEventThrottle={16}
@@ -640,7 +640,7 @@ const styles = StyleSheet.create({
   categoryTabsContainer: {
     width: '100%',
     marginBottom: 12,
-    marginTop: 12,
+    marginTop: 14,
     paddingLeft: 10,
   },
  
@@ -710,6 +710,8 @@ const styles = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
+    marginTop: 2,
+    marginLeft: 1
   },
 
 dateHeading:{

@@ -1412,7 +1412,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? 70 : 60,
+    top: Platform.OS === 'ios' ? '8.4%': 60,
     width: Platform.OS === 'ios' ? '100%' : '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -1421,6 +1421,8 @@ const styles = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
+    marginTop: (Platform.OS === 'ios' ? 0 : 0),
+    marginLeft: 0
   },
   backButtonContainer: {
     position: 'absolute',
@@ -1589,7 +1591,7 @@ dropdowncard:{
     padding: 12,
     borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    marginTop:12
+    marginTop:(Platform.OS === 'ios' ? 9: 12)
   },
 productdetails: {
     marginTop: 10,

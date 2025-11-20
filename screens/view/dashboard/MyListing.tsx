@@ -480,7 +480,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
             contentContainerStyle={[
               styles.listContainer,
               {
-                paddingTop: Platform.OS === 'ios' ? 120 : 100,
+                paddingTop: Platform.OS === 'ios' ? 114 : 100,
                 paddingBottom: isEmpty
                   ? 10                        // ⬅ remove padding when list is empty
                   : Platform.select({
@@ -618,7 +618,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '6.5%' : 40,
+    top: Platform.OS === 'ios' ? '6%' : 40,
     width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -627,6 +627,8 @@ const styles = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
+    marginTop: 2,
+    marginLeft: 1
   },
   tabcard1: {
     minHeight: 38,

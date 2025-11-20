@@ -237,7 +237,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
             right: 0,
             justifyContent: 'center', 
             alignItems: 'center',
-            height: (Platform.OS  === 'ios' ? 200 : 0)
+            height: (Platform.OS  === 'ios' ? 600 : 0)
           }}
         >
           <ActivityIndicator size="large" color="#FFFFFF" />

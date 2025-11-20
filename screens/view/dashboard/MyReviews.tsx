@@ -467,7 +467,7 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
             }
             contentContainerStyle={[
               styles.listContainer,
-              { paddingTop: Platform.OS === 'ios' ? 120 : 100,flexGrow:1 },
+              { paddingTop: Platform.OS === 'ios' ? 115 : 100,flexGrow:1 },
             ]}
             onScroll={scrollHandler}
             scrollEventThrottle={16}
@@ -562,6 +562,8 @@ const styles = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
+    marginTop: 2,
+    marginLeft: 1
   },
 
 

@@ -406,7 +406,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
             }}
           >
             {/* Card */}
-            <View style={[styles.card, { marginTop: 10 }]}>
+            <View style={[styles.card, { marginTop: (Platform.OS === 'ios'? 6: 10) }]}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 {(() => {
                   // Check if category is housekeeping or tuition
@@ -1076,7 +1076,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '8.6%' : 60,
+    top: Platform.OS === 'ios' ? '8.5%' : 60,
     width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -1085,6 +1085,8 @@ const styles = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
+    marginTop: (Platform.OS === 'ios' ? 0 : 0),
+    marginLeft: 1 
   },
   backButtonContainer: {
     position: 'absolute',

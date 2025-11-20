@@ -629,7 +629,7 @@ const handleEndReached = useCallback(() => {
             onEndReachedThreshold={0.5}
             ListHeaderComponent={
               <View
-                style={{ flexDirection: 'row', gap: 8,paddingHorizontal: 8 }}
+                style={{ flexDirection: 'row', gap: 8,paddingHorizontal:8 }}
               >
                 <Pressable
                   style={styles.search_container}
@@ -794,6 +794,8 @@ const styles = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
+    marginTop: 2,
+    marginLeft: 1
   },
 
 
@@ -901,15 +903,7 @@ const styles = StyleSheet.create({
     marginTop: 17
   },
   search_container: {
-    // flexDirection: 'row',
-    // alignItems: 'center',
-    // borderRadius: 40,
-    // boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    // backgroundColor:
-    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    // width: '84%',
-    // minHeight:48,
-    // marginEnd: 8,
+
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
@@ -920,8 +914,8 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     paddingVertical: 4,
     padding: (Platform.OS === 'ios'? 12:0),
-    marginTop:(Platform.OS === 'ios' ? 4:20),
-    height: 48,
+    marginTop:(Platform.OS === 'ios' ? 5:20),
+    height: 50,
     gap: 8,
     width: '84%',
   },

@@ -1245,7 +1245,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '8.6%' : 60,
+    top: Platform.OS === 'ios' ? '8.5%' : 60,
     width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -1254,16 +1254,18 @@ const styles = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
+    marginTop: (Platform.OS === 'ios' ? 0 : 0),
+    marginLeft: 1 
   },
   backButtonContainer: {
     position: 'absolute',
-    left: 16,
+    left: (Platform.OS === 'ios'?  16.2: 16),
     zIndex: 11,
     //top: 7,
   },
   rightButtoContainer:{
     position: 'absolute',
-    right: 16,
+    right: (Platform.OS === 'ios' ? 17.7 : 16),
     zIndex: 11,
     //top: 7,
   },
@@ -1586,7 +1588,7 @@ inactiveStepCircle: {
   scrollContainer: {
    //paddingHorizontal: 20,
    paddingBottom: 80,
-   paddingTop: Platform.OS === 'ios' ? 120 : 100,
+   paddingTop: Platform.OS === 'ios' ? 110 : 100,
   },
 
   datePosted: {

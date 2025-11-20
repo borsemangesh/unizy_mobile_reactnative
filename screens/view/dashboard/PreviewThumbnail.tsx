@@ -587,7 +587,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '8%': 60,
+    top: Platform.OS === 'ios' ? '8.5%': 60,
     width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -596,6 +596,8 @@ const styles = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
+    marginTop: (Platform.OS === 'ios' ? 0 : 0),
+    marginLeft: 1 
   },
   scrollContainer: {
     paddingHorizontal: 16,
