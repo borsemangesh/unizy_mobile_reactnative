@@ -186,7 +186,7 @@ type ChatProps = {
 };
 
 const BookmarkScreenContent = ({ navigation }: ChatProps) => (
-  <View style={[styles.tabContent]}>
+  <View style={{flex: 1}}>
     {/* <Text allowFontScaling={false} style={styles.tabContentText}>🔖 Bookmark Layout</Text> */}
     <MessagesScreen navigation={navigation}/>
 
@@ -1148,7 +1148,7 @@ const blurAmount = useDerivedValue(() =>
       onScroll={scrollHandler}
       style={{
         flex: 1,
-        paddingTop: Platform.OS === 'ios' ? 140 : 120,
+        paddingTop: Platform.OS === 'ios' ? 124 : 120,
       }}
       showsVerticalScrollIndicator={false}
     >
@@ -1336,7 +1336,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     padding: (Platform.OS === 'ios'? 12:0),
     marginTop:(Platform.OS === 'ios' ? 16:20),
-    height: 48,
+    height: 50,
     gap: 8
   },
   searchIcon: {

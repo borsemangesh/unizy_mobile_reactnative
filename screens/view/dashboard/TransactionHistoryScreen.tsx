@@ -323,7 +323,7 @@ export default function TransactionHistoryScreen(
   return (
     <View
       style={[
-        { flex: 1, paddingHorizontal: 16, height: '100%', width: '100%' },
+        { flex: 1,marginTop: 11, paddingHorizontal: 16, height: '100%', width: '100%' },
       ]}
     >
       <View style={[styles.bottomTabContainer]}>

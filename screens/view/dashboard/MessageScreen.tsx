@@ -230,7 +230,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
       {initialLoading ? (
         <View 
           style={{ 
-            // position: 'absolute',
+            position: 'absolute',
             top: Platform.OS === 'ios' ? '100%' : 320,
             bottom: (Platform.OS === 'ios' ? 0 : 200),
             left: 0,
@@ -467,7 +467,7 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     fontFamily: 'Urbanist-Medium',
-    marginRight: -5,
+    marginRight: 5,
     fontWeight: 500,
     fontSize: 17,
     color: '#fff',
@@ -481,9 +481,11 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     paddingVertical: 4,
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
     marginBottom: 15,
     zIndex: 12,
+    height: (Platform.OS === 'ios' ? 50 : 0),
+    gap: 8,
   },
   searchIcon: {
     padding: Platform.OS === 'ios' ? 0 : 5,

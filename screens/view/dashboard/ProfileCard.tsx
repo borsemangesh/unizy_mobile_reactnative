@@ -303,10 +303,9 @@ return (
 
     <View
       style={{
-        paddingTop: Platform.OS === 'ios' ? '0%' : 20,
+        paddingTop: Platform.OS === 'ios' ? 0: 20,
         marginHorizontal: 16,
         gap: 24,
-        marginTop: -16,
       }}
     >
       <View style={styles.userRow}>
