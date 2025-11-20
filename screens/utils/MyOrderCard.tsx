@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ImageSourcePropType,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 
 type CreatedBy = {
@@ -132,9 +133,11 @@ const handleViewTransaction = () => {
       </View>
 
       {/* Dotted Line */}
-      <View style={styles.dashedLine} />
+      {/* <View style={styles.dashedLine} />
 
-       <View style={styles.dashedLine1} />
+       <View style={styles.dashedLine1} /> */}
+    <View style={styles.cardconstinerdivider} />
+       
 
        {ispurchase && !isreviewadded ? (
         <View style={styles.buttonRow}>
@@ -174,6 +177,22 @@ const handleViewTransaction = () => {
 export default MyOrderCard;
 
 const styles = StyleSheet.create({
+
+   cardconstinerdivider: {
+    
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '100%',
+        height: (Platform.OS === 'ios' ? 2 : 1.5),
+        borderStyle: 'dashed',
+        borderBottomWidth: (Platform.OS === 'ios' ? 0.9 : 1),
+        // backgroundColor: 'rgba(169, 211, 255, 0.08)',
+        borderColor: (Platform.OS === 'ios' ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)' : '#4169B8'),
+        marginVertical:6,
+      },
+  
   card: {
     backgroundColor: 'rgba(255,255,255,0.08)',
     borderRadius: 16,
