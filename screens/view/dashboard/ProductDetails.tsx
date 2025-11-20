@@ -715,7 +715,7 @@ const handleEndReached = useCallback(() => {
             onEndReachedThreshold={0.5}
             ListHeaderComponent={
               <View
-                style={{ flexDirection: 'row', gap: 8,paddingHorizontal: 9 }}
+                style={{ flexDirection: 'row', gap: 8,paddingHorizontal: 8 }}
               >
                 <Pressable
                   style={styles.search_container}
@@ -1026,7 +1026,7 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     paddingVertical: 4,
     padding: (Platform.OS === 'ios'? 12:0),
-    marginTop:(Platform.OS === 'ios' ? 5:20),
+    marginTop:(Platform.OS === 'ios' ? 4:20),
     height: 48,
     gap: 8,
     width: '84%',

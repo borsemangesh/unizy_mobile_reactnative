@@ -1181,13 +1181,13 @@ const blurAmount = useDerivedValue(() =>
             {Platform.OS === 'ios' ? (
               <View style={[StyleSheet.absoluteFill, { borderRadius: 25, backgroundColor: 'transparent'}]}>
               <BlurView
-                style={[StyleSheet.absoluteFill, { borderRadius: 25, backgroundColor: 'transparent',}]}
+                style={[StyleSheet.absoluteFill, { borderRadius: 25, backgroundColor: 'transparent',overflow: 'hidden'}]}
                 blurType='light'
                 blurAmount={1.3}
                 reducedTransparencyFallbackColor="rgba(15, 21 ,131,0.8)"
                 overlayColor="rgba(15, 21 ,131,0.8)"
               >
-                <View style={{opacity:(Platform.OS === 'ios' ?0.4 :0), backgroundColor: 'rgba(0, 3, 65, 0.98)', width: '100%', height: '100%',}}></View>
+                <View style={{opacity:(Platform.OS === 'ios' ?0.4 :0), backgroundColor: 'rgba(0, 3, 65, 0.98)', width: '100%', height: '100%',borderRadius: 25,}}></View>
                 </BlurView>
             </View>):(<></>)}
           

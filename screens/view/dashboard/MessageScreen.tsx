@@ -55,80 +55,57 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       const userId = await AsyncStorage.getItem('userId');
-
+    
       if (!token || !userId) {
-        console.warn('Missing token or user ID in AsyncStorage');
+        console.warn('Missing token or userId');
         if (isInitialLoad) {
-          // Show loader for at least 1 second even on error
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(r => setTimeout(r, 1000));
           setInitialLoading(false);
         }
         return;
       }
-
-      // Only set initial loading on first load
-      if (isInitialLoad) {
-        setInitialLoading(true);
-        // Add a minimum delay to ensure loader is visible
-        await new Promise(resolve => setTimeout(resolve, 500));
-      }
-
+    
+      let start = Date.now();
+    
+      if (isInitialLoad) setInitialLoading(true);
+    
       const url = `${MAIN_URL.baseUrl}twilio/mychats?search=${query}`;
-      
+      console.log("twilioURL:", url);
+    
       const response = await fetch(url, {
-        method: 'GET',
+        method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
-
+    
       const data = await response.json();
-
-      console.log("datszczczca",data);
-      
-
+    
       if (!response.ok) {
-        console.warn('Token fetch failed:', data.message);
-        if (isInitialLoad) {
-          // Show loader for at least 1 second even on error
-          const elapsedTime = 500; // Already waited 500ms
-          const remainingTime = Math.max(0, 1000 - elapsedTime);
-          if (remainingTime > 0) {
-            await new Promise(resolve => setTimeout(resolve, remainingTime));
-          }
-          setInitialLoading(false);
-        }
-        return;
+        console.warn("Fetch failed:", data.message);
+      } else {
+        setStudentList(data?.data?.result || []);
       }
-
-      const UserData = data.data;
-      setStudentList(UserData.result);
-      
+    
       if (isInitialLoad) {
-        // Ensure loader shows for at least 1 second total
-        const remainingTime = Math.max(0, 1000 - 500);
-        if (remainingTime > 0) {
-          await new Promise(resolve => setTimeout(resolve, remainingTime));
-        }
+        let elapsed = Date.now() - start;
+        let remaining = Math.max(0, 1000 - elapsed);
+        await new Promise(r => setTimeout(r, remaining));
         setInitialLoading(false);
       }
+    
     } catch (error) {
-      console.error('Chat setup failed:', error);
+      console.error("Chat setup failed:", error);
       if (isInitialLoad) {
-        // Show loader for at least 1 second even on error
-        const elapsedTime = 500; // Already waited 500ms if we got here
-        const remainingTime = Math.max(0, 1000 - elapsedTime);
-        if (remainingTime > 0) {
-          await new Promise(resolve => setTimeout(resolve, remainingTime));
-        }
+        await new Promise(r => setTimeout(r, 1000));
         setInitialLoading(false);
       }
     }
+    
   };
 
-    // fetchUserChatData();
-  // }, []);
+
 
   // Load initial data
   useEffect(() => {

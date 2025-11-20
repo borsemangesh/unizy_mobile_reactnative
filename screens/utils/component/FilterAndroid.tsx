@@ -145,6 +145,10 @@ const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(n
   }
 }, [visible, initialFilters]);
 
+const modelClose= () => {
+  onClose();
+}
+
   const handleTabPress = (tabName: string) => {
     setSelectedTab(tabName);
   };
@@ -387,7 +391,7 @@ const handleApply = () => {
         animationType="slide"
         visible={visible}
         transparent
-        onRequestClose={handleClose}
+        onRequestClose={modelClose}
       >
           <View style={{
             flex: 1, justifyContent: 'flex-end', backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(34, 30, 252, 0.08) 0%, rgba(255, 255, 255, 0.10) 100%)'
@@ -395,7 +399,7 @@ const handleApply = () => {
            
 
             <View style={styles.overlay}>
-               <TouchableWithoutFeedback onPress={handleClose}>
+               <TouchableWithoutFeedback onPress={modelClose}>
                 <View style={StyleSheet.absoluteFillObject} />
               </TouchableWithoutFeedback>
               <View style={[styles.modelcontainer]}>

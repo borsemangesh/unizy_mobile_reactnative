@@ -621,7 +621,7 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
             return index.toString();
           }}
           ListHeaderComponent={
-            <View style={{ flexDirection: 'row', gap: 8 ,paddingHorizontal: 10}}>
+            <View style={{ flexDirection: 'row', gap: 8 ,paddingHorizontal: 8}}>
               <View style={styles.search_container}>
                 <Image source={searchIcon} style={styles.searchIcon} />
                 <TextInput
@@ -689,15 +689,6 @@ const handleFilterApply = async (filterBody: any, pageNum: number = 1) => {
           }
         />
       </View>
-
-      {/* <FilterBottomSheet
-        catagory_id={category_id}
-        visible={isFilterVisible}
-        onClose={() => setFilterVisible(false)}
-        onApply={filterBody => handleFilterApply(filterBody)}
-        from={0}
-        to={0}
-      /> */}
 
       {Platform.OS === 'ios' ? (
         <FilterBottomSheet
@@ -768,7 +759,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '6%' : 40,
+    top: Platform.OS === 'ios' ? '6.1%' : 40,
     width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -788,8 +779,8 @@ dateHeading:{
     marginTop:16
     },
     blurButtonWrapper: {
-      width: 48,
-      height: 48,
+      width: 46,
+      height: 46,
       borderRadius: 40,
       overflow: 'hidden',
       justifyContent: 'center',
@@ -884,7 +875,7 @@ dateHeading:{
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     // paddingVertical: 4,
     padding: (Platform.OS === 'ios'? 12:0),
-    marginTop:(Platform.OS === 'ios' ? 5:20),
+    marginTop:(Platform.OS === 'ios' ? 4:20),
     height: 48,
     gap: 8,
     width: '84%',
@@ -958,7 +949,7 @@ dateHeading:{
     borderLeftColor: '#ffffff5d',
     borderRightColor: '#ffffff36',
     borderWidth: 0.3,
-    marginTop: (Platform.OS === 'ios'? 5:20),
+    marginTop: (Platform.OS === 'ios'? 4:20),
   },
   iconSmall: {
     width: 24,

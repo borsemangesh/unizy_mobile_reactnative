@@ -1627,10 +1627,16 @@ const MessagesIndividualScreen = ({
 
                      <TouchableOpacity
                  onPress={() => {
-                  navigation.replace('Dashboard', {
-                    AddScreenBackactiveTab: 'Bookmark',
-                    isNavigate: false,
-                  });
+                  console.log("CHATBACK", navigation.getState());
+                  if(navigation.canGoBack()){
+                      navigation.goBack();
+                  } else {
+                    navigation.replace('Dashboard', {
+                      AddScreenBackactiveTab: 'Bookmark',
+                      isNavigate: false,
+                    });
+                  }
+                  
                  }}
                   style={{
                     width: 48,

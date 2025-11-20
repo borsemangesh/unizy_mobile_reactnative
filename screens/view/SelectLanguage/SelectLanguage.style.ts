@@ -54,6 +54,8 @@ export const selectlang_styles = StyleSheet.create({
     fontWeight:500,
     fontSize:17,
     color: '#fff',
+    width: '82%',
+    height: '100%'
   },
 
   listContainer: {

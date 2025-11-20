@@ -2339,7 +2339,7 @@ useEffect(() => {
                                 value={username1}
                                 maxLength={50}
                                 selectionColor="white"
-                                keyboardType="email-address"
+                                keyboardType={Platform.OS === 'ios' ? "default":'email-address'}
                                 autoCapitalize="none"
                                 autoComplete={
                                   Platform.OS === 'ios' ? 'email' : 'username'

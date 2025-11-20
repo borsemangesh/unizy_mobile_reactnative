@@ -19,6 +19,7 @@ const FilterButtonApply = ({ onPress, title = 'Click', style }: ButtonProps) => 
         style={StyleSheet.absoluteFill}
         blurType="light"
         blurAmount={2}
+        pointerEvents="none"
         reducedTransparencyFallbackColor="transparent"
       />
       <Text allowFontScaling={false} style={styles.buttonText}>{title}</Text>

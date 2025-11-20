@@ -926,6 +926,7 @@ const handlePayConfirmed = (amount: number) => {
                     //   navigation.navigate("MessagesIndividualScreen");
                     // }
                     if (detail?.ispurchased) {
+                        console.log("NAVIGATIONSTATUS: ",navigation.getState());
                         navigation.navigate("MessagesIndividualScreen",{
                           animation: 'none',
                           sellerData: {
