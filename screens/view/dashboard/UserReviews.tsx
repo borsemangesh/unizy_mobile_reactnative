@@ -112,6 +112,8 @@ const UserReviews = ({ navigation }: UserReviewsProps)  => {
   const [isLoading, setIsLoading] = useState(false);
   const insets = useSafeAreaInsets(); // Safe area insets
   const { height: screenHeight } = Dimensions.get('window');
+  const [totalRecords, setTotalRecords] = useState(0);
+
 
   type Category = {
   id: number | null; 
@@ -190,12 +192,19 @@ useEffect(() => {
   loadCategories();
 }, []);
 
+// useEffect(() => {
+//   setPage(1);
+//   displayListOfProduct(selectedCategory?.id ?? null, 1);
+// }, [selectedCategory]);
+
 useEffect(() => {
   setPage(1);
+  setFeatureList([]);      
+  setTotalRecords(0);     
+  setIsLoadingMore(false); 
+
   displayListOfProduct(selectedCategory?.id ?? null, 1);
 }, [selectedCategory]);
-
-
 
 
 const displayListOfProduct = async (categoryId: number | null, pageNum: number) => {
@@ -222,10 +231,16 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
     const jsonResponse = await response.json();
 
     const reviews: ReviewItem[] = jsonResponse.data?.features ?? [];
+    const total = jsonResponse.data?.totalRecords ?? reviews.length;
+    setTotalRecords(total);
 
     if (jsonResponse.statusCode === 200) {
-      setIsLoading(false);
-      setFeatureList(reviews);   // <-- Now correct array
+      if (pageNum === 1) {
+      setFeatureList(reviews);     
+    } else {
+      setFeatureList(prev => [...prev, ...reviews]); 
+    }
+      
     } 
     else if (jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403) {
       setIsLoading(false);
@@ -475,10 +490,20 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
             onScroll={scrollHandler}
             scrollEventThrottle={16}
             onEndReachedThreshold={0.5}
+            // onEndReached={() => {
+            //   const nextPage = page + 1;
+            //   setPage(nextPage);
+            //   displayListOfProduct(selectedCategory?.id ?? null, nextPage);
+            // }}
             onEndReached={() => {
+              if (featureList.length >= totalRecords) return; 
+              if (isLoadingMore) return; 
+
+              setIsLoadingMore(true);
               const nextPage = page + 1;
               setPage(nextPage);
-              displayListOfProduct(selectedCategory?.id ?? null, nextPage);
+              displayListOfProduct(selectedCategory?.id ?? null, nextPage)
+                .finally(() => setIsLoadingMore(false));
             }}
             ListFooterComponent={
               isLoadingMore ? (
@@ -511,9 +536,6 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
       <NewCustomToastContainer/>
     </ImageBackground>
   );
-
-
-
 
 };
 

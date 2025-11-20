@@ -13,6 +13,7 @@ import {
   ActivityIndicator,
   ImageSourcePropType,
   Dimensions,
+  BackHandler,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -162,6 +163,23 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
       if (saved) setBookmarkedIds(JSON.parse(saved));
     };
     loadBookmarks();
+  }, []);
+
+   useEffect(() => {
+    const backAction = () => {
+       navigation.replace('Dashboard', {
+      AddScreenBackactiveTab: 'Home',
+      isNavigate: false,
+      })
+      return true;
+    };
+  
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+  
+    return () => backHandler.remove();
   }, []);
 
   const clickfilter = () => {

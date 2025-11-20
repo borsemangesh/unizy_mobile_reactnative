@@ -18,6 +18,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   StatusBar,
+  BackHandler,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImageResizer from 'react-native-image-resizer';
@@ -291,6 +292,20 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
       }).start();
     }
   }, [expanded]);
+
+  useEffect(() => {
+    const backAction = () => {
+       navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Add', isNavigate:false })
+      return true;
+    };
+  
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+  
+    return () => backHandler.remove();
+  }, []);
 
   const handleValueChange = (
     fieldId: number,

@@ -47,6 +47,7 @@ import StripeOnboardingCancel from './dashboard/StripeOnboardingCancel';
 import StripeOnboardingComplete from './dashboard/StripeOnboardingComplete';
 import UserReviews from './dashboard/UserReviews';
 import UserListing from './dashboard/UserListing';
+import UserAddReview from './dashboard/UserAddReview';
 
 const Stack = createNativeStackNavigator();
 
@@ -317,6 +318,15 @@ export const Navigation = () => {
         <Stack.Screen
           name="MyOrders"
           component={MyOrders}
+          options={{
+            headerShown: false,
+            presentation: 'fullScreenModal',
+          }}
+        />
+
+         <Stack.Screen
+          name="UserAddReview"
+          component={UserAddReview}
           options={{
             headerShown: false,
             presentation: 'fullScreenModal',

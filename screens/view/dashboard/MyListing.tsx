@@ -16,6 +16,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Dimensions,
+  BackHandler,
 } from 'react-native';
 
 import Animated, {
@@ -142,6 +143,10 @@ const MyListing = ({ navigation }: MyListingProps) => {
     name: 'All',
   });
 
+
+
+
+
   useFocusEffect(
     useCallback(() => {
       setPage(1);
@@ -171,6 +176,24 @@ const MyListing = ({ navigation }: MyListingProps) => {
     setPage(1);
     displayListOfProduct(selectedCategory?.id ?? null, 1);
   }, [selectedCategory]);
+
+
+  useEffect(() => {
+  const backAction = () => {
+     navigation.replace('Dashboard', {
+    AddScreenBackactiveTab: 'Home',
+    isNavigate: false,
+    })
+    return true;
+  };
+
+  const backHandler = BackHandler.addEventListener(
+    "hardwareBackPress",
+    backAction
+  );
+
+  return () => backHandler.remove();
+}, []);
 
   const displayListOfProduct = async (
     categoryId: number | null,

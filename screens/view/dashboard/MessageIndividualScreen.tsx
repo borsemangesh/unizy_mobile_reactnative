@@ -2538,7 +2538,9 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#FFFFFFE0',
     marginTop: 2,
+    minWidth:'70%',
     maxWidth: '86%',
+   
   },
   backIconStyle: {
     width: 30,

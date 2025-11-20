@@ -67,7 +67,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
   const { height } = Dimensions.get('window');
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [otp, setOtp] = useState(['', '', '', '']);
-
+ const [price,setprice] = useState('')
   const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
 
@@ -639,6 +639,18 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                     </Text>
                   </View>
 
+                  {data?.list?.category_id === 3 && (
+                    <View style={styles.listingtyperow}>
+                      <Text allowFontScaling={false} style={styles.lebleHeader}>
+                        Units Purchased:
+                      </Text>
+
+                      <Text allowFontScaling={false} style={styles.status}>
+                        {buyer?.purchased_quantity ?? 1}
+                      </Text>
+                    </View>
+                  )}
+
                   <View style={styles.listingtyperow}>
                     <Text allowFontScaling={false} style={styles.lebleHeader}>
                       Sold For:
@@ -667,7 +679,8 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                         }}
                         //onPress={() => setShowPopup1(true)}
                         onPress={() => {
-                          setSelectedOrderId(buyer.orderid); // store selected orderid in state
+                          setSelectedOrderId(buyer.orderid);
+                          setprice(buyer.originalprice) 
                           setShowPopup1(true);
                         }}
                       >
@@ -892,7 +905,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                     allowFontScaling={false}
                     style={[styles.subheader1, { marginTop: 0 }]}
                   >
-                    The payment of £{data?.list?.price} has been transferred to your account.
+                    The payment of £{price} has been transferred to your account.
                   </Text>
                   <TouchableOpacity
                     style={styles.loginButton}
