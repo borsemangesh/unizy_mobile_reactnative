@@ -569,16 +569,21 @@ export default function TransactionHistoryScreen(
                   </View>
 
                   <View style={styles.cardconstinerdivider} />
-                  <View style={{ flexDirection: 'row', width: '80%' }}>
-                   <Text style={styles.sellerText}>Purchased from</Text>
+                 
+                   {/* <Text style={styles.sellerText}>Purchased from</Text>
                     <Text
                       allowFontScaling={false}
                       numberOfLines={2}
                       style={[styles.sellerTextName,{marginLeft: 4}]}
                     >
                       {item.seller} ({item.university})
-                    </Text>
-                  </View>
+                    </Text> */}
+                    <Text style={styles.sellerText}>
+                       Purchased from{'  '}
+                <Text style={styles.sellerTextName}>
+                  {item.seller} ({item.university})
+                </Text>
+              </Text>
                 </View>
               ))}
             </View>
@@ -638,7 +643,7 @@ export default function TransactionHistoryScreen(
             {/* 🔹 Sales transactions — loop through each section */}
             {transactions.map((section, idx) => (
               <View key={idx} style={styles.section}>
-                <Text allowFontScaling={false} style={styles.dateText}>
+                <Text allowFontScaling={false} style={styles.dateText1}>
                   {getFormattedDate(section.date)}
                 </Text>
 
@@ -961,6 +966,14 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontFamily: 'Urbanist-SemiBold',
   },
+  dateText1: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    marginBottom: 10,
+    marginLeft: 5,
+    fontFamily: 'Urbanist-SemiBold',
+    marginTop:6
+  },
   card: {
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     gap: 12,
@@ -1066,11 +1079,11 @@ const styles = StyleSheet.create({
   },
   sellerTextName: {
     color: '#9CD6FF',
- fontSize: 12,
+    fontSize: 12,
     fontWeight: '600',
-    // marginTop: 10,
+        // marginTop: 10,
     fontFamily: 'Urbanist-SemiBold',
-  },
+      },
   sellerText_New:{
     color: '#FFFFFF',
     fontSize: 12,
@@ -1082,7 +1095,7 @@ const styles = StyleSheet.create({
   salesCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     padding: 12,
-    marginBottom: 5,
+    marginBottom: 8,
     borderRadius: 18,
     gap: 12,
   },
