@@ -1146,7 +1146,21 @@ const handlePayConfirmed = (amount: number) => {
           animationType="fade"
           onRequestClose={closePopup1}
         >
-          <TouchableWithoutFeedback onPress={closePopup1}>
+          <TouchableWithoutFeedback  onPress={() => {
+                      navigation.reset({
+                        index: 0,
+                        routes: [
+                          {
+                            name: 'Dashboard',
+                            params: {
+                              AddScreenBackactiveTab: 'Home',
+                              isNavigate: false,
+                            }
+                          }
+                        ],
+                      });
+                      setShowPopup1(false);
+                    }}>
             <View style={styles.overlay}>
               <BlurView
                 style={{
@@ -1190,8 +1204,6 @@ const handlePayConfirmed = (amount: number) => {
                   <TouchableOpacity
                     style={styles.loginButton}
                     onPress={() => {
-
-
                       navigation.reset({
                         index: 0,
                         routes: [
@@ -1205,12 +1217,6 @@ const handlePayConfirmed = (amount: number) => {
                         ],
                       });
                       setShowPopup1(false);
-
-                    //   navigation.replace('Dashboard', {
-                    //     AddScreenBackactiveTab: 'Home',
-                    //     isNavigate: false,
-                    //   });
-                    //   setShowPopup1(false);
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText}>

@@ -513,8 +513,8 @@ export default function TransactionHistoryScreen(
                             }`
                           : (item?.category_id === 2 || item?.category_id === 5)
                           ? 
-                            `${item?.purchased_quantity ?? 1} ${
-                              (item?.purchased_quantity ?? 1) > 1 ? 'hours' : 'hour'
+                            `${item?.hours ?? 1} ${
+                              (item?.hours ?? 1) > 1 ? 'hours' : 'hour'
                             }`
                           : ''
                         }
