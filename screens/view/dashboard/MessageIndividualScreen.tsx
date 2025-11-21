@@ -48,6 +48,7 @@ import Animated, {
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { getTwilioClient, waitForTwilioReady } from "../../view/emoji/twilioService";
 import Loader from '../../utils/component/Loader';
+import { showToast } from '../../utils/toast';
 
 
 const bgImage = require('../../../assets/images/backimg.png');
@@ -734,7 +735,10 @@ const MessagesIndividualScreen = ({
         }
 
         // Initialize Twilio client with error handling
-        const twilio = await getTwilioClient(data.data.token);
+       // const twilio = await getTwilioClient(data.data.token);
+       const twilio = await new TwilioChatClient(data.data.token);
+
+       console.log(twilio)
         
         if (!twilio) {
           throw new Error('Failed to initialize Twilio client');
