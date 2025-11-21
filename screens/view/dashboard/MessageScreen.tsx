@@ -386,7 +386,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
                           alignSelf: 'center',
                         }}
                       >
-                        {chat?.unreadcount}
+                        {chat?.unreadcount >=9 ? '9+' : chat?.unreadcount}
                       </Text>
                     )}
                   </View>

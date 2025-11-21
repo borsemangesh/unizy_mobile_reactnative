@@ -5,7 +5,7 @@ let twilioClientSingleton = null;
 export const getTwilioClient = async (token) => {
   if (!twilioClientSingleton) {
     console.time("TwilioInit");
-    twilioClientSingleton = await TwilioChatClient.create(token);
+    twilioClientSingleton =  await new TwilioChatClient(token);
     console.timeEnd("TwilioInit");
   }
   return twilioClientSingleton;

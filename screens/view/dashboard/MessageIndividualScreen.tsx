@@ -47,12 +47,14 @@ import Animated, {
 // @ts-ignore - react-native-vector-icons types
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { getTwilioClient, waitForTwilioReady } from "../../view/emoji/twilioService";
+import Loader from '../../utils/component/Loader';
 
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImage = require('../../../assets/images/user.jpg');
 const back = require('../../../assets/images/back.png');
 const smileyhappy = require('../../../assets/images/smileyhappy.png');
+
 
 type MessagesIndividualScreenProps = {
   navigation: any;
@@ -671,7 +673,7 @@ const MessagesIndividualScreen = ({
       const data = await response.json();
 
       
-      // debugger;
+      
       // const twilio = await TwilioChatClient.create(data.data.token);
       const twilio  = await getTwilioClient(data.data.token);
       console.log("twilio",twilio);
@@ -2490,20 +2492,37 @@ useEffect(() => {
          
       <View style={{ flex: 1 }}>
         {initialLoading && (
-          <View
-            style={{
-              position: 'absolute',
-              top: headerTotalHeight,
-              bottom: inputBarHeight,
-              left: 0,
-              right: 0,
-              justifyContent: 'center',
-              alignItems: 'center',
-              zIndex: 999,
-            }}
-          >
-            <ActivityIndicator size="large" color="#FFFFFF" />
-          </View>
+          // <View
+          //   style={{
+          //     position: 'absolute',
+          //     top: headerTotalHeight,
+          //     bottom: inputBarHeight,
+          //     left: 0,
+          //     right: 0,
+          //     justifyContent: 'center',
+          //     alignItems: 'center',
+          //     zIndex: 999,
+          //   }}
+          // >
+          //   <ActivityIndicator size="large" color="#FFFFFF" />
+          // </View>
+
+
+            <Loader
+          containerStyle={{
+            position: 'absolute',
+            // top: headerTotalHeight,
+            left: 0,
+            right: 0,
+            // bottom: inputBarHeight,
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingTop: Platform.OS === 'ios' ? 600 :0,
+            zIndex: 1000,
+            elevation: Platform.OS === 'android' ? 100 : 0,
+            pointerEvents: 'none',
+          }}
+        />
 
         )}
         {/* Static transparent blur header - 10px height */}
@@ -2602,10 +2621,14 @@ useEffect(() => {
                       if(navigation.canGoBack()){
                       navigation.goBack();
                   } else {
-                    navigation.replace('Dashboard', {
-                      AddScreenBackactiveTab: 'Bookmark',
-                      isNavigate: false,
-                    });
+                    // navigation.replace('Dashboard', {
+                    //   AddScreenBackactiveTab: 'Bookmark',
+                    //   isNavigate: false,
+
+                     
+                    // });
+
+                     navigation.goBack();
                   }
 
                   }else{
@@ -2687,7 +2710,7 @@ useEffect(() => {
               });
             }}
           >
-            {source === 'chatList' ? (
+            {source =='chatList' ? (
               members?.profile ? (
                 <Image
                   source={{ uri: members?.profile }}
@@ -2714,8 +2737,8 @@ useEffect(() => {
               <View style={styles.initialsCircle}>
                 <Text allowFontScaling={false} style={styles.initialsText}>
                   {getInitials(
-                    members?.firstname ?? 'A',
-                    members?.lastname ?? 'W',
+                    sellerData?.firstname ?? 'A',
+                    sellerData?.lastname ?? 'W',
                   )}
                 </Text>
               </View>
