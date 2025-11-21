@@ -52,6 +52,7 @@ import TransactionHistoryScreen from './TransactionHistoryScreen';
 import { BlurView } from '@react-native-community/blur';
 import BottomNavigation from '../../utils/component/BottomNavigation';
 import DeviceInfo from 'react-native-device-info';
+import Loader from '../../utils/component/Loader';
 
 const mylistings = require('../../../assets/images/mylistingicon.png');
 const mylistings1 = require('../../../assets/images/favourite.png');
@@ -844,7 +845,14 @@ return (
            {isLoading ? (
   // 👇 Loading state
   <View style={styles.emptyWrapper}>
-    <ActivityIndicator size="large" color="#999" />
+    <Loader
+      containerStyle={{
+        width: 100,
+        height: 100,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    />
   </View>
 ) : features.length === 0 ? (
   // 👇 No Listings Found
@@ -880,7 +888,7 @@ return (
             title={item.title}
             infoTitle={`${item.createdby?.firstname || ''} ${item.createdby?.lastname || ''}`}
             inforTitlePrice={`£ ${item.price}`}
-            rating="4.5"
+            rating={item.avg_rating}
             productImage={{ uri: item.createdby?.profile }}
             onBookmarkPress={() => handleBookmarkPress(item.id)}
             isBookmarked={item.isbookmarked}
@@ -893,7 +901,7 @@ return (
             tag={item.university?.name || 'University of Warwick'}
             infoTitle={item.title}
             inforTitlePrice={`£ ${item.price}`}
-            rating="4.5"
+            rating={item.avg_rating}
             productImage={{ uri: item.thumbnail }}
             onBookmarkPress={() => handleBookmarkPress(item.id)}
             isBookmarked={item.isbookmarked}
@@ -999,7 +1007,7 @@ const blurAmount = useDerivedValue(() =>
           <View
             style={[
               styles.header,
-              { paddingTop: Platform.OS === 'ios' ? '13.7%' : 40 },
+              { paddingTop: Platform.OS === 'ios' ? '13.7%': 40 },
             ]}
           >
             <Animated.View
@@ -1148,7 +1156,7 @@ const blurAmount = useDerivedValue(() =>
       onScroll={scrollHandler}
       style={{
         flex: 1,
-        paddingTop: Platform.OS === 'ios' ? 124 : 120,
+        paddingTop: Platform.OS === 'ios' ? 126 : 120,
       }}
       showsVerticalScrollIndicator={false}
     >
@@ -1462,8 +1470,8 @@ const styles = StyleSheet.create({
   },
 
   MylistingsBackground: {
-    height: 48,
-    width: 48,
+    height: 49,
+    width: 49,
 
     justifyContent: 'center',
     alignItems: 'center',
@@ -1473,11 +1481,12 @@ const styles = StyleSheet.create({
     boxShadow:
       '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
 
-    borderTopColor: '#ffffff5d',
-    borderBottomColor: '#ffffff36',
-    borderLeftColor: '#ffffff5d',
-    borderRightColor: '#ffffff36',
-    borderWidth: 0.3,
+    // borderTopColor: '#ffffff5d',
+    // borderBottomColor: '#ffffff36',
+    // borderLeftColor: '#ffffff5d',
+    // borderRightColor: '#ffffff36',
+    borderColor: '#ffffff36',
+    borderWidth: 0.5,
   },
   iconSmall: {
     width: 25,

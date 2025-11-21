@@ -568,13 +568,17 @@ export default function TutitionCard({
           <Text allowFontScaling={false} style={styles.title}>{title}</Text>
           <View style={styles.priceRow}>
             <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
-            <View style={styles.ratingRow}>
-              <Image
-                source={require('../../assets/images/staricon.png')}
-                style={styles.starIcon}
-              />
-              <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
-            </View>
+            {rating !== '0.0' && (
+                     <View style={styles.ratingRow}>
+                       <Image
+                         source={require('../../assets/images/staricon.png')}
+                         style={styles.starIcon}
+                       />
+                       <Text allowFontScaling={false} style={styles.ratingText}>
+                         {rating}
+                       </Text>
+                     </View>
+                   )}
           </View>
         </View>
       </View>

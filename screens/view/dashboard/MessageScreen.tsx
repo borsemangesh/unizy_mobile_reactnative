@@ -27,6 +27,7 @@ import Animated, {
   useAnimatedStyle,
   interpolate,
 } from 'react-native-reanimated';
+import Loader from '../../utils/component/Loader';
 
 type MessageScreenProps = {
   navigation: any;
@@ -260,23 +261,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
 
   return (
     <View style={{ flex: 1, width: '100%', height: '100%' }}>
-      {initialLoading ? (
-        <View 
-          style={{ 
-            position: 'absolute',
-            top: Platform.OS === 'ios' ? '100%' : 320,
-            bottom: (Platform.OS === 'ios' ? 0 : 200),
-            left: 0,
-            right: 0,
-            justifyContent: 'center', 
-            alignItems: 'center',
-            height: (Platform.OS  === 'ios' ? 200 : 0)
-          }}
-        >
-          <ActivityIndicator size="large" color="#FFFFFF" />
-        </View>
-      ) : (
-        <FlatList
+      <FlatList
           data={studentList || []}
           keyExtractor={(item, index) => {
             'worklet';
@@ -442,6 +427,22 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
             </View>
           ) : null
         }
+        />
+      {initialLoading && (!studentList || studentList.length === 0) && (
+        <Loader
+          containerStyle={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingTop: Platform.OS === 'ios' ? 600 : 250,
+            zIndex: 1000,
+            elevation: Platform.OS === 'android' ? 100 : 0,
+            pointerEvents: 'none',
+          }}
         />
       )}
       {/* {!initialLoading && search !== '' && (!studentList || studentList.length === 0) ? (

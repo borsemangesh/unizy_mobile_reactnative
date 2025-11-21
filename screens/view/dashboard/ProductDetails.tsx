@@ -16,6 +16,7 @@ import {
   Pressable,
   Dimensions,
   ScrollView,
+  BackHandler,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -28,6 +29,7 @@ import FilterBottomSheet from '../../utils/component/FilterBottomSheet';
 import SearchTutionCard from '../../utils/SearchTutionCard';
 import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
 import { SquircleView } from 'react-native-figma-squircle';
+import Loader from '../../utils/component/Loader';
 
 import Animated, {
   useSharedValue,
@@ -64,6 +66,7 @@ type university={
 }
 
 type Feature = {
+  avg_rating: string;
   id: number;
   created_by: number;
   category_id: number;
@@ -100,6 +103,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
 
 const [page, setPage] = useState(1);
 const [isLoading, setIsLoading] = useState(false);
+const [initialLoading, setInitialLoading] = useState(true);
 const [hasMore, setHasMore] = useState(true); 
 const [isFilterVisible, setFilterVisible] = useState(false);
 const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
@@ -168,6 +172,23 @@ const inputRef = useRef<TextInput>(null);
   loadBookmarks();
 }, []);
 
+ useEffect(() => {
+  const backAction = () => {
+     navigation.replace('Dashboard', {
+    AddScreenBackactiveTab: 'Home',
+    isNavigate: false,
+    })
+    return true;
+  };
+
+  const backHandler = BackHandler.addEventListener(
+    "hardwareBackPress",
+    backAction
+  );
+
+  return () => backHandler.remove();
+}, []);
+
 const clickfilter = () => {
   setFilterVisible(true);
   setTimeout(() => console.log("Filter open state:", isFilterVisible), 100);
@@ -199,17 +220,24 @@ useFocusEffect(
     setPage(1);
     setHasMore(true);
     setFeaturelist([]);
-    displayListOfProduct(1, search);
+    displayListOfProduct(1, search, true);
   }, [appliedFilter])
 );
   const displayListOfProduct = async (
   pageNum: number = 1,
   searchText: string = search,
+  isInitialLoad: boolean = false,
 ) => {
   if (isLoading || !hasMore) return;
 
+    let start = Date.now();
+    
     try {
-      setIsLoading(true);
+      if (isInitialLoad) {
+        setInitialLoading(true);
+      } else {
+        setIsLoading(true);
+      }
   
       const body = {
         search: searchText,
@@ -223,7 +251,13 @@ useFocusEffect(
       const url = MAIN_URL.baseUrl + 'category/feature-list/search';
       console.log(url)
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) return;
+      if (!token) {
+        if (isInitialLoad) {
+          await new Promise(r => setTimeout(r, 1000));
+          setInitialLoading(false);
+        }
+        return;
+      }
   
       const response = await fetch(url, {
         method: 'POST',
@@ -250,7 +284,12 @@ useFocusEffect(
         setPage(prev => prev + 1);
       }
       if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
-            setIsLoading(false);
+            if (isInitialLoad) {
+              await new Promise(r => setTimeout(r, 1000));
+              setInitialLoading(false);
+            } else {
+              setIsLoading(false);
+            }
             navigation.reset({
             index: 0,
             routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
@@ -258,8 +297,19 @@ useFocusEffect(
           }
     } catch (err) {
       console.log('Error:', err);
+      if (isInitialLoad) {
+        await new Promise(r => setTimeout(r, 1000));
+        setInitialLoading(false);
+      }
     } finally {
-      setIsLoading(false);
+      if (isInitialLoad) {
+        let elapsed = Date.now() - start;
+        let remaining = Math.max(0, 1000 - elapsed);
+        await new Promise(r => setTimeout(r, remaining));
+        setInitialLoading(false);
+      } else {
+        setIsLoading(false);
+      }
     }
 };
 
@@ -356,7 +406,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
            tag={item.university?.name || 'University of Warwick'}
           infoTitle={item.title}
           inforTitlePrice={`£ ${item.price}`}
-          rating={item.isfeatured ? '4.5' : '4.5'}
+          rating={item.avg_rating}
           showInitials={showInitials}
           initialsName={initials.toUpperCase()}
           productImage={item.createdby?.profile ? { uri: item.createdby.profile } : undefined}
@@ -370,7 +420,7 @@ const renderItem = ({ item, index }: { item: Feature; index: number }) => {
            tag={item.university?.name || 'University of Warwick'}
           infoTitle={item.title}
           inforTitlePrice={`£ ${item.price}`}
-          rating={item.isfeatured ? '4.5' : '4.5'}
+          rating={item.avg_rating}
           productImage={productImage ?? require('../../../assets/images/drone.png')}
           bookmark={item.isbookmarked}
           //bookmark={bookmarkedIds.includes(item.id)} 
@@ -498,6 +548,23 @@ const handleEndReached = useCallback(() => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
+              {initialLoading && featurelist.length === 0 && (
+                <Loader
+                  containerStyle={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    paddingTop: Platform.OS === 'ios' ? 80 : 100,
+                    zIndex: 1000,
+                    elevation: Platform.OS === 'android' ? 100 : 0,
+                    pointerEvents: 'none',
+                  }}
+                />
+              )}
               <StatusBar
                  translucent
                  backgroundColor="transparent"
@@ -611,7 +678,7 @@ const handleEndReached = useCallback(() => {
             onEndReachedThreshold={0.5}
             ListHeaderComponent={
               <View
-                style={{ flexDirection: 'row', gap: 8,paddingHorizontal: 8 }}
+                style={{ flexDirection: 'row', gap: 8,paddingHorizontal:8 }}
               >
                 <Pressable
                   style={styles.search_container}
@@ -648,7 +715,18 @@ const handleEndReached = useCallback(() => {
               </View>
             }
             ListFooterComponent={
-              isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
+              isLoading ? (
+                <View style={{ paddingVertical: 20, alignItems: 'center' }}>
+                  <Loader
+                    containerStyle={{
+                      width: 50,
+                      height: 50,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  />
+                </View>
+              ) : null
             }
             contentContainerStyle={[
               styles.listContainer,
@@ -776,6 +854,8 @@ const styles = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
+    marginTop: 2,
+    marginLeft: 1
   },
 
 
@@ -883,15 +963,7 @@ const styles = StyleSheet.create({
     marginTop: 17
   },
   search_container: {
-    // flexDirection: 'row',
-    // alignItems: 'center',
-    // borderRadius: 40,
-    // boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    // backgroundColor:
-    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    // width: '84%',
-    // minHeight:48,
-    // marginEnd: 8,
+
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
@@ -902,8 +974,8 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     paddingVertical: 4,
     padding: (Platform.OS === 'ios'? 12:0),
-    marginTop:(Platform.OS === 'ios' ? 4:20),
-    height: 48,
+    marginTop:(Platform.OS === 'ios' ? 5:20),
+    height: 50,
     gap: 8,
     width: '84%',
   },

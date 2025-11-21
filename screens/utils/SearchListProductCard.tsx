@@ -44,7 +44,7 @@ export default function SearchListProductCard({
       blurAmount={100}
     style={[StyleSheet.absoluteFillObject,{borderRadius: 9}]}
       />       
-        <Text allowFontScaling={false} style={styles.tagText}>
+        <Text allowFontScaling={false}  style={styles.tagText}>
           {tag}
         </Text>
       </View>
@@ -91,7 +91,7 @@ export default function SearchListProductCard({
       </View>
 
       <View style={styles.infoRow}>
-        <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
+        <Text allowFontScaling={false} numberOfLines={1} style={styles.title}>{infoTitle}</Text>
 
         <View
           style={{
@@ -103,6 +103,8 @@ export default function SearchListProductCard({
           }}
         >
           <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
+          
+           {rating !== '0.0' && (
           <View
             style={{
               flexDirection: 'row',
@@ -118,6 +120,7 @@ export default function SearchListProductCard({
 
             <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
           </View>
+          )}
         </View>
       </View>
 
@@ -137,6 +140,7 @@ const styles = StyleSheet.create({
     width: '95%',
     overflow: 'hidden',
     height: 'auto',
+
     //marginHorizontal: 6,
     paddingBottom: 10,
     borderWidth: 0.4,

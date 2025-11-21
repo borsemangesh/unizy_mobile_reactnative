@@ -14,6 +14,7 @@ import {
   FlatList,
   StatusBar,
   TouchableWithoutFeedback,
+  BackHandler,
 } from 'react-native';
 import { Key, useEffect, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
@@ -205,13 +206,26 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     const index = Math.round(event.nativeEvent.contentOffset.x / screenWidth);
     setActiveIndex(index);
   };
-//  const quantityOptions = [
-//   { id: 1, option_name: "1" },
-//   { id: 2, option_name: "2" },
-//   { id: 3, option_name: "3" },
-//   { id: 4, option_name: "4" },
-//   { id: 5, option_name: "5" }
-// ]
+
+
+   useEffect(() => {
+    const backAction = () => {
+       navigation.replace('Dashboard', {
+      AddScreenBackactiveTab: 'Home',
+      isNavigate: false,
+      })
+      return true;
+    };
+  
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+  
+    return () => backHandler.remove();
+  }, []);
+
+
 const quantityField = detail?.params?.find(
   (p: { name: string }) => p.name === "Quantity"
 );
@@ -223,14 +237,7 @@ const quantityOptions = Array.from({ length: maxQty }, (_, i) => ({
   option_name: String(i + 1),
 }));
 
-  // const formatDate = (dateString: string) => {
-  //   if (!dateString) return '01-01-2025'; // fallback if null
-  //   const date = new Date(dateString);
-  //   const day = String(date.getDate()).padStart(2, '0');
-  //   const month = String(date.getMonth() + 1).padStart(2, '0');
-  //   const year = date.getFullYear();
-  //   return `${day}-${month}-${year}`;
-  // };
+  
 
   const formatDate = (dateString?: string) => {
   if (!dateString) return "";
@@ -496,14 +503,6 @@ const handlePayConfirmed = (amount: number) => {
     console.log("AMOUNT",finalamount)
 
     try {
-
-    //   const createPayload = {
-    //       //amount: Number(detail.price).toFixed(2), 
-    //       amount: Number(finalamount),
-    //       feature_id: id,
-    //       payment_id:paymentintent_id,      
-    // };
-
     const createPayload = {
     amount: Number(finalamount),
     feature_id: id,
@@ -535,6 +534,11 @@ const handlePayConfirmed = (amount: number) => {
         await AsyncStorage.removeItem('quantitycount');
 
 
+
+        await AsyncStorage.removeItem('finalamount');
+        await AsyncStorage.removeItem('quantitycount');
+
+
       // Save order id to storage
       await AsyncStorage.setItem("last_order_id", data.data?.orderid?.toString() || "");
       await AsyncStorage.setItem("last_transaction_amount", data.data?.amount?.toString() || "");
@@ -542,9 +546,12 @@ const handlePayConfirmed = (amount: number) => {
 
 
 
+
+
       showToast(" Purchased successfully!", "success");
       setShowPopup1(true)
     } else {
+      showToast(data?.message || "Something went wrong.Please try again", "error");
       showToast(data?.message || "Something went wrong.Please try again", "error");
     }
      
@@ -772,7 +779,9 @@ const handlePayConfirmed = (amount: number) => {
                       />
                       <Text allowFontScaling={false} style={styles.datetext1}>
                       Service Duration:{' '}
-                      <Text style={styles.durationValue}>3 Hours</Text>
+                      <Text style={styles.durationValue}>
+                         {detail?.hours ? `${detail.hours} ${detail.hours > 1 ? 'Hours' : 'Hour'}` : '1 Hour'}
+                        </Text>
                     </Text>
                     </View>
                   )}
@@ -933,7 +942,7 @@ const handlePayConfirmed = (amount: number) => {
                       <Text
                         allowFontScaling={false}
                         style={ styles.chattext}>
-                        4.5
+                        {detail?.avg_rating}
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -1244,7 +1253,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '8.6%' : 60,
+    top: Platform.OS === 'ios' ? '8.5%' : 60,
     width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -1253,16 +1262,18 @@ const styles = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
+    marginTop: (Platform.OS === 'ios' ? 0 : 0),
+    marginLeft: 1 
   },
   backButtonContainer: {
     position: 'absolute',
-    left: 16,
+    left: (Platform.OS === 'ios'?  16.2: 16),
     zIndex: 11,
     //top: 7,
   },
   rightButtoContainer:{
     position: 'absolute',
-    right: 16,
+    right: (Platform.OS === 'ios' ? 17.7 : 16),
     zIndex: 11,
     //top: 7,
   },
@@ -1585,7 +1596,7 @@ inactiveStepCircle: {
   scrollContainer: {
    //paddingHorizontal: 20,
    paddingBottom: 80,
-   paddingTop: Platform.OS === 'ios' ? 120 : 100,
+   paddingTop: Platform.OS === 'ios' ? 110 : 100,
   },
 
   datePosted: {
@@ -1623,6 +1634,7 @@ inactiveStepCircle: {
   },
 
 
+  
   userSub: {
     color: 'rgba(255, 255, 255, 0.48)',
     fontFamily: 'Urbanist-Regular',
@@ -1651,6 +1663,8 @@ inactiveStepCircle: {
     letterSpacing: -0.24,
     paddingLeft:4
   },
+
+ 
   univeritytext: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-Medium',

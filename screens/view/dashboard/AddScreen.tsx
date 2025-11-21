@@ -18,6 +18,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   StatusBar,
+  BackHandler,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImageResizer from 'react-native-image-resizer';
@@ -292,6 +293,20 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     }
   }, [expanded]);
 
+  useEffect(() => {
+    const backAction = () => {
+       navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Add', isNavigate:false })
+      return true;
+    };
+  
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+  
+    return () => backHandler.remove();
+  }, []);
+
   const handleValueChange = (
     fieldId: number,
     aliasName: string | null,
@@ -445,10 +460,102 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
 
 
+const handlePreview = async () => {
+  try {
+    // ========== VALIDATION ==========
+    for (const field of fields) {
+      const { id, field_type } = field.param;
+
+      // get value from formValues
+      let value = formValues[id]?.value;
+
+      // FIX: For IMAGE fields, validation must use uploadedImages
+      if (field_type.toLowerCase() === 'image') {
+        value = uploadedImages;
+      }
+
+      if (field.mandatory) {
+        if (
+          value === undefined ||
+          value === null ||
+          (typeof value === 'string' && value.trim() === '') ||
+          (Array.isArray(value) && value.length === 0)
+        ) {
+          if (field_type.toLowerCase() === 'image') {
+            showToast(`${field.param.field_name} are mandatory`, 'error');
+          } else {
+            showToast(`${field.param.field_name} is mandatory`, 'error');
+          }
+          return;
+        }
+      }
+    }
+
+    // ========== PRICE CALCULATION (ONLY FOR CATEGORY 2 & 5) ==========
+    let computedPrice: number | null = null;
+
+    if (productId === 2 || productId === 5) {
+      let priceFieldId: number | null = null;
+      let durationFieldId: number | null = null;
+
+      fields.forEach(f => {
+        if (f.param.alias_name === 'price') priceFieldId = f.param.id;
+        if (f.param.alias_name === 'service_duration') durationFieldId = f.param.id;
+      });
+
+      if (priceFieldId !== null && durationFieldId !== null) {
+        const rawPrice = Number(formValues[priceFieldId]?.value || 0);
+        const rawDuration = Number(formValues[durationFieldId]?.value || 1);
+
+        computedPrice = rawPrice * rawDuration;
+      }
+    }
+
+    // ========== BUILD DATA TO STORE ==========
+    const dataToStore: any = { ...formValues };
+
+    // Insert computed price
+    if (computedPrice !== null) {
+      fields.forEach(f => {
+        if (f.param.alias_name === 'price') {
+          dataToStore[f.param.id] = {
+            value: computedPrice.toString(),
+            alias_name: 'price',
+          };
+        }
+      });
+    }
+
+    // Insert uploaded images
+    fields.forEach(field => {
+      if (field.param.field_type.toLowerCase() === 'image') {
+        const uploadedForField = uploadedImages.map(img => ({
+          id: img.id,
+          uri: img.uri,
+          name: img.name,
+        }));
+
+        dataToStore[field.param.id] = {
+          value: uploadedForField,
+          alias_name: field.param.alias_name ?? null,
+        };
+      }
+    });
+
+    // SAVE & NAVIGATE
+    await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
+    navigation.navigate('PreviewThumbnail');
+
+  } catch (error) {
+    console.log('Error saving form data: ', error);
+    showToast('Failed to save form data');
+  }
+};
+
+
 // const handlePreview = async () => {
 //   try {
-
-//     // ----- Mandatory Validation (unchanged) -----
+//     // Mandatory validation (same)
 //     for (const field of fields) {
 //       const { id, field_type } = field.param;
 //       let value = formValues[id]?.value;
@@ -470,41 +577,42 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 //       }
 //     }
 
-//    if (productId === 2 || productId === 5) {
-//         let priceFieldId: number | null = null;
-//         let durationFieldId: number | null = null;
+//     // ---- COMPUTE PRICE ONLY ONCE ----
+//     let computedPrice: number | null = null;
 
-//         // Find ID of price and duration fields
-//         fields.forEach(f => {
-//           if (f.param.alias_name === 'price') {
-//             priceFieldId = f.param.id;
-//           }
-//           if (f.param.alias_name === 'service_duration') {
-//             durationFieldId = f.param.id;
-//           }
-//         });
+//     if (productId === 2 || productId === 5) {
+//       let priceFieldId: number | null = null;
+//       let durationFieldId: number | null = null;
 
-//         // Only apply multiplication if BOTH fields exist 🟩
-//         if (priceFieldId !== null && durationFieldId !== null) {
-//           const rawPrice = formValues[priceFieldId]?.value ?? "0";
-//           const rawDuration = formValues[durationFieldId]?.value ?? "1";
+//       fields.forEach(f => {
+//         if (f.param.alias_name === 'price') priceFieldId = f.param.id;
+//         if (f.param.alias_name === 'service_duration') durationFieldId = f.param.id;
+//       });
 
-//           const price = Number(rawPrice);
-//           const duration = Number(rawDuration);
+//       if (priceFieldId !== null && durationFieldId !== null) {
+//         const rawPrice = Number(formValues[priceFieldId]?.value || 0);
+//         const rawDuration = Number(formValues[durationFieldId]?.value || 1);
 
-//           if (!isNaN(price) && !isNaN(duration)) {
-//             const finalPrice = price * duration;
-
-//             // Update the price value safely
-//             formValues[priceFieldId] = {
-//               value: finalPrice.toString(),
-//               alias_name: 'price',
-//             };
-//           }
-//         }
+//         computedPrice = rawPrice * rawDuration;
 //       }
+//     }
+
+//     // ---- BUILD dataToStore ----
 //     const dataToStore: any = { ...formValues };
 
+//     // Replace only when navigating
+//     if (computedPrice !== null) {
+//       fields.forEach(f => {
+//         if (f.param.alias_name === 'price') {
+//           dataToStore[f.param.id] = {
+//             value: computedPrice.toString(),
+//             alias_name: 'price'
+//           };
+//         }
+//       });
+//     }
+
+//     // Handle image fields
 //     fields.forEach(field => {
 //       if (field.param.field_type.toLowerCase() === 'image') {
 //         const uploadedForField = uploadedImages.map(img => ({
@@ -521,99 +629,14 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 //     });
 
 //     await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
-//     console.log('Form data saved: ', dataToStore);
 
 //     navigation.navigate('PreviewThumbnail');
+
 //   } catch (error) {
 //     console.log('Error saving form data: ', error);
 //     showToast('Failed to save form data');
 //   }
 // };
-
-const handlePreview = async () => {
-  try {
-    // Mandatory validation (same)
-    for (const field of fields) {
-      const { id, field_type } = field.param;
-      let value = formValues[id]?.value;
-
-      if (field.mandatory) {
-        if (
-          value === undefined ||
-          value === null ||
-          (typeof value === 'string' && value.trim() === '') ||
-          (Array.isArray(value) && value.length === 0)
-        ) {
-          if (field_type.toLowerCase() === 'image') {
-            showToast(`${field.param.field_name} are mandatory`, 'error');
-          } else {
-            showToast(`${field.param.field_name} is mandatory`, 'error');
-          }
-          return;
-        }
-      }
-    }
-
-    // ---- COMPUTE PRICE ONLY ONCE ----
-    let computedPrice: number | null = null;
-
-    if (productId === 2 || productId === 5) {
-      let priceFieldId: number | null = null;
-      let durationFieldId: number | null = null;
-
-      fields.forEach(f => {
-        if (f.param.alias_name === 'price') priceFieldId = f.param.id;
-        if (f.param.alias_name === 'service_duration') durationFieldId = f.param.id;
-      });
-
-      if (priceFieldId !== null && durationFieldId !== null) {
-        const rawPrice = Number(formValues[priceFieldId]?.value || 0);
-        const rawDuration = Number(formValues[durationFieldId]?.value || 1);
-
-        computedPrice = rawPrice * rawDuration;
-      }
-    }
-
-    // ---- BUILD dataToStore ----
-    const dataToStore: any = { ...formValues };
-
-    // Replace only when navigating
-    if (computedPrice !== null) {
-      fields.forEach(f => {
-        if (f.param.alias_name === 'price') {
-          dataToStore[f.param.id] = {
-            value: computedPrice.toString(),
-            alias_name: 'price'
-          };
-        }
-      });
-    }
-
-    // Handle image fields
-    fields.forEach(field => {
-      if (field.param.field_type.toLowerCase() === 'image') {
-        const uploadedForField = uploadedImages.map(img => ({
-          id: img.id,
-          uri: img.uri,
-          name: img.name,
-        }));
-
-        dataToStore[field.param.id] = {
-          value: uploadedForField,
-          alias_name: field.param.alias_name ?? null,
-        };
-      }
-    });
-
-    await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
-
-    navigation.navigate('PreviewThumbnail');
-
-  } catch (error) {
-    console.log('Error saving form data: ', error);
-    showToast('Failed to save form data');
-  }
-};
 
 
   const handleSelectImage = async () => {
@@ -1389,7 +1412,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? 70 : 60,
+    top: Platform.OS === 'ios' ? '8.4%': 60,
     width: Platform.OS === 'ios' ? '100%' : '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -1398,6 +1421,8 @@ const styles = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
+    marginTop: (Platform.OS === 'ios' ? 0 : 0),
+    marginLeft: 0
   },
   backButtonContainer: {
     position: 'absolute',
@@ -1566,7 +1591,7 @@ dropdowncard:{
     padding: 12,
     borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    marginTop:12
+    marginTop:(Platform.OS === 'ios' ? 9: 12)
   },
 productdetails: {
     marginTop: 10,

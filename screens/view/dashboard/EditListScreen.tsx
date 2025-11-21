@@ -303,41 +303,81 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             value: data.description || '',
             alias_name: 'description',
           };
+          initialValues.quantity = {
+          value: data.remaining_quantity ?? '',
+          alias_name: 'quantity',
+        };
           initialValues.isfeatured = {
             value: !!data.isfeatured,
             alias_name: 'isfeatured',
           };
 
-          // --- Dynamic Params ---
+          // if (Array.isArray(data.params)) {
+          //   data.params.forEach((param: any) => {
+          //     const fieldType = param.field_type?.toLowerCase();
+
+          //     const baseField = {
+          //       alias_name: param.alias_name || null,
+          //     };
+
+          //     if (fieldType === 'dropdown') {
+          //       if (Array.isArray(param.param_value)) {
+          //         initialValues[param.id] = {
+          //           ...baseField,
+          //           value: param.param_value.map((v: any) => Number(v)),
+          //         };
+          //       } else {
+          //         initialValues[param.id] = {
+          //           ...baseField,
+          //           value: param.param_value ? Number(param.param_value) : null,
+          //         };
+          //       }
+          //     } else {
+          //       // For text / boolean / etc.
+          //       initialValues[param.id] = {
+          //         ...baseField,
+          //         value: param.param_value || '',
+          //       };
+          //     }
+          //   });
+          // }
+
           if (Array.isArray(data.params)) {
-            data.params.forEach((param: any) => {
-              const fieldType = param.field_type?.toLowerCase();
+          data.params.forEach((param: any) => {
+            const fieldType = param.field_type?.toLowerCase();
 
-              const baseField = {
-                alias_name: param.alias_name || null,
-              };
+            const baseField = {
+              alias_name: param.alias_name || null,
+            };
 
-              if (fieldType === 'dropdown') {
-                if (Array.isArray(param.param_value)) {
-                  initialValues[param.id] = {
-                    ...baseField,
-                    value: param.param_value.map((v: any) => Number(v)),
-                  };
-                } else {
-                  initialValues[param.id] = {
-                    ...baseField,
-                    value: param.param_value ? Number(param.param_value) : null,
-                  };
-                }
-              } else {
-                // For text / boolean / etc.
+            let finalValue = null;
+            if (param.alias_name === "quantity") {
+              finalValue = data?.remaining_quantity ?? "";
+            } else {
+              finalValue = param.param_value ?? "";
+            }
+
+            if (fieldType === "dropdown") {
+              if (Array.isArray(finalValue)) {
                 initialValues[param.id] = {
                   ...baseField,
-                  value: param.param_value || '',
+                  value: finalValue.map((v: any) => Number(v)),
+                };
+              } else {
+                initialValues[param.id] = {
+                  ...baseField,
+                  value: finalValue ? Number(finalValue) : null,
                 };
               }
-            });
-          }
+            } else {
+              initialValues[param.id] = {
+                ...baseField,
+                value: finalValue,
+              };
+            }
+          });
+        }
+
 
           // --- Files / Images ---
           if (Array.isArray(data.files) && data.files.length > 0) {
@@ -768,19 +808,21 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         const { field_name, keyboardtype, alias_name } = param;
         console.log('PARMSASDF: ', param);
 
-        // const rawValue = formValues[param.id]?.value || '';
+        // const rawValue =
+        //   formValues[param.id]?.value ??
+        //   formValues[alias_name]?.value ??
+        //   formValues[field_name]?.value ??
+        //   '';
+
         const rawValue =
-          formValues[param.id]?.value ??
-          formValues[alias_name]?.value ??
-          formValues[field_name]?.value ??
-          '';
-        console.log('formValues: ', formValues);
+        formValues[param.id]?.value ??
+        (alias_name ? formValues[alias_name]?.value : '') ??
+        '';
+
+      const finalValue =
+        rawValue !== null && rawValue !== undefined ? String(rawValue) : '';
 
         const isPriceField = alias_name?.toLowerCase() === 'price';
-        // const placeholderText =
-        //   alias_name?.toLowerCase() === 'price'
-        //     ? `£ ${alias_name}`
-        //     : alias_name || field_name;
         const placeholderText =
           alias_name?.toLowerCase() === 'price'
             ? `£ Enter ${field_name}`
@@ -830,8 +872,8 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
               multiline={false}
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               keyboardType={rnKeyboardType}
-              value={isPriceField && rawValue ? `£ ${rawValue}` : rawValue}
-              // onChangeText={text => handleValueChange(param.id, alias_name, text)}
+             // value={isPriceField && rawValue ? `£ ${rawValue}` : rawValue}
+             value={isPriceField ? `£ ${finalValue}` : finalValue}
               onChangeText={text => {
                 if (isPriceField) {
                   // Remove £ and spaces before saving
@@ -1506,7 +1548,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '8%' : 60,
+    top: Platform.OS === 'ios' ? '8.5%' : 60,
     width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -1515,6 +1557,8 @@ const styles = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
+    marginTop: (Platform.OS === 'ios' ? 0 : 0),
+    marginLeft: 1 
   },
   backButtonContainer: {
     position: 'absolute',

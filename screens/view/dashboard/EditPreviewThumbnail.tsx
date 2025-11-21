@@ -394,7 +394,7 @@ const { height } = Dimensions.get('window');
                     onScroll={scrollHandler}
                     contentContainerStyle={[
                       styles.scrollContainer,
-                      { paddingBottom: height * 0.1, }, // 0.05% of screen height
+                      { paddingBottom:(Platform.OS === 'ios'? 170 :  height * 0.1) }, // 0.05% of screen height
                     ]}>
             <View style={styles.productCarddisplay}>
             {storedForm ? (
@@ -421,7 +421,7 @@ const { height } = Dimensions.get('window');
           
                       <Text
                         allowFontScaling={false}
-                        style={[styles.newtext1, { paddingBottom: 6 }]}
+                        style={[styles.newtext1, { paddingBottom: (Platform.OS === 'ios'? 0: 6) }]}
                       >
                         Regular Listing Preview
                       </Text>
@@ -590,7 +590,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '8%': 60,
+    top: Platform.OS === 'ios' ? '8.5%': 60,
     width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -599,11 +599,14 @@ const styles = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
+
+    marginTop: (Platform.OS === 'ios' ? 0 : 0),
+    marginLeft: 1 
   },
   scrollContainer: {
     paddingHorizontal: 16,
     paddingBottom: 80,
-    paddingTop: Platform.OS === 'ios' ? 120 : 100,
+    paddingTop: Platform.OS === 'ios' ? 110 : 100,
     alignItems: 'center',
     justifyContent: 'center',
   },

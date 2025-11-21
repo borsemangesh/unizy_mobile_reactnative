@@ -2121,7 +2121,7 @@ useEffect(() => {
                                 }
                                 value={username}
                                 maxLength={50}
-                                keyboardType="email-address"
+                                keyboardType={Platform.OS === 'ios' ? "default":'email-address'}
                                 autoCapitalize="none"
                                 autoCorrect={false}
                                 selectionColor="white"
@@ -2133,6 +2133,7 @@ useEffect(() => {
                                     ? 'emailAddress'
                                     : 'username'
                                 }
+                                importantForAutofill="yes"
                                 onChangeText={usernameText =>
                                   setUsername(usernameText)
                                 }
@@ -2294,6 +2295,7 @@ useEffect(() => {
                             </View>
                           </View>
                         </Animated.View>
+                     
                       </>
                     )}
 

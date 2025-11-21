@@ -40,6 +40,7 @@ import AnimatedReanimated, {
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import ButtonNew from '../../utils/component/ButtonNew';
+import Loader from '../../utils/component/Loader';
 
 type ListingDetailsProps = {
   navigation: any;
@@ -66,10 +67,12 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const { height } = Dimensions.get('window');
   const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [price,setprice] = useState('')
   const [otp, setOtp] = useState(['', '', '', '']);
 
   const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
+const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
 
   const scrollY = useSharedValue(0);
 
@@ -406,7 +409,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
             }}
           >
             {/* Card */}
-            <View style={[styles.card, { marginTop: 10 }]}>
+            <View style={[styles.card, { marginTop: (Platform.OS === 'ios' ? 6 : 10 ) }]}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 {(() => {
                   // Check if category is housekeeping or tuition
@@ -597,15 +600,6 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                       {buyer.firstname} {buyer.lastname}
                     </Text>
                   </View>
-
-                  {/* <View style={styles.listingtyperow}>
-                      <Text allowFontScaling={false} style={styles.lebleHeader}>
-                        Buyer’s University:
-                      </Text>
-                      <Text allowFontScaling={false} style={styles.status}>
-                        {buyer.university_name}
-                      </Text>
-                    </View> */}
                   <View style={styles.listingtyperow1}>
                     <Text allowFontScaling={false} style={styles.lebleHeader}>
                       Buyer’s University:
@@ -640,6 +634,18 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     </Text>
                   </View>
 
+                  {data?.list?.category_id === 3 && (
+                    <View style={styles.listingtyperow}>
+                      <Text allowFontScaling={false} style={styles.lebleHeader}>
+                        Units Purchased:
+                      </Text>
+
+                      <Text allowFontScaling={false} style={styles.status}>
+                        {buyer?.purchased_quantity ?? 1}
+                      </Text>
+                    </View>
+                  )}
+
                   <View style={styles.listingtyperow}>
                     <Text allowFontScaling={false} style={styles.lebleHeader}>
                       Sold For:
@@ -668,7 +674,8 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                         }}
                         //onPress={() => setShowPopup1(true)}
                         onPress={() => {
-                          setSelectedOrderId(buyer.orderid); // store selected orderid in state
+                          setSelectedOrderId(buyer.orderid);
+                          setprice(buyer.originalprice) 
                           setShowPopup1(true);
                         }}
                       >
@@ -872,7 +879,8 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 
                 {loading && (
                   <View style={styles.fullLoader}>
-                    <ActivityIndicator size="large" color="#fff" />
+                    {/* <ActivityIndicator size="large" color="#fff" /> */}
+                    <Loader/>
                   </View>
                 )}
 
@@ -974,7 +982,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     allowFontScaling={false}
                     style={[styles.subheader1, { marginTop: 0 }]}
                   >
-                    The payment of £{data?.list?.price} has been transferred to your account.
+                    The payment of £{price} has been transferred to your account.
                   </Text>
                   <TouchableOpacity
                     style={styles.loginButton}
@@ -1145,7 +1153,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '8.6%' : 60,
+    top: Platform.OS === 'ios' ? '8.5%' : 60,
     width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -1154,6 +1162,8 @@ const styles = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
+    marginTop: (Platform.OS === 'ios' ? 0 : 0),
+    marginLeft: 1 
   },
   backButtonContainer: {
     position: 'absolute',

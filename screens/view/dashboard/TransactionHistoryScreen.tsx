@@ -39,6 +39,8 @@ interface TransactionItem {
   feature_idNew: number;
   amount: string;
   purchased_quantity?:number
+  category_id:number;
+  hours?:number
 }
 
 interface TransactionSection {
@@ -120,6 +122,7 @@ export default function TransactionHistoryScreen(
     const fetchTransactions = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
+        console.log(token)
         if (!token) {
           console.log('No token found');
           return;
@@ -173,7 +176,9 @@ export default function TransactionHistoryScreen(
               university: item.university_name, // University name
               order_otp: item.order_otp,        // OTP for verification
               category_logo: item.category_logo,
-              purchased_quantity:item.purchased_quantity ?? 0
+              purchased_quantity:item.purchased_quantity ?? 0,
+              category_id:item.category_id,
+              hours:item.hours ?? 0
             })),
           }));
        
@@ -463,9 +468,7 @@ export default function TransactionHistoryScreen(
                               {item.price}
                             </Text>
 
-                            <View
-                              style={styles.statusBox}
-                            >
+                            {/* <View style={styles.statusBox}>
                               <Text
                                 allowFontScaling={false}
                                 style={[
@@ -481,7 +484,34 @@ export default function TransactionHistoryScreen(
                               >
                                 {item?.purchased_quantity} units
                               </Text>
-                            </View>
+                            </View> */}
+
+                 {(item?.category_id === 3 || item?.category_id === 2 || item?.category_id === 5) && (
+                    <View style={styles.statusBox}>
+                      <Text
+                        allowFontScaling={false}
+                        style={{
+                          color: '#9CD6FF',
+                          fontWeight: '600',
+                          fontSize: 12,
+                          fontFamily: 'Urbanist-SemiBold',
+                        }}
+                      >
+                        {item?.category_id === 3
+                          ? 
+                            `${item?.purchased_quantity ?? 1} ${
+                              (item?.purchased_quantity ?? 1) > 1 ? 'units' : 'unit'
+                            }`
+                          : (item?.category_id === 2 || item?.category_id === 5)
+                          ? 
+                            `${item?.purchased_quantity ?? 1} ${
+                              (item?.purchased_quantity ?? 1) > 1 ? 'hours' : 'hour'
+                            }`
+                          : ''
+                        }
+                      </Text>
+                    </View>
+                  )}
                           </View>
                         </View>
                       </View>
@@ -1079,7 +1109,7 @@ const styles = StyleSheet.create({
     borderBottomStartRadius: 50,
     boxSizing: 'border-box',
     zIndex: 100,
-    marginTop: -14,
+    marginTop: -10,
   },
   bubble: {
   

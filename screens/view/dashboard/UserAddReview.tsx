@@ -31,7 +31,7 @@ import AddRating from '../../utils/AddRating';
 import { BlurView } from '@react-native-community/blur';
 import Button from '../../utils/component/Button';
 
-type AddReviewProps = {
+type UserAddReviewProps = {
   navigation: any;
 };
 
@@ -41,11 +41,11 @@ type RootStackParamList = {
   AddReview: { category_id: number,feature_id:number};
 };
 
-type AddReviewRouteProp = RouteProp<RootStackParamList, 'AddReview'>;
+type UserAddReviewRouteProp = RouteProp<RootStackParamList, 'AddReview'>;
 
-const AddReview : React.FC<AddReviewProps> = ({ navigation }) =>{
+const UserAddReview : React.FC<UserAddReviewProps> = ({ navigation }) =>{
 
-  const route = useRoute<AddReviewRouteProp>();
+  const route = useRoute<UserAddReviewRouteProp>();
   const {feature_id} =route.params;
   const { category_id } = route.params;
    const [rating, setRating] = useState(0);
@@ -137,13 +137,13 @@ const AddReview : React.FC<AddReviewProps> = ({ navigation }) =>{
         </View>
       
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-  <View style={{ flex: 1 ,paddingTop:Platform.OS === 'ios' ? 120 : 100,paddingHorizontal: 16}}>
+        <View style={{ flex: 1 ,paddingTop:Platform.OS === 'ios' ? 120 : 100,paddingHorizontal: 16}}>
           <View style={styles.innercontainer}>
             <Text allowFontScaling={false} style={styles.mainlabel}>How many stars would you give?</Text>
              <Text allowFontScaling={false} style={styles.sublabel}>Slide across the stars to rate this product</Text>
          </View>
 
-        <View style={{  marginTop:16,marginBottom: 20, alignItems: 'center' }}>
+         <View style={{  marginTop:16,marginBottom: 20, alignItems: 'center' }}>
         {/* <AddRating starSize={40} /> */}
 
         <AddRating starSize={40} onChange={setRating} />
@@ -227,11 +227,12 @@ const AddReview : React.FC<AddReviewProps> = ({ navigation }) =>{
                 style={styles.loginButton1}
                 //onPress={()=>{setShowPopup1(false);}}
                 onPress={() => {
-                      navigation.goBack();
-                      setShowPopup1(false);
+                    setShowPopup1(false);
+                    navigation.replace('MyReviews'); 
+                      
                     }}
                     >
-                <Text allowFontScaling={false} style={styles.loginText1}>Return to Reviews</Text>
+                <Text allowFontScaling={false} style={styles.loginText1}>Return to My Reviews</Text>
               </TouchableOpacity>
             </View>
           </BlurView>
@@ -246,7 +247,7 @@ const AddReview : React.FC<AddReviewProps> = ({ navigation }) =>{
   );
 };
 
-export default AddReview;
+export default UserAddReview;
 
 const styles = StyleSheet.create({
 
@@ -487,7 +488,7 @@ const styles = StyleSheet.create({
      flex: 1,
      },
   header: {
-    
+
     position: 'absolute',
     top: Platform.OS === 'ios' ? '6.7%' : 60,
     width: Platform.OS === 'ios' ? 393 : '100%',

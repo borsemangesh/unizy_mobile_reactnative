@@ -2504,6 +2504,7 @@ useEffect(() => {
           >
             <ActivityIndicator size="large" color="#FFFFFF" />
           </View>
+
         )}
         {/* Static transparent blur header - 10px height */}
         <View
@@ -3534,7 +3535,9 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#FFFFFFE0',
     marginTop: 2,
+    minWidth:'70%',
     maxWidth: '86%',
+   
   },
   backIconStyle: {
     width: 30,

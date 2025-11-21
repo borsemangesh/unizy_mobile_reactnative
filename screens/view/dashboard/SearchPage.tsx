@@ -13,6 +13,7 @@ import {
   ActivityIndicator,
   ImageSourcePropType,
   Dimensions,
+  BackHandler,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -62,6 +63,7 @@ type university = {
 }
 
 type Feature = {
+  avg_rating: string;
   id: number;
   created_by: number;
   category_id: number;
@@ -162,6 +164,23 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
       if (saved) setBookmarkedIds(JSON.parse(saved));
     };
     loadBookmarks();
+  }, []);
+
+   useEffect(() => {
+    const backAction = () => {
+       navigation.replace('Dashboard', {
+      AddScreenBackactiveTab: 'Home',
+      isNavigate: false,
+      })
+      return true;
+    };
+  
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+  
+    return () => backHandler.remove();
   }, []);
 
   const clickfilter = () => {
@@ -342,7 +361,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
               tag={item.university?.name || 'University of Warwick'}
               infoTitle={item.title}
               inforTitlePrice={`£ ${item.price}`}
-              rating={item.isfeatured ? '4.5' : '4.5'}
+              rating={item.avg_rating}
               showInitials={showInitials}
               initialsName={initials.toUpperCase()}
               productImage={item.createdby?.profile ? { uri: item.createdby.profile } : undefined}
@@ -355,7 +374,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
               tag={item.university?.name || 'University of Warwick'}
               infoTitle={item.title}
               inforTitlePrice={`£ ${item.price}`}
-              rating={item.isfeatured ? '4.5' : '4.5'}
+              rating={item.avg_rating}
               productImage={productImage ?? require('../../../assets/images/drone.png')}
               bookmark={item.isbookmarked}
               isfeature={item.isfeatured}
@@ -573,7 +592,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
           }
           contentContainerStyle={[
             styles.listContainer,
-            { paddingTop: Platform.OS === 'ios' ? 120 : 100, paddingBottom: isEmpty ? 10 : 40, flexGrow: 1 },
+            { paddingTop: Platform.OS === 'ios' ? 121 : 100, paddingBottom: isEmpty ? 10 : 40, flexGrow: 1 },
           ]}
           onScroll={scrollHandler}
           scrollEventThrottle={16}
@@ -674,7 +693,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '6.1%' : 40,
+    top: Platform.OS === 'ios' ? '6%' : 40,
     width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -683,6 +702,8 @@ const styles = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
+    marginTop: 2,
+    marginLeft: 1
   },
 
   dateHeading: {
@@ -791,7 +812,7 @@ const styles = StyleSheet.create({
     // paddingVertical: 4,
     padding: (Platform.OS === 'ios' ? 12 : 0),
     marginTop: (Platform.OS === 'ios' ? 4 : 20),
-    height: 48,
+    height: 50,
     gap: 8,
     width: '84%',
   },
