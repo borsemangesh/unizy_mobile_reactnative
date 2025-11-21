@@ -20,6 +20,7 @@ import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
 import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
@@ -69,7 +70,9 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
     
       if (isInitialLoad) setInitialLoading(true);
     
-      const url = `${MAIN_URL.baseUrl}twilio/mychats?search=${query}`;
+      // Add timestamp to bust cache and ensure fresh data
+      const timestamp = Date.now();
+      const url = `${MAIN_URL.baseUrl}twilio/mychats?search=${query}&_t=${timestamp}`;
       console.log("twilioURL:", url);
     
       const response = await fetch(url, {
@@ -81,6 +84,9 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
       });
     
       const data = await response.json();
+
+      console.log("dataiii",data);
+      
     
       if (!response.ok) {
         console.warn("Fetch failed:", data.message);
@@ -111,6 +117,33 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
   useEffect(() => {
     fetchUserChatData('', true);
   }, []);
+
+  // Refresh chat list when screen comes into focus (e.g., navigating back from individual chat)
+  useFocusEffect(
+    React.useCallback(() => {
+      // Skip initial mount - let the useEffect handle it
+      if (isInitialMount.current) {
+        return;
+      }
+      
+      // Use retry logic with multiple attempts to ensure backend has synced messages
+      // This handles cases where messages take time to sync to the backend API
+      const timeoutIds: NodeJS.Timeout[] = [];
+      const delays = [800, 1500, 2500]; // Progressive delays for retries
+      
+      delays.forEach((delay, index) => {
+        const timeoutId = setTimeout(() => {
+          fetchUserChatData('', false);
+        }, delay);
+        timeoutIds.push(timeoutId);
+      });
+      
+      return () => {
+        // Clear all timeouts if component unmounts or focus changes
+        timeoutIds.forEach(id => clearTimeout(id));
+      };
+    }, [])
+  );
 
   // Search with debounce - NO loader
   useEffect(() => {
@@ -395,7 +428,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
         }}
         ListEmptyComponent={
           !initialLoading && (!studentList || studentList.length === 0) ? (
-            <View style={[styles.emptyWrapper, { minHeight: INNER_SCREEN_HEIGHT - (Platform.OS === 'ios' ? 225 : 150) }]}>
+            <View style={[styles.emptyWrapper, { minHeight: INNER_SCREEN_HEIGHT - (Platform.OS === 'ios' ? 225 : 250) }]}>
               <View style={styles.emptyContainer}>
                 <Image
                   source={require('../../../assets/images/noproduct.png')}
@@ -484,7 +517,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     marginBottom: 15,
     zIndex: 12,
-    height: (Platform.OS === 'ios' ? 50 : 0),
+    height: (Platform.OS === 'ios' ? 50 : 50),
     gap: 8,
   },
   searchIcon: {

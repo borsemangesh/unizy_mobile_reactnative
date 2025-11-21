@@ -46,6 +46,8 @@ import Animated, {
 } from 'react-native-reanimated';
 // @ts-ignore - react-native-vector-icons types
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { getTwilioClient, waitForTwilioReady } from "../../view/emoji/twilioService";
+
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImage = require('../../../assets/images/user.jpg');
@@ -85,6 +87,27 @@ type RouteParams = {
   conversationSid:string;
 };
 
+const conversationCache : any = {};
+const messageCache:any = {};
+
+const CACHE_KEY_CONVO_PREFIX = "twilio_convo_";
+const CACHE_KEY_MSG_PREFIX = "twilio_msg_";
+
+const saveJSON = async (key:any, value:any) => {
+  try {
+    await AsyncStorage.setItem(key, JSON.stringify(value));
+  } catch (_) {}
+};
+
+const loadJSON = async (key:any) => {
+  try {
+    const raw = await AsyncStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  } catch (_) {
+    return null;
+  }
+};
+
 const MessagesIndividualScreen = ({
   navigation,
 }: MessagesIndividualScreenProps) => {
@@ -99,8 +122,6 @@ const MessagesIndividualScreen = ({
 
   console.log('currentUserIdList----', currentUserIdList);
 
-  // const [twilioToken, setTwilioToken] = useState<any>(null);
-
   const [chatClient, setChatClient] = useState<any>(null);
 
   const [conversation, setConversation] = useState<any>(null);
@@ -109,8 +130,6 @@ const MessagesIndividualScreen = ({
   const [messagesDateTime, setMessagesDateTime] = useState<any[]>([]);
 
   const [messageText, setMessageText] = useState('');
-  // const [currentUserId, setCurrentUserId] = useState(null);
-
   const [checkUser, setCheckUser] = useState<string | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
@@ -130,18 +149,21 @@ const MessagesIndividualScreen = ({
   const flatListRef = useRef<FlatList>(null);
   const textInputRef = useRef<TextInput>(null);
   const emojiTranslateY = useRef(new RNAnimated.Value(0)).current;
+  const loadingFromScrollRef = useRef(false);   
+  const shouldAutoScrollRef = useRef(true);
+  const newestMessageSidRef = useRef<string | null>(null); // Track newest message to detect if it changed
 
-  // Animated hooks for blur effect
-  // Show blur when content height exceeds viewport (scrollable content exists)
+
+
   const hasScrollableContent = useSharedValue(false);
   const contentHeightRef = useRef(0);
   const viewportHeightRef = useRef(0);
-  const prevContentHeightRef = useRef(0); // Track previous content height to detect new messages
+  const prevContentHeightRef = useRef(0); 
 
-  // Define scrollY before scrollHandler (required for blur animation)
+
   const scrollY = useSharedValue(0);
 
-  // Function to check if content is scrollable and update blur
+
   const updateBlurState = () => {
     if (contentHeightRef.current > 0 && viewportHeightRef.current > 0) {
       hasScrollableContent.value =
@@ -154,32 +176,19 @@ const MessagesIndividualScreen = ({
       'worklet';
       const contentH = event.contentSize.height;
       const viewportH = event.layoutMeasurement.height;
-      const currentY = event.contentOffset.y;
-
-      // For inverted FlatList:
-      // - At bottom (newest messages): currentY = 0 → blur = 0
-      // - Scrolling up (older messages): currentY increases → blur increases
-      // Update scrollY for blur animation
+      const currentY = event.contentOffset.y;  
       scrollY.value = currentY;
 
-      // Calculate if we're at the top (viewing oldest messages)
+ 
       const maxScrollY = Math.max(0, contentH - viewportH);
       const distanceFromTop = maxScrollY - currentY;
-      const isAtTop = distanceFromTop <= 10; // Small threshold for precision
-
-      // Show blur only if:
-      // 1. Content is scrollable (contentH > viewportH)
-      // 2. NOT at top (not viewing oldest messages)
-      // Hide blur only when fully scrolled to top
+      const isAtTop = distanceFromTop <= 10;
       hasScrollableContent.value = contentH > viewportH && !isAtTop;
     },
   });
  
    const animatedBlurStyle = useAnimatedStyle(() => {
      'worklet';
-     // Blur increases as we scroll up (scrollY increases)
-     // At bottom (scrollY = 0): no blur (opacity = 0)
-     // Scrolling up (scrollY increases): blur increases (opacity increases to 1)
      const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
      return { opacity };
    });
@@ -247,18 +256,12 @@ const MessagesIndividualScreen = ({
   const WINDOW_HEIGHT = Dimensions.get('window').height;
   const INPUT_BAR_HEIGHT = Platform.OS === 'ios' ? 70 : 64;
   const DEFAULT_EMOJI_HEIGHT = Math.round(WINDOW_HEIGHT * 0.35);
-  // Consistent bottom spacing to match keyboard-open appearance
-  const BOTTOM_SPACING = Platform.OS === 'ios' ? 0 : 0; // Will be handled by padding
+  const BOTTOM_SPACING = Platform.OS === 'ios' ? 0 : 0; 
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [lastKeyboardHeight, setLastKeyboardHeight] = useState(0);
   const windowHeightRef = useRef(Dimensions.get('window').height);
-
-  // Emoji keyboard height MUST match the device's actual keyboard height
-  // Use lastKeyboardHeight (captured when keyboard opens) to match device-specific keyboard height
-  // This ensures emoji picker height matches the exact keyboard height on each device
-  // If keyboard hasn't been opened yet, use a reasonable default that will be updated when keyboard opens
   const EMOJI_PICKER_HEIGHT =
     lastKeyboardHeight > 0
       ? lastKeyboardHeight // Use actual keyboard height captured from device
@@ -279,10 +282,6 @@ const MessagesIndividualScreen = ({
     });
   }, [isEmojiPickerVisible, navigation]);
 
-  // const [loading, setLoading] = useState(true);
-
-  // Emoji picker - NO ANIMATION, instant appearance/disappearance
-  // Set translateY to 0 always for instant show/hide (no bottom-to-top animation)
   useEffect(() => {
     // Always keep translateY at 0 for instant appearance (no animation)
     emojiTranslateY.setValue(0);
@@ -293,27 +292,19 @@ const MessagesIndividualScreen = ({
     PanResponder.create({
       onStartShouldSetPanResponder: () => false,
       onMoveShouldSetPanResponder: (_, gestureState) => {
-        // STRICTLY only respond to vertical downward swipes
-        // Completely ignore horizontal swipes (left/right)
         const verticalMovement = Math.abs(gestureState.dy);
         const horizontalMovement = Math.abs(gestureState.dx);
         const isVerticalSwipe = verticalMovement > horizontalMovement;
         const isDownwardSwipe = gestureState.dy > 15; // Minimum threshold
-
-        // Only activate if it's clearly a vertical downward swipe
         return isVerticalSwipe && isDownwardSwipe;
       },
       onPanResponderGrant: () => {
         // Gesture started
       },
       onPanResponderMove: (_, gestureState) => {
-        // Only move if it's a downward vertical gesture
-        // But don't animate - just track for swipe detection
         const isVertical =
           Math.abs(gestureState.dy) > Math.abs(gestureState.dx);
         if (isVertical && gestureState.dy > 0) {
-          // Track gesture but don't visually move (no animation)
-          // The emoji picker stays in place, we just detect the swipe
         }
       },
       onPanResponderRelease: (_, gestureState) => {
@@ -415,8 +406,6 @@ const MessagesIndividualScreen = ({
       'gi',
     );
 
-    // Remove number words, but preserve spaces around them
-    // Replace number words with empty string (spaces will remain)
     filtered = filtered.replace(numberWordsPattern, '');
 
     // Only clean up excessive spaces (3+ consecutive spaces) left after removal
@@ -628,233 +617,957 @@ const MessagesIndividualScreen = ({
   // ----------------------------------------------------------
   // STEP 1: Get Twilio Token and Initialize Client
   // ----------------------------------------------------------
-  useEffect(() => {
-    const fetchTwilioToken = async () => {
-      try {
-        setInitialLoading(true);
-        const token = await AsyncStorage.getItem('userToken');
-        const userId = await AsyncStorage.getItem('userId');
-        if (!token || !userId) {
-          setInitialLoading(false);
-          return;
-        }
+  // useEffect(() => {
+  //   const fetchTwilioToken = async () => {
+  //     try {
+  //       setInitialLoading(true);
+  //       const token = await AsyncStorage.getItem('userToken');
+  //       const userId = await AsyncStorage.getItem('userId');
+  //       if (!token || !userId) {
+  //         setInitialLoading(false);
+  //         return;
+  //       }
 
-        // Store userId in state for message comparison
-        setCurrentUserId(String(userId));
+  //       // Store userId in state for message comparison
+  //       setCurrentUserId(String(userId));
 
-        const response = await fetch(`${MAIN_URL.baseUrl}twilio/auth-token`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
+  //       const response = await fetch(`${MAIN_URL.baseUrl}twilio/auth-token`, {
+  //         method: 'GET',
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //           'Content-Type': 'application/json',
+  //         },
+  //       });
 
-        const data = await response.json();
-        if (!response.ok) {
-          setInitialLoading(false);
-          throw new Error(data.message);
-        }
+  //       const data = await response.json();
+  //       if (!response.ok) {
+  //         setInitialLoading(false);
+  //         throw new Error(data.message);
+  //       }
 
-        // const twillioToken :any = await AsyncStorage.getItem('twillioToken');
+  //       // const twillioToken :any = await AsyncStorage.getItem('twillioToken');
 
-        console.log('data', data.data.token);
+  //       console.log('data', data.data.token);
 
-        const client = new TwilioChatClient(data.data.token);
-        setChatClient(client);
-      } catch (err) {
-        console.error('Twilio init failed:', err);
-        setInitialLoading(false);
-      }
-    };
-    fetchTwilioToken();
+  //       const client = new TwilioChatClient(data.data.token);
+  //       setChatClient(client);
+  //     } catch (err) {
+  //       console.error('Twilio init failed:', err);
+  //       setInitialLoading(false);
+  //     }
+  //   };
+  //   fetchTwilioToken();
+  // }, []);
+
+ useEffect(() => {
+    (async () => {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) return;
+
+      const response = await fetch(
+        `${MAIN_URL.baseUrl}twilio/auth-token`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const data = await response.json();
+
+      
+      // debugger;
+      // const twilio = await TwilioChatClient.create(data.data.token);
+      const twilio  = await getTwilioClient(data.data.token);
+      console.log("twilio",twilio);
+      
+      setChatClient(twilio);
+
+ // 🔥 Preload conversations silently in background
+    setTimeout(() => {
+      twilio.getSubscribedConversations()
+        .then((list:any) => list.items.forEach((c:any) => {
+          conversationCache[c.uniqueName] = c;
+        }))
+        .catch(() => {});
+    }, 500);
+  
+
+    })();
   }, []);
+
+// ----------------------------Wait for Connection--------------------------
+
+
 
   // ----------------------------------------------------------
   // STEP 2: Fetch or Create Conversation
   // ----------------------------------------------------------
-  useEffect(() => {
-    if (!chatClient) return;
+//   useEffect(() => {
+//     if (!chatClient) return;
 
-    let isMounted = true;
-    // const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+//     let isMounted = true;
+//     // const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
-    const fetchConversation = async () => {
-      try {
-        //  setLoading(true);
-        const token = await AsyncStorage.getItem('userToken');
-        const userId = await AsyncStorage.getItem('userId');
+//     const fetchConversation = async () => {
+//       try {
+//         //  setLoading(true);
+//         const token = await AsyncStorage.getItem('userToken');
+//         const userId = await AsyncStorage.getItem('userId');
 
-        const waitForClientConnection = (client: any) =>
-          new Promise<void>(resolve => {
-            if (client.connectionState === 'connected') return resolve();
-            client.on('connectionStateChanged', (state: string) => {
-              if (state === 'connected') resolve();
-            });
-          });
+//         // const waitForClientConnection = (client: any) =>
+//         //   new Promise<void>(resolve => {
+//         //     if (client.connectionState === 'connected') return resolve();
+//         //     client.on('connectionStateChanged', (state: string) => {
+//         //       if (state === 'connected') resolve();
+//         //     });
+//         //   });
 
-        await waitForClientConnection(chatClient);
+//         // await waitForClientConnection(chatClient);
+//          await waitForTwilioReady(chatClient);
+//         console.log("hiiii");
+        
+//         let convName = userConvName;
+//         let apiData: any = null;
+//         console.log('source000', source);
 
-        let convName = userConvName;
-        let apiData: any = null;
-        console.log('source000', source);
+//         if (source === 'sellerPage') {
+//           const url = `${MAIN_URL.baseUrl}twilio/conversation-fetch`;
+//           const res = await fetch(url, {
+//             method: 'POST',
+//             headers: {
+//               Authorization: `Bearer ${token}`,
+//               'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({ feature_id: sellerData.featureId }),
+//           });
 
-        if (source === 'sellerPage') {
-          const url = `${MAIN_URL.baseUrl}twilio/conversation-fetch`;
-          const res = await fetch(url, {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ feature_id: sellerData.featureId }),
-          });
+//           apiData = await res.json();
+//           if (res.ok && apiData.data?.conv_name)
+//             convName = apiData.data.conv_name;
 
-          apiData = await res.json();
-          if (res.ok && apiData.data?.conv_name)
-            convName = apiData.data.conv_name;
+//           if (apiData.data == null) {
+//             console.warn(
+//               'Conversation create new conversation:',
+//               apiData.message,
+//             );
+//             // console.time("firstLoder")
+//             setInitialLoading(false);
+//              console.timeEnd("firstLoder")
+//             return;
+//           }
+//         }
 
-          if (apiData.data == null) {
-            console.warn(
-              'Conversation create new conversation:',
-              apiData.message,
-            );
-            setInitialLoading(false);
-            return;
-          }
-        }
+//         console.log('convoppppppppppp', convName);
 
-        console.log('convoppppppppppp', convName);
 
-        let convo;
-        try {
-          convo = await chatClient.getConversationByUniqueName(convName);
-        } catch {
-          convo = await chatClient.createConversation({ uniqueName: convName });
-        }
 
-        if (!convo) {
+
+
+
+
+
+
+// let convo = null;
+
+// // ⚡ 1) Cache HIT (0ms)
+// if (conversationCache[convName]) {
+//   console.log("⚡ Cache HIT for conversation");
+//   convo = conversationCache[convName];
+// } else {
+//   // ⚡ 2) Fast fetch using SID (100–180ms)
+//   if (conversationSid) {
+//     console.time("getConversationBySid");
+//     try {
+//       convo = await chatClient.getConversation(conversationSid);
+//       console.log('convo',conversationSid);
+      
+//     } catch {}
+//     console.timeEnd("getConversationBySid");
+//   }
+
+//   // ⚡ 3) Fallback: uniqueName (500–700ms)
+//   if (!convo) {
+//     console.time("getConversationByUniqueName");
+//     try {
+//       convo = await chatClient.getConversationByUniqueName(convName);
+//     } catch {
+//       convo = await chatClient.createConversation({ uniqueName: convName });
+//     }
+//     console.timeEnd("getConversationByUniqueName");
+//   }
+
+//   // Store in cache
+//   conversationCache[convName] = convo;
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//           // let convo = chatClient.conversations.get(convName);
+
+//         // let convo;
+//         // try {
+//         //       console.time("getConversationByUniqueName");
+//         // convo = await chatClient.getConversationByUniqueName(convName);
+//         // console.timeEnd("getConversationByUniqueName");
+//         // } catch {
+//         //   convo = await chatClient.createConversation({ uniqueName: convName });
+//         // }
+
+//         // if (!convo) {
+//         //   setInitialLoading(false);
+//         //   return;
+//         // }
+
+//         const participants = await convo.getParticipants();
+//         const alreadyJoined = participants.some(
+//           (p: any) => p.identity === userId,
+//         );
+//         if (!alreadyJoined) await convo.join();
+
+//         if (!isMounted) return;
+//         setConversation(convo);
+
+//         // Convert to string to match Twilio's author format (author is typically userId as string)
+//         setCheckUser(
+//           String(
+//             source === 'chatList'
+//               ? currentUserIdList
+//               : apiData?.data?.current_user_id || userId,
+//           ),
+//         );
+
+//         // Load all messages initially by fetching all pages
+//         // Twilio pagination: nextPage() = newer messages, prevPage() = older messages
+//         let allMessages: any[] = [];
+//         let currentPage = await convo.getMessages();
+//         allMessages = [...currentPage.items];
+//         markAsRead(currentPage);
+
+//         console.log(
+//           'Initial page loaded:',
+//           currentPage.items.length,
+//           'hasPrevPage:',
+//           currentPage.hasPrevPage,
+//         );
+
+//         // Load all older pages (prevPage gets older messages)
+//         let pageCount = 1;
+//         while (currentPage.hasPrevPage) {
+//           try {
+//             const prevPage = await currentPage.prevPage();
+//             if (prevPage && prevPage.items && prevPage.items.length > 0) {
+//               allMessages = [...allMessages, ...prevPage.items];
+//               currentPage = prevPage;
+//               pageCount++;
+//               console.log(
+//                 `Loaded older page ${pageCount}:`,
+//                 prevPage.items.length,
+//                 'Total so far:',
+//                 allMessages.length,
+//               );
+//             } else {
+//               break;
+//             }
+//           } catch (error) {
+//             console.error('Error loading previous page:', error);
+//             break;
+//           }
+//         }
+
+//         console.log(
+//           'Total messages loaded initially:',
+//           allMessages.length,
+//           'from',
+//           pageCount,
+//           'pages',
+//         );
+
+//         // Store the last page (oldest messages) for pagination (to load even older messages if needed)
+//         messagesPageRef.current = currentPage;
+
+//         // Check if there are more messages to load (older than what we have)
+//         const hasMore = currentPage.hasPrevPage || false;
+//         console.log('hasMoreMessages (older than loaded):', hasMore);
+//         setHasMoreMessages(hasMore);
+
+//         const messagesdate = allMessages.map((msg: any) => {
+//           const createdAt = msg.dateCreated || msg.timestamp; // fallback if dateCreated missing
+
+//           return {
+//             time: new Date(createdAt).toLocaleTimeString([], {
+//               hour: '2-digit',
+//               minute: '2-digit',
+//             }),
+//             date: new Date(createdAt).toLocaleDateString('en-IN', {
+//               day: '2-digit',
+//               month: 'short',
+//               year: 'numeric',
+//             }),
+//           };
+//         });
+
+//         console.log('date time masg------', messagesdate);
+//         console.log('All messages loaded----------', allMessages.length);
+//         setMessagesDateTime(messagesdate);
+//         console.log('checkUser============______', checkUser);
+
+//         // Sort messages chronologically (newest first for inverted FlatList)
+//         // Inverted FlatList will display newest at bottom, oldest at top
+//         const sortedInitialMessages = [...allMessages].sort((a, b) => {
+//           const timeA = new Date(a.dateCreated || a.timestamp).getTime();
+//           const timeB = new Date(b.dateCreated || b.timestamp).getTime();
+//           return timeB - timeA; // Newest first (for inverted list)
+//         });
+//         setMessages(sortedInitialMessages);
+//         // Hide loader once messages are loaded
+//         setInitialLoading(false);
+//       } catch (err) {
+//         console.error('Conversation setup failed:', err);
+//         setInitialLoading(false);
+//       }
+//     };
+
+//     fetchConversation();
+
+//     return () => {
+//       isMounted = false;
+//     };
+//   }, [chatClient]);
+
+
+
+
+
+
+//   useEffect(() => {
+//   if (!chatClient) return;
+
+//   let isMounted = true;
+
+//   const fetchConversationOptimized = async () => {
+//     try {
+//       setInitialLoading(true);
+
+//       const token = await AsyncStorage.getItem("userToken");
+//       const userId = await AsyncStorage.getItem("userId");
+
+//       // Ensure Twilio client is fully connected
+//       await waitForTwilioReady(chatClient);
+
+//       // Resolve conversation name (seller flow may override)
+//       let convName = userConvName;
+//       let apiData: any = null;
+
+//       if (source === "sellerPage") {
+//         const url = `${MAIN_URL.baseUrl}twilio/conversation-fetch`;
+//         const res = await fetch(url, {
+//           method: "POST",
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//             "Content-Type": "application/json",
+//           },
+//           body: JSON.stringify({ feature_id: sellerData.featureId }),
+//         });
+
+//         apiData = await res.json();
+//         if (res.ok && apiData.data?.conv_name) convName = apiData.data.conv_name;
+
+//         if (apiData.data == null) {
+//           console.warn("Conversation not available:", apiData.message);
+//           setInitialLoading(false);
+//           return;
+//         }
+//       }
+
+//       console.log("Loading conversation:", { convName, conversationSid });
+
+//       // Try in-memory conversation cache first (0ms)
+//       let convo = conversationCache[convName] || null;
+
+//       // If not cached, prefer SID (faster) then uniqueName
+//       if (!convo) {
+//         if (conversationSid) {
+//           console.time("getConversationBySid");
+//           try {
+//             convo = await chatClient.getConversation(conversationSid);
+//             console.log("Loaded convo by SID:", conversationSid);
+//           } catch (e) {
+//             console.warn("getConversation(SID) failed, will try uniqueName", e);
+//             convo = null;
+//           }
+//           console.timeEnd("getConversationBySid");
+//         }
+//       }
+
+//       if (!convo) {
+//         console.time("getConversationByUniqueName");
+//         try {
+//           convo = await chatClient.getConversationByUniqueName(convName);
+//           console.log("Loaded convo by uniqueName:", convName);
+//         } catch (err) {
+//           console.warn("getConversationByUniqueName failed - creating:", err);
+//           convo = await chatClient.createConversation({ uniqueName: convName });
+//           console.log("Created convo:", convo?.sid);
+//         }
+//         console.timeEnd("getConversationByUniqueName");
+//       }
+
+//       if (!convo) {
+//         console.error("Failed to load or create conversation");
+//         setInitialLoading(false);
+//         return;
+//       }
+
+//       // Cache conversation for future fast loads
+//       conversationCache[convName] = convo;
+
+//       // Ensure the user is joined
+//       const participants = await convo.getParticipants();
+//       const alreadyJoined = participants.some((p: any) => p.identity === userId);
+//       if (!alreadyJoined) {
+//         try {
+//           await convo.join();
+//           console.log("Joined conversation:", convo.sid);
+//         } catch (err: any) {
+//           if (err?.message?.includes("Conflict")) {
+//             console.log("Already joined (conflict).");
+//           } else {
+//             console.warn("Join conversation failed:", err);
+//           }
+//         }
+//       }
+
+//       if (!isMounted) return;
+
+//       // Save conversation and checkUser
+//       setConversation(convo);
+//       setCheckUser(
+//         String(
+//           source === "chatList"
+//             ? currentUserIdList
+//             : apiData?.data?.current_user_id || userId,
+//         ),
+//       );
+
+//       // Load messages: only latest page (fast). Use message cache if available.
+//       let page: any = null;
+//       let items: any[] = [];
+
+//       if (messageCache[convName]) {
+//         console.log("Message cache HIT for:", convName);
+//         items = messageCache[convName];
+//         // We won't have messagesPageRef for pagination from cache; keep it null so loadOlderMessages works normally
+//       } else {
+//         console.time("loadMessages_latest");
+//         // fetch the latest 30 messages (fast)
+//         page = await convo.getMessages(30);
+//         items = [...(page?.items || [])];
+//         messageCache[convName] = items;
+//         messagesPageRef.current = page;
+//         console.timeEnd("loadMessages_latest");
+//       }
+
+//       // Mark as read (pass the page or the convo as needed)
+//       try {
+//         if (page) markAsRead(page);
+//         else markAsRead(convo); // fallback, your markAsRead expects a conversation variable earlier
+//       } catch (e) {
+//         console.warn("markAsRead failed:", e);
+//       }
+
+//       // Set pagination / hasMore flag
+//       const hasMore = page?.hasPrevPage ?? false;
+//       setHasMoreMessages(hasMore);
+
+//       // Build messagesDateTime and messages state
+//       const messagesdate = items.map((msg: any) => {
+//         const createdAt = msg.dateCreated || msg.timestamp;
+//         return {
+//           time: new Date(createdAt).toLocaleTimeString([], {
+//             hour: "2-digit",
+//             minute: "2-digit",
+//           }),
+//           date: new Date(createdAt).toLocaleDateString("en-IN", {
+//             day: "2-digit",
+//             month: "short",
+//             year: "numeric",
+//           }),
+//         };
+//       });
+
+//       setMessagesDateTime(messagesdate);
+
+//       // Sort newest-first for your inverted FlatList
+//       const sortedInitialMessages = [...items].sort((a, b) => {
+//         const timeA = new Date(a.dateCreated || a.timestamp).getTime();
+//         const timeB = new Date(b.dateCreated || b.timestamp).getTime();
+//         return timeB - timeA;
+//       });
+
+//       setMessages(sortedInitialMessages);
+
+//       setInitialLoading(false);
+//     } catch (err) {
+//       console.error("Conversation setup failed:", err);
+//       setInitialLoading(false);
+//     }
+//   };
+
+//   fetchConversationOptimized();
+
+//   return () => {
+//     isMounted = false;
+//   };
+// }, [chatClient, conversationSid, userConvName, source, sellerData]);
+
+
+// useEffect(() => {
+//   if (!chatClient) return;
+
+//   let isMounted = true;
+
+//   const loadConversation = async () => {
+//     try {
+//       setInitialLoading(true);
+
+//       const token = await AsyncStorage.getItem("userToken");
+//       const userId = await AsyncStorage.getItem("userId");
+
+//       await waitForTwilioReady(chatClient);
+
+//       let convName = userConvName;
+//       let apiData = null;
+
+//       // ---------------------- Handle sellerPage override ----------------------
+//       if (source === "sellerPage") {
+//         const res = await fetch(`${MAIN_URL.baseUrl}twilio/conversation-fetch`, {
+//           method: "POST",
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//             "Content-Type": "application/json",
+//           },
+//           body: JSON.stringify({ feature_id: sellerData.featureId }),
+//         });
+
+//         apiData = await res.json();
+//         if (res.ok && apiData.data?.conv_name) convName = apiData.data.conv_name;
+//         if (!apiData.data) {
+//           setInitialLoading(false);
+//           return;
+//         }
+//       }
+
+//       // ---------------------- INSTANT OPEN (Persistent Cache) ----------------------
+//       const persistedConvo = await loadJSON(CACHE_KEY_CONVO_PREFIX + convName);
+//       const persistedMsgs = await loadJSON(CACHE_KEY_MSG_PREFIX + convName);
+
+//      if (persistedConvo && persistedMsgs) {
+//   conversationCache[convName] = persistedConvo;
+//   messageCache[convName] = persistedMsgs;
+
+//   setConversation(persistedConvo);
+
+//   setMessages(
+//     [...(persistedMsgs || [])].sort(
+//       (a, b) =>
+//         new Date(b.dateCreated).getTime() -
+//         new Date(a.dateCreated).getTime()
+//     )
+//   );
+
+//   setInitialLoading(false);
+//   return;
+// }
+
+
+//       // ---------------------- Live Twilio Fetching ----------------------
+//       const fetchTwilioFresh = async () => {
+//         let convo = conversationCache[convName] || null;
+
+//         // Prefer SID (fastest)
+//         if (!convo && conversationSid) {
+//           try {
+//             convo = await chatClient.getConversation(conversationSid);
+//           } catch (_) {}
+//         }
+
+//         // Fallback: uniqueName
+//         if (!convo) {
+//           try {
+//             convo = await chatClient.getConversationByUniqueName(convName);
+//           } catch {
+//             convo = await chatClient.createConversation({ uniqueName: convName });
+//           }
+//         }
+
+//         conversationCache[convName] = convo;
+//         await saveJSON(CACHE_KEY_CONVO_PREFIX + convName, convo);
+
+//         // Ensure joined
+//         const participants = await convo.getParticipants();
+//         const alreadyJoined = participants.some((p:any) => p.identity === userId);
+//         if (!alreadyJoined) await convo.join();
+
+//         if (!isMounted) return;
+//         setConversation(convo);
+
+//         // Load latest messages only
+//         let page = await convo.getMessages(30);
+//         let items = page.items || [];
+
+//         setCheckUser(
+//   String(
+//     source === 'chatList'
+//       ? currentUserIdList
+//       : apiData?.data?.current_user_id || userId
+//   )
+// );
+
+// setCurrentUserId(String(userId));
+
+//         messageCache[convName] = items;
+//         await saveJSON(CACHE_KEY_MSG_PREFIX + convName, items);
+
+//   setMessages(
+//   [...(items || [])].sort((a, b) => (
+//     new Date(b.dateCreated).getTime() -
+//     new Date(a.dateCreated).getTime()
+//   ))
+// );
+//         setHasMoreMessages(page.hasPrevPage);
+
+//         setInitialLoading(false);
+//       };
+
+//       await fetchTwilioFresh();
+//     } catch (err) {
+//       console.error("Conversation load failed:", err);
+//       setInitialLoading(false);
+//     }
+//   };
+
+//   loadConversation();
+//   return () => { isMounted = false };
+// }, [chatClient]);
+
+
+// useEffect(() => {
+//   if (!chatClient) return;
+
+//   let isMounted = true;
+
+//   const loadConversation = async () => {
+//     try {
+//       setInitialLoading(true);
+
+//       const token = await AsyncStorage.getItem("userToken");
+//       const userId = await AsyncStorage.getItem("userId");
+
+//       await waitForTwilioReady(chatClient);
+
+//       let convName = userConvName;
+//       let apiData = null;
+
+//       // ---------------------- Handle sellerPage override ----------------------
+//       if (source === "sellerPage") {
+//         const res = await fetch(`${MAIN_URL.baseUrl}twilio/conversation-fetch`, {
+//           method: "POST",
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//             "Content-Type": "application/json",
+//           },
+//           body: JSON.stringify({ feature_id: sellerData.featureId }),
+//         });
+
+//         apiData = await res.json();
+//         if (res.ok && apiData.data?.conv_name) convName = apiData.data.conv_name;
+
+//         if (!apiData.data) {
+//           setInitialLoading(false);
+//           return;
+//         }
+//       }
+
+//       // ---------------------- INSTANT OPEN (Persistent Cache) ----------------------
+//       const persistedConvo = await loadJSON(CACHE_KEY_CONVO_PREFIX + convName);
+//       const persistedMsgs = await loadJSON(CACHE_KEY_MSG_PREFIX + convName);
+
+//       if (persistedConvo && persistedMsgs) {
+//         conversationCache[convName] = persistedConvo;
+//         messageCache[convName] = persistedMsgs;
+
+//         setConversation(persistedConvo);
+
+//         // Set identity BEFORE rendering cached messages
+//         setCheckUser(
+//           String(
+//             source === "chatList"
+//               ? currentUserIdList
+//               : apiData?.data?.current_user_id || userId
+//           )
+//         );
+//         setCurrentUserId(String(userId));
+
+//         setMessages(
+//           [...(persistedMsgs || [])].sort(
+//             (a, b) =>
+//               new Date(b.dateCreated).getTime() -
+//               new Date(a.dateCreated).getTime()
+//           )
+//         );
+
+//         setInitialLoading(false);
+//         return;
+//       }
+
+//       // ---------------------- Live Twilio Fresh Fetch ----------------------
+//       const fetchTwilioFresh = async () => {
+//         let convo = conversationCache[convName] || null;
+
+//         // Fastest: by SID
+//         if (!convo && conversationSid) {
+//           try {
+//             convo = await chatClient.getConversation(conversationSid);
+//           } catch (_) {}
+//         }
+
+//         // Fallback: by uniqueName
+//         if (!convo) {
+//           try {
+//             convo = await chatClient.getConversationByUniqueName(convName);
+//           } catch {
+//             convo = await chatClient.createConversation({ uniqueName: convName });
+//           }
+//         }
+
+//         conversationCache[convName] = convo;
+//         await saveJSON(CACHE_KEY_CONVO_PREFIX + convName, convo);
+
+//         // Ensure joined
+//         const participants = await convo.getParticipants();
+//         const alreadyJoined = participants.some((p:any) => p.identity === userId);
+//         if (!alreadyJoined) await convo.join();
+
+//         if (!isMounted) return;
+//         setConversation(convo);
+
+//         // ---------------------- SET USER IDENTITY BEFORE LOADING MESSAGES ----------------------
+//         setCheckUser(
+//           String(
+//             source === "chatList"
+//               ? currentUserIdList
+//               : apiData?.data?.current_user_id || userId
+//           )
+//         );
+//         setCurrentUserId(String(userId));
+
+//         // ---------------------- LOAD ALL MESSAGES (not just 30) ----------------------
+//         let page = await convo.getMessages(30);
+//         let items = Array.isArray(page.items) ? page.items : [];
+//         let all = [...items];
+
+//         while (page.hasPrevPage) {
+//           const prev = await page.prevPage();
+//           if (!prev || !prev.items?.length) break;
+
+//           all = [...all, ...prev.items];
+//           page = prev;
+//         }
+
+//         messageCache[convName] = all;
+//         await saveJSON(CACHE_KEY_MSG_PREFIX + convName, all);
+
+//         // Sort newest → oldest
+//         setMessages(
+//           [...all].sort(
+//             (a, b) =>
+//               new Date(b.dateCreated).getTime() -
+//               new Date(a.dateCreated).getTime()
+//           )
+//         );
+
+//         setHasMoreMessages(page.hasPrevPage);
+//         setInitialLoading(false);
+//       };
+
+//       await fetchTwilioFresh();
+//     } catch (err) {
+//       console.error("Conversation load failed:", err);
+//       setInitialLoading(false);
+//     }
+//   };
+
+//   loadConversation();
+//   return () => {
+//     isMounted = false;
+//   };
+// }, [chatClient]);
+
+// Updated MessageIndividualScreen.tsx
+// -- Full optimized chat loading with only latest 20 msgs and scroll pagination --
+
+// NOTE: Paste your entire file here and replace your old useEffect with the updated block.
+// The user requested only updated section, but a full file structure is required.
+// Insert the updated useEffect block exactly where your old useEffect was.
+
+// --- START OF UPDATED USEEFFECT BLOCK ---
+
+useEffect(() => {
+  if (!chatClient) return;
+
+  let isMounted = true;
+
+  const loadConversation = async () => {
+    try {
+      setInitialLoading(true);
+
+      const token = await AsyncStorage.getItem("userToken");
+      const userId = await AsyncStorage.getItem("userId");
+
+      await waitForTwilioReady(chatClient);
+
+      let convName = userConvName;
+      let apiData = null;
+
+      // ---------------------- Handle sellerPage override ----------------------
+      if (source === "sellerPage") {
+        const res = await fetch(`${MAIN_URL.baseUrl}twilio/conversation-fetch`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ feature_id: sellerData.featureId }),
+        });
+
+        apiData = await res.json();
+        if (res.ok && apiData.data?.conv_name) convName = apiData.data.conv_name;
+
+        if (!apiData.data) {
           setInitialLoading(false);
           return;
         }
+      }
 
-        const participants = await convo.getParticipants();
-        const alreadyJoined = participants.some(
-          (p: any) => p.identity === userId,
+      // ---------------------- INSTANT OPEN (Persistent Cache) ----------------------
+      const persistedConvo = await loadJSON(CACHE_KEY_CONVO_PREFIX + convName);
+      const persistedMsgs = await loadJSON(CACHE_KEY_MSG_PREFIX + convName);
+
+      if (persistedConvo && persistedMsgs) {
+        conversationCache[convName] = persistedConvo;
+        messageCache[convName] = persistedMsgs;
+
+        setConversation(persistedConvo);
+
+        // Set identity BEFORE rendering cached messages
+        setCheckUser(
+          String(
+            source === "chatList"
+              ? currentUserIdList
+              : apiData?.data?.current_user_id || userId
+          )
         );
+        setCurrentUserId(String(userId));
+
+        setMessages(
+          [...(persistedMsgs || [])].sort((a, b) => (
+            new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
+          ))
+        );
+
+        setInitialLoading(false);
+        return;
+      }
+
+      // ---------------------- Live Twilio Fresh Fetch ----------------------
+      const fetchTwilioFresh = async () => {
+        let convo = conversationCache[convName] || null;
+
+        // Fastest: by SID
+        if (!convo && conversationSid) {
+          try {
+            convo = await chatClient.getConversation(conversationSid);
+          } catch (_) {}
+        }
+
+        // Fallback: by uniqueName
+        if (!convo) {
+          try {
+            convo = await chatClient.getConversationByUniqueName(convName);
+          } catch {
+            convo = await chatClient.createConversation({ uniqueName: convName });
+          }
+        }
+
+        conversationCache[convName] = convo;
+        await saveJSON(CACHE_KEY_CONVO_PREFIX + convName, convo);
+
+        // Ensure joined
+        const participants = await convo.getParticipants();
+        const alreadyJoined = participants.some((p:any) => p.identity === userId);
         if (!alreadyJoined) await convo.join();
 
         if (!isMounted) return;
         setConversation(convo);
 
-        // Convert to string to match Twilio's author format (author is typically userId as string)
+        // ---------------------- SET USER IDENTITY BEFORE LOADING MESSAGES ----------------------
         setCheckUser(
           String(
-            source === 'chatList'
+            source === "chatList"
               ? currentUserIdList
-              : apiData?.data?.current_user_id || userId,
-          ),
+              : apiData?.data?.current_user_id || userId
+          )
+        );
+        setCurrentUserId(String(userId));
+
+        // ---------------------- LOAD ONLY LATEST 20 MESSAGES ----------------------
+        let page = await convo.getMessages(20);
+        let items = Array.isArray(page.items) ? page.items : [];
+        markAsRead(conversationSid);
+
+        messagesPageRef.current = page;
+
+        messageCache[convName] = items;
+        await saveJSON(CACHE_KEY_MSG_PREFIX + convName, items);
+
+        setMessages(
+          [...items].sort((a, b) => (
+            new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
+          ))
         );
 
-        // Load all messages initially by fetching all pages
-        // Twilio pagination: nextPage() = newer messages, prevPage() = older messages
-        let allMessages: any[] = [];
-        let currentPage = await convo.getMessages();
-        allMessages = [...currentPage.items];
-        markAsRead(currentPage);
-
-        console.log(
-          'Initial page loaded:',
-          currentPage.items.length,
-          'hasPrevPage:',
-          currentPage.hasPrevPage,
-        );
-
-        // Load all older pages (prevPage gets older messages)
-        let pageCount = 1;
-        while (currentPage.hasPrevPage) {
-          try {
-            const prevPage = await currentPage.prevPage();
-            if (prevPage && prevPage.items && prevPage.items.length > 0) {
-              allMessages = [...allMessages, ...prevPage.items];
-              currentPage = prevPage;
-              pageCount++;
-              console.log(
-                `Loaded older page ${pageCount}:`,
-                prevPage.items.length,
-                'Total so far:',
-                allMessages.length,
-              );
-            } else {
-              break;
-            }
-          } catch (error) {
-            console.error('Error loading previous page:', error);
-            break;
-          }
-        }
-
-        console.log(
-          'Total messages loaded initially:',
-          allMessages.length,
-          'from',
-          pageCount,
-          'pages',
-        );
-
-        // Store the last page (oldest messages) for pagination (to load even older messages if needed)
-        messagesPageRef.current = currentPage;
-
-        // Check if there are more messages to load (older than what we have)
-        const hasMore = currentPage.hasPrevPage || false;
-        console.log('hasMoreMessages (older than loaded):', hasMore);
-        setHasMoreMessages(hasMore);
-
-        const messagesdate = allMessages.map((msg: any) => {
-          const createdAt = msg.dateCreated || msg.timestamp; // fallback if dateCreated missing
-
-          return {
-            time: new Date(createdAt).toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit',
-            }),
-            date: new Date(createdAt).toLocaleDateString('en-IN', {
-              day: '2-digit',
-              month: 'short',
-              year: 'numeric',
-            }),
-          };
-        });
-
-        console.log('date time masg------', messagesdate);
-        console.log('All messages loaded----------', allMessages.length);
-        setMessagesDateTime(messagesdate);
-        console.log('checkUser============______', checkUser);
-
-        // Sort messages chronologically (newest first for inverted FlatList)
-        // Inverted FlatList will display newest at bottom, oldest at top
-        const sortedInitialMessages = [...allMessages].sort((a, b) => {
-          const timeA = new Date(a.dateCreated || a.timestamp).getTime();
-          const timeB = new Date(b.dateCreated || b.timestamp).getTime();
-          return timeB - timeA; // Newest first (for inverted list)
-        });
-        setMessages(sortedInitialMessages);
-        // Hide loader once messages are loaded
+        setHasMoreMessages(page.hasPrevPage);
         setInitialLoading(false);
-      } catch (err) {
-        console.error('Conversation setup failed:', err);
-        setInitialLoading(false);
-      }
-    };
+      };
 
-    fetchConversation();
+      await fetchTwilioFresh();
+    } catch (err) {
+      console.error("Conversation load failed:", err);
+      setInitialLoading(false);
+    }
+  };
 
-    return () => {
-      isMounted = false;
-    };
-  }, [chatClient]);
+  loadConversation();
+  return () => {
+    isMounted = false;
+  };
+}, [chatClient]);
+
+// --- END OF UPDATED USEEFFECT BLOCK ---
 
 
+
+// Removed duplicate messageAdded listener - functionality merged into the main listener below
 
   ////////////-------------------read count api -------------------//////////
 
@@ -891,90 +1604,121 @@ const MessagesIndividualScreen = ({
   // ----------------------------------------------------------
   // Load older messages (pagination) - WhatsApp style
   // ----------------------------------------------------------
+  // const loadOlderMessages = useCallback(async () => {
+  //   if (!conversation || !hasMoreMessages || loadingOlderMessages) {
+  //     console.log(
+  //       'loadOlderMessages: Skipping - conversation:',
+  //       !!conversation,
+  //       'hasMoreMessages:',
+  //       hasMoreMessages,
+  //       'loadingOlderMessages:',
+  //       loadingOlderMessages,
+  //     );
+  //     return;
+  //   }
+
+  //   try {
+  //     setLoadingOlderMessages(true);
+  //     console.log('loadOlderMessages: Loading older messages...');
+
+  //     // Get the previous page of messages
+  //     const prevPage = await messagesPageRef.current?.prevPage();
+
+  //     if (!prevPage || !prevPage.items || prevPage.items.length === 0) {
+  //       console.log('loadOlderMessages: No more messages to load');
+  //       setHasMoreMessages(false);
+  //       setLoadingOlderMessages(false);
+  //       return;
+  //     }
+
+  //     console.log(
+  //       'loadOlderMessages: Loaded',
+  //       prevPage.items.length,
+  //       'older messages',
+  //     );
+
+  //     // Store the new page for next pagination
+  //     messagesPageRef.current = prevPage;
+
+  //     // Check if there are more messages
+  //     setHasMoreMessages(prevPage.hasNextPage || false);
+
+  //     // Get existing message SIDs for deduplication
+  //     setMessages(prev => {
+  //       const existingSids = new Set(prev.map(msg => msg.sid));
+
+  //       // Filter out duplicates from new messages
+  //       const newMessages = prevPage.items.filter(
+  //         (msg: any) => !existingSids.has(msg.sid),
+  //       );
+
+  //       if (newMessages.length === 0) {
+  //         console.log('loadOlderMessages: All messages are duplicates');
+  //         setHasMoreMessages(false);
+  //         return prev; // No new messages, return previous state
+  //       }
+
+  //       console.log(
+  //         'loadOlderMessages: Adding',
+  //         newMessages.length,
+  //         'new messages',
+  //       );
+
+  //       // Combine: existing messages + new older messages
+  //       // With inverted FlatList: newest at bottom (index 0), oldest at top (last index)
+  //       // New older messages should be added to the end of the array (will appear at top after inversion)
+  //       const combined = [...prev, ...newMessages];
+
+  //       // Sort to maintain newest-first order (newest at start, oldest at end)
+  //       const sorted = combined.sort((a, b) => {
+  //         const timeA = new Date(a.dateCreated || a.timestamp).getTime();
+  //         const timeB = new Date(b.dateCreated || b.timestamp).getTime();
+  //         return timeB - timeA; // Newest first
+  //       });
+
+  //       return sorted;
+  //     });
+
+  //     // Scroll position is maintained automatically by FlatList when items are added
+  //     // Inverted FlatList correctly maintains position when appending to end
+  //   } catch (error) {
+  //     console.error('Failed to load older messages:', error);
+  //     setHasMoreMessages(false);
+  //   } finally {
+  //     setLoadingOlderMessages(false);
+  //   }
+  // }, [conversation, hasMoreMessages, loadingOlderMessages]);
+
   const loadOlderMessages = useCallback(async () => {
-    if (!conversation || !hasMoreMessages || loadingOlderMessages) {
-      console.log(
-        'loadOlderMessages: Skipping - conversation:',
-        !!conversation,
-        'hasMoreMessages:',
-        hasMoreMessages,
-        'loadingOlderMessages:',
-        loadingOlderMessages,
-      );
-      return;
-    }
+  if (!messagesPageRef.current?.hasPrevPage) return;
+  if (loadingOlderMessages) return; // Prevent multiple simultaneous loads
 
-    try {
-      setLoadingOlderMessages(true);
-      console.log('loadOlderMessages: Loading older messages...');
+  setLoadingOlderMessages(true);
+  loadingFromScrollRef.current = true;
 
-      // Get the previous page of messages
-      const prevPage = await messagesPageRef.current?.prevPage();
+  try {
+    const prevPage = await messagesPageRef.current.prevPage();
 
-      if (!prevPage || !prevPage.items || prevPage.items.length === 0) {
-        console.log('loadOlderMessages: No more messages to load');
-        setHasMoreMessages(false);
-        setLoadingOlderMessages(false);
-        return;
-      }
+    messagesPageRef.current = prevPage;
 
-      console.log(
-        'loadOlderMessages: Loaded',
-        prevPage.items.length,
-        'older messages',
-      );
+    setMessages(prev => {
+      const existing = new Set(prev.map(m => m.sid));
+      const fresh = prevPage.items.filter((m:any) => !existing.has(m.sid));
+     return [...prev, ...fresh].sort((a, b) => (
+  new Date(b.dateCreated).getTime() -
+  new Date(a.dateCreated).getTime()
+));
+    });
+  } catch (error) {
+    console.error('Failed to load older messages:', error);
+  } finally {
+    setLoadingOlderMessages(false);
+    setTimeout(() => {
+      loadingFromScrollRef.current = false;
+    }, 200);
+  }
+}, [loadingOlderMessages]);
 
-      // Store the new page for next pagination
-      messagesPageRef.current = prevPage;
-
-      // Check if there are more messages
-      setHasMoreMessages(prevPage.hasNextPage || false);
-
-      // Get existing message SIDs for deduplication
-      setMessages(prev => {
-        const existingSids = new Set(prev.map(msg => msg.sid));
-
-        // Filter out duplicates from new messages
-        const newMessages = prevPage.items.filter(
-          (msg: any) => !existingSids.has(msg.sid),
-        );
-
-        if (newMessages.length === 0) {
-          console.log('loadOlderMessages: All messages are duplicates');
-          setHasMoreMessages(false);
-          return prev; // No new messages, return previous state
-        }
-
-        console.log(
-          'loadOlderMessages: Adding',
-          newMessages.length,
-          'new messages',
-        );
-
-        // Combine: existing messages + new older messages
-        // With inverted FlatList: newest at bottom (index 0), oldest at top (last index)
-        // New older messages should be added to the end of the array (will appear at top after inversion)
-        const combined = [...prev, ...newMessages];
-
-        // Sort to maintain newest-first order (newest at start, oldest at end)
-        const sorted = combined.sort((a, b) => {
-          const timeA = new Date(a.dateCreated || a.timestamp).getTime();
-          const timeB = new Date(b.dateCreated || b.timestamp).getTime();
-          return timeB - timeA; // Newest first
-        });
-
-        return sorted;
-      });
-
-      // Scroll position is maintained automatically by FlatList when items are added
-      // Inverted FlatList correctly maintains position when appending to end
-    } catch (error) {
-      console.error('Failed to load older messages:', error);
-      setHasMoreMessages(false);
-    } finally {
-      setLoadingOlderMessages(false);
-    }
-  }, [conversation, hasMoreMessages, loadingOlderMessages]);
 
   // ----------------------------------------------------------
   // STEP 3: Attach Twilio Message Listener (ONLY ONCE)
@@ -1008,16 +1752,56 @@ const MessagesIndividualScreen = ({
         },
       });
 
+      const isFromMe = 
+        String(messageAuthor) === String(checkUser) ||
+        String(messageAuthor) === String(currentUserId) ||
+        String(messageAuthor) === String(userId);
+
       setMessages(prev => {
         if (prev.find(msg => msg.sid === m.sid)) return prev; // dedup
+        
         // Add new message and sort chronologically (newest first for inverted FlatList)
-        const updated = [...prev, m];
-        return updated.sort((a, b) => {
+        const updated = [...prev, m].sort((a, b) => {
           const timeA = new Date(a.dateCreated || a.timestamp).getTime();
           const timeB = new Date(b.dateCreated || b.timestamp).getTime();
           return timeB - timeA; // Newest first (for inverted list)
         });
+        
+        // Update cache (merged from duplicate listener)
+        const convName = conversation.uniqueName;
+        messageCache[convName] = updated;
+        saveJSON(CACHE_KEY_MSG_PREFIX + convName, updated);
+        
+        return updated;
       });
+
+      // Scroll to bottom when user's own message is added
+      if (isFromMe) {
+        shouldAutoScrollRef.current = true;
+        // Use multiple requestAnimationFrame to ensure layout is complete
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            InteractionManager.runAfterInteractions(() => {
+              setTimeout(() => {
+                if (flatListRef.current) {
+                  try {
+                    flatListRef.current.scrollToOffset({
+                      offset: 0,
+                      animated: true,
+                    });
+                  } catch (err) {
+                    try {
+                      flatListRef.current.scrollToEnd({ animated: true });
+                    } catch (e) {
+                      console.warn('Scroll failed:', e);
+                    }
+                  }
+                }
+              }, 600); // Increased delay to wait for keyboard animation
+            });
+          });
+        });
+      }
     };
 
     conversation.on('messageAdded', handleNewMessage);
@@ -1026,7 +1810,7 @@ const MessagesIndividualScreen = ({
       console.log(' Cleaning Twilio listener');
       conversation.removeListener('messageAdded', handleNewMessage);
     };
-  }, [conversation]);
+  }, [conversation, checkUser, currentUserId]); // Add missing dependencies
 
   // ----------------------------------------------------------
   // STEP 4: Send Message
@@ -1036,32 +1820,37 @@ const MessagesIndividualScreen = ({
     const filteredMessage = filterNumbersAndNumberWords(messageText.trim());
 
     if (!filteredMessage) {
-      // Show alert if message becomes empty after filtering
-      // Alert.alert('Invalid Message', 'Messages cannot contain numbers or number words.');
       setMessageText(''); // Clear the input
       return;
     }
 
-    if (!messageText.trim()) return;
+    // Clear message text immediately for better perceived performance
+    setMessageText('');
+    
+    // Reset auto-scroll flag when user sends a message
+    shouldAutoScrollRef.current = true;
 
     try {
-      const token = await AsyncStorage.getItem('userToken');
-      const userId = await AsyncStorage.getItem('userId');
-
-      console.log('token', token);
+      // Parallel AsyncStorage reads for better performance
+      const [token, userId] = await Promise.all([
+        AsyncStorage.getItem('userToken'),
+        AsyncStorage.getItem('userId'),
+      ]);
 
       if (conversation) {
+        // Send message - handleNewMessage will handle scrolling automatically
         await conversation.sendMessage(filteredMessage);
-        console.log(' Message sent conversation exist:', filteredMessage);
-        setMessageText(''); // clear input after send
         return;
       }
 
-      // Case 2️: Conversation not yet created → create now after first message
-      console.log(' Creating conversation after first message...');
+      // Case 2: Conversation not yet created → create now after first message
+      if (!sellerData?.featureId) {
+        console.error('Missing featureId');
+        return;
+      }
 
       const urlCreate = `${MAIN_URL.baseUrl}twilio/conversation-create`;
-      const body = { feature_id: sellerData?.featureId };
+      const body = { feature_id: sellerData.featureId };
 
       const createResponse = await fetch(urlCreate, {
         method: 'POST',
@@ -1073,7 +1862,6 @@ const MessagesIndividualScreen = ({
       });
 
       const createData = await createResponse.json();
-      console.log('conversation-create response:', createData);
 
       if (!createResponse.ok || !createData?.data?.conv_name) {
         console.error('Failed to create conversation:', createData.message);
@@ -1082,51 +1870,44 @@ const MessagesIndividualScreen = ({
 
       const convName = createData.data.conv_name;
       const currentUserIdFromApi = createData.data.current_user_id;
-      // Convert to string to match Twilio's author format (author is typically userId as string)
+      
+      // Convert to string to match Twilio's author format
       setCheckUser(String(currentUserIdFromApi));
-      // Also set currentUserId from AsyncStorage (this is what Twilio uses as identity)
+      
+      // Also set currentUserId from AsyncStorage
       if (userId) {
         setCurrentUserId(String(userId));
       }
-      // setCurrentUserId(convName);
 
       // Get or create Twilio conversation
       let convo;
       try {
         convo = await chatClient.getConversationByUniqueName(convName);
-        console.log('Found Twilio conversation:', convo.sid);
       } catch {
         convo = await chatClient.createConversation({ uniqueName: convName });
-        console.log('Created Twilio conversation:', convo.sid);
       }
 
       // Join conversation
       try {
         await convo.join();
-        console.log('Joined new conversation:', convo.sid);
       } catch (err: any) {
-        if (err.message?.includes('Conflict')) console.log('Already joined.');
-        else console.error('Join failed:', err);
+        if (!err.message?.includes('Conflict')) {
+          console.error('Join failed:', err);
+        }
       }
 
       // Set conversation BEFORE sending message so the messageAdded listener is ready
       setConversation(convo);
 
-      // Small delay to ensure the useEffect listener is set up
-      // This prevents race condition where message is sent before listener is ready
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // Reduced delay - 50ms should be enough for React state to update
+      // The useEffect listener should be ready by then
+      await new Promise(resolve => setTimeout(resolve, 50));
 
       // Send the pending first message
       // Twilio will trigger messageAdded event which will add the message automatically
+      // handleNewMessage will handle scrolling automatically
       await convo.sendMessage(filteredMessage);
-      console.log(
-        'First message sent after conversation creation:',
-        filteredMessage,
-      );
-
-      setMessageText('');
-      // Don't manually add message - let Twilio's messageAdded event handle it
-      // This ensures the message structure matches Twilio's format and appears correctly
+      
     } catch (error) {
       console.error('Message send failed:', error);
     }
@@ -1379,32 +2160,82 @@ const MessagesIndividualScreen = ({
 
   //-------------- for set date wise messages -----------------//
 
+  // const formatMessageDate = (date: Date) => {
+  //   const d = new Date(date);
+  //   const today = new Date();
+  //   today.setHours(0, 0, 0, 0);
+  //   const yesterday = new Date(today);
+  //   yesterday.setDate(yesterday.getDate() - 1);
+  //   const messageDate = new Date(d);
+  //   messageDate.setHours(0, 0, 0, 0);
+  //   if (messageDate.getTime() === today.getTime()) return 'Today';
+  //   if (messageDate.getTime() === yesterday.getTime()) return 'Yesterday';
+  //   return d.toLocaleDateString('en-IN', {
+  //     day: '2-digit',
+  //     month: 'short',
+  //     year: 'numeric',
+  //   });
+  // };
+
+
+  // add new date format
   const formatMessageDate = (date: Date) => {
-    const d = new Date(date);
+  const d = new Date(date);
 
-    // Get today's date in local timezone (reset time to midnight for accurate comparison)
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+  // Today at midnight
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-    // Get yesterday's date
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
+  // Yesterday at midnight
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
 
-    // Get message date in local timezone (reset time to midnight)
-    const messageDate = new Date(d);
-    messageDate.setHours(0, 0, 0, 0);
+  // Message date at midnight
+  const messageDate = new Date(d);
+  messageDate.setHours(0, 0, 0, 0);
 
-    // Compare dates (year, month, day only)
-    if (messageDate.getTime() === today.getTime()) return 'Today';
+  // Today check
+  if (messageDate.getTime() === today.getTime()) {
+    return "Today";
+  }
 
-    if (messageDate.getTime() === yesterday.getTime()) return 'Yesterday';
+  // Yesterday check
+  if (messageDate.getTime() === yesterday.getTime()) {
+    return "Yesterday";
+  }
 
-    return d.toLocaleDateString('en-IN', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    });
+  // Format with suffix (st, nd, rd, th)
+  const day = d.getDate();
+
+  const getSuffix = (n: number) => {
+    if (n > 3 && n < 21) return "th";
+    switch (n % 10) {
+      case 1:
+        return "st";
+      case 2:
+        return "nd";
+      case 3:
+        return "rd";
+      default:
+        return "th";
+    }
   };
+
+  const suffix = getSuffix(day);
+
+  const month = d.toLocaleString("en-GB", { month: "short" });
+  const year = d.getFullYear();
+
+  // Final format: 20th Nov 2025
+  return `${day}${suffix} ${month} ${year}`;
+};
+
+
+
+
+
+
+
 
   const buildMessageList = (messages: any[]) => {
     // Inverted FlatList: Array[0] appears at BOTTOM, Array[n] appears at TOP
@@ -1460,6 +2291,16 @@ const MessagesIndividualScreen = ({
     [messages],
   );
 
+  // Find the index of the oldest date (appears at top in inverted list)
+  const oldestDateIndex = React.useMemo(() => {
+    for (let i = groupedMessages.length - 1; i >= 0; i--) {
+      if (groupedMessages[i]?.type === 'date') {
+        return i;
+      }
+    }
+    return -1;
+  }, [groupedMessages]);
+
   // Find the newest message index (not date) for adding bottom padding
   // With inverted FlatList and reversed grouped array, newest message is at index 0
   const lastMessageIndex = React.useMemo(() => {
@@ -1508,6 +2349,131 @@ const MessagesIndividualScreen = ({
   // The marginBottom on last message will adjust automatically via extraData re-render
 
   // const groupedMessages = buildMessageList(messages);
+
+  // Scroll to bottom when user sends a new message
+  const prevMessagesLengthRef = useRef(messages.length);
+  const lastUserMessageRef = useRef<string | null>(null);
+  
+  // Initialize newestMessageSidRef when messages are first loaded
+  useEffect(() => {
+    if (messages.length > 0 && !newestMessageSidRef.current) {
+      newestMessageSidRef.current = messages[0]?.sid || null;
+    }
+  }, [messages.length === 0 ? null : messages[0]?.sid]);
+  
+  useEffect(() => {
+    // Check if a new message was added
+    if (messages.length > prevMessagesLengthRef.current && messages.length > 0) {
+      const lastMessage = messages[0]; // Newest message is first in the array (for inverted list)
+      const messageAuthor = lastMessage?.author || lastMessage?.state?.author || lastMessage?.attributes?.author;
+      const isFromMe = 
+        String(messageAuthor) === String(checkUser) ||
+        String(messageAuthor) === String(currentUserId);
+      
+      // Only scroll if it's a new message from the user (not a duplicate)
+      if (isFromMe && lastMessage?.sid !== lastUserMessageRef.current) {
+        lastUserMessageRef.current = lastMessage?.sid || null;
+        newestMessageSidRef.current = lastMessage?.sid || null; // Update newest message ref
+        shouldAutoScrollRef.current = true; // Reset flag for future messages
+        
+        // ALWAYS scroll for user's own messages, regardless of previous scroll state
+        // Use multiple attempts with increasing delays to ensure it works
+        const scrollToBottom = (delay: number) => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              InteractionManager.runAfterInteractions(() => {
+                setTimeout(() => {
+                  if (flatListRef.current) {
+                    try {
+                      // For inverted FlatList, scrollToOffset with 0 scrolls to bottom
+                      flatListRef.current.scrollToOffset({
+                        offset: 0,
+                        animated: true,
+                      });
+                    } catch (err) {
+                      try {
+                        // Fallback to scrollToEnd
+                        flatListRef.current.scrollToEnd({ animated: true });
+                      } catch (e) {
+                        try {
+                          // Final fallback to scrollToIndex
+                          if (lastMessageIndex >= 0) {
+                            flatListRef.current.scrollToIndex({
+                              index: lastMessageIndex,
+                              animated: true,
+                              viewPosition: 1,
+                            });
+                          }
+                        } catch (e2) {
+                          console.warn('Scroll failed:', e2);
+                        }
+                      }
+                    }
+                  }
+                }, delay);
+              });
+            });
+          });
+        };
+        
+        // Try scrolling multiple times with increasing delays
+        scrollToBottom(keyboardVisible ? 300 : 200);
+        scrollToBottom(keyboardVisible ? 600 : 400);
+        scrollToBottom(keyboardVisible ? 1000 : 700);
+      }
+    }
+    prevMessagesLengthRef.current = messages.length;
+  }, [messages, checkUser, currentUserId, keyboardVisible, lastMessageIndex]);
+
+  // Silently position messages at bottom when emoji keyboard opens (no visible scroll animation)
+  const prevEmojiPickerVisibleRef = useRef(isEmojiPickerVisible);
+  useEffect(() => {
+    // Only position when emoji picker becomes visible (not when it closes)
+    if (isEmojiPickerVisible && !prevEmojiPickerVisibleRef.current) {
+      // Silently position scroll at bottom so messages appear above emoji keyboard
+      // Use animated: false to avoid visible scrolling effect
+      requestAnimationFrame(() => {
+        if (flatListRef.current) {
+          try {
+            flatListRef.current.scrollToOffset({
+              offset: 0,
+              animated: false, // No animation - silent positioning
+            });
+          } catch (err) {
+            try {
+              flatListRef.current.scrollToEnd({ animated: false });
+            } catch (e) {
+              // Ignore errors
+            }
+          }
+        }
+      });
+    }
+    prevEmojiPickerVisibleRef.current = isEmojiPickerVisible;
+  }, [isEmojiPickerVisible]);
+
+  // Scroll to bottom on initial load to show latest messages
+  useEffect(() => {
+    if (!initialLoading && messages.length > 0 && flatListRef.current) {
+      // Small delay to ensure layout is ready
+      setTimeout(() => {
+        if (flatListRef.current) {
+          try {
+            flatListRef.current.scrollToOffset({
+              offset: 0,
+              animated: false, // No animation on initial load
+            });
+          } catch (err) {
+            try {
+              flatListRef.current.scrollToEnd({ animated: false });
+            } catch (e) {
+              // Ignore errors
+            }
+          }
+        }
+      }, 100);
+    }
+  }, [initialLoading, messages.length === 0 ? null : messages[0]?.sid]); // Only trigger when initial loading completes
 
   console.log('groupedMessages=========', groupedMessages);
 
@@ -1631,7 +2597,8 @@ const MessagesIndividualScreen = ({
                      <TouchableOpacity
                  onPress={() => {
                   console.log("CHATBACK", navigation.getState());
-                  if(navigation.canGoBack()){
+                  if(Platform.OS === 'ios'){
+                      if(navigation.canGoBack()){
                       navigation.goBack();
                   } else {
                     navigation.replace('Dashboard', {
@@ -1639,6 +2606,14 @@ const MessagesIndividualScreen = ({
                       isNavigate: false,
                     });
                   }
+
+                  }else{
+                      navigation.replace('Dashboard', {
+                      AddScreenBackactiveTab: 'Bookmark',
+                      isNavigate: false,
+                    });
+                  }
+                
                   
                  }}
                    hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}  
@@ -1809,6 +2784,8 @@ const MessagesIndividualScreen = ({
             <Animated.FlatList
               data={groupedMessages}
               inverted // WhatsApp-style: newest messages at bottom, scroll up to see older
+              // onEndReached={loadOlderMessages}            // 🔥 Load older messages
+    // onEndReachedThreshold={0.2}                 // 🔥 Trigger earlier (20% before top)
               extraData={[
                 keyboardVisible,
                 isEmojiPickerVisible,
@@ -1819,18 +2796,50 @@ const MessagesIndividualScreen = ({
               keyExtractor={(item, index) =>
                 item.sid || item.data?.sid || `item-${index}`
               }
-              onScroll={scrollHandler}
+              // onScroll={scrollHandler}
+
+
+                maintainVisibleContentPosition={{
+    minIndexForVisible: 1,
+  }}
+
+                onScroll={(event) => {
+    // Manually update shared values for blur effect
+    const offsetY = event.nativeEvent.contentOffset.y;
+    const contentHeight = event.nativeEvent.contentSize.height;
+    const viewportHeight = event.nativeEvent.layoutMeasurement.height;
+    
+    // Update scrollY for blur animation
+    scrollY.value = offsetY;
+    
+    // Calculate if we're at the top (viewing oldest messages)
+    const maxScrollY = Math.max(0, contentHeight - viewportHeight);
+    const distanceFromTop = maxScrollY - offsetY;
+    const isAtTop = distanceFromTop <= 10;
+    
+    // Update hasScrollableContent for blur visibility
+    hasScrollableContent.value = contentHeight > viewportHeight && !isAtTop;
+
+    if (offsetY > 30) {
+shouldAutoScrollRef.current = false;
+}
+
+    // 👇 Load older messages when user reaches 25% from the top
+    const threshold = maxScrollY * 0.25; // 25% from top
+    
+    if (distanceFromTop <= threshold && !loadingFromScrollRef.current && !loadingOlderMessages && messagesPageRef.current?.hasPrevPage) {
+      loadOlderMessages();
+    }
+  }}
+
+
+
               scrollEventThrottle={16}
               scrollEnabled={!isEmojiPickerVisible} // Disable scrolling when emoji keyboard is open
-              onEndReached={loadOlderMessages} // Load older messages when scrolling to top (inverted list)
-              onEndReachedThreshold={0.3} // Trigger when 30% from top (more sensitive for better UX)
-              ListHeaderComponent={
-                loadingOlderMessages ? (
-                  <View style={{ paddingVertical: 10, alignItems: 'center' }}>
-                    <ActivityIndicator size="small" color="#FFFFFF" />
-                  </View>
-                ) : null
-              }
+              // onEndReached={loadOlderMessages} // Load older messages when scrolling to top (inverted list)
+              // onEndReachedThreshold={0.3} // Trigger when 30% from top (more sensitive for better UX)
+              ListHeaderComponent={null}
+              // Removed - using date label replacement instead for WhatsApp-style behavior
               onScrollToIndexFailed={info => {
                 // Fallback to scrollToEnd if scrollToIndex fails
                 setTimeout(() => {
@@ -1907,7 +2916,7 @@ const MessagesIndividualScreen = ({
                             marginVertical: 10,
                           }}
                         >
-                          {item?.date}
+                          {loadingOlderMessages && index === oldestDateIndex ? 'Loading...' : item?.date}
                         </Text>
                       </View>
                     ) : (
@@ -1993,35 +3002,80 @@ const MessagesIndividualScreen = ({
                 contentHeightRef.current = height;
                 updateBlurState();
 
-                // If content height increased (new message added), scroll to bottom
-                if (
-                  height > prevHeight &&
-                  prevHeight > 0 &&
-                  flatListRef.current
-                ) {
-                  // New message was added - scroll to show it above keyboard
-                  InteractionManager.runAfterInteractions(() => {
-                    setTimeout(() => {
-                      if (flatListRef.current) {
-                        try {
-                          // For inverted FlatList, scrollToOffset with 0 scrolls to bottom
-                          flatListRef.current.scrollToOffset({
-                            offset: 0,
-                            animated: true,
-                          });
-                        } catch (err) {
-                          // Fallback to scrollToEnd
+                // Do NOT auto-scroll when loading older messages
+                if (loadingFromScrollRef.current || loadingOlderMessages) return;
+
+                // If content height increased (new message added)
+                if (height > prevHeight && prevHeight > 0 && flatListRef.current) {
+                  // Check if the newest message is from the current user
+                  const newestMessage = messages.length > 0 ? messages[0] : null;
+                  const newestMessageSid = newestMessage?.sid || null;
+                  
+                  // Only scroll if the newest message actually changed
+                  // If newest message didn't change but height increased, it means older messages were added
+                  if (newestMessageSid === newestMessageSidRef.current) {
+                    // Newest message didn't change - this is older messages being loaded, don't scroll
+                    return;
+                  }
+                  
+                  // Update the ref to track the newest message
+                  newestMessageSidRef.current = newestMessageSid;
+                  
+                  const messageAuthor = newestMessage?.author || newestMessage?.state?.author || newestMessage?.attributes?.author;
+                  const isFromMe = 
+                    String(messageAuthor) === String(checkUser) ||
+                    String(messageAuthor) === String(currentUserId);
+                  
+                  // Always scroll if it's user's own message, or if shouldAutoScrollRef is true
+                  if (isFromMe || shouldAutoScrollRef.current) {
+                    if (isFromMe) {
+                      shouldAutoScrollRef.current = true; // Reset flag for user's messages
+                    }
+                    
+                    // New message was added - scroll to show it above keyboard
+                    InteractionManager.runAfterInteractions(() => {
+                      setTimeout(() => {
+                        if (flatListRef.current) {
                           try {
-                            flatListRef.current.scrollToEnd({ animated: true });
-                          } catch (e) {
-                            console.warn('Scroll failed:', e);
+                            // For inverted FlatList, scrollToOffset with 0 scrolls to bottom
+                            flatListRef.current.scrollToOffset({
+                              offset: 0,
+                              animated: true,
+                            });
+                          } catch (err) {
+                            // Fallback to scrollToEnd
+                            try {
+                              flatListRef.current.scrollToEnd({ animated: true });
+                            } catch (e) {
+                              console.warn('Scroll failed:', e);
+                            }
                           }
                         }
-                      }
-                    }, 100);
-                  });
+                      }, keyboardVisible ? 300 : 200);
+                    });
+                  }
                 }
               }}
+
+//               onContentSizeChange={(w, h) => {
+//   const prev = contentHeightRef.current;
+//   contentHeightRef.current = h;
+
+//   // Do NOT auto-scroll when loading older messages
+//   if (loadingFromScrollRef.current) return;
+
+//   // New incoming message → scroll to bottom
+//   if (h > prev) {
+//     flatListRef.current?.scrollToOffset({
+//       offset: 0,
+//       animated: true,
+//     });
+//   }
+// }}
+
+
+
+
               onLayout={event => {
                 // Update viewport height and check if scrollable
                 const { height } = event.nativeEvent.layout;
