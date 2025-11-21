@@ -181,7 +181,7 @@ return (
             <Text allowFontScaling={false} style={styles.initialsText}>
               {getInitials(
                 userList?.firstname ?? '',
-                userList?.lastname ?? 'W'
+                userList?.lastname ?? ''
               )}
             </Text>
           </View>
