@@ -754,7 +754,7 @@ const handlePayConfirmed = (amount: number) => {
                  scrollEventThrottle={16}
                  showsVerticalScrollIndicator={false}
                 onScroll={scrollHandler}
-            contentContainerStyle={[styles.scrollContainer,{ paddingBottom: height * 0.07 }, 
+            contentContainerStyle={[styles.scrollContainer,{ paddingBottom:(Platform.OS === 'ios'? 90:  height * 0.07 )}, 
           ]}>
             <View style={{marginTop:12}}>
              {renderImage()}

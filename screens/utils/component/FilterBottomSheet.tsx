@@ -396,153 +396,175 @@ const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(n
 
   return (
     <View
-      style={[
-        StyleSheet.absoluteFillObject,
-        { zIndex: 999, display: visible ? 'flex' : 'none' },
-      ]}
+    style={[
+      ,
+      { zIndex: 999, display: visible ? 'flex' : 'none',position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,width: '100%', height: '100%',},
+    ]}
+  >
+    {/* Background BlurView */}
+    <BlurView
+      style={{ top: 0, left: 0, right: 0, bottom: 0,width: '100%', height: '100%',}}
+      blurType="dark"
+      blurAmount={Platform.OS === 'ios' ?3 : 4}
+      reducedTransparencyFallbackColor="transparent"
     >
-      {/* Background BlurView */}
-      <BlurView
-        style={[StyleSheet.absoluteFillObject]}
-        blurType="dark"
-        blurAmount={Platform.OS === 'ios' ? 2 : 4}
-        reducedTransparencyFallbackColor="transparent"
-      />
 
-      {/* Modal */}
-      <Modal
-        animationType="slide"
-        visible={visible}
-        transparent
-        onRequestClose={modelClose}
-      >
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'flex-end',
-            backgroundColor:
-              'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(34, 30, 252, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-            zIndex: 1000,
-          }}
-        >
-          {/* Overlay Click to Close */}
-          <TouchableWithoutFeedback onPress={modelClose}>
-            <View style={StyleSheet.absoluteFillObject} />
-          </TouchableWithoutFeedback>
+    {/* Modal */}
+    <Modal
+      animationType="slide"
+      visible={visible}
+      transparent
+      onRequestClose={modelClose}
+    >
+      {/* <View
+        style={[{
+          flex: 1,
+          justifyContent: 'flex-end',
+          backgroundColor:
+            'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(34, 30, 252, 0.06) 0%, rgba(64, 122, 229, 0.1) 100%)',
+          zIndex: 1000,
+        },StyleSheet.absoluteFillObject,]}
+      > */}
+      <View style={{
+            flex: 1, justifyContent: 'flex-end', backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(34, 30, 252, 0.08) 0%, rgba(255, 255, 255, 0.10) 100%)'
+          }}>
+        {/* Overlay Click to Close */}
+        <TouchableWithoutFeedback onPress={modelClose}>
+          <View style={StyleSheet.absoluteFillObject} />
+        </TouchableWithoutFeedback>
 
-          <View style={[styles.modelcontainer, { zIndex: 1001 }]}>
-            {' '}
-            {/* Ensure modal container has higher zIndex */}
-            <BlurView
-              style={[StyleSheet.absoluteFillObject]}
-              blurType="dark"
-              blurAmount={Platform.OS === 'ios' ? 100 : 4}
-              reducedTransparencyFallbackColor="transparent"
+        <View style={[styles.modelcontainer, { zIndex: 1001 }]}>
+          {' '}
+          {/* Ensure modal container has higher zIndex */}
+          {/* <BlurView
+            style={[{backgroundColor: 'rgba(81, 151, 255, 0.3)',width: '100%',height: '100%'}]}
+            blurType="dark"
+            blurAmount={Platform.OS === 'ios' ? 5 : 4}
+            reducedTransparencyFallbackColor="transparent"
+          > */}
+          <BlurView
+                  style={[
+                    {
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0, borderRadius: 30,
+                      backgroundColor: 'rgba(119, 173, 255, 0.07)'
+                    },
+
+                  ]}
+                  blurType="light"
+                  blurAmount={18}
+                  pointerEvents='none'
+                  reducedTransparencyFallbackColor="white"
+                />
+          <View style={styles.modeltitleContainer1}>
+            <View
+              style={{
+                width: 50,
+                height: 4,
+                borderRadius: 2,
+                alignSelf: 'center',
+                backgroundColor: '#000228',
+                marginTop: 8,
+              }}
             />
-            <View style={styles.modeltitleContainer1}>
-              <View
-                style={{
-                  width: 50,
-                  height: 4,
-                  borderRadius: 2,
-                  alignSelf: 'center',
-                  backgroundColor: '#000228',
-                  marginTop: 8,
-                }}
-              />
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  paddingTop: 16,
-                }}
-              >
-                <Text allowFontScaling={false} style={styles.modelTextHeader}>
-                  Filters
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                paddingTop: 16,
+              }}
+            >
+              <Text allowFontScaling={false} style={styles.modelTextHeader}>
+                Filters
+              </Text>
+              <TouchableOpacity onPress={handleClearFilters}>
+                <Text allowFontScaling={false} style={styles.clearAll}>
+                  Clear all
                 </Text>
-                <TouchableOpacity onPress={handleClearFilters}>
-                  <Text allowFontScaling={false} style={styles.clearAll}>
-                    Clear all
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            <View style={{ flex: 1, flexDirection: 'row' }}>
-              {/* Left-side filter tabs */}
-              <View style={styles.modelLeftSideContainer}>
-                <ScrollView
-                  showsVerticalScrollIndicator={false}
-                  contentContainerStyle={{
-                    paddingBottom: Platform.OS === 'ios' ? 65 : 20,
-                  }}
-                >
-                  {filters.map(f => (
-                    <TouchableOpacity
-                      key={f.field_name}
-                      onPress={() => handleTabPress(f.field_name)}
-                      style={
-                        selectedTab === f.field_name
-                          ? styles.activeTab
-                          : styles.inactiveTab
-                      }
-                    >
-                      <View
-                        style={{ alignItems: 'center', width: '100%', gap: 4 }}
-                      >
-                        {f.logo ? (
-                          <Image
-                            source={{ uri: f.logo }}
-                            style={styles.filterLogo}
-                            resizeMode="contain"
-                          />
-                        ) : null}
-                        <Text
-                          allowFontScaling={false}
-                          style={[
-                            styles.filtertitle,
-                            selectedTab === f.field_name
-                              ? styles.activeTabText
-                              : styles.inactiveTabText,
-                          ]}
-                        >
-                          {f.field_name}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
-              </View>
-
-              {/* Right-side content (filter options) */}
-              <ScrollView
-                style={styles.scrollview_style}
-                contentContainerStyle={{ padding: 16, paddingBottom: 70 }}
-                showsVerticalScrollIndicator={false}
-              >
-                <Text allowFontScaling={false} style={styles.filterHeadTitle}>
-                  {selectedTab}
-                </Text>
-                {renderRightContent()}
-              </ScrollView>
-            </View>
-            {/* Bottom buttons */}
-            <View style={styles.bottomview}>
-              <FilterButton
-                title="Cancel"
-                onPress={handleClose}
-                style={styles.FilterButton_cancle}
-              />
-              <FilterButtonApply
-                title="Apply"
-                onPress={handleApply}
-                style={styles.FilterButton_apply}
-              />
+              </TouchableOpacity>
             </View>
           </View>
+          <View style={{ flex: 1, flexDirection: 'row' }}>
+            {/* Left-side filter tabs */}
+            <View style={styles.modelLeftSideContainer}>
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{
+                  paddingBottom: Platform.OS === 'ios' ? 65 : 20,
+                }}
+              >
+                {filters.map(f => (
+                  <TouchableOpacity
+                    key={f.field_name}
+                    onPress={() => handleTabPress(f.field_name)}
+                    style={
+                      selectedTab === f.field_name
+                        ? styles.activeTab
+                        : styles.inactiveTab
+                    }
+                  >
+                    <View
+                      style={{ alignItems: 'center', width: '100%', gap: 4 }}
+                    >
+                      {f.logo ? (
+                        <Image
+                          source={{ uri: f.logo }}
+                          style={styles.filterLogo}
+                          resizeMode="contain"
+                        />
+                      ) : null}
+                      <Text
+                        allowFontScaling={false}
+                        style={[
+                          styles.filtertitle,
+                          selectedTab === f.field_name
+                            ? styles.activeTabText
+                            : styles.inactiveTabText,
+                        ]}
+                      >
+                        {f.field_name}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+
+            {/* Right-side content (filter options) */}
+            <ScrollView
+              style={styles.scrollview_style}
+              contentContainerStyle={{ padding: 16, paddingBottom: 70 }}
+              showsVerticalScrollIndicator={false}
+            >
+              <Text allowFontScaling={false} style={styles.filterHeadTitle}>
+                {selectedTab}
+              </Text>
+              {renderRightContent()}
+            </ScrollView>
+          </View>
+          {/* Bottom buttons */}
+          <View style={styles.bottomview}>
+            <FilterButton
+              title="Cancel"
+              onPress={handleClose}
+              style={styles.FilterButton_cancle}
+            />
+            <FilterButtonApply
+              title="Apply"
+              onPress={handleApply}
+              style={styles.FilterButton_apply}
+            />
+          </View>
+          {/* </BlurView> */}
         </View>
-      </Modal>
-    </View>
+      </View>
+    </Modal>
+    </BlurView>
+  </View>
   );
 };
 
@@ -552,7 +574,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor:
       Platform.OS === 'ios'
-        ? 'rgba(188, 200, 255, 0.19)'
+        ? 'rgba(0, 0, 0, 0.30)'
         : 'rgba(255, 255, 255, 0.07)',
     
   },
@@ -662,7 +684,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 26,
     paddingBottom: 16,
     backgroundColor:
-      Platform.OS === 'ios' ? 'rgba(22, 49, 110, 0.20)' : 'rgba(0, 0, 0, 0.07)',
+      Platform.OS === 'ios' ? 'rgba(0, 0, 0, 0.40)' : 'rgba(0, 0, 0, 0.07)',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
   },
@@ -819,7 +841,7 @@ const styles = StyleSheet.create({
     //   Platform.OS === 'ios' ? 'rgba(37, 76, 176, 0.18)' : 'rgba(0, 0, 0, 0.07)',
 
     backgroundColor:
-      Platform.OS === 'ios' ? 'rgba(22, 49, 110, 0.20)' : 'rgba(0, 0, 0, 0.07)',
+      Platform.OS === 'ios' ? 'rgba(0, 0, 0, 0.40)' : 'rgba(0, 0, 0, 0.07)',
   },
   modelTextHeader: {
     color: 'rgba(255, 255, 255, 0.88)',

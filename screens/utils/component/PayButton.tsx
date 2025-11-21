@@ -118,7 +118,7 @@ const PayButton = ({ amount, onPress, label = "Pay" }: PayButtonProps) => {
   return (
        <TouchableOpacity onPress={onPress} activeOpacity={0.7} style={[
             styles.buttonContainer,
-            { bottom: (Platform.OS === 'ios'? 15: insets.bottom + 10) }
+            { bottom: (Platform.OS === 'ios'? 25: insets.bottom + 10) }
           ]}>
 
       <BlurView

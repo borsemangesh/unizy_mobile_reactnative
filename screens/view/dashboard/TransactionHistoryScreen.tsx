@@ -18,6 +18,7 @@ import {
 import { MAIN_URL } from '../../utils/APIConstant';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import SalesAllDetailsDropdown from '../../utils/component/SalesAllDetailsDropdown';
+import SalesAllDetailsDropdown_IOS from '../../utils/component/SalesAllDetailsDropdown_IOS';
 
 type TransactionPropos = {
   navigation: any;
@@ -278,6 +279,7 @@ export default function TransactionHistoryScreen(
 
   const [salesData, setSalesData] = useState<any[]>([]);
   const [salesTitle, setSalesTitle] = useState('');
+  const background = require('../../../assets/images/placeholder_history.png');
 
   const fetchSalesHistory = async (catagory_id: number) => {
     try {
@@ -456,12 +458,16 @@ export default function TransactionHistoryScreen(
                           alignItems: 'center',
                         }}
                       >
-                        <View style={styles.imgcontainer}>
+                        {/* <View style={styles.imgcontainer}>
                           <Image
                             source={{ uri: item.category_logo }}
                             style={styles.image}
                             resizeMode="cover"
                           />
+                        </View> */}
+                        <View >
+                          <Image source={background} style={styles.imgcontainer} resizeMode="cover" />
+                          <Image  source={{ uri: item.category_logo }} style={styles.image} resizeMode="cover" />
                         </View>
                         <View style={{ gap: 4 }}>
                           <Text
@@ -590,12 +596,16 @@ export default function TransactionHistoryScreen(
                   width: '100%',
                 }}
               >
-                <View style={styles.imgcontainer}>
+                {/* <View style={styles.imgcontainer}>
                   <Image
                     source={totalEaning}
                     style={{ width: 28, height: 28, resizeMode: 'cover' }}
                     resizeMode="cover"
                   />
+                </View> */}
+                <View >
+                  <Image source={background} style={styles.imgcontainer} resizeMode="cover" />
+                  <Image   source={totalEaning} style={styles.image} resizeMode="cover" />
                 </View>
                 <View
                   style={{
@@ -649,13 +659,17 @@ export default function TransactionHistoryScreen(
                           gap: 12,
                         }}
                       >
-                        <View style={styles.imgcontainer}>
+                        {/* <View style={styles.imgcontainer}>
                           <Image
                             // source={item.category_logo}
                             source={{ uri: item.category_logo }}
                             style={styles.image}
                             resizeMode="cover"
                           />
+                        </View> */}
+                        <View >
+                          <Image source={background} style={styles.imgcontainer} resizeMode="cover" />
+                          <Image  source={{ uri: item.category_logo }} style={styles.image} resizeMode="cover" />
                         </View>
                         <Text style={styles.salesTitle}>
                           {item.title.length > 24
@@ -741,14 +755,18 @@ export default function TransactionHistoryScreen(
                         justifyContent: 'center',
                       }}
                     >
-                      <View style={styles.imgcontainer}>
+                      {/* <View style={styles.imgcontainer}>
                         <Image
-                          // source={item.category_logo}
+                          
                           source={{ uri: item.category_logo }}
                           style={styles.image}
                           resizeMode="cover"
                         />
-                      </View>
+                      </View> */}
+                       <View >
+                          <Image source={background} style={styles.imgcontainer} resizeMode="cover" />
+                          <Image  source={{ uri: item.category_logo }} style={styles.image} resizeMode="cover" />
+                        </View>
                       <Text
                         allowFontScaling={false}
                         style={styles.chargesTitle}
@@ -791,14 +809,34 @@ export default function TransactionHistoryScreen(
           ))
         )}
       </ScrollView>
-      <SalesAllDetailsDropdown
-        catagory_id={catagoryid}
-        visible={isFilterVisible}
-        onClose={() => setFilterVisible(false)}
-        SalesImageUrl={SalesImageUrl}
-        salesDataResponse={salesData}
-        dropDowntitle={salesTitle}
-      />
+
+
+      {Platform.OS === 'android' ? (
+        <> 
+         <SalesAllDetailsDropdown
+            catagory_id={catagoryid}
+            visible={isFilterVisible}
+            onClose={() => setFilterVisible(false)}
+            SalesImageUrl={SalesImageUrl}
+            salesDataResponse={salesData}
+            dropDowntitle={salesTitle}
+          />
+        </>
+      ) : (
+        <>
+        <SalesAllDetailsDropdown_IOS
+            catagory_id={catagoryid}
+            visible={isFilterVisible}
+            onClose={() => setFilterVisible(false)}
+            SalesImageUrl={SalesImageUrl}
+            salesDataResponse={salesData}
+            dropDowntitle={salesTitle}
+          />
+           
+        </>
+      )}
+    
+      
     </View>
   );
 }
@@ -872,7 +910,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 12, 
-    padding:8,
+    // padding:8,
     alignItems:'center',
     alignSelf: 'center',
     justifyContent: 'center',
@@ -887,6 +925,11 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     resizeMode: 'contain',
+    position:'absolute',
+    top: 10,
+    right: 10,
+    bottom: 10,
+    left: 10
   },
   container: {
     flex: 1,
@@ -1048,6 +1091,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-SemiBold',
+    marginTop: 2
   },
   allDetails: {
     // marginTop: 10,
@@ -1055,7 +1099,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 12,
-    textDecorationLine: 'underline', 
+    textDecorationLine: 'underline',  marginTop: 2
   },
 
   chargesCard: {
