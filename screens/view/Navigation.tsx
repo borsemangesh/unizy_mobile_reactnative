@@ -52,6 +52,17 @@ import { navigationRef } from './navigationRef';
 
 const Stack = createNativeStackNavigator();
 
+const linking = {
+  prefixes: ['unizyapp://'],
+  config: {
+    screens: {
+      StripeOnboardingComplete: 'onboarding-complete',
+      StripeOnboardingCancel: 'onboarding-cancel',
+    },
+  },
+};
+
+
 export const Navigation = () => {
   const [initialRoute, setInitialRoute] = useState<null | string>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);

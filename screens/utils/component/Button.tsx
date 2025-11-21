@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
     alignSelf: 'center',
     position: 'absolute',
-    bottom: (Platform.OS === 'ios'? 34 : 10),
+    bottom: (Platform.OS === 'ios'? 34 : 20),
     },
 
   buttonText: {

@@ -880,7 +880,7 @@ return (
             title={item.title}
             infoTitle={`${item.createdby?.firstname || ''} ${item.createdby?.lastname || ''}`}
             inforTitlePrice={`£ ${item.price}`}
-            rating="4.5"
+            rating={item.avg_rating}
             productImage={{ uri: item.createdby?.profile }}
             onBookmarkPress={() => handleBookmarkPress(item.id)}
             isBookmarked={item.isbookmarked}
@@ -893,7 +893,7 @@ return (
             tag={item.university?.name || 'University of Warwick'}
             infoTitle={item.title}
             inforTitlePrice={`£ ${item.price}`}
-            rating="4.5"
+            rating={item.avg_rating}
             productImage={{ uri: item.thumbnail }}
             onBookmarkPress={() => handleBookmarkPress(item.id)}
             isBookmarked={item.isbookmarked}

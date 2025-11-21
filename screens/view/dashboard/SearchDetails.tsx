@@ -534,6 +534,11 @@ const handlePayConfirmed = (amount: number) => {
         await AsyncStorage.removeItem('quantitycount');
 
 
+
+        await AsyncStorage.removeItem('finalamount');
+        await AsyncStorage.removeItem('quantitycount');
+
+
       // Save order id to storage
       await AsyncStorage.setItem("last_order_id", data.data?.orderid?.toString() || "");
       await AsyncStorage.setItem("last_transaction_amount", data.data?.amount?.toString() || "");
@@ -541,9 +546,12 @@ const handlePayConfirmed = (amount: number) => {
 
 
 
+
+
       showToast(" Purchased successfully!", "success");
       setShowPopup1(true)
     } else {
+      showToast(data?.message || "Something went wrong.Please try again", "error");
       showToast(data?.message || "Something went wrong.Please try again", "error");
     }
      
@@ -934,7 +942,7 @@ const handlePayConfirmed = (amount: number) => {
                       <Text
                         allowFontScaling={false}
                         style={ styles.chattext}>
-                        4.5
+                        {detail?.avg_rating}
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -1626,6 +1634,7 @@ inactiveStepCircle: {
   },
 
 
+  
   userSub: {
     color: 'rgba(255, 255, 255, 0.48)',
     fontFamily: 'Urbanist-Regular',
@@ -1654,6 +1663,8 @@ inactiveStepCircle: {
     letterSpacing: -0.24,
     paddingLeft:4
   },
+
+ 
   univeritytext: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-Medium',

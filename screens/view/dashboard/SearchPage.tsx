@@ -63,6 +63,7 @@ type university = {
 }
 
 type Feature = {
+  avg_rating: string;
   id: number;
   created_by: number;
   category_id: number;
@@ -360,7 +361,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
               tag={item.university?.name || 'University of Warwick'}
               infoTitle={item.title}
               inforTitlePrice={`£ ${item.price}`}
-              rating={item.isfeatured ? '4.5' : '4.5'}
+              rating={item.avg_rating}
               showInitials={showInitials}
               initialsName={initials.toUpperCase()}
               productImage={item.createdby?.profile ? { uri: item.createdby.profile } : undefined}
@@ -373,7 +374,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
               tag={item.university?.name || 'University of Warwick'}
               infoTitle={item.title}
               inforTitlePrice={`£ ${item.price}`}
-              rating={item.isfeatured ? '4.5' : '4.5'}
+              rating={item.avg_rating}
               productImage={productImage ?? require('../../../assets/images/drone.png')}
               bookmark={item.isbookmarked}
               isfeature={item.isfeatured}

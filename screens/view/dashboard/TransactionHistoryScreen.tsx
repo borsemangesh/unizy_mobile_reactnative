@@ -122,6 +122,7 @@ export default function TransactionHistoryScreen(
     const fetchTransactions = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
+        console.log(token)
         if (!token) {
           console.log('No token found');
           return;
