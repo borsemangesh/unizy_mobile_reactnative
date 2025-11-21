@@ -47,12 +47,15 @@ import Animated, {
 // @ts-ignore - react-native-vector-icons types
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { getTwilioClient, waitForTwilioReady } from "../../view/emoji/twilioService";
+import Loader from '../../utils/component/Loader';
+import { showToast } from '../../utils/toast';
 
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImage = require('../../../assets/images/user.jpg');
 const back = require('../../../assets/images/back.png');
 const smileyhappy = require('../../../assets/images/smileyhappy.png');
+
 
 type MessagesIndividualScreenProps = {
   navigation: any;
@@ -96,15 +99,56 @@ const CACHE_KEY_MSG_PREFIX = "twilio_msg_";
 const saveJSON = async (key:any, value:any) => {
   try {
     await AsyncStorage.setItem(key, JSON.stringify(value));
-  } catch (_) {}
+  } catch (err: any) {
+    // Silent fail - cache is optional
+    if (__DEV__) {
+      console.warn('Cache save failed:', err.message);
+    }
+  }
 };
 
 const loadJSON = async (key:any) => {
   try {
     const raw = await AsyncStorage.getItem(key);
     return raw ? JSON.parse(raw) : null;
-  } catch (_) {
+  } catch (err: any) {
+    // Silent fail - cache is optional
+    if (__DEV__) {
+      console.warn('Cache load failed:', err.message);
+    }
     return null;
+  }
+};
+
+// Helper function for safe fetch with timeout (production-ready)
+const fetchWithTimeout = async (
+  url: string,
+  options: RequestInit = {},
+  timeoutMs: number = 15000
+): Promise<Response> => {
+  // AbortController is available in React Native 0.60+
+  // For React Native 0.81.0, it's definitely available
+  if (typeof AbortController === 'undefined') {
+    // Fallback for very old React Native versions (unlikely but safe)
+    throw new Error('AbortController not available');
+  }
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error: any) {
+    clearTimeout(timeoutId);
+    if (error.name === 'AbortError') {
+      throw new Error(`Request timeout after ${timeoutMs}ms`);
+    }
+    throw error;
   }
 };
 
@@ -660,35 +704,87 @@ const MessagesIndividualScreen = ({
   // }, []);
 
  useEffect(() => {
+    let isMounted = true;
+
     (async () => {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) return;
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) {
+          console.warn('Twilio init: No token available');
+          return;
+        }
 
-      const response = await fetch(
-        `${MAIN_URL.baseUrl}twilio/auth-token`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      const data = await response.json();
+        // Add timeout for network request (production-safe)
+        const response = await fetchWithTimeout(
+          `${MAIN_URL.baseUrl}twilio/auth-token`,
+          { 
+            headers: { Authorization: `Bearer ${token}` },
+          },
+          15000
+        );
 
-      
-      // debugger;
-      // const twilio = await TwilioChatClient.create(data.data.token);
-      const twilio  = await getTwilioClient(data.data.token);
-      console.log("twilio",twilio);
-      
-      setChatClient(twilio);
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || `HTTP ${response.status}`);
+        }
 
- // 🔥 Preload conversations silently in background
-    setTimeout(() => {
-      twilio.getSubscribedConversations()
-        .then((list:any) => list.items.forEach((c:any) => {
-          conversationCache[c.uniqueName] = c;
-        }))
-        .catch(() => {});
-    }, 500);
-  
+        const data = await response.json();
 
+        if (!data?.data?.token) {
+          throw new Error('Invalid token response from server');
+        }
+
+        // Initialize Twilio client with error handling
+       // const twilio = await getTwilioClient(data.data.token);
+       const twilio = await new TwilioChatClient(data.data.token);
+
+       console.log(twilio)
+        
+        if (!twilio) {
+          throw new Error('Failed to initialize Twilio client');
+        }
+
+        if (!isMounted) return;
+
+        console.log("Twilio client initialized successfully");
+        setChatClient(twilio);
+
+        // Preload conversations silently in background with error handling
+        setTimeout(() => {
+          if (twilio && isMounted) {
+            twilio.getSubscribedConversations()
+              .then((list: any) => {
+                if (list?.items && isMounted) {
+                  list.items.forEach((c: any) => {
+                    if (c?.uniqueName) {
+                      conversationCache[c.uniqueName] = c;
+                    }
+                  });
+                }
+              })
+              .catch((err: any) => {
+                console.warn('Preload conversations failed:', err.message);
+              });
+          }
+        }, 500);
+      } catch (error: any) {
+        console.error('Twilio initialization failed:', error.message);
+        
+        // Show user-friendly error in production
+        if (error.name === 'AbortError') {
+          console.error('Twilio token request timed out');
+        }
+        
+        // Don't set loading to false if component unmounted
+        if (isMounted) {
+          // Could show error state here if needed
+        }
+      }
     })();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
 // ----------------------------Wait for Connection--------------------------
@@ -1434,26 +1530,55 @@ useEffect(() => {
       const token = await AsyncStorage.getItem("userToken");
       const userId = await AsyncStorage.getItem("userId");
 
-      await waitForTwilioReady(chatClient);
+      if (!chatClient) {
+        throw new Error("Twilio client not initialized");
+      }
+
+      // Wait for Twilio with timeout - critical for production builds
+      try {
+        await waitForTwilioReady(chatClient, 15000);
+      } catch (readyErr: any) {
+        console.error("Twilio connection failed:", readyErr.message);
+        throw new Error(`Twilio connection failed: ${readyErr.message}`);
+      }
 
       let convName = userConvName;
       let apiData = null;
 
       // ---------------------- Handle sellerPage override ----------------------
       if (source === "sellerPage") {
-        const res = await fetch(`${MAIN_URL.baseUrl}twilio/conversation-fetch`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ feature_id: sellerData.featureId }),
-        });
+        try {
+          const res = await fetchWithTimeout(
+            `${MAIN_URL.baseUrl}twilio/conversation-fetch`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ feature_id: sellerData.featureId }),
+            },
+            15000
+          );
 
-        apiData = await res.json();
-        if (res.ok && apiData.data?.conv_name) convName = apiData.data.conv_name;
+          if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            throw new Error(errorData.message || `HTTP ${res.status}`);
+          }
 
-        if (!apiData.data) {
+          apiData = await res.json();
+          if (res.ok && apiData.data?.conv_name) convName = apiData.data.conv_name;
+
+          if (!apiData.data) {
+            console.warn("Conversation not available for sellerPage");
+            setInitialLoading(false);
+            return;
+          }
+        } catch (error: any) {
+          console.error("Failed to fetch conversation for sellerPage:", error.message);
+          if (error.name === 'AbortError') {
+            console.error("Request timed out");
+          }
           setInitialLoading(false);
           return;
         }
@@ -1497,25 +1622,55 @@ useEffect(() => {
         if (!convo && conversationSid) {
           try {
             convo = await chatClient.getConversation(conversationSid);
-          } catch (_) {}
+            console.log("Loaded conversation by SID:", conversationSid);
+          } catch (err: any) {
+            console.warn("Failed to get conversation by SID:", err.message);
+          }
         }
 
         // Fallback: by uniqueName
         if (!convo) {
           try {
             convo = await chatClient.getConversationByUniqueName(convName);
-          } catch {
-            convo = await chatClient.createConversation({ uniqueName: convName });
+            console.log("Loaded conversation by uniqueName:", convName);
+          } catch (err: any) {
+            console.warn("Failed to get conversation by uniqueName, creating new:", err.message);
+            try {
+              convo = await chatClient.createConversation({ uniqueName: convName });
+              console.log("Created new conversation:", convName);
+            } catch (createErr: any) {
+              throw new Error(`Failed to create conversation: ${createErr.message}`);
+            }
           }
         }
 
-        conversationCache[convName] = convo;
-        await saveJSON(CACHE_KEY_CONVO_PREFIX + convName, convo);
+        if (!convo) {
+          throw new Error("Failed to get or create conversation");
+        }
 
-        // Ensure joined
-        const participants = await convo.getParticipants();
-        const alreadyJoined = participants.some((p:any) => p.identity === userId);
-        if (!alreadyJoined) await convo.join();
+        conversationCache[convName] = convo;
+        
+        // Save to cache with error handling
+        try {
+          await saveJSON(CACHE_KEY_CONVO_PREFIX + convName, convo);
+        } catch (cacheErr: any) {
+          console.warn("Failed to save conversation to cache:", cacheErr.message);
+        }
+
+        // Ensure joined with error handling
+        try {
+          const participants = await convo.getParticipants();
+          const alreadyJoined = participants.some((p:any) => p.identity === userId);
+          if (!alreadyJoined) {
+            await convo.join();
+            console.log("Joined conversation:", convName);
+          }
+        } catch (joinErr: any) {
+          // Ignore "already joined" errors
+          if (!joinErr.message?.includes("Conflict") && !joinErr.message?.includes("already")) {
+            console.warn("Failed to join conversation:", joinErr.message);
+          }
+        }
 
         if (!isMounted) return;
         setConversation(convo);
@@ -1531,14 +1686,31 @@ useEffect(() => {
         setCurrentUserId(String(userId));
 
         // ---------------------- LOAD ONLY LATEST 20 MESSAGES ----------------------
-        let page = await convo.getMessages(20);
-        let items = Array.isArray(page.items) ? page.items : [];
-        markAsRead(conversationSid);
+        let page;
+        let items: any[] = [];
+        
+        try {
+          page = await convo.getMessages(20);
+          items = Array.isArray(page.items) ? page.items : [];
+          messagesPageRef.current = page;
+        } catch (msgErr: any) {
+          console.error("Failed to load messages:", msgErr.message);
+          throw new Error(`Failed to load messages: ${msgErr.message}`);
+        }
 
-        messagesPageRef.current = page;
+        // Fix: Pass conversation object, not SID string
+        markAsRead(convo).catch((err) => {
+          console.warn("markAsRead failed:", err.message);
+        });
 
         messageCache[convName] = items;
-        await saveJSON(CACHE_KEY_MSG_PREFIX + convName, items);
+        
+        // Save messages to cache with error handling
+        try {
+          await saveJSON(CACHE_KEY_MSG_PREFIX + convName, items);
+        } catch (cacheErr: any) {
+          console.warn("Failed to save messages to cache:", cacheErr.message);
+        }
 
         setMessages(
           [...items].sort((a, b) => (
@@ -1551,9 +1723,26 @@ useEffect(() => {
       };
 
       await fetchTwilioFresh();
-    } catch (err) {
-      console.error("Conversation load failed:", err);
+    } catch (err: any) {
+      console.error("Conversation load failed:", err?.message || err);
+      
+      // More detailed error logging for production debugging
+      if (err?.message) {
+        console.error("Error details:", {
+          message: err.message,
+          name: err.name,
+          stack: err.stack?.substring(0, 200), // First 200 chars of stack
+        });
+      }
+      
       setInitialLoading(false);
+      
+      // Optional: Show user-friendly error (uncomment if needed)
+      // Alert.alert(
+      //   "Connection Error",
+      //   "Unable to load conversation. Please check your connection and try again.",
+      //   [{ text: "OK" }]
+      // );
     }
   };
 
@@ -1572,33 +1761,51 @@ useEffect(() => {
   ////////////-------------------read count api -------------------//////////
 
   const markAsRead = async (conversation: any) => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        console.warn('markAsRead: No token available');
+        return;
+      }
 
- const token = await AsyncStorage.getItem('userToken');
-    const userId = await AsyncStorage.getItem('userId');
+      // Handle both conversation object and SID string
+      const sid = typeof conversation === 'string' 
+        ? conversation 
+        : conversation?.sid || conversationSid;
 
-    const lastMessage = conversation;
+      if (!sid) {
+        console.warn('markAsRead: No conversation SID available');
+        return;
+      }
 
+      const url = `${MAIN_URL.baseUrl}twilio/convo-read-update`;
+      
+      // Add timeout for production builds (10 second timeout)
+      const res = await fetchWithTimeout(
+        url,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            twilio_conversation_sid: sid,
+          }),
+        },
+        10000
+      );
 
-    console.log("conversation.............",conversation);
-    
-    if (!lastMessage) return;
-
-    
-
-
-
-    const url = `${MAIN_URL.baseUrl}twilio/convo-read-update`;
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-         twilio_conversation_sid:conversationSid,
-        // messageIndex: lastMessage.index,
-      }),
-    });
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        console.warn('markAsRead API failed:', errorData.message || res.statusText);
+      }
+    } catch (error: any) {
+      // Silent fail - don't break chat if read status fails
+      if (error.name !== 'AbortError') {
+        console.warn('markAsRead error:', error.message);
+      }
+    }
   };
 
   // ----------------------------------------------------------
@@ -2490,20 +2697,37 @@ useEffect(() => {
          
       <View style={{ flex: 1 }}>
         {initialLoading && (
-          <View
-            style={{
-              position: 'absolute',
-              top: headerTotalHeight,
-              bottom: inputBarHeight,
-              left: 0,
-              right: 0,
-              justifyContent: 'center',
-              alignItems: 'center',
-              zIndex: 999,
-            }}
-          >
-            <ActivityIndicator size="large" color="#FFFFFF" />
-          </View>
+          // <View
+          //   style={{
+          //     position: 'absolute',
+          //     top: headerTotalHeight,
+          //     bottom: inputBarHeight,
+          //     left: 0,
+          //     right: 0,
+          //     justifyContent: 'center',
+          //     alignItems: 'center',
+          //     zIndex: 999,
+          //   }}
+          // >
+          //   <ActivityIndicator size="large" color="#FFFFFF" />
+          // </View>
+
+
+            <Loader
+          containerStyle={{
+            position: 'absolute',
+            // top: headerTotalHeight,
+            left: 0,
+            right: 0,
+            // bottom: inputBarHeight,
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingTop: Platform.OS === 'ios' ? 600 :0,
+            zIndex: 1000,
+            elevation: Platform.OS === 'android' ? 100 : 0,
+            pointerEvents: 'none',
+          }}
+        />
 
         )}
         {/* Static transparent blur header - 10px height */}
@@ -2602,10 +2826,14 @@ useEffect(() => {
                       if(navigation.canGoBack()){
                       navigation.goBack();
                   } else {
-                    navigation.replace('Dashboard', {
-                      AddScreenBackactiveTab: 'Bookmark',
-                      isNavigate: false,
-                    });
+                    // navigation.replace('Dashboard', {
+                    //   AddScreenBackactiveTab: 'Bookmark',
+                    //   isNavigate: false,
+
+                     
+                    // });
+
+                     navigation.goBack();
                   }
 
                   }else{
@@ -2687,7 +2915,7 @@ useEffect(() => {
               });
             }}
           >
-            {source === 'chatList' ? (
+            {source =='chatList' ? (
               members?.profile ? (
                 <Image
                   source={{ uri: members?.profile }}
@@ -2714,8 +2942,8 @@ useEffect(() => {
               <View style={styles.initialsCircle}>
                 <Text allowFontScaling={false} style={styles.initialsText}>
                   {getInitials(
-                    members?.firstname ?? 'A',
-                    members?.lastname ?? 'W',
+                    sellerData?.firstname ?? 'A',
+                    sellerData?.lastname ?? 'W',
                   )}
                 </Text>
               </View>

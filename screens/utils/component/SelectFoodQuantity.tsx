@@ -49,16 +49,6 @@ const SelectFoodQuantity = ({
  const unitPrice = Number(price ?? 0);
   const totalPrice = unitPrice * count;
 
-// const handleApply = () => {
- 
-//   if (continueToPay) {
-//     const finalAmount = Number(totalPrice.toFixed(2));
-//     continueToPay(finalAmount);
-//   }
-
-// //  onClose();
-// };
-
 
 const handleApply = async () => {
   try {
