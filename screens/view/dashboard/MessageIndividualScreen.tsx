@@ -45,6 +45,7 @@ import Animated, {
 } from 'react-native-reanimated';
 // @ts-ignore - react-native-vector-icons types
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Loader from '../../utils/component/Loader';
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImage = require('../../../assets/images/user.jpg');
@@ -1573,20 +1574,21 @@ const MessagesIndividualScreen = ({
          
       <View style={{ flex: 1 }}>
         {initialLoading && (
-          <View
-            style={{
-              position: 'absolute',
-              top: headerTotalHeight,
-              bottom: inputBarHeight,
-              left: 0,
-              right: 0,
-              justifyContent: 'center',
-              alignItems: 'center',
-              zIndex: 999,
-            }}
-          >
-            <ActivityIndicator size="large" color="#FFFFFF" />
-          </View>
+          // <View
+          //   style={{
+          //     position: 'absolute',
+          //     top: headerTotalHeight,
+          //     bottom: inputBarHeight,
+          //     left: 0,
+          //     right: 0,
+          //     justifyContent: 'center',
+          //     alignItems: 'center',
+          //     zIndex: 999,
+          //   }}
+          // >
+          //   <ActivityIndicator size="large" color="#FFFFFF" />
+          // </View>
+          <Loader/>
         )}
         {/* Static transparent blur header - 10px height */}
         <View

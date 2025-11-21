@@ -26,6 +26,7 @@ import Animated, {
   useAnimatedStyle,
   interpolate,
 } from 'react-native-reanimated';
+import Loader from '../../utils/component/Loader';
 
 type MessageScreenProps = {
   navigation: any;
@@ -240,7 +241,8 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
             height: (Platform.OS  === 'ios' ? 600 : 0)
           }}
         >
-          <ActivityIndicator size="large" color="#FFFFFF" />
+          {/* <ActivityIndicator size="large" color="#FFFFFF" /> */}
+          <Loader/>
         </View>
       ) : (
         <FlatList
