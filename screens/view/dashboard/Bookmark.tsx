@@ -782,6 +782,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     paddingHorizontal: 10,
+      marginBottom: Platform.OS === "ios" ? 20 : 10,
     // marginTop: -5
   },
 
@@ -801,7 +802,7 @@ const styles = StyleSheet.create({
   emptyImage: {
     width: 50,
     height: 50,
-    marginBottom: 20,
+    marginBottom: 10,
   },
   emptyText: {
     fontSize: 20,

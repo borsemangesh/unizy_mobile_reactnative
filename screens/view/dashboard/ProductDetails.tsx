@@ -976,13 +976,14 @@ const styles = StyleSheet.create({
     padding: (Platform.OS === 'ios'? 12:0),
     marginTop:(Platform.OS === 'ios' ? 5:20),
     height: 50,
-    gap: 8,
+
     width: '84%',
   },
   searchIcon: { 
     
     padding: (Platform.OS === 'ios'? 0:5),
-    margin: (Platform.OS === 'ios'? 0:10),
+     marginLeft: (Platform.OS === 'ios' ? 0 : 10),
+     marginRight: (Platform.OS === 'ios' ? 0 : 6),
     height: 24,
     width: 24,
   },
