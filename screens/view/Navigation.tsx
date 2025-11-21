@@ -48,6 +48,7 @@ import StripeOnboardingComplete from './dashboard/StripeOnboardingComplete';
 import UserReviews from './dashboard/UserReviews';
 import UserListing from './dashboard/UserListing';
 import UserAddReview from './dashboard/UserAddReview';
+import { navigationRef } from './navigationRef';
 
 const Stack = createNativeStackNavigator();
 
@@ -55,9 +56,20 @@ export const Navigation = () => {
   const [initialRoute, setInitialRoute] = useState<null | string>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
 
+
+  const linking = {
+    prefixes: ['unizyapp://'],
+    config: {
+      screens: {
+        StripeOnboardingComplete: 'onboarding-complete',
+        StripeOnboardingCancel: 'onboarding-cancel',
+      },
+    },
+  };
+
   enableScreens();
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef} linking={linking}>
       <Stack.Navigator
         initialRouteName="SinglePage"
         screenOptions={{ headerShown: false, animation: 'none' }}
