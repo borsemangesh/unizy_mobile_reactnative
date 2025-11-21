@@ -174,6 +174,7 @@ type NotificationCardProps = {
   typeid: number;
   typename: string;
   templateName?: string;
+  categoryid:number
 };
 
 const NotificationCard: React.FC<NotificationCardProps> = ({
@@ -183,6 +184,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
   navigation,
   typeid,
   typename,
+  categoryid,
   templateName = '',
 }) => {
   const fullStar = require('../../assets/images/starfill.png'); // your full star
@@ -194,16 +196,29 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
       // Navigate to ListingDetails
       navigation.navigate('ListingDetails', {
         shareid: typeid,
-        catagory_id: 0,
+        catagory_id: categoryid,
         catagory_name: typename,
       });
     } else if (templateName === 'FeatureListed') {
       // Navigate to SearchDetails
-      navigation.navigate('SearchDetails', {
-        id: typeid,
-        name: typename,
+      navigation.navigate('ListingDetails', {
+       shareid: typeid,
+        catagory_id: categoryid,
+        catagory_name: typename,
       });
     } 
+
+    else if (templateName==='NewReviewedAdd'){
+       navigation.replace('ReviewDetails', {
+        catagory_id: categoryid,
+        id: typeid,
+       purchase:false
+       });
+    }
+
+    else if (templateName==='YourOrderCompleted'){
+       navigation.replace('MyOrders');
+    }
     else if (templateName === 'OrderCompletedRecivedPaymentSoon') {
      navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false})
     } 

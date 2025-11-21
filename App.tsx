@@ -127,7 +127,11 @@ function App() {
             console.log("📋 Full detail object:", JSON.stringify(detail, null, 2));
             
             let notificationData = detail.notification?.data;
-            
+
+            const notif = detail.notification;
+            const title = notif?.title;
+            const data = notif?.data; 
+                    
             console.log('📋 Raw notification data:', notificationData);
 
             if (notificationData) {
@@ -145,12 +149,19 @@ function App() {
 
 
 
-                 if (notificationData?.title === "Item Sold") {
-                  console.log("🟢 Navigating to TransactionHistory → Sales tab");
+                if (title === "Item Sold") {
+                  const featureId = data?.feature_id || null;
+                  console.log("📦 Extracted feature_id:", featureId);
 
-                  navigate('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false});
+                  navigate("ListingDetails", {
+                    shareid: featureId,
+                    catagory_id: 0,
+                    catagory_name: "",
+                  });
+
                   return;
                 }
+
 
                  else if (notificationData?.title === "Order Completed") {
                   console.log("🟢 Navigating to TransactionHistory → Sales tab");
@@ -252,7 +263,8 @@ function App() {
             }
           }
         });
-      } catch (error) {
+      } 
+      catch (error) {
         console.error("❌ Error initializing notifications:", error);
       }
     };

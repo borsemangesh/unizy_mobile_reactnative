@@ -691,7 +691,7 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
         </AnimatedReanimated.ScrollView>
 
 
-        {/*        
+               
         {(
         !data?.list?.ispurchased ||
         data?.list?.category_id === 2 ||
@@ -767,10 +767,10 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
             }}/>
 
         </View>
-      )} */}
+      )}
 
 
-        {(
+        {/* {(
           (data?.list?.category_id === 3 && data?.list?.remaining_quantity > 0) ||
 
           (data?.list?.category_id !== 3 && (
@@ -846,7 +846,7 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
                 }}
               />
             </View>
-          )}
+          )} */}
 
 
 

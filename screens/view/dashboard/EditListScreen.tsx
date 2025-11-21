@@ -121,6 +121,12 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
   const scrollY = useSharedValue(0);
 
+  console.log("📦 Route Params Received:", {
+  productId,
+  productName,
+  shareid
+});
+
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: event => {
       'worklet';

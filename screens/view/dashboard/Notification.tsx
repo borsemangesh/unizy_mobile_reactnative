@@ -337,7 +337,8 @@ const renderItem = ({ item ,index  }: { item: any ;index: number }) => {
   // Get template name for navigation
   const templateName = item.template?.name || '';
   const featureId = item.metadata?.feature_id || item.metadata?.id || 0;
-  const featureTitle = item.metadata?.feature_title || item.metadata?.title || 'Product';
+  const featureTitle = item.metadata?.category.name || item.metadata?.category.name || 'Product';
+  const category_id = item.metadata?.category.id|| item.metadata?.category.id || 0;
 
   return (
     <View style={styles.itemContainer}>
@@ -349,6 +350,7 @@ const renderItem = ({ item ,index  }: { item: any ;index: number }) => {
         typeid={featureId}
         typename={featureTitle}
         templateName={templateName}
+        categoryid={category_id}
       />
     </View>
   );
