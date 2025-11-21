@@ -1181,7 +1181,7 @@ const blurAmount = useDerivedValue(() =>
         
         <Animated.View
           style={[
-            styles.bottomTabContainer,{position: 'absolute',bottom: 0},
+            styles.bottomTabContainer,
             { transform: [{ translateY: bottomNaviationSlideupAnimation }] },
           ]}
           >
@@ -1207,7 +1207,7 @@ const blurAmount = useDerivedValue(() =>
               style={[
                 styles.bubble,
                 {
-                  width: tabWidth - 6,
+                  width: 70,
                   transform: [{ translateX: bubbleX }],
                 },
               ]}
@@ -1217,7 +1217,7 @@ const blurAmount = useDerivedValue(() =>
           {tabs.map(({ key, icon, activeIcon }) => (
             <TouchableOpacity
               key={key}
-              style={[styles.tabItem, { width: tabWidth }]}
+              style={[styles.tabItem, { width: '18.34%' }]}
               onPress={() => {
                 setIsNav(false);
                 navigation.setParams({ isNavigate: false });
@@ -1366,16 +1366,16 @@ const styles = StyleSheet.create({
   bottomTabContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: '6.5%',
+    // height: '6.5%',
     //marginBottom: 20,
     marginBottom: Platform.OS === 'ios' ? 30 : 30,    
     borderRadius: 50,
     alignSelf: 'center',
     // position: 'relative',
-    padding: 4,
+    padding: 2,
+    // marginLeft: 1,
     borderWidth: 0.4,
     //padding: 12,
-    margin:4,
     borderColor: '#ffffff11',
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
     backgroundColor: 'rgba(0, 23, 128, 0.49)',
@@ -1424,8 +1424,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     
-    left: 3,
-    right: 3,
+    left: 1,
+    // right: 1,
     borderWidth: 0.5,
     borderColor: '#ffffff2e',
 
