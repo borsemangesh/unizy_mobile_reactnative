@@ -137,13 +137,13 @@ const UserAddReview : React.FC<UserAddReviewProps> = ({ navigation }) =>{
         </View>
       
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-  <View style={{ flex: 1 }}>
+        <View style={{ flex: 1 ,paddingTop:Platform.OS === 'ios' ? 120 : 100,paddingHorizontal: 16}}>
           <View style={styles.innercontainer}>
             <Text allowFontScaling={false} style={styles.mainlabel}>How many stars would you give?</Text>
              <Text allowFontScaling={false} style={styles.sublabel}>Slide across the stars to rate this product</Text>
          </View>
 
-        <View style={{ paddingHorizontal: 16, marginTop:16,marginBottom: 20, alignItems: 'center' }}>
+         <View style={{  marginTop:16,marginBottom: 20, alignItems: 'center' }}>
         {/* <AddRating starSize={40} /> */}
 
         <AddRating starSize={40} onChange={setRating} />
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
     marginTop:4
     },
     innercontainer:{
-         paddingHorizontal: 16, 
+        //  paddingHorizontal: 16, 
          marginBottom: 8, 
          flexDirection: 'column', 
          justifyContent: 'space-between' 
@@ -486,12 +486,21 @@ const styles = StyleSheet.create({
       height: '100%' },
   fullScreenContainer: {
      flex: 1,
-     marginTop:10,
      },
   header: {
-    paddingTop: Platform.OS === 'ios' ? '9%' : 30,
-    paddingBottom: 12,
+
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? '6.7%' : 60,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingHorizontal: 16,
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
+    marginTop: (Platform.OS === 'ios' ? 0 : 0),
+    marginLeft: 1 
   },
   headerRow: {
     flexDirection: 'row',
