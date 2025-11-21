@@ -37,6 +37,7 @@ import AnimatedReanimated, {
 } from 'react-native-reanimated';
 import MaskedView from '@react-native-masked-view/masked-view';
 import SelectFoodQuantity from '../../utils/component/SelectFoodQuantity'
+import SelectFoodQuantity_IOS from '../../utils/component/SelectFoodQuantity_IOS';
 
 
 type SearchDetailsProps = {
@@ -1006,37 +1007,59 @@ const handlePayConfirmed = (amount: number) => {
         onPress={() => handlePay()}   // ALWAYS call without amount
       />
 
-      <SelectFoodQuantity
-        // totalcount={10}
+      {
+      Platform.OS === 'ios' ? (
+        <SelectFoodQuantity_IOS
+          totalcount={detail?.remaining_quantity}
+          options={quantityOptions}
+          visible={multiSelectModal.visible}
+          price={Number(detail?.price)}
+          title="Choose Quantity"
+          subtitle="Select the number of units you’d like to buy."
+          selectedValues={formValues[multiSelectModal.fieldId!]?.value}
+          onClose={() =>
+            setMultiSelectModal(prev => ({ ...prev, visible: false }))
+          }
+          onSelect={(selectedIds) => {
+            const quantity = Array.isArray(selectedIds)
+              ? selectedIds[0]
+              : selectedIds;
 
-        totalcount={detail?.remaining_quantity}
- 
-        options={quantityOptions}
-        visible={multiSelectModal.visible}   
-        price={Number(detail?.price)}
-        title={'Choose Quantitiy'}
-        subtitle={'Select the number of units you’d like to buy.'}
-        selectedValues={formValues[multiSelectModal.fieldId!]?.value}
-        onClose={() =>
-          setMultiSelectModal(prev => ({ ...prev, visible: false }))
-        }
-        //continueToPay={(finalAmount) => handlePay(finalAmount)}
-         continueToPay={(amount) => {
-          handlePay(amount);    // navigates first
-          setMultiSelectModal(prev => ({ ...prev, visible: false }));  // close after
-        }}
+            setFormValues((prev: any) => ({
+              ...prev,
+              [multiSelectModal.fieldId!]: { value: quantity },
+            }));
+          }}
+        />
+      ) : (
+        <SelectFoodQuantity
+          totalcount={detail?.remaining_quantity}
+          options={quantityOptions}
+          visible={multiSelectModal.visible}
+          price={Number(detail?.price)}
+          title="Choose Quantity"
+          subtitle="Select the number of units you’d like to buy."
+          selectedValues={formValues[multiSelectModal.fieldId!]?.value}
+          onClose={() =>
+            setMultiSelectModal(prev => ({ ...prev, visible: false }))
+          }
+          continueToPay={(amount) => {
+            handlePay(amount);
+            setMultiSelectModal(prev => ({ ...prev, visible: false }));
+          }}
+          onSelect={(selectedIds) => {
+            const quantity = Array.isArray(selectedIds)
+              ? selectedIds[0]
+              : selectedIds;
 
-      onSelect={(selectedIds) => {
-        const quantity = Array.isArray(selectedIds)
-          ? selectedIds[0] // fallback
-          : selectedIds;
-
-        setFormValues((prev: any) => ({
-          ...prev,
-          [multiSelectModal.fieldId!]: { value: quantity },
-        }));
-      }}
-      />
+            setFormValues((prev: any) => ({
+              ...prev,
+              [multiSelectModal.fieldId!]: { value: quantity },
+            }));
+          }}
+        />
+      )
+    }
 
 
         <Modal
