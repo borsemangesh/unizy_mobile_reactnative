@@ -86,6 +86,7 @@ import React, { useState, useMemo } from 'react';
 import {
   Dimensions,
   FlatList,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -177,12 +178,12 @@ const EmojiKeyboard: React.FC<EmojiKeyboardProps> = ({ onEmojiSelected }) => {
         >
           <Text style={styles.topTabIcon}>😀</Text>
         </TouchableOpacity>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={[styles.topTab, selectedTopTab === 'gif' && styles.topTabActive]}
           onPress={() => setSelectedTopTab('gif')}
         >
           <Text style={styles.topTabText}>GIF</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TouchableOpacity
           style={[styles.topTab, selectedTopTab === 'person' && styles.topTabActive]}
           onPress={() => {
@@ -190,17 +191,29 @@ const EmojiKeyboard: React.FC<EmojiKeyboardProps> = ({ onEmojiSelected }) => {
             setSelectedCategory('gestures');
           }}
         >
-          <MaterialIcons name="person" size={20} color={selectedTopTab === 'person' ? '#0084ff' : '#666'} />
+
+               <Image source={require('../../../assets/keyboardimages/userkebordicon.png')}
+                        style={{ width: 24, height: 24, tintColor: '#666' }}
+                      />
+
+
+          {/* <MaterialIcons name="person" size={20} tintColor={selectedTopTab === 'person' ? '#0084ff' : '#666'} /> */}
         </TouchableOpacity>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={[styles.topTab, selectedTopTab === 'sticker' && styles.topTabActive]}
           onPress={() => setSelectedTopTab('sticker')}
         >
           <MaterialIcons name="image" size={20} color={selectedTopTab === 'sticker' ? '#0084ff' : '#666'} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.topTab} onPress={handleDelete}>
-          <MaterialIcons name="backspace" size={20} color="#666" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+        <TouchableOpacity 
+  style={[styles.topTab, { marginLeft: 'auto' }]}
+  onPress={handleDelete}
+>
+  <Image
+    source={require('../../../assets/keyboardimages/backspace.png')}
+    style={{ width: 25, height: 25, tintColor: '#666' }}
+  />
+</TouchableOpacity>
       </View>
 
       {/* Category Name */}
@@ -232,11 +245,17 @@ const EmojiKeyboard: React.FC<EmojiKeyboardProps> = ({ onEmojiSelected }) => {
             setSelectedTopTab('smiley');
           }}
         >
-          <MaterialIcons
+          {/* <MaterialIcons
             name="access-time"
             size={22}
             color={selectedCategory === 'faces' ? '#0084ff' : '#666'}
-          />
+          /> */}
+
+             <Image source={require('../../../assets/keyboardimages/clock1.png')}
+                        style={{ width: 24, height: 24,
+                           tintColor: selectedCategory === 'faces' ? '#0084ff' : '#666' }}
+                      />
+
         </TouchableOpacity>
         
         {/* Smileys & People */}
@@ -308,11 +327,11 @@ const EmojiKeyboard: React.FC<EmojiKeyboardProps> = ({ onEmojiSelected }) => {
             setSelectedCategory('objects');
           }}
         >
-          <MaterialIcons
+          {/* <MaterialIcons
             name="tag"
             size={20}
             color={selectedCategory === 'objects' ? '#0084ff' : '#666'}
-          />
+          /> */}
         </TouchableOpacity>
         
         {/* Flags */}

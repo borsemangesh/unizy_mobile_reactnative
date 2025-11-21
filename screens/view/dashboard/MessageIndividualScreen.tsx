@@ -3272,7 +3272,13 @@ shouldAutoScrollRef.current = false;
                   >
                     {isEmojiPickerVisible ? (
                       // Show keyboard icon when emoji keyboard is visible (like WhatsApp)
-                      <MaterialIcons name="keyboard" size={24} color="#fff" />
+                      // <MaterialIcons name="keyboard" size={24} color="#fff" />
+                      <Image
+
+                      
+                        source={require('../../../assets/keyboardimages/keyboard1.png')}
+                        style={{ width: 24, height: 24, tintColor: '#fff' }}
+                      />
                     ) : (
                       // Show smiley icon when text keyboard is visible or no keyboard
                       <Image
