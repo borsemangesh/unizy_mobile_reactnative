@@ -214,7 +214,8 @@ const SalesAllDetailsDropdown = ({
           </Text>
         </View>
         <View style={{ gap: 4, alignItems: 'flex-end', flex: 0.5 }}>
-          <Text
+         
+          {/* <Text
             style={{
               color: 'rgb(255, 255, 255)',
               fontWeight: '600',
@@ -222,8 +223,43 @@ const SalesAllDetailsDropdown = ({
               fontSize: 14,
             }}
           >
-            £ {parseFloat(buyer.amount).toFixed(2)} {/* Ensure the amount is a number */}
-          </Text>
+            £ {parseFloat(buyer.amount).toFixed(2)} 
+          </Text> */}
+
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+
+             <View style={styles.statusBox}>
+                  <Text
+                    allowFontScaling={false}
+                    style={{
+                      color: '#ABABFF',
+                      fontWeight: '600',
+                      fontSize: 12,
+                      fontFamily: 'Urbanist-SemiBold',
+                    }}
+                  >
+                    x{buyer.purchased_quantity}
+                  </Text>
+                </View>
+
+                <Text
+                  style={{
+                    color: 'rgb(255, 255, 255)',
+                    fontWeight: '600',
+                    fontFamily: 'Urbanist-SemiBold',
+                    fontSize: 14,
+                    marginLeft: 8, // spacing before the box
+                  }}
+                >
+                  £ {parseFloat(buyer.amount).toFixed(2)}
+                </Text>
+
+                {/* UNITS BOX RIGHT SIDE */}
+               
+
+              </View>
+
           <Text
             style={{
               color: 'rgb(255, 255, 255)',
@@ -368,6 +404,19 @@ const SalesAllDetailsDropdown = ({
 };
 
 const styles = StyleSheet.create({
+
+  statusBox: {
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    paddingTop: 2,
+    paddingBottom: 2,
+    paddingLeft: 6,
+    paddingRight: 6,
+    gap:12,
+    borderRadius: 4,
+    justifyContent:'center',
+    height: 20,
+  },
+
   cardconstinerdivider: {
     display: 'flex',
     flexDirection: 'row',
