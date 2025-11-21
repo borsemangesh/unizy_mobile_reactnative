@@ -24,24 +24,34 @@ export const waitForTwilioReady = (client, timeoutMs = 10000) =>
       return;
     }
 
-    // Set up timeout to prevent infinite waiting
-    const timeoutId = setTimeout(() => {
-      client.removeListener("connectionStateChanged", handleStateChange);
-      reject(new Error(`Twilio connection timeout after ${timeoutMs}ms. Current state: ${client.connectionState}`));
-    }, timeoutMs);
+    let timeoutId = null;
+    let isResolved = false;
 
     // Handle connection state changes
     const handleStateChange = (state) => {
+      if (isResolved) return; // Prevent multiple calls
+
       if (state === "connected") {
-        clearTimeout(timeoutId);
+        isResolved = true;
+        if (timeoutId) clearTimeout(timeoutId);
         client.removeListener("connectionStateChanged", handleStateChange);
         resolve();
       } else if (state === "disconnected" || state === "denied") {
-        clearTimeout(timeoutId);
+        isResolved = true;
+        if (timeoutId) clearTimeout(timeoutId);
         client.removeListener("connectionStateChanged", handleStateChange);
         reject(new Error(`Twilio connection failed with state: ${state}`));
       }
     };
+
+    // Set up timeout to prevent infinite waiting
+    timeoutId = setTimeout(() => {
+      if (!isResolved) {
+        isResolved = true;
+        client.removeListener("connectionStateChanged", handleStateChange);
+        reject(new Error(`Twilio connection timeout after ${timeoutMs}ms. Current state: ${client.connectionState}`));
+      }
+    }, timeoutMs);
 
     client.on("connectionStateChanged", handleStateChange);
   });
