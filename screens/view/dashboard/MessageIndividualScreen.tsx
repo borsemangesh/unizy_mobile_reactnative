@@ -98,15 +98,56 @@ const CACHE_KEY_MSG_PREFIX = "twilio_msg_";
 const saveJSON = async (key:any, value:any) => {
   try {
     await AsyncStorage.setItem(key, JSON.stringify(value));
-  } catch (_) {}
+  } catch (err: any) {
+    // Silent fail - cache is optional
+    if (__DEV__) {
+      console.warn('Cache save failed:', err.message);
+    }
+  }
 };
 
 const loadJSON = async (key:any) => {
   try {
     const raw = await AsyncStorage.getItem(key);
     return raw ? JSON.parse(raw) : null;
-  } catch (_) {
+  } catch (err: any) {
+    // Silent fail - cache is optional
+    if (__DEV__) {
+      console.warn('Cache load failed:', err.message);
+    }
     return null;
+  }
+};
+
+// Helper function for safe fetch with timeout (production-ready)
+const fetchWithTimeout = async (
+  url: string,
+  options: RequestInit = {},
+  timeoutMs: number = 15000
+): Promise<Response> => {
+  // AbortController is available in React Native 0.60+
+  // For React Native 0.81.0, it's definitely available
+  if (typeof AbortController === 'undefined') {
+    // Fallback for very old React Native versions (unlikely but safe)
+    throw new Error('AbortController not available');
+  }
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error: any) {
+    clearTimeout(timeoutId);
+    if (error.name === 'AbortError') {
+      throw new Error(`Request timeout after ${timeoutMs}ms`);
+    }
+    throw error;
   }
 };
 
@@ -672,19 +713,14 @@ const MessagesIndividualScreen = ({
           return;
         }
 
-        // Add timeout for network request
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
-
-        const response = await fetch(
+        // Add timeout for network request (production-safe)
+        const response = await fetchWithTimeout(
           `${MAIN_URL.baseUrl}twilio/auth-token`,
           { 
             headers: { Authorization: `Bearer ${token}` },
-            signal: controller.signal,
-          }
+          },
+          15000
         );
-
-        clearTimeout(timeoutId);
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
@@ -1508,20 +1544,18 @@ useEffect(() => {
       // ---------------------- Handle sellerPage override ----------------------
       if (source === "sellerPage") {
         try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 15000);
-
-          const res = await fetch(`${MAIN_URL.baseUrl}twilio/conversation-fetch`, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
+          const res = await fetchWithTimeout(
+            `${MAIN_URL.baseUrl}twilio/conversation-fetch`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ feature_id: sellerData.featureId }),
             },
-            body: JSON.stringify({ feature_id: sellerData.featureId }),
-            signal: controller.signal,
-          });
-
-          clearTimeout(timeoutId);
+            15000
+          );
 
           if (!res.ok) {
             const errorData = await res.json().catch(() => ({}));
@@ -1742,23 +1776,21 @@ useEffect(() => {
 
       const url = `${MAIN_URL.baseUrl}twilio/convo-read-update`;
       
-      // Add timeout for production builds
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+      // Add timeout for production builds (10 second timeout)
+      const res = await fetchWithTimeout(
+        url,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            twilio_conversation_sid: sid,
+          }),
         },
-        body: JSON.stringify({
-          twilio_conversation_sid: sid,
-        }),
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
+        10000
+      );
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
