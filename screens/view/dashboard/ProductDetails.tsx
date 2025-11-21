@@ -548,7 +548,7 @@ const handleEndReached = useCallback(() => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-              {initialLoading && (
+              {initialLoading && featurelist.length === 0 && (
                 <Loader
                   containerStyle={{
                     position: 'absolute',

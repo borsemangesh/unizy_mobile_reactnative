@@ -228,23 +228,6 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
 
   return (
     <View style={{ flex: 1, width: '100%', height: '100%' }}>
-      {initialLoading && (
-        <Loader
-          containerStyle={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            justifyContent: 'center',
-            alignItems: 'center',
-            paddingTop: Platform.OS === 'ios' ? 600 : 250,
-            zIndex: 1000,
-            elevation: Platform.OS === 'android' ? 1000 : 0,
-            pointerEvents: 'none',
-          }}
-        />
-      )}
       <FlatList
           data={studentList || []}
           keyExtractor={(item, index) => {
@@ -412,6 +395,23 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
           ) : null
         }
         />
+      {initialLoading && (!studentList || studentList.length === 0) && (
+        <Loader
+          containerStyle={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingTop: Platform.OS === 'ios' ? 600 : 250,
+            zIndex: 1000,
+            elevation: Platform.OS === 'android' ? 100 : 0,
+            pointerEvents: 'none',
+          }}
+        />
+      )}
       {/* {!initialLoading && search !== '' && (!studentList || studentList.length === 0) ? (
         <View
         pointerEvents="none"   

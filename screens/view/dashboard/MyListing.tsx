@@ -358,7 +358,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-        {initialLoading && (
+        {initialLoading && featureList.length === 0 && (
           <Loader
             containerStyle={{
               position: 'absolute',

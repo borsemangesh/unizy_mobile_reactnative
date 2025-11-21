@@ -355,7 +355,7 @@ const renderItem = ({ item ,index  }: { item: any ;index: number }) => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-        {initialLoading && (
+        {initialLoading && notificationList.length === 0 && (
           <Loader
             containerStyle={{
               position: 'absolute',
