@@ -132,7 +132,7 @@ type TransactionScreenProps = {
 
 const SearchScreenContent = ({navigation}: TransactionScreenProps) => (
   <View  style={{flex: 1}}>
-    <TransactionHistoryScreen navigation ={navigation}/>
+    <TransactionHistoryScreen navigation={navigation} route={undefined}/>
   </View>
 );
 type AddScreenContentProps = {

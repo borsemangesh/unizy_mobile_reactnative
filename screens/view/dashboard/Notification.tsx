@@ -162,6 +162,8 @@ const displayListOfProduct = async (pageNum: number, isInitialLoad: boolean = fa
     
     const pagesize = 10;
     let url = `${MAIN_URL.baseUrl}user/mynotification?page=${pageNum}&pagesize=${pagesize}`;
+
+    console.log(url)
     
     const token = await AsyncStorage.getItem('userToken');
     if (!token) {
@@ -325,7 +327,7 @@ const renderItem = ({ item ,index  }: { item: any ;index: number }) => {
   });
 
 
-  console.log("parts...",formattedParts);
+ // console.log("parts...",formattedParts);
   
 // };
 

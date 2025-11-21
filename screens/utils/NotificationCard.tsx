@@ -203,7 +203,14 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
         id: typeid,
         name: typename,
       });
-    } else {
+    } 
+    else if (templateName === 'OrderCompletedRecivedPaymentSoon') {
+     navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false})
+    } 
+     else if (templateName === 'PayoutSuccess') {
+      navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false,issales:true})
+    } 
+    else {
       // Default navigation (fallback to SearchDetails)
       navigation.navigate('SearchDetails', {
         id: typeid,

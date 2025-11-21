@@ -303,7 +303,7 @@ return (
 
     <View
       style={{
-        paddingTop: Platform.OS === 'ios' ? 0: 20,
+        paddingTop: Platform.OS === 'ios' ? 0: 0,
         marginHorizontal: 16,
         gap: 24,
       }}

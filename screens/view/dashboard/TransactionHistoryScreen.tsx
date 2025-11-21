@@ -21,6 +21,7 @@ import SalesAllDetailsDropdown from '../../utils/component/SalesAllDetailsDropdo
 
 type TransactionPropos = {
   navigation: any;
+  route: any;
 };
 
 interface TransactionItem {
@@ -53,6 +54,7 @@ const productImage = require('../../../assets/images/producticon.png');
 const totalEaning = require('../../../assets/images/totalearnings.png');
 export default function TransactionHistoryScreen(
   navigation: TransactionPropos,
+  
 ) {
 
   const navigation1: NavigationProp<any> = useNavigation();
@@ -60,6 +62,8 @@ export default function TransactionHistoryScreen(
   const [transactions, setTransactions] = useState<TransactionSection[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const { route } = navigation;
+  const { issales } = route?.params || {}
   const screenWidth = Dimensions.get('window').width;
   const tabsname = ['Purchases', 'Sales', 'Charges'];
   const tabWidth = (screenWidth * 0.9) / tabsname.length;
@@ -80,6 +84,11 @@ export default function TransactionHistoryScreen(
   const [SalesImageUrl, setSalesImageUrl] = useState('');
   const { height } = Dimensions.get('window');
 
+ useEffect(() => {
+    if (issales) {
+      setActiveTab('Sales');   // Switch to Sales tab automatically
+    }
+  }, [issales]);
 
   useEffect(() => {
     if (activeTab === 'Purchases') {
@@ -425,7 +434,7 @@ export default function TransactionHistoryScreen(
                 resizeMode="contain"
               />
               <Text allowFontScaling={false} style={styles.emptyText}>
-                No transactions found
+                No Transactions Found
               </Text>
             </View>
           </View>

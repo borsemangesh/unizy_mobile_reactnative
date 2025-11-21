@@ -143,6 +143,30 @@ function App() {
                   return value;
                 };
 
+
+
+                 if (notificationData?.title === "Item Sold") {
+                  console.log("🟢 Navigating to TransactionHistory → Sales tab");
+
+                  navigate('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false});
+                  return;
+                }
+
+                 else if (notificationData?.title === "Order Completed") {
+                  console.log("🟢 Navigating to TransactionHistory → Sales tab");
+
+                  navigate('MyOrders',{});
+                  return;
+                }
+                else if(notificationData?.title === "New review received"){
+                  navigate('ReviewDetails', {
+                    category_id: 0,id: 0,purchase:false
+                  });
+                }
+
+                 else if(notificationData?.title === "Payout Processed"){
+                 navigate('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false});
+                }
                 if (typeof notificationData === 'string') {
                   try {
                     notificationData = JSON.parse(notificationData);
