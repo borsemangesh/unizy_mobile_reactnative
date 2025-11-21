@@ -691,7 +691,7 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
         </AnimatedReanimated.ScrollView>
 
 
-               
+{/*                
         {(
         !data?.list?.ispurchased ||
         data?.list?.category_id === 2 ||
@@ -767,87 +767,110 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
             }}/>
 
         </View>
-      )}
+      )} */}
 
 
-        {/* {(
-          (data?.list?.category_id === 3 && data?.list?.remaining_quantity > 0) ||
 
-          (data?.list?.category_id !== 3 && (
-            !data?.list?.ispurchased ||
-            data?.list?.category_id === 2 ||
-            data?.list?.category_id === 5
-          ))
-        ) && (
-            <View style={styles.bottomview}>
-              <ButtonNew
-                title={data?.list?.isactive ? 'Deactivate' : 'Activate'}
-                textStyle={[styles.cancelText, { width: '100%' }]}
-                buttonStyle={[{
-                  width: '49%',
-                  boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-                  backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.10) 100%)',
-                  borderBlockStartColor: '#ffffff47',
-                  borderBlockColor: '#ffffff47',
-                  borderTopColor: '#ffffff47',
-                  borderBottomColor: '#ffffff47',
-                  borderLeftColor: '#ffffff47',
-                  borderRightColor: '#ffffff47',
-                  boxSizing: 'border-box',
-                }]}
-                onPress={() => {
-                  if (data?.list?.isactive) {
-                    setShowConfirm(true);
-                  } else {
-                    handleDeactivate();
-                  }
-                }}
-              />
+{data?.list?.category_id === 3 &&
+ data?.list?.remaining_quantity > 0 &&
+ data?.list?.isactive &&
+ data?.list?.ispurchased === true ? (
 
-              <ButtonNew
-                title="Edit Listing"
-                textStyle={{
-                  color: '#000000',
-                  fontFamily: 'Urbanist-Regular',
-                  fontSize: 16,
-                  fontWeight: '500',
-                  fontStyle: 'normal',
-                  letterSpacing: 0.17,
-                  lineHeight: 22,
-                }}
-                buttonStyle={[{ width: '49%', backgroundColor: '#ffffffa7' }]}
-                onPress={() => {
-                  if (!data?.list?.isactive) {
-                    showToast('Purchased item can’t be edited.', 'error');
-                    return;
-                  }
+  /* ---- SHOW ONLY ONE FULL-WIDTH BUTTON ---- */
+  <View style={[styles.bottomview, { justifyContent: 'center' }]}>
+    <ButtonNew
+      title="Deactivate"
+      textStyle={[styles.cancelText, { width: '100%' }]}
+      buttonStyle={{
+        width: '100%',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.23)',
+        backgroundColor:
+          'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.10) 100%)',
+        borderColor: '#ffffff47',
+        boxSizing: 'border-box',
+      }}
+      onPress={() => {
+        if (data?.list?.isactive) {
+          setShowConfirm(true);
+        } else {
+          handleDeactivate();
+        }
+      }}
+    />
+  </View>
 
-                  if (Platform.OS === 'ios') {
-                    navigation.navigate(
-                      'EditListScreen',
-                      {
-                        productId: catagory_id,
-                        productName: catagory_name,
-                        shareid: shareid,
-                      },
-                      { animation: 'none' },
-                    );
-                  } else {
-                    navigation.replace(
-                      'EditListScreen',
-                      {
-                        productId: catagory_id,
-                        productName: catagory_name,
-                        shareid: shareid,
-                      },
-                      { animation: 'none' },
-                    );
-                  }
-                }}
-              />
-            </View>
-          )} */}
+) : (
 
+  /* ---- ORIGINAL TWO BUTTONS ---- */
+  (!data?.list?.ispurchased ||
+    data?.list?.category_id === 2 ||
+    data?.list?.category_id === 5) && (
+    <View style={styles.bottomview}>
+      <ButtonNew
+        title={data?.list?.isactive ? 'Deactivate' : 'Activate'}
+        textStyle={[styles.cancelText, { width: '100%' }]}
+        buttonStyle={[{
+          width:'49%',
+          boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
+          backgroundColor:
+            'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.10) 100%)',
+          borderColor: '#ffffff47',
+          boxSizing: 'border-box',
+        }]}
+        onPress={() => {
+          if (data?.list?.isactive) {
+            setShowConfirm(true);
+          } else {
+            handleDeactivate();
+          }
+        }}
+      />
+
+      <ButtonNew
+        textStyle={{
+          color: '#000000',
+          fontFamily: 'Urbanist-Regular',
+          fontSize: 16,
+          fontWeight: '500',
+          letterSpacing: 0.17,
+          lineHeight: 22,
+        }}
+        buttonStyle={[{ width: '49%', backgroundColor: '#ffffffa7' }]}
+        title="Edit Listing"
+        onPress={() => {
+          if (!data?.list?.isactive) {
+            showToast('Purchased item can’t be edited.', 'error');
+            return;
+          }
+
+          if (Platform.OS === 'ios') {
+            navigation.navigate(
+              'EditListScreen',
+              {
+                productId: catagory_id,
+                productName: catagory_name,
+                shareid: shareid,
+              },
+              { animation: 'none' },
+            );
+          } else {
+            navigation.replace(
+              'EditListScreen',
+              {
+                productId: catagory_id,
+                productName: catagory_name,
+                shareid: shareid,
+              },
+              { animation: 'none' },
+            );
+          }
+        }}
+      />
+    </View>
+  )
+)}
+
+       
 
 
         <Modal
