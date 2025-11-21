@@ -29,6 +29,7 @@ import FilterBottomSheet from '../../utils/component/FilterBottomSheet';
 import SearchTutionCard from '../../utils/SearchTutionCard';
 import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
 import { SquircleView } from 'react-native-figma-squircle';
+import Loader from '../../utils/component/Loader';
 
 import Animated, {
   useSharedValue,
@@ -102,6 +103,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
 
 const [page, setPage] = useState(1);
 const [isLoading, setIsLoading] = useState(false);
+const [initialLoading, setInitialLoading] = useState(true);
 const [hasMore, setHasMore] = useState(true); 
 const [isFilterVisible, setFilterVisible] = useState(false);
 const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
@@ -218,17 +220,24 @@ useFocusEffect(
     setPage(1);
     setHasMore(true);
     setFeaturelist([]);
-    displayListOfProduct(1, search);
+    displayListOfProduct(1, search, true);
   }, [appliedFilter])
 );
   const displayListOfProduct = async (
   pageNum: number = 1,
   searchText: string = search,
+  isInitialLoad: boolean = false,
 ) => {
   if (isLoading || !hasMore) return;
 
+    let start = Date.now();
+    
     try {
-      setIsLoading(true);
+      if (isInitialLoad) {
+        setInitialLoading(true);
+      } else {
+        setIsLoading(true);
+      }
   
       const body = {
         search: searchText,
@@ -242,7 +251,13 @@ useFocusEffect(
       const url = MAIN_URL.baseUrl + 'category/feature-list/search';
       console.log(url)
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) return;
+      if (!token) {
+        if (isInitialLoad) {
+          await new Promise(r => setTimeout(r, 1000));
+          setInitialLoading(false);
+        }
+        return;
+      }
   
       const response = await fetch(url, {
         method: 'POST',
@@ -269,7 +284,12 @@ useFocusEffect(
         setPage(prev => prev + 1);
       }
       if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
-            setIsLoading(false);
+            if (isInitialLoad) {
+              await new Promise(r => setTimeout(r, 1000));
+              setInitialLoading(false);
+            } else {
+              setIsLoading(false);
+            }
             navigation.reset({
             index: 0,
             routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
@@ -277,8 +297,19 @@ useFocusEffect(
           }
     } catch (err) {
       console.log('Error:', err);
+      if (isInitialLoad) {
+        await new Promise(r => setTimeout(r, 1000));
+        setInitialLoading(false);
+      }
     } finally {
-      setIsLoading(false);
+      if (isInitialLoad) {
+        let elapsed = Date.now() - start;
+        let remaining = Math.max(0, 1000 - elapsed);
+        await new Promise(r => setTimeout(r, remaining));
+        setInitialLoading(false);
+      } else {
+        setIsLoading(false);
+      }
     }
 };
 
@@ -517,6 +548,23 @@ const handleEndReached = useCallback(() => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
+              {initialLoading && (
+                <Loader
+                  containerStyle={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    paddingTop: Platform.OS === 'ios' ? 80 : 100,
+                    zIndex: 1000,
+                    elevation: Platform.OS === 'android' ? 100 : 0,
+                    pointerEvents: 'none',
+                  }}
+                />
+              )}
               <StatusBar
                  translucent
                  backgroundColor="transparent"
@@ -667,7 +715,18 @@ const handleEndReached = useCallback(() => {
               </View>
             }
             ListFooterComponent={
-              isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
+              isLoading ? (
+                <View style={{ paddingVertical: 20, alignItems: 'center' }}>
+                  <Loader
+                    containerStyle={{
+                      width: 50,
+                      height: 50,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  />
+                </View>
+              ) : null
             }
             contentContainerStyle={[
               styles.listContainer,

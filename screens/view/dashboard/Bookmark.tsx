@@ -41,6 +41,7 @@ import Animated, {
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
+import Loader from '../../utils/component/Loader';
 
 type CreatedBy = {
   id: number;
@@ -101,6 +102,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
     null,
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
   const SCREEN_HEIGHT = Dimensions.get('window').height;
   const insets = useSafeAreaInsets();
@@ -194,22 +196,30 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
 
   useEffect(() => {
     setPage(1);
-    displayListOfProduct(selectedCategory?.id ?? null, 1);
+    displayListOfProduct(selectedCategory?.id ?? null, 1, false);
   }, [selectedCategory]);
 
   useFocusEffect(
     useCallback(() => {
       setPage(1);
-      displayListOfProduct(selectedCategory?.id ?? null, 1);
+      displayListOfProduct(selectedCategory?.id ?? null, 1, true);
     }, [selectedCategory]),
   );
 
   const displayListOfProduct = async (
     categoryId: number | null,
     pageNum: number,
+    isInitialLoad: boolean = false,
   ) => {
+    let start = Date.now();
+    
     try {
-      // setIsLoading(true);
+      if (isInitialLoad) {
+        setInitialLoading(true);
+      } else {
+        setIsLoading(true);
+      }
+      
       const pagesize = 10;
 
       let url = `${MAIN_URL.baseUrl}category/mybookmark-list?page=${pageNum}&pagesize=${pagesize}`;
@@ -219,7 +229,13 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
       }
 
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) return;
+      if (!token) {
+        if (isInitialLoad) {
+          await new Promise(r => setTimeout(r, 1000));
+          setInitialLoading(false);
+        }
+        return;
+      }
 
       const response = await fetch(url, {
         method: 'GET',
@@ -232,12 +248,8 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
       const jsonResponse = await response.json();
       console.log('API Response:', jsonResponse);
       if (jsonResponse.statusCode === 200) {
-        // const features = jsonResponse.data.features;
-        // const bookmarkedFeatures = features.filter((f: { featurelist: { isbookmarked: any; }; }) => f.featurelist.isbookmarked);
-        setIsLoading(false);
         if (pageNum === 1) {
           setFeaturelist(jsonResponse.data.features);
-          //setFeaturelist(bookmarkedFeatures)
         } else {
           setFeaturelist(prev => [...prev, ...jsonResponse.data.features]);
         }
@@ -245,18 +257,42 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
         jsonResponse.statusCode === 401 ||
         jsonResponse.statusCode === 403
       ) {
-        setIsLoading(false);
+        if (isInitialLoad) {
+          await new Promise(r => setTimeout(r, 1000));
+          setInitialLoading(false);
+        } else {
+          setIsLoading(false);
+        }
         navigation.reset({
           index: 0,
           routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
         });
       } else {
-        setIsLoading(false);
+        if (isInitialLoad) {
+          await new Promise(r => setTimeout(r, 1000));
+          setInitialLoading(false);
+        } else {
+          setIsLoading(false);
+        }
         console.log('API Error:', jsonResponse.message);
       }
     } catch (err) {
-      setIsLoading(true);
       console.log('Error:', err);
+      if (isInitialLoad) {
+        await new Promise(r => setTimeout(r, 1000));
+        setInitialLoading(false);
+      } else {
+        setIsLoading(false);
+      }
+    } finally {
+      if (isInitialLoad) {
+        let elapsed = Date.now() - start;
+        let remaining = Math.max(0, 1000 - elapsed);
+        await new Promise(r => setTimeout(r, remaining));
+        setInitialLoading(false);
+      } else {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -443,6 +479,23 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
+        {initialLoading && (
+          <Loader
+            containerStyle={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingTop: Platform.OS === 'ios' ? 600 : 100,
+              zIndex: 1000,
+              elevation: Platform.OS === 'android' ? 100 : 0,
+              pointerEvents: 'none',
+            }}
+          />
+        )}
         <StatusBar
           translucent
           backgroundColor="transparent"
@@ -608,15 +661,20 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
           }}
           ListFooterComponent={
             isLoadingMore ? (
-              <ActivityIndicator
-                size="small"
-                color="#fff"
-                style={{ marginVertical: 12 }}
-              />
+              <View style={{ paddingVertical: 20, alignItems: 'center' }}>
+                <Loader
+                  containerStyle={{
+                    width: 50,
+                    height: 50,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                />
+              </View>
             ) : null
           }
           ListEmptyComponent={
-            !isLoading ? (
+            !initialLoading && !isLoading ? (
               <View style={[styles.emptyWrapper]}>
                 <View style={styles.emptyContainer}>
                   <Image

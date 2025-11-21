@@ -1887,7 +1887,8 @@ const MessagesIndividualScreen = ({
               ListHeaderComponent={
                 loadingOlderMessages ? (
                   <View style={{ paddingVertical: 10, alignItems: 'center' }}>
-                    <ActivityIndicator size="small" color="#FFFFFF" />
+                    {/* <ActivityIndicator size="small" color="#FFFFFF" /> */}
+                    <Loader/>
                   </View>
                 ) : null
               }

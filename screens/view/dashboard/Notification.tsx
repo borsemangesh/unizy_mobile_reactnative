@@ -32,6 +32,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import { BlurView } from '@react-native-community/blur';
 import MaskedView from '@react-native-masked-view/masked-view';
+import Loader from '../../utils/component/Loader';
 
 
 type NotificationProps = {
@@ -137,6 +138,7 @@ const Notification = ({ navigation }: NotificationProps) => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const pagesize = 10;
   const [isLoading, setIsLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const insets = useSafeAreaInsets(); // Safe area insets
   const { height: screenHeight } = Dimensions.get('window');
     
@@ -144,17 +146,31 @@ const Notification = ({ navigation }: NotificationProps) => {
 
 useEffect(() => {
   setPage(1);
-  displayListOfProduct(1);
+  displayListOfProduct(1, true);
 }, []);
 
 
-const displayListOfProduct = async (pageNum: number) => {
+const displayListOfProduct = async (pageNum: number, isInitialLoad: boolean = false) => {
+  let start = Date.now();
+  
   try {
+    if (isInitialLoad) {
+      setInitialLoading(true);
+    } else {
+      setIsLoading(true);
+    }
+    
     const pagesize = 10;
     let url = `${MAIN_URL.baseUrl}user/mynotification?page=${pageNum}&pagesize=${pagesize}`;
     
-    const token = await AsyncStorage.getItem('userToken'); 
-    if (!token) return;
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) {
+      if (isInitialLoad) {
+        await new Promise(r => setTimeout(r, 1000));
+        setInitialLoading(false);
+      }
+      return;
+    }
 
     const response = await fetch(url, {
       method: 'GET',
@@ -168,8 +184,6 @@ const displayListOfProduct = async (pageNum: number) => {
     // console.log('API Response:', jsonResponse);
 
    if (jsonResponse.statusCode === 200) {
-      setIsLoading(false);
-
       const newData = jsonResponse?.data?.notifications ?? [];
 
       console.log("newData.........",newData);
@@ -184,7 +198,12 @@ const displayListOfProduct = async (pageNum: number) => {
       }
     } 
     else if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
-          setIsLoading(false);
+          if (isInitialLoad) {
+            await new Promise(r => setTimeout(r, 1000));
+            setInitialLoading(false);
+          } else {
+            setIsLoading(false);
+          }
           navigation.reset({
           index: 0,
           routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
@@ -192,12 +211,31 @@ const displayListOfProduct = async (pageNum: number) => {
         }
     
     else {
-      setIsLoading(false);
+      if (isInitialLoad) {
+        await new Promise(r => setTimeout(r, 1000));
+        setInitialLoading(false);
+      } else {
+        setIsLoading(false);
+      }
       // console.log('API Error:', jsonResponse.message);
     }
   } catch (err) {
-    setIsLoading(false);
     console.log('Error:', err);
+    if (isInitialLoad) {
+      await new Promise(r => setTimeout(r, 1000));
+      setInitialLoading(false);
+    } else {
+      setIsLoading(false);
+    }
+  } finally {
+    if (isInitialLoad) {
+      let elapsed = Date.now() - start;
+      let remaining = Math.max(0, 1000 - elapsed);
+      await new Promise(r => setTimeout(r, remaining));
+      setInitialLoading(false);
+    } else {
+      setIsLoading(false);
+    }
   }
 };
 
@@ -317,7 +355,23 @@ const renderItem = ({ item ,index  }: { item: any ;index: number }) => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-
+        {initialLoading && (
+          <Loader
+            containerStyle={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingTop: Platform.OS === 'ios' ? 600 : 200,
+              zIndex: 1000,
+              elevation: Platform.OS === 'android' ? 100 : 0,
+              pointerEvents: 'none',
+            }}
+          />
+        )}
         {/* <StatusBar
           translucent
           backgroundColor="transparent"
@@ -437,11 +491,20 @@ const renderItem = ({ item ,index  }: { item: any ;index: number }) => {
             }}
             ListFooterComponent={
               isLoadingMore ? (
-                <ActivityIndicator size="small" color="#fff" style={{ marginVertical: 10 }} />
+                <View style={{ paddingVertical: 20, alignItems: 'center' }}>
+                  <Loader
+                    containerStyle={{
+                      width: 50,
+                      height: 50,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  />
+                </View>
               ) : null
             }
             ListEmptyComponent={
-              !isLoading ? (
+              !initialLoading && !isLoading ? (
                 <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
                   No Notification found
                 </Text>

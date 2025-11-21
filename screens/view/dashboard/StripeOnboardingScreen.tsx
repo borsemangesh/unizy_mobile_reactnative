@@ -1,8 +1,9 @@
 import React, { useRef } from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, View, Text, StyleSheet, Platform } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Linking } from 'react-native';
+import Loader from '../../utils/component/Loader';
 type RootStackParamList = {
   StripeOnboardingScreen: { onboardingUrl: string };
   StripeOnboardingComplete: undefined;
@@ -56,16 +57,33 @@ export default function StripeOnboardingScreen({ route, navigation }: any) {
   };
 
   return (
-    <WebView
-      ref={webViewRef}
-      source={{ uri: onboardingUrl }}
-      onNavigationStateChange={handleUrlChange}
-      onShouldStartLoadWithRequest={handleShouldStartLoadWithRequest}
-      originWhitelist={['*']}
-      javaScriptEnabled={true}
-      domStorageEnabled={true}
-      startInLoadingState
-      renderLoading={() => <ActivityIndicator size="large" />}
+    <View style={styles.webViewContainer}>
+      <WebView
+        ref={webViewRef}
+        source={{ uri: onboardingUrl }}
+        onNavigationStateChange={handleUrlChange}
+        onShouldStartLoadWithRequest={handleShouldStartLoadWithRequest}
+        originWhitelist={['*']}
+        javaScriptEnabled={true}
+        domStorageEnabled={true}
+        startInLoadingState
+        style={styles.webView}
+        renderLoading={() => (
+          <View style={styles.loadingContainer}>
+            <Loader
+              containerStyle={{
+                width: 100,
+                height: 100,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: 'transparent',
+              }}
+            />
+            <Text allowFontScaling={false} style={styles.loadingText}>
+              Redirecting to Stripe..
+            </Text>
+          </View>
+        )}
       onError={(syntheticEvent) => {
         const { nativeEvent } = syntheticEvent;
         console.warn('WebView error: ', nativeEvent);
@@ -75,6 +93,32 @@ export default function StripeOnboardingScreen({ route, navigation }: any) {
           handleUrlChange({ url: nativeEvent.url });
         }
       }}
-    />
+      />
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  webViewContainer: {
+    flex: 1,
+    backgroundColor: '#0C56C4',
+    width: '100%',
+    height: '100%',
+  },
+  webView: {
+    flex: 1,
+    backgroundColor: '#0C56C4',
+  },
+  loadingContainer: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#0C56C4',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontFamily: 'Urbanist-Medium',
+    fontWeight: '500',
+  },
+});

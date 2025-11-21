@@ -40,6 +40,7 @@ import AnimatedReanimated, {
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import ButtonNew from '../../utils/component/ButtonNew';
+import Loader from '../../utils/component/Loader';
 
 type ListingDetailsProps = {
   navigation: any;
@@ -803,7 +804,8 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
 
                 {loading && (
                   <View style={styles.fullLoader}>
-                    <ActivityIndicator size="large" color="#fff" />
+                    {/* <ActivityIndicator size="large" color="#fff" /> */}
+                    <Loader/>
                   </View>
                 )}
 

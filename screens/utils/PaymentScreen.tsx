@@ -5,6 +5,7 @@ import { MAIN_URL } from './APIConstant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { showToast } from './component/NewCustomToastManager';
+import Loader from './component/Loader';
 
 
 type RootStackParamList = {
@@ -196,7 +197,7 @@ const PaymentScreen :React.FC<PaymentScreenProps> = ({ navigation }) => {
       style={styles.bg}
     >
       {loading && (
-        <ActivityIndicator color="#fff" size="large" style={styles.loader} />
+       <Loader/>
       )}
       <View />
     </ImageBackground>

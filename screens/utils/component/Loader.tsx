@@ -1,10 +1,10 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ViewStyle, StyleProp, Platform } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 const LOADER_HTML = `
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="background: transparent;">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,10 +15,14 @@ const LOADER_HTML = `
       box-sizing: border-box;
     }
 
+    html {
+      background: transparent;
+    }
+
     body {
       width: 100%;
       height: 100vh;
-      background: transparent;
+      background: transparent !important;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -55,15 +59,26 @@ const LOADER_HTML = `
 </html>
 `;
 
-const Loader = () => {
+type LoaderProps = {
+  containerStyle?: StyleProp<ViewStyle>;
+};
+
+const Loader = ({ containerStyle }: LoaderProps) => {
   return (
-    <View style={styles.loaderContainer}>
+    <View style={[styles.loaderContainer, containerStyle]}>
       <WebView
-       originWhitelist={['*']}
+        originWhitelist={['*']}
         source={{ html: LOADER_HTML }}
         style={styles.webview}
         scrollEnabled={false}
         javaScriptEnabled={true}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        bounces={false}
+        startInLoadingState={false}
+        {...(Platform.OS === 'ios' && { 
+          opaque: false,
+        })}
       />
     </View>
   );
@@ -71,20 +86,16 @@ const Loader = () => {
 
 const styles = StyleSheet.create({
   loaderContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1000,
-    pointerEvents: 'none',
+    width: '100%',
+    height: '100%',
   },
   webview: {
     width: 100,
     height: 100,
     backgroundColor: 'transparent',
+    opacity: 1,
   },
 });
 

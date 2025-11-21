@@ -228,24 +228,24 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
 
   return (
     <View style={{ flex: 1, width: '100%', height: '100%' }}>
-      {initialLoading ? (
-        <View 
-          style={{ 
+      {initialLoading && (
+        <Loader
+          containerStyle={{
             position: 'absolute',
-            top: Platform.OS === 'ios' ? '100%' : 320,
-            bottom: (Platform.OS === 'ios' ? 0 : 200),
+            top: 0,
             left: 0,
             right: 0,
-            justifyContent: 'center', 
+            bottom: 0,
+            justifyContent: 'center',
             alignItems: 'center',
-            height: (Platform.OS  === 'ios' ? 600 : 0)
+            paddingTop: Platform.OS === 'ios' ? 600 : 250,
+            zIndex: 1000,
+            elevation: Platform.OS === 'android' ? 1000 : 0,
+            pointerEvents: 'none',
           }}
-        >
-          {/* <ActivityIndicator size="large" color="#FFFFFF" /> */}
-          <Loader/>
-        </View>
-      ) : (
-        <FlatList
+        />
+      )}
+      <FlatList
           data={studentList || []}
           keyExtractor={(item, index) => {
             'worklet';
@@ -412,7 +412,6 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
           ) : null
         }
         />
-      )}
       {/* {!initialLoading && search !== '' && (!studentList || studentList.length === 0) ? (
         <View
         pointerEvents="none"   

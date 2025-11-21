@@ -37,6 +37,7 @@ import MyListingCard from '../../utils/MyListingCard';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
+import Loader from '../../utils/component/Loader';
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 type Feature = {
@@ -78,6 +79,8 @@ const MyListing = ({ navigation }: MyListingProps) => {
     null,
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const isInitialMount = useRef(true);
   const insets = useSafeAreaInsets();
   const { height: screenHeight } = Dimensions.get('window');
   const { height } = Dimensions.get('window');
@@ -149,8 +152,16 @@ const MyListing = ({ navigation }: MyListingProps) => {
 
   useFocusEffect(
     useCallback(() => {
-      setPage(1);
-      displayListOfProduct(selectedCategory?.id ?? null, 1);
+      // Only show loader on first mount
+      if (isInitialMount.current) {
+        isInitialMount.current = false;
+        setPage(1);
+        displayListOfProduct(selectedCategory?.id ?? null, 1, true);
+      } else {
+        // On subsequent focuses, reload without showing loader
+        setPage(1);
+        displayListOfProduct(selectedCategory?.id ?? null, 1, false);
+      }
 
       return () => { };
     }, []),
@@ -174,7 +185,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
 
   useEffect(() => {
     setPage(1);
-    displayListOfProduct(selectedCategory?.id ?? null, 1);
+    displayListOfProduct(selectedCategory?.id ?? null, 1, false);
   }, [selectedCategory]);
 
 
@@ -198,8 +209,17 @@ const MyListing = ({ navigation }: MyListingProps) => {
   const displayListOfProduct = async (
     categoryId: number | null,
     pageNum: number,
+    isInitialLoad: boolean = false,
   ) => {
+    let start = Date.now();
+    
     try {
+      if (isInitialLoad) {
+        setInitialLoading(true);
+      } else {
+        setIsLoading(true);
+      }
+      
       const pagesize = 10;
       let url = `${MAIN_URL.baseUrl}category/mylisting?page=${pageNum}&pagesize=${pagesize}`;
       if (categoryId) {
@@ -207,7 +227,13 @@ const MyListing = ({ navigation }: MyListingProps) => {
       }
 
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) return;
+      if (!token) {
+        if (isInitialLoad) {
+          await new Promise(r => setTimeout(r, 1000));
+          setInitialLoading(false);
+        }
+        return;
+      }
 
       const response = await fetch(url, {
         method: 'GET',
@@ -220,7 +246,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
       const jsonResponse = await response.json();
 
       if (jsonResponse.statusCode === 200) {
-        setIsLoading(false);
         if (pageNum === 1) {
           setFeatureList(jsonResponse.data.features);
         } else {
@@ -230,17 +255,41 @@ const MyListing = ({ navigation }: MyListingProps) => {
         jsonResponse.statusCode === 401 ||
         jsonResponse.statusCode === 403
       ) {
-        setIsLoading(false);
+        if (isInitialLoad) {
+          await new Promise(r => setTimeout(r, 1000));
+          setInitialLoading(false);
+        } else {
+          setIsLoading(false);
+        }
         navigation.reset({
           index: 0,
           routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
         });
       } else {
-        setIsLoading(false);
+        if (isInitialLoad) {
+          await new Promise(r => setTimeout(r, 1000));
+          setInitialLoading(false);
+        } else {
+          setIsLoading(false);
+        }
       }
     } catch (err) {
-      setIsLoading(false);
       console.log('Error:', err);
+      if (isInitialLoad) {
+        await new Promise(r => setTimeout(r, 1000));
+        setInitialLoading(false);
+      } else {
+        setIsLoading(false);
+      }
+    } finally {
+      if (isInitialLoad) {
+        let elapsed = Date.now() - start;
+        let remaining = Math.max(0, 1000 - elapsed);
+        await new Promise(r => setTimeout(r, remaining));
+        setInitialLoading(false);
+      } else {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -309,6 +358,23 @@ const MyListing = ({ navigation }: MyListingProps) => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
+        {initialLoading && (
+          <Loader
+            containerStyle={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingTop: Platform.OS === 'ios' ? 600 : 100,
+              zIndex: 1000,
+              elevation: Platform.OS === 'android' ? 100 : 0,
+              pointerEvents: 'none',
+            }}
+          />
+        )}
         <StatusBar
           translucent
           backgroundColor="transparent"
@@ -501,15 +567,20 @@ const MyListing = ({ navigation }: MyListingProps) => {
             }}
             ListFooterComponent={
               isLoadingMore ? (
-                <ActivityIndicator
-                  size="small"
-                  color="#fff"
-                  style={{ marginVertical: 12 }}
-                />
+                <View style={{ paddingVertical: 20, alignItems: 'center' }}>
+                  <Loader
+                    containerStyle={{
+                      width: 50,
+                      height: 50,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  />
+                </View>
               ) : null
             }
             ListEmptyComponent={
-              !isLoading ? (
+              !initialLoading && !isLoading ? (
                 <View style={[styles.emptyWrapper]}>
                   <View style={styles.emptyContainer}>
                     <Image

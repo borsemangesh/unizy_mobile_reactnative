@@ -52,6 +52,7 @@ import TransactionHistoryScreen from './TransactionHistoryScreen';
 import { BlurView } from '@react-native-community/blur';
 import BottomNavigation from '../../utils/component/BottomNavigation';
 import DeviceInfo from 'react-native-device-info';
+import Loader from '../../utils/component/Loader';
 
 const mylistings = require('../../../assets/images/mylistingicon.png');
 const mylistings1 = require('../../../assets/images/favourite.png');
@@ -844,7 +845,14 @@ return (
            {isLoading ? (
   // 👇 Loading state
   <View style={styles.emptyWrapper}>
-    <ActivityIndicator size="large" color="#999" />
+    <Loader
+      containerStyle={{
+        width: 100,
+        height: 100,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    />
   </View>
 ) : features.length === 0 ? (
   // 👇 No Listings Found

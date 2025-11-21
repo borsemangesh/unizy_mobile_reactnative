@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   Image,
   ImageBackground,
@@ -35,6 +35,7 @@ import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { RouteProp, useRoute } from '@react-navigation/native';
+import Loader from '../../utils/component/Loader';
 
 type CreatedBy = {
   id: number;
@@ -110,6 +111,8 @@ const UserReviews = ({ navigation }: UserReviewsProps)  => {
   const [featureList, setFeatureList] = useState<any[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const isInitialMount = useRef(true);
   const insets = useSafeAreaInsets(); // Safe area insets
   const { height: screenHeight } = Dimensions.get('window');
   const [totalRecords, setTotalRecords] = useState(0);
@@ -198,17 +201,38 @@ useEffect(() => {
 // }, [selectedCategory]);
 
 useEffect(() => {
+  // Skip on initial mount - let the initial load handle it
+  if (isInitialMount.current) {
+    return;
+  }
+
   setPage(1);
   setFeatureList([]);      
   setTotalRecords(0);     
   setIsLoadingMore(false); 
-
-  displayListOfProduct(selectedCategory?.id ?? null, 1);
+  displayListOfProduct(selectedCategory?.id ?? null, 1, false);
 }, [selectedCategory]);
 
+useEffect(() => {
+  // Only load on initial mount
+  if (isInitialMount.current) {
+    isInitialMount.current = false;
+    setPage(1);
+    displayListOfProduct(selectedCategory?.id ?? null, 1, true);
+  }
+}, []);
 
-const displayListOfProduct = async (categoryId: number | null, pageNum: number) => {
+
+const displayListOfProduct = async (categoryId: number | null, pageNum: number, isInitialLoad: boolean = false) => {
+  let start = Date.now();
+  
   try {
+    if (isInitialLoad) {
+      setInitialLoading(true);
+    } else {
+      setIsLoading(true);
+    }
+    
     const pagesize = 10;
     let url = `${MAIN_URL.baseUrl}user/user-review?page=${pageNum}&pagesize=${pagesize}&user_id=${members.id}`;
 
@@ -218,7 +242,13 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
 
     console.log(url)
     const token = await AsyncStorage.getItem('userToken');
-    if (!token) return;
+    if (!token) {
+      if (isInitialLoad) {
+        await new Promise(r => setTimeout(r, 1000));
+        setInitialLoading(false);
+      }
+      return;
+    }
 
     const response = await fetch(url, {
       method: 'GET',
@@ -236,26 +266,54 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
 
     if (jsonResponse.statusCode === 200) {
       if (pageNum === 1) {
-      setFeatureList(reviews);     
+      setFeatureList(reviews);
+      // If reviews are loaded, hide initial loader immediately
+      if (isInitialLoad) {
+        setInitialLoading(false);
+      }
     } else {
       setFeatureList(prev => [...prev, ...reviews]); 
     }
       
     } 
     else if (jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403) {
-      setIsLoading(false);
+      if (isInitialLoad) {
+        await new Promise(r => setTimeout(r, 1000));
+        setInitialLoading(false);
+      } else {
+        setIsLoading(false);
+      }
       navigation.reset({
         index: 0,
         routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
       });
     } 
     else {
-      setIsLoading(false);
+      if (isInitialLoad) {
+        await new Promise(r => setTimeout(r, 1000));
+        setInitialLoading(false);
+      } else {
+        setIsLoading(false);
+      }
     }
 
   } catch (err) {
-    setIsLoading(false);
     console.log('Error:', err);
+    if (isInitialLoad) {
+      await new Promise(r => setTimeout(r, 1000));
+      setInitialLoading(false);
+    } else {
+      setIsLoading(false);
+    }
+  } finally {
+    if (isInitialLoad) {
+      let elapsed = Date.now() - start;
+      let remaining = Math.max(0, 1000 - elapsed);
+      await new Promise(r => setTimeout(r, remaining));
+      setInitialLoading(false);
+    } else {
+      setIsLoading(false);
+    }
   }
 };
 
@@ -329,6 +387,23 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
+        {initialLoading && featureList.length === 0 && (
+          <Loader
+            containerStyle={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingTop: Platform.OS === 'ios' ? 600 : 150,
+              zIndex: 1000,
+              elevation: Platform.OS === 'android' ? 100 : 0,
+              pointerEvents: 'none',
+            }}
+          />
+        )}
             <StatusBar
                  translucent
                  backgroundColor="transparent"
@@ -507,15 +582,20 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
             }}
             ListFooterComponent={
               isLoadingMore ? (
-                <ActivityIndicator
-                  size="small"
-                  color="#fff"
-                  style={{ marginVertical: 12 }}
-                />
+                <View style={{ paddingVertical: 20, alignItems: 'center' }}>
+                  <Loader
+                    containerStyle={{
+                      width: 50,
+                      height: 50,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  />
+                </View>
               ) : null
             }
             ListEmptyComponent={
-              !isLoading ? (
+              !initialLoading && !isLoading ? (
                <View style={[styles.emptyWrapper]}>
                           <View style={styles.emptyContainer}>
                             <Image
