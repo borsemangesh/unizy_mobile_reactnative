@@ -216,6 +216,7 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
   const otpverify = async () => {
     Keyboard.dismiss();
     setLoading(true);
+    console.log("closePopup1",closePopup1)
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
@@ -254,14 +255,16 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
 
       const data = await res.json();
       console.log('OTP Verify Response:', data);
-
+      setShowPopup1(false);
       if (data?.statusCode === 200) {
         setLoading(false);
+       
         showToast(data.message, 'success');
         setShowPopup2(true);
       } else {
         setLoading(false);
         setShowPopup1(false);
+
         showToast(data?.message, 'error');
       }
     } catch (err) {
@@ -1010,7 +1013,21 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
                   <TouchableOpacity
                     style={styles.loginButton}
                     onPress={() => {
+                      
+                      
                       navigation.replace('MyListing');
+
+
+                      navigation.reset({
+                        index: 0,
+                        routes: [
+                          {
+                            name: 'MyListing',
+                          }
+                        ],
+                      });
+
+
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText}>

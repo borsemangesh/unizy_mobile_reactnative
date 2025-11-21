@@ -217,7 +217,7 @@ const SalesAllDetailsDropdown_IOS = ({
           </Text>
         </View>
         <View style={{ gap: 4, alignItems: 'flex-end', flex: 0.5 }}>
-          <Text
+          {/* <Text
             style={{
               color: 'rgb(255, 255, 255)',
               fontWeight: '600',
@@ -225,8 +225,42 @@ const SalesAllDetailsDropdown_IOS = ({
               fontSize: 14,
             }}
           >
-            £ {parseFloat(buyer.amount).toFixed(2)} {/* Ensure the amount is a number */}
-          </Text>
+            £ {parseFloat(buyer.amount).toFixed(2)} 
+          </Text> */}
+           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+
+              <View style={styles.statusBox}>
+                  <Text
+                    allowFontScaling={false}
+                    style={{
+                      color: '#ABABFF',
+                      fontWeight: '600',
+                      fontSize: 12,
+                      fontFamily: 'Urbanist-SemiBold',
+                    }}
+                  >
+                    x{buyer.purchased_quantity}
+                  </Text>
+                </View>
+
+                <Text
+                  style={{
+                    color: 'rgb(255, 255, 255)',
+                    fontWeight: '600',
+                    fontFamily: 'Urbanist-SemiBold',
+                    fontSize: 14,
+                    marginLeft: 8, // spacing before the box
+                  }}
+                >
+                  £ {parseFloat(buyer.amount).toFixed(2)}
+                </Text>
+
+                {/* UNITS BOX RIGHT SIDE */}
+                
+
+              </View>
+
           <Text
             style={{
               color: 'rgb(255, 255, 255)',
@@ -271,6 +305,7 @@ const SalesAllDetailsDropdown_IOS = ({
       style={{ top: 0, left: 0, right: 0, bottom: 0,width: '100%', height: '100%',}}
       blurType="dark"
       blurAmount={Platform.OS === 'ios' ?3 : 4}
+      pointerEvents="none" 
       reducedTransparencyFallbackColor="transparent"
     >
       <Modal animationType="slide" visible={visible} transparent onRequestClose={handleClose}>
@@ -296,7 +331,7 @@ const SalesAllDetailsDropdown_IOS = ({
                   blurAmount={6}
                   pointerEvents='none'
                   reducedTransparencyFallbackColor="white"
-                >
+               />
 
               <View style={styles.modeltitleContainer1}>
                 <View
@@ -367,7 +402,7 @@ const SalesAllDetailsDropdown_IOS = ({
                   {renderRightContent()}
                 </ScrollView>
               </View>
-              </BlurView>
+              {/* </BlurView> */}
             </View>
           {/* </View> */}
         </View>
@@ -378,6 +413,17 @@ const SalesAllDetailsDropdown_IOS = ({
 };
 
 const styles = StyleSheet.create({
+  statusBox: {
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    paddingTop: 2,
+    paddingBottom: 2,
+    paddingLeft: 6,
+    paddingRight: 6,
+    gap:12,
+    borderRadius: 4,
+    justifyContent:'center',
+    height: 20,
+  },
   cardconstinerdivider: {
     display: 'flex',
     flexDirection: 'row',
@@ -484,3 +530,6 @@ const styles = StyleSheet.create({
 });
 
 export default SalesAllDetailsDropdown_IOS;
+
+
+

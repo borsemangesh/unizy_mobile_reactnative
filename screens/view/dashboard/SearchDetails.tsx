@@ -1020,6 +1020,10 @@ const handlePayConfirmed = (amount: number) => {
           onClose={() =>
             setMultiSelectModal(prev => ({ ...prev, visible: false }))
           }
+          continueToPay={(amount) => {
+            handlePay(amount);
+            setMultiSelectModal(prev => ({ ...prev, visible: false }));
+          }}
           onSelect={(selectedIds) => {
             const quantity = Array.isArray(selectedIds)
               ? selectedIds[0]

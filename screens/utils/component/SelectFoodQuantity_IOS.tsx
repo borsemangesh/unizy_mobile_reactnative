@@ -63,85 +63,123 @@ const handleApply = async () => {
   }
 };
   return (
-<View onTouchCancel={onClose} style={[StyleSheet.absoluteFillObject,{zIndex: 999,display: visible ? 'flex' : 'none'}]}>      <BlurView
-      style={[StyleSheet.absoluteFillObject]}
-      blurType="dark"
-      blurAmount={Platform.OS === 'ios' ? 2 : 2}
-      reducedTransparencyFallbackColor="transparent"
-    />
-      <BlurView
-      style={[StyleSheet.absoluteFillObject]}
-      blurType="dark"
-      blurAmount={Platform.OS === 'ios' ? 2 : 2}
-      reducedTransparencyFallbackColor="transparent"
-    />
-    <Modal
-      animationType="slide"
-      visible={visible}
-      transparent
-      onRequestClose={onClose}
+    <View
+      onTouchCancel={onClose}
+      style={[
+        StyleSheet.absoluteFillObject,
+        { zIndex: 999, display: visible ? 'flex' : 'none' },
+      ]}
     >
+      {' '}
+      <BlurView
+        style={[
+          {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0, borderRadius: 30,
+            backgroundColor: 'rgba(119, 173, 255, 0.07)'
+          },
 
-    <View style={{ flex: 1,justifyContent: 'flex-end', }}>
-
-      <View style={styles.overlay}>
-
-  <TouchableWithoutFeedback onPress={onClose}>
-    <View style={StyleSheet.absoluteFillObject} />
-  </TouchableWithoutFeedback>
-        <View style={styles.modelcontainer}>
-          <BlurView
-          blurType={Platform.OS === 'ios' ? 'light' : 'dark'}
-            style={[
-             { position: 'absolute',
-              left: 0,
-              right: 0,
-              top: 0,
-              bottom: 0,
-              opacity: 1,
-            }
-            ]}
-            blurAmount={Platform.OS === 'ios' ? 50 : 10}
-            reducedTransparencyFallbackColor="none"
-          />
-          <View style={styles.modeltitleContainer}>
-               <View style={{width: '100%',alignSelf: 'center',alignItems: 'center',paddingBottom: 10}}>
-                 <View style={{height:5,backgroundColor: 'rgba(0, 0, 0, 0.57)',flexDirection: 'row',width: '15%',borderRadius: 10,top:-10}}/>
-              </View>
-            <View
-              style={{
-                flexDirection: 'column',
-              }}
-            >
-              <View style={styles.header}>
-                <View style={styles.optionHeader}>
-                  <View style={styles.checkboxImage}>
-                      <Image
-                      source={require('../../../assets/images/food_quan.png')}
-                      style={{ width: 24, height: 24 }}
-                    />
-                  </View>
-                  <Text allowFontScaling={false} style={styles.modelTextHeader}>{title}</Text>
+        ]}
+        blurType="dark"
+        blurAmount={3}
+        pointerEvents='none'
+        reducedTransparencyFallbackColor="white"
+      />
+      <Modal
+        animationType="slide"
+        visible={visible}
+        transparent
+        onRequestClose={onClose}
+      >
+        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+          {/* <View style={styles.overlay}> */}
+            <TouchableWithoutFeedback onPress={onClose}>
+              <View style={StyleSheet.absoluteFillObject} />
+            </TouchableWithoutFeedback>
+            <View style={styles.modelcontainer}>
+              <BlurView
+                blurType={Platform.OS === 'ios' ? 'light' : 'dark'}
+                style={[
+                  {
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                    opacity: 1,
+                  },
+                ]}
+                blurAmount={Platform.OS === 'ios' ? 5 : 10}
+                reducedTransparencyFallbackColor="none"
+              />
+              <View style={styles.modeltitleContainer}>
+                <View
+                  style={{
+                    width: '100%',
+                    alignSelf: 'center',
+                    alignItems: 'center',
+                    paddingBottom: 10,
+                  }}
+                >
+                  <View
+                    style={{
+                      height: 5,
+                      backgroundColor: 'rgba(0, 0, 0, 0.57)',
+                      flexDirection: 'row',
+                      width: '15%',
+                      borderRadius: 10,
+                      top: -10,
+                    }}
+                  />
                 </View>
-                <Text allowFontScaling={false} style={styles.orderandTotalEarings}>
-                  {subtitle}
-                </Text>
+                <View
+                  style={{
+                    flexDirection: 'column',
+                  }}
+                >
+                  <View style={styles.header}>
+                    <View style={styles.optionHeader}>
+                      <View style={styles.checkboxImage}>
+                        <Image
+                          source={require('../../../assets/images/food_quan.png')}
+                          style={{ width: 24, height: 24 }}
+                        />
+                      </View>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.modelTextHeader}
+                      >
+                        {title}
+                      </Text>
+                    </View>
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.orderandTotalEarings}
+                    >
+                      {subtitle}
+                    </Text>
+                  </View>
+                </View>
               </View>
-            </View>
-          </View>
-          <View
-            style={{
-              width: '100%',
-              minHeight: screenHeight * 0.2, 
-              maxHeight: screenHeight * 0.6,
-              paddingHorizontal: 10,
-              backgroundColor: (Platform.OS === 'ios' ? 'rgba(2, 6, 131, 0.26)' : 'none')
-            }}
-          >
-            <ScrollView  showsVerticalScrollIndicator={false} contentContainerStyle={{ }}>
-              {options.map((option, index) => {
-              
-                  return (
+              <View
+                style={{
+                  width: '100%',
+                  minHeight: screenHeight * 0.2,
+                  maxHeight: screenHeight * 0.6,
+                  paddingHorizontal: 10,
+                  backgroundColor:
+                    Platform.OS === 'ios' ? 'rgba(2, 6, 131, 0.26)' : 'none',
+                }}
+              >
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={{}}
+                >
+                  {options.map((option, index) => {
+                    return (
                       <View
                         style={{
                           paddingHorizontal: 10,
@@ -172,12 +210,16 @@ const handleApply = async () => {
                               }}
                             >
                               Available Units:{' '}
-                              <Text style={{ color: '#fff',
-                                fontSize: 17,
-                                fontWeight: 600,
-                                lineHeight: 18,
-                                letterSpacing: -0.28,
-                                fontFamily: 'Urbanist-SemiBold', }}>
+                              <Text
+                                style={{
+                                  color: '#fff',
+                                  fontSize: 17,
+                                  fontWeight: 600,
+                                  lineHeight: 18,
+                                  letterSpacing: -0.28,
+                                  fontFamily: 'Urbanist-SemiBold',
+                                }}
+                              >
                                 {maxUnits}
                               </Text>
                             </Text>
@@ -192,7 +234,9 @@ const handleApply = async () => {
                               {/* Minus Button */}
                               <TouchableOpacity
                                 disabled={count === 1}
-                                onPress={() => setCount(prev => Math.max(1, prev - 1))}
+                                onPress={() =>
+                                  setCount(prev => Math.max(1, prev - 1))
+                                }
                               >
                                 <Image
                                   source={
@@ -212,7 +256,7 @@ const handleApply = async () => {
                                   width: 30,
                                   textAlign: 'center',
                                   fontFamily: 'Urbanist-SemiBold',
-                                  fontWeight:600
+                                  fontWeight: 600,
                                 }}
                               >
                                 {count}
@@ -221,7 +265,9 @@ const handleApply = async () => {
                               {/* Plus Button */}
                               <TouchableOpacity
                                 disabled={count === maxUnits}
-                                onPress={() => setCount(prev => Math.min(maxUnits, prev + 1))}
+                                onPress={() =>
+                                  setCount(prev => Math.min(maxUnits, prev + 1))
+                                }
                               >
                                 <Image
                                   source={
@@ -237,25 +283,20 @@ const handleApply = async () => {
                         </View>
                       </View>
                     );
+                  })}
+                  <View style={styles.cardconstinerdivider} />
+                </ScrollView>
+              </View>
 
-              })}
-               <View style={styles.cardconstinerdivider} />
-            </ScrollView>
-    
-          </View>
-  
-             <PayButton
-            amount={Number(totalPrice.toFixed(2))}
-            label={ "Pay"}
-            onPress={handleApply}
-          />
+              <PayButton
+                amount={Number(totalPrice.toFixed(2))}
+                label={'Pay'}
+                onPress={handleApply}
+              />
+            </View>
+          {/* </View> */}
         </View>
-        
-
-      </View>
-
-      </View>
-    </Modal>
+      </Modal>
     </View>
   );
 };

@@ -136,7 +136,7 @@ const handleViewTransaction = () => {
       {/* <View style={styles.dashedLine} />
 
        <View style={styles.dashedLine1} /> */}
-    <View style={styles.cardconstinerdivider} />
+      <View style={styles.cardconstinerdivider} />
        
 
        {ispurchase && !isreviewadded ? (
@@ -146,7 +146,7 @@ const handleViewTransaction = () => {
             activeOpacity={0.7}
             onPress={handleViewTransaction}>
             <Text allowFontScaling={false} style={styles.btnText}>
-              View in Transactions
+              View in Transaction
             </Text>
           </TouchableOpacity>
 
@@ -184,20 +184,22 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        width: '100%',
+        width: '98%',
         height: (Platform.OS === 'ios' ? 2 : 1.5),
         borderStyle: 'dashed',
         borderBottomWidth: (Platform.OS === 'ios' ? 0.9 : 1),
         // backgroundColor: 'rgba(169, 211, 255, 0.08)',
         borderColor: (Platform.OS === 'ios' ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)' : '#4169B8'),
         marginVertical:6,
+        marginLeft:2
+
       },
   
   card: {
     backgroundColor: 'rgba(255,255,255,0.08)',
     borderRadius: 16,
     padding: 12,
-    //marginVertical: 4,
+    // marginVertical: 4,
     marginHorizontal: 8,
     //borderWidth: 1,
     //borderColor: 'rgba(255,255,255,0.1)',
