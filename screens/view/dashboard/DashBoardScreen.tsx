@@ -220,7 +220,6 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState<string>('Home');
   const screenWidth = Dimensions.get('window').width;
-  //const tabWidth = screenWidth / 5;
   const tabsname = ['Home', 'Search', 'Add', 'Bookmark', 'Profile'];
 
   const tabWidth = (screenWidth * 0.9) / tabsname.length;
@@ -1181,7 +1180,7 @@ const blurAmount = useDerivedValue(() =>
         
         <Animated.View
           style={[
-            styles.bottomTabContainer,
+            styles.bottomTabContainer,{position: 'absolute',bottom: 0},
             { transform: [{ translateY: bottomNaviationSlideupAnimation }] },
           ]}
           >
@@ -1207,7 +1206,7 @@ const blurAmount = useDerivedValue(() =>
               style={[
                 styles.bubble,
                 {
-                  width: 70,
+                  width: tabWidth - 6,
                   transform: [{ translateX: bubbleX }],
                 },
               ]}
@@ -1217,7 +1216,7 @@ const blurAmount = useDerivedValue(() =>
           {tabs.map(({ key, icon, activeIcon }) => (
             <TouchableOpacity
               key={key}
-              style={[styles.tabItem, { width: '18.34%' }]}
+              style={[styles.tabItem, { width: tabWidth }]}
               onPress={() => {
                 setIsNav(false);
                 navigation.setParams({ isNavigate: false });
