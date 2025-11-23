@@ -280,11 +280,11 @@ function App() {
   return (
     <StripeProvider publishableKey={Constant.PUBLIC_KEY}>
       
-      {/* <ImageBackground
+      <ImageBackground
         source={require('../unizy_mobile_reactnative/assets/images/bganimationscreen.png')}
         style={{ flex: 1, width: '100%', height: '100%'}}
         resizeMode="cover"
-      > */}
+      >
     <SafeAreaProvider>
       <StatusBar
         barStyle="light-content"
@@ -293,7 +293,7 @@ function App() {
       />
       <Navigation />
     </SafeAreaProvider>
-    {/* </ImageBackground> */}
+    </ImageBackground>
     </StripeProvider>
   );
 }

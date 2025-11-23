@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ImageSourcePropType,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import { SquircleView } from 'react-native-figma-squircle';
 
@@ -101,7 +102,7 @@ const ReviewDetailCard: React.FC<ReviewDetailCardProps> = ({
       </View>
     </View>
 
-   <View style={styles.dashedLine} />
+   {/* <View style={styles.dashedLine} /> */}
    
    <View style={styles.dashedLine1} />
 
@@ -169,12 +170,23 @@ const styles = StyleSheet.create({
   },
 
   dashedLine1: {
-    borderBottomWidth: 1,
-    borderColor: '#5b70abff',
-    borderStyle: 'dashed',
-    //paddingVertical: 10,
-    marginVertical:6,
+    // borderBottomWidth: 1,
+    // borderColor: '#5b70abff',
+    // borderStyle: 'dashed',
+    // //paddingVertical: 10,
+    // marginVertical:6,
+    // width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     width: '100%',
+    borderStyle: 'dashed',
+    borderBottomWidth: 1.5,
+    marginVertical:6,
+    backgroundColor: (Platform.OS === 'ios' ? 'rgba(2, 6, 131, 0.26)' : 'none'),
+    height: 1,
+    borderColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)'
     
   },
 

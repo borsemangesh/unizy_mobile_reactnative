@@ -309,10 +309,26 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   
       if (response.ok) {
         showToast(data?.message || 'Profile updated successfully', 'success');
-        navigation.replace('Dashboard', {
-          AddScreenBackactiveTab: 'Profile',
-          isNavigate: false,
-        });
+        setTimeout(() => {
+          // navigation.replace('Dashboard', {
+          //   AddScreenBackactiveTab: 'Profile',
+          //   isNavigate: false,
+          // });
+
+          navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: 'Dashboard',
+                params: {
+                  AddScreenBackactiveTab: 'Profile',
+                  isNavigate: false,
+                }
+              }
+            ],
+          });
+
+        }, 4500); 
       } else {
         showToast(data?.message || 'Failed to update profile.Please try again', 'error');
       }

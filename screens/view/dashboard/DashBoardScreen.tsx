@@ -1426,7 +1426,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     
     left: 1,
-    // right: 1,
+    right: 1,
     borderWidth: 0.5,
     borderColor: '#ffffff2e',
 

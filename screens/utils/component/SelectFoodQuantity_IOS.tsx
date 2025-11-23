@@ -184,6 +184,7 @@ const handleApply = async () => {
                         style={{
                           paddingHorizontal: 10,
                           marginTop: 10,
+                          marginBottom: 10,
                         }}
                         key={index}
                       >
@@ -284,7 +285,8 @@ const handleApply = async () => {
                       </View>
                     );
                   })}
-                  <View style={styles.cardconstinerdivider} />
+                 
+                <View style={styles.cardconstinerdivider} />
                 </ScrollView>
               </View>
 
@@ -315,6 +317,9 @@ tickImage:{
     width: '95%',
     borderStyle: 'dashed',
     borderBottomWidth: 1,
+    // paddingBottom: 1,
+    // paddingTop: 1,
+    marginHorizontal: 10,
     backgroundColor: (Platform.OS === 'ios' ? 'rgba(2, 6, 131, 0.26)' : 'none'),
     height: 1,
     borderColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)'

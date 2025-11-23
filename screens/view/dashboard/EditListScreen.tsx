@@ -1621,9 +1621,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   deleteIcon: {
-    width: 44,
-    height: 44,
-    resizeMode: 'center',
+    width: 24,
+    height: 24,
+    resizeMode: 'contain',
   },
   threedots: {
     width: 20,
