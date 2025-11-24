@@ -304,7 +304,18 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
           // --- Basic Fields ---
           initialValues.title = { value: data.title || '', alias_name: 'title' };
-          initialValues.price = { value: data.originalprice || '', alias_name: 'price' };
+          //initialValues.price = { value: data.originalprice || '', alias_name: 'price' };
+
+
+
+          initialValues.price = {
+            value:
+              (data?.category_id === 2 || data?.category_id === 5)
+                ? (Number(data?.originalprice) / Number(data?.hours || 1))   // divide price by hours
+                : data?.originalprice || '',
+            alias_name: 'price',
+          };
+
           initialValues.description = {
             value: data.description || '',
             alias_name: 'description',
@@ -313,40 +324,15 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
           value: data.remaining_quantity ?? '',
           alias_name: 'quantity',
         };
+        initialValues.service_duration = {
+          value: data.hours ?? '',
+          alias_name:'service_duration'
+        },
+
           initialValues.isfeatured = {
             value: !!data.isfeatured,
             alias_name: 'isfeatured',
           };
-
-          // if (Array.isArray(data.params)) {
-          //   data.params.forEach((param: any) => {
-          //     const fieldType = param.field_type?.toLowerCase();
-
-          //     const baseField = {
-          //       alias_name: param.alias_name || null,
-          //     };
-
-          //     if (fieldType === 'dropdown') {
-          //       if (Array.isArray(param.param_value)) {
-          //         initialValues[param.id] = {
-          //           ...baseField,
-          //           value: param.param_value.map((v: any) => Number(v)),
-          //         };
-          //       } else {
-          //         initialValues[param.id] = {
-          //           ...baseField,
-          //           value: param.param_value ? Number(param.param_value) : null,
-          //         };
-          //       }
-          //     } else {
-          //       // For text / boolean / etc.
-          //       initialValues[param.id] = {
-          //         ...baseField,
-          //         value: param.param_value || '',
-          //       };
-          //     }
-          //   });
-          // }
 
           if (Array.isArray(data.params)) {
           data.params.forEach((param: any) => {
@@ -359,7 +345,11 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             let finalValue = null;
             if (param.alias_name === "quantity") {
               finalValue = data?.remaining_quantity ?? "";
-            } else {
+            }
+            else if(param.alias_name === "service_duration"){
+              finalValue = data?.hours ?? "";
+            }
+             else {
               finalValue = param.param_value ?? "";
             }
 
@@ -813,12 +803,6 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         const { param } = field;
         const { field_name, keyboardtype, alias_name } = param;
         console.log('PARMSASDF: ', param);
-
-        // const rawValue =
-        //   formValues[param.id]?.value ??
-        //   formValues[alias_name]?.value ??
-        //   formValues[field_name]?.value ??
-        //   '';
 
         const rawValue =
         formValues[param.id]?.value ??

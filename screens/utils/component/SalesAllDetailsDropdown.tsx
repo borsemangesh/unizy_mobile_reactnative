@@ -423,15 +423,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
+     borderBottomWidth: 1,
+    borderColor: '#52577cff',
     borderStyle: 'dashed',
-    borderBottomWidth: 1,
-    backgroundColor: Platform.OS === 'ios' ? 'rgba(67, 170, 234, 0.09)' : 'none',
     height: 2,
     marginTop: 10,
     marginBottom: 10,
-    borderColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
+    
     },
   initialsCircle: {
     backgroundColor: 'rgba(63, 110, 251, 0.43)',

@@ -26,7 +26,7 @@ import { NewCustomToastContainer } from '../../utils/component/NewCustomToastMan
 import { useFocusEffect } from '@react-navigation/native';
 import { BlurView } from '@react-native-community/blur';
 import DeviceInfo from 'react-native-device-info';
-
+import Loader from '../../utils/component/Loader';
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImg = require('../../../assets/images/user.jpg'); 
@@ -71,6 +71,8 @@ const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
 const [expanded, setExpanded] = useState(false);
 const animatedHeight = useRef(new Animated.Value(0)).current;
  const [showConfirm, setShowConfirm] = useState(false);
+ const [loading, setLoading] = useState(true);
+
 
 useEffect(() => {
   if (expanded) {
@@ -86,13 +88,11 @@ useEffect(() => {
 useEffect(() => {
     const fetchUserProfile = async () => {
       try {
+        setLoading(true);
         const token = await AsyncStorage.getItem('userToken');
         const userId = await AsyncStorage.getItem('userId');
 
-
         console.log("profile card page.... ",userId);
-        
-
 
         if (!token || !userId) {
           console.warn('Missing token or user ID in AsyncStorage');
@@ -117,7 +117,6 @@ useEffect(() => {
         return;
       }
 
-      // 👇 Case 2: backend wraps statusCode in JSON body
       if (data.statusCode === 401 || data.statusCode === 403) {
         handleForceLogout();
         return;
@@ -137,16 +136,19 @@ useEffect(() => {
             university_name: user.university_name ?? null,
           });
           
-          
         } else {
           console.warn('Failed to fetch user profile:', data?.message || response.status);
         }
       } catch (error) {
         console.error('Error fetching user profile:', error);
       }
+       finally {
+      setLoading(false);
+    }
     };
     const handleForceLogout = async () => {
       console.log('User inactive or unauthorized — logging out');
+      setLoading(false);
       await AsyncStorage.clear();
       navigation.reset({
         index: 0,
@@ -291,15 +293,16 @@ const clickBack = () =>{
   return (f + l) || '?';
 };
 
+if (loading) {
+  return (
+    <View style={{ flex: 1 }}>
+      <Loader />
+    </View>
+  );
+}
+
 return (
   <View style={styles.fullScreenContainer}>
-    {/* <View style={[styles.header]}>
-      <View style={styles.headerRow}>
-        <Text allowFontScaling={false} style={styles.unizyText}>
-          Profile
-        </Text>
-      </View>
-    </View> */}
 
     <View
       style={{
@@ -324,9 +327,7 @@ return (
           )}
         </View>
 
-        <View style={{
-               }}>
-          {/* Name + Edit on top row */}
+        <View style={{ }}>
           <View
             style={{
               flexDirection: 'row',
@@ -343,7 +344,6 @@ return (
             </Text>
           </View>
 
-          {/* Details below name */}
           <View style={{ flexDirection: 'column', gap: 6, marginTop: 4 }}>
             <View
               style={{ flexDirection: 'row', alignItems: 'center', gap: 8}}
@@ -352,9 +352,6 @@ return (
                 source={require('../../../assets/images/buildings.png')}
                 style={{ width: 16, height: 16 }}
               />
-              {/* <Text allowFontScaling={false} style={styles.userSub}>
-                {userMeta?.university_name || 'University Name'}
-              </Text> */}
               <Text allowFontScaling={false} style={styles.userSub}>
                 {userMeta?.university_name
                   ? userMeta.university_name.length > 25

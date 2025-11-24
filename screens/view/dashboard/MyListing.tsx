@@ -150,23 +150,31 @@ const MyListing = ({ navigation }: MyListingProps) => {
 
 
 
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     if (isInitialMount.current) {
+  //       isInitialMount.current = false;
+  //       setPage(1);
+  //       displayListOfProduct(selectedCategory?.id ?? null, 1, true);
+  //     } else {
+  //       setPage(1);
+  //       displayListOfProduct(selectedCategory?.id ?? null, 1, false);
+  //     }
+
+  //     return () => { };
+  //   }, []),
+  // );
+
   useFocusEffect(
-    useCallback(() => {
-      // Only show loader on first mount
-      if (isInitialMount.current) {
-        isInitialMount.current = false;
-        setPage(1);
-        displayListOfProduct(selectedCategory?.id ?? null, 1, true);
-      } else {
-        // On subsequent focuses, reload without showing loader
-        setPage(1);
-        displayListOfProduct(selectedCategory?.id ?? null, 1, false);
-      }
+  useCallback(() => {
+    console.log("SCREEN FOCUSED — reloading category:", selectedCategory);
 
-      return () => { };
-    }, []),
-  );
+    setPage(1);
+    displayListOfProduct(selectedCategory?.id ?? null, 1, false);
 
+    return () => {};
+  }, [selectedCategory])
+);
   useEffect(() => {
     const loadCategories = async () => {
       const stored = await AsyncStorage.getItem('categories');
@@ -183,10 +191,10 @@ const MyListing = ({ navigation }: MyListingProps) => {
     loadCategories();
   }, []);
 
-  useEffect(() => {
-    setPage(1);
-    displayListOfProduct(selectedCategory?.id ?? null, 1, false);
-  }, [selectedCategory]);
+  // useEffect(() => {
+  //   setPage(1);
+  //   displayListOfProduct(selectedCategory?.id ?? null, 1, false);
+  // }, [selectedCategory]);
 
 
   useEffect(() => {
