@@ -19,6 +19,7 @@ import { MAIN_URL } from '../../utils/APIConstant';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import SalesAllDetailsDropdown from '../../utils/component/SalesAllDetailsDropdown';
 import SalesAllDetailsDropdown_IOS from '../../utils/component/SalesAllDetailsDropdown_IOS';
+import Loader from '../../utils/component/Loader';
 
 type TransactionPropos = {
   navigation: any;
@@ -427,7 +428,11 @@ export default function TransactionHistoryScreen(
         }}
         showsVerticalScrollIndicator={false}
       >
-        {transactions.length === 0 ? (
+        {loading ? (
+          <View style={styles.loaderWrapper}>
+            <Loader containerStyle={styles.loaderContainer} />
+          </View>
+        ) : transactions.length === 0 ? (
           <View style={styles.emptyWrapper}>
             <View style={styles.emptyContainer}>
               <Image
@@ -847,6 +852,18 @@ export default function TransactionHistoryScreen(
 }
 
 const styles = StyleSheet.create({
+  loaderWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: Platform.OS === 'ios' ? 570 : 300,
+    paddingVertical: 40,
+  },
+  loaderContainer: {
+    width: 100,
+    height: 100,
+  },
   emptyWrapper: {
     flex: 1,
     justifyContent: 'center',
