@@ -776,7 +776,13 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
         {!loading && (
           <View style={styles.bottomButtonContainer}>
           <Button
-            title={buttonLoading ? 'Loading...' : 'Edit Bank Details'}
+            title={
+              buttonLoading
+                ? 'Loading...'
+                : data?.stripeAccount?.isboardcomplete
+                ? 'Edit Bank Details'
+                : 'Add Bank Details'
+            }
             onPress={buttonLoading ? () => {} : handleAddBank}
           />
           </View>
@@ -951,10 +957,10 @@ const styles = StyleSheet.create({
   status: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '500',
     letterSpacing: -0.28,
     lineHeight: 16,
-    fontFamily: 'Urbanist-SemiBold',
+    fontFamily: 'Urbanist-Medium',
   },
   carddivider: {
     display: 'flex',
