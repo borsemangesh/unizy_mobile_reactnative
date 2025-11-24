@@ -943,7 +943,7 @@ const blurAmount = useDerivedValue(() =>
           <View
             style={[
               styles.header,
-              { paddingTop: Platform.OS === 'ios' ? '13.7%': 40 },
+              { paddingTop: Platform.OS === 'ios' ? '13.7%' : 40 },
             ]}
           >
             <Animated.View
@@ -962,7 +962,9 @@ const blurAmount = useDerivedValue(() =>
                 </View>
               </TouchableOpacity>
 
-              <Text allowFontScaling={false} style={styles.unizyText}>UniZy</Text>
+              <Text allowFontScaling={false} style={styles.unizyText}>
+                UniZy
+              </Text>
 
               <TouchableOpacity onPress={clickbookmark}>
                 <View style={styles.MylistingsBackground}>
@@ -986,14 +988,18 @@ const blurAmount = useDerivedValue(() =>
                 value={search}
                 allowFontScaling={false}
                 onFocus={() => {
-                  if(Platform.OS === 'ios'){
-                    navigation.replace('SearchPage',{ animation: 'none' ,from: 'Dashboard'})
+                  if (Platform.OS === 'ios') {
+                    navigation.replace('SearchPage', {
+                      animation: 'none',
+                      from: 'Dashboard',
+                    });
                   } else {
-                    navigation.navigate('SearchPage',{ animation: 'none' ,from: 'Dashboard'})
+                    navigation.navigate('SearchPage', {
+                      animation: 'none',
+                      from: 'Dashboard',
+                    });
                   }
-                }
-                 
-              }
+                }}
               />
             </Animated.View>
           </View>
@@ -1002,150 +1008,178 @@ const blurAmount = useDerivedValue(() =>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} 
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
         >
+          {activeTab === 'Search' ||
+          activeTab === 'Profile' ||
+          activeTab === 'Bookmark' ? (
+            <View style={{ flex: 1 }}>
+              <StatusBar
+                translucent
+                backgroundColor="transparent"
+                barStyle="light-content"
+              />
 
-{activeTab === 'Search' || activeTab === 'Profile'  ||  activeTab === 'Bookmark' ? (
-  <View style={{ flex: 1 }}>
-    <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
+              {/* 🔹 Animated Blur Header */}
+              <AnimatedReanimated.View
+                style={[
+                  {
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: Platform.OS === 'ios' ? 100 : 120,
+                    zIndex: 0,
+                  },
+                  animatedBlurStyle,
+                ]}
+                pointerEvents="none"
+              >
+                <MaskedView
+                  style={StyleSheet.absoluteFill}
+                  maskElement={
+                    <LinearGradient
+                      colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                      locations={[0, 0.8]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 0, y: 1 }}
+                      style={StyleSheet.absoluteFill}
+                    />
+                  }
+                >
+                  <BlurView
+                    style={StyleSheet.absoluteFill}
+                    blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+                    blurAmount={Platform.OS === 'ios' ? 10 : 45}
+                    reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+                  />
+                  <LinearGradient
+                    colors={[
+                      'rgba(255,255,255,0.45)',
+                      'rgba(255,255,255,0.02)',
+                      'rgba(255,255,255,0.02)',
+                    ]}
+                    style={StyleSheet.absoluteFill}
+                  />
+                </MaskedView>
+              </AnimatedReanimated.View>
 
-    {/* 🔹 Animated Blur Header */}
-    <AnimatedReanimated.View
-      style={[
-        {
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: Platform.OS === 'ios' ? 100 : 120,
-          zIndex: 0,
-        },
-        animatedBlurStyle,
-      ]}
-      pointerEvents="none"
-    >
-      <MaskedView
-        style={StyleSheet.absoluteFill}
-        maskElement={
-          <LinearGradient
-            colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
-            locations={[0, 0.8]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }}
-            style={StyleSheet.absoluteFill}
-          />
-        }
-      >
-        <BlurView
-          style={StyleSheet.absoluteFill}
-          blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
-          blurAmount={Platform.OS === 'ios' ? 10 : 45}
-          reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
-        />
-        <LinearGradient
-          colors={[
-            'rgba(255,255,255,0.45)',
-            'rgba(255,255,255,0.02)',
-            'rgba(255,255,255,0.02)',
-          ]}
-          style={StyleSheet.absoluteFill}
-        />
-      </MaskedView>
-    </AnimatedReanimated.View>
-
-    {/* 🔹 Dynamic Header Title */}
-    <View
-      style={{
-        position: 'absolute',
-        top: Platform.OS === 'ios' ? 70 : 60,
-        width: '100%',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: 16,
-        zIndex: 0,
-      }}
-    >
-      <Text
-        allowFontScaling={false}
-        style={{
-          color: '#fff',
-          fontSize: 20,
-          fontWeight: '600',
-          fontFamily: 'Urbanist-SemiBold',
-        }}
-      >
-        {/* {activeTab === 'Search' ? 'Transaction History' : 'Profile'} */}
-          {activeTab === 'Search' ? (
-          'Transaction History'
-          ) : activeTab === 'Profile' ? (
-            'Profile'
-          ) : activeTab === 'Bookmark' ? (
-          'Messages'
-          ) : null}
+              {/* 🔹 Dynamic Header Title */}
+              
+              <View
+                style={{
+                  position: 'absolute',
+                  top: Platform.OS === 'ios' ? 70 : 60,
+                  width: '100%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  paddingHorizontal: 16,
+                  zIndex: 0,
+                }}
+              >
+                <Text
+                  allowFontScaling={false}
+                  style={{
+                    color: '#fff',
+                    fontSize: 20,
+                    fontWeight: '600',
+                    fontFamily: 'Urbanist-SemiBold',
+                  }}
+                >
+                  {/* {activeTab === 'Search' ? 'Transaction History' : 'Profile'} */}
+                  {activeTab === 'Search'
+                    ? 'Transaction History'
+                    : activeTab === 'Profile'
+                    ? 'Profile'
+                    : activeTab === 'Bookmark'
+                    ? 'Messages'
+                    : null}
                 </Text>
               </View>
 
-    {/* 🔹 Scroll section */}
-    <AnimatedReanimated.ScrollView
-      scrollEventThrottle={16}
-      onScroll={scrollHandler}
-      style={{
-        flex: 1,
-        paddingTop: Platform.OS === 'ios' ? 126 : 120,
-      }}
-      showsVerticalScrollIndicator={false}
-    >
-     {activeTab === 'Search' ? (
-  <SearchScreenContent navigation={navigation} />
-) : activeTab === 'Profile' ? (
-  <ProfileScreenContent navigation={navigation} />
-) : activeTab === 'Bookmark' ? (
-  <BookmarkScreenContent navigation={navigation} />
-) : null}
-    </AnimatedReanimated.ScrollView>
-  </View>
-) : (
-  // other tabs (Home, Add, etc)
-  <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-    {renderActiveTabContent()}
-  </ScrollView>
-)}
-
-
+              {/* 🔹 Scroll section */}
+              <AnimatedReanimated.ScrollView
+                scrollEventThrottle={16}
+                onScroll={scrollHandler}
+                style={{
+                  flex: 1,
+                  paddingTop: Platform.OS === 'ios' ? 126 : 120,
+                }}
+                showsVerticalScrollIndicator={false}
+              >
+                {activeTab === 'Search' ? (
+                  <SearchScreenContent navigation={navigation} />
+                ) : activeTab === 'Profile' ? (
+                  <ProfileScreenContent navigation={navigation} />
+                ) : activeTab === 'Bookmark' ? (
+                  <BookmarkScreenContent navigation={navigation} />
+                ) : null}
+              </AnimatedReanimated.ScrollView>
+            </View>
+          ) : (
+            // other tabs (Home, Add, etc)
+            <ScrollView
+              style={{ flex: 1 }}
+              showsVerticalScrollIndicator={false}
+            >
+              {renderActiveTabContent()}
+            </ScrollView>
+          )}
         </KeyboardAvoidingView>
-        
+
+
         <Animated.View
           style={[
-            styles.bottomTabContainer,{position: 'absolute',bottom: 0},
+            styles.bottomTabContainer,
+            { position: 'absolute', bottom: 0 },
             { transform: [{ translateY: bottomNaviationSlideupAnimation }] },
           ]}
-          >
-        
-            {Platform.OS === 'ios' ? (
-              
-              <View style={[StyleSheet.absoluteFill, { borderRadius: 25, backgroundColor: 'transparent'}]}>
+        >
+          {Platform.OS === 'ios' ? (
+            <View
+              style={[
+                StyleSheet.absoluteFill,
+                { borderRadius: 25, backgroundColor: 'transparent' },
+              ]}
+            >
               <BlurView
-                style={[StyleSheet.absoluteFill, { borderRadius: 25, backgroundColor: 'transparent',overflow: 'hidden'}]}
-                blurType='light'
+                style={[
+                  StyleSheet.absoluteFill,
+                  {
+                    borderRadius: 25,
+                    backgroundColor: 'transparent',
+                    overflow: 'hidden',
+                  },
+                ]}
+                blurType="light"
                 blurAmount={1.3}
                 reducedTransparencyFallbackColor="rgba(15, 21 ,131,0.8)"
                 overlayColor="rgba(15, 21 ,131,0.8)"
               >
-                <View style={{opacity:(Platform.OS === 'ios' ?0.4 :0), backgroundColor: 'rgba(0, 3, 65, 0.98)', width: '100%', height: '100%',borderRadius: 25,}}></View>
-                </BlurView>
+                <View
+                  style={{
+                    opacity: Platform.OS === 'ios' ? 0.4 : 0,
+                    backgroundColor: 'rgba(0, 3, 65, 0.98)',
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: 25,
+                  }}
+                ></View>
+              </BlurView>
             </View>
-          ):(<></>)}
-          
-          
-          <View style={[{ height: 48, }]}>
-           
-          
+          ) : (
+            <>
+            
+            </>
+          )}
+
+          <View style={[{ height: 48 }]}>
             <Animated.View
               style={[
                 styles.bubble,
                 {
-                  width: tabWidth - 6,
+                  width: tabWidth ,
                   transform: [{ translateX: bubbleX }],
                 },
               ]}
@@ -1164,14 +1198,13 @@ const blurAmount = useDerivedValue(() =>
             >
               <View style={styles.iconWrapper}>
                 <Image
-                  source={activeTab === key ? activeIcon : icon} 
+                  source={activeTab === key ? activeIcon : icon}
                   style={styles.tabIcon}
                 />
               </View>
             </TouchableOpacity>
           ))}
         </Animated.View>
-        
       </View>
       <NewCustomToastContainer />
     </ImageBackground>
@@ -1300,14 +1333,12 @@ const styles = StyleSheet.create({
     color: '#fff',
     width: '90%',
     height: 40,
-    
   },
 
   bottomTabContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    // height: '6.5%',
-    //marginBottom: 20,
+    width: '91.6%',
     marginBottom: Platform.OS === 'ios' ? 30 : 30,    
     borderRadius: 50,
     alignSelf: 'center',

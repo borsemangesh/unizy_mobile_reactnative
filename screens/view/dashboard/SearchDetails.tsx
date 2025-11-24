@@ -725,7 +725,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
           onScroll={scrollHandler}
           contentContainerStyle={[
             styles.scrollContainer,
-            { paddingBottom: Platform.OS === 'ios' ? 90 : height * 0.07 },
+            { paddingBottom: Platform.OS === 'ios' ? 75 : height * 0.07 },
           ]}
         >
           <View style={{ marginTop: 12 }}>

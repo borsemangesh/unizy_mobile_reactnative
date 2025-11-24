@@ -104,7 +104,8 @@ const ReviewDetailCard: React.FC<ReviewDetailCardProps> = ({
 
    {/* <View style={styles.dashedLine} /> */}
    
-   <View style={styles.dashedLine1} />
+   {/* <View style={styles.dashedLine1} /> */}
+   <View style={styles.cardconstinerdivider} />
 
   <View style={styles.bottomContent}>
   
@@ -139,6 +140,20 @@ const ReviewDetailCard: React.FC<ReviewDetailCardProps> = ({
 export default ReviewDetailCard;
 
 const styles = StyleSheet.create({
+  cardconstinerdivider: {
+
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    height: (Platform.OS === 'ios' ? 2 : 1.5),
+    borderStyle: 'dashed',
+    borderBottomWidth: (Platform.OS === 'ios' ? 0.9 : 1),
+    // backgroundColor: 'rgba(169, 211, 255, 0.08)',
+    borderColor: (Platform.OS === 'ios' ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)' : '#4169B8'),
+
+  },
 
     initialsCircle:{
     backgroundColor: '#8390D4',
@@ -176,17 +191,17 @@ const styles = StyleSheet.create({
     // //paddingVertical: 10,
     // marginVertical:6,
     // width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    borderStyle: 'dashed',
-    borderBottomWidth: 1.5,
-    marginVertical:6,
-    backgroundColor: (Platform.OS === 'ios' ? 'rgba(2, 6, 131, 0.26)' : 'none'),
-    height: 1,
-    borderColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)'
+    // display: 'flex',
+    // flexDirection: 'row',
+    // justifyContent: 'space-between',
+    // alignItems: 'center',
+    // width: '100%',
+    // borderStyle: 'dashed',
+    // borderBottomWidth: 1.5,
+    // marginVertical:6,
+    // backgroundColor: (Platform.OS === 'ios' ? 'rgba(2, 6, 131, 0.26)' : 'none'),
+    // height: 1,
+    // borderColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)'
     
   },
 
@@ -215,11 +230,12 @@ bottomContent: {
     borderWidth: 1,
     marginHorizontal:8,
     borderColor: 'rgba(255,255,255,0.1)',
+    gap: 10
   },
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    paddingBottom:6
+    // paddingBottom:6
   },
   image: {
     width: 70,
