@@ -81,6 +81,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
     max_cappund: string | null;
     feature_fee: string | null
     max_feature_cap: | null,
+    accommodation_amount: | null
   }
 
   interface UserMeta {
@@ -301,18 +302,20 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
       const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
       const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
 
-      if (isFeatured) {
-        navigation.navigate('PaymentScreen', {
-          amount: diff1,
-          feature_id: 1,
-          nav: 'add',
-          onSuccess: async () => {
-            await listProduct();
-          },
-        });
-      } else {
-        await listProduct();
-      }
+      await listProduct();
+
+      // if (isFeatured) {
+      //   navigation.navigate('PaymentScreen', {
+      //     amount: diff1,
+      //     feature_id: 1,
+      //     nav: 'add',
+      //     onSuccess: async () => {
+      //       await listProduct();
+      //     },
+      //   });
+      // } else {
+      //   await listProduct();
+      // }
     } catch (e) {
       console.log('Error parsing storedForm:', e);
     }
@@ -508,6 +511,8 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
     return (f + l) || '?';
   };
 
+
+  const accomodation_amount = parseFloat(userMeta?.category?.accommodation_amount ?? '0');
 
   const raw = getValueByAlias(storedForm, 'price') ?? '0';
   const priceValue = parseFloat(String(raw)) || 0;
@@ -973,8 +978,8 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
               const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
               const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
 
-              if (isFeatured) {
-                return `List for £${diff1.toFixed(2)}`;
+              if (isFeatured && categoryid===Number(4)) {
+                return `List for £${accomodation_amount.toFixed(2)}`
               }
               return 'List';
             } catch (e) {

@@ -724,8 +724,16 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
           showsVerticalScrollIndicator={false}
           onScroll={scrollHandler}
           contentContainerStyle={[
-            styles.scrollContainer,
-            { paddingBottom: Platform.OS === 'ios' ? 75 : height * 0.07 },
+            // styles.scrollContainer,
+            // { paddingBottom: Platform.OS === 'ios' ? 75 : height * 0.07 },
+                styles.scrollContainer,
+                {
+                  paddingBottom:
+                    detail?.category?.id === 4
+                      ? (Platform.OS === 'ios' ? 20 : height * 0.01) // when id = 4
+                      : (Platform.OS === 'ios' ? 75 : height * 0.07), // default
+                },
+
           ]}
         >
           <View style={{ marginTop: 12 }}>
@@ -1000,20 +1008,32 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
           </View>
         </AnimatedReanimated.ScrollView>
 
+       
         {/* <PayButton
-          amount={Number(detail?.price).toFixed(2)}
-          label="Pay"
-          onPress={handlePay}
-      />  */}
-        <PayButton
           amount={
             detail?.category?.name === 'Food'
               ? undefined
               : Number(detail?.price)
           }
           label={detail?.category?.name === 'Food' ? 'Select Quantity' : 'Pay'}
-          onPress={() => handlePay()} // ALWAYS call without amount
+          onPress={() => handlePay()} 
+        /> */}
+
+        {detail?.category?.id !== 4 && (
+        <PayButton
+          amount={
+            detail?.category?.name === 'Food'
+              ? undefined
+              : Number(detail?.price)
+          }
+          label={
+            detail?.category?.name === 'Food'
+              ? 'Select Quantity'
+              : 'Pay'
+          }
+          onPress={() => handlePay()}
         />
+      )}
 
         {Platform.OS === 'ios' ? (
           <SelectFoodQuantity_IOS
