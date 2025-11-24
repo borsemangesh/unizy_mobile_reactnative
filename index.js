@@ -8,6 +8,7 @@ import messaging from '@react-native-firebase/messaging';
 import { name as appName } from './app.json';
 import notifee, { EventType } from '@notifee/react-native';
 import { navigate } from './screens/view/NavigationService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // 1️⃣ Background FCM handler
 messaging().setBackgroundMessageHandler(async remoteMessage => {
@@ -106,6 +107,32 @@ notifee.onBackgroundEvent(async ({ type, detail }) => {
         currentUserIdList = Number(parseValue(notificationData.from)) || 0;
       }
 
+      // Extract conversation SID (CRITICAL for fast loading)
+      const conversationSid = notificationData?.conversationSid || 
+                             notificationData?.twilio_conversation_sid || 
+                             notificationData?.sid || 
+                             notificationData?.conversation_sid || 
+                             '';
+
+      // Extract source
+      const source = notificationData?.source ? parseValue(notificationData.source) : 'chatList';
+
+      // Extract sellerData if source is sellerPage
+      let sellerData = undefined;
+      if (source === 'sellerPage' && notificationData?.sellerData) {
+        const parsedSellerData = parseValue(notificationData.sellerData);
+        if (parsedSellerData && typeof parsedSellerData === 'object') {
+          sellerData = {
+            featureId: parsedSellerData.featureId || parsedSellerData.id || 0,
+            firstname: parsedSellerData.firstname || '',
+            lastname: parsedSellerData.lastname || '',
+            profile: parsedSellerData.profile || null,
+            universityName: parsedSellerData.universityName || parsedSellerData.university || { id: 0, name: '' },
+            id: parsedSellerData.id || 0,
+          };
+        }
+      }
+
       if (!userConvName) {
         console.error("❌ Missing userConvName in notification data");
         return;
@@ -121,14 +148,27 @@ notifee.onBackgroundEvent(async ({ type, detail }) => {
         members,
         userConvName,
         currentUserIdList,
-        source: notificationData?.source ? parseValue(notificationData.source) : 'chatList',
+        conversationSid, // ✅ ADDED - Critical for fast conversation loading
+        source,
+        ...(sellerData && { sellerData }), // ✅ ADDED - Only include if exists
       };
 
       console.log('📱 Final navigation params:', JSON.stringify(params, null, 2));
 
+      // ✅ CRITICAL FIX: Store in AsyncStorage for quit state
+      // This ensures navigation happens after app initialization
+      // ✅ ALSO: Clear any previous completion flag (new notification = new navigation)
+      await AsyncStorage.removeItem('notificationNavigationCompleted');
+      await AsyncStorage.setItem('pendingNotificationNavigation', JSON.stringify({
+        screen: 'MessagesIndividualScreen',
+        params: params,
+        timestamp: Date.now(),
+      }));
+
+      // Try immediate navigation (works if app is in background)
       setTimeout(() => {
         navigate("MessagesIndividualScreen", params);
-      }, 1500);
+      }, 2000); // Increased delay for quit state
     } catch (error) {
       console.error("❌ Error parsing notification data:", error);
     }

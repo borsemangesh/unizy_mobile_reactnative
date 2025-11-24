@@ -19,6 +19,7 @@ import {
   NativeScrollEvent,
   ActivityIndicator,
   StatusBar,
+  AppState,
 } from 'react-native';
 
 
@@ -237,6 +238,186 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
 
 const scrollViewRef = useRef<ScrollView>(null);
 const [isLoading, setIsLoading] = useState(true);
+
+  // ✅ CRITICAL: Check for pending notification navigation
+  const navigationInProgress = useRef(false); // Prevent duplicate navigation
+  const checkTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]); // Track all timers to clear them
+  
+  const checkPendingNavigation = React.useCallback(async () => {
+    try {
+      // ✅ CRITICAL: Check if navigation was already completed (persisted in AsyncStorage)
+      const navCompleted = await AsyncStorage.getItem('notificationNavigationCompleted');
+      if (navCompleted === 'true') {
+        console.log('✅ Dashboard: Navigation already completed (from AsyncStorage), stopping all checks');
+        return;
+      }
+
+      // Prevent duplicate navigation calls
+      if (navigationInProgress.current) {
+        console.log('⏸️ Dashboard: Navigation already in progress, skipping...');
+        return;
+      }
+
+      console.log('🔍 Dashboard: Checking for pending notification navigation...');
+      const pendingNav = await AsyncStorage.getItem('pendingNotificationNavigation');
+      if (pendingNav) {
+        console.log('✅ Dashboard: Found pending navigation:', pendingNav);
+        const { screen, params, timestamp } = JSON.parse(pendingNav);
+        
+        // Only navigate if notification is recent (within last 5 minutes)
+        const isRecent = Date.now() - timestamp < 5 * 60 * 1000;
+        console.log(`📊 Dashboard: Navigation isRecent: ${isRecent}, screen: ${screen}, age: ${Date.now() - timestamp}ms`);
+        
+        if (isRecent && screen === 'MessagesIndividualScreen') {
+          // Mark navigation as in progress
+          navigationInProgress.current = true;
+          
+          // ✅ CRITICAL: Clear pending navigation IMMEDIATELY before navigation
+          await AsyncStorage.removeItem('pendingNotificationNavigation');
+          console.log('🧹 Dashboard: Cleared pending navigation from AsyncStorage');
+          
+          // ✅ CRITICAL: Mark as completed in AsyncStorage BEFORE navigation (persists across remounts)
+          await AsyncStorage.setItem('notificationNavigationCompleted', 'true');
+          console.log('✅ Dashboard: Marked navigation as completed in AsyncStorage');
+          
+          // ✅ CRITICAL: Stop all polling and timers
+          checkTimersRef.current.forEach(timer => clearTimeout(timer));
+          checkTimersRef.current = [];
+          
+          // Wait for Dashboard to fully render, then navigate
+          setTimeout(() => {
+            console.log('🚀 Dashboard: Navigating to MessagesIndividualScreen with params:', JSON.stringify(params, null, 2));
+            try {
+              // ✅ FIX: Since we're already on Dashboard, just use navigate (not reset)
+              // This ensures proper stack: Dashboard -> Chat Screen
+              // Back button will correctly go back to Dashboard
+              navigation.navigate(screen, params);
+              console.log('✅ Dashboard: Navigation navigate successful (using navigation prop)');
+              
+              navigationInProgress.current = false;
+              console.log('✅ Dashboard: Navigation completed, all future checks disabled');
+            } catch (navError) {
+              console.error('❌ Dashboard: Navigation error with navigation prop:', navError);
+              navigationInProgress.current = false;
+              
+              // Fallback: Try using navigationRef directly
+              try {
+                const { navigationRef } = require('../NavigationService');
+                if (navigationRef.isReady()) {
+                  navigationRef.navigate(screen, params);
+                  console.log('✅ Dashboard: Navigation navigate successful (using navigationRef)');
+                  navigationInProgress.current = false;
+                } else {
+                  console.error('❌ Dashboard: navigationRef is not ready');
+                  navigationInProgress.current = false;
+                }
+              } catch (refError) {
+                console.error('❌ Dashboard: Navigation error with navigationRef:', refError);
+                navigationInProgress.current = false;
+              }
+            }
+          }, 800); // Reduced delay for faster navigation
+        } else {
+          // Clear old pending navigation
+          await AsyncStorage.removeItem('pendingNotificationNavigation');
+          console.log('🧹 Dashboard: Cleared old pending navigation');
+        }
+      } else {
+        console.log('ℹ️ Dashboard: No pending navigation found');
+      }
+    } catch (error) {
+      console.error('❌ Dashboard: Error checking pending navigation:', error);
+      navigationInProgress.current = false;
+    }
+  }, [navigation]);
+
+  // Check on mount (when Dashboard first loads)
+  useEffect(() => {
+    console.log('🏠 Dashboard: Component mounted, starting navigation checks...');
+    
+    // Check IMMEDIATELY on mount (checkPendingNavigation will check AsyncStorage flag)
+    checkPendingNavigation();
+    
+    // Check multiple times to catch navigation that arrives after Dashboard loads
+    const timer1 = setTimeout(() => {
+      checkPendingNavigation();
+    }, 500);
+
+    const timer2 = setTimeout(() => {
+      checkPendingNavigation();
+    }, 1500);
+
+    const timer3 = setTimeout(() => {
+      checkPendingNavigation();
+    }, 3000);
+
+    const timer4 = setTimeout(() => {
+      checkPendingNavigation();
+    }, 5000);
+
+    // Store timers for cleanup
+    checkTimersRef.current = [timer1, timer2, timer3, timer4];
+
+    // ✅ Poll every 2 seconds for the first 10 seconds (aggressive check)
+    const pollInterval = setInterval(() => {
+      checkPendingNavigation(); // Will check AsyncStorage flag internally
+    }, 2000);
+
+    const pollTimeout = setTimeout(() => {
+      clearInterval(pollInterval);
+      console.log('⏹️ Dashboard: Stopped polling for pending navigation (timeout)');
+    }, 10000);
+
+    return () => {
+      checkTimersRef.current.forEach(timer => clearTimeout(timer));
+      checkTimersRef.current = [];
+      clearInterval(pollInterval);
+      clearTimeout(pollTimeout);
+    };
+  }, [checkPendingNavigation]);
+
+  // ✅ ALSO check when Dashboard comes into focus (in case it was already loaded)
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log('👁️ Dashboard: Screen focused, checking for pending navigation...');
+      // Check immediately when focused (checkPendingNavigation will check AsyncStorage flag)
+      checkPendingNavigation();
+      
+      // Also check after delays
+      const timer1 = setTimeout(() => {
+        checkPendingNavigation();
+      }, 500);
+
+      const timer2 = setTimeout(() => {
+        checkPendingNavigation();
+      }, 1500);
+
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+      };
+    }, [checkPendingNavigation])
+  );
+
+  // ✅ ALSO check when app comes to foreground (AppState listener)
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      if (nextAppState === 'active') {
+        console.log('📱 Dashboard: App came to foreground, checking for pending navigation...');
+        // Check immediately when app becomes active (checkPendingNavigation will check AsyncStorage flag)
+        checkPendingNavigation();
+        
+        // Also check after a delay
+        setTimeout(() => {
+          checkPendingNavigation();
+        }, 1000);
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [checkPendingNavigation]);
 
   useEffect(() => {
     setIsNav(route.params?.isNavigate);

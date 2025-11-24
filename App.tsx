@@ -9,6 +9,7 @@ import { Constant } from "./screens/utils/Constant";
 import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
 import messaging from '@react-native-firebase/messaging';
 import { navigate } from "./screens/view/navigationRef";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 function App() {
@@ -121,7 +122,7 @@ function App() {
         });
        
 
-        unsubscribeForeground = notifee.onForegroundEvent(({ type, detail }) => {
+        unsubscribeForeground = notifee.onForegroundEvent(async ({ type, detail }) => {
           if (type === EventType.PRESS) {
             console.log("🟦 Notification tapped in foreground");
             console.log("📋 Full detail object:", JSON.stringify(detail, null, 2));
@@ -198,6 +199,32 @@ function App() {
                   currentUserIdList = Number(parseValue(notificationData.from)) || 0;
                 }
 
+                // Extract conversation SID (CRITICAL for fast loading)
+                const conversationSid = notificationData?.conversationSid || 
+                                       notificationData?.twilio_conversation_sid || 
+                                       notificationData?.sid || 
+                                       notificationData?.conversation_sid || 
+                                       '';
+
+                // Extract source
+                const source = notificationData?.source ? parseValue(notificationData.source) : 'chatList';
+
+                // Extract sellerData if source is sellerPage
+                let sellerData = undefined;
+                if (source === 'sellerPage' && notificationData?.sellerData) {
+                  const parsedSellerData = parseValue(notificationData.sellerData);
+                  if (parsedSellerData && typeof parsedSellerData === 'object') {
+                    sellerData = {
+                      featureId: parsedSellerData.featureId || parsedSellerData.id || 0,
+                      firstname: parsedSellerData.firstname || '',
+                      lastname: parsedSellerData.lastname || '',
+                      profile: parsedSellerData.profile || null,
+                      universityName: parsedSellerData.universityName || parsedSellerData.university || { id: 0, name: '' },
+                      id: parsedSellerData.id || 0,
+                    };
+                  }
+                }
+
                 // Validate required fields
                 if (!userConvName) {
                   console.error("❌ Missing userConvName in notification data");
@@ -214,10 +241,21 @@ function App() {
                   members,
                   userConvName,
                   currentUserIdList,
-                  source: notificationData?.source ? parseValue(notificationData.source) : 'chatList',
+                  conversationSid, // ✅ ADDED - Critical for fast conversation loading
+                  source,
+                  ...(sellerData && { sellerData }), // ✅ ADDED - Only include if exists
                 };
 
                 console.log('📱 Final navigation params:', JSON.stringify(params, null, 2));
+
+                // ✅ CRITICAL FIX: Store in AsyncStorage as backup
+                // ✅ ALSO: Clear any previous completion flag (new notification = new navigation)
+                await AsyncStorage.removeItem('notificationNavigationCompleted');
+                await AsyncStorage.setItem('pendingNotificationNavigation', JSON.stringify({
+                  screen: 'MessagesIndividualScreen',
+                  params: params,
+                  timestamp: Date.now(),
+                }));
 
                 setTimeout(() => {
                   navigate("MessagesIndividualScreen", params);
