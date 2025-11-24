@@ -48,7 +48,7 @@ import StripeOnboardingComplete from './dashboard/StripeOnboardingComplete';
 import UserReviews from './dashboard/UserReviews';
 import UserListing from './dashboard/UserListing';
 import UserAddReview from './dashboard/UserAddReview';
-import { navigationRef } from './navigationRef';
+import { navigationRef } from './NavigationService';
 
 const Stack = createNativeStackNavigator();
 

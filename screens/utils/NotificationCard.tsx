@@ -194,7 +194,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
   const handleNavigation = () => {
     if (templateName === 'ItemSold') {
       // Navigate to ListingDetails
-      navigation.navigate('ListingDetails', {
+      navigation.navigate('ViewListingDetails', {
         shareid: typeid,
         catagory_id: categoryid,
         catagory_name: typename,
