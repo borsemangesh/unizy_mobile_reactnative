@@ -60,7 +60,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
   const insets = useSafeAreaInsets(); // Safe area insets
   const [newdate,setnewdate]=useState('')
-
+const [categoryid, setcategoryid] = useState(0);
   const [fields, setFields] = useState<any[]>([]); // seller fields from API
   const today = new Date();
 
@@ -232,6 +232,8 @@ const { height } = Dimensions.get('window');
   //const priceValue = getValueByAlias(storedForm, 'price') || '0';
   const descriptionvalue =
     getValueByAlias(storedForm, 'description') || 'No Description';
+  const duration_value = getValueByAlias(storedForm, 'service_duration') || '1'
+
 
   const onScroll = (event: {
     nativeEvent: { contentOffset: { x: number } };
@@ -246,6 +248,7 @@ const { height } = Dimensions.get('window');
       try {
         const token = await AsyncStorage.getItem('userToken');
         const productId1 = await AsyncStorage.getItem('selectedProductId');
+        setcategoryid(Number(productId1))
         if (!token) {
           console.log('No token found');
           return;
@@ -437,9 +440,6 @@ const dataArray = nonImageFields
 
       // console.log("ImagesFiledWithStatus", imageFieldsWithStatus);
 
-
-
-   
 
   const storedDataImages = await AsyncStorage.getItem('deletedImagesId');
   const deletedImageIds = storedDataImages ? JSON.parse(storedDataImages).deleted_image_ids || [] : [];
@@ -920,6 +920,20 @@ const dataArray = nonImageFields
                 <Text allowFontScaling={false} style={styles.priceText}>
                   {`$${commissionPrice}`}
                 </Text>
+
+                {(categoryid === 2 || categoryid === 5) && (
+                                  <View style={styles.datePosted1}>
+                                    <Image
+                                      source={require('../../../assets/images/duration_info.png')}
+                                      style={{ height: 16, width: 16 }}
+                                    />
+                                     <Text allowFontScaling={false} style={styles.datetext1}>
+                                      Service Duration:{' '}
+                                      <Text style={styles.durationValue}>{duration_value} Hours</Text>
+                                      </Text>
+                                  </View>
+                                )}
+                
               </View>
               <View
                 style={{
@@ -1217,6 +1231,44 @@ const dataArray = nonImageFields
 };
 
 const styles = StyleSheet.create({
+
+    datetext1: {
+    //color: 'rgba(255, 255, 255, 0.48)',
+    color: '#9CD6FF',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 12,
+    fontWeight: '500',
+    lineHeight: 16,
+    letterSpacing: -0.24,
+    paddingLeft: 4
+  },
+  durationValue: {
+    color: '#FFF',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 12,
+    fontWeight: '600',
+    lineHeight: 16,
+    letterSpacing: -0.24,
+    paddingLeft: 4
+  },
+
+  datePosted1: {
+    flexDirection: 'row',
+    height: 'auto',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.09) 100%)',
+    //boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+    borderRadius: 8,
+    paddingLeft: 8,
+    paddingRight: 8,
+    paddingTop: 6,
+    paddingBottom: 6,
+    marginTop: 8,
+    //alignItems: 'center',
+    //gap: 4,
+    width: 'auto',
+    alignSelf: 'flex-start',
+  },
 
   
     headerWrapper: {

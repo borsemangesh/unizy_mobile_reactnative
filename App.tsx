@@ -45,9 +45,6 @@ function App() {
           console.log("❌ Notification permission denied");
         }
 
-        const notifeeSettings = await notifee.requestPermission();
-        console.log("🔔 Notifee permission:", notifeeSettings);
-
         if (Platform.OS === 'android') {
           await notifee.createChannel({
             id: 'default',
