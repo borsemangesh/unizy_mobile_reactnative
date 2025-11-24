@@ -210,9 +210,9 @@ const AddScreenContent: React.FC<AddScreenContentProps> = ({ navigation, product
 
   if (loading) {
     return (
-      <View style={styles.tabContent3}>
+      <View style={[styles.tabContent3]}>
         <Text allowFontScaling={false} style={[styles.tabContentText3]}>List Product</Text>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',height: '100%',paddingTop: 300}}>
           <Loader
             containerStyle={{
               width: 50,
