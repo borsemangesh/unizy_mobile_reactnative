@@ -23,6 +23,7 @@ import { NewCustomToastContainer } from '../../utils/component/NewCustomToastMan
 import MyReviewCard from '../../utils/MyReviewCard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SquircleView } from 'react-native-figma-squircle';
+import Loader from '../../utils/component/Loader';
 
 import Animated, {
   useSharedValue,
@@ -96,7 +97,7 @@ const MyReviews = ({ navigation }: MyReviewsProps)  => {
   const pagesize = 10;
   const [featureList, setFeatureList] = useState<any[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const insets = useSafeAreaInsets(); // Safe area insets
   const { height: screenHeight } = Dimensions.get('window');
 
@@ -183,6 +184,9 @@ useEffect(() => {
 
 const displayListOfProduct = async (categoryId: number | null, pageNum: number) => {
   try {
+    if (pageNum === 1) {
+      setIsLoading(true);
+    }
     const pagesize = 10;
     let url = `${MAIN_URL.baseUrl}category/myreview?page=${pageNum}&pagesize=${pagesize}`;
     if (categoryId) {
@@ -487,20 +491,24 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
               ) : null
             }
             ListEmptyComponent={
-              !isLoading ? (
-               <View style={[styles.emptyWrapper]}>
-                          <View style={styles.emptyContainer}>
-                            <Image
-                              source={require('../../../assets/images/noproduct.png')} // your image
-                              style={styles.emptyImage}
-                              resizeMode="contain"
-                            />
-                            <Text allowFontScaling={false} style={styles.emptyText}>
-                              No Reviews Found
-                            </Text>
-                          </View>
-                          </View>
-              ) : null
+              isLoading ? (
+                <View style={styles.loaderWrapper}>
+                  <Loader containerStyle={styles.loaderContainer} />
+                </View>
+              ) : (
+                <View style={[styles.emptyWrapper]}>
+                  <View style={styles.emptyContainer}>
+                    <Image
+                      source={require('../../../assets/images/noproduct.png')}
+                      style={styles.emptyImage}
+                      resizeMode="contain"
+                    />
+                    <Text allowFontScaling={false} style={styles.emptyText}>
+                      No Reviews Found
+                    </Text>
+                  </View>
+                </View>
+              )
             }
           />
 
@@ -590,7 +598,18 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
     backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
   },
-
+  loaderWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    minHeight: Platform.OS === 'ios' ? 400 : 300,
+    paddingVertical: 40,
+  },
+  loaderContainer: {
+    width: 100,
+    height: 100,
+  },
     emptyWrapper: {
       flex: 1,
       justifyContent: 'center',
