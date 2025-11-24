@@ -87,16 +87,16 @@ type RouteParams = {
     universityName: { id: number; name: string };
     id: number;
   };
-  conversationSid:string;
+  conversationSid: string;
 };
 
-const conversationCache : any = {};
-const messageCache:any = {};
+const conversationCache: any = {};
+const messageCache: any = {};
 
 const CACHE_KEY_CONVO_PREFIX = "twilio_convo_";
 const CACHE_KEY_MSG_PREFIX = "twilio_msg_";
 
-const saveJSON = async (key:any, value:any) => {
+const saveJSON = async (key: any, value: any) => {
   try {
     await AsyncStorage.setItem(key, JSON.stringify(value));
   } catch (err: any) {
@@ -107,7 +107,7 @@ const saveJSON = async (key:any, value:any) => {
   }
 };
 
-const loadJSON = async (key:any) => {
+const loadJSON = async (key: any) => {
   try {
     const raw = await AsyncStorage.getItem(key);
     return raw ? JSON.parse(raw) : null;
@@ -156,7 +156,7 @@ const MessagesIndividualScreen = ({
   navigation,
 }: MessagesIndividualScreenProps) => {
   const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
-  const { members, sellerData, userConvName, currentUserIdList, source,conversationSid } =
+  const { members, sellerData, userConvName, currentUserIdList, source, conversationSid } =
     route.params;
 
   console.log('Received members:', members);
@@ -193,7 +193,7 @@ const MessagesIndividualScreen = ({
   const flatListRef = useRef<FlatList>(null);
   const textInputRef = useRef<TextInput>(null);
   const emojiTranslateY = useRef(new RNAnimated.Value(0)).current;
-  const loadingFromScrollRef = useRef(false);   
+  const loadingFromScrollRef = useRef(false);
   const shouldAutoScrollRef = useRef(true);
   const newestMessageSidRef = useRef<string | null>(null); // Track newest message to detect if it changed
 
@@ -202,7 +202,7 @@ const MessagesIndividualScreen = ({
   const hasScrollableContent = useSharedValue(false);
   const contentHeightRef = useRef(0);
   const viewportHeightRef = useRef(0);
-  const prevContentHeightRef = useRef(0); 
+  const prevContentHeightRef = useRef(0);
 
 
   const scrollY = useSharedValue(0);
@@ -220,87 +220,87 @@ const MessagesIndividualScreen = ({
       'worklet';
       const contentH = event.contentSize.height;
       const viewportH = event.layoutMeasurement.height;
-      const currentY = event.contentOffset.y;  
+      const currentY = event.contentOffset.y;
       scrollY.value = currentY;
 
- 
+
       const maxScrollY = Math.max(0, contentH - viewportH);
       const distanceFromTop = maxScrollY - currentY;
       const isAtTop = distanceFromTop <= 10;
       hasScrollableContent.value = contentH > viewportH && !isAtTop;
     },
   });
- 
-   const animatedBlurStyle = useAnimatedStyle(() => {
-     'worklet';
-     const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
-     return { opacity };
-   });
- 
-   const animatedButtonStyle = useAnimatedStyle(() => {
-     'worklet';
-     const borderColor = interpolateColor(
-       scrollY.value,
-       [0, 300],
-       ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
-     );
-     const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
-     return {
-       borderColor,
-       backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
-     };
-   });
- 
-   const animatedIconStyle = useAnimatedStyle(() => {
-     'worklet';
-     const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
-     const tintColor = interpolateColor(
-       scrollY.value,
-       [0, 150],
-       ['#FFFFFF', '#002050'],
-     );
-     return {
-       opacity,
-       tintColor,
-     };
-   });
- 
-   const blurAmount = useDerivedValue(() => {
-     'worklet';
-     return interpolate(scrollY.value, [0, 300], [0, 10], 'clamp');
-   });
- 
-   const animatedStaticBackgroundStyle = useAnimatedStyle(() => {
-     'worklet';
-     return {
-       opacity: interpolate(
-         scrollY.value,
-         [0, 30],
-         [1, 0],
-         'clamp',
-       ),
-       backgroundColor: 'rgba(255,255,255,0.1)',
-       borderRadius: 40,
-     };
-   });
- 
-   const animatedBlurViewStyle = useAnimatedStyle(() => {
-     'worklet';
-     return {
-       opacity: interpolate(
-         scrollY.value,
-         [0, 50],
-         [0, 1],
-         'clamp',
-       ),
-     };
-   });
+
+  const animatedBlurStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+    return { opacity };
+  });
+
+  const animatedButtonStyle = useAnimatedStyle(() => {
+    'worklet';
+    const borderColor = interpolateColor(
+      scrollY.value,
+      [0, 300],
+      ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+    );
+    const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
+    return {
+      borderColor,
+      backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+    };
+  });
+
+  const animatedIconStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
+    const tintColor = interpolateColor(
+      scrollY.value,
+      [0, 150],
+      ['#FFFFFF', '#002050'],
+    );
+    return {
+      opacity,
+      tintColor,
+    };
+  });
+
+  const blurAmount = useDerivedValue(() => {
+    'worklet';
+    return interpolate(scrollY.value, [0, 300], [0, 10], 'clamp');
+  });
+
+  const animatedStaticBackgroundStyle = useAnimatedStyle(() => {
+    'worklet';
+    return {
+      opacity: interpolate(
+        scrollY.value,
+        [0, 30],
+        [1, 0],
+        'clamp',
+      ),
+      backgroundColor: 'rgba(255,255,255,0.1)',
+      borderRadius: 40,
+    };
+  });
+
+  const animatedBlurViewStyle = useAnimatedStyle(() => {
+    'worklet';
+    return {
+      opacity: interpolate(
+        scrollY.value,
+        [0, 50],
+        [0, 1],
+        'clamp',
+      ),
+    };
+  });
 
   // Move constants before they're used
   const WINDOW_HEIGHT = Dimensions.get('window').height;
   const INPUT_BAR_HEIGHT = Platform.OS === 'ios' ? 70 : 64;
   const DEFAULT_EMOJI_HEIGHT = Math.round(WINDOW_HEIGHT * 0.35);
-  const BOTTOM_SPACING = Platform.OS === 'ios' ? 0 : 0; 
+  const BOTTOM_SPACING = Platform.OS === 'ios' ? 0 : 0;
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
@@ -658,8 +658,8 @@ const MessagesIndividualScreen = ({
     }
   };
 
- 
- useEffect(() => {
+
+  useEffect(() => {
     let isMounted = true;
 
     (async () => {
@@ -673,7 +673,7 @@ const MessagesIndividualScreen = ({
         // Add timeout for network request (production-safe)
         const response = await fetchWithTimeout(
           `${MAIN_URL.baseUrl}twilio/auth-token`,
-          { 
+          {
             headers: { Authorization: `Bearer ${token}` },
           },
           15000
@@ -691,11 +691,11 @@ const MessagesIndividualScreen = ({
         }
 
         // Initialize Twilio client with error handling
-       // const twilio = await getTwilioClient(data.data.token);
-       const twilio = await new TwilioChatClient(data.data.token);
+        // const twilio = await getTwilioClient(data.data.token);
+        const twilio = await new TwilioChatClient(data.data.token);
 
-       console.log(twilio)
-        
+        console.log(twilio)
+
         if (!twilio) {
           throw new Error('Failed to initialize Twilio client');
         }
@@ -725,12 +725,12 @@ const MessagesIndividualScreen = ({
         }, 500);
       } catch (error: any) {
         console.error('Twilio initialization failed:', error.message);
-        
+
         // Show user-friendly error in production
         if (error.name === 'AbortError') {
           console.error('Twilio token request timed out');
         }
-        
+
         // Don't set loading to false if component unmounted
         if (isMounted) {
           // Could show error state here if needed
@@ -744,245 +744,245 @@ const MessagesIndividualScreen = ({
   }, []);
 
 
-useEffect(() => {
-  if (!chatClient) return;
+  useEffect(() => {
+    if (!chatClient) return;
 
-  let isMounted = true;
+    let isMounted = true;
 
-  const loadConversation = async () => {
-    try {
-      setInitialLoading(true);
-
-      const token = await AsyncStorage.getItem("userToken");
-      const userId = await AsyncStorage.getItem("userId");
-
-      if (!chatClient) {
-        throw new Error("Twilio client not initialized");
-      }
-
-      // Wait for Twilio with timeout - critical for production builds
+    const loadConversation = async () => {
       try {
-        await waitForTwilioReady(chatClient, 15000);
-      } catch (readyErr: any) {
-        console.error("Twilio connection failed:", readyErr.message);
-        throw new Error(`Twilio connection failed: ${readyErr.message}`);
-      }
+        setInitialLoading(true);
 
-      let convName = userConvName;
-      let apiData = null;
+        const token = await AsyncStorage.getItem("userToken");
+        const userId = await AsyncStorage.getItem("userId");
 
-      // ---------------------- Handle sellerPage override ----------------------
-      if (source === "sellerPage") {
+        if (!chatClient) {
+          throw new Error("Twilio client not initialized");
+        }
+
+        // Wait for Twilio with timeout - critical for production builds
         try {
-          const res = await fetchWithTimeout(
-            `${MAIN_URL.baseUrl}twilio/conversation-fetch`,
-            {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
+          await waitForTwilioReady(chatClient, 15000);
+        } catch (readyErr: any) {
+          console.error("Twilio connection failed:", readyErr.message);
+          throw new Error(`Twilio connection failed: ${readyErr.message}`);
+        }
+
+        let convName = userConvName;
+        let apiData = null;
+
+        // ---------------------- Handle sellerPage override ----------------------
+        if (source === "sellerPage") {
+          try {
+            const res = await fetchWithTimeout(
+              `${MAIN_URL.baseUrl}twilio/conversation-fetch`,
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ feature_id: sellerData.featureId }),
               },
-              body: JSON.stringify({ feature_id: sellerData.featureId }),
-            },
-            15000
-          );
+              15000
+            );
 
-          if (!res.ok) {
-            const errorData = await res.json().catch(() => ({}));
-            throw new Error(errorData.message || `HTTP ${res.status}`);
-          }
+            if (!res.ok) {
+              const errorData = await res.json().catch(() => ({}));
+              throw new Error(errorData.message || `HTTP ${res.status}`);
+            }
 
-          apiData = await res.json();
-          if (res.ok && apiData.data?.conv_name) convName = apiData.data.conv_name;
+            apiData = await res.json();
+            if (res.ok && apiData.data?.conv_name) convName = apiData.data.conv_name;
 
-          if (!apiData.data) {
-            console.warn("Conversation not available for sellerPage");
+            if (!apiData.data) {
+              console.warn("Conversation not available for sellerPage");
+              setInitialLoading(false);
+              return;
+            }
+          } catch (error: any) {
+            console.error("Failed to fetch conversation for sellerPage:", error.message);
+            if (error.name === 'AbortError') {
+              console.error("Request timed out");
+            }
             setInitialLoading(false);
             return;
           }
-        } catch (error: any) {
-          console.error("Failed to fetch conversation for sellerPage:", error.message);
-          if (error.name === 'AbortError') {
-            console.error("Request timed out");
-          }
+        }
+
+        // ---------------------- INSTANT OPEN (Persistent Cache) ----------------------
+        const persistedConvo = await loadJSON(CACHE_KEY_CONVO_PREFIX + convName);
+        const persistedMsgs = await loadJSON(CACHE_KEY_MSG_PREFIX + convName);
+
+        if (persistedConvo && persistedMsgs) {
+          conversationCache[convName] = persistedConvo;
+          messageCache[convName] = persistedMsgs;
+
+          setConversation(persistedConvo);
+
+          // Set identity BEFORE rendering cached messages
+          setCheckUser(
+            String(
+              source === "chatList"
+                ? currentUserIdList
+                : apiData?.data?.current_user_id || userId
+            )
+          );
+          setCurrentUserId(String(userId));
+
+          setMessages(
+            [...(persistedMsgs || [])].sort((a, b) => (
+              new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
+            ))
+          );
+
           setInitialLoading(false);
           return;
         }
-      }
 
-      // ---------------------- INSTANT OPEN (Persistent Cache) ----------------------
-      const persistedConvo = await loadJSON(CACHE_KEY_CONVO_PREFIX + convName);
-      const persistedMsgs = await loadJSON(CACHE_KEY_MSG_PREFIX + convName);
+        // ---------------------- Live Twilio Fresh Fetch ----------------------
+        const fetchTwilioFresh = async () => {
+          let convo = conversationCache[convName] || null;
 
-      if (persistedConvo && persistedMsgs) {
-        conversationCache[convName] = persistedConvo;
-        messageCache[convName] = persistedMsgs;
-
-        setConversation(persistedConvo);
-
-        // Set identity BEFORE rendering cached messages
-        setCheckUser(
-          String(
-            source === "chatList"
-              ? currentUserIdList
-              : apiData?.data?.current_user_id || userId
-          )
-        );
-        setCurrentUserId(String(userId));
-
-        setMessages(
-          [...(persistedMsgs || [])].sort((a, b) => (
-            new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
-          ))
-        );
-
-        setInitialLoading(false);
-        return;
-      }
-
-      // ---------------------- Live Twilio Fresh Fetch ----------------------
-      const fetchTwilioFresh = async () => {
-        let convo = conversationCache[convName] || null;
-
-        // Fastest: by SID
-        if (!convo && conversationSid) {
-          try {
-            convo = await chatClient.getConversation(conversationSid);
-            console.log("Loaded conversation by SID:", conversationSid);
-          } catch (err: any) {
-            console.warn("Failed to get conversation by SID:", err.message);
-          }
-        }
-
-        // Fallback: by uniqueName
-        if (!convo) {
-          try {
-            convo = await chatClient.getConversationByUniqueName(convName);
-            console.log("Loaded conversation by uniqueName:", convName);
-          } catch (err: any) {
-            console.warn("Failed to get conversation by uniqueName, creating new:", err.message);
+          // Fastest: by SID
+          if (!convo && conversationSid) {
             try {
-              convo = await chatClient.createConversation({ uniqueName: convName });
-              console.log("Created new conversation:", convName);
-            } catch (createErr: any) {
-              throw new Error(`Failed to create conversation: ${createErr.message}`);
+              convo = await chatClient.getConversation(conversationSid);
+              console.log("Loaded conversation by SID:", conversationSid);
+            } catch (err: any) {
+              console.warn("Failed to get conversation by SID:", err.message);
             }
           }
-        }
 
-        if (!convo) {
-          throw new Error("Failed to get or create conversation");
-        }
-
-        conversationCache[convName] = convo;
-        
-        // Save to cache with error handling
-        try {
-          await saveJSON(CACHE_KEY_CONVO_PREFIX + convName, convo);
-        } catch (cacheErr: any) {
-          console.warn("Failed to save conversation to cache:", cacheErr.message);
-        }
-
-        // Ensure joined with error handling
-        try {
-          const participants = await convo.getParticipants();
-          const alreadyJoined = participants.some((p:any) => p.identity === userId);
-          if (!alreadyJoined) {
-            await convo.join();
-            console.log("Joined conversation:", convName);
+          // Fallback: by uniqueName
+          if (!convo) {
+            try {
+              convo = await chatClient.getConversationByUniqueName(convName);
+              console.log("Loaded conversation by uniqueName:", convName);
+            } catch (err: any) {
+              console.warn("Failed to get conversation by uniqueName, creating new:", err.message);
+              try {
+                convo = await chatClient.createConversation({ uniqueName: convName });
+                console.log("Created new conversation:", convName);
+              } catch (createErr: any) {
+                throw new Error(`Failed to create conversation: ${createErr.message}`);
+              }
+            }
           }
-        } catch (joinErr: any) {
-          // Ignore "already joined" errors
-          if (!joinErr.message?.includes("Conflict") && !joinErr.message?.includes("already")) {
-            console.warn("Failed to join conversation:", joinErr.message);
+
+          if (!convo) {
+            throw new Error("Failed to get or create conversation");
           }
+
+          conversationCache[convName] = convo;
+
+          // Save to cache with error handling
+          try {
+            await saveJSON(CACHE_KEY_CONVO_PREFIX + convName, convo);
+          } catch (cacheErr: any) {
+            console.warn("Failed to save conversation to cache:", cacheErr.message);
+          }
+
+          // Ensure joined with error handling
+          try {
+            const participants = await convo.getParticipants();
+            const alreadyJoined = participants.some((p: any) => p.identity === userId);
+            if (!alreadyJoined) {
+              await convo.join();
+              console.log("Joined conversation:", convName);
+            }
+          } catch (joinErr: any) {
+            // Ignore "already joined" errors
+            if (!joinErr.message?.includes("Conflict") && !joinErr.message?.includes("already")) {
+              console.warn("Failed to join conversation:", joinErr.message);
+            }
+          }
+
+          if (!isMounted) return;
+          setConversation(convo);
+
+          // ---------------------- SET USER IDENTITY BEFORE LOADING MESSAGES ----------------------
+          setCheckUser(
+            String(
+              source === "chatList"
+                ? currentUserIdList
+                : apiData?.data?.current_user_id || userId
+            )
+          );
+          setCurrentUserId(String(userId));
+
+          // ---------------------- LOAD ONLY LATEST 20 MESSAGES ----------------------
+          let page;
+          let items: any[] = [];
+
+          try {
+            page = await convo.getMessages(20);
+            items = Array.isArray(page.items) ? page.items : [];
+            messagesPageRef.current = page;
+          } catch (msgErr: any) {
+            console.error("Failed to load messages:", msgErr.message);
+            throw new Error(`Failed to load messages: ${msgErr.message}`);
+          }
+
+          // Fix: Pass conversation object, not SID string
+          markAsRead(convo).catch((err) => {
+            console.warn("markAsRead failed:", err.message);
+          });
+
+          messageCache[convName] = items;
+
+          // Save messages to cache with error handling
+          try {
+            await saveJSON(CACHE_KEY_MSG_PREFIX + convName, items);
+          } catch (cacheErr: any) {
+            console.warn("Failed to save messages to cache:", cacheErr.message);
+          }
+
+          setMessages(
+            [...items].sort((a, b) => (
+              new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
+            ))
+          );
+
+          setHasMoreMessages(page.hasPrevPage);
+          setInitialLoading(false);
+        };
+
+        await fetchTwilioFresh();
+      } catch (err: any) {
+        console.error("Conversation load failed:", err?.message || err);
+
+        // More detailed error logging for production debugging
+        if (err?.message) {
+          console.error("Error details:", {
+            message: err.message,
+            name: err.name,
+            stack: err.stack?.substring(0, 200), // First 200 chars of stack
+          });
         }
 
-        if (!isMounted) return;
-        setConversation(convo);
-
-        // ---------------------- SET USER IDENTITY BEFORE LOADING MESSAGES ----------------------
-        setCheckUser(
-          String(
-            source === "chatList"
-              ? currentUserIdList
-              : apiData?.data?.current_user_id || userId
-          )
-        );
-        setCurrentUserId(String(userId));
-
-        // ---------------------- LOAD ONLY LATEST 20 MESSAGES ----------------------
-        let page;
-        let items: any[] = [];
-        
-        try {
-          page = await convo.getMessages(20);
-          items = Array.isArray(page.items) ? page.items : [];
-          messagesPageRef.current = page;
-        } catch (msgErr: any) {
-          console.error("Failed to load messages:", msgErr.message);
-          throw new Error(`Failed to load messages: ${msgErr.message}`);
-        }
-
-        // Fix: Pass conversation object, not SID string
-        markAsRead(convo).catch((err) => {
-          console.warn("markAsRead failed:", err.message);
-        });
-
-        messageCache[convName] = items;
-        
-        // Save messages to cache with error handling
-        try {
-          await saveJSON(CACHE_KEY_MSG_PREFIX + convName, items);
-        } catch (cacheErr: any) {
-          console.warn("Failed to save messages to cache:", cacheErr.message);
-        }
-
-        setMessages(
-          [...items].sort((a, b) => (
-            new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
-          ))
-        );
-
-        setHasMoreMessages(page.hasPrevPage);
         setInitialLoading(false);
-      };
 
-      await fetchTwilioFresh();
-    } catch (err: any) {
-      console.error("Conversation load failed:", err?.message || err);
-      
-      // More detailed error logging for production debugging
-      if (err?.message) {
-        console.error("Error details:", {
-          message: err.message,
-          name: err.name,
-          stack: err.stack?.substring(0, 200), // First 200 chars of stack
-        });
+        // Optional: Show user-friendly error (uncomment if needed)
+        // Alert.alert(
+        //   "Connection Error",
+        //   "Unable to load conversation. Please check your connection and try again.",
+        //   [{ text: "OK" }]
+        // );
       }
-      
-      setInitialLoading(false);
-      
-      // Optional: Show user-friendly error (uncomment if needed)
-      // Alert.alert(
-      //   "Connection Error",
-      //   "Unable to load conversation. Please check your connection and try again.",
-      //   [{ text: "OK" }]
-      // );
-    }
-  };
+    };
 
-  loadConversation();
-  return () => {
-    isMounted = false;
-  };
-}, [chatClient]);
+    loadConversation();
+    return () => {
+      isMounted = false;
+    };
+  }, [chatClient]);
 
-// --- END OF UPDATED USEEFFECT BLOCK ---
+  // --- END OF UPDATED USEEFFECT BLOCK ---
 
 
 
-// Removed duplicate messageAdded listener - functionality merged into the main listener below
+  // Removed duplicate messageAdded listener - functionality merged into the main listener below
 
   ////////////-------------------read count api -------------------//////////
 
@@ -995,8 +995,8 @@ useEffect(() => {
       }
 
       // Handle both conversation object and SID string
-      const sid = typeof conversation === 'string' 
-        ? conversation 
+      const sid = typeof conversation === 'string'
+        ? conversation
         : conversation?.sid || conversationSid;
 
       if (!sid) {
@@ -1005,7 +1005,7 @@ useEffect(() => {
       }
 
       const url = `${MAIN_URL.baseUrl}twilio/convo-read-update`;
-      
+
       // Add timeout for production builds (10 second timeout)
       const res = await fetchWithTimeout(
         url,
@@ -1123,34 +1123,34 @@ useEffect(() => {
   // }, [conversation, hasMoreMessages, loadingOlderMessages]);
 
   const loadOlderMessages = useCallback(async () => {
-  if (!messagesPageRef.current?.hasPrevPage) return;
-  if (loadingOlderMessages) return; // Prevent multiple simultaneous loads
+    if (!messagesPageRef.current?.hasPrevPage) return;
+    if (loadingOlderMessages) return; // Prevent multiple simultaneous loads
 
-  setLoadingOlderMessages(true);
-  loadingFromScrollRef.current = true;
+    setLoadingOlderMessages(true);
+    loadingFromScrollRef.current = true;
 
-  try {
-    const prevPage = await messagesPageRef.current.prevPage();
+    try {
+      const prevPage = await messagesPageRef.current.prevPage();
 
-    messagesPageRef.current = prevPage;
+      messagesPageRef.current = prevPage;
 
-    setMessages(prev => {
-      const existing = new Set(prev.map(m => m.sid));
-      const fresh = prevPage.items.filter((m:any) => !existing.has(m.sid));
-     return [...prev, ...fresh].sort((a, b) => (
-  new Date(b.dateCreated).getTime() -
-  new Date(a.dateCreated).getTime()
-));
-    });
-  } catch (error) {
-    console.error('Failed to load older messages:', error);
-  } finally {
-    setLoadingOlderMessages(false);
-    setTimeout(() => {
-      loadingFromScrollRef.current = false;
-    }, 200);
-  }
-}, [loadingOlderMessages]);
+      setMessages(prev => {
+        const existing = new Set(prev.map(m => m.sid));
+        const fresh = prevPage.items.filter((m: any) => !existing.has(m.sid));
+        return [...prev, ...fresh].sort((a, b) => (
+          new Date(b.dateCreated).getTime() -
+          new Date(a.dateCreated).getTime()
+        ));
+      });
+    } catch (error) {
+      console.error('Failed to load older messages:', error);
+    } finally {
+      setLoadingOlderMessages(false);
+      setTimeout(() => {
+        loadingFromScrollRef.current = false;
+      }, 200);
+    }
+  }, [loadingOlderMessages]);
 
 
   // ----------------------------------------------------------
@@ -1185,26 +1185,26 @@ useEffect(() => {
         },
       });
 
-      const isFromMe = 
+      const isFromMe =
         String(messageAuthor) === String(checkUser) ||
         String(messageAuthor) === String(currentUserId) ||
         String(messageAuthor) === String(userId);
 
       setMessages(prev => {
         if (prev.find(msg => msg.sid === m.sid)) return prev; // dedup
-        
+
         // Add new message and sort chronologically (newest first for inverted FlatList)
         const updated = [...prev, m].sort((a, b) => {
           const timeA = new Date(a.dateCreated || a.timestamp).getTime();
           const timeB = new Date(b.dateCreated || b.timestamp).getTime();
           return timeB - timeA; // Newest first (for inverted list)
         });
-        
+
         // Update cache (merged from duplicate listener)
         const convName = conversation.uniqueName;
         messageCache[convName] = updated;
         saveJSON(CACHE_KEY_MSG_PREFIX + convName, updated);
-        
+
         return updated;
       });
 
@@ -1259,7 +1259,7 @@ useEffect(() => {
 
     // Clear message text immediately for better perceived performance
     setMessageText('');
-    
+
     // Reset auto-scroll flag when user sends a message
     shouldAutoScrollRef.current = true;
 
@@ -1303,10 +1303,10 @@ useEffect(() => {
 
       const convName = createData.data.conv_name;
       const currentUserIdFromApi = createData.data.current_user_id;
-      
+
       // Convert to string to match Twilio's author format
       setCheckUser(String(currentUserIdFromApi));
-      
+
       // Also set currentUserId from AsyncStorage
       if (userId) {
         setCurrentUserId(String(userId));
@@ -1340,7 +1340,7 @@ useEffect(() => {
       // Twilio will trigger messageAdded event which will add the message automatically
       // handleNewMessage will handle scrolling automatically
       await convo.sendMessage(filteredMessage);
-      
+
     } catch (error) {
       console.error('Message send failed:', error);
     }
@@ -1585,8 +1585,8 @@ useEffect(() => {
       ? lastKeyboardHeight
       : EMOJI_PICKER_HEIGHT
     : Platform.OS === 'ios' && !keyboardVisible && layoutReady
-    ? 0
-    : 0; // Small offset to match keyboard-open appearance
+      ? 0
+      : 0; // Small offset to match keyboard-open appearance
 
   // Removed: Auto-scroll logic - inverted FlatList automatically shows newest messages at bottom
   const [extraPadding] = useState(48); // gap for padding
@@ -1613,55 +1613,55 @@ useEffect(() => {
 
   // add new date format
   const formatMessageDate = (date: Date) => {
-  const d = new Date(date);
+    const d = new Date(date);
 
-  // Today at midnight
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+    // Today at midnight
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-  // Yesterday at midnight
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
+    // Yesterday at midnight
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
 
-  // Message date at midnight
-  const messageDate = new Date(d);
-  messageDate.setHours(0, 0, 0, 0);
+    // Message date at midnight
+    const messageDate = new Date(d);
+    messageDate.setHours(0, 0, 0, 0);
 
-  // Today check
-  if (messageDate.getTime() === today.getTime()) {
-    return "Today";
-  }
-
-  // Yesterday check
-  if (messageDate.getTime() === yesterday.getTime()) {
-    return "Yesterday";
-  }
-
-  // Format with suffix (st, nd, rd, th)
-  const day = d.getDate();
-
-  const getSuffix = (n: number) => {
-    if (n > 3 && n < 21) return "th";
-    switch (n % 10) {
-      case 1:
-        return "st";
-      case 2:
-        return "nd";
-      case 3:
-        return "rd";
-      default:
-        return "th";
+    // Today check
+    if (messageDate.getTime() === today.getTime()) {
+      return "Today";
     }
+
+    // Yesterday check
+    if (messageDate.getTime() === yesterday.getTime()) {
+      return "Yesterday";
+    }
+
+    // Format with suffix (st, nd, rd, th)
+    const day = d.getDate();
+
+    const getSuffix = (n: number) => {
+      if (n > 3 && n < 21) return "th";
+      switch (n % 10) {
+        case 1:
+          return "st";
+        case 2:
+          return "nd";
+        case 3:
+          return "rd";
+        default:
+          return "th";
+      }
+    };
+
+    const suffix = getSuffix(day);
+
+    const month = d.toLocaleString("en-GB", { month: "short" });
+    const year = d.getFullYear();
+
+    // Final format: 20th Nov 2025
+    return `${day}${suffix} ${month} ${year}`;
   };
-
-  const suffix = getSuffix(day);
-
-  const month = d.toLocaleString("en-GB", { month: "short" });
-  const year = d.getFullYear();
-
-  // Final format: 20th Nov 2025
-  return `${day}${suffix} ${month} ${year}`;
-};
 
 
 
@@ -1778,29 +1778,29 @@ useEffect(() => {
   // Scroll to bottom when user sends a new message
   const prevMessagesLengthRef = useRef(messages.length);
   const lastUserMessageRef = useRef<string | null>(null);
-  
+
   // Initialize newestMessageSidRef when messages are first loaded
   useEffect(() => {
     if (messages.length > 0 && !newestMessageSidRef.current) {
       newestMessageSidRef.current = messages[0]?.sid || null;
     }
   }, [messages.length === 0 ? null : messages[0]?.sid]);
-  
+
   useEffect(() => {
     // Check if a new message was added
     if (messages.length > prevMessagesLengthRef.current && messages.length > 0) {
       const lastMessage = messages[0]; // Newest message is first in the array (for inverted list)
       const messageAuthor = lastMessage?.author || lastMessage?.state?.author || lastMessage?.attributes?.author;
-      const isFromMe = 
+      const isFromMe =
         String(messageAuthor) === String(checkUser) ||
         String(messageAuthor) === String(currentUserId);
-      
+
       // Only scroll if it's a new message from the user (not a duplicate)
       if (isFromMe && lastMessage?.sid !== lastUserMessageRef.current) {
         lastUserMessageRef.current = lastMessage?.sid || null;
         newestMessageSidRef.current = lastMessage?.sid || null; // Update newest message ref
         shouldAutoScrollRef.current = true; // Reset flag for future messages
-        
+
         // ALWAYS scroll for user's own messages, regardless of previous scroll state
         // Use multiple attempts with increasing delays to ensure it works
         const scrollToBottom = (delay: number) => {
@@ -1840,7 +1840,7 @@ useEffect(() => {
             });
           });
         };
-        
+
         // Try scrolling multiple times with increasing delays
         scrollToBottom(keyboardVisible ? 300 : 200);
         scrollToBottom(keyboardVisible ? 600 : 400);
@@ -2022,10 +2022,18 @@ useEffect(() => {
                       navigation.goBack();
                     }
                   } else {
-                    navigation.replace('Dashboard', {
-                      AddScreenBackactiveTab: 'Bookmark',
-                      isNavigate: false,
-                    });
+
+                    if (source === 'sellerPage') {
+                      navigation.goBack();
+                    }
+                    else {
+                      navigation.replace('Dashboard', {
+                        AddScreenBackactiveTab: 'Bookmark',
+                        isNavigate: false,
+                      });
+                    }
+
+
                   }
                 }}
                 hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
@@ -2573,8 +2581,8 @@ useEffect(() => {
                       ? 0
                       : 30
                     : keyboardVisible || isEmojiPickerVisible
-                    ? 8
-                    : 34,
+                      ? 8
+                      : 34,
                 // Footer spacing will be handled by a spacer element below
                 backgroundColor: 'transparent',
                 zIndex: 1000,
@@ -2862,7 +2870,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
     marginVertical: 4,
-    
+
     // position: 'relative',
   },
   leftTailContainer: {
@@ -2958,9 +2966,9 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#FFFFFFE0',
     marginTop: 2,
-    minWidth:'70%',
+    minWidth: '70%',
     maxWidth: '86%',
-   
+
   },
   backIconStyle: {
     width: 30,
@@ -3058,7 +3066,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0,
     textAlignVertical: 'center',
     includeFontPadding: false,
-    
+
   },
 
   initialsCircle: {
@@ -3128,7 +3136,7 @@ const styles = StyleSheet.create({
   },
 
   //------------------------- add for blur ----------------------//
-    headerWrapper: {
+  headerWrapper: {
     position: 'absolute',
     top: 0,
     width: Platform.OS === 'ios' ? '100%' : '100%',
@@ -3139,14 +3147,14 @@ const styles = StyleSheet.create({
     pointerEvents: 'none',
   },
 
-     backButtonContainer: {
+  backButtonContainer: {
     width: 48,
     height: 48,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
-    blurButtonWrapper: {
+  blurButtonWrapper: {
     width: 48,
     height: 48,
     borderRadius: 40,
@@ -3174,12 +3182,12 @@ const styles = StyleSheet.create({
     // paddingHorizontal: 16,
     justifyContent: 'space-between',
   },
-    headerSpacer: {
+  headerSpacer: {
     width: 48,
     height: 48,
   },
 
-    unizyText: {
+  unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
     flex: 1,
