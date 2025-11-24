@@ -222,7 +222,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   const screenWidth = Dimensions.get('window').width;
   const tabsname = ['Home', 'Search', 'Add', 'Bookmark', 'Profile'];
 
-  const tabWidth = (screenWidth * 0.9) / tabsname.length;
+  const tabWidth = (screenWidth * 0.90) / tabsname.length;
 
   const bubbleX = useRef(new Animated.Value(0)).current;
 
@@ -841,78 +841,88 @@ return (
           Featured Listings
         </Text>
       </Animated.View>
-           {isLoading ? (
-  // 👇 Loading state
-  <View style={styles.emptyWrapper}>
-    <Loader
-      containerStyle={{
-        width: 100,
-        height: 100,
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    />
-  </View>
-) : features.length === 0 ? (
-  // 👇 No Listings Found
-  <View style={styles.emptyWrapper}>
-    <View style={styles.emptyContainer}>
-      <Image
-        source={require('../../../assets/images/noproduct.png')}
-        style={styles.emptyImage}
-        resizeMode="contain"
-      />
-      <Text allowFontScaling={false} style={styles.emptyText}>
-        No Listings Found
-      </Text>
-    </View>
-  </View>
-) : (
-  // 👇 Show scrollable cards if data exists
-  <ScrollView
-    directionalLockEnabled
-    style={{ paddingHorizontal: 0, marginLeft: 8 }}
-    horizontal
-    showsVerticalScrollIndicator={false}
-    showsHorizontalScrollIndicator={false}
-  >
-    {features.map((item) => (
-      <Animated.View
-        key={item.id}
-        style={{ transform: [{ translateY: cardSlideupAnimation }] }}
-      >
-        {item.profileshowinview ? (
-          <TutitionCard
-            tag={item.university?.name || 'University of Warwick'}
-            title={item.title}
-            infoTitle={`${item.createdby?.firstname || ''} ${item.createdby?.lastname || ''}`}
-            inforTitlePrice={`£ ${item.price}`}
-            rating={item.avg_rating}
-            productImage={{ uri: item.createdby?.profile }}
-            onBookmarkPress={() => handleBookmarkPress(item.id)}
-            isBookmarked={item.isbookmarked}
-            onpress={() => {
-              navigation.navigate('SearchDetails', { id: item.id }, { animation: 'none' });
+      {isLoading ? (
+        // 👇 Loading state
+        <View style={styles.emptyWrapper}>
+          <Loader
+            containerStyle={{
+              width: 100,
+              height: 100,
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
           />
-        ) : (
-          <ProductCard
-            tag={item.university?.name || 'University of Warwick'}
-            infoTitle={item.title}
-            inforTitlePrice={`£ ${item.price}`}
-            rating={item.avg_rating}
-            productImage={{ uri: item.thumbnail }}
-            onBookmarkPress={() => handleBookmarkPress(item.id)}
-            isBookmarked={item.isbookmarked}
-            onpress={() => {
-              navigation.replace('SearchDetails', { id: item.id }, { animation: 'none' });
-            }}
-          />
-        )}
-      </Animated.View>
-    ))}
-  </ScrollView>
-)}
+        </View>
+      ) : features.length === 0 ? (
+        // 👇 No Listings Found
+        <View style={styles.emptyWrapper}>
+          <View style={styles.emptyContainer}>
+            <Image
+              source={require('../../../assets/images/noproduct.png')}
+              style={styles.emptyImage}
+              resizeMode="contain"
+            />
+            <Text allowFontScaling={false} style={styles.emptyText}>
+              No Listings Found
+            </Text>
+          </View>
+        </View>
+      ) : (
+        // 👇 Show scrollable cards if data exists
+        <ScrollView
+          directionalLockEnabled
+          style={{ paddingHorizontal: 0, marginLeft: 8 }}
+          horizontal
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+        >
+          {features.map(item => (
+            <Animated.View
+              key={item.id}
+              style={{ transform: [{ translateY: cardSlideupAnimation }] }}
+            >
+              {item.profileshowinview ? (
+                <TutitionCard
+                  tag={item.university?.name || 'University of Warwick'}
+                  title={item.title}
+                  infoTitle={`${item.createdby?.firstname || ''} ${
+                    item.createdby?.lastname || ''
+                  }`}
+                  inforTitlePrice={`£ ${item.price}`}
+                  rating={item.avg_rating}
+                  productImage={{ uri: item.createdby?.profile }}
+                  onBookmarkPress={() => handleBookmarkPress(item.id)}
+                  isBookmarked={item.isbookmarked}
+                  onpress={() => {
+                    navigation.navigate(
+                      'SearchDetails',
+                      { id: item.id },
+                      { animation: 'none' },
+                    );
+                  }}
+                />
+              ) : (
+                <ProductCard
+                  tag={item.university?.name || 'University of Warwick'}
+                  infoTitle={item.title}
+                  inforTitlePrice={`£ ${item.price}`}
+                  rating={item.avg_rating}
+                  productImage={{ uri: item.thumbnail }}
+                  onBookmarkPress={() => handleBookmarkPress(item.id)}
+                  isBookmarked={item.isbookmarked}
+                  onpress={() => {
+                    navigation.replace(
+                      'SearchDetails',
+                      { id: item.id },
+                      { animation: 'none' },
+                    );
+                  }}
+                />
+              )}
+            </Animated.View>
+          ))}
+        </ScrollView>
+      )}
     </>
   );
       case 'Search':
@@ -1186,6 +1196,7 @@ const blurAmount = useDerivedValue(() =>
           >
         
             {Platform.OS === 'ios' ? (
+              
               <View style={[StyleSheet.absoluteFill, { borderRadius: 25, backgroundColor: 'transparent'}]}>
               <BlurView
                 style={[StyleSheet.absoluteFill, { borderRadius: 25, backgroundColor: 'transparent',overflow: 'hidden'}]}
@@ -1196,7 +1207,8 @@ const blurAmount = useDerivedValue(() =>
               >
                 <View style={{opacity:(Platform.OS === 'ios' ?0.4 :0), backgroundColor: 'rgba(0, 3, 65, 0.98)', width: '100%', height: '100%',borderRadius: 25,}}></View>
                 </BlurView>
-            </View>):(<></>)}
+            </View>
+          ):(<></>)}
           
           
           <View style={[{ height: 48, }]}>

@@ -50,15 +50,12 @@ import AnimatedReanimated, {
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 
-
 const bgImage = require('../../../assets/images/backimg.png');
-const profileImg = require('../../../assets/images/user.jpg'); 
-const uploadIcon = require('../../../assets/images/upload.png'); 
-const fileIcon = require('../../../assets/images/file.png'); 
-const deleteIcon = require('../../../assets/images/delete.png'); 
-const uploadIcon1 = require('../../../assets/images/fileupload.png'); 
-
-
+const profileImg = require('../../../assets/images/user.jpg');
+const uploadIcon = require('../../../assets/images/upload.png');
+const fileIcon = require('../../../assets/images/file.png');
+const deleteIcon = require('../../../assets/images/delete.png');
+const uploadIcon1 = require('../../../assets/images/fileupload.png');
 
 type AddScreenContentProps = {
   navigation: any;
@@ -90,14 +87,12 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     ismultilple: boolean;
     fieldId?: number;
     fieldLabel?: string;
-
-  }>({ visible: false, ismultilple: false,});
+  }>({ visible: false, ismultilple: false });
 
   const [multiSelectOptions, setMultiSelectOptions] = useState<any[]>([]);
   const [uploadedImages, setUploadedImages] = useState<
     { id: string; uri: string; name: string }[]
   >([]);
-
 
   const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
@@ -149,27 +144,26 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
   );
 
-  
   interface Category {
-  id: number;
-  name: string;
-  description: string | null;
-  isactive: boolean;
-  logo: string | null;
-  commission: string | null;
-  max_cappund: string | null;
-  feature_fee:string | null
-  max_feature_cap: |null,
-}
+    id: number;
+    name: string;
+    description: string | null;
+    isactive: boolean;
+    logo: string | null;
+    commission: string | null;
+    max_cappund: string | null;
+    feature_fee: string | null;
+    max_feature_cap: null;
+  }
 
   interface UserMeta {
     firstname: string | null;
     lastname: string | null;
     profile: string | null;
     student_email: string | null;
-    university_name:string|null
+    university_name: string | null;
     category?: Category | null;
-    city?:string | null;
+    city?: string | null;
   }
 
   const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
@@ -181,7 +175,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const { height } = Dimensions.get('window');
   const bottomPadding = height * 0.0005;
 
-  
   useEffect(() => {
     const fetchFields = async () => {
       try {
@@ -193,7 +186,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           return;
         }
 
-        console.log(token)
+        console.log(token);
 
         const url = `${MAIN_URL.baseUrl}category/listparams/user/${productId}`;
 
@@ -211,23 +204,24 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
         const json = await response.json();
 
-       
-
         if (json?.metadata) {
-
-        if (json.metadata.category) {
-          // Convert null or undefined to 0
-          setFeatureFee(parseFloat(json.metadata.category.feature_fee ?? '0'));
-          setMaxFeatureCap(parseFloat(json.metadata.category.max_feature_cap ?? '0'));
-        }
+          if (json.metadata.category) {
+            // Convert null or undefined to 0
+            setFeatureFee(
+              parseFloat(json.metadata.category.feature_fee ?? '0'),
+            );
+            setMaxFeatureCap(
+              parseFloat(json.metadata.category.max_feature_cap ?? '0'),
+            );
+          }
           setUserMeta({
             firstname: json.metadata.firstname ?? null,
             lastname: json.metadata.lastname ?? null,
             profile: json.metadata.profile ?? null,
             student_email: json.metadata.student_email ?? null,
-            university_name:json.metadata.university_name ?? null,
+            university_name: json.metadata.university_name ?? null,
             category: json.metadata.category ?? null,
-            city:json.metadata.city ?? null, // 
+            city: json.metadata.city ?? null, //
           });
 
           await AsyncStorage.setItem(
@@ -237,15 +231,13 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               lastname: json.metadata.lastname ?? null,
               profile: json.metadata.profile ?? null,
               student_email: json.metadata.student_email ?? null,
-              university_name:json.metadata.university_name ?? null,
+              university_name: json.metadata.university_name ?? null,
               category: json.metadata.category ?? null,
-              city:json.metadata.city ?? null, // 
+              city: json.metadata.city ?? null, //
             }),
           );
         }
         await AsyncStorage.setItem('selectedProductId', String(productId));
-
-        
 
         if (json?.data) {
           const sellerFields = json.data.filter(
@@ -253,15 +245,15 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           );
           setFields(sellerFields);
         }
-         if (response.status === 401 || response.status === 403) {
-        handleForceLogout();
-        return;
-      }
+        if (response.status === 401 || response.status === 403) {
+          handleForceLogout();
+          return;
+        }
 
-      if (json.statusCode === 401 || json.statusCode === 403) {
-        handleForceLogout();
-        return;
-      }
+        if (json.statusCode === 401 || json.statusCode === 403) {
+          handleForceLogout();
+          return;
+        }
       } catch (err) {
         console.log('Error fetching fields', err);
       } finally {
@@ -269,7 +261,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
       }
     };
 
-     const handleForceLogout = async () => {
+    const handleForceLogout = async () => {
       console.log('User inactive or unauthorized — logging out');
       await AsyncStorage.clear();
       navigation.reset({
@@ -295,15 +287,18 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
   useEffect(() => {
     const backAction = () => {
-       navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Add', isNavigate:false })
+      navigation.replace('Dashboard', {
+        AddScreenBackactiveTab: 'Add',
+        isNavigate: false,
+      });
       return true;
     };
-  
+
     const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
+      'hardwareBackPress',
+      backAction,
     );
-  
+
     return () => backHandler.remove();
   }, []);
 
@@ -335,40 +330,40 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
   const getCurrentDate = () => {
     const today = new Date();
-  
+
     const day = today.getDate();
     const year = today.getFullYear();
-  
-    const month = today.toLocaleString("default", { month: "short" });
-  
-    let suffix = "th";
-    if (day % 10 === 1 && day !== 11) suffix = "st";
-    else if (day % 10 === 2 && day !== 12) suffix = "nd";
-    else if (day % 10 === 3 && day !== 13) suffix = "rd";
-  
+
+    const month = today.toLocaleString('default', { month: 'short' });
+
+    let suffix = 'th';
+    if (day % 10 === 1 && day !== 11) suffix = 'st';
+    else if (day % 10 === 2 && day !== 12) suffix = 'nd';
+    else if (day % 10 === 3 && day !== 13) suffix = 'rd';
+
     return `${day}${suffix} ${month} ${year}`;
   };
 
   const pluralizeLabel = (label: string) => {
-    if (!label) return "";
-   
-    const words = label.trim().split(" ");
+    if (!label) return '';
+
+    const words = label.trim().split(' ');
     const lastWord = words[words.length - 1];
-    if (lastWord.toLowerCase().endsWith("s")) return label;
-   
+    if (lastWord.toLowerCase().endsWith('s')) return label;
+
     let plural = lastWord;
-   
+
     if (/(ch|sh|x|s|z)$/i.test(lastWord)) {
-      plural = lastWord + "es";
+      plural = lastWord + 'es';
     } else if (/[aeiou]y$/i.test(lastWord)) {
-      plural = lastWord + "s";
+      plural = lastWord + 's';
     } else if (/y$/i.test(lastWord)) {
-      plural = lastWord.slice(0, -1) + "ies";
+      plural = lastWord.slice(0, -1) + 'ies';
     } else {
-      plural = lastWord + "s";
+      plural = lastWord + 's';
     }
     words[words.length - 1] = plural;
-    return words.join(" ");
+    return words.join(' ');
   };
 
   const requestCameraPermission = async () => {
@@ -384,9 +379,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               buttonNeutral: 'Ask Me Later',
               buttonNegative: 'Cancel',
               buttonPositive: 'OK',
-            }
+            },
           );
-     
+
           // Request Gallery Permission (Android 13+)
           const readImagesGranted = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
@@ -396,9 +391,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               buttonNeutral: 'Ask Me Later',
               buttonNegative: 'Cancel',
               buttonPositive: 'OK',
-            }
+            },
           ).catch(() => null);
-     
+
           // Request for Android 12 and below
           const readStorageGranted = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
@@ -408,14 +403,14 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               buttonNeutral: 'Ask Me Later',
               buttonNegative: 'Cancel',
               buttonPositive: 'OK',
-            }
+            },
           ).catch(() => null);
-     
+
           // Final permission result
           const galleryGranted =
             readImagesGranted === PermissionsAndroid.RESULTS.GRANTED ||
             readStorageGranted === PermissionsAndroid.RESULTS.GRANTED;
-     
+
           return (
             cameraGranted === PermissionsAndroid.RESULTS.GRANTED &&
             galleryGranted
@@ -430,9 +425,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           PERMISSIONS.IOS.CAMERA,
           PERMISSIONS.IOS.PHOTO_LIBRARY,
         ];
-  
+
         const results = await Promise.all(
-          permissionsToCheck.map(async (perm) => {
+          permissionsToCheck.map(async perm => {
             const status = await check(perm);
             if (status === RESULTS.GRANTED) return true;
             if (status === RESULTS.BLOCKED) {
@@ -443,12 +438,15 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             return req === RESULTS.GRANTED;
           }),
         );
-  
-        if (results.every((r) => r === true)) {
+
+        if (results.every(r => r === true)) {
           //Alert.alert('Success', 'Camera and gallery permissions granted');
           return true;
         } else {
-          Alert.alert('Permission Denied', 'Camera or gallery permission denied');
+          Alert.alert(
+            'Permission Denied',
+            'Camera or gallery permission denied',
+          );
           return false;
         }
       }
@@ -458,186 +456,182 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     }
   };
 
+  const handlePreview = async () => {
+    try {
+      // ========== VALIDATION ==========
+      for (const field of fields) {
+        const { id, field_type } = field.param;
 
+        // get value from formValues
+        let value = formValues[id]?.value;
 
-const handlePreview = async () => {
-  try {
-    // ========== VALIDATION ==========
-    for (const field of fields) {
-      const { id, field_type } = field.param;
+        // FIX: For IMAGE fields, validation must use uploadedImages
+        if (field_type.toLowerCase() === 'image') {
+          value = uploadedImages;
+        }
 
-      // get value from formValues
-      let value = formValues[id]?.value;
-
-      // FIX: For IMAGE fields, validation must use uploadedImages
-      if (field_type.toLowerCase() === 'image') {
-        value = uploadedImages;
-      }
-
-      if (field.mandatory) {
-        if (
-          value === undefined ||
-          value === null ||
-          (typeof value === 'string' && value.trim() === '') ||
-          (Array.isArray(value) && value.length === 0)
-        ) {
-          if (field_type.toLowerCase() === 'image') {
-            showToast(`${field.param.field_name} are mandatory`, 'error');
-          } else {
-            showToast(`${field.param.field_name} is mandatory`, 'error');
+        if (field.mandatory) {
+          if (
+            value === undefined ||
+            value === null ||
+            (typeof value === 'string' && value.trim() === '') ||
+            (Array.isArray(value) && value.length === 0)
+          ) {
+            if (field_type.toLowerCase() === 'image') {
+              showToast(`${field.param.field_name} are mandatory`, 'error');
+            } else {
+              showToast(`${field.param.field_name} is mandatory`, 'error');
+            }
+            return;
           }
-          return;
         }
       }
-    }
 
-    // ========== PRICE CALCULATION (ONLY FOR CATEGORY 2 & 5) ==========
-    let computedPrice: number | null = null;
+      // ========== PRICE CALCULATION (ONLY FOR CATEGORY 2 & 5) ==========
+      let computedPrice: number | null = null;
 
-    if (productId === 2 || productId === 5) {
-      let priceFieldId: number | null = null;
-      let durationFieldId: number | null = null;
+      if (productId === 2 || productId === 5) {
+        let priceFieldId: number | null = null;
+        let durationFieldId: number | null = null;
 
-      fields.forEach(f => {
-        if (f.param.alias_name === 'price') priceFieldId = f.param.id;
-        if (f.param.alias_name === 'service_duration') durationFieldId = f.param.id;
-      });
+        fields.forEach(f => {
+          if (f.param.alias_name === 'price') priceFieldId = f.param.id;
+          if (f.param.alias_name === 'service_duration')
+            durationFieldId = f.param.id;
+        });
 
-      if (priceFieldId !== null && durationFieldId !== null) {
-        const rawPrice = Number(formValues[priceFieldId]?.value || 0);
-        const rawDuration = Number(formValues[durationFieldId]?.value || 1);
+        if (priceFieldId !== null && durationFieldId !== null) {
+          const rawPrice = Number(formValues[priceFieldId]?.value || 0);
+          const rawDuration = Number(formValues[durationFieldId]?.value || 1);
 
-        computedPrice = rawPrice * rawDuration;
+          computedPrice = rawPrice * rawDuration;
+        }
       }
-    }
 
-    // ========== BUILD DATA TO STORE ==========
-    const dataToStore: any = { ...formValues };
+      // ========== BUILD DATA TO STORE ==========
+      const dataToStore: any = { ...formValues };
 
-    // Insert computed price
-    if (computedPrice !== null) {
-      fields.forEach(f => {
-        if (f.param.alias_name === 'price') {
-          dataToStore[f.param.id] = {
-            value: computedPrice.toString(),
-            alias_name: 'price',
+      // Insert computed price
+      if (computedPrice !== null) {
+        fields.forEach(f => {
+          if (f.param.alias_name === 'price') {
+            dataToStore[f.param.id] = {
+              value: computedPrice.toString(),
+              alias_name: 'price',
+            };
+          }
+        });
+      }
+
+      // Insert uploaded images
+      fields.forEach(field => {
+        if (field.param.field_type.toLowerCase() === 'image') {
+          const uploadedForField = uploadedImages.map(img => ({
+            id: img.id,
+            uri: img.uri,
+            name: img.name,
+          }));
+
+          dataToStore[field.param.id] = {
+            value: uploadedForField,
+            alias_name: field.param.alias_name ?? null,
           };
         }
       });
+
+      // SAVE & NAVIGATE
+      await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
+      navigation.navigate('PreviewThumbnail');
+    } catch (error) {
+      console.log('Error saving form data: ', error);
+      showToast('Failed to save form data');
     }
+  };
 
-    // Insert uploaded images
-    fields.forEach(field => {
-      if (field.param.field_type.toLowerCase() === 'image') {
-        const uploadedForField = uploadedImages.map(img => ({
-          id: img.id,
-          uri: img.uri,
-          name: img.name,
-        }));
+  // const handlePreview = async () => {
+  //   try {
+  //     // Mandatory validation (same)
+  //     for (const field of fields) {
+  //       const { id, field_type } = field.param;
+  //       let value = formValues[id]?.value;
 
-        dataToStore[field.param.id] = {
-          value: uploadedForField,
-          alias_name: field.param.alias_name ?? null,
-        };
-      }
-    });
+  //       if (field.mandatory) {
+  //         if (
+  //           value === undefined ||
+  //           value === null ||
+  //           (typeof value === 'string' && value.trim() === '') ||
+  //           (Array.isArray(value) && value.length === 0)
+  //         ) {
+  //           if (field_type.toLowerCase() === 'image') {
+  //             showToast(`${field.param.field_name} are mandatory`, 'error');
+  //           } else {
+  //             showToast(`${field.param.field_name} is mandatory`, 'error');
+  //           }
+  //           return;
+  //         }
+  //       }
+  //     }
 
-    // SAVE & NAVIGATE
-    await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
-    navigation.navigate('PreviewThumbnail');
+  //     // ---- COMPUTE PRICE ONLY ONCE ----
+  //     let computedPrice: number | null = null;
 
-  } catch (error) {
-    console.log('Error saving form data: ', error);
-    showToast('Failed to save form data');
-  }
-};
+  //     if (productId === 2 || productId === 5) {
+  //       let priceFieldId: number | null = null;
+  //       let durationFieldId: number | null = null;
 
+  //       fields.forEach(f => {
+  //         if (f.param.alias_name === 'price') priceFieldId = f.param.id;
+  //         if (f.param.alias_name === 'service_duration') durationFieldId = f.param.id;
+  //       });
 
-// const handlePreview = async () => {
-//   try {
-//     // Mandatory validation (same)
-//     for (const field of fields) {
-//       const { id, field_type } = field.param;
-//       let value = formValues[id]?.value;
+  //       if (priceFieldId !== null && durationFieldId !== null) {
+  //         const rawPrice = Number(formValues[priceFieldId]?.value || 0);
+  //         const rawDuration = Number(formValues[durationFieldId]?.value || 1);
 
-//       if (field.mandatory) {
-//         if (
-//           value === undefined ||
-//           value === null ||
-//           (typeof value === 'string' && value.trim() === '') ||
-//           (Array.isArray(value) && value.length === 0)
-//         ) {
-//           if (field_type.toLowerCase() === 'image') {
-//             showToast(`${field.param.field_name} are mandatory`, 'error');
-//           } else {
-//             showToast(`${field.param.field_name} is mandatory`, 'error');
-//           }
-//           return;
-//         }
-//       }
-//     }
+  //         computedPrice = rawPrice * rawDuration;
+  //       }
+  //     }
 
-//     // ---- COMPUTE PRICE ONLY ONCE ----
-//     let computedPrice: number | null = null;
+  //     // ---- BUILD dataToStore ----
+  //     const dataToStore: any = { ...formValues };
 
-//     if (productId === 2 || productId === 5) {
-//       let priceFieldId: number | null = null;
-//       let durationFieldId: number | null = null;
+  //     // Replace only when navigating
+  //     if (computedPrice !== null) {
+  //       fields.forEach(f => {
+  //         if (f.param.alias_name === 'price') {
+  //           dataToStore[f.param.id] = {
+  //             value: computedPrice.toString(),
+  //             alias_name: 'price'
+  //           };
+  //         }
+  //       });
+  //     }
 
-//       fields.forEach(f => {
-//         if (f.param.alias_name === 'price') priceFieldId = f.param.id;
-//         if (f.param.alias_name === 'service_duration') durationFieldId = f.param.id;
-//       });
+  //     // Handle image fields
+  //     fields.forEach(field => {
+  //       if (field.param.field_type.toLowerCase() === 'image') {
+  //         const uploadedForField = uploadedImages.map(img => ({
+  //           id: img.id,
+  //           uri: img.uri,
+  //           name: img.name,
+  //         }));
 
-//       if (priceFieldId !== null && durationFieldId !== null) {
-//         const rawPrice = Number(formValues[priceFieldId]?.value || 0);
-//         const rawDuration = Number(formValues[durationFieldId]?.value || 1);
+  //         dataToStore[field.param.id] = {
+  //           value: uploadedForField,
+  //           alias_name: field.param.alias_name ?? null,
+  //         };
+  //       }
+  //     });
 
-//         computedPrice = rawPrice * rawDuration;
-//       }
-//     }
+  //     await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
 
-//     // ---- BUILD dataToStore ----
-//     const dataToStore: any = { ...formValues };
+  //     navigation.navigate('PreviewThumbnail');
 
-//     // Replace only when navigating
-//     if (computedPrice !== null) {
-//       fields.forEach(f => {
-//         if (f.param.alias_name === 'price') {
-//           dataToStore[f.param.id] = {
-//             value: computedPrice.toString(),
-//             alias_name: 'price'
-//           };
-//         }
-//       });
-//     }
-
-//     // Handle image fields
-//     fields.forEach(field => {
-//       if (field.param.field_type.toLowerCase() === 'image') {
-//         const uploadedForField = uploadedImages.map(img => ({
-//           id: img.id,
-//           uri: img.uri,
-//           name: img.name,
-//         }));
-
-//         dataToStore[field.param.id] = {
-//           value: uploadedForField,
-//           alias_name: field.param.alias_name ?? null,
-//         };
-//       }
-//     });
-
-//     await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
-
-//     navigation.navigate('PreviewThumbnail');
-
-//   } catch (error) {
-//     console.log('Error saving form data: ', error);
-//     showToast('Failed to save form data');
-//   }
-// };
-
+  //   } catch (error) {
+  //     console.log('Error saving form data: ', error);
+  //     showToast('Failed to save form data');
+  //   }
+  // };
 
   const handleSelectImage = async () => {
     const hasPermission = await requestCameraPermission();
@@ -727,10 +721,10 @@ const handlePreview = async () => {
     );
   };
   const getInitials = (firstName = '', lastName = '') => {
-  const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
-  const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
-  return (f + l) || '?';
-};
+    const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
+    const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
+    return f + l || '?';
+  };
 
   const renderLabel = (field_name: any, mandatory: any) => (
     <Text allowFontScaling={false} style={styles.textstyle}>
@@ -749,7 +743,6 @@ const handlePreview = async () => {
   const [isCheckbox, setCheckBox] = useState(false);
 
   const renderField = (field: any) => {
-    
     const param = field?.param;
     if (!param) return null; // skip if param is missing
 
@@ -770,11 +763,11 @@ const handlePreview = async () => {
         const rawValue = formValues[param.id]?.value || '';
 
         const isPriceField = alias_name?.toLowerCase() === 'price';
-       
+
         const placeholderText =
-        alias_name?.toLowerCase() === 'price'
-          ? `£ Enter ${field_name}`
-          : `Enter ${field_name}`;
+          alias_name?.toLowerCase() === 'price'
+            ? `£ Enter ${field_name}`
+            : `Enter ${field_name}`;
 
         let rnKeyboardType:
           | 'default'
@@ -807,12 +800,12 @@ const handlePreview = async () => {
             {/* <Text style={styles.textstyle}>{field_name}</Text> */}
             {renderLabel(field_name, field.mandatory)}
             <TextInput
-            allowFontScaling={false}
+              allowFontScaling={false}
               style={[
                 styles.personalEmailID_TextInput,
                 styles.login_container,
                 {
-                  height:44,
+                  height: 44,
                   textAlignVertical: 'center', // centers text vertically on Android
                   paddingVertical: 0, // prevents padding changes on focus
                 },
@@ -842,10 +835,10 @@ const handlePreview = async () => {
         const { param } = field;
         const { field_name, keyboardtype, alias_name } = param;
         //const placeholderText = alias_name || field_name;
-         const placeholderText =
-        alias_name?.toLowerCase() === 'price'
-          ? `£ Enter ${field_name}`
-          : `Enter ${field_name}`;
+        const placeholderText =
+          alias_name?.toLowerCase() === 'price'
+            ? `£ Enter ${field_name}`
+            : `Enter ${field_name}`;
 
         let rnKeyboardType:
           | 'default'
@@ -878,7 +871,7 @@ const handlePreview = async () => {
             {/* <Text style={styles.textstyle}>{field_name}</Text> */}
             {renderLabel(field_name, field.mandatory)}
             <TextInput
-            allowFontScaling={false}
+              allowFontScaling={false}
               style={[
                 styles.personalEmailID_TextInput,
                 styles.login_container,
@@ -917,18 +910,18 @@ const handlePreview = async () => {
               }}
             >
               <View style={styles.dropdowncard}>
-              <Text allowFontScaling={false} style={styles.dropdowntext}>
-                {Array.isArray(formValues[id]?.value) &&
-                formValues[id]?.value.length > 0
-                  ? `${formValues[id]?.value.length} Selected`
-                  : `Select ${field_name}`}
-              </Text>
+                <Text allowFontScaling={false} style={styles.dropdowntext}>
+                  {Array.isArray(formValues[id]?.value) &&
+                  formValues[id]?.value.length > 0
+                    ? `${formValues[id]?.value.length} Selected`
+                    : `Select ${field_name}`}
+                </Text>
               </View>
-               <Image
-              source={require('../../../assets/images/right.png')} 
-              style={styles.dropdownIcon}
-              resizeMode="contain"
-            />
+              <Image
+                source={require('../../../assets/images/right.png')}
+                style={styles.dropdownIcon}
+                resizeMode="contain"
+              />
             </TouchableOpacity>
 
             <View style={styles.categoryContainer}>
@@ -992,9 +985,11 @@ const handlePreview = async () => {
               onPress={handleImageSelect}
             >
               <Image source={uploadIcon1} style={styles.uploadIcon} />
-              <Text allowFontScaling={false} style={styles.uploadText}>Upload {field_name}</Text>
+              <Text allowFontScaling={false} style={styles.uploadText}>
+                Upload {field_name}
+              </Text>
             </TouchableOpacity>
-    {uploadedImages.length > 0 && (
+            {uploadedImages.length > 0 && (
               <View style={styles.imagelistcard}>
                 {uploadedImages.map((file, index) => (
                   <View key={file.id} style={{ width: '100%' }}>
@@ -1005,8 +1000,8 @@ const handlePreview = async () => {
                         justifyContent: 'space-between',
                         alignItems: 'center',
                         paddingRight: 6,
-                        paddingVertical:6,
-                        paddingLeft:8
+                        paddingVertical: 6,
+                        paddingLeft: 8,
                       }}
                     >
                       <View
@@ -1026,7 +1021,7 @@ const handlePreview = async () => {
                           style={{ width: 32, height: 32, marginRight: 5 }}
                         />
                         <Text
-                        allowFontScaling={false}
+                          allowFontScaling={false}
                           style={[styles.fileName, { flexShrink: 1 }]}
                           numberOfLines={1}
                           ellipsizeMode="tail"
@@ -1042,7 +1037,11 @@ const handlePreview = async () => {
                           )
                         }
                       >
-                        <Image source={deleteIcon} style={styles.deleteIcon} />
+                        <Image
+                          source={deleteIcon}
+                          style={{ width: 38, height: 38, resizeMode: 'contain' }}
+                        />
+                        {/* <Image source={deleteIcon} style={styles.deleteIcon} /> */}
                       </TouchableOpacity>
                     </View>
 
@@ -1069,9 +1068,7 @@ const handlePreview = async () => {
       case 'boolean':
         return (
           <View key={field.id} style={styles.featurecard}>
-            {/* Main row with label and toggle */}
             <View style={styles.featuredRow}>
-              {/* <Text style={styles.featuredLabel}>{field.param.field_name}</Text> */}
               {renderLabel1(field.param.field_name, field.mandatory)}
 
               <ToggleButton
@@ -1090,12 +1087,20 @@ const handlePreview = async () => {
 
               {/* Texts */}
               <View style={{ flex: 1 }}>
-                <Text allowFontScaling={false} style={styles.importantText1}>Important:</Text>
-              <Text allowFontScaling={false} style={styles.importantText}>
-                Featured listings require a small upfront fee —{' '}
-                <Text allowFontScaling={false} style={styles.importantText1}>{featureFee}%</Text> of your item’s price or up to{' '}
-                <Text allowFontScaling={false} style={styles.importantText1}>£{maxFeatureCap}</Text> (whichever is lower).
-              </Text>
+                <Text allowFontScaling={false} style={styles.importantText1}>
+                  Important:
+                </Text>
+                <Text allowFontScaling={false} style={styles.importantText}>
+                  Featured listings require a small upfront fee —{' '}
+                  <Text allowFontScaling={false} style={styles.importantText1}>
+                    {featureFee}%
+                  </Text>{' '}
+                  of your item’s price or up to{' '}
+                  <Text allowFontScaling={false} style={styles.importantText1}>
+                    £{maxFeatureCap}
+                  </Text>{' '}
+                  (whichever is lower).
+                </Text>
               </View>
             </View>
           </View>
@@ -1106,27 +1111,23 @@ const handlePreview = async () => {
     }
   };
 
-  // Identify the featured toggle (boolean field) to render it separately from the main container
   const featuredField = fields.find(
     (f: any) => f?.param?.field_type?.toLowerCase() === 'boolean',
   );
 
   return (
- 
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-      <StatusBar
+        <StatusBar
           translucent
           backgroundColor="transparent"
           barStyle="light-content"
         />
 
-        {/* Header with Blur only at top */}
         <AnimatedReanimated.View
           style={[styles.headerWrapper, animatedBlurStyle]}
           pointerEvents="none"
         >
-          {/* Blur layer only at top with gradient fade */}
           <MaskedView
             style={StyleSheet.absoluteFill}
             maskElement={
@@ -1143,7 +1144,6 @@ const handlePreview = async () => {
               style={StyleSheet.absoluteFill}
               blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
               blurAmount={Platform.OS === 'ios' ? 45 : 45}
-              // overlayColor="rgba(255,255,255,0.05)"
               reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
             />
             <LinearGradient
@@ -1159,17 +1159,20 @@ const handlePreview = async () => {
           </MaskedView>
         </AnimatedReanimated.View>
 
-        {/* Header Content */}
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
-            onPress={() => {navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Add', isNavigate:false })}}
+            onPress={() => {
+              navigation.replace('Dashboard', {
+                AddScreenBackactiveTab: 'Add',
+                isNavigate: false,
+              });
+            }}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
             <AnimatedReanimated.View
               style={[styles.blurButtonWrapper, animatedButtonStyle]}
             >
-              {/* Static background (visible when scrollY = 0) */}
               <AnimatedReanimated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -1186,7 +1189,6 @@ const handlePreview = async () => {
                 ]}
               />
 
-              {/* Blur view fades in as scroll increases */}
               <AnimatedReanimated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -1208,7 +1210,6 @@ const handlePreview = async () => {
                 />
               </AnimatedReanimated.View>
 
-              {/* Back Icon */}
               <AnimatedReanimated.Image
                 source={require('../../../assets/images/back.png')}
                 style={[{ height: 24, width: 24 }, animatedIconStyle]}
@@ -1221,81 +1222,91 @@ const handlePreview = async () => {
           </Text>
         </View>
 
-
-
-        
-
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <AnimatedReanimated.ScrollView 
-          scrollEventThrottle={16}
-          onScroll={scrollHandler}
-          contentContainerStyle={[
-            styles.scrollContainer,
-            { paddingBottom: height * 0.1 }, // 0.05% of screen height
-          ]}>
-            
+          <AnimatedReanimated.ScrollView
+            scrollEventThrottle={16}
+            onScroll={scrollHandler}
+            contentContainerStyle={[
+              styles.scrollContainer,
+              { paddingBottom: height * 0.1 }, // 0.05% of screen height
+            ]}
+          >
             <View style={styles.userRow}>
-          <View style={{ width: '20%', alignItems: 'center', justifyContent: 'center' }}>
-            {userMeta?.profile ? (
-              <Image
-                source={{ uri: userMeta.profile }}
-                style={styles.avatar}
-              />
-            ) : (
-              <View style={styles.initialsCircle}>
-                <Text allowFontScaling={false} style={styles.initialsText}>
-                  {getInitials(userMeta?.firstname ?? 'Alan', userMeta?.lastname ?? 'Walker')}
-                </Text>
-              </View>
-            )}
-          </View>
-
-          <View style={{ width: '80%' }}>
-            <Text allowFontScaling={false} style={styles.userName}>
-              {userMeta
-                ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''}`.trim()
-                : 'Alan Walker'}
-            </Text>
-
-            <View
-              style={{
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                display: 'flex',
-                alignItems: 'stretch',
-              }}
-            >
-              <Text allowFontScaling={false} style={styles.userSub}>
-            {userMeta?.university_name || 'University of Warwick,'}
-          </Text>
               <View
                 style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
+                  width: '20%',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                <Text allowFontScaling={false} style={styles.userSub2}>{userMeta?.city || 'Coventry'}</Text>
+                {userMeta?.profile ? (
+                  <Image
+                    source={{ uri: userMeta.profile }}
+                    style={styles.avatar}
+                  />
+                ) : (
+                  <View style={styles.initialsCircle}>
+                    <Text allowFontScaling={false} style={styles.initialsText}>
+                      {getInitials(
+                        userMeta?.firstname ?? 'Alan',
+                        userMeta?.lastname ?? 'Walker',
+                      )}
+                    </Text>
+                  </View>
+                )}
+              </View>
+
+              <View style={{ width: '80%' }}>
+                <Text allowFontScaling={false} style={styles.userName}>
+                  {userMeta
+                    ? `${userMeta.firstname ?? ''} ${
+                        userMeta.lastname ?? ''
+                      }`.trim()
+                    : 'Alan Walker'}
+                </Text>
+
                 <View
                   style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: 3,
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    display: 'flex',
+                    alignItems: 'stretch',
                   }}
                 >
-                  <Image
-                    source={require('../../../assets/images/calendar_icon1.png')}
-                    style={{ height: 20, width: 20 }}
-                  />
-                  <Text allowFontScaling={false} style={styles.dateText}>{getCurrentDate()}</Text>
+                  <Text allowFontScaling={false} style={styles.userSub}>
+                    {userMeta?.university_name || 'University of Warwick,'}
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <Text allowFontScaling={false} style={styles.userSub2}>
+                      {userMeta?.city || 'Coventry'}
+                    </Text>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 3,
+                      }}
+                    >
+                      <Image
+                        source={require('../../../assets/images/calendar_icon1.png')}
+                        style={{ height: 20, width: 20 }}
+                      />
+                      <Text allowFontScaling={false} style={styles.dateText}>
+                        {getCurrentDate()}
+                      </Text>
+                    </View>
+                  </View>
                 </View>
               </View>
             </View>
-          </View>
-        </View>
-
 
             <View style={styles.productdetails}>
               <Animated.View
@@ -1307,13 +1318,16 @@ const handlePreview = async () => {
                   }),
                 }}
               >
-              <Text allowFontScaling={false} style={styles.productdetailstext}>
-                {productName === 'Food'
-                  ? 'Dish Details'
-                  : `${productName ? `${productName} ` : ''}Details`}
-              </Text>                
+                <Text
+                  allowFontScaling={false}
+                  style={styles.productdetailstext}
+                >
+                  {productName === 'Food'
+                    ? 'Dish Details'
+                    : `${productName ? `${productName} ` : ''}Details`}
+                </Text>
 
-              {fields
+                {fields
                   .filter(
                     (f: any) =>
                       f?.param?.field_type?.toLowerCase() !== 'boolean',
@@ -1322,76 +1336,72 @@ const handlePreview = async () => {
               </Animated.View>
             </View>
             {/* Featured listing toggle rendered as a separate section */}
-            {featuredField && (
-              <View>
-                {renderField(featuredField)}
-              </View>
-            )}
-          </AnimatedReanimated.ScrollView>         
+            {featuredField && <View>{renderField(featuredField)}</View>}
+          </AnimatedReanimated.ScrollView>
         </KeyboardAvoidingView>
         <Button title="Preview Details" onPress={() => handlePreview()} />
-
       </View>
-       
 
-
-{Platform.OS === 'android' ? (
+      {Platform.OS === 'android' ? (
         <>
-
-<SelectCatagoryDropdown
-        options={multiSelectOptions}
-        visible={multiSelectModal.visible}
-        ismultilple={multiSelectModal?.ismultilple}
-        title={`Select ${multiSelectModal?.fieldLabel || 'Category'}`}
-        subtitle={
-          multiSelectModal?.ismultilple
-            ? `Pick all ${pluralizeLabel(multiSelectModal?.fieldLabel || 'Category')} that fit your listing.`
-            : `Select the ${multiSelectModal?.fieldLabel || 'category'} that best describes your listing.`
-        }
-        selectedValues={formValues[multiSelectModal.fieldId!]?.value}
-        onClose={() =>
-          setMultiSelectModal(prev => ({ ...prev, visible: false }))
-        }
-        onSelect={(selectedIds: number[] | number) => {
-          setFormValues((prev: any) => ({
-            ...prev,
-            [multiSelectModal.fieldId!]: { value: selectedIds },
-          }));
-        }}
-      />
-
+          <SelectCatagoryDropdown
+            options={multiSelectOptions}
+            visible={multiSelectModal.visible}
+            ismultilple={multiSelectModal?.ismultilple}
+            title={`Select ${multiSelectModal?.fieldLabel || 'Category'}`}
+            subtitle={
+              multiSelectModal?.ismultilple
+                ? `Pick all ${pluralizeLabel(
+                    multiSelectModal?.fieldLabel || 'Category',
+                  )} that fit your listing.`
+                : `Select the ${
+                    multiSelectModal?.fieldLabel || 'category'
+                  } that best describes your listing.`
+            }
+            selectedValues={formValues[multiSelectModal.fieldId!]?.value}
+            onClose={() =>
+              setMultiSelectModal(prev => ({ ...prev, visible: false }))
+            }
+            onSelect={(selectedIds: number[] | number) => {
+              setFormValues((prev: any) => ({
+                ...prev,
+                [multiSelectModal.fieldId!]: { value: selectedIds },
+              }));
+            }}
+          />
         </>
-      ):(
+      ) : (
         <>
-
           <SelectCatagoryDropdown_IOS
-              options={multiSelectOptions}
-              visible={multiSelectModal.visible}
-              ismultilple={multiSelectModal?.ismultilple}
-              title={`Select ${multiSelectModal?.fieldLabel || 'Category'}`}
-              subtitle={
-                multiSelectModal?.ismultilple
-                  ? `Pick all ${pluralizeLabel(multiSelectModal?.fieldLabel || 'Category')} that fit your listing.`
-                  : `Select the ${multiSelectModal?.fieldLabel || 'category'} that best describes your listing.`
-              }
-              //subtitle={`Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your item.`}
-              selectedValues={formValues[multiSelectModal.fieldId!]?.value}
-              onClose={() =>
-                setMultiSelectModal(prev => ({ ...prev, visible: false }))
-              }
-              onSelect={(selectedIds: number[] | number) => {
-                setFormValues((prev: any) => ({
-                  ...prev,
-                  [multiSelectModal.fieldId!]: { value: selectedIds },
-                }));
-              }}
-            />
+            options={multiSelectOptions}
+            visible={multiSelectModal.visible}
+            ismultilple={multiSelectModal?.ismultilple}
+            title={`Select ${multiSelectModal?.fieldLabel || 'Category'}`}
+            subtitle={
+              multiSelectModal?.ismultilple
+                ? `Pick all ${pluralizeLabel(
+                    multiSelectModal?.fieldLabel || 'Category',
+                  )} that fit your listing.`
+                : `Select the ${
+                    multiSelectModal?.fieldLabel || 'category'
+                  } that best describes your listing.`
+            }
+            //subtitle={`Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your item.`}
+            selectedValues={formValues[multiSelectModal.fieldId!]?.value}
+            onClose={() =>
+              setMultiSelectModal(prev => ({ ...prev, visible: false }))
+            }
+            onSelect={(selectedIds: number[] | number) => {
+              setFormValues((prev: any) => ({
+                ...prev,
+                [multiSelectModal.fieldId!]: { value: selectedIds },
+              }));
+            }}
+          />
         </>
       )}
 
-     
       <NewCustomToastContainer />
-
     </ImageBackground>
   );
 };
@@ -1399,8 +1409,7 @@ const handlePreview = async () => {
 export default AddScreen;
 
 const styles = StyleSheet.create({
-
-    headerWrapper: {
+  headerWrapper: {
     position: 'absolute',
     top: 0,
     width: Platform.OS === 'ios' ? '100%' : '100%',
@@ -1412,7 +1421,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '8.4%': 60,
+    top: Platform.OS === 'ios' ? '8.4%' : 60,
     width: Platform.OS === 'ios' ? '100%' : '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -1421,8 +1430,8 @@ const styles = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-    marginTop: (Platform.OS === 'ios' ? 0 : 0),
-    marginLeft: 0
+    marginTop: Platform.OS === 'ios' ? 0 : 0,
+    marginLeft: 0,
   },
   backButtonContainer: {
     position: 'absolute',
@@ -1442,22 +1451,21 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
   },
 
-   
-    initialsCircle:{
- backgroundColor: '#8390D4',
-  alignItems: 'center',
-  justifyContent: 'center',
-   width: 50,
+  initialsCircle: {
+    backgroundColor: '#8390D4',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 50,
     height: 50,
     borderRadius: 25,
     marginRight: 12,
   },
-  initialsText:{
-   color: '#fff',
-  fontSize: 18,
-  fontWeight:600,
-  textAlign: 'center',
-  fontFamily: 'Urbanist-SemiBold',
+  initialsText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 600,
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
   },
   featurecard: {
     paddingHorizontal: 16,
@@ -1467,17 +1475,17 @@ const styles = StyleSheet.create({
     gap: 10,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
   },
-  
-dropdownIcon: {
-  width: 20,
-  height: 20,
-  tintColor:'#FFF'
-},
-dropdowncard:{
-  minHeight:40,
-  alignItems:'flex-start',
-  justifyContent:'center'
-},
+
+  dropdownIcon: {
+    width: 20,
+    height: 20,
+    tintColor: '#FFF',
+  },
+  dropdowncard: {
+    minHeight: 40,
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+  },
   dropdowntext: {
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
@@ -1535,7 +1543,7 @@ dropdowncard:{
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
     //boxShadow: 'rgba(255, 255, 255, 0.12)  inset -1px 0px 5px 1px inset ',
 
-   boxShadow:
+    boxShadow:
       '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
@@ -1563,7 +1571,7 @@ dropdowncard:{
   //   zIndex: 10,
   //   overflow: 'hidden',
   //   backgroundColor:'transparent'
-    
+
   // },
 
   // headerRow: {
@@ -1579,10 +1587,10 @@ dropdowncard:{
     fontSize: 26,
     color: '#fff',
   },
-    scrollContainer: {
+  scrollContainer: {
     paddingHorizontal: 16,
     paddingBottom: 80,
-    paddingTop: Platform.OS === 'ios' ? 120: 100,
+    paddingTop: Platform.OS === 'ios' ? 120 : 100,
   },
   userRow: {
     flexDirection: 'row',
@@ -1591,9 +1599,9 @@ dropdowncard:{
     padding: 12,
     borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    marginTop:(Platform.OS === 'ios' ? 9: 12)
+    marginTop: Platform.OS === 'ios' ? 9 : 12,
   },
-productdetails: {
+  productdetails: {
     marginTop: 10,
     padding: 16,
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
@@ -1622,7 +1630,7 @@ productdetails: {
     fontSize: 12,
     fontWeight: '500',
     lineHeight: 14,
-    marginTop:4
+    marginTop: 4,
   },
   userSub2: {
     color: 'rgba(255, 255, 255, 0.88)',
@@ -1630,24 +1638,23 @@ productdetails: {
     fontSize: 12,
     fontWeight: '500',
     lineHeight: 16,
-    marginTop:1
+    marginTop: 1,
   },
-   userSub1: {
+  userSub1: {
     color: 'rgba(255, 255, 255, 0.48)',
     fontFamily: 'Urbanist-Medium',
     fontSize: 12,
     fontWeight: '500',
     lineHeight: 16,
-    marginTop:1
+    marginTop: 1,
   },
 
-   
   dateText: {
     fontSize: 14,
     fontWeight: '500',
     lineHeight: 16,
-    marginTop:1,
-    color:'#9CD6FF',
+    marginTop: 1,
+    color: '#9CD6FF',
     fontFamily: 'Urbanist-SemiBold',
     letterSpacing: -0.24,
   },
@@ -1691,16 +1698,15 @@ productdetails: {
     height: 20,
     marginRight: 8,
     resizeMode: 'contain',
-     mixBlendMode: 'normal',
+    mixBlendMode: 'normal',
   },
   uploadText: {
     //color: 'rgba(255, 255, 255, 0.48)',
-    color:'#ACE3FF',
+    color: '#ACE3FF',
     fontSize: 14,
-     mixBlendMode: 'normal',
-     fontFamily: 'Urbanist-Medium',
-     fontWeight:500,
-     
+    mixBlendMode: 'normal',
+    fontFamily: 'Urbanist-Medium',
+    fontWeight: 500,
   },
   divider: {
     height: 1,
@@ -1752,15 +1758,15 @@ productdetails: {
     fontWeight: 400,
     lineHeight: 16,
     fontSize: 14,
-    paddingLeft:4
+    paddingLeft: 4,
   },
-    textstyle1: {
+  textstyle1: {
     color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-Medium',
     fontWeight: 500,
     lineHeight: 22,
     fontSize: 17,
-    paddingLeft:4
+    paddingLeft: 4,
   },
   productTextView: {
     gap: 4,
@@ -1779,7 +1785,7 @@ productdetails: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     // marginBottom: 12,
-   // marginTop: 9,
+    // marginTop: 9,
   },
   categoryTag: {
     backgroundColor:
@@ -1895,7 +1901,7 @@ productdetails: {
     lineHeight: 22,
     fontStyle: 'normal',
     color: '#fff',
-    minHeight:40
+    minHeight: 40,
   },
 
   pickerContainer: {
@@ -1905,7 +1911,7 @@ productdetails: {
     borderColor: '#ffffff2c',
     flexDirection: 'row',
     justifyContent: 'space-between',
-  alignItems: 'center',
+    alignItems: 'center',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
@@ -1959,5 +1965,4 @@ productdetails: {
     marginTop: 16,
     alignItems: 'center',
   },
-
 });

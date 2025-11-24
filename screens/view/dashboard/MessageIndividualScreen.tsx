@@ -658,51 +658,7 @@ const MessagesIndividualScreen = ({
     }
   };
 
-  // ----------------------------------------------------------
-  // STEP 1: Get Twilio Token and Initialize Client
-  // ----------------------------------------------------------
-  // useEffect(() => {
-  //   const fetchTwilioToken = async () => {
-  //     try {
-  //       setInitialLoading(true);
-  //       const token = await AsyncStorage.getItem('userToken');
-  //       const userId = await AsyncStorage.getItem('userId');
-  //       if (!token || !userId) {
-  //         setInitialLoading(false);
-  //         return;
-  //       }
-
-  //       // Store userId in state for message comparison
-  //       setCurrentUserId(String(userId));
-
-  //       const response = await fetch(`${MAIN_URL.baseUrl}twilio/auth-token`, {
-  //         method: 'GET',
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //           'Content-Type': 'application/json',
-  //         },
-  //       });
-
-  //       const data = await response.json();
-  //       if (!response.ok) {
-  //         setInitialLoading(false);
-  //         throw new Error(data.message);
-  //       }
-
-  //       // const twillioToken :any = await AsyncStorage.getItem('twillioToken');
-
-  //       console.log('data', data.data.token);
-
-  //       const client = new TwilioChatClient(data.data.token);
-  //       setChatClient(client);
-  //     } catch (err) {
-  //       console.error('Twilio init failed:', err);
-  //       setInitialLoading(false);
-  //     }
-  //   };
-  //   fetchTwilioToken();
-  // }, []);
-
+ 
  useEffect(() => {
     let isMounted = true;
 
@@ -787,736 +743,6 @@ const MessagesIndividualScreen = ({
     };
   }, []);
 
-// ----------------------------Wait for Connection--------------------------
-
-
-
-  // ----------------------------------------------------------
-  // STEP 2: Fetch or Create Conversation
-  // ----------------------------------------------------------
-//   useEffect(() => {
-//     if (!chatClient) return;
-
-//     let isMounted = true;
-//     // const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
-
-//     const fetchConversation = async () => {
-//       try {
-//         //  setLoading(true);
-//         const token = await AsyncStorage.getItem('userToken');
-//         const userId = await AsyncStorage.getItem('userId');
-
-//         // const waitForClientConnection = (client: any) =>
-//         //   new Promise<void>(resolve => {
-//         //     if (client.connectionState === 'connected') return resolve();
-//         //     client.on('connectionStateChanged', (state: string) => {
-//         //       if (state === 'connected') resolve();
-//         //     });
-//         //   });
-
-//         // await waitForClientConnection(chatClient);
-//          await waitForTwilioReady(chatClient);
-//         console.log("hiiii");
-        
-//         let convName = userConvName;
-//         let apiData: any = null;
-//         console.log('source000', source);
-
-//         if (source === 'sellerPage') {
-//           const url = `${MAIN_URL.baseUrl}twilio/conversation-fetch`;
-//           const res = await fetch(url, {
-//             method: 'POST',
-//             headers: {
-//               Authorization: `Bearer ${token}`,
-//               'Content-Type': 'application/json',
-//             },
-//             body: JSON.stringify({ feature_id: sellerData.featureId }),
-//           });
-
-//           apiData = await res.json();
-//           if (res.ok && apiData.data?.conv_name)
-//             convName = apiData.data.conv_name;
-
-//           if (apiData.data == null) {
-//             console.warn(
-//               'Conversation create new conversation:',
-//               apiData.message,
-//             );
-//             // console.time("firstLoder")
-//             setInitialLoading(false);
-//              console.timeEnd("firstLoder")
-//             return;
-//           }
-//         }
-
-//         console.log('convoppppppppppp', convName);
-
-
-
-
-
-
-
-
-
-// let convo = null;
-
-// // ⚡ 1) Cache HIT (0ms)
-// if (conversationCache[convName]) {
-//   console.log("⚡ Cache HIT for conversation");
-//   convo = conversationCache[convName];
-// } else {
-//   // ⚡ 2) Fast fetch using SID (100–180ms)
-//   if (conversationSid) {
-//     console.time("getConversationBySid");
-//     try {
-//       convo = await chatClient.getConversation(conversationSid);
-//       console.log('convo',conversationSid);
-      
-//     } catch {}
-//     console.timeEnd("getConversationBySid");
-//   }
-
-//   // ⚡ 3) Fallback: uniqueName (500–700ms)
-//   if (!convo) {
-//     console.time("getConversationByUniqueName");
-//     try {
-//       convo = await chatClient.getConversationByUniqueName(convName);
-//     } catch {
-//       convo = await chatClient.createConversation({ uniqueName: convName });
-//     }
-//     console.timeEnd("getConversationByUniqueName");
-//   }
-
-//   // Store in cache
-//   conversationCache[convName] = convo;
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//           // let convo = chatClient.conversations.get(convName);
-
-//         // let convo;
-//         // try {
-//         //       console.time("getConversationByUniqueName");
-//         // convo = await chatClient.getConversationByUniqueName(convName);
-//         // console.timeEnd("getConversationByUniqueName");
-//         // } catch {
-//         //   convo = await chatClient.createConversation({ uniqueName: convName });
-//         // }
-
-//         // if (!convo) {
-//         //   setInitialLoading(false);
-//         //   return;
-//         // }
-
-//         const participants = await convo.getParticipants();
-//         const alreadyJoined = participants.some(
-//           (p: any) => p.identity === userId,
-//         );
-//         if (!alreadyJoined) await convo.join();
-
-//         if (!isMounted) return;
-//         setConversation(convo);
-
-//         // Convert to string to match Twilio's author format (author is typically userId as string)
-//         setCheckUser(
-//           String(
-//             source === 'chatList'
-//               ? currentUserIdList
-//               : apiData?.data?.current_user_id || userId,
-//           ),
-//         );
-
-//         // Load all messages initially by fetching all pages
-//         // Twilio pagination: nextPage() = newer messages, prevPage() = older messages
-//         let allMessages: any[] = [];
-//         let currentPage = await convo.getMessages();
-//         allMessages = [...currentPage.items];
-//         markAsRead(currentPage);
-
-//         console.log(
-//           'Initial page loaded:',
-//           currentPage.items.length,
-//           'hasPrevPage:',
-//           currentPage.hasPrevPage,
-//         );
-
-//         // Load all older pages (prevPage gets older messages)
-//         let pageCount = 1;
-//         while (currentPage.hasPrevPage) {
-//           try {
-//             const prevPage = await currentPage.prevPage();
-//             if (prevPage && prevPage.items && prevPage.items.length > 0) {
-//               allMessages = [...allMessages, ...prevPage.items];
-//               currentPage = prevPage;
-//               pageCount++;
-//               console.log(
-//                 `Loaded older page ${pageCount}:`,
-//                 prevPage.items.length,
-//                 'Total so far:',
-//                 allMessages.length,
-//               );
-//             } else {
-//               break;
-//             }
-//           } catch (error) {
-//             console.error('Error loading previous page:', error);
-//             break;
-//           }
-//         }
-
-//         console.log(
-//           'Total messages loaded initially:',
-//           allMessages.length,
-//           'from',
-//           pageCount,
-//           'pages',
-//         );
-
-//         // Store the last page (oldest messages) for pagination (to load even older messages if needed)
-//         messagesPageRef.current = currentPage;
-
-//         // Check if there are more messages to load (older than what we have)
-//         const hasMore = currentPage.hasPrevPage || false;
-//         console.log('hasMoreMessages (older than loaded):', hasMore);
-//         setHasMoreMessages(hasMore);
-
-//         const messagesdate = allMessages.map((msg: any) => {
-//           const createdAt = msg.dateCreated || msg.timestamp; // fallback if dateCreated missing
-
-//           return {
-//             time: new Date(createdAt).toLocaleTimeString([], {
-//               hour: '2-digit',
-//               minute: '2-digit',
-//             }),
-//             date: new Date(createdAt).toLocaleDateString('en-IN', {
-//               day: '2-digit',
-//               month: 'short',
-//               year: 'numeric',
-//             }),
-//           };
-//         });
-
-//         console.log('date time masg------', messagesdate);
-//         console.log('All messages loaded----------', allMessages.length);
-//         setMessagesDateTime(messagesdate);
-//         console.log('checkUser============______', checkUser);
-
-//         // Sort messages chronologically (newest first for inverted FlatList)
-//         // Inverted FlatList will display newest at bottom, oldest at top
-//         const sortedInitialMessages = [...allMessages].sort((a, b) => {
-//           const timeA = new Date(a.dateCreated || a.timestamp).getTime();
-//           const timeB = new Date(b.dateCreated || b.timestamp).getTime();
-//           return timeB - timeA; // Newest first (for inverted list)
-//         });
-//         setMessages(sortedInitialMessages);
-//         // Hide loader once messages are loaded
-//         setInitialLoading(false);
-//       } catch (err) {
-//         console.error('Conversation setup failed:', err);
-//         setInitialLoading(false);
-//       }
-//     };
-
-//     fetchConversation();
-
-//     return () => {
-//       isMounted = false;
-//     };
-//   }, [chatClient]);
-
-
-
-
-
-
-//   useEffect(() => {
-//   if (!chatClient) return;
-
-//   let isMounted = true;
-
-//   const fetchConversationOptimized = async () => {
-//     try {
-//       setInitialLoading(true);
-
-//       const token = await AsyncStorage.getItem("userToken");
-//       const userId = await AsyncStorage.getItem("userId");
-
-//       // Ensure Twilio client is fully connected
-//       await waitForTwilioReady(chatClient);
-
-//       // Resolve conversation name (seller flow may override)
-//       let convName = userConvName;
-//       let apiData: any = null;
-
-//       if (source === "sellerPage") {
-//         const url = `${MAIN_URL.baseUrl}twilio/conversation-fetch`;
-//         const res = await fetch(url, {
-//           method: "POST",
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//             "Content-Type": "application/json",
-//           },
-//           body: JSON.stringify({ feature_id: sellerData.featureId }),
-//         });
-
-//         apiData = await res.json();
-//         if (res.ok && apiData.data?.conv_name) convName = apiData.data.conv_name;
-
-//         if (apiData.data == null) {
-//           console.warn("Conversation not available:", apiData.message);
-//           setInitialLoading(false);
-//           return;
-//         }
-//       }
-
-//       console.log("Loading conversation:", { convName, conversationSid });
-
-//       // Try in-memory conversation cache first (0ms)
-//       let convo = conversationCache[convName] || null;
-
-//       // If not cached, prefer SID (faster) then uniqueName
-//       if (!convo) {
-//         if (conversationSid) {
-//           console.time("getConversationBySid");
-//           try {
-//             convo = await chatClient.getConversation(conversationSid);
-//             console.log("Loaded convo by SID:", conversationSid);
-//           } catch (e) {
-//             console.warn("getConversation(SID) failed, will try uniqueName", e);
-//             convo = null;
-//           }
-//           console.timeEnd("getConversationBySid");
-//         }
-//       }
-
-//       if (!convo) {
-//         console.time("getConversationByUniqueName");
-//         try {
-//           convo = await chatClient.getConversationByUniqueName(convName);
-//           console.log("Loaded convo by uniqueName:", convName);
-//         } catch (err) {
-//           console.warn("getConversationByUniqueName failed - creating:", err);
-//           convo = await chatClient.createConversation({ uniqueName: convName });
-//           console.log("Created convo:", convo?.sid);
-//         }
-//         console.timeEnd("getConversationByUniqueName");
-//       }
-
-//       if (!convo) {
-//         console.error("Failed to load or create conversation");
-//         setInitialLoading(false);
-//         return;
-//       }
-
-//       // Cache conversation for future fast loads
-//       conversationCache[convName] = convo;
-
-//       // Ensure the user is joined
-//       const participants = await convo.getParticipants();
-//       const alreadyJoined = participants.some((p: any) => p.identity === userId);
-//       if (!alreadyJoined) {
-//         try {
-//           await convo.join();
-//           console.log("Joined conversation:", convo.sid);
-//         } catch (err: any) {
-//           if (err?.message?.includes("Conflict")) {
-//             console.log("Already joined (conflict).");
-//           } else {
-//             console.warn("Join conversation failed:", err);
-//           }
-//         }
-//       }
-
-//       if (!isMounted) return;
-
-//       // Save conversation and checkUser
-//       setConversation(convo);
-//       setCheckUser(
-//         String(
-//           source === "chatList"
-//             ? currentUserIdList
-//             : apiData?.data?.current_user_id || userId,
-//         ),
-//       );
-
-//       // Load messages: only latest page (fast). Use message cache if available.
-//       let page: any = null;
-//       let items: any[] = [];
-
-//       if (messageCache[convName]) {
-//         console.log("Message cache HIT for:", convName);
-//         items = messageCache[convName];
-//         // We won't have messagesPageRef for pagination from cache; keep it null so loadOlderMessages works normally
-//       } else {
-//         console.time("loadMessages_latest");
-//         // fetch the latest 30 messages (fast)
-//         page = await convo.getMessages(30);
-//         items = [...(page?.items || [])];
-//         messageCache[convName] = items;
-//         messagesPageRef.current = page;
-//         console.timeEnd("loadMessages_latest");
-//       }
-
-//       // Mark as read (pass the page or the convo as needed)
-//       try {
-//         if (page) markAsRead(page);
-//         else markAsRead(convo); // fallback, your markAsRead expects a conversation variable earlier
-//       } catch (e) {
-//         console.warn("markAsRead failed:", e);
-//       }
-
-//       // Set pagination / hasMore flag
-//       const hasMore = page?.hasPrevPage ?? false;
-//       setHasMoreMessages(hasMore);
-
-//       // Build messagesDateTime and messages state
-//       const messagesdate = items.map((msg: any) => {
-//         const createdAt = msg.dateCreated || msg.timestamp;
-//         return {
-//           time: new Date(createdAt).toLocaleTimeString([], {
-//             hour: "2-digit",
-//             minute: "2-digit",
-//           }),
-//           date: new Date(createdAt).toLocaleDateString("en-IN", {
-//             day: "2-digit",
-//             month: "short",
-//             year: "numeric",
-//           }),
-//         };
-//       });
-
-//       setMessagesDateTime(messagesdate);
-
-//       // Sort newest-first for your inverted FlatList
-//       const sortedInitialMessages = [...items].sort((a, b) => {
-//         const timeA = new Date(a.dateCreated || a.timestamp).getTime();
-//         const timeB = new Date(b.dateCreated || b.timestamp).getTime();
-//         return timeB - timeA;
-//       });
-
-//       setMessages(sortedInitialMessages);
-
-//       setInitialLoading(false);
-//     } catch (err) {
-//       console.error("Conversation setup failed:", err);
-//       setInitialLoading(false);
-//     }
-//   };
-
-//   fetchConversationOptimized();
-
-//   return () => {
-//     isMounted = false;
-//   };
-// }, [chatClient, conversationSid, userConvName, source, sellerData]);
-
-
-// useEffect(() => {
-//   if (!chatClient) return;
-
-//   let isMounted = true;
-
-//   const loadConversation = async () => {
-//     try {
-//       setInitialLoading(true);
-
-//       const token = await AsyncStorage.getItem("userToken");
-//       const userId = await AsyncStorage.getItem("userId");
-
-//       await waitForTwilioReady(chatClient);
-
-//       let convName = userConvName;
-//       let apiData = null;
-
-//       // ---------------------- Handle sellerPage override ----------------------
-//       if (source === "sellerPage") {
-//         const res = await fetch(`${MAIN_URL.baseUrl}twilio/conversation-fetch`, {
-//           method: "POST",
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//             "Content-Type": "application/json",
-//           },
-//           body: JSON.stringify({ feature_id: sellerData.featureId }),
-//         });
-
-//         apiData = await res.json();
-//         if (res.ok && apiData.data?.conv_name) convName = apiData.data.conv_name;
-//         if (!apiData.data) {
-//           setInitialLoading(false);
-//           return;
-//         }
-//       }
-
-//       // ---------------------- INSTANT OPEN (Persistent Cache) ----------------------
-//       const persistedConvo = await loadJSON(CACHE_KEY_CONVO_PREFIX + convName);
-//       const persistedMsgs = await loadJSON(CACHE_KEY_MSG_PREFIX + convName);
-
-//      if (persistedConvo && persistedMsgs) {
-//   conversationCache[convName] = persistedConvo;
-//   messageCache[convName] = persistedMsgs;
-
-//   setConversation(persistedConvo);
-
-//   setMessages(
-//     [...(persistedMsgs || [])].sort(
-//       (a, b) =>
-//         new Date(b.dateCreated).getTime() -
-//         new Date(a.dateCreated).getTime()
-//     )
-//   );
-
-//   setInitialLoading(false);
-//   return;
-// }
-
-
-//       // ---------------------- Live Twilio Fetching ----------------------
-//       const fetchTwilioFresh = async () => {
-//         let convo = conversationCache[convName] || null;
-
-//         // Prefer SID (fastest)
-//         if (!convo && conversationSid) {
-//           try {
-//             convo = await chatClient.getConversation(conversationSid);
-//           } catch (_) {}
-//         }
-
-//         // Fallback: uniqueName
-//         if (!convo) {
-//           try {
-//             convo = await chatClient.getConversationByUniqueName(convName);
-//           } catch {
-//             convo = await chatClient.createConversation({ uniqueName: convName });
-//           }
-//         }
-
-//         conversationCache[convName] = convo;
-//         await saveJSON(CACHE_KEY_CONVO_PREFIX + convName, convo);
-
-//         // Ensure joined
-//         const participants = await convo.getParticipants();
-//         const alreadyJoined = participants.some((p:any) => p.identity === userId);
-//         if (!alreadyJoined) await convo.join();
-
-//         if (!isMounted) return;
-//         setConversation(convo);
-
-//         // Load latest messages only
-//         let page = await convo.getMessages(30);
-//         let items = page.items || [];
-
-//         setCheckUser(
-//   String(
-//     source === 'chatList'
-//       ? currentUserIdList
-//       : apiData?.data?.current_user_id || userId
-//   )
-// );
-
-// setCurrentUserId(String(userId));
-
-//         messageCache[convName] = items;
-//         await saveJSON(CACHE_KEY_MSG_PREFIX + convName, items);
-
-//   setMessages(
-//   [...(items || [])].sort((a, b) => (
-//     new Date(b.dateCreated).getTime() -
-//     new Date(a.dateCreated).getTime()
-//   ))
-// );
-//         setHasMoreMessages(page.hasPrevPage);
-
-//         setInitialLoading(false);
-//       };
-
-//       await fetchTwilioFresh();
-//     } catch (err) {
-//       console.error("Conversation load failed:", err);
-//       setInitialLoading(false);
-//     }
-//   };
-
-//   loadConversation();
-//   return () => { isMounted = false };
-// }, [chatClient]);
-
-
-// useEffect(() => {
-//   if (!chatClient) return;
-
-//   let isMounted = true;
-
-//   const loadConversation = async () => {
-//     try {
-//       setInitialLoading(true);
-
-//       const token = await AsyncStorage.getItem("userToken");
-//       const userId = await AsyncStorage.getItem("userId");
-
-//       await waitForTwilioReady(chatClient);
-
-//       let convName = userConvName;
-//       let apiData = null;
-
-//       // ---------------------- Handle sellerPage override ----------------------
-//       if (source === "sellerPage") {
-//         const res = await fetch(`${MAIN_URL.baseUrl}twilio/conversation-fetch`, {
-//           method: "POST",
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//             "Content-Type": "application/json",
-//           },
-//           body: JSON.stringify({ feature_id: sellerData.featureId }),
-//         });
-
-//         apiData = await res.json();
-//         if (res.ok && apiData.data?.conv_name) convName = apiData.data.conv_name;
-
-//         if (!apiData.data) {
-//           setInitialLoading(false);
-//           return;
-//         }
-//       }
-
-//       // ---------------------- INSTANT OPEN (Persistent Cache) ----------------------
-//       const persistedConvo = await loadJSON(CACHE_KEY_CONVO_PREFIX + convName);
-//       const persistedMsgs = await loadJSON(CACHE_KEY_MSG_PREFIX + convName);
-
-//       if (persistedConvo && persistedMsgs) {
-//         conversationCache[convName] = persistedConvo;
-//         messageCache[convName] = persistedMsgs;
-
-//         setConversation(persistedConvo);
-
-//         // Set identity BEFORE rendering cached messages
-//         setCheckUser(
-//           String(
-//             source === "chatList"
-//               ? currentUserIdList
-//               : apiData?.data?.current_user_id || userId
-//           )
-//         );
-//         setCurrentUserId(String(userId));
-
-//         setMessages(
-//           [...(persistedMsgs || [])].sort(
-//             (a, b) =>
-//               new Date(b.dateCreated).getTime() -
-//               new Date(a.dateCreated).getTime()
-//           )
-//         );
-
-//         setInitialLoading(false);
-//         return;
-//       }
-
-//       // ---------------------- Live Twilio Fresh Fetch ----------------------
-//       const fetchTwilioFresh = async () => {
-//         let convo = conversationCache[convName] || null;
-
-//         // Fastest: by SID
-//         if (!convo && conversationSid) {
-//           try {
-//             convo = await chatClient.getConversation(conversationSid);
-//           } catch (_) {}
-//         }
-
-//         // Fallback: by uniqueName
-//         if (!convo) {
-//           try {
-//             convo = await chatClient.getConversationByUniqueName(convName);
-//           } catch {
-//             convo = await chatClient.createConversation({ uniqueName: convName });
-//           }
-//         }
-
-//         conversationCache[convName] = convo;
-//         await saveJSON(CACHE_KEY_CONVO_PREFIX + convName, convo);
-
-//         // Ensure joined
-//         const participants = await convo.getParticipants();
-//         const alreadyJoined = participants.some((p:any) => p.identity === userId);
-//         if (!alreadyJoined) await convo.join();
-
-//         if (!isMounted) return;
-//         setConversation(convo);
-
-//         // ---------------------- SET USER IDENTITY BEFORE LOADING MESSAGES ----------------------
-//         setCheckUser(
-//           String(
-//             source === "chatList"
-//               ? currentUserIdList
-//               : apiData?.data?.current_user_id || userId
-//           )
-//         );
-//         setCurrentUserId(String(userId));
-
-//         // ---------------------- LOAD ALL MESSAGES (not just 30) ----------------------
-//         let page = await convo.getMessages(30);
-//         let items = Array.isArray(page.items) ? page.items : [];
-//         let all = [...items];
-
-//         while (page.hasPrevPage) {
-//           const prev = await page.prevPage();
-//           if (!prev || !prev.items?.length) break;
-
-//           all = [...all, ...prev.items];
-//           page = prev;
-//         }
-
-//         messageCache[convName] = all;
-//         await saveJSON(CACHE_KEY_MSG_PREFIX + convName, all);
-
-//         // Sort newest → oldest
-//         setMessages(
-//           [...all].sort(
-//             (a, b) =>
-//               new Date(b.dateCreated).getTime() -
-//               new Date(a.dateCreated).getTime()
-//           )
-//         );
-
-//         setHasMoreMessages(page.hasPrevPage);
-//         setInitialLoading(false);
-//       };
-
-//       await fetchTwilioFresh();
-//     } catch (err) {
-//       console.error("Conversation load failed:", err);
-//       setInitialLoading(false);
-//     }
-//   };
-
-//   loadConversation();
-//   return () => {
-//     isMounted = false;
-//   };
-// }, [chatClient]);
-
-// Updated MessageIndividualScreen.tsx
-// -- Full optimized chat loading with only latest 20 msgs and scroll pagination --
-
-// NOTE: Paste your entire file here and replace your old useEffect with the updated block.
-// The user requested only updated section, but a full file structure is required.
-// Insert the updated useEffect block exactly where your old useEffect was.
-
-// --- START OF UPDATED USEEFFECT BLOCK ---
 
 useEffect(() => {
   if (!chatClient) return;
@@ -2548,14 +1774,6 @@ useEffect(() => {
     EMOJI_PICKER_HEIGHT,
   ]);
 
-  // With inverted FlatList, newest messages are automatically at bottom
-  // No need to scroll on initial load - inverted list starts at bottom
-  // Blur effect is now based on content height vs viewport, not scroll position
-
-  // Removed: Scroll on keyboard open/close - let KeyboardAvoidingView handle natural adjustment like WhatsApp
-  // The marginBottom on last message will adjust automatically via extraData re-render
-
-  // const groupedMessages = buildMessageList(messages);
 
   // Scroll to bottom when user sends a new message
   const prevMessagesLengthRef = useRef(messages.length);
@@ -2694,41 +1912,23 @@ useEffect(() => {
 
   return (
     <ImageBackground source={bgImage} style={{ flex: 1 }} resizeMode="cover">
-         
       <View style={{ flex: 1 }}>
         {initialLoading && (
-          // <View
-          //   style={{
-          //     position: 'absolute',
-          //     top: headerTotalHeight,
-          //     bottom: inputBarHeight,
-          //     left: 0,
-          //     right: 0,
-          //     justifyContent: 'center',
-          //     alignItems: 'center',
-          //     zIndex: 999,
-          //   }}
-          // >
-          //   <ActivityIndicator size="large" color="#FFFFFF" />
-          // </View>
-
-
-            <Loader
-          containerStyle={{
-            position: 'absolute',
-            // top: headerTotalHeight,
-            left: 0,
-            right: 0,
-            // bottom: inputBarHeight,
-            justifyContent: 'center',
-            alignItems: 'center',
-            paddingTop: Platform.OS === 'ios' ? 600 :0,
-            zIndex: 1000,
-            elevation: Platform.OS === 'android' ? 100 : 0,
-            pointerEvents: 'none',
-          }}
-        />
-
+          <Loader
+            containerStyle={{
+              position: 'absolute',
+              // top: headerTotalHeight,
+              left: 0,
+              right: 0,
+              // bottom: inputBarHeight,
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingTop: Platform.OS === 'ios' ? 0 : 0,
+              zIndex: 1000,
+              elevation: Platform.OS === 'android' ? 100 : 0,
+              pointerEvents: 'none',
+            }}
+          />
         )}
         {/* Static transparent blur header - 10px height */}
         <View
@@ -2750,248 +1950,223 @@ useEffect(() => {
           />
         </View>
         <Animated.View
-                  style={[styles.headerWrapper, animatedBlurStyle]}
-                  pointerEvents="none"
-                >
-        
-                   <MaskedView
-                    style={StyleSheet.absoluteFill}
-                    maskElement={
-                      <LinearGradient
-                        colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
-                        locations={[0, 0.8]}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 0, y: 1 }}
-                        style={StyleSheet.absoluteFill}
-                      />
-                    }
-                  >
-        
-                      <BlurView
-                      style={StyleSheet.absoluteFill}
-                      blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
-                      blurAmount={Platform.OS === 'ios' ? 45 : 45}
-                      // overlayColor="rgba(255,255,255,0.05)"
-                      reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
-                    />
-        
-                     <LinearGradient
-                      colors={[
-                        'rgba(255, 255, 255, 0.45)',
-                        'rgba(255, 255, 255, 0.02)',
-                        'rgba(255, 255, 255, 0.02)',
-                      ]}
-                      style={StyleSheet.absoluteFill}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 0, y: 1 }}
-                    />
-        
-        
-                  </MaskedView>
-          
-        
-        
-                </Animated.View>
+          style={[styles.headerWrapper, animatedBlurStyle]}
+          pointerEvents="none"
+        >
+          <MaskedView
+            style={StyleSheet.absoluteFill}
+            maskElement={
+              <LinearGradient
+                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                locations={[0, 0.8]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            }
+          >
+            <BlurView
+              style={StyleSheet.absoluteFill}
+              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+              blurAmount={Platform.OS === 'ios' ? 45 : 45}
+              // overlayColor="rgba(255,255,255,0.05)"
+              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+            />
 
-                    <View style={styles.header} pointerEvents="box-none">
-                 
-                          <View style={styles.headerRow}>
-                
- {/* //-----------------------Add New Header------------------------\\ */}
+            <LinearGradient
+              colors={[
+                'rgba(255, 255, 255, 0.45)',
+                'rgba(255, 255, 255, 0.02)',
+                'rgba(255, 255, 255, 0.02)',
+              ]}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+            />
+          </MaskedView>
+        </Animated.View>
 
-              {/* //-----------------------Add New Header------------------------\\ */}
+        <View style={styles.header} pointerEvents="box-none">
+          <View style={styles.headerRow}>
+            {/* //-----------------------Add New Header------------------------\\ */}
 
-                <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  width: '100%',
-                  justifyContent: 'space-between',
-                  gap: 8,
-                  paddingHorizontal:16,
-                  position: 'absolute',
-                  paddingTop: Platform.OS === 'ios' ? 0 : 0,
+            {/* //-----------------------Add New Header------------------------\\ */}
 
-                 
-                }}
-              >
-                  
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                width: '100%',
+                justifyContent: 'space-between',
+                gap: 8,
+                paddingHorizontal: 16,
+                position: 'absolute',
+                paddingTop: Platform.OS === 'ios' ? 0 : 0,
+              }}
+            >
+              {/* //------------------Add Button -------------------// */}
 
-                {/* //------------------Add Button -------------------// */}
-
-                     <TouchableOpacity
-                 onPress={() => {
-                  console.log("CHATBACK", navigation.getState());
-                  if(Platform.OS === 'ios'){
-                      if(navigation.canGoBack()){
+              <TouchableOpacity
+                onPress={() => {
+                  console.log('CHATBACK', navigation.getState());
+                  if (Platform.OS === 'ios') {
+                    if (navigation.canGoBack()) {
                       navigation.goBack();
+                    } else {
+                      // navigation.replace('Dashboard', {
+                      //   AddScreenBackactiveTab: 'Bookmark',
+                      //   isNavigate: false,
+
+                      // });
+
+                      navigation.goBack();
+                    }
                   } else {
-                    // navigation.replace('Dashboard', {
-                    //   AddScreenBackactiveTab: 'Bookmark',
-                    //   isNavigate: false,
-
-                     
-                    // });
-
-                     navigation.goBack();
-                  }
-
-                  }else{
-                      navigation.replace('Dashboard', {
+                    navigation.replace('Dashboard', {
                       AddScreenBackactiveTab: 'Bookmark',
                       isNavigate: false,
                     });
                   }
-                
-                  
-                 }}
-                   hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}  
+                }}
+                hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 24,
+                  overflow: 'hidden',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  position: 'relative',
+                }}
+              >
+                <BlurView
                   style={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 24,
-                    overflow: 'hidden',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    position: 'relative',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    borderRadius: 0,
                   }}
-                >
-                  <BlurView
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      borderRadius: 0,
-                    }}
-                    blurType="light"
-                    blurAmount={10}
-                    reducedTransparencyFallbackColor="#ffffff66"
-                  />
-                 <Image
-              source={back}
-              resizeMode="contain"
-              style={styles.backIconStyle}
-            />
-                </TouchableOpacity>
-                <View
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="#ffffff66"
+                />
+                <Image
+                  source={back}
+                  resizeMode="contain"
+                  style={styles.backIconStyle}
+                />
+              </TouchableOpacity>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  flex: 1,
+                  borderRadius: Platform.OS === 'ios' ? 40 : 40,
+                  paddingHorizontal: 12,
+                  paddingVertical: 8,
+                  overflow: 'hidden',
+                  position: 'relative',
+                }}
+              >
+                <BlurView
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    borderRadius: 30,
+                  }}
+                  blurType="light"
+                  blurAmount={5}
+                  reducedTransparencyFallbackColor="#ffffff34"
+                />
+
+                {/* //----------------------Add Heder text -----------------------// */}
+
+                <TouchableOpacity
                   style={{
                     flexDirection: 'row',
+                    gap: 10,
                     alignItems: 'center',
-                    flex: 1,
-                    borderRadius: (Platform.OS === 'ios' ? 40 : 40),
-                    paddingHorizontal: 12,
-                    paddingVertical: 8,
-                    overflow: 'hidden',
-                    position: 'relative',
+                  }}
+                  onPress={() => {
+                    navigation.navigate('UserProfileScreen', {
+                      animation: 'none',
+                      members: source == 'chatList' ? members : sellerData,
+                      // source: 'chatList',
+                    });
                   }}
                 >
-                  <BlurView
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      borderRadius: 30,
-                    }}
-                    blurType="light"
-                    blurAmount={5}
-                    reducedTransparencyFallbackColor="#ffffff34"
-
-                  />
-                
-                    {/* //----------------------Add Heder text -----------------------// */}
-                
-                  <TouchableOpacity
-            style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}
-
-            onPress={() => {
-              navigation.navigate('UserProfileScreen', {
-                animation: 'none',
-                members: source == 'chatList' ? members : sellerData,
-                // source: 'chatList',
-              });
-            }}
-          >
-            {source =='chatList' ? (
-              members?.profile ? (
-                <Image
-                  source={{ uri: members?.profile }}
-                  style={styles.profileImage}
-                />
-              ) : (
-                <View style={styles.initialsCircle}>
-                  <Text allowFontScaling={false} style={styles.initialsText}>
-                    {getInitials(
-                      members?.firstname ?? 'A',
-                      members?.lastname ?? 'W',
-                    )}
-                  </Text>
-                </View>
-              )
-            ) : sellerData?.profile ? (
-              <Image
-                source={{ uri: sellerData?.profile }}
-                style={styles.profileImage}
-              />
-
-
-            ) : (
-              <View style={styles.initialsCircle}>
-                <Text allowFontScaling={false} style={styles.initialsText}>
-                  {getInitials(
-                    sellerData?.firstname ?? 'A',
-                    sellerData?.lastname ?? 'W',
+                  {source == 'chatList' ? (
+                    members?.profile ? (
+                      <Image
+                        source={{ uri: members?.profile }}
+                        style={styles.profileImage}
+                      />
+                    ) : (
+                      <View style={styles.initialsCircle}>
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.initialsText}
+                        >
+                          {getInitials(
+                            members?.firstname ?? 'A',
+                            members?.lastname ?? 'W',
+                          )}
+                        </Text>
+                      </View>
+                    )
+                  ) : sellerData?.profile ? (
+                    <Image
+                      source={{ uri: sellerData?.profile }}
+                      style={styles.profileImage}
+                    />
+                  ) : (
+                    <View style={styles.initialsCircle}>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.initialsText}
+                      >
+                        {getInitials(
+                          sellerData?.firstname ?? 'A',
+                          sellerData?.lastname ?? 'W',
+                        )}
+                      </Text>
+                    </View>
                   )}
-                </Text>
-              </View>
-            )}
 
-            <View>
-              <Text allowFontScaling={false} style={styles.studentName}>
-                {source === 'chatList'
-                  ? members?.firstname
-                  : sellerData.firstname}{' '}
-                {source === 'chatList'
-                  ? members?.lastname
-                  : sellerData.lastname}
-              </Text>
-              <Text
-                allowFontScaling={false}
-                style={styles.universityName}
-                numberOfLines={0}
-              >
-                {source == 'chatList'
-                  ? members?.university.name
-                  : sellerData?.universityName.name}
-              </Text>
+                  <View>
+                    <Text allowFontScaling={false} style={styles.studentName}>
+                      {source === 'chatList'
+                        ? members?.firstname
+                        : sellerData.firstname}{' '}
+                      {source === 'chatList'
+                        ? members?.lastname
+                        : sellerData.lastname}
+                    </Text>
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.universityName}
+                      numberOfLines={0}
+                    >
+                      {source == 'chatList'
+                        ? members?.university.name
+                        : sellerData?.universityName.name}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
             </View>
-          </TouchableOpacity>
-                </View>                  
-              </View>
 
+            {/* //-------------------add header text ------------------------//              */}
 
-
-
-
-
-
-
-
-                {/* //-------------------add header text ------------------------//              */}
-                            
-                            
-                            {/* Spacer to balance the back button and keep title centered */}
-                            <View style={styles.headerSpacer} />
-                          </View>
-                        </View>
-
-         
-
-
-           
+            {/* Spacer to balance the back button and keep title centered */}
+            <View style={styles.headerSpacer} />
+          </View>
+        </View>
 
         <KeyboardAvoidingView
           key={kavKey}
@@ -3014,7 +2189,7 @@ useEffect(() => {
               data={groupedMessages}
               inverted // WhatsApp-style: newest messages at bottom, scroll up to see older
               // onEndReached={loadOlderMessages}            // 🔥 Load older messages
-    // onEndReachedThreshold={0.2}                 // 🔥 Trigger earlier (20% before top)
+              // onEndReachedThreshold={0.2}                 // 🔥 Trigger earlier (20% before top)
               extraData={[
                 keyboardVisible,
                 isEmojiPickerVisible,
@@ -3027,42 +2202,44 @@ useEffect(() => {
               }
               // onScroll={scrollHandler}
 
+              maintainVisibleContentPosition={{
+                minIndexForVisible: 1,
+              }}
+              onScroll={event => {
+                // Manually update shared values for blur effect
+                const offsetY = event.nativeEvent.contentOffset.y;
+                const contentHeight = event.nativeEvent.contentSize.height;
+                const viewportHeight =
+                  event.nativeEvent.layoutMeasurement.height;
 
-                maintainVisibleContentPosition={{
-    minIndexForVisible: 1,
-  }}
+                // Update scrollY for blur animation
+                scrollY.value = offsetY;
 
-                onScroll={(event) => {
-    // Manually update shared values for blur effect
-    const offsetY = event.nativeEvent.contentOffset.y;
-    const contentHeight = event.nativeEvent.contentSize.height;
-    const viewportHeight = event.nativeEvent.layoutMeasurement.height;
-    
-    // Update scrollY for blur animation
-    scrollY.value = offsetY;
-    
-    // Calculate if we're at the top (viewing oldest messages)
-    const maxScrollY = Math.max(0, contentHeight - viewportHeight);
-    const distanceFromTop = maxScrollY - offsetY;
-    const isAtTop = distanceFromTop <= 10;
-    
-    // Update hasScrollableContent for blur visibility
-    hasScrollableContent.value = contentHeight > viewportHeight && !isAtTop;
+                // Calculate if we're at the top (viewing oldest messages)
+                const maxScrollY = Math.max(0, contentHeight - viewportHeight);
+                const distanceFromTop = maxScrollY - offsetY;
+                const isAtTop = distanceFromTop <= 10;
 
-    if (offsetY > 30) {
-shouldAutoScrollRef.current = false;
-}
+                // Update hasScrollableContent for blur visibility
+                hasScrollableContent.value =
+                  contentHeight > viewportHeight && !isAtTop;
 
-    // 👇 Load older messages when user reaches 25% from the top
-    const threshold = maxScrollY * 0.25; // 25% from top
-    
-    if (distanceFromTop <= threshold && !loadingFromScrollRef.current && !loadingOlderMessages && messagesPageRef.current?.hasPrevPage) {
-      loadOlderMessages();
-    }
-  }}
+                if (offsetY > 30) {
+                  shouldAutoScrollRef.current = false;
+                }
 
+                // 👇 Load older messages when user reaches 25% from the top
+                const threshold = maxScrollY * 0.25; // 25% from top
 
-
+                if (
+                  distanceFromTop <= threshold &&
+                  !loadingFromScrollRef.current &&
+                  !loadingOlderMessages &&
+                  messagesPageRef.current?.hasPrevPage
+                ) {
+                  loadOlderMessages();
+                }
+              }}
               scrollEventThrottle={16}
               scrollEnabled={!isEmojiPickerVisible} // Disable scrolling when emoji keyboard is open
               // onEndReached={loadOlderMessages} // Load older messages when scrolling to top (inverted list)
@@ -3145,7 +2322,9 @@ shouldAutoScrollRef.current = false;
                             marginVertical: 10,
                           }}
                         >
-                          {loadingOlderMessages && index === oldestDateIndex ? 'Loading...' : item?.date}
+                          {loadingOlderMessages && index === oldestDateIndex
+                            ? 'Loading...'
+                            : item?.date}
                         </Text>
                       </View>
                     ) : (
@@ -3232,78 +2411,88 @@ shouldAutoScrollRef.current = false;
                 updateBlurState();
 
                 // Do NOT auto-scroll when loading older messages
-                if (loadingFromScrollRef.current || loadingOlderMessages) return;
+                if (loadingFromScrollRef.current || loadingOlderMessages)
+                  return;
 
                 // If content height increased (new message added)
-                if (height > prevHeight && prevHeight > 0 && flatListRef.current) {
+                if (
+                  height > prevHeight &&
+                  prevHeight > 0 &&
+                  flatListRef.current
+                ) {
                   // Check if the newest message is from the current user
-                  const newestMessage = messages.length > 0 ? messages[0] : null;
+                  const newestMessage =
+                    messages.length > 0 ? messages[0] : null;
                   const newestMessageSid = newestMessage?.sid || null;
-                  
+
                   // Only scroll if the newest message actually changed
                   // If newest message didn't change but height increased, it means older messages were added
                   if (newestMessageSid === newestMessageSidRef.current) {
                     // Newest message didn't change - this is older messages being loaded, don't scroll
                     return;
                   }
-                  
+
                   // Update the ref to track the newest message
                   newestMessageSidRef.current = newestMessageSid;
-                  
-                  const messageAuthor = newestMessage?.author || newestMessage?.state?.author || newestMessage?.attributes?.author;
-                  const isFromMe = 
+
+                  const messageAuthor =
+                    newestMessage?.author ||
+                    newestMessage?.state?.author ||
+                    newestMessage?.attributes?.author;
+                  const isFromMe =
                     String(messageAuthor) === String(checkUser) ||
                     String(messageAuthor) === String(currentUserId);
-                  
+
                   // Always scroll if it's user's own message, or if shouldAutoScrollRef is true
                   if (isFromMe || shouldAutoScrollRef.current) {
                     if (isFromMe) {
                       shouldAutoScrollRef.current = true; // Reset flag for user's messages
                     }
-                    
+
                     // New message was added - scroll to show it above keyboard
                     InteractionManager.runAfterInteractions(() => {
-                      setTimeout(() => {
-                        if (flatListRef.current) {
-                          try {
-                            // For inverted FlatList, scrollToOffset with 0 scrolls to bottom
-                            flatListRef.current.scrollToOffset({
-                              offset: 0,
-                              animated: true,
-                            });
-                          } catch (err) {
-                            // Fallback to scrollToEnd
+                      setTimeout(
+                        () => {
+                          if (flatListRef.current) {
                             try {
-                              flatListRef.current.scrollToEnd({ animated: true });
-                            } catch (e) {
-                              console.warn('Scroll failed:', e);
+                              // For inverted FlatList, scrollToOffset with 0 scrolls to bottom
+                              flatListRef.current.scrollToOffset({
+                                offset: 0,
+                                animated: true,
+                              });
+                            } catch (err) {
+                              // Fallback to scrollToEnd
+                              try {
+                                flatListRef.current.scrollToEnd({
+                                  animated: true,
+                                });
+                              } catch (e) {
+                                console.warn('Scroll failed:', e);
+                              }
                             }
                           }
-                        }
-                      }, keyboardVisible ? 300 : 200);
+                        },
+                        keyboardVisible ? 300 : 200,
+                      );
                     });
                   }
                 }
               }}
+              //               onContentSizeChange={(w, h) => {
+              //   const prev = contentHeightRef.current;
+              //   contentHeightRef.current = h;
 
-//               onContentSizeChange={(w, h) => {
-//   const prev = contentHeightRef.current;
-//   contentHeightRef.current = h;
+              //   // Do NOT auto-scroll when loading older messages
+              //   if (loadingFromScrollRef.current) return;
 
-//   // Do NOT auto-scroll when loading older messages
-//   if (loadingFromScrollRef.current) return;
-
-//   // New incoming message → scroll to bottom
-//   if (h > prev) {
-//     flatListRef.current?.scrollToOffset({
-//       offset: 0,
-//       animated: true,
-//     });
-//   }
-// }}
-
-
-
+              //   // New incoming message → scroll to bottom
+              //   if (h > prev) {
+              //     flatListRef.current?.scrollToOffset({
+              //       offset: 0,
+              //       animated: true,
+              //     });
+              //   }
+              // }}
 
               onLayout={event => {
                 // Update viewport height and check if scrollable
@@ -3380,7 +2569,9 @@ shouldAutoScrollRef.current = false;
                 paddingTop: Platform.OS === 'ios' ? 0 : 8,
                 paddingBottom:
                   Platform.OS === 'ios'
-                    ? keyboardVisible || isEmojiPickerVisible ?0:30 
+                    ? keyboardVisible || isEmojiPickerVisible
+                      ? 0
+                      : 30
                     : keyboardVisible || isEmojiPickerVisible
                     ? 8
                     : 34,
@@ -3496,14 +2687,12 @@ shouldAutoScrollRef.current = false;
                         }
                       }
                     }}
-                    style={{ marginRight: (Platform.OS === 'ios'? 5 : 8) }}
+                    style={{ marginRight: Platform.OS === 'ios' ? 5 : 8 }}
                   >
                     {isEmojiPickerVisible ? (
                       // Show keyboard icon when emoji keyboard is visible (like WhatsApp)
                       // <MaterialIcons name="keyboard" size={24} color="#fff" />
                       <Image
-
-                      
                         source={require('../../../assets/keyboardimages/keyboard1.png')}
                         style={{ width: 24, height: 24, tintColor: '#fff' }}
                       />
@@ -3519,10 +2708,10 @@ shouldAutoScrollRef.current = false;
                   <View
                     style={{
                       width: 1,
-                      height:  30,
-                      marginTop: (Platform.OS === 'ios'? 5 : 0),
-                      marginBottom: (Platform.OS === 'ios'? 5 : 0),
-                      
+                      height: 30,
+                      marginTop: Platform.OS === 'ios' ? 5 : 0,
+                      marginBottom: Platform.OS === 'ios' ? 5 : 0,
+
                       backgroundColor: 'rgba(255, 255, 255, 0.23)',
                       marginHorizontal: 6,
                     }}
@@ -3537,7 +2726,7 @@ shouldAutoScrollRef.current = false;
                       color: '#fff',
                       fontFamily: 'Urbanist-Medium',
                       fontSize: 17,
-                      marginLeft: (Platform.OS === 'ios'? 5 : 0)
+                      marginLeft: Platform.OS === 'ios' ? 5 : 0,
                     }}
                     placeholder="Message"
                     placeholderTextColor="#ccc"
@@ -3605,8 +2794,8 @@ shouldAutoScrollRef.current = false;
                 {/* Send */}
                 <TouchableOpacity
                   onPress={handleSendMessage}
-                     disabled={isSendDisabled}
-                       hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}   
+                  disabled={isSendDisabled}
+                  hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
                   style={{
                     marginLeft: 8,
                     width: 48,
@@ -3616,7 +2805,7 @@ shouldAutoScrollRef.current = false;
                     justifyContent: 'center',
                     alignItems: 'center',
                     position: 'relative',
-                     opacity: isSendDisabled ? 0.5 : 1, // 🔥 Disable UI Feedback
+                    opacity: isSendDisabled ? 0.5 : 1, // 🔥 Disable UI Feedback
                   }}
                 >
                   <BlurView
