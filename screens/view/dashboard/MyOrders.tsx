@@ -28,6 +28,7 @@ import NotificationCard from '../../utils/NotificationCard';
 import ReviewDetailCard from '../../utils/ReviewDetailCard';
 import MyOrderCard from '../../utils/MyOrderCard';
 import { SquircleView } from 'react-native-figma-squircle';
+import Loader from '../../utils/component/Loader';
 
 
 import Animated, {
@@ -104,7 +105,7 @@ const MyOrders = ({ navigation }: MyOrdersProps)  => {
     const pagesize = 10;
     const [featurelist, setFeaturelist] = useState<Feature[]>([]);  
     const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
  const SCREEN_HEIGHT = Dimensions.get('window').height;
   const { height: screenHeight } = Dimensions.get('window');
@@ -207,7 +208,9 @@ useFocusEffect(
 
 const displayListOfProduct = async (categoryId: number | null, pageNum: number) => {
   try {
-   // setIsLoading(true);
+    if (pageNum === 1) {
+      setIsLoading(true);
+    }
     const pagesize = 10;
     
     let url = `${MAIN_URL.baseUrl}category/myorder-list?page=${pageNum}&pagesize=${pagesize}`;
@@ -257,7 +260,7 @@ const displayListOfProduct = async (categoryId: number | null, pageNum: number) 
       console.log('API Error:', jsonResponse.message);
     }
   } catch (err) {
-    setIsLoading(true);
+    setIsLoading(false);
     console.log('Error:', err);
   }
 };
@@ -599,30 +602,25 @@ const renderItem = ({ item, index }: { item: any; index: number }) => {
               setPage(nextPage);
               displayListOfProduct(selectedCategory?.id ?? null, nextPage);
             }}
-            ListFooterComponent={
-              isLoadingMore ? (
-                <ActivityIndicator
-                  size="small"
-                  color="#fff"
-                  style={{ marginVertical: 12 }}
-                />
-              ) : null
-            }
             ListEmptyComponent={
-              !isLoading ? (
-               <View style={[styles.emptyWrapper]}>
-                          <View style={styles.emptyContainer}>
-                            <Image
-                              source={require('../../../assets/images/noproduct.png')} // your image
-                              style={styles.emptyImage}
-                              resizeMode="contain"
-                            />
-                            <Text allowFontScaling={false} style={styles.emptyText}>
-                              No Orders Found
-                            </Text>
-                          </View>
-                          </View>
-              ) : null
+              isLoading ? (
+                <View style={styles.loaderWrapper}>
+                  <Loader containerStyle={styles.loaderContainer} />
+                </View>
+              ) : (
+                <View style={[styles.emptyWrapper]}>
+                  <View style={styles.emptyContainer}>
+                    <Image
+                      source={require('../../../assets/images/noproduct.png')}
+                      style={styles.emptyImage}
+                      resizeMode="contain"
+                    />
+                    <Text allowFontScaling={false} style={styles.emptyText}>
+                      No Orders Found
+                    </Text>
+                  </View>
+                </View>
+              )
             }
           />
 
@@ -723,6 +721,18 @@ dateHeading:{
     marginTop:16
     },
 
+   loaderWrapper: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '100%',
+      minHeight: Platform.OS === 'ios' ? 400 : 300,
+      paddingVertical: 40,
+    },
+    loaderContainer: {
+      width: 100,
+      height: 100,
+    },
    emptyWrapper: {
       flex: 1,
       justifyContent: 'center',

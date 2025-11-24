@@ -403,16 +403,21 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
               })
             },
           ]}>
-          <View
-            style={{
-              gap: 16,
-              justifyContent: 'center',
-              alignItems: 'center',
-              width: '100%',
-            }}
-          >
-            {/* Card */}
-            <View style={[styles.card, { marginTop: (Platform.OS === 'ios' ? 6 : 10 ) }]}>
+          {loading ? (
+            <View style={styles.mainLoaderWrapper}>
+              <Loader containerStyle={styles.mainLoaderContainer} />
+            </View>
+          ) : (
+            <View
+              style={{
+                gap: 16,
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '100%',
+              }}
+            >
+              {/* Card */}
+              <View style={[styles.card, { marginTop: (Platform.OS === 'ios' ? 6 : 10 ) }]}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 {(() => {
                   // Check if category is housekeeping or tuition
@@ -690,7 +695,8 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
                   )}
                 </View>
               ))}
-          </View>
+            </View>
+          )}
         </AnimatedReanimated.ScrollView>
 
 
@@ -1125,6 +1131,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     zIndex: 999,   // ensure it appears above modal content
+  },
+  mainLoaderWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    minHeight: Platform.OS === 'ios' ? 400 : 300,
+    paddingVertical: 40,
+  },
+  mainLoaderContainer: {
+    width: 100,
+    height: 100,
   },
   rightSection: {
     flexDirection: 'row',
