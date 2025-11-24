@@ -19,6 +19,8 @@ import {
   NativeScrollEvent,
   ActivityIndicator,
   StatusBar,
+  Modal,
+  TouchableWithoutFeedback,
 } from 'react-native';
 
 
@@ -137,50 +139,185 @@ const SearchScreenContent = ({navigation}: TransactionScreenProps) => (
 );
 type AddScreenContentProps = {
   navigation: any;
+  products: any[];
+  onSetActiveTab?: (tab: string) => void;
 };
 
-const AddScreenContent: React.FC<
-  AddScreenContentProps & { products: any[] }
-> = ({ navigation, products }) => (
-  <View style={styles.tabContent3}>
-    <Text allowFontScaling={false} style={[styles.tabContentText3]}>List Product</Text>
-    <AnimatedSlideUp>
-      <FlatList
-        data={products}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity       
-            onPress={() => {
-              navigation.replace('AddScreen', {
-                productId: item.id,
-                productName: item.name,
-              },{ animation: 'none' });
+const AddScreenContent: React.FC<AddScreenContentProps> = ({ navigation, products, onSetActiveTab }) => {
+  const [isOnboardingComplete, setIsOnboardingComplete] = useState<boolean | null>(null);
+  const [showOnboardingPopup, setShowOnboardingPopup] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkOnboardingStatus = async () => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) {
+          setLoading(false);
+          return;
+        }
+
+        const url = `${MAIN_URL.baseUrl}transaction/account-detail`;
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+          },
+        });
+
+        const result = await response.json();
+        
+        if (response.ok && result.statusCode === 200) {
+          const isComplete = result.data?.stripeAccount?.isboardcomplete === true;
+          setIsOnboardingComplete(isComplete);
+        } else {
+          // If API fails, assume not complete
+          setIsOnboardingComplete(false);
+        }
+      } catch (error) {
+        console.error('Error checking onboarding status:', error);
+        setIsOnboardingComplete(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkOnboardingStatus();
+  }, []);
+
+  const handleProductPress = (item: any) => {
+    // Check if onboarding is complete before navigating
+    if (isOnboardingComplete === false) {
+      // Show popup if onboarding is not complete
+      setShowOnboardingPopup(true);
+    } else if (isOnboardingComplete === true) {
+      // Navigate normally if onboarding is complete
+      navigation.replace('AddScreen', {
+        productId: item.id,
+        productName: item.name,
+      }, { animation: 'none' });
+    }
+    // If isOnboardingComplete is null (still loading), do nothing
+  };
+
+  const handleGoToPayment = () => {
+    setShowOnboardingPopup(false);
+    if (onSetActiveTab) {
+      onSetActiveTab('Profile');
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.tabContent3}>
+        <Text allowFontScaling={false} style={[styles.tabContentText3]}>List Product</Text>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Loader
+            containerStyle={{
+              width: 50,
+              height: 50,
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
-          >
-            <View style={styles.card}>
-             
+          />
+        </View>
+      </View>
+    );
+  }
 
-               <ImageBackground
-                source={require('../../../assets/images/cardbg.png')} 
-                style={styles.iconBackground}> 
-
-                <Image source={item.icon} style={styles.cardIcon1} />
+  return (
+    <View style={styles.tabContent3}>
+      <Text allowFontScaling={false} style={[styles.tabContentText3]}>List Product</Text>
+      <AnimatedSlideUp>
+        <FlatList
+          data={products}
+          keyExtractor={item => item.id.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity       
+              onPress={() => handleProductPress(item)}
+            >
+              <View style={styles.card}>
                
-               </ImageBackground> 
 
-              <View style={styles.cardTextContainer}>
-                <Text allowFontScaling={false} style={styles.cardTitle}>{item.name}</Text>
-                <Text allowFontScaling={false} style={styles.cardDescription}>{item.description}</Text>
+                 <ImageBackground
+                  source={require('../../../assets/images/cardbg.png')} 
+                  style={styles.iconBackground}> 
+
+                  <Image source={item.icon} style={styles.cardIcon1} />
+                 
+                 </ImageBackground> 
+
+                <View style={styles.cardTextContainer}>
+                  <Text allowFontScaling={false} style={styles.cardTitle}>{item.name}</Text>
+                  <Text allowFontScaling={false} style={styles.cardDescription}>{item.description}</Text>
+                </View>
               </View>
-            </View>
-          </TouchableOpacity>
-        )}
-        ItemSeparatorComponent={() => <View style={{ height: 16 }} />} 
-        contentContainerStyle={{ marginTop:20 }}
-      />
-    </AnimatedSlideUp>
-  </View>
-);
+            </TouchableOpacity>
+          )}
+          ItemSeparatorComponent={() => <View style={{ height: 16 }} />} 
+          contentContainerStyle={{ marginTop:20 }}
+        />
+      </AnimatedSlideUp>
+
+      {/* Onboarding Popup Modal */}
+      <Modal
+        visible={showOnboardingPopup}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowOnboardingPopup(false)}
+      >
+        <TouchableWithoutFeedback onPress={() => setShowOnboardingPopup(false)}>
+          <View style={styles.overlay}>
+            <BlurView
+              style={{
+                flex: 1,
+                alignContent: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                alignItems: 'center',
+              }}
+              blurType="light"
+              blurAmount={10}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            >
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                ]}
+              />
+
+              <View style={styles.popupContainer}>
+                
+                <Image
+                                    source={require('../../../assets/images/alerticon.png')}
+                                    style={styles.logo}
+                                    resizeMode="contain"
+                                  />
+                <Text allowFontScaling={false} style={styles.popupMainHeader}>
+                  Complete Payment Methods
+                </Text>
+                <Text allowFontScaling={false} style={styles.popupSubHeader}>
+                  Please complete your Stripe onboarding process in Payment Methods to add listings.
+                </Text>
+
+                <TouchableOpacity
+                  style={styles.popupButton}
+                  onPress={handleGoToPayment}
+                >
+                  <Text allowFontScaling={false} style={styles.popupButtonText}>
+                    Go to Payment Methods
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </BlurView>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+    </View>
+  );
+};
 
 type ChatProps = {
   navigation: any;
@@ -855,7 +992,7 @@ return (
       case 'Search':
         return <SearchScreenContent  navigation={navigation}/>;
       case 'Add':
-        return <AddScreenContent navigation={navigation} products={products} />;
+        return <AddScreenContent navigation={navigation} products={products} onSetActiveTab={setActiveTab} />;
       case 'Bookmark':
         return <BookmarkScreenContent navigation={navigation} />;
       case 'Profile':
@@ -1673,4 +1810,95 @@ emptyText: {
   fontFamily: 'Urbanist-SemiBold',
   fontWeight:600
 },
+overlay: {
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: 'rgba(0,0,0,0.5)',
+},
+popupContainer: {
+  width: '85%',
+  padding: 20,
+  borderRadius: 24,
+  borderWidth: 1,
+  borderColor: 'rgba(255, 255, 255, 0.1)',
+  alignItems: 'center',
+  overflow: 'hidden',
+  backgroundColor: 'rgba(255, 255, 255, 0.04)',
+},
+popupLogo: {
+  width: 64,
+  height: 64,
+  marginBottom: 20,
+},
+popupMainHeader: {
+  color: 'rgba(255, 255, 255, 0.80)',
+  fontFamily: 'Urbanist-SemiBold',
+  fontSize: 20,
+  fontWeight: '600',
+  letterSpacing: -0.4,
+  lineHeight: 28,
+},
+popupSubHeader: {
+  color: 'rgba(255, 255, 255, 0.80)',
+  fontFamily: 'Urbanist-Regular',
+  fontSize: 14,
+  fontWeight: '400',
+  textAlign: 'center',
+  marginTop: 6,
+},
+popupButton: {
+  display: 'flex',
+  width: '100%',
+  height: 52,
+  justifyContent: 'center',
+  alignItems: 'center',
+  gap: 4,
+  borderRadius: 100,
+  paddingTop: 6,
+  paddingBottom: 6,
+  backgroundColor: 'rgba(255, 255, 255, 0.56)',
+  marginTop: 20,
+  borderWidth: 0.5,
+  borderColor: '#ffffff2c',
+},
+popupButtonText: {
+  color: '#002050',
+  textAlign: 'center',
+  fontFamily: 'Urbanist-Medium',
+  fontSize: 17,
+  fontWeight: 500,
+  letterSpacing: 1,
+  width: '100%',
+},
+popupButtonCancel: {
+  display: 'flex',
+  width: '100%',
+  height: 52,
+  justifyContent: 'center',
+  alignItems: 'center',
+  gap: 4,
+  borderRadius: 100,
+  paddingTop: 6,
+  paddingBottom: 6,
+  backgroundColor: 'rgba(170, 169, 176, 0.56)',
+  marginTop: 8,
+  borderWidth: 0.5,
+  borderColor: '#ffffff2c',
+},
+popupButtonTextCancel: {
+  color: '#FFFFFF7A',
+  textAlign: 'center',
+  fontFamily: 'Urbanist-Medium',
+  fontSize: 17,
+  fontWeight: 500,
+  letterSpacing: 1,
+  width: '100%',
+},
+  logo: {
+    width: 64,
+    height: 64,
+    marginBottom: 20,
+  },
+
 });
