@@ -40,6 +40,7 @@ import Animated, {
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
+import Loader from '../../utils/component/Loader';
 
 type ReviewDetailsProps = {
   navigation: any;
@@ -57,7 +58,8 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
   const { id } = route.params;
   const { purchase } = route.params;
   const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [totalReviews, setTotalReviews] = useState(0);
   const [averageRating, setAverageRating] = useState(0);
   const { height } = Dimensions.get('window');
@@ -171,6 +173,8 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
 
   const fetchReviews = async () => {
     try {
+      setLoading(true);
+      setInitialLoading(true);
       const userId = await AsyncStorage.getItem('userId');
       const token = await AsyncStorage.getItem('userToken');
       console.log(token);
@@ -211,10 +215,18 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
       }));
 
       setUsers(formattedUsers);
+
+      setLoading(false);
+      setInitialLoading(false);
     } catch (error) {
       console.log('Review Fetch Error:', error);
-    } finally {
+
       setLoading(false);
+      setInitialLoading(false);
+    } finally {
+
+      setLoading(false);
+      setInitialLoading(false);
     }
   };
 
@@ -469,12 +481,34 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
               </View>
             </>
           }
+          // ListEmptyComponent={
+          //   <View style={{ alignItems: 'center', marginTop: 50 }}>
+          //     <Text allowFontScaling={false} style={{ color: '#fff' }}>
+          //       No reviews found
+          //     </Text>
+          //   </View>
+          // }
           ListEmptyComponent={
-            <View style={{ alignItems: 'center', marginTop: 50 }}>
-              <Text allowFontScaling={false} style={{ color: '#fff' }}>
-                No reviews found
-              </Text>
-            </View>
+            (loading || initialLoading) && users.length === 0 ? (
+              // Show loader while fetching
+              <View style={[styles.emptyWrapper, { justifyContent: 'center', flex: 1 }]}>
+                <Loader containerStyle={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }} />
+              </View>
+            ) : !loading && users.length === 0 ? (
+              // Show "No Listings Found" if API finished and list is empty
+              <View style={[styles.emptyWrapper, { justifyContent: 'center', alignItems: 'center', flex: 1,paddingHorizontal: 16 }]}>
+                <View style={styles.emptyContainer}>
+                  <Image
+                    source={require('../../../assets/images/noproduct.png')}
+                    style={styles.emptyImage}
+                    resizeMode="contain"
+                  />
+                  <Text allowFontScaling={false} style={styles.emptyText}>
+                    No reviews found
+                  </Text>
+                </View>
+              </View>
+            ) : null // List has items, show nothing
           }
         />
 
@@ -498,6 +532,41 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
 export default ReviewDetails;
 
 const styles = StyleSheet.create({
+  emptyWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+  },
+
+
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderWidth: 0.3,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 24,
+    overflow: 'hidden',
+    minHeight:'80%',
+    marginTop:200,
+  },
+  emptyImage: {
+    width: 50,
+    height: 50,
+    marginBottom: 20,
+  },
+  emptyText: {
+    fontSize: 20,
+    color: '#fff',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: 600
+  },
+
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,

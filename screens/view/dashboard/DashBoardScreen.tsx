@@ -494,60 +494,6 @@ const sendDeviceTokenToServer = async () => {
     }).start();
   }, [activeTab, bubbleX, tabWidth]);
 
- 
-  // const renderProducts = () => {
-  //   const isEven = products.length % 2 === 0;
-  //   let startIndex = 0;
-  //   const rows: JSX.Element[] = [];
-
-  //   if (!isEven) {
-  //     rows.push(
-  //       <Animated.View
-  //         style={[
-  //           { width: '100%' }, 
-  //           { transform: [{ translateY: categorytranslateY }] },
-  //         ]}
-  //         key={products[0].id}
-  //       >
-  //         <ProductItem navigation={navigation} item={products[0]} fullWidth />
-  //       </Animated.View>,
-  //     );
-  //     startIndex = 1;
-  //   }
-
-  //   for (let i = startIndex; i < products.length; i += 2) {
-  //     const rowItems = products.slice(i, i + 2);
-
-  //     rows.push(
-  //       <View style={styles.row} key={i}>
-  //         {rowItems.map((item, index) => (
-  //           <Animated.View
-  //             key={item.id}
-  //             style={[
-  //               styles.halfWidth,
-  //               {
-  //                 transform: [
-  //                   {
-  //                     translateX:
-  //                       index === 0 ? leftItemTranslateX : rightItemTranslateX,
-  //                   },
-  //                 ],
-  //               },
-  //             ]}
-  //           >
-  //             <ProductItem
-  //               navigation={navigation}
-  //               item={item}
-  //               fullWidth={false}
-  //             />
-  //           </Animated.View>
-  //         ))}
-  //         {rowItems.length === 1 && <View style={styles.halfWidth} />}
-  //       </View>,
-  //     );
-  //   }
-  //   return rows;
-  // };
 
 const [activeIndex, setActiveIndex] = useState(0);
 const scrollX = useRef(new Animated.Value(0)).current;
@@ -577,26 +523,7 @@ const renderProducts = () => {
     for (let i = startIndex; i < products.length; i += 2) {
       const rowItems = products.slice(i, i + 2);
       rows.push(
-        // <View style={styles.row} key={i}>
-        //   {rowItems.map((item, index) => (
-        //     <Animated.View
-        //       key={item.id}
-        //       style={[
-        //         // styles.halfWidth,
-        //         {
-        //           transform: [
-        //             {
-        //               translateX:
-        //                 index === 0 ? leftItemTranslateX : rightItemTranslateX,
-        //             },
-        //           ],
-        //         },
-        //       ]}
-        //     >
-        //       <ProductItem navigation={navigation} item={item} />
-        //     </Animated.View>
-        //   ))}
-        // </View>
+     
 
         <View style={styles.row} key={i}>
   {rowItems.map((item, index) => (

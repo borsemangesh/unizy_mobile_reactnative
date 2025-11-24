@@ -223,94 +223,79 @@ useFocusEffect(
     displayListOfProduct(1, search, true);
   }, [appliedFilter])
 );
-  const displayListOfProduct = async (
-  pageNum: number = 1,
-  searchText: string = search,
-  isInitialLoad: boolean = false,
+const displayListOfProduct = async (
+  pageNum = 1,
+  searchText = search,
+  isInitialLoad = false
 ) => {
-  if (isLoading || !hasMore) return;
+  if ((isLoading && !isInitialLoad) || !hasMore) return;
 
-    let start = Date.now();
-    
-    try {
-      if (isInitialLoad) {
-        setInitialLoading(true);
-      } else {
-        setIsLoading(true);
-      }
-  
-      const body = {
-        search: searchText,
-        page: pageNum,
-        pagesize: 20,
-        category_id: category_id,
-      };
-  
-      console.log(body)
-  
-      const url = MAIN_URL.baseUrl + 'category/feature-list/search';
-      console.log(url)
-      const token = await AsyncStorage.getItem('userToken');
-      if (!token) {
-        if (isInitialLoad) {
-          await new Promise(r => setTimeout(r, 1000));
-          setInitialLoading(false);
-        }
-        return;
-      }
-  
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      });
-  
-      const jsonResponse = await response.json();
-      console.log('API Response:', jsonResponse);
-  
-      if (jsonResponse.statusCode === 200) {
-        const newFeatures = jsonResponse.data.features;
-  
-        if (pageNum === 1) {
-          setFeaturelist(newFeatures);
-        } else {
-          setFeaturelist(prev => [...prev, ...newFeatures]);
-        }
-  
-        setHasMore(newFeatures.length === 20); 
-        setPage(prev => prev + 1);
-      }
-      if(jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403){
-            if (isInitialLoad) {
-              await new Promise(r => setTimeout(r, 1000));
-              setInitialLoading(false);
-            } else {
-              setIsLoading(false);
-            }
-            navigation.reset({
-            index: 0,
-            routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
-          });
-          }
-    } catch (err) {
-      console.log('Error:', err);
-      if (isInitialLoad) {
-        await new Promise(r => setTimeout(r, 1000));
-        setInitialLoading(false);
-      }
-    } finally {
-      if (isInitialLoad) {
-        let elapsed = Date.now() - start;
-        let remaining = Math.max(0, 1000 - elapsed);
-        await new Promise(r => setTimeout(r, remaining));
-        setInitialLoading(false);
-      } else {
-        setIsLoading(false);
-      }
+  if (isInitialLoad) {
+    setInitialLoading(true);
+  } else {
+    setIsLoading(true);
+  }
+
+  let start = Date.now();
+
+  try {
+    const body = {
+      search: searchText,
+      page: pageNum,
+      pagesize: 20,
+      category_id: category_id,
+    };
+
+    const url = MAIN_URL.baseUrl + 'category/feature-list/search';
+    const token = await AsyncStorage.getItem('userToken');
+
+    if (!token) {
+      if (isInitialLoad) setInitialLoading(false);
+      else setIsLoading(false);
+      return;
     }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    const jsonResponse = await response.json();
+
+    if (jsonResponse.statusCode === 200) {
+      const newFeatures = jsonResponse.data.features;
+
+      if (pageNum === 1) {
+        setFeaturelist(newFeatures);
+      } else {
+        setFeaturelist((prev) => [...prev, ...newFeatures]);
+      }
+
+      setHasMore(newFeatures.length === 20);
+      setPage(pageNum + 1);
+    } else if (
+      jsonResponse.statusCode === 401 ||
+      jsonResponse.statusCode === 403
+    ) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+      });
+    }
+  } catch (err) {
+    console.log('Error:', err);
+  } finally {
+    const elapsed = Date.now() - start;
+    const remaining = Math.max(0, 500 - elapsed); // ensure min loader time
+    setTimeout(() => {
+      if (isInitialLoad) setInitialLoading(false);
+      else setIsLoading(false);
+    }, remaining);
+  }
 };
 
 const handleBookmarkPress = async (productId: number) => {
@@ -548,7 +533,7 @@ const handleEndReached = useCallback(() => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-              {initialLoading && featurelist.length === 0 && (
+              {/* {initialLoading && featurelist.length === 0 && (
                 <Loader
                   containerStyle={{
                     position: 'absolute',
@@ -564,7 +549,7 @@ const handleEndReached = useCallback(() => {
                     pointerEvents: 'none',
                   }}
                 />
-              )}
+              )} */}
               <StatusBar
                  translucent
                  backgroundColor="transparent"
@@ -665,284 +650,89 @@ const handleEndReached = useCallback(() => {
                  <Text allowFontScaling={false} style={styles.unizyText}>{`${category_name}s`}</Text>
                </View>
 
-        {/* <Animated.FlatList
-            data={featurelist}
-            keyExtractor={(item, index) => {
-              item.id.toString()
-              'worklet';
-              return index.toString();
-            }}
-            renderItem={renderItem}
-            numColumns={2}
-            onEndReached={handleEndReached}
-            onEndReachedThreshold={0.5}
-            ListHeaderComponent={
-              <View
-                style={{ flexDirection: 'row', gap: 8,paddingHorizontal:8 }}
-              >
-                <Pressable
-                  style={styles.search_container}
-                  onPress={() => inputRef.current?.focus()}
-                >
-                  <Image source={searchIcon} style={styles.searchIcon} />
-                  <TextInput
-                    ref={inputRef}
-                    allowFontScaling={false}
-                    style={styles.searchBar}
-                    selectionColor="white"
-                    placeholder="Search"
-                    placeholderTextColor="#ccc"
-                    //onChangeText={setSearch}
-                    onChangeText={text => {
-                      setSearch(text);
-                      debouncedSearch(text);
-                    }}
-                    value={search}
-                  />
-                </Pressable>
-  
-                <View>
-                  <TouchableOpacity
-                    onPress={() => {
-                      clickfilter();
-                    }}
-                  >
-                    <View style={styles.MylistingsBackground}>
-                      <Image source={mylistings} style={styles.iconSmall} />
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            }
-            // ListFooterComponent={
-            //   isLoading ? (
-            //     <View style={{ paddingVertical: 20, alignItems: 'center' }}>
-            //       <Loader
-            //         containerStyle={{
-            //           width: 50,
-            //           height: 50,
-            //           justifyContent: 'center',
-            //           alignItems: 'center',
-            //         }}
-            //       />
-            //     </View>
-            //   ) : null
-            // }
-            // ListFooterComponent={
-            //   isLoading && featurelist.length > 0 ? (
-            //     <View style={{ paddingVertical: 20, alignItems: 'center' }}>
-            //       <Loader
-            //         containerStyle={{
-            //           width: 50,
-            //           height: 50,
-            //           justifyContent: 'center',
-            //           alignItems: 'center',
-            //         }}
-            //       />
-            //     </View>
-            //   ) : null
-            // }
-            ListFooterComponent={
-              isLoading && featurelist.length > 0 ? (
-                <View style={{ paddingVertical: 20, alignItems: 'center' }}>
-                  <Loader
-                    containerStyle={{
-                      width: 50,
-                      height: 50,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}
-                  />
-                </View>
-              ) : null
-            }
-            contentContainerStyle={[
-              styles.listContainer,
-              { paddingTop: Platform.OS === 'ios' ? 120 : 100 ,paddingBottom: isEmpty ? 10 : 40,flexGrow:1},
-            ]}
-            onScroll={scrollHandler}
-            scrollEventThrottle={16}
-            
-            // ListEmptyComponent={
-            //   !isLoading ? (
-            //     <View style={{ paddingVertical: 20, alignItems: 'center' }}>
-            //       <Loader
-            //         containerStyle={{
-            //           width: 50,
-            //           height: 50,
-            //           justifyContent: 'center',
-            //           alignItems: 'center',
-            //         }}
-            //       />
-            //     </View>
-            //   ) : <View style={[styles.emptyWrapper]}>
-            //   <View style={styles.emptyContainer}>
-            //       <Image
-            //         source={require('../../../assets/images/noproduct.png')} // your image
-            //         style={styles.emptyImage}
-            //         resizeMode="contain"
-            //       />
-            //       <Text allowFontScaling={false} style={styles.emptyText}>
-            //         No Listings Found
-            //       </Text>
-            //     </View>
-            //   </View>
-            // }
-            ListEmptyComponent={
-              isLoading ? (
-                // API is loading & list is empty → show loader
-                <View style={{ flex: 1, paddingTop: 40, alignItems: 'center' }}>
-                  <Loader
-                    containerStyle={{
-                      width: 50,
-                      height: 50,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}
-                  />
-                </View>
-              ) : (
-                // API finished & list empty → show No Listings Found
-                <View style={[styles.emptyWrapper]}>
-                  <View style={styles.emptyContainer}>
-                    <Image
-                      source={require('../../../assets/images/noproduct.png')}
-                      style={styles.emptyImage}
-                      resizeMode="contain"
-                    />
-                    <Text allowFontScaling={false} style={styles.emptyText}>
-                      No Listings Found
-                    </Text>
-                  </View>
-                </View>
-              )
-            }
-            
-          /> */}
-          {isLoading  ? (
-            <>
-             <View style={{ paddingVertical: 20, alignItems: 'center' }}>
-              <Loader
-                containerStyle={{
-                  width: 50,
-                  height: 50,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              />
-            </View>
-            </>
-          ): <>
-           <Animated.FlatList
-        data={featurelist}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={renderItem}
-        numColumns={2}
-        onEndReached={handleEndReached}
-        onEndReachedThreshold={0.5}
-        ListHeaderComponent={
-          <View style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 8 }}>
-            <Pressable
-              style={styles.search_container}
-              onPress={() => inputRef.current?.focus()}
-            >
-              <Image source={searchIcon} style={styles.searchIcon} />
-              <TextInput
-                ref={inputRef}
-                allowFontScaling={false}
-                style={styles.searchBar}
-                selectionColor="white"
-                placeholder="Search"
-                placeholderTextColor="#ccc"
-                onChangeText={text => {
-                  setSearch(text);
-                  debouncedSearch(text);
-                }}
-                value={search}
-              />
-            </Pressable>
 
-            <View>
-              <TouchableOpacity onPress={() => clickfilter()}>
-                <View style={styles.MylistingsBackground}>
-                  <Image source={mylistings} style={styles.iconSmall} />
-                </View>
-              </TouchableOpacity>
+<Animated.FlatList
+    data={featurelist}
+    keyExtractor={(item, index) => index.toString()}
+    renderItem={renderItem}
+    numColumns={2}
+    onEndReached={handleEndReached}
+    onEndReachedThreshold={0.5}
+    ListHeaderComponent={
+      <View style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 8 }}>
+        <Pressable
+          style={styles.search_container}
+          onPress={() => inputRef.current?.focus()}
+        >
+          <Image source={searchIcon} style={styles.searchIcon} />
+          <TextInput
+            ref={inputRef}
+            allowFontScaling={false}
+            style={styles.searchBar}
+            selectionColor="white"
+            placeholder="Search"
+            placeholderTextColor="#ccc"
+            onChangeText={text => {
+              setSearch(text);
+              debouncedSearch(text);
+            }}
+            value={search}
+          />
+        </Pressable>
+
+        <View>
+          <TouchableOpacity onPress={() => clickfilter()}>
+            <View style={styles.MylistingsBackground}>
+              <Image source={mylistings} style={styles.iconSmall} />
             </View>
+          </TouchableOpacity>
+        </View>
+      </View>
+    }
+    ListFooterComponent={
+      // Footer loader for pagination
+      isLoading && featurelist.length > 0 ? (
+        <View style={{ paddingVertical: 20, alignItems: 'center' }}>
+          <Loader containerStyle={{ width: 50, height: 50 }} />
+        </View>
+      ) : null
+    }
+    ListEmptyComponent={
+      (isLoading || initialLoading) && featurelist.length === 0 ? (
+        // Show loader while fetching
+        <View style={[styles.emptyWrapper, { justifyContent: 'center', flex: 1 }]}>
+          <Loader containerStyle={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }} />
+        </View>
+      ) : !isLoading && featurelist.length === 0 ? (
+        // Show "No Listings Found" if API finished and list is empty
+        <View style={[styles.emptyWrapper, { justifyContent: 'center', alignItems: 'center', flex: 1 }]}>
+          <View style={styles.emptyContainer}>
+            <Image
+              source={require('../../../assets/images/noproduct.png')}
+              style={styles.emptyImage}
+              resizeMode="contain"
+            />
+            <Text allowFontScaling={false} style={styles.emptyText}>
+              No Listings Found
+            </Text>
           </View>
-        }
-        ListFooterComponent={
-          // Footer loader only for pagination (list has items)
-          isLoading && featurelist.length > 0 ? (
-            <View style={{ paddingVertical: 20, alignItems: 'center' }}>
-              <Loader
-                containerStyle={{
-                  width: 50,
-                  height: 50,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              />
-            </View>
-          ) : null
-        }
-        ListEmptyComponent={
-          // Show Loader if API is loading and list is empty
-          isLoading && featurelist.length === 0 ? (
-            <View style={{ flex: 1, paddingTop: 40, alignItems: 'center' }}>
-              <Loader
-                containerStyle={{
-                  width: 50,
-                  height: 50,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              />
-            </View>
-          ) : !isLoading && featurelist.length === 0 ? (
-            // Show "No Listings Found" if API finished and list is empty
-            <View style={[styles.emptyWrapper]}>
-              <View style={styles.emptyContainer}>
-                <Image
-                  source={require('../../../assets/images/noproduct.png')}
-                  style={styles.emptyImage}
-                  resizeMode="contain"
-                />
-                <Text allowFontScaling={false} style={styles.emptyText}>
-                  No Listings Found
-                </Text>
-              </View>
-            </View>
-          ) : null
-        }
-        contentContainerStyle={[
-          styles.listContainer,
-          {
-            paddingTop: Platform.OS === 'ios' ? 120 : 100,
-            paddingBottom: featurelist.length === 0 ? 10 : 40,
-            flexGrow: 1,
-          },
-        ]}
-        onScroll={scrollHandler}
-        scrollEventThrottle={16}
-      />
-          </>}
-         
+        </View>
+      ) : null // List has items, show nothing
+    }
+    contentContainerStyle={[
+      styles.listContainer,
+      {
+        paddingTop: Platform.OS === 'ios' ? 120 : 100,
+        paddingBottom: featurelist.length === 0 ? 10 : 40,
+        flexGrow: 1,
+      },
+    ]}
+    onScroll={scrollHandler}
+    scrollEventThrottle={16}
+  /> 
+
 
       </View>
-
-      {/* <FilterBottomSheet
-        catagory_id={category_id}
-        visible={isFilterVisible}
-        initialFilters={appliedFilter}
-        onClose={() => {
-          console.log('Filter Colse click:  ', isFilterVisible);
-          setFilterVisible(false);
-        }}
-        onApply={filterBody => handleFilterApply(filterBody)}
-        from={0}
-        to={0}
-      /> */}
 
       {Platform.OS === 'ios' ? (
         <FilterBottomSheet
@@ -1066,7 +856,7 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       width:'100%',
-      paddingHorizontal:10
+      paddingHorizontal:10,
     },
 
  

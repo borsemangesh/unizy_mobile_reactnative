@@ -273,15 +273,6 @@ export default function ProductCard({
                   style={StyleSheet.absoluteFillObject}
                 />
 
-          {/* <LinearGradient
-          colors={[
-            'rgba(255,255,255,0.48)', 
-            'rgba(255,255,255,0)' 
-          ]}
-          style={StyleSheet.absoluteFillObject}
-          start={{ x: 0.17, y: 0.06 }}
-          end={{ x: 1, y: 1 }}
-        /> */}
       
         <Text allowFontScaling={false} style={styles.tagText}>
           {tag}

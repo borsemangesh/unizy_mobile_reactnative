@@ -479,7 +479,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-        {initialLoading && featurelist.length === 0 && (
+        {/* {initialLoading && featurelist.length === 0 && (
           <Loader
             containerStyle={{
               position: 'absolute',
@@ -495,7 +495,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
               pointerEvents: 'none',
             }}
           />
-        )}
+        )} */}
         <StatusBar
           translucent
           backgroundColor="transparent"
@@ -673,21 +673,43 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
               </View>
             ) : null
           }
+          // ListEmptyComponent={
+          //   !initialLoading && !isLoading ? (
+          //     <View style={[styles.emptyWrapper]}>
+          //       <View style={styles.emptyContainer}>
+          //         <Image
+          //           source={require('../../../assets/images/noproduct.png')} // your image
+          //           style={styles.emptyImage}
+          //           resizeMode="contain"
+          //         />
+          //         <Text allowFontScaling={false} style={styles.emptyText}>
+          //           No Bookmarks Found
+          //         </Text>
+          //       </View>
+          //     </View>
+          //   ) : null
+          // }
           ListEmptyComponent={
-            !initialLoading && !isLoading ? (
-              <View style={[styles.emptyWrapper]}>
+            (isLoading || initialLoading) && featurelist.length === 0 ? (
+              // Show loader while fetching
+              <View style={[styles.emptyWrapper, { justifyContent: 'center', flex: 1 }]}>
+                <Loader containerStyle={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }} />
+              </View>
+            ) : !isLoading && featurelist.length === 0 ? (
+              // Show "No Listings Found" if API finished and list is empty
+              <View style={[styles.emptyWrapper, { justifyContent: 'center', alignItems: 'center', flex: 1 }]}>
                 <View style={styles.emptyContainer}>
                   <Image
-                    source={require('../../../assets/images/noproduct.png')} // your image
+                    source={require('../../../assets/images/noproduct.png')}
                     style={styles.emptyImage}
                     resizeMode="contain"
                   />
                   <Text allowFontScaling={false} style={styles.emptyText}>
-                    No Bookmarks Found
+                    No Listings Found
                   </Text>
                 </View>
               </View>
-            ) : null
+            ) : null // List has items, show nothing
           }
         />
       </View>
