@@ -32,19 +32,46 @@ function App() {
 
     const initializeNotifications = async () => {
       try {
-        const authStatus = await messaging().requestPermission();
-        const enabled =
-          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+        // const authStatus = await messaging().requestPermission();
+        // const enabled =
+        //   authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        //   authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-        if (enabled) {
-          console.log("✅ Notification permission granted");
+        // if (enabled) {
+        //   console.log("✅ Notification permission granted");
+        //   const token = await messaging().getToken();
+        //   console.log("🔥 FCM Token:", token);
+        // } else {
+        //   console.log("❌ Notification permission denied");
+        // }
+
+        if (Platform.OS === "ios") {
+          const notifeeSettings = await notifee.requestPermission({
+            sound: true,
+            alert: true,
+            badge: true,
+          });
+          console.log("🔔 iOS Notification permission:", notifeeSettings);
+
           const token = await messaging().getToken();
           console.log("🔥 FCM Token:", token);
-        } else {
-          console.log("❌ Notification permission denied");
         }
 
+        else {
+          const authStatus = await messaging().requestPermission();
+          const enabled =
+            authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+            authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+          if (enabled) {
+            console.log("✅ Notification permission granted");
+            const token = await messaging().getToken();
+            console.log("🔥 FCM Token:", token);
+          } else {
+            console.log("❌ Notification permission denied");
+          }
+        }
+      
         if (Platform.OS === 'android') {
           await notifee.createChannel({
             id: 'default',
