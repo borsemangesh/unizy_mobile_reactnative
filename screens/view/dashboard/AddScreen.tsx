@@ -1335,7 +1335,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                   .map((field: any) => renderField(field))}
               </Animated.View>
             </View>
-            {/* Featured listing toggle rendered as a separate section */}
+           
             {featuredField && <View>{renderField(featuredField)}</View>}
           </AnimatedReanimated.ScrollView>
         </KeyboardAvoidingView>

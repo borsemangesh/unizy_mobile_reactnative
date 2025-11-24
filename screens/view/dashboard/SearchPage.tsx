@@ -548,6 +548,8 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
           data={featurelist}
           renderItem={renderItem}
           numColumns={2}
+          showsVerticalScrollIndicator={true}   // Hide vertical scrollbar
+          showsHorizontalScrollIndicator={true}
           onEndReachedThreshold={0.5}
           columnWrapperStyle={styles.row1}
           keyExtractor={(item, index) => {
@@ -815,6 +817,7 @@ const styles = StyleSheet.create({
     height: 50,
   
     width: '84%',
+    gap:(Platform.OS === 'ios' ? 8:0 )
   },
   searchIcon: {
 

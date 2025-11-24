@@ -159,12 +159,12 @@ const MessagesIndividualScreen = ({
   const { members, sellerData, userConvName, currentUserIdList, source, conversationSid } =
     route.params;
 
-  console.log('Received members:', members);
-  console.log('sellerData----', sellerData?.featureId);
-  console.log('source', source);
-  console.log('convName', userConvName);
+  // console.log('Received members:', members);
+  // console.log('sellerData----', sellerData?.featureId);
+  // console.log('source', source);
+  // console.log('convName', userConvName);
 
-  console.log('currentUserIdList----', currentUserIdList);
+  // console.log('currentUserIdList----', currentUserIdList);
 
   const [chatClient, setChatClient] = useState<any>(null);
 
@@ -1240,7 +1240,7 @@ const MessagesIndividualScreen = ({
     conversation.on('messageAdded', handleNewMessage);
 
     return () => {
-      console.log(' Cleaning Twilio listener');
+      // console.log(' Cleaning Twilio listener');
       conversation.removeListener('messageAdded', handleNewMessage);
     };
   }, [conversation, checkUser, currentUserId]); // Add missing dependencies
@@ -1373,14 +1373,14 @@ const MessagesIndividualScreen = ({
           // Use the maximum of both methods to ensure accurate height
           if (heightDiff > 100) {
             h = Math.max(h, heightDiff);
-            console.log(
-              'Keyboard height - event:',
-              (e && e.endCoordinates && e.endCoordinates.height) || 0,
-              'window diff:',
-              heightDiff,
-              'using:',
-              h,
-            );
+            // console.log(
+            //   'Keyboard height - event:',
+            //   (e && e.endCoordinates && e.endCoordinates.height) || 0,
+            //   'window diff:',
+            //   heightDiff,
+            //   'using:',
+            //   h,
+            // );
           }
           // Update reference for next calculation
           windowHeightRef.current = currentWindowHeight;
@@ -1397,13 +1397,13 @@ const MessagesIndividualScreen = ({
             // This is important for devices like Motorola Edge Fusion 60 where height might vary
             const newHeight = Math.max(prev, h);
             if (newHeight !== prev) {
-              console.log(
-                'Keyboard height captured:',
-                h,
-                'Max height:',
-                newHeight,
-                'Device will use this for emoji picker',
-              );
+              // console.log(
+              //   'Keyboard height captured:',
+              //   h,
+              //   'Max height:',
+              //   newHeight,
+              //   'Device will use this for emoji picker',
+              // );
             }
             return newHeight;
           });
@@ -1421,24 +1421,24 @@ const MessagesIndividualScreen = ({
                 // Use the maximum of all methods to ensure accurate height
                 const maxHeight = Math.max(prev, h, metricsHeight);
                 if (maxHeight !== prev) {
-                  console.log(
-                    'Keyboard height from metrics (immediate):',
-                    metricsHeight,
-                    'event:',
-                    h,
-                    'Max height:',
-                    maxHeight,
-                  );
+                  // console.log(
+                  //   'Keyboard height from metrics (immediate):',
+                  //   metricsHeight,
+                  //   'event:',
+                  //   h,
+                  //   'Max height:',
+                  //   maxHeight,
+                  // );
                 }
                 return maxHeight;
               });
             }
           } catch (err) {
             // Keyboard.metrics() might not be available, use event height
-            console.log(
-              'Keyboard.metrics() not available, using event height:',
-              h,
-            );
+            // console.log(
+            //   'Keyboard.metrics() not available, using event height:',
+            //   h,
+            // );
           }
 
           // First delayed check after 150ms for devices that report height later
@@ -1450,12 +1450,12 @@ const MessagesIndividualScreen = ({
                 setLastKeyboardHeight(prev => {
                   const maxHeight = Math.max(prev, metricsHeight);
                   if (maxHeight !== prev) {
-                    console.log(
-                      'Keyboard height updated from metrics (150ms):',
-                      metricsHeight,
-                      'Max height:',
-                      maxHeight,
-                    );
+                    // console.log(
+                    //   'Keyboard height updated from metrics (150ms):',
+                    //   metricsHeight,
+                    //   'Max height:',
+                    //   maxHeight,
+                    // );
                   }
                   return maxHeight;
                 });
@@ -1468,12 +1468,12 @@ const MessagesIndividualScreen = ({
                 setLastKeyboardHeight(prev => {
                   const maxHeight = Math.max(prev, heightDiff);
                   if (maxHeight !== prev) {
-                    console.log(
-                      'Keyboard height from window diff (150ms):',
-                      heightDiff,
-                      'Max height:',
-                      maxHeight,
-                    );
+                    // console.log(
+                    //   'Keyboard height from window diff (150ms):',
+                    //   heightDiff,
+                    //   'Max height:',
+                    //   maxHeight,
+                    // );
                   }
                   return maxHeight;
                 });
@@ -1900,7 +1900,7 @@ const MessagesIndividualScreen = ({
     }
   }, [initialLoading, messages.length === 0 ? null : messages[0]?.sid]); // Only trigger when initial loading completes
 
-  console.log('groupedMessages=========', groupedMessages);
+  // console.log('groupedMessages=========', groupedMessages);
 
   // Calculate header and input bar heights for loader positioning
   const headerTop = Platform.OS === 'ios' ? 50 : 40;
@@ -2008,11 +2008,20 @@ const MessagesIndividualScreen = ({
 
               <TouchableOpacity
                 onPress={() => {
-                  console.log('CHATBACK', navigation.getState());
+                  console.log('CHATBACK', source);
                   if (Platform.OS === 'ios') {
+                    // console.log("source: ", source);
                     if (navigation.canGoBack()) {
                       navigation.goBack();
                     } else {
+                      if(source === 'chatList'){
+                        navigation.reset({
+                          index: 0,
+                          routes: [{ name: 'Dashboard', params: { resetToLogin: true,AddScreenBackactiveTab: 'Bookmark',
+                          isNavigate: false, } }],
+                        });
+
+                      }
                       // navigation.replace('Dashboard', {
                       //   AddScreenBackactiveTab: 'Bookmark',
                       //   isNavigate: false,
@@ -2020,7 +2029,9 @@ const MessagesIndividualScreen = ({
                       // });
 
                       navigation.goBack();
+
                     }
+                   
                   } else {
 
                     if (source === 'sellerPage') {
@@ -2032,8 +2043,6 @@ const MessagesIndividualScreen = ({
                         isNavigate: false,
                       });
                     }
-
-
                   }
                 }}
                 hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
@@ -2625,12 +2634,12 @@ const MessagesIndividualScreen = ({
                   <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={() => {
-                      console.log(
-                        'Emoji button clicked, isEmojiPickerVisible:',
-                        isEmojiPickerVisible,
-                        'keyboardVisible:',
-                        keyboardVisible,
-                      );
+                      // console.log(
+                      //   'Emoji button clicked, isEmojiPickerVisible:',
+                      //   isEmojiPickerVisible,
+                      //   'keyboardVisible:',
+                      //   keyboardVisible,
+                      // );
                       if (isEmojiPickerVisible) {
                         // Currently showing emoji keyboard - switch to text keyboard
                         shouldAutoFocusRef.current = true; // Allow auto-focus
@@ -2645,10 +2654,10 @@ const MessagesIndividualScreen = ({
                         }, 150);
                       } else {
                         // Currently showing text keyboard or no keyboard - switch to emoji keyboard
-                        console.log('Opening emoji keyboard...', {
-                          keyboardVisible,
-                          isEmojiPickerVisible,
-                        });
+                        // console.log('Opening emoji keyboard...', {
+                        //   keyboardVisible,
+                        //   isEmojiPickerVisible,
+                        // });
 
                         // Set flags first
                         shouldAutoFocusRef.current = false; // Prevent auto-focus
@@ -2656,31 +2665,31 @@ const MessagesIndividualScreen = ({
 
                         if (keyboardVisible) {
                           // Dismiss text keyboard first, then show emoji picker
-                          console.log('Dismissing keyboard first...');
+                          // console.log('Dismissing keyboard first...');
                           Keyboard.dismiss();
                           // Blur input to prevent text keyboard from showing
                           textInputRef.current?.blur();
                           setTimeout(() => {
-                            console.log(
-                              'Setting emoji picker visible to true (after keyboard dismiss)',
-                            );
+                            // console.log(
+                            //   'Setting emoji picker visible to true (after keyboard dismiss)',
+                            // );
                             setIsEmojiPickerVisible(true);
                             // Reset flag after delay to allow normal behavior
                             setTimeout(() => {
                               isOpeningEmojiRef.current = false;
-                              console.log('Emoji keyboard visible, flag reset');
+                              // console.log('Emoji keyboard visible, flag reset');
                             }, 500);
                           }, 300);
                         } else {
                           // No keyboard visible - show emoji keyboard immediately
-                          console.log(
-                            'Setting emoji picker visible to true (no keyboard) - IMMEDIATE',
-                          );
+                          // console.log(
+                          //   'Setting emoji picker visible to true (no keyboard) - IMMEDIATE',
+                          // );
                           // Set state immediately - no delays
                           setIsEmojiPickerVisible(true);
-                          console.log(
-                            'State set to true, should render emoji picker now',
-                          );
+                          // console.log(
+                          //   'State set to true, should render emoji picker now',
+                          // );
                           // Blur input after state is set to prevent text keyboard from showing
                           setTimeout(() => {
                             textInputRef.current?.blur();

@@ -1453,6 +1453,7 @@ const styles = StyleSheet.create({
     padding: (Platform.OS === 'ios'? 12:0),
     marginTop:(Platform.OS === 'ios' ? 16:20),
     height: 50,
+    gap:(Platform.OS === 'ios' ? 8:0 )
 
   },
   searchIcon: {
@@ -1487,8 +1488,7 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff11',
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
     backgroundColor: 'rgba(0, 23, 128, 0.49)',
-    // backgroundColor:
-    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
+  
     borderEndEndRadius: 50,
     borderStartEndRadius: 50,
     borderTopLeftRadius: 50,
