@@ -949,15 +949,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       ]}
                       activeOpacity={0.8}
                       onPress={() => {
-                        // if (detail?.ispurchased) {
-                        //   navigation.navigate("MessagesIndividualScreen");
-                        // }
-                        if (detail?.ispurchased) {
-                          console.log(
-                            'NAVIGATIONSTATUS: ',
-                            navigation.getState(),
-                          );
-                          navigation.navigate('MessagesIndividualScreen', {
+                       
+                         navigation.navigate('MessagesIndividualScreen', {
                             animation: 'none',
                             sellerData: {
                               featureId: detail.id,
@@ -967,11 +960,29 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                               universityName: detail.university,
                               id: detail.createdby.id,
                             },
-                            source: 'sellerPage', // 👈 another flag
+                            source: 'sellerPage', 
                           });
-                        } else {
-                          setShowPopup(true);
-                        }
+                        
+                        // if (detail?.ispurchased) {
+                        //   console.log(
+                        //     'NAVIGATIONSTATUS: ',
+                        //     navigation.getState(),
+                        //   );
+                        //   navigation.navigate('MessagesIndividualScreen', {
+                        //     animation: 'none',
+                        //     sellerData: {
+                        //       featureId: detail.id,
+                        //       firstname: detail.createdby.firstname,
+                        //       lastname: detail.createdby.lastname,
+                        //       profile: detail.createdby.profile,
+                        //       universityName: detail.university,
+                        //       id: detail.createdby.id,
+                        //     },
+                        //     source: 'sellerPage', // 👈 another flag
+                        //   });
+                        // } else {
+                        //   setShowPopup(true);
+                        // }
                       }}
                     >
                       <Image
