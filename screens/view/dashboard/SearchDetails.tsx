@@ -1,4 +1,3 @@
-
 import {
   View,
   Text,
@@ -21,7 +20,10 @@ import { BlurView } from '@react-native-community/blur';
 import { useRoute } from '@react-navigation/native';
 import { MAIN_URL } from '../../utils/APIConstant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {NewCustomToastContainer,showToast,} from '../../utils/component/NewCustomToastManager';
+import {
+  NewCustomToastContainer,
+  showToast,
+} from '../../utils/component/NewCustomToastManager';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Button from '../../utils/component/Button';
 import PayButton from '../../utils/component/PayButton';
@@ -36,9 +38,8 @@ import AnimatedReanimated, {
   useDerivedValue,
 } from 'react-native-reanimated';
 import MaskedView from '@react-native-masked-view/masked-view';
-import SelectFoodQuantity from '../../utils/component/SelectFoodQuantity'
+import SelectFoodQuantity from '../../utils/component/SelectFoodQuantity';
 import SelectFoodQuantity_IOS from '../../utils/component/SelectFoodQuantity_IOS';
-
 
 type SearchDetailsProps = {
   navigation: any;
@@ -81,76 +82,74 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
   const insets = useSafeAreaInsets(); // Safe area insets
 
-  const [famount,setfamout] = useState(0)
+  const [famount, setfamout] = useState(0);
   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
 
-    const { height } = Dimensions.get('window');
-   const screenHeight = Dimensions.get('window').height;
-    const [slideUp1] = useState(new Animated.Value(0));
-  
-    const scrollY = useSharedValue(0);
-  
-    const scrollHandler = useAnimatedScrollHandler({
-      onScroll: event => {
-        'worklet';
-        scrollY.value = event.contentOffset.y;
-      },
-    });
-  
-    const animatedBlurStyle = useAnimatedStyle(() => {
+  const { height } = Dimensions.get('window');
+  const screenHeight = Dimensions.get('window').height;
+  const [slideUp1] = useState(new Animated.Value(0));
+
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: event => {
       'worklet';
-      const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
-      return { opacity };
-    });
-  
-    const animatedButtonStyle = useAnimatedStyle(() => {
-      'worklet';
-      const borderColor = interpolateColor(
-        scrollY.value,
-        [0, 300],
-        ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
-      );
-      const redOpacity = interpolate(scrollY.value, [0, 100], [0, 0.15], 'clamp');
-      return {
-        borderColor,
-        backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
-      };
-    });
-  
-    const animatedIconStyle = useAnimatedStyle(() => {
-      'worklet';
-      const opacity = interpolate(scrollY.value, [0, 100], [0.8, 1], 'clamp');
-      const tintColor = interpolateColor(
-        scrollY.value,
-        [0, 150],
-        ['#FFFFFF', '#002050'],
-      );
-      return {
-        opacity,
-        tintColor,
-      };
-    });
-  
-    const blurAmount = useDerivedValue(() =>
-      interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  const animatedBlurStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+    return { opacity };
+  });
+
+  const animatedButtonStyle = useAnimatedStyle(() => {
+    'worklet';
+    const borderColor = interpolateColor(
+      scrollY.value,
+      [0, 300],
+      ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
     );
+    const redOpacity = interpolate(scrollY.value, [0, 100], [0, 0.15], 'clamp');
+    return {
+      borderColor,
+      backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+    };
+  });
 
-      const [multiSelectModal, setMultiSelectModal] = useState<{
-        visible: boolean;
-        ismultilple: boolean;
-        fieldId?: number;
-        fieldLabel?: string;
-    
-      }>({ visible: false, ismultilple: false,});
-    
-      const [multiSelectOptions, setMultiSelectOptions] = useState<any[]>([]);
+  const animatedIconStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 100], [0.8, 1], 'clamp');
+    const tintColor = interpolateColor(
+      scrollY.value,
+      [0, 150],
+      ['#FFFFFF', '#002050'],
+    );
+    return {
+      opacity,
+      tintColor,
+    };
+  });
 
+  const blurAmount = useDerivedValue(() =>
+    interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+  );
+
+  const [multiSelectModal, setMultiSelectModal] = useState<{
+    visible: boolean;
+    ismultilple: boolean;
+    fieldId?: number;
+    fieldLabel?: string;
+  }>({ visible: false, ismultilple: false });
+
+  const [multiSelectOptions, setMultiSelectOptions] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchDetails = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
-        console.log(token)
+        console.log(token);
         if (!token) return;
         const url1 = `${MAIN_URL.baseUrl}category/feature-detail/${id}`;
         console.log(url1);
@@ -161,10 +160,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         });
         const json = await res.json();
         setDetail(json.data);
-        console.log("json.data------",json.data);
-        console.log("details--------",json);
-        
-        
+        console.log('json.data------', json.data);
+        console.log('details--------', json);
 
         if (res.status === 401 || res.status === 403) {
           handleForceLogout();
@@ -208,108 +205,85 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     setActiveIndex(index);
   };
 
-
-   useEffect(() => {
+  useEffect(() => {
     const backAction = () => {
-       navigation.replace('Dashboard', {
-      AddScreenBackactiveTab: 'Home',
-      isNavigate: false,
-      })
+      navigation.replace('Dashboard', {
+        AddScreenBackactiveTab: 'Home',
+        isNavigate: false,
+      });
       return true;
     };
-  
+
     const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
+      'hardwareBackPress',
+      backAction,
     );
-  
+
     return () => backHandler.remove();
   }, []);
 
+  const quantityField = detail?.params?.find(
+    (p: { name: string }) => p.name === 'Quantity',
+  );
 
-const quantityField = detail?.params?.find(
-  (p: { name: string }) => p.name === "Quantity"
-);
+  const maxQty = Number(quantityField?.options?.[0]?.option_name) || 1;
 
-const maxQty = Number(quantityField?.options?.[0]?.option_name) || 1;
-
-const quantityOptions = Array.from({ length: maxQty }, (_, i) => ({
-  id: i + 1,
-  option_name: String(i + 1),
-}));
-
-  
+  const quantityOptions = Array.from({ length: maxQty }, (_, i) => ({
+    id: i + 1,
+    option_name: String(i + 1),
+  }));
 
   const formatDate = (dateString?: string) => {
-  if (!dateString) return "";
+    if (!dateString) return '';
 
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) return "";
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
 
-  const day = date.getDate();
+    const day = date.getDate();
 
-  let suffix = "th";
-  if (day % 10 === 1 && day !== 11) suffix = "st";
-  else if (day % 10 === 2 && day !== 12) suffix = "nd";
-  else if (day % 10 === 3 && day !== 13) suffix = "rd";
+    let suffix = 'th';
+    if (day % 10 === 1 && day !== 11) suffix = 'st';
+    else if (day % 10 === 2 && day !== 12) suffix = 'nd';
+    else if (day % 10 === 3 && day !== 13) suffix = 'rd';
 
-  // Short month name (Jan, Feb, Mar...)
-  const monthShort = date
-    .toLocaleString("default", { month: "short" }); // "Nov"
+    // Short month name (Jan, Feb, Mar...)
+    const monthShort = date.toLocaleString('default', { month: 'short' }); // "Nov"
 
-  const year = date.getFullYear();
+    const year = date.getFullYear();
 
-  return `${day}${suffix} ${monthShort} ${year}`;
-};
+    return `${day}${suffix} ${monthShort} ${year}`;
+  };
 
-//   const handlePay = () => {
-
-//   if (detail?.category?.name === 'Food') {
-//     setMultiSelectModal(prev => ({ ...prev, visible: true }));
-//     return;
-//   }
-//   navigation.navigate('PaymentScreen', {
-//     amount: Number(detail.price).toFixed(2),
-//     feature_id: id,
-//     nav: 'purchase',
-//     onSuccess: async () => {
-//       await purchaseProduct();
-//     }
-//   });
-// };
-
-
-const handlePay = (overrideAmount?: number) => {
-
-  if (detail?.category?.name === 'Food' && overrideAmount === undefined) {
-    setMultiSelectModal(prev => ({ ...prev, visible: true }));
-    return;
-  }
-
-  const amountToPay = overrideAmount ?? Number(detail.price).toFixed(2);
-
-  console.log("Final Amount",famount)
-
-  navigation.navigate('PaymentScreen', {
-    amount: amountToPay,
-    feature_id: id,
-    nav: 'purchase',
-    onSuccess: async () => {
-      await purchaseProduct();
+  const handlePay = (overrideAmount?: number) => {
+    if (detail?.category?.name === 'Food' && overrideAmount === undefined) {
+      setMultiSelectModal(prev => ({ ...prev, visible: true }));
+      return;
     }
-  });
-};
 
-const handlePayConfirmed = (amount: number) => {
-  navigation.navigate('PaymentScreen', {
-    amount: amount.toFixed(2),
-    feature_id: id,
-    nav: 'purchase',
-    onSuccess: async () => {
-      await purchaseProduct();
-    }
-  });
-}
+    const amountToPay = overrideAmount ?? Number(detail.price).toFixed(2);
+
+    console.log('Final Amount', famount);
+
+    navigation.navigate('PaymentScreen', {
+      amount: amountToPay,
+      feature_id: id,
+      nav: 'purchase',
+      onSuccess: async () => {
+        await purchaseProduct();
+      },
+    });
+  };
+
+  const handlePayConfirmed = (amount: number) => {
+    navigation.navigate('PaymentScreen', {
+      amount: amount.toFixed(2),
+      feature_id: id,
+      nav: 'purchase',
+      onSuccess: async () => {
+        await purchaseProduct();
+      },
+    });
+  };
 
   const renderImage = () => {
     const fallbackImage = require('../../../assets/images/drone.png');
@@ -320,67 +294,66 @@ const handlePayConfirmed = (amount: number) => {
         detail?.createdby?.lastname?.[0] ?? ''
       }`.toUpperCase();
 
-    return (
-      <ImageBackground
-        source={require('../../../assets/images/featurebg.png')}
-        style={{
-          alignItems: 'center',
-          justifyContent: 'center',
-          height:270,
-          width:'100%'
-        }}
-      >
-        <View
+      return (
+        <ImageBackground
+          source={require('../../../assets/images/featurebg.png')}
           style={{
             alignItems: 'center',
             justifyContent: 'center',
-            //paddingVertical: 20,
+            height: 270,
+            width: '100%',
           }}
         >
-          {detail?.createdby?.profile ? (
-            <Image
-              source={{ uri: detail?.createdby?.profile }}
-              style={{
-                width: 180,
-                height: 180,
-                borderRadius: 90,
-              }}
-              resizeMode="cover"
-              onError={() => {
-                console.log('Profile image failed to load');
-                setImageUri(null);
-              }}
-            />
-          ) : (
-
-            <View
-              style={{
-                width: 180,
-                height: 180,
-                borderRadius: 90,
-                backgroundColor: '#8390D4',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Text
-              allowFontScaling={false}
+          <View
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              //paddingVertical: 20,
+            }}
+          >
+            {detail?.createdby?.profile ? (
+              <Image
+                source={{ uri: detail?.createdby?.profile }}
                 style={{
-                  fontSize: 80,
-                 color: '#FFF',
-                 fontWeight:600,
-                textAlign: 'center',
-                fontFamily: 'Urbanist-SemiBold',
+                  width: 180,
+                  height: 180,
+                  borderRadius: 90,
+                }}
+                resizeMode="cover"
+                onError={() => {
+                  console.log('Profile image failed to load');
+                  setImageUri(null);
+                }}
+              />
+            ) : (
+              <View
+                style={{
+                  width: 180,
+                  height: 180,
+                  borderRadius: 90,
+                  backgroundColor: '#8390D4',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                {initials || 'NA'}
-              </Text>
-            </View>
-          )}
-        </View>
-      </ImageBackground>
-    );
-  }
+                <Text
+                  allowFontScaling={false}
+                  style={{
+                    fontSize: 80,
+                    color: '#FFF',
+                    fontWeight: 600,
+                    textAlign: 'center',
+                    fontFamily: 'Urbanist-SemiBold',
+                  }}
+                >
+                  {initials || 'NA'}
+                </Text>
+              </View>
+            )}
+          </View>
+        </ImageBackground>
+      );
+    }
 
     if (images.length > 1) {
       return (
@@ -489,582 +462,603 @@ const handlePayConfirmed = (amount: number) => {
     return f + l || '?';
   };
 
-  const purchaseProduct = async () =>{
+  const purchaseProduct = async () => {
     const token = await AsyncStorage.getItem('userToken');
     if (!token) {
       console.log('⚠️ Token not found. Cannot upload.');
       return;
     }
-    const finalamount = await AsyncStorage.getItem('finalamount')
-    const paymentintent_id= await AsyncStorage.getItem("paymentintent_id");
-    const quantity = await AsyncStorage.getItem("quantitycount")
+    const finalamount = await AsyncStorage.getItem('finalamount');
+    const paymentintent_id = await AsyncStorage.getItem('paymentintent_id');
+    const quantity = await AsyncStorage.getItem('quantitycount');
 
-
-    console.log("COUNT",quantity)
-    console.log("AMOUNT",finalamount)
+    console.log('COUNT', quantity);
+    console.log('AMOUNT', finalamount);
 
     try {
-    const createPayload = {
-    amount: Number(finalamount),
-    feature_id: id,
-    payment_id: paymentintent_id,
-  ...(detail?.category_id === 3 && { quantity: Number(quantity) })  
-};
+      const createPayload = {
+        amount: Number(finalamount),
+        feature_id: id,
+        payment_id: paymentintent_id,
+        ...(detail?.category_id === 3 && { quantity: Number(quantity) }),
+      };
 
-    const url = `${MAIN_URL.baseUrl}transaction/post-order-complete`;
+      const url = `${MAIN_URL.baseUrl}transaction/post-order-complete`;
 
-    console.log('Step 5: Calling create API with payload:', createPayload);
+      console.log('Step 5: Calling create API with payload:', createPayload);
 
-    const response = await fetch(url,
-      {
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(createPayload),
-      },
-    );
+      });
       const data = await response.json();
       console.log('Response:', data);
 
-
       if (response.ok && data?.statusCode === 200) {
+        await AsyncStorage.removeItem('finalamount');
+        await AsyncStorage.removeItem('quantitycount');
 
         await AsyncStorage.removeItem('finalamount');
         await AsyncStorage.removeItem('quantitycount');
 
+        // Save order id to storage
+        await AsyncStorage.setItem(
+          'last_order_id',
+          data.data?.orderid?.toString() || '',
+        );
+        await AsyncStorage.setItem(
+          'last_transaction_amount',
+          data.data?.amount?.toString() || '',
+        );
+        await AsyncStorage.setItem(
+          'order_otp',
+          data.data?.order_otp?.toString() || '',
+        );
 
-
-        await AsyncStorage.removeItem('finalamount');
-        await AsyncStorage.removeItem('quantitycount');
-
-
-      // Save order id to storage
-      await AsyncStorage.setItem("last_order_id", data.data?.orderid?.toString() || "");
-      await AsyncStorage.setItem("last_transaction_amount", data.data?.amount?.toString() || "");
-      await AsyncStorage.setItem('order_otp',data.data?.order_otp?.toString() || "");
-
-
-
-
-
-      showToast(" Purchased successfully!", "success");
-      setShowPopup1(true)
-    } else {
-      showToast(data?.message || "Something went wrong.Please try again", "error");
-      showToast(data?.message || "Something went wrong.Please try again", "error");
-    }
-     
+        showToast(' Purchased successfully!', 'success');
+        setShowPopup1(true);
+      } else {
+        showToast(
+          data?.message || 'Something went wrong.Please try again',
+          'error',
+        );
+        showToast(
+          data?.message || 'Something went wrong.Please try again',
+          'error',
+        );
+      }
     } catch (err) {
       console.error('Error :', err);
     }
-  }
+  };
 
-  
+  return (
+    <ImageBackground
+      source={require('../../../assets/images/backimg.png')}
+      style={{ width: '100%', height: '100%' }}
+      resizeMode="cover"
+    >
+      <View style={styles.fullScreenContainer}>
+        <StatusBar
+          translucent
+          backgroundColor="transparent"
+          barStyle="light-content"
+        />
 
-    return (
-      <ImageBackground
-        source={require('../../../assets/images/backimg.png')}
-        style={{ width: '100%', height: '100%' }}
-        resizeMode="cover"
-      >
-        <View style={styles.fullScreenContainer}>
+        {/* Header with Blur only at top */}
+        <AnimatedReanimated.View
+          style={[styles.headerWrapper, animatedBlurStyle]}
+          pointerEvents="none"
+        >
+          {/* Blur layer only at top with gradient fade */}
+          <MaskedView
+            style={StyleSheet.absoluteFill}
+            maskElement={
+              <LinearGradient
+                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                locations={[0, 0.8]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            }
+          >
+            <BlurView
+              style={StyleSheet.absoluteFill}
+              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+              blurAmount={Platform.OS === 'ios' ? 45 : 45}
+              // overlayColor="rgba(255,255,255,0.05)"
+              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+            />
+            <LinearGradient
+              colors={[
+                'rgba(255, 255, 255, 0.45)',
+                'rgba(255, 255, 255, 0.02)',
+                'rgba(255, 255, 255, 0.02)',
+              ]}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+            />
+          </MaskedView>
+        </AnimatedReanimated.View>
 
-           <StatusBar
-                    translucent
-                    backgroundColor="transparent"
-                    barStyle="light-content"
-                  />
-          
-                  {/* Header with Blur only at top */}
-                  <AnimatedReanimated.View
-                    style={[styles.headerWrapper, animatedBlurStyle]}
-                    pointerEvents="none"
-                  >
-                    {/* Blur layer only at top with gradient fade */}
-                    <MaskedView
-                      style={StyleSheet.absoluteFill}
-                      maskElement={
-                        <LinearGradient
-                          colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
-                          locations={[0, 0.8]}
-                          start={{ x: 0, y: 0 }}
-                          end={{ x: 0, y: 1 }}
-                          style={StyleSheet.absoluteFill}
-                        />
-                      }
-                    >
-                      <BlurView
-                        style={StyleSheet.absoluteFill}
-                        blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
-                        blurAmount={Platform.OS === 'ios' ? 45 : 45}
-                        // overlayColor="rgba(255,255,255,0.05)"
-                        reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
-                      />
-                      <LinearGradient
-                        colors={[
-                          'rgba(255, 255, 255, 0.45)',
-                          'rgba(255, 255, 255, 0.02)',
-                          'rgba(255, 255, 255, 0.02)',
-                        ]}
-                        style={StyleSheet.absoluteFill}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 0, y: 1 }}
-                      />
-                    </MaskedView>
-                  </AnimatedReanimated.View>
-          
-                  {/* Header Content */}
-                  <View style={styles.headerContent} pointerEvents="box-none">
-                    <TouchableOpacity
-                      onPress={() => {
-                      if (navigation.canGoBack()) {
-                        navigation.goBack(); // go to previous screen if available
-                      } else {
-                        navigation.replace('Dashboard', {
-                          AddScreenBackactiveTab: 'Home',
-                          isNavigate: false,
-                        });
-                      }
-                    }}
-                      style={styles.backButtonContainer}
-                      activeOpacity={0.7}
-                    >
-                      <AnimatedReanimated.View
-                        style={[styles.blurButtonWrapper, animatedButtonStyle]}
-                      >
-                        {/* Static background (visible when scrollY = 0) */}
-                        <AnimatedReanimated.View
-                          style={[
-                            StyleSheet.absoluteFill,
-                            useAnimatedStyle(() => ({
-                              opacity: interpolate(
-                                scrollY.value,
-                                [0, 30],
-                                [1, 0],
-                                'clamp',
-                              ),
-                              backgroundColor: 'rgba(255,255,255,0.1)',
-                              borderRadius: 40,
-                            })),
-                          ]}
-                        />
-          
-                        {/* Blur view fades in as scroll increases */}
-                        <AnimatedReanimated.View
-                          style={[
-                            StyleSheet.absoluteFill,
-                            useAnimatedStyle(() => ({
-                              opacity: interpolate(
-                                scrollY.value,
-                                [0, 50],
-                                [0, 1],
-                                'clamp',
-                              ),
-                            })),
-                          ]}
-                        >
-                          <BlurView
-                            style={StyleSheet.absoluteFill}
-                            blurType="light"
-                            blurAmount={10}
-                            reducedTransparencyFallbackColor="transparent"
-                          />
-                        </AnimatedReanimated.View>
-          
-                        {/* Back Icon */}
-                        <AnimatedReanimated.Image
-                          source={require('../../../assets/images/back.png')}
-                          style={[{ height: 24, width: 24 }, animatedIconStyle]}
-                        />
-                      </AnimatedReanimated.View>
-                    </TouchableOpacity>
-          
-                   <Text allowFontScaling={false} style={styles.unizyText}>
-                    {detail?.category?.name
-                      ? `${detail.category.name} Details`
-                      : ''}
-                  </Text>
+        {/* Header Content */}
+        <View style={styles.headerContent} pointerEvents="box-none">
+          <TouchableOpacity
+            onPress={() => {
+              if (navigation.canGoBack()) {
+                navigation.goBack(); // go to previous screen if available
+              } else {
+                navigation.replace('Dashboard', {
+                  AddScreenBackactiveTab: 'Home',
+                  isNavigate: false,
+                });
+              }
+            }}
+            style={styles.backButtonContainer}
+            activeOpacity={0.7}
+          >
+            <AnimatedReanimated.View
+              style={[styles.blurButtonWrapper, animatedButtonStyle]}
+            >
+              {/* Static background (visible when scrollY = 0) */}
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 30],
+                      [1, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 40,
+                  })),
+                ]}
+              />
 
-                  <TouchableOpacity
-                      onPress={() => {
-                    handleBookmarkPress(id);
-                }}
-                      style={styles.rightButtoContainer}
-                      activeOpacity={0.7}
-                    >
-                      <AnimatedReanimated.View
-                        style={[styles.blurButtonWrapper, animatedButtonStyle]}
-                      >
-                        {/* Static background (visible when scrollY = 0) */}
-                        <AnimatedReanimated.View
-                          style={[
-                            StyleSheet.absoluteFill,
-                            useAnimatedStyle(() => ({
-                              opacity: interpolate(
-                                scrollY.value,
-                                [0, 30],
-                                [1, 0],
-                                'clamp',
-                              ),
-                              backgroundColor: 'rgba(255,255,255,0.1)',
-                              borderRadius: 40,
-                            })),
-                          ]}
-                        />
-          
-                        {/* Blur view fades in as scroll increases */}
-                        <AnimatedReanimated.View
-                          style={[
-                            StyleSheet.absoluteFill,
-                            useAnimatedStyle(() => ({
-                              opacity: interpolate(
-                                scrollY.value,
-                                [0, 50],
-                                [0, 1],
-                                'clamp',
-                              ),
-                            })),
-                          ]}
-                        >
-                          <BlurView
-                            style={StyleSheet.absoluteFill}
-                            blurType="light"
-                            blurAmount={10}
-                            reducedTransparencyFallbackColor="transparent"
-                          />
-                        </AnimatedReanimated.View>
-          
-                        {/* Back Icon */}
-                        <AnimatedReanimated.Image
-                          source={
-                            detail?.isbookmarked
-                              ? require('../../../assets/images/favourite_filled.png') // bookmarked
-                              : require('../../../assets/images/favourite.png') // not bookmarked
-                          }
-                          style={styles.iconSmall}
-                        />
-                      </AnimatedReanimated.View>
-                    </TouchableOpacity>
-                  </View>
-          
+              {/* Blur view fades in as scroll increases */}
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 50],
+                      [0, 1],
+                      'clamp',
+                    ),
+                  })),
+                ]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
+                />
+              </AnimatedReanimated.View>
 
-              <AnimatedReanimated.ScrollView 
-                 scrollEventThrottle={16}
-                 showsVerticalScrollIndicator={false}
-                onScroll={scrollHandler}
-            contentContainerStyle={[styles.scrollContainer,{ paddingBottom:(Platform.OS === 'ios'? 90:  height * 0.07 )}, 
-          ]}>
-            <View style={{marginTop:12}}>
-             {renderImage()}
+              {/* Back Icon */}
+              <AnimatedReanimated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 24, width: 24 }, animatedIconStyle]}
+              />
+            </AnimatedReanimated.View>
+          </TouchableOpacity>
 
-          <View style={{ flex: 1, padding: 16 }}>
-            <View style={styles.card}>
-              <View style={{  }}>
-                {detail && (
-                  <>
-                    <Text allowFontScaling={false} style={styles.QuaddText}>
-                      {detail.title}
-                    </Text>
-                    <Text allowFontScaling={false} style={styles.priceText}>
-                      £{Number(detail.price).toFixed(2)}
-                    </Text>              
-                  </>
-                )}
-                 {(detail?.category_id === 2 || detail?.category_id === 5) && (
+          <Text allowFontScaling={false} style={styles.unizyText}>
+            {detail?.category?.name ? `${detail.category.name} Details` : ''}
+          </Text>
+
+          <TouchableOpacity
+            onPress={() => {
+              handleBookmarkPress(id);
+            }}
+            style={styles.rightButtoContainer}
+            activeOpacity={0.7}
+          >
+            <AnimatedReanimated.View
+              style={[styles.blurButtonWrapper, animatedButtonStyle]}
+            >
+              {/* Static background (visible when scrollY = 0) */}
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 30],
+                      [1, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 40,
+                  })),
+                ]}
+              />
+
+              {/* Blur view fades in as scroll increases */}
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 50],
+                      [0, 1],
+                      'clamp',
+                    ),
+                  })),
+                ]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
+                />
+              </AnimatedReanimated.View>
+
+              {/* Back Icon */}
+              <AnimatedReanimated.Image
+                source={
+                  detail?.isbookmarked
+                    ? require('../../../assets/images/favourite_filled.png') // bookmarked
+                    : require('../../../assets/images/favourite.png') // not bookmarked
+                }
+                style={styles.iconSmall}
+              />
+            </AnimatedReanimated.View>
+          </TouchableOpacity>
+        </View>
+
+        <AnimatedReanimated.ScrollView
+          scrollEventThrottle={16}
+          showsVerticalScrollIndicator={false}
+          onScroll={scrollHandler}
+          contentContainerStyle={[
+            styles.scrollContainer,
+            { paddingBottom: Platform.OS === 'ios' ? 90 : height * 0.07 },
+          ]}
+        >
+          <View style={{ marginTop: 12 }}>
+            {renderImage()}
+
+            <View style={{ flex: 1, padding: 16 }}>
+              <View style={styles.card}>
+                <View style={{}}>
+                  {detail && (
+                    <>
+                      <Text allowFontScaling={false} style={styles.QuaddText}>
+                        {detail.title}
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.priceText}>
+                        £{Number(detail.price).toFixed(2)}
+                      </Text>
+                    </>
+                  )}
+                  {(detail?.category_id === 2 || detail?.category_id === 5) && (
                     <View style={styles.datePosted1}>
                       <Image
                         source={require('../../../assets/images/duration_info.png')}
                         style={{ height: 16, width: 16 }}
                       />
                       <Text allowFontScaling={false} style={styles.datetext1}>
-                      Service Duration:{' '}
-                      <Text style={styles.durationValue}>
-                         {detail?.hours ? `${detail.hours} ${detail.hours > 1 ? 'Hours' : 'Hour'}` : '1 Hour'}
+                        Service Duration:{' '}
+                        <Text style={styles.durationValue}>
+                          {detail?.hours
+                            ? `${detail.hours} ${
+                                detail.hours > 1 ? 'Hours' : 'Hour'
+                              }`
+                            : '1 Hour'}
                         </Text>
-                    </Text>
+                      </Text>
                     </View>
                   )}
-              </View>
-             
-              <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'flex-start',
-                  gap: 2,
-                  alignSelf: 'stretch',
-                }}
-              >
-                <Text allowFontScaling={false} style={styles.productDesHeding}>
-                  Product Description
-                </Text>
-                <Text allowFontScaling={false} style={styles.productDesc}>
-                  {detail?.description || 'No description available'}
-                </Text>
+                </View>
 
-                <View style={styles.datePosted}>
-                  <Image
-                    source={require('../../../assets/images/calendar_icon1.png')}
-                    style={{ height: 16, width: 16 }}
-                  />
-                  <Text allowFontScaling={false} style={styles.datetext}>
-                    Date Posted: {formatDate(detail?.created_at)}
+                <View
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    gap: 2,
+                    alignSelf: 'stretch',
+                  }}
+                >
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.productDesHeding}
+                  >
+                    Product Description
                   </Text>
+                  <Text allowFontScaling={false} style={styles.productDesc}>
+                    {detail?.description || 'No description available'}
+                  </Text>
+
+                  <View style={styles.datePosted}>
+                    <Image
+                      source={require('../../../assets/images/calendar_icon1.png')}
+                      style={{ height: 16, width: 16 }}
+                    />
+                    <Text allowFontScaling={false} style={styles.datetext}>
+                      Date Posted: {formatDate(detail?.created_at)}
+                    </Text>
+                  </View>
                 </View>
               </View>
-            </View>
 
-            <View style={styles.card}>
-              <View style={styles.gap12}>
-                <Text
-                  allowFontScaling={false}
-                  style={styles.productDeatilsHeading1}
-                >
-                  {detail?.category?.name
-                ? detail.category.name === 'Food'
-                  ? 'Dish Details'
-                  : `${detail.category.name} Details`
-                : ''}
-                </Text>
+              <View style={styles.card}>
+                <View style={styles.gap12}>
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.productDeatilsHeading1}
+                  >
+                    {detail?.category?.name
+                      ? detail.category.name === 'Food'
+                        ? 'Dish Details'
+                        : `${detail.category.name} Details`
+                      : ''}
+                  </Text>
 
                   {detail?.params?.map((param: Param) => (
-                    <View key={param.id} style={{ marginTop:4,marginBottom:0 }}>
+                    <View
+                      key={param.id}
+                      style={{ marginTop: 4, marginBottom: 0 }}
+                    >
                       {/* Param name */}
-                      <Text allowFontScaling={false}style={styles.itemcondition}>{param.name}</Text>
-
-                    {/* Param value */}
-                    {param.options && param.options.length > 0 ? (
-                      <View style={styles.categoryContainer}>
-                        {param.options
-                          .filter(opt =>
-                            (param.param_value?.toString() || '')
-                              .split(',')
-                              .map(v => v.trim())
-                              .includes(opt.option_id.toString()),
-                          )
-                          .map((opt: ParamOption) => (
-                            <View key={opt.id} style={styles.categoryTag}>
-                              <Text
-                                allowFontScaling={false}
-                                style={styles.catagoryText}
-                              >
-                                {opt.option_name}
-                              </Text>
-                            </View>
-                          ))}
-                      </View>
-                    ) : (
                       <Text
                         allowFontScaling={false}
-                        style={[styles.new, { marginTop:0}]}
+                        style={styles.itemcondition}
                       >
-                        {param.param_value || '—'}
+                        {param.name}
                       </Text>
-                    )}
-                  </View>
-                ))}
+
+                      {/* Param value */}
+                      {param.options && param.options.length > 0 ? (
+                        <View style={styles.categoryContainer}>
+                          {param.options
+                            .filter(opt =>
+                              (param.param_value?.toString() || '')
+                                .split(',')
+                                .map(v => v.trim())
+                                .includes(opt.option_id.toString()),
+                            )
+                            .map((opt: ParamOption) => (
+                              <View key={opt.id} style={styles.categoryTag}>
+                                <Text
+                                  allowFontScaling={false}
+                                  style={styles.catagoryText}
+                                >
+                                  {opt.option_name}
+                                </Text>
+                              </View>
+                            ))}
+                        </View>
+                      ) : (
+                        <Text
+                          allowFontScaling={false}
+                          style={[styles.new, { marginTop: 0 }]}
+                        >
+                          {param.param_value || '—'}
+                        </Text>
+                      )}
+                    </View>
+                  ))}
+                </View>
               </View>
-            </View>
 
-            <View style={styles.card}>
-              <View style={{ gap: 12 }}>
-                <Text
-                  allowFontScaling={false}
-                  style={styles.productDeatilsHeading}
-                >
-                  Seller Details
-                </Text>
+              <View style={styles.card}>
+                <View style={{ gap: 12 }}>
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.productDeatilsHeading}
+                  >
+                    Seller Details
+                  </Text>
 
-                <View style={{ flexDirection: 'row',marginBottom:4 }}>
-                 
-                  {detail?.createdby?.profile ? (
-                    <Image
-                      source={{ uri: detail.createdby.profile }}
-                      style={styles.avatar}
-                    />
-                  ) : (
-                    <View style={styles.initialsCircle}>
+                  <View style={{ flexDirection: 'row', marginBottom: 4 }}>
+                    {detail?.createdby?.profile ? (
+                      <Image
+                        source={{ uri: detail.createdby.profile }}
+                        style={styles.avatar}
+                      />
+                    ) : (
+                      <View style={styles.initialsCircle}>
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.initialsText}
+                        >
+                          {getInitials(
+                            detail?.createdby?.firstname ?? 'Alan',
+                            detail?.createdby?.lastname ?? 'Walker',
+                          )}
+                        </Text>
+                      </View>
+                    )}
+
+                    <View style={{ width: '80%', gap: 0 }}>
+                      <Text allowFontScaling={false} style={styles.userName}>
+                        {detail?.createdby
+                          ? `${detail.createdby.firstname || ''} ${
+                              detail.createdby.lastname || ''
+                            }`
+                          : 'Unknown User'}
+                      </Text>
+
                       <Text
                         allowFontScaling={false}
-                        style={styles.initialsText}
+                        style={styles.univeritytext}
                       >
-                        {getInitials(
-                          detail?.createdby?.firstname ?? 'Alan',
-                          detail?.createdby?.lastname ?? 'Walker',
-                        )}
+                        {detail?.university?.name
+                          ? `${detail.university.name},`
+                          : 'University of Warwick,'}
+                      </Text>
+                      <Text
+                        allowFontScaling={false}
+                        style={[styles.univeritytext, { marginTop: 0 }]}
+                      >
+                        {detail?.createdby?.city || ''}
                       </Text>
                     </View>
-                  )}
-
-                  <View style={{ width: '80%', gap: 0 }}>
-                    <Text allowFontScaling={false} style={styles.userName}>
-                      {detail?.createdby
-                        ? `${detail.createdby.firstname || ''} ${
-                            detail.createdby.lastname || ''
-                          }`
-                        : 'Unknown User'}
-                    </Text>
-
-                    <Text allowFontScaling={false} style={styles.univeritytext}>
-                      {detail?.university?.name
-                        ? `${detail.university.name},`
-                        : 'University of Warwick,'}
-                    </Text>
-                      <Text
-                      allowFontScaling={false}
-                      style={[styles.univeritytext, { marginTop: 0 }]}>
-                      {detail?.createdby?.city  || ''}
-                    </Text>
                   </View>
-                </View>
 
-                <View style={{ flexDirection: 'row' }}>
-                  <View
-                    style={styles.bottombutton}>
-                    <TouchableOpacity
-                      //disabled={!detail?.ispurchased}
-                      onPress={() => {
+                  <View style={{ flexDirection: 'row' }}>
+                    <View style={styles.bottombutton}>
+                      <TouchableOpacity
+                        //disabled={!detail?.ispurchased}
+                        onPress={() => {
                           navigation.navigate('ReviewDetails', {
                             category_id: detail?.category_id,
                             id: detail?.id,
-                            purchase:detail?.ispurchased
+                            purchase: detail?.ispurchased,
                           });
-                        
+                        }}
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 6,
+                        }}
+                      >
+                        <Image
+                          source={require('../../../assets/images/staricon.png')}
+                          style={{ height: 16, width: 16 }}
+                        />
+
+                        <Text allowFontScaling={false} style={styles.chattext}>
+                          {detail?.avg_rating}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+
+                    <TouchableOpacity
+                      style={[
+                        styles.chatcard,
+                        {
+                          marginLeft: 8,
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                        },
+                      ]}
+                      activeOpacity={0.8}
+                      onPress={() => {
+                        // if (detail?.ispurchased) {
+                        //   navigation.navigate("MessagesIndividualScreen");
+                        // }
+                        if (detail?.ispurchased) {
+                          console.log(
+                            'NAVIGATIONSTATUS: ',
+                            navigation.getState(),
+                          );
+                          navigation.navigate('MessagesIndividualScreen', {
+                            animation: 'none',
+                            sellerData: {
+                              featureId: detail.id,
+                              firstname: detail.createdby.firstname,
+                              lastname: detail.createdby.lastname,
+                              profile: detail.createdby.profile,
+                              universityName: detail.university,
+                              id: detail.createdby.id,
+                            },
+                            source: 'sellerPage', // 👈 another flag
+                          });
+                        } else {
+                          setShowPopup(true);
+                        }
                       }}
-                      style={{ flexDirection: 'row', alignItems: 'center' , gap: 6,}}
                     >
                       <Image
-                        source={require('../../../assets/images/staricon.png')}
-                        style={{ height: 16, width: 16 }}
+                        source={require('../../../assets/images/message_chat.png')}
+                        style={{ height: 16, width: 16, marginRight: 4 }}
                       />
-
-                      <Text
-                        allowFontScaling={false}
-                        style={ styles.chattext}>
-                        {detail?.avg_rating}
+                      <Text allowFontScaling={false} style={styles.chattext}>
+                        Chat with Seller
                       </Text>
                     </TouchableOpacity>
                   </View>
-
-                  <TouchableOpacity
-                  style={[styles.chatcard, { marginLeft: 8, flexDirection: 'row', alignItems: 'center' }]}
-                  activeOpacity={0.8}
-                  onPress={() => {
-                    // if (detail?.ispurchased) {
-                    //   navigation.navigate("MessagesIndividualScreen");
-                    // }
-                    if (detail?.ispurchased) {
-                        console.log("NAVIGATIONSTATUS: ",navigation.getState());
-                        navigation.navigate("MessagesIndividualScreen",{
-                          animation: 'none',
-                          sellerData: {
-                            featureId: detail.id, 
-                            firstname: detail.createdby.firstname,
-                            lastname:  detail.createdby.lastname,                          
-                            profile:  detail.createdby.profile,
-                            universityName:detail.university,
-                            id:detail.createdby.id,
-
-                          },
-                          source: 'sellerPage', // 👈 another flag
-                        });
-                      }
-                    
-                    else {
-                      setShowPopup(true);
-                    }
-                  }}
-                >
-                  <Image
-                    source={require('../../../assets/images/message_chat.png')}
-                    style={{ height: 16, width: 16, marginRight: 4 }}
-                  />
-                  <Text allowFontScaling={false} style={styles.chattext}>
-                    Chat with Seller
-                  </Text>
-                </TouchableOpacity>
                 </View>
               </View>
             </View>
-
-            
-          </View>
           </View>
         </AnimatedReanimated.ScrollView>
-
-      
 
         {/* <PayButton
           amount={Number(detail?.price).toFixed(2)}
           label="Pay"
           onPress={handlePay}
       />  */}
-      <PayButton
-        amount={detail?.category?.name === "Food" ? undefined : Number(detail?.price)}
-        label={detail?.category?.name === "Food" ? "Select Quantity" : "Pay"}
-        onPress={() => handlePay()}   // ALWAYS call without amount
-      />
-
-      {
-      Platform.OS === 'ios' ? (
-        <SelectFoodQuantity_IOS
-          totalcount={detail?.remaining_quantity}
-          options={quantityOptions}
-          visible={multiSelectModal.visible}
-          price={Number(detail?.price)}
-          title="Choose Quantity"
-          subtitle="Select the number of units you’d like to buy."
-          selectedValues={formValues[multiSelectModal.fieldId!]?.value}
-          onClose={() =>
-            setMultiSelectModal(prev => ({ ...prev, visible: false }))
+        <PayButton
+          amount={
+            detail?.category?.name === 'Food'
+              ? undefined
+              : Number(detail?.price)
           }
-          continueToPay={(amount) => {
-            handlePay(amount);
-            setMultiSelectModal(prev => ({ ...prev, visible: false }));
-          }}
-          onSelect={(selectedIds) => {
-            const quantity = Array.isArray(selectedIds)
-              ? selectedIds[0]
-              : selectedIds;
-
-            setFormValues((prev: any) => ({
-              ...prev,
-              [multiSelectModal.fieldId!]: { value: quantity },
-            }));
-          }}
+          label={detail?.category?.name === 'Food' ? 'Select Quantity' : 'Pay'}
+          onPress={() => handlePay()} // ALWAYS call without amount
         />
-      ) : (
-        <SelectFoodQuantity
-          totalcount={detail?.remaining_quantity}
-          options={quantityOptions}
-          visible={multiSelectModal.visible}
-          price={Number(detail?.price)}
-          title="Choose Quantity"
-          subtitle="Select the number of units you’d like to buy."
-          selectedValues={formValues[multiSelectModal.fieldId!]?.value}
-          onClose={() =>
-            setMultiSelectModal(prev => ({ ...prev, visible: false }))
-          }
-          continueToPay={(amount) => {
-            handlePay(amount);
-            setMultiSelectModal(prev => ({ ...prev, visible: false }));
-          }}
-          onSelect={(selectedIds) => {
-            const quantity = Array.isArray(selectedIds)
-              ? selectedIds[0]
-              : selectedIds;
 
-            setFormValues((prev: any) => ({
-              ...prev,
-              [multiSelectModal.fieldId!]: { value: quantity },
-            }));
-          }}
-        />
-      )
-    }
+        {Platform.OS === 'ios' ? (
+          <SelectFoodQuantity_IOS
+            totalcount={detail?.remaining_quantity}
+            options={quantityOptions}
+            visible={multiSelectModal.visible}
+            price={Number(detail?.price)}
+            title="Choose Quantity"
+            subtitle="Select the number of units you’d like to buy."
+            selectedValues={formValues[multiSelectModal.fieldId!]?.value}
+            onClose={() =>
+              setMultiSelectModal(prev => ({ ...prev, visible: false }))
+            }
+            continueToPay={amount => {
+              handlePay(amount);
+              setMultiSelectModal(prev => ({ ...prev, visible: false }));
+            }}
+            onSelect={selectedIds => {
+              const quantity = Array.isArray(selectedIds)
+                ? selectedIds[0]
+                : selectedIds;
 
+              setFormValues((prev: any) => ({
+                ...prev,
+                [multiSelectModal.fieldId!]: { value: quantity },
+              }));
+            }}
+          />
+        ) : (
+          <SelectFoodQuantity
+            totalcount={detail?.remaining_quantity}
+            options={quantityOptions}
+            visible={multiSelectModal.visible}
+            price={Number(detail?.price)}
+            title="Choose Quantity"
+            subtitle="Select the number of units you’d like to buy."
+            selectedValues={formValues[multiSelectModal.fieldId!]?.value}
+            onClose={() =>
+              setMultiSelectModal(prev => ({ ...prev, visible: false }))
+            }
+            continueToPay={amount => {
+              handlePay(amount);
+              setMultiSelectModal(prev => ({ ...prev, visible: false }));
+            }}
+            onSelect={selectedIds => {
+              const quantity = Array.isArray(selectedIds)
+                ? selectedIds[0]
+                : selectedIds;
+
+              setFormValues((prev: any) => ({
+                ...prev,
+                [multiSelectModal.fieldId!]: { value: quantity },
+              }));
+            }}
+          />
+        )}
 
         <Modal
           visible={showPopup}
@@ -1150,21 +1144,23 @@ const handlePayConfirmed = (amount: number) => {
           animationType="fade"
           onRequestClose={closePopup1}
         >
-          <TouchableWithoutFeedback  onPress={() => {
-                      navigation.reset({
-                        index: 0,
-                        routes: [
-                          {
-                            name: 'Dashboard',
-                            params: {
-                              AddScreenBackactiveTab: 'Home',
-                              isNavigate: false,
-                            }
-                          }
-                        ],
-                      });
-                      setShowPopup1(false);
-                    }}>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: 'Dashboard',
+                    params: {
+                      AddScreenBackactiveTab: 'Home',
+                      isNavigate: false,
+                    },
+                  },
+                ],
+              });
+              setShowPopup1(false);
+            }}
+          >
             <View style={styles.overlay}>
               <BlurView
                 style={{
@@ -1216,8 +1212,8 @@ const handlePayConfirmed = (amount: number) => {
                             params: {
                               AddScreenBackactiveTab: 'Home',
                               isNavigate: false,
-                            }
-                          }
+                            },
+                          },
                         ],
                       });
                       setShowPopup1(false);
@@ -1231,19 +1227,18 @@ const handlePayConfirmed = (amount: number) => {
                   <TouchableOpacity
                     style={styles.loginButton1}
                     onPress={() => {
-                       navigation.navigate("MessagesIndividualScreen",{
-                          animation: 'none',
-                          sellerData: {
-                            featureId: detail.id, 
-                            firstname: detail.createdby.firstname,
-                            lastname:  detail.createdby.lastname,                          
-                            profile:  detail.createdby.profile,
-                            universityName:detail.university,
-                            id:detail.createdby.id,
-
-                          },
-                          source: 'sellerPage', // 👈 another flag
-                        });
+                      navigation.navigate('MessagesIndividualScreen', {
+                        animation: 'none',
+                        sellerData: {
+                          featureId: detail.id,
+                          firstname: detail.createdby.firstname,
+                          lastname: detail.createdby.lastname,
+                          profile: detail.createdby.profile,
+                          universityName: detail.university,
+                          id: detail.createdby.id,
+                        },
+                        source: 'sellerPage', // 👈 another flag
+                      });
                       setShowPopup1(false);
                     }}
                   >
@@ -1263,18 +1258,17 @@ const handlePayConfirmed = (amount: number) => {
 };
 
 const styles = StyleSheet.create({
-
-  durationValue:{
-    color:'#FFF',
+  durationValue: {
+    color: '#FFF',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 12,
     fontWeight: '600',
     lineHeight: 16,
     letterSpacing: -0.24,
-    paddingLeft:4
+    paddingLeft: 4,
   },
 
-   headerWrapper: {
+  headerWrapper: {
     position: 'absolute',
     top: 0,
     width: Platform.OS === 'ios' ? '100%' : '100%',
@@ -1295,18 +1289,18 @@ const styles = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-    marginTop: (Platform.OS === 'ios' ? 0 : 0),
-    marginLeft: 1 
+    marginTop: Platform.OS === 'ios' ? 0 : 0,
+    marginLeft: 1,
   },
   backButtonContainer: {
     position: 'absolute',
-    left: (Platform.OS === 'ios'?  16.2: 16),
+    left: Platform.OS === 'ios' ? 16.2 : 16,
     zIndex: 11,
     //top: 7,
   },
-  rightButtoContainer:{
+  rightButtoContainer: {
     position: 'absolute',
-    right: (Platform.OS === 'ios' ? 17.7 : 16),
+    right: Platform.OS === 'ios' ? 17.7 : 16,
     zIndex: 11,
     //top: 7,
   },
@@ -1322,11 +1316,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
   },
 
-
-
-  fullScreenContainer: { 
-    flex: 1
-   },
+  fullScreenContainer: {
+    flex: 1,
+  },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : 50,
     paddingBottom: 12,
@@ -1347,7 +1339,7 @@ const styles = StyleSheet.create({
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
     //boxShadow: 'rgba(255, 255, 255, 0.12)  inset -1px 0px 5px 1px inset ',
 
-   boxShadow:
+    boxShadow:
       '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
@@ -1363,44 +1355,45 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
   },
 
-
-  chattext:{
-  color: 'rgba(255, 255, 255, 0.48)',
-  fontFamily: 'Urbanist-SemiBold',
-  fontSize: 14,
-  fontWeight: '600',
-  fontStyle: 'normal',
-  letterSpacing: -0.28,
+  chattext: {
+    color: 'rgba(255, 255, 255, 0.48)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 14,
+    fontWeight: '600',
+    fontStyle: 'normal',
+    letterSpacing: -0.28,
   },
-  chatcard:{
-  borderRadius: 10,
-    backgroundColor:'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+  chatcard: {
+    borderRadius: 10,
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     gap: 4,
-    flex:1,
+    flex: 1,
     paddingHorizontal: 16,
-    paddingVertical:12,
-    height:'auto'
+    paddingVertical: 12,
+    height: 'auto',
     //width: '80%',
   },
 
-  bottombutton:{
- borderRadius: 10,
-  backgroundColor:'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'center',
-  alignItems: 'center',
-  gap: 4,
-  padding: 16,
-  //width: '20%',
-  paddingHorizontal: 16,
-  paddingVertical:12,
+  bottombutton: {
+    borderRadius: 10,
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    padding: 16,
+    //width: '20%',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
 
   initialsCircle: {
@@ -1443,58 +1436,56 @@ const styles = StyleSheet.create({
     height: 24,
   },
 
- 
-
   stepIndicatorContainer: {
-  position: 'absolute',
-  bottom: 12, // place above bottom edge of image
-  alignSelf: 'center',
-  flexDirection: 'row',
-  justifyContent: 'center',
-  alignItems: 'center',
-  gap: 6,
-  zIndex: 10, // ensures it's on top of image
-},
+    position: 'absolute',
+    bottom: 12, // place above bottom edge of image
+    alignSelf: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 6,
+    zIndex: 10, // ensures it's on top of image
+  },
 
-stepCircle: {
-  width: 12,
-  height: 12,
-  borderRadius: 16,
-  backgroundColor: 'rgba(255, 255, 255, 0.3)',
-},
+  stepCircle: {
+    width: 12,
+    height: 12,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+  },
 
-activeStepCircle: {
-  width: 12,
-  height: 12,
-  borderRadius: 40,
-  backgroundColor: '#FFFFFF',
-  borderColor: '#ffffff4e',
-  borderWidth: 1,
-  justifyContent: 'center',
-  alignItems: 'center',
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 1 },
-  shadowOpacity: 0.25,
-  shadowRadius: 3.33,
-  elevation: 2,
-},
+  activeStepCircle: {
+    width: 12,
+    height: 12,
+    borderRadius: 40,
+    backgroundColor: '#FFFFFF',
+    borderColor: '#ffffff4e',
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.33,
+    elevation: 2,
+  },
 
-inactiveStepCircle: {
-  width: 12,
-  height: 12,
-  borderRadius: 40,
-  backgroundColor: 'rgba(255, 255, 255, 0.2)',
-  borderColor: '#ffffff4e',
-  borderWidth: 1,
-  justifyContent: 'center',
-  alignItems: 'center',
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 1 },
-  shadowOpacity: 0.25,
-  shadowRadius: 3.33,
-  elevation: 2,
-},
- 
+  inactiveStepCircle: {
+    width: 12,
+    height: 12,
+    borderRadius: 40,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: '#ffffff4e',
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.33,
+    elevation: 2,
+  },
+
   backBtn: {
     width: 48,
     height: 48,
@@ -1502,8 +1493,6 @@ inactiveStepCircle: {
     alignItems: 'center',
   },
 
- 
-  
   loginText: {
     color: '#002050',
     textAlign: 'center',
@@ -1627,9 +1616,9 @@ inactiveStepCircle: {
   // },
 
   scrollContainer: {
-   //paddingHorizontal: 20,
-   paddingBottom: 80,
-   paddingTop: Platform.OS === 'ios' ? 110 : 100,
+    //paddingHorizontal: 20,
+    paddingBottom: 80,
+    paddingTop: Platform.OS === 'ios' ? 110 : 100,
   },
 
   datePosted: {
@@ -1643,12 +1632,12 @@ inactiveStepCircle: {
     paddingRight: 8,
     paddingTop: 6,
     paddingBottom: 6,
-    marginTop:12,
+    marginTop: 12,
     alignItems: 'center',
     gap: 4,
   },
 
-    datePosted1: {
+  datePosted1: {
     flexDirection: 'row',
     height: 'auto',
     backgroundColor:
@@ -1657,17 +1646,15 @@ inactiveStepCircle: {
     borderRadius: 8,
     paddingLeft: 8,
     paddingRight: 8,
-     paddingTop: 6,
+    paddingTop: 6,
     paddingBottom: 6,
-     marginTop:8,
+    marginTop: 8,
     //alignItems: 'center',
     //gap: 4,
-    width:'auto',
-    alignSelf: 'flex-start', 
+    width: 'auto',
+    alignSelf: 'flex-start',
   },
 
-
-  
   userSub: {
     color: 'rgba(255, 255, 255, 0.48)',
     fontFamily: 'Urbanist-Regular',
@@ -1676,9 +1663,9 @@ inactiveStepCircle: {
     lineHeight: 16,
     letterSpacing: -0.24,
   },
-   datetext: {
+  datetext: {
     //color: 'rgba(255, 255, 255, 0.48)',
-    color:'#9CD6FF',
+    color: '#9CD6FF',
     fontFamily: 'Urbanist-Medium',
     fontSize: 12,
     fontWeight: '500',
@@ -1688,23 +1675,22 @@ inactiveStepCircle: {
 
   datetext1: {
     //color: 'rgba(255, 255, 255, 0.48)',
-    color:'#9CD6FF',
+    color: '#9CD6FF',
     fontFamily: 'Urbanist-Medium',
     fontSize: 12,
     fontWeight: '500',
     lineHeight: 16,
     letterSpacing: -0.24,
-    paddingLeft:4
+    paddingLeft: 4,
   },
 
- 
   univeritytext: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-Medium',
     fontSize: 12,
     fontWeight: '500',
-    marginTop:4,
-    lineHeight:14
+    marginTop: 4,
+    lineHeight: 14,
   },
   userName: {
     position: 'relative',
@@ -1720,7 +1706,7 @@ inactiveStepCircle: {
     height: 50,
     borderRadius: 25,
     marginRight: 12,
-    resizeMode:'cover'
+    resizeMode: 'cover',
   },
   gap12: {
     gap: 8,
@@ -1755,10 +1741,9 @@ inactiveStepCircle: {
   categoryContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-
   },
   catagoryText: {
-    color:'#9CD6FF',
+    color: '#9CD6FF',
     fontFamily: 'Urbanist-Medium',
     fontSize: 12,
     fontWeight: '500',
@@ -1766,14 +1751,14 @@ inactiveStepCircle: {
     letterSpacing: -0.24,
   },
 
-   catagoryText1: {
+  catagoryText1: {
     fontFamily: 'Urbanist-Medium',
     fontSize: 12,
     fontWeight: '500',
     fontStyle: 'normal',
     lineHeight: 1.3,
     //color: '#fff',
-    color:'#9CD6FF'
+    color: '#9CD6FF',
   },
   categoryTag: {
     backgroundColor:
@@ -1786,7 +1771,7 @@ inactiveStepCircle: {
     paddingRight: 6,
     paddingTop: 2,
     paddingBottom: 2,
-    marginTop:6
+    marginTop: 6,
   },
   productDesHeding: {
     color: 'rgba(255, 255, 255, 0.72)',
@@ -1814,7 +1799,7 @@ inactiveStepCircle: {
     letterSpacing: -0.36,
   },
 
-    productDeatilsHeading1: {
+  productDeatilsHeading1: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 18,
@@ -1838,7 +1823,7 @@ inactiveStepCircle: {
     fontSize: 20,
     fontWeight: 700,
     letterSpacing: -0.1,
-    paddingTop:8
+    paddingTop: 8,
   },
   priceText1: {
     color: '#002050',
@@ -1855,13 +1840,12 @@ inactiveStepCircle: {
     borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     gap: 12,
-    marginTop:6
+    marginTop: 6,
   },
   h24_w24: {
     width: 24,
     height: 24,
   },
- 
 
   previewThumbnail: {
     color: '#FFF',

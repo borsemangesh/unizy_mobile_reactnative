@@ -665,7 +665,7 @@ const handleEndReached = useCallback(() => {
                  <Text allowFontScaling={false} style={styles.unizyText}>{`${category_name}s`}</Text>
                </View>
 
-        <Animated.FlatList
+        {/* <Animated.FlatList
             data={featurelist}
             keyExtractor={(item, index) => {
               item.id.toString()
@@ -714,8 +714,36 @@ const handleEndReached = useCallback(() => {
                 </View>
               </View>
             }
+            // ListFooterComponent={
+            //   isLoading ? (
+            //     <View style={{ paddingVertical: 20, alignItems: 'center' }}>
+            //       <Loader
+            //         containerStyle={{
+            //           width: 50,
+            //           height: 50,
+            //           justifyContent: 'center',
+            //           alignItems: 'center',
+            //         }}
+            //       />
+            //     </View>
+            //   ) : null
+            // }
+            // ListFooterComponent={
+            //   isLoading && featurelist.length > 0 ? (
+            //     <View style={{ paddingVertical: 20, alignItems: 'center' }}>
+            //       <Loader
+            //         containerStyle={{
+            //           width: 50,
+            //           height: 50,
+            //           justifyContent: 'center',
+            //           alignItems: 'center',
+            //         }}
+            //       />
+            //     </View>
+            //   ) : null
+            // }
             ListFooterComponent={
-              isLoading ? (
+              isLoading && featurelist.length > 0 ? (
                 <View style={{ paddingVertical: 20, alignItems: 'center' }}>
                   <Loader
                     containerStyle={{
@@ -735,12 +763,50 @@ const handleEndReached = useCallback(() => {
             onScroll={scrollHandler}
             scrollEventThrottle={16}
             
+            // ListEmptyComponent={
+            //   !isLoading ? (
+            //     <View style={{ paddingVertical: 20, alignItems: 'center' }}>
+            //       <Loader
+            //         containerStyle={{
+            //           width: 50,
+            //           height: 50,
+            //           justifyContent: 'center',
+            //           alignItems: 'center',
+            //         }}
+            //       />
+            //     </View>
+            //   ) : <View style={[styles.emptyWrapper]}>
+            //   <View style={styles.emptyContainer}>
+            //       <Image
+            //         source={require('../../../assets/images/noproduct.png')} // your image
+            //         style={styles.emptyImage}
+            //         resizeMode="contain"
+            //       />
+            //       <Text allowFontScaling={false} style={styles.emptyText}>
+            //         No Listings Found
+            //       </Text>
+            //     </View>
+            //   </View>
+            // }
             ListEmptyComponent={
-              !isLoading ? (
+              isLoading ? (
+                // API is loading & list is empty → show loader
+                <View style={{ flex: 1, paddingTop: 40, alignItems: 'center' }}>
+                  <Loader
+                    containerStyle={{
+                      width: 50,
+                      height: 50,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  />
+                </View>
+              ) : (
+                // API finished & list empty → show No Listings Found
                 <View style={[styles.emptyWrapper]}>
-                <View style={styles.emptyContainer}>
+                  <View style={styles.emptyContainer}>
                     <Image
-                      source={require('../../../assets/images/noproduct.png')} // your image
+                      source={require('../../../assets/images/noproduct.png')}
                       style={styles.emptyImage}
                       resizeMode="contain"
                     />
@@ -749,9 +815,120 @@ const handleEndReached = useCallback(() => {
                     </Text>
                   </View>
                 </View>
-              ) : null
+              )
             }
-          />
+            
+          /> */}
+          {isLoading  ? (
+            <>
+             <View style={{ paddingVertical: 20, alignItems: 'center' }}>
+              <Loader
+                containerStyle={{
+                  width: 50,
+                  height: 50,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              />
+            </View>
+            </>
+          ): <>
+           <Animated.FlatList
+        data={featurelist}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={renderItem}
+        numColumns={2}
+        onEndReached={handleEndReached}
+        onEndReachedThreshold={0.5}
+        ListHeaderComponent={
+          <View style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 8 }}>
+            <Pressable
+              style={styles.search_container}
+              onPress={() => inputRef.current?.focus()}
+            >
+              <Image source={searchIcon} style={styles.searchIcon} />
+              <TextInput
+                ref={inputRef}
+                allowFontScaling={false}
+                style={styles.searchBar}
+                selectionColor="white"
+                placeholder="Search"
+                placeholderTextColor="#ccc"
+                onChangeText={text => {
+                  setSearch(text);
+                  debouncedSearch(text);
+                }}
+                value={search}
+              />
+            </Pressable>
+
+            <View>
+              <TouchableOpacity onPress={() => clickfilter()}>
+                <View style={styles.MylistingsBackground}>
+                  <Image source={mylistings} style={styles.iconSmall} />
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        }
+        ListFooterComponent={
+          // Footer loader only for pagination (list has items)
+          isLoading && featurelist.length > 0 ? (
+            <View style={{ paddingVertical: 20, alignItems: 'center' }}>
+              <Loader
+                containerStyle={{
+                  width: 50,
+                  height: 50,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              />
+            </View>
+          ) : null
+        }
+        ListEmptyComponent={
+          // Show Loader if API is loading and list is empty
+          isLoading && featurelist.length === 0 ? (
+            <View style={{ flex: 1, paddingTop: 40, alignItems: 'center' }}>
+              <Loader
+                containerStyle={{
+                  width: 50,
+                  height: 50,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              />
+            </View>
+          ) : !isLoading && featurelist.length === 0 ? (
+            // Show "No Listings Found" if API finished and list is empty
+            <View style={[styles.emptyWrapper]}>
+              <View style={styles.emptyContainer}>
+                <Image
+                  source={require('../../../assets/images/noproduct.png')}
+                  style={styles.emptyImage}
+                  resizeMode="contain"
+                />
+                <Text allowFontScaling={false} style={styles.emptyText}>
+                  No Listings Found
+                </Text>
+              </View>
+            </View>
+          ) : null
+        }
+        contentContainerStyle={[
+          styles.listContainer,
+          {
+            paddingTop: Platform.OS === 'ios' ? 120 : 100,
+            paddingBottom: featurelist.length === 0 ? 10 : 40,
+            flexGrow: 1,
+          },
+        ]}
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
+      />
+          </>}
+         
+
       </View>
 
       {/* <FilterBottomSheet

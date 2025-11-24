@@ -929,6 +929,7 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
                   <View style={styles.otpContainer}>
                     {[0, 1, 2, 3, 4, 5].map((_, index) => (
                       <TextInput
+                        value={otp[index]}
                         key={index}
                         ref={ref => {
                           inputs.current[index] = ref;
@@ -943,6 +944,28 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
                         returnKeyType="next"
                         textAlign="center"
                         secureTextEntry={true}
+                        onKeyPress={({ nativeEvent }) => {
+                          if (nativeEvent.key === 'Backspace') {
+                        
+                            // If current box has value, clear it
+                            if (otp[index] !== "") {
+                              const newOtp = [...otp];
+                              newOtp[index] = "";
+                              setOtp(newOtp);
+                              return;
+                            }
+                        
+                            // If empty and not first box, move focus
+                            if (index > 0) {
+                              inputs.current[index - 1]?.focus();   // 👈 safe, no TypeScript error
+                        
+                              const newOtp = [...otp];
+                              newOtp[index - 1] = "";
+                              setOtp(newOtp);
+                            }
+                          }
+                        }}
+                        
                       />
                     ))}
                   </View>

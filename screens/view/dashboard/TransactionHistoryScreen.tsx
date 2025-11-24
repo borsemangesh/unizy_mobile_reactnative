@@ -132,6 +132,7 @@ export default function TransactionHistoryScreen(
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
+        setLoading(true);
         const token = await AsyncStorage.getItem('userToken');
         console.log(token)
         if (!token) {
@@ -233,7 +234,7 @@ export default function TransactionHistoryScreen(
             })),
           }));
         }
-
+        setLoading(false);
         setTransactions(formatted);
       } catch (err) {
         console.log('Error fetching transactions:', err);
@@ -245,7 +246,6 @@ export default function TransactionHistoryScreen(
     const handleForceLogout = async () => {
       console.log('User inactive or unauthorized — logging out');
       await AsyncStorage.clear();
-      // navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
     };
 
     setLoading(true);
@@ -857,8 +857,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    height: Platform.OS === 'ios' ? 570 : 300,
-    paddingVertical: 40,
+    height: Platform.OS === 'ios' ? 547 : 300,
+    paddingVertical: (Platform.OS === 'ios' ? 0 : 40),
   },
   loaderContainer: {
     width: 100,
