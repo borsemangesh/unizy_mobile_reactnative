@@ -4,6 +4,7 @@ import { WebView } from 'react-native-webview';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Linking } from 'react-native';
 import Loader from '../../utils/component/Loader';
+import { SafeAreaView } from "react-native-safe-area-context";
 type RootStackParamList = {
   StripeOnboardingScreen: { onboardingUrl: string };
   StripeOnboardingComplete: undefined;
@@ -57,7 +58,7 @@ export default function StripeOnboardingScreen({ route, navigation }: any) {
   };
 
   return (
-    <View style={styles.webViewContainer}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#0C56C4' }} edges={['top']}>
       <WebView
         ref={webViewRef}
         source={{ uri: onboardingUrl }}
@@ -94,7 +95,7 @@ export default function StripeOnboardingScreen({ route, navigation }: any) {
         }
       }}
       />
-    </View>
+   </SafeAreaView>
   );
 }
 

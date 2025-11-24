@@ -24,7 +24,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, useFocusEffect } from '@react-navigation/native';
 import { SquircleView } from 'react-native-figma-squircle';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
@@ -36,6 +36,7 @@ import {
   NewCustomToastContainer,
   showToast,
 } from '../../utils/component/NewCustomToastManager';
+import Loader from '../../utils/component/Loader';
 
 type AccountDetailsProps = {
   navigation: any;
@@ -116,6 +117,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
   const [loading, setLoading] = useState(true);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const isFromOnboarding = useRef(false);
 
   // Debug log to check route params
   useEffect(() => {
@@ -172,10 +174,61 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
     fetchAccountDetails();
   }, [fetchAccountDetails]);
 
-  // Show success popup only once when redirected from onboarding
+  // Reset onboarding flag when screen loses focus
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        // Reset flag when screen loses focus
+        isFromOnboarding.current = false;
+      };
+    }, []),
+  );
+
+  // Helper function to check if bank data is present (indicates onboarding was completed)
+  const hasBankData = () => {
+    // Check if merchant data exists
+    if (!data?.stripeAccount?.merchant) {
+      return false;
+    }
+    
+    const merchants = Array.isArray(data.stripeAccount.merchant)
+      ? data.stripeAccount.merchant
+      : [data.stripeAccount.merchant];
+    
+    // Check if there's at least one merchant with actual bank details
+    // This is the most reliable indicator that onboarding was completed successfully
+    const hasActualBankData = merchants.some(
+      (bank: any) =>
+        bank &&
+        (bank.bank_name || bank.last4 || bank.routing_number || bank.account_number),
+    );
+    
+    return hasActualBankData;
+  };
+
+  // Show success popup only once when redirected from onboarding AND bank data is present
   useEffect(() => {
     const checkAndShowPopup = async () => {
+      // Don't show if not coming from onboarding
       if (!showSuccess) {
+        return;
+      }
+
+      // Mark that we're coming from onboarding
+      isFromOnboarding.current = true;
+
+      // Wait for data to be loaded
+      if (loading || !data) {
+        console.log('Waiting for data to load...');
+        return;
+      }
+
+      // Check if bank data is actually present
+      const hasData = hasBankData();
+      console.log('Bank data check - hasData:', hasData);
+
+      if (!hasData) {
+        console.log('No bank data present, not showing popup');
         return;
       }
 
@@ -188,26 +241,28 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
         showSuccess,
         'popupShown:',
         popupShown,
+        'hasBankData:',
+        hasData,
       );
 
-      // Only show if not already shown
-      if (!popupShown || popupShown !== 'true') {
-        console.log('Showing success popup');
+      // Only show if not already shown and bank data is present
+      if ((!popupShown || popupShown !== 'true') && hasData) {
+        console.log('Showing success popup - all conditions met');
         setShowSuccessPopup(true);
         // Mark as shown so it won't show again
         await AsyncStorage.setItem('onboardingSuccessPopupShown', 'true');
       } else {
-        console.log('Popup already shown previously, skipping');
+        console.log('Popup already shown previously or no bank data, skipping');
       }
     };
 
     // Add a small delay to ensure route params and component are ready
     const timer = setTimeout(() => {
       checkAndShowPopup();
-    }, 300);
+    }, 500);
 
     return () => clearTimeout(timer);
-  }, [showSuccess]);
+  }, [showSuccess, data, loading]);
 
   const maskAccountNumber = (last4: string) => {
     if (!last4) return '****';
@@ -356,14 +411,33 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
         {/* Header Content */}
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
+            activeOpacity={0.7}
             onPress={() => {
-              if (Platform.OS === 'ios') {
-                navigation.replace('Dashboard', {
-                  AddScreenBackactiveTab: 'Profile',
-                  isNavigate: false,
-                });
+              // If coming from onboarding or can't go back, navigate to Dashboard
+              if (isFromOnboarding.current || !navigation.canGoBack()) {
+                if (Platform.OS === 'ios') {
+                  navigation.replace('Dashboard', {
+                    AddScreenBackactiveTab: 'Profile',
+                    isNavigate: false,
+                  });
+                } else {
+                  navigation.navigate('Dashboard', {
+                    AddScreenBackactiveTab: 'Profile',
+                    isNavigate: false,
+                  });
+                }
+                // Reset flag after navigation
+                isFromOnboarding.current = false;
               } else {
-                navigation.goBack();
+                // Normal back navigation
+                if (Platform.OS === 'ios') {
+                  navigation.replace('Dashboard', {
+                    AddScreenBackactiveTab: 'Profile',
+                    isNavigate: false,
+                  });
+                } else {
+                  navigation.goBack();
+                }
               }
             }}
             style={styles.backButtonContainer}
@@ -401,8 +475,18 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
           </Text>
         </View>
 
-        <View>
-          <Animated.ScrollView
+        {loading ? (
+          <Loader
+            containerStyle={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingTop: Platform.OS === 'ios' ? 120 : 100,
+            }}
+          />
+        ) : (
+          <View>
+            <Animated.ScrollView
             contentContainerStyle={styles.scrollContainer}
             onScroll={scrollHandler}
             scrollEventThrottle={16}
@@ -685,15 +769,18 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                 )}
             </View>
           </Animated.ScrollView>
-        </View>
+          </View>
+        )}
 
         {/* Fixed Bottom Button */}
-        <View style={styles.bottomButtonContainer}>
+        {!loading && (
+          <View style={styles.bottomButtonContainer}>
           <Button
             title={buttonLoading ? 'Loading...' : 'Edit Bank Details'}
             onPress={buttonLoading ? () => {} : handleAddBank}
           />
-        </View>
+          </View>
+        )}
       </View>
 
       {/* Success Popup Modal */}
