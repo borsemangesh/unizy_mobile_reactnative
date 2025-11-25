@@ -644,27 +644,35 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   );
 
 
+  const ClickPostalCode = async (postalCode:any) => {
+    const cityName = await getCityFromPostalCode(postalCode);
+  
+    setUserMeta(prev => ({
+      ...prev,
+      city: cityName,  // Only set city
+    }));
+  };
+
+  const getCityFromPostalCode = async (postalCode:any) => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`
+      );
+  
+      const data = await response.json();
+  
+      return data[0]?.address?.city || data[0]?.address?.town || data[0]?.address?.village;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-        {/* Header */}
-        {/* <View style={styles.header}>
-          <View style={styles.headerRow}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <View style={styles.backIconRow}>
-                <Image
-                  source={require('../../../assets/images/back.png')}
-                  style={{ height: 24, width: 24 }}
-                />
-              </View>
-            </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>
-              Edit Profile
-            </Text>
-            <View style={{ width: 48 }} />
-          </View>
-        </View> */}
+       
 
         <StatusBar
           translucent
@@ -1042,6 +1050,35 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   </TouchableOpacity>
                 </View>
               </View>
+              <View style={styles.inputGroup}>
+                <Text style={styles.label} allowFontScaling={false}>
+                  Postal Code*
+                </Text>
+                <TextInput
+                  value={userMeta.postal_code || ''}
+                  // onChangeText={text =>
+                  //   setUserMeta(prev => ({ ...prev, postal_code: text }))
+                  // }
+
+                  onChangeText={(text) => {
+
+                    // Block more than 6 digits
+                    if (text.length > 6) return;
+                
+                    setUserMeta(prev => ({ ...prev, postal_code: text }));
+                
+                    // Call API when exactly 6 digits
+                    if (text.length === 6) {
+                      ClickPostalCode(text);
+                    }
+                  }}
+                  allowFontScaling={false}
+                  style={styles.input}
+                  keyboardType="default"
+                  placeholder="Enter Postal Code"
+                  placeholderTextColor="#ccc"
+                />
+              </View>
 
               <View style={styles.inputGroup}>
                 <Text style={styles.label} allowFontScaling={false}>
@@ -1059,22 +1096,13 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 />
               </View>
 
-              <View style={styles.inputGroup}>
-                <Text style={styles.label} allowFontScaling={false}>
-                  Postal Code*
-                </Text>
-                <TextInput
-                  value={userMeta.postal_code || ''}
-                  onChangeText={text =>
-                    setUserMeta(prev => ({ ...prev, postal_code: text }))
-                  }
-                  allowFontScaling={false}
-                  style={styles.input}
-                  keyboardType="numeric"
-                  placeholder="Enter Postal Code"
-                  placeholderTextColor="#ccc"
-                />
-              </View>
+              
+
+              {/* <Button
+                title="Postal code Cick"  
+                onPress={() => {
+                  ClickPostalCode();
+                }}/> */}
             </View>
 
             
