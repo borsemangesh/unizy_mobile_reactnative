@@ -978,7 +978,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
               const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
               const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
 
-              if (isFeatured && categoryid===Number(4)) {
+              if (categoryid===Number(4)) {
                 return `List for £${accomodation_amount.toFixed(2)}`
               }
               return 'List';
