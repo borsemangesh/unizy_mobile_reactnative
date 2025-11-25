@@ -33,19 +33,7 @@ function App() {
 
     const initializeNotifications = async () => {
       try {
-        // const authStatus = await messaging().requestPermission();
-        // const enabled =
-        //   authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-        //   authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-        // if (enabled) {
-        //   console.log("✅ Notification permission granted");
-        //   const token = await messaging().getToken();
-        //   console.log("🔥 FCM Token:", token);
-        // } else {
-        //   console.log("❌ Notification permission denied");
-        // }
-
+        
         if (Platform.OS === "ios") {
           const notifeeSettings = await notifee.requestPermission({
             sound: true,
@@ -63,6 +51,9 @@ function App() {
           const enabled =
             authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
             authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+            const notifeeSettings = await notifee.requestPermission();
+            console.log("🔔 Notifee permission:", notifeeSettings);
 
           if (enabled) {
             console.log("✅ Notification permission granted");
@@ -146,155 +137,10 @@ function App() {
         });
        
 
-        // unsubscribeForeground = notifee.onForegroundEvent(({ type, detail }) => {
-        //   if (type === EventType.PRESS) {
-        //     console.log("🟦 Notification tapped in foreground");
-        //     console.log("📋 Full detail object:", JSON.stringify(detail, null, 2));
-            
-        //     let notificationData = detail.notification?.data;
-
-        //     const notif = detail.notification;
-        //     const title = notif?.title;
-        //     const data = notif?.data; 
-                    
-        //     console.log('📋 Raw notification data:', notificationData);
-
-        //     if (notificationData) {
-        //       try {
-        //         const parseValue = (value: any): any => {
-        //           if (typeof value === 'string') {
-        //             try {
-        //               return JSON.parse(value);
-        //             } catch {
-        //               return value;
-        //             }
-        //           }
-        //           return value;
-        //         };
-
-
-
-        //         if (title === "Item Sold") {
-        //           const featureId = data?.feature_id || null;
-        //           console.log("📦 Extracted feature_id:", featureId);
-
-        //           navigate("ViewListingDetails", {
-        //             shareid: featureId,
-        //             catagory_id: 0,
-        //             catagory_name: "",
-        //           });
-
-        //           return;
-        //         }
-
-
-        //          else if (notificationData?.title === "Order Completed") {
-        //           console.log("🟢 Navigating to TransactionHistory → Sales tab");
-
-        //           navigate('MyOrders',{});
-        //           return;
-        //         }
-        //         else if(notificationData?.title === "New review received"){
-        //           navigate('ReviewDetails', {
-        //             category_id: 0,id: 0,purchase:false
-        //           });
-        //         }
-
-        //          else if(notificationData?.title === "Payout Processed"){
-        //          navigate('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false});
-        //         }
-        //         if (typeof notificationData === 'string') {
-        //           try {
-        //             notificationData = JSON.parse(notificationData);
-        //             console.log('📊 Parsed notification data:', notificationData);
-        //           } catch (e) {
-        //             console.warn('⚠️ Could not parse data as JSON:', e);
-        //           }
-        //         }
-
-        //         if (notificationData?.data && typeof notificationData.data === 'string') {
-        //           try {
-        //             notificationData = JSON.parse(notificationData.data);
-        //             console.log('📊 Parsed nested data field:', notificationData);
-        //           } catch (e) {
-        //             console.warn('⚠️ Could not parse nested data as JSON:', e);
-        //           }
-        //         }
-
-        //         let members = null;
-        //         if (notificationData?.members) {
-        //           const parsedMembers = parseValue(notificationData.members);
-        //           if (Array.isArray(parsedMembers)) {
-        //             members = parsedMembers[0];
-        //           } else if (typeof parsedMembers === 'object' && parsedMembers !== null) {
-        //             members = parsedMembers;
-        //           }
-        //         }
-
-        //         if (members) {
-        //           members = {
-        //             id: members.id || 0,
-        //             firstname: members.firstname || '',
-        //             lastname: members.lastname || '',
-        //             profile: members.profile || null,
-        //             university: {
-        //               id: members.university?.id || 0,
-        //               name: members.universityName || members.university?.name || ''
-        //             }
-        //           };
-        //         }
-
-        //         console.log("👤 Transformed members:", members);
-
-        //         const userConvName = notificationData?.userConvName || 
-        //                           notificationData?.conv_name || 
-        //                           notificationData?.friendlyname || 
-        //                           '';
-                
-        //         let currentUserIdList = 0;
-        //         if (notificationData?.current_user_id) {
-        //           currentUserIdList = Number(parseValue(notificationData.current_user_id));
-        //         } else if (notificationData?.from) {
-        //           currentUserIdList = Number(parseValue(notificationData.from)) || 0;
-        //         }
-
-        //         // Validate required fields
-        //         if (!userConvName) {
-        //           console.error("❌ Missing userConvName in notification data");
-        //           return;
-        //         }
-
-        //         if (!members || !members.firstname) {
-        //           console.error("❌ Missing or invalid members data in notification");
-        //           return;
-        //         }
-
-        //         const params = {
-        //           animation: 'none',
-        //           members,
-        //           userConvName,
-        //           currentUserIdList,
-        //           source: notificationData?.source ? parseValue(notificationData.source) : 'chatList',
-        //         };
-
-        //         console.log('📱 Final navigation params:', JSON.stringify(params, null, 2));
-
-        //         setTimeout(() => {
-        //           navigate("MessagesIndividualScreen", params);
-        //         }, 1000);
-        //       } catch (error) {
-        //         console.error("❌ Error handling foreground notification tap:", error);
-        //       }
-        //     }
-        //   }
-        // });
-
-
         unsubscribeForeground = notifee.onForegroundEvent(({ type, detail }) => {
           if (type === EventType.PRESS) {
             console.log("🟦 Notification tapped in foreground");
             const notificationData = detail.notification?.data;
-            // Use the centralized handler
             handleNotification(notificationData, false);
           }
         });

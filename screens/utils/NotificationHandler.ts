@@ -25,7 +25,7 @@ export const handleNotification = async (notificationData: any, isBackground: bo
                 console.warn(' Could not parse data as JSON:', e);
             }
         }
-debugger
+
         // Parse nested data field if it exists
         if (notificationData?.data && typeof notificationData.data === 'string') {
             try {
@@ -36,7 +36,6 @@ debugger
             }
         }
 
-        debugger
         // Handle specific notification titles/types
         const title = notificationData?.type
 
@@ -176,7 +175,7 @@ debugger
             // Navigate with a small delay to ensure app is ready
             setTimeout(() => {
                 navigate("MessagesIndividualScreen", params);
-            }, isBackground ? 800 : 500);
+            }, isBackground ? 200 : 100);
         } else {
             console.log(" Notification data did not match any known navigation patterns");
         }
