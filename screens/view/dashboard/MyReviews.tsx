@@ -576,7 +576,7 @@ const styles = StyleSheet.create({
 
 
    categoryTabsContainer: {
-    width: '100%',
+    width: '105%',
     marginBottom: 12,
     marginTop: 12,
     paddingLeft: 10

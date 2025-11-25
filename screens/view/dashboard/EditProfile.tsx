@@ -738,6 +738,8 @@ photo
 };
 
 
+  const [typingTimeout, setTypingTimeout] = useState<any>(null);
+
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
@@ -1126,16 +1128,43 @@ photo
                 </Text>
                 <TextInput
                   value={userMeta.postal_code || ''}
+                  // onChangeText={text => {
+                  //   const filteredText = text.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                  //   if (filteredText.trim().length > 7) return;
+                  //   setUserMeta(prev => ({
+                  //     ...prev,
+                  //     postal_code: filteredText,
+                  //   }));
+                  //   if (filteredText.trim().length <= 7) {
+                  //     ClickPostalCode(filteredText);
+                  //   }
+                  // }}
                   onChangeText={text => {
-                    const filteredText = text.replace(/[^a-zA-Z0-9]/g, '');
-                    if (filteredText.length > 6) return;
+                    // Keep only letters + numbers, convert to uppercase
+                    const filteredText = text.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                
+                    // Limit length
+                    if (filteredText.length > 7) return;
+                
+                    // Update state
                     setUserMeta(prev => ({
                       ...prev,
                       postal_code: filteredText,
                     }));
-                    if (filteredText.length === 6) {
-                      ClickPostalCode(filteredText);
+                
+                    // Clear old timer
+                    if (typingTimeout) {
+                      clearTimeout(typingTimeout);
                     }
+                
+                    // Start new 3-sec timer
+                    const timeout = setTimeout(() => {
+                      if (filteredText.length > 0) {
+                        ClickPostalCode(filteredText);
+                      }
+                    }, 3000); // 3 seconds
+                
+                    setTypingTimeout(timeout);
                   }}
                   allowFontScaling={false}
                   style={styles.input}

@@ -705,7 +705,7 @@ export default Bookmark;
 
 const styles = StyleSheet.create({
   categoryTabsContainer: {
-    width: '100%',
+    width: '105%',
     marginTop: 12,
     paddingLeft: 10,
   },

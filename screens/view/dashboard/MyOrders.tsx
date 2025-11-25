@@ -4,28 +4,22 @@ import {
   Image,
   ImageBackground,
   Text,
-  TextInput,
   View,
   TouchableOpacity,
-  FlatList,
   Platform,
   StyleSheet,
   StatusBar,
   ScrollView,
-  ActivityIndicator,
-  ImageSourcePropType,
   Dimensions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 
 const bgImage = require('../../../assets/images/backimg.png');
-import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
-import SearchListProductCard from '../../utils/SearchListProductCard';
-import SearchTutionCard from '../../utils/SearchTutionCard';
+import { useFocusEffect } from '@react-navigation/native';
+
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
-import NotificationCard from '../../utils/NotificationCard';
-import ReviewDetailCard from '../../utils/ReviewDetailCard';
+
 import MyOrderCard from '../../utils/MyOrderCard';
 import { SquircleView } from 'react-native-figma-squircle';
 import Loader from '../../utils/component/Loader';
@@ -102,13 +96,12 @@ type MyOrdersProps = {
 const MyOrders = ({ navigation }: MyOrdersProps)  => {
   const [search, setSearch] = useState<string>('');
     const [page, setPage] = useState(1);
-    const pagesize = 10;
+   
     const [featurelist, setFeaturelist] = useState<Feature[]>([]);  
-    const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(true);
   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
- const SCREEN_HEIGHT = Dimensions.get('window').height;
-  const { height: screenHeight } = Dimensions.get('window');
+
+  
 const [isLoadingMore, setIsLoadingMore] = useState(false);
    const scrollY = useSharedValue(0);
   
@@ -636,7 +629,7 @@ export default MyOrders;
 const styles = StyleSheet.create({
 
   categoryTabsContainer: {
-    width: '100%',
+    width: '105%',
     marginBottom: 12,
     marginTop: 14,
     paddingLeft: 10,

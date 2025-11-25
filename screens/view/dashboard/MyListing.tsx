@@ -587,22 +587,6 @@ useEffect(() => {
                 </View>
               ) : null
             }
-            // ListEmptyComponent={
-            //   !initialLoading && !isLoading ? (
-            //     <View style={[styles.emptyWrapper]}>
-            //       <View style={styles.emptyContainer}>
-            //         <Image
-            //           source={require('../../../assets/images/noproduct.png')} // your image
-            //           style={styles.emptyImage}
-            //           resizeMode="contain"
-            //         />
-            //         <Text allowFontScaling={false} style={styles.emptyText}>
-            //           No Listings Found
-            //         </Text>
-            //       </View>
-            //     </View>
-            //   ) : null
-            // }
             ListEmptyComponent={
              
               (isLoading || initialLoading) && featurelist.length === 0 ? (
@@ -673,7 +657,7 @@ const styles = StyleSheet.create({
   },
 
   categoryTabsContainer: {
-    width: '100%',
+    width: '105%',
     marginBottom: 12,
     marginTop: 12,
   },
