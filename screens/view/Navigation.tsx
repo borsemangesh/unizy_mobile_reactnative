@@ -49,6 +49,7 @@ import UserReviews from './dashboard/UserReviews';
 import UserListing from './dashboard/UserListing';
 import UserAddReview from './dashboard/UserAddReview';
 import { navigationRef } from './NavigationService';
+import ChangePassword from './dashboard/ChangePassword';
 
 const Stack = createNativeStackNavigator();
 
@@ -407,6 +408,15 @@ export const Navigation = () => {
              <Stack.Screen
               name="UserListing"
               component={UserListing}
+              options={{
+                headerShown: false,
+                presentation: 'fullScreenModal',
+              }}
+            />
+
+              <Stack.Screen
+              name="ChangePassword"
+              component={ChangePassword}
               options={{
                 headerShown: false,
                 presentation: 'fullScreenModal',
