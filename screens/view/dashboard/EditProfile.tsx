@@ -288,6 +288,19 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           setTimeout(resolve, 2000);
         }); // Wait 1.5s so toast stays visible
       }
+
+
+       if (photo == null) {
+
+        await handleDeleteImage();
+
+        // showToast('Image deleted successfully', 'success');
+        await new Promise((resolve: any) => {
+          setTimeout(resolve, 2000);
+        }); // Wait 1.5s so toast stays visible
+      }
+
+
       const url = `${MAIN_URL.baseUrl}user/profile-edit`;
 
       const body = {
@@ -1332,7 +1345,7 @@ photo
                   style={styles.loginButton}
                   onPress={async () => {
                     setShowDeleteModal(false);
-                    await handleDeleteImage();
+                    // await handleDeleteImage();
                     setPhoto(null);
                   }}
                 >
