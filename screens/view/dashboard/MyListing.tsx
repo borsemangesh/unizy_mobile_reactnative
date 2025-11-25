@@ -165,16 +165,21 @@ const MyListing = ({ navigation }: MyListingProps) => {
   //   }, []),
   // );
 
-  useFocusEffect(
-  useCallback(() => {
-    console.log("SCREEN FOCUSED — reloading category:", selectedCategory);
+//   useFocusEffect(
+//   useCallback(() => {
+//     console.log("SCREEN FOCUSED — reloading category:", selectedCategory);
 
-    setPage(1);
-    displayListOfProduct(selectedCategory?.id ?? null, 1, false);
+//     setPage(1);
+//     displayListOfProduct(selectedCategory?.id ?? null, 1, false);
 
-    return () => {};
-  }, [selectedCategory])
-);
+//     return () => {};
+//   }, [selectedCategory])
+// );
+
+useEffect(() => {
+  setPage(1);
+  displayListOfProduct(selectedCategory?.id ?? null, 1, false);
+}, [selectedCategory]);
   useEffect(() => {
     const loadCategories = async () => {
       const stored = await AsyncStorage.getItem('categories');
@@ -224,6 +229,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
     try {
       if (isInitialLoad) {
         setInitialLoading(true);
+        
       } else {
         setIsLoading(true);
       }
@@ -239,6 +245,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
         if (isInitialLoad) {
           await new Promise(r => setTimeout(r, 1000));
           setInitialLoading(false);
+          setIsLoading(false);
         }
         return;
       }
@@ -266,7 +273,10 @@ const MyListing = ({ navigation }: MyListingProps) => {
         if (isInitialLoad) {
           await new Promise(r => setTimeout(r, 1000));
           setInitialLoading(false);
+
+          setIsLoading(false);
         } else {
+          setInitialLoading(false);
           setIsLoading(false);
         }
         navigation.reset({
@@ -277,7 +287,9 @@ const MyListing = ({ navigation }: MyListingProps) => {
         if (isInitialLoad) {
           await new Promise(r => setTimeout(r, 1000));
           setInitialLoading(false);
+          setIsLoading(false);
         } else {
+          setIsLoading(false);
           setIsLoading(false);
         }
       }
@@ -295,8 +307,10 @@ const MyListing = ({ navigation }: MyListingProps) => {
         let remaining = Math.max(0, 1000 - elapsed);
         await new Promise(r => setTimeout(r, remaining));
         setInitialLoading(false);
+        setIsLoading(false);
       } else {
         setIsLoading(false);
+        setInitialLoading(false);
       }
     }
   };
@@ -477,10 +491,12 @@ const MyListing = ({ navigation }: MyListingProps) => {
           </Text>
         </View>
         {/* List */}
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, overflow: 'hidden'}}>
           <Animated.FlatList
-
             data={featureList}
+            scrollEnabled={true} // ← Allow scroll only inside FlatList
+            showsVerticalScrollIndicator={false}
+            nestedScrollEnabled={false}
             renderItem={renderItem}
             // keyExtractor={(item, index) => {
             //   'worklet';
@@ -588,6 +604,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
             //   ) : null
             // }
             ListEmptyComponent={
+             
               (isLoading || initialLoading) && featurelist.length === 0 ? (
                 // Show loader while fetching
                 <View style={[styles.emptyWrapper, { justifyContent: 'center', flex: 1 }]}>
@@ -752,8 +769,8 @@ const styles = StyleSheet.create({
 
   background: {
     flex: 1,
-    width: '100%',
-    height: '100%',
+    // width: '100%',
+    // height: '100%',
   },
   fullScreenContainer: {
     flex: 1,
