@@ -1,6 +1,7 @@
 import { BlurView } from '@react-native-community/blur';
 import { RouteProp, useFocusEffect, useIsFocused, useRoute } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from "react-i18next";
 import {
   View,
   Text,
@@ -27,7 +28,7 @@ import { getRequest } from '../../utils/API';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-
+import i18n, { initI18n,changeAppLanguage  } from "../../../localization/i18n";
 import BackgroundAnimation from '../Hello/BackgroundAnimation';
 import { Language } from '../../utils/Language';
 import { greetings } from '../../utils/Greetings';
@@ -42,6 +43,9 @@ import {
 import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 
 const { height } = Dimensions.get('window');
+
+  
+
 
 type SinglePageProps = {
   navigation: any;
@@ -59,7 +63,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   const [currentScreenIninner, setcurrentScreenIninner] = useState<
     'login' | 'signup' | 'forgotpassword' | 'sendOTP' | 'verify' | 'profile'
   >('login');
-
+    const { t } = useTranslation();
   //Hello Screen
   const [currentGreetingIndex, setCurrentGreetingIndex] = useState(0);
   const unizyTranslateY = React.useRef(new Animated.Value(-100)).current;
@@ -85,6 +89,16 @@ useEffect(() => {
     showToast(route.params?.logoutMessage,'success')
   }
 }, [route.params]);
+
+  // Debug: Log translation info
+  useEffect(() => {
+    console.log('=== LoginScreen i18n Debug ===');
+    console.log('Current language:', i18n.language);
+    console.log('Translation for "login":', t('login'));
+    console.log('Translation for "password":', t('password'));
+    console.log('Translation for "personal_email_id":', t('personal_email_id'));
+    console.log('==============================');
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -132,11 +146,17 @@ useEffect(() => {
   const handleLanguageSelect = async (item: Language) => {
     try {
       loginTranslateY.setValue(0);
+      
       await AsyncStorage.setItem(
         'selectedLanguage',
-        JSON.stringify({ id: item.id, code: item.code, name: item.name }),
+        JSON.stringify(item.code),
       );
+      
+      await changeAppLanguage(item.code);
+     
+      console.log(t('select_language'))
       setSelected(item.code);
+      
       Animated.timing(loginunizyTranslateY, {
         toValue: 0,
         duration: 1000,
@@ -2115,7 +2135,7 @@ useEffect(() => {
                               <TextInput
                                 allowFontScaling={false}
                                 style={Styles.personalEmailID_TextInput}
-                                placeholder={'Personal Email ID*'}
+                               placeholder={t('personal_email_id')}
                                 placeholderTextColor={
                                   'rgba(255, 255, 255, 0.48)'
                                 }
@@ -2144,7 +2164,7 @@ useEffect(() => {
                               <TextInput
                                 allowFontScaling={false}
                                 style={Styles.password_TextInput}
-                                placeholder={'Password*'}
+                               placeholder={t('password')}
                                 placeholderTextColor={
                                   'rgba(255, 255, 255, 0.48)'
                                 }
@@ -2191,7 +2211,8 @@ useEffect(() => {
                                 });
                               }}
                             >
-                              Forgot Password?
+                              
+                                  {t('forgot_password')}
                             </Text>
                           </View>
 
@@ -2204,7 +2225,7 @@ useEffect(() => {
                                 allowFontScaling={false}
                                 style={Styles.sendText}
                               >
-                                Login
+                                  {t('login')}
                               </Text>
                             </TouchableOpacity>
 
@@ -2231,7 +2252,8 @@ useEffect(() => {
                                   paddingBottom: Platform.OS === 'ios' ? 9 : 10,
                                 }}
                               >
-                                Don't have an account?
+                                
+                                {t('dont_have_account')}
                               </Text>
                               <TouchableOpacity
                                 onPress={() => {
@@ -2289,7 +2311,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.signupText}
                                 >
-                                  Sign up
+                                      {t('sign_up')}
                                 </Text>
                               </TouchableOpacity>
                             </View>
@@ -2336,7 +2358,7 @@ useEffect(() => {
                                   Styles.personalEmailID_TextInput,
                                   { color: '#fff' },
                                 ]}
-                                placeholder="Personal Email ID*"
+                              placeholder={t('personal_email_id')}
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                 value={username1}
                                 maxLength={50}
@@ -2577,7 +2599,7 @@ useEffect(() => {
                             <TextInput
                               allowFontScaling={false}
                               style={Styles.password_TextInput}
-                              placeholder="Personal Email ID*"
+                          placeholder={t('personal_email_id')}
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
                               value={signUpusername}
                               maxLength={50}
@@ -3429,7 +3451,8 @@ useEffect(() => {
                       allowFontScaling={false}
                       style={Styles.bycountuningAgreementText}
                     >
-                      By continuing, you agree to our
+                    
+                         {t('by_continuing_agree')}
                     </Text>
                     {/* <Text allowFontScaling={false} style={Styles.teamsandConditionText}>
                       Terms & Conditions
@@ -3439,7 +3462,8 @@ useEffect(() => {
                         allowFontScaling={false}
                         style={Styles.teamsandConditionText}
                       >
-                        Terms & Conditions
+                      
+                        {t('terms_and_conditions')}
                       </Text>
                       <View
                         style={{
@@ -3462,7 +3486,7 @@ useEffect(() => {
                       allowFontScaling={false}
                       style={Styles.bycountuningAgreementText}
                     >
-                      and
+                      {t('and')}
                     </Text>
                     {/* <Text allowFontScaling={false} style={Styles.teamsandConditionText}>
                       Privacy Policy
@@ -3472,7 +3496,7 @@ useEffect(() => {
                         allowFontScaling={false}
                         style={Styles.teamsandConditionText}
                       >
-                        Privacy Policy
+                     {t('privacy_policy')}
                       </Text>
                       <View
                         style={{
