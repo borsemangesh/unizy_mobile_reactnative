@@ -239,8 +239,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     }
     if (
       !userMeta.postal_code ||
-      userMeta.postal_code.trim() === '' ||
-      isNaN(+userMeta.postal_code)
+      userMeta.postal_code.trim() === '' 
     ) {
       errors.push('Postal code is required.');
     }
@@ -1056,20 +1055,12 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 </Text>
                 <TextInput
                   value={userMeta.postal_code || ''}
-                  // onChangeText={text =>
-                  //   setUserMeta(prev => ({ ...prev, postal_code: text }))
-                  // }
-
                   onChangeText={(text) => {
-
-                    // Block more than 6 digits
-                    if (text.length > 6) return;
-                
-                    setUserMeta(prev => ({ ...prev, postal_code: text }));
-                
-                    // Call API when exactly 6 digits
-                    if (text.length === 6) {
-                      ClickPostalCode(text);
+                    const filteredText = text.replace(/[^a-zA-Z0-9]/g, "");
+                    if (filteredText.length > 6) return;
+                    setUserMeta(prev => ({ ...prev, postal_code: filteredText }));
+                    if (filteredText.length === 6) {
+                      ClickPostalCode(filteredText);
                     }
                   }}
                   allowFontScaling={false}
