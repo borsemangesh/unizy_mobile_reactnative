@@ -794,7 +794,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             onScroll={scrollHandler}
             contentContainerStyle={[
               styles.scrollContainer,
-              { paddingBottom: screenHeight * 0.1 }, 
+              { paddingBottom:(Platform.OS === 'ios'? screenHeight * 0.12: screenHeight * 0.1) }, 
             ]}
           >
             <View style={styles.profileavatarContainer}>

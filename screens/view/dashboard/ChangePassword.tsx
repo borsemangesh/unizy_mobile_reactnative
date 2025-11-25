@@ -8,16 +8,7 @@ import {
   TouchableOpacity,
   Platform,
   StyleSheet,
-  ScrollView,
-  PermissionsAndroid,
-  Alert,
-  Modal,
-  TouchableWithoutFeedback,
-  Keyboard,
   KeyboardAvoidingView,
-  StatusBar,
-  Dimensions,
-  Animated,
 } from 'react-native';
 
 import AnimatedReanimated, {
@@ -85,81 +76,85 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
             <View style={{ width: 48 }} />
           </View>
         </View>
-        <View style={styles.blurCard}>
-          <View style={styles.inputGroup}>
-            <Text style={styles.label} allowFontScaling={false}>
-              Current Password*
-            </Text>
-            <TextInput
-              value={userMeta.currentPassword || ''}
-              onChangeText={text =>
-                setUserMeta(prev => ({ ...prev, currentPassword: text }))
-              }
-              allowFontScaling={false}
-              style={styles.input}
-              placeholder="Enter Current Password"
-              placeholderTextColor="#ccc"
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label} allowFontScaling={false}>
-              New Password*
-            </Text>
-            <TextInput
-              value={userMeta.newPassword || ''}
-              onChangeText={text =>
-                setUserMeta(prev => ({ ...prev, newPassword: text }))
-              }
-              allowFontScaling={false}
-              style={styles.input}
-              placeholder="Enter New Password"
-              placeholderTextColor="#ccc"
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label} allowFontScaling={false}>
-              Confirm Password*
-            </Text>
-            <TextInput
-              allowFontScaling={false}
-              value={userMeta.confirmPassword || ''}
-              onChangeText={text =>
-                setUserMeta(prev => ({ ...prev, confirmPassword: text }))
-              }
-              style={styles.input}
-              placeholder="Enter Confirm Password"
-              placeholderTextColor="#ccc"
-            />
-          </View>
-
-          <TouchableOpacity activeOpacity={0.7} style={styles.buttonContainer}>
-            <BlurView
-              style={StyleSheet.absoluteFill}
-              blurType="light"
-              blurAmount={2}
-              pointerEvents="none"
-              reducedTransparencyFallbackColor="transparent"
-            />
-            <Text allowFontScaling={false} style={styles.buttonText}>
-              Change Password
-            </Text>
-          </TouchableOpacity>
-
-          <Text
-            allowFontScaling={false}
-            style={styles.forgetText}
-            //   onPress={() => sendOtp(emailName)}
-          >
-            Forgot Password?
-          </Text>
-        </View>
 
         <KeyboardAvoidingView
-          style={{ flex: 1, marginTop: 0 }}
+          style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 120 : 110 }}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        ></KeyboardAvoidingView>
+        >
+          <View style={styles.blurCard}>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label} allowFontScaling={false}>
+                Current Password*
+              </Text>
+              <TextInput
+                value={userMeta.currentPassword || ''}
+                onChangeText={text =>
+                  setUserMeta(prev => ({ ...prev, currentPassword: text }))
+                }
+                allowFontScaling={false}
+                style={styles.input}
+                placeholder="Enter Current Password"
+                placeholderTextColor="#ccc"
+              />
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.label} allowFontScaling={false}>
+                New Password*
+              </Text>
+              <TextInput
+                value={userMeta.newPassword || ''}
+                onChangeText={text =>
+                  setUserMeta(prev => ({ ...prev, newPassword: text }))
+                }
+                allowFontScaling={false}
+                style={styles.input}
+                placeholder="Enter New Password"
+                placeholderTextColor="#ccc"
+              />
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.label} allowFontScaling={false}>
+                Confirm Password*
+              </Text>
+              <TextInput
+                allowFontScaling={false}
+                value={userMeta.confirmPassword || ''}
+                onChangeText={text =>
+                  setUserMeta(prev => ({ ...prev, confirmPassword: text }))
+                }
+                style={styles.input}
+                placeholder="Enter Confirm Password"
+                placeholderTextColor="#ccc"
+              />
+            </View>
+
+            <TouchableOpacity
+              activeOpacity={0.7}
+              style={styles.buttonContainer}
+            >
+              <BlurView
+                style={StyleSheet.absoluteFill}
+                blurType="light"
+                blurAmount={2}
+                pointerEvents="none"
+                reducedTransparencyFallbackColor="transparent"
+              />
+              <Text allowFontScaling={false} style={styles.buttonText}>
+                Change Password
+              </Text>
+            </TouchableOpacity>
+
+            <Text
+              allowFontScaling={false}
+              style={styles.forgetText}
+              //   onPress={() => sendOtp(emailName)}
+            >
+              Forgot Password?
+            </Text>
+          </View>
+        </KeyboardAvoidingView>
       </View>
       <NewCustomToastContainer />
     </ImageBackground>
@@ -289,9 +284,19 @@ const styles = StyleSheet.create({
     // paddingTop: Platform.OS === 'ios' ? '6%' : 30,
     // paddingBottom: 12,
     // // paddingHorizontal: 16,
-    paddingTop: Platform.OS === 'ios' ? '15.2%' : 50,
-    paddingBottom: 12,
+    // paddingTop: Platform.OS === 'ios' ? '15.3%' : 50,
+    // paddingBottom: 12,
+    // paddingHorizontal: 16,
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? '7.1%' : 50,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingHorizontal: 16,
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
   },
   headerRow: {
     flexDirection: 'row',
@@ -773,7 +778,7 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
     alignSelf: 'center',
     // position: 'absolute',
-    bottom: Platform.OS === 'ios' ? 34 : 0,
+    bottom: Platform.OS === 'ios' ? 0 : 0,
     marginTop: 16,
   },
 
