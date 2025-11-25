@@ -109,6 +109,9 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
         const data = await response.json();
 
+       
+        
+
         if (response.status === 401 || response.status === 403) {
           handleForceLogout();
           return;
@@ -463,12 +466,12 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
   const handleDeleteImage = async () => {
     try {
-      // if (!imageUri) return true; // No new image, treat as success
+      if (newphoto) return true; // No new image, treat as success
 
       const token = await AsyncStorage.getItem('userToken');
       const userId = await AsyncStorage.getItem('userId');
       const url = `${MAIN_URL.baseUrl}user/delete-profile?userId=${userId}`;
-
+photo
       if (!token || !userId) {
         showToast('User authentication is missing.', 'error');
         return false;
@@ -715,6 +718,13 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     }
   };
 
+    const getInitials = (firstName = '', lastName = '') => {
+  const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
+  const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
+  return (f + l) || '?';
+};
+
+
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
@@ -862,7 +872,23 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                       resizeMode="contain"
                     />
                   </TouchableOpacity>
-                  <Image
+
+
+            {photo ? (
+                        <Image source={{ uri: photo}} style={styles.profilelogo} />
+                      ) : (
+                        <View style={styles.initialsCircle}>
+                          <Text allowFontScaling={false} style={styles.initialsText}>
+                            {getInitials(
+                              userMeta?.firstname ?? 'A',
+                              userMeta?.lastname ?? 'W',
+                            )}
+                          </Text>
+                        </View>
+                      )}
+
+
+                  {/* <Image
                     source={
                       photo
                         ? { uri: photo }
@@ -870,7 +896,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     }
                     style={styles.profilelogo}
                     resizeMode="cover"
-                  />
+                  /> */}
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -1268,7 +1294,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       >
         <TouchableWithoutFeedback
           onPress={() => {
-            navigation.replace('MyListing');
+            navigation.replace('EditProfile');
           }}
         >
           <View style={styles.overlay}>
@@ -1928,5 +1954,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+
+   initialsCircle:{
+    backgroundColor: '#8390D4',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+  },
+  initialsText:{
+   color: '#fff',
+  fontSize: 36,
+  fontWeight:600,
+  textAlign: 'center',
+  fontFamily: 'Urbanist-SemiBold',
   },
 });
