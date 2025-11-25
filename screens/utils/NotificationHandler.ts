@@ -86,6 +86,11 @@ export const handleNotification = async (notificationData: any, isBackground: bo
             return;
         }
 
+        if(title == 'orderotp'){
+              navigate('Dashboard', { AddScreenBackactiveTab: 'Search', isNavigate: false });
+            return;
+        }
+
    
 
         // Handle Chat/Message Notifications
