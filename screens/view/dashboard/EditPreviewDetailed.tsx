@@ -81,6 +81,7 @@ const [categoryid, setcategoryid] = useState(0);
     max_cappund: string | null;
     feature_fee: string | null;
     max_feature_cap: null;
+    accommodation_amount: | null
   }
 
   interface UserMeta {
@@ -233,6 +234,7 @@ const { height } = Dimensions.get('window');
   const descriptionvalue =
     getValueByAlias(storedForm, 'description') || 'No Description';
   const duration_value = getValueByAlias(storedForm, 'service_duration') || '1'
+  const accomodation_amount = parseFloat(userMeta?.category?.accommodation_amount ?? '0');
 
 
   const onScroll = (event: {
@@ -1095,10 +1097,14 @@ const dataArray = nonImageFields
                   const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
                   const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
 
-                  if (isFeatured) {
-                    return `Update for £${diff1.toFixed(2)}`;
-                  }
-                  return 'Update';
+                  // if (isFeatured) {
+                  //   return `Update for £${diff1.toFixed(2)}`;
+                  // }
+                  // return 'Update';
+              if (categoryid===Number(4)) {
+                return `List for £${accomodation_amount.toFixed(2)}`
+              }
+              return 'List';
                 } catch (e) {
                   console.log('Error parsing storedForm:', e);
                   return 'Update';

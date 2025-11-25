@@ -200,13 +200,15 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
         catagory_name: typename,
       });
     } else if (templateName === 'FeatureListed') {
-      // Navigate to SearchDetails
       navigation.navigate('ListingDetails', {
        shareid: typeid,
         catagory_id: categoryid,
         catagory_name: typename,
       });
     } 
+    else if(templateName==='OrderOTP'){
+      navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false})
+    }
 
     else if (templateName==='NewReviewedAdd'){
        navigation.replace('ReviewDetails', {

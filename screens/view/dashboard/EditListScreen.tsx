@@ -669,9 +669,22 @@ const handlePreview = async (latestFormValues: any) => {
         if (param.alias_name === 'service_duration') durationFieldId = param.id;
       });
 
-      if (priceFieldId !== null && durationFieldId !== null) {
-        const rawPrice = Number(latestFormValues[String(priceFieldId)]?.value || 0);
-        const rawDuration = Number(latestFormValues[String(durationFieldId)]?.value || 1);
+      // if (priceFieldId !== null && durationFieldId !== null) {
+      //   const rawPrice = Number(latestFormValues[String(priceFieldId)]?.value || 0);
+      //   const rawDuration = Number(latestFormValues[String(durationFieldId)]?.value || 1);
+
+      //   computedPrice = rawPrice * rawDuration;
+      // }
+
+       if (priceFieldId !== null && durationFieldId !== null) {
+        // read value from ID OR alias (fallback)
+        const rawPrice =
+          Number(latestFormValues[String(priceFieldId)]?.value) ||
+          Number(latestFormValues['price']?.value) ||
+          0;
+
+        const rawDuration =Number(latestFormValues[String(durationFieldId)]?.value) ||Number(latestFormValues['service_duration']?.value) ||1;
+        //const rawDuration = Number(latestFormValues[String(durationFieldId)]?.value || 1);
 
         computedPrice = rawPrice * rawDuration;
       }
@@ -691,6 +704,8 @@ const handlePreview = async (latestFormValues: any) => {
         }
       });
     }
+
+   
 
     // Handle image fields
     fields.forEach(field => {
