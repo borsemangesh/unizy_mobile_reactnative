@@ -9,6 +9,7 @@ import {
   Platform,
   StyleSheet,
   KeyboardAvoidingView,
+  Keyboard,
 } from 'react-native';
 
 import AnimatedReanimated, {
@@ -44,17 +45,187 @@ type changePasswordProps = {
 };
 
 interface UserMeta {
-  currentPassword: string | null;
-  newPassword: string | null;
-  confirmPassword: string | null;
+  current_password: string | null;
+  new_password: string | null;
+  confirm_password: string | null;
 }
 
 const ChangePassword = ({ navigation }: changePasswordProps) => {
   const [userMeta, setUserMeta] = useState<UserMeta>({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: '',
+    current_password: '',
+    new_password: '',
+    confirm_password: '',
   });
+
+  const [showCurrent, setShowCurrent] = useState(false);
+const [showNew, setShowNew] = useState(false);
+const [showConfirm, setShowConfirm] = useState(false);
+
+  // const handlechangePassword = async () => {
+  //   // const errors = validateForm();
+  //   // if (errors.length > 0) {
+  //   //   showToast(errors[0], 'error');
+  //   //   return;
+  //   // } else if (!isUpdateDisabled_personal) {
+  //   //   showToast('Please verify your personal email Id', 'error');
+  //   //   return;
+  //   // } else if (!isUpdateDisabled) {
+  //   //   showToast('Please verify your student email Id', 'error');
+  //   //   return;
+  //   // }
+
+  //   try {
+  //     const token = await AsyncStorage.getItem('userToken');
+  //     const userId = await AsyncStorage.getItem('userId');
+
+  //     if (!token || !userId) {
+  //       showToast('User authentication is missing.', 'error');
+  //       return;
+  //     }
+
+  //     const url = `${MAIN_URL.baseUrl}user/update-password`;
+  //     console.log("url",url);
+      
+
+  //     const body = {
+  //       current_password: userMeta.current_password,
+  //       new_password: userMeta.new_password,
+  //       confirm_password: userMeta.confirm_password,
+  //     };
+
+  //     const response = await fetch(url, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //       body: JSON.stringify(body),
+  //     });
+
+  //     const data = await response.json();
+
+  //     console.log("data",data);
+      
+
+  //     if (response.ok) {
+  //       showToast(data?.message || 'Password updated successfully', 'success');
+
+  //        navigation.navigate('EditProfile')
+  //       // navigation.reset({
+  //       //   index: 0,
+  //       //   routes: [
+  //       //     {
+  //       //       name: 'Dashboard',
+  //       //       params: {
+  //       //         AddScreenBackactiveTab: 'Profile',
+  //       //         isNavigate: false,
+  //       //       },
+  //       //     },
+  //       //   ],
+  //       // });
+  //       // setTimeout(() => {
+  //         // navigation.replace('Dashboard', {
+  //         //   AddScreenBackactiveTab: 'Profile',
+  //         //   isNavigate: false,
+  //         // });
+
+  //       //   navigation.reset({
+  //       //     index: 0,
+  //       //     routes: [
+  //       //       {
+  //       //         name: 'Dashboard',
+  //       //         params: {
+  //       //           AddScreenBackactiveTab: 'Profile',
+  //       //           isNavigate: false,
+  //       //         }
+  //       //       }
+  //       //     ],
+  //       //   });
+
+  //       // }, 4500);
+  //     } else {
+  //       showToast(
+  //         data?.message || 'Failed to update password.Please try again',
+  //         'error',
+  //       );
+  //     }
+  //   } catch (error) {
+  //     console.error('Error during password update:', error);
+  //     showToast('An unexpected error occurred.', 'error');
+  //   }
+  // };
+
+
+  const handlechangePassword = async () => {
+  Keyboard.dismiss();
+
+  const { current_password, new_password, confirm_password } = userMeta;
+
+  // 1️⃣ All fields required
+ if (  !current_password?.trim() ||  !new_password?.trim() ||  !confirm_password?.trim()) {
+  showToast("All fields are required", "error");
+  return;
+}
+
+  // 2️⃣ Current password and new password should NOT be same
+  if (current_password === new_password) {
+    showToast("New password must be different from current password", "error");
+    return;
+  }
+
+  // 3️⃣ New and confirm must match
+  if (new_password !== confirm_password) {
+    showToast("New password and Confirm password do not match", "error");
+    return;
+  }
+
+  try {
+    const token = await AsyncStorage.getItem('userToken');
+    const userId = await AsyncStorage.getItem('userId');
+
+    if (!token || !userId) {
+      showToast("User authentication is missing.", "error");
+      return;
+    }
+
+    const url = `${MAIN_URL.baseUrl}user/update-password`;
+
+    const body = {
+      current_password,
+      new_password,
+      confirm_password
+    };
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(body)
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      showToast(data?.message || "Password updated successfully", "success");
+
+      // Clear fields
+      setUserMeta({
+        current_password: "",
+        new_password: "",
+        confirm_password: ""
+      });
+
+      navigation.navigate("EditProfile");
+    } else {
+      showToast(data?.message || "Failed to update password. Please try again", "error");
+    }
+  } catch (error) {
+    console.error("Error during password update:", error);
+    showToast("An unexpected error occurred.", "error");
+  }
+};
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -86,53 +257,143 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
               <Text style={styles.label} allowFontScaling={false}>
                 Current Password*
               </Text>
-              <TextInput
-                value={userMeta.currentPassword || ''}
+              {/* <TextInput
+                value={userMeta.current_password || ''}
                 onChangeText={text =>
-                  setUserMeta(prev => ({ ...prev, currentPassword: text }))
+                  setUserMeta(prev => ({ ...prev, current_password: text }))
                 }
                 allowFontScaling={false}
                 style={styles.input}
                 placeholder="Enter Current Password"
                 placeholderTextColor="#ccc"
-              />
+              /> */}
+
+
+              <View style={{ position: "relative" }}>
+  <TextInput
+    value={userMeta.current_password || ""}
+    secureTextEntry={!showCurrent}
+    onChangeText={(text) =>
+      setUserMeta((prev) => ({ ...prev, current_password: text }))
+    }
+    style={styles.input}
+    placeholder="Enter Current Password"
+    placeholderTextColor="#ccc"
+  />
+
+  <TouchableOpacity
+    style={styles.eyeButton}
+    onPress={() => setShowCurrent(!showCurrent)}
+  >
+    <Image
+      source={
+        showCurrent
+       ? require("../../../assets/images/eyeopen.png")          
+          : require("../../../assets/images/eyecross1.png")
+      }
+      style={styles.eyeIcon}
+    />
+  </TouchableOpacity>
+</View>
+
             </View>
 
             <View style={styles.inputGroup}>
               <Text style={styles.label} allowFontScaling={false}>
                 New Password*
               </Text>
-              <TextInput
-                value={userMeta.newPassword || ''}
+              {/* <TextInput
+                value={userMeta.new_password || ''}
                 onChangeText={text =>
-                  setUserMeta(prev => ({ ...prev, newPassword: text }))
+                  setUserMeta(prev => ({ ...prev, new_password: text }))
                 }
                 allowFontScaling={false}
                 style={styles.input}
                 placeholder="Enter New Password"
                 placeholderTextColor="#ccc"
-              />
+              /> */}
+
+
+              <View style={{ position: "relative" }}>
+  <TextInput
+    value={userMeta.new_password || ""}
+    secureTextEntry={!showNew}
+    onChangeText={(text) =>
+      setUserMeta((prev) => ({ ...prev, new_password: text }))
+    }
+    style={styles.input}
+    placeholder="Enter New Password"
+    placeholderTextColor="#ccc"
+  />
+
+  <TouchableOpacity
+    style={styles.eyeButton}
+    onPress={() => setShowNew(!showNew)}
+  >
+    <Image
+      source={
+        showNew
+          ? require("../../../assets/images/eyeopen.png")          
+          : require("../../../assets/images/eyecross1.png")
+      }
+      style={styles.eyeIcon}
+    />
+  </TouchableOpacity>
+</View>
+
             </View>
 
             <View style={styles.inputGroup}>
               <Text style={styles.label} allowFontScaling={false}>
                 Confirm Password*
               </Text>
-              <TextInput
+              {/* <TextInput
                 allowFontScaling={false}
-                value={userMeta.confirmPassword || ''}
+                value={userMeta.confirm_password || ''}
                 onChangeText={text =>
-                  setUserMeta(prev => ({ ...prev, confirmPassword: text }))
+                  setUserMeta(prev => ({ ...prev, confirm_password: text }))
                 }
                 style={styles.input}
                 placeholder="Enter Confirm Password"
                 placeholderTextColor="#ccc"
-              />
+              /> */}
+
+
+              <View style={{ position: "relative" }}>
+  <TextInput
+    value={userMeta.confirm_password || ""}
+    secureTextEntry={!showConfirm}
+    onChangeText={(text) =>
+      setUserMeta((prev) => ({ ...prev, confirm_password: text }))
+    }
+    style={styles.input}
+    placeholder="Enter Confirm Password"
+    placeholderTextColor="#ccc"
+  />
+
+  <TouchableOpacity
+    style={styles.eyeButton}
+    onPress={() => setShowConfirm(!showConfirm)}
+  >
+    <Image
+      source={
+        showConfirm        
+          ? require("../../../assets/images/eyeopen.png")          
+          : require("../../../assets/images/eyecross1.png")
+      }
+      style={styles.eyeIcon}
+    />
+  </TouchableOpacity>
+</View>
+
             </View>
 
             <TouchableOpacity
               activeOpacity={0.7}
               style={styles.buttonContainer}
+               onPress={()=>{
+                    handlechangePassword();
+                  }}
             >
               <BlurView
                 style={StyleSheet.absoluteFill}
@@ -617,7 +878,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
 
-
   popupContainer: {
     width: '90%',
     padding: 20,
@@ -629,7 +889,6 @@ const styles = StyleSheet.create({
 
     backgroundColor: 'rgba(255, 255, 255, 0.04)',
   },
-
 
   mainheader: {
     fontFamily: 'Urbanist-SemiBold',
@@ -802,6 +1061,18 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     marginTop: 10,
   },
+
+  eyeButton: {
+  position: "absolute",
+  right: 12,
+  top: 8,
+  padding: 4,
+},
+
+eyeIcon: {
+  width: 20,
+  height: 20,
+  tintColor: "#ccc",
+},
+
 });
-
-

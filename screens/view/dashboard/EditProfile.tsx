@@ -64,6 +64,7 @@ interface UserMeta {
 }
 
 const EditProfile = ({ navigation }: EditProfileProps) => {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [photo, setPhoto] = useState<string | null>(null);
   const [newphoto, setNewPhoto] = useState<string | null>(null);
   const [userMeta, setUserMeta] = useState<UserMeta>({
@@ -454,6 +455,47 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     }
   };
 
+
+
+   const handleDeleteImage = async () => {
+    try {
+      // if (!imageUri) return true; // No new image, treat as success
+  
+      const token = await AsyncStorage.getItem('userToken');
+      const userId = await AsyncStorage.getItem('userId');
+      const url = `${MAIN_URL.baseUrl}user/delete-profile?userId=${userId}`;
+  
+      if (!token || !userId) {
+        showToast('User authentication is missing.', 'error');
+        return false;
+      }
+    
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+        // body: formData,
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        return true; 
+      } else {
+        showToast(data?.message || 'Failed to delete image.Please try again', 'error');
+        return false; 
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      showToast('Unexpected error occured during delete.Please try again', 'error');
+      return false; 
+    }
+  };
+
+  
+
   //------------------------- to handel personal email ------------------------//
 
   // const [emailModalVisible, setEmailModalVisible] = useState(false);
@@ -809,9 +851,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 <TouchableOpacity>
                 <TouchableOpacity
                   style={styles.profiledeleteButton}
-                  onPress={()=>{
-                    // handleSelectImage();
-                  }}
+                  // onPress={()=>{
+                  //   // handleDeleteImage();
+                  // }}
+                   onPress={() => setShowDeleteModal(true)}
+                  
                 >
                   {/* assets\images\camera_icon.png */}
                   <Image
@@ -1277,6 +1321,103 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
+
+
+      {/* <Modal
+  visible={showDeleteModal}
+  transparent={true}
+  animationType="fade"
+  onRequestClose={() => setShowDeleteModal(false)}
+>
+  <TouchableWithoutFeedback onPress={() => setShowDeleteModal(false)}>
+    <View style={styles.overlay}>
+      <BlurView
+        style={{
+          flex: 1,
+          alignContent: 'center',
+          justifyContent: 'center',
+          width: '100%',
+          alignItems: 'center',
+        }}
+        blurType="light"
+        blurAmount={10}
+        reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+      >
+ 
+        <View
+          style={[
+            StyleSheet.absoluteFill,
+            { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
+          ]}
+        />
+
+
+        <View style={styles.popupContainer}>
+          <Text allowFontScaling={false} style={styles.mainheader}>
+            Delete Profile Image?
+          </Text>
+
+          <Text allowFontScaling={false} style={styles.subheader}>
+            Are you sure you want to delete your profile image?
+          </Text>
+
+    
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: 12,
+              marginTop: 20,
+              width: '100%',
+            }}
+          >
+          
+            <TouchableOpacity
+              style={[
+                styles.loginButton1,
+                {
+                  backgroundColor: 'rgba(255,255,255,0.15)',
+                  borderRadius: 100,
+                  borderWidth: 0.5,
+                  borderColor: '#ffffff2c',
+                  flex: 1,
+                },
+              ]}
+              onPress={() => setShowDeleteModal(false)}
+            >
+              <Text allowFontScaling={false} style={styles.loginText1}>
+                Cancel
+              </Text>
+            </TouchableOpacity>
+
+
+            <TouchableOpacity
+              style={[
+                styles.loginButton,
+                {
+                  backgroundColor: 'rgba(255,0,0,0.45)',
+                  borderRadius: 100,
+                  flex: 1,
+                },
+              ]}
+              onPress={async () => {
+                setShowDeleteModal(false);
+                await handleDeleteImage();
+                setPhoto(null);
+                showToast('Image deleted successfully', 'success');
+              }}
+            >
+              <Text allowFontScaling={false} style={styles.loginText}>
+                Delete
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </BlurView>
+    </View>
+  </TouchableWithoutFeedback>
+</Modal> */}
+
+      
     </ImageBackground>
   );
 };
@@ -1667,6 +1808,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
+    zIndex: 1,
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.6) 100%)',
   },
@@ -1678,8 +1820,8 @@ const styles = StyleSheet.create({
   },
 
   profiledeletecameraIcon: {
-    width: 24,
-    height: 24,
+    width: 20,
+    height: 20,
     // marginLeft: -1,
     // marginTop: 3,
   },
