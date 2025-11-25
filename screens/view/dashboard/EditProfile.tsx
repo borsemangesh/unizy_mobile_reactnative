@@ -857,7 +857,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     onPress={() => setShowDeleteModal(true)}
                   >
                     <Image
-                      source={require('../../../assets/images/profile_delete.png')}
+                      source={require('../../../assets/images/delprofile.png')}
                       style={styles.profiledeletecameraIcon}
                       resizeMode="contain"
                     />
@@ -1298,7 +1298,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   style={styles.logo}
                   resizeMode="contain"
                 />
-                <Text allowFontScaling={false} style={styles.mainheader}>
+                <Text allowFontScaling={false} style={[styles.mainheader,{marginTop: 10}]}>
                   Do you want to delete the profile picture!
                 </Text>
 

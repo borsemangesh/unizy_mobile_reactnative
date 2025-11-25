@@ -1224,7 +1224,7 @@ const blurAmount = useDerivedValue(() =>
                     fontFamily: 'Urbanist-SemiBold',
                   }}
                 >
-                  {/* {activeTab === 'Search' ? 'Transaction History' : 'Profile'} */}
+              
                   {activeTab === 'Search'
                     ? 'Transaction History'
                     : activeTab === 'Profile'
