@@ -2611,6 +2611,8 @@ const MessagesIndividualScreen = ({
                     alignItems: 'center',
                     flex: 1,
                     borderRadius: 40,
+
+                  height: 48,
                     paddingHorizontal: 16,
                     paddingVertical: 4,
                     overflow: 'hidden',
@@ -2704,7 +2706,7 @@ const MessagesIndividualScreen = ({
                         }
                       }
                     }}
-                    style={{ marginRight: Platform.OS === 'ios' ? 5 : 8 }}
+                    style={{ marginRight: Platform.OS === 'ios' ? 5 : 8 ,display: 'none',}}
                   >
                     {isEmojiPickerVisible ? (
                       // Show keyboard icon when emoji keyboard is visible (like WhatsApp)
@@ -2728,7 +2730,7 @@ const MessagesIndividualScreen = ({
                       height: 30,
                       marginTop: Platform.OS === 'ios' ? 5 : 0,
                       marginBottom: Platform.OS === 'ios' ? 5 : 0,
-
+                      display: 'none',
                       backgroundColor: 'rgba(255, 255, 255, 0.23)',
                       marginHorizontal: 6,
                     }}
