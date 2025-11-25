@@ -61,99 +61,6 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
 const [showNew, setShowNew] = useState(false);
 const [showConfirm, setShowConfirm] = useState(false);
 
-  // const handlechangePassword = async () => {
-  //   // const errors = validateForm();
-  //   // if (errors.length > 0) {
-  //   //   showToast(errors[0], 'error');
-  //   //   return;
-  //   // } else if (!isUpdateDisabled_personal) {
-  //   //   showToast('Please verify your personal email Id', 'error');
-  //   //   return;
-  //   // } else if (!isUpdateDisabled) {
-  //   //   showToast('Please verify your student email Id', 'error');
-  //   //   return;
-  //   // }
-
-  //   try {
-  //     const token = await AsyncStorage.getItem('userToken');
-  //     const userId = await AsyncStorage.getItem('userId');
-
-  //     if (!token || !userId) {
-  //       showToast('User authentication is missing.', 'error');
-  //       return;
-  //     }
-
-  //     const url = `${MAIN_URL.baseUrl}user/update-password`;
-  //     console.log("url",url);
-      
-
-  //     const body = {
-  //       current_password: userMeta.current_password,
-  //       new_password: userMeta.new_password,
-  //       confirm_password: userMeta.confirm_password,
-  //     };
-
-  //     const response = await fetch(url, {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //       body: JSON.stringify(body),
-  //     });
-
-  //     const data = await response.json();
-
-  //     console.log("data",data);
-      
-
-  //     if (response.ok) {
-  //       showToast(data?.message || 'Password updated successfully', 'success');
-
-  //        navigation.navigate('EditProfile')
-  //       // navigation.reset({
-  //       //   index: 0,
-  //       //   routes: [
-  //       //     {
-  //       //       name: 'Dashboard',
-  //       //       params: {
-  //       //         AddScreenBackactiveTab: 'Profile',
-  //       //         isNavigate: false,
-  //       //       },
-  //       //     },
-  //       //   ],
-  //       // });
-  //       // setTimeout(() => {
-  //         // navigation.replace('Dashboard', {
-  //         //   AddScreenBackactiveTab: 'Profile',
-  //         //   isNavigate: false,
-  //         // });
-
-  //       //   navigation.reset({
-  //       //     index: 0,
-  //       //     routes: [
-  //       //       {
-  //       //         name: 'Dashboard',
-  //       //         params: {
-  //       //           AddScreenBackactiveTab: 'Profile',
-  //       //           isNavigate: false,
-  //       //         }
-  //       //       }
-  //       //     ],
-  //       //   });
-
-  //       // }, 4500);
-  //     } else {
-  //       showToast(
-  //         data?.message || 'Failed to update password.Please try again',
-  //         'error',
-  //       );
-  //     }
-  //   } catch (error) {
-  //     console.error('Error during password update:', error);
-  //     showToast('An unexpected error occurred.', 'error');
-  //   }
-  // };
 
 
   const handlechangePassword = async () => {
@@ -161,19 +68,30 @@ const [showConfirm, setShowConfirm] = useState(false);
 
   const { current_password, new_password, confirm_password } = userMeta;
 
-  // 1️⃣ All fields required
+
+
+
  if (  !current_password?.trim() ||  !new_password?.trim() ||  !confirm_password?.trim()) {
   showToast("All fields are required", "error");
   return;
 }
 
-  // 2️⃣ Current password and new password should NOT be same
+
   if (current_password === new_password) {
     showToast("New password must be different from current password", "error");
     return;
   }
 
-  // 3️⃣ New and confirm must match
+
+const passwordRegex =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]|:;"'<>,.?/]).{8,}$/;
+
+if (!passwordRegex.test(new_password.trim())) {
+showToast('Min 8 chars: upper, lower, number, symbol.', 'error');
+  return;
+}
+
+
   if (new_password !== confirm_password) {
     showToast("New password and Confirm password do not match", "error");
     return;
@@ -217,7 +135,7 @@ const [showConfirm, setShowConfirm] = useState(false);
         confirm_password: ""
       });
 
-      navigation.navigate("EditProfile");
+      navigation.nevigate("EditProfile");
     } else {
       showToast(data?.message || "Failed to update password. Please try again", "error");
     }
@@ -410,7 +328,7 @@ const [showConfirm, setShowConfirm] = useState(false);
             <Text
               allowFontScaling={false}
               style={styles.forgetText}
-              //   onPress={() => sendOtp(emailName)}
+              onPress={() => navigation.goBack()}
             >
               Forgot Password?
             </Text>
