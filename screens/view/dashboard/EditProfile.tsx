@@ -807,6 +807,20 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             <View style={styles.profileavatarContainer}>
               <View style={styles.profilebigCircle}>
                 <TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.profiledeleteButton}
+                  onPress={()=>{
+                    // handleSelectImage();
+                  }}
+                >
+                  {/* assets\images\camera_icon.png */}
+                  <Image
+                    // source={require('../../../assets/images/camera_1.png')}
+                    source={require('../../../assets/images/profile_delete.png')}
+                    style={styles.profiledeletecameraIcon}
+                    resizeMode="contain"
+                  />
+                </TouchableOpacity>
                   <Image
                     source={
                       photo
@@ -1644,6 +1658,18 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.6) 100%)',
   },
+  profiledeleteButton: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    width: 30,
+    height: 30,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.6) 100%)',
+  },
   profilecameraIcon: {
     width: 40,
     height: 40,
@@ -1651,6 +1677,12 @@ const styles = StyleSheet.create({
     marginTop: 3,
   },
 
+  profiledeletecameraIcon: {
+    width: 24,
+    height: 24,
+    // marginLeft: -1,
+    // marginTop: 3,
+  },
   updateIcon: {
     width: 16,
     height: 16,
