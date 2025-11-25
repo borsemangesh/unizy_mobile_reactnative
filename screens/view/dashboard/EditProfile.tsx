@@ -30,7 +30,6 @@ import AnimatedReanimated, {
 } from 'react-native-reanimated';
 // import LinearGradient from 'react-native-linear-gradient';
 
-
 import MaskedView from '@react-native-masked-view/masked-view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const bgImage = require('../../../assets/images/backimg.png');
@@ -45,7 +44,13 @@ import {
   launchCamera,
   launchImageLibrary,
 } from 'react-native-image-picker';
-import { check, PERMISSIONS, request, RESULTS,openSettings } from 'react-native-permissions';
+import {
+  check,
+  PERMISSIONS,
+  request,
+  RESULTS,
+  openSettings,
+} from 'react-native-permissions';
 import Button from '../../utils/component/Button';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -151,7 +156,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     fetchUserProfile();
   }, []);
 
-
   const requestCameraPermission = async () => {
     // ANDROID
     if (Platform.OS === 'android') {
@@ -166,40 +170,40 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             buttonPositive: 'OK',
           },
         );
-  
+
         return granted === PermissionsAndroid.RESULTS.GRANTED;
       } catch (err) {
         console.warn(err);
         return false;
       }
     }
-  
+
     // iOS
     if (Platform.OS === 'ios') {
       try {
         const status = await check(PERMISSIONS.IOS.CAMERA);
-  
+
         switch (status) {
           case RESULTS.GRANTED:
             return true;
-  
+
           case RESULTS.DENIED:
             // User denied previously → we can ask again
             const result = await request(PERMISSIONS.IOS.CAMERA);
             return result === RESULTS.GRANTED;
-  
+
           case RESULTS.BLOCKED:
             // User selected "Don't Allow" + "Don't ask again"
             Alert.alert(
-              "Camera Permission Needed",
-              "Camera access is blocked. Please enable it in Settings.",
+              'Camera Permission Needed',
+              'Camera access is blocked. Please enable it in Settings.',
               [
-                { text: "Open Settings", onPress: () => openSettings() },
-                { text: "Cancel", style: "cancel" },
-              ]
+                { text: 'Open Settings', onPress: () => openSettings() },
+                { text: 'Cancel', style: 'cancel' },
+              ],
             );
             return false;
-  
+
           default:
             return false;
         }
@@ -208,7 +212,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         return false;
       }
     }
-  
+
     return true;
   };
 
@@ -238,10 +242,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     if (!userMeta.city || userMeta.city.trim() === '') {
       errors.push('City is required.');
     }
-    if (
-      !userMeta.postal_code ||
-      userMeta.postal_code.trim() === '' 
-    ) {
+    if (!userMeta.postal_code || userMeta.postal_code.trim() === '') {
       errors.push('Postal code is required.');
     }
     return errors;
@@ -261,11 +262,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       showToast('Please verify your student email Id', 'error');
       return;
     }
-  
+
     try {
       const token = await AsyncStorage.getItem('userToken');
       const userId = await AsyncStorage.getItem('userId');
-  
+
       if (!token || !userId) {
         showToast('User authentication is missing.', 'error');
         return;
@@ -273,20 +274,19 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
       if (newphoto !== null) {
         const uploadSuccess = await handleUploadImage(newphoto);
-  
+
         if (!uploadSuccess) {
           console.log('Image upload failed — stopping profile update.');
           return;
         }
-  
 
         showToast('Image uploaded successfully', 'success');
-        await new Promise((resolve:any) => {
+        await new Promise((resolve: any) => {
           setTimeout(resolve, 2000);
         }); // Wait 1.5s so toast stays visible
       }
       const url = `${MAIN_URL.baseUrl}user/profile-edit`;
-  
+
       const body = {
         firstname: userMeta.firstname,
         lastname: userMeta.lastname,
@@ -295,7 +295,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         city: userMeta.city,
         postal_code: userMeta.postal_code,
       };
-  
+
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
@@ -304,9 +304,9 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         },
         body: JSON.stringify(body),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         showToast(data?.message || 'Profile updated successfully', 'success');
         navigation.reset({
@@ -317,8 +317,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
               params: {
                 AddScreenBackactiveTab: 'Profile',
                 isNavigate: false,
-              }
-            }
+              },
+            },
           ],
         });
         // setTimeout(() => {
@@ -340,22 +340,23 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         //     ],
         //   });
 
-        // }, 4500); 
+        // }, 4500);
       } else {
-        showToast(data?.message || 'Failed to update profile.Please try again', 'error');
+        showToast(
+          data?.message || 'Failed to update profile.Please try again',
+          'error',
+        );
       }
     } catch (error) {
       console.error('Error during profile update:', error);
       showToast('An unexpected error occurred.', 'error');
     }
   };
-  
-  
 
   //------------------ image upload functionality ---------------//
 
   const handleSelectImage = async () => {
-    console.log("Choose image")
+    console.log('Choose image');
     const hasPermission = await requestCameraPermission();
     if (!hasPermission) return;
     Alert.alert(
@@ -377,7 +378,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   setPhoto(response.assets[0].uri);
                   setNewPhoto(response.assets[0].uri);
                 }
-            
               },
             );
           },
@@ -412,25 +412,25 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   const handleUploadImage = async (imageUri: string | null) => {
     try {
       if (!imageUri) return true; // No new image, treat as success
-  
+
       const token = await AsyncStorage.getItem('userToken');
       const userId = await AsyncStorage.getItem('userId');
       const url = `${MAIN_URL.baseUrl}user/update-profile`;
-  
+
       if (!token || !userId) {
         showToast('User authentication is missing.', 'error');
         return false;
       }
-  
+
       const formData = new FormData();
       formData.append('file', {
         uri: imageUri,
         type: 'image/jpeg',
         name: `profile_${userId}.jpg`,
       } as any);
-  
+
       formData.append('userId', userId);
-  
+
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -439,37 +439,41 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         },
         body: formData,
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
-        return true; 
+        return true;
       } else {
-        showToast(data?.message || 'Failed to upload image.Please try again', 'error');
-        return false; 
+        showToast(
+          data?.message || 'Failed to upload image.Please try again',
+          'error',
+        );
+        return false;
       }
     } catch (error) {
       console.error('Upload error:', error);
-      showToast('Unexpected error occured during upload.Please try again', 'error');
-      return false; 
+      showToast(
+        'Unexpected error occured during upload.Please try again',
+        'error',
+      );
+      return false;
     }
   };
 
-
-
-   const handleDeleteImage = async () => {
+  const handleDeleteImage = async () => {
     try {
       // if (!imageUri) return true; // No new image, treat as success
-  
+
       const token = await AsyncStorage.getItem('userToken');
       const userId = await AsyncStorage.getItem('userId');
       const url = `${MAIN_URL.baseUrl}user/delete-profile?userId=${userId}`;
-  
+
       if (!token || !userId) {
         showToast('User authentication is missing.', 'error');
         return false;
       }
-    
+
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -478,23 +482,28 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         },
         // body: formData,
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
-        return true; 
+        showToast('Image deleted successfully', 'success');
+        return true;
       } else {
-        showToast(data?.message || 'Failed to delete image.Please try again', 'error');
-        return false; 
+        showToast(
+          data?.message || 'Failed to delete image.Please try again',
+          'error',
+        );
+        return false;
       }
     } catch (error) {
       console.error('Upload error:', error);
-      showToast('Unexpected error occured during delete.Please try again', 'error');
-      return false; 
+      showToast(
+        'Unexpected error occured during delete.Please try again',
+        'error',
+      );
+      return false;
     }
   };
-
-  
 
   //------------------------- to handel personal email ------------------------//
 
@@ -566,7 +575,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         return;
       }
       const otpValue = otp.join('');
-      // const order_id = await AsyncStorage.getItem('last_order_id');
 
       console.log('otpValue', otpValue);
 
@@ -589,15 +597,14 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       console.log('OTP Verify Response:', data);
 
       if (data?.statusCode === 200) {
-        // showToast(data.message, 'success');
         setShowPopup1(false);
-        // setShowPopup2(true);
+  
       } else {
         showToast(data?.message, 'error');
       }
     } catch (err) {
       console.error(err);
-      // showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+    
     }
   };
 
@@ -613,7 +620,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     }
   };
 
-  //------------------ use for show popup------------------------//
 
   const [showPopup1, setShowPopup1] = useState(false);
   const closePopup1 = () => setShowPopup1(false);
@@ -627,12 +633,9 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   const [isUpdateDisabled, setIsUpdateDisabled] = useState(true);
   const [updateText, setUpdateText] = useState('Update');
 
-  //  email: userMeta.email,
-  // student_email: userMeta.student_email,
 
   const [initialEmail, setInitialEmail] = useState(''); // store original email
   const [initialPersonalEmail, setInitialPersonalEmail] = useState(''); // store original email
-
 
   const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
@@ -684,49 +687,47 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
   );
 
-
-  const ClickPostalCode = async (postalCode:any) => {
+  const ClickPostalCode = async (postalCode: any) => {
     const cityName = await getCityFromPostalCode(postalCode);
-  
+
     setUserMeta(prev => ({
       ...prev,
-      city: cityName,  // Only set city
+      city: cityName, // Only set city
     }));
   };
 
-  const getCityFromPostalCode = async (postalCode:any) => {
+  const getCityFromPostalCode = async (postalCode: any) => {
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`
+        `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
       );
-  
+
       const data = await response.json();
-  
-      return data[0]?.address?.city || data[0]?.address?.town || data[0]?.address?.village;
+
+      return (
+        data[0]?.address?.city ||
+        data[0]?.address?.town ||
+        data[0]?.address?.village
+      );
     } catch (error) {
       console.log(error);
       return null;
     }
   };
 
-
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-       
-
         <StatusBar
           translucent
           backgroundColor="transparent"
           barStyle="light-content"
         />
 
-        {/* Header with Blur only at top */}
         <AnimatedReanimated.View
           style={[styles.headerWrapper, animatedBlurStyle]}
           pointerEvents="none"
         >
-          {/* Blur layer only at top with gradient fade */}
           <MaskedView
             style={StyleSheet.absoluteFill}
             maskElement={
@@ -743,7 +744,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
               style={StyleSheet.absoluteFill}
               blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
               blurAmount={Platform.OS === 'ios' ? 45 : 45}
-              // overlayColor="rgba(255,255,255,0.05)"
               reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
             />
             <LinearGradient
@@ -771,8 +771,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     params: {
                       AddScreenBackactiveTab: 'Profile',
                       isNavigate: false,
-                    }
-                  }
+                    },
+                  },
                 ],
               });
             }}
@@ -782,7 +782,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             <AnimatedReanimated.View
               style={[styles.blurButtonWrapper, animatedButtonStyle]}
             >
-              {/* Static background (visible when scrollY = 0) */}
               <AnimatedReanimated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -799,7 +798,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 ]}
               />
 
-              {/* Blur view fades in as scroll increases */}
               <AnimatedReanimated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -843,28 +841,27 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             onScroll={scrollHandler}
             contentContainerStyle={[
               styles.scrollContainer,
-              { paddingBottom:(Platform.OS === 'ios'? screenHeight * 0.12: screenHeight * 0.1) }, 
+              {
+                paddingBottom:
+                  Platform.OS === 'ios'
+                    ? screenHeight * 0.12
+                    : screenHeight * 0.1,
+              },
             ]}
           >
             <View style={styles.profileavatarContainer}>
               <View style={styles.profilebigCircle}>
                 <TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.profiledeleteButton}
-                  // onPress={()=>{
-                  //   // handleDeleteImage();
-                  // }}
-                   onPress={() => setShowDeleteModal(true)}
-                  
-                >
-                  {/* assets\images\camera_icon.png */}
-                  <Image
-                    // source={require('../../../assets/images/camera_1.png')}
-                    source={require('../../../assets/images/profile_delete.png')}
-                    style={styles.profiledeletecameraIcon}
-                    resizeMode="contain"
-                  />
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.profiledeleteButton}
+                    onPress={() => setShowDeleteModal(true)}
+                  >
+                    <Image
+                      source={require('../../../assets/images/profile_delete.png')}
+                      style={styles.profiledeletecameraIcon}
+                      resizeMode="contain"
+                    />
+                  </TouchableOpacity>
                   <Image
                     source={
                       photo
@@ -878,13 +875,12 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
                 <TouchableOpacity
                   style={styles.profilecameraButton}
-                  onPress={()=>{
+                  onPress={() => {
                     handleSelectImage();
                   }}
                 >
-                  {/* assets\images\camera_icon.png */}
+               
                   <Image
-                    // source={require('../../../assets/images/camera_1.png')}
                     source={require('../../../assets/images/camera_icon.png')}
                     style={styles.profilecameraIcon}
                     resizeMode="contain"
@@ -892,7 +888,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 </TouchableOpacity>
               </View>
             </View>
-
 
             <View style={styles.blurCard}>
               <View style={styles.inputGroup}>
@@ -975,12 +970,9 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   />
                   <TouchableOpacity
                     style={{
-                      width: 32, // Fixed width – adjust as needed
+                      width: 32, 
                       height: 32,
-                      // marginLeft: 12,
-                      // backgroundColor:
-                      //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
-
+              
                       backgroundColor: isUpdateDisabled_personal
                         ? '#99999980' // Fallback color for disabled
                         : 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
@@ -1001,21 +993,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                       setEmailName('personalEmail')
                     )}
                   >
-                    {/* <Text style={styles.edittext} allowFontScaling={false}>Update</Text>
-                   
-
-
-                  <TouchableOpacity
-                style={styles.profilecameraButton}
-                onPress={handleSelectImage}
-              >
-                {/* assets\images\camera_icon.png */}
                     <Image
                       source={require('../../../assets/images/editcontained.png')}
                       style={styles.updateIcon}
                       resizeMode="contain"
                     />
-                    {/* </TouchableOpacity> */}
                   </TouchableOpacity>
                 </View>
               </View>
@@ -1031,14 +1013,13 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     backgroundColor: 'rgba(255,255,255,0.08)',
                     borderRadius: 12,
                     paddingHorizontal: 4,
-                    minHeight: 44, // or any desired height
+                    minHeight: 44,
                   }}
                 >
                   <TextInput
                     style={{
                       flex: 1,
                       color: '#fff',
-                      // fontSize: 14,
                       backgroundColor: 'transparent',
                       borderWidth: 0,
                       borderRadius: 10,
@@ -1049,12 +1030,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                       fontWeight: 400,
                     }}
                     allowFontScaling={false}
-                    //  value={userMeta.email || ''}
                     value={userMeta.student_email || ''}
                     onChangeText={text => {
                       setUserMeta(prev => ({ ...prev, student_email: text }));
 
-                      // Compare against the ORIGINAL email, not previous state
                       if (text === initialEmail) {
                         console.log('condition_true (unchanged)');
                         setIsUpdateDisabled(true);
@@ -1072,15 +1051,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   />
                   <TouchableOpacity
                     style={{
-                      width: 32, // Fixed width – adjust as needed
+                      width: 32, 
                       height: 32,
-                      // marginLeft: 12,
-
-                      // backgroundColor:
-                      //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
-
                       backgroundColor: isUpdateDisabled
-                        ? '#99999980' // Fallback color for disabled
+                        ? '#99999980' 
                         : 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
                       boxShadow: isUpdateDisabled
                         ? ''
@@ -1113,10 +1087,13 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 </Text>
                 <TextInput
                   value={userMeta.postal_code || ''}
-                  onChangeText={(text) => {
-                    const filteredText = text.replace(/[^a-zA-Z0-9]/g, "");
+                  onChangeText={text => {
+                    const filteredText = text.replace(/[^a-zA-Z0-9]/g, '');
                     if (filteredText.length > 6) return;
-                    setUserMeta(prev => ({ ...prev, postal_code: filteredText }));
+                    setUserMeta(prev => ({
+                      ...prev,
+                      postal_code: filteredText,
+                    }));
                     if (filteredText.length === 6) {
                       ClickPostalCode(filteredText);
                     }
@@ -1144,38 +1121,35 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   placeholderTextColor="#ccc"
                 />
               </View>
-
-              
-
-              {/* <Button
-                title="Postal code Cick"  
-                onPress={() => {
-                  ClickPostalCode();
-                }}/> */}
             </View>
 
-            
- <TouchableOpacity
-  style={{
-    top: 16,
-    // marginHorizontal: 0,
-    marginBottom: 16,
-    height: 48,
-    borderRadius: 30,
-    backgroundColor: 'rgba(255,255,255,0.12)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    // borderWidth: 1,
-    borderColor: '#ffffff22',
-  }}
-  onPress={() =>  navigation.navigate('ChangePassword')}
->
-  <Text style={{color: '#FFFFFF7A', fontSize: 17, fontWeight: '500' ,fontFamily: 'Urbanist-Medium'}}>Change Password</Text>
-</TouchableOpacity>
-
+            <TouchableOpacity
+              style={{
+                top: 16,
+                marginBottom: 16,
+                height: 48,
+                borderRadius: 30,
+                backgroundColor: 'rgba(255,255,255,0.12)',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderColor: '#ffffff22',
+              }}
+              onPress={() => navigation.navigate('ChangePassword')}
+            >
+              <Text
+                style={{
+                  color: '#FFFFFF7A',
+                  fontSize: 17,
+                  fontWeight: '500',
+                  fontFamily: 'Urbanist-Medium',
+                }}
+              >
+                Change Password
+              </Text>
+            </TouchableOpacity>
           </AnimatedReanimated.ScrollView>
         </KeyboardAvoidingView>
-       
+
         <Button
           title="Save Details"
           onPress={() => {
@@ -1258,9 +1232,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
                 <TouchableOpacity
                   style={styles.loginButton}
-                  // onPress={() => {
-                  //   setShowPopup2(true);
-                  //   }}
+                  
                   onPress={otpverify}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>
@@ -1268,16 +1240,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   </Text>
                 </TouchableOpacity>
 
-                {/* <TouchableOpacity
-                         style={styles.loginButton1}
-                         onPress={() => {
-                           setShowPopup1(false);
-                         }}
-                       >
-                         <Text allowFontScaling={false} style={styles.loginText1}>
-                           Cancel
-                         </Text>                       
-                       </TouchableOpacity>  */}
 
                 <Text
                   allowFontScaling={false}
@@ -1292,132 +1254,82 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     Resend Code
                   </Text>
                 </Text>
-
-                {/* <Text allowFontScaling={false} style={styles.subheader}
-                 onPress={() => sendOtp(emailName)}>
-                  Didn’t receive a code? Resend Code
-                </Text> */}
-                {/* 
-                <Text allowFontScaling={false} style={styles.subheader}>
-                  Entered wrong email? Go Back
-                </Text> */}
-
-                {/* <Text style={styles.subheader}>
-  Entered wrong email?{' '}
-  <Text style={{ color: '#FFFFFF7A' }} onPress={closePopup1}>Go Back</Text>
-</Text> */}
-
-                {/* <Text allowFontScaling={false} style={styles.subheader}>
-                  Entered wrong email?{' '}
-                  <Text
-                    style={styles.subheader}
-                    onPress={closePopup1} // or your handler
-                  >
-                    Go Back
-                  </Text>
-                </Text> */}
               </View>
             </BlurView>
           </View>
         </TouchableWithoutFeedback>
       </Modal>
 
-
-      {/* <Modal
-  visible={showDeleteModal}
-  transparent={true}
-  animationType="fade"
-  onRequestClose={() => setShowDeleteModal(false)}
->
-  <TouchableWithoutFeedback onPress={() => setShowDeleteModal(false)}>
-    <View style={styles.overlay}>
-      <BlurView
-        style={{
-          flex: 1,
-          alignContent: 'center',
-          justifyContent: 'center',
-          width: '100%',
-          alignItems: 'center',
-        }}
-        blurType="light"
-        blurAmount={10}
-        reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+      <Modal
+        visible={showDeleteModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowDeleteModal(false)}
       >
- 
-        <View
-          style={[
-            StyleSheet.absoluteFill,
-            { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
-          ]}
-        />
-
-
-        <View style={styles.popupContainer}>
-          <Text allowFontScaling={false} style={styles.mainheader}>
-            Delete Profile Image?
-          </Text>
-
-          <Text allowFontScaling={false} style={styles.subheader}>
-            Are you sure you want to delete your profile image?
-          </Text>
-
-    
-          <View
-            style={{
-              flexDirection: 'row',
-              gap: 12,
-              marginTop: 20,
-              width: '100%',
-            }}
-          >
-          
-            <TouchableOpacity
-              style={[
-                styles.loginButton1,
-                {
-                  backgroundColor: 'rgba(255,255,255,0.15)',
-                  borderRadius: 100,
-                  borderWidth: 0.5,
-                  borderColor: '#ffffff2c',
-                  flex: 1,
-                },
-              ]}
-              onPress={() => setShowDeleteModal(false)}
-            >
-              <Text allowFontScaling={false} style={styles.loginText1}>
-                Cancel
-              </Text>
-            </TouchableOpacity>
-
-
-            <TouchableOpacity
-              style={[
-                styles.loginButton,
-                {
-                  backgroundColor: 'rgba(255,0,0,0.45)',
-                  borderRadius: 100,
-                  flex: 1,
-                },
-              ]}
-              onPress={async () => {
-                setShowDeleteModal(false);
-                await handleDeleteImage();
-                setPhoto(null);
-                showToast('Image deleted successfully', 'success');
+        <TouchableWithoutFeedback
+          onPress={() => {
+            navigation.replace('MyListing');
+          }}
+        >
+          <View style={styles.overlay}>
+            <BlurView
+              style={{
+                flex: 1,
+                alignContent: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                alignItems: 'center',
+                backgroundColor: 'rgba(0, 0, 0, 0.30)',
               }}
+              blurType="light"
+              blurAmount={2}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
             >
-              <Text allowFontScaling={false} style={styles.loginText}>
-                Delete
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </BlurView>
-    </View>
-  </TouchableWithoutFeedback>
-</Modal> */}
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                ]}
+              />
 
-      
+              <View style={styles.popupContainer}>
+                <Image
+                  source={require('../../../assets/images/profile_delete.png')}
+                  style={styles.logo}
+                  resizeMode="contain"
+                />
+                <Text allowFontScaling={false} style={styles.mainheader}>
+                  Do you want to delete the profile picture!
+                </Text>
+
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  onPress={async () => {
+                    setShowDeleteModal(false);
+                    await handleDeleteImage();
+                    setPhoto(null);
+                  }}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText}>
+                    Yes, Delete
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.loginButton1}
+                  onPress={() => {
+                    setShowDeleteModal(false);
+                  }}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText1}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </BlurView>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </ImageBackground>
   );
 };
@@ -1425,13 +1337,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 export default EditProfile;
 
 const styles = StyleSheet.create({
-
   scrollContainer: {
     paddingHorizontal: 16,
     paddingBottom: 80,
-    paddingTop: Platform.OS === 'ios' ? 120: 100,
+    paddingTop: Platform.OS === 'ios' ? 120 : 100,
   },
-
 
   headerWrapper: {
     position: 'absolute',
@@ -1526,13 +1436,13 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   tabtext: {
-    color: '#fff', // selected tab text color
+    color: '#fff', 
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
   },
   othertext: {
-    color: '#FFFFFF7A', // unselected tab text color
+    color: '#FFFFFF7A', 
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
@@ -1545,10 +1455,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    // paddingTop: Platform.OS === 'ios' ? '6%' : 30,
-    // paddingBottom: 12,
-    // // paddingHorizontal: 16,
-    paddingTop: Platform.OS === 'ios' ? '15.2%'  : 50,
+    paddingTop: Platform.OS === 'ios' ? '15.2%' : 50,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },
@@ -1578,7 +1485,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
-    // marginRight: 12,
     width: 265,
     height: 28,
     opacity: 1,
@@ -1607,11 +1513,8 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10,
     paddingTop: 10,
-    //paddingBottom:80,
   },
   row1: {
-    // flexDirection: 'row',
-    // justifyContent: 'flex-start',
   },
   itemContainer: {
     flex: 1,
@@ -1679,20 +1582,13 @@ const styles = StyleSheet.create({
   blurCard: {
     marginTop: 16,
     borderRadius: 24,
-    // padding: 16,
-    // marginBottom:16,
-
-    // overflow: 'hidden',
     paddingHorizontal: 16,
     paddingVertical: 16,
     backgroundColor: 'rgba(255,255,255,0.08)',
     gap: 12,
   },
   inputGroup: {
-    // marginBottom: 14,
     height: 64,
-    // paddingHorizontal:8,
-    // paddingVertical:12
   },
   label: {
     color: '#fff',
@@ -1701,7 +1597,6 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     fontFamily: 'Urbanist-Regular',
     fontWeight: 400,
-    // marginLeft:10
   },
   input: {
     backgroundColor: 'rgba(255,255,255,0.1)',
@@ -1758,8 +1653,8 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   logo: {
-    width: 120,
-    height: 120,
+    width: 100,
+    height: 100,
     borderRadius: 60,
   },
 
@@ -1822,18 +1717,14 @@ const styles = StyleSheet.create({
   profiledeletecameraIcon: {
     width: 20,
     height: 20,
-    // marginLeft: -1,
-    // marginTop: 3,
   },
   updateIcon: {
     width: 16,
     height: 16,
-    // marginLeft: -1,
-    // marginTop: 3,
   },
 
   inputEmail: {
-    flex: 1, // THIS PART IS MOST IMPORTANT!!
+    flex: 1,
     color: '#fff',
     fontSize: 16,
     backgroundColor: 'transparent',
@@ -1851,13 +1742,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.08)', // matches glass effect
     borderRadius: 14,
 
-    //  paddingHorizontal: 12,
-    // paddingVertical: 6,
-    // marginTop: 4,
-    // shadowColor: '#000',
-    // shadowOpacity: 0.10,
-    // shadowRadius: 7,
-    // elevation: 4,
   },
 
   inputWithUpdate: {
@@ -1867,30 +1751,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     color: '#fff',
     height: 44,
-    // width:329
   },
 
-  // inputFlex: {
-  //   flex: 1,
-  //   // color: '#fff',
-  //   fontSize: 14,
-  //   fontFamily: 'Urbanist-SemiBold',
-  //   backgroundColor: 'transparent',
-  //   borderWidth: 0,
-
-  //   //  backgroundColor: 'rgba(255,255,255,0.1)',
-  //     borderRadius: 10,
-  //     paddingHorizontal: 12,
-  //     paddingVertical: 10,
-  //     color: '#fff',
-  //     height:44,
-  // },
+  
   updateButton: {
     marginLeft: 38,
-    backgroundColor: '#FFFFFF8F', // contrast glass effect
+    backgroundColor: '#FFFFFF8F',
     borderRadius: 10,
-    // paddingHorizontal: 10,
-    // height: 30,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#222',
@@ -1908,20 +1775,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
   },
 
-  // -----------------to handle personal email--------------------//
+
   overlay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
-
-  //   overlay: {
-  //   flex: 1,
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   backgroundColor: 'rgba(0,0,0,0.5)', // Slight darkening
-  // },
 
   popupContainer: {
     width: '90%',
@@ -1932,29 +1792,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     overflow: 'hidden',
 
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+    backgroundColor: 'rgba(255, 255, 255, 0.10)',
   },
-
-  //   popupContainer: {
-  //   backgroundColor: 'rgba(255,255,255,0.10)', // or your preferred glass color
-  //   padding: 24,
-  //   borderRadius: 18,
-  //   width: '90%', // or maxWidth: 400 for big screens
-  //   alignItems: 'center',
-  //   shadowColor: '#000',
-  //   shadowOpacity: 0.2,
-  //   shadowRadius: 10,
-  //   elevation: 8,
-  // },
-
-  // mainheader: {
-  //   color: 'rgba(255, 255, 255, 0.80)',
-  //   fontFamily: 'Urbanist-SemiBold',
-  //   fontSize: 18,
-  //   fontWeight: '600',
-  //   letterSpacing: -0.4,
-  //   lineHeight: 28,
-  // },
 
   mainheader: {
     fontFamily: 'Urbanist-SemiBold',
@@ -2038,18 +1877,12 @@ const styles = StyleSheet.create({
   otpContainer: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    // width: '100%',
     alignSelf: 'center',
-    gap: 8, // works in RN 0.71+, otherwise use marginRight
+    gap: 8, 
     marginTop: 16,
     paddingHorizontal: 20,
   },
 
-  //   otpContainer: {
-  //   flexDirection: 'row',
-  //   justifyContent: 'center',
-  //   marginBottom: 24,
-  // },
 
   otpBox: {
     width: 48,
@@ -2088,10 +1921,7 @@ const styles = StyleSheet.create({
   },
 
   edittext: {
-    // fontFamily: 'Urbanist-SemiBold',
-    // fontSize: 14,
     color: '#fff',
-    // fontWeight: 600,
     textAlign: 'center',
   },
   tabContent: {

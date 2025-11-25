@@ -12,8 +12,6 @@ import {
   Dimensions,
   Animated,
   Easing,
-  FlatList,
-  ImageSourcePropType,
 } from 'react-native';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -173,7 +171,7 @@ export default function TransactionHistoryScreen(
           return;
         }
 
-        // Parse response based on tab
+        
         let formatted: TransactionSection[] = [];
 
         if (selectedTab === 'Purchases' && Array.isArray(json.data)) {
@@ -182,11 +180,11 @@ export default function TransactionHistoryScreen(
             items: section.transactions.map((item: any) => ({
               title: item.title ,
               price: `£${item.amount}`,
-              status: item.order_status,        // Show order status like "Awaiting Delivery"
-              code: item.status,                // Payment status (e.g. "succeeded")
-              seller: item.purchased_from,      // Who you bought from
-              university: item.university_name, // University name
-              order_otp: item.order_otp,        // OTP for verification
+              status: item.order_status,        
+              code: item.status,   
+              seller: item.purchased_from,
+              university: item.university_name,
+              order_otp: item.order_otp,
               category_logo: item.category_logo,
               purchased_quantity:item.purchased_quantity ?? 0,
               category_id:item.category_id,
