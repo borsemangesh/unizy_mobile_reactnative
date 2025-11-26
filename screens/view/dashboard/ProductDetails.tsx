@@ -60,9 +60,9 @@ type CreatedBy = {
   updated_at: string;
   role_id: number;
 };
-type university={
-  id:number,
-  name:string
+type university = {
+  id: number,
+  name: string
 }
 
 type Feature = {
@@ -79,8 +79,8 @@ type Feature = {
   thumbnail: string;
   profileshowinview: boolean
   createdby: CreatedBy;
-  university:university;
-  isbookmarked:boolean
+  university: university;
+  isbookmarked: boolean
 };
 
 type ProductDetailsProps = {
@@ -88,7 +88,7 @@ type ProductDetailsProps = {
 };
 
 type RootStackParamList = {
-  ProductDetails: { category_id: number ,category_name:string};
+  ProductDetails: { category_id: number, category_name: string };
 };
 
 type ProductDetailsRouteProp = RouteProp<RootStackParamList, 'ProductDetails'>;
@@ -99,433 +99,423 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
   const [search, setSearch] = useState<string>('');
   const route = useRoute<ProductDetailsRouteProp>();
   const { category_id } = route.params;
-  const {category_name} =route.params;
+  const { category_name } = route.params;
 
-const [page, setPage] = useState(1);
-const [isLoading, setIsLoading] = useState(false);
-const [initialLoading, setInitialLoading] = useState(true);
-const [hasMore, setHasMore] = useState(true); 
-const [isFilterVisible, setFilterVisible] = useState(false);
-const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
-const inputRef = useRef<TextInput>(null);
- const SCREEN_HEIGHT = Dimensions.get('window').height;
-
-
- const scrollY = useSharedValue(0);
- 
- const scrollHandler = useAnimatedScrollHandler({
-   onScroll: event => {
-     'worklet';
-     scrollY.value = event.contentOffset.y;
-   },
- });
-
- const animatedBlurStyle = useAnimatedStyle(() => {
-   'worklet';
-   const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
-   return { opacity };
- });
-
- const animatedButtonStyle = useAnimatedStyle(() => {
-   'worklet';
-   const borderColor = interpolateColor(
-     scrollY.value,
-     [0, 300],
-     ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
-   );
-   const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
-   return {
-     borderColor,
-     backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
-   };
- });
- const animatedIconStyle = useAnimatedStyle(() => {
-   'worklet';
-
-   const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
-
-   const tintColor = interpolateColor(
-     scrollY.value,
-     [0, 150],
-     ['#FFFFFF', '#002050'],
-   );
-
-   return {
-     opacity,
-     tintColor,
-   };
- });
-
- const blurAmount = useDerivedValue(() =>
-   interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
- );
+  const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
+  const [isFilterVisible, setFilterVisible] = useState(false);
+  const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
+  const inputRef = useRef<TextInput>(null);
+  const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 
+  const scrollY = useSharedValue(0);
 
- const [appliedFilter, setAppliedFilter] = useState<any | null>(null);
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: event => {
+      'worklet';
+      scrollY.value = event.contentOffset.y;
+    },
+  });
 
-  useEffect(() => {
-  const loadBookmarks = async () => {
-    const saved = await AsyncStorage.getItem('bookmarkedIds');
-    if (saved) setBookmarkedIds(JSON.parse(saved));
-  };
-  loadBookmarks();
-}, []);
+  const animatedBlurStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+    return { opacity };
+  });
 
- useEffect(() => {
-  const backAction = () => {
-     navigation.replace('Dashboard', {
-    AddScreenBackactiveTab: 'Home',
-    isNavigate: false,
-    })
-    return true;
-  };
+  const animatedButtonStyle = useAnimatedStyle(() => {
+    'worklet';
+    const borderColor = interpolateColor(
+      scrollY.value,
+      [0, 300],
+      ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+    );
+    const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
+    return {
+      borderColor,
+      backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+    };
+  });
+  const animatedIconStyle = useAnimatedStyle(() => {
+    'worklet';
 
-  const backHandler = BackHandler.addEventListener(
-    "hardwareBackPress",
-    backAction
+    const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
+
+    const tintColor = interpolateColor(
+      scrollY.value,
+      [0, 150],
+      ['#FFFFFF', '#002050'],
+    );
+
+    return {
+      opacity,
+      tintColor,
+    };
+  });
+
+  const blurAmount = useDerivedValue(() =>
+    interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
   );
 
-  return () => backHandler.remove();
-}, []);
 
-const clickfilter = () => {
-  setFilterVisible(true);
-  setTimeout(() => console.log("Filter open state:", isFilterVisible), 100);
-};
 
-function debounce<T extends (...args: any[]) => void>(func: T, delay: number) {
-  let timeout: ReturnType<typeof setTimeout>;
-  return (...args: Parameters<T>) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), delay);
-  };
-}
-const debouncedSearch = useRef(
-  debounce((text: string) => {
-    setPage(1);
-    setHasMore(true);
-    displayListOfProduct(1, text);
-  }, 350)
-).current;
+  const [appliedFilter, setAppliedFilter] = useState<any | null>(null);
 
-useFocusEffect(
-  useCallback(() => {
-    if (appliedFilter) {
-      console.log("🔁 Returning with filter active — keeping filter results");
-      return;
-    }
+  useEffect(() => {
+    const loadBookmarks = async () => {
+      const saved = await AsyncStorage.getItem('bookmarkedIds');
+      if (saved) setBookmarkedIds(JSON.parse(saved));
+    };
+    loadBookmarks();
+  }, []);
 
-    console.log("📍 No filter — normal fetch on focus");
-    setPage(1);
-    setHasMore(true);
-    setFeaturelist([]);
-    displayListOfProduct(1, search, true);
-  }, [appliedFilter])
-);
-const displayListOfProduct = async (
-  pageNum = 1,
-  searchText = search,
-  isInitialLoad = false
-) => {
-  if ((isLoading && !isInitialLoad) || !hasMore) return;
-
-  if (isInitialLoad) {
-    setInitialLoading(true);
-  } else {
-    setIsLoading(true);
-  }
-
-  let start = Date.now();
-
-  try {
-    const body = {
-      search: searchText,
-      page: pageNum,
-      pagesize: 20,
-      category_id: category_id,
+  useEffect(() => {
+    const backAction = () => {
+      navigation.replace('Dashboard', {
+        AddScreenBackactiveTab: 'Home',
+        isNavigate: false,
+      })
+      return true;
     };
 
-    const url = MAIN_URL.baseUrl + 'category/feature-list/search';
-    const token = await AsyncStorage.getItem('userToken');
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
 
-    if (!token) {
-      if (isInitialLoad) setInitialLoading(false);
-      else setIsLoading(false);
-      return;
+    return () => backHandler.remove();
+  }, []);
+
+  const clickfilter = () => {
+    setFilterVisible(true);
+    setTimeout(() => console.log("Filter open state:", isFilterVisible), 100);
+  };
+
+  function debounce<T extends (...args: any[]) => void>(func: T, delay: number) {
+    let timeout: ReturnType<typeof setTimeout>;
+    return (...args: Parameters<T>) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), delay);
+    };
+  }
+  const debouncedSearch = useRef(
+    debounce((text: string) => {
+      setPage(1);
+      setHasMore(true);
+      displayListOfProduct(1, text);
+    }, 350)
+  ).current;
+
+  useFocusEffect(
+    useCallback(() => {
+      if (appliedFilter) {
+        console.log("🔁 Returning with filter active — keeping filter results");
+        return;
+      }
+      setPage(1);
+      setHasMore(true);
+      setFeaturelist([]);
+      displayListOfProduct(1, search, true);
+    }, [appliedFilter])
+  );
+  const displayListOfProduct = async (
+    pageNum = 1,
+    searchText = search,
+    isInitialLoad = false
+  ) => {
+    if ((isLoading && !isInitialLoad) || !hasMore) return;
+
+    if (isInitialLoad) {
+      setInitialLoading(true);
+    } else {
+      setIsLoading(true);
     }
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
+    let start = Date.now();
 
-    const jsonResponse = await response.json();
+    try {
+      const body = {
+        search: searchText,
+        page: pageNum,
+        pagesize: 20,
+        category_id: category_id,
+      };
 
-    if (jsonResponse.statusCode === 200) {
-      const newFeatures = jsonResponse.data.features;
+      const url = MAIN_URL.baseUrl + 'category/feature-list/search';
+      const token = await AsyncStorage.getItem('userToken');
 
-      if (pageNum === 1) {
-        setFeaturelist(newFeatures);
-      } else {
-        setFeaturelist((prev) => [...prev, ...newFeatures]);
+      if (!token) {
+        if (isInitialLoad) setInitialLoading(false);
+        else setIsLoading(false);
+        return;
       }
 
-      setHasMore(newFeatures.length === 20);
-      setPage(pageNum + 1);
-    } else if (
-      jsonResponse.statusCode === 401 ||
-      jsonResponse.statusCode === 403
-    ) {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
       });
+
+      const jsonResponse = await response.json();
+
+      if (jsonResponse.statusCode === 200) {
+        const newFeatures = jsonResponse.data.features;
+
+        if (pageNum === 1) {
+          setFeaturelist(newFeatures);
+        } else {
+          setFeaturelist((prev) => [...prev, ...newFeatures]);
+        }
+
+        setHasMore(newFeatures.length === 20);
+        setPage(pageNum + 1);
+      } else if (
+        jsonResponse.statusCode === 401 ||
+        jsonResponse.statusCode === 403
+      ) {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+        });
+      }
+    } catch (err) {
+      console.log('Error:', err);
+    } finally {
+      const elapsed = Date.now() - start;
+      const remaining = Math.max(0, 500 - elapsed);
+      setTimeout(() => {
+        if (isInitialLoad) setInitialLoading(false);
+        else setIsLoading(false);
+      }, remaining);
     }
-  } catch (err) {
-    console.log('Error:', err);
-  } finally {
-    const elapsed = Date.now() - start;
-    const remaining = Math.max(0, 500 - elapsed); // ensure min loader time
-    setTimeout(() => {
-      if (isInitialLoad) setInitialLoading(false);
-      else setIsLoading(false);
-    }, remaining);
-  }
-};
+  };
 
-const handleBookmarkPress = async (productId: number) => {
-  try {
-    setFeaturelist(prevList =>
-      prevList.map(item =>
-        item.id === productId
-          ? { ...item, isbookmarked: !item.isbookmarked }
-          : item
-      )
-    );
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) return;
+  const handleBookmarkPress = async (productId: number) => {
+    try {
+      setFeaturelist(prevList =>
+        prevList.map(item =>
+          item.id === productId
+            ? { ...item, isbookmarked: !item.isbookmarked }
+            : item
+        )
+      );
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) return;
 
-    const url = MAIN_URL.baseUrl + 'category/list-bookmark';
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ feature_id: productId }),
-    });
+      const url = MAIN_URL.baseUrl + 'category/list-bookmark';
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ feature_id: productId }),
+      });
 
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
-    const data = await response.json();
-    console.log('Bookmark response:', data);
-    showToast(data.message, data.statusCode === 200 ? 'success' : 'error');
+      const data = await response.json();
+      console.log('Bookmark response:', data);
+      showToast(data.message, data.statusCode === 200 ? 'success' : 'error');
 
-  } catch (error) {
-    console.error('Bookmark error:', error);
+    } catch (error) {
+      console.error('Bookmark error:', error);
 
-    // 3️⃣ Revert if API fails
-    setFeaturelist(prevList =>
-      prevList.map(item =>
-        item.id === productId
-          ? { ...item, isbookmarked: !item.isbookmarked }
-          : item
-      )
-    );
-  }
-};
+      setFeaturelist(prevList =>
+        prevList.map(item =>
+          item.id === productId
+            ? { ...item, isbookmarked: !item.isbookmarked }
+            : item
+        )
+      );
+    }
+  };
 
-  
+
   const filteredFeatures: Feature[] = featurelist.filter((item) =>
     item.title?.toLowerCase().includes(search.toLowerCase())
   );
 
 
-const renderItem = ({ item, index }: { item: Feature; index: number }) => {
-  const isLastOddItem =
-    filteredFeatures.length % 2 !== 0 &&
-    index === filteredFeatures.length - 1;
+  const renderItem = ({ item, index }: { item: Feature; index: number }) => {
+    const isLastOddItem =
+      filteredFeatures.length % 2 !== 0 &&
+      index === filteredFeatures.length - 1;
 
- let productImage: ImageSourcePropType | null = null;
-  let showInitials = false;
-  let initials = '';
+    let productImage: ImageSourcePropType | null = null;
+    let showInitials = false;
+    let initials = '';
 
-  if (item.profileshowinview) {
-    if (item.createdby?.profile) {
-      productImage = { uri: item.createdby.profile };
+    if (item.profileshowinview) {
+      if (item.createdby?.profile) {
+        productImage = { uri: item.createdby.profile };
+      } else {
+        showInitials = true;
+        initials = `${item.createdby?.firstname?.[0] ?? ''}${item.createdby?.lastname?.[0] ?? ''}`;
+      }
     } else {
-      showInitials = true;
-      initials = `${item.createdby?.firstname?.[0] ?? ''}${item.createdby?.lastname?.[0] ?? ''}`;
+      if (item.thumbnail) {
+        productImage = { uri: item.thumbnail };
+      } else {
+        productImage = require('../../../assets/images/drone.png');
+      }
     }
-  } else {
-    if (item.thumbnail) {
-      productImage = { uri: item.thumbnail };
-    } else {
-      productImage = require('../../../assets/images/drone.png');
-    }
-  }
-  return (
-    <View
-      style={[
-        styles.itemContainer,
-        { flex: isLastOddItem ? 0.5 : 0.5, marginRight: isLastOddItem ? 0.5 : 0.5,paddingHorizontal: 4  },
-      ]}
-    >
-
-
-
-      <TouchableOpacity
-        onPress={() =>{
-          navigation.navigate('SearchDetails', { id: item.id ,name:category_name},{animation: 'none'})}
-          
-        }
-        style={{ flex: 1 }}
+    return (
+      <View
+        style={[
+          styles.itemContainer,
+          { flex: isLastOddItem ? 0.5 : 0.5, marginRight: isLastOddItem ? 0.5 : 0.5, paddingHorizontal: 4 },
+        ]}
       >
-        {item.profileshowinview ? (
-        <SearchTutionCard
-           tag={item.university?.name || 'University of Warwick'}
-          infoTitle={item.title}
-          inforTitlePrice={`£ ${item.price}`}
-          rating={item.avg_rating}
-          showInitials={showInitials}
-          initialsName={initials.toUpperCase()}
-          productImage={item.createdby?.profile ? { uri: item.createdby.profile } : undefined}
-          bookmark={item.isbookmarked}
-          //bookmark={bookmarkedIds.includes(item.id)} 
-          isfeature={item.isfeatured}
-          applybookmark={() => handleBookmarkPress(item.id)}
-        />
-      ) : (
-        <SearchListProductCard
-           tag={item.university?.name || 'University of Warwick'}
-          infoTitle={item.title}
-          inforTitlePrice={`£ ${item.price}`}
-          rating={item.avg_rating}
-          productImage={productImage ?? require('../../../assets/images/drone.png')}
-          bookmark={item.isbookmarked}
-          //bookmark={bookmarkedIds.includes(item.id)} 
-          isfeature={item.isfeatured}
-          applybookmark={() => handleBookmarkPress(item.id)}
-        />
-      )}
-      </TouchableOpacity>
-    </View>
-  );
-};
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('SearchDetails', { id: item.id, name: category_name }, { animation: 'none' })
+          }
 
-const handleFilterApply = async (filterBody: any) => {
-  console.log("Display the Filter apply", filterBody);
-  try {
-    setAppliedFilter(filterBody); 
-    setIsLoading(true);
-    setFeaturelist([]); 
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) return;
+          }
+          style={{ flex: 1 }}
+        >
+          {item.profileshowinview ? (
+            <SearchTutionCard
+              tag={item.university?.name || 'University of Warwick'}
+              infoTitle={item.title}
+              inforTitlePrice={`£ ${item.price}`}
+              rating={item.avg_rating}
+              showInitials={showInitials}
+              initialsName={initials.toUpperCase()}
+              productImage={item.createdby?.profile ? { uri: item.createdby.profile } : undefined}
+              bookmark={item.isbookmarked}
+              isfeature={item.isfeatured}
+              applybookmark={() => handleBookmarkPress(item.id)}
+            />
+          ) : (
+            <SearchListProductCard
+              tag={item.university?.name || 'University of Warwick'}
+              infoTitle={item.title}
+              inforTitlePrice={`£ ${item.price}`}
+              rating={item.avg_rating}
+              productImage={productImage ?? require('../../../assets/images/drone.png')}
+              bookmark={item.isbookmarked}
+              isfeature={item.isfeatured}
+              applybookmark={() => handleBookmarkPress(item.id)}
+            />
+          )}
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const handleFilterApply = async (filterBody: any) => {
+    console.log("Display the Filter apply", filterBody);
+    try {
+      setAppliedFilter(filterBody);
+      setIsLoading(true);
+      setFeaturelist([]);
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) return;
 
 
-    const newFilterBody = {
-      ...filterBody,
-      page: 1,
-      pagesize: 20,
-      search: search,
-    };
+      const newFilterBody = {
+        ...filterBody,
+        page: 1,
+        pagesize: 20,
+        search: search,
+      };
 
-    console.log("NewFilterBody:", newFilterBody);
+      console.log("NewFilterBody:", newFilterBody);
 
-    setAppliedFilter(newFilterBody);
-    
+      setAppliedFilter(newFilterBody);
 
-    const url = `${MAIN_URL.baseUrl}category/filter-apply`;
 
-    console.log(url)
+      const url = `${MAIN_URL.baseUrl}category/filter-apply`;
 
-    //const url = 'http://65.0.99.229:4320/category/filter-apply';
+      console.log(url)
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newFilterBody),
-    });
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newFilterBody),
+      });
 
-    const jsonResponse = await response.json();
-    console.log('Filter Apply Response:', jsonResponse);
+      const jsonResponse = await response.json();
+      console.log('Filter Apply Response:', jsonResponse);
 
-    if (jsonResponse.statusCode === 200) {
-      const filteredFeatures = jsonResponse.data.features;
-      setFeaturelist(filteredFeatures);
-      setHasMore(filteredFeatures.length === 20);
-      setPage(2);
+      if (jsonResponse.statusCode === 200) {
+        const filteredFeatures = jsonResponse.data.features;
+        setFeaturelist(filteredFeatures);
+        setHasMore(filteredFeatures.length === 20);
+        setPage(2);
+      }
+    } catch (err) {
+      console.log('Error applying filters:', err);
+    } finally {
+      setIsLoading(false);
     }
-  } catch (err) {
-    console.log('Error applying filters:', err);
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
-const loadMoreFilteredResults = async () => {
-  if (!appliedFilter || isLoading || !hasMore) return;
+  const loadMoreFilteredResults = async () => {
+    if (!appliedFilter || isLoading || !hasMore) return;
 
-  try {
-    setIsLoading(true);
+    try {
+      setIsLoading(true);
 
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) return;
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) return;
 
-    // Create a copy and increment page
-    const nextFilterBody = {
-      ...appliedFilter,
-      page: page, // use the current state page
-      search: search,
-    };
+      const nextFilterBody = {
+        ...appliedFilter,
+        page: page,
+        search: search,
+      };
 
-    const url = `${MAIN_URL.baseUrl}category/filter-apply`;
-    console.log('Fetching next filter page:', nextFilterBody);
+      const url = `${MAIN_URL.baseUrl}category/filter-apply`;
+      console.log('Fetching next filter page:', nextFilterBody);
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(nextFilterBody),
-    });
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(nextFilterBody),
+      });
 
-    const jsonResponse = await response.json();
-    console.log('Next Page Filter Response:', jsonResponse);
+      const jsonResponse = await response.json();
+      console.log('Next Page Filter Response:', jsonResponse);
 
-    if (jsonResponse.statusCode === 200) {
-      const moreFeatures = jsonResponse.data.features || [];
-      setFeaturelist(prev => [...prev, ...moreFeatures]);
-      setHasMore(moreFeatures.length === 20);
-      setPage(prev => prev + 1); // increment for next call
+      if (jsonResponse.statusCode === 200) {
+        const moreFeatures = jsonResponse.data.features || [];
+        setFeaturelist(prev => [...prev, ...moreFeatures]);
+        setHasMore(moreFeatures.length === 20);
+        setPage(prev => prev + 1);
+      }
+    } catch (err) {
+      console.log('Error loading more filtered results:', err);
+    } finally {
+      setIsLoading(false);
     }
-  } catch (err) {
-    console.log('Error loading more filtered results:', err);
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
-const handleEndReached = useCallback(() => {
+  const handleEndReached = useCallback(() => {
 
-  if (isLoading || !hasMore) return;
+    if (isLoading || !hasMore) return;
 
-  if (appliedFilter) {
-    loadMoreFilteredResults();
-  } 
-  else if (search.trim().length > 0) {
-    displayListOfProduct(page, search);
-  }
-}, [isLoading, hasMore, appliedFilter, search, page]);
+    if (appliedFilter) {
+      loadMoreFilteredResults();
+    }
+    else if (search.trim().length > 0) {
+      displayListOfProduct(page, search);
+    }
+  }, [isLoading, hasMore, appliedFilter, search, page]);
 
 
   const isEmpty = featurelist.length === 0;
@@ -533,203 +523,182 @@ const handleEndReached = useCallback(() => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-              {/* {initialLoading && featurelist.length === 0 && (
-                <Loader
-                  containerStyle={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    paddingTop: Platform.OS === 'ios' ? 80 : 100,
-                    zIndex: 1000,
-                    elevation: Platform.OS === 'android' ? 100 : 0,
-                    pointerEvents: 'none',
-                  }}
-                />
-              )} */}
-              <StatusBar
-                 translucent
-                 backgroundColor="transparent"
-                 barStyle="light-content"
-               />
-        
-               <Animated.View
-                 style={[styles.headerWrapper, animatedBlurStyle]}
-                 pointerEvents="none"
-               >
-                 <MaskedView
-                   style={StyleSheet.absoluteFill}
-                   maskElement={
-                     <LinearGradient
-                       colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
-                       locations={[0, 0.8]}
-                       start={{ x: 0, y: 0 }}
-                       end={{ x: 0, y: 1 }}
-                       style={StyleSheet.absoluteFill}
-                     />
-                   }
-                 >
-                   <BlurView
-                     style={StyleSheet.absoluteFill}
-                     blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
-                     blurAmount={Platform.OS === 'ios' ? 45 : 45}
-                    //  overlayColor="rgba(255,255,255,0.05)"
-                     reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
-                   />
-                   <LinearGradient
-                     colors={[
-                       'rgba(255, 255, 255, 0.45)',
-                       'rgba(255, 255, 255, 0.02)',
-                       'rgba(255, 255, 255, 0.02)',
-                     ]}
-                     style={StyleSheet.absoluteFill}
-                     start={{ x: 0, y: 0 }}
-                     end={{ x: 0, y: 1 }}
-                   />
-                 </MaskedView>
-               </Animated.View>
+        <StatusBar
+          translucent
+          backgroundColor="transparent"
+          barStyle="light-content"
+        />
 
-               <View style={styles.headerContent} pointerEvents="box-none">
-                 <TouchableOpacity
-                   onPress={() => navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})}
-                   style={styles.backButtonContainer}
-                   activeOpacity={0.7}
-                 >
-                   <Animated.View
-                     style={[styles.blurButtonWrapper, animatedButtonStyle]}
-                   >
-                     <Animated.View
-                       style={[
-                         StyleSheet.absoluteFill,
-                         useAnimatedStyle(() => ({
-                           opacity: interpolate(
-                             scrollY.value,
-                             [0, 30],
-                             [1, 0],
-                             'clamp',
-                           ),
-                           backgroundColor: 'rgba(255,255,255,0.1)',
-                           borderRadius: 40,
-                         })),
-                       ]}
-                     />
-        
-                     {/* Blur view fades in as scroll increases */}
-                     <Animated.View
-                       style={[
-                         StyleSheet.absoluteFill,
-                         useAnimatedStyle(() => ({
-                           opacity: interpolate(
-                             scrollY.value,
-                             [0, 50],
-                             [0, 1],
-                             'clamp',
-                           ),
-                         })),
-                       ]}
-                     >
-                       <BlurView
-                         style={StyleSheet.absoluteFill}
-                         blurType="light"
-                         blurAmount={10}
-                         reducedTransparencyFallbackColor="transparent"
-                       />
-                     </Animated.View>
-        
-                     {/* Back Icon */}
-                     <Animated.Image
-                       source={require('../../../assets/images/back.png')}
-                       style={[{ height: 24, width: 24 }, animatedIconStyle]}
-                     />
-                   </Animated.View>
-                 </TouchableOpacity>
-        
-                 <Text allowFontScaling={false} style={styles.unizyText}>{`${category_name}s`}</Text>
-               </View>
-
-
-<Animated.FlatList
-    data={featurelist}
-    keyExtractor={(item, index) => index.toString()}
-    renderItem={renderItem}
-    numColumns={2}
-    onEndReached={handleEndReached}
-    onEndReachedThreshold={0.5}
-    ListHeaderComponent={
-      <View style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 8 }}>
-        <Pressable
-          style={styles.search_container}
-          onPress={() => inputRef.current?.focus()}
+        <Animated.View
+          style={[styles.headerWrapper, animatedBlurStyle]}
+          pointerEvents="none"
         >
-          <Image source={searchIcon} style={styles.searchIcon} />
-          <TextInput
-            ref={inputRef}
-            allowFontScaling={false}
-            style={styles.searchBar}
-            selectionColor="white"
-            placeholder="Search"
-            placeholderTextColor="#ccc"
-            onChangeText={text => {
-              setSearch(text);
-              debouncedSearch(text);
-            }}
-            value={search}
-          />
-        </Pressable>
-
-        <View>
-          <TouchableOpacity onPress={() => clickfilter()}>
-            <View style={styles.MylistingsBackground}>
-              <Image source={mylistings} style={styles.iconSmall} />
-            </View>
-          </TouchableOpacity>
-        </View>
-      </View>
-    }
-    ListFooterComponent={
-      // Footer loader for pagination
-      isLoading && featurelist.length > 0 ? (
-        <View style={{ paddingVertical: 20, alignItems: 'center' }}>
-          <Loader containerStyle={{ width: 50, height: 50 }} />
-        </View>
-      ) : null
-    }
-    ListEmptyComponent={
-      (isLoading || initialLoading) && featurelist.length === 0 ? (
-        // Show loader while fetching
-        <View style={[styles.emptyWrapper, { justifyContent: 'center', flex: 1 }]}>
-          <Loader containerStyle={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }} />
-        </View>
-      ) : !isLoading && featurelist.length === 0 ? (
-        // Show "No Listings Found" if API finished and list is empty
-        <View style={[styles.emptyWrapper, { justifyContent: 'center', alignItems: 'center', flex: 1 }]}>
-          <View style={styles.emptyContainer}>
-            <Image
-              source={require('../../../assets/images/noproduct.png')}
-              style={styles.emptyImage}
-              resizeMode="contain"
+          <MaskedView
+            style={StyleSheet.absoluteFill}
+            maskElement={
+              <LinearGradient
+                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                locations={[0, 0.8]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            }
+          >
+            <BlurView
+              style={StyleSheet.absoluteFill}
+              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+              blurAmount={Platform.OS === 'ios' ? 45 : 45}
+              //  overlayColor="rgba(255,255,255,0.05)"
+              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
             />
-            <Text allowFontScaling={false} style={styles.emptyText}>
-              No Listings Found
-            </Text>
-          </View>
+            <LinearGradient
+              colors={[
+                'rgba(255, 255, 255, 0.45)',
+                'rgba(255, 255, 255, 0.02)',
+                'rgba(255, 255, 255, 0.02)',
+              ]}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+            />
+          </MaskedView>
+        </Animated.View>
+
+        <View style={styles.headerContent} pointerEvents="box-none">
+          <TouchableOpacity
+            onPress={() => navigation.replace('Dashboard', { AddScreenBackactiveTab: 'Home', isNavigate: false })}
+            style={styles.backButtonContainer}
+            activeOpacity={0.7}
+          >
+            <Animated.View
+              style={[styles.blurButtonWrapper, animatedButtonStyle]}
+            >
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 30],
+                      [1, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 40,
+                  })),
+                ]}
+              />
+
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 50],
+                      [0, 1],
+                      'clamp',
+                    ),
+                  })),
+                ]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
+                />
+              </Animated.View>
+
+              {/* Back Icon */}
+              <Animated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 24, width: 24 }, animatedIconStyle]}
+              />
+            </Animated.View>
+          </TouchableOpacity>
+
+          <Text allowFontScaling={false} style={styles.unizyText}>{`${category_name}s`}</Text>
         </View>
-      ) : null // List has items, show nothing
-    }
-    contentContainerStyle={[
-      styles.listContainer,
-      {
-        paddingTop: Platform.OS === 'ios' ? 120 : 100,
-        paddingBottom: featurelist.length === 0 ? 10 : 40,
-        flexGrow: 1,
-      },
-    ]}
-    onScroll={scrollHandler}
-    scrollEventThrottle={16}
-  /> 
+
+
+        <Animated.FlatList
+          data={featurelist}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={renderItem}
+          numColumns={2}
+          onEndReached={handleEndReached}
+          onEndReachedThreshold={0.5}
+          ListHeaderComponent={
+            <View style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 8 }}>
+              <Pressable
+                style={styles.search_container}
+                onPress={() => inputRef.current?.focus()}
+              >
+                <Image source={searchIcon} style={styles.searchIcon} />
+                <TextInput
+                  ref={inputRef}
+                  allowFontScaling={false}
+                  style={styles.searchBar}
+                  selectionColor="white"
+                  placeholder="Search"
+                  placeholderTextColor="#ccc"
+                  onChangeText={text => {
+                    setSearch(text);
+                    debouncedSearch(text);
+                  }}
+                  value={search}
+                />
+              </Pressable>
+
+              <View>
+                <TouchableOpacity onPress={() => clickfilter()}>
+                  <View style={styles.MylistingsBackground}>
+                    <Image source={mylistings} style={styles.iconSmall} />
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+          }
+          ListFooterComponent={
+            isLoading && featurelist.length > 0 ? (
+              <View style={{ paddingVertical: 20, alignItems: 'center' }}>
+                <Loader containerStyle={{ width: 50, height: 50 }} />
+              </View>
+            ) : null
+          }
+          ListEmptyComponent={
+            (isLoading || initialLoading) && featurelist.length === 0 ? (
+              <View style={[styles.emptyWrapper, { justifyContent: 'center', flex: 1 }]}>
+                <Loader containerStyle={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }} />
+              </View>
+            ) : !isLoading && featurelist.length === 0 ? (
+              <View style={[styles.emptyWrapper, { justifyContent: 'center', alignItems: 'center', flex: 1 }]}>
+                <View style={styles.emptyContainer}>
+                  <Image
+                    source={require('../../../assets/images/noproduct.png')}
+                    style={styles.emptyImage}
+                    resizeMode="contain"
+                  />
+                  <Text allowFontScaling={false} style={styles.emptyText}>
+                    No Listings Found
+                  </Text>
+                </View>
+              </View>
+            ) : null
+          }
+          contentContainerStyle={[
+            styles.listContainer,
+            {
+              paddingTop: Platform.OS === 'ios' ? 120 : 100,
+              paddingBottom: featurelist.length === 0 ? 10 : 40,
+              flexGrow: 1,
+            },
+          ]}
+          onScroll={scrollHandler}
+          scrollEventThrottle={16}
+        />
 
 
       </View>
@@ -757,8 +726,8 @@ const handleEndReached = useCallback(() => {
             setFilterVisible(false);
           }}
           onApply={filterBody => handleFilterApply(filterBody)}
-          from={0}   
-          to={0}     
+          from={0}
+          to={0}
         />
       )}
 
@@ -782,7 +751,7 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === 'ios' ? 16 : 12,
     paddingHorizontal: 16,
     justifyContent: 'center',
-    overflow: 'hidden', // IMPORTANT for MaskedView
+    overflow: 'hidden',
     flexDirection: 'row',
     alignItems: 'center',
     elevation: 0,
@@ -800,7 +769,7 @@ const styles = StyleSheet.create({
     top: 7,
   },
 
-   headerWrapper: {
+  headerWrapper: {
     position: 'absolute',
     top: 0,
     width: Platform.OS === 'ios' ? 393 : '100%',
@@ -826,13 +795,13 @@ const styles = StyleSheet.create({
   },
 
 
-   categoryTabsContainer: {
+  categoryTabsContainer: {
     width: '100%',
     marginBottom: 12,
     marginTop: 12,
     paddingLeft: 10
   },
- 
+
   categoryTabsScrollContent: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -847,31 +816,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
 
 
-   emptyWrapper: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      width:'100%',
-      paddingHorizontal:10,
-    },
-
- 
-   emptyContainer: {
+  emptyWrapper: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    width:'100%',
+    width: '100%',
+    paddingHorizontal: 10,
+  },
+
+
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     borderWidth: 0.3,
     borderColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius:24,
-    overflow:'hidden',
-    //minHeight:'80%',
-  // marginBottom:20,
+    borderRadius: 24,
+    overflow: 'hidden',
   },
   emptyImage: {
     width: 50,
@@ -883,21 +850,16 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
-    fontWeight:600
+    fontWeight: 600
   },
   background: {
-     flex: 1, 
-     width: '100%',
-      height: '100%' 
-    },
-  fullScreenContainer: { 
     flex: 1,
-   },
-  // header: {
-  //   paddingTop: Platform.OS === 'ios' ? '15.2%'  : 50,
-  //   // paddingBottom: 12,
-  //   paddingHorizontal: 16,
-  // },
+    width: '100%',
+    height: '100%'
+  },
+  fullScreenContainer: {
+    flex: 1,
+  },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -911,9 +873,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    //boxShadow: 'rgba(255, 255, 255, 0.12)  inset -1px 0px 5px 1px inset ',
-
-   boxShadow:
+    boxShadow:
       '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
@@ -940,26 +900,21 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     paddingVertical: 4,
-    padding: (Platform.OS === 'ios'? 12:0),
-    marginTop:(Platform.OS === 'ios' ? 5:20),
+    padding: (Platform.OS === 'ios' ? 12 : 0),
+    marginTop: (Platform.OS === 'ios' ? 5 : 20),
     height: 50,
-    gap:(Platform.OS === 'ios' ? 8:0 ),
+    gap: (Platform.OS === 'ios' ? 8 : 0),
     width: '84%',
   },
-  searchIcon: { 
-    
-    padding: (Platform.OS === 'ios'? 0:5),
-     marginLeft: (Platform.OS === 'ios' ? 0 : 10),
-     marginRight: (Platform.OS === 'ios' ? 0 : 6),
+  searchIcon: {
+
+    padding: (Platform.OS === 'ios' ? 0 : 5),
+    marginLeft: (Platform.OS === 'ios' ? 0 : 10),
+    marginRight: (Platform.OS === 'ios' ? 0 : 6),
     height: 24,
     width: 24,
   },
   searchBar: {
-    // fontSize: 17,
-    // color: '#fff',
-    // width: '80%',
-    // height: '100%',
-    // marginLeft: 8,
     fontSize: 17,
     color: '#fff',
     fontFamily: 'Urbanist-Medium',
@@ -969,11 +924,9 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     marginRight: 5,
     paddingTop: 10,
-    gap:16
+    gap: 16
   },
   row1: {
-    // flexDirection: 'row',
-    // justifyContent: 'flex-start',
   },
   itemContainer: {
     flex: 1,
@@ -1014,7 +967,7 @@ const styles = StyleSheet.create({
     borderLeftColor: '#ffffff5d',
     borderRightColor: '#ffffff36',
     borderWidth: 0.3,
-    marginTop: (Platform.OS === 'ios'? 6:20),
+    marginTop: (Platform.OS === 'ios' ? 6 : 20),
   },
   iconSmall: {
     width: 24,

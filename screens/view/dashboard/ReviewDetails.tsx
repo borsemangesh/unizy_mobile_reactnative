@@ -132,31 +132,31 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
   useEffect(() => {
     const loadCategories = async () => {
       const stored = await AsyncStorage.getItem('categories');
-  
+
       if (stored) {
         const parsed = JSON.parse(stored);
-  
+
         const catObjects = [
           { id: null, name: 'All' },
           ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
         ];
-  
+
         setCategories(catObjects);
-  
+
         const matchedCategory = catObjects.find(c => c.id === category_id);
         setSelectedCategory(matchedCategory ?? catObjects[0]);
-                if (purchase === true && matchedCategory) {
+        if (purchase === true && matchedCategory) {
           setShowButton(true);
         } else {
           setShowButton(false);
         }
       }
-  
+
       setCategoriesLoaded(true);
     };
-  
+
     loadCategories();
-  }, [category_id,purchase]);
+  }, [category_id, purchase]);
 
   useEffect(() => {
     if (selectedCategory?.id !== category_id) {
@@ -241,10 +241,10 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return "";
-   
+
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return "";
-  
+
     const day = date.getDate();
     let suffix = "th";
     if (day % 10 === 1 && day !== 11) suffix = "st";
@@ -252,7 +252,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
     else if (day % 10 === 3 && day !== 13) suffix = "rd";
     const monthShort = date
       .toLocaleString("default", { month: "short" }); // "Nov"
-  
+
     const year = date.getFullYear();
     return `${day}${suffix} ${monthShort} ${year}`;
   };
@@ -350,8 +350,6 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
                   })),
                 ]}
               />
-
-              {/* Blur view fades in as scroll increases */}
               <Animated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -373,7 +371,6 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
                 />
               </Animated.View>
 
-              {/* Back Icon */}
               <Animated.Image
                 source={require('../../../assets/images/back.png')}
                 style={[{ height: 24, width: 24 }, animatedIconStyle]}
@@ -397,13 +394,12 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
           contentContainerStyle={{
             paddingTop: Platform.OS === 'ios' ? 120 : 110,
             paddingBottom: Platform.select({
-            ios: height * 0.01,
-            android: height * 0.1, 
-          }),
+              ios: height * 0.01,
+              android: height * 0.1,
+            }),
           }}
           ListHeaderComponent={
             <>
-              {/* Category Tabs */}
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -431,7 +427,6 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
                 })}
               </ScrollView>
 
-              {/* Rating Summary */}
               <View
                 style={{
                   paddingHorizontal: 16,
@@ -458,7 +453,6 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
                 </Text>
               </View>
 
-              {/* Review Header */}
               <View style={styles.innercontainer}>
                 <Text allowFontScaling={false} style={styles.mainlabel}>
                   Reviews
@@ -481,22 +475,13 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
               </View>
             </>
           }
-          // ListEmptyComponent={
-          //   <View style={{ alignItems: 'center', marginTop: 50 }}>
-          //     <Text allowFontScaling={false} style={{ color: '#fff' }}>
-          //       No reviews found
-          //     </Text>
-          //   </View>
-          // }
           ListEmptyComponent={
             (loading || initialLoading) && users.length === 0 ? (
-              // Show loader while fetching
               <View style={[styles.emptyWrapper, { justifyContent: 'center', flex: 1 }]}>
                 <Loader containerStyle={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }} />
               </View>
             ) : !loading && users.length === 0 ? (
-              // Show "No Listings Found" if API finished and list is empty
-              <View style={[styles.emptyWrapper, { justifyContent: 'center', alignItems: 'center', flex: 1,paddingHorizontal: 16 }]}>
+              <View style={[styles.emptyWrapper, { justifyContent: 'center', alignItems: 'center', flex: 1, paddingHorizontal: 16 }]}>
                 <View style={styles.emptyContainer}>
                   <Image
                     source={require('../../../assets/images/noproduct.png')}
@@ -508,7 +493,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
                   </Text>
                 </View>
               </View>
-            ) : null // List has items, show nothing
+            ) : null
           }
         />
 
@@ -551,8 +536,8 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.08)',
     borderRadius: 24,
     overflow: 'hidden',
-    minHeight:'80%',
-    marginTop:200,
+    minHeight: '80%',
+    marginTop: 200,
   },
   emptyImage: {
     width: 50,
@@ -586,7 +571,7 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === 'ios' ? 16 : 12,
     paddingHorizontal: 16,
     justifyContent: 'center',
-    overflow: 'hidden', // IMPORTANT for MaskedView
+    overflow: 'hidden',
     flexDirection: 'row',
     alignItems: 'center',
     elevation: 0,

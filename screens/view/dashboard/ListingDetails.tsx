@@ -181,14 +181,13 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
           data1.message,
           data1.statusCode === 200 ? 'success' : 'error',
         );
-        // Refresh details so status updates immediately
         await fetchDetails();
       } else {
-        showToast('Something went wrong.Please try again', 'error');
+        showToast(Constant.SOMTHING_WENT_WRONG, 'error');
       }
     } catch (error) {
       console.error('❌ API Error:', error);
-      showToast('Failed to update product status', 'error');
+    
     }
   };
   useEffect(() => {
@@ -227,16 +226,9 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
       const otpValue = otp.join('');
       const order_id = await AsyncStorage.getItem('last_order_id');
 
-      // if (!otp_id) {
-      //   showToast(Constant.OTP_ID_MISSING, 'error');
-      //   return;
-      // }
-
       const url = MAIN_URL.baseUrl + 'transaction/verify-post-order-otp';
 
       const createPayload = {
-        //orderid: 'KX5WHMSX',
-        //otp: '123456',
         otp: otpValue,
         orderid: selectedOrderId,
       };
@@ -420,14 +412,12 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
               <View style={[styles.card, { marginTop: (Platform.OS === 'ios' ? 6 : 10 ) }]}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 {(() => {
-                  // Check if category is housekeeping or tuition
                   const categoryName = data?.list?.category?.name || '';
                   const isProfileCategory = categoryName?.toLowerCase() === 'house keeping' || categoryName?.toLowerCase() === 'tuition';
                   const profilePhoto = data?.list?.createdby?.profile;
                   const firstName = data?.list?.createdby?.firstname;
                   const lastName = data?.list?.createdby?.lastname;
 
-                  // Get initials helper function
                   const getInitials = (first: string | null = '', last: string | null = '') => {
                     const f = first?.trim()?.charAt(0)?.toUpperCase() || '';
                     const l = last?.trim()?.charAt(0)?.toUpperCase() || '';
@@ -700,92 +690,11 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
         </AnimatedReanimated.ScrollView>
 
 
-{/*                
-        {(
-        !data?.list?.ispurchased ||
-        data?.list?.category_id === 2 ||
-        data?.list?.category_id === 5
-      ) && (
-
-        <View style={styles.bottomview}>
-          <ButtonNew
-            // title='Deactivate'
-            title={data?.list?.isactive ? 'Deactivate' : 'Activate'}
-            textStyle={[styles.cancelText,{width: '100%'}]}
-
-            buttonStyle={[{
-              width:'49%',
-              boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-              
-            backgroundColor:
-              'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.10) 100%)',
-            borderBlockStartColor: '#ffffff47',
-            borderBlockColor: '#ffffff47',
-        
-            borderTopColor: '#ffffff47',
-            borderBottomColor: '#ffffff47',
-            borderLeftColor: '#ffffff47',
-            borderRightColor: '#ffffff47',
-            boxSizing: 'border-box',}]}
-            onPress={() => {
-              if (data?.list?.isactive) {
-                setShowConfirm(true);
-              } else {
-                handleDeactivate();
-              }
-            }}/>
-          <ButtonNew
-          textStyle={{color: '#000000',
-          fontFamily: 'Urbanist-Regular',
-          fontSize: 16,
-          fontWeight: '500',
-          fontStyle: 'normal',
-          letterSpacing: 0.17,
-          lineHeight: 22,}}
-           buttonStyle={[{width: '49%', backgroundColor: '#ffffffa7' }]}
-            title=' Edit Listing'
-            onPress={() => {
-              if (!data?.list?.isactive) {
-                showToast('Purchased item can’t be edited.', 'error');
-                return;
-              }
-              if(Platform.OS === 'ios'){
-                navigation.navigate(
-                  'EditListScreen',
-                  {
-                    productId: catagory_id,
-                    productName: catagory_name,
-                    shareid: shareid,
-                  },
-                  { animation: 'none' },
-                );
-
-              } else {
-                navigation.replace(
-                  'EditListScreen',
-                  {
-                    productId: catagory_id,
-                    productName: catagory_name,
-                    shareid: shareid,
-                  },
-                  { animation: 'none' },
-                );
-
-              }
-              
-            }}/>
-
-        </View>
-      )} */}
-
-
-
 {data?.list?.category_id === 3 &&
  data?.list?.remaining_quantity > 0 &&
  data?.list?.isactive &&
  data?.list?.ispurchased === true ? (
 
-  /* ---- SHOW ONLY ONE FULL-WIDTH BUTTON ---- */
   <View style={[styles.bottomview, { justifyContent: 'center' }]}>
     <ButtonNew
       title="Deactivate"
@@ -810,7 +719,6 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
 
 ) : (
 
-  /* ---- ORIGINAL TWO BUTTONS ---- */
   (!data?.list?.ispurchased ||
     data?.list?.category_id === 2 ||
     data?.list?.category_id === 5) && (
@@ -879,9 +787,7 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
   )
 )}
 
-       
-
-
+      
         <Modal
           visible={showPopup1}
           transparent
@@ -955,9 +861,8 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
                               return;
                             }
                         
-                            // If empty and not first box, move focus
                             if (index > 0) {
-                              inputs.current[index - 1]?.focus();   // 👈 safe, no TypeScript error
+                              inputs.current[index - 1]?.focus();
                         
                               const newOtp = [...otp];
                               newOtp[index - 1] = "";
@@ -1069,7 +974,6 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
           </TouchableWithoutFeedback>
         </Modal>
 
-        {/* Confirm Deactivate Modal (only shown when currently active) */}
         <Modal
           visible={showConfirm}
           transparent

@@ -7,8 +7,8 @@ type StripeOnboardingCancelProps = {
 
 export default function StripeOnboardingCancel({ navigation }: StripeOnboardingCancelProps) {
   useEffect(() => {
-    navigation.navigate("ProfileCard"); // back to profile
+    navigation.navigate("ProfileCard"); 
   }, []);
 
-  return null; // no UI needed
+  return null; 
 }

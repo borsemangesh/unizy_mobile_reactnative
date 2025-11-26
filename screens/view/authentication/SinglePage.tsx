@@ -125,7 +125,7 @@ useEffect(() => {
 
   useEffect(() => {
     if (search.trim() !== '' && filteredLanguages.length === 0) {
-      showToast('No results found', 'error');
+      showToast(Constant.NO_RESULT_FOUND, 'error');
     }
   }, [search, filteredLanguages]);
 
@@ -202,46 +202,6 @@ useEffect(() => {
       ]),
     ]).start();
   };
-
-  // const animateGreeting = () => {
-  //   greetingOpacity.setValue(0);
-  //   greetingScale.setValue(0.1);
-  
-  //   Animated.sequence([
-  //     Animated.parallel([
-  //       // Bounce in opacity using timing to 1
-  //       Animated.timing(greetingOpacity, {
-  //         toValue: 1,
-  //         duration: 100,
-  //         easing: Easing.linear,
-  //         useNativeDriver: true,
-  //       }),
-  //       // Bounce scale using spring
-  //       Animated.spring(greetingScale, {
-  //         toValue: 1,
-  //         friction: 3.5, // lower = bouncier
-  //         tension: 40,   // higher = faster snap
-  //         useNativeDriver: true,
-  //       }),
-  //     ]),
-  //     Animated.delay(5500),
-  //     Animated.parallel([
-  //       Animated.timing(greetingOpacity, {
-  //         toValue: 0,
-  //         duration: 100,
-  //         easing: Easing.in(Easing.ease),
-  //         useNativeDriver: true,
-  //       }),
-  //       Animated.spring(greetingScale, {
-  //         toValue: 0.8,
-  //         friction: 3,
-  //         tension: 20,
-  //         useNativeDriver: true,
-  //       }),
-  //     ]),
-  //   ]).start();
-  // };
-  
 
 
   //   Signup Screen
@@ -749,11 +709,6 @@ useEffect(() => {
       showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
       return;
     }
-
-    // if (postalCode.length < 5) {
-    //   showToast("Postal code must be at least 5 characters long.", 'error');
-    //   return;
-    // }
     const emailRegex =
       /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;
     if (!emailRegex.test(signUpusername.trim())) {
@@ -764,7 +719,7 @@ useEffect(() => {
     // const passwordRegex =/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     const passwordRegex =/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]|:;"'<>,.?/]).{8,}$/;
     if (!passwordRegex.test(signUppassword.trim())) {
-      showToast('Min 8 chars: upper, lower, number, symbol.', 'error');
+      showToast(Constant.PASSWORD_VALID, 'error');
       return;
     }
     if (signUppassword.trim() !== confirmPassword.trim()) {
@@ -814,41 +769,7 @@ useEffect(() => {
           setCurrentScreen('login');
           setcurrentScreenIninner('sendOTP');
         })
-
-    // Animated.timing(signupTranslateY, {
-    //   toValue: 300,//Dimensions.get('window').height,
-    //   duration: 350,
-    //   easing: Easing.in(Easing.ease),
-    //   useNativeDriver: true,
-    // }).start(() => {
-    //   // Slide SendOTP screen from top into view
-    //   // setOTPTranslatY.setValue(-Dimensions.get('window').height); // reset position
-    //   setOTPTranslatY.setValue(-600);
-    //   Animated.timing(setOTPTranslatY, {
-    //     toValue: 0,
-    //     duration: 250,
-    //     easing: Easing.out(Easing.ease),
-    //     useNativeDriver: true,
-    //   }).start(() => {
-    //     setCurrentScreen('login');
-    //     setcurrentScreenIninner('sendOTP');
-    //      setTimeout(() => {
-    //     inputs.current[0]?.focus();
-    //   }, 300);
-    //   });
-    // });
-
-      // Animated.timing(loginTranslateY, {
-      //   toValue: 500,//Dimensions.get('window').height,
-      //   duration: 350,
-      //   easing: Easing.in(Easing.ease),
-      //   useNativeDriver: true,
-      // }).start(() => {
-      //   setCurrentScreen('login');
-      //   setcurrentScreenIninner('sendOTP');
-      // });
-
-        
+    
       } else {
         showToast(data.message || 'Signup failed', 'error');
       }
@@ -947,25 +868,6 @@ useEffect(() => {
         setsignUpPassword('');
         setsignUpIsPasswordVisible(false);
         setIsConfirmPasswordVisible(false);
-
-    // Animated.timing(setOTPTranslatY, {
-    //   toValue: 200,//Dimensions.get('window').height,
-    //   duration: 200,
-    //   easing: Easing.in(Easing.ease),
-    //   useNativeDriver: true,
-    // }).start(() => {});
-
-    // Animated.timing(loginTranslateY, {
-    //   toValue: 200,//Dimensions.get('window').height,
-    //   duration: 200,
-    //   easing: Easing.in(Easing.ease),
-    //   useNativeDriver: true,
-    // }).start(() => {
-    //   setCurrentScreen('login');
-    //   setcurrentScreenIninner('verify');
-    //   setShowOtp(false);
-    //   setverifyimageLoaded(true);
-    // });
 
     clickOtpVerify(() => {
       setCurrentScreen('login');
@@ -1223,23 +1125,6 @@ useEffect(() => {
         setcurrentScreenIninner('profile');
     })
 
-      // Animated.timing(verifyAndContinyTranslateY2, {
-      //   toValue: 300, // slide down off-screen
-      //   duration: 200,
-      //   easing: Easing.out(Easing.ease),
-      //   useNativeDriver: true,
-      // }).start(()=>{
-    
-      //   setShowPopup1(false);
-      //   setCurrentScreen('login');
-      //   setcurrentScreenIninner('profile');
-      //   Animated.timing(profileTranslateY, {
-      //       toValue: 0,
-      //       duration: 500,
-      //       easing: Easing.out(Easing.ease),
-      //       useNativeDriver: true,
-      //     }).start();
-      // });
       } else {
         showToast(data?.message || 'OTP verification failed', 'error');
       }

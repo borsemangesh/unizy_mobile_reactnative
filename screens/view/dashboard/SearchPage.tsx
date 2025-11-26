@@ -100,7 +100,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
 
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true); // whether more pages exist
+  const [hasMore, setHasMore] = useState(true);
   const [isFilterVisible, setFilterVisible] = useState(false);
   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
   const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -166,20 +166,20 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
     loadBookmarks();
   }, []);
 
-   useEffect(() => {
+  useEffect(() => {
     const backAction = () => {
-       navigation.replace('Dashboard', {
-      AddScreenBackactiveTab: 'Home',
-      isNavigate: false,
+      navigation.replace('Dashboard', {
+        AddScreenBackactiveTab: 'Home',
+        isNavigate: false,
       })
       return true;
     };
-  
+
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       backAction
     );
-  
+
     return () => backHandler.remove();
   }, []);
 
@@ -254,7 +254,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
 
   const handleSearchChange = (text: string) => {
     setSearch(text);
-    setIsFilterMode(false); // reset filter mode
+    setIsFilterMode(false); 
 
     if (text.trim().length > 0) {
       debouncedSearch(text);
@@ -301,7 +301,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
       }
 
       setBookmarkedIds(updatedBookmarks);
-      await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks)); // persist locally
+      await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks)); 
 
     } catch (error) {
       console.error('Bookmark error:', error);
@@ -345,8 +345,6 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
           { flex: isLastOddItem ? 0.5 : 0.5, marginRight: isLastOddItem ? 0.5 : 0.5 },
         ]}
       >
-
-
 
         <TouchableOpacity
           onPress={() => {
@@ -548,7 +546,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
           data={featurelist}
           renderItem={renderItem}
           numColumns={2}
-          showsVerticalScrollIndicator={true}   // Hide vertical scrollbar
+          showsVerticalScrollIndicator={true}   
           showsHorizontalScrollIndicator={true}
           onEndReachedThreshold={0.5}
           columnWrapperStyle={styles.row1}
@@ -665,7 +663,7 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === 'ios' ? 16 : 12,
     paddingHorizontal: 16,
     justifyContent: 'center',
-    overflow: 'hidden', // IMPORTANT for MaskedView
+    overflow: 'hidden', 
     flexDirection: 'row',
     alignItems: 'center',
     elevation: 0,
@@ -725,7 +723,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', 
   },
 
 
@@ -769,11 +767,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600
   },
-  // header: {
-  //   paddingTop: Platform.OS === 'ios' ? '15.2%'  : 50,
-  //   // paddingBottom: 12,
-  //   paddingHorizontal: 16,
-  // },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -811,19 +804,18 @@ const styles = StyleSheet.create({
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    // paddingVertical: 4,
     padding: (Platform.OS === 'ios' ? 12 : 0),
     marginTop: (Platform.OS === 'ios' ? 4 : 20),
     height: 50,
-  
+
     width: '84%',
-    gap:(Platform.OS === 'ios' ? 8:0 )
+    gap: (Platform.OS === 'ios' ? 8 : 0)
   },
   searchIcon: {
 
     padding: (Platform.OS === 'ios' ? 0 : 5),
     marginLeft: (Platform.OS === 'ios' ? 0 : 10),
-     marginRight: (Platform.OS === 'ios' ? 0 : 6),
+    marginRight: (Platform.OS === 'ios' ? 0 : 6),
     height: 24,
     width: 24,
   },
@@ -836,18 +828,13 @@ const styles = StyleSheet.create({
 
   },
   listContainer: {
-    // marginLeft: 10,
-    // marginRight: 10,
-    // paddingTop: 10,
     marginLeft: 8,
     marginRight: 5,
     paddingTop: 10,
-    // gap:16
 
   },
   row1: {
-    // flexDirection: 'row',
-    // justifyContent: 'flex-start',
+
   },
   itemContainer: {
     flex: 1,

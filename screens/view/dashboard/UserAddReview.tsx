@@ -30,6 +30,7 @@ import StarRating from '../../utils/StarRating';
 import AddRating from '../../utils/AddRating';
 import { BlurView } from '@react-native-community/blur';
 import Button from '../../utils/component/Button';
+import { Constant } from '../../utils/Constant';
 
 type UserAddReviewProps = {
   navigation: any;
@@ -58,13 +59,13 @@ const UserAddReview : React.FC<UserAddReviewProps> = ({ navigation }) =>{
 
    const handleSubmit = async () => {
     if (rating === 0) {
-      showToast('Please select a rating');
-      return;
-    }
-    if (username.trim() === '') {
-      showToast('Please enter your comment');
-      return;
-    }
+          showToast(Constant.ENTER_RATING,'error');
+          return;
+        }
+        if (username.trim() === '') {
+          showToast(Constant.ENTER_REVIEW,'error');
+          return;
+        }
 
     try {
       setIsLoading(true);
@@ -167,10 +168,6 @@ const UserAddReview : React.FC<UserAddReviewProps> = ({ navigation }) =>{
          </View>
         </View>
         </TouchableWithoutFeedback>
-
-        {/* <TouchableOpacity onPress={handleSubmit} style={styles.previewBtn} >
-            <Text allowFontScaling={false} style={styles.payText}>Submit Review </Text>
-          </TouchableOpacity> */}
          <Button title="Submit Review" onPress={() => handleSubmit()} />
 
    <Modal

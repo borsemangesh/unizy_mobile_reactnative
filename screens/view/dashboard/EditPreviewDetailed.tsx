@@ -34,6 +34,7 @@ import AnimatedReanimated, {
 } from 'react-native-reanimated';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
+import { Constant } from '../../utils/Constant';
 
 type previewDetailsProps = {
   navigation: any;
@@ -330,7 +331,6 @@ const { height } = Dimensions.get('window');
 
       if (!storedData) {
         console.log('⚠️ No form data found in storage');
-        showToast('No form data found');
         return;
       }
 
@@ -384,7 +384,7 @@ const dataArray = nonImageFields
       param_value: val !== undefined && val !== null && val !== '' ? val : null,
     };
   })
-  .filter(item => item.param_value !== null); // ✅ only keep filled values
+  .filter(item => item.param_value !== null); 
 
       console.log('✅ Data array for create API:', dataArray);
 
@@ -392,9 +392,6 @@ const dataArray = nonImageFields
         category_id: productId1, // dynamic or static
         data: dataArray,
       };
-
-      console.log('Step 5: Calling create API with payload:', createPayload);
-
       console.log(
         'API',
         `${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`,
@@ -411,19 +408,17 @@ const dataArray = nonImageFields
         },
       );
 
-      console.log(`✅ Create API status: ${createRes.status}`);
       const createJson = await createRes.json();
       console.log('✅ Create API response:', createJson);
 
       if (!createRes.ok) {
-        showToast('Failed to create feature list');
+        //showToast('Failed to create feature list');
         return;
       }
 
       const feature_id = createJson?.data?.id;
       if (!feature_id) {
         console.log('❌ feature_id not returned from create API.');
-        showToast('feature_id missing in response');
         return
       }
 
@@ -449,16 +444,13 @@ const dataArray = nonImageFields
 
   for (const [param_id, images] of imageFields) {
     if (!Array.isArray(images)) {
-      console.warn(`⚠️ images is not an array for param_id=${param_id}`);
       continue;
     }
 
-    console.log(`Step 7: Uploading images for param_id=${param_id}`);
 
     for (const image of images) {
       // Defensive check
       if (!image || !image.uri) {
-        console.warn(`⚠️ Invalid image data for param_id=${param_id}`, image);
         continue;
       }
 
@@ -467,8 +459,6 @@ const dataArray = nonImageFields
         console.log(`Skipping upload for deleted image with ID: ${image.id}`);
         continue;
       }
-
-      console.log(`🟡 Preparing upload for image under param_id=${param_id}:`, image);
 
       // Prepare FormData
       const data = new FormData();
@@ -491,12 +481,9 @@ const dataArray = nonImageFields
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
-          // DO NOT manually set 'Content-Type' here for FormData!
         },
         body: data,
       });
-
-      console.log(`✅ Upload completed. Status: ${uploadRes.status}`);
 
       let uploadJson;
       try {
@@ -516,126 +503,13 @@ const dataArray = nonImageFields
     }
   }
 
-      // for (const [param_id, images] of imageFields) {
-      //   console.log(`Step 7: Uploading images for param_id=${param_id}`);
-
-      //   for (const image of images) {
-      //     console.log(
-      //       `🟡 Preparing upload for image under param_id=${param_id}:`,
-      //       image,
-      //     );
-
-      //     const data = new FormData();
-      //     data.append('files', {
-      //       uri: image.uri,
-      //       type: image.type || 'image/jpeg',
-      //       name: image.name,
-      //     } as any);
-      //     data.append('feature_id', feature_id);
-      //     data.append('param_id', param_id);
-
-      //     console.log('✅ FormData prepared for upload');
-
-      //     const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-update`;
-      //     console.log(
-      //       `Step 7: Uploading image ${image.name} with param_id=${param_id} to ${uploadUrl}`,
-      //     );
-
-      //     const uploadRes = await fetch(uploadUrl, {
-      //       method: 'POST',
-      //       headers: {
-      //         Authorization: `Bearer ${token}`,
-      //       },
-      //       body: data,
-      //     });
-
-      //     console.log(`✅ Upload completed. Status: ${uploadRes.status}`);
-      //     const uploadJson = await uploadRes.json();
-      //     console.log('✅ Upload response JSON:', uploadJson);
-
-      //     if (!uploadRes.ok) {
-      //       console.log(
-      //         `❌ Upload failed for ${image.name} (param_id=${param_id})`,
-      //       );
-      //       showToast(`Failed to upload image ${image.name}`);
-      //     } else {
-      //       console.log(
-      //         `✅ Upload success for ${image.name} (param_id=${param_id})`,
-      //       );
-      //     }
-      //   }
-      // }
-
-      // for (const [param_id, images] of imageFieldsWithStatus) {
-      //   for (const image of images) {
-      //     if (image.status === 'deleted') {
-      //       // ✅ Call DELETE or mark as deleted
-      //       const deleteUrl = `${MAIN_URL.baseUrl}category/featurelist/image-update`;
-      //       const deleteBody = {
-      //         feature_id,
-      //         param_id,
-      //         file_id: image.id,
-      //         status: 'deleted',
-      //       };
-      
-      //       // 🟢 Log the delete body
-      //       console.log('🗑️ DELETE Image Body:', JSON.stringify(deleteBody, null, 2));
-      
-      //       const deleteRes = await fetch(deleteUrl, {
-      //         method: 'POST', // or PATCH if your API uses it
-      //         headers: {
-      //           'Content-Type': 'application/json',
-      //           Authorization: `Bearer ${token}`,
-      //         },
-      //         body: JSON.stringify(deleteBody),
-      //       });
-      
-      //       const deleteJson = await deleteRes.json();
-      //       console.log('🗑️ DELETE Response:', deleteJson);
-      
-      //     } else if (image.status === 'new') {
-      //       // ✅ Upload new image
-      //     const data = new FormData();
-      //     data.append('files', {
-      //       uri: image.uri,
-      //       type: image.type || 'image/jpeg',
-      //       name: image.name,
-      //     } as any);
-      //     data.append('feature_id', feature_id);
-      //     data.append('param_id', param_id);
-      //       data.append('status', 'new');
-      
-      //       // 🟢 Log FormData content (debug-friendly)
-      //       console.log('🆕 Uploading New Image Body:');
-      //       console.log({
-      //         file_name: image.name,
-      //         file_uri: image.uri,
-      //         feature_id,
-      //         param_id,
-      //         status: 'new',
-      //       });
-
-      //     const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-update`;
-      //     const uploadRes = await fetch(uploadUrl, {
-      //       method: 'POST',
-      //         headers: { Authorization: `Bearer ${token}` },
-      //       body: data,
-      //     });
-
-      //     const uploadJson = await uploadRes.json();
-      //       console.log('🆕 Upload Response:', uploadJson);
-      //     }
-      //   }
-      // }
-
-      
-
+  
       console.log('✅ All uploads done. Showing toast.');
-      showToast('All data uploaded successfully');
+      showToast(Constant.DATA_UPLOAD,'success');
       setShowPopup(true);
     } catch (error) {
       console.log('❌ Error in handleListPress:', error);
-      showToast('Error uploading data');
+      showToast(Constant.SOMTHING_WENT_WRONG,'error');
     }
   };
 

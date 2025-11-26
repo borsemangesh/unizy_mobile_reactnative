@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import { View, Image, TouchableOpacity } from 'react-native';
 
 const starFull = require('../../assets/images/starfill.png');
-const starHalf = require('../../assets/images/starhalf.png'); // keep if needed for display-only
+const starHalf = require('../../assets/images/starhalf.png');
 const starEmpty = require('../../assets/images/starempty.png');
 
 type AddRatingProps = {
-  rating?: number;           // initial rating (optional)
-  maxStars?: number;         // default 5
-  starSize?: number;         // default 24
+  rating?: number;          
+  maxStars?: number;         
+  starSize?: number;        
   style?: object;
-  onChange?: (rating: number) => void; // callback when rating changes
+  onChange?: (rating: number) => void; 
 };
 
 const AddRating: React.FC<AddRatingProps> = ({
@@ -23,7 +23,7 @@ const AddRating: React.FC<AddRatingProps> = ({
   const [rating, setRating] = useState(initialRating);
 
   const handlePress = (index: number) => {
-    const newRating = rating === index + 1 ? 0 : index + 1; // toggle off if same star tapped again
+    const newRating = rating === index + 1 ? 0 : index + 1;
     setRating(newRating);
     if (onChange) onChange(newRating);
   };

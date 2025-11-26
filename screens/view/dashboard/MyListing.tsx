@@ -138,7 +138,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
   const blurAmount = useDerivedValue(() =>
     interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
   );
-
   const [categories, setCategories] = useState<Category[]>([
     { id: null, name: 'All' },
   ]);
@@ -146,7 +145,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
     id: null,
     name: 'All',
   });
-
 
 
 useEffect(() => {
@@ -168,6 +166,7 @@ useEffect(() => {
     };
     loadCategories();
   }, []);
+
 
   useEffect(() => {
   const backAction = () => {
@@ -353,17 +352,12 @@ useEffect(() => {
           barStyle="light-content"
         />
 
-
-<StatusBar
-          translucent
-          backgroundColor="transparent"
-          barStyle="light-content"
-        />
-
+        {/* Header with Blur only at top */}
         <Animated.View
           style={[styles.headerWrapper, animatedBlurStyle]}
           pointerEvents="none"
         >
+          {/* Blur layer only at top with gradient fade */}
           <MaskedView
             style={StyleSheet.absoluteFill}
             maskElement={
@@ -380,7 +374,7 @@ useEffect(() => {
               style={StyleSheet.absoluteFill}
               blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
               blurAmount={Platform.OS === 'ios' ? 45 : 45}
-              //  overlayColor="rgba(255,255,255,0.05)"
+              // overlayColor="rgba(255,255,255,0.05)"
               reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
             />
             <LinearGradient
@@ -395,43 +389,6 @@ useEffect(() => {
             />
           </MaskedView>
         </Animated.View>
-      
-        {/* <Animated.View
-          style={[styles.headerWrapper, animatedBlurStyle]}
-          pointerEvents="none"
-        >
-
-          <MaskedView
-            style={StyleSheet.absoluteFill}
-            maskElement={
-              <LinearGradient
-                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
-                locations={[0, 0.8]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={[StyleSheet.absoluteFill,
-                  ]}
-              />
-            }
-          >
-            <BlurView
-              style={[StyleSheet.absoluteFill]}
-              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
-              blurAmount={Platform.OS === 'ios' ? 45 : 45}
-              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
-            />
-            <LinearGradient
-              colors={[
-                'rgba(255, 255, 255, 0.45)',
-                'rgba(255, 255, 255, 0.02)',
-                'rgba(255, 255, 255, 0.02)',
-              ]}
-              style={StyleSheet.absoluteFill}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 0, y: 1 }}
-            />
-          </MaskedView>
-        </Animated.View> */}
 
         {/* Header Content */}
         <View style={styles.headerContent} pointerEvents="box-none">
@@ -448,7 +405,6 @@ useEffect(() => {
             <Animated.View
               style={[styles.blurButtonWrapper, animatedButtonStyle]}
             >
-         
               <Animated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -465,7 +421,6 @@ useEffect(() => {
                 ]}
               />
 
-              {/* Blur view fades in as scroll increases */}
               <Animated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -487,7 +442,6 @@ useEffect(() => {
                 />
               </Animated.View>
 
-              {/* Back Icon */}
               <Animated.Image
                 source={require('../../../assets/images/back.png')}
                 style={[{ height: 24, width: 24 }, animatedIconStyle]}
@@ -499,18 +453,13 @@ useEffect(() => {
             My Listings
           </Text>
         </View>
-        {/* List */}
         <View style={{ flex: 1, overflow: 'hidden'}}>
           <Animated.FlatList
             data={featureList}
-            scrollEnabled={true} // ← Allow scroll only inside FlatList
+            scrollEnabled={true} 
             showsVerticalScrollIndicator={false}
             nestedScrollEnabled={false}
             renderItem={renderItem}
-            // keyExtractor={(item, index) => {
-            //   'worklet';
-            //   return index.toString();
-            // }}
             keyExtractor={item => item.id.toString()}
             ListHeaderComponent={
               <View
@@ -531,9 +480,6 @@ useEffect(() => {
                         onPress={() => setSelectedCategory(cat)}
                         activeOpacity={0.7}
                       >
-                        {/* <View
-                          style={isSelected ? styles.tabcard : styles.tabcard1}
-                        > */}
                         <SquircleView
                           style={isSelected ? styles.tabcard : styles.tabcard1}
                           squircleParams={{
@@ -552,7 +498,6 @@ useEffect(() => {
                           >
                             {cat.name}
                           </Text>
-                          {/* </View> */}
                         </SquircleView>
                       </TouchableOpacity>
                     );
@@ -565,9 +510,9 @@ useEffect(() => {
               {
                 paddingTop: Platform.OS === 'ios' ? 114 : 100,
                 paddingBottom: isEmpty
-                  ? 10                        // ⬅ remove padding when list is empty
+                  ? 10                      
                   : Platform.select({
-                      ios: height * 0.01,   // ⬅ apply padding when list has data
+                      ios: height * 0.01,   
                       android: height * 0.04,
                     }),
                 flexGrow: 1,
@@ -599,12 +544,10 @@ useEffect(() => {
             ListEmptyComponent={
              
               (isLoading || initialLoading) && featurelist.length === 0 ? (
-                // Show loader while fetching
                 <View style={[styles.emptyWrapper, { justifyContent: 'center', flex: 1 }]}>
                   <Loader containerStyle={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }} />
                 </View>
               ) : !isLoading && featurelist.length === 0 ? (
-                // Show "No Listings Found" if API finished and list is empty
                 <View style={[styles.emptyWrapper, { justifyContent: 'center', alignItems: 'center', flex: 1 }]}>
                   <View style={styles.emptyContainer}>
                     <Image
@@ -617,7 +560,7 @@ useEffect(() => {
                     </Text>
                   </View>
                 </View>
-              ) : null // List has items, show nothing
+              ) : null 
             }
           />
         </View>
@@ -654,60 +597,31 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
 
   },
-  emptyImage: { width: 50, height: 50, marginBottom: 20 },
+  emptyImage: {
+    width: 50,
+    height: 50,
+    marginBottom: 20,
+  },
   emptyText: {
+    fontSize: 20,
     color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
+    textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
+    fontWeight: 600
   },
 
-  background: { flex: 1 },
-  fullScreenContainer: { flex: 1 },
-
-  headerWrapper: {
-
-
-    position: 'absolute',
-    top: 0,
-    width: Platform.OS === 'ios' ? 393 : '100%',
-    height: Platform.OS === 'ios' ? 180 : 180,
-    zIndex: 10,
-    overflow: 'hidden',
-    alignSelf: 'center',
-    pointerEvents: 'none',
+  categoryTabsContainer: {
+    width: '105%',
+    marginBottom: 12,
+    marginTop: 12,
   },
 
-  headerContent: {
-    // position: 'absolute',
-    // top: Platform.OS === 'ios' ? 60 : 40,
-    // width: '100%',
-    // alignItems: 'center',
-    // zIndex: 20,
-
-        position: 'absolute',
-    top: Platform.OS === 'ios' ? '6%' : 40,
-    width: Platform.OS === 'ios' ? 393 : '100%',
+  categoryTabsScrollContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-    zIndex: 11,
-    alignSelf: 'center',
-    pointerEvents: 'box-none',
-    marginTop: 2,
-    marginLeft: 1,
+    paddingRight: 16,
   },
-
-  backButtonContainer: {
-    position: 'absolute',
-    left: 16,
-    zIndex: 11,
-    top: 7,
-  },
-
   blurButtonWrapper: {
-
     width: 48,
     height: 48,
     borderRadius: 40,
@@ -718,10 +632,129 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
     backgroundColor: 'rgba(255, 255, 255, 0.1)', 
   },
+  tabcard: {
+    minHeight: 38,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    marginRight: 8,
+    borderColor: '#ffffff11',
+    borderRadius: 10,
+    boxShadow:
+      'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+  },
+  headerWrapper: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    height: Platform.OS === 'ios' ? 180 : 180,
+    zIndex: 10,
+    overflow: 'hidden',
+    alignSelf: 'center',
+    pointerEvents: 'none',
+  },
+  headerContent: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? '6%' : 40,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
+    marginTop: 2,
+    marginLeft: 1
+  },
+  tabcard1: {
+    minHeight: 38,
 
+    borderColor: '#ffffff',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    borderEndEndRadius: 10,
+    borderStartEndRadius: 10,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderBottomStartRadius: 10,
+    borderBlockStartColor: '#ffffff2e',
+    borderBlockColor: '#ffffff2e',
+    borderTopColor: '#ffffff2e',
+    borderBottomColor: '#ffffff2e',
+    borderLeftColor: '#ffffff2e',
+    borderRightColor: '#ffffff2e',
+    boxSizing: 'border-box',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    marginRight: 8,
+  },
+  tabtext: {
+    color: '#fff', 
+    fontWeight: '600',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 14,
+  },
+  othertext: {
+    color: '#FFFFFF7A', 
+    fontWeight: '600',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 14,
+  },
+
+  background: {
+    flex: 1,
+  },
+  fullScreenContainer: {
+    flex: 1,
+  },
+
+  header: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    zIndex: 20,
+    paddingTop: Platform.OS === 'ios' ? 50 : 40,
+    paddingBottom: Platform.OS === 'ios' ? 16 : 12,
+    paddingHorizontal: 16,
+    justifyContent: 'center',
+    overflow: 'hidden',
+    flexDirection: 'row',
+    alignItems: 'center',
+    elevation: 0,
+    backgroundColor: 'transparent',
+    borderBottomWidth: 0,
+    shadowOpacity: 0,
+    shadowColor: 'transparent',
+    alignSelf: 'center',
+    minHeight: Platform.OS === 'ios' ? 80 : 88,
+  },
+  backButtonContainer: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 11,
+    top: 7,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backIconRow: {
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    padding: 12,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:
+      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
+    borderWidth: 0.4,
+
+    borderColor: '#ffffff2c',
+  },
   unizyText: {
-
-        color: '#FFFFFF',
+    color: '#FFFFFF',
     fontSize: 20,
     textAlign: 'center',
     fontWeight: '600',
@@ -729,7 +762,26 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 17,
   },
-
+  search_container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 16,
+    marginRight: 16,
+    borderRadius: 40,
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+  },
+  searchIcon: {
+    margin: 10,
+    height: 24,
+    width: 24,
+  },
+  searchBar: {
+    fontSize: 17,
+    color: '#fff',
+    width: '85%',
+  },
   listContainer: {
     paddingHorizontal: 16,
     width: '100%',

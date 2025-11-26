@@ -187,18 +187,18 @@ const AddScreenContent: React.FC<AddScreenContentProps> = ({ navigation, product
   }, []);
 
   const handleProductPress = (item: any) => {
-    // Check if onboarding is complete before navigating
+
     if (isOnboardingComplete === false) {
-      // Show popup if onboarding is not complete
+
       setShowOnboardingPopup(true);
     } else if (isOnboardingComplete === true) {
-      // Navigate normally if onboarding is complete
+
       navigation.replace('AddScreen', {
         productId: item.id,
         productName: item.name,
       }, { animation: 'none' });
     }
-    // If isOnboardingComplete is null (still loading), do nothing
+
   };
 
   const handleGoToPayment = () => {
@@ -260,7 +260,7 @@ const AddScreenContent: React.FC<AddScreenContentProps> = ({ navigation, product
         />
       </AnimatedSlideUp>
 
-      {/* Onboarding Popup Modal */}
+
       <Modal
         visible={showOnboardingPopup}
         transparent
@@ -325,7 +325,7 @@ type ChatProps = {
 
 const BookmarkScreenContent = ({ navigation }: ChatProps) => (
   <View style={{flex: 1}}>
-    {/* <Text allowFontScaling={false} style={styles.tabContentText}>🔖 Bookmark Layout</Text> */}
+
     <MessagesScreen navigation={navigation}/>
 
   </View>
@@ -376,7 +376,7 @@ const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setIsNav(route.params?.isNavigate);
-    // console.log('useEffect_IsNav', isNav,route.params?.isNavigate);
+
     if (route.params?.AddScreenBackactiveTab) {
       setActiveTab(
         route.params?.AddScreenBackactiveTab as
@@ -641,12 +641,12 @@ const renderProducts = () => {
   const rows: JSX.Element[] = [];
 
   if (products.length <= 6) {
-    // ✅ Old grid layout (no change)
+
     if (!isEven) {
       rows.push(
         <Animated.View
           style={[
-            // { width: '80%' },
+
             { transform: [{ translateY: categorytranslateY }] },
           ]}
           key={products[0].id}
@@ -680,7 +680,7 @@ const renderProducts = () => {
     </Animated.View>
   ))}
 
-  {/* Add empty placeholder if only one item */}
+
   {rowItems.length === 1 && <View style={{ flex: 1 }} />}
 </View>
       );
@@ -770,20 +770,16 @@ const handleScrollEnd = (e: { nativeEvent: { contentOffset: { x: number } } }) =
 return (
   <View>
     <Animated.ScrollView
-    //ref={scrollViewRef}
       horizontal
        pagingEnabled={false} 
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
       onScroll={onScroll}
       onMomentumScrollEnd={handleScrollEnd}
-      //onScrollEndDrag={handleScrollEndDrag}
-
       scrollEventThrottle={16}
     >
   {pages.map((page, pageIndex) => (
     <View key={pageIndex} style={{ width, flexDirection: 'row',padding:10,}}>
-      {/* Left column */}
       <View style={{ flex: 1}}>
         {page.left.map(item => (
           <Animated.View
@@ -794,8 +790,6 @@ return (
           </Animated.View>
         ))}
       </View>
-
-      {/* Right column */}
       <View style={{ flex: 1,paddingLeft:2}}>
         {page.right.map(item => (
           <Animated.View
@@ -906,7 +900,6 @@ return (
         </Text>
       </Animated.View>
       {isLoading ? (
-        // 👇 Loading state
         <View style={styles.emptyWrapper}>
           <Loader
             containerStyle={{
@@ -918,7 +911,6 @@ return (
           />
         </View>
       ) : features.length === 0 ? (
-        // 👇 No Listings Found
         <View style={styles.emptyWrapper}>
           <View style={styles.emptyContainer}>
             <Image
@@ -932,7 +924,6 @@ return (
           </View>
         </View>
       ) : (
-        // 👇 Show scrollable cards if data exists
         <ScrollView
           directionalLockEnabled
           style={{ paddingHorizontal: 0, marginLeft: 8 }}
@@ -1157,7 +1148,6 @@ const blurAmount = useDerivedValue(() =>
                 barStyle="light-content"
               />
 
-              {/* 🔹 Animated Blur Header */}
               <AnimatedReanimated.View
                 style={[
                   {
@@ -1199,10 +1189,7 @@ const blurAmount = useDerivedValue(() =>
                     style={StyleSheet.absoluteFill}
                   />
                 </MaskedView>
-              </AnimatedReanimated.View>
-
-              {/* 🔹 Dynamic Header Title */}
-              
+              </AnimatedReanimated.View>              
               <View
                 style={{
                   position: 'absolute',
@@ -1234,8 +1221,6 @@ const blurAmount = useDerivedValue(() =>
                     : null}
                 </Text>
               </View>
-
-              {/* 🔹 Scroll section */}
               <AnimatedReanimated.ScrollView
                 scrollEventThrottle={16}
                 onScroll={scrollHandler}
@@ -1392,7 +1377,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
 
 
@@ -1480,11 +1465,8 @@ const styles = StyleSheet.create({
     marginBottom: Platform.OS === 'ios' ? 30 : 30,    
     borderRadius: 50,
     alignSelf: 'center',
-    // position: 'relative',
     padding: 2,
-    // marginLeft: 1,
     borderWidth: 0.4,
-    //padding: 12,
     borderColor: '#ffffff11',
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
     backgroundColor: 'rgba(0, 23, 128, 0.49)',
@@ -1503,12 +1485,8 @@ const styles = StyleSheet.create({
 
     boxSizing: 'border-box',
     zIndex: 100,
-    // position: 'absolute',
-    // bottom: 0,
   },
   tabItem: {
-    //justifyContent: 'center',
-    //alignItems: 'center',
   },
   iconWrapper: {
     height: 50, //
@@ -1519,11 +1497,9 @@ const styles = StyleSheet.create({
     tabIcon: {
     width: 28,
     height: 28,
-    //tintColor: '#fff',
     resizeMode: 'contain',
   },
   bubble: {
-    //height: 48,
     height: '100%',
     backgroundColor: 'rgba(255, 255, 255, 0.16)',    
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18)',
@@ -1566,15 +1542,12 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'column',
     alignItems: 'center',
-
-    // paddingBottom: 12,
     paddingHorizontal: 16,
     marginVertical:6
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-   // paddingBottom: 13,
   },
 
   MylistingsBackground: {
@@ -1588,11 +1561,6 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(97, 179, 255, 0.2) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow:
       '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
-
-    // borderTopColor: '#ffffff5d',
-    // borderBottomColor: '#ffffff36',
-    // borderLeftColor: '#ffffff5d',
-    // borderRightColor: '#ffffff36',
     borderColor: '#ffffff36',
     borderWidth: 0.5,
   },
@@ -1658,13 +1626,9 @@ const styles = StyleSheet.create({
   },
 
   fullWidth: {
-    //width: '100%',
-   // maxWidth: '100%',
   },
   halfWidth: {
-   // flex: 0.48,
-   // width:'40%',
-    //justifyContent:'flex-start'
+  
   },
   cardIcon: {
     width: 24,
@@ -1692,15 +1656,12 @@ const styles = StyleSheet.create({
 
   tabContent: {
     flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
+
   },
   tabContentText: {
     color: '#fff',
     fontSize: 20,
   },
-
-  //list product tab
 
   tabContent3: {
     flex: 1,
@@ -1720,19 +1681,14 @@ const styles = StyleSheet.create({
   card: {
     height: 94,
     flexDirection: 'row',
-    //backgroundColor: '#ffffff20', // semi-transparent for dark bg
     borderRadius: 24,
     paddingHorizontal: 16,
     paddingVertical:16,
     alignItems: 'center',
     justifyContent:'center',
     flex:1,
-
-    //borderWidth: 0.4,
-   // borderColor: '#ffffff2c',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
-    //boxShadow: 'rgba(255, 255, 255, 0.02) -1px 10px 5px 10px',
   },
   cardIcon1: {
     width: 36,

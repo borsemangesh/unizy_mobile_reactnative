@@ -17,7 +17,6 @@ import {
   Dimensions,
   ActivityIndicator,
 } from 'react-native';
-// import { showToast } from '../../utils/toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { useRoute } from '@react-navigation/native';
@@ -68,7 +67,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
   const { height } = Dimensions.get('window');
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [otp, setOtp] = useState(['', '', '', '']);
- const [price,setprice] = useState('')
+  const [price, setprice] = useState('')
   const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
 
@@ -182,11 +181,10 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
         // Refresh details so status updates immediately
         await fetchDetails();
       } else {
-        showToast('Something went wrong.Please try again', 'error');
+        showToast(Constant.SOMTHING_WENT_WRONG, 'error');
       }
     } catch (error) {
       console.error('❌ API Error:', error);
-      showToast('Failed to update product status', 'error');
     }
   };
   useEffect(() => {
@@ -224,16 +222,9 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
       const otpValue = otp.join('');
       const order_id = await AsyncStorage.getItem('last_order_id');
 
-      // if (!otp_id) {
-      //   showToast(Constant.OTP_ID_MISSING, 'error');
-      //   return;
-      // }
-
       const url = MAIN_URL.baseUrl + 'transaction/verify-post-order-otp';
 
       const createPayload = {
-        //orderid: 'KX5WHMSX',
-        //otp: '123456',
         otp: otpValue,
         orderid: selectedOrderId,
       };
@@ -407,7 +398,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
             }}
           >
             {/* Card */}
-            <View style={[styles.card, { marginTop: (Platform.OS === 'ios'? 6: 10) }]}>
+            <View style={[styles.card, { marginTop: (Platform.OS === 'ios' ? 6 : 10) }]}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 {(() => {
                   // Check if category is housekeeping or tuition
@@ -553,7 +544,6 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                       </Text>
                     </View>
 
-                    {/* ✅ STATUS BADGE - only if otpverified */}
                     {buyer.otpverified && (
                       <View
                         style={{
@@ -588,7 +578,6 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
 
                   <View style={styles.cardconstinerdivider} />
 
-                  {/* BUYER DETAILS */}
                   <View style={styles.listingtyperow}>
                     <Text allowFontScaling={false} style={styles.lebleHeader}>
                       Buyer Name:
@@ -597,15 +586,6 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                       {buyer.firstname} {buyer.lastname}
                     </Text>
                   </View>
-
-                  {/* <View style={styles.listingtyperow}>
-                      <Text allowFontScaling={false} style={styles.lebleHeader}>
-                        Buyer’s University:
-                      </Text>
-                      <Text allowFontScaling={false} style={styles.status}>
-                        {buyer.university_name}
-                      </Text>
-                    </View> */}
                   <View style={styles.listingtyperow1}>
                     <Text allowFontScaling={false} style={styles.lebleHeader}>
                       Buyer’s University:
@@ -681,7 +661,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                         //onPress={() => setShowPopup1(true)}
                         onPress={() => {
                           setSelectedOrderId(buyer.orderid);
-                          setprice(buyer.originalprice) 
+                          setprice(buyer.originalprice)
                           setShowPopup1(true);
                         }}
                       >
@@ -695,85 +675,6 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
               ))}
           </View>
         </AnimatedReanimated.ScrollView>
-
-        {/* {(
-          (data?.list?.category_id === 3 && data?.list?.remaining_quantity > 0) ||
-
-          (data?.list?.category_id !== 3 && (
-            !data?.list?.ispurchased ||
-            data?.list?.category_id === 2 ||
-            data?.list?.category_id === 5
-          ))
-        ) && (
-            <View style={styles.bottomview}>
-              <ButtonNew
-                title={data?.list?.isactive ? 'Deactivate' : 'Activate'}
-                textStyle={[styles.cancelText, { width: '100%' }]}
-                buttonStyle={[{
-                  width: '49%',
-                  boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-                  backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.10) 100%)',
-                  borderBlockStartColor: '#ffffff47',
-                  borderBlockColor: '#ffffff47',
-                  borderTopColor: '#ffffff47',
-                  borderBottomColor: '#ffffff47',
-                  borderLeftColor: '#ffffff47',
-                  borderRightColor: '#ffffff47',
-                  boxSizing: 'border-box',
-                }]}
-                onPress={() => {
-                  if (data?.list?.isactive) {
-                    setShowConfirm(true);
-                  } else {
-                    handleDeactivate();
-                  }
-                }}
-              />
-
-              <ButtonNew
-                title="Edit Listing"
-                textStyle={{
-                  color: '#000000',
-                  fontFamily: 'Urbanist-Regular',
-                  fontSize: 16,
-                  fontWeight: '500',
-                  fontStyle: 'normal',
-                  letterSpacing: 0.17,
-                  lineHeight: 22,
-                }}
-                buttonStyle={[{ width: '49%', backgroundColor: '#ffffffa7' }]}
-                onPress={() => {
-                  if (!data?.list?.isactive) {
-                    showToast('Purchased item can’t be edited.', 'error');
-                    return;
-                  }
-
-                  if (Platform.OS === 'ios') {
-                    navigation.navigate(
-                      'EditListScreen',
-                      {
-                        productId: catagory_id,
-                        productName: catagory_name,
-                        shareid: shareid,
-                      },
-                      { animation: 'none' },
-                    );
-                  } else {
-                    navigation.replace(
-                      'EditListScreen',
-                      {
-                        productId: catagory_id,
-                        productName: catagory_name,
-                        shareid: shareid,
-                      },
-                      { animation: 'none' },
-                    );
-                  }
-                }}
-              />
-            </View>
-          )} */}
-
 
         <Modal
           visible={showPopup1}
@@ -805,7 +706,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                 {loading && (
                   <View style={styles.fullLoader}>
                     {/* <ActivityIndicator size="large" color="#fff" /> */}
-                    <Loader/>
+                    <Loader />
                   </View>
                 )}
 
@@ -925,7 +826,6 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
           </TouchableWithoutFeedback>
         </Modal>
 
-        {/* Confirm Deactivate Modal (only shown when currently active) */}
         <Modal
           visible={showConfirm}
           transparent
@@ -1088,7 +988,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'box-none',
     marginTop: (Platform.OS === 'ios' ? 0 : 0),
-    marginLeft: 1 
+    marginLeft: 1
   },
   backButtonContainer: {
     position: 'absolute',

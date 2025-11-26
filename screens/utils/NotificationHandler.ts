@@ -1,11 +1,12 @@
 import { navigate } from '../view/NavigationService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+export const navigationReady = { isReady: false };
 
 export const handleNotification = async (notificationData: any, isBackground: boolean = false) => {
     try {
         console.log(` Handling ${isBackground ? 'background' : 'foreground'} notification data:`, notificationData);
 
-        console.log(" Notification Data handler :", notificationData);  
+        console.log(" Notification Data handler :", notificationData);
         const parseValue = (value: any) => {
             if (typeof value === 'string') {
                 try {
@@ -17,7 +18,6 @@ export const handleNotification = async (notificationData: any, isBackground: bo
             return value;
         };
 
-        // Parse main data if it's a string
         if (typeof notificationData === 'string') {
             try {
                 notificationData = JSON.parse(notificationData);
@@ -26,7 +26,6 @@ export const handleNotification = async (notificationData: any, isBackground: bo
             }
         }
 
-        // Parse nested data field if it exists
         if (notificationData?.data && typeof notificationData.data === 'string') {
             try {
                 const nestedData = JSON.parse(notificationData.data);
@@ -36,45 +35,38 @@ export const handleNotification = async (notificationData: any, isBackground: bo
             }
         }
 
-        // Handle specific notification titles/types
         const title = notificationData?.type
 
-        // item sold notification 
-        if (title == "order_details") {            
+        if (title == "order_details") {
             const featureId = notificationData?.feature_id || notificationData?.data?.feature_id || null;
             console.log(" Extracted feature_id:", featureId);
             navigate("ViewListingDetails", {
                 shareid: featureId,
-                 catagory_id:notificationData?.category_id,
+                catagory_id: notificationData?.category_id,
                 catagory_name: notificationData?.catagory_name,
             });
             return;
         }
 
-          if (title == "feature_details") {            
+        if (title == "feature_details") {
             const featureId = notificationData?.feature_id || notificationData?.data?.feature_id || null;
             console.log(" Extracted feature_id:", featureId);
             navigate("ListingDetails", {
                 shareid: featureId,
-                catagory_id:notificationData?.category_id,
+                catagory_id: notificationData?.category_id,
                 catagory_name: notificationData?.catagory_name,
             });
             return;
         }
 
-        // order  complete notification
         if (title === "transaction_details") {
             const featureId = notificationData?.feature_id || notificationData?.data?.feature_id || null;
             navigate('MyOrders', {
-                //    shareid: featureId,
-                // catagory_id: 0,
-                // catagory_name: "",
             });
             return;
         }
-        //nevigate for review
         if (title == "review") {
-              const featureId = notificationData?.feature_id || notificationData?.data?.feature_id || null;
+            const featureId = notificationData?.feature_id || notificationData?.data?.feature_id || null;
             navigate('ReviewDetails', {
                 category_id: notificationData?.category_id, id: featureId, purchase: false
             });
@@ -86,14 +78,11 @@ export const handleNotification = async (notificationData: any, isBackground: bo
             return;
         }
 
-        if(title == 'orderotp'){
-              navigate('Dashboard', { AddScreenBackactiveTab: 'Search', isNavigate: false });
+        if (title == 'orderotp') {
+            navigate('Dashboard', { AddScreenBackactiveTab: 'Search', isNavigate: false });
             return;
         }
 
-   
-
-        // Handle Chat/Message Notifications
         let members = null;
         if (notificationData?.members) {
             const parsedMembers = parseValue(notificationData.members);
@@ -128,18 +117,14 @@ export const handleNotification = async (notificationData: any, isBackground: bo
         } else if (notificationData?.from) {
             currentUserIdList = Number(parseValue(notificationData.from)) || 0;
         }
-
-        // Extract conversation SID
         const conversationSid = notificationData?.conversationSid ||
             notificationData?.twilio_conversation_sid ||
             notificationData?.sid ||
             notificationData?.conversation_sid ||
             '';
 
-        // Extract source
         const source = notificationData?.source ? parseValue(notificationData.source) : 'chatList';
 
-        // Extract sellerData if source is sellerPage
         let sellerData = undefined;
         if (source === 'sellerPage' && notificationData?.sellerData) {
             const parsedSellerData = parseValue(notificationData.sellerData);
@@ -155,7 +140,6 @@ export const handleNotification = async (notificationData: any, isBackground: bo
             }
         }
 
-        // If it's a chat notification, validate required fields
         if (userConvName && members && members.firstname) {
             const params = {
                 animation: 'none',
@@ -169,7 +153,6 @@ export const handleNotification = async (notificationData: any, isBackground: bo
 
             console.log(' Final navigation params:', JSON.stringify(params, null, 2));
 
-            // Store in AsyncStorage for backup/quit state
             await AsyncStorage.removeItem('notificationNavigationCompleted');
             await AsyncStorage.setItem('pendingNotificationNavigation', JSON.stringify({
                 screen: 'MessagesIndividualScreen',
@@ -177,10 +160,22 @@ export const handleNotification = async (notificationData: any, isBackground: bo
                 timestamp: Date.now(),
             }));
 
-            // Navigate with a small delay to ensure app is ready
             setTimeout(() => {
                 navigate("MessagesIndividualScreen", params);
             }, isBackground ? 200 : 100);
+
+
+            // const waitForNavigation = async () => {
+            // let attempts = 0;
+
+            // while (!navigationReady.isReady && attempts < 15) {
+            //     await new Promise(r => setTimeout(r, 200));
+            //     attempts++;
+            // }
+            // };
+
+            // await waitForNavigation();
+            // navigate("MessagesIndividualScreen", params);
         } else {
             console.log(" Notification data did not match any known navigation patterns");
         }

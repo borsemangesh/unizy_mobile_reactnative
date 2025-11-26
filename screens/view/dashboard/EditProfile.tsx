@@ -53,6 +53,7 @@ import {
 } from 'react-native-permissions';
 import Button from '../../utils/component/Button';
 import LinearGradient from 'react-native-linear-gradient';
+import { Constant } from '../../utils/Constant';
 
 type EditProfileProps = {
   navigation: any;
@@ -109,8 +110,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
         const data = await response.json();
 
-       
-        
+
+
 
         if (response.status === 401 || response.status === 403) {
           handleForceLogout();
@@ -259,10 +260,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       showToast(errors[0], 'error');
       return;
     } else if (!isUpdateDisabled_personal) {
-      showToast('Please verify your personal email Id', 'error');
+      showToast(Constant.VERIFY_PERSONAL_MAIL, 'error');
       return;
     } else if (!isUpdateDisabled) {
-      showToast('Please verify your student email Id', 'error');
+      showToast(Constant.VERIFY_STUDENT_MAIL, 'error');
       return;
     }
 
@@ -271,7 +272,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       const userId = await AsyncStorage.getItem('userId');
 
       if (!token || !userId) {
-        showToast('User authentication is missing.', 'error');
+        showToast(Constant.USER_NOT_AUTH, 'error');
         return;
       }
 
@@ -283,21 +284,19 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           return;
         }
 
-        showToast('Image uploaded successfully', 'success');
+        showToast(Constant.IMAGE_UPLOAD, 'success');
         await new Promise((resolve: any) => {
           setTimeout(resolve, 2000);
         }); // Wait 1.5s so toast stays visible
       }
 
 
-       if (photo == null) {
+      if (photo == null) {
 
         await handleDeleteImage();
-
-        // showToast('Image deleted successfully', 'success');
         await new Promise((resolve: any) => {
           setTimeout(resolve, 2000);
-        }); // Wait 1.5s so toast stays visible
+        });
       }
 
 
@@ -365,7 +364,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       }
     } catch (error) {
       console.error('Error during profile update:', error);
-      showToast('An unexpected error occurred.', 'error');
+      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
     }
   };
 
@@ -434,7 +433,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       const url = `${MAIN_URL.baseUrl}user/update-profile`;
 
       if (!token || !userId) {
-        showToast('User authentication is missing.', 'error');
+        showToast(Constant.USER_NOT_AUTH, 'error');
         return false;
       }
 
@@ -470,7 +469,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     } catch (error) {
       console.error('Upload error:', error);
       showToast(
-        'Unexpected error occured during upload.Please try again',
+        Constant.SOMTHING_WENT_WRONG,
         'error',
       );
       return false;
@@ -484,9 +483,9 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       const token = await AsyncStorage.getItem('userToken');
       const userId = await AsyncStorage.getItem('userId');
       const url = `${MAIN_URL.baseUrl}user/delete-profile?userId=${userId}`;
-photo
+      photo
       if (!token || !userId) {
-        showToast('User authentication is missing.', 'error');
+        showToast(Constant.USER_NOT_AUTH, 'error');
         return false;
       }
 
@@ -502,7 +501,7 @@ photo
       const data = await response.json();
 
       if (response.ok) {
-        showToast('Image deleted successfully', 'success');
+        showToast(Constant.IMAGE_DELETE, 'success');
         return true;
       } else {
         showToast(
@@ -514,7 +513,7 @@ photo
     } catch (error) {
       console.error('Upload error:', error);
       showToast(
-        'Unexpected error occured during delete.Please try again',
+        Constant.SOMTHING_WENT_WRONG,
         'error',
       );
       return false;
@@ -614,13 +613,13 @@ photo
 
       if (data?.statusCode === 200) {
         setShowPopup1(false);
-  
+
       } else {
         showToast(data?.message, 'error');
       }
     } catch (err) {
       console.error(err);
-    
+
     }
   };
 
@@ -731,11 +730,11 @@ photo
     }
   };
 
-    const getInitials = (firstName = '', lastName = '') => {
-  const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
-  const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
-  return (f + l) || '?';
-};
+  const getInitials = (firstName = '', lastName = '') => {
+    const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
+    const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
+    return (f + l) || '?';
+  };
 
 
   const [typingTimeout, setTypingTimeout] = useState<any>(null);
@@ -889,18 +888,18 @@ photo
                   </TouchableOpacity>
 
 
-            {photo ? (
-                        <Image source={{ uri: photo}} style={styles.profilelogo} />
-                      ) : (
-                        <View style={styles.initialsCircle}>
-                          <Text allowFontScaling={false} style={styles.initialsText}>
-                            {getInitials(
-                              userMeta?.firstname ?? 'A',
-                              userMeta?.lastname ?? 'W',
-                            )}
-                          </Text>
-                        </View>
-                      )}
+                  {photo ? (
+                    <Image source={{ uri: photo }} style={styles.profilelogo} />
+                  ) : (
+                    <View style={styles.initialsCircle}>
+                      <Text allowFontScaling={false} style={styles.initialsText}>
+                        {getInitials(
+                          userMeta?.firstname ?? 'A',
+                          userMeta?.lastname ?? 'W',
+                        )}
+                      </Text>
+                    </View>
+                  )}
 
 
                   {/* <Image
@@ -920,7 +919,7 @@ photo
                     handleSelectImage();
                   }}
                 >
-               
+
                   <Image
                     source={require('../../../assets/images/camera_icon.png')}
                     style={styles.profilecameraIcon}
@@ -1011,9 +1010,9 @@ photo
                   />
                   <TouchableOpacity
                     style={{
-                      width: 32, 
+                      width: 32,
                       height: 32,
-              
+
                       backgroundColor: isUpdateDisabled_personal
                         ? '#99999980' // Fallback color for disabled
                         : 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
@@ -1092,10 +1091,10 @@ photo
                   />
                   <TouchableOpacity
                     style={{
-                      width: 32, 
+                      width: 32,
                       height: 32,
                       backgroundColor: isUpdateDisabled
-                        ? '#99999980' 
+                        ? '#99999980'
                         : 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
                       boxShadow: isUpdateDisabled
                         ? ''
@@ -1142,28 +1141,28 @@ photo
                   onChangeText={text => {
                     // Keep only letters + numbers, convert to uppercase
                     const filteredText = text.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-                
+
                     // Limit length
                     if (filteredText.length > 7) return;
-                
+
                     // Update state
                     setUserMeta(prev => ({
                       ...prev,
                       postal_code: filteredText,
                     }));
-                
+
                     // Clear old timer
                     if (typingTimeout) {
                       clearTimeout(typingTimeout);
                     }
-                
+
                     // Start new 3-sec timer
                     const timeout = setTimeout(() => {
                       if (filteredText.length > 0) {
                         ClickPostalCode(filteredText);
                       }
                     }, 3000); // 3 seconds
-                
+
                     setTypingTimeout(timeout);
                   }}
                   allowFontScaling={false}
@@ -1231,7 +1230,7 @@ photo
         visible={showPopup1}
         transparent={true}
         animationType="fade"
-        onRequestClose={() => {}}
+        onRequestClose={() => { }}
       >
         <TouchableWithoutFeedback onPress={closePopup1}>
           <View style={styles.overlay}>
@@ -1300,7 +1299,7 @@ photo
 
                 <TouchableOpacity
                   style={styles.loginButton}
-                  
+
                   onPress={otpverify}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>
@@ -1366,7 +1365,7 @@ photo
                   style={styles.logo}
                   resizeMode="contain"
                 />
-                <Text allowFontScaling={false} style={[styles.mainheader,{marginTop: 10}]}>
+                <Text allowFontScaling={false} style={[styles.mainheader, { marginTop: 10 }]}>
                   Do you want to delete the profile picture!
                 </Text>
 
@@ -1504,13 +1503,13 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   tabtext: {
-    color: '#fff', 
+    color: '#fff',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
   },
   othertext: {
-    color: '#FFFFFF7A', 
+    color: '#FFFFFF7A',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
@@ -1821,7 +1820,7 @@ const styles = StyleSheet.create({
     height: 44,
   },
 
-  
+
   updateButton: {
     marginLeft: 38,
     backgroundColor: '#FFFFFF8F',
@@ -1946,7 +1945,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignSelf: 'center',
-    gap: 8, 
+    gap: 8,
     marginTop: 16,
     paddingHorizontal: 20,
   },
@@ -1998,7 +1997,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-   initialsCircle:{
+  initialsCircle: {
     backgroundColor: '#8390D4',
     alignItems: 'center',
     justifyContent: 'center',
@@ -2006,11 +2005,11 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
   },
-  initialsText:{
-   color: '#fff',
-  fontSize: 36,
-  fontWeight:600,
-  textAlign: 'center',
-  fontFamily: 'Urbanist-SemiBold',
+  initialsText: {
+    color: '#fff',
+    fontSize: 36,
+    fontWeight: 600,
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
   },
 });

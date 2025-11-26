@@ -100,7 +100,6 @@ const saveJSON = async (key: any, value: any) => {
   try {
     await AsyncStorage.setItem(key, JSON.stringify(value));
   } catch (err: any) {
-    // Silent fail - cache is optional
     if (__DEV__) {
       console.warn('Cache save failed:', err.message);
     }
@@ -120,16 +119,13 @@ const loadJSON = async (key: any) => {
   }
 };
 
-// Helper function for safe fetch with timeout (production-ready)
 const fetchWithTimeout = async (
   url: string,
   options: RequestInit = {},
   timeoutMs: number = 15000
 ): Promise<Response> => {
-  // AbortController is available in React Native 0.60+
-  // For React Native 0.81.0, it's definitely available
+  
   if (typeof AbortController === 'undefined') {
-    // Fallback for very old React Native versions (unlikely but safe)
     throw new Error('AbortController not available');
   }
 
@@ -159,13 +155,6 @@ const MessagesIndividualScreen = ({
   const { members, sellerData, userConvName, currentUserIdList, source, conversationSid } =
     route.params;
 
-  // console.log('Received members:', members);
-  // console.log('sellerData----', sellerData?.featureId);
-  // console.log('source', source);
-  // console.log('convName', userConvName);
-
-  // console.log('currentUserIdList----', currentUserIdList);
-
   const [chatClient, setChatClient] = useState<any>(null);
 
   const [conversation, setConversation] = useState<any>(null);
@@ -180,8 +169,7 @@ const MessagesIndividualScreen = ({
   // Pagination state for WhatsApp-style loading
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
   const [loadingOlderMessages, setLoadingOlderMessages] = useState(false);
-  const messagesPageRef = useRef<any>(null); // Store the messages page for pagination
-
+  const messagesPageRef = useRef<any>(null); 
   const [selectedEmoji, setSelectedEmoji] = useState('...');
 
   const [isEmojiPickerVisible, setIsEmojiPickerVisible] = useState(false);
@@ -195,9 +183,7 @@ const MessagesIndividualScreen = ({
   const emojiTranslateY = useRef(new RNAnimated.Value(0)).current;
   const loadingFromScrollRef = useRef(false);
   const shouldAutoScrollRef = useRef(true);
-  const newestMessageSidRef = useRef<string | null>(null); // Track newest message to detect if it changed
-
-
+  const newestMessageSidRef = useRef<string | null>(null); 
 
   const hasScrollableContent = useSharedValue(false);
   const contentHeightRef = useRef(0);
@@ -308,10 +294,9 @@ const MessagesIndividualScreen = ({
   const windowHeightRef = useRef(Dimensions.get('window').height);
   const EMOJI_PICKER_HEIGHT =
     lastKeyboardHeight > 0
-      ? lastKeyboardHeight // Use actual keyboard height captured from device
-      : DEFAULT_EMOJI_HEIGHT; // Fallback until keyboard opens (will be updated automatically)
+      ? lastKeyboardHeight
+      : DEFAULT_EMOJI_HEIGHT; 
 
-  // Update window height when dimensions change (for keyboard height calculation)
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
       windowHeightRef.current = window.height;
@@ -319,7 +304,6 @@ const MessagesIndividualScreen = ({
     return () => subscription?.remove();
   }, []);
 
-  // Disable navigation gestures when emoji keyboard is open
   useEffect(() => {
     navigation.setOptions({
       gestureEnabled: !isEmojiPickerVisible,
@@ -327,11 +311,9 @@ const MessagesIndividualScreen = ({
   }, [isEmojiPickerVisible, navigation]);
 
   useEffect(() => {
-    // Always keep translateY at 0 for instant appearance (no animation)
     emojiTranslateY.setValue(0);
   }, [isEmojiPickerVisible, lastKeyboardHeight]);
 
-  // PanResponder for swipe down gesture only - ignores horizontal swipes
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => false,
@@ -339,11 +321,10 @@ const MessagesIndividualScreen = ({
         const verticalMovement = Math.abs(gestureState.dy);
         const horizontalMovement = Math.abs(gestureState.dx);
         const isVerticalSwipe = verticalMovement > horizontalMovement;
-        const isDownwardSwipe = gestureState.dy > 15; // Minimum threshold
+        const isDownwardSwipe = gestureState.dy > 15; 
         return isVerticalSwipe && isDownwardSwipe;
       },
       onPanResponderGrant: () => {
-        // Gesture started
       },
       onPanResponderMove: (_, gestureState) => {
         const isVertical =
@@ -359,38 +340,31 @@ const MessagesIndividualScreen = ({
           isVertical && (gestureState.dy > 50 || gestureState.vy > 0.5);
 
         if (shouldClose && isEmojiPickerVisible) {
-          // Close emoji keyboard instantly (no animation)
           emojiTranslateY.setValue(0);
           setIsEmojiPickerVisible(false);
         } else {
-          // Reset to 0 instantly (no animation)
           emojiTranslateY.setValue(0);
         }
       },
     }),
   ).current;
 
-  // Auto-focus text input when emoji keyboard closes (except when button is clicked or on initial mount)
   const shouldAutoFocusRef = useRef(true);
   const isInitialMountRef = useRef(true);
-  const isOpeningEmojiRef = useRef(false); // Track when we're opening emoji keyboard
+  const isOpeningEmojiRef = useRef(false);
 
   useEffect(() => {
-    // Skip auto-focus on initial mount
     if (isInitialMountRef.current) {
       isInitialMountRef.current = false;
       return;
     }
 
-    // Don't auto-focus if we're in the process of opening emoji keyboard
     if (isOpeningEmojiRef.current) {
       isOpeningEmojiRef.current = false; // Reset flag
       return;
     }
 
-    // Only auto-focus if emoji keyboard was just closed (not on initial mount or when opening)
     if (!isEmojiPickerVisible && shouldAutoFocusRef.current) {
-      // Emoji keyboard closed - focus text input
       const timer = setTimeout(() => {
         textInputRef.current?.focus();
       }, 200);
@@ -399,15 +373,12 @@ const MessagesIndividualScreen = ({
     shouldAutoFocusRef.current = true; // Reset for next time
   }, [isEmojiPickerVisible]);
 
-  // Track cursor position for emoji insertion
   const selectionRef = useRef({ start: 0, end: 0 });
 
-  // Function to filter out numbers and number words
   const filterNumbersAndNumberWords = (text: string): string => {
     // Remove all digits (0-9)
     let filtered = text.replace(/[0-9]/g, '');
 
-    // Remove number words (case-insensitive)
     const numberWords = [
       'zero',
       'one',
@@ -444,7 +415,6 @@ const MessagesIndividualScreen = ({
       'trillion',
     ];
 
-    // Create regex pattern to match number words as whole words
     const numberWordsPattern = new RegExp(
       `\\b(${numberWords.join('|')})\\b`,
       'gi',
@@ -452,14 +422,11 @@ const MessagesIndividualScreen = ({
 
     filtered = filtered.replace(numberWordsPattern, '');
 
-    // Only clean up excessive spaces (3+ consecutive spaces) left after removal
-    // Preserve single and double spaces that user intentionally types
     filtered = filtered.replace(/\s{3,}/g, '  ');
 
     return filtered;
   };
 
-  // Handle text input change with number filtering
   const handleTextChange = (text: string) => {
     const filteredText = filterNumbersAndNumberWords(text);
     setMessageText(filteredText);
@@ -467,12 +434,9 @@ const MessagesIndividualScreen = ({
 
   const handleEmojiSelected = (char: string) => {
     if (char === 'DELETE') {
-      // Delete character at cursor position or before cursor
-      // Get current text and cursor position BEFORE state update
       const currentText = messageText;
       let { start, end } = selectionRef.current;
 
-      // Ensure cursor position is valid and within text bounds
       const textLength = currentText.length;
       if (start < 0) start = 0;
       if (start > textLength) start = textLength;
@@ -488,14 +452,9 @@ const MessagesIndividualScreen = ({
       let newCursorPos: number;
 
       if (start === end && start > 0) {
-        // Cursor is at a position, delete character before cursor
-        // For emojis (which can be 2+ UTF-16 code units), we need to delete the entire emoji
-        // Check if the character before cursor is part of a surrogate pair (emoji)
         const charBefore = currentText[start - 1];
         const charCode = charBefore.charCodeAt(0);
 
-        // Check if it's a low surrogate (second part of emoji) - range 0xDC00-0xDFFF
-        // If it is, check if the character before it is a high surrogate
         if (charCode >= 0xdc00 && charCode <= 0xdfff && start > 1) {
           const charBefore2 = currentText[start - 2];
           const charCode2 = charBefore2.charCodeAt(0);
@@ -511,9 +470,7 @@ const MessagesIndividualScreen = ({
             newCursorPos = start - 1;
           }
         } else if (charCode >= 0xd800 && charCode <= 0xdbff && start > 1) {
-          // High surrogate - check if next character is low surrogate
-          // If cursor is right after high surrogate, we're in the middle of emoji
-          // Delete the high surrogate (1 char) - the low will be handled on next delete
+         
           newText = currentText.slice(0, start - 1) + currentText.slice(start);
           newCursorPos = start - 1;
         } else {
@@ -526,8 +483,7 @@ const MessagesIndividualScreen = ({
         newText = currentText.slice(0, start) + currentText.slice(end);
         newCursorPos = start;
       } else {
-        // No cursor position, delete last character (fallback)
-        // Check if last character is part of emoji
+        
         if (currentText.length > 0) {
           const lastChar = currentText[currentText.length - 1];
           const charCode = lastChar.charCodeAt(0);
@@ -540,7 +496,6 @@ const MessagesIndividualScreen = ({
           ) {
             const charBefore = currentText[currentText.length - 2];
             const charCode2 = charBefore.charCodeAt(0);
-            // If previous character is high surrogate, delete both (surrogate pair)
             if (charCode2 >= 0xd800 && charCode2 <= 0xdbff) {
               newText = currentText.slice(0, -2);
               newCursorPos = newText.length;
@@ -587,26 +542,16 @@ const MessagesIndividualScreen = ({
         }, 0);
       });
     } else {
-      // Insert emoji at cursor position
-      // Handle multi-byte emoji characters correctly
-      // Get the latest cursor position right before insertion to ensure accuracy
-      // This is critical when user moves cursor after opening emoji keyboard
-
-      // Ensure emoji is a valid string (handle any encoding issues)
+  
       const emojiChar = String(char);
-
-      // Validate emoji is not empty or corrupted
       if (!emojiChar || emojiChar.length === 0) {
         console.warn('Invalid emoji character received:', char);
         return;
       }
 
-      // Get current text and cursor position BEFORE state update
-      // This ensures we have the most up-to-date values
       const currentText = messageText;
       let { start, end } = selectionRef.current;
 
-      // Ensure cursor position is valid and within text bounds
       const textLength = currentText.length;
       if (start < 0) start = 0;
       if (start > textLength) start = textLength;
@@ -618,15 +563,10 @@ const MessagesIndividualScreen = ({
         end = temp;
       }
 
-      // Insert emoji at cursor position
-      // Use slice to ensure we don't corrupt existing emojis in the text
       const beforeText = currentText.slice(0, start);
       const afterText = currentText.slice(end);
-
-      // Build new text by concatenating parts
       const newText = beforeText + emojiChar + afterText;
 
-      // Calculate cursor position correctly for emojis
       const emojiCodeUnits = emojiChar.length; // UTF-16 code units
       const newCursorPos = start + emojiCodeUnits;
 
@@ -690,8 +630,6 @@ const MessagesIndividualScreen = ({
           throw new Error('Invalid token response from server');
         }
 
-        // Initialize Twilio client with error handling
-        // const twilio = await getTwilioClient(data.data.token);
         const twilio = await new TwilioChatClient(data.data.token);
 
         console.log(twilio)
@@ -705,7 +643,6 @@ const MessagesIndividualScreen = ({
         console.log("Twilio client initialized successfully");
         setChatClient(twilio);
 
-        // Preload conversations silently in background with error handling
         setTimeout(() => {
           if (twilio && isMounted) {
             twilio.getSubscribedConversations()
@@ -963,12 +900,6 @@ const MessagesIndividualScreen = ({
 
         setInitialLoading(false);
 
-        // Optional: Show user-friendly error (uncomment if needed)
-        // Alert.alert(
-        //   "Connection Error",
-        //   "Unable to load conversation. Please check your connection and try again.",
-        //   [{ text: "OK" }]
-        // );
       }
     };
 
@@ -1034,97 +965,10 @@ const MessagesIndividualScreen = ({
     }
   };
 
-  // ----------------------------------------------------------
-  // Load older messages (pagination) - WhatsApp style
-  // ----------------------------------------------------------
-  // const loadOlderMessages = useCallback(async () => {
-  //   if (!conversation || !hasMoreMessages || loadingOlderMessages) {
-  //     console.log(
-  //       'loadOlderMessages: Skipping - conversation:',
-  //       !!conversation,
-  //       'hasMoreMessages:',
-  //       hasMoreMessages,
-  //       'loadingOlderMessages:',
-  //       loadingOlderMessages,
-  //     );
-  //     return;
-  //   }
-
-  //   try {
-  //     setLoadingOlderMessages(true);
-  //     console.log('loadOlderMessages: Loading older messages...');
-
-  //     // Get the previous page of messages
-  //     const prevPage = await messagesPageRef.current?.prevPage();
-
-  //     if (!prevPage || !prevPage.items || prevPage.items.length === 0) {
-  //       console.log('loadOlderMessages: No more messages to load');
-  //       setHasMoreMessages(false);
-  //       setLoadingOlderMessages(false);
-  //       return;
-  //     }
-
-  //     console.log(
-  //       'loadOlderMessages: Loaded',
-  //       prevPage.items.length,
-  //       'older messages',
-  //     );
-
-  //     // Store the new page for next pagination
-  //     messagesPageRef.current = prevPage;
-
-  //     // Check if there are more messages
-  //     setHasMoreMessages(prevPage.hasNextPage || false);
-
-  //     // Get existing message SIDs for deduplication
-  //     setMessages(prev => {
-  //       const existingSids = new Set(prev.map(msg => msg.sid));
-
-  //       // Filter out duplicates from new messages
-  //       const newMessages = prevPage.items.filter(
-  //         (msg: any) => !existingSids.has(msg.sid),
-  //       );
-
-  //       if (newMessages.length === 0) {
-  //         console.log('loadOlderMessages: All messages are duplicates');
-  //         setHasMoreMessages(false);
-  //         return prev; // No new messages, return previous state
-  //       }
-
-  //       console.log(
-  //         'loadOlderMessages: Adding',
-  //         newMessages.length,
-  //         'new messages',
-  //       );
-
-  //       // Combine: existing messages + new older messages
-  //       // With inverted FlatList: newest at bottom (index 0), oldest at top (last index)
-  //       // New older messages should be added to the end of the array (will appear at top after inversion)
-  //       const combined = [...prev, ...newMessages];
-
-  //       // Sort to maintain newest-first order (newest at start, oldest at end)
-  //       const sorted = combined.sort((a, b) => {
-  //         const timeA = new Date(a.dateCreated || a.timestamp).getTime();
-  //         const timeB = new Date(b.dateCreated || b.timestamp).getTime();
-  //         return timeB - timeA; // Newest first
-  //       });
-
-  //       return sorted;
-  //     });
-
-  //     // Scroll position is maintained automatically by FlatList when items are added
-  //     // Inverted FlatList correctly maintains position when appending to end
-  //   } catch (error) {
-  //     console.error('Failed to load older messages:', error);
-  //     setHasMoreMessages(false);
-  //   } finally {
-  //     setLoadingOlderMessages(false);
-  //   }
-  // }, [conversation, hasMoreMessages, loadingOlderMessages]);
-
+ 
   const loadOlderMessages = useCallback(async () => {
     if (!messagesPageRef.current?.hasPrevPage) return;
-    if (loadingOlderMessages) return; // Prevent multiple simultaneous loads
+    if (loadingOlderMessages) return; 
 
     setLoadingOlderMessages(true);
     loadingFromScrollRef.current = true;
@@ -1153,9 +997,7 @@ const MessagesIndividualScreen = ({
   }, [loadingOlderMessages]);
 
 
-  // ----------------------------------------------------------
-  // STEP 3: Attach Twilio Message Listener (ONLY ONCE)
-  // ----------------------------------------------------------
+ 
   useEffect(() => {
     if (!conversation) return;
 
@@ -1329,16 +1171,10 @@ const MessagesIndividualScreen = ({
         }
       }
 
-      // Set conversation BEFORE sending message so the messageAdded listener is ready
       setConversation(convo);
 
-      // Reduced delay - 50ms should be enough for React state to update
-      // The useEffect listener should be ready by then
+  
       await new Promise(resolve => setTimeout(resolve, 50));
-
-      // Send the pending first message
-      // Twilio will trigger messageAdded event which will add the message automatically
-      // handleNewMessage will handle scrolling automatically
       await convo.sendMessage(filteredMessage);
 
     } catch (error) {
@@ -1350,85 +1186,44 @@ const MessagesIndividualScreen = ({
     (firstName?.[0] || '') + (lastName?.[0] || '');
 
   useEffect(() => {
-    // Keyboard listeners to get keyboard height
-    // On Android, use keyboardDidShow for more reliable height capture (especially on Motorola devices)
     const showSub = Keyboard.addListener(
       Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
       e => {
         setKeyboardVisible(true);
 
-        // Capture the device's actual keyboard height
-        // Try multiple sources for maximum compatibility across devices
         let h =
           (e && e.endCoordinates && e.endCoordinates.height) ||
           (e && e.startCoordinates && e.startCoordinates.height) ||
           0;
 
-        // On Android, also calculate height from window dimensions change
-        // This is more reliable on some devices like Motorola Edge Fusion 60
         if (Platform.OS === 'android') {
           const currentWindowHeight = Dimensions.get('window').height;
           const heightDiff = windowHeightRef.current - currentWindowHeight;
-          // If window height decreased significantly, that's likely the keyboard
-          // Use the maximum of both methods to ensure accurate height
           if (heightDiff > 100) {
             h = Math.max(h, heightDiff);
-            // console.log(
-            //   'Keyboard height - event:',
-            //   (e && e.endCoordinates && e.endCoordinates.height) || 0,
-            //   'window diff:',
-            //   heightDiff,
-            //   'using:',
-            //   h,
-            // );
           }
-          // Update reference for next calculation
           windowHeightRef.current = currentWindowHeight;
         }
 
         setKeyboardHeight(h);
-
-        // CRITICAL: Store the keyboard height for emoji keyboard to match device-specific height
-        // This ensures emoji picker height matches the exact keyboard height on this device
-        // Use the maximum height seen to handle cases where height might change slightly
         if (h > 0) {
           setLastKeyboardHeight(prev => {
-            // Use the maximum height to ensure we capture the full keyboard height
-            // This is important for devices like Motorola Edge Fusion 60 where height might vary
             const newHeight = Math.max(prev, h);
             if (newHeight !== prev) {
-              // console.log(
-              //   'Keyboard height captured:',
-              //   h,
-              //   'Max height:',
-              //   newHeight,
-              //   'Device will use this for emoji picker',
-              // );
             }
             return newHeight;
           });
         }
 
-        // On Android, also check height multiple times to ensure we get the final height
-        // Some devices (like Motorola Edge Fusion 60) might report height in stages or with slight delays
+        
         if (Platform.OS === 'android' && h > 0) {
-          // Check immediately with Keyboard.metrics() for more accurate height
           try {
             const metrics = Keyboard.metrics();
             if (metrics && metrics.height && metrics.height > 0) {
               const metricsHeight = metrics.height;
               setLastKeyboardHeight(prev => {
-                // Use the maximum of all methods to ensure accurate height
                 const maxHeight = Math.max(prev, h, metricsHeight);
                 if (maxHeight !== prev) {
-                  // console.log(
-                  //   'Keyboard height from metrics (immediate):',
-                  //   metricsHeight,
-                  //   'event:',
-                  //   h,
-                  //   'Max height:',
-                  //   maxHeight,
-                  // );
                 }
                 return maxHeight;
               });
@@ -2004,7 +1799,6 @@ const MessagesIndividualScreen = ({
                 paddingTop: Platform.OS === 'ios' ? 0 : 0,
               }}
             >
-              {/* //------------------Add Button -------------------// */}
 
               <TouchableOpacity
                 onPress={() => {

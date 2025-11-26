@@ -34,6 +34,7 @@ import AnimatedReanimated, {
 } from 'react-native-reanimated';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
+import { Constant } from '../../utils/Constant';
 
 type previewDetailsProps = {
   navigation: any;
@@ -59,14 +60,13 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const screenWidth = Dimensions.get('window').width;
   const [activeIndex, setActiveIndex] = useState(0);
   const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
-  const insets = useSafeAreaInsets(); // Safe area insets
+  const insets = useSafeAreaInsets(); 
   const [categoryid, setcategoryid] = useState(0);
   const { height } = Dimensions.get('window');
 
-  const [fields, setFields] = useState<any[]>([]); // seller fields from API
+  const [fields, setFields] = useState<any[]>([]);
   const today = new Date();
 
-  // Format as DD-MM-YYYY
   const formattedDate = `${today.getDate().toString().padStart(2, '0')}-${(today.getMonth() + 1)
     .toString()
     .padStart(2, '0')}-${today.getFullYear()}`;
@@ -323,13 +323,10 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
   const listProduct = async () => {
     console.log('🔵 handleListPress called');
-    //setShowPopup(true);
     try {
 
       const paymentintent_id = await AsyncStorage.getItem("paymentintent_id");
-      console.log('Step 1: Fetching formData from AsyncStorage...');
       const storedData = await AsyncStorage.getItem('formData');
-      console.log('✅ AsyncStorage.getItem(formData) result:', storedData);
 
       if (!storedData) {
         console.log('⚠️ No form data found in storage');
@@ -343,7 +340,6 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
       > = JSON.parse(storedData);
       console.log('✅ Parsed formData:', formData);
 
-      console.log('Step 2: Fetching userToken...');
       const token = await AsyncStorage.getItem('userToken');
       const productId1 = await AsyncStorage.getItem('selectedProductId');
 
@@ -351,8 +347,6 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
         console.log('⚠️ Token not found. Cannot upload.');
         return;
       }
-
-      console.log('Step 3: Splitting formData...');
 
       const imageFields = Object.entries(formData)
         .filter(([key, obj]) => {
@@ -374,19 +368,13 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
       });
 
       console.log('✅ Non-image fields:', nonImageFields);
-      console.log('✅ Image fields:', imageFields);
 
       const dataArray = nonImageFields.map(([key, obj]) => ({
         id: Number(key),
-        param_value: obj.value, // now take .value
+        param_value: obj.value, 
       }));
 
       console.log('✅ Data array for create API:', dataArray);
-
-      //  const createPayload = {
-      //   category_id: productId1, 
-      //   data: dataArray,
-      // };
 
       const createPayload = {
         category_id: productId1,
@@ -423,21 +411,14 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
       const feature_id = createJson?.data?.id;
       if (!feature_id) {
-        console.log('❌ feature_id not returned from create API.');
         showToast('feature_id missing in response');
         return;
       }
       console.log('✅ feature_id from create API:', feature_id);
 
       for (const [param_id, images] of imageFields) {
-        console.log(`Step 7: Uploading images for param_id=${param_id}`);
 
         for (const image of images) {
-          console.log(
-            `🟡 Preparing upload for image under param_id=${param_id}:`,
-            image,
-          );
-
           const data = new FormData();
           data.append('files', {
             uri: image.uri,
@@ -450,10 +431,6 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
           console.log('✅ FormData prepared for upload');
 
           const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-upload`;
-          console.log(
-            `Step 7: Uploading image ${image.name} with param_id=${param_id} to ${uploadUrl}`,
-          );
-
           const uploadRes = await fetch(uploadUrl, {
             method: 'POST',
             headers: {
@@ -480,12 +457,11 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
       }
 
       console.log('✅ All uploads done. Showing toast.');
-      showToast('All data uploaded successfully');
+      showToast(Constant.DATA_UPLOAD,'success');
       setShowPopup(true);
     }
     catch (error) {
       console.log('❌ Error in handleListPress:', error);
-      showToast('Error uploading data');
     }
   };
 
@@ -550,33 +526,15 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
     >
       <View style={styles.fullScreenContainer}>
 
-        {/* <View style={styles.header}>
-           <View style={styles.headerRow}>
-         <TouchableOpacity onPress={() => navigation.replace('PreviewThumbnail')}>          
-         <View style={styles.backIconRow}>
-           <Image
-              source={require('../../../assets/images/back.png')}
-               style={{ height: 24, width: 24 }}/>
-            </View>
-          </TouchableOpacity>
-        <Text allowFontScaling={false} style={styles.unizyText}>Preview Details</Text>
-          <View style={{ width: 48 }} />
-          </View>
-        </View> */}
-
-
         <StatusBar
           translucent
           backgroundColor="transparent"
           barStyle="light-content"
         />
-
-        {/* Header with Blur only at top */}
         <AnimatedReanimated.View
           style={[styles.headerWrapper, animatedBlurStyle]}
           pointerEvents="none"
         >
-          {/* Blur layer only at top with gradient fade */}
           <MaskedView
             style={StyleSheet.absoluteFill}
             maskElement={
@@ -609,7 +567,6 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
           </MaskedView>
         </AnimatedReanimated.View>
 
-        {/* Header Content */}
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => navigation.replace('PreviewThumbnail')}
@@ -619,7 +576,6 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
             <AnimatedReanimated.View
               style={[styles.blurButtonWrapper, animatedButtonStyle]}
             >
-              {/* Static background (visible when scrollY = 0) */}
               <AnimatedReanimated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -636,7 +592,6 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                 ]}
               />
 
-              {/* Blur view fades in as scroll increases */}
               <AnimatedReanimated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -657,8 +612,6 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                   reducedTransparencyFallbackColor="transparent"
                 />
               </AnimatedReanimated.View>
-
-              {/* Back Icon */}
               <AnimatedReanimated.Image
                 source={require('../../../assets/images/back.png')}
                 style={[{ height: 24, width: 24 }, animatedIconStyle]}
@@ -671,16 +624,12 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
           </Text>
         </View>
 
-
-
-
-
         <AnimatedReanimated.ScrollView
           scrollEventThrottle={16}
           onScroll={scrollHandler}
           contentContainerStyle={[
             styles.scrollContainer,
-            { paddingBottom: height * 0.1 }, // 0.05% of screen height
+            { paddingBottom: height * 0.1 }, 
           ]}>
 
           <View style={{ marginTop: (Platform.OS === 'ios'? 10:12) }}>
@@ -693,8 +642,6 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                   justifyContent: 'center',
                   height: 270,
                   width: '100%',
-
-
                 }}
               >
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
@@ -756,8 +703,6 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                     />
                   )}
                 />
-
-                {/* Custom Step Indicator */}
                 <View style={styles.stepIndicatorContainer}>
                   {storedForm[6].value.map((_: any, index: number) => {
                     const isActive = index === activeIndex;
