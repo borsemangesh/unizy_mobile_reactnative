@@ -97,52 +97,102 @@ showToast('Min 8 chars: upper, lower, number, symbol.', 'error');
     return;
   }
 
+  // try {
+  //   const token = await AsyncStorage.getItem('userToken');
+  //   const userId = await AsyncStorage.getItem('userId');
+
+  //   if (!token || !userId) {
+  //     showToast("User authentication is missing.", "error");
+  //     return;
+  //   }
+
+  //   const url = `${MAIN_URL.baseUrl}user/update-password`;
+
+  //   const body = {
+  //     current_password,
+  //     new_password,
+  //     confirm_password
+  //   };
+
+  //   const response = await fetch(url, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${token}`
+  //     },
+  //     body: JSON.stringify(body)
+  //   });
+
+  //   const data = await response.json();
+
+  //   if (response.ok) {
+  //     showToast(data?.message || "Password updated successfully", "success");
+
+  //     // Clear fields
+  //     setUserMeta({
+  //       current_password: "",
+  //       new_password: "",
+  //       confirm_password: ""
+  //     });
+
+  //     navigation.nevigate("EditProfile");
+  //   } else {
+  //     showToast(data?.message || "Failed to update password. Please try again", "error");
+  //   }
+  // } catch (error) {
+  //   console.error("Error during password update:", error);
+  //   showToast("An unexpected error occurred.", "error");
+  // }
+
+
   try {
-    const token = await AsyncStorage.getItem('userToken');
-    const userId = await AsyncStorage.getItem('userId');
+  const token = await AsyncStorage.getItem("userToken");
 
-    if (!token || !userId) {
-      showToast("User authentication is missing.", "error");
-      return;
-    }
+  if (!token) {
+    showToast("User authentication is missing.", "error");
+    return;
+  }
 
-    const url = `${MAIN_URL.baseUrl}user/update-password`;
+  const url = `${MAIN_URL.baseUrl}user/update-password`;
 
-    const body = {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
       current_password,
       new_password,
-      confirm_password
-    };
+      confirm_password,
+    }),
+  });
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify(body)
+  let data = null;
+
+  try {
+    data = await response.json();
+  } catch {
+    data = {};
+  }
+
+  if (response.ok) {
+    showToast(data?.message || "Password updated successfully", "success");
+
+    setUserMeta({
+      current_password: "",
+      new_password: "",
+      confirm_password: "",
     });
 
-    const data = await response.json();
-
-    if (response.ok) {
-      showToast(data?.message || "Password updated successfully", "success");
-
-      // Clear fields
-      setUserMeta({
-        current_password: "",
-        new_password: "",
-        confirm_password: ""
-      });
-
-      navigation.nevigate("EditProfile");
-    } else {
-      showToast(data?.message || "Failed to update password. Please try again", "error");
-    }
-  } catch (error) {
-    console.error("Error during password update:", error);
-    showToast("An unexpected error occurred.", "error");
+    navigation.navigate("EditProfile");
+  } else {
+    showToast(data?.message || "Failed to update password", "error");
   }
+} catch (error) {
+  console.log("Update Password Error:", error);
+  showToast("An unexpected error occurred.", "error");
+}
 };
 
   return (
@@ -325,13 +375,13 @@ showToast('Min 8 chars: upper, lower, number, symbol.', 'error');
               </Text>
             </TouchableOpacity>
 
-            <Text
+            {/* <Text
               allowFontScaling={false}
               style={styles.forgetText}
               onPress={() => navigation.goBack()}
             >
               Forgot Password?
-            </Text>
+            </Text> */}
           </View>
         </KeyboardAvoidingView>
       </View>
