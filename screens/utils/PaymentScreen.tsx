@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { showToast } from './component/NewCustomToastManager';
 import Loader from './component/Loader';
+import { Constant } from './Constant';
 
 
 type RootStackParamList = {
@@ -88,18 +89,7 @@ const PaymentScreen :React.FC<PaymentScreenProps> = ({ navigation }) => {
       await AsyncStorage.setItem("finalamount", String(famount));
  
       await AsyncStorage.setItem("paymentintent_id", paymentintent_id);
-      // const pi = clientSecret as any; // ✅ cast it
- 
-      //   const paymentData = {
-      //     transactionId: pi.id,
-      //     status: pi.status,
-      //     //amount: pi.amount,
-      //     //currency: pi.currency,
-      //    // timestamp: new Date().toISOString(),
-      //   };
-      // await AsyncStorage.setItem("last_payment", JSON.stringify(paymentData));
-      // console.log("Stored payment:", paymentData);
- 
+      
       return {
         clientSecret,
         ephemeralKey,
@@ -135,31 +125,10 @@ const PaymentScreen :React.FC<PaymentScreenProps> = ({ navigation }) => {
       openSheet();
     } else {
       setLoading(false);
-      showToast("Failed to init payment sheet", "error");
+      showToast(Constant.PAYMENT_FAIL, "error");
     }
 };
  
- 
- 
- 
-  //  const openSheet = async () => {
-  //   const { error } = await presentPaymentSheet();
- 
-  //   if (error) {
-  //     if (error.code === 'Canceled') {
-  //     // 👇 User dismissed payment sheet manually
-  //     console.log('User cancelled payment');
-  //     navigation.goBack(); // ✅ Return to previous screen
-  //     return;
-  //   }
-  //     showToast(`Payment failed: ${error.message}`);
-  //   }
-  // else {
-  //     showToast("Payment successful!");
-  //     if (onSuccess) await onSuccess();
-  //     navigation.goBack();
-  //   }
-  // };
  
  const openSheet = async () => {
   try {
@@ -173,17 +142,17 @@ const PaymentScreen :React.FC<PaymentScreenProps> = ({ navigation }) => {
       }
  
       console.log('Payment failed:', error);
-      showToast(`Payment failed: Please try again.`, 'error');
+      showToast(Constant.PAYMENT_FAIL, 'error');
       return;
     }
  
-    showToast('Payment completed successfully!');
+    showToast(Constant.PAYMENT_COMPLETE,'success');
     if (onSuccess) await onSuccess();
     navigation.goBack();
  
   } catch (e) {
     console.error('Unexpected error during payment:', e);
-    showToast('Something went wrong. Please try again.', 'error');
+    showToast(Constant.SOMTHING_WENT_WRONG, 'error');
   }
 };
  

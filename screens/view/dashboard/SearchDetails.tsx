@@ -40,6 +40,7 @@ import AnimatedReanimated, {
 import MaskedView from '@react-native-masked-view/masked-view';
 import SelectFoodQuantity from '../../utils/component/SelectFoodQuantity';
 import SelectFoodQuantity_IOS from '../../utils/component/SelectFoodQuantity_IOS';
+import { Constant } from '../../utils/Constant';
 
 type SearchDetailsProps = {
   navigation: any;
@@ -519,7 +520,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
           data.data?.order_otp?.toString() || '',
         );
 
-        showToast(' Purchased successfully!', 'success');
+        showToast(Constant.PURCHASE_SUCCESS, 'success');
         setShowPopup1(true);
       } else {
         showToast(

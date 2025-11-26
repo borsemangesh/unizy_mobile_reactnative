@@ -49,6 +49,7 @@ import AnimatedReanimated, {
 } from 'react-native-reanimated';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
+import { Constant } from '../../utils/Constant';
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImg = require('../../../assets/images/user.jpg');
@@ -179,8 +180,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     const fetchFields = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
-
-        // const productId1 = await AsyncStorage.getItem('selectedProductId');
         if (!token) {
           console.log('No token found');
           return;
@@ -279,8 +278,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     if (expanded) {
       Animated.timing(animatedHeight, {
         toValue: 1,
-        duration: 800, // slow expansion
-        useNativeDriver: false, // height cannot use native driver
+        duration: 800, 
+        useNativeDriver: false, 
       }).start();
     }
   }, [expanded]);
@@ -311,7 +310,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
       ...prev,
       [fieldId]: {
         value: value,
-        alias_name: aliasName ?? null, // null if no alias_name
+        alias_name: aliasName ?? null, 
       },
     }));
   };
@@ -474,9 +473,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             (Array.isArray(value) && value.length === 0)
           ) {
             if (field_type.toLowerCase() === 'image') {
-              showToast(`${field.param.field_name} are mandatory`, 'error');
+              showToast(`${field.param.field_name} ${Constant.ARE_MAN}`, 'error');
             } else {
-              showToast(`${field.param.field_name} is mandatory`, 'error');
+              showToast(`${field.param.field_name} ${Constant.IS_MAN}`, 'error');
             }
             return;
           }
@@ -535,7 +534,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
       navigation.navigate('PreviewThumbnail');
     } catch (error) {
       console.log('Error saving form data: ', error);
-      showToast('Failed to save form data');
+      showToast(Constant.DATA_NOT_SAVE,'error');
     }
   };
 
@@ -877,7 +876,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
         const handleImageSelect = () => {
           if (uploadedImages.length >= maxvalue) {
-            showToast(`Maximum ${maxvalue} images allowed`);
+            showToast(`${Constant.MAXIMUM} ${maxvalue} ${Constant.IMAGE_ALLOWED}`);
             return;
           }
           handleSelectImage();

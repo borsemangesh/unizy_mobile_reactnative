@@ -39,6 +39,7 @@ import {
   RESULTS,
   openSettings,
 } from 'react-native-permissions';
+import { Constant } from '../../utils/Constant';
 
 type changePasswordProps = {
   navigation: any;
@@ -68,17 +69,14 @@ const [showConfirm, setShowConfirm] = useState(false);
 
   const { current_password, new_password, confirm_password } = userMeta;
 
-
-
-
  if (  !current_password?.trim() ||  !new_password?.trim() ||  !confirm_password?.trim()) {
-  showToast("All fields are required", "error");
+  showToast(Constant.REQUIRED_ALL_FIELDS, "error");
   return;
 }
 
 
   if (current_password === new_password) {
-    showToast("New password must be different from current password", "error");
+    showToast(Constant.NEW_VALID_PASSWORD, "error");
     return;
   }
 
@@ -86,70 +84,23 @@ const [showConfirm, setShowConfirm] = useState(false);
 const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]|:;"'<>,.?/]).{8,}$/;
 
-if (!passwordRegex.test(new_password.trim())) {
-showToast('Min 8 chars: upper, lower, number, symbol.', 'error');
-  return;
-}
-
-
-  if (new_password !== confirm_password) {
-    showToast("New password and Confirm password do not match", "error");
+  if (!passwordRegex.test(new_password.trim())) {
+  showToast(Constant.PASSWORD_VALID, 'error');
     return;
   }
 
-  // try {
-  //   const token = await AsyncStorage.getItem('userToken');
-  //   const userId = await AsyncStorage.getItem('userId');
 
-  //   if (!token || !userId) {
-  //     showToast("User authentication is missing.", "error");
-  //     return;
-  //   }
-
-  //   const url = `${MAIN_URL.baseUrl}user/update-password`;
-
-  //   const body = {
-  //     current_password,
-  //     new_password,
-  //     confirm_password
-  //   };
-
-  //   const response = await fetch(url, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: `Bearer ${token}`
-  //     },
-  //     body: JSON.stringify(body)
-  //   });
-
-  //   const data = await response.json();
-
-  //   if (response.ok) {
-  //     showToast(data?.message || "Password updated successfully", "success");
-
-  //     // Clear fields
-  //     setUserMeta({
-  //       current_password: "",
-  //       new_password: "",
-  //       confirm_password: ""
-  //     });
-
-  //     navigation.nevigate("EditProfile");
-  //   } else {
-  //     showToast(data?.message || "Failed to update password. Please try again", "error");
-  //   }
-  // } catch (error) {
-  //   console.error("Error during password update:", error);
-  //   showToast("An unexpected error occurred.", "error");
-  // }
+  if (new_password !== confirm_password) {
+    showToast(Constant.PASSWORDS_DO_NOT_MATCH, "error");
+    return;
+  }
 
 
   try {
   const token = await AsyncStorage.getItem("userToken");
 
   if (!token) {
-    showToast("User authentication is missing.", "error");
+    showToast(Constant.USER_NOT_AUTH, "error");
     return;
   }
 
@@ -191,7 +142,7 @@ showToast('Min 8 chars: upper, lower, number, symbol.', 'error');
   }
 } catch (error) {
   console.log("Update Password Error:", error);
-  showToast("An unexpected error occurred.", "error");
+  showToast(Constant.SOMTHING_WENT_WRONG, "error");
 }
 };
 

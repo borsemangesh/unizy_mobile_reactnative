@@ -26,7 +26,7 @@ type TransactionPropos = {
 
 interface TransactionItem {
   total_earning: number;
-  total_orders:number
+  total_orders: number
   title: string;
   price: string;
   status: string;
@@ -36,12 +36,12 @@ interface TransactionItem {
   viewUrl?: string;
   order_otp: number;
   featureId: number;
-  category_logo:string;
+  category_logo: string;
   feature_idNew: number;
   amount: string;
-  purchased_quantity?:number
-  category_id:number;
-  hours?:number
+  purchased_quantity?: number
+  category_id: number;
+  hours?: number
 }
 
 interface TransactionSection {
@@ -54,7 +54,7 @@ const productImage = require('../../../assets/images/producticon.png');
 const totalEaning = require('../../../assets/images/totalearnings.png');
 export default function TransactionHistoryScreen(
   navigation: TransactionPropos,
-  
+
 ) {
 
   const navigation1: NavigationProp<any> = useNavigation();
@@ -77,14 +77,14 @@ export default function TransactionHistoryScreen(
   const bubbleX = useRef(new Animated.Value(0)).current;
 
   const [activeTab, setActiveTab] = useState<string>('Purchases');
-  const [overallEarning,setOverallEarning] = useState(0);
+  const [overallEarning, setOverallEarning] = useState(0);
 
   const tabs = [{ key: 'Purchases' }, { key: 'Sales' }, { key: 'Charges' }];
   const [isFilterVisible, setFilterVisible] = useState(false);
   const [SalesImageUrl, setSalesImageUrl] = useState('');
   const { height } = Dimensions.get('window');
 
- useEffect(() => {
+  useEffect(() => {
     if (issales) {
       setActiveTab('Sales');   // Switch to Sales tab automatically
     }
@@ -140,13 +140,13 @@ export default function TransactionHistoryScreen(
         let url = '';
         if (selectedTab === 'Purchases') {
           url = `${MAIN_URL.baseUrl}transaction/purchase`;
-        }  if (selectedTab === 'Sales') {
+        } if (selectedTab === 'Sales') {
           url = `${MAIN_URL.baseUrl}transaction/sales`;
-        }  if (selectedTab === 'Charges') {
+        } if (selectedTab === 'Charges') {
           url = `${MAIN_URL.baseUrl}transaction/charges`;
         }
 
-        console.log("TokenTransaction: ",token);
+        console.log("TokenTransaction: ", token);
         const response = await fetch(url, {
           method: 'GET',
           headers: {
@@ -171,51 +171,50 @@ export default function TransactionHistoryScreen(
           return;
         }
 
-        
+
         let formatted: TransactionSection[] = [];
 
         if (selectedTab === 'Purchases' && Array.isArray(json.data)) {
           formatted = json.data.map((section: any) => ({
             date: section.date,
             items: section.transactions.map((item: any) => ({
-              title: item.title ,
+              title: item.title,
               price: `£${item.amount}`,
-              status: item.order_status,        
-              code: item.status,   
+              status: item.order_status,
+              code: item.status,
               seller: item.purchased_from,
               university: item.university_name,
               order_otp: item.order_otp,
               category_logo: item.category_logo,
-              purchased_quantity:item.purchased_quantity ?? 0,
-              category_id:item.category_id,
-              hours:item.hours ?? 0
+              purchased_quantity: item.purchased_quantity ?? 0,
+              category_id: item.category_id,
+              hours: item.hours ?? 0
             })),
           }));
-       
-        }  if (selectedTab === 'Sales' && json.data?.sales_history) {
+
+        } if (selectedTab === 'Sales' && json.data?.sales_history) {
           setOverallEarning(json.data.total_earning),
-          // Sales API response
-          formatted = json.data.sales_history.map((section: any) => ({
-           
-            date: section.date,
-           total_sales: section.total_sales,
-            items: section.transactions.map((item: any) => ({
-              title: item.title,
-              price: `£${item.amount}`,
-              status: item.status,
-              code: '', // no code in sales example
-              seller: item.sold_to,
-              amount: item.amount,
-              university: item.university_name, // extra data if needed
-              category_logo: item.category_logo,
-              feature_idNew: item.id,
-              featureId: item.id,  
-              total_sales: item.total_sales,
-              total_orders:item.total_orders,
-              total_earning:item.total_earning
-            })),
-          }));
-        }  
+            formatted = json.data.sales_history.map((section: any) => ({
+
+              date: section.date,
+              total_sales: section.total_sales,
+              items: section.transactions.map((item: any) => ({
+                title: item.title,
+                price: `£${item.amount}`,
+                status: item.status,
+                code: '',
+                seller: item.sold_to,
+                amount: item.amount,
+                university: item.university_name,
+                category_logo: item.category_logo,
+                feature_idNew: item.id,
+                featureId: item.id,
+                total_sales: item.total_sales,
+                total_orders: item.total_orders,
+                total_earning: item.total_earning
+              })),
+            }));
+        }
         if (selectedTab === 'Charges' && json.data?.charges_history) {
           formatted = json.data.charges_history.map((section: any) => ({
             date: section.date,
@@ -224,9 +223,9 @@ export default function TransactionHistoryScreen(
               price: `£${item.listing_fee}`,
               status: item.payment_status,
               code: '',
-              featureId: item.feature_id,           // ✅ Correct field name
-              viewUrl: item.view_listing_url,       // ✅ Matches your interface
-              order_otp: 0,                         // placeholder to satisfy your interface
+              featureId: item.feature_id,
+              viewUrl: item.view_listing_url,
+              order_otp: 0,
               category_logo: item.category_logo,
               feature_idNew: item.feature_id
             })),
@@ -248,33 +247,32 @@ export default function TransactionHistoryScreen(
 
     setLoading(true);
     fetchTransactions();
-  }, [selectedTab]); 
+  }, [selectedTab]);
 
   const getFormattedDate = (dateString: string) => {
     const parts = dateString.split(" ");
     if (parts.length !== 3) return dateString;
-  
+
     const [dayStr, monthStr, yearStr] = parts;
     const day = parseInt(dayStr);
-  
+
     if (isNaN(day)) return dateString;
-  
+
     // Add suffix
     const suffix =
       day % 10 === 1 && day !== 11
         ? "st"
         : day % 10 === 2 && day !== 12
-        ? "nd"
-        : day % 10 === 3 && day !== 13
-        ? "rd"
-        : "th";
-  
-    // Convert full month to short month
+          ? "nd"
+          : day % 10 === 3 && day !== 13
+            ? "rd"
+            : "th";
+
     const shortMonth = monthStr.substring(0, 3);
-  
+
     return `${day}${suffix} ${shortMonth} ${yearStr}`;
   };
-  const [catagoryid,setCatagoryid] = useState(0)
+  const [catagoryid, setCatagoryid] = useState(0)
 
   const [salesData, setSalesData] = useState<any[]>([]);
   const [salesTitle, setSalesTitle] = useState('');
@@ -288,12 +286,10 @@ export default function TransactionHistoryScreen(
         console.log('No token found');
         return;
       }
-  
-      // Construct the URL
+
       const url = `${MAIN_URL.baseUrl}transaction/sales-history?feature_id=${catagory_id}`;
       console.log('SalesHistory URL:', url);
-  
-      // Make the API call
+
       const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -301,30 +297,26 @@ export default function TransactionHistoryScreen(
           Authorization: `Bearer ${token}`,
         },
       });
-  
-      // Handle response status codes
+
       if (response.status === 401 || response.status === 403) {
         // handleForceLogout();
         return;
       }
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-  
-      // Parse the JSON response
+
       const json = await response.json();
       console.log("SalesHistory Response:", json);
-  
+
       if (json.statusCode === 401 || json.statusCode === 403) {
         // handleForceLogout();
         return;
       }
-  
-      // Update the sales data
       setSalesData(json);
       setFilterVisible(true);
-  
+
     } catch (err) {
       console.log('Error fetching sales history:', err);
     } finally {
@@ -334,11 +326,11 @@ export default function TransactionHistoryScreen(
 
 
   const [isSelected, setIsSelected] = useState(false);
-  
+
   return (
     <View
       style={[
-        { flex: 1,marginTop: 11, paddingHorizontal: 16, height: '100%', width: '100%' },
+        { flex: 1, marginTop: 11, paddingHorizontal: 16, height: '100%', width: '100%' },
       ]}
     >
       <View style={[styles.bottomTabContainer]}>
@@ -399,7 +391,6 @@ export default function TransactionHistoryScreen(
                 />
               )}
 
-            {/* Divider after Sales */}
             {key === 'Sales' &&
               index !== tabs.length - 1 &&
               selectedTab !== 'Sales' &&
@@ -461,16 +452,9 @@ export default function TransactionHistoryScreen(
                           alignItems: 'center',
                         }}
                       >
-                        {/* <View style={styles.imgcontainer}>
-                          <Image
-                            source={{ uri: item.category_logo }}
-                            style={styles.image}
-                            resizeMode="cover"
-                          />
-                        </View> */}
                         <View >
                           <Image source={background} style={styles.imgcontainer} resizeMode="cover" />
-                          <Image  source={{ uri: item.category_logo }} style={styles.image} resizeMode="cover" />
+                          <Image source={{ uri: item.category_logo }} style={styles.image} resizeMode="cover" />
                         </View>
                         <View style={{ gap: 4 }}>
                           <Text
@@ -481,55 +465,34 @@ export default function TransactionHistoryScreen(
                               ? `${item.title.substring(0, 24)}...`
                               : item.title}
                           </Text>
-                          <View style={{flexDirection: 'row', gap: 4,width: '91%',justifyContent: 'space-between'}}>
+                          <View style={{ flexDirection: 'row', gap: 4, width: '91%', justifyContent: 'space-between' }}>
                             <Text allowFontScaling={false} style={styles.price}>
                               {item.price}
                             </Text>
-
-                            {/* <View style={styles.statusBox}>
-                              <Text
-                                allowFontScaling={false}
-                                style={[
-                                  
-                                  {
+                            {(item?.category_id === 3 || item?.category_id === 2 || item?.category_id === 5) && (
+                              <View style={styles.statusBox}>
+                                <Text
+                                  allowFontScaling={false}
+                                  style={{
                                     color: '#9CD6FF',
                                     fontWeight: '600',
                                     fontSize: 12,
                                     fontFamily: 'Urbanist-SemiBold',
-                                        
-                                  },
-                                ]}
-                              >
-                                {item?.purchased_quantity} units
-                              </Text>
-                            </View> */}
-
-                 {(item?.category_id === 3 || item?.category_id === 2 || item?.category_id === 5) && (
-                    <View style={styles.statusBox}>
-                      <Text
-                        allowFontScaling={false}
-                        style={{
-                          color: '#9CD6FF',
-                          fontWeight: '600',
-                          fontSize: 12,
-                          fontFamily: 'Urbanist-SemiBold',
-                        }}
-                      >
-                        {item?.category_id === 3
-                          ? 
-                            `${item?.purchased_quantity ?? 1} ${
-                              (item?.purchased_quantity ?? 1) > 1 ? 'units' : 'unit'
-                            }`
-                          : (item?.category_id === 2 || item?.category_id === 5)
-                          ? 
-                            `${item?.hours ?? 1} ${
-                              (item?.hours ?? 1) > 1 ? 'hours' : 'hour'
-                            }`
-                          : ''
-                        }
-                      </Text>
-                    </View>
-                  )}
+                                  }}
+                                >
+                                  {item?.category_id === 3
+                                    ?
+                                    `${item?.purchased_quantity ?? 1} ${(item?.purchased_quantity ?? 1) > 1 ? 'units' : 'unit'
+                                    }`
+                                    : (item?.category_id === 2 || item?.category_id === 5)
+                                      ?
+                                      `${item?.hours ?? 1} ${(item?.hours ?? 1) > 1 ? 'hours' : 'hour'
+                                      }`
+                                      : ''
+                                  }
+                                </Text>
+                              </View>
+                            )}
                           </View>
                         </View>
                       </View>
@@ -572,29 +535,18 @@ export default function TransactionHistoryScreen(
                   </View>
 
                   <View style={styles.cardconstinerdivider} />
-                 
-                   {/* <Text style={styles.sellerText}>Purchased from</Text>
-                    <Text
-                      allowFontScaling={false}
-                      numberOfLines={2}
-                      style={[styles.sellerTextName,{marginLeft: 4}]}
-                    >
+                  <Text style={styles.sellerText}>
+                    Purchased from{'  '}
+                    <Text style={styles.sellerTextName}>
                       {item.seller} ({item.university})
-                    </Text> */}
-                    <Text style={styles.sellerText}>
-                       Purchased from{'  '}
-                <Text style={styles.sellerTextName}>
-                  {item.seller} ({item.university})
-                </Text>
-              </Text>
+                    </Text>
+                  </Text>
                 </View>
               ))}
             </View>
           ))
         ) : selectedTab === 'Sales' ? (
-          // ✅ Sales UI (fixed so Overall Earnings shows only once)
           <>
-            {/* 🔹 Overall Earnings — show only once */}
             <View style={styles.chargesCard}>
               <View
                 style={{
@@ -604,16 +556,9 @@ export default function TransactionHistoryScreen(
                   width: '100%',
                 }}
               >
-                {/* <View style={styles.imgcontainer}>
-                  <Image
-                    source={totalEaning}
-                    style={{ width: 28, height: 28, resizeMode: 'cover' }}
-                    resizeMode="cover"
-                  />
-                </View> */}
                 <View >
                   <Image source={background} style={styles.imgcontainer} resizeMode="cover" />
-                  <Image   source={totalEaning} style={styles.image} resizeMode="cover" />
+                  <Image source={totalEaning} style={styles.image} resizeMode="cover" />
                 </View>
                 <View
                   style={{
@@ -636,14 +581,12 @@ export default function TransactionHistoryScreen(
                     allowFontScaling={false}
                     style={styles.Overall_Earnings_title}
                   >
-                    {/* {`£` + overallEarning} */}
                     {`£${Number(overallEarning).toFixed(2)}`}
                   </Text>
                 </View>
               </View>
             </View>
 
-            {/* 🔹 Sales transactions — loop through each section */}
             {transactions.map((section, idx) => (
               <View key={idx} style={styles.section}>
                 <Text allowFontScaling={false} style={styles.dateText1}>
@@ -667,17 +610,9 @@ export default function TransactionHistoryScreen(
                           gap: 12,
                         }}
                       >
-                        {/* <View style={styles.imgcontainer}>
-                          <Image
-                            // source={item.category_logo}
-                            source={{ uri: item.category_logo }}
-                            style={styles.image}
-                            resizeMode="cover"
-                          />
-                        </View> */}
                         <View >
                           <Image source={background} style={styles.imgcontainer} resizeMode="cover" />
-                          <Image  source={{ uri: item.category_logo }} style={styles.image} resizeMode="cover" />
+                          <Image source={{ uri: item.category_logo }} style={styles.image} resizeMode="cover" />
                         </View>
                         <Text style={styles.salesTitle}>
                           {item.title.length > 24
@@ -740,7 +675,6 @@ export default function TransactionHistoryScreen(
             ))}
           </>
         ) : (
-          // Charges UI (different layout)
           transactions.map((section, idx) => (
             <View key={idx} style={styles.section}>
               <Text allowFontScaling={false} style={styles.dateText}>
@@ -763,18 +697,10 @@ export default function TransactionHistoryScreen(
                         justifyContent: 'center',
                       }}
                     >
-                      {/* <View style={styles.imgcontainer}>
-                        <Image
-                          
-                          source={{ uri: item.category_logo }}
-                          style={styles.image}
-                          resizeMode="cover"
-                        />
-                      </View> */}
-                       <View >
-                          <Image source={background} style={styles.imgcontainer} resizeMode="cover" />
-                          <Image  source={{ uri: item.category_logo }} style={styles.image} resizeMode="cover" />
-                        </View>
+                      <View >
+                        <Image source={background} style={styles.imgcontainer} resizeMode="cover" />
+                        <Image source={{ uri: item.category_logo }} style={styles.image} resizeMode="cover" />
+                      </View>
                       <Text
                         allowFontScaling={false}
                         style={styles.chargesTitle}
@@ -820,8 +746,8 @@ export default function TransactionHistoryScreen(
 
 
       {Platform.OS === 'android' ? (
-        <> 
-         <SalesAllDetailsDropdown
+        <>
+          <SalesAllDetailsDropdown
             catagory_id={catagoryid}
             visible={isFilterVisible}
             onClose={() => setFilterVisible(false)}
@@ -832,7 +758,7 @@ export default function TransactionHistoryScreen(
         </>
       ) : (
         <>
-        <SalesAllDetailsDropdown_IOS
+          <SalesAllDetailsDropdown_IOS
             catagory_id={catagoryid}
             visible={isFilterVisible}
             onClose={() => setFilterVisible(false)}
@@ -840,11 +766,11 @@ export default function TransactionHistoryScreen(
             salesDataResponse={salesData}
             dropDowntitle={salesTitle}
           />
-           
+
         </>
       )}
-    
-      
+
+
     </View>
   );
 }
@@ -866,27 +792,27 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    width:'100%',
+    width: '100%',
     height: '100%',
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    width:'100%',
-    height: (Platform.OS === 'ios' ? 570: 300),
+    width: '100%',
+    height: (Platform.OS === 'ios' ? 570 : 300),
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     borderWidth: 0.3,
     borderColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius:24,
-    overflow:'hidden',
-  
-    minHeight:'100%',
-  
-  //  marginBottom:20,
+    borderRadius: 24,
+    overflow: 'hidden',
+
+    minHeight: '100%',
+
+    //  marginBottom:20,
 
 
-//  marginBottom:20,
+    //  marginBottom:20,
   },
   emptyImage: {
     width: 50,
@@ -898,7 +824,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
-    fontWeight:600
+    fontWeight: 600
   },
   // cardconstinerdivider: {
   //   display: 'flex',
@@ -913,25 +839,25 @@ const styles = StyleSheet.create({
   //     'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)',
   // },
 
-   cardconstinerdivider: {
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  width: '100%',
-  height: (Platform.OS==='ios'? 2:1.5),
-  borderStyle: 'dashed',
-  borderBottomWidth:(Platform.OS==='ios'? 0.9:1),
-  // backgroundColor: 'rgba(169, 211, 255, 0.08)',
-  borderColor: (Platform.OS==='ios'?  'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)':'#4169B8'),
+  cardconstinerdivider: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    height: (Platform.OS === 'ios' ? 2 : 1.5),
+    borderStyle: 'dashed',
+    borderBottomWidth: (Platform.OS === 'ios' ? 0.9 : 1),
+    // backgroundColor: 'rgba(169, 211, 255, 0.08)',
+    borderColor: (Platform.OS === 'ios' ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)' : '#4169B8'),
   },
 
-  imgcontainer:{
+  imgcontainer: {
     width: 44,
     height: 44,
-    borderRadius: 12, 
+    borderRadius: 12,
     // padding:8,
-    alignItems:'center',
+    alignItems: 'center',
     alignSelf: 'center',
     justifyContent: 'center',
     borderWidth: 0.4,
@@ -940,12 +866,12 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxSizing: 'border-box'
-    },
+  },
   image: {
     width: 24,
     height: 24,
     resizeMode: 'contain',
-    position:'absolute',
+    position: 'absolute',
     top: 10,
     right: 10,
     bottom: 10,
@@ -959,7 +885,7 @@ const styles = StyleSheet.create({
   },
   activeTabButton: {
     backgroundColor: 'rgba(255, 255, 255, 0.16)',
-  
+
     boxShadow:
       '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25),rgba(76, 112, 242, 0.18) inset 0px -1.761px 0px 100px',
   },
@@ -987,7 +913,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginLeft: 5,
     fontFamily: 'Urbanist-SemiBold',
-    marginTop:6
+    marginTop: 6
   },
   card: {
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
@@ -1031,7 +957,7 @@ const styles = StyleSheet.create({
   },
 
   header: {
-    paddingTop: Platform.OS === 'ios' ? '19.5%'  : 50,
+    paddingTop: Platform.OS === 'ios' ? '19.5%' : 50,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },
@@ -1046,8 +972,8 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
     fontWeight: '600',
-     fontFamily: 'Urbanist-SemiBold',
-     width: '100%',
+    fontFamily: 'Urbanist-SemiBold',
+    width: '100%',
 
   },
   statusBox: {
@@ -1056,9 +982,9 @@ const styles = StyleSheet.create({
     paddingBottom: 2,
     paddingLeft: 6,
     paddingRight: 6,
-    gap:12,
+    gap: 12,
     borderRadius: 4,
-    justifyContent:'center',
+    justifyContent: 'center',
     height: 20,
   },
   statusText: {
@@ -1071,13 +997,13 @@ const styles = StyleSheet.create({
   },
   codeBox: {
     backgroundColor: 'rgba(255,255,255,0.15)',
-    height:24,
+    height: 24,
     paddingTop: 0,
     paddingBottom: 0,
     paddingLeft: 12,
     paddingRight: 8,
     borderRadius: 6,
-    justifyContent:'center'
+    justifyContent: 'center'
   },
   codeText: {
     color: '#fff',
@@ -1096,15 +1022,15 @@ const styles = StyleSheet.create({
     color: '#9CD6FF',
     fontSize: 12,
     fontWeight: '600',
-        // marginTop: 10,
+    // marginTop: 10,
     fontFamily: 'Urbanist-SemiBold',
-      },
-  sellerText_New:{
+  },
+  sellerText_New: {
     color: '#FFFFFF',
     fontSize: 12,
-       fontWeight: '600',
-       // marginTop: 10,
-       fontFamily: 'Urbanist-SemiBold',
+    fontWeight: '600',
+    // marginTop: 10,
+    fontFamily: 'Urbanist-SemiBold',
   },
 
   salesCard: {
@@ -1127,7 +1053,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 12,
-    textDecorationLine: 'underline',  marginTop: 2
+    textDecorationLine: 'underline', marginTop: 2
   },
 
   chargesCard: {
@@ -1144,13 +1070,13 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     fontFamily: 'Urbanist-SemiBold',
   },
-  Overall_Earnings_value:{
+  Overall_Earnings_value: {
     fontWeight: '600',
     fontSize: 17,
     color: '#fff',
     fontFamily: 'Urbanist-SemiBold',
   },
-  Overall_Earnings_title:{
+  Overall_Earnings_title: {
     fontWeight: '600',
     fontSize: 20,
     color: '#fff',
@@ -1167,7 +1093,7 @@ const styles = StyleSheet.create({
   //Tabls
 
   bottomTabContainer: {
-   
+
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1193,7 +1119,7 @@ const styles = StyleSheet.create({
     marginTop: -10,
   },
   bubble: {
-  
+
     height: 38,//'93%',
     backgroundColor: 'rgba(255, 255, 255, 0.16)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18)',

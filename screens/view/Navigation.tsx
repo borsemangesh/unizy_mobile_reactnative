@@ -50,6 +50,7 @@ import UserListing from './dashboard/UserListing';
 import UserAddReview from './dashboard/UserAddReview';
 import { navigationRef } from './NavigationService';
 import ChangePassword from './dashboard/ChangePassword';
+import { navigationReady } from '../utils/NotificationHandler';
 
 const Stack = createNativeStackNavigator();
 
@@ -71,7 +72,12 @@ export const Navigation = () => {
 
   enableScreens();
   return (
-    <NavigationContainer ref={navigationRef} linking={linking}>
+    <NavigationContainer ref={navigationRef} linking={linking}
+    
+    onReady={() => {
+    navigationReady.isReady = true;
+  }}
+    >
       <Stack.Navigator
         initialRouteName="SinglePage"
         screenOptions={{ headerShown: false, animation: 'none' }}

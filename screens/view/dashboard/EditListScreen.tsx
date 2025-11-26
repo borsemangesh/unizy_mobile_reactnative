@@ -43,6 +43,7 @@ import AnimatedReanimated, {
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { BlurView } from '@react-native-community/blur';
+import { Constant } from '../../utils/Constant';
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImg = require('../../../assets/images/user.jpg');
@@ -551,76 +552,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
       return false;
     }
   };
-  // const handlePreview = async (latestFormValues: any) => {
-  //   try {
-  //     for (const field of fields) {
-  //       // Use param if exists, otherwise field itself
-  //       const param = field.param || field;
-  //       const { id, field_type, field_name, alias_name, mandatory } = param;
-  //       const fieldId = String(id);
-
-  //       const nameToShow = alias_name || field_name || 'Unnamed Field';
-
-  //       // Try getting value by id first, then alias_name
-  //       let value =
-  //         latestFormValues[fieldId]?.value ??
-  //         latestFormValues[alias_name]?.value ??
-  //         '';
-
-  //       if (field_type?.toLowerCase() === 'image') {
-  //         value = uploadedImages;
-  //       }
-
-  //       if (mandatory) {
-  //         const isEmpty =
-  //           value === undefined ||
-  //           value === null ||
-  //           (typeof value === 'string' && value.trim() === '') ||
-  //           (Array.isArray(value) && value.length === 0);
-
-  //         if (isEmpty) {
-  //           console.log(
-  //             '❌ Missing mandatory field:',
-  //             nameToShow,
-  //             'Value:',
-  //             value,
-  //           );
-  //           showToast(`${nameToShow} is mandatory`, 'error');
-  //           return;
-  //         }
-  //       }
-  //     }
-
-  //     const dataToStore: any = { ...latestFormValues };
-
-  //     fields.forEach(field => {
-  //       const param = field.param || field;
-  //       const fieldType = param.field_type?.toLowerCase();
-
-  //       if (fieldType === 'image') {
-  //         const uploadedForField = uploadedImages.map(img => ({
-  //           id: img.id,
-  //           uri: img.uri,
-  //           name: img.name,
-  //         }));
-
-  //         dataToStore[String(param.id)] = {
-  //           value: uploadedForField,
-  //           alias_name: param.alias_name ?? null,
-  //         };
-  //       }
-  //     });
-
-  //     await AsyncStorage.setItem('formData1', JSON.stringify(dataToStore));
-  //     console.log('✅ Form data saved:', dataToStore);
-
-  //     navigation.navigate('EditPreviewThumbnail');
-  //   } catch (error) {
-
-  //     showToast('Failed to save form data');
-  //   }
-  // };
-
+  
 const handlePreview = async (latestFormValues: any) => {
   try {
     // ------------------ Mandatory validation ------------------
@@ -648,7 +580,7 @@ const handlePreview = async (latestFormValues: any) => {
           (Array.isArray(value) && value.length === 0);
 
         if (isEmpty) {
-          showToast(`${nameToShow} is mandatory`, 'error');
+          showToast(`${nameToShow} ${Constant.IS_MAN}`, 'error');
           return;
         }
       }
@@ -733,7 +665,7 @@ const handlePreview = async (latestFormValues: any) => {
     navigation.navigate('EditPreviewThumbnail');
   } catch (error) {
     console.log('Error:', error);
-    showToast('Failed to save form data');
+    showToast(Constant.DATA_NOT_SAVE,'error');
   }
 };
 
@@ -1148,7 +1080,7 @@ const handlePreview = async (latestFormValues: any) => {
 
         const handleImageSelect = () => {
           if (uploadedImages.length >= maxvalue) {
-            showToast(`Maximum ${maxvalue} images allowed`);
+            showToast(`${Constant.MAXIMUM} ${maxvalue} ${Constant.IMAGE_ALLOWED}`);
             return;
           }
           handleSelectImage();

@@ -57,7 +57,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       const userId = await AsyncStorage.getItem('userId');
-    
+
       if (!token || !userId) {
         console.warn('Missing token or userId');
         if (isInitialLoad) {
@@ -66,16 +66,15 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
         }
         return;
       }
-    
+
       let start = Date.now();
-    
+
       if (isInitialLoad) setInitialLoading(true);
-    
-      // Add timestamp to bust cache and ensure fresh data
+
       const timestamp = Date.now();
       const url = `${MAIN_URL.baseUrl}twilio/mychats?search=${query}&_t=${timestamp}`;
       console.log("twilioURL:", url);
-    
+
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -83,25 +82,25 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
           "Content-Type": "application/json",
         },
       });
-    
+
       const data = await response.json();
 
-      console.log("dataiii",data);
-      
-    
+      console.log("dataiii", data);
+
+
       if (!response.ok) {
         console.warn("Fetch failed:", data.message);
       } else {
         setStudentList(data?.data?.result || []);
       }
-    
+
       if (isInitialLoad) {
         let elapsed = Date.now() - start;
         let remaining = Math.max(0, 1000 - elapsed);
         await new Promise(r => setTimeout(r, remaining));
         setInitialLoading(false);
       }
-    
+
     } catch (error) {
       console.error("Chat setup failed:", error);
       if (isInitialLoad) {
@@ -109,53 +108,42 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
         setInitialLoading(false);
       }
     }
-    
+
   };
 
-
-
-  // Load initial data
   useEffect(() => {
     fetchUserChatData('', true);
   }, []);
 
-  // Refresh chat list when screen comes into focus (e.g., navigating back from individual chat)
   useFocusEffect(
     React.useCallback(() => {
-      // Skip initial mount - let the useEffect handle it
       if (isInitialMount.current) {
         return;
       }
-      
-      // Use retry logic with multiple attempts to ensure backend has synced messages
-      // This handles cases where messages take time to sync to the backend API
+
       const timeoutIds: NodeJS.Timeout[] = [];
-      const delays = [800, 1500, 2500]; // Progressive delays for retries
-      
+      const delays = [800, 1500, 2500];
+
       delays.forEach((delay, index) => {
         const timeoutId = setTimeout(() => {
           fetchUserChatData('', false);
         }, delay);
         timeoutIds.push(timeoutId);
       });
-      
+
       return () => {
-        // Clear all timeouts if component unmounts or focus changes
         timeoutIds.forEach(id => clearTimeout(id));
       };
     }, [])
   );
 
-  // Search with debounce - NO loader
   useEffect(() => {
-    // Skip on initial mount - let the initial load handle it
     if (isInitialMount.current) {
       isInitialMount.current = false;
       return;
     }
 
     if (search === '') {
-      // If search is cleared, reload initial data without showing loader
       fetchUserChatData('', false);
       return;
     }
@@ -167,90 +155,49 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
     return () => clearTimeout(delay);
   }, [search]);
 
-  // const formatTime = (dateString: string) => {
-  //   // if (!dateString) return "";
-  //   // const date = new Date(dateString);
-  //   // return date.toLocaleTimeString([], {
-  //   //   hour: "2-digit",
-  //   //   minute: "2-digit",
-  //   //   hour12: true,
-  //   // });
-
-  //   if (!dateString) return '';
-
-  //   const date = new Date(dateString);
-  //   const today = new Date();
-
-  //   // Strip time to compare only the day, month, year
-  //   const isToday =
-  //     date.getDate() === today.getDate() &&
-  //     date.getMonth() === today.getMonth() &&
-  //     date.getFullYear() === today.getFullYear();
-
-  //   if (isToday) {
-  //     return date.toLocaleTimeString([], {
-  //       hour: '2-digit',
-  //       minute: '2-digit',
-  //       hour12: true,
-  //     });
-  //   } else {
-  //     return date.toLocaleDateString('en-GB', {
-  //       day: '2-digit',
-  //       month: '2-digit',
-  //       year: 'numeric',
-  //     }); // Example: 29/01/2025
-  //   }
-  // };
-
-
   const formatTime = (dateString: string) => {
-  if (!dateString) return "";
+    if (!dateString) return "";
 
-  const date = new Date(dateString);
-  const today = new Date();
+    const date = new Date(dateString);
+    const today = new Date();
 
-  // Check for Today
-  const isToday =
-    date.getDate() === today.getDate() &&
-    date.getMonth() === today.getMonth() &&
-    date.getFullYear() === today.getFullYear();
+    const isToday =
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear();
 
-  if (isToday) {
-    return date.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
-  }
-
-  // ---- Format: 20th Nov 2025 ----
-  
-  const day = date.getDate();
-
-  // Add ordinal suffix
-  const getSuffix = (n: number) => {
-    if (n > 3 && n < 21) return "th";
-    switch (n % 10) {
-      case 1:
-        return "st";
-      case 2:
-        return "nd";
-      case 3:
-        return "rd";
-      default:
-        return "th";
+    if (isToday) {
+      return date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
     }
+
+
+    const day = date.getDate();
+
+    const getSuffix = (n: number) => {
+      if (n > 3 && n < 21) return "th";
+      switch (n % 10) {
+        case 1:
+          return "st";
+        case 2:
+          return "nd";
+        case 3:
+          return "rd";
+        default:
+          return "th";
+      }
+    };
+
+    const suffix = getSuffix(day);
+
+    const month = date.toLocaleString("en-GB", { month: "short" });
+    const year = date.getFullYear();
+
+    return `${day}${suffix} ${month} ${year}`;
   };
-
-  const suffix = getSuffix(day);
-
-  const month = date.toLocaleString("en-GB", { month: "short" });
-  const year = date.getFullYear();
-
-  return `${day}${suffix} ${month} ${year}`;
-};
-
-
 
 
   const getInitials = (firstName = '', lastName = '') => {
@@ -262,26 +209,26 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
   return (
     <View style={{ flex: 1, width: '100%', height: '100%' }}>
       <FlatList
-          data={studentList || []}
-          keyExtractor={(item, index) => {
-            'worklet';
-            return index.toString();
-          }}
-          ListHeaderComponent={
-            <View style={styles.search_container}>
-              <Image source={searchIcon} style={styles.searchIcon} />
-              <TextInput
-                allowFontScaling={false}
-                style={styles.searchBar}
-                placeholder="Search"
-                placeholderTextColor="#ccc"
-                selectionColor={'#fff'}
-                onChangeText={setSearch}
-                value={search}
-              />
-            </View>
-          }
-        renderItem={({ item: chat,index  }) => (
+        data={studentList || []}
+        keyExtractor={(item, index) => {
+          'worklet';
+          return index.toString();
+        }}
+        ListHeaderComponent={
+          <View style={styles.search_container}>
+            <Image source={searchIcon} style={styles.searchIcon} />
+            <TextInput
+              allowFontScaling={false}
+              style={styles.searchBar}
+              placeholder="Search"
+              placeholderTextColor="#ccc"
+              selectionColor={'#fff'}
+              onChangeText={setSearch}
+              value={search}
+            />
+          </View>
+        }
+        renderItem={({ item: chat, index }) => (
           <TouchableOpacity
             onPress={() => {
               navigation.navigate('MessagesIndividualScreen', {
@@ -322,28 +269,28 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
                       width: '100%',
                     }}
                   >
-                  <Text
-                    allowFontScaling={false}
-                    style={{
-                      fontSize: 16,
-                      fontWeight: '600',
-                      color: '#FFFFFF',
-                      fontFamily: 'Urbanist-SemiBold',
-                    }}
-                  >
-                    {chat?.members?.firstname} {chat?.members?.lastname}
-                  </Text>
-                  <Text
-                    allowFontScaling={false}
-                    style={{
-                      fontSize: 12,
-                      fontWeight: '500',
-                      color: '#FFFFFFA3',
-                      fontFamily: 'Urbanist-Medium',
-                    }}
-                  >
-                    {formatTime(chat?.last_message?.dateCreated)}
-                  </Text>
+                    <Text
+                      allowFontScaling={false}
+                      style={{
+                        fontSize: 16,
+                        fontWeight: '600',
+                        color: '#FFFFFF',
+                        fontFamily: 'Urbanist-SemiBold',
+                      }}
+                    >
+                      {chat?.members?.firstname} {chat?.members?.lastname}
+                    </Text>
+                    <Text
+                      allowFontScaling={false}
+                      style={{
+                        fontSize: 12,
+                        fontWeight: '500',
+                        color: '#FFFFFFA3',
+                        fontFamily: 'Urbanist-Medium',
+                      }}
+                    >
+                      {formatTime(chat?.last_message?.dateCreated)}
+                    </Text>
                   </View>
 
                   <View
@@ -386,24 +333,24 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
                           alignSelf: 'center',
                         }}
                       >
-                        {chat?.unreadcount >=9 ? '9+' : chat?.unreadcount}
+                        {chat?.unreadcount >= 9 ? '9+' : chat?.unreadcount}
                       </Text>
                     )}
                   </View>
                 </View>
               </View>
               {index !== studentList.length - 1 && (
-        <View
-          style={{
-            height: 1,
-            backgroundColor: 'rgba(255,255,255,0.2)',
-            marginTop: 10,
-            width: '100%',
-          }}
-        />
-      )}
+                <View
+                  style={{
+                    height: 1,
+                    backgroundColor: 'rgba(255,255,255,0.2)',
+                    marginTop: 10,
+                    width: '100%',
+                  }}
+                />
+              )}
             </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
         )}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
@@ -427,7 +374,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
             </View>
           ) : null
         }
-        />
+      />
       {initialLoading && (!studentList || studentList.length === 0) && (
         <Loader
           containerStyle={{
@@ -445,30 +392,6 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
           }}
         />
       )}
-      {/* {!initialLoading && search !== '' && (!studentList || studentList.length === 0) ? (
-        <View
-        pointerEvents="none"   
-          style={{
-          position: 'absolute',
-          top: 190,
-          left: 0,
-          right: 0,
-          alignItems: 'center',
-          paddingTop: 10,
-        }}
-        >
-          <View style={styles.emptyContainer}>
-            <Image
-              source={require('../../../assets/images/noproduct.png')}
-              style={styles.emptyImage}
-              resizeMode="contain"
-            />
-            <Text allowFontScaling={false} style={styles.emptyText}>
-              No Messages found
-            </Text>
-          </View>
-        </View>
-      ) : null} */}
     </View>
   );
 };
@@ -481,7 +404,6 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    // marginRight: 12,
   },
   initialsText: {
     color: '#fff',
@@ -523,7 +445,6 @@ const styles = StyleSheet.create({
   },
   searchIcon: {
     padding: Platform.OS === 'ios' ? 0 : 5,
-    // margin: 10,
     height: 24,
     width: 24,
   },

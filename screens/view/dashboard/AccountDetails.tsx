@@ -178,15 +178,12 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
   useFocusEffect(
     useCallback(() => {
       return () => {
-        // Reset flag when screen loses focus
         isFromOnboarding.current = false;
       };
     }, []),
   );
 
-  // Helper function to check if bank data is present (indicates onboarding was completed)
   const hasBankData = () => {
-    // Check if merchant data exists
     if (!data?.stripeAccount?.merchant) {
       return false;
     }
@@ -194,9 +191,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
     const merchants = Array.isArray(data.stripeAccount.merchant)
       ? data.stripeAccount.merchant
       : [data.stripeAccount.merchant];
-    
-    // Check if there's at least one merchant with actual bank details
-    // This is the most reliable indicator that onboarding was completed successfully
+  
     const hasActualBankData = merchants.some(
       (bank: any) =>
         bank &&
@@ -206,24 +201,18 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
     return hasActualBankData;
   };
 
-  // Show success popup only once when redirected from onboarding AND bank data is present
   useEffect(() => {
     const checkAndShowPopup = async () => {
-      // Don't show if not coming from onboarding
       if (!showSuccess) {
         return;
       }
-
-      // Mark that we're coming from onboarding
       isFromOnboarding.current = true;
 
-      // Wait for data to be loaded
       if (loading || !data) {
         console.log('Waiting for data to load...');
         return;
       }
 
-      // Check if bank data is actually present
       const hasData = hasBankData();
       console.log('Bank data check - hasData:', hasData);
 
@@ -232,7 +221,6 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
         return;
       }
 
-      // Check if popup was already shown for this session
       const popupShown = await AsyncStorage.getItem(
         'onboardingSuccessPopupShown',
       );
@@ -245,18 +233,15 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
         hasData,
       );
 
-      // Only show if not already shown and bank data is present
       if ((!popupShown || popupShown !== 'true') && hasData) {
         console.log('Showing success popup - all conditions met');
         setShowSuccessPopup(true);
-        // Mark as shown so it won't show again
         await AsyncStorage.setItem('onboardingSuccessPopupShown', 'true');
       } else {
         console.log('Popup already shown previously or no bank data, skipping');
       }
     };
 
-    // Add a small delay to ensure route params and component are ready
     const timer = setTimeout(() => {
       checkAndShowPopup();
     }, 500);
@@ -269,7 +254,6 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
     return `****${last4}`;
   };
 
-  // Get all primary banks (all banks with default_for_currency: true)
   const getPrimaryBanks = () => {
     if (!data?.stripeAccount?.merchant) return [];
     const merchants = Array.isArray(data.stripeAccount.merchant)
@@ -282,7 +266,6 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
     return primaryBanks;
   };
 
-  // Get other banks (all banks without default_for_currency: true)
   const getOtherBanks = () => {
     if (!data?.stripeAccount?.merchant) return [];
     const merchants = Array.isArray(data.stripeAccount.merchant)
@@ -308,7 +291,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
       setButtonLoading(true);
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
-        showToast('Please login to continue', 'error');
+        showToast(Constant.UNABLE_TO_LOGIN, 'error');
         setButtonLoading(false);
         return;
       }
@@ -336,13 +319,12 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
             'Navigating to StripeOnboardingScreen with URL:',
             accountLinkUrl,
           );
-          // Navigate to StripeOnboardingScreen with the URL (same as onboarding flow)
           navigation.navigate('StripeOnboardingScreen', {
             onboardingUrl: accountLinkUrl,
           });
         } else {
           console.error('Account link URL not found in response data');
-          showToast('Account link URL not found in response', 'error');
+          showToast(Constant.INVALID_ACCOUNT_LINK, 'error');
         }
       } else {
         console.error(
@@ -370,13 +352,10 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
           backgroundColor="transparent"
           barStyle="light-content"
         />
-
-        {/* Header with Blur only at top */}
         <Animated.View
           style={[styles.headerWrapper, animatedBlurStyle]}
           pointerEvents="none"
         >
-          {/* Blur layer only at top with gradient fade */}
           <MaskedView
             style={StyleSheet.absoluteFill}
             maskElement={
@@ -408,12 +387,10 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
           </MaskedView>
         </Animated.View>
 
-        {/* Header Content */}
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => {
-              // If coming from onboarding or can't go back, navigate to Dashboard
               if (isFromOnboarding.current || !navigation.canGoBack()) {
                 if (Platform.OS === 'ios') {
                   navigation.replace('Dashboard', {
@@ -426,10 +403,8 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                     isNavigate: false,
                   });
                 }
-                // Reset flag after navigation
                 isFromOnboarding.current = false;
               } else {
-                // Normal back navigation
                 if (Platform.OS === 'ios') {
                   navigation.replace('Dashboard', {
                     AddScreenBackactiveTab: 'Profile',
@@ -445,12 +420,9 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
             <Animated.View
               style={[styles.blurButtonWrapper, animatedButtonStyle]}
             >
-              {/* Static background (visible when scrollY = 0) */}
               <Animated.View
                 style={[StyleSheet.absoluteFill, animatedStaticBackgroundStyle]}
               />
-
-              {/* Blur view fades in as scroll increases */}
               <Animated.View
                 style={[StyleSheet.absoluteFill, animatedBlurViewStyle]}
               >

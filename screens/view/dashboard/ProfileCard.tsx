@@ -27,6 +27,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { BlurView } from '@react-native-community/blur';
 import DeviceInfo from 'react-native-device-info';
 import Loader from '../../utils/component/Loader';
+import { Constant } from '../../utils/Constant';
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImg = require('../../../assets/images/user.jpg'); 
@@ -452,29 +453,6 @@ return (
                 Are you sure you want to log out from your account?
               </Text>
 
-              {/* <TouchableOpacity
-                style={styles.loginButton}
-                onPress={async () => {
-                  setShowConfirm(false);
-                  await AsyncStorage.setItem('ISLOGIN', 'false');
-                  navigation.reset({
-                    index: 0,
-                    routes: [
-                      {
-                        name: 'SinglePage',
-                        params: {
-                          resetToLogin: true,
-                          logoutMessage: 'User Logout Successfully',
-                        },
-                      },
-                    ],
-                  });
-                }}
-              >
-                <Text allowFontScaling={false} style={styles.loginText}>
-                  Log out
-                </Text>
-              </TouchableOpacity> */}
 
               <TouchableOpacity
               style={styles.loginButton}
@@ -513,13 +491,13 @@ return (
                           name: 'SinglePage',
                           params: {
                             resetToLogin: true,
-                            logoutMessage: 'User Logout Successfully',
+                            logoutMessage: Constant.USER_LOGOUT,
                           },
                         },
                       ],
                     });
                   } else {
-                    showToast("Logout failed! Please try again.");
+                    showToast(Constant.LOGOUT_FAIL,'error');
                   }
 
                 } catch (error) {

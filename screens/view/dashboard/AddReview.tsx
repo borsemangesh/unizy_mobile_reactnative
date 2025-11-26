@@ -34,6 +34,7 @@ import AddRating from '../../utils/AddRating';
 import { BlurView } from '@react-native-community/blur';
 import Button from '../../utils/component/Button';
 import Loader from '../../utils/component/Loader';
+import { Constant } from '../../utils/Constant';
 
 type AddReviewProps = {
   navigation: any;
@@ -60,11 +61,11 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
 
   const handleSubmit = async () => {
     if (rating === 0) {
-      showToast('Please select a rating');
+      showToast(Constant.ENTER_RATING,'error');
       return;
     }
     if (username.trim() === '') {
-      showToast('Please enter your comment');
+      showToast(Constant.ENTER_REVIEW,'error');
       return;
     }
 
@@ -110,7 +111,6 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
       }
     } catch (error) {
       console.error('Review error:', error);
-      console.log('Something went wrong');
     } finally {
       setIsLoading(false);
     }
@@ -124,7 +124,6 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
           <View style={styles.headerRow}>
             <TouchableOpacity
               onPress={() => {
-                // navigation.replace('ReviewDetails',{category_id:category_id,id: feature_id,})
                 navigation.goBack();
               }}
             >
@@ -143,7 +142,6 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
         </View>
         {isLoading && (
           <View style={styles.fullLoader}>
-            {/* <ActivityIndicator size="large" color="#fff" /> */}
             <Loader/>
           </View>
         )}
@@ -168,8 +166,6 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
             <View
               style={{ marginTop: 16, marginBottom: 20, alignItems: 'center' }}
             >
-              {/* <AddRating starSize={40} /> */}
-
               <AddRating starSize={40} onChange={setRating} />
             </View>
 
