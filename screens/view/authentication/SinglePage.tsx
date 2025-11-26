@@ -28,7 +28,7 @@ import { getRequest } from '../../utils/API';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import i18n, { initI18n,changeAppLanguage  } from "../../../localization/i18n";
+import i18n, { initI18n,changeAppLanguage,loadLanguageFromServer  } from "../../../localization/i18n";
 import BackgroundAnimation from '../Hello/BackgroundAnimation';
 import { Language } from '../../utils/Language';
 import { greetings } from '../../utils/Greetings';
@@ -2339,15 +2339,14 @@ useEffect(() => {
                               allowFontScaling={false}
                               style={Styles.resetTitle}
                             >
-                              Reset Password
+                              {t('reset_password')}
                             </Text>
                             <View style={Styles.privacyContainer}>
                               <Text
                                 allowFontScaling={false}
                                 style={[Styles.termsText, { paddingBottom: 8 }]}
                               >
-                                Enter your personal email address and we’ll send
-                                you a link to reset your password
+                                {t('enter_email_to_reset')}
                               </Text>
                             </View>
 
@@ -2391,7 +2390,7 @@ useEffect(() => {
                                 allowFontScaling={false}
                                 style={Styles.sendText}
                               >
-                                Send Reset Link
+                                {t('send_reset_link')}
                               </Text>
                             </TouchableOpacity>
 
@@ -2420,7 +2419,7 @@ useEffect(() => {
                                   { color: 'rgba(140, 244, 255, 0.7)' },
                                 ]}
                               >
-                                Go Back
+                               {t('go_back')}
                               </Text>
                             </TouchableOpacity>
                           </Animated.View>
@@ -2521,7 +2520,7 @@ useEffect(() => {
                               <TextInput
                                 allowFontScaling={false}
                                 style={Styles.personalEmailID_TextInput1}
-                                placeholder="First Name*"
+                                 placeholder={t('first_name')}
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                 value={firstName}
                                 onChangeText={text =>
@@ -2541,7 +2540,7 @@ useEffect(() => {
                               <TextInput
                                 allowFontScaling={false}
                                 style={Styles.personalEmailID_TextInput1}
-                                placeholder="Last Name*"
+                                placeholder={t("last_name")}
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                 value={lastName}
                                 selectionColor="white"
@@ -2599,7 +2598,7 @@ useEffect(() => {
                             <TextInput
                               allowFontScaling={false}
                               style={Styles.password_TextInput}
-                          placeholder={t('personal_email_id')}
+                          placeholder={t("personal_email_id")}
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
                               value={signUpusername}
                               maxLength={50}
@@ -2638,11 +2637,9 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.infoText1}
                                 >
-                                  Important:{' '}
+                                  {t('important')}{' '}
                                 </Text>
-                                Use your personal email address for signup. Your
-                                university email will be requested separately
-                                for student verification.
+                               {t('use_personal_email_info')}
                               </Text>
                             </View>
                           )}
@@ -2651,7 +2648,7 @@ useEffect(() => {
                             <TextInput
                               allowFontScaling={false}
                               style={Styles.password_TextInput}
-                              placeholder="Create Password*"
+                              placeholder={t('create_password')}
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
                               value={signUppassword}
                               maxLength={20}
@@ -2690,7 +2687,7 @@ useEffect(() => {
                                 Styles.password_TextInput,
                                 { color: '#fff' },
                               ]}
-                              placeholder="Confirm Password*"
+                              placeholder={t("confirm_password")}
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
                               value={confirmPassword}
                               maxLength={20}
@@ -2735,7 +2732,7 @@ useEffect(() => {
                               allowFontScaling={false}
                               style={Styles.sendText}
                             >
-                              Send OTP
+                             {t('send_otp')}
                             </Text>
                           </TouchableOpacity>
 
@@ -2752,7 +2749,7 @@ useEffect(() => {
                               allowFontScaling={false}
                               style={Styles.signupPrompt}
                             >
-                              Already have an account?{' '}
+                              {t('already_have_account')}{' '}
                             </Text>
                             <TouchableOpacity
                               onPress={() => {
@@ -2785,7 +2782,7 @@ useEffect(() => {
                                 allowFontScaling={false}
                                 style={Styles.signupPrompt1}
                               >
-                                Login
+                                {t('login')}
                               </Text>
                             </TouchableOpacity>
                           </View>
