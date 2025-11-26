@@ -133,14 +133,15 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
 
         // navigation.navigate('EditProfile');
         // navigation.goBack();
-        setInterval(() => {
-          navigation.goBack();
+        // setInterval(() => {
           setUserMeta({
             current_password: '',
             new_password: '',
             confirm_password: '',
           });
-        }, 2000); // 3 second
+          navigation.goBack();
+          
+        // }, 2000); // 3 second
        
       } else {
         showToast(data?.message || 'Failed to update password', 'error');
@@ -753,8 +754,8 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   logo: {
-    width: 120,
-    height: 120,
+    width: 64,
+    height: 64,
     borderRadius: 60,
   },
 

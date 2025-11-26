@@ -654,7 +654,8 @@ tabcard: {
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
       borderRadius:10,
-    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',  
+      boxShadow:
+      'rgba(255, 255, 255, 0.02)inset 0.1px 0.1px 1px 0px,',  
 },
   tabcard1: {
      minHeight:38,

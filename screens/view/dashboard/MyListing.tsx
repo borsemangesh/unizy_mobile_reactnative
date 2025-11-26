@@ -436,11 +436,16 @@ const MyListing = ({ navigation }: MyListingProps) => {
         {/* Header Content */}
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
-            onPress={() =>
-              navigation.replace('Dashboard', {
-                AddScreenBackactiveTab: 'Home',
-                isNavigate: false,
-              })
+            onPress={() =>{
+              console.log("MYLISTSTACK",navigation.getState())
+              if(navigation.getState().routes[navigation.getState().index].name === 'MyListing'){
+                navigation.replace('Dashboard', {
+                  AddScreenBackactiveTab: 'Home',
+                  isNavigate: false,
+                })
+              }
+              
+            }
             }
             style={styles.backButtonContainer}
             activeOpacity={0.7}
@@ -742,8 +747,14 @@ const styles = StyleSheet.create({
     minHeight: 38,
     paddingVertical: 10,
     paddingHorizontal: 16,
-    borderRadius: 10,
     marginRight: 8,
+    borderWidth: 0.4,
+    borderColor: '#ffffff11',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    borderRadius: 10,
+    boxShadow:
+    'rgba(255, 255, 255, 0.02)inset 0.1px 0.1px 1px 0px,',
   },
   tabcard1: {
     minHeight: 38,
