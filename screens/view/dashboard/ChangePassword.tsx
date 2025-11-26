@@ -10,6 +10,8 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Keyboard,
+  Modal,
+  TouchableWithoutFeedback,
 } from 'react-native';
 
 import AnimatedReanimated, {
@@ -59,92 +61,106 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
   });
 
   const [showCurrent, setShowCurrent] = useState(false);
-const [showNew, setShowNew] = useState(false);
-const [showConfirm, setShowConfirm] = useState(false);
-
-
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const handlechangePassword = async () => {
-  Keyboard.dismiss();
+    Keyboard.dismiss();
 
-  const { current_password, new_password, confirm_password } = userMeta;
+    const { current_password, new_password, confirm_password } = userMeta;
 
- if (  !current_password?.trim() ||  !new_password?.trim() ||  !confirm_password?.trim()) {
-  showToast(Constant.REQUIRED_ALL_FIELDS, "error");
-  return;
-}
+    if (
+      !current_password?.trim() ||
+      !new_password?.trim() ||
+      !confirm_password?.trim()
+    ) {
+      showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
+      return;
+    }
+
+    if (current_password === new_password) {
+      showToast(Constant.NEW_VALID_PASSWORD, 'error');
+      return;
+    }
+
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]|:;"'<>,.?/]).{8,}$/;
+
+    if (!passwordRegex.test(new_password.trim())) {
+      showToast(Constant.PASSWORD_VALID, 'error');
+      return;
+    }
+
+    if (new_password !== confirm_password) {
+      showToast(Constant.PASSWORDS_DO_NOT_MATCH, 'error');
+      return;
+    }
+
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+
+      if (!token) {
+        showToast(Constant.USER_NOT_AUTH, 'error');
+        return;
+      }
+
+      const url = `${MAIN_URL.baseUrl}user/update-password`;
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          current_password,
+          new_password,
+          confirm_password,
+        }),
+      });
+
+      let data = null;
+
+      try {
+        data = await response.json();
+      } catch {
+        data = {};
+      }
+
+      if (response.ok) {
+        showToast(data?.message || 'Password updated successfully', 'success');
+
+        // navigation.navigate('EditProfile');
+        // navigation.goBack();
+        setInterval(() => {
+          navigation.goBack();
+          setUserMeta({
+            current_password: '',
+            new_password: '',
+            confirm_password: '',
+          });
+        }, 2000); // 3 second
+       
+      } else {
+        showToast(data?.message || 'Failed to update password', 'error');
+      }
+    } catch (error) {
+      console.log('Update Password Error:', error);
+      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+    }
+  };
 
 
-  if (current_password === new_password) {
-    showToast(Constant.NEW_VALID_PASSWORD, "error");
-    return;
-  }
-
-
-const passwordRegex =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]|:;"'<>,.?/]).{8,}$/;
-
-  if (!passwordRegex.test(new_password.trim())) {
-  showToast(Constant.PASSWORD_VALID, 'error');
-    return;
-  }
-
-
-  if (new_password !== confirm_password) {
-    showToast(Constant.PASSWORDS_DO_NOT_MATCH, "error");
-    return;
-  }
-
-
-  try {
-  const token = await AsyncStorage.getItem("userToken");
-
-  if (!token) {
-    showToast(Constant.USER_NOT_AUTH, "error");
-    return;
-  }
-
-  const url = `${MAIN_URL.baseUrl}user/update-password`;
-
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({
-      current_password,
-      new_password,
-      confirm_password,
-    }),
-  });
-
-  let data = null;
-
-  try {
-    data = await response.json();
-  } catch {
-    data = {};
-  }
-
-  if (response.ok) {
-    showToast(data?.message || "Password updated successfully", "success");
-
-    setUserMeta({
-      current_password: "",
-      new_password: "",
-      confirm_password: "",
+  const handleForceLogout = async () => {
+    console.log('User inactive or unauthorized — logging out');
+    // setLoading(false);
+    await AsyncStorage.clear();
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'SinglePage', params: {forgotPassword: true, resetToLogin: false,currentScreen: 'login',currentScreenIninner: 'forgotpassword' } }],
     });
-
-    navigation.navigate("EditProfile");
-  } else {
-    showToast(data?.message || "Failed to update password", "error");
-  }
-} catch (error) {
-  console.log("Update Password Error:", error);
-  showToast(Constant.SOMTHING_WENT_WRONG, "error");
-}
-};
+  };
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -176,90 +192,66 @@ const passwordRegex =
               <Text style={styles.label} allowFontScaling={false}>
                 Current Password*
               </Text>
-              {/* <TextInput
-                value={userMeta.current_password || ''}
-                onChangeText={text =>
-                  setUserMeta(prev => ({ ...prev, current_password: text }))
-                }
-                allowFontScaling={false}
-                style={styles.input}
-                placeholder="Enter Current Password"
-                placeholderTextColor="#ccc"
-              /> */}
 
+              <View style={{ position: 'relative' }}>
+                <TextInput
+                  value={userMeta.current_password || ''}
+                  secureTextEntry={!showCurrent}
+                  onChangeText={text =>
+                    setUserMeta(prev => ({ ...prev, current_password: text }))
+                  }
+                  style={styles.input}
+                  placeholder="Enter Current Password"
+                  placeholderTextColor="#ccc"
+                />
 
-              <View style={{ position: "relative" }}>
-  <TextInput
-    value={userMeta.current_password || ""}
-    secureTextEntry={!showCurrent}
-    onChangeText={(text) =>
-      setUserMeta((prev) => ({ ...prev, current_password: text }))
-    }
-    style={styles.input}
-    placeholder="Enter Current Password"
-    placeholderTextColor="#ccc"
-  />
-
-  <TouchableOpacity
-    style={styles.eyeButton}
-    onPress={() => setShowCurrent(!showCurrent)}
-  >
-    <Image
-      source={
-        showCurrent
-       ? require("../../../assets/images/eyeopen.png")          
-          : require("../../../assets/images/eyecross1.png")
-      }
-      style={styles.eyeIcon}
-    />
-  </TouchableOpacity>
-</View>
-
+                <TouchableOpacity
+                  style={styles.eyeButton}
+                  onPress={() => setShowCurrent(!showCurrent)}
+                >
+                  <Image
+                    source={
+                      showCurrent
+                        ? require('../../../assets/images/eyeopen.png')
+                        : require('../../../assets/images/eyecross1.png')
+                    }
+                    style={styles.eyeIcon}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
 
             <View style={styles.inputGroup}>
               <Text style={styles.label} allowFontScaling={false}>
                 New Password*
               </Text>
-              {/* <TextInput
-                value={userMeta.new_password || ''}
-                onChangeText={text =>
-                  setUserMeta(prev => ({ ...prev, new_password: text }))
-                }
-                allowFontScaling={false}
-                style={styles.input}
-                placeholder="Enter New Password"
-                placeholderTextColor="#ccc"
-              /> */}
 
+              <View style={{ position: 'relative' }}>
+                <TextInput
+                  value={userMeta.new_password || ''}
+                  secureTextEntry={!showNew}
+                  onChangeText={text =>
+                    setUserMeta(prev => ({ ...prev, new_password: text }))
+                  }
+                  style={styles.input}
+                  placeholder="Enter New Password"
+                  placeholderTextColor="#ccc"
+                />
 
-              <View style={{ position: "relative" }}>
-  <TextInput
-    value={userMeta.new_password || ""}
-    secureTextEntry={!showNew}
-    onChangeText={(text) =>
-      setUserMeta((prev) => ({ ...prev, new_password: text }))
-    }
-    style={styles.input}
-    placeholder="Enter New Password"
-    placeholderTextColor="#ccc"
-  />
-
-  <TouchableOpacity
-    style={styles.eyeButton}
-    onPress={() => setShowNew(!showNew)}
-  >
-    <Image
-      source={
-        showNew
-          ? require("../../../assets/images/eyeopen.png")          
-          : require("../../../assets/images/eyecross1.png")
-      }
-      style={styles.eyeIcon}
-    />
-  </TouchableOpacity>
-</View>
-
+                <TouchableOpacity
+                  style={styles.eyeButton}
+                  onPress={() => setShowNew(!showNew)}
+                >
+                  <Image
+                    source={
+                      showNew
+                        ? require('../../../assets/images/eyeopen.png')
+                        : require('../../../assets/images/eyecross1.png')
+                    }
+                    style={styles.eyeIcon}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
 
             <View style={styles.inputGroup}>
@@ -277,42 +269,40 @@ const passwordRegex =
                 placeholderTextColor="#ccc"
               /> */}
 
+              <View style={{ position: 'relative' }}>
+                <TextInput
+                  value={userMeta.confirm_password || ''}
+                  secureTextEntry={!showConfirm}
+                  onChangeText={text =>
+                    setUserMeta(prev => ({ ...prev, confirm_password: text }))
+                  }
+                  style={styles.input}
+                  placeholder="Enter Confirm Password"
+                  placeholderTextColor="#ccc"
+                />
 
-              <View style={{ position: "relative" }}>
-  <TextInput
-    value={userMeta.confirm_password || ""}
-    secureTextEntry={!showConfirm}
-    onChangeText={(text) =>
-      setUserMeta((prev) => ({ ...prev, confirm_password: text }))
-    }
-    style={styles.input}
-    placeholder="Enter Confirm Password"
-    placeholderTextColor="#ccc"
-  />
-
-  <TouchableOpacity
-    style={styles.eyeButton}
-    onPress={() => setShowConfirm(!showConfirm)}
-  >
-    <Image
-      source={
-        showConfirm        
-          ? require("../../../assets/images/eyeopen.png")          
-          : require("../../../assets/images/eyecross1.png")
-      }
-      style={styles.eyeIcon}
-    />
-  </TouchableOpacity>
-</View>
-
+                <TouchableOpacity
+                  style={styles.eyeButton}
+                  onPress={() => setShowConfirm(!showConfirm)}
+                >
+                  <Image
+                    source={
+                      showConfirm
+                        ? require('../../../assets/images/eyeopen.png')
+                        : require('../../../assets/images/eyecross1.png')
+                    }
+                    style={styles.eyeIcon}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
 
             <TouchableOpacity
               activeOpacity={0.7}
               style={styles.buttonContainer}
-               onPress={()=>{
-                    handlechangePassword();
-                  }}
+              onPress={() => {
+                handlechangePassword();
+              }}
             >
               <BlurView
                 style={StyleSheet.absoluteFill}
@@ -326,16 +316,94 @@ const passwordRegex =
               </Text>
             </TouchableOpacity>
 
-            {/* <Text
-              allowFontScaling={false}
-              style={styles.forgetText}
-              onPress={() => navigation.goBack()}
-            >
-              Forgot Password?
-            </Text> */}
+            <TouchableOpacity onPress={() => {
+              console.log("This is Forgot password")
+              setShowDeleteModal(true);
+              }}>
+              <Text
+                allowFontScaling={false}
+                style={styles.forgetText}
+                // onPress={() => navigation.goBack()}
+              >
+                Forgot Password?
+              </Text>
+            </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
       </View>
+
+
+
+      <Modal
+        visible={showDeleteModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowDeleteModal(false)}
+      >
+        <TouchableWithoutFeedback
+          onPress={() => {
+            navigation.replace('EditProfile');
+          }}
+        >
+          <View style={styles.overlay}>
+            <BlurView
+              style={{
+                flex: 1,
+                alignContent: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                alignItems: 'center',
+                backgroundColor: 'rgba(0, 0, 0, 0.30)',
+              }}
+              blurType="light"
+              blurAmount={2}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            >
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                ]}
+              />
+
+              <View style={styles.popupContainer}>
+                <Image
+                  source={require('../../../assets/images/alerticon.png')}
+                  style={styles.logo}
+                  resizeMode="contain"
+                />
+                <Text allowFontScaling={false} style={[styles.mainheader, { marginTop: 10 }]}>
+                Are you sure you want to proceed? You will be logged out of your account.
+                </Text>
+
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  onPress={async () => {
+                    handleForceLogout();
+                  }}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText}>
+                    Yes, Proceed
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.loginButton1}
+                  onPress={() => {
+                    setShowDeleteModal(false);
+                  }}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText1}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </BlurView>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+
+
       <NewCustomToastContainer />
     </ImageBackground>
   );
@@ -982,16 +1050,15 @@ const styles = StyleSheet.create({
   },
 
   eyeButton: {
-  position: "absolute",
-  right: 12,
-  top: 8,
-  padding: 4,
-},
+    position: 'absolute',
+    right: 12,
+    top: 8,
+    padding: 4,
+  },
 
-eyeIcon: {
-  width: 20,
-  height: 20,
-  tintColor: "#ccc",
-},
-
+  eyeIcon: {
+    width: 20,
+    height: 20,
+    tintColor: '#ccc',
+  },
 });
