@@ -138,6 +138,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
   const blurAmount = useDerivedValue(() =>
     interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
   );
+
   const [categories, setCategories] = useState<Category[]>([
     { id: null, name: 'All' },
   ]);
@@ -147,34 +148,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
   });
 
 
-
-
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     if (isInitialMount.current) {
-  //       isInitialMount.current = false;
-  //       setPage(1);
-  //       displayListOfProduct(selectedCategory?.id ?? null, 1, true);
-  //     } else {
-  //       setPage(1);
-  //       displayListOfProduct(selectedCategory?.id ?? null, 1, false);
-  //     }
-
-  //     return () => { };
-  //   }, []),
-  // );
-
-//   useFocusEffect(
-//   useCallback(() => {
-//     console.log("SCREEN FOCUSED — reloading category:", selectedCategory);
-
-//     setPage(1);
-//     displayListOfProduct(selectedCategory?.id ?? null, 1, false);
-
-//     return () => {};
-//   }, [selectedCategory])
-// );
 
 useEffect(() => {
   setPage(1);
@@ -195,12 +168,6 @@ useEffect(() => {
     };
     loadCategories();
   }, []);
-
-  // useEffect(() => {
-  //   setPage(1);
-  //   displayListOfProduct(selectedCategory?.id ?? null, 1, false);
-  // }, [selectedCategory]);
-
 
   useEffect(() => {
   const backAction = () => {
@@ -386,12 +353,17 @@ useEffect(() => {
           barStyle="light-content"
         />
 
-        {/* Header with Blur only at top */}
+
+<StatusBar
+          translucent
+          backgroundColor="transparent"
+          barStyle="light-content"
+        />
+
         <Animated.View
           style={[styles.headerWrapper, animatedBlurStyle]}
           pointerEvents="none"
         >
-          {/* Blur layer only at top with gradient fade */}
           <MaskedView
             style={StyleSheet.absoluteFill}
             maskElement={
@@ -408,7 +380,7 @@ useEffect(() => {
               style={StyleSheet.absoluteFill}
               blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
               blurAmount={Platform.OS === 'ios' ? 45 : 45}
-              // overlayColor="rgba(255,255,255,0.05)"
+              //  overlayColor="rgba(255,255,255,0.05)"
               reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
             />
             <LinearGradient
@@ -423,6 +395,43 @@ useEffect(() => {
             />
           </MaskedView>
         </Animated.View>
+      
+        {/* <Animated.View
+          style={[styles.headerWrapper, animatedBlurStyle]}
+          pointerEvents="none"
+        >
+
+          <MaskedView
+            style={StyleSheet.absoluteFill}
+            maskElement={
+              <LinearGradient
+                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                locations={[0, 0.8]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={[StyleSheet.absoluteFill,
+                  ]}
+              />
+            }
+          >
+            <BlurView
+              style={[StyleSheet.absoluteFill]}
+              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+              blurAmount={Platform.OS === 'ios' ? 45 : 45}
+              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+            />
+            <LinearGradient
+              colors={[
+                'rgba(255, 255, 255, 0.45)',
+                'rgba(255, 255, 255, 0.02)',
+                'rgba(255, 255, 255, 0.02)',
+              ]}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+            />
+          </MaskedView>
+        </Animated.View> */}
 
         {/* Header Content */}
         <View style={styles.headerContent} pointerEvents="box-none">
@@ -439,7 +448,7 @@ useEffect(() => {
             <Animated.View
               style={[styles.blurButtonWrapper, animatedButtonStyle]}
             >
-              {/* Static background (visible when scrollY = 0) */}
+         
               <Animated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -621,78 +630,28 @@ useEffect(() => {
 export default MyListing;
 
 const styles = StyleSheet.create({
-
-  emptyWrapper: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%'
-  },
-
-
+  emptyWrapper: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     width: '100%',
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    borderWidth: 0.3,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: 24,
-    overflow: 'hidden',
-    //minHeight:'80%',
-    //marginBottom:20,
-  },
-  emptyImage: {
-    width: 50,
-    height: 50,
-    marginBottom: 20,
-  },
-  emptyText: {
-    fontSize: 20,
-    color: '#fff',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-SemiBold',
-    fontWeight: 600
-  },
-
-  categoryTabsContainer: {
-    width: '105%',
-    marginBottom: 12,
-    marginTop: 12,
-  },
-
-  categoryTabsScrollContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingRight: 16,
-  },
-  blurButtonWrapper: {
-    width: 48,
-    height: 48,
-    borderRadius: 40,
-    overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+    padding: 20,
+    borderRadius: 20,
   },
-  tabcard: {
-    minHeight: 38,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    marginRight: 8,
-
-    borderColor: '#ffffff11',
-    // backgroundColor:
-    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    borderRadius: 10,
-
-    boxShadow:
-      'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+  emptyImage: { width: 50, height: 50, marginBottom: 20 },
+  emptyText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
+    fontFamily: 'Urbanist-SemiBold',
   },
+
+  background: { flex: 1 },
+  fullScreenContainer: { flex: 1 },
+
   headerWrapper: {
+
+
     position: 'absolute',
     top: 0,
     width: Platform.OS === 'ios' ? 393 : '100%',
@@ -702,8 +661,15 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'none',
   },
+
   headerContent: {
-    position: 'absolute',
+    // position: 'absolute',
+    // top: Platform.OS === 'ios' ? 60 : 40,
+    // width: '100%',
+    // alignItems: 'center',
+    // zIndex: 20,
+
+        position: 'absolute',
     top: Platform.OS === 'ios' ? '6%' : 40,
     width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
@@ -714,103 +680,32 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'box-none',
     marginTop: 2,
-    marginLeft: 1
-  },
-  tabcard1: {
-    minHeight: 38,
-
-    borderColor: '#ffffff',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    borderEndEndRadius: 10,
-    borderStartEndRadius: 10,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    borderBottomStartRadius: 10,
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-    boxSizing: 'border-box',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    marginRight: 8,
-  },
-  tabtext: {
-    color: '#fff', // selected tab text color
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14,
-  },
-  othertext: {
-    color: '#FFFFFF7A', // unselected tab text color
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14,
+    marginLeft: 1,
   },
 
-  background: {
-    flex: 1,
-    // width: '100%',
-    // height: '100%',
-  },
-  fullScreenContainer: {
-    flex: 1,
-  },
-  // header: {
-  //   paddingTop: Platform.OS === 'ios' ? 42 : 50,
-  //   paddingBottom: 12,
-  //   paddingHorizontal: 16,
-  // },
-  header: {
-    position: 'absolute',
-    top: 0,
-    width: Platform.OS === 'ios' ? 393 : '100%',
-    zIndex: 20,
-    paddingTop: Platform.OS === 'ios' ? 50 : 40,
-    paddingBottom: Platform.OS === 'ios' ? 16 : 12,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-    overflow: 'hidden', // IMPORTANT for MaskedView
-    flexDirection: 'row',
-    alignItems: 'center',
-    elevation: 0,
-    backgroundColor: 'transparent',
-    borderBottomWidth: 0,
-    shadowOpacity: 0,
-    shadowColor: 'transparent',
-    alignSelf: 'center',
-    minHeight: Platform.OS === 'ios' ? 80 : 88,
-  },
   backButtonContainer: {
     position: 'absolute',
     left: 16,
     zIndex: 11,
     top: 7,
   },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backIconRow: {
+
+  blurButtonWrapper: {
+
     width: 48,
     height: 48,
     borderRadius: 40,
-    padding: 12,
-    display: 'flex',
+    overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
     borderWidth: 0.4,
-
     borderColor: '#ffffff2c',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', 
   },
+
   unizyText: {
-    color: '#FFFFFF',
+
+        color: '#FFFFFF',
     fontSize: 20,
     textAlign: 'center',
     fontWeight: '600',
@@ -818,43 +713,272 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 17,
   },
-  search_container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 16,
-    marginRight: 16,
-    borderRadius: 40,
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  },
-  searchIcon: {
-    margin: 10,
-    height: 24,
-    width: 24,
-  },
-  searchBar: {
-    fontSize: 17,
-    color: '#fff',
-    width: '85%',
-  },
+
   listContainer: {
     paddingHorizontal: 16,
-    paddingTop: 10,
-    //paddingBottom: Platform.OS === 'ios' ? 40 : 80,
-    width: Platform.OS === 'ios' ? 393 : '100%',
-    alignSelf: 'center',
-  },
-  row: {
-    justifyContent: 'space-between',
-    paddingHorizontal: 0,
-  },
-  row1: {
-    // flexDirection: 'row',
-    // justifyContent: 'flex-start',
-  },
-  itemContainer: {
     width: '100%',
   },
 
+  categoryTabsContainer: { marginBottom: 12, marginTop: 12 },
+  categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' },
+
+  tabcard: {
+    minHeight: 38,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+    marginRight: 8,
+  },
+  tabcard1: {
+    minHeight: 38,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+    marginRight: 8,
+  },
+
+  tabtext: { color: '#fff', fontWeight: '600', fontSize: 14 },
+  othertext: { color: '#FFFFFF7A', fontWeight: '600', fontSize: 14 },
+
+  itemContainer: { width: '100%' },
 });
+
+
+// const styles = StyleSheet.create({
+
+//   emptyWrapper: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     width: '100%'
+//   },
+
+
+//   emptyContainer: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     width: '100%',
+//     backgroundColor: 'rgba(255, 255, 255, 0.06)',
+//     borderWidth: 0.3,
+//     borderColor: 'rgba(255, 255, 255, 0.08)',
+//     borderRadius: 24,
+//     overflow: 'hidden',
+//     //minHeight:'80%',
+//     //marginBottom:20,
+//   },
+//   emptyImage: {
+//     width: 50,
+//     height: 50,
+//     marginBottom: 20,
+//   },
+//   emptyText: {
+//     fontSize: 20,
+//     color: '#fff',
+//     textAlign: 'center',
+//     fontFamily: 'Urbanist-SemiBold',
+//     fontWeight: 600
+//   },
+
+//   categoryTabsContainer: {
+//     width: '105%',
+//     marginBottom: 12,
+//     marginTop: 12,
+//   },
+
+//   categoryTabsScrollContent: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     paddingRight: 16,
+//   },
+//   blurButtonWrapper: {
+//     width: 48,
+//     height: 48,
+//     borderRadius: 40,
+//     overflow: 'hidden',
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     borderWidth: 0.4,
+//     borderColor: '#ffffff2c',
+//     backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+//   },
+//   tabcard: {
+//     minHeight: 38,
+//     paddingVertical: 10,
+//     paddingHorizontal: 16,
+//     marginRight: 8,
+
+//     borderColor: '#ffffff11',
+//     // backgroundColor:
+//     //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
+//     borderRadius: 10,
+
+//     boxShadow:
+//       'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+//   },
+//   headerWrapper: {
+//     position: 'absolute',
+//     top: 0,
+//     width: Platform.OS === 'ios' ? 393 : '100%',
+//     height: Platform.OS === 'ios' ? 180 : 180,
+//     zIndex: 10,
+//     overflow: 'hidden',
+//     alignSelf: 'center',
+//     pointerEvents: 'none',
+//   },
+//   headerContent: {
+//     position: 'absolute',
+//     top: Platform.OS === 'ios' ? '6%' : 40,
+//     width: Platform.OS === 'ios' ? 393 : '100%',
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//     paddingHorizontal: 16,
+//     zIndex: 11,
+//     alignSelf: 'center',
+//     pointerEvents: 'box-none',
+//     marginTop: 2,
+//     marginLeft: 1
+//   },
+//   tabcard1: {
+//     minHeight: 38,
+
+//     borderColor: '#ffffff',
+//     backgroundColor:
+//       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
+//     borderEndEndRadius: 10,
+//     borderStartEndRadius: 10,
+//     borderTopLeftRadius: 10,
+//     borderTopRightRadius: 10,
+//     borderBottomStartRadius: 10,
+//     borderBlockStartColor: '#ffffff2e',
+//     borderBlockColor: '#ffffff2e',
+//     borderTopColor: '#ffffff2e',
+//     borderBottomColor: '#ffffff2e',
+//     borderLeftColor: '#ffffff2e',
+//     borderRightColor: '#ffffff2e',
+//     boxSizing: 'border-box',
+//     paddingVertical: 10,
+//     paddingHorizontal: 16,
+//     marginRight: 8,
+//   },
+//   tabtext: {
+//     color: '#fff', // selected tab text color
+//     fontWeight: '600',
+//     fontFamily: 'Urbanist-SemiBold',
+//     fontSize: 14,
+//   },
+//   othertext: {
+//     color: '#FFFFFF7A', // unselected tab text color
+//     fontWeight: '600',
+//     fontFamily: 'Urbanist-SemiBold',
+//     fontSize: 14,
+//   },
+
+//   background: {
+//     flex: 1,
+//     // width: '100%',
+//     // height: '100%',
+//   },
+//   fullScreenContainer: {
+//     flex: 1,
+//   },
+//   // header: {
+//   //   paddingTop: Platform.OS === 'ios' ? 42 : 50,
+//   //   paddingBottom: 12,
+//   //   paddingHorizontal: 16,
+//   // },
+//   header: {
+//     position: 'absolute',
+//     top: 0,
+//     width: Platform.OS === 'ios' ? 393 : '100%',
+//     zIndex: 20,
+//     paddingTop: Platform.OS === 'ios' ? 50 : 40,
+//     paddingBottom: Platform.OS === 'ios' ? 16 : 12,
+//     paddingHorizontal: 16,
+//     justifyContent: 'center',
+//     overflow: 'hidden', // IMPORTANT for MaskedView
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     elevation: 0,
+//     backgroundColor: 'transparent',
+//     borderBottomWidth: 0,
+//     shadowOpacity: 0,
+//     shadowColor: 'transparent',
+//     alignSelf: 'center',
+//     minHeight: Platform.OS === 'ios' ? 80 : 88,
+//   },
+//   backButtonContainer: {
+//     position: 'absolute',
+//     left: 16,
+//     zIndex: 11,
+//     top: 7,
+//   },
+//   headerRow: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//   },
+//   backIconRow: {
+//     width: 48,
+//     height: 48,
+//     borderRadius: 40,
+//     padding: 12,
+//     display: 'flex',
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     backgroundColor:
+//       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+//     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
+//     borderWidth: 0.4,
+
+//     borderColor: '#ffffff2c',
+//   },
+//   unizyText: {
+//     color: '#FFFFFF',
+//     fontSize: 20,
+//     textAlign: 'center',
+//     fontWeight: '600',
+//     fontFamily: 'Urbanist-SemiBold',
+//     width: '100%',
+//     marginTop: 17,
+//   },
+//   search_container: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     marginLeft: 16,
+//     marginRight: 16,
+//     borderRadius: 40,
+//     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+//     backgroundColor:
+//       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+//   },
+//   searchIcon: {
+//     margin: 10,
+//     height: 24,
+//     width: 24,
+//   },
+//   searchBar: {
+//     fontSize: 17,
+//     color: '#fff',
+//     width: '85%',
+//   },
+//   listContainer: {
+//     paddingHorizontal: 16,
+//     paddingTop: 10,
+//     //paddingBottom: Platform.OS === 'ios' ? 40 : 80,
+//     width: Platform.OS === 'ios' ? 393 : '100%',
+//     alignSelf: 'center',
+//   },
+//   row: {
+//     justifyContent: 'space-between',
+//     paddingHorizontal: 0,
+//   },
+//   row1: {
+//     // flexDirection: 'row',
+//     // justifyContent: 'flex-start',
+//   },
+//   itemContainer: {
+//     width: '100%',
+//   },
+
+// });
