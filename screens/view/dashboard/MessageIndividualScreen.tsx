@@ -1,4 +1,3 @@
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {
   useCallback,
@@ -31,8 +30,7 @@ import Svg, { ClipPath, Defs, Rect } from 'react-native-svg';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { Client as TwilioChatClient } from '@twilio/conversations';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import EmojiKeyboard from '../emoji/emojiKebord';
-import { InteractionManager, PanResponder } from 'react-native';
+import { InteractionManager } from 'react-native';
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
@@ -54,7 +52,6 @@ import { showToast } from '../../utils/toast';
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImage = require('../../../assets/images/user.jpg');
 const back = require('../../../assets/images/back.png');
-const smileyhappy = require('../../../assets/images/smileyhappy.png');
 
 
 type MessagesIndividualScreenProps = {
@@ -182,9 +179,6 @@ const MessagesIndividualScreen = ({
   const [loadingOlderMessages, setLoadingOlderMessages] = useState(false);
   const messagesPageRef = useRef<any>(null); // Store the messages page for pagination
 
-  const [selectedEmoji, setSelectedEmoji] = useState('...');
-
-  const [isEmojiPickerVisible, setIsEmojiPickerVisible] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [layoutReady, setLayoutReady] = useState(false);
   const [kavKey, setKavKey] = useState(0);
@@ -192,7 +186,6 @@ const MessagesIndividualScreen = ({
   const { width, height } = Dimensions.get('window');
   const flatListRef = useRef<FlatList>(null);
   const textInputRef = useRef<TextInput>(null);
-  const emojiTranslateY = useRef(new RNAnimated.Value(0)).current;
   const loadingFromScrollRef = useRef(false);
   const shouldAutoScrollRef = useRef(true);
   const newestMessageSidRef = useRef<string | null>(null); // Track newest message to detect if it changed
@@ -299,17 +292,13 @@ const MessagesIndividualScreen = ({
   // Move constants before they're used
   const WINDOW_HEIGHT = Dimensions.get('window').height;
   const INPUT_BAR_HEIGHT = Platform.OS === 'ios' ? 70 : 64;
-  const DEFAULT_EMOJI_HEIGHT = Math.round(WINDOW_HEIGHT * 0.35);
   const BOTTOM_SPACING = Platform.OS === 'ios' ? 0 : 0;
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
-  const [lastKeyboardHeight, setLastKeyboardHeight] = useState(0);
   const windowHeightRef = useRef(Dimensions.get('window').height);
-  const EMOJI_PICKER_HEIGHT =
-    lastKeyboardHeight > 0
-      ? lastKeyboardHeight // Use actual keyboard height captured from device
-      : DEFAULT_EMOJI_HEIGHT; // Fallback until keyboard opens (will be updated automatically)
+  const keyboardHeightRef = useRef(0); // Stable ref to prevent shaking
+  const keyboardHeightSetRef = useRef(false); // Track if height has been set for this keyboard session
 
   // Update window height when dimensions change (for keyboard height calculation)
   useEffect(() => {
@@ -319,88 +308,9 @@ const MessagesIndividualScreen = ({
     return () => subscription?.remove();
   }, []);
 
-  // Disable navigation gestures when emoji keyboard is open
-  useEffect(() => {
-    navigation.setOptions({
-      gestureEnabled: !isEmojiPickerVisible,
-    });
-  }, [isEmojiPickerVisible, navigation]);
 
-  useEffect(() => {
-    // Always keep translateY at 0 for instant appearance (no animation)
-    emojiTranslateY.setValue(0);
-  }, [isEmojiPickerVisible, lastKeyboardHeight]);
-
-  // PanResponder for swipe down gesture only - ignores horizontal swipes
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => false,
-      onMoveShouldSetPanResponder: (_, gestureState) => {
-        const verticalMovement = Math.abs(gestureState.dy);
-        const horizontalMovement = Math.abs(gestureState.dx);
-        const isVerticalSwipe = verticalMovement > horizontalMovement;
-        const isDownwardSwipe = gestureState.dy > 15; // Minimum threshold
-        return isVerticalSwipe && isDownwardSwipe;
-      },
-      onPanResponderGrant: () => {
-        // Gesture started
-      },
-      onPanResponderMove: (_, gestureState) => {
-        const isVertical =
-          Math.abs(gestureState.dy) > Math.abs(gestureState.dx);
-        if (isVertical && gestureState.dy > 0) {
-        }
-      },
-      onPanResponderRelease: (_, gestureState) => {
-        // Check if it's a valid vertical downward swipe
-        const isVertical =
-          Math.abs(gestureState.dy) > Math.abs(gestureState.dx);
-        const shouldClose =
-          isVertical && (gestureState.dy > 50 || gestureState.vy > 0.5);
-
-        if (shouldClose && isEmojiPickerVisible) {
-          // Close emoji keyboard instantly (no animation)
-          emojiTranslateY.setValue(0);
-          setIsEmojiPickerVisible(false);
-        } else {
-          // Reset to 0 instantly (no animation)
-          emojiTranslateY.setValue(0);
-        }
-      },
-    }),
-  ).current;
-
-  // Auto-focus text input when emoji keyboard closes (except when button is clicked or on initial mount)
-  const shouldAutoFocusRef = useRef(true);
   const isInitialMountRef = useRef(true);
-  const isOpeningEmojiRef = useRef(false); // Track when we're opening emoji keyboard
 
-  useEffect(() => {
-    // Skip auto-focus on initial mount
-    if (isInitialMountRef.current) {
-      isInitialMountRef.current = false;
-      return;
-    }
-
-    // Don't auto-focus if we're in the process of opening emoji keyboard
-    if (isOpeningEmojiRef.current) {
-      isOpeningEmojiRef.current = false; // Reset flag
-      return;
-    }
-
-    // Only auto-focus if emoji keyboard was just closed (not on initial mount or when opening)
-    if (!isEmojiPickerVisible && shouldAutoFocusRef.current) {
-      // Emoji keyboard closed - focus text input
-      const timer = setTimeout(() => {
-        textInputRef.current?.focus();
-      }, 200);
-      return () => clearTimeout(timer);
-    }
-    shouldAutoFocusRef.current = true; // Reset for next time
-  }, [isEmojiPickerVisible]);
-
-  // Track cursor position for emoji insertion
-  const selectionRef = useRef({ start: 0, end: 0 });
 
   // Function to filter out numbers and number words
   const filterNumbersAndNumberWords = (text: string): string => {
@@ -465,198 +375,6 @@ const MessagesIndividualScreen = ({
     setMessageText(filteredText);
   };
 
-  const handleEmojiSelected = (char: string) => {
-    if (char === 'DELETE') {
-      // Delete character at cursor position or before cursor
-      // Get current text and cursor position BEFORE state update
-      const currentText = messageText;
-      let { start, end } = selectionRef.current;
-
-      // Ensure cursor position is valid and within text bounds
-      const textLength = currentText.length;
-      if (start < 0) start = 0;
-      if (start > textLength) start = textLength;
-      if (end < 0) end = 0;
-      if (end > textLength) end = textLength;
-      if (start > end) {
-        const temp = start;
-        start = end;
-        end = temp;
-      }
-
-      let newText: string;
-      let newCursorPos: number;
-
-      if (start === end && start > 0) {
-        // Cursor is at a position, delete character before cursor
-        // For emojis (which can be 2+ UTF-16 code units), we need to delete the entire emoji
-        // Check if the character before cursor is part of a surrogate pair (emoji)
-        const charBefore = currentText[start - 1];
-        const charCode = charBefore.charCodeAt(0);
-
-        // Check if it's a low surrogate (second part of emoji) - range 0xDC00-0xDFFF
-        // If it is, check if the character before it is a high surrogate
-        if (charCode >= 0xdc00 && charCode <= 0xdfff && start > 1) {
-          const charBefore2 = currentText[start - 2];
-          const charCode2 = charBefore2.charCodeAt(0);
-          // If previous character is high surrogate, delete both (surrogate pair)
-          if (charCode2 >= 0xd800 && charCode2 <= 0xdbff) {
-            newText =
-              currentText.slice(0, start - 2) + currentText.slice(start);
-            newCursorPos = start - 2;
-          } else {
-            // Just a low surrogate without high, delete 1 character
-            newText =
-              currentText.slice(0, start - 1) + currentText.slice(start);
-            newCursorPos = start - 1;
-          }
-        } else if (charCode >= 0xd800 && charCode <= 0xdbff && start > 1) {
-          // High surrogate - check if next character is low surrogate
-          // If cursor is right after high surrogate, we're in the middle of emoji
-          // Delete the high surrogate (1 char) - the low will be handled on next delete
-          newText = currentText.slice(0, start - 1) + currentText.slice(start);
-          newCursorPos = start - 1;
-        } else {
-          // Regular character, delete 1 character
-          newText = currentText.slice(0, start - 1) + currentText.slice(start);
-          newCursorPos = start - 1;
-        }
-      } else if (start !== end) {
-        // Text is selected, delete selected text
-        newText = currentText.slice(0, start) + currentText.slice(end);
-        newCursorPos = start;
-      } else {
-        // No cursor position, delete last character (fallback)
-        // Check if last character is part of emoji
-        if (currentText.length > 0) {
-          const lastChar = currentText[currentText.length - 1];
-          const charCode = lastChar.charCodeAt(0);
-
-          // Check if it's a low surrogate (second part of emoji)
-          if (
-            charCode >= 0xdc00 &&
-            charCode <= 0xdfff &&
-            currentText.length > 1
-          ) {
-            const charBefore = currentText[currentText.length - 2];
-            const charCode2 = charBefore.charCodeAt(0);
-            // If previous character is high surrogate, delete both (surrogate pair)
-            if (charCode2 >= 0xd800 && charCode2 <= 0xdbff) {
-              newText = currentText.slice(0, -2);
-              newCursorPos = newText.length;
-            } else {
-              // Just delete the low surrogate
-              newText = currentText.slice(0, -1);
-              newCursorPos = newText.length;
-            }
-          } else {
-            // Delete last 1 character
-            newText = currentText.slice(0, -1);
-            newCursorPos = newText.length;
-          }
-        } else {
-          newText = currentText;
-          newCursorPos = 0;
-        }
-      }
-
-      // Ensure cursor position is valid
-      newCursorPos = Math.max(0, Math.min(newCursorPos, newText.length));
-
-      // Update state
-      setMessageText(newText);
-
-      // Update selectionRef
-      selectionRef.current = {
-        start: newCursorPos,
-        end: newCursorPos,
-      };
-
-      // Set cursor position after state update
-      requestAnimationFrame(() => {
-        setTimeout(() => {
-          if (textInputRef.current) {
-            textInputRef.current.setNativeProps({
-              selection: { start: newCursorPos, end: newCursorPos },
-            });
-            selectionRef.current = {
-              start: newCursorPos,
-              end: newCursorPos,
-            };
-          }
-        }, 0);
-      });
-    } else {
-      // Insert emoji at cursor position
-      // Handle multi-byte emoji characters correctly
-      // Get the latest cursor position right before insertion to ensure accuracy
-      // This is critical when user moves cursor after opening emoji keyboard
-
-      // Ensure emoji is a valid string (handle any encoding issues)
-      const emojiChar = String(char);
-
-      // Validate emoji is not empty or corrupted
-      if (!emojiChar || emojiChar.length === 0) {
-        console.warn('Invalid emoji character received:', char);
-        return;
-      }
-
-      // Get current text and cursor position BEFORE state update
-      // This ensures we have the most up-to-date values
-      const currentText = messageText;
-      let { start, end } = selectionRef.current;
-
-      // Ensure cursor position is valid and within text bounds
-      const textLength = currentText.length;
-      if (start < 0) start = 0;
-      if (start > textLength) start = textLength;
-      if (end < 0) end = 0;
-      if (end > textLength) end = textLength;
-      if (start > end) {
-        const temp = start;
-        start = end;
-        end = temp;
-      }
-
-      // Insert emoji at cursor position
-      // Use slice to ensure we don't corrupt existing emojis in the text
-      const beforeText = currentText.slice(0, start);
-      const afterText = currentText.slice(end);
-
-      // Build new text by concatenating parts
-      const newText = beforeText + emojiChar + afterText;
-
-      // Calculate cursor position correctly for emojis
-      const emojiCodeUnits = emojiChar.length; // UTF-16 code units
-      const newCursorPos = start + emojiCodeUnits;
-
-      // Update state with new text
-      setMessageText(newText);
-
-      // Update selectionRef immediately
-      selectionRef.current = {
-        start: newCursorPos,
-        end: newCursorPos,
-      };
-
-      // Set cursor position after state update
-      requestAnimationFrame(() => {
-        setTimeout(() => {
-          if (textInputRef.current) {
-            const safeCursorPos = Math.min(newCursorPos, newText.length);
-            textInputRef.current.setNativeProps({
-              selection: { start: safeCursorPos, end: safeCursorPos },
-            });
-            // Update selectionRef after setting native props
-            selectionRef.current = {
-              start: safeCursorPos,
-              end: safeCursorPos,
-            };
-          }
-        }, 0);
-      });
-    }
-  };
 
 
   useEffect(() => {
@@ -1209,14 +927,15 @@ const MessagesIndividualScreen = ({
       });
 
       // Scroll to bottom when user's own message is added
-      if (isFromMe) {
+      // BUT NOT when content is short and locked on iOS
+      if (isFromMe && !(Platform.OS === 'ios' && isShortContentLockedRef.current)) {
         shouldAutoScrollRef.current = true;
         // Use multiple requestAnimationFrame to ensure layout is complete
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             InteractionManager.runAfterInteractions(() => {
               setTimeout(() => {
-                if (flatListRef.current) {
+                if (flatListRef.current && !(Platform.OS === 'ios' && isShortContentLockedRef.current)) {
                   try {
                     flatListRef.current.scrollToOffset({
                       offset: 0,
@@ -1373,169 +1092,34 @@ const MessagesIndividualScreen = ({
           // Use the maximum of both methods to ensure accurate height
           if (heightDiff > 100) {
             h = Math.max(h, heightDiff);
-            // console.log(
-            //   'Keyboard height - event:',
-            //   (e && e.endCoordinates && e.endCoordinates.height) || 0,
-            //   'window diff:',
-            //   heightDiff,
-            //   'using:',
-            //   h,
-            // );
           }
           // Update reference for next calculation
           windowHeightRef.current = currentWindowHeight;
         }
 
-        setKeyboardHeight(h);
-
-        // CRITICAL: Store the keyboard height for emoji keyboard to match device-specific height
-        // This ensures emoji picker height matches the exact keyboard height on this device
-        // Use the maximum height seen to handle cases where height might change slightly
-        if (h > 0) {
-          setLastKeyboardHeight(prev => {
-            // Use the maximum height to ensure we capture the full keyboard height
-            // This is important for devices like Motorola Edge Fusion 60 where height might vary
-            const newHeight = Math.max(prev, h);
-            if (newHeight !== prev) {
-              // console.log(
-              //   'Keyboard height captured:',
-              //   h,
-              //   'Max height:',
-              //   newHeight,
-              //   'Device will use this for emoji picker',
-              // );
-            }
-            return newHeight;
-          });
-        }
-
-        // On Android, also check height multiple times to ensure we get the final height
-        // Some devices (like Motorola Edge Fusion 60) might report height in stages or with slight delays
-        if (Platform.OS === 'android' && h > 0) {
-          // Check immediately with Keyboard.metrics() for more accurate height
-          try {
-            const metrics = Keyboard.metrics();
-            if (metrics && metrics.height && metrics.height > 0) {
-              const metricsHeight = metrics.height;
-              setLastKeyboardHeight(prev => {
-                // Use the maximum of all methods to ensure accurate height
-                const maxHeight = Math.max(prev, h, metricsHeight);
-                if (maxHeight !== prev) {
-                  // console.log(
-                  //   'Keyboard height from metrics (immediate):',
-                  //   metricsHeight,
-                  //   'event:',
-                  //   h,
-                  //   'Max height:',
-                  //   maxHeight,
-                  // );
-                }
-                return maxHeight;
-              });
-            }
-          } catch (err) {
-            // Keyboard.metrics() might not be available, use event height
-            // console.log(
-            //   'Keyboard.metrics() not available, using event height:',
-            //   h,
-            // );
+        // On iOS, only update keyboard height once per keyboard session to prevent shaking
+        // The keyboardWillShow event can fire multiple times with slightly different heights
+        if (Platform.OS === 'ios') {
+          // Only update if height hasn't been set yet for this session, or if it's significantly different
+          // This prevents micro-adjustments during keyboard animation that cause shaking
+          if (!keyboardHeightSetRef.current || (h > 0 && Math.abs(h - keyboardHeightRef.current) > 20)) {
+            keyboardHeightRef.current = h;
+            setKeyboardHeight(h);
+            keyboardHeightSetRef.current = true;
           }
-
-          // First delayed check after 150ms for devices that report height later
-          setTimeout(() => {
-            try {
-              const metrics = Keyboard.metrics();
-              if (metrics && metrics.height && metrics.height > 0) {
-                const metricsHeight = metrics.height;
-                setLastKeyboardHeight(prev => {
-                  const maxHeight = Math.max(prev, metricsHeight);
-                  if (maxHeight !== prev) {
-                    // console.log(
-                    //   'Keyboard height updated from metrics (150ms):',
-                    //   metricsHeight,
-                    //   'Max height:',
-                    //   maxHeight,
-                    // );
-                  }
-                  return maxHeight;
-                });
-              }
-
-              // Also check window dimensions again for final verification
-              const currentWindowHeight = Dimensions.get('window').height;
-              const heightDiff = windowHeightRef.current - currentWindowHeight;
-              if (heightDiff > 100) {
-                setLastKeyboardHeight(prev => {
-                  const maxHeight = Math.max(prev, heightDiff);
-                  if (maxHeight !== prev) {
-                    // console.log(
-                    //   'Keyboard height from window diff (150ms):',
-                    //   heightDiff,
-                    //   'Max height:',
-                    //   maxHeight,
-                    // );
-                  }
-                  return maxHeight;
-                });
-              }
-            } catch (err) {
-              // Keyboard.metrics() might not be available on all Android versions
-            }
-          }, 150);
-
-          // Final check after 400ms for devices that report height very late (like Motorola Edge Fusion 60)
-          setTimeout(() => {
-            try {
-              const metrics = Keyboard.metrics();
-              if (metrics && metrics.height && metrics.height > 0) {
-                const metricsHeight = metrics.height;
-                setLastKeyboardHeight(prev => {
-                  const maxHeight = Math.max(prev, metricsHeight);
-                  if (maxHeight !== prev) {
-                    console.log(
-                      'Keyboard height updated from metrics (400ms):',
-                      metricsHeight,
-                      'Max height:',
-                      maxHeight,
-                      'Device: Motorola Edge Fusion 60',
-                    );
-                  }
-                  return maxHeight;
-                });
-              }
-
-              // Final window dimensions check
-              const currentWindowHeight = Dimensions.get('window').height;
-              const heightDiff = windowHeightRef.current - currentWindowHeight;
-              if (heightDiff > 100) {
-                setLastKeyboardHeight(prev => {
-                  const maxHeight = Math.max(prev, heightDiff);
-                  if (maxHeight !== prev) {
-                    console.log(
-                      'Keyboard height from window diff (400ms):',
-                      heightDiff,
-                      'Max height:',
-                      maxHeight,
-                      'Device: Motorola Edge Fusion 60',
-                    );
-                  }
-                  return maxHeight;
-                });
-              }
-            } catch (err) {
-              // Keyboard.metrics() might not be available
-            }
-          }, 400);
+        } else {
+          keyboardHeightRef.current = h;
+          setKeyboardHeight(h);
         }
 
-        // if keyboard opens, close emoji picker
-        if (isEmojiPickerVisible) setIsEmojiPickerVisible(false);
       },
     );
     const hideSub = Keyboard.addListener(
       Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
       () => {
         setKeyboardVisible(false);
+        keyboardHeightRef.current = 0;
+        keyboardHeightSetRef.current = false; // Reset flag for next keyboard open
         setKeyboardHeight(0);
 
         // Update window height reference when keyboard closes
@@ -1546,20 +1130,22 @@ const MessagesIndividualScreen = ({
           }, 100);
         }
 
-        // Force KeyboardAvoidingView to reset by changing key
-        // This ensures padding is fully removed
-        setKavKey(prev => prev + 1);
-        // Keep lastKeyboardHeight for emoji keyboard sizing
-        // No scrolling needed - KeyboardAvoidingView handles natural adjustment
-        // FlatList will re-render automatically via extraData prop when keyboardVisible changes
-      },
-    );
+         // Force KeyboardAvoidingView to reset by changing key (only on iOS when needed)
+         // This ensures padding is fully removed
+         // Only update on iOS to prevent unnecessary re-renders on Android
+         if (Platform.OS === 'ios' && !isContentShort) {
+           setKavKey(prev => prev + 1);
+         }
+         // No scrolling needed - KeyboardAvoidingView handles natural adjustment
+         // FlatList will re-render automatically via extraData prop when keyboardVisible changes
+       },
+     );
 
     return () => {
       showSub.remove();
       hideSub.remove();
     };
-  }, [isEmojiPickerVisible, setIsEmojiPickerVisible]);
+  }, []);
 
   // Force layout recalculation after initial load completes
   useEffect(() => {
@@ -1574,19 +1160,6 @@ const MessagesIndividualScreen = ({
     }
   }, [initialLoading, layoutReady]);
 
-  // Calculate input bar bottom position
-  // When emoji is visible, position above emoji keyboard
-  // When text keyboard is visible, KeyboardAvoidingView handles it
-  // When neither is visible, add small bottom offset to match keyboard-open spacing
-  // KeyboardAvoidingView adds padding when keyboard opens, creating visual space below input bar
-  // We add a small offset when closed to match that spacing
-  const inputBarBottom = isEmojiPickerVisible
-    ? lastKeyboardHeight > 0
-      ? lastKeyboardHeight
-      : EMOJI_PICKER_HEIGHT
-    : Platform.OS === 'ios' && !keyboardVisible && layoutReady
-      ? 0
-      : 0; // Small offset to match keyboard-open appearance
 
   // Removed: Auto-scroll logic - inverted FlatList automatically shows newest messages at bottom
   const [extraPadding] = useState(48); // gap for padding
@@ -1746,33 +1319,16 @@ const MessagesIndividualScreen = ({
   }, [groupedMessages]);
 
   // Memoize content container style to ensure padding is applied on initial load
-  // Include bottom padding that adjusts for keyboard/emoji picker state
   // Input bar is absolutely positioned, but we need minimal padding to ensure last message is visible
   const contentContainerStyle = React.useMemo(() => {
     // KeyboardAvoidingView already handles pushing content up when keyboard opens
     // So we only need minimal padding for the input bar itself, not the full keyboard height
-    let paddingBottom = INPUT_BAR_HEIGHT; // Just enough to ensure last message is visible above input bar
-
-    if (keyboardVisible && !isEmojiPickerVisible) {
-      // Text keyboard is open - KeyboardAvoidingView handles the push
-      // We only need padding for the input bar, not the keyboard height
-      paddingBottom = INPUT_BAR_HEIGHT;
-    } else if (isEmojiPickerVisible) {
-      // Emoji picker is visible - KeyboardAvoidingView is disabled, so we need to add emoji picker height
-      paddingBottom = EMOJI_PICKER_HEIGHT;
-    }
-
     return {
       paddingTop: Platform.OS === 'ios' ? 160 : 150, // Header space at top
-      paddingBottom: 0, // Dynamic bottom padding for keyboard/emoji
+      paddingBottom: 0, // Dynamic bottom padding for keyboard
       flexGrow: 1, // Ensure content takes full space
     };
-  }, [
-    keyboardVisible,
-    isEmojiPickerVisible,
-    keyboardHeight,
-    EMOJI_PICKER_HEIGHT,
-  ]);
+  }, []); // Remove dependencies to prevent re-renders - padding is set dynamically in contentContainerStyle prop
 
 
   // Scroll to bottom when user sends a new message
@@ -1842,47 +1398,24 @@ const MessagesIndividualScreen = ({
         };
 
         // Try scrolling multiple times with increasing delays
-        scrollToBottom(keyboardVisible ? 300 : 200);
-        scrollToBottom(keyboardVisible ? 600 : 400);
-        scrollToBottom(keyboardVisible ? 1000 : 700);
+        // BUT NOT when content is short and locked on iOS
+        if (!(Platform.OS === 'ios' && isShortContentLockedRef.current)) {
+          scrollToBottom(keyboardVisible ? 300 : 200);
+          scrollToBottom(keyboardVisible ? 600 : 400);
+          scrollToBottom(keyboardVisible ? 1000 : 700);
+        }
       }
     }
     prevMessagesLengthRef.current = messages.length;
   }, [messages, checkUser, currentUserId, keyboardVisible, lastMessageIndex]);
 
-  // Silently position messages at bottom when emoji keyboard opens (no visible scroll animation)
-  const prevEmojiPickerVisibleRef = useRef(isEmojiPickerVisible);
-  useEffect(() => {
-    // Only position when emoji picker becomes visible (not when it closes)
-    if (isEmojiPickerVisible && !prevEmojiPickerVisibleRef.current) {
-      // Silently position scroll at bottom so messages appear above emoji keyboard
-      // Use animated: false to avoid visible scrolling effect
-      requestAnimationFrame(() => {
-        if (flatListRef.current) {
-          try {
-            flatListRef.current.scrollToOffset({
-              offset: 0,
-              animated: false, // No animation - silent positioning
-            });
-          } catch (err) {
-            try {
-              flatListRef.current.scrollToEnd({ animated: false });
-            } catch (e) {
-              // Ignore errors
-            }
-          }
-        }
-      });
-    }
-    prevEmojiPickerVisibleRef.current = isEmojiPickerVisible;
-  }, [isEmojiPickerVisible]);
 
   // Scroll to bottom on initial load to show latest messages
   useEffect(() => {
-    if (!initialLoading && messages.length > 0 && flatListRef.current) {
+    if (!initialLoading && messages.length > 0 && flatListRef.current && !(Platform.OS === 'ios' && isShortContentLockedRef.current)) {
       // Small delay to ensure layout is ready
       setTimeout(() => {
-        if (flatListRef.current) {
+        if (flatListRef.current && !(Platform.OS === 'ios' && isShortContentLockedRef.current)) {
           try {
             flatListRef.current.scrollToOffset({
               offset: 0,
@@ -1909,6 +1442,70 @@ const MessagesIndividualScreen = ({
   const inputBarHeight = INPUT_BAR_HEIGHT;
 
   const isSendDisabled = initialLoading || !messageText.trim();
+
+  const [isContentShort, setIsContentShort] = useState(false);
+  const prevIsContentShortRef = useRef(false);
+  const scrollToShortContentRef = useRef(false); // Prevent multiple scroll calls
+  const contentSizeChangeTimeoutRef = useRef<NodeJS.Timeout | null>(null); // Throttle content size changes
+  const isShortContentLockedRef = useRef(false); // Lock position when content is short
+
+  // Calculate input bar bottom position (memoized to prevent shaking)
+  // When content is short on iOS, manually position above keyboard
+  // Otherwise, KeyboardAvoidingView handles it
+  // Use ref value for stability during keyboard animations
+  const inputBarBottom = React.useMemo(() => {
+    if (Platform.OS === 'ios' && isContentShort && keyboardVisible) {
+      // Use the stable ref value to prevent shaking during keyboard animations
+      return keyboardHeightRef.current || keyboardHeight;
+    }
+    return 0;
+  }, [Platform.OS, isContentShort, keyboardVisible, keyboardHeight]);
+
+  // Scroll to show messages when keyboard opens with short content on iOS (only once)
+  useEffect(() => {
+    if (Platform.OS === 'ios' && isContentShort && keyboardVisible && flatListRef.current && messages.length > 0 && !scrollToShortContentRef.current) {
+      scrollToShortContentRef.current = true;
+      isShortContentLockedRef.current = true; // Lock position immediately to prevent any updates
+      // Delay to ensure keyboard animation completes and content size is stable
+      const timeoutId = setTimeout(() => {
+        if (flatListRef.current && keyboardVisible && isContentShort && isShortContentLockedRef.current) {
+          try {
+            // For inverted FlatList, scrollToOffset with 0 scrolls to bottom (newest messages)
+            flatListRef.current.scrollToOffset({
+              offset: 0,
+              animated: false, // Use false to prevent animation conflicts and shaking
+            });
+          } catch (err) {
+            try {
+              flatListRef.current.scrollToEnd({ animated: false });
+            } catch (e) {
+              // Ignore errors
+            }
+          }
+        }
+      }, 500); // Increased delay to ensure everything is stable
+      return () => {
+        clearTimeout(timeoutId);
+        // Reset flags when keyboard closes or content changes
+        if (!keyboardVisible || !isContentShort) {
+          scrollToShortContentRef.current = false;
+          isShortContentLockedRef.current = false;
+        }
+      };
+    } else if (!keyboardVisible || !isContentShort) {
+      scrollToShortContentRef.current = false;
+      isShortContentLockedRef.current = false;
+    }
+  }, [isContentShort, keyboardVisible, messages.length]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (contentSizeChangeTimeoutRef.current) {
+        clearTimeout(contentSizeChangeTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <ImageBackground source={bgImage} style={{ flex: 1 }} resizeMode="cover">
@@ -2190,7 +1787,7 @@ const MessagesIndividualScreen = ({
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 5 : 0}
-          enabled={!isEmojiPickerVisible}
+          enabled={Platform.OS === 'ios' ? !isContentShort : true}
         >
           <View
             style={{ flex: 1 }}
@@ -2207,21 +1804,28 @@ const MessagesIndividualScreen = ({
               inverted // WhatsApp-style: newest messages at bottom, scroll up to see older
               // onEndReached={loadOlderMessages}            // 🔥 Load older messages
               // onEndReachedThreshold={0.2}                 // 🔥 Trigger earlier (20% before top)
-              extraData={[
-                keyboardVisible,
-                isEmojiPickerVisible,
-                lastMessageIndex,
-                lastKeyboardHeight,
-                loadingOlderMessages,
-              ]} // Force re-render when keyboard/emoji state or keyboard height changes
+              removeClippedSubviews={Platform.OS === 'ios' && isContentShort && keyboardVisible ? false : true} // Disable clipping when short to prevent layout shifts
+              extraData={React.useMemo(() => {
+                // When locked, use minimal extraData to prevent re-renders
+                if (Platform.OS === 'ios' && isShortContentLockedRef.current) {
+                  // Only include essential data when locked
+                  return [keyboardVisible, lastMessageIndex];
+                }
+                return [keyboardVisible, lastMessageIndex, loadingOlderMessages, isContentShort];
+              }, [keyboardVisible, lastMessageIndex, loadingOlderMessages, isContentShort])} // Memoize to prevent unnecessary re-renders
               keyExtractor={(item, index) =>
                 item.sid || item.data?.sid || `item-${index}`
               }
               // onScroll={scrollHandler}
 
-              maintainVisibleContentPosition={{
-                minIndexForVisible: 1,
-              }}
+              maintainVisibleContentPosition={
+                // Disable on iOS when content is short to prevent shaking
+                Platform.OS === 'ios' && isContentShort
+                  ? undefined
+                  : {
+                      minIndexForVisible: 1,
+                    }
+              }
               onScroll={event => {
                 // Manually update shared values for blur effect
                 const offsetY = event.nativeEvent.contentOffset.y;
@@ -2258,7 +1862,7 @@ const MessagesIndividualScreen = ({
                 }
               }}
               scrollEventThrottle={16}
-              scrollEnabled={!isEmojiPickerVisible} // Disable scrolling when emoji keyboard is open
+              scrollEnabled={true}
               // onEndReached={loadOlderMessages} // Load older messages when scrolling to top (inverted list)
               // onEndReachedThreshold={0.3} // Trigger when 30% from top (more sensitive for better UX)
               ListHeaderComponent={null}
@@ -2293,33 +1897,10 @@ const MessagesIndividualScreen = ({
 
                 const isLastMessage = index === lastMessageIndex;
                 const isMyMessage = isFromCurrentUser(item);
-                // Calculate bottom padding for SAME HEIGHT across all three states:
-                // 1. Default (no keyboard): INPUT_BAR_HEIGHT + spacing
-                // 2. Text keyboard open: INPUT_BAR_HEIGHT + spacing (KeyboardAvoidingView handles keyboard push)
-                // 3. Emoji picker visible: INPUT_BAR_HEIGHT + EMOJI_PICKER_HEIGHT + spacing
-                //
-                // Key insight: When text keyboard is open, KeyboardAvoidingView already pushes content up by keyboardHeight
-                // So we only need INPUT_BAR_HEIGHT + spacing for marginBottom
-                // When emoji picker is visible, we need to add EMOJI_PICKER_HEIGHT to match the keyboard height
-                // EMOJI_PICKER_HEIGHT should equal keyboardHeight for consistent appearance
-
                 // Minimal spacing between last message and input field
                 // Input bar is absolutely positioned, so we only need a tiny gap
                 const BASE_SPACING = 0; // No extra spacing - input bar handles positioning
-
-                let bottomPadding;
-
-                if (keyboardVisible && !isEmojiPickerVisible) {
-                  // Text keyboard is open - KeyboardAvoidingView handles the push
-                  // No extra spacing needed since input bar is positioned above keyboard
-                  bottomPadding = BASE_SPACING;
-                } else if (isEmojiPickerVisible) {
-                  // Emoji picker is visible - add emoji picker height
-                  bottomPadding = EMOJI_PICKER_HEIGHT + BASE_SPACING;
-                } else {
-                  // Default state (no keyboard) - no extra spacing, input bar is absolutely positioned
-                  bottomPadding = BASE_SPACING;
-                }
+                const bottomPadding = BASE_SPACING;
 
                 return (
                   <>
@@ -2421,15 +2002,51 @@ const MessagesIndividualScreen = ({
               }}
               ref={flatListRef}
               keyboardShouldPersistTaps="handled"
-              onContentSizeChange={(width, height) => {
-                // Update content height and check if scrollable
-                const prevHeight = contentHeightRef.current;
-                contentHeightRef.current = height;
-                updateBlurState();
+               onContentSizeChange={(width, height) => {
+                 // When content is short and locked on iOS, completely skip all updates to prevent shaking
+                 if (Platform.OS === 'ios' && isShortContentLockedRef.current) {
+                   return; // Skip all processing when locked
+                 }
 
-                // Do NOT auto-scroll when loading older messages
-                if (loadingFromScrollRef.current || loadingOlderMessages)
-                  return;
+                 // Update content height immediately (needed for calculations)
+                 const prevHeight = contentHeightRef.current;
+                 contentHeightRef.current = height;
+                 updateBlurState();
+
+                 // Throttle isContentShort state updates to prevent shaking
+                 if (Platform.OS === 'ios') {
+                   if (contentSizeChangeTimeoutRef.current) {
+                     clearTimeout(contentSizeChangeTimeoutRef.current);
+                   }
+
+                   contentSizeChangeTimeoutRef.current = setTimeout(() => {
+                     // Don't update if locked
+                     if (isShortContentLockedRef.current) return;
+                     
+                     const screenHeight = Dimensions.get("window").height;
+                     const newIsContentShort = height < screenHeight * 0.7;
+                     // Only update state if value changed to prevent unnecessary re-renders and shaking
+                     if (newIsContentShort !== prevIsContentShortRef.current) {
+                       prevIsContentShortRef.current = newIsContentShort;
+                       isShortContentLockedRef.current = newIsContentShort && keyboardVisible;
+                       // Use double requestAnimationFrame to batch updates and prevent shaking
+                       requestAnimationFrame(() => {
+                         requestAnimationFrame(() => {
+                           setIsContentShort(newIsContentShort);
+                         });
+                       });
+                     } else if (newIsContentShort && keyboardVisible) {
+                       // Keep lock active if still short and keyboard visible
+                       isShortContentLockedRef.current = true;
+                     }
+                   }, 200); // Increased throttle to 200ms to prevent rapid updates
+                 }
+
+                 // Do NOT auto-scroll when loading older messages or when content is short on iOS
+                 // (short content scrolling is handled by the dedicated useEffect)
+                 // Completely prevent any scroll operations when content is short and locked
+                 if (loadingFromScrollRef.current || loadingOlderMessages || (Platform.OS === 'ios' && isShortContentLockedRef.current))
+                   return;
 
                 // If content height increased (new message added)
                 if (
@@ -2461,7 +2078,8 @@ const MessagesIndividualScreen = ({
                     String(messageAuthor) === String(currentUserId);
 
                   // Always scroll if it's user's own message, or if shouldAutoScrollRef is true
-                  if (isFromMe || shouldAutoScrollRef.current) {
+                  // BUT NOT when content is short and locked on iOS
+                  if (!(Platform.OS === 'ios' && isShortContentLockedRef.current) && (isFromMe || shouldAutoScrollRef.current)) {
                     if (isFromMe) {
                       shouldAutoScrollRef.current = true; // Reset flag for user's messages
                     }
@@ -2470,7 +2088,7 @@ const MessagesIndividualScreen = ({
                     InteractionManager.runAfterInteractions(() => {
                       setTimeout(
                         () => {
-                          if (flatListRef.current) {
+                          if (flatListRef.current && !(Platform.OS === 'ios' && isShortContentLockedRef.current)) {
                             try {
                               // For inverted FlatList, scrollToOffset with 0 scrolls to bottom
                               flatListRef.current.scrollToOffset({
@@ -2495,107 +2113,67 @@ const MessagesIndividualScreen = ({
                   }
                 }
               }}
-              //               onContentSizeChange={(w, h) => {
-              //   const prev = contentHeightRef.current;
-              //   contentHeightRef.current = h;
-
-              //   // Do NOT auto-scroll when loading older messages
-              //   if (loadingFromScrollRef.current) return;
-
-              //   // New incoming message → scroll to bottom
-              //   if (h > prev) {
-              //     flatListRef.current?.scrollToOffset({
-              //       offset: 0,
-              //       animated: true,
-              //     });
-              //   }
-              // }}
-
+              
               onLayout={event => {
+                // Skip layout updates when content is short and locked to prevent shaking
+                if (Platform.OS === 'ios' && isShortContentLockedRef.current) {
+                  return;
+                }
                 // Update viewport height and check if scrollable
                 const { height } = event.nativeEvent.layout;
                 viewportHeightRef.current = height;
                 updateBlurState();
               }}
-              contentContainerStyle={{
-                ...contentContainerStyle,
-                paddingBottom: 120,
-                paddingTop: isEmojiPickerVisible || keyboardVisible ? 80 : 105,
-                justifyContent: 'flex-end',
-              }}
+               contentContainerStyle={React.useMemo(() => {
+                 // When content is short and locked, use completely stable values - don't recalculate
+                 if (Platform.OS === 'ios' && isContentShort && keyboardVisible && isShortContentLockedRef.current) {
+                   // Return a completely stable style object - use ref value that was set when locked
+                  //  const lockedHeight = keyboardHeightRef.current || 0;
+                   return {
+                     paddingTop: 80,
+                     paddingBottom:  120,
+                     flexGrow: 1,
+                     justifyContent: 'flex-end',
+                   };
+                 }
+                 
+                 return {
+                   ...contentContainerStyle,
+                   paddingBottom: isContentShort && Platform.OS === 'ios' && keyboardVisible
+                     ? (keyboardHeightRef.current || keyboardHeight) + INPUT_BAR_HEIGHT +10
+                     : 120,
+                   paddingTop: keyboardVisible ? 80 : 105,
+                   // Always use flex-end for inverted FlatList to keep newest messages (index 0) visible at bottom
+                   justifyContent: 'flex-end',
+                 };
+               }, [contentContainerStyle, isContentShort, keyboardVisible, keyboardHeight])}
               showsVerticalScrollIndicator={false}
             />
 
-            {/* Touchable overlay to close emoji keyboard when tapping outside */}
-            {isEmojiPickerVisible && (
-              <Pressable
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: EMOJI_PICKER_HEIGHT + INPUT_BAR_HEIGHT,
-                  zIndex: 998,
-                  backgroundColor: 'transparent', // Transparent but still captures taps
-                }}
-                onPress={() => {
-                  setIsEmojiPickerVisible(false);
-                }}
-              />
-            )}
-
-            {/* EMOJI PICKER PANEL - instant appearance, no animation */}
-            {isEmojiPickerVisible && (
-              <View
-                style={{
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  height: EMOJI_PICKER_HEIGHT,
-                  backgroundColor: '#FFFFFF',
-                  borderTopLeftRadius: 12,
-                  borderTopRightRadius: 12,
-                  zIndex: 999,
-                  // NO transform/translateY - instant appearance
-                }}
-                {...panResponder.panHandlers}
-                // Prevent navigation gestures when emoji keyboard is open
-                onStartShouldSetResponder={() => true}
-                onMoveShouldSetResponder={() => true}
-                onResponderTerminationRequest={() => false}
-              >
-                <View style={{ flex: 1 }}>
-                  <EmojiKeyboard
-                    onEmojiSelected={emoji => {
-                      handleEmojiSelected(emoji);
-                    }}
-                  />
-                </View>
-              </View>
-            )}
 
             {/* Input Bar - ALWAYS above keyboard or emoji panel */}
             <View
-              style={{
+              style={React.useMemo(() => ({
                 position: 'absolute',
                 left: 0,
                 right: 0,
+                // bottom: inputBarBottom,
                 bottom: inputBarBottom,
                 paddingHorizontal: 16,
                 paddingTop: Platform.OS === 'ios' ? 0 : 8,
                 paddingBottom:
                   Platform.OS === 'ios'
-                    ? keyboardVisible || isEmojiPickerVisible
+                    ? isContentShort && keyboardVisible
                       ? 0
-                      : 30
-                    : keyboardVisible || isEmojiPickerVisible
+                      : keyboardVisible
+                        ? 0
+                        : 30
+                    : keyboardVisible
                       ? 8
                       : 34,
-                // Footer spacing will be handled by a spacer element below
                 backgroundColor: 'transparent',
                 zIndex: 1000,
-              }}
+              }), [inputBarBottom, isContentShort, keyboardVisible])}
             >
               <View
                 style={{
@@ -2632,109 +2210,6 @@ const MessagesIndividualScreen = ({
                     blurAmount={5}
                     reducedTransparencyFallbackColor="#ffffff34"
                   />
-                  {/* Emoji/Keyboard toggle button - WhatsApp style */}
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() => {
-                      // console.log(
-                      //   'Emoji button clicked, isEmojiPickerVisible:',
-                      //   isEmojiPickerVisible,
-                      //   'keyboardVisible:',
-                      //   keyboardVisible,
-                      // );
-                      if (isEmojiPickerVisible) {
-                        // Currently showing emoji keyboard - switch to text keyboard
-                        shouldAutoFocusRef.current = true; // Allow auto-focus
-                        isOpeningEmojiRef.current = false; // Not opening emoji
-                        setIsEmojiPickerVisible(false);
-                        // Focus text input to show keyboard and cursor
-                        setTimeout(() => {
-                          textInputRef.current?.blur();
-                          setTimeout(() => {
-                            textInputRef.current?.focus();
-                          }, 50);
-                        }, 150);
-                      } else {
-                        // Currently showing text keyboard or no keyboard - switch to emoji keyboard
-                        // console.log('Opening emoji keyboard...', {
-                        //   keyboardVisible,
-                        //   isEmojiPickerVisible,
-                        // });
-
-                        // Set flags first
-                        shouldAutoFocusRef.current = false; // Prevent auto-focus
-                        isOpeningEmojiRef.current = true; // Mark that we're opening emoji keyboard
-
-                        if (keyboardVisible) {
-                          // Dismiss text keyboard first, then show emoji picker
-                          // console.log('Dismissing keyboard first...');
-                          Keyboard.dismiss();
-                          // Blur input to prevent text keyboard from showing
-                          textInputRef.current?.blur();
-                          setTimeout(() => {
-                            // console.log(
-                            //   'Setting emoji picker visible to true (after keyboard dismiss)',
-                            // );
-                            setIsEmojiPickerVisible(true);
-                            // Reset flag after delay to allow normal behavior
-                            setTimeout(() => {
-                              isOpeningEmojiRef.current = false;
-                              // console.log('Emoji keyboard visible, flag reset');
-                            }, 500);
-                          }, 300);
-                        } else {
-                          // No keyboard visible - show emoji keyboard immediately
-                          // console.log(
-                          //   'Setting emoji picker visible to true (no keyboard) - IMMEDIATE',
-                          // );
-                          // Set state immediately - no delays
-                          setIsEmojiPickerVisible(true);
-                          // console.log(
-                          //   'State set to true, should render emoji picker now',
-                          // );
-                          // Blur input after state is set to prevent text keyboard from showing
-                          setTimeout(() => {
-                            textInputRef.current?.blur();
-                          }, 50);
-                          // Reset flag after delay to allow normal behavior
-                          setTimeout(() => {
-                            isOpeningEmojiRef.current = false;
-                            console.log(
-                              'Emoji keyboard visible (no keyboard), flag reset',
-                            );
-                          }, 500);
-                        }
-                      }
-                    }}
-                    style={{ marginRight: Platform.OS === 'ios' ? 5 : 8 ,display: 'none',}}
-                  >
-                    {isEmojiPickerVisible ? (
-                      // Show keyboard icon when emoji keyboard is visible (like WhatsApp)
-                      // <MaterialIcons name="keyboard" size={24} color="#fff" />
-                      <Image
-                        source={require('../../../assets/keyboardimages/keyboard1.png')}
-                        style={{ width: 24, height: 24, tintColor: '#fff' }}
-                      />
-                    ) : (
-                      // Show smiley icon when text keyboard is visible or no keyboard
-                      <Image
-                        source={smileyhappy}
-                        style={{ width: 24, height: 24, tintColor: '#fff' }}
-                      />
-                    )}
-                  </TouchableOpacity>
-
-                  <View
-                    style={{
-                      width: 1,
-                      height: 30,
-                      marginTop: Platform.OS === 'ios' ? 5 : 0,
-                      marginBottom: Platform.OS === 'ios' ? 5 : 0,
-                      display: 'none',
-                      backgroundColor: 'rgba(255, 255, 255, 0.23)',
-                      marginHorizontal: 6,
-                    }}
-                  />
 
                   {/* Text input */}
                   <TextInput
@@ -2751,62 +2226,6 @@ const MessagesIndividualScreen = ({
                     placeholderTextColor="#ccc"
                     onChangeText={handleTextChange}
                     value={messageText}
-                    showSoftInputOnFocus={!isEmojiPickerVisible} // Don't show keyboard when emoji picker is visible
-                    onSelectionChange={e => {
-                      // Track cursor position for emoji insertion
-                      // Always update to get the latest cursor position
-                      // This is critical when user moves cursor, especially with emoji keyboard open
-                      const newStart = e.nativeEvent.selection.start;
-                      const newEnd = e.nativeEvent.selection.end;
-
-                      // Validate selection is within text bounds
-                      const textLength = messageText.length;
-                      const safeStart = Math.max(
-                        0,
-                        Math.min(newStart, textLength),
-                      );
-                      const safeEnd = Math.max(0, Math.min(newEnd, textLength));
-
-                      selectionRef.current = {
-                        start: safeStart,
-                        end: safeEnd,
-                      };
-                    }}
-                    onFocus={() => {
-                      // When user taps on text input, hide emoji keyboard and show text keyboard
-                      // This matches WhatsApp behavior - tapping input always shows text keyboard
-                      // Add a longer delay to check flags to prevent race conditions when opening emoji
-                      setTimeout(() => {
-                        // Only close emoji picker if:
-                        // 1. Emoji picker is visible
-                        // 2. shouldAutoFocusRef is true (user tapped, not programmatic)
-                        // 3. We're not in the process of opening emoji keyboard
-                        console.log('onFocus triggered:', {
-                          isEmojiPickerVisible,
-                          shouldAutoFocus: shouldAutoFocusRef.current,
-                          isOpeningEmoji: isOpeningEmojiRef.current,
-                        });
-                        if (
-                          isEmojiPickerVisible &&
-                          shouldAutoFocusRef.current &&
-                          !isOpeningEmojiRef.current
-                        ) {
-                          console.log('Closing emoji picker from onFocus');
-                          setIsEmojiPickerVisible(false);
-                          // Focus will automatically show keyboard after emoji picker closes
-                          // Ensure keyboard shows
-                          setTimeout(() => {
-                            if (textInputRef.current) {
-                              textInputRef.current.focus();
-                            }
-                          }, 100);
-                        } else {
-                          console.log(
-                            'Not closing emoji picker - flags prevent it',
-                          );
-                        }
-                      }, 300);
-                    }}
                   />
                 </View>
 
