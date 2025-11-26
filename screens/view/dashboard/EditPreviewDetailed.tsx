@@ -374,18 +374,18 @@ const { height } = Dimensions.get('window');
       console.log('✅ Image fields:', imageFields);
 
       // --- Build data array safely ---
-const dataArray = nonImageFields
-  .filter(([key, obj]) => !isNaN(Number(key)))
-  .map(([key, obj]) => {
-    const val = obj.value;
-    return {
-      id: Number(key),
-      param_value: val !== undefined && val !== null && val !== '' ? val : null,
-    };
-  })
-  .filter(item => item.param_value !== null); 
+      const dataArray = nonImageFields
+        .filter(([key, obj]) => !isNaN(Number(key)))
+        .map(([key, obj]) => {
+          const val = obj.value;
+          return {
+            id: Number(key),
+            param_value: val !== undefined && val !== null && val !== '' ? val : null,
+          };
+        })
+        .filter(item => item.param_value !== null); 
 
-      console.log('✅ Data array for create API:', dataArray);
+            console.log('✅ Data array for create API:', dataArray);
 
       const createPayload = {
         category_id: productId1, // dynamic or static
@@ -483,9 +483,11 @@ const dataArray = nonImageFields
   
       console.log('✅ All uploads done. Showing toast.');
       showToast(Constant.DATA_UPLOAD,'success');
+      showToast(Constant.DATA_UPLOAD,'success');
       setShowPopup(true);
     } catch (error) {
       console.log('❌ Error in handleListPress:', error);
+      showToast(Constant.SOMTHING_WENT_WRONG,'error');
       showToast(Constant.SOMTHING_WENT_WRONG,'error');
     }
   };

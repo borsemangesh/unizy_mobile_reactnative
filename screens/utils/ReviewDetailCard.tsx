@@ -20,12 +20,12 @@ type ReviewDetailCardProps = {
   reviewText?: string;
   navigation?: any;
   shareid: number;
-  date:string,
-  reviewer_name:string,
-  category_id:number
-  reviewer_image?:string
-  feature_image?:string,
- 
+  date: string,
+  reviewer_name: string,
+  category_id: number
+  reviewer_image?: string
+  feature_image?: string,
+
 };
 
 const ReviewDetailCard: React.FC<ReviewDetailCardProps> = ({
@@ -42,97 +42,87 @@ const ReviewDetailCard: React.FC<ReviewDetailCardProps> = ({
   feature_image
 
 }) => {
-  const fullStar = require('../../assets/images/starfill.png'); 
-  const emptyStar = require('../../assets/images/starempty.png'); 
+  const fullStar = require('../../assets/images/starfill.png');
+  const emptyStar = require('../../assets/images/starempty.png');
 
   const getInitials = (fullName?: string): string => {
-  if (!fullName) return '';
+    if (!fullName) return '';
 
-  const parts = fullName.trim().split(' ').filter(Boolean);
+    const parts = fullName.trim().split(' ').filter(Boolean);
 
-  if (parts.length === 0) return '';
-  if (parts.length === 1) return parts[0][0].toUpperCase();
+    if (parts.length === 0) return '';
+    if (parts.length === 1) return parts[0][0].toUpperCase();
 
-  // First letter + last letter
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-};
-  
-     const renderProfileSection = () => {
-      if (category_id===2 || category_id===5) {
-        if (reviewer_image) {
-          return (  
-            <Image
-              source={{ uri: reviewer_image }}
-              style={styles.image}
-              resizeMode="cover"
-            />
-          );
-        } else {
-          return (
-            <View style={styles.initialsCircle}>
-              <Text allowFontScaling={false} style={styles.initialsText}>
-                {getInitials(reviewer_name)}
-              </Text>
-             
-            </View>
-          );
-        }
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  };
+
+  const renderProfileSection = () => {
+    if (category_id === 2 || category_id === 5) {
+      if (reviewer_image) {
+        return (
+          <Image
+            source={{ uri: reviewer_image }}
+            style={styles.image}
+            resizeMode="cover"
+          />
+        );
       } else {
         return (
-          <Image source={{ uri: feature_image }} style={styles.image} resizeMode="cover" />
+          <View style={styles.initialsCircle}>
+            <Text allowFontScaling={false} style={styles.initialsText}>
+              {getInitials(reviewer_name)}
+            </Text>
+
+          </View>
         );
       }
-    };
-  
+    } else {
+      return (
+        <Image source={{ uri: feature_image }} style={styles.image} resizeMode="cover" />
+      );
+    }
+  };
+
 
   return (
     <TouchableOpacity
       style={styles.card}
-     // onPress={() => navigation.navigate('ListingDetails', { shareid })}
       activeOpacity={0.8}
     >
-     <View style={styles.row}>
-      {/* <Image source={productImage} style={styles.image} resizeMode="cover" /> */}
-       {renderProfileSection()}
-      <View style={styles.details}>
-        <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
-        <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
-        <Text allowFontScaling={false} style={styles.date}>{date}
-        </Text>
+      <View style={styles.row}>
+        {renderProfileSection()}
+        <View style={styles.details}>
+          <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
+          <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
+          <Text allowFontScaling={false} style={styles.date}>{date}
+          </Text>
+        </View>
       </View>
-    </View>
+      <View style={styles.cardconstinerdivider} />
 
-   {/* <View style={styles.dashedLine} /> */}
-   
-   {/* <View style={styles.dashedLine1} /> */}
-   <View style={styles.cardconstinerdivider} />
+      <View style={styles.bottomContent}>
+        <View style={styles.topRow}>
+          <Text allowFontScaling={false} style={styles.reviewerName}>
+            {reviewer_name}
+          </Text>
 
-  <View style={styles.bottomContent}>
-  
-  {/* Top Row: Text Left, Stars Right */}
-  <View style={styles.topRow}>
-    <Text allowFontScaling={false} style={styles.reviewerName}>
-      {reviewer_name}
-    </Text>
+          <View style={styles.starsRow}>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Image
+                key={i}
+                source={i < Number(rating) ? fullStar : emptyStar}
+                style={styles.star}
+              />
+            ))}
+          </View>
+        </View>
 
-    <View style={styles.starsRow}>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Image
-          key={i}
-          source={i < Number(rating) ? fullStar : emptyStar}
-          style={styles.star}
-        />
-      ))}
-    </View>
-  </View>
-
-  {/* Review text below */}
-  {reviewText ? (
-    <Text allowFontScaling={false} style={styles.reviewText} numberOfLines={3}>
-      {reviewText}
-    </Text>
-  ) : null}
-</View>
+        {reviewText ? (
+          <Text allowFontScaling={false} style={styles.reviewText} numberOfLines={3}>
+            {reviewText}
+          </Text>
+        ) : null}
+      </View>
     </TouchableOpacity>
   );
 };
@@ -150,12 +140,11 @@ const styles = StyleSheet.create({
     height: (Platform.OS === 'ios' ? 2 : 1.5),
     borderStyle: 'dashed',
     borderBottomWidth: (Platform.OS === 'ios' ? 0.9 : 1),
-    // backgroundColor: 'rgba(169, 211, 255, 0.08)',
     borderColor: (Platform.OS === 'ios' ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)' : '#4169B8'),
 
   },
 
-    initialsCircle:{
+  initialsCircle: {
     backgroundColor: '#8390D4',
     alignItems: 'center',
     justifyContent: 'center',
@@ -163,85 +152,63 @@ const styles = StyleSheet.create({
     height: 70,
     borderRadius: 14,
     //marginRight: 12,
-    overflow:'hidden'
+    overflow: 'hidden'
   },
-  initialsText:{
-   color: '#fff',
-  fontSize: 30,
-  fontWeight:600,
-  textAlign: 'center',
-  fontFamily: 'Urbanist-SemiBold',
+  initialsText: {
+    color: '#fff',
+    fontSize: 30,
+    fontWeight: 600,
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
   },
 
-    dashedLine: {
+  dashedLine: {
     borderBottomWidth: 1,
     borderColor: '#6592D4',
     borderStyle: 'dashed',
-    //paddingVertical: 10,
-    //marginVertical:6,
     width: '100%',
-    opacity: 0, 
-    
+    opacity: 0,
+
   },
 
   dashedLine1: {
-    // borderBottomWidth: 1,
-    // borderColor: '#5b70abff',
-    // borderStyle: 'dashed',
-    // //paddingVertical: 10,
-    // marginVertical:6,
-    // width: '100%',
-    // display: 'flex',
-    // flexDirection: 'row',
-    // justifyContent: 'space-between',
-    // alignItems: 'center',
-    // width: '100%',
-    // borderStyle: 'dashed',
-    // borderBottomWidth: 1.5,
-    // marginVertical:6,
-    // backgroundColor: (Platform.OS === 'ios' ? 'rgba(2, 6, 131, 0.26)' : 'none'),
-    // height: 1,
-    // borderColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)'
-    
   },
 
   topRow: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-},
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
 
-reviewerName: {
-  fontSize: 14,
-  color: '#FFFFFFE0',
-  fontWeight: '600',
-  fontFamily: 'Urbanist-SemiBold',
-  flex: 1,
-  marginRight: 8,
-},
-bottomContent: {
- // marginTop:2,
-},
+  reviewerName: {
+    fontSize: 14,
+    color: '#FFFFFFE0',
+    fontWeight: '600',
+    fontFamily: 'Urbanist-SemiBold',
+    flex: 1,
+    marginRight: 8,
+  },
+  bottomContent: {
+  },
   card: {
     backgroundColor: 'rgba(255,255,255,0.08)',
     borderRadius: 16,
     padding: 12,
     marginVertical: 8,
     borderWidth: 1,
-    marginHorizontal:8,
+    marginHorizontal: 8,
     borderColor: 'rgba(255,255,255,0.1)',
     gap: 10
   },
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    // paddingBottom:6
   },
   image: {
     width: 70,
     height: 70,
     borderRadius: 14,
-    overflow:'hidden'
+    overflow: 'hidden'
   },
   details: {
     flex: 1,
@@ -265,16 +232,16 @@ bottomContent: {
     color: '#FFFFFFE0',
     marginTop: 6,
     fontFamily: 'Urbanist-Medium',
-    fontWeight:500,
+    fontWeight: 500,
   },
   starsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop:6
-   
+    paddingTop: 6
+
   },
   star: {
-    width: 16, // adjust to match your design
+    width: 16,
     height: 16,
     marginRight: 4,
   },
@@ -283,7 +250,7 @@ bottomContent: {
     color: '#FFFFFFE0',
     marginTop: 8,
     fontFamily: 'Urbanist-Regular',
-    fontWeight:400,
+    fontWeight: 400,
     lineHeight: 18,
   },
 });

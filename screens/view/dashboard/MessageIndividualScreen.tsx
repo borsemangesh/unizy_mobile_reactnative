@@ -97,7 +97,6 @@ const saveJSON = async (key: any, value: any) => {
   try {
     await AsyncStorage.setItem(key, JSON.stringify(value));
   } catch (err: any) {
-    // Silent fail - cache is optional
     if (__DEV__) {
       console.warn('Cache save failed:', err.message);
     }
@@ -117,16 +116,13 @@ const loadJSON = async (key: any) => {
   }
 };
 
-// Helper function for safe fetch with timeout (production-ready)
 const fetchWithTimeout = async (
   url: string,
   options: RequestInit = {},
   timeoutMs: number = 15000
 ): Promise<Response> => {
-  // AbortController is available in React Native 0.60+
-  // For React Native 0.81.0, it's definitely available
+  
   if (typeof AbortController === 'undefined') {
-    // Fallback for very old React Native versions (unlikely but safe)
     throw new Error('AbortController not available');
   }
 
@@ -156,13 +152,6 @@ const MessagesIndividualScreen = ({
   const { members, sellerData, userConvName, currentUserIdList, source, conversationSid } =
     route.params;
 
-  // console.log('Received members:', members);
-  // console.log('sellerData----', sellerData?.featureId);
-  // console.log('source', source);
-  // console.log('convName', userConvName);
-
-  // console.log('currentUserIdList----', currentUserIdList);
-
   const [chatClient, setChatClient] = useState<any>(null);
 
   const [conversation, setConversation] = useState<any>(null);
@@ -188,9 +177,7 @@ const MessagesIndividualScreen = ({
   const textInputRef = useRef<TextInput>(null);
   const loadingFromScrollRef = useRef(false);
   const shouldAutoScrollRef = useRef(true);
-  const newestMessageSidRef = useRef<string | null>(null); // Track newest message to detect if it changed
-
-
+  const newestMessageSidRef = useRef<string | null>(null); 
 
   const hasScrollableContent = useSharedValue(false);
   const contentHeightRef = useRef(0);
@@ -300,7 +287,6 @@ const MessagesIndividualScreen = ({
   const keyboardHeightRef = useRef(0); // Stable ref to prevent shaking
   const keyboardHeightSetRef = useRef(false); // Track if height has been set for this keyboard session
 
-  // Update window height when dimensions change (for keyboard height calculation)
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
       windowHeightRef.current = window.height;
@@ -312,12 +298,10 @@ const MessagesIndividualScreen = ({
   const isInitialMountRef = useRef(true);
 
 
-  // Function to filter out numbers and number words
   const filterNumbersAndNumberWords = (text: string): string => {
     // Remove all digits (0-9)
     let filtered = text.replace(/[0-9]/g, '');
 
-    // Remove number words (case-insensitive)
     const numberWords = [
       'zero',
       'one',
@@ -354,7 +338,6 @@ const MessagesIndividualScreen = ({
       'trillion',
     ];
 
-    // Create regex pattern to match number words as whole words
     const numberWordsPattern = new RegExp(
       `\\b(${numberWords.join('|')})\\b`,
       'gi',
@@ -362,14 +345,11 @@ const MessagesIndividualScreen = ({
 
     filtered = filtered.replace(numberWordsPattern, '');
 
-    // Only clean up excessive spaces (3+ consecutive spaces) left after removal
-    // Preserve single and double spaces that user intentionally types
     filtered = filtered.replace(/\s{3,}/g, '  ');
 
     return filtered;
   };
 
-  // Handle text input change with number filtering
   const handleTextChange = (text: string) => {
     const filteredText = filterNumbersAndNumberWords(text);
     setMessageText(filteredText);
@@ -408,8 +388,6 @@ const MessagesIndividualScreen = ({
           throw new Error('Invalid token response from server');
         }
 
-        // Initialize Twilio client with error handling
-        // const twilio = await getTwilioClient(data.data.token);
         const twilio = await new TwilioChatClient(data.data.token);
 
         console.log(twilio)
@@ -423,7 +401,6 @@ const MessagesIndividualScreen = ({
         console.log("Twilio client initialized successfully");
         setChatClient(twilio);
 
-        // Preload conversations silently in background with error handling
         setTimeout(() => {
           if (twilio && isMounted) {
             twilio.getSubscribedConversations()
@@ -681,12 +658,6 @@ const MessagesIndividualScreen = ({
 
         setInitialLoading(false);
 
-        // Optional: Show user-friendly error (uncomment if needed)
-        // Alert.alert(
-        //   "Connection Error",
-        //   "Unable to load conversation. Please check your connection and try again.",
-        //   [{ text: "OK" }]
-        // );
       }
     };
 
@@ -752,97 +723,10 @@ const MessagesIndividualScreen = ({
     }
   };
 
-  // ----------------------------------------------------------
-  // Load older messages (pagination) - WhatsApp style
-  // ----------------------------------------------------------
-  // const loadOlderMessages = useCallback(async () => {
-  //   if (!conversation || !hasMoreMessages || loadingOlderMessages) {
-  //     console.log(
-  //       'loadOlderMessages: Skipping - conversation:',
-  //       !!conversation,
-  //       'hasMoreMessages:',
-  //       hasMoreMessages,
-  //       'loadingOlderMessages:',
-  //       loadingOlderMessages,
-  //     );
-  //     return;
-  //   }
-
-  //   try {
-  //     setLoadingOlderMessages(true);
-  //     console.log('loadOlderMessages: Loading older messages...');
-
-  //     // Get the previous page of messages
-  //     const prevPage = await messagesPageRef.current?.prevPage();
-
-  //     if (!prevPage || !prevPage.items || prevPage.items.length === 0) {
-  //       console.log('loadOlderMessages: No more messages to load');
-  //       setHasMoreMessages(false);
-  //       setLoadingOlderMessages(false);
-  //       return;
-  //     }
-
-  //     console.log(
-  //       'loadOlderMessages: Loaded',
-  //       prevPage.items.length,
-  //       'older messages',
-  //     );
-
-  //     // Store the new page for next pagination
-  //     messagesPageRef.current = prevPage;
-
-  //     // Check if there are more messages
-  //     setHasMoreMessages(prevPage.hasNextPage || false);
-
-  //     // Get existing message SIDs for deduplication
-  //     setMessages(prev => {
-  //       const existingSids = new Set(prev.map(msg => msg.sid));
-
-  //       // Filter out duplicates from new messages
-  //       const newMessages = prevPage.items.filter(
-  //         (msg: any) => !existingSids.has(msg.sid),
-  //       );
-
-  //       if (newMessages.length === 0) {
-  //         console.log('loadOlderMessages: All messages are duplicates');
-  //         setHasMoreMessages(false);
-  //         return prev; // No new messages, return previous state
-  //       }
-
-  //       console.log(
-  //         'loadOlderMessages: Adding',
-  //         newMessages.length,
-  //         'new messages',
-  //       );
-
-  //       // Combine: existing messages + new older messages
-  //       // With inverted FlatList: newest at bottom (index 0), oldest at top (last index)
-  //       // New older messages should be added to the end of the array (will appear at top after inversion)
-  //       const combined = [...prev, ...newMessages];
-
-  //       // Sort to maintain newest-first order (newest at start, oldest at end)
-  //       const sorted = combined.sort((a, b) => {
-  //         const timeA = new Date(a.dateCreated || a.timestamp).getTime();
-  //         const timeB = new Date(b.dateCreated || b.timestamp).getTime();
-  //         return timeB - timeA; // Newest first
-  //       });
-
-  //       return sorted;
-  //     });
-
-  //     // Scroll position is maintained automatically by FlatList when items are added
-  //     // Inverted FlatList correctly maintains position when appending to end
-  //   } catch (error) {
-  //     console.error('Failed to load older messages:', error);
-  //     setHasMoreMessages(false);
-  //   } finally {
-  //     setLoadingOlderMessages(false);
-  //   }
-  // }, [conversation, hasMoreMessages, loadingOlderMessages]);
-
+ 
   const loadOlderMessages = useCallback(async () => {
     if (!messagesPageRef.current?.hasPrevPage) return;
-    if (loadingOlderMessages) return; // Prevent multiple simultaneous loads
+    if (loadingOlderMessages) return; 
 
     setLoadingOlderMessages(true);
     loadingFromScrollRef.current = true;
@@ -871,9 +755,7 @@ const MessagesIndividualScreen = ({
   }, [loadingOlderMessages]);
 
 
-  // ----------------------------------------------------------
-  // STEP 3: Attach Twilio Message Listener (ONLY ONCE)
-  // ----------------------------------------------------------
+ 
   useEffect(() => {
     if (!conversation) return;
 
@@ -1608,7 +1490,6 @@ const MessagesIndividualScreen = ({
                 paddingTop: Platform.OS === 'ios' ? 0 : 0,
               }}
             >
-              {/* //------------------Add Button -------------------// */}
 
               <TouchableOpacity
                 onPress={() => {

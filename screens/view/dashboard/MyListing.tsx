@@ -138,7 +138,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
   const blurAmount = useDerivedValue(() =>
     interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
   );
-
   const [categories, setCategories] = useState<Category[]>([
     { id: null, name: 'All' },
   ]);
@@ -146,7 +145,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
     id: null,
     name: 'All',
   });
-
 
 
   useEffect(() => {
@@ -168,6 +166,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
     };
     loadCategories();
   }, []);
+
 
   useEffect(() => {
     const backAction = () => {
@@ -364,6 +363,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
           style={[styles.headerWrapper, animatedBlurStyle]}
           pointerEvents="none"
         >
+          {/* Blur layer only at top with gradient fade */}
           <MaskedView
             style={StyleSheet.absoluteFill}
             maskElement={
@@ -380,7 +380,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
               style={StyleSheet.absoluteFill}
               blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
               blurAmount={Platform.OS === 'ios' ? 45 : 45}
-              //  overlayColor="rgba(255,255,255,0.05)"
+              // overlayColor="rgba(255,255,255,0.05)"
               reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
             />
             <LinearGradient
@@ -465,7 +465,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
                 ]}
               />
 
-              {/* Blur view fades in as scroll increases */}
               <Animated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -487,7 +486,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
                 />
               </Animated.View>
 
-              {/* Back Icon */}
               <Animated.Image
                 source={require('../../../assets/images/back.png')}
                 style={[{ height: 24, width: 24 }, animatedIconStyle]}
@@ -503,14 +501,10 @@ const MyListing = ({ navigation }: MyListingProps) => {
         <View style={{ flex: 1, overflow: 'hidden' }}>
           <Animated.FlatList
             data={featureList}
-            scrollEnabled={true} // ← Allow scroll only inside FlatList
+            scrollEnabled={true} 
             showsVerticalScrollIndicator={false}
             nestedScrollEnabled={false}
             renderItem={renderItem}
-            // keyExtractor={(item, index) => {
-            //   'worklet';
-            //   return index.toString();
-            // }}
             keyExtractor={item => item.id.toString()}
             ListHeaderComponent={
               <View
@@ -531,9 +525,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
                         onPress={() => setSelectedCategory(cat)}
                         activeOpacity={0.7}
                       >
-                        {/* <View
-                          style={isSelected ? styles.tabcard : styles.tabcard1}
-                        > */}
                         <SquircleView
                           style={isSelected ? styles.tabcard : styles.tabcard1}
                           squircleParams={{
@@ -552,7 +543,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
                           >
                             {cat.name}
                           </Text>
-                          {/* </View> */}
                         </SquircleView>
                       </TouchableOpacity>
                     );
@@ -565,7 +555,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
               {
                 paddingTop: Platform.OS === 'ios' ? 114 : 100,
                 paddingBottom: isEmpty
-                  ? 10                        // ⬅ remove padding when list is empty
+                  ? 10                      
                   : Platform.select({
                     ios: height * 0.01,   // ⬅ apply padding when list has data
                     android: height * 0.04,
@@ -599,12 +589,10 @@ const MyListing = ({ navigation }: MyListingProps) => {
             ListEmptyComponent={
 
               (isLoading || initialLoading) && featurelist.length === 0 ? (
-                // Show loader while fetching
                 <View style={[styles.emptyWrapper, { justifyContent: 'center', flex: 1 }]}>
                   <Loader containerStyle={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }} />
                 </View>
               ) : !isLoading && featurelist.length === 0 ? (
-                // Show "No Listings Found" if API finished and list is empty
                 <View style={[styles.emptyWrapper, { justifyContent: 'center', alignItems: 'center', flex: 1 }]}>
                   <View style={styles.emptyContainer}>
                     <Image
@@ -617,7 +605,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
                     </Text>
                   </View>
                 </View>
-              ) : null // List has items, show nothing
+              ) : null 
             }
           />
         </View>
@@ -654,20 +642,47 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
 
   },
-  emptyImage: { width: 50, height: 50, marginBottom: 20 },
+  emptyImage: {
+    width: 50,
+    height: 50,
+    marginBottom: 20,
+  },
   emptyText: {
+    fontSize: 20,
     color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
+    textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
+    fontWeight: 600
   },
 
-  background: { flex: 1 },
-  fullScreenContainer: { flex: 1 },
 
+  // categoryTabsScrollContent: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   paddingRight: 16,
+  // },
+  blurButtonWrapper: {
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', 
+  },
+  // tabcard: {
+  //   minHeight: 38,
+  //   paddingVertical: 10,
+  //   paddingHorizontal: 16,
+  //   marginRight: 8,
+  //   borderColor: '#ffffff11',
+  //   borderRadius: 10,
+  //   boxShadow:
+  //     'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+  // },
   headerWrapper: {
-
-
     position: 'absolute',
     top: 0,
     width: Platform.OS === 'ios' ? 393 : '100%',
@@ -677,7 +692,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'none',
   },
-
   headerContent: {
     // position: 'absolute',
     // top: Platform.OS === 'ios' ? 60 : 40,
@@ -696,29 +710,95 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'box-none',
     marginTop: 2,
-    marginLeft: 1,
+    marginLeft: 1
+  },
+  // tabcard1: {
+  //   minHeight: 38,
+
+  //   borderColor: '#ffffff',
+  //   backgroundColor:
+  //     'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
+  //   borderEndEndRadius: 10,
+  //   borderStartEndRadius: 10,
+  //   borderTopLeftRadius: 10,
+  //   borderTopRightRadius: 10,
+  //   borderBottomStartRadius: 10,
+  //   borderBlockStartColor: '#ffffff2e',
+  //   borderBlockColor: '#ffffff2e',
+  //   borderTopColor: '#ffffff2e',
+  //   borderBottomColor: '#ffffff2e',
+  //   borderLeftColor: '#ffffff2e',
+  //   borderRightColor: '#ffffff2e',
+  //   boxSizing: 'border-box',
+  //   paddingVertical: 10,
+  //   paddingHorizontal: 16,
+  //   marginRight: 8,
+  // },
+  tabtext: {
+    color: '#fff', 
+    fontWeight: '600',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 14,
+  },
+  othertext: {
+    color: '#FFFFFF7A', 
+    fontWeight: '600',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 14,
   },
 
+  background: {
+    flex: 1,
+  },
+  fullScreenContainer: {
+    flex: 1,
+  },
+
+  header: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    zIndex: 20,
+    paddingTop: Platform.OS === 'ios' ? 50 : 40,
+    paddingBottom: Platform.OS === 'ios' ? 16 : 12,
+    paddingHorizontal: 16,
+    justifyContent: 'center',
+    overflow: 'hidden',
+    flexDirection: 'row',
+    alignItems: 'center',
+    elevation: 0,
+    backgroundColor: 'transparent',
+    borderBottomWidth: 0,
+    shadowOpacity: 0,
+    shadowColor: 'transparent',
+    alignSelf: 'center',
+    minHeight: Platform.OS === 'ios' ? 80 : 88,
+  },
   backButtonContainer: {
     position: 'absolute',
     left: 16,
     zIndex: 11,
     top: 7,
   },
-
-  blurButtonWrapper: {
-
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backIconRow: {
     width: 48,
     height: 48,
     borderRadius: 40,
-    overflow: 'hidden',
+    padding: 12,
+    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor:
+      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
     borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  },
 
+    borderColor: '#ffffff2c',
+  },
   unizyText: {
 
     color: '#FFFFFF',
@@ -729,7 +809,26 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 17,
   },
-
+  search_container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 16,
+    marginRight: 16,
+    borderRadius: 40,
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+  },
+  searchIcon: {
+    margin: 10,
+    height: 24,
+    width: 24,
+  },
+  searchBar: {
+    fontSize: 17,
+    color: '#fff',
+    width: '85%',
+  },
   listContainer: {
     paddingHorizontal: 16,
     width: '100%',
@@ -753,15 +852,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
 
-  tabtext: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 14
-  },
-  othertext: { 
-    color: '#FFFFFF7A', 
-    fontWeight: '600', 
-    fontSize: 14 },
+
 
   itemContainer: { 
     width: '100%'
