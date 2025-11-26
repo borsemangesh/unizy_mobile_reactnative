@@ -582,6 +582,7 @@ useEffect(() => {
   const handleSendResetLink = async () => {
     Keyboard.dismiss();
     if (!username1.trim()) {
+      showToast(t(Constant.REQUIRED_ALL_FIELDS), 'error');
       return;
     }
 
@@ -589,7 +590,7 @@ useEffect(() => {
       /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;
 
     if (!emailRegex.test(username1.trim())) {
-      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
+      showToast(t(Constant.VALID_EMAI_LADDRESS), 'error');
       return;
     }
 
@@ -608,7 +609,9 @@ useEffect(() => {
 
       if (res.ok) {
         // Show toast
-        showToast(data.message || Constant.PASSWORD_RESET_LINK_SENT, 'success');
+        // showToast(t(data.message || Constant.PASSWORD_RESET_LINK_SENT, )'success');
+
+        showToast(t(data?.message) || t(Constant.PASSWORD_RESET_LINK_SENT), 'success');
         const toastDuration = 3000;
         setTimeout(() => {
           setShowPopup(true);
