@@ -86,7 +86,7 @@ useEffect(() => {
     loginTranslateY.setValue(0);
     setCurrentScreen('login'); 
     setcurrentScreenIninner('login'); 
-    showToast(route.params?.logoutMessage,'success')
+    showToast(t(route.params?.logoutMessage),'success')
   }
 
   if(route.params?.forgotPassword){
@@ -148,7 +148,7 @@ useEffect(() => {
 
   useEffect(() => {
     if (search.trim() !== '' && filteredLanguages.length === 0) {
-      showToast(Constant.NO_RESULT_FOUND, 'error');
+      showToast(t(Constant.NO_RESULT_FOUND), 'error');
     }
   }, [search, filteredLanguages]);
 
@@ -582,7 +582,6 @@ useEffect(() => {
   const handleSendResetLink = async () => {
     Keyboard.dismiss();
     if (!username1.trim()) {
-      showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
       return;
     }
 
@@ -616,11 +615,11 @@ useEffect(() => {
         }, toastDuration);
         setUsername1('');
       } else {
-        showToast(data.message || Constant.SOMTHING_WENT_WRONG, 'error');
+        showToast(t(data.message) || t(Constant.SOMTHING_WENT_WRONG), 'error');
       }
     } catch (error) {
       console.error('Error sending reset link:', error);
-      showToast(Constant.NETWORK_ERROR_PLEASE_TRY_AGAIN, 'error');
+      showToast(t(Constant.NETWORK_ERROR_PLEASE_TRY_AGAIN), 'error');
     }
   };
 
@@ -629,13 +628,13 @@ useEffect(() => {
     Keyboard.dismiss();
 
     if (!username.trim() || !password.trim()) {
-      showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
+      showToast(t(Constant.REQUIRED_ALL_FIELDS), 'error');
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(username.trim())) {
-      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
+      showToast(t(Constant.VALID_EMAI_LADDRESS), 'error');
       return;
     }
 
@@ -658,7 +657,7 @@ useEffect(() => {
         result = await response.json();
       } catch (err) {
         setLoading(false);
-        showToast(Constant.INVALID_SERVER_RESPONSE, 'error');
+        showToast(t(Constant.INVALID_SERVER_RESPONSE), 'error');
         return;
       }
 
@@ -666,8 +665,8 @@ useEffect(() => {
 
       if (!response.ok || result?.statusCode !== 200) {
         setLoading(false);
-        showToast(
-          result?.message || Constant.INVALID_EMAIL_OR_PASSWORD,
+        showToast(t(
+          result?.message )|| t(Constant.INVALID_EMAIL_OR_PASSWORD),
           'error',
         );
         return;
@@ -682,7 +681,7 @@ useEffect(() => {
         await AsyncStorage.setItem('userData', JSON.stringify(user));
         await AsyncStorage.setItem('userId', String(user.id));
 
-        showToast(result?.message || Constant.LOGIN_SUCCESSFUL, 'success');
+        showToast(t(result?.message) || t(Constant.LOGIN_SUCCESSFUL), 'success');
 
         setUsername('');
         setPassword('');
@@ -692,7 +691,7 @@ useEffect(() => {
         navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: true,loginMessage: result?.message,isFirsttimeLogin: true});
       } else {
         setLoading(false);
-        showToast(Constant.INVALID_USER_DATA_RECEIVED, 'error');
+        showToast(t(Constant.INVALID_USER_DATA_RECEIVED), 'error');
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -735,24 +734,24 @@ useEffect(() => {
       !signUppassword.trim() ||
       !confirmPassword.trim()
     ) {
-      showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
+      showToast(t(Constant.REQUIRED_ALL_FIELDS), 'error');
       return;
     }
     const emailRegex =
       /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;
     if (!emailRegex.test(signUpusername.trim())) {
-      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
+      showToast(t(Constant.VALID_EMAI_LADDRESS), 'error');
       return;
     }
 
     // const passwordRegex =/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     const passwordRegex =/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]|:;"'<>,.?/]).{8,}$/;
     if (!passwordRegex.test(signUppassword.trim())) {
-      showToast(Constant.PASSWORD_VALID, 'error');
+      showToast(t(Constant.PASSWORD_VALID), 'error');
       return;
     }
     if (signUppassword.trim() !== confirmPassword.trim()) {
-      showToast(Constant.PASSWORDS_DO_NOT_MATCH, 'error');
+      showToast(t(Constant.PASSWORDS_DO_NOT_MATCH), 'error');
       return;
     }
 
@@ -782,7 +781,7 @@ useEffect(() => {
       console.log('API response:', data);
 
       if (response.status === 201) {
-        showToast(data.message, 'success');
+        showToast(t(data.message), 'success');
 
         await AsyncStorage.setItem(
           'tempUserId',
@@ -800,11 +799,11 @@ useEffect(() => {
         })
     
       } else {
-        showToast(data.message || 'Signup failed', 'error');
+        showToast(t(data.message) || 'Signup failed', 'error');
       }
     } catch (err) {
       console.log('Error sending signup request:', err);
-      showToast(Constant.FAIL_TO_SEND_OTP, 'error');
+      showToast(t(Constant.FAIL_TO_SEND_OTP), 'error');
     }
   };
 
@@ -855,14 +854,14 @@ useEffect(() => {
     const otpValue = otp.join('');
 
     if (otpValue.length < 4 || otp.includes('')) {
-      showToast(Constant.PLEASE_ENTER_ALL_4_DIGITS_OF_THE_OTP, 'error');
+      showToast(t(Constant.PLEASE_ENTER_ALL_4_DIGITS_OF_THE_OTP), 'error');
       return;
     }
     try {
       const otp_id = await AsyncStorage.getItem('otp_id');
 
       if (!otp_id) {
-        showToast(Constant.OTP_ID_MISSING, 'error');
+        showToast(t(Constant.OTP_ID_MISSING), 'error');
         return;
       }
 
@@ -883,7 +882,7 @@ useEffect(() => {
       console.log('OTP Verify Response:', data);
 
       if (data?.statusCode === 200) {
-        showToast(data.message, 'success');
+        showToast(t(data.message), 'success');
         await AsyncStorage.setItem(
           'temp_user_id',
           data.data.temp_user_id.toString(),
@@ -905,11 +904,11 @@ useEffect(() => {
       setverifyimageLoaded(true);
     });
       } else {
-        showToast(data?.message || Constant.OPT_VERIFICATION_FAILED, 'error');
+        showToast(t(data?.message) || t(Constant.OPT_VERIFICATION_FAILED), 'error');
       }
     } catch (err) {
       console.error(err);
-      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+      showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
     }
   };
 
@@ -932,7 +931,7 @@ useEffect(() => {
 
       const data = await response.json();
       if (response.ok && data?.statusCode === 200) {
-        showToast(data.message, 'success');
+        showToast(t(data.message), 'success');
 
         await AsyncStorage.setItem(
           'tempUserId',
@@ -983,13 +982,13 @@ useEffect(() => {
     setOtp1(['', '', '', '']);
 
     if (!verifyusername.trim()) {
-      showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
+      showToast(t(Constant.REQUIRED_ALL_FIELDS), 'error');
       return;
     }
 
     const emailParts = verifyusername.split('@');
     if (emailParts.length !== 2) {
-      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
+      showToast(t(Constant.VALID_EMAI_LADDRESS), 'error');
       return;
     }
     console.log(emailParts)
@@ -999,7 +998,7 @@ useEffect(() => {
     console.log(domain)
 
     if (!universityDomains.includes(domain)) {
-      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
+      showToast(t(Constant.VALID_EMAI_LADDRESS), 'error');
       return;
     }
 
@@ -1022,7 +1021,7 @@ useEffect(() => {
       console.log('Send OTP Response:', data);
 
       if (data?.statusCode === 200) {
-        showToast(data.message, 'success');
+        showToast(t(data.message), 'success');
         await AsyncStorage.setItem(
           'temp_user_id',
           data.data.temp_user_id.toString(),
@@ -1059,11 +1058,11 @@ useEffect(() => {
         ]).start();
         });
       } else {
-        showToast(data?.message || 'Failed to send OTP', 'error');
+        showToast(t(data?.message) || 'Failed to send OTP', 'error');
       }
     } catch (err) {
       console.error('Error sending OTP:', err);
-      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+      showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
     }
   };
 
@@ -1099,14 +1098,14 @@ useEffect(() => {
     const otpValue = otp1.join('');
 
     if (otpValue.length < 4 || otp1.includes('')) {
-      showToast(Constant.PLEASE_ENTER_ALL_4_DIGITS_OF_THE_OTP, 'error');
+      showToast(t(Constant.PLEASE_ENTER_ALL_4_DIGITS_OF_THE_OTP), 'error');
       return;
     }
 
     try {
       const otp_id = await AsyncStorage.getItem('otp_id');
       if (!otp_id) {
-        showToast(Constant.OTP_ID_MISSING, 'error');
+        showToast(t(Constant.OTP_ID_MISSING), 'error');
         return;
       }
 
@@ -1127,7 +1126,7 @@ useEffect(() => {
       console.log('Student OTP Verify Response:', data);
 
       if (data?.statusCode === 200) {
-        showToast(data.message, 'success');
+        showToast(t(data.message), 'success');
 
         if (data?.data) {
           await AsyncStorage.setItem('user_email', data.data.email || '');
@@ -1155,11 +1154,11 @@ useEffect(() => {
     })
 
       } else {
-        showToast(data?.message || 'OTP verification failed', 'error');
+        showToast(t(data?.message) || 'OTP verification failed', 'error');
       }
     } catch (err) {
       console.error('Error verifying OTP:', err);
-      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+      showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
     }
   };
 
@@ -1193,18 +1192,18 @@ useEffect(() => {
         await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
         // await AsyncStorage.setItem('signupUsername', username);
 
-        showToast(data.message, 'success');
+        showToast(t(data.message), 'success');
         setShowOtp(true);
         //startAnimation();
         setTimeout(() => {
         verifyinputs.current[0]?.focus();
       }, 200);
       } else {
-        showToast(data?.message || Constant.FAIL_TO_SEND_OTP, 'error');
+        showToast(t(data?.message) || t(Constant.FAIL_TO_SEND_OTP), 'error');
       }
     } catch (err) {
       console.error('Error sending OTP:', err);
-      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+      showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
     }
   };
   //profile
@@ -1609,7 +1608,7 @@ useEffect(() => {
 
       if (response.ok && result?.message) {
         console.log('Upload success');
-        showToast(result.message, 'success');
+        showToast(t(result.message), 'success');
 
         // setTimeout(() => {
         //   setShowPopup1(true);
