@@ -1124,11 +1124,18 @@ const MessagesIndividualScreen = ({
 
         // Update window height reference when keyboard closes
         // This ensures accurate calculation on next keyboard open
+
+
+
         if (Platform.OS === 'android') {
-          setTimeout(() => {
-            windowHeightRef.current = Dimensions.get('window').height;
-          }, 100);
+          // setTimeout(() => {
+          //   windowHeightRef.current = Dimensions.get('window').height;
+            // Force KeyboardAvoidingView to reset on Android to remove extra space
+            setKavKey(prev => prev + 1);
+          // }, 100);
         }
+
+        
 
          // Force KeyboardAvoidingView to reset by changing key (only on iOS when needed)
          // This ensures padding is fully removed
@@ -1788,6 +1795,8 @@ const MessagesIndividualScreen = ({
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 5 : 0}
           enabled={Platform.OS === 'ios' ? !isContentShort : true}
+
+          
         >
           <View
             style={{ flex: 1 }}
