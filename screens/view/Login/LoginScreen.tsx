@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from "react-i18next";
 import {
   View,
   TextInput,
@@ -14,6 +15,7 @@ import {
   ToastAndroid,
   BackHandler,
   StyleSheet,
+  Alert
 } from 'react-native';
  
 import { loginStyles } from './LoginScreen.style';
@@ -41,7 +43,20 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const [shrink, setShrink] = useState(false);
   const isFocused = useIsFocused();
 
+  const { t, i18n } = useTranslation();
+  
+  // Debug: Log translation info
   useEffect(() => {
+    console.log('=== LoginScreen i18n Debug ===');
+    console.log('Current language:', i18n.language);
+    console.log('Translation for "login":', t('login'));
+    console.log('Translation for "password":', t('password'));
+    console.log('Translation for "personal_email_id":', t('personal_email_id'));
+    console.log('==============================');
+  }, []);
+
+  useEffect(() => {
+    console.log('useEffect2');
     const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
       if (isFocused) {
         BackHandler.exitApp();
@@ -123,7 +138,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
     if (text.length === 0) {
       setError("");
     } else if (!emailRegex.test(text)) {
-      ToastAndroid.show("Please enter a valid email address", ToastAndroid.SHORT);
+      ToastAndroid.show(t('invalid_email'), ToastAndroid.SHORT);
     } else {
       setError("");
     }
@@ -205,7 +220,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
               />
             </View>
           </TouchableOpacity>
-          <Text style={loginStyles.unizyText}>UniZy</Text>
+          <Text style={loginStyles.unizyText}>{t('app_name')}</Text>
           <View style={loginStyles.emptyView}></View>
         </Animated.View>
         <Animated.View style={[loginStyles.cardView, { height: cardHeight }]}>
@@ -217,7 +232,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           <View style={loginStyles.login_container}>
             <TextInput
               style={loginStyles.personalEmailID_TextInput}
-              placeholder={'Personal Email ID'}
+              placeholder={t('personal_email_id')}
               placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
               value={username}
               onChangeText={usernameText => setUsername(usernameText)}
@@ -227,7 +242,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           <View style={loginStyles.password_container}>
             <TextInput
               style={loginStyles.password_TextInput}
-              placeholder={'Password'}
+              placeholder={t('password')}
               placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
               value={password}
               onChangeText={passwordText => setPassword(passwordText)}
@@ -242,7 +257,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           <Text
             style={loginStyles.forgetPasswordText}
           >
-            Forgot Password?
+            {t('forgot_password')}
           </Text>
           </TouchableOpacity>
  
@@ -250,7 +265,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
             style={loginStyles.loginButton}
             onPress={handleLogin}
           >
-            <Text style={loginStyles.loginText}>Login</Text>
+            <Text style={loginStyles.loginText}>{t('login')}</Text>
           </TouchableOpacity>
  
           <View
@@ -273,10 +288,10 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
                 marginTop: 10,
               }}
             >
-              Don't have an account?
+              {t('dont_have_account')}
             </Text>
             <TouchableOpacity onPress={clickSignUpListner}>
-              <Text style={loginStyles.signupText}>Sign up</Text>
+              <Text style={loginStyles.signupText}>{t('sign_up')}</Text>
             </TouchableOpacity>
           </View>
         </Animated.View>
@@ -295,16 +310,16 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       >
         <View style={loginStyles.teamsandConditionContainer}>
           <Text style={loginStyles.bycountuningAgreementText}>
-            By continuing, you agree to our
+            {t('by_continuing_agree')}
           </Text>
           <Text style={loginStyles.teamsandConditionText}>
-            Terms & Conditions
+            {t('terms_and_conditions')}
           </Text>
         </View>
  
         <View style={loginStyles.teamsandConditionContainer}>
-          <Text style={loginStyles.bycountuningAgreementText}>and</Text>
-          <Text style={loginStyles.teamsandConditionText}>Privacy Policy</Text>
+          <Text style={loginStyles.bycountuningAgreementText}>{t('and')}</Text>
+          <Text style={loginStyles.teamsandConditionText}>{t('privacy_policy')}</Text>
         </View>
       </Animated.View>
     </ImageBackground>

@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect ,useState } from "react";
 import { LogBox, StatusBar, View, StyleSheet, ImageBackground, Platform, PermissionsAndroid, Alert } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Navigation } from "./screens/view/Navigation";
@@ -10,12 +10,12 @@ import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
 import messaging from '@react-native-firebase/messaging';
 import { navigate } from "./screens/view/navigationRef";
 import { handleNotification } from "./screens/utils/NotificationHandler";
-
+import { initI18n } from "./localization/i18n";
 
 function App() {
   LogBox.ignoreAllLogs();
   enableScreens();
-
+   const [ready, setReady] = useState(false)
   async function requestUserPermission() {
     const authStatus = await messaging().requestPermission();
     const enabled =
@@ -27,10 +27,19 @@ function App() {
     }
   }
 
+    useEffect(() => {
+    const initialize = async () => {
+      await initI18n();   // WAIT for i18n
+      setReady(true);
+    };
+    initialize();
+  }, []);
+  
+
   useEffect(() => {
     let unsubscribe: (() => void) | null = null;
     let unsubscribeForeground: (() => void) | null = null;
-
+  
     const initializeNotifications = async () => {
       try {
         
@@ -153,13 +162,17 @@ function App() {
 
     initializeNotifications();
 
+    
+
     return () => {
       if (unsubscribe) unsubscribe();
       if (unsubscribeForeground) unsubscribeForeground();
+      
     };
   }, []);
 
   return (
+    
     <StripeProvider publishableKey={Constant.PUBLIC_KEY}>
       
       <ImageBackground
@@ -177,6 +190,8 @@ function App() {
     </SafeAreaProvider>
     </ImageBackground>
     </StripeProvider>
+
+    
   );
 }
 
