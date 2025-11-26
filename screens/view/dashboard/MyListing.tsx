@@ -630,13 +630,29 @@ useEffect(() => {
 export default MyListing;
 
 const styles = StyleSheet.create({
-  emptyWrapper: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  emptyContainer: {
-    width: '100%',
+  // emptyWrapper: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  emptyWrapper: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
-    borderRadius: 20,
+    width: '100%',
+      marginBottom: Platform.OS === "ios" ? 20 : 10,
+    // marginTop: -5
+  },
+  
+  emptyContainer: {
+  
+
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderWidth: 0.3,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 24,
+    overflow: 'hidden',
+
   },
   emptyImage: { width: 50, height: 50, marginBottom: 20 },
   emptyText: {
@@ -719,7 +735,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 
-  categoryTabsContainer: { marginBottom: 12, marginTop: 12 },
+  categoryTabsContainer: { marginBottom: 12, marginTop: 12,width: '105%', },
   categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' },
 
   tabcard: {
