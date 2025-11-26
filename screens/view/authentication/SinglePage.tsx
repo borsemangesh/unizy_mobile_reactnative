@@ -47,7 +47,7 @@ type SinglePageProps = {
   navigation: any;
 };
 type RootStackParamList = {
-  SinglePage: { resetToLogin?: boolean,logoutMessage:string };
+  SinglePage: { resetToLogin?: boolean,logoutMessage:string, forgotPassword: boolean, currentScreen: string,currentScreenIninner: string};
 };
 type SinglePageRouteProp = RouteProp<RootStackParamList, 'SinglePage'>;
 
@@ -83,6 +83,15 @@ useEffect(() => {
     setCurrentScreen('login'); 
     setcurrentScreenIninner('login'); 
     showToast(route.params?.logoutMessage,'success')
+  }
+
+  if(route.params?.forgotPassword){
+    loginOpacity.setValue(1);
+    loginTranslateY.setValue(0);
+    setCurrentScreen('login'); 
+    setcurrentScreenIninner('forgotpassword'); 
+    // showToast(route.params?.logoutMessage,'success')
+    
   }
 }, [route.params]);
 
