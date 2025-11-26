@@ -16,13 +16,12 @@ import {
 } from 'react-native';
 import { Key, useEffect, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
-import { showToast } from '../../utils/toast';
 import { MAIN_URL } from '../../utils/APIConstant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CommonActions } from '@react-navigation/native';
 import Button from '../../utils/component/Button';
-import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
+import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
 
 import AnimatedReanimated, {
   useSharedValue,
@@ -35,6 +34,7 @@ import AnimatedReanimated, {
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { Constant } from '../../utils/Constant';
+import { Ellipse } from 'react-native-svg';
 
 type previewDetailsProps = {
   navigation: any;
@@ -60,7 +60,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const screenWidth = Dimensions.get('window').width;
   const [activeIndex, setActiveIndex] = useState(0);
   const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
-  const insets = useSafeAreaInsets(); 
+  const insets = useSafeAreaInsets();
   const [categoryid, setcategoryid] = useState(0);
   const { height } = Dimensions.get('window');
 
@@ -322,7 +322,6 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
   };
 
   const listProduct = async () => {
-    console.log('🔵 handleListPress called');
     try {
 
       const paymentintent_id = await AsyncStorage.getItem("paymentintent_id");
@@ -330,7 +329,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
       if (!storedData) {
         console.log('⚠️ No form data found in storage');
-        showToast('No form data found');
+        showToast(Constant.DATA_NOT_SAVE, 'error');
         return;
       }
 
@@ -367,11 +366,9 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
         return !(Array.isArray(v) && v.every((item: any) => item?.uri));
       });
 
-      console.log('✅ Non-image fields:', nonImageFields);
-
       const dataArray = nonImageFields.map(([key, obj]) => ({
         id: Number(key),
-        param_value: obj.value, 
+        param_value: obj.value,
       }));
 
       console.log('✅ Data array for create API:', dataArray);
@@ -402,68 +399,71 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
       console.log(`✅ Create API status: ${createRes.status}`);
       const createJson = await createRes.json();
-      console.log('✅ Create API response:', createJson);
+      const apiMessage = createJson?.message || createJson?.error || "Something went wrong";
+      const isSuccess = createRes.status === 200 || createRes.status === 201;
 
-      if (!createRes.ok) {
-        showToast('Failed to create feature list');
+      showToast(apiMessage, isSuccess ? "success" : "error");
+
+      if (!(createRes.status === 200 || createRes.status === 201)) {
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'Dashboard',
+              params: {
+                AddScreenBackactiveTab: 'Add',
+                isNavigate: false,
+              },
+            },
+          ],
+        });
         return;
       }
-
       const feature_id = createJson?.data?.id;
       if (!feature_id) {
-        showToast('feature_id missing in response');
+        showToast(Constant.SOMTHING_WENT_WRONG, 'error')
         return;
       }
-      console.log('✅ feature_id from create API:', feature_id);
-
       for (const [param_id, images] of imageFields) {
-
         for (const image of images) {
           const data = new FormData();
           data.append('files', {
             uri: image.uri,
             type: image.type || 'image/jpeg',
             name: image.name,
-          } as any);
+          });
           data.append('feature_id', feature_id);
           data.append('param_id', param_id);
 
-          console.log('✅ FormData prepared for upload');
+          const uploadRes = await fetch(
+            `${MAIN_URL.baseUrl}category/featurelist/image-upload`,
+            {
+              method: 'POST',
+              headers: { Authorization: `Bearer ${token}` },
+              body: data,
+            }
+          );
 
-          const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-upload`;
-          const uploadRes = await fetch(uploadUrl, {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            body: data,
-          });
-
-          console.log(`✅ Upload completed. Status: ${uploadRes.status}`);
           const uploadJson = await uploadRes.json();
-          console.log('✅ Upload response JSON:', uploadJson);
 
-          if (!uploadRes.ok) {
-            console.log(
-              `❌ Upload failed for ${image.name} (param_id=${param_id})`,
-            );
-            showToast(`Failed to upload image ${image.name}`);
-          } else {
-            console.log(
-              `✅ Upload success for ${image.name} (param_id=${param_id})`,
-            );
-          }
+          console.log("✅ Upload API Parsed JSON:", uploadJson);
+
+          const apiMessage = uploadJson?.message || uploadJson?.error || `Failed to upload ${image.name}`;
+          const isSuccess = uploadRes.status === 200 || uploadRes.status === 201;
+          showToast(apiMessage, isSuccess ? "success" : "error");
+          if (!isSuccess) return;
         }
       }
-
-      console.log('✅ All uploads done. Showing toast.');
-      showToast(Constant.DATA_UPLOAD,'success');
+      showToast(Constant.DATA_UPLOAD, 'success');
       setShowPopup(true);
     }
     catch (error) {
       console.log('❌ Error in handleListPress:', error);
     }
   };
+
+
+
 
   const getCurrentDate = () => {
     const today = new Date();
@@ -629,10 +629,10 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
           onScroll={scrollHandler}
           contentContainerStyle={[
             styles.scrollContainer,
-            { paddingBottom: height * 0.1 }, 
+            { paddingBottom: height * 0.1 },
           ]}>
 
-          <View style={{ marginTop: (Platform.OS === 'ios'? 10:12) }}>
+          <View style={{ marginTop: (Platform.OS === 'ios' ? 10 : 12) }}>
 
             {(userMeta?.category?.id === 2 || userMeta?.category?.id === 5) ? (
               <ImageBackground
@@ -750,10 +750,10 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                       source={require('../../../assets/images/duration_info.png')}
                       style={{ height: 16, width: 16 }}
                     />
-                     <Text allowFontScaling={false} style={styles.datetext1}>
+                    <Text allowFontScaling={false} style={styles.datetext1}>
                       Service Duration:{' '}
                       <Text style={styles.durationValue}>{duration_value} Hours</Text>
-                      </Text>
+                    </Text>
                   </View>
                 )}
 
@@ -923,7 +923,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
               const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
               const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
 
-              if (categoryid===Number(4)) {
+              if (categoryid === Number(4)) {
                 return `List for £${accomodation_amount.toFixed(2)}`
               }
               return 'List';
@@ -1089,7 +1089,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '8.5%': 60,
+    top: Platform.OS === 'ios' ? '8.5%' : 60,
     width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -1099,7 +1099,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'box-none',
     marginTop: (Platform.OS === 'ios' ? 0 : 0),
-    marginLeft: 1 
+    marginLeft: 1
   },
   backButtonContainer: {
     position: 'absolute',

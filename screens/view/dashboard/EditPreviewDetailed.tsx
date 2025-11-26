@@ -16,13 +16,12 @@ import {
 } from 'react-native';
 import { Key, useEffect, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
-import { showToast } from '../../utils/toast';
 import { MAIN_URL } from '../../utils/APIConstant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CommonActions } from '@react-navigation/native';
 import Button from '../../utils/component/Button';
-import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
+import { NewCustomToastContainer ,showToast} from '../../utils/component/NewCustomToastManager';
 
 import AnimatedReanimated, {
   useSharedValue,
@@ -411,32 +410,23 @@ const dataArray = nonImageFields
       const createJson = await createRes.json();
       console.log('✅ Create API response:', createJson);
 
-      if (!createRes.ok) {
-        //showToast('Failed to create feature list');
+      const apiMessage = createJson?.message || createJson?.error || "Something went wrong";
+      const isSuccess = createRes.status === 200 || createRes.status === 201;
+
+      showToast(apiMessage, isSuccess ? "success" : "error");
+
+      if (!(createRes.status === 200 || createRes.status === 201)) {
+         navigation.reset({
+                index: 0,
+                routes: [{ name: 'MyListing',},],
+              });
         return;
       }
 
       const feature_id = createJson?.data?.id;
       if (!feature_id) {
-        console.log('❌ feature_id not returned from create API.');
         return
       }
-
-      // const imageFieldsWithStatus = Object.entries(formData)
-      // .filter(([_, obj]) => Array.isArray(obj.value) && obj.value.length > 0)
-      // .map(([key, obj]) => [
-      //   key,
-      //   obj.value.map((img: any) => ({
-      //     id: img.id,
-      //     uri: img.uri,
-      //     name: img.name,
-      //     type: img.type || 'image/jpeg',
-      //     status: img.status || 'kept', // ✅ ensure every image has a status
-      //   })),
-      // ]) as [string, any[]][];
-
-      // console.log("ImagesFiledWithStatus", imageFieldsWithStatus);
-
 
   const storedDataImages = await AsyncStorage.getItem('deletedImagesId');
   const deletedImageIds = storedDataImages ? JSON.parse(storedDataImages).deleted_image_ids || [] : [];
@@ -447,20 +437,14 @@ const dataArray = nonImageFields
       continue;
     }
 
-
     for (const image of images) {
-      // Defensive check
       if (!image || !image.uri) {
         continue;
       }
 
-      // Skip deleted images
       if (deletedImageIds.includes(image.id)) {
-        console.log(`Skipping upload for deleted image with ID: ${image.id}`);
         continue;
       }
-
-      // Prepare FormData
       const data = new FormData();
       data.append('files', {
         uri: image.uri,
@@ -469,8 +453,6 @@ const dataArray = nonImageFields
       } as any);
       data.append('feature_id', feature_id);
       data.append('param_id', param_id);
-
-      // Add deleted IDs payload
       data.append('deleted_image_ids', JSON.stringify(deletedImageIds));
 
       console.log('✅ FormData prepared for upload', JSON.stringify(data));
@@ -484,22 +466,17 @@ const dataArray = nonImageFields
         },
         body: data,
       });
+      const uploadJson = await uploadRes.json();
 
-      let uploadJson;
       try {
-        uploadJson = await uploadRes.json();
+          console.log("✅ Upload API Parsed JSON:", uploadJson);
+          const apiMessage = uploadJson?.message || uploadJson?.error || `Failed to upload ${image.name}`;
+          const isSuccess = uploadRes.status === 200 || uploadRes.status === 201;
+          showToast(apiMessage, isSuccess ? "success" : "error");
+          if (!isSuccess) return;
       } catch (err) {
         console.error('❌ Failed to parse upload response as JSON', err);
-      }
-
-      console.log('✅ Upload response JSON:', uploadJson);
-
-      if (!uploadRes.ok) {
-        console.log(`❌ Upload failed for ${image.name} (param_id=${param_id})`);
-        showToast(`Failed to upload image ${image.name}`);
-      } else {
-        console.log(`✅ Upload success for ${image.name} (param_id=${param_id})`);
-      }
+      }    
     }
   }
 
