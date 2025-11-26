@@ -63,6 +63,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   const [currentScreenIninner, setcurrentScreenIninner] = useState<
     'login' | 'signup' | 'forgotpassword' | 'sendOTP' | 'verify' | 'profile'
   >('login');
+  
     const { t } = useTranslation();
   //Hello Screen
   const [currentGreetingIndex, setCurrentGreetingIndex] = useState(0);
@@ -697,9 +698,9 @@ useEffect(() => {
 
       if (!response.ok || result?.statusCode !== 200) {
         setLoading(false);
-        showToast(
-          result?.message || Constant.INVALID_EMAIL_OR_PASSWORD,
-          'error',
+        showToast(t(
+            result?.message || Constant.INVALID_EMAIL_OR_PASSWORD,
+          'error',)
         );
         return;
       }
@@ -713,7 +714,7 @@ useEffect(() => {
         await AsyncStorage.setItem('userData', JSON.stringify(user));
         await AsyncStorage.setItem('userId', String(user.id));
 
-        showToast(result?.message || Constant.LOGIN_SUCCESSFUL, 'success');
+        showToast(t(result?.message || Constant.LOGIN_SUCCESSFUL, 'success'));
 
         setUsername('');
         setPassword('');
