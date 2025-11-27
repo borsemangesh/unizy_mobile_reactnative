@@ -134,6 +134,9 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
         // navigation.navigate('EditProfile');
         // navigation.goBack();
         // setInterval(() => {
+          await new Promise((resolve: any) => {
+            setTimeout(resolve, 2000);
+          }); // Wait 1.5s so toast stays visible
           setUserMeta({
             current_password: '',
             new_password: '',
