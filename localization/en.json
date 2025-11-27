@@ -246,6 +246,6 @@
   "USER_LOGOUT": "User Logout Successfully",
   "LOGOUT_FAIL": "Logout failed! Please try again.",
   "PURCHASE_SUCCESS": "Purchased successfully!",
-
-  "Featured_Listings":"Featured Listings"
+  "Featured_Listings":"Featured Listings",
+  "No_Listings_Found":"No Listings Found"
 }

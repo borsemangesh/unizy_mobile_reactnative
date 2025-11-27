@@ -18,7 +18,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
-
+import { useTranslation } from "react-i18next";
 const bgImage = require('../../../assets/images/backimg.png');
 import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import SearchListProductCard from '../../utils/SearchListProductCard';
@@ -205,7 +205,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
       displayListOfProduct(selectedCategory?.id ?? null, 1, true);
     }, [selectedCategory]),
   );
-
+  const { t } = useTranslation();
   const displayListOfProduct = async (
     categoryId: number | null,
     pageNum: number,
@@ -688,7 +688,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
                     resizeMode="contain"
                   />
                   <Text allowFontScaling={false} style={styles.emptyText}>
-                    No Listings Found
+                   {t('No_Listings_Found')}
                   </Text>
                 </View>
               </View>

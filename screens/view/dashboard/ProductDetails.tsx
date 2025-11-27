@@ -20,7 +20,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
-
+import { useTranslation } from "react-i18next";
 const bgImage = require('../../../assets/images/backimg.png');
 const searchIcon = require('../../../assets/images/searchicon.png');
 import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
@@ -189,6 +189,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
     return () => backHandler.remove();
   }, []);
 
+  const { t } = useTranslation();
   const clickfilter = () => {
     setFilterVisible(true);
     setTimeout(() => console.log("Filter open state:", isFilterVisible), 100);
@@ -642,7 +643,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
                   allowFontScaling={false}
                   style={styles.searchBar}
                   selectionColor="white"
-                  placeholder="Search"
+                  placeholder={t('search')}
                   placeholderTextColor="#ccc"
                   onChangeText={text => {
                     setSearch(text);
@@ -682,7 +683,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
                     resizeMode="contain"
                   />
                   <Text allowFontScaling={false} style={styles.emptyText}>
-                    No Listings Found
+                    {t('No_Listings_Found')}
                   </Text>
                 </View>
               </View>

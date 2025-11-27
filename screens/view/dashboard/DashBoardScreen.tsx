@@ -34,7 +34,7 @@ import AnimatedReanimated, {
 } from 'react-native-reanimated';
 // import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
-
+import { useTranslation } from "react-i18next";
 const bgImage = require('../../../assets/images/backimg.png');
 import ProductCard from '../../utils/ProductCard';
 import messaging from "@react-native-firebase/messaging";
@@ -388,7 +388,7 @@ const [isLoading, setIsLoading] = useState(true);
           | 'Profile',
       );
     }
-
+   
     const fetchCategories = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
@@ -448,7 +448,7 @@ const [isLoading, setIsLoading] = useState(true);
     loadBookmarks();
   }, [route.params?.AddScreenBackactiveTab]);
 
-
+  const { t } = useTranslation();
   useFocusEffect(
   useCallback(() => {
     const fetchFeatures = async () => {
@@ -902,7 +902,7 @@ return (
         }}
       >
         <Text allowFontScaling={false} style={styles.featuredText}>
-          Featured Listings
+         {t('Featured_Listings')}
         </Text>
       </Animated.View>
       {isLoading ? (
@@ -1116,7 +1116,7 @@ const blurAmount = useDerivedValue(() =>
               <Image source={searchIcon} style={styles.searchIcon} />
               <TextInput
                 style={styles.searchBar}
-                placeholder="Search"
+                placeholder={t('search')}
                 placeholderTextColor="#ccc"
                 onChangeText={setSearch}
                 value={search}
