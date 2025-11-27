@@ -28,6 +28,8 @@ import { BlurView } from '@react-native-community/blur';
 import DeviceInfo from 'react-native-device-info';
 import Loader from '../../utils/component/Loader';
 import { Constant } from '../../utils/Constant';
+import { resetTwilioClient } from '../../view/emoji/twilioService';
+import { clearTwilioCache } from '../dashboard/MessageIndividualScreen';
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImg = require('../../../assets/images/user.jpg'); 
@@ -227,6 +229,16 @@ const renderItem = ({ item }: any) => {
         //   index: 0,
         //   routes: [{ name: 'SinglePage', params: { resetToLogin: true , logoutMessage: 'User Logout Successfully'} }],
         // });
+
+
+        await AsyncStorage.setItem('userToken', '');
+                    await AsyncStorage.setItem('userData', '');
+                    await AsyncStorage.setItem('userId', '');
+
+                    
+                    await AsyncStorage.setItem('twilio_convo_', '');
+                    await AsyncStorage.setItem('twilio_msg_', '');
+                   
 
         setShowConfirm(true); 
       }
@@ -482,6 +494,34 @@ return (
                   // If API success → proceed to logout
                   if (apiData?.statusCode === 200) {
                     setShowConfirm(false);
+                    
+                    // 🔒 SECURITY: Clear Twilio client and cache to prevent notifications to wrong user
+                    try {
+                      // Reset Twilio client singleton (removes all listeners)
+                      await resetTwilioClient();
+                      
+                      // Clear all Twilio caches (in-memory and AsyncStorage)
+                      await clearTwilioCache();
+                      
+                      // Delete FCM token locally (optional but good practice)
+                      try {
+                        const messaging = require('@react-native-firebase/messaging').default;
+                        await messaging().deleteToken();
+                        if (__DEV__) {
+                          console.log('✅ FCM token deleted locally');
+                        }
+                      } catch (fcmError) {
+                        console.warn('⚠️ Error deleting FCM token:', fcmError);
+                      }
+                      
+                      if (__DEV__) {
+                        console.log('✅ Twilio client and cache cleared on logout');
+                      }
+                    } catch (clearError) {
+                      console.warn('⚠️ Error clearing Twilio data on logout:', clearError);
+                      // Continue with logout even if clearing fails
+                    }
+                    
                     await AsyncStorage.setItem('ISLOGIN', 'false');
 
                     navigation.reset({

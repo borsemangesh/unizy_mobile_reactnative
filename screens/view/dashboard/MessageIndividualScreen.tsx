@@ -93,6 +93,52 @@ const messageCache: any = {};
 const CACHE_KEY_CONVO_PREFIX = "twilio_convo_";
 const CACHE_KEY_MSG_PREFIX = "twilio_msg_";
 
+// Track all active Twilio clients for cleanup
+const activeTwilioClients = new Set();
+
+/**
+ * Clear all Twilio caches (in-memory and AsyncStorage)
+ * This should be called on logout to prevent data leakage between users
+ */
+export const clearTwilioCache = async () => {
+  try {
+    // Clear in-memory caches
+    Object.keys(conversationCache).forEach(key => delete conversationCache[key]);
+    Object.keys(messageCache).forEach(key => delete messageCache[key]);
+    
+    // Clear AsyncStorage caches
+    const allKeys = await AsyncStorage.getAllKeys();
+    const twilioKeys = allKeys.filter(key => 
+      key.startsWith(CACHE_KEY_CONVO_PREFIX) || key.startsWith(CACHE_KEY_MSG_PREFIX)
+    );
+    
+    if (twilioKeys.length > 0) {
+      await AsyncStorage.multiRemove(twilioKeys);
+      if (__DEV__) {
+        console.log(`✅ Cleared ${twilioKeys.length} Twilio cache entries`);
+      }
+    }
+    
+    // Reset all active Twilio clients from MessageIndividualScreen
+    activeTwilioClients.forEach((client: any) => {
+      try {
+        if (client && typeof client.removeAllListeners === 'function') {
+          client.removeAllListeners();
+        }
+        if (client && typeof client.shutdown === 'function') {
+          client.shutdown().catch(() => {});
+        }
+      } catch (err) {
+        console.warn('Error resetting Twilio client:', err);
+      }
+    });
+    activeTwilioClients.clear();
+    
+  } catch (err) {
+    console.warn('⚠️ Error clearing Twilio cache:', err);
+  }
+};
+
 const saveJSON = async (key: any, value: any) => {
   try {
     await AsyncStorage.setItem(key, JSON.stringify(value));
@@ -164,6 +210,7 @@ const MessagesIndividualScreen = ({
   // console.log('currentUserIdList----', currentUserIdList);
 
   const [chatClient, setChatClient] = useState<any>(null);
+  const chatClientRef = useRef<any>(null); // Track client for cleanup
 
   const [conversation, setConversation] = useState<any>(null);
 
@@ -414,6 +461,8 @@ const MessagesIndividualScreen = ({
 
         console.log("Twilio client initialized successfully");
         setChatClient(twilio);
+        chatClientRef.current = twilio; // Track for cleanup
+        activeTwilioClients.add(twilio); // Add to active clients set
 
         setTimeout(() => {
           if (twilio && isMounted) {

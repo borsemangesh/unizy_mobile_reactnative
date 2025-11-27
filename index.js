@@ -14,6 +14,20 @@ import { handleNotification } from './screens/utils/NotificationHandler';
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log("📩 Background FCM Message:", remoteMessage);
 
+  // 🔒 SECURITY: Check if user is logged in before processing notifications
+  const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+  try {
+    const isLogin = await AsyncStorage.getItem('ISLOGIN');
+    if (isLogin !== 'true') {
+      console.log('⚠️ Ignoring background notification - user not logged in');
+      return; // Don't show notifications if user is logged out
+    }
+  } catch (err) {
+    console.warn('⚠️ Error checking login status:', err);
+    // If we can't check, don't show notification to be safe
+    return;
+  }
+
   const title = remoteMessage.notification?.title || remoteMessage.data?.title || "Notification";
   const body = remoteMessage.notification?.body || remoteMessage.data?.body || "";
 
@@ -43,9 +57,20 @@ notifee.onBackgroundEvent(async ({ type, detail }) => {
     console.log("detail", detail);
     console.log("type", type);
     
+    // 🔒 SECURITY: Check if user is logged in before handling notification tap
+    const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+    try {
+      const isLogin = await AsyncStorage.getItem('ISLOGIN');
+      if (isLogin !== 'true') {
+        console.log('⚠️ Ignoring notification tap - user not logged in');
+        return; // Don't navigate if user is logged out
+      }
+    } catch (err) {
+      console.warn('⚠️ Error checking login status:', err);
+      return;
+    }
+    
     const notificationData = detail.notification?.data;
-
-;
     await handleNotification(notificationData, true);
   }
 });
