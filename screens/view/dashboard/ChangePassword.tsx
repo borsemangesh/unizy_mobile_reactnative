@@ -128,9 +128,9 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
         data = {};
       }
 
+   
       if (response.ok) {
-        showToast(data?.message || 'Password updated successfully', 'success');
-
+        showToast(data?.message, 'success');
         // navigation.navigate('EditProfile');
         // navigation.goBack();
         // setInterval(() => {
@@ -142,10 +142,9 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
             new_password: '',
             confirm_password: '',
           });
+
           navigation.goBack();
-          
-        // }, 2000); // 3 second
-       
+      
       } else {
         showToast(data?.message || 'Failed to update password', 'error');
       }
@@ -155,14 +154,23 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
     }
   };
 
-
   const handleForceLogout = async () => {
     console.log('User inactive or unauthorized — logging out');
     // setLoading(false);
     await AsyncStorage.clear();
     navigation.reset({
       index: 0,
-      routes: [{ name: 'SinglePage', params: {forgotPassword: true, resetToLogin: false,currentScreen: 'login',currentScreenIninner: 'forgotpassword' } }],
+      routes: [
+        {
+          name: 'SinglePage',
+          params: {
+            forgotPassword: true,
+            resetToLogin: false,
+            currentScreen: 'login',
+            currentScreenIninner: 'forgotpassword',
+          },
+        },
+      ],
     });
   };
 
@@ -320,10 +328,12 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => {
-              console.log("This is Forgot password")
-              setShowDeleteModal(true);
-              }}>
+            <TouchableOpacity
+              onPress={() => {
+                console.log('This is Forgot password');
+                setShowDeleteModal(true);
+              }}
+            >
               <Text
                 allowFontScaling={false}
                 style={styles.forgetText}
@@ -335,8 +345,6 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
           </View>
         </KeyboardAvoidingView>
       </View>
-
-
 
       <Modal
         visible={showDeleteModal}
@@ -376,8 +384,12 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                   style={styles.logo}
                   resizeMode="contain"
                 />
-                <Text allowFontScaling={false} style={[styles.mainheader, { marginTop: 10 }]}>
-                Are you sure you want to proceed? You will be logged out of your account.
+                <Text
+                  allowFontScaling={false}
+                  style={[styles.mainheader, { marginTop: 10 }]}
+                >
+                  Are you sure you want to proceed? You will be logged out of
+                  your account.
                 </Text>
 
                 <TouchableOpacity
@@ -406,7 +418,6 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
-
 
       <NewCustomToastContainer />
     </ImageBackground>
