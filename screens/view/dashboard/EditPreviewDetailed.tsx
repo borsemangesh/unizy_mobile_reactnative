@@ -483,9 +483,11 @@ const dataArray = nonImageFields
   
       console.log('✅ All uploads done. Showing toast.');
       showToast(Constant.DATA_UPLOAD,'success');
+      showToast(Constant.DATA_UPLOAD,'success');
       setShowPopup(true);
     } catch (error) {
       console.log('❌ Error in handleListPress:', error);
+      showToast(Constant.SOMTHING_WENT_WRONG,'error');
       showToast(Constant.SOMTHING_WENT_WRONG,'error');
     }
   };
