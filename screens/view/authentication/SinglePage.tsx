@@ -586,6 +586,7 @@ useEffect(() => {
       });
 
       const data = await res.json();
+      console.log("RESPONSE: ",data);
 
       if (res.ok) {
         // Show toast
