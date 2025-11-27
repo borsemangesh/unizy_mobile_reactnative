@@ -245,6 +245,7 @@
   "IMAGE_ALLOWED": "images allowed",
   "USER_LOGOUT": "User Logout Successfully",
   "LOGOUT_FAIL": "Logout failed! Please try again.",
-  "PURCHASE_SUCCESS": "Purchased successfully!"
+  "PURCHASE_SUCCESS": "Purchased successfully!",
 
+  "Featured_Listings":"Featured Listings"
 }

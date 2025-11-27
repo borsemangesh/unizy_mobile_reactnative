@@ -28,6 +28,7 @@ import { BlurView } from '@react-native-community/blur';
 import DeviceInfo from 'react-native-device-info';
 import Loader from '../../utils/component/Loader';
 import { Constant } from '../../utils/Constant';
+import { useTranslation } from "react-i18next";
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImg = require('../../../assets/images/user.jpg'); 
@@ -85,7 +86,7 @@ useEffect(() => {
   }
 }, [expanded]);
 
-
+  const { t } = useTranslation();
 useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -397,7 +398,7 @@ return (
         >
           <View style={styles.editcard}>
             <Text allowFontScaling={false} style={styles.edittext}>
-              Edit
+              {t('camera')}
             </Text>
           </View>
         </TouchableOpacity>

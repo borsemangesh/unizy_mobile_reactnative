@@ -2701,14 +2701,14 @@ useEffect(() => {
                                 allowFontScaling={false}
                                 style={Styles.sendOtpresetTitle}
                               >
-                                Verify Personal Email ID
+                                {t('verify_personal_email')}
                               </Text>
                               <View style={Styles.sendOtpprivacyContainer}>
                                 <Text
                                   allowFontScaling={false}
                                   style={Styles.termsText}
                                 >
-                                  We have sent a 4-digit code to{' '}
+                                 {t("we_sent_code_to")}{' '}
                                   <Text
                                     allowFontScaling={false}
                                     style={Styles.sendOtpresendText2}
@@ -2762,7 +2762,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.sendText}
                                 >
-                                  Verify & Continue
+                                  {t('verify_and_continue')}
                                 </Text>
                               </TouchableOpacity>
 
@@ -2777,7 +2777,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.sendOtpresendText}
                                 >
-                                  Didn’t receive a code?{' '}
+                                  {t('didnt_receive_code')}{' '}
                                 </Text>
                                 <TouchableOpacity onPress={handleresend}>
                                   <Text
@@ -2787,7 +2787,7 @@ useEffect(() => {
                                       { color: 'rgba(140, 244, 255, 0.7)' },
                                     ]}
                                   >
-                                    Resend Code
+                                    {t('resend_code')}
                                   </Text>
                                 </TouchableOpacity>
                               </View>
@@ -2803,7 +2803,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.sendOtpgoBackText}
                                 >
-                                  Entered wrong email?{' '}
+                                  {t('entered_wrong_email')}{' '}
                                 </Text>
                                 <TouchableOpacity
                                   onPress={() => {
@@ -2840,7 +2840,7 @@ useEffect(() => {
                                       { color: 'rgba(140, 244, 255, 0.7)' },
                                     ]}
                                   >
-                                    Go Back
+                                    {t('go_back')}
                                   </Text>
                                 </TouchableOpacity>
                               </View>
@@ -2868,13 +2868,13 @@ useEffect(() => {
                                 allowFontScaling={false}
                                 style={[Styles.verifyresetTitle,{paddingBottom: (Platform.OS === 'ios'  ? 16 : 0)}]}
                               >
-                                Verify University Email ID
+                              {t('verify_university_email')}
                               </Text>
                               <View style={Styles.verifylogin_container}>
                                 <TextInput
                                   allowFontScaling={false}
                                   style={Styles.verifypersonalEmailID_TextInput}
-                                  placeholder={'University Email ID*'}
+                                  placeholder={t('university_email_id')}
                                   placeholderTextColor={
                                     'rgba(255, 255, 255, 0.48)'
                                   }
@@ -2902,7 +2902,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.sendText}
                                 >
-                                  Send OTP
+                                  {t('send_otp')}
                                 </Text>
                               </TouchableOpacity>
                             </View>
@@ -2927,7 +2927,7 @@ useEffect(() => {
                                 allowFontScaling={false}
                                 style={Styles.verifyresetTitle}
                               >
-                                Verify University Email ID
+                               {t('verify_university_email')}
                               </Text>
 
                               <View style={Styles.verifyprivacyContainer}>
@@ -2935,7 +2935,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.verifytermsText}
                                 >
-                                  We have sent a 4-digit code to{' '}
+                                  {t('we_sent_code_to')}{' '}
                                   <Text
                                     allowFontScaling={false}
                                     style={Styles.resendText2}
@@ -2988,7 +2988,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.sendText}
                                 >
-                                  Verify & Continue
+                                {t('verify_and_continue')}
                                 </Text>
                               </TouchableOpacity>
 
@@ -2999,7 +2999,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.verifyresendText}
                                 >
-                                  Didn’t receive a code?{' '}
+                                  {t('didnt_receive_code')}{' '}
                                 </Text>
                                 <TouchableOpacity onPress={resubmitotp}>
                                   <Text
@@ -3009,7 +3009,7 @@ useEffect(() => {
                                       { color: 'rgba(140, 244, 255, 0.7)' },
                                     ]}
                                   >
-                                    Resend Code
+                                    {t('resend_code')}
                                   </Text>
                                 </TouchableOpacity>
                               </View>
@@ -3024,7 +3024,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.verifyresendText}
                                 >
-                                  Entered wrong email?{' '}
+                                 {t('entered_wrong_email')}{' '}
                                 </Text>
                                 <TouchableOpacity
                                   onPress={() => {
@@ -3072,7 +3072,7 @@ useEffect(() => {
                                       { color: 'rgba(140, 244, 255, 0.7)' },
                                     ]}
                                   >
-                                    Go Back
+                                 {t('go_back')}
                                   </Text>
                                 </TouchableOpacity>
                               </TouchableOpacity>
@@ -3099,7 +3099,7 @@ useEffect(() => {
                                 allowFontScaling={false}
                                 style={Styles.profileprofileresetTitle}
                               >
-                                Add a Photo
+                              {t('add_photo')}
                               </Text>
                               <View
                                 style={[
@@ -3111,8 +3111,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.profiletermsText}
                                 >
-                                  Personalize your account with a photo. You can
-                                  always change it later.
+                                  {t('personalize_account')}
                                 </Text>
                               </View>
 
@@ -3153,7 +3152,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.profileloginText}
                                 >
-                                  Continue
+                                  {t('continue')}
                                 </Text>
                               </TouchableOpacity>
 
@@ -3170,7 +3169,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.profilesignupPrompt}
                                 >
-                                  Want to do it later?{' '}
+                                 {t('want_to_do_later')}{' '}
                                 </Text>
                                 <TouchableOpacity
                                   onPress={() => {
@@ -3184,7 +3183,7 @@ useEffect(() => {
                                       { color: 'rgba(140, 244, 255, 0.7)' },
                                     ]}
                                   >
-                                    Skip
+                                    {t('skip')}
                                   </Text>
                                 </TouchableOpacity>
                               </View>
@@ -3254,14 +3253,13 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.profiletermsText2}
                                 >
-                                  Account Created Successfully!
+                                 {t('account_created_successfully')}
                                 </Text>
                                 <Text
                                   allowFontScaling={false}
                                   style={Styles.profiletermsText1}
                                 >
-                                  Welcome to Unizy! Your account has been
-                                  created and your’re all set to start exploring
+                                 {t('welcome_to_unizy')}
                                 </Text>
                                 <TouchableOpacity
                                   style={Styles.profileloginButton}
@@ -3283,7 +3281,7 @@ useEffect(() => {
                                     allowFontScaling={false}
                                     style={Styles.profileloginText}
                                   >
-                                    Start Exploring
+                                  {t('start_exploring')}
                                   </Text>
                                 </TouchableOpacity>
                               </View>

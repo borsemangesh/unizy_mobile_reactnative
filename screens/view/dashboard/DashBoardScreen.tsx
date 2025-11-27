@@ -163,6 +163,7 @@ const AddScreenContent: React.FC<AddScreenContentProps> = ({ navigation, product
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: 'application/json',
+        
           },
         });
 
@@ -392,6 +393,10 @@ const [isLoading, setIsLoading] = useState(true);
       try {
         const token = await AsyncStorage.getItem('userToken');
         if (!token) return;
+     
+        const language_code=await AsyncStorage.getItem('selectedLanguage')||'en'
+        console.log("language-code",language_code)
+        
 
         const url2 = MAIN_URL.baseUrl + 'user/category';
 
@@ -400,6 +405,7 @@ const [isLoading, setIsLoading] = useState(true);
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
+            language_code:language_code
           },
         });
         const json = await response.json();
