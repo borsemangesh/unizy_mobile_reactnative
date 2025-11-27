@@ -451,7 +451,19 @@ const MyOrders = ({ navigation }: MyOrdersProps) => {
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
-              navigation.replace('Dashboard', { AddScreenBackactiveTab: 'Profile', isNavigate: false })
+              // navigation.replace('Dashboard', { AddScreenBackactiveTab: 'Profile', isNavigate: false })
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: 'Dashboard',
+                    params: {
+                      AddScreenBackactiveTab: 'Profile',
+                      isNavigate: false,
+                    },
+                  },
+                ],
+              });
             }}
             style={styles.backButtonContainer}
             activeOpacity={0.7}

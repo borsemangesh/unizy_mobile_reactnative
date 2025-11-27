@@ -93,7 +93,19 @@ const MyOrderCard: React.FC<MyOrderCardProps> = ({
 
 const handleViewTransaction = () => {
    //navigation.navigate('TransactionDetail', { shareid });
-   navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false})
+  //  navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false})
+  navigation.reset({
+    index: 0,
+    routes: [
+      {
+        name: 'Dashboard',
+        params: {
+          AddScreenBackactiveTab: 'Search',
+          isNavigate: false,
+        },
+      },
+    ],
+  });
   };
 
   const handleWriteReview = () => {
