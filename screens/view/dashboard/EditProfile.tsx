@@ -1388,15 +1388,18 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 ]}
               />
 
-              <View style={styles.popupContainer}>
+              <View style={[styles.popupContainer,{gap: 3}]}>
                 <Image
                   source={require('../../../assets/images/profile_delete.png')}
                   style={styles.logo}
                   resizeMode="contain"
                 />
-                <Text allowFontScaling={false} style={[styles.mainheader, { marginTop: 10 }]}>
-                  Do you want to delete the profile picture!
-                </Text>
+                <Text allowFontScaling={false} style={styles.mainheader1}>
+                Confirm Delete
+              </Text>
+              <Text allowFontScaling={false} style={styles.subheader2}>
+                Are you sure you want to delete your profile?
+              </Text>
 
                 <TouchableOpacity
                   style={styles.loginButton}
@@ -1900,6 +1903,15 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
   },
+  mainheader1: {
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: '500',
+    // marginBottom: 10,
+    fontSize: 20,
+
+    color: '#fff',
+    textAlign: 'center',
+  },
 
   subheader: {
     color: 'rgba(255, 255, 255, 0.80)',
@@ -1908,6 +1920,13 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     textAlign: 'center',
     marginTop: 20,
+  },
+  subheader2: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'center',
   },
 
   subheader1: {
@@ -1930,7 +1949,7 @@ const styles = StyleSheet.create({
     paddingTop: 6,
     paddingBottom: 6,
     backgroundColor: 'rgba(170, 169, 176, 0.56)',
-    marginTop: 16,
+    marginTop: 5,
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
   },
