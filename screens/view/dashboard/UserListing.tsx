@@ -38,6 +38,7 @@ import Animated, {
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
+import { useTranslation } from 'react-i18next';
 
 
 type CreatedBy = {
@@ -109,7 +110,7 @@ type RouteParams = {
 const UserListing = ({ navigation }: UserListingProps)  => {
  const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
     const { members } =   route.params;
-
+const { t } = useTranslation();
 
   const [search, setSearch] = useState<string>('');
     const [page, setPage] = useState(1);
@@ -607,7 +608,7 @@ const handleBookmarkPress = async (productId: number) => {
                               resizeMode="contain"
                             />
                             <Text allowFontScaling={false} style={styles.emptyText}>
-                              No Listings Found
+                               {t('No_Listings_Found')}
                             </Text>
                           </View>
                           </View>

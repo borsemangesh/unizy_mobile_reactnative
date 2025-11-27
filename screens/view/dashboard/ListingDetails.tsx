@@ -1055,7 +1055,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     onPress={() => setShowConfirm(false)}
                   >
                     <Text allowFontScaling={false} style={styles.loginText1}>
-                      Cancel
+                       {t('cancel')}
                     </Text>
                   </TouchableOpacity>
                 </View>

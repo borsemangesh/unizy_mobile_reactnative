@@ -36,6 +36,7 @@ import AnimatedReanimated, {
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { BlurView } from '@react-native-community/blur';
+import { useTranslation } from 'react-i18next';
 
 type PreviewThumbnailProps = {
   navigation: any;
@@ -195,6 +196,8 @@ const { height } = Dimensions.get('window');
     fetchStoredData();
   }, []);
 
+  const { t } = useTranslation();
+  
   type FormEntry = {
     value: any;
     alias_name: string | null;
@@ -377,7 +380,7 @@ const { height } = Dimensions.get('window');
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-          Preview Thumbnail
+          {t('preview_thumbnail')}
           </Text>
         </View>
 
@@ -407,7 +410,7 @@ const { height } = Dimensions.get('window');
                         allowFontScaling={false}
                         style={[styles.newtext, { paddingBottom: 6 }]}
                       >
-                        Featured Listing Preview
+                        {t('preview_featured_listing')}
                       </Text>
                       <NewTutitionCard
                         tag={uniname}
@@ -423,7 +426,7 @@ const { height } = Dimensions.get('window');
                         allowFontScaling={false}
                         style={[styles.newtext1, { paddingBottom: (Platform.OS === 'ios'? 0: 6) }]}
                       >
-                        Regular Listing Preview
+                        {t('preview_regular_listing')}
                       </Text>
                       <SeperateTutionCard
                           tag={uniname}
@@ -453,7 +456,7 @@ const { height } = Dimensions.get('window');
                       allowFontScaling={false}
                       style={[styles.newtext, { paddingBottom: 6 }]}
                     >
-                      Featured Listing Preview
+                      {t('preview_featured_listing')}
                     </Text>
                     <PreviewCard
                       tag={uniname}
@@ -470,7 +473,7 @@ const { height } = Dimensions.get('window');
                       allowFontScaling={false}
                       style={[styles.newtext1, { paddingBottom: 6 }]}
                     >
-                      Regular Listing Preview
+                     {t('preview_regular_listing')}
                     </Text>
                     <NewFeatureCard
                       tag={uniname}
@@ -531,7 +534,7 @@ const { height } = Dimensions.get('window');
               />
               <View style={{ flex: 1 }}>
                 <Text allowFontScaling={false} style={styles.importantText1}>
-                  Important:
+                   {t('important')}
                 </Text>
                 <Text allowFontScaling={false} style={styles.importantText}>
                   A
@@ -550,7 +553,7 @@ const { height } = Dimensions.get('window');
             </View>
             
         <Button
-          title="Next"
+          title={t('next')}
           onPress={() => navigation.navigate('EditPreviewDetailed')}
         />
       </View>
