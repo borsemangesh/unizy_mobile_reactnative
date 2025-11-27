@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from "react-i18next";
 import {
   View,
   Text,
@@ -46,7 +47,7 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
   lastName = null,
 }) => {
   const isProfileCategory = categoryName?.toLowerCase() === 'house keeping' || categoryName?.toLowerCase() === 'tuition';
-  
+    const { t } = useTranslation();
   const getInitials = (first: string | null = '', last: string | null = '') => {
     const f = first?.trim()?.charAt(0)?.toUpperCase() || '';
     const l = last?.trim()?.charAt(0)?.toUpperCase() || '';
@@ -146,7 +147,7 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
            {isfeature && (
              <View style={styles.featureBadge}>
                <Text allowFontScaling={false} style={styles.featureText}>
-                 Featured
+               {t('featured')}
                </Text>
              </View>
            )}

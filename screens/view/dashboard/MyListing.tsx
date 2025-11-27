@@ -32,6 +32,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
+import { useTranslation } from "react-i18next";
 const bgImage = require('../../../assets/images/backimg.png');
 import MyListingCard from '../../utils/MyListingCard';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
@@ -69,6 +70,7 @@ type MyListingProps = {
 };
 
 const MyListing = ({ navigation }: MyListingProps) => {
+    const { t } = useTranslation();
   const [featurelist, setFeaturelist] = useState<Feature[]>([]);
   const [search, setSearch] = useState<string>('');
   const [page, setPage] = useState(1);
@@ -139,11 +141,11 @@ const MyListing = ({ navigation }: MyListingProps) => {
     interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
   );
   const [categories, setCategories] = useState<Category[]>([
-    { id: null, name: 'All' },
+    { id: null, name: t('all') },
   ]);
   const [selectedCategory, setSelectedCategory] = useState<Category>({
     id: null,
-    name: 'All',
+    name: t('all'),
   });
 
 
@@ -157,7 +159,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
       if (stored) {
         const parsed = JSON.parse(stored);
         const catObjects = [
-          { id: null, name: 'All' },
+          { id: null, name: t('all') },
           ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
         ];
         setCategories(catObjects);
@@ -165,7 +167,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
       }
     };
     loadCategories();
-  }, []);
+  }, [t]);
 
 
   useEffect(() => {
@@ -494,7 +496,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-            My Listings
+            {t('My_Listings')}
           </Text>
         </View>
         {/* List */}
@@ -601,7 +603,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
                       resizeMode="contain"
                     />
                     <Text allowFontScaling={false} style={styles.emptyText}>
-                      No Listings Found
+                      {t('No_Listings_Found"')}
                     </Text>
                   </View>
                 </View>

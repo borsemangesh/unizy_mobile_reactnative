@@ -20,6 +20,7 @@ import {
 // import { showToast } from '../../utils/toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
+import { useTranslation } from "react-i18next";
 import { useRoute } from '@react-navigation/native';
 import {
   NewCustomToastContainer,
@@ -47,6 +48,7 @@ type ListingDetailsProps = {
 };
 const bgImage = require('../../../assets/images/backimg.png');
 const ListingDetails = ({ navigation }: ListingDetailsProps) => {
+  const { t } = useTranslation();
   const [showPopup1, setShowPopup1] = useState(false);
   const closePopup1 = () => setShowPopup1(false);
 
@@ -378,7 +380,7 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-            Listing Details
+           {t('listing_details')}
           </Text>
         </View>
 
@@ -486,7 +488,7 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
               <View style={styles.cardconstinerdivider} />
               <View style={styles.listingtyperow}>
                 <Text allowFontScaling={false} style={styles.lebleHeader}>
-                  Listing Type:
+                   {t('listing_type')}:
                 </Text>
                 <Text allowFontScaling={false} style={styles.status}>
                   {data?.list?.isfeatured ? 'Featured' : 'Regular'}
@@ -494,7 +496,7 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
               </View>
               <View style={styles.listingtyperow}>
                 <Text allowFontScaling={false} style={styles.lebleHeader}>
-                  Listing Status:
+                 {t('listing_status')}:
                 </Text>
                 <Text allowFontScaling={false} style={styles.status}>
                   {' '}
@@ -505,7 +507,7 @@ const [selectedBuyer, setSelectedBuyer] = useState<any>(null);
               {data?.list?.category_id === 3 && data?.list?.isactive && (
                 <View style={styles.listingtyperow}>
                   <Text allowFontScaling={false} style={styles.lebleHeader}>
-                    Available Units:
+                   {t('Available_Units:')}:
                   </Text>
 
                   <Text allowFontScaling={false} style={styles.status}>

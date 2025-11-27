@@ -271,7 +271,7 @@
   "logout": "Logout",
   "confirm_logout": "Confirm Logout",
   "logout_message": "Are you sure you want to log out from your account?",
-  "All":"All",
+  "all":"All",
   "featured": "Featured",
   "active": "Active",
   "inactive": "Inactive",
@@ -572,5 +572,8 @@
   "return_my_reviews": "Return to My Reviews",
   "password_reset_sent": "A password reset link has been sent to your personal email. Please check your inbox (or spam folder) to continue.",
   "account_created_success": "Account Created Successfully!",
-  "welcome_unizy": "Welcome to Unizy! Your account has been created and you're all set to start exploring"
+  "welcome_unizy": "Welcome to Unizy! Your account has been created and you're all set to start exploring",
+  "My_Listings":"My Listings",
+  "Available_Units":"Available Units"
+  
 }
