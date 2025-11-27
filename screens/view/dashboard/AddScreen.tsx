@@ -50,6 +50,7 @@ import AnimatedReanimated, {
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { Constant } from '../../utils/Constant';
+import { useTranslation } from 'react-i18next';
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImg = require('../../../assets/images/user.jpg');
@@ -82,7 +83,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const formattedDate = today.toLocaleDateString('en-GB');
   const displayDate = formattedDate.replace(/\//g, '-');
   const [photo, setPhoto] = useState<string | null>(null);
-
+  
   const [multiSelectModal, setMultiSelectModal] = useState<{
     visible: boolean;
     ismultilple: boolean;
@@ -314,7 +315,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
       },
     }));
   };
-
+const { t } = useTranslation();
   const handleMultiSelectToggle = (fieldId: number, optionId: number) => {
     const prevSelected: number[] = Array.isArray(formValues[fieldId])
       ? formValues[fieldId]
@@ -1124,8 +1125,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-            {`List${productName ? ` ${productName} ` : ''}`}
-          </Text>
+          {`${t('list')}${productName ? ` ${productName} ` : ''}`}
+        </Text>
         </View>
 
         <KeyboardAvoidingView
