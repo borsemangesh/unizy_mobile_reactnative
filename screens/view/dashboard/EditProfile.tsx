@@ -1395,10 +1395,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   resizeMode="contain"
                 />
                 <Text allowFontScaling={false} style={styles.mainheader1}>
-                Confirm Delete
+                Remove Profile Picture
               </Text>
               <Text allowFontScaling={false} style={styles.subheader2}>
-                Are you sure you want to delete your profile?
+                Are you sure you want to remove your profile picture?
               </Text>
 
                 <TouchableOpacity
@@ -1410,7 +1410,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   }}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>
-                    Yes, Delete
+                    Yes, Remove
                   </Text>
                 </TouchableOpacity>
 
@@ -1904,13 +1904,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   mainheader1: {
+    color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-SemiBold',
-    fontWeight: '500',
-    // marginBottom: 10,
     fontSize: 20,
-
-    color: '#fff',
-    textAlign: 'center',
+    fontWeight: '600',
+    letterSpacing: -0.4,
+    lineHeight: 28,
   },
 
   subheader: {
@@ -1927,6 +1926,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     textAlign: 'center',
+    marginTop: 6,
   },
 
   subheader1: {

@@ -384,11 +384,14 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                   style={styles.logo}
                   resizeMode="contain"
                 />
+                <Text allowFontScaling={false} style={styles.mainheader1}>
+                  Confirm Action
+                  </Text>
                 <Text
                   allowFontScaling={false}
                   style={[styles.mainheader, { marginTop: 10 }]}
                 >
-                  Are you sure you want to proceed? You will be logged out of
+                    Are you sure you want to proceed? You will be logged out of
                   your account.
                 </Text>
 
@@ -426,6 +429,14 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
 export default ChangePassword;
 
 const styles = StyleSheet.create({
+  mainheader1: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 20,
+    fontWeight: '600',
+    letterSpacing: -0.4,
+    lineHeight: 28,
+  },
   scrollContainer: {
     paddingHorizontal: 16,
     paddingBottom: 80,
@@ -893,13 +904,19 @@ const styles = StyleSheet.create({
   },
 
   mainheader: {
-    fontFamily: 'Urbanist-SemiBold',
-    fontWeight: '500',
-    // marginBottom: 10,
-    fontSize: 20,
+    // fontFamily: 'Urbanist-SemiBold',
+    // fontWeight: '500',
+    // // marginBottom: 10,
+    // fontSize: 20,
 
-    color: '#fff',
+    // color: '#fff',
+    // textAlign: 'center',
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 16,
+    fontWeight: '400',
     textAlign: 'center',
+    marginTop: 6,
   },
 
   subheader: {
