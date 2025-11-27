@@ -603,7 +603,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
                       resizeMode="contain"
                     />
                     <Text allowFontScaling={false} style={styles.emptyText}>
-                      {t('No_Listings_Found"')}
+                      {t('No_Listings_Found')}
                     </Text>
                   </View>
                 </View>

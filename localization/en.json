@@ -49,8 +49,8 @@
   "gallery": "Gallery",
   "cancel": "Cancel",
   "invalid_email": "Please enter a valid email address",
-  
-   "EmailNotFound": "Email is required.",
+
+  "EmailNotFound": "Email is required.",
   "EmailExists": "Email address already exists.",
   "UserNotFound": "User not found.",
   "UserNotAuthenticated": "User is not authenticated.",
@@ -160,12 +160,10 @@
   "PasswordChangeSuccess": "Password changed successfully.",
   "ProfileDeletedSuccessfully": "User profile deleted successfully.",
   "ProfileNotFound": "User profile not found.",
-  
- 
+
   "PAYMENT_FAILED": "Payment failed. Please try again.",
   "PAYMENT_SUCCESSFUL": "Payment completed successfully.",
   "PAYMENT_SUCCESS": "Payment successful.",
-
 
   "PLEASE_FILL_ALL_REQUIRED_FIELDS": "Please fill in all required fields.",
   "INVALID_EMAIL": "Please enter a valid email address.",
@@ -246,10 +244,10 @@
   "USER_LOGOUT": "User Logout Successfully",
   "LOGOUT_FAIL": "Logout failed! Please try again.",
   "PURCHASE_SUCCESS": "Purchased successfully!",
-  "Featured_Listings":"Featured Listings",
-  "No_Listings_Found":"No Listings Found",
-  "Bookmarks":"Bookmarks",
-  "List_product":"List Product",
+  "Featured_Listings": "Featured Listings",
+  "No_Listings_Found": "No Listings Found",
+  "Bookmarks": "Bookmarks",
+  "List_product": "List Product",
   "profile": "Profile",
   "edit": "Edit",
   "student_email_id": "Student Email ID",
@@ -271,7 +269,7 @@
   "logout": "Logout",
   "confirm_logout": "Confirm Logout",
   "logout_message": "Are you sure you want to log out from your account?",
-  "all":"All",
+  "all": "All",
   "featured": "Featured",
   "active": "Active",
   "inactive": "Inactive",
@@ -536,7 +534,7 @@
   "hk_availability_notice": "Availability & Notice",
   "enter_hk_availability_notice": "Enter Availability & Notice",
   "message": "Message",
-  
+
   "jan": "Jan",
   "feb": "Feb",
   "mar": "Mar",
@@ -573,7 +571,24 @@
   "password_reset_sent": "A password reset link has been sent to your personal email. Please check your inbox (or spam folder) to continue.",
   "account_created_success": "Account Created Successfully!",
   "welcome_unizy": "Welcome to Unizy! Your account has been created and you're all set to start exploring",
-  "My_Listings":"My Listings",
-  "Available_Units":"Available Units"
-  
+  "My_Listings": "My Listings",
+  "Available_Units": "Available Units",
+  "Units_Purchased": "Units Purchased",
+  "Sale_Details": "Sale Details",
+  "Activate": "Activate",
+  "Deactivate": "Deactivate",
+  "Edit_Listing": "Edit Listing",
+  "regular": "regular",
+  "Enter_Delivery_OTP": " Enter Delivery OTP",
+  "please_enter_6digit_otp":"Please enter the 6-digit OTP shared by the buyer to confirm delivery.",
+  "Verify":"Verify",
+    "Order_Fulfilled":"Order Fulfilled!",
+    "Delivery_Verified":"Delivery Verified",
+    "The_payment_of":"The payment of",
+    "£":"£",
+    "has_been_transferred_to_your_account":"has been transferred to your account.",
+    "Deactivate_Listing":"Deactivate Listing",
+    "deactivate_listing":"Are you sure you want to deactivate this listing?"
+
+
 }
