@@ -13,6 +13,7 @@ import {
   View,
 } from 'react-native';
 import { MAIN_URL } from '../APIConstant';
+import { useTranslation } from 'react-i18next';
 
 interface FilterBottomSheetProps {
   catagory_id: number;
@@ -107,6 +108,7 @@ const SalesAllDetailsDropdown = ({
     onClose();
   };
 
+   const { t } = useTranslation();
   const handleForceLogout = async () => {
     console.log('User inactive or unauthorized — logging out');
     await AsyncStorage.clear();

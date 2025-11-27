@@ -35,6 +35,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { Constant } from '../../utils/Constant';
 import { Ellipse } from 'react-native-svg';
+import { useTranslation } from 'react-i18next';
 
 type previewDetailsProps = {
   navigation: any;
@@ -288,7 +289,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
     fetchFields();
   }, []);
 
-
+const { t } = useTranslation();
 
   type ImageField = {
     id?: string;
@@ -620,7 +621,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-            Preview Details
+            {t('preview_details')}
           </Text>
         </View>
 
@@ -790,9 +791,13 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
             <View style={styles.card}>
               <View style={styles.gap12}>
                 <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
-                  {userMeta?.category?.name === 'Food'
+                  {/* {userMeta?.category?.id === 3
                     ? 'Dish Details'
-                    : `${userMeta?.category?.name ?? ''} Details`}
+                    : `${userMeta?.category?.name ?? ''} Details`} */}
+
+                    {userMeta?.category?.id === 3
+                    ? t('dish_details')
+                    : `${userMeta?.category?.name ? `${userMeta?.category?.name} ` : ''}${t('details')}`}
                 </Text>
                 <View style={{ gap: 12 }}>
                   {fields.map(field => {
@@ -908,7 +913,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                       source={require('../../../assets/images/message_chat.png')}
                       style={{ height: 16, width: 16, marginRight: 4 }}
                     />
-                    <Text allowFontScaling={false} style={styles.chattext}>Chat with Seller</Text>
+                    <Text allowFontScaling={false} style={styles.chattext}>{t('chat_with_seller')}</Text>
                   </View>
                 </View>
               </View>
@@ -923,10 +928,15 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
               const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
               const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
 
+              // if (categoryid === Number(4)) {
+              //   return `List for £${accomodation_amount.toFixed(2)}`
+              // }
+              // return 'List';
+
               if (categoryid === Number(4)) {
-                return `List for £${accomodation_amount.toFixed(2)}`
+                return `${t('list')} for £${accomodation_amount.toFixed(2)}`;
               }
-              return 'List';
+              return t('list');
             } catch (e) {
               console.log('Error parsing storedForm:', e);
               return 'List';
@@ -978,7 +988,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                     lineHeight: 28,
                   }}
                 >
-                  Product Listed Successfully!
+                  {t('product_listed_success')}!
                 </Text>
                 <Text
                   allowFontScaling={false}
@@ -993,7 +1003,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                     textAlign: 'center'
                   }}
                 >
-                  Your product is now live and visible to other students.
+                 {t('product_listed_message')}
                 </Text>
 
                 <TouchableOpacity
@@ -1026,7 +1036,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                   }}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>
-                    Return to Choose Category
+                   {t('return_choose_category')}
                   </Text>
                 </TouchableOpacity>
               </View>

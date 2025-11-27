@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { View, StyleSheet } from "react-native";
 import CustomToast from "./CustomToast";
 
-// Global reference to showToast function
 let showToastFunc: ((text: string, type?: "success" | "error" | "info") => void) | null = null;
 
 export const NewCustomToastContainer: React.FC = () => {
@@ -13,7 +12,6 @@ export const NewCustomToastContainer: React.FC = () => {
   }[]>([]);
   const [isToastVisible, setIsToastVisible] = useState(false); // Track if a toast is currently active
 
-  // Global showToast function
   showToastFunc = (text: string, type?: "success" | "error" | "info") => {
     if (isToastVisible) {
       // If a toast is already visible, don't add a new one
@@ -45,7 +43,6 @@ export const NewCustomToastContainer: React.FC = () => {
   );
 };
 
-// Global function to trigger toast
 export const showToast = (text: string, type?: "success" | "error" | "info") => {
   showToastFunc?.(text, type);
 };

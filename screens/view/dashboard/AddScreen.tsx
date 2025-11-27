@@ -83,7 +83,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const formattedDate = today.toLocaleDateString('en-GB');
   const displayDate = formattedDate.replace(/\//g, '-');
   const [photo, setPhoto] = useState<string | null>(null);
-  
+
   const [multiSelectModal, setMultiSelectModal] = useState<{
     visible: boolean;
     ismultilple: boolean;
@@ -279,8 +279,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     if (expanded) {
       Animated.timing(animatedHeight, {
         toValue: 1,
-        duration: 800, 
-        useNativeDriver: false, 
+        duration: 800,
+        useNativeDriver: false,
       }).start();
     }
   }, [expanded]);
@@ -311,11 +311,11 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
       ...prev,
       [fieldId]: {
         value: value,
-        alias_name: aliasName ?? null, 
+        alias_name: aliasName ?? null,
       },
     }));
   };
-const { t } = useTranslation();
+  const { t } = useTranslation();
   const handleMultiSelectToggle = (fieldId: number, optionId: number) => {
     const prevSelected: number[] = Array.isArray(formValues[fieldId])
       ? formValues[fieldId]
@@ -535,11 +535,11 @@ const { t } = useTranslation();
       navigation.navigate('PreviewThumbnail');
     } catch (error) {
       console.log('Error saving form data: ', error);
-      showToast(Constant.DATA_NOT_SAVE,'error');
+      showToast(Constant.DATA_NOT_SAVE, 'error');
     }
   };
 
- 
+
   const handleSelectImage = async () => {
     const hasPermission = await requestCameraPermission();
     if (!hasPermission) return;
@@ -819,7 +819,7 @@ const { t } = useTranslation();
               <View style={styles.dropdowncard}>
                 <Text allowFontScaling={false} style={styles.dropdowntext}>
                   {Array.isArray(formValues[id]?.value) &&
-                  formValues[id]?.value.length > 0
+                    formValues[id]?.value.length > 0
                     ? `${formValues[id]?.value.length} Selected`
                     : `Select ${field_name}`}
                 </Text>
@@ -893,7 +893,7 @@ const { t } = useTranslation();
             >
               <Image source={uploadIcon1} style={styles.uploadIcon} />
               <Text allowFontScaling={false} style={styles.uploadText}>
-                Upload {field_name}
+                {t('upload_images')}
               </Text>
             </TouchableOpacity>
             {uploadedImages.length > 0 && (
@@ -995,18 +995,18 @@ const { t } = useTranslation();
               {/* Texts */}
               <View style={{ flex: 1 }}>
                 <Text allowFontScaling={false} style={styles.importantText1}>
-                  Important:
+                  {t('important')}
                 </Text>
                 <Text allowFontScaling={false} style={styles.importantText}>
-                  Featured listings require a small upfront fee —{' '}
+                  {t('featured_listing_note_1')} {' '}
                   <Text allowFontScaling={false} style={styles.importantText1}>
                     {featureFee}%
                   </Text>{' '}
-                  of your item’s price or up to{' '}
+                  {t('featured_listing_fee_percentage')}{' '}
                   <Text allowFontScaling={false} style={styles.importantText1}>
                     £{maxFeatureCap}
-                  </Text>{' '}
-                  (whichever is lower).
+                  </Text>{''}
+                  {t('featured_listing_fee_cap')}
                 </Text>
               </View>
             </View>
@@ -1125,8 +1125,8 @@ const { t } = useTranslation();
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-          {`${t('list')}${productName ? ` ${productName} ` : ''}`}
-        </Text>
+            {`${t('list')}${productName ? ` ${productName} ` : ''}`}
+          </Text>
         </View>
 
         <KeyboardAvoidingView
@@ -1169,8 +1169,7 @@ const { t } = useTranslation();
               <View style={{ width: '80%' }}>
                 <Text allowFontScaling={false} style={styles.userName}>
                   {userMeta
-                    ? `${userMeta.firstname ?? ''} ${
-                        userMeta.lastname ?? ''
+                    ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''
                       }`.trim()
                     : 'Alan Walker'}
                 </Text>
@@ -1229,9 +1228,9 @@ const { t } = useTranslation();
                   allowFontScaling={false}
                   style={styles.productdetailstext}
                 >
-                  {productName === 'Food'
-                    ? 'Dish Details'
-                    : `${productName ? `${productName} ` : ''}Details`}
+                  {productId === 3
+                    ? t('dish_details')
+                    : `${productName ? `${productName} ` : ''}${t('details')}`}
                 </Text>
 
                 {fields
@@ -1246,7 +1245,7 @@ const { t } = useTranslation();
             {featuredField && <View>{renderField(featuredField)}</View>}
           </AnimatedReanimated.ScrollView>
         </KeyboardAvoidingView>
-        <Button title="Preview Details" onPress={() => handlePreview()} />
+        <Button title={t('preview_details')} onPress={() => handlePreview()} />
       </View>
 
       {Platform.OS === 'android' ? (
@@ -1259,11 +1258,10 @@ const { t } = useTranslation();
             subtitle={
               multiSelectModal?.ismultilple
                 ? `Pick all ${pluralizeLabel(
-                    multiSelectModal?.fieldLabel || 'Category',
-                  )} that fit your listing.`
-                : `Select the ${
-                    multiSelectModal?.fieldLabel || 'category'
-                  } that best describes your listing.`
+                  multiSelectModal?.fieldLabel || 'Category',
+                )} that fit your listing.`
+                : `Select the ${multiSelectModal?.fieldLabel || 'category'
+                } that best describes your listing.`
             }
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>
@@ -1287,11 +1285,10 @@ const { t } = useTranslation();
             subtitle={
               multiSelectModal?.ismultilple
                 ? `Pick all ${pluralizeLabel(
-                    multiSelectModal?.fieldLabel || 'Category',
-                  )} that fit your listing.`
-                : `Select the ${
-                    multiSelectModal?.fieldLabel || 'category'
-                  } that best describes your listing.`
+                  multiSelectModal?.fieldLabel || 'Category',
+                )} that fit your listing.`
+                : `Select the ${multiSelectModal?.fieldLabel || 'category'
+                } that best describes your listing.`
             }
             //subtitle={`Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your item.`}
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}

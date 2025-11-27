@@ -16,6 +16,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import PayButton from './PayButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
 
 interface SelectFoodQuantity_IOSProps {
   options: { id: number; option_name: string }[];
@@ -49,7 +50,7 @@ const SelectFoodQuantity_IOS = ({
  const unitPrice = Number(price ?? 0);
   const totalPrice = unitPrice * count;
 
-
+ const { t } = useTranslation();
 const handleApply = async () => {
   try {
     await AsyncStorage.setItem('quantitycount', String(count)); 

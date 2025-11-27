@@ -18,6 +18,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import SalesAllDetailsDropdown from '../../utils/component/SalesAllDetailsDropdown';
 import SalesAllDetailsDropdown_IOS from '../../utils/component/SalesAllDetailsDropdown_IOS';
 import Loader from '../../utils/component/Loader';
+import { useTranslation } from 'react-i18next';
 
 type TransactionPropos = {
   navigation: any;
@@ -66,6 +67,9 @@ export default function TransactionHistoryScreen(
   const { issales } = route?.params || {}
   const screenWidth = Dimensions.get('window').width;
   const tabsname = ['Purchases', 'Sales', 'Charges'];
+
+ const { t } = useTranslation();
+
   const tabWidth = (screenWidth * 0.9) / tabsname.length;
 
   const translateX = useRef(new Animated.Value(0)).current;
@@ -83,6 +87,7 @@ export default function TransactionHistoryScreen(
   const [isFilterVisible, setFilterVisible] = useState(false);
   const [SalesImageUrl, setSalesImageUrl] = useState('');
   const { height } = Dimensions.get('window');
+  
 
   useEffect(() => {
     if (issales) {
@@ -326,6 +331,7 @@ export default function TransactionHistoryScreen(
 
 
   const [isSelected, setIsSelected] = useState(false);
+
 
   return (
     <View

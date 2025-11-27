@@ -35,6 +35,7 @@ import { BlurView } from '@react-native-community/blur';
 import Button from '../../utils/component/Button';
 import Loader from '../../utils/component/Loader';
 import { Constant } from '../../utils/Constant';
+import { useTranslation } from 'react-i18next';
 
 type AddReviewProps = {
   navigation: any;
@@ -57,6 +58,7 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
   const [showPopup1, setShowPopup1] = useState(false);
   const closePopup1 = () => setShowPopup1(false);
   const { width } = Dimensions.get('window');
+ const { t } = useTranslation();
  
 
   const handleSubmit = async () => {
@@ -135,7 +137,7 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
               </View>
             </TouchableOpacity>
             <Text allowFontScaling={false} style={styles.unizyText}>
-              Write a Review
+              {t('write_a_review')}
             </Text>
             <View style={{ width: 48 }} />
           </View>
@@ -156,10 +158,10 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
           >
             <View style={styles.innercontainer}>
               <Text allowFontScaling={false} style={styles.mainlabel}>
-                How many stars would you give?
+                {t('how_many_stars')}
               </Text>
               <Text allowFontScaling={false} style={styles.sublabel}>
-                Slide across the stars to rate this product
+                {t('slide_to_rate')}
               </Text>
             </View>
 
@@ -171,7 +173,7 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
 
             <View style={styles.innercontainer}>
               <Text allowFontScaling={false} style={styles.mainlabel1}>
-                Tell us More{' '}
+                {t('tell_us_more')}{' '}
               </Text>
 
               <View style={styles.login_container}>
@@ -194,7 +196,7 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
             </View>
           </View>
         </TouchableWithoutFeedback>
-        <Button title="Submit Review" onPress={() => handleSubmit()} />
+        <Button title={t('submit_review')} onPress={() => handleSubmit()} />
 
         <Modal
           visible={showPopup1}

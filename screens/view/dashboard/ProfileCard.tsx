@@ -37,15 +37,25 @@ const logouticon=require('../../../assets/images/logout.png')
 const helpicon=require('../../../assets/images/help.png')
 const okicon=require('../../../assets/images/ok.png')
 
-const cardData = [
-  { id: '1', title: 'Payment Methods', image: require('../../../assets/images/payment.png') },
-  { id: '2', title: 'My Orders', image: require('../../../assets/images/cart.png') },
-  { id: '3', title: 'My Reviews', image: require('../../../assets/images/ok.png') },
-  { id: '4', title: 'Notifications', image: require('../../../assets/images/notify.png') },
-  { id: '5', title: 'Help & Support', image: require('../../../assets/images/helpicon.png') },
-  { id: '6', title: 'Logout', image: require('../../../assets/images/logout.png') },
-  {id:'7',title:'App Version',image: require('../../../assets/images/versionicon.png')}
+// const cardData = [
+//   { id: '1', title: 'Payment Methods', image: require('../../../assets/images/payment.png') },
+//   { id: '2', title: 'My Orders', image: require('../../../assets/images/cart.png') },
+//   { id: '3', title: 'My Reviews', image: require('../../../assets/images/ok.png') },
+//   { id: '4', title: 'Notifications', image: require('../../../assets/images/notify.png') },
+//   { id: '5', title: 'Help & Support', image: require('../../../assets/images/helpicon.png') },
+//   { id: '6', title: 'Logout', image: require('../../../assets/images/logout.png') },
+//   {id:'7',title:'App Version',image: require('../../../assets/images/versionicon.png')}
   
+// ];
+
+const cardData = [
+  { id: '1', titleKey: 'payment_methods', image: require('../../../assets/images/payment.png') },
+  { id: '2', titleKey: 'my_orders', image: require('../../../assets/images/cart.png') },
+  { id: '3', titleKey: 'my_reviews', image: require('../../../assets/images/ok.png') },
+  { id: '4', titleKey: 'notifications', image: require('../../../assets/images/notify.png') },
+  { id: '5', titleKey: 'help_support', image: require('../../../assets/images/helpicon.png') },
+  { id: '6', titleKey: 'logout', image: require('../../../assets/images/logout.png') },
+  { id: '7', titleKey: 'app_version', image: require('../../../assets/images/versionicon.png') },
 ];
 
 const arrowIcon = require('../../../assets/images/nextarrow.png');
@@ -87,7 +97,8 @@ useEffect(() => {
 }, [expanded]);
 
   const { t } = useTranslation();
-useEffect(() => {
+
+  useEffect(() => {
     const fetchUserProfile = async () => {
       try {
         setLoading(true);
@@ -214,8 +225,8 @@ useEffect(() => {
 
 
 const renderItem = ({ item }: any) => {
-  const isLogout = item.title.toLowerCase() === 'logout';
-  const isVersion = item.title.toLowerCase() === 'app version';
+  const isLogout = item.titleKey === 'logout';
+  const isVersion = item.titleKey === 'app_version';
  
 
   return (
@@ -231,7 +242,7 @@ const renderItem = ({ item }: any) => {
 
         setShowConfirm(true); 
       }
-        else if (item.title === 'My Orders') {
+        else if (item.titleKey  === 'my_orders') {
           if(Platform.OS === 'ios'){
             navigation.replace('MyOrders'); 
           } else {
@@ -239,7 +250,7 @@ const renderItem = ({ item }: any) => {
           }
           
         } 
-        else if (item.title === 'My Reviews') {
+        else if (item.titleKey  === 'my_reviews') {
           if(Platform.OS === 'ios'){
             navigation.replace('MyReviews'); 
           } else {
@@ -247,11 +258,11 @@ const renderItem = ({ item }: any) => {
           }
           // navigation.navigate('MyReviews'); 
         } 
-        else if (item.title === 'Help & Support') {
+        else if (item.titleKey  === 'help_support') {
           navigation.navigate('HelpSupport'); 
         } 
 
-        else if (item.title === 'Notifications') {
+        else if (item.titleKey  === 'notifications') {
           if(Platform.OS === 'ios'){
             navigation.replace('Notification'); 
           } else {
@@ -259,7 +270,7 @@ const renderItem = ({ item }: any) => {
           }
           
         }
-        else if(item.title === 'Payment Methods'){
+        else if(item.titleKey  === 'payment_methods'){
           openStripeOnboarding();
         } 
          else {
@@ -274,7 +285,7 @@ const renderItem = ({ item }: any) => {
           isLogout && { color: '#FF8282E0' },
         ]}
       >
-        {item.title}
+         {t(item.titleKey)}
       </Text>
       {isVersion ? (
         <Text allowFontScaling={false} style={styles.versionText}>{APP_VERSION}</Text>
@@ -448,10 +459,10 @@ return (
                 resizeMode="contain"
               />
               <Text allowFontScaling={false} style={styles.mainheader}>
-                Confirm Logout
+                {t('confirm_logout')}
               </Text>
               <Text allowFontScaling={false} style={styles.subheader}>
-                Are you sure you want to log out from your account?
+                {t('logout_message')}
               </Text>
 
 
@@ -508,7 +519,7 @@ return (
               }}
             >
               <Text allowFontScaling={false} style={styles.loginText}>
-                Log out
+                {t('logout')}
               </Text>
             </TouchableOpacity>
 
@@ -517,7 +528,7 @@ return (
                 onPress={() => setShowConfirm(false)}
               >
                 <Text allowFontScaling={false} style={styles.loginText1}>
-                  Cancel
+                  {t('cancel')}
                 </Text>
               </TouchableOpacity>
             </View>

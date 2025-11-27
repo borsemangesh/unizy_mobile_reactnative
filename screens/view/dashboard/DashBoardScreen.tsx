@@ -187,6 +187,8 @@ const AddScreenContent: React.FC<AddScreenContentProps> = ({ navigation, product
     checkOnboardingStatus();
   }, []);
 
+  const { t } = useTranslation();
+
   const handleProductPress = (item: any) => {
 
     if (isOnboardingComplete === false) {
@@ -212,7 +214,7 @@ const AddScreenContent: React.FC<AddScreenContentProps> = ({ navigation, product
   if (loading) {
     return (
       <View style={[styles.tabContent3]}>
-        <Text allowFontScaling={false} style={[styles.tabContentText3]}>List Product</Text>
+        <Text allowFontScaling={false} style={[styles.tabContentText3]}>{t('List_product')}</Text>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',height: '100%',paddingTop: 300}}>
           <Loader
             containerStyle={{
@@ -229,7 +231,7 @@ const AddScreenContent: React.FC<AddScreenContentProps> = ({ navigation, product
 
   return (
     <View style={styles.tabContent3}>
-      <Text allowFontScaling={false} style={[styles.tabContentText3]}>List Product</Text>
+      <Text allowFontScaling={false} style={[styles.tabContentText3]}>{t('List_Product')}</Text>
       <AnimatedSlideUp>
         <FlatList
           data={products}
@@ -448,7 +450,7 @@ const [isLoading, setIsLoading] = useState(true);
     loadBookmarks();
   }, [route.params?.AddScreenBackactiveTab]);
 
-  const { t } = useTranslation();
+  
   useFocusEffect(
   useCallback(() => {
     const fetchFeatures = async () => {
@@ -925,7 +927,7 @@ return (
               resizeMode="contain"
             />
             <Text allowFontScaling={false} style={styles.emptyText}>
-              No Listings Found
+               {t('No_Listings_Found')}
             </Text>
           </View>
         </View>
@@ -1068,7 +1070,7 @@ const blurAmount = useDerivedValue(() =>
 );
 
 
-
+const { t } = useTranslation();
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -1219,12 +1221,12 @@ const blurAmount = useDerivedValue(() =>
                 >
               
                   {activeTab === 'Search'
-                    ? 'Transaction History'
-                    : activeTab === 'Profile'
-                    ? 'Profile'
-                    : activeTab === 'Bookmark'
-                    ? 'Messages'
-                    : null}
+                ? t('transaction_history')
+                : activeTab === 'Profile'
+                ? t('profile')
+                : activeTab === 'Bookmark'
+                ? t('messages')
+                : null}
                 </Text>
               </View>
               <AnimatedReanimated.ScrollView

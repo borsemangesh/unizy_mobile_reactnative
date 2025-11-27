@@ -36,6 +36,7 @@ import Animated, {
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
+import { useTranslation } from 'react-i18next';
 
 
 type CreatedBy = {
@@ -101,6 +102,7 @@ const MyOrders = ({ navigation }: MyOrdersProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
 
+    const { t } = useTranslation();
 
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const scrollY = useSharedValue(0);
@@ -165,10 +167,14 @@ const MyOrders = ({ navigation }: MyOrdersProps) => {
     name: string;
   };
 
-  const [categories, setCategories] = useState<Category[]>([
-    { id: null, name: 'All' }
+ const [categories, setCategories] = useState<Category[]>([
+    { id: null, name: t('all') },
   ]);
-  const [selectedCategory, setSelectedCategory] = useState<Category>({ id: null, name: 'All' });
+  const [selectedCategory, setSelectedCategory] = useState<Category>({
+    id: null,
+    name: t('all'),
+  });
+
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -176,7 +182,7 @@ const MyOrders = ({ navigation }: MyOrdersProps) => {
       if (stored) {
         const parsed = JSON.parse(stored);
         const catObjects = [
-          { id: null, name: 'All' },
+          { id: null, name: t('all') },
           ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
         ];
         setCategories(catObjects);
@@ -184,8 +190,8 @@ const MyOrders = ({ navigation }: MyOrdersProps) => {
       }
     };
     loadCategories();
-  }, []);
-
+  }, [t]);
+  
   useEffect(() => {
     setPage(1);
     displayListOfProduct(selectedCategory?.id ?? null, 1);
@@ -503,7 +509,7 @@ const MyOrders = ({ navigation }: MyOrdersProps) => {
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-            My Orders
+             {t('my_orders')}
           </Text>
         </View>
 

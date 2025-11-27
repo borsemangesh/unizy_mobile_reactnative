@@ -37,6 +37,7 @@ import {
   showToast,
 } from '../../utils/component/NewCustomToastManager';
 import Loader from '../../utils/component/Loader';
+import { useTranslation } from 'react-i18next';
 
 type AccountDetailsProps = {
   navigation: any;
@@ -182,6 +183,8 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
       };
     }, []),
   );
+
+   const { t } = useTranslation();
 
   const hasBankData = () => {
     if (!data?.stripeAccount?.merchant) {

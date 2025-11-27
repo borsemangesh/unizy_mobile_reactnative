@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -62,6 +63,8 @@ const MyOrderCard: React.FC<MyOrderCardProps> = ({
     return `${firstname?.[0] ?? ''}${lastname?.[0] ?? ''}`.toUpperCase();
   };
 
+      const { t } = useTranslation();
+
    const renderProfileSection = () => {
     if (profileshowinview) {
       if (createdby?.profile) {
@@ -119,13 +122,13 @@ const handleViewTransaction = () => {
           {ispurchase ? (
             <View style={styles.statusTag}>
               <Text allowFontScaling={false} style={styles.statusText}>
-                Fulfilled on: {date}
+                {t('fulfilled_on')}: {date}
               </Text>
             </View>
           ) : (
             <View style={styles.statusTag}>
               <Text allowFontScaling={false} style={styles.statusText}>
-                Awaiting Delivery
+               {t('awaiting_delivery')}
               </Text>
             </View>
           )}
@@ -146,7 +149,7 @@ const handleViewTransaction = () => {
             activeOpacity={0.7}
             onPress={handleViewTransaction}>
             <Text allowFontScaling={false} style={styles.btnText}>
-              View in Transaction
+              {t('view_in_transactions')}
             </Text>
           </TouchableOpacity>
 
@@ -155,7 +158,7 @@ const handleViewTransaction = () => {
             activeOpacity={0.7}
             onPress={handleWriteReview}>
             <Text allowFontScaling={false} style={styles.btnTextSecondary}>
-              Write a Review
+              {t('write_a_review')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -166,7 +169,7 @@ const handleViewTransaction = () => {
           activeOpacity={0.7}
           onPress={handleViewTransaction}>
           <Text allowFontScaling={false} style={styles.btnText}>
-            View in Transactions
+            {t('view_in_transactions')}
           </Text>
         </TouchableOpacity>
       )}

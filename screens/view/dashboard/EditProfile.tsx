@@ -54,6 +54,7 @@ import {
 import Button from '../../utils/component/Button';
 import LinearGradient from 'react-native-linear-gradient';
 import { Constant } from '../../utils/Constant';
+import { useTranslation } from 'react-i18next';
 
 type EditProfileProps = {
   navigation: any;
@@ -160,6 +161,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     fetchUserProfile();
   }, []);
 
+  const { t } = useTranslation();
   const requestCameraPermission = async () => {
     // ANDROID
     if (Platform.OS === 'android') {
@@ -852,7 +854,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-            Edit Profile
+           {t('edit')} {t('profile')}
           </Text>
         </View>
 
@@ -932,7 +934,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             <View style={styles.blurCard}>
               <View style={styles.inputGroup}>
                 <Text style={styles.label} allowFontScaling={false}>
-                  First Name*
+                  {t('first_name')}
                 </Text>
                 <TextInput
                   value={userMeta.firstname || ''}
@@ -948,7 +950,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
               <View style={styles.inputGroup}>
                 <Text style={styles.label} allowFontScaling={false}>
-                  Last Name*
+                   {t('last_name')}
                 </Text>
                 <TextInput
                   value={userMeta.lastname || ''}
@@ -964,7 +966,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
               <View style={styles.inputGroup}>
                 <Text style={styles.label} allowFontScaling={false}>
-                  Personal Email ID*
+                  {t('personal_email_id')}
                 </Text>
                 <View
                   style={{
@@ -1044,7 +1046,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
               <View style={styles.inputGroup}>
                 <Text style={styles.label} allowFontScaling={false}>
-                  Student Email ID*
+                  {t('student_email_id')}
                 </Text>
                 <View
                   style={{
@@ -1123,7 +1125,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
               </View>
               <View style={styles.inputGroup}>
                 <Text style={styles.label} allowFontScaling={false}>
-                  Postal Code*
+                  {t('postal_code')}
                 </Text>
                 <TextInput
                   value={userMeta.postal_code || ''}
@@ -1175,7 +1177,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
               <View style={styles.inputGroup}>
                 <Text style={styles.label} allowFontScaling={false}>
-                  City*
+                  {t('city')}
                 </Text>
                 <TextInput
                   allowFontScaling={false}
@@ -1218,7 +1220,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         </KeyboardAvoidingView>
 
         <Button
-          title="Save Details"
+          title={t('save_details')}
           onPress={() => {
             handleSaveProfile();
           }}
@@ -1261,7 +1263,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 </Text>
 
                 <Text allowFontScaling={false} style={styles.subheader}>
-                  We have sent a 4-digit code to{' '}
+                  {t('we_sent_code_to')}{' '}
                   <Text
                     allowFontScaling={false}
                     style={{
@@ -1312,13 +1314,13 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   allowFontScaling={false}
                   style={[styles.subheader, { marginBottom: 6 }]}
                 >
-                  Didn’t receive a code?{' '}
+                  {t('didnt_receive_code')}{' '}
                   <Text
                     allowFontScaling={false}
                     style={{ color: '#FFFFFF7A' }}
                     onPress={() => sendOtp(emailName)}
                   >
-                    Resend Code
+                    {t('resend_code')}
                   </Text>
                 </Text>
               </View>
@@ -1389,7 +1391,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   }}
                 >
                   <Text allowFontScaling={false} style={styles.loginText1}>
-                    Cancel
+                    {t('cancel')}
                   </Text>
                 </TouchableOpacity>
               </View>

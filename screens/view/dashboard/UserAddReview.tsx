@@ -31,6 +31,7 @@ import AddRating from '../../utils/AddRating';
 import { BlurView } from '@react-native-community/blur';
 import Button from '../../utils/component/Button';
 import { Constant } from '../../utils/Constant';
+import { useTranslation } from 'react-i18next';
 
 type UserAddReviewProps = {
   navigation: any;
@@ -56,6 +57,7 @@ const UserAddReview : React.FC<UserAddReviewProps> = ({ navigation }) =>{
   const [showPopup1, setShowPopup1] = useState(false);
     const closePopup1 = () => setShowPopup1(false);
    const { width } = Dimensions.get('window');
+const { t } = useTranslation();
 
    const handleSubmit = async () => {
     if (rating === 0) {
@@ -132,7 +134,7 @@ const UserAddReview : React.FC<UserAddReviewProps> = ({ navigation }) =>{
                 />
               </View>
             </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>Write a Review</Text>
+            <Text allowFontScaling={false} style={styles.unizyText}>{t('write_a_review')}</Text>
             <View style={{ width: 48 }} />
           </View>
         </View>
@@ -140,8 +142,8 @@ const UserAddReview : React.FC<UserAddReviewProps> = ({ navigation }) =>{
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={{ flex: 1 ,paddingTop:Platform.OS === 'ios' ? 120 : 100,paddingHorizontal: 16}}>
           <View style={styles.innercontainer}>
-            <Text allowFontScaling={false} style={styles.mainlabel}>How many stars would you give?</Text>
-             <Text allowFontScaling={false} style={styles.sublabel}>Slide across the stars to rate this product</Text>
+            <Text allowFontScaling={false} style={styles.mainlabel}>{t('how_many_stars')}</Text>
+             <Text allowFontScaling={false} style={styles.sublabel}>{t('slide_to_rate')}</Text>
          </View>
 
          <View style={{  marginTop:16,marginBottom: 20, alignItems: 'center' }}>
@@ -151,7 +153,7 @@ const UserAddReview : React.FC<UserAddReviewProps> = ({ navigation }) =>{
         </View>
 
     <View style={styles.innercontainer}>
-        <Text allowFontScaling={false} style={styles.mainlabel1}>Tell us More </Text>
+        <Text allowFontScaling={false} style={styles.mainlabel1}>{t('tell_us_more')} </Text>
 
         <View style={styles.login_container}>
               <TextInput
@@ -168,7 +170,7 @@ const UserAddReview : React.FC<UserAddReviewProps> = ({ navigation }) =>{
          </View>
         </View>
         </TouchableWithoutFeedback>
-         <Button title="Submit Review" onPress={() => handleSubmit()} />
+         <Button title={t('submit_review')} onPress={() => handleSubmit()} />
 
    <Modal
         visible={showPopup1}

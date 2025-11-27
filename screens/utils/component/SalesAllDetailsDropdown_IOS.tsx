@@ -14,6 +14,7 @@ import {
   View,
 } from 'react-native';
 import { MAIN_URL } from '../APIConstant';
+import { useTranslation } from 'react-i18next';
 
 
 interface FilterBottomSheetProps {
@@ -105,6 +106,8 @@ const SalesAllDetailsDropdown_IOS = ({
         // setSalesData(salesDataResponse);
     
   }, [salesDataResponse]);
+
+   const { t } = useTranslation();
 
   const handleClose = () => {
     onClose();

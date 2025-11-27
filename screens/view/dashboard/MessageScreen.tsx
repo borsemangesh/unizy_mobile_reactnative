@@ -28,6 +28,7 @@ import Animated, {
   interpolate,
 } from 'react-native-reanimated';
 import Loader from '../../utils/component/Loader';
+import { useTranslation } from 'react-i18next';
 
 type MessageScreenProps = {
   navigation: any;
@@ -199,6 +200,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
     return `${day}${suffix} ${month} ${year}`;
   };
 
+  const { t } = useTranslation();
 
   const getInitials = (firstName = '', lastName = '') => {
     const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
@@ -220,7 +222,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
             <TextInput
               allowFontScaling={false}
               style={styles.searchBar}
-              placeholder="Search"
+              placeholder={t('search')}
               placeholderTextColor="#ccc"
               selectionColor={'#fff'}
               onChangeText={setSearch}
