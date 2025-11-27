@@ -578,6 +578,8 @@
   "account_created_success": "Account Created Successfully!",
   "welcome_unizy": "Welcome to Unizy! Your account has been created and you're all set to start exploring",
   "My_Listings":"My Listings",
-  "Available_Units":"Available Units"
+  "Available_Units":"Available Units",
+  "Deactivate_Listing":"Deactivate Listing",
+  "deactivate_listing":"Are you Sure do you want deactivate this listing"
   
 }
