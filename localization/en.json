@@ -646,8 +646,10 @@
   "unable_edit":"Purchased item can’t be edited.",
   "enter":"Enter",
   "selected":"selected",
+  "IS_MAN":"is mandatory",
+  "ARE_MAN":"are mandatory",
+  "no_description_available":"No description available",
+  "verify_student_email_id":"Verify Student Email ID",
   "time_am":"am",
   "time_pm":"pm"
-
-
 }

@@ -620,7 +620,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
             </Animated.View>
           </TouchableOpacity>
 
-          <Text allowFontScaling={false} style={styles.unizyText}>{`${category_name}s`}</Text>
+          <Text allowFontScaling={false} style={styles.unizyText}>{`${category_name}`}</Text>
         </View>
 
 

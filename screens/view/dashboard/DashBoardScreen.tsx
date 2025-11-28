@@ -214,7 +214,7 @@ const AddScreenContent: React.FC<AddScreenContentProps> = ({ navigation, product
   if (loading) {
     return (
       <View style={[styles.tabContent3]}>
-        <Text allowFontScaling={false} style={[styles.tabContentText3]}>{t('List_product')}</Text>
+
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height: '100%', paddingTop: 300 }}>
           <Loader
             containerStyle={{
@@ -1221,11 +1221,13 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                 >
 
                   {activeTab === 'Search'
-                    ? t('transaction_history')
-                    : activeTab === 'Profile'
-                      ? t('profile')
-                      : activeTab === 'Bookmark'
-                        ? t('messages')
+                  ? t('transaction_history')
+                  : activeTab === 'Profile'
+                    ? t('profile')
+                    : activeTab === 'Bookmark'
+                      ? t('messages')
+                      : activeTab === 'Add'   // ✅ new tab
+                        ? t('settings')            // make sure "settings" exists in translation
                         : null}
                 </Text>
               </View>

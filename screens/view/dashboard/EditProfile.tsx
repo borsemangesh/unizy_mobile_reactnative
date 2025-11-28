@@ -1258,8 +1258,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
               <View style={styles.popupContainer}>
                 <Text allowFontScaling={false} style={styles.mainheader}>
                   {emailName === 'personalEmail'
-                    ? 'Verify Personal Email ID'
-                    : 'Verify Student Email ID'}
+                    ? t('verify_personal_email')
+                    : t('verify_student_email_id')}
                 </Text>
 
                 <Text allowFontScaling={false} style={styles.subheader}>

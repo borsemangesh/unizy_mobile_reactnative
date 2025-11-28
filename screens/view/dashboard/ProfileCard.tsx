@@ -331,8 +331,8 @@ return (
             <View style={styles.initialsCircle}>
               <Text allowFontScaling={false} style={styles.initialsText}>
                 {getInitials(
-                  userMeta?.firstname ?? 'A',
-                  userMeta?.lastname ?? 'W',
+                  userMeta?.firstname ?? ' ',
+                  userMeta?.lastname ?? ' ',
                 )}
               </Text>
             </View>
@@ -408,7 +408,7 @@ return (
         >
           <View style={styles.editcard}>
             <Text allowFontScaling={false} style={styles.edittext}>
-              {t('camera')}
+              {t('edit')}
             </Text>
           </View>
         </TouchableOpacity>

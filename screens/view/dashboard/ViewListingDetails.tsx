@@ -513,7 +513,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
               {data?.list?.category_id === 3 && data?.list?.isactive && (
                 <View style={styles.listingtyperow}>
                   <Text allowFontScaling={false} style={styles.lebleHeader}>
-                    {t('Available_Units:')}:
+                    {t('Available_Units')}:
                   </Text>
 
                   <Text allowFontScaling={false} style={styles.status}>

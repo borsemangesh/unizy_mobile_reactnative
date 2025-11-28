@@ -795,7 +795,7 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
                     />
                     <Text allowFontScaling={false} style={styles.datetext1}>
                       {t('service_duration')}:{' '}
-                      <Text style={styles.durationValue}>{duration_value} Hours</Text>
+                      <Text style={styles.durationValue}>{duration_value} {t('hours')}</Text>
                     </Text>
                   </View>
                 )}

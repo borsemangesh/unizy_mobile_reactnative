@@ -225,6 +225,11 @@ const { t } = useTranslation();
     const fetchFields = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
+        const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+        if (!token) {
+          console.log('No token found');
+          return;
+        }
         const productId1 = await AsyncStorage.getItem('selectedProductId');
         setcategoryid(Number(productId1))
 
@@ -240,6 +245,7 @@ const { t } = useTranslation();
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
+            language_code: language_code
           },
         });
 
@@ -766,7 +772,7 @@ const { t } = useTranslation();
                     />
                     <Text allowFontScaling={false} style={styles.datetext1}>
                       {t('service_duration')}:{' '}
-                      <Text style={styles.durationValue}>{duration_value} Hours</Text>
+                      <Text style={styles.durationValue}>{duration_value} {t('hours')}</Text>
                     </Text>
                   </View>
                 )}

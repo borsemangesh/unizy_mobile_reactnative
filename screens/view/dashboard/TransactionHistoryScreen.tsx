@@ -267,43 +267,43 @@ export default function TransactionHistoryScreen(
     fetchTransactions();
   }, [selectedTab]);
 
-const getFormattedDate = (dateString: string, t?: any) => {
-  const parts = dateString.split(" ");
-  if (parts.length !== 3) return dateString;
+  const getFormattedDate = (dateString: string, t?: any) => {
+    const parts = dateString.split(" ");
+    if (parts.length !== 3) return dateString;
 
-  const [dayStr, monthStr, yearStr] = parts;
-  const day = parseInt(dayStr);
+    const [dayStr, monthStr, yearStr] = parts;
+    const day = parseInt(dayStr);
 
-  if (isNaN(day)) return dateString;
+    if (isNaN(day)) return dateString;
 
-  const lang = i18n.language; 
+    const lang = i18n.language;
 
-  // English suffix logic
-  let suffix = "";
-  if (lang === "en") {
-    suffix =
-      day % 10 === 1 && day !== 11
-        ? "st"
-        : day % 10 === 2 && day !== 12
-        ? "nd"
-        : day % 10 === 3 && day !== 13
-        ? "rd"
-        : "th";
-  }
+    // English suffix logic
+    let suffix = "";
+    if (lang === "en") {
+      suffix =
+        day % 10 === 1 && day !== 11
+          ? "st"
+          : day % 10 === 2 && day !== 12
+            ? "nd"
+            : day % 10 === 3 && day !== 13
+              ? "rd"
+              : "th";
+    }
 
-  const months = [
-    "jan","feb","mar","apr","may","jun",
-    "jul","aug","sep","oct","nov","dec"
-  ];
+    const months = [
+      "jan", "feb", "mar", "apr", "may", "jun",
+      "jul", "aug", "sep", "oct", "nov", "dec"
+    ];
 
-  const monthShort = monthStr.substring(0, 3).toLowerCase();
-  const monthIndex = months.indexOf(monthShort);
+    const monthShort = monthStr.substring(0, 3).toLowerCase();
+    const monthIndex = months.indexOf(monthShort);
 
-  const translatedMonth =
-    t && monthIndex !== -1 ? t(months[monthIndex]) : monthStr;
+    const translatedMonth =
+      t && monthIndex !== -1 ? t(months[monthIndex]) : monthStr;
 
-  return `${day}${suffix} ${translatedMonth} ${yearStr}`;
-};
+    return `${day}${suffix} ${translatedMonth} ${yearStr}`;
+  };
 
   const [catagoryid, setCatagoryid] = useState(0)
 
@@ -313,7 +313,7 @@ const getFormattedDate = (dateString: string, t?: any) => {
 
   const fetchSalesHistory = async (catagory_id: number) => {
     try {
-      // Get user token
+      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
         console.log('No token found');
@@ -328,6 +328,7 @@ const getFormattedDate = (dateString: string, t?: any) => {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
+          language_code: language_code
         },
       });
 
@@ -474,7 +475,7 @@ const getFormattedDate = (dateString: string, t?: any) => {
           transactions.map((section, idx) => (
             <View key={idx} style={styles.section}>
               <Text allowFontScaling={false} style={styles.dateText}>
-                {getFormattedDate(section.date,t)}
+                {getFormattedDate(section.date, t)}
               </Text>
               {section.items.map((item, i) => (
                 <View key={i} style={styles.card}>
@@ -625,7 +626,7 @@ const getFormattedDate = (dateString: string, t?: any) => {
             {transactions.map((section, idx) => (
               <View key={idx} style={styles.section}>
                 <Text allowFontScaling={false} style={styles.dateText1}>
-                  {getFormattedDate(section.date,t)}
+                  {getFormattedDate(section.date, t)}
                 </Text>
 
                 {section.items.map((item, i) => (
@@ -713,7 +714,7 @@ const getFormattedDate = (dateString: string, t?: any) => {
           transactions.map((section, idx) => (
             <View key={idx} style={styles.section}>
               <Text allowFontScaling={false} style={styles.dateText}>
-                {getFormattedDate(section.date,t)}
+                {getFormattedDate(section.date, t)}
               </Text>
               {section.items.map((item, i) => (
                 <View key={i} style={styles.chargesCard}>

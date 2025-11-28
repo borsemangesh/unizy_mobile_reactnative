@@ -806,7 +806,7 @@ const formatDate = (dateString?: string, t?: any) => {
                     {t('product_description')}
                   </Text>
                   <Text allowFontScaling={false} style={styles.productDesc}>
-                    {detail?.description || 'No description available'}
+                    {detail?.description || t('no_description_available')}
                   </Text>
 
                   <View style={styles.datePosted}>

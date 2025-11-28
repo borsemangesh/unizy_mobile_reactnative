@@ -181,6 +181,8 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
     console.log('Product ID: ', productId, productName, shareid);
     const fetchFields = async () => {
       try {
+        const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+        console.log("language-code", language_code)
         const token = await AsyncStorage.getItem('userToken');
 
         // const productId1 = await AsyncStorage.getItem('selectedProductId');
@@ -196,6 +198,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
+            language_code: language_code
           },
         });
 
@@ -269,7 +272,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
     const fetchListDetails = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
-
+        const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
         if (!token) {
           console.log('No token found');
           return;
@@ -284,6 +287,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
+            language_code: language_code
           },
         });
 
