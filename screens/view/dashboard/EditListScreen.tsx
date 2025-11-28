@@ -684,11 +684,11 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
     if (!hasPermission) return;
 
     Alert.alert(
-      'Select Option',
-      'Choose a source',
+       t('select_option'),
+       t('choose_source'),
       [
         {
-          text: 'Camera',
+          text: t('camera'),
           onPress: () => {
             launchCamera(
               { mediaType: 'photo', cameraType: 'front', quality: 1 },
@@ -730,7 +730,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
           },
         },
         {
-          text: 'Gallery',
+          text: t('gallery'),
           onPress: () => {
             launchImageLibrary(
               { mediaType: 'photo', quality: 1 },
@@ -771,7 +771,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             );
           },
         },
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('cancel'), style: 'cancel' },
       ],
       { cancelable: true },
     );

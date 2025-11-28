@@ -1534,11 +1534,11 @@ useEffect(() => {
     };
 
     Alert.alert(
-      'Select Option',
-      'Choose a source',
+       t('select_option'),
+       t('choose_source'),
       [
         {
-          text: 'Camera',
+          text: t('camera'),
           onPress: () => {
             launchCamera(
               {
@@ -1551,7 +1551,7 @@ useEffect(() => {
           },
         },
         {
-          text: 'Gallery',
+          text: t('gallery'),
           onPress: () => {
             launchImageLibrary(
               {
@@ -1563,7 +1563,7 @@ useEffect(() => {
           },
         },
         {
-          text: 'Cancel',
+          text: t('cancel'),
           style: 'cancel',
         },
       ],

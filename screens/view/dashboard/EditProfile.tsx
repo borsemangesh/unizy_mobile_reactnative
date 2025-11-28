@@ -377,11 +377,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     const hasPermission = await requestCameraPermission();
     if (!hasPermission) return;
     Alert.alert(
-      'Select Option',
-      'Choose a source',
+      t('select_option'),
+      t('choose_source'),
       [
         {
-          text: 'Camera',
+          text: t('camera'),
           onPress: () => {
             launchCamera(
               {
@@ -400,7 +400,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           },
         },
         {
-          text: 'Gallery',
+          text: t('gallery'),
           onPress: () => {
             launchImageLibrary(
               {
@@ -418,7 +418,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           },
         },
         {
-          text: 'Cancel',
+          text: t('cancel'),
           style: 'cancel',
         },
       ],

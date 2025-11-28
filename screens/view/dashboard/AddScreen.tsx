@@ -390,7 +390,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
       if (Platform.OS === 'android') {
         try {
           // Request CAMERA
-          const cameraGranted = await PermissionsAndroid.request(
+          const cameraGranted = await PermissionsAndroid.request(   
             PermissionsAndroid.PERMISSIONS.CAMERA,
             {
               title: 'Camera Permission',
@@ -564,11 +564,11 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     if (!hasPermission) return;
 
     Alert.alert(
-      'Select Option',
-      'Choose a source',
+      t('select_option'),
+      t('choose_source'),
       [
         {
-          text: 'Camera',
+          text: t('camera'),
           onPress: () => {
             launchCamera(
               { mediaType: 'photo', cameraType: 'front', quality: 1 }, // get max quality first
@@ -605,7 +605,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           },
         },
         {
-          text: 'Gallery',
+          text: t('gallery'),
           onPress: () => {
             launchImageLibrary(
               { mediaType: 'photo', quality: 1 },
@@ -641,7 +641,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             );
           },
         },
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('cancel'), style: 'cancel' },
       ],
       { cancelable: true },
     );
