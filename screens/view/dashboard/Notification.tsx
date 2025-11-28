@@ -430,7 +430,27 @@ const renderItem = ({ item ,index  }: { item: any ;index: number }) => {
         <View style={styles.header} pointerEvents="box-none">
           <View style={styles.headerRow}>
             <TouchableOpacity 
-              onPress={() => navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Profile',isNavigate: false})}
+              onPress={() => {
+                if(Platform.OS === 'ios'){
+                  navigation.reset({
+                    index: 0,
+                    routes: [
+                      {
+                        name: 'Dashboard',
+                        params: {
+                          AddScreenBackactiveTab: 'Profile',
+                          isNavigate: false,
+                        }
+                      }
+                    ],
+                  });
+                  
+                } else {
+                  navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Profile',isNavigate: false})
+                }
+                // 
+                
+              }}
               style={styles.backButtonContainer}
             >
               <Animated.View
@@ -482,7 +502,7 @@ const renderItem = ({ item ,index  }: { item: any ;index: number }) => {
                  styles.listContainer,
                    {                   
                    paddingBottom: (Platform.OS === 'ios' ? 30:screenHeight * 0.150 + insets.bottom), 
-                    paddingTop: Platform.OS === 'ios' ? 110 : 130,
+                    paddingTop: Platform.OS === 'ios' ? 120 : 130,
                     
                     },
                 ]}
@@ -545,8 +565,9 @@ dateHeading:{
 
   background: { 
     flex: 1,
-     width: '100%',
-      height: '100%' },
+    //  width: '100%',
+    //   height: '100%' 
+    },
   fullScreenContainer: {
      flex: 1,
     //  marginTop: 10
@@ -599,9 +620,18 @@ dateHeading:{
   },
 
    headerWrapper: {
+    // position: 'absolute',
+    // top: 0,
+    // width: Platform.OS === 'ios' ? '100%' : '100%',
+    // height: Platform.OS === 'ios' ? 180 : 180,
+    // zIndex: 10,
+    // overflow: 'hidden',
+    // alignSelf: 'center',
+    // pointerEvents: 'none',
+
     position: 'absolute',
     top: 0,
-    width: Platform.OS === 'ios' ? '100%' : '100%',
+    width: Platform.OS === 'ios' ? 393 : '100%',
     height: Platform.OS === 'ios' ? 180 : 180,
     zIndex: 10,
     overflow: 'hidden',
@@ -622,21 +652,45 @@ dateHeading:{
   },
 
   header: {
+    // position: 'absolute',
+    // top: Platform.OS === 'ios' ? '4%' : 40,
+    // left: 0,
+    // right: 0,
+    // height: 100,
+    // justifyContent: 'center',
+    // zIndex: 11,
+    // pointerEvents: 'box-none',
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '4%' : 40,
-    left: 0,
-    right: 0,
-    height: 100,
+    top: Platform.OS === 'ios' ? '6%' : 40,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: 16,
     zIndex: 11,
+    alignSelf: 'center',
     pointerEvents: 'box-none',
+    marginTop: 5,
+    marginLeft: 1,
   
   },
   headerRow: {
+    // flexDirection: 'row',
+    // alignItems: 'center',
+    // // paddingHorizontal: 16,
+    // justifyContent: 'space-between',
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? '6%' : 40,
+    width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     paddingHorizontal: 16,
-    justifyContent: 'space-between',
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
+    marginTop: 2,
+    marginLeft: 1,
  
   },
   headerSpacer: {

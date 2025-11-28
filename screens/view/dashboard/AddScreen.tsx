@@ -455,16 +455,103 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     }
   };
 
+  // const handlePreview = async () => {
+  //   try {
+  //     for (const field of fields) {
+  //       const { id, field_type } = field.param;
+  //       let value = formValues[id]?.value;
+
+  //       if (field_type.toLowerCase() === 'image') {
+  //         value = uploadedImages;
+  //       }
+
+  //       if (field.mandatory) {
+  //         if (
+  //           value === undefined ||
+  //           value === null ||
+  //           (typeof value === 'string' && value.trim() === '') ||
+  //           (Array.isArray(value) && value.length === 0)
+  //         ) {
+  //           if (field_type.toLowerCase() === 'image') {
+  //             showToast(`${field.param.field_name} ${Constant.ARE_MAN}`, 'error');
+  //           } else {
+  //             showToast(`${field.param.field_name} ${Constant.IS_MAN}`, 'error');
+  //           }
+  //           return;
+  //         }
+  //       }
+  //     }
+
+  //     let computedPrice: number | null = null;
+
+  //     if (productId === 2 || productId === 5) {
+  //       let priceFieldId: number | null = null;
+  //       let durationFieldId: number | null = null;
+
+  //       fields.forEach(f => {
+  //         if (f.param.alias_name === 'price') priceFieldId = f.param.id;
+  //         if (f.param.alias_name === 'service_duration')
+  //           durationFieldId = f.param.id;
+  //       });
+
+  //       if (priceFieldId !== null && durationFieldId !== null) {
+  //         const rawPrice = Number(formValues[priceFieldId]?.value || 0);
+  //         const rawDuration = Number(formValues[durationFieldId]?.value || 1);
+
+  //         computedPrice = rawPrice * rawDuration;
+  //       }
+  //     }
+
+  //     const dataToStore: any = { ...formValues };
+
+  //     if (computedPrice !== null) {
+  //       fields.forEach(f => {
+  //         if (f.param.alias_name === 'price') {
+  //           dataToStore[f.param.id] = {
+  //             value: computedPrice.toString(),
+  //             alias_name: 'price',
+  //           };
+  //         }
+  //       });
+  //     }
+
+  //     fields.forEach(field => {
+  //       if (field.param.field_type.toLowerCase() === 'image') {
+  //         const uploadedForField = uploadedImages.map(img => ({
+  //           id: img.id,
+  //           uri: img.uri,
+  //           name: img.name,
+  //         }));
+
+  //         dataToStore[field.param.id] = {
+  //           value: uploadedForField,
+  //           alias_name: field.param.alias_name ?? null,
+  //         };
+  //       }
+  //     });
+
+  //     await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
+  //     navigation.navigate('PreviewThumbnail');
+  //   } catch (error) {
+  //     console.log('Error saving form data: ', error);
+  //     showToast(Constant.DATA_NOT_SAVE,'error');
+  //   }
+  // };
+
   const handlePreview = async () => {
+    console.log("ReViewScrenn");
+  
     try {
+      // Step 1: Validate mandatory fields
       for (const field of fields) {
         const { id, field_type } = field.param;
         let value = formValues[id]?.value;
-
+  
         if (field_type.toLowerCase() === 'image') {
           value = uploadedImages;
         }
-
+  
+        // If the field is mandatory, check for its presence
         if (field.mandatory) {
           if (
             value === undefined ||
@@ -477,64 +564,93 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             } else {
               showToast(`${field.param.field_name} ${Constant.IS_MAN}`, 'error');
             }
-            return;
+            return; // Exit the function early if mandatory fields are missing
           }
         }
       }
-
+  
+      // Step 2: Handle price validation
       let computedPrice: number | null = null;
-
+  
       if (productId === 2 || productId === 5) {
         let priceFieldId: number | null = null;
         let durationFieldId: number | null = null;
-
-        fields.forEach(f => {
+  
+        // Find the price and duration field IDs
+        for (const f of fields) {
           if (f.param.alias_name === 'price') priceFieldId = f.param.id;
-          if (f.param.alias_name === 'service_duration')
-            durationFieldId = f.param.id;
-        });
-
+          if (f.param.alias_name === 'service_duration') durationFieldId = f.param.id;
+        }
+  
         if (priceFieldId !== null && durationFieldId !== null) {
-          const rawPrice = Number(formValues[priceFieldId]?.value || 0);
+          let rawPrice = formValues[priceFieldId]?.value || '0'; // default to '0' if undefined
+  
+          // Remove unwanted characters (currency symbols, commas, spaces, etc.)
+          rawPrice = String(rawPrice).replace(/[^\d.-]/g, ''); // Keep only digits, periods and hyphens
+  
+          const priceNumber = parseFloat(rawPrice);
+  
+          // Check if the price is valid
+          if (isNaN(priceNumber) || priceNumber < 99999) {
+            showToast("Price must be at least £99,999", "error");
+            return; // Stop the function if price is invalid
+          }
+  
+          // Get the duration value (default to 1 if empty)
           const rawDuration = Number(formValues[durationFieldId]?.value || 1);
-
-          computedPrice = rawPrice * rawDuration;
+  
+          computedPrice = priceNumber * rawDuration; // Calculate the computed price
         }
       }
-
+  
+      // Step 3: Store data
       const dataToStore: any = { ...formValues };
-
+  
+      // If the computed price exists, store it
       if (computedPrice !== null) {
-        fields.forEach(f => {
+        for (const f of fields) {
           if (f.param.alias_name === 'price') {
             dataToStore[f.param.id] = {
               value: computedPrice.toString(),
               alias_name: 'price',
             };
           }
-        });
+        }
       }
-
-      fields.forEach(field => {
+  
+      // Step 4: Handle image fields
+      for (const field of fields) {
         if (field.param.field_type.toLowerCase() === 'image') {
           const uploadedForField = uploadedImages.map(img => ({
             id: img.id,
             uri: img.uri,
             name: img.name,
           }));
-
+  
           dataToStore[field.param.id] = {
             value: uploadedForField,
             alias_name: field.param.alias_name ?? null,
           };
         }
-      });
-
+  
+        // Check if the alias_name is 'price' and apply condition
+        if (field.param.alias_name === 'price') {
+          const priceValue = parseFloat(dataToStore[field.param.id]?.value);
+  
+          // Check if the value is valid and greater than £99,999
+          if (priceValue > 99999) {
+            showToast("Price cannot exceed £99,999", "error");
+            return; // Exit the function immediately if the price is invalid
+          }
+        }
+      }
+  
+      // Step 5: Save to AsyncStorage and navigate to preview
       await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
       navigation.navigate('PreviewThumbnail');
     } catch (error) {
       console.log('Error saving form data: ', error);
-      showToast(Constant.DATA_NOT_SAVE,'error');
+      showToast(Constant.DATA_NOT_SAVE, 'error');
     }
   };
 
