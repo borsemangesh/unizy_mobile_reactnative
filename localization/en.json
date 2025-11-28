@@ -645,7 +645,9 @@
   "no_title":"No Title",
   "unable_edit":"Purchased item can’t be edited.",
   "enter":"Enter",
-  "selected":"selected"
+  "selected":"selected",
+  "time_am":"am",
+  "time_pm":"pm"
 
 
 }

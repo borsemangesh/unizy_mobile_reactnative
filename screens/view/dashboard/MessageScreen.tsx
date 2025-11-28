@@ -29,6 +29,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import Loader from '../../utils/component/Loader';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../../localization/i18n';
 
 type MessageScreenProps = {
   navigation: any;
@@ -122,19 +123,21 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
         return;
       }
 
-      const timeoutIds: NodeJS.Timeout[] = [];
-      const delays = [800, 1500, 2500];
+       fetchUserChatData('', false);
 
-      delays.forEach((delay, index) => {
-        const timeoutId = setTimeout(() => {
-          fetchUserChatData('', false);
-        }, delay);
-        timeoutIds.push(timeoutId);
-      });
+      // const timeoutIds: NodeJS.Timeout[] = [];
+      // const delays = [800, 1500, 2500];
 
-      return () => {
-        timeoutIds.forEach(id => clearTimeout(id));
-      };
+      // delays.forEach((delay, index) => {
+      //   const timeoutId = setTimeout(() => {
+      //     fetchUserChatData('', false);
+      //   }, delay);
+      //   timeoutIds.push(timeoutId);
+      // });
+
+      // return () => {
+      //   timeoutIds.forEach(id => clearTimeout(id));
+      // };
     }, [])
   );
 
@@ -157,6 +160,16 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
   }, [search]);
 
   const formatTime = (dateString: string) => {
+
+
+
+    console.log( "hiiiiiii=>",t('no_results_found'));
+
+    
+     console.log("AM444 =>", t('time_am'));
+    console.log("PM =>", t('time_pm'));
+
+
     if (!dateString) return "";
 
     const date = new Date(dateString);
@@ -167,13 +180,49 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
       date.getMonth() === today.getMonth() &&
       date.getFullYear() === today.getFullYear();
 
-    if (isToday) {
-      return date.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      });
-    }
+    // if (isToday) {
+    //   return date.toLocaleTimeString([], {
+    //     hour: "2-digit",
+    //     minute: "2-digit",
+    //     hour12: true,
+    //   });
+
+      
+
+
+
+
+    // }
+
+
+
+      if (isToday) {
+    let time = date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+
+    // Detect AM / PM
+    const isAM = time.toLowerCase().includes('am');
+    const isPM = time.toLowerCase().includes('pm');
+
+    
+
+    // console.log("isAM",isAM);
+    //  console.log("isPM",isPM);
+
+    // Replace AM/PM with translated versions
+    time = time
+      .replace(/am/i, t('time_am'))
+      .replace(/pm/i, t('time_pm'));
+
+    //   console.log("time after",time);
+      
+ 
+
+    return time;
+  }
 
 
     const day = date.getDate();
@@ -192,12 +241,29 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
       }
     };
 
-    const suffix = getSuffix(day);
+    // const suffix = getSuffix(day);
+    
+        const lang = i18n.language; 
+      const suffix = lang == "en" ? getSuffix(day): "";
 
-    const month = date.toLocaleString("en-GB", { month: "short" });
+    // const month = date.toLocaleString("en-GB", { month: "short" });
+
+
+    
+  const monthIndex = date.getMonth(); // 0–11
+  const monthKeys = [
+    "jan","feb","mar","apr","may","jun",
+    "jul","aug","sep","oct","nov","dec"
+  ];
+
+  const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+
+
+
+
     const year = date.getFullYear();
 
-    return `${day}${suffix} ${month} ${year}`;
+    return `${day}${suffix} ${monthShort} ${year}`;
   };
 
   const { t } = useTranslation();
@@ -370,7 +436,8 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
                   resizeMode="contain"
                 />
                 <Text allowFontScaling={false} style={styles.emptyText}>
-                  No Data Found
+                  {/* No Data Found */}
+                  {t('no_results_found')}
                 </Text>
               </View>
             </View>
