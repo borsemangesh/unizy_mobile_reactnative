@@ -92,11 +92,11 @@ type ProductItemProps = {
 
 const iconMap: Record<string, any> = {
   Products: require('../../../assets/images/producticon.png'),
-  Product: require('../../../assets/images/producticon.png'), 
+  Product: require('../../../assets/images/producticon.png'),
   Food: require('../../../assets/images/fod_icon.png'),
-  Food2: require('../../../assets/images/fod_icon.png'), 
+  Food2: require('../../../assets/images/fod_icon.png'),
   Accommodation: require('../../../assets/images/bed_icon.png'),
-  Accomodation: require('../../../assets/images/bed_icon.png'), 
+  Accomodation: require('../../../assets/images/bed_icon.png'),
   Tuition: require('../../../assets/images/book.png'),
   'House Keeping': require('../../../assets/images/housekeeping.png'),
 };
@@ -113,7 +113,7 @@ const ProductItem: React.FC<ProductItemProps> = ({
       navigation.replace('ProductDetails', {
         category_id: item.id,
         category_name: item.name,
-      },{ animation: 'none' });
+      }, { animation: 'none' });
     }}
   >
     <View
@@ -132,9 +132,9 @@ type TransactionScreenProps = {
   navigation: any;
 };
 
-const SearchScreenContent = ({navigation}: TransactionScreenProps) => (
-  <View  style={{flex: 1}}>
-    <TransactionHistoryScreen navigation={navigation} route={undefined}/>
+const SearchScreenContent = ({ navigation }: TransactionScreenProps) => (
+  <View style={{ flex: 1 }}>
+    <TransactionHistoryScreen navigation={navigation} route={undefined} />
   </View>
 );
 type AddScreenContentProps = {
@@ -163,12 +163,12 @@ const AddScreenContent: React.FC<AddScreenContentProps> = ({ navigation, product
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: 'application/json',
-        
+
           },
         });
 
         const result = await response.json();
-        
+
         if (response.ok && result.statusCode === 200) {
           const isComplete = result.data?.stripeAccount?.isboardcomplete === true;
           setIsOnboardingComplete(isComplete);
@@ -215,7 +215,7 @@ const AddScreenContent: React.FC<AddScreenContentProps> = ({ navigation, product
     return (
       <View style={[styles.tabContent3]}>
         <Text allowFontScaling={false} style={[styles.tabContentText3]}>{t('List_product')}</Text>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',height: '100%',paddingTop: 300}}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height: '100%', paddingTop: 300 }}>
           <Loader
             containerStyle={{
               width: 50,
@@ -237,19 +237,19 @@ const AddScreenContent: React.FC<AddScreenContentProps> = ({ navigation, product
           data={products}
           keyExtractor={item => item.id.toString()}
           renderItem={({ item }) => (
-            <TouchableOpacity       
+            <TouchableOpacity
               onPress={() => handleProductPress(item)}
             >
               <View style={styles.card}>
-               
 
-                 <ImageBackground
-                  source={require('../../../assets/images/cardbg.png')} 
-                  style={styles.iconBackground}> 
+
+                <ImageBackground
+                  source={require('../../../assets/images/cardbg.png')}
+                  style={styles.iconBackground}>
 
                   <Image source={item.icon} style={styles.cardIcon1} />
-                 
-                 </ImageBackground> 
+
+                </ImageBackground>
 
                 <View style={styles.cardTextContainer}>
                   <Text allowFontScaling={false} style={styles.cardTitle}>{item.name}</Text>
@@ -258,8 +258,8 @@ const AddScreenContent: React.FC<AddScreenContentProps> = ({ navigation, product
               </View>
             </TouchableOpacity>
           )}
-          ItemSeparatorComponent={() => <View style={{ height: 16 }} />} 
-          contentContainerStyle={{ marginTop:20 }}
+          ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+          contentContainerStyle={{ marginTop: 20 }}
         />
       </AnimatedSlideUp>
 
@@ -292,17 +292,17 @@ const AddScreenContent: React.FC<AddScreenContentProps> = ({ navigation, product
               />
 
               <View style={styles.popupContainer}>
-                
+
                 <Image
-                                    source={require('../../../assets/images/alerticon.png')}
-                                    style={styles.logo}
-                                    resizeMode="contain"
-                                  />
+                  source={require('../../../assets/images/alerticon.png')}
+                  style={styles.logo}
+                  resizeMode="contain"
+                />
                 <Text allowFontScaling={false} style={styles.popupMainHeader}>
-                  Complete Payment Methods
+                  {t('complete_payment_method')}
                 </Text>
                 <Text allowFontScaling={false} style={styles.popupSubHeader}>
-                  Please complete your Stripe onboarding process in Payment Methods to add listings.
+                  {t('complete_onboarding')}
                 </Text>
 
                 <TouchableOpacity
@@ -310,7 +310,7 @@ const AddScreenContent: React.FC<AddScreenContentProps> = ({ navigation, product
                   onPress={handleGoToPayment}
                 >
                   <Text allowFontScaling={false} style={styles.popupButtonText}>
-                    Go to Payment Methods
+                    {t('go_payments')}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -327,9 +327,9 @@ type ChatProps = {
 };
 
 const BookmarkScreenContent = ({ navigation }: ChatProps) => (
-  <View style={{flex: 1}}>
+  <View style={{ flex: 1 }}>
 
-    <MessagesScreen navigation={navigation}/>
+    <MessagesScreen navigation={navigation} />
 
   </View>
 );
@@ -338,7 +338,7 @@ type ProfileScreenContentProps = {
   navigation: any;
 };
 const ProfileScreenContent = ({ navigation }: ProfileScreenContentProps) => (
-  <View style={{flex: 1}}>
+  <View style={{ flex: 1 }}>
     <ProfileCard navigation={navigation} />
   </View>
 );
@@ -348,12 +348,13 @@ type DashBoardScreenProps = {
 };
 
 type RootStackParamList = {
-  Dashboard: { AddScreenBackactiveTab: string;
-        isNavigate: boolean;
-        loginMessage: string;    
-        isFirsttimeLogin: boolean;   
-      }
-   };
+  Dashboard: {
+    AddScreenBackactiveTab: string;
+    isNavigate: boolean;
+    loginMessage: string;
+    isFirsttimeLogin: boolean;
+  }
+};
 type DashboardRouteProp = RouteProp<RootStackParamList, 'Dashboard'>;
 
 const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
@@ -374,8 +375,8 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const { width } = Dimensions.get('window');
 
-const scrollViewRef = useRef<ScrollView>(null);
-const [isLoading, setIsLoading] = useState(true);
+  const scrollViewRef = useRef<ScrollView>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setIsNav(route.params?.isNavigate);
@@ -383,22 +384,22 @@ const [isLoading, setIsLoading] = useState(true);
     if (route.params?.AddScreenBackactiveTab) {
       setActiveTab(
         route.params?.AddScreenBackactiveTab as
-          | 'Home'
-          | 'Search'
-          | 'Add'
-          | 'Bookmark'
-          | 'Profile',
+        | 'Home'
+        | 'Search'
+        | 'Add'
+        | 'Bookmark'
+        | 'Profile',
       );
     }
-   
+
     const fetchCategories = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
         if (!token) return;
-     
-        const language_code=await AsyncStorage.getItem('selectedLanguage')||'en'
-        console.log("language-code",language_code)
-        
+
+        const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+        console.log("language-code", language_code)
+
 
         const url2 = MAIN_URL.baseUrl + 'user/category';
 
@@ -407,7 +408,7 @@ const [isLoading, setIsLoading] = useState(true);
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
-            language_code:language_code
+            language_code: language_code
           },
         });
         const json = await response.json();
@@ -429,7 +430,7 @@ const [isLoading, setIsLoading] = useState(true);
         }));
 
         await AsyncStorage.setItem(
-          'categories', 
+          'categories',
           JSON.stringify(idNameArray),
         );
 
@@ -450,85 +451,85 @@ const [isLoading, setIsLoading] = useState(true);
     loadBookmarks();
   }, [route.params?.AddScreenBackactiveTab]);
 
-  
+
   useFocusEffect(
-  useCallback(() => {
-    const fetchFeatures = async () => {
-      try {
-        const token = await AsyncStorage.getItem('userToken');
-        if (!token) return;
+    useCallback(() => {
+      const fetchFeatures = async () => {
+        try {
+          const token = await AsyncStorage.getItem('userToken');
+          if (!token) return;
 
-        const url1 = MAIN_URL.baseUrl + 'category/feature-list';
-        console.log("FeatureListingDashboard:",url1);
-        const res = await fetch(url1, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+          const url1 = MAIN_URL.baseUrl + 'category/feature-list';
+          console.log("FeatureListingDashboard:", url1);
+          const res = await fetch(url1, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
 
-        const json = await res.json();
-        console.log('✅ Features API response:', json);
+          const json = await res.json();
+          console.log('✅ Features API response:', json);
 
-        if (json.statusCode === 200) {
-          setFeatures(json.data.features || []);
+          if (json.statusCode === 200) {
+            setFeatures(json.data.features || []);
+            setIsLoading(false);
+          }
+          if (json.statusCode === 401 || json.statusCode === 403) {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+            });
+          }
+        } catch (err) {
+          console.log('❌ Error fetching features:', err);
+          setIsLoading(false);
+        } finally {
           setIsLoading(false);
         }
-        if(json.statusCode === 401 || json.statusCode === 403){
-          navigation.reset({
-          index: 0,
-          routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
-        });
-        }
-      } catch (err) {
-        console.log('❌ Error fetching features:', err);
-        setIsLoading(false);
-      }finally {
-        setIsLoading(false);
-      }
-    };
+      };
 
-    fetchFeatures();
-  }, [])
-);
+      fetchFeatures();
+    }, [])
+  );
 
- useEffect(() => {
+  useEffect(() => {
     sendDeviceTokenToServer();
   }, []);
 
-const sendDeviceTokenToServer = async () => {
+  const sendDeviceTokenToServer = async () => {
     try {
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) return;
-    const deviceId = await DeviceInfo.getUniqueId();
-    const url1 = MAIN_URL.baseUrl + 'user/devicetoken';
-    console.log('📤 FCM URL:', url1);
-    const fcmToken = await messaging().getToken();
-    console.log('📤 FCM fcmToken:', fcmToken);
-    const requestBody = {
-          device_token: fcmToken,
-          device_type  : Platform.OS,
-          device_id:deviceId
-        };
-    console.log('Body:', JSON.stringify(requestBody));
-    const response = await fetch(url1, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(requestBody),
-    });
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) return;
+      const deviceId = await DeviceInfo.getUniqueId();
+      const url1 = MAIN_URL.baseUrl + 'user/devicetoken';
+      console.log('📤 FCM URL:', url1);
+      const fcmToken = await messaging().getToken();
+      console.log('📤 FCM fcmToken:', fcmToken);
+      const requestBody = {
+        device_token: fcmToken,
+        device_type: Platform.OS,
+        device_id: deviceId
+      };
+      console.log('Body:', JSON.stringify(requestBody));
+      const response = await fetch(url1, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(requestBody),
+      });
 
-    if (response.ok) {
-      console.log('✅ FCM token sent to server successfully');
-    } else {
-      const error = await response.text();
-      console.log('❌ Server error:', error);
+      if (response.ok) {
+        console.log('✅ FCM token sent to server successfully');
+      } else {
+        const error = await response.text();
+        console.log('❌ Server error:', error);
+      }
+    } catch (error) {
+      console.error('❌ Error sending token to server:', error);
     }
-  } catch (error) {
-    console.error('❌ Error sending token to server:', error);
-  }
 
   };
-  
+
   const [isNav, setIsNav] = useState(true);
 
   const screenHeight = Dimensions.get('window').height;
@@ -539,8 +540,8 @@ const sendDeviceTokenToServer = async () => {
   const categorytranslateY = React.useRef(
     new Animated.Value(screenHeight),
   ).current;
-  const leftItemTranslateX = useRef(new Animated.Value(-300)).current; 
-  const rightItemTranslateX = useRef(new Animated.Value(300)).current; 
+  const leftItemTranslateX = useRef(new Animated.Value(-300)).current;
+  const rightItemTranslateX = useRef(new Animated.Value(300)).current;
   const cardSlideupAnimation = useRef(new Animated.Value(screenHeight)).current;
   const bottomNaviationSlideupAnimation = useRef(
     new Animated.Value(screenHeight),
@@ -548,10 +549,10 @@ const sendDeviceTokenToServer = async () => {
 
   useEffect(() => {
     if (activeTab === 'Home' && route.params?.isNavigate) {
-      console.log("isNav: ",isNav)
-      if(route.params?.isFirsttimeLogin){
+      console.log("isNav: ", isNav)
+      if (route.params?.isFirsttimeLogin) {
         navigation.setParams({ isFirsttimeLogin: false });
-        showToast(route.params?.loginMessage || Constant.LOGIN_SUCCESSFUL, 'success');
+        showToast(t(route.params?.loginMessage) || t(Constant.LOGIN_SUCCESSFUL), 'success');
       }
       setIsNav(false);
       translateY.setValue(-screenWidth);
@@ -624,7 +625,7 @@ const sendDeviceTokenToServer = async () => {
       bottomNaviationSlideupAnimation.setValue(0);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab,route.params?.isNavigate]);
+  }, [activeTab, route.params?.isNavigate]);
 
   useEffect(() => {
     const index = ['Home', 'Search', 'Add', 'Bookmark', 'Profile'].indexOf(
@@ -634,362 +635,361 @@ const sendDeviceTokenToServer = async () => {
       toValue: index * tabWidth,
       friction: 6,
       tension: 20,
-      
+
       useNativeDriver: true,
     }).start();
   }, [activeTab, bubbleX, tabWidth]);
 
 
-const [activeIndex, setActiveIndex] = useState(0);
-const scrollX = useRef(new Animated.Value(0)).current;
+  const [activeIndex, setActiveIndex] = useState(0);
+  const scrollX = useRef(new Animated.Value(0)).current;
 
-const renderProducts = () => {
-  const isEven = products.length % 2 === 0;
-  let startIndex = 0;
-  const rows: JSX.Element[] = [];
+  const renderProducts = () => {
+    const isEven = products.length % 2 === 0;
+    let startIndex = 0;
+    const rows: JSX.Element[] = [];
 
-  if (products.length <= 6) {
+    if (products.length <= 6) {
 
-    if (!isEven) {
-      rows.push(
-        <Animated.View
-          style={[
+      if (!isEven) {
+        rows.push(
+          <Animated.View
+            style={[
 
-            { transform: [{ translateY: categorytranslateY }] },
-          ]}
-          key={products[0].id}
+              { transform: [{ translateY: categorytranslateY }] },
+            ]}
+            key={products[0].id}
+          >
+            <ProductItem navigation={navigation} item={products[0]} />
+          </Animated.View>,
+        );
+        startIndex = 1;
+      }
+
+      for (let i = startIndex; i < products.length; i += 2) {
+        const rowItems = products.slice(i, i + 2);
+        rows.push(
+
+
+          <View style={styles.row} key={i}>
+            {rowItems.map((item, index) => (
+              <Animated.View
+                key={item.id}
+                style={{
+                  flex: 1,
+                  transform: [
+                    {
+                      translateX:
+                        index === 0 ? leftItemTranslateX : rightItemTranslateX,
+                    },
+                  ],
+                }}
+              >
+                <ProductItem navigation={navigation} item={item} />
+              </Animated.View>
+            ))}
+
+
+            {rowItems.length === 1 && <View style={{ flex: 1 }} />}
+          </View>
+        );
+      }
+
+      return <View>{rows}</View>;
+    }
+
+
+
+    const createPages = (items: typeof products) => {
+      const pages = [];
+      const pageSize = 6;
+      const overlap = 3;
+
+      if (items.length <= pageSize) {
+        pages.push({
+          left: items.filter((_, i) => i < 3),
+          right: items.filter((_, i) => i >= 3),
+        });
+        return pages;
+      }
+
+      pages.push({
+        left: items.slice(0, 3),
+        right: items.slice(3, 6),
+      });
+
+      let start = 3;
+      while (start + overlap < items.length) {
+        const left = items.slice(start, start + overlap);
+        const right = items.slice(start + overlap, start + overlap + 3);
+        pages.push({ left, right });
+        start += 3;
+      }
+
+      const lastIndex = start + overlap;
+      if (lastIndex < items.length) {
+        const left = items.slice(start, start + overlap);
+        const right = items.slice(start + overlap);
+        pages.push({ left, right });
+      }
+
+      return pages;
+    };
+
+
+
+    const pages = createPages(products);
+
+
+    let secondPageLeft: typeof products = [];
+    let secondPageRight: typeof products = [];
+    if (products.length > 6) {
+      secondPageLeft = products.slice(3, 6);
+      secondPageRight = products.slice(6);
+    }
+
+    const rightRows: (typeof products[0] | null)[] = [];
+    if (secondPageRight.length > 0) {
+      const rowsCount = secondPageLeft.length;
+      for (let i = 0; i < rowsCount; i++) {
+        rightRows.push(secondPageRight[i] || null);
+      }
+    }
+    const handleScrollEndDrag = (e: any) => {
+      const offsetX = e.nativeEvent.contentOffset.x;
+      const index = Math.round(offsetX / width);
+      scrollViewRef.current?.scrollTo({ x: index * width, animated: true });
+      setActiveIndex(index);
+    };
+
+    const onScroll = Animated.event(
+      [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+      { useNativeDriver: false }
+    );
+
+    const handleScrollEnd = (e: { nativeEvent: { contentOffset: { x: number } } }) => {
+      const index = Math.round(e.nativeEvent.contentOffset.x / width);
+      setActiveIndex(index);
+    };
+
+
+
+
+
+    return (
+      <View>
+        <Animated.ScrollView
+          horizontal
+          pagingEnabled={false}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          onScroll={onScroll}
+          onMomentumScrollEnd={handleScrollEnd}
+          scrollEventThrottle={16}
         >
-          <ProductItem navigation={navigation} item={products[0]}  />
-        </Animated.View>,
-      );
-      startIndex = 1;
-    }
+          {pages.map((page, pageIndex) => (
+            <View key={pageIndex} style={{ width, flexDirection: 'row', padding: 10, }}>
+              <View style={{ flex: 1 }}>
+                {page.left.map(item => (
+                  <Animated.View
+                    key={item.id}
+                    style={{ transform: [{ translateY: categorytranslateY }], marginBottom: 4 }}
+                  >
+                    <ProductItem navigation={navigation} item={item} />
+                  </Animated.View>
+                ))}
+              </View>
+              <View style={{ flex: 1, paddingLeft: 2 }}>
+                {page.right.map(item => (
+                  <Animated.View
+                    key={item.id}
+                    style={{ transform: [{ translateY: categorytranslateY }], marginBottom: 4 }}
+                  >
+                    <ProductItem navigation={navigation} item={item} />
+                  </Animated.View>
+                ))}
+              </View>
+            </View>
+          ))}
+        </Animated.ScrollView>
 
-    for (let i = startIndex; i < products.length; i += 2) {
-      const rowItems = products.slice(i, i + 2);
-      rows.push(
-     
-
-        <View style={styles.row} key={i}>
-  {rowItems.map((item, index) => (
-    <Animated.View
-      key={item.id}
-      style={{
-        flex: 1,
-        transform: [
-          {
-            translateX:
-              index === 0 ? leftItemTranslateX : rightItemTranslateX,
-          },
-        ],
-      }}
-    >
-      <ProductItem navigation={navigation} item={item} />
-    </Animated.View>
-  ))}
-
-
-  {rowItems.length === 1 && <View style={{ flex: 1 }} />}
-</View>
-      );
-    }
-
-    return <View>{rows}</View>;
-  }
-
-  
-
-const createPages = (items: typeof products) => {
-  const pages = [];
-  const pageSize = 6;
-  const overlap = 3;
-
-  if (items.length <= pageSize) {
-    pages.push({
-      left: items.filter((_, i) => i < 3),
-      right: items.filter((_, i) => i >= 3),
-    });
-    return pages;
-  }
-
-  pages.push({
-    left: items.slice(0, 3),
-    right: items.slice(3, 6),
-  });
-
-  let start = 3;
-  while (start + overlap < items.length) {
-    const left = items.slice(start, start + overlap); 
-    const right = items.slice(start + overlap, start + overlap + 3);
-    pages.push({ left, right });
-    start += 3;
-  }
-
-  const lastIndex = start + overlap;
-  if (lastIndex < items.length) {
-    const left = items.slice(start, start + overlap);
-    const right = items.slice(start + overlap);
-    pages.push({ left, right });
-  }
-
-  return pages;
-};
-
-
-
-const pages = createPages(products);
- 
-
-let secondPageLeft: typeof products = [];
-let secondPageRight: typeof products = [];
-if (products.length > 6) {
-  secondPageLeft = products.slice(3, 6); 
-  secondPageRight = products.slice(6);  
-}
-
-const rightRows: (typeof products[0] | null)[] = [];
-if (secondPageRight.length > 0) {
-  const rowsCount = secondPageLeft.length;
-  for (let i = 0; i < rowsCount; i++) {
-    rightRows.push(secondPageRight[i] || null);
-  }
-}
-const handleScrollEndDrag = (e: any) => {
-  const offsetX = e.nativeEvent.contentOffset.x;
-  const index = Math.round(offsetX / width); 
-  scrollViewRef.current?.scrollTo({ x: index * width, animated: true });
-  setActiveIndex(index);
-};
-
-const onScroll = Animated.event(
-  [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-  { useNativeDriver: false }
-);
-
-const handleScrollEnd = (e: { nativeEvent: { contentOffset: { x: number } } }) => {
-  const index = Math.round(e.nativeEvent.contentOffset.x / width);
-  setActiveIndex(index);
-};
-
-
-
-
-
-return (
-  <View>
-    <Animated.ScrollView
-      horizontal
-       pagingEnabled={false} 
-      showsVerticalScrollIndicator={false}
-      showsHorizontalScrollIndicator={false}
-      onScroll={onScroll}
-      onMomentumScrollEnd={handleScrollEnd}
-      scrollEventThrottle={16}
-    >
-  {pages.map((page, pageIndex) => (
-    <View key={pageIndex} style={{ width, flexDirection: 'row',padding:10,}}>
-      <View style={{ flex: 1}}>
-        {page.left.map(item => (
-          <Animated.View
-            key={item.id}
-            style={{ transform: [{ translateY: categorytranslateY }], marginBottom: 4 }}
-          >
-            <ProductItem navigation={navigation} item={item} />
-          </Animated.View>
-        ))}
+        <View style={styles.stepIndicatorContainer}>
+          {pages.map((_, idx) =>
+            idx === activeIndex ? (
+              <LinearGradient
+                key={idx}
+                colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0.5)']}
+                style={styles.stepCircle}
+              />
+            ) : (
+              <View
+                key={idx}
+                style={[styles.stepCircle, styles.inactiveStepCircle]}
+              />
+            )
+          )}
+        </View>
       </View>
-      <View style={{ flex: 1,paddingLeft:2}}>
-        {page.right.map(item => (
-          <Animated.View
-            key={item.id}
-            style={{ transform: [{ translateY: categorytranslateY }], marginBottom: 4 }}
-          >
-            <ProductItem navigation={navigation} item={item} />
-          </Animated.View>
-        ))}
-      </View>
-    </View>
-  ))}
-</Animated.ScrollView>
-    
-    <View style={styles.stepIndicatorContainer}>
-  {pages.map((_, idx) =>
-    idx === activeIndex ? (
-      <LinearGradient
-        key={idx}
-        colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0.5)']}
-        style={styles.stepCircle}
-      />
-    ) : (
-      <View
-        key={idx}
-        style={[styles.stepCircle, styles.inactiveStepCircle]}
-      />
-    )
-  )}
-</View>
-  </View>
-);
-
-};
-
-
- const handleBookmarkPress = async (productId: number) => {
-  try {
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) return;
-
-    setFeatures(prev =>
-      prev.map(item =>
-        item.id === productId
-          ? { ...item, isbookmarked: !item.isbookmarked }
-          : item
-      )
     );
 
-    const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
+  };
 
-    const url = MAIN_URL.baseUrl + 'category/list-bookmark';
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ feature_id: productId }),
-    });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+  const handleBookmarkPress = async (productId: number) => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) return;
+
+      setFeatures(prev =>
+        prev.map(item =>
+          item.id === productId
+            ? { ...item, isbookmarked: !item.isbookmarked }
+            : item
+        )
+      );
+
+      const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
+
+      const url = MAIN_URL.baseUrl + 'category/list-bookmark';
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ feature_id: productId }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Bookmark response:', data);
+      if (data?.message) {
+        showToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
+      }
+
+      let updatedBookmarks;
+      if (isCurrentlyBookmarked) {
+        updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
+      } else {
+        updatedBookmarks = [...bookmarkedIds, productId];
+      }
+
+      setBookmarkedIds(updatedBookmarks);
+      await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks));
+    } catch (error) {
+      console.error('Bookmark error:', error);
+
+      setFeatures(prev =>
+        prev.map(item =>
+          item.id === productId
+            ? { ...item, isbookmarked: !item.isbookmarked }
+            : item
+        )
+      );
     }
-
-    const data = await response.json();
-    console.log('Bookmark response:', data);
-    if (data?.message) {
-      showToast(data.message, data.statusCode === 200 ? 'success' : 'error');
-    }
-
-    let updatedBookmarks;
-    if (isCurrentlyBookmarked) {
-      updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
-    } else {
-      updatedBookmarks = [...bookmarkedIds, productId];
-    }
-
-    setBookmarkedIds(updatedBookmarks);
-    await AsyncStorage.setItem('bookmarkedIds', JSON.stringify(updatedBookmarks));
-  } catch (error) {
-    console.error('Bookmark error:', error);
-
-    setFeatures(prev =>
-      prev.map(item =>
-        item.id === productId
-          ? { ...item, isbookmarked: !item.isbookmarked }
-          : item
-      )
-    );
-  }
-};
+  };
 
   const renderActiveTabContent = () => {
     switch (activeTab) {
       case 'Home':
-  return (
-    <>
-      <View style={styles.productsWrapper}>{renderProducts()}</View>
+        return (
+          <>
+            <View style={styles.productsWrapper}>{renderProducts()}</View>
 
-      <Animated.View
-        style={{
-          transform: [{ translateY: cardSlideupAnimation }],
-        }}
-      >
-        <Text allowFontScaling={false} style={styles.featuredText}>
-         {t('Featured_Listings')}
-        </Text>
-      </Animated.View>
-      {isLoading ? (
-        <View style={styles.emptyWrapper}>
-          <Loader
-            containerStyle={{
-              width: 100,
-              height: 100,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          />
-        </View>
-      ) : features.length === 0 ? (
-        <View style={styles.emptyWrapper}>
-          <View style={styles.emptyContainer}>
-            <Image
-              source={require('../../../assets/images/noproduct.png')}
-              style={styles.emptyImage}
-              resizeMode="contain"
-            />
-            <Text allowFontScaling={false} style={styles.emptyText}>
-               {t('No_Listings_Found')}
-            </Text>
-          </View>
-        </View>
-      ) : (
-        <ScrollView
-          directionalLockEnabled
-          style={{ paddingHorizontal: 0, marginLeft: 8 }}
-          horizontal
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-        >
-          {features.map(item => (
             <Animated.View
-              key={item.id}
-              style={{ transform: [{ translateY: cardSlideupAnimation }] }}
+              style={{
+                transform: [{ translateY: cardSlideupAnimation }],
+              }}
             >
-              {item.profileshowinview ? (
-                <TutitionCard
-                  tag={item.university?.name || 'University of Warwick'}
-                  title={item.title}
-                  infoTitle={`${item.createdby?.firstname || ''} ${
-                    item.createdby?.lastname || ''
-                  }`}
-                  inforTitlePrice={`£ ${item.price}`}
-                  rating={item.avg_rating}
-                  productImage={{ uri: item.createdby?.profile }}
-                  onBookmarkPress={() => handleBookmarkPress(item.id)}
-                  isBookmarked={item.isbookmarked}
-                  onpress={() => {
-                    navigation.navigate(
-                      'SearchDetails',
-                      { id: item.id },
-                      { animation: 'none' },
-                    );
-                  }}
-                />
-              ) : (
-                <ProductCard
-                  tag={item.university?.name || 'University of Warwick'}
-                  infoTitle={item.title}
-                  inforTitlePrice={`£ ${item.price}`}
-                  rating={item.avg_rating}
-                  productImage={{ uri: item.thumbnail }}
-                  onBookmarkPress={() => handleBookmarkPress(item.id)}
-                  isBookmarked={item.isbookmarked}
-                  onpress={() => {
-                    navigation.replace(
-                      'SearchDetails',
-                      { id: item.id },
-                      { animation: 'none' },
-                    );
-                  }}
-                />
-              )}
+              <Text allowFontScaling={false} style={styles.featuredText}>
+                {t('Featured_Listings')}
+              </Text>
             </Animated.View>
-          ))}
-        </ScrollView>
-      )}
-    </>
-  );
+            {isLoading ? (
+              <View style={styles.emptyWrapper}>
+                <Loader
+                  containerStyle={{
+                    width: 100,
+                    height: 100,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                />
+              </View>
+            ) : features.length === 0 ? (
+              <View style={styles.emptyWrapper}>
+                <View style={styles.emptyContainer}>
+                  <Image
+                    source={require('../../../assets/images/noproduct.png')}
+                    style={styles.emptyImage}
+                    resizeMode="contain"
+                  />
+                  <Text allowFontScaling={false} style={styles.emptyText}>
+                    {t('No_Listings_Found')}
+                  </Text>
+                </View>
+              </View>
+            ) : (
+              <ScrollView
+                directionalLockEnabled
+                style={{ paddingHorizontal: 0, marginLeft: 8 }}
+                horizontal
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+              >
+                {features.map(item => (
+                  <Animated.View
+                    key={item.id}
+                    style={{ transform: [{ translateY: cardSlideupAnimation }] }}
+                  >
+                    {item.profileshowinview ? (
+                      <TutitionCard
+                        tag={item.university?.name || 'University of Warwick'}
+                        title={item.title}
+                        infoTitle={`${item.createdby?.firstname || ''} ${item.createdby?.lastname || ''
+                          }`}
+                        inforTitlePrice={`£ ${item.price}`}
+                        rating={item.avg_rating}
+                        productImage={{ uri: item.createdby?.profile }}
+                        onBookmarkPress={() => handleBookmarkPress(item.id)}
+                        isBookmarked={item.isbookmarked}
+                        onpress={() => {
+                          navigation.navigate(
+                            'SearchDetails',
+                            { id: item.id },
+                            { animation: 'none' },
+                          );
+                        }}
+                      />
+                    ) : (
+                      <ProductCard
+                        tag={item.university?.name || 'University of Warwick'}
+                        infoTitle={item.title}
+                        inforTitlePrice={`£ ${item.price}`}
+                        rating={item.avg_rating}
+                        productImage={{ uri: item.thumbnail }}
+                        onBookmarkPress={() => handleBookmarkPress(item.id)}
+                        isBookmarked={item.isbookmarked}
+                        onpress={() => {
+                          navigation.replace(
+                            'SearchDetails',
+                            { id: item.id },
+                            { animation: 'none' },
+                          );
+                        }}
+                      />
+                    )}
+                  </Animated.View>
+                ))}
+              </ScrollView>
+            )}
+          </>
+        );
       case 'Search':
-        return <SearchScreenContent  navigation={navigation}/>;
+        return <SearchScreenContent navigation={navigation} />;
       case 'Add':
         return <AddScreenContent navigation={navigation} products={products} onSetActiveTab={setActiveTab} />;
       case 'Bookmark':
@@ -1011,66 +1011,66 @@ return (
 
   const clickbookmark = () => {
     setIsNav(false);
-    navigation.replace('Bookmark',{ animation: 'none' }); 
+    navigation.replace('Bookmark', { animation: 'none' });
   };
   const clicklisting = async () => {
     setIsNav(false);
-    navigation.replace('MyListing',{ animation: 'none' });
+    navigation.replace('MyListing', { animation: 'none' });
   };
 
 
-  
 
 
-const scrollY = useSharedValue(0);
 
-const scrollHandler = useAnimatedScrollHandler({
-  onScroll: event => {
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: event => {
+      'worklet';
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  const animatedBlurStyle = useAnimatedStyle(() => {
     'worklet';
-    scrollY.value = event.contentOffset.y;
-  },
-});
+    const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+    return { opacity };
+  });
 
-const animatedBlurStyle = useAnimatedStyle(() => {
-  'worklet';
-  const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
-  return { opacity };
-});
+  const animatedButtonStyle = useAnimatedStyle(() => {
+    'worklet';
+    const borderColor = interpolateColor(
+      scrollY.value,
+      [0, 300],
+      ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+    );
+    const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
+    return {
+      borderColor,
+      backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+    };
+  });
 
-const animatedButtonStyle = useAnimatedStyle(() => {
-  'worklet';
-  const borderColor = interpolateColor(
-    scrollY.value,
-    [0, 300],
-    ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+  const animatedIconStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
+    const tintColor = interpolateColor(
+      scrollY.value,
+      [0, 150],
+      ['#FFFFFF', '#002050'],
+    );
+    return {
+      opacity,
+      tintColor,
+    };
+  });
+
+  const blurAmount = useDerivedValue(() =>
+    interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
   );
-  const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
-  return {
-    borderColor,
-    backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
-  };
-});
-
-const animatedIconStyle = useAnimatedStyle(() => {
-  'worklet';
-  const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
-  const tintColor = interpolateColor(
-    scrollY.value,
-    [0, 150],
-    ['#FFFFFF', '#002050'],
-  );
-  return {
-    opacity,
-    tintColor,
-  };
-});
-
-const blurAmount = useDerivedValue(() =>
-  interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
-);
 
 
-const { t } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -1147,8 +1147,8 @@ const { t } = useTranslation();
           keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
         >
           {activeTab === 'Search' ||
-          activeTab === 'Profile' ||
-          activeTab === 'Bookmark' ? (
+            activeTab === 'Profile' ||
+            activeTab === 'Bookmark' ? (
             <View style={{ flex: 1 }}>
               <StatusBar
                 translucent
@@ -1197,7 +1197,7 @@ const { t } = useTranslation();
                     style={StyleSheet.absoluteFill}
                   />
                 </MaskedView>
-              </AnimatedReanimated.View>              
+              </AnimatedReanimated.View>
               <View
                 style={{
                   position: 'absolute',
@@ -1219,14 +1219,14 @@ const { t } = useTranslation();
                     fontFamily: 'Urbanist-SemiBold',
                   }}
                 >
-              
+
                   {activeTab === 'Search'
-                ? t('transaction_history')
-                : activeTab === 'Profile'
-                ? t('profile')
-                : activeTab === 'Bookmark'
-                ? t('messages')
-                : null}
+                    ? t('transaction_history')
+                    : activeTab === 'Profile'
+                      ? t('profile')
+                      : activeTab === 'Bookmark'
+                        ? t('messages')
+                        : null}
                 </Text>
               </View>
               <AnimatedReanimated.ScrollView
@@ -1300,7 +1300,7 @@ const { t } = useTranslation();
             </View>
           ) : (
             <>
-            
+
             </>
           )}
 
@@ -1309,7 +1309,7 @@ const { t } = useTranslation();
               style={[
                 styles.bubble,
                 {
-                  width: tabWidth ,
+                  width: tabWidth,
                   transform: [{ translateX: bubbleX }],
                 },
               ]}
@@ -1392,7 +1392,7 @@ const styles = StyleSheet.create({
 
 
 
-   stepCircle: {
+  stepCircle: {
     width: 12,
     height: 12,
     borderRadius: 16,
@@ -1411,7 +1411,7 @@ const styles = StyleSheet.create({
     boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
     shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25)',
   },
-  
+
   stepIndicatorContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -1443,16 +1443,16 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     paddingVertical: 4,
-    padding: (Platform.OS === 'ios'? 12:0),
-    marginTop:(Platform.OS === 'ios' ? 16:20),
+    padding: (Platform.OS === 'ios' ? 12 : 0),
+    marginTop: (Platform.OS === 'ios' ? 16 : 20),
     height: 50,
-    gap:(Platform.OS === 'ios' ? 8:0 )
+    gap: (Platform.OS === 'ios' ? 8 : 0)
 
   },
   searchIcon: {
-    padding: (Platform.OS === 'ios'? 0:5),
-   marginLeft: (Platform.OS === 'ios' ? 0 : 10),
-     marginRight: (Platform.OS === 'ios' ? 0 : 6),
+    padding: (Platform.OS === 'ios' ? 0 : 5),
+    marginLeft: (Platform.OS === 'ios' ? 0 : 10),
+    marginRight: (Platform.OS === 'ios' ? 0 : 6),
     height: 24,
     width: 24,
   },
@@ -1470,7 +1470,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '91.6%',
-    marginBottom: Platform.OS === 'ios' ? 30 : 30,    
+    marginBottom: Platform.OS === 'ios' ? 30 : 30,
     borderRadius: 50,
     alignSelf: 'center',
     padding: 2,
@@ -1478,7 +1478,7 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff11',
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
     backgroundColor: 'rgba(0, 23, 128, 0.49)',
-  
+
     borderEndEndRadius: 50,
     borderStartEndRadius: 50,
     borderTopLeftRadius: 50,
@@ -1502,20 +1502,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-    tabIcon: {
+  tabIcon: {
     width: 28,
     height: 28,
     resizeMode: 'contain',
   },
   bubble: {
     height: '100%',
-    backgroundColor: 'rgba(255, 255, 255, 0.16)',    
+    backgroundColor: 'rgba(255, 255, 255, 0.16)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18)',
     position: 'absolute',
-   
+
     justifyContent: 'center',
     alignItems: 'center',
-    
+
     left: 1,
     right: 1,
     borderWidth: 0.5,
@@ -1551,7 +1551,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     paddingHorizontal: 16,
-    marginVertical:6
+    marginVertical: 6
   },
   headerRow: {
     flexDirection: 'row',
@@ -1582,14 +1582,14 @@ const styles = StyleSheet.create({
     fontSize: 24,
     flex: 1,
     textAlign: 'center',
-    
+
   },
   emptyView: {},
 
   productsWrapper: {
     flexDirection: 'column',
     paddingHorizontal: 12,
-    marginHorizontal:1
+    marginHorizontal: 1
   },
 
   row: {
@@ -1606,10 +1606,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderRadius: 10,
     paddingHorizontal: 12,
-    paddingVertical:19,
+    paddingVertical: 19,
     alignItems: 'center',
-    marginVertical:(Platform.OS === 'ios' ? 5: 5.5),
-    marginHorizontal: (Platform.OS === 'ios' ? 5: 5.5),
+    marginVertical: (Platform.OS === 'ios' ? 5 : 5.5),
+    marginHorizontal: (Platform.OS === 'ios' ? 5 : 5.5),
     borderWidth: 0.4,
     borderColor: '#ffffff11',
 
@@ -1630,13 +1630,13 @@ const styles = StyleSheet.create({
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
     boxSizing: 'border-box',
-    
+
   },
 
   fullWidth: {
   },
   halfWidth: {
-  
+
   },
   cardIcon: {
     width: 24,
@@ -1673,8 +1673,8 @@ const styles = StyleSheet.create({
 
   tabContent3: {
     flex: 1,
-    padding: (Platform.OS === 'ios' ? 16 :20),
-    paddingTop: Platform.OS === 'ios' ? '15.2%'  : 50,
+    padding: (Platform.OS === 'ios' ? 16 : 20),
+    paddingTop: Platform.OS === 'ios' ? '15.2%' : 50,
 
   },
   tabContentText3: {
@@ -1691,10 +1691,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderRadius: 24,
     paddingHorizontal: 16,
-    paddingVertical:16,
+    paddingVertical: 16,
     alignItems: 'center',
-    justifyContent:'center',
-    flex:1,
+    justifyContent: 'center',
+    flex: 1,
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
   },
@@ -1723,14 +1723,14 @@ const styles = StyleSheet.create({
   iconBackground: {
     width: 75,
     height: 62,
-    borderRadius: 16, 
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
     paddingVertical: 8,
     borderWidth: 0.4,
     borderColor: 'transparent',
-    overflow:'hidden',
+    overflow: 'hidden',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.15) 100%)',
     boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.25)',
@@ -1740,125 +1740,125 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    width:'100%',
-    paddingLeft:16,
-    paddingRight:16,
-    minHeight:230
-    
+    width: '100%',
+    paddingLeft: 16,
+    paddingRight: 16,
+    minHeight: 230
+
   },
 
 
- emptyContainer: {
-  //flex: 1,
-  justifyContent: 'center',
-  alignItems: 'center',
-  width:'100%',
-  height: (Platform.OS === 'ios' ? 290 : 300),
-  backgroundColor: 'rgba(255, 255, 255, 0.06)',
-  borderWidth: 0.3,
-  borderColor: 'rgba(255, 255, 255, 0.08)',
-  borderRadius:24,
-  overflow:'hidden',
-  //minHeight:'80%',
- marginBottom:20,
-},
-emptyImage: {
-  width: 50,
-  height: 50,
-  marginBottom: 20,
-},
-emptyText: {
-  fontSize: 20,
-  color: '#fff',
-  textAlign: 'center',
-  fontFamily: 'Urbanist-SemiBold',
-  fontWeight:600
-},
-overlay: {
-  flex: 1,
-  justifyContent: 'center',
-  alignItems: 'center',
-  backgroundColor: 'rgba(0,0,0,0.5)',
-},
-popupContainer: {
-  width: '85%',
-  padding: 20,
-  borderRadius: 24,
-  borderWidth: 1,
-  borderColor: 'rgba(255, 255, 255, 0.1)',
-  alignItems: 'center',
-  overflow: 'hidden',
-  backgroundColor: 'rgba(255, 255, 255, 0.04)',
-},
-popupLogo: {
-  width: 64,
-  height: 64,
-  marginBottom: 20,
-},
-popupMainHeader: {
-  color: 'rgba(255, 255, 255, 0.80)',
-  fontFamily: 'Urbanist-SemiBold',
-  fontSize: 20,
-  fontWeight: '600',
-  letterSpacing: -0.4,
-  lineHeight: 28,
-},
-popupSubHeader: {
-  color: 'rgba(255, 255, 255, 0.80)',
-  fontFamily: 'Urbanist-Regular',
-  fontSize: 14,
-  fontWeight: '400',
-  textAlign: 'center',
-  marginTop: 6,
-},
-popupButton: {
-  display: 'flex',
-  width: '100%',
-  height: 52,
-  justifyContent: 'center',
-  alignItems: 'center',
-  gap: 4,
-  borderRadius: 100,
-  paddingTop: 6,
-  paddingBottom: 6,
-  backgroundColor: 'rgba(255, 255, 255, 0.56)',
-  marginTop: 20,
-  borderWidth: 0.5,
-  borderColor: '#ffffff2c',
-},
-popupButtonText: {
-  color: '#002050',
-  textAlign: 'center',
-  fontFamily: 'Urbanist-Medium',
-  fontSize: 17,
-  fontWeight: 500,
-  letterSpacing: 1,
-  width: '100%',
-},
-popupButtonCancel: {
-  display: 'flex',
-  width: '100%',
-  height: 52,
-  justifyContent: 'center',
-  alignItems: 'center',
-  gap: 4,
-  borderRadius: 100,
-  paddingTop: 6,
-  paddingBottom: 6,
-  backgroundColor: 'rgba(170, 169, 176, 0.56)',
-  marginTop: 8,
-  borderWidth: 0.5,
-  borderColor: '#ffffff2c',
-},
-popupButtonTextCancel: {
-  color: '#FFFFFF7A',
-  textAlign: 'center',
-  fontFamily: 'Urbanist-Medium',
-  fontSize: 17,
-  fontWeight: 500,
-  letterSpacing: 1,
-  width: '100%',
-},
+  emptyContainer: {
+    //flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: (Platform.OS === 'ios' ? 290 : 300),
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderWidth: 0.3,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 24,
+    overflow: 'hidden',
+    //minHeight:'80%',
+    marginBottom: 20,
+  },
+  emptyImage: {
+    width: 50,
+    height: 50,
+    marginBottom: 20,
+  },
+  emptyText: {
+    fontSize: 20,
+    color: '#fff',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: 600
+  },
+  overlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  popupContainer: {
+    width: '85%',
+    padding: 20,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'center',
+    overflow: 'hidden',
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+  },
+  popupLogo: {
+    width: 64,
+    height: 64,
+    marginBottom: 20,
+  },
+  popupMainHeader: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 20,
+    fontWeight: '600',
+    letterSpacing: -0.4,
+    lineHeight: 28,
+  },
+  popupSubHeader: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginTop: 6,
+  },
+  popupButton: {
+    display: 'flex',
+    width: '100%',
+    height: 52,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 100,
+    paddingTop: 6,
+    paddingBottom: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.56)',
+    marginTop: 20,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+  },
+  popupButtonText: {
+    color: '#002050',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: 500,
+    letterSpacing: 1,
+    width: '100%',
+  },
+  popupButtonCancel: {
+    display: 'flex',
+    width: '100%',
+    height: 52,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 100,
+    paddingTop: 6,
+    paddingBottom: 6,
+    backgroundColor: 'rgba(170, 169, 176, 0.56)',
+    marginTop: 8,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+  },
+  popupButtonTextCancel: {
+    color: '#FFFFFF7A',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: 500,
+    letterSpacing: 1,
+    width: '100%',
+  },
   logo: {
     width: 64,
     height: 64,

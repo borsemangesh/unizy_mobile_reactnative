@@ -35,6 +35,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../../localization/i18n';
 
 type previewDetailsProps = {
   navigation: any;
@@ -212,29 +213,40 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
     return null;
   };
 
-  const formatDateWithDash = (dateString?: string) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "";
+const formatDateWithDash = (dateString?: string, t?: any) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "";
 
-    const day = date.getDate();
+  const day = date.getDate();
+  const year = date.getFullYear();
+  const lang = i18n.language; // current app language
 
-    let suffix = "th";
+  // ---------- Suffix only for English ----------
+  let suffix = "";
+  if (lang === "en") {
     if (day % 10 === 1 && day !== 11) suffix = "st";
     else if (day % 10 === 2 && day !== 12) suffix = "nd";
     else if (day % 10 === 3 && day !== 13) suffix = "rd";
+    else suffix = "th";
+  }
 
-    const monthShort = date
-      .toLocaleString("default", { month: "short" }); // "Nov"
+  // ---------- Month translation ----------
+  const monthIndex = date.getMonth(); // 0–11
+  const monthKeys = [
+    "jan","feb","mar","apr","may","jun",
+    "jul","aug","sep","oct","nov","dec"
+  ];
 
-    const year = date.getFullYear();
-    return `${day}${suffix} ${monthShort} ${year}`;
-  };
+  const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
 
-  const titleValue = getValueByAlias(storedForm, 'title') || 'No Title';
+  return `${day}${suffix} ${monthShort} ${year}`;
+};
+
+  const titleValue = getValueByAlias(storedForm, 'title') || t('no_title');
   //const priceValue = getValueByAlias(storedForm, 'price') || '0';
   const descriptionvalue =
-    getValueByAlias(storedForm, 'description') || 'No Description';
+    getValueByAlias(storedForm, 'description') || t('no_des');
   const duration_value = getValueByAlias(storedForm, 'service_duration') || '1'
   const accomodation_amount = parseFloat(userMeta?.category?.accommodation_amount ?? '0');
 
@@ -415,7 +427,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
       const apiMessage = createJson?.message || createJson?.error || "Something went wrong";
       const isSuccess = createRes.status === 200 || createRes.status === 201;
 
-      showToast(apiMessage, isSuccess ? "success" : "error");
+      showToast(t(apiMessage), isSuccess ? "success" : "error");
 
       if (!(createRes.status === 200 || createRes.status === 201)) {
         navigation.reset({
@@ -474,7 +486,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
             console.log("✅ Upload API Parsed JSON:", uploadJson);
             const apiMessage = uploadJson?.message || uploadJson?.error || `Failed to upload ${image.name}`;
             const isSuccess = uploadRes.status === 200 || uploadRes.status === 201;
-            showToast(apiMessage, isSuccess ? "success" : "error");
+            showToast(t(apiMessage), isSuccess ? "success" : "error");
             if (!isSuccess) return;
           } catch (err) {
             console.error('❌ Failed to parse upload response as JSON', err);
@@ -484,13 +496,11 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
 
       console.log('✅ All uploads done. Showing toast.');
-      showToast(Constant.DATA_UPLOAD, 'success');
-      showToast(Constant.DATA_UPLOAD, 'success');
+      showToast(t(Constant.DATA_UPLOAD), 'success');
       setShowPopup(true);
     } catch (error) {
       console.log('❌ Error in handleListPress:', error);
-      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
-      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+      showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
     }
   };
 
@@ -801,7 +811,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
                 }}
               >
                 <Text allowFontScaling={false} style={styles.productDesHeding}>
-                  {userMeta?.category?.name === 'Food' ? 'Dish Description' : `${userMeta?.category?.name ?? ''} Description`}
+                  {userMeta?.category?.id === 3 ? t('dish_description') : `${userMeta?.category?.name ?? ''} ${t('des')}`}
                 </Text>
                 <Text allowFontScaling={false} style={styles.productDesc}>
                   {descriptionvalue}
@@ -812,7 +822,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
                     source={require('../../../assets/images/calendar_icon1.png')}
                     style={{ height: 16, width: 16 }}
                   />
-                  <Text allowFontScaling={false} style={styles.datetext}>Date Posted: {formatDateWithDash(newdate)}</Text>
+                  <Text allowFontScaling={false} style={styles.datetext}>{t('date_posted')}: {formatDateWithDash(newdate,t)}</Text>
                 </View>
               </View>
             </View>

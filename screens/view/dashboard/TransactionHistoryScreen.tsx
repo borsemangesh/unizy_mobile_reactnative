@@ -19,6 +19,7 @@ import SalesAllDetailsDropdown from '../../utils/component/SalesAllDetailsDropdo
 import SalesAllDetailsDropdown_IOS from '../../utils/component/SalesAllDetailsDropdown_IOS';
 import Loader from '../../utils/component/Loader';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../../localization/i18n';
 
 type TransactionPropos = {
   navigation: any;
@@ -84,6 +85,18 @@ export default function TransactionHistoryScreen(
   const [overallEarning, setOverallEarning] = useState(0);
 
   const tabs = [{ key: 'Purchases' }, { key: 'Sales' }, { key: 'Charges' }];
+  const getTabLabel = (key: string) => {
+    switch (key) {
+      case 'Purchases':
+        return t('purchases');
+      case 'Sales':
+        return t('sales');
+      case 'Charges':
+        return t('charges');
+      default:
+        return key;
+    }
+  };
   const [isFilterVisible, setFilterVisible] = useState(false);
   const [SalesImageUrl, setSalesImageUrl] = useState('');
   const { height } = Dimensions.get('window');
@@ -254,29 +267,44 @@ export default function TransactionHistoryScreen(
     fetchTransactions();
   }, [selectedTab]);
 
-  const getFormattedDate = (dateString: string) => {
-    const parts = dateString.split(" ");
-    if (parts.length !== 3) return dateString;
+const getFormattedDate = (dateString: string, t?: any) => {
+  const parts = dateString.split(" ");
+  if (parts.length !== 3) return dateString;
 
-    const [dayStr, monthStr, yearStr] = parts;
-    const day = parseInt(dayStr);
+  const [dayStr, monthStr, yearStr] = parts;
+  const day = parseInt(dayStr);
 
-    if (isNaN(day)) return dateString;
+  if (isNaN(day)) return dateString;
 
-    // Add suffix
-    const suffix =
+  const lang = i18n.language; 
+
+  // English suffix logic
+  let suffix = "";
+  if (lang === "en") {
+    suffix =
       day % 10 === 1 && day !== 11
         ? "st"
         : day % 10 === 2 && day !== 12
-          ? "nd"
-          : day % 10 === 3 && day !== 13
-            ? "rd"
-            : "th";
+        ? "nd"
+        : day % 10 === 3 && day !== 13
+        ? "rd"
+        : "th";
+  }
 
-    const shortMonth = monthStr.substring(0, 3);
+  const months = [
+    "jan","feb","mar","apr","may","jun",
+    "jul","aug","sep","oct","nov","dec"
+  ];
 
-    return `${day}${suffix} ${shortMonth} ${yearStr}`;
-  };
+  const monthShort = monthStr.substring(0, 3).toLowerCase();
+  const monthIndex = months.indexOf(monthShort);
+
+  const translatedMonth =
+    t && monthIndex !== -1 ? t(months[monthIndex]) : monthStr;
+
+  return `${day}${suffix} ${translatedMonth} ${yearStr}`;
+};
+
   const [catagoryid, setCatagoryid] = useState(0)
 
   const [salesData, setSalesData] = useState<any[]>([]);
@@ -376,7 +404,8 @@ export default function TransactionHistoryScreen(
                     textAlign: 'center',
                   }}
                 >
-                  {key}
+                  {getTabLabel(key)}
+
                 </Text>
               </View>
             </TouchableOpacity>
@@ -445,7 +474,7 @@ export default function TransactionHistoryScreen(
           transactions.map((section, idx) => (
             <View key={idx} style={styles.section}>
               <Text allowFontScaling={false} style={styles.dateText}>
-                {getFormattedDate(section.date)}
+                {getFormattedDate(section.date,t)}
               </Text>
               {section.items.map((item, i) => (
                 <View key={i} style={styles.card}>
@@ -596,7 +625,7 @@ export default function TransactionHistoryScreen(
             {transactions.map((section, idx) => (
               <View key={idx} style={styles.section}>
                 <Text allowFontScaling={false} style={styles.dateText1}>
-                  {getFormattedDate(section.date)}
+                  {getFormattedDate(section.date,t)}
                 </Text>
 
                 {section.items.map((item, i) => (
@@ -662,7 +691,7 @@ export default function TransactionHistoryScreen(
                           fontSize: 12,
                         }}
                       >
-                       {t('total_order')}: {item.total_orders}
+                        {t('total_order')}: {item.total_orders}
                       </Text>
                       <Text
                         allowFontScaling={false}
@@ -684,7 +713,7 @@ export default function TransactionHistoryScreen(
           transactions.map((section, idx) => (
             <View key={idx} style={styles.section}>
               <Text allowFontScaling={false} style={styles.dateText}>
-                {getFormattedDate(section.date)}
+                {getFormattedDate(section.date,t)}
               </Text>
               {section.items.map((item, i) => (
                 <View key={i} style={styles.chargesCard}>

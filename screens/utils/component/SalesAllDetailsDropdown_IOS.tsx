@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { MAIN_URL } from '../APIConstant';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../../localization/i18n';
 
 
 interface FilterBottomSheetProps {
@@ -23,7 +24,7 @@ interface FilterBottomSheetProps {
   onClose: () => void;
   SalesImageUrl: string;
   salesDataResponse: any[];
-  dropDowntitle: string; 
+  dropDowntitle: string;
 }
 
 const SalesAllDetailsDropdown_IOS = ({
@@ -35,7 +36,7 @@ const SalesAllDetailsDropdown_IOS = ({
   dropDowntitle
 
 }: FilterBottomSheetProps) => {
-  
+
   const [salesData, setSalesData] = useState<any[]>([]);// Holds the sales data
   const [loading, setLoading] = useState<boolean>(false); // Loading state
   const screenHeight = Dimensions.get('window').height;
@@ -51,11 +52,11 @@ const SalesAllDetailsDropdown_IOS = ({
         console.log('No token found');
         return;
       }
-  
+
       // Construct the URL
       const url = `${MAIN_URL.baseUrl}transaction/sales-history?feature_id=${catagory_id}`;
       console.log('SalesHistory URL:', url);
-  
+
       // Make the API call
       const response = await fetch(url, {
         method: 'GET',
@@ -65,7 +66,7 @@ const SalesAllDetailsDropdown_IOS = ({
         },
       });
       const json = await response.json();
-  
+
       // Handle response status codes
       if (response.status === 200) {
         setSalesData(json.data.features.buyers);
@@ -73,41 +74,41 @@ const SalesAllDetailsDropdown_IOS = ({
         console.log("SalesHistory ResponseByers:", json.data.features.buyers);
 
       }
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-  
+
       // Parse the JSON response
-      
+
       console.log("SalesHistory Response:", json);
-  
+
       if (json.statusCode === 401 || json.statusCode === 403) {
         // handleForceLogout();
         return;
       }
-  
+
       // Update the sales data to only contain the 'buyers' array
-       // <-- Corrected part
-  
+      // <-- Corrected part
+
     } catch (err) {
       console.log('Error fetching sales history:', err);
     } finally {
       setLoading(false);
     }
   };
-  
-  
+
+
 
   useEffect(() => {
-      console.log('Component mounted, fetching sales history',salesDataResponse);
-      
-      fetchSalesHistory(catagory_id);
-        // setSalesData(salesDataResponse);
-    
+    console.log('Component mounted, fetching sales history', salesDataResponse);
+
+    fetchSalesHistory(catagory_id);
+    // setSalesData(salesDataResponse);
+
   }, [salesDataResponse]);
 
-   const { t } = useTranslation();
+  const { t } = useTranslation();
 
   const handleClose = () => {
     onClose();
@@ -141,44 +142,53 @@ const SalesAllDetailsDropdown_IOS = ({
       );
     }
 
-    const formatPurchaseDate = (dateString: string) => {
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) return "";
-    
-      const day = date.getDate();
-      const month = date.toLocaleString("default", { month: "short" });
-      const year = date.getFullYear();
-    
-      let suffix = "th";
-      if (day % 10 === 1 && day !== 11) suffix = "st";
-      else if (day % 10 === 2 && day !== 12) suffix = "nd";
-      else if (day % 10 === 3 && day !== 13) suffix = "rd";
-    
-      return `${day}${suffix} ${month} ${year}`;
-    };
+    const formatPurchaseDate = (dateString: string, t?: any) => {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "";
 
-    // Render the sales data
+  const day = date.getDate();
+  const lang = i18n.language; // current selected language
+
+  // Month translation
+  const monthIndex = date.getMonth(); // 0–11
+  const monthKeys = [
+    "jan","feb","mar","apr","may","jun",
+    "jul","aug","sep","oct","nov","dec"
+  ];
+
+  const month = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+
+  const year = date.getFullYear();
+
+  // ---------- Suffix only for English ----------
+  let suffix = "";
+  if (lang === "en") {
+    if (day % 10 === 1 && day !== 11) suffix = "st";
+    else if (day % 10 === 2 && day !== 12) suffix = "nd";
+    else if (day % 10 === 3 && day !== 13) suffix = "rd";
+    else suffix = "th";
+  }
+
+  return `${day}${suffix} ${month} ${year}`;
+}
+
+
     return (
-
-     
       <ScrollView style={{ flexGrow: 0, paddingTop: 10, }} showsVerticalScrollIndicator={false}>
         {Array.isArray(salesData) && salesData.length > 0 ? (
-  salesData.map((buyer, index) => (
-    <View key={index} style={{ marginBottom: 5 }}>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          flex: 1,
-          width: '100%',
-          marginBottom: 12,
-          alignItems: 'center',
-        }}
-      >
-
-
-
-            {buyer?.profile ? (
+          salesData.map((buyer, index) => (
+            <View key={index} style={{ marginBottom: 5 }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  flex: 1,
+                  width: '100%',
+                  marginBottom: 12,
+                  alignItems: 'center',
+                }}
+              >
+                {buyer?.profile ? (
                   <Image
                     source={{ uri: buyer.profile }}
                     style={styles.avatar}
@@ -186,114 +196,82 @@ const SalesAllDetailsDropdown_IOS = ({
                 ) : (
                   <View style={styles.initialsCircle}>
                     <Text allowFontScaling={false} style={styles.initialsText}>
-            {getInitials(buyer.firstname, buyer.lastname)}
-          </Text>
+                      {getInitials(buyer.firstname, buyer.lastname)}
+                    </Text>
                   </View>
-          )}
-
-
-        {/* <View style={styles.initialsCircle}>
-          <Text allowFontScaling={false} style={styles.initialsText}>
-            {getInitials(buyer.firstname, buyer.lastname)}
-          </Text>
-        </View> */}
-        <View style={{ gap: 4, flex: 0.5 }}>
-          <Text
-            style={{
-              color: 'rgb(255, 255, 255)',
-              fontWeight: '600',
-              fontFamily: 'Urbanist-SemiBold',
-              fontSize: 14,
-            }}
-          >
-            {buyer.firstname} {buyer.lastname}
-          </Text>
-          <Text
-            style={{
-              color: 'rgb(255, 255, 255)',
-              fontWeight: '600',
-              fontFamily: 'Urbanist-SemiBold',
-              fontSize: 12,
-            }}
-          >
-            {buyer.university_name}
-          </Text>
-        </View>
-        <View style={{ gap: 4, alignItems: 'flex-end', flex: 0.5 }}>
-          {/* <Text
-            style={{
-              color: 'rgb(255, 255, 255)',
-              fontWeight: '600',
-              fontFamily: 'Urbanist-SemiBold',
-              fontSize: 14,
-            }}
-          >
-            £ {parseFloat(buyer.amount).toFixed(2)} 
-          </Text> */}
-           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-
-
-              <View style={styles.statusBox}>
+                )}
+                <View style={{ gap: 4, flex: 0.5 }}>
                   <Text
-                    allowFontScaling={false}
                     style={{
-                      color: '#ABABFF',
+                      color: 'rgb(255, 255, 255)',
                       fontWeight: '600',
-                      fontSize: 12,
                       fontFamily: 'Urbanist-SemiBold',
+                      fontSize: 14,
                     }}
                   >
-                    x{buyer.purchased_quantity}
+                    {buyer.firstname} {buyer.lastname}
+                  </Text>
+                  <Text
+                    style={{
+                      color: 'rgb(255, 255, 255)',
+                      fontWeight: '600',
+                      fontFamily: 'Urbanist-SemiBold',
+                      fontSize: 12,
+                    }}
+                  >
+                    {buyer.university_name}
                   </Text>
                 </View>
-
-                <Text
-                  style={{
-                    color: 'rgb(255, 255, 255)',
-                    fontWeight: '600',
-                    fontFamily: 'Urbanist-SemiBold',
-                    fontSize: 14,
-                    marginLeft: 8, // spacing before the box
-                  }}
-                >
-                  £ {parseFloat(buyer.amount).toFixed(2)}
-                </Text>
-
-                {/* UNITS BOX RIGHT SIDE */}
+                <View style={{ gap: 4, alignItems: 'flex-end', flex: 0.5 }}>
                 
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={styles.statusBox}>
+                      <Text
+                        allowFontScaling={false}
+                        style={{
+                          color: '#ABABFF',
+                          fontWeight: '600',
+                          fontSize: 12,
+                          fontFamily: 'Urbanist-SemiBold',
+                        }}
+                      >
+                        x{buyer.purchased_quantity}
+                      </Text>
+                    </View>
 
+                    <Text
+                      style={{
+                        color: 'rgb(255, 255, 255)',
+                        fontWeight: '600',
+                        fontFamily: 'Urbanist-SemiBold',
+                        fontSize: 14,
+                        marginLeft: 8, 
+                      }}
+                    >
+                      £ {parseFloat(buyer.amount).toFixed(2)}
+                    </Text>
+                  </View>
+
+                  <Text
+                    style={{
+                      color: 'rgb(255, 255, 255)',
+                      fontWeight: '600',
+                      fontFamily: 'Urbanist-regular',
+                      fontSize: 12,
+                    }}
+                  >
+                    {formatPurchaseDate(buyer.purchase_date, t)}
+                  </Text>
+                </View>
               </View>
-
-          <Text
-            style={{
-              color: 'rgb(255, 255, 255)',
-              fontWeight: '600',
-              fontFamily: 'Urbanist-regular',
-              fontSize: 12,
-            }}
-          >
-            {formatPurchaseDate(buyer.purchase_date)}
+            </View>
+          ))
+        ) : (
+          <Text style={{ color: 'white', textAlign: 'center', padding: 20 }}>
+            {t('no_sales_data')}
           </Text>
-        </View>
-      </View>
-
-      
-    </View>
-
-
-
-
-  ))
-) : (
-  <Text style={{ color: 'white', textAlign: 'center', padding: 20 }}>
-    {t('no_sales_data')}
-  </Text>
-)}
-
-
-
-
-    </ScrollView>
+        )}
+      </ScrollView>
     );
   };
 
@@ -305,36 +283,36 @@ const SalesAllDetailsDropdown_IOS = ({
       ]}
     >
       <BlurView
-      style={{ top: 0, left: 0, right: 0, bottom: 0,width: '100%', height: '100%',}}
-      blurType="dark"
-      blurAmount={Platform.OS === 'ios' ?3 : 4}
-      pointerEvents="none" 
-      reducedTransparencyFallbackColor="transparent"
-    >
-      <Modal animationType="slide" visible={visible} transparent onRequestClose={handleClose}>
-        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-          {/* <View style={styles.overlay}> */}
+        style={{ top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', }}
+        blurType="dark"
+        blurAmount={Platform.OS === 'ios' ? 3 : 4}
+        pointerEvents="none"
+        reducedTransparencyFallbackColor="transparent"
+      >
+        <Modal animationType="slide" visible={visible} transparent onRequestClose={handleClose}>
+          <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+            {/* <View style={styles.overlay}> */}
             <TouchableWithoutFeedback onPress={handleClose}>
               <View style={StyleSheet.absoluteFillObject} />
             </TouchableWithoutFeedback>
             <View style={[styles.modelcontainer,]}>
               <BlurView
-                  style={[
-                    {
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0, borderRadius: 30,
-                      backgroundColor: 'rgba(119, 173, 255, 0.07)'
-                    },
+                style={[
+                  {
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0, borderRadius: 30,
+                    backgroundColor: 'rgba(119, 173, 255, 0.07)'
+                  },
 
-                  ]}
-                  blurType="light"
-                  blurAmount={6}
-                  pointerEvents='none'
-                  reducedTransparencyFallbackColor="white"
-               />
+                ]}
+                blurType="light"
+                blurAmount={6}
+                pointerEvents='none'
+                reducedTransparencyFallbackColor="white"
+              />
 
               <View style={styles.modeltitleContainer1}>
                 <View
@@ -357,7 +335,7 @@ const SalesAllDetailsDropdown_IOS = ({
                 >
                   <View >
                     <Image source={background} style={styles.imgcontainer} resizeMode="cover" />
-                    <Image source={{ uri: SalesImageUrl }}style={styles.image} resizeMode="cover" />
+                    <Image source={{ uri: SalesImageUrl }} style={styles.image} resizeMode="cover" />
                   </View>
                   <Text style={styles.salesTitle}>{dropDowntitle}</Text>
                 </View>
@@ -388,13 +366,16 @@ const SalesAllDetailsDropdown_IOS = ({
                 </View>
               </View>
 
-              <View style={{ flex: 1, 
-                
-                flexDirection: 'row', backgroundColor: 'rgba(31, 34, 136, 0.60)',}}>
+              <View style={{
+                flex: 1,
+
+                flexDirection: 'row', backgroundColor: 'rgba(31, 34, 136, 0.60)',
+              }}>
                 <ScrollView
-                  style={{ flex: 1, paddingHorizontal: 16,
-                  
-                   }}
+                  style={{
+                    flex: 1, paddingHorizontal: 16,
+
+                  }}
                   contentContainerStyle={{ paddingBottom: 70 }}
                   showsVerticalScrollIndicator={false}
                 >
@@ -406,9 +387,9 @@ const SalesAllDetailsDropdown_IOS = ({
               </View>
               {/* </BlurView> */}
             </View>
-          {/* </View> */}
-        </View>
-      </Modal>
+            {/* </View> */}
+          </View>
+        </Modal>
       </BlurView>
     </View>
   );
@@ -421,9 +402,9 @@ const styles = StyleSheet.create({
     paddingBottom: 2,
     paddingLeft: 6,
     paddingRight: 6,
-    gap:12,
+    gap: 12,
     borderRadius: 4,
-    justifyContent:'center',
+    justifyContent: 'center',
     height: 20,
   },
   cardconstinerdivider: {
@@ -441,7 +422,7 @@ const styles = StyleSheet.create({
     borderColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)',
 
-    },
+  },
   initialsCircle: {
     backgroundColor: 'rgba(63, 110, 251, 0.43)',
     alignItems: 'center',
@@ -470,7 +451,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     resizeMode: 'contain',
-    position:'absolute',
+    position: 'absolute',
     top: 11,
     right: 10,
     bottom: 10,

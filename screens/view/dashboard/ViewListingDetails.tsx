@@ -41,6 +41,7 @@ import MaskedView from '@react-native-masked-view/masked-view';
 import ButtonNew from '../../utils/component/ButtonNew';
 import Loader from '../../utils/component/Loader';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../../localization/i18n';
 
 type ListingDetailsProps = {
   navigation: any;
@@ -176,13 +177,13 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
 
       if (data1.message) {
         showToast(
-          data1.message,
+          t(data1.message),
           data1.statusCode === 200 ? 'success' : 'error',
         );
         // Refresh details so status updates immediately
         await fetchDetails();
       } else {
-        showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+        showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
       }
     } catch (error) {
       console.error('❌ API Error:', error);
@@ -249,38 +250,50 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
 
       if (data?.statusCode === 200) {
         setLoading(false);
-        showToast(data.message, 'success');
+        showToast(t(data.message), 'success');
         setShowPopup2(true);
       } else {
         setLoading(false);
         setShowPopup1(false);
-        showToast(data?.message, 'error');
+        showToast(t(data?.message), 'error');
       }
     } catch (err) {
       setLoading(false);
       console.error(err);
-      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+      showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
     }
   };
 
-  const formatDateWithDash = (dateString?: string) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "";
+ const formatDateWithDash = (dateString?: string, t?: any) => {
+  if (!dateString) return "";
+  
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "";
 
-    const day = date.getDate();
+  const day = date.getDate();
+  const lang = i18n.language; // detect language
 
-    let suffix = "th";
+  // Add suffix only for English
+  let suffix = "";
+  if (lang === "en") {
     if (day % 10 === 1 && day !== 11) suffix = "st";
     else if (day % 10 === 2 && day !== 12) suffix = "nd";
     else if (day % 10 === 3 && day !== 13) suffix = "rd";
+    else suffix = "th";
+  }
 
-    const monthShort = date
-      .toLocaleString("default", { month: "short" }); // "Nov"
+  // Month translation
+  const monthIndex = date.getMonth(); // 0–11
+  const monthKeys = [
+    "jan","feb","mar","apr","may","jun",
+    "jul","aug","sep","oct","nov","dec"
+  ];
 
-    const year = date.getFullYear();
-    return `${day}${suffix} ${monthShort} ${year}`;
-  };
+  const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+  const year = date.getFullYear();
+
+  return `${day}${suffix} ${monthShort} ${year}`;
+};
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
@@ -464,7 +477,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                       £{data?.list?.price}
                     </Text>
                     <Text allowFontScaling={false} style={styles.datetlable}>
-                      {formatDateWithDash(data?.list?.created_at)}
+                      {formatDateWithDash(data?.list?.created_at,t)}
                     </Text>
                   </View>
 

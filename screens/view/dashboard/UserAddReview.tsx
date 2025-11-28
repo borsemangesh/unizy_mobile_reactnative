@@ -61,11 +61,11 @@ const { t } = useTranslation();
 
    const handleSubmit = async () => {
     if (rating === 0) {
-          showToast(Constant.ENTER_RATING,'error');
+          showToast(t(Constant.ENTER_RATING),'error');
           return;
         }
         if (username.trim() === '') {
-          showToast(Constant.ENTER_REVIEW,'error');
+          showToast(t(Constant.ENTER_REVIEW),'error');
           return;
         }
 
@@ -103,11 +103,11 @@ const { t } = useTranslation();
 
       if (result.statusCode === 200) {
         console.log('Review saved:', result);
-        showToast(result.message)
+        showToast(t(result.message))
         setShowPopup1(true); 
       } else {
         console.warn('Error saving review:', result);
-        showToast(result.message || 'Failed to submit review');
+        showToast(t(result.message) || 'Failed to submit review');
       }
     } catch (error) {
       console.error('Review error:', error);

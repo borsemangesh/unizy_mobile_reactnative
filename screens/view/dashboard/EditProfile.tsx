@@ -262,10 +262,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       showToast(errors[0], 'error');
       return;
     } else if (!isUpdateDisabled_personal) {
-      showToast(Constant.VERIFY_PERSONAL_MAIL, 'error');
+      showToast(t(Constant.VERIFY_PERSONAL_MAIL), 'error');
       return;
     } else if (!isUpdateDisabled) {
-      showToast(Constant.VERIFY_STUDENT_MAIL, 'error');
+      showToast(t(Constant.VERIFY_STUDENT_MAIL), 'error');
       return;
     }
 
@@ -274,7 +274,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       const userId = await AsyncStorage.getItem('userId');
 
       if (!token || !userId) {
-        showToast(Constant.USER_NOT_AUTH, 'error');
+        showToast(t(Constant.USER_NOT_AUTH), 'error');
         return;
       }
 
@@ -325,7 +325,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       const data = await response.json();
 
       if (response.ok) {
-        showToast(data?.message || 'Profile updated successfully', 'success');
+        showToast(t(data?.message) || 'Profile updated successfully', 'success');
         navigation.reset({
           index: 0,
           routes: [
@@ -360,13 +360,13 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         // }, 4500);
       } else {
         showToast(
-          data?.message || 'Failed to update profile.Please try again',
+          t(data?.message) || 'Failed to update profile.Please try again',
           'error',
         );
       }
     } catch (error) {
       console.error('Error during profile update:', error);
-      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+      showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
     }
   };
 
@@ -435,7 +435,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       const url = `${MAIN_URL.baseUrl}user/update-profile`;
 
       if (!token || !userId) {
-        showToast(Constant.USER_NOT_AUTH, 'error');
+        showToast(t(Constant.USER_NOT_AUTH), 'error');
         return false;
       }
 
@@ -463,7 +463,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         return true;
       } else {
         showToast(
-          data?.message || 'Failed to upload image.Please try again',
+          t(data?.message) || 'Failed to upload image.Please try again',
           'error',
         );
         return false;
@@ -471,7 +471,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     } catch (error) {
       console.error('Upload error:', error);
       showToast(
-        Constant.SOMTHING_WENT_WRONG,
+        t(Constant.SOMTHING_WENT_WRONG),
         'error',
       );
       return false;
@@ -487,7 +487,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       const url = `${MAIN_URL.baseUrl}user/delete-profile?userId=${userId}`;
       photo
       if (!token || !userId) {
-        showToast(Constant.USER_NOT_AUTH, 'error');
+        showToast(t(Constant.USER_NOT_AUTH), 'error');
         return false;
       }
 
@@ -503,11 +503,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       const data = await response.json();
 
       if (response.ok) {
-        showToast(Constant.IMAGE_DELETE, 'success');
+        showToast(t(Constant.IMAGE_DELETE), 'success');
         return true;
       } else {
         showToast(
-          data?.message || 'Failed to delete image.Please try again',
+          t(data?.message) || 'Failed to delete image.Please try again',
           'error',
         );
         return false;
@@ -515,7 +515,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     } catch (error) {
       console.error('Upload error:', error);
       showToast(
-        Constant.SOMTHING_WENT_WRONG,
+        t(Constant.SOMTHING_WENT_WRONG),
         'error',
       );
       return false;
@@ -574,7 +574,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
         // setShowPopup2(true);
       } else {
-        showToast(data?.message, 'error');
+        showToast(t(data?.message), 'error');
       }
     } catch (err) {
       console.error(err);
@@ -617,7 +617,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         setShowPopup1(false);
 
       } else {
-        showToast(data?.message, 'error');
+        showToast(t(data?.message), 'error');
       }
     } catch (err) {
       console.error(err);

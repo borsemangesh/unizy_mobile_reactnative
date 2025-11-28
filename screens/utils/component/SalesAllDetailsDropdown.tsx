@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { MAIN_URL } from '../APIConstant';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../../localization/i18n';
 
 interface FilterBottomSheetProps {
   catagory_id: number;
@@ -21,7 +22,7 @@ interface FilterBottomSheetProps {
   onClose: () => void;
   SalesImageUrl: string;
   salesDataResponse: any[];
-  dropDowntitle: string; 
+  dropDowntitle: string;
 }
 
 const SalesAllDetailsDropdown = ({
@@ -33,10 +34,10 @@ const SalesAllDetailsDropdown = ({
   dropDowntitle
 
 }: FilterBottomSheetProps) => {
-  
+
   const [salesData, setSalesData] = useState<any[]>([]);// Holds the sales data
   const [loading, setLoading] = useState<boolean>(false); // Loading state
-  
+
 
 
 
@@ -48,11 +49,11 @@ const SalesAllDetailsDropdown = ({
         console.log('No token found');
         return;
       }
-  
+
       // Construct the URL
       const url = `${MAIN_URL.baseUrl}transaction/sales-history?feature_id=${catagory_id}`;
       console.log('SalesHistory URL:', url);
-  
+
       // Make the API call
       const response = await fetch(url, {
         method: 'GET',
@@ -62,7 +63,7 @@ const SalesAllDetailsDropdown = ({
         },
       });
       const json = await response.json();
-  
+
       // Handle response status codes
       if (response.status === 200) {
         setSalesData(json.data.features.buyers);
@@ -70,45 +71,45 @@ const SalesAllDetailsDropdown = ({
         console.log("SalesHistory ResponseByers:", json.data.features.buyers);
 
       }
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-  
+
       // Parse the JSON response
-      
+
       console.log("SalesHistory Response:", json);
-  
+
       if (json.statusCode === 401 || json.statusCode === 403) {
         // handleForceLogout();
         return;
       }
-  
+
       // Update the sales data to only contain the 'buyers' array
-       // <-- Corrected part
-  
+      // <-- Corrected part
+
     } catch (err) {
       console.log('Error fetching sales history:', err);
     } finally {
       setLoading(false);
     }
   };
-  
-  
+
+
 
   useEffect(() => {
-      console.log('Component mounted, fetching sales history',salesDataResponse);
-      
-      fetchSalesHistory(catagory_id);
-        // setSalesData(salesDataResponse);
-    
+    console.log('Component mounted, fetching sales history', salesDataResponse);
+
+    fetchSalesHistory(catagory_id);
+    // setSalesData(salesDataResponse);
+
   }, [salesDataResponse]);
 
   const handleClose = () => {
     onClose();
   };
 
-   const { t } = useTranslation();
+  const { t } = useTranslation();
   const handleForceLogout = async () => {
     console.log('User inactive or unauthorized — logging out');
     await AsyncStorage.clear();
@@ -137,44 +138,52 @@ const SalesAllDetailsDropdown = ({
       );
     }
 
-    const formatPurchaseDate = (dateString: string) => {
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) return "";
-    
-      const day = date.getDate();
-      const month = date.toLocaleString("default", { month: "short" });
-      const year = date.getFullYear();
-    
-      let suffix = "th";
-      if (day % 10 === 1 && day !== 11) suffix = "st";
-      else if (day % 10 === 2 && day !== 12) suffix = "nd";
-      else if (day % 10 === 3 && day !== 13) suffix = "rd";
-    
-      return `${day}${suffix} ${month} ${year}`;
-    };
+  const formatPurchaseDate = (dateString: string, t?: any) => {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "";
 
-    // Render the sales data
+  const day = date.getDate();
+  const lang = i18n.language; // current selected language
+
+  // Month translation
+  const monthIndex = date.getMonth(); // 0–11
+  const monthKeys = [
+    "jan","feb","mar","apr","may","jun",
+    "jul","aug","sep","oct","nov","dec"
+  ];
+
+  const month = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+
+  const year = date.getFullYear();
+
+  // ---------- Suffix only for English ----------
+  let suffix = "";
+  if (lang === "en") {
+    if (day % 10 === 1 && day !== 11) suffix = "st";
+    else if (day % 10 === 2 && day !== 12) suffix = "nd";
+    else if (day % 10 === 3 && day !== 13) suffix = "rd";
+    else suffix = "th";
+  }
+
+  return `${day}${suffix} ${month} ${year}`;
+}
+
     return (
-
-     
       <ScrollView style={{ flexGrow: 0, paddingTop: 10 }} showsVerticalScrollIndicator={false}>
         {Array.isArray(salesData) && salesData.length > 0 ? (
-  salesData.map((buyer, index) => (
-    <View key={index} style={{ marginBottom: 5 }}>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          flex: 1,
-          width: '100%',
-          marginBottom: 12,
-          alignItems: 'center',
-        }}
-      >
-
-
-
-            {buyer?.profile ? (
+          salesData.map((buyer, index) => (
+            <View key={index} style={{ marginBottom: 5 }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  flex: 1,
+                  width: '100%',
+                  marginBottom: 12,
+                  alignItems: 'center',
+                }}
+              >
+                {buyer?.profile ? (
                   <Image
                     source={{ uri: buyer.profile }}
                     style={styles.avatar}
@@ -182,116 +191,81 @@ const SalesAllDetailsDropdown = ({
                 ) : (
                   <View style={styles.initialsCircle}>
                     <Text allowFontScaling={false} style={styles.initialsText}>
-            {getInitials(buyer.firstname, buyer.lastname)}
-          </Text>
+                      {getInitials(buyer.firstname, buyer.lastname)}
+                    </Text>
                   </View>
-          )}
-
-
-        {/* <View style={styles.initialsCircle}>
-          <Text allowFontScaling={false} style={styles.initialsText}>
-            {getInitials(buyer.firstname, buyer.lastname)}
-          </Text>
-        </View> */}
-        <View style={{ gap: 4, flex: 0.5 }}>
-          <Text
-            style={{
-              color: 'rgb(255, 255, 255)',
-              fontWeight: '600',
-              fontFamily: 'Urbanist-SemiBold',
-              fontSize: 14,
-            }}
-          >
-            {buyer.firstname} {buyer.lastname}
-          </Text>
-          <Text
-            style={{
-              color: 'rgb(255, 255, 255)',
-              fontWeight: '600',
-              fontFamily: 'Urbanist-SemiBold',
-              fontSize: 12,
-            }}
-          >
-            {buyer.university_name}
-          </Text>
-        </View>
-        <View style={{ gap: 4, alignItems: 'flex-end', flex: 0.5 }}>
-         
-          {/* <Text
-            style={{
-              color: 'rgb(255, 255, 255)',
-              fontWeight: '600',
-              fontFamily: 'Urbanist-SemiBold',
-              fontSize: 14,
-            }}
-          >
-            £ {parseFloat(buyer.amount).toFixed(2)} 
-          </Text> */}
-
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-
-
-             <View style={styles.statusBox}>
+                )}
+                <View style={{ gap: 4, flex: 0.5 }}>
                   <Text
-                    allowFontScaling={false}
                     style={{
-                      color: '#ABABFF',
+                      color: 'rgb(255, 255, 255)',
                       fontWeight: '600',
-                      fontSize: 12,
                       fontFamily: 'Urbanist-SemiBold',
+                      fontSize: 14,
                     }}
                   >
-                    x{buyer.purchased_quantity}
+                    {buyer.firstname} {buyer.lastname}
+                  </Text>
+                  <Text
+                    style={{
+                      color: 'rgb(255, 255, 255)',
+                      fontWeight: '600',
+                      fontFamily: 'Urbanist-SemiBold',
+                      fontSize: 12,
+                    }}
+                  >
+                    {buyer.university_name}
                   </Text>
                 </View>
+                <View style={{ gap: 4, alignItems: 'flex-end', flex: 0.5 }}>
 
-                <Text
-                  style={{
-                    color: 'rgb(255, 255, 255)',
-                    fontWeight: '600',
-                    fontFamily: 'Urbanist-SemiBold',
-                    fontSize: 14,
-                    marginLeft: 8, // spacing before the box
-                  }}
-                >
-                  £ {parseFloat(buyer.amount).toFixed(2)}
-                </Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={styles.statusBox}>
+                      <Text
+                        allowFontScaling={false}
+                        style={{
+                          color: '#ABABFF',
+                          fontWeight: '600',
+                          fontSize: 12,
+                          fontFamily: 'Urbanist-SemiBold',
+                        }}
+                      >
+                        x{buyer.purchased_quantity}
+                      </Text>
+                    </View>
 
-                {/* UNITS BOX RIGHT SIDE */}
-               
-
+                    <Text
+                      style={{
+                        color: 'rgb(255, 255, 255)',
+                        fontWeight: '600',
+                        fontFamily: 'Urbanist-SemiBold',
+                        fontSize: 14,
+                        marginLeft: 8,
+                      }}
+                    >
+                      £ {parseFloat(buyer.amount).toFixed(2)}
+                    </Text>
+                  </View>
+                  <Text
+                    style={{
+                      color: 'rgb(255, 255, 255)',
+                      fontWeight: '600',
+                      fontFamily: 'Urbanist-regular',
+                      fontSize: 12,
+                    }}
+                  >
+                    {formatPurchaseDate(buyer.purchase_date, t)}
+                  </Text>
+                </View>
               </View>
-
-          <Text
-            style={{
-              color: 'rgb(255, 255, 255)',
-              fontWeight: '600',
-              fontFamily: 'Urbanist-regular',
-              fontSize: 12,
-            }}
-          >
-            {formatPurchaseDate(buyer.purchase_date)}
+            </View>
+          ))
+        ) : (
+          <Text style={{ color: 'white', textAlign: 'center', padding: 20 }}>
+            {t('no_sales_data')}
           </Text>
-        </View>
-      </View>
-
-      
-    </View>
-
-
-
-
-  ))
-) : (
-  <Text style={{ color: 'white', textAlign: 'center', padding: 20 }}>
-     {t('no_sales_data')}
-  </Text>
-)}
-
-
-
-
-    </ScrollView>
+        )}
+      </ScrollView>
     );
   };
 
@@ -353,7 +327,7 @@ const SalesAllDetailsDropdown = ({
                   }}
                 >
                   <View style={styles.imgcontainer}>
-                    <Image source={{ uri: SalesImageUrl }}style={styles.image} resizeMode="cover" />
+                    <Image source={{ uri: SalesImageUrl }} style={styles.image} resizeMode="cover" />
                   </View>
                   <Text style={styles.salesTitle}>{dropDowntitle}</Text>
                 </View>
@@ -384,14 +358,14 @@ const SalesAllDetailsDropdown = ({
                 </View>
               </View>
 
-              <View style={{ flex: 1, flexDirection: 'row', backgroundColor:Platform.OS==="android"? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(0, 60, 163, 0.18) 0%, rgba(255, 255, 255, 0.03) 100%)' :'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(0, 60, 163, 0.18) 0%, rgba(255, 255, 255, 0.03) 100%)',}}>
+              <View style={{ flex: 1, flexDirection: 'row', backgroundColor: Platform.OS === "android" ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(0, 60, 163, 0.18) 0%, rgba(255, 255, 255, 0.03) 100%)' : 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(0, 60, 163, 0.18) 0%, rgba(255, 255, 255, 0.03) 100%)', }}>
                 <ScrollView
-                  style={{ flex: 1, paddingHorizontal: 16, backgroundColor: Platform.OS === 'android' ? 'transparent': 'rgba(1, 26, 86, 0.12)', }}
+                  style={{ flex: 1, paddingHorizontal: 16, backgroundColor: Platform.OS === 'android' ? 'transparent' : 'rgba(1, 26, 86, 0.12)', }}
                   contentContainerStyle={{ paddingBottom: 70 }}
                   showsVerticalScrollIndicator={false}
                 >
                   <Text allowFontScaling={false} style={styles.filterHeadTitle}>
-                     {t('sold_to')}
+                    {t('sold_to')}
                   </Text>
                   {renderRightContent()}
                 </ScrollView>
@@ -412,9 +386,9 @@ const styles = StyleSheet.create({
     paddingBottom: 2,
     paddingLeft: 6,
     paddingRight: 6,
-    gap:12,
+    gap: 12,
     borderRadius: 4,
-    justifyContent:'center',
+    justifyContent: 'center',
     height: 20,
   },
 
@@ -424,14 +398,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-     borderBottomWidth: 1,
+    borderBottomWidth: 1,
     borderColor: '#52577cff',
     borderStyle: 'dashed',
     height: 2,
     marginTop: 10,
     marginBottom: 10,
-    
-    },
+
+  },
   initialsCircle: {
     backgroundColor: 'rgba(63, 110, 251, 0.43)',
     alignItems: 'center',
@@ -497,7 +471,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     overflow: 'hidden',
     backgroundColor:
-  'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgb(0, 60, 163) 0%, rgba(255, 255, 255, 0.03) 100%)',
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgb(0, 60, 163) 0%, rgba(255, 255, 255, 0.03) 100%)',
   },
   overlay: {
     flex: 1,

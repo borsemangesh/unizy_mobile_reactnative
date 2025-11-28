@@ -45,6 +45,7 @@ import MaskedView from '@react-native-masked-view/masked-view';
 import { BlurView } from '@react-native-community/blur';
 import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../../localization/i18n';
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImg = require('../../../assets/images/user.jpg');
@@ -582,7 +583,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             (Array.isArray(value) && value.length === 0);
 
           if (isEmpty) {
-            showToast(`${nameToShow} ${Constant.IS_MAN}`, 'error');
+            showToast(`${nameToShow} ${t(Constant.IS_MAN)}`, 'error');
             return;
           }
         }
@@ -667,7 +668,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
       navigation.navigate('EditPreviewThumbnail');
     } catch (error) {
       console.log('Error:', error);
-      showToast(Constant.DATA_NOT_SAVE, 'error');
+      showToast(t(Constant.DATA_NOT_SAVE), 'error');
     }
   };
 
@@ -818,24 +819,35 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
     console.log(`Deleted image with ID: ${fileId}`);
   };
 
-  const formatDateWithDash = (dateString?: string) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "";
+const formatDateWithDash = (dateString?: string, t?: any) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "";
 
-    const day = date.getDate();
+  const day = date.getDate();
+  const year = date.getFullYear();
+  const lang = i18n.language; // current app language
 
-    let suffix = "th";
+  // ---------- Suffix only for English ----------
+  let suffix = "";
+  if (lang === "en") {
     if (day % 10 === 1 && day !== 11) suffix = "st";
     else if (day % 10 === 2 && day !== 12) suffix = "nd";
     else if (day % 10 === 3 && day !== 13) suffix = "rd";
+    else suffix = "th";
+  }
 
-    const monthShort = date
-      .toLocaleString("default", { month: "short" }); // "Nov"
+  // ---------- Month translation ----------
+  const monthIndex = date.getMonth(); // 0–11
+  const monthKeys = [
+    "jan","feb","mar","apr","may","jun",
+    "jul","aug","sep","oct","nov","dec"
+  ];
 
-    const year = date.getFullYear();
-    return `${day}${suffix} ${monthShort} ${year}`;
-  };
+  const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+
+  return `${day}${suffix} ${monthShort} ${year}`;
+};
 
   const renderField = (field: any) => {
 
@@ -875,8 +887,8 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         const isPriceField = alias_name?.toLowerCase() === 'price';
         const placeholderText =
           alias_name?.toLowerCase() === 'price'
-            ? `£ Enter ${field_name}`
-            : `Enter ${field_name}`;
+            ? `£ ${t('enter')} ${field_name}`
+            : `${t('enter')} ${field_name}`;
 
 
         let rnKeyboardType:
@@ -944,8 +956,8 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         // const placeholderText = alias_name || field_name;
         const placeholderText =
           alias_name?.toLowerCase() === 'price'
-            ? `£ Enter ${field_name}`
-            : `Enter ${field_name}`;
+            ? `£ ${t('enter')} ${field_name}`
+            : `${t('enter')} ${field_name}`;
 
         let rnKeyboardType:
           | 'default'
@@ -1031,7 +1043,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             >
               {/* 🔹 Always show placeholder text here */}
               <Text allowFontScaling={false} style={styles.dropdowntext}>
-                {`Select ${field_name}`}
+                {`${t('select')} ${field_name}`}
               </Text>
 
               <Image
@@ -1082,7 +1094,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
         const handleImageSelect = () => {
           if (uploadedImages.length >= maxvalue) {
-            showToast(`${Constant.MAXIMUM} ${maxvalue} ${Constant.IMAGE_ALLOWED}`);
+            showToast(`${t(Constant.MAXIMUM)} ${maxvalue} ${t(Constant.IMAGE_ALLOWED)}`);
             return;
           }
           handleSelectImage();
@@ -1467,7 +1479,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                         source={require('../../../assets/images/calendar_icon1.png')}
                         style={{ height: 20, width: 20 }}
                       />
-                      <Text allowFontScaling={false} style={styles.dateText}>{formatDateWithDash(newdate)}</Text>
+                      <Text allowFontScaling={false} style={styles.dateText}>{formatDateWithDash(newdate,t)}</Text>
                     </View>
                   </View>
                 </View>
@@ -1497,7 +1509,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
                   {productId === 3
                     ? t('dish_details')
-                    : `${productName ? `${productName} ` : ''}${t('details')}`}
+                    : `${category ? `${category} ` : ''}${t('details')}`}
                   {/* {category === 'Food' ? 'Dish Details' : `${category ? `${category} Details` : ''}`} */}
                 </Text>
 

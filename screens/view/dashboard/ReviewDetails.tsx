@@ -42,6 +42,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import Loader from '../../utils/component/Loader';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../../localization/i18n';
 
 type ReviewDetailsProps = {
   navigation: any;
@@ -241,26 +242,39 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
     comment: string;
   };
 
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return "";
+ const formatDate = (dateString?: string, t?: any) => {
+  if (!dateString) return "";
 
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "";
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "";
 
-    const day = date.getDate();
-    let suffix = "th";
+  const day = date.getDate();
+  const year = date.getFullYear();
+  const lang = i18n.language; // detect current language
+
+  // ---------- Suffix only for English ----------
+  let suffix = "";
+  if (lang === "en") {
     if (day % 10 === 1 && day !== 11) suffix = "st";
     else if (day % 10 === 2 && day !== 12) suffix = "nd";
     else if (day % 10 === 3 && day !== 13) suffix = "rd";
-    const monthShort = date
-      .toLocaleString("default", { month: "short" }); // "Nov"
+    else suffix = "th";
+  }
 
-    const year = date.getFullYear();
-    return `${day}${suffix} ${monthShort} ${year}`;
-  };
+  // ---------- Month translation ----------
+  const monthIndex = date.getMonth(); // 0–11
+  const monthKeys = [
+    "jan","feb","mar","apr","may","jun",
+    "jul","aug","sep","oct","nov","dec"
+  ];
+
+  const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+
+  return `${day}${suffix} ${monthShort} ${year}`;
+};
 
   const renderItem = ({ item }: any) => {
-    const displayDate = formatDate(item.date);
+    const displayDate = formatDate(item.date,t);
     const displayTitle = item.featureTitle ?? 'Title';
 
     return (

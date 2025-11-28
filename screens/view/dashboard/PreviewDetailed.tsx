@@ -36,6 +36,7 @@ import MaskedView from '@react-native-masked-view/masked-view';
 import { Constant } from '../../utils/Constant';
 import { Ellipse } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../../localization/i18n';
 
 type previewDetailsProps = {
   navigation: any;
@@ -134,6 +135,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
   }, []);
 
 
+const { t } = useTranslation();
 
 
   type FormEntry = {
@@ -154,9 +156,9 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
     return entry ? entry.value : null;
   };
 
-  const titleValue = getValueByAlias(storedForm, 'title') || 'No Title';
+  const titleValue = getValueByAlias(storedForm, 'title') || t('no_des');
   //const priceValue = getValueByAlias(storedForm, 'price') || '0';
-  const descriptionvalue = getValueByAlias(storedForm, 'description') || 'No Description'
+  const descriptionvalue = getValueByAlias(storedForm, 'description') || t('no_des')
   const duration_value = getValueByAlias(storedForm, 'service_duration') || '1'
 
 
@@ -289,7 +291,6 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
     fetchFields();
   }, []);
 
-const { t } = useTranslation();
 
   type ImageField = {
     id?: string;
@@ -330,7 +331,7 @@ const { t } = useTranslation();
 
       if (!storedData) {
         console.log('⚠️ No form data found in storage');
-        showToast(Constant.DATA_NOT_SAVE, 'error');
+        showToast(t(Constant.DATA_NOT_SAVE), 'error');
         return;
       }
 
@@ -403,7 +404,7 @@ const { t } = useTranslation();
       const apiMessage = createJson?.message || createJson?.error || "Something went wrong";
       const isSuccess = createRes.status === 200 || createRes.status === 201;
 
-      showToast(apiMessage, isSuccess ? "success" : "error");
+      showToast(t(apiMessage), isSuccess ? "success" : "error");
 
       if (!(createRes.status === 200 || createRes.status === 201)) {
         navigation.reset({
@@ -422,7 +423,7 @@ const { t } = useTranslation();
       }
       const feature_id = createJson?.data?.id;
       if (!feature_id) {
-        showToast(Constant.SOMTHING_WENT_WRONG, 'error')
+        showToast(t(Constant.SOMTHING_WENT_WRONG), 'error')
         return;
       }
       for (const [param_id, images] of imageFields) {
@@ -451,11 +452,11 @@ const { t } = useTranslation();
 
           const apiMessage = uploadJson?.message || uploadJson?.error || `Failed to upload ${image.name}`;
           const isSuccess = uploadRes.status === 200 || uploadRes.status === 201;
-          showToast(apiMessage, isSuccess ? "success" : "error");
+          showToast(t(apiMessage), isSuccess ? "success" : "error");
           if (!isSuccess) return;
         }
       }
-      showToast(Constant.DATA_UPLOAD, 'success');
+      showToast(t(Constant.DATA_UPLOAD), 'success');
       setShowPopup(true);
     }
     catch (error) {
@@ -466,21 +467,33 @@ const { t } = useTranslation();
 
 
 
-  const getCurrentDate = () => {
-    const today = new Date();
+ const getCurrentDate = (t?: any) => {
+  const today = new Date();
 
-    const day = today.getDate();
-    const year = today.getFullYear();
+  const day = today.getDate();
+  const year = today.getFullYear();
+  const lang = i18n.language; // current selected language
 
-    const month = today.toLocaleString("default", { month: "short" });
+  // Month translation
+  const monthIndex = today.getMonth(); // 0–11
+  const monthKeys = [
+    "jan","feb","mar","apr","may","jun",
+    "jul","aug","sep","oct","nov","dec"
+  ];
 
-    let suffix = "th";
+  const month = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+
+  // Suffix only for English
+  let suffix = "";
+  if (lang === "en") {
     if (day % 10 === 1 && day !== 11) suffix = "st";
     else if (day % 10 === 2 && day !== 12) suffix = "nd";
     else if (day % 10 === 3 && day !== 13) suffix = "rd";
+    else suffix = "th";
+  }
 
-    return `${day}${suffix} ${month} ${year}`;
-  };
+  return `${day}${suffix} ${month} ${year}`;
+};
 
   const getInitials = (firstName = '', lastName = '') => {
     const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
@@ -769,9 +782,7 @@ const { t } = useTranslation();
                 }}
               >
                 <Text allowFontScaling={false} style={styles.productDesHeding}>
-                  {userMeta?.category?.name === 'Food'
-                    ? 'Dish Description'
-                    : `${userMeta?.category?.name ?? ''} Description`}
+                  {userMeta?.category?.id === 3 ? t('dish_description') : `${userMeta?.category?.name ?? ''} ${t('des')}`}
                 </Text>
 
                 <Text allowFontScaling={false} style={styles.productDesc}>
@@ -783,7 +794,7 @@ const { t } = useTranslation();
                     source={require('../../../assets/images/calendar_icon1.png')}
                     style={{ height: 16, width: 16 }}
                   />
-                  <Text allowFontScaling={false} style={styles.datetext}>Date Posted: {getCurrentDate()}</Text>
+                  <Text allowFontScaling={false} style={styles.datetext}>{t('date_posted')}: {getCurrentDate(t)}</Text>
                 </View>
               </View>
             </View>

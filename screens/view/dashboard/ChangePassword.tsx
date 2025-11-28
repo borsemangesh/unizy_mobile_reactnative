@@ -76,12 +76,12 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
       !new_password?.trim() ||
       !confirm_password?.trim()
     ) {
-      showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
+      showToast(t(Constant.REQUIRED_ALL_FIELDS), 'error');
       return;
     }
 
     if (current_password === new_password) {
-      showToast(Constant.NEW_VALID_PASSWORD, 'error');
+      showToast(t(Constant.NEW_VALID_PASSWORD), 'error');
       return;
     }
 
@@ -89,12 +89,12 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]|:;"'<>,.?/]).{8,}$/;
 
     if (!passwordRegex.test(new_password.trim())) {
-      showToast(Constant.PASSWORD_VALID, 'error');
+      showToast(t(Constant.PASSWORD_VALID), 'error');
       return;
     }
 
     if (new_password !== confirm_password) {
-      showToast(Constant.PASSWORDS_DO_NOT_MATCH, 'error');
+      showToast(t(Constant.PASSWORDS_DO_NOT_MATCH), 'error');
       return;
     }
 
@@ -102,7 +102,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
       const token = await AsyncStorage.getItem('userToken');
 
       if (!token) {
-        showToast(Constant.USER_NOT_AUTH, 'error');
+        showToast(t(Constant.USER_NOT_AUTH), 'error');
         return;
       }
 
@@ -130,7 +130,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
       }
 
       if (response.ok) {
-        showToast(data?.message || 'Password updated successfully', 'success');
+        showToast(t(data?.message) || 'Password updated successfully', 'success');
 
         // navigation.navigate('EditProfile');
         // navigation.goBack();
@@ -144,7 +144,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
         }, 2000); // 3 second
 
       } else {
-        showToast(data?.message || 'Failed to update password', 'error');
+        showToast(t(data?.message) || 'Failed to update password', 'error');
       }
     } catch (error) {
       console.log('Update Password Error:', error);

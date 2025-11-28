@@ -322,7 +322,7 @@ const handleBookmarkPress = async (productId: number) => {
     const data = await response.json();
     console.log('Bookmark response:', data);
     if (data?.message) {
-      showToast(data.message, data.statusCode === 200 ? 'success' : 'error');
+      showToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
     }
 
     displayListOfProduct(selectedCategory?.id ?? null, 1);

@@ -581,10 +581,6 @@
   "Available_Units":"Available Units",
   "Deactivate_Listing":"Deactivate Listing",
   "deactivate_listing":"Are you Sure do you want deactivate this listing",
-
-
-
-
   "select":"Select",
   "pick_all":"Pick all",
   "that_fit_your_listing":"that fit your listing.",
@@ -626,6 +622,30 @@
   "are_you_sure":"Are you sure you want to remove your profile picture?",
   "yes_remove":"Yes, Remove",
   "verify":"verify",
-  "tell":"'Tell other students what you liked, what could be better..."
+  "tell":"'Tell other students what you liked, what could be better...",
+  "bank_details":"Bank Details",
+  "profile_details":"Profile Details",
+  "name":"Name",
+  "email":"Email",
+  "bank_name":"Bank Name",
+  "acc_number":"Account Number",
+  "sort_code":"Sort Code",
+  "no_bank":"No bank details available. Please add your bank account.",
+  "edit_bank_details":"Edit Bank Details",
+  "add_bank_details":"Add Bank Details",
+  "account_setup_success":"Account Setup Complete",
+  "account_verified":"Your account has been successfully verified.",
+  "ok":"OK",
+  "loading":"Loading...",
+  "complete_payment_method":"Complete Payment Methods",
+  "go_payments":"Go to Payment Methods",
+  "complete_onboarding":"Please complete your Stripe onboarding process in Payment Methods to add listings.",
+  "des":"Description",
+  "no_des":"No Description",
+  "no_title":"No Title",
+  "unable_edit":"Purchased item can’t be edited.",
+  "enter":"Enter",
+  "selected":"selected"
+
 
 }

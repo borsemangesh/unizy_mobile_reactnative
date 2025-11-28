@@ -66,75 +66,75 @@ interface UserMeta {
   profile: string | null;
   student_email: string | null;
   category?: Category | null;
-  university_name?:string|null
+  university_name?: string | null
 }
 
 const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
   const [storedForm, setStoredForm] = useState<any | null>(null);
   const [categoryDetails, setCategoryDetails] =
     useState<CategoryDetailsType | null>(null);
-const [uniname, setUniname] = useState<string>(''); // initialize with empty string
-const [categoryId, setCategoryId] = useState<number | null>(null);
+  const [uniname, setUniname] = useState<string>(''); // initialize with empty string
+  const [categoryId, setCategoryId] = useState<number | null>(null);
 
 
-const [fullName, setFullName] = useState('');
-const [initials, setInitials] = useState('');
-const [profile,setProfile] = useState('');
-const [featureitem,setfeatureitem] =useState(false)
+  const [fullName, setFullName] = useState('');
+  const [initials, setInitials] = useState('');
+  const [profile, setProfile] = useState('');
+  const [featureitem, setfeatureitem] = useState(false)
 
 
 
-const { height } = Dimensions.get('window');
+  const { height } = Dimensions.get('window');
   const bottomPadding = height * 0.0005;
 
   const [slideUp1] = useState(new Animated.Value(0));
-  
-    const scrollY = useSharedValue(0);
-  
-    const scrollHandler = useAnimatedScrollHandler({
-      onScroll: event => {
-        'worklet';
-        scrollY.value = event.contentOffset.y;
-      },
-    });
-  
-    const animatedBlurStyle = useAnimatedStyle(() => {
+
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: event => {
       'worklet';
-      const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
-      return { opacity };
-    });
-  
-    const animatedButtonStyle = useAnimatedStyle(() => {
-      'worklet';
-      const borderColor = interpolateColor(
-        scrollY.value,
-        [0, 300],
-        ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
-      );
-      const redOpacity = interpolate(scrollY.value, [0, 100], [0, 0.15], 'clamp');
-      return {
-        borderColor,
-        backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
-      };
-    });
-  
-    const animatedIconStyle = useAnimatedStyle(() => {
-      'worklet';
-      const opacity = interpolate(scrollY.value, [0, 100], [0.8, 1], 'clamp');
-      const tintColor = interpolateColor(
-        scrollY.value,
-        [0, 150],
-        ['#FFFFFF', '#002050'],
-      );
-      return {
-        opacity,
-        tintColor,
-      };
-    });
-  
-    const blurAmount = useDerivedValue(() =>
-      interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  const animatedBlurStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+    return { opacity };
+  });
+
+  const animatedButtonStyle = useAnimatedStyle(() => {
+    'worklet';
+    const borderColor = interpolateColor(
+      scrollY.value,
+      [0, 300],
+      ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
     );
+    const redOpacity = interpolate(scrollY.value, [0, 100], [0, 0.15], 'clamp');
+    return {
+      borderColor,
+      backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+    };
+  });
+
+  const animatedIconStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 100], [0.8, 1], 'clamp');
+    const tintColor = interpolateColor(
+      scrollY.value,
+      [0, 150],
+      ['#FFFFFF', '#002050'],
+    );
+    return {
+      opacity,
+      tintColor,
+    };
+  });
+
+  const blurAmount = useDerivedValue(() =>
+    interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+  );
 
   useEffect(() => {
     const fetchStoredData = async () => {
@@ -161,15 +161,15 @@ const { height } = Dimensions.get('window');
           console.log('Stored User Meta:', parsedUserMeta);
 
           setUniname(parsedUserMeta?.university_name ?? '');
-          setCategoryId(parsedUserMeta?.category?.id ?? null); 
+          setCategoryId(parsedUserMeta?.category?.id ?? null);
           setProfile(parsedUserMeta?.profile ?? '')
 
-          const full = `${parsedUserMeta?.firstname } ${parsedUserMeta?.lastname}`.trim();
+          const full = `${parsedUserMeta?.firstname} ${parsedUserMeta?.lastname}`.trim();
           setFullName(full);
 
-        // Create initials (first letter of each, uppercased)
-        const init = `${parsedUserMeta?.firstname?.charAt(0) ?? ''}${parsedUserMeta?.lastname ?.charAt(0) ?? ''}`.toUpperCase();
-        setInitials(init);
+          // Create initials (first letter of each, uppercased)
+          const init = `${parsedUserMeta?.firstname?.charAt(0) ?? ''}${parsedUserMeta?.lastname?.charAt(0) ?? ''}`.toUpperCase();
+          setInitials(init);
 
 
           if (parsedUserMeta.category) {
@@ -197,13 +197,13 @@ const { height } = Dimensions.get('window');
   }, []);
 
   const { t } = useTranslation();
-  
+
   type FormEntry = {
     value: any;
     alias_name: string | null;
   };
 
-  
+
   const getValueByAlias = (
     formData: Record<string, FormEntry> | null,
     alias: string,
@@ -261,24 +261,7 @@ const { height } = Dimensions.get('window');
       resizeMode="cover"
     >
       <View style={styles.fullScreenContainer}>
-        
-         {/* <View style={styles.header}>
-                      <View style={styles.headerRow}>
-                    <TouchableOpacity onPress={() => {
-                     navigation.goBack();
-                  }}>          
-                    <View style={styles.backIconRow}>
-                      <Image
-                         source={require('../../../assets/images/back.png')}
-                          style={{ height: 24, width: 24 }}/>
-                       </View>
-                     </TouchableOpacity>
-                   <Text allowFontScaling={false} style={styles.unizyText}>Preview Thumbnail</Text>
-                     <View style={{ width: 48 }} />
-                     </View>
-                   </View> */}
-
-<StatusBar
+        <StatusBar
           translucent
           backgroundColor="transparent"
           barStyle="light-content"
@@ -325,7 +308,7 @@ const { height } = Dimensions.get('window');
         {/* Header Content */}
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
-             onPress={() => { navigation.goBack();}}
+            onPress={() => { navigation.goBack(); }}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
@@ -380,31 +363,23 @@ const { height } = Dimensions.get('window');
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-          {t('preview_thumbnail')}
+            {t('preview_thumbnail')}
           </Text>
         </View>
 
-         {/* <ScrollView
-            style={{ flex: 1 }}
-              contentContainerStyle={{ flexGrow: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-              paddingBottom: 180, }}
-              showsVerticalScrollIndicator={false} > */}
 
-<AnimatedReanimated.ScrollView 
-                    scrollEventThrottle={16}
-                    onScroll={scrollHandler}
-                    contentContainerStyle={[
-                      styles.scrollContainer,
-                      { paddingBottom:(Platform.OS === 'ios'? 170 :  height * 0.1) }, // 0.05% of screen height
-                    ]}>
-            <View style={styles.productCarddisplay}>
+        <AnimatedReanimated.ScrollView
+          scrollEventThrottle={16}
+          onScroll={scrollHandler}
+          contentContainerStyle={[
+            styles.scrollContainer,
+            { paddingBottom: (Platform.OS === 'ios' ? 170 : height * 0.1) },
+          ]}>
+          <View style={styles.productCarddisplay}>
             {storedForm ? (
               <>
                 {categoryId === 2 || categoryId === 5 ? (
                   (!!storedForm[13]?.value === true || featureitem) ? (
-                    // 🔹 CASE 1A: Category 2 or 5, Featured = true
                     <>
                       <Text
                         allowFontScaling={false}
@@ -421,36 +396,36 @@ const { height } = Dimensions.get('window');
                         productImage={{ uri: profile }}
                         isBookmarked={false}
                       />
-          
+
                       <Text
                         allowFontScaling={false}
-                        style={[styles.newtext1, { paddingBottom: (Platform.OS === 'ios'? 0: 6) }]}
+                        style={[styles.newtext1, { paddingBottom: (Platform.OS === 'ios' ? 0 : 6) }]}
                       >
                         {t('preview_regular_listing')}
                       </Text>
                       <SeperateTutionCard
-                          tag={uniname}
-                          infoTitle={titleValue}
-                          rating={storedForm[12]?.value || '4.5'}
-                          inforTitlePrice={`£${commissionPrice}`}
-                          productImage={{ uri: profile }}
-                          bookmark={false}
-                          showInitials={!profile || profile === null || profile.trim() === ''}
-                        isfeature={true} initialsName={initials}            />
+                        tag={uniname}
+                        infoTitle={titleValue}
+                        rating={storedForm[12]?.value || '4.5'}
+                        inforTitlePrice={`£${commissionPrice}`}
+                        productImage={{ uri: profile }}
+                        bookmark={false}
+                        showInitials={!profile || profile === null || profile.trim() === ''}
+                        isfeature={true} initialsName={initials} />
                     </>
                   ) : (
                     <SeperateTutionCard
                       tag={uniname}
-                          infoTitle={titleValue}
-                          rating={storedForm[12]?.value || '4.5'}
-                          inforTitlePrice={`£${commissionPrice}`}
-                          productImage={profile ? { uri: profile } : undefined}
-                          bookmark={false}
-                          showInitials={!profile || profile === null || profile.trim() === ''}
-                          isfeature={false} initialsName={initials} 
+                      infoTitle={titleValue}
+                      rating={storedForm[12]?.value || '4.5'}
+                      inforTitlePrice={`£${commissionPrice}`}
+                      productImage={profile ? { uri: profile } : undefined}
+                      bookmark={false}
+                      showInitials={!profile || profile === null || profile.trim() === ''}
+                      isfeature={false} initialsName={initials}
                     />
                   )
-                ) :  (!!storedForm[13]?.value === true || featureitem) ? (
+                ) : (!!storedForm[13]?.value === true || featureitem) ? (
                   <>
                     <Text
                       allowFontScaling={false}
@@ -473,7 +448,7 @@ const { height } = Dimensions.get('window');
                       allowFontScaling={false}
                       style={[styles.newtext1, { paddingBottom: 6 }]}
                     >
-                     {t('preview_regular_listing')}
+                      {t('preview_regular_listing')}
                     </Text>
                     <NewFeatureCard
                       tag={uniname}
@@ -506,58 +481,46 @@ const { height } = Dimensions.get('window');
                 allowFontScaling={false}
                 style={{ color: '#fff', textAlign: 'center' }}
               >
-                Loading...
+                {t('loading')}
               </Text>
             )}
           </View>
-          </AnimatedReanimated.ScrollView >
-          
+        </AnimatedReanimated.ScrollView >
 
-         
-          {/* <TouchableOpacity
-            style={styles.nextButton}
-            onPress={() => {
-              navigation.navigate('EditPreviewDetailed');
-            }}
-          >
-            <Text allowFontScaling={false} style={styles.nextText}>
-              Next
-            </Text>
-          </TouchableOpacity> */}
-           <View style={styles.bottomFixed}>
+        <View style={styles.bottomFixed}>
 
-            <View style={styles.textbg}>
-             
-              <Image
-                source={require('../../../assets/images/info_icon.png')}
-                style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
-              />
-              <View style={{ flex: 1 }}>
+          <View style={styles.textbg}>
+
+            <Image
+              source={require('../../../assets/images/info_icon.png')}
+              style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+            />
+            <View style={{ flex: 1 }}>
+              <Text allowFontScaling={false} style={styles.importantText1}>
+                {t('important')}
+              </Text>
+              <Text allowFontScaling={false} style={styles.importantText}>
+                {t('a')}
                 <Text allowFontScaling={false} style={styles.importantText1}>
-                   {t('important')}
+                  {' '}
+                  {categoryDetails?.commission ?? '0'}%
+                </Text>{' '}
+                {t('commission_or_maximum')}
+                <Text allowFontScaling={false} style={styles.importantText1}>
+                  {' '}
+                  £{categoryDetails?.max_cappund ?? '0'}
                 </Text>
-                <Text allowFontScaling={false} style={styles.importantText}>
-                  {t('a')}
-                  <Text allowFontScaling={false} style={styles.importantText1}>
-                    {' '}
-                    {categoryDetails?.commission ?? '0'}%
-                  </Text>{' '}
-                  {t('commission_or_maximum')}
-                  <Text allowFontScaling={false} style={styles.importantText1}>
-                    {' '}
-                    £{categoryDetails?.max_cappund ?? '0'}
-                  </Text>
-                  {t('whichever_lower')}
-                </Text>
-              </View>
+                {t('whichever_lower')}
+              </Text>
             </View>
-            
-        <Button
-          title={t('next')}
-          onPress={() => navigation.navigate('EditPreviewDetailed')}
-        />
-      </View>
+          </View>
+
+          <Button
+            title={t('next')}
+            onPress={() => navigation.navigate('EditPreviewDetailed')}
+          />
         </View>
+      </View>
       <NewCustomToastContainer />
     </ImageBackground>
   );
@@ -593,7 +556,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '8.5%': 60,
+    top: Platform.OS === 'ios' ? '8.5%' : 60,
     width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -604,7 +567,7 @@ const styles = StyleSheet.create({
     pointerEvents: 'box-none',
 
     marginTop: (Platform.OS === 'ios' ? 0 : 0),
-    marginLeft: 1 
+    marginLeft: 1
   },
   scrollContainer: {
     paddingHorizontal: 16,
@@ -614,70 +577,70 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-    newtext:{
-     color: '#fff',
+  newtext: {
+    color: '#fff',
     fontSize: 16,
     marginHorizontal: 6,
-    marginVertical:16,
+    marginVertical: 16,
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600,
   },
- newtext1:{
-     color: '#fff',
+  newtext1: {
+    color: '#fff',
     fontSize: 16,
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600,
     marginHorizontal: 6,
-    marginTop:24,
-    marginBottom:16
+    marginTop: 24,
+    marginBottom: 16
 
   },
- textbg:{
-    overflow:'hidden',
+  textbg: {
+    overflow: 'hidden',
 
-  alignContent:'center',
-  alignSelf:'center',
-  width:'90%',
- flexDirection: 'row',
-          alignItems: 'flex-start',
-backgroundColor:'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-  padding: 6,
-  borderWidth:0.5,
-  borderEndEndRadius: 12,
-  borderStartEndRadius: 12,
-  borderTopLeftRadius: 12,
-  borderTopRightRadius: 12,
-  borderBottomStartRadius: 12,
-  borderBlockStartColor: '#ffffff31',
-  borderBlockColor: '#ffffff31',
-  borderTopColor: '#ffffff31',
-  borderBottomColor: '#ffffff31',
-  borderLeftColor: '#ffffff31',
-  borderRightColor: '#ffffff31',
-  marginBottom:80,
+    alignContent: 'center',
+    alignSelf: 'center',
+    width: '90%',
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+    padding: 6,
+    borderWidth: 0.5,
+    borderEndEndRadius: 12,
+    borderStartEndRadius: 12,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    borderBottomStartRadius: 12,
+    borderBlockStartColor: '#ffffff31',
+    borderBlockColor: '#ffffff31',
+    borderTopColor: '#ffffff31',
+    borderBottomColor: '#ffffff31',
+    borderLeftColor: '#ffffff31',
+    borderRightColor: '#ffffff31',
+    marginBottom: 80,
 
- 
-            
+
+
   },
 
   bottomFixed: {
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  right: 0,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
 
-  paddingVertical: 10,
-  //paddingHorizontal: 16,
-  //borderTopWidth: 0.5,
- // borderTopColor: '#444',
-},
- header: {
+    paddingVertical: 10,
+    //paddingHorizontal: 16,
+    //borderTopWidth: 0.5,
+    // borderTopColor: '#444',
+  },
+  header: {
     paddingTop: Platform.OS === 'ios' ? 50 : 50,
     paddingBottom: 12,
     paddingHorizontal: 16,
   },
-   fullScreenContainer: {
+  fullScreenContainer: {
     flex: 1,
     //marginTop: 30,
   },
@@ -696,14 +659,14 @@ backgroundColor:'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
     //boxShadow: 'rgba(255, 255, 255, 0.12)  inset -1px 0px 5px 1px inset ',
 
-   boxShadow:
+    boxShadow:
       '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
     height: 48,
     width: 48,
   },
- unizyText: {
+  unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
     flex: 1,
@@ -712,7 +675,7 @@ backgroundColor:'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 
     fontFamily: 'Urbanist-SemiBold',
   },
 
- 
+
   importantText: {
     color: '#ccc',
     fontSize: 12,

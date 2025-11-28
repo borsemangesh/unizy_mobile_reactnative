@@ -446,7 +446,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-            Bank Details
+            {t('bank_details')}
           </Text>
         </View>
 
@@ -499,7 +499,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                     allowFontScaling={false}
                     style={styles.sellerHeaderlable}
                   >
-                    Profile Details
+                    {t('profile_details')}
                   </Text>
                 </View>
 
@@ -507,7 +507,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
 
                 <View style={styles.listingtyperow}>
                   <Text allowFontScaling={false} style={styles.lebleHeader}>
-                    Name:
+                    {t('name')}:
                   </Text>
                   <Text allowFontScaling={false} style={styles.status}>
                     {(() => {
@@ -522,7 +522,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
 
                 <View style={styles.listingtyperow}>
                   <Text allowFontScaling={false} style={styles.lebleHeader}>
-                    Email:
+                    {t('email')}:
                   </Text>
                   <Text allowFontScaling={false} style={styles.status}>
                     {(() => {
@@ -570,7 +570,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                             allowFontScaling={false}
                             style={styles.sellerHeaderlable}
                           >
-                            Bank Details
+                            {t('bank_details')}
                           </Text>
                         </View>
 
@@ -581,7 +581,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                             allowFontScaling={false}
                             style={styles.lebleHeader}
                           >
-                            Bank Name:
+                            {t('bank_name')}:
                           </Text>
                           <Text allowFontScaling={false} style={styles.status}>
                             {bank.bank_name || 'N/A'}
@@ -593,7 +593,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                             allowFontScaling={false}
                             style={styles.lebleHeader}
                           >
-                            Account Number:
+                            {t('acc_number')}:
                           </Text>
                           <Text allowFontScaling={false} style={styles.status}>
                             {bank.last4 ? maskAccountNumber(bank.last4) : 'N/A'}
@@ -605,7 +605,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                             allowFontScaling={false}
                             style={styles.lebleHeader}
                           >
-                            Sort Code:
+                           {t('sort_code')}:
                           </Text>
                           <Text allowFontScaling={false} style={styles.status}>
                             {bank.routing_number || 'N/A'}
@@ -651,7 +651,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                             allowFontScaling={false}
                             style={styles.sellerHeaderlable}
                           >
-                            Bank Details
+                            {t('bank_details')}
                           </Text>
                         </View>
 
@@ -662,7 +662,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                             allowFontScaling={false}
                             style={styles.lebleHeader}
                           >
-                            Bank Name:
+                            {t('bank_name')}:
                           </Text>
                           <Text allowFontScaling={false} style={styles.status}>
                             {bank.bank_name || 'N/A'}
@@ -674,7 +674,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                             allowFontScaling={false}
                             style={styles.lebleHeader}
                           >
-                            Account Number:
+                            {t('acc_number')}:
                           </Text>
                           <Text allowFontScaling={false} style={styles.status}>
                             {bank.last4 ? maskAccountNumber(bank.last4) : 'N/A'}
@@ -686,7 +686,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                             allowFontScaling={false}
                             style={styles.lebleHeader}
                           >
-                            Sort Code:
+                            {t('sort_code')}:
                           </Text>
                           <Text allowFontScaling={false} style={styles.status}>
                             {bank.routing_number || 'N/A'}
@@ -729,7 +729,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                         allowFontScaling={false}
                         style={styles.sellerHeaderlable}
                       >
-                        Bank Details
+                        {t('bank_details')}
                       </Text>
                     </View>
 
@@ -737,7 +737,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
 
                     <View style={styles.listingtyperow}>
                       <Text allowFontScaling={false} style={styles.status}>
-                        No bank details available. Please add your bank account.
+                        {t('no_bank')}
                       </Text>
                     </View>
                   </SquircleView>
@@ -753,10 +753,10 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
           <Button
             title={
               buttonLoading
-                ? 'Loading...'
+                ? t('laoding')
                 : data?.stripeAccount?.isboardcomplete
-                ? 'Edit Bank Details'
-                : 'Add Bank Details'
+                ? t('edit_bank_details')
+                : t('add_bank_details')
             }
             onPress={buttonLoading ? () => {} : handleAddBank}
           />
@@ -793,10 +793,10 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
               resizeMode="contain"
             />
             <Text allowFontScaling={false} style={styles.mainheader}>
-              Account Setup Complete!
+              {t('account_setup_success')}!
             </Text>
             <Text allowFontScaling={false} style={styles.subheader1}>
-              Your account has been successfully verified.
+              {t('account_verified')}
             </Text>
             <TouchableOpacity
               style={styles.loginButton}
@@ -810,7 +810,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
               }}
             >
               <Text allowFontScaling={false} style={styles.loginText}>
-                OK
+                {t('ok')}
               </Text>
             </TouchableOpacity>
           </View>

@@ -20,9 +20,8 @@ import {
   FlatList,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { showToast } from '../../utils/toast';
 import { MAIN_URL } from '../../utils/APIConstant';
-import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
+import { NewCustomToastContainer,showToast } from '../../utils/component/NewCustomToastManager';
 import { useFocusEffect } from '@react-navigation/native';
 import { BlurView } from '@react-native-community/blur';
 import DeviceInfo from 'react-native-device-info';
@@ -353,7 +352,7 @@ return (
                 ? `${userMeta.firstname ?? ''} ${
                     userMeta.lastname ?? ''
                   }`.trim()
-                : 'Loading...'}
+                : t('loading')}
             </Text>
           </View>
 
@@ -503,13 +502,13 @@ return (
                           name: 'SinglePage',
                           params: {
                             resetToLogin: true,
-                            logoutMessage: Constant.USER_LOGOUT,
+                            logoutMessage: t(Constant.USER_LOGOUT),
                           },
                         },
                       ],
                     });
                   } else {
-                    showToast(Constant.LOGOUT_FAIL,'error');
+                    showToast(t(Constant.LOGOUT_FAIL),'error');
                   }
 
                 } catch (error) {

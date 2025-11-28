@@ -39,6 +39,7 @@ import { NewCustomToastContainer } from '../../utils/component/NewCustomToastMan
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import Loader from '../../utils/component/Loader';
+import i18n from '../../../localization/i18n';
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 type Feature = {
@@ -285,7 +286,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
 
   const renderItem = useCallback(
     ({ item, index }: { item: Feature; index: number }) => {
-      const displayDate = formatDate(item.created_at);
+      const displayDate = formatDate(item.created_at,t);
       const displayTitle =
         item.title && item.title.trim() !== '' ? item.title : 'Title';
       const displayPrice = item.price != null ? item.price : 0;
@@ -307,7 +308,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
             inforTitlePrice={`£ ${displayPrice}`}
             rating={displayDate}
             productImage={productImage}
-            topRightText={item.isactive ? 'Active' : 'Inactive'}
+            topRightText={item.isactive ? t('active') : t('inactive')}
             isfeature={item.isfeatured}
             navigation={navigation}
             shareid={item.id}
@@ -325,24 +326,36 @@ const MyListing = ({ navigation }: MyListingProps) => {
     [categories, navigation],
   );
 
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return "";
+const formatDate = (dateString?: string, t?: any) => {
+  if (!dateString) return "";
 
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "";
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "";
 
-    const day = date.getDate();
+  const day = date.getDate();
+  const year = date.getFullYear();
+  const lang = i18n.language; // detect current language
 
-    let suffix = "th";
+  // ---------- Suffix only for English ----------
+  let suffix = "";
+  if (lang === "en") {
     if (day % 10 === 1 && day !== 11) suffix = "st";
     else if (day % 10 === 2 && day !== 12) suffix = "nd";
     else if (day % 10 === 3 && day !== 13) suffix = "rd";
-    const monthShort = date
-      .toLocaleString("default", { month: "short" }); // "Nov"
+    else suffix = "th";
+  }
 
-    const year = date.getFullYear();
-    return `${day}${suffix} ${monthShort} ${year}`;
-  };
+  // ---------- Month translation ----------
+  const monthIndex = date.getMonth(); // 0–11
+  const monthKeys = [
+    "jan","feb","mar","apr","may","jun",
+    "jul","aug","sep","oct","nov","dec"
+  ];
+
+  const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+
+  return `${day}${suffix} ${monthShort} ${year}`;
+};
   const isEmpty = featureList.length === 0;
 
   return (

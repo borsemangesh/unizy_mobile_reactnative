@@ -323,7 +323,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
 
       const data = await response.json();
       console.log('Bookmark response:', data);
-      showToast(data.message, data.statusCode === 200 ? 'success' : 'error');
+      showToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
 
     } catch (error) {
       console.error('Bookmark error:', error);

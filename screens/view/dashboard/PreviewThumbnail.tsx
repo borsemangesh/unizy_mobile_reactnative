@@ -488,7 +488,7 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                 allowFontScaling={false}
                 style={{ color: '#fff', textAlign: 'center' }}
               >
-                Loading...
+                {t('loading')}
               </Text>
             )}
           </View>
