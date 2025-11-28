@@ -159,7 +159,7 @@ const { t } = useTranslation();
               <TextInput
               allowFontScaling={false}
                 style={[styles.personalEmailID_TextInput, { textAlignVertical: 'top', paddingTop: 10 }]}
-                placeholder={'Tell other students what you liked, what could be better...'}
+                placeholder={t('tell')}
                 placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
                 multiline={true}
                 value={username}
@@ -212,7 +212,7 @@ const { t } = useTranslation();
                 fontWeight: '600',
                 letterSpacing: -0.4,
                 lineHeight: 28,
-              }}>Review Submitted Successfully!</Text>
+              }}>{t('review_submitted_success')}!</Text>
               
  
               <TouchableOpacity
@@ -234,7 +234,7 @@ const { t } = useTranslation();
                   setShowPopup1(false);
                 }}
               >
-                <Text allowFontScaling={false} style={styles.loginText}>Return to Home</Text>
+                <Text allowFontScaling={false} style={styles.loginText}>{t('return_home')}</Text>
               </TouchableOpacity>
 
                <TouchableOpacity
@@ -246,7 +246,7 @@ const { t } = useTranslation();
                       
                     }}
                     >
-                <Text allowFontScaling={false} style={styles.loginText1}>Return to My Reviews</Text>
+                <Text allowFontScaling={false} style={styles.loginText1}>{t('return_my_reviews')}</Text>
               </TouchableOpacity>
             </View>
           </BlurView>

@@ -591,7 +591,7 @@ const MyOrders = ({ navigation }: MyOrdersProps) => {
                     resizeMode="contain"
                   />
                   <Text allowFontScaling={false} style={styles.emptyText}>
-                    No Orders Found
+                    {t('no_orders_found')}
                   </Text>
                 </View>
               </View>

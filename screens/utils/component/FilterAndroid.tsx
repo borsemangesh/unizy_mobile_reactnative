@@ -446,11 +446,11 @@ const handleApply = () => {
                     alignItems: 'center',
                     paddingTop:16
                   }}>
-                 <Text allowFontScaling={false} style={styles.modelTextHeader}>Filters</Text>
+                 <Text allowFontScaling={false} style={styles.modelTextHeader}>{t('filters')}</Text>
                   <TouchableOpacity
                     onPress={handleClearFilters}
                   >
-                    <Text allowFontScaling={false} style={styles.clearAll}>Clear all</Text>
+                    <Text allowFontScaling={false} style={styles.clearAll}>{t('clear_all')}</Text>
                   </TouchableOpacity>
                   </View>
                 </View>

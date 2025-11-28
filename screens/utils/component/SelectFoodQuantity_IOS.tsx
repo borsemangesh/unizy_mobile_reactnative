@@ -211,7 +211,7 @@ const handleApply = async () => {
                                 fontFamily: 'Urbanist-Medium',
                               }}
                             >
-                              Available Units:{' '}
+                              {t('Available_Units')}:{' '}
                               <Text
                                 style={{
                                   color: '#fff',
@@ -293,7 +293,7 @@ const handleApply = async () => {
 
               <PayButton
                 amount={Number(totalPrice.toFixed(2))}
-                label={'Pay'}
+                label={t('pay')}
                 onPress={handleApply}
               />
             </View>

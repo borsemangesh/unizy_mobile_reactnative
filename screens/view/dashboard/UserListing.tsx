@@ -518,7 +518,7 @@ const handleBookmarkPress = async (productId: number) => {
                  </TouchableOpacity>
         
                  <Text allowFontScaling={false} style={styles.unizyText}>
-                   {members.firstname} Listings
+                   {members.firstname} {t('listings')}
                  </Text>
                </View>
 

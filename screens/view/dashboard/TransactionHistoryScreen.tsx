@@ -68,7 +68,7 @@ export default function TransactionHistoryScreen(
   const screenWidth = Dimensions.get('window').width;
   const tabsname = ['Purchases', 'Sales', 'Charges'];
 
- const { t } = useTranslation();
+  const { t } = useTranslation();
 
   const tabWidth = (screenWidth * 0.9) / tabsname.length;
 
@@ -87,7 +87,7 @@ export default function TransactionHistoryScreen(
   const [isFilterVisible, setFilterVisible] = useState(false);
   const [SalesImageUrl, setSalesImageUrl] = useState('');
   const { height } = Dimensions.get('window');
-  
+
 
   useEffect(() => {
     if (issales) {
@@ -436,7 +436,7 @@ export default function TransactionHistoryScreen(
                 resizeMode="contain"
               />
               <Text allowFontScaling={false} style={styles.emptyText}>
-                No Transactions Found
+                {t('no_transactions_found')}
               </Text>
             </View>
           </View>
@@ -488,11 +488,11 @@ export default function TransactionHistoryScreen(
                                 >
                                   {item?.category_id === 3
                                     ?
-                                    `${item?.purchased_quantity ?? 1} ${(item?.purchased_quantity ?? 1) > 1 ? 'units' : 'unit'
+                                    `${item?.purchased_quantity ?? 1} ${(item?.purchased_quantity ?? 1) > 1 ? t('units') : t('unit')
                                     }`
                                     : (item?.category_id === 2 || item?.category_id === 5)
                                       ?
-                                      `${item?.hours ?? 1} ${(item?.hours ?? 1) > 1 ? 'hours' : 'hour'
+                                      `${item?.hours ?? 1} ${(item?.hours ?? 1) > 1 ? t('hours') : t('hour')
                                       }`
                                       : ''
                                   }
@@ -542,7 +542,7 @@ export default function TransactionHistoryScreen(
 
                   <View style={styles.cardconstinerdivider} />
                   <Text style={styles.sellerText}>
-                    Purchased from{'  '}
+                    {t('purchased_from')}{'  '}
                     <Text style={styles.sellerTextName}>
                       {item.seller} ({item.university})
                     </Text>
@@ -580,7 +580,7 @@ export default function TransactionHistoryScreen(
                     allowFontScaling={false}
                     style={styles.Overall_Earnings_value}
                   >
-                    Overall Earnings
+                    {t('overall_earnings')}
                   </Text>
 
                   <Text
@@ -641,7 +641,7 @@ export default function TransactionHistoryScreen(
                           allowFontScaling={false}
                           style={styles.allDetails}
                         >
-                          All Details
+                          {t('all_details')}
                         </Text>
                       </TouchableOpacity>
                     </View>
@@ -662,7 +662,7 @@ export default function TransactionHistoryScreen(
                           fontSize: 12,
                         }}
                       >
-                        Total Order: {item.total_orders}
+                       {t('total_order')}: {item.total_orders}
                       </Text>
                       <Text
                         allowFontScaling={false}
@@ -672,7 +672,7 @@ export default function TransactionHistoryScreen(
                           fontSize: 12,
                         }}
                       >
-                        Total Earnings: {item.total_earning}
+                        {t('total_earnings')}: {item.total_earning}
                       </Text>
                     </View>
                   </View>
@@ -735,13 +735,13 @@ export default function TransactionHistoryScreen(
                           textDecorationLine: 'underline',
                         }}
                       >
-                        View Listing
+                        {t('view_listing')}
                       </Text>
                     </TouchableOpacity>
                   </View>
                   <View style={styles.cardconstinerdivider} />
                   <Text style={styles.viewListing}>
-                    Featured Listing Fee: {item.price}
+                    {t('featured_listing_fee')}: {item.price}
                   </Text>
                 </View>
               ))}

@@ -4,6 +4,7 @@ import { FlatList, Image, ImageBackground, Platform, ScrollView, StyleSheet, Tex
 import LinearGradient from 'react-native-linear-gradient';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { RouteProp, useRoute } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImage = require('../../../assets/images/user.jpg');
@@ -35,6 +36,7 @@ const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
     const { members } =   route.params;
     const [messageText, setMessageText] = useState('');
     const [userList, setUserList] = useState<any>(null);
+    const { t } = useTranslation();
 
 
     useEffect(() => {
@@ -126,12 +128,12 @@ const renderItem = ({ item }: any) => {
  const cardData = [
   {
     id: '1',
-    title: `${userList?.firstname || ''} Reviews`,
+    title: `${userList?.firstname || ''} ${t('reviews')}`,
     image: require('../../../assets/images/ok.png'),
   },
   {
     id: '2',
-    title: `${userList?.firstname || ''} Listings`,
+    title: `${userList?.firstname || ''} ${t('listings')}`,
     image: require('../../../assets/images/mylistingicon.png'),
   },
 ];
@@ -151,7 +153,7 @@ return (
                 />
               </View>
             </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>Contact Info</Text>
+            <Text allowFontScaling={false} style={styles.unizyText}>{t('contact_info')}</Text>
             <View style={{ width: 48 }} />
           </View>
         </View>

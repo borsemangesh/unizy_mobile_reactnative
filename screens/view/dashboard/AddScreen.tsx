@@ -1254,15 +1254,12 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             options={multiSelectOptions}
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
-            title={`Select ${multiSelectModal?.fieldLabel || 'Category'}`}
+            title={`${t('select')} ${multiSelectModal?.fieldLabel || 'Category'}`}
             subtitle={
-              multiSelectModal?.ismultilple
-                ? `Pick all ${pluralizeLabel(
-                  multiSelectModal?.fieldLabel || 'Category',
-                )} that fit your listing.`
-                : `Select the ${multiSelectModal?.fieldLabel || 'category'
-                } that best describes your listing.`
-            }
+            multiSelectModal?.ismultilple
+              ? `${t('pick_all')} ${multiSelectModal?.fieldLabel || 'categories'} ${t('best_describe')}`
+              : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'} ${t('that_fit_your_listing')}`
+          }
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>
               setMultiSelectModal(prev => ({ ...prev, visible: false }))
@@ -1281,15 +1278,12 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             options={multiSelectOptions}
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
-            title={`Select ${multiSelectModal?.fieldLabel || 'Category'}`}
+           title={`${t('select')} ${multiSelectModal?.fieldLabel || 'Category'}`}
             subtitle={
-              multiSelectModal?.ismultilple
-                ? `Pick all ${pluralizeLabel(
-                  multiSelectModal?.fieldLabel || 'Category',
-                )} that fit your listing.`
-                : `Select the ${multiSelectModal?.fieldLabel || 'category'
-                } that best describes your listing.`
-            }
+            multiSelectModal?.ismultilple
+              ? `${t('pick_all')} ${multiSelectModal?.fieldLabel || 'categories'} ${t('best_describe')}`
+              : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'} ${t('that_fit_your_listing')}`
+          }
             //subtitle={`Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your item.`}
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>

@@ -183,9 +183,7 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
                     styles.personalEmailID_TextInput,
                     { textAlignVertical: 'top', paddingTop: 10 },
                   ]}
-                  placeholder={
-                    'Tell other students what you liked, what could be better...'
-                  }
+                  placeholder={t('tell')}
                   placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
                   multiline={true}
                   value={username}
@@ -242,7 +240,7 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
                       lineHeight: 28,
                     }}
                   >
-                    Review Submitted Successfully!
+                    {t('review_submitted_success')}!
                   </Text>
 
                   <TouchableOpacity
@@ -256,7 +254,7 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText}>
-                      Return to Home
+                      {t('return_home')}
                     </Text>
                   </TouchableOpacity>
 
@@ -269,7 +267,7 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText1}>
-                      Return to Reviews
+                      {t('return_reviews')}
                     </Text>
                   </TouchableOpacity>
                 </View>

@@ -2368,9 +2368,7 @@ useEffect(() => {
                                     allowFontScaling={false}
                                     style={Styles.termsText1}
                                   >
-                                    A password reset link has been sent to your
-                                    personal email. Please check your inbox (or
-                                    spam folder) to continue.
+                                   {t('password_reset_link_sent')}
                                   </Text>
 
                                   <TouchableOpacity
@@ -2385,7 +2383,7 @@ useEffect(() => {
                                       allowFontScaling={false}
                                       style={Styles.loginText}
                                     >
-                                      Back to Login
+                                      {t('back_to_login')}
                                     </Text>
                                   </TouchableOpacity>
                                 </View>

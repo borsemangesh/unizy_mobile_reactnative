@@ -133,7 +133,7 @@ const SalesAllDetailsDropdown = ({
     // If there's no sales data, show a message
     if (salesData.length === 0) {
       return (
-        <Text style={{ color: 'white', textAlign: 'center', padding: 20 }}>No sales data available</Text>
+        <Text style={{ color: 'white', textAlign: 'center', padding: 20 }}> {t('no_sales_data')}</Text>
       );
     }
 
@@ -284,7 +284,7 @@ const SalesAllDetailsDropdown = ({
   ))
 ) : (
   <Text style={{ color: 'white', textAlign: 'center', padding: 20 }}>
-    No sales data available
+     {t('no_sales_data')}
   </Text>
 )}
 
@@ -368,7 +368,7 @@ const SalesAllDetailsDropdown = ({
                       color: '#FFFFFF',
                     }}
                   >
-                    Total Orders: {salesData.length}
+                    {t('total_order')}: {salesData.length}
                   </Text>
                   <Text
                     style={{
@@ -378,8 +378,7 @@ const SalesAllDetailsDropdown = ({
                       color: '#FFFFFF',
                     }}
                   >
-                    {/* Total Earnings: ${salesData.reduce((acc, buyer) => acc + parseFloat(buyer.amount), 0).toFixed(2)} */}
-                    Total Earnings: £ {totalEarnings}
+                    {t('total_earnings')}: £ {totalEarnings}
 
                   </Text>
                 </View>
@@ -392,7 +391,7 @@ const SalesAllDetailsDropdown = ({
                   showsVerticalScrollIndicator={false}
                 >
                   <Text allowFontScaling={false} style={styles.filterHeadTitle}>
-                    Sold To
+                     {t('sold_to')}
                   </Text>
                   {renderRightContent()}
                 </ScrollView>

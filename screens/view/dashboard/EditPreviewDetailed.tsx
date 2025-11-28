@@ -21,7 +21,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CommonActions } from '@react-navigation/native';
 import Button from '../../utils/component/Button';
-import { NewCustomToastContainer ,showToast} from '../../utils/component/NewCustomToastManager';
+import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
 
 import AnimatedReanimated, {
   useSharedValue,
@@ -34,6 +34,7 @@ import AnimatedReanimated, {
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { Constant } from '../../utils/Constant';
+import { useTranslation } from 'react-i18next';
 
 type previewDetailsProps = {
   navigation: any;
@@ -53,14 +54,15 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const [showPopup, setShowPopup] = useState(false);
   const closePopup = () => setShowPopup(false);
   const scrollY1 = new Animated.Value(0);
+  const { t } = useTranslation();
 
   const [storedForm, setStoredForm] = useState<any | null>(null);
   const screenWidth = Dimensions.get('window').width;
   const [activeIndex, setActiveIndex] = useState(0);
   const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
   const insets = useSafeAreaInsets(); // Safe area insets
-  const [newdate,setnewdate]=useState('')
-const [categoryid, setcategoryid] = useState(0);
+  const [newdate, setnewdate] = useState('')
+  const [categoryid, setcategoryid] = useState(0);
   const [fields, setFields] = useState<any[]>([]); // seller fields from API
   const today = new Date();
 
@@ -91,12 +93,12 @@ const [categoryid, setcategoryid] = useState(0);
     student_email: string | null;
     university_name: string | null;
     category?: Category | null;
-    city?:string|null;
+    city?: string | null;
   }
 
   const flatListRef = useRef(null);
-const { height } = Dimensions.get('window');
-   const screenHeight = Dimensions.get('window').height;
+  const { height } = Dimensions.get('window');
+  const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
 
   const scrollY = useSharedValue(0);
@@ -214,17 +216,17 @@ const { height } = Dimensions.get('window');
     if (!dateString) return "";
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return "";
-  
+
     const day = date.getDate();
-  
+
     let suffix = "th";
     if (day % 10 === 1 && day !== 11) suffix = "st";
     else if (day % 10 === 2 && day !== 12) suffix = "nd";
     else if (day % 10 === 3 && day !== 13) suffix = "rd";
-  
+
     const monthShort = date
       .toLocaleString("default", { month: "short" }); // "Nov"
-  
+
     const year = date.getFullYear();
     return `${day}${suffix} ${monthShort} ${year}`;
   };
@@ -280,7 +282,7 @@ const { height } = Dimensions.get('window');
             student_email: json.metadata.student_email ?? null,
             university_name: json.metadata.university_name ?? null,
             category: json.metadata.category ?? null,
-            city:json.metadata.city ?? null,  
+            city: json.metadata.city ?? null,
           });
 
           await AsyncStorage.setItem(
@@ -292,7 +294,7 @@ const { height } = Dimensions.get('window');
               student_email: json.metadata.student_email ?? null,
               university_name: json.metadata.university_name ?? null,
               category: json.metadata.category ?? null,
-              city:json.metadata.city ?? null, // 
+              city: json.metadata.city ?? null, // 
             }),
           );
         }
@@ -320,7 +322,7 @@ const { height } = Dimensions.get('window');
     type?: string;
   };
 
-  
+
   const handleListPress = async () => {
     console.log('🔵 handleListPress called');
     try {
@@ -361,9 +363,9 @@ const { height } = Dimensions.get('window');
           );
         })
         .map(([key, obj]) => [key, obj.value as ImageField[]]) as [
-        string,
-        ImageField[],
-      ][];
+          string,
+          ImageField[],
+        ][];
 
       const nonImageFields = Object.entries(formData).filter(([key, obj]) => {
         const v = obj.value;
@@ -383,9 +385,9 @@ const { height } = Dimensions.get('window');
             param_value: val !== undefined && val !== null && val !== '' ? val : null,
           };
         })
-        .filter(item => item.param_value !== null); 
+        .filter(item => item.param_value !== null);
 
-            console.log('✅ Data array for create API:', dataArray);
+      console.log('✅ Data array for create API:', dataArray);
 
       const createPayload = {
         category_id: productId1, // dynamic or static
@@ -416,10 +418,10 @@ const { height } = Dimensions.get('window');
       showToast(apiMessage, isSuccess ? "success" : "error");
 
       if (!(createRes.status === 200 || createRes.status === 201)) {
-         navigation.reset({
-                index: 0,
-                routes: [{ name: 'MyListing',},],
-              });
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'MyListing', },],
+        });
         return;
       }
 
@@ -428,67 +430,67 @@ const { height } = Dimensions.get('window');
         return
       }
 
-  const storedDataImages = await AsyncStorage.getItem('deletedImagesId');
-  const deletedImageIds = storedDataImages ? JSON.parse(storedDataImages).deleted_image_ids || [] : [];
+      const storedDataImages = await AsyncStorage.getItem('deletedImagesId');
+      const deletedImageIds = storedDataImages ? JSON.parse(storedDataImages).deleted_image_ids || [] : [];
 
 
-  for (const [param_id, images] of imageFields) {
-    if (!Array.isArray(images)) {
-      continue;
-    }
+      for (const [param_id, images] of imageFields) {
+        if (!Array.isArray(images)) {
+          continue;
+        }
 
-    for (const image of images) {
-      if (!image || !image.uri) {
-        continue;
+        for (const image of images) {
+          if (!image || !image.uri) {
+            continue;
+          }
+
+          if (deletedImageIds.includes(image.id)) {
+            continue;
+          }
+          const data = new FormData();
+          data.append('files', {
+            uri: image.uri,
+            type: image.type || 'image/jpeg',
+            name: image.name,
+          } as any);
+          data.append('feature_id', feature_id);
+          data.append('param_id', param_id);
+          data.append('deleted_image_ids', JSON.stringify(deletedImageIds));
+
+          console.log('✅ FormData prepared for upload', JSON.stringify(data));
+
+          const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-update`;
+
+          const uploadRes = await fetch(uploadUrl, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: data,
+          });
+          const uploadJson = await uploadRes.json();
+
+          try {
+            console.log("✅ Upload API Parsed JSON:", uploadJson);
+            const apiMessage = uploadJson?.message || uploadJson?.error || `Failed to upload ${image.name}`;
+            const isSuccess = uploadRes.status === 200 || uploadRes.status === 201;
+            showToast(apiMessage, isSuccess ? "success" : "error");
+            if (!isSuccess) return;
+          } catch (err) {
+            console.error('❌ Failed to parse upload response as JSON', err);
+          }
+        }
       }
 
-      if (deletedImageIds.includes(image.id)) {
-        continue;
-      }
-      const data = new FormData();
-      data.append('files', {
-        uri: image.uri,
-        type: image.type || 'image/jpeg',
-        name: image.name,
-      } as any);
-      data.append('feature_id', feature_id);
-      data.append('param_id', param_id);
-      data.append('deleted_image_ids', JSON.stringify(deletedImageIds));
 
-      console.log('✅ FormData prepared for upload', JSON.stringify(data));
-
-      const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-update`;
-
-      const uploadRes = await fetch(uploadUrl, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: data,
-      });
-      const uploadJson = await uploadRes.json();
-
-      try {
-          console.log("✅ Upload API Parsed JSON:", uploadJson);
-          const apiMessage = uploadJson?.message || uploadJson?.error || `Failed to upload ${image.name}`;
-          const isSuccess = uploadRes.status === 200 || uploadRes.status === 201;
-          showToast(apiMessage, isSuccess ? "success" : "error");
-          if (!isSuccess) return;
-      } catch (err) {
-        console.error('❌ Failed to parse upload response as JSON', err);
-      }    
-    }
-  }
-
-  
       console.log('✅ All uploads done. Showing toast.');
-      showToast(Constant.DATA_UPLOAD,'success');
-      showToast(Constant.DATA_UPLOAD,'success');
+      showToast(Constant.DATA_UPLOAD, 'success');
+      showToast(Constant.DATA_UPLOAD, 'success');
       setShowPopup(true);
     } catch (error) {
       console.log('❌ Error in handleListPress:', error);
-      showToast(Constant.SOMTHING_WENT_WRONG,'error');
-      showToast(Constant.SOMTHING_WENT_WRONG,'error');
+      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
     }
   };
 
@@ -542,230 +544,229 @@ const { height } = Dimensions.get('window');
       resizeMode="cover"
     >
       <View style={styles.fullScreenContainer}>
-         
-
-                 <StatusBar
-                          translucent
-                          backgroundColor="transparent"
-                          barStyle="light-content"
-                        />
-                
-                        {/* Header with Blur only at top */}
-                        <AnimatedReanimated.View
-                          style={[styles.headerWrapper, animatedBlurStyle]}
-                          pointerEvents="none"
-                        >
-                          {/* Blur layer only at top with gradient fade */}
-                          <MaskedView
-                            style={StyleSheet.absoluteFill}
-                            maskElement={
-                              <LinearGradient
-                                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
-                                locations={[0, 0.8]}
-                                start={{ x: 0, y: 0 }}
-                                end={{ x: 0, y: 1 }}
-                                style={StyleSheet.absoluteFill}
-                              />
-                            }
-                          >
-                            <BlurView
-                              style={StyleSheet.absoluteFill}
-                              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
-                              blurAmount={Platform.OS === 'ios' ? 45 : 45}
-                              // overlayColor="rgba(255,255,255,0.05)"
-                              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
-                            />
-                            <LinearGradient
-                              colors={[
-                                'rgba(255, 255, 255, 0.45)',
-                                'rgba(255, 255, 255, 0.02)',
-                                'rgba(255, 255, 255, 0.02)',
-                              ]}
-                              style={StyleSheet.absoluteFill}
-                              start={{ x: 0, y: 0 }}
-                              end={{ x: 0, y: 1 }}
-                            />
-                          </MaskedView>
-                        </AnimatedReanimated.View>
-                
-                        {/* Header Content */}
-                        <View style={styles.headerContent} pointerEvents="box-none">
-                          <TouchableOpacity
-                            onPress={() => navigation.replace('EditPreviewThumbnail')}
-                            style={styles.backButtonContainer}
-                            activeOpacity={0.7}
-                          >
-                            <AnimatedReanimated.View
-                              style={[styles.blurButtonWrapper, animatedButtonStyle]}
-                            >
-                              {/* Static background (visible when scrollY = 0) */}
-                              <AnimatedReanimated.View
-                                style={[
-                                  StyleSheet.absoluteFill,
-                                  useAnimatedStyle(() => ({
-                                    opacity: interpolate(
-                                      scrollY.value,
-                                      [0, 30],
-                                      [1, 0],
-                                      'clamp',
-                                    ),
-                                    backgroundColor: 'rgba(255,255,255,0.1)',
-                                    borderRadius: 40,
-                                  })),
-                                ]}
-                              />
-                
-                              {/* Blur view fades in as scroll increases */}
-                              <AnimatedReanimated.View
-                                style={[
-                                  StyleSheet.absoluteFill,
-                                  useAnimatedStyle(() => ({
-                                    opacity: interpolate(
-                                      scrollY.value,
-                                      [0, 50],
-                                      [0, 1],
-                                      'clamp',
-                                    ),
-                                  })),
-                                ]}
-                              >
-                                <BlurView
-                                  style={StyleSheet.absoluteFill}
-                                  blurType="light"
-                                  blurAmount={10}
-                                  reducedTransparencyFallbackColor="transparent"
-                                />
-                              </AnimatedReanimated.View>
-                
-                              {/* Back Icon */}
-                              <AnimatedReanimated.Image
-                                source={require('../../../assets/images/back.png')}
-                                style={[{ height: 24, width: 24 }, animatedIconStyle]}
-                              />
-                            </AnimatedReanimated.View>
-                          </TouchableOpacity>
-                
-                          <Text allowFontScaling={false} style={styles.unizyText}>
-                            Preview Details
-                          </Text>
-                        </View>
-                
 
 
-        
-        <AnimatedReanimated.ScrollView 
-                       scrollEventThrottle={16}
-                       onScroll={scrollHandler}
-                       contentContainerStyle={[
-                         styles.scrollContainer,
-                         { paddingBottom: height * 0.1 }, // 0.05% of screen height
-                       ]}>
-        
-          <View style={{marginTop:(Platform.OS === 'ios' ? 9 : 12)}}>
+        <StatusBar
+          translucent
+          backgroundColor="transparent"
+          barStyle="light-content"
+        />
 
-        {(userMeta?.category?.id === 2 || userMeta?.category?.id === 5)? (
-                      <ImageBackground
-                        source={require('../../../assets/images/featurebg.png')}
+        {/* Header with Blur only at top */}
+        <AnimatedReanimated.View
+          style={[styles.headerWrapper, animatedBlurStyle]}
+          pointerEvents="none"
+        >
+          {/* Blur layer only at top with gradient fade */}
+          <MaskedView
+            style={StyleSheet.absoluteFill}
+            maskElement={
+              <LinearGradient
+                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                locations={[0, 0.8]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            }
+          >
+            <BlurView
+              style={StyleSheet.absoluteFill}
+              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+              blurAmount={Platform.OS === 'ios' ? 45 : 45}
+              // overlayColor="rgba(255,255,255,0.05)"
+              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+            />
+            <LinearGradient
+              colors={[
+                'rgba(255, 255, 255, 0.45)',
+                'rgba(255, 255, 255, 0.02)',
+                'rgba(255, 255, 255, 0.02)',
+              ]}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+            />
+          </MaskedView>
+        </AnimatedReanimated.View>
+
+        {/* Header Content */}
+        <View style={styles.headerContent} pointerEvents="box-none">
+          <TouchableOpacity
+            onPress={() => navigation.replace('EditPreviewThumbnail')}
+            style={styles.backButtonContainer}
+            activeOpacity={0.7}
+          >
+            <AnimatedReanimated.View
+              style={[styles.blurButtonWrapper, animatedButtonStyle]}
+            >
+              {/* Static background (visible when scrollY = 0) */}
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 30],
+                      [1, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 40,
+                  })),
+                ]}
+              />
+
+              {/* Blur view fades in as scroll increases */}
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 50],
+                      [0, 1],
+                      'clamp',
+                    ),
+                  })),
+                ]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
+                />
+              </AnimatedReanimated.View>
+
+              {/* Back Icon */}
+              <AnimatedReanimated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 24, width: 24 }, animatedIconStyle]}
+              />
+            </AnimatedReanimated.View>
+          </TouchableOpacity>
+
+          <Text allowFontScaling={false} style={styles.unizyText}>
+            {t('preview_details')}
+          </Text>
+        </View>
+
+
+
+
+        <AnimatedReanimated.ScrollView
+          scrollEventThrottle={16}
+          onScroll={scrollHandler}
+          contentContainerStyle={[
+            styles.scrollContainer,
+            { paddingBottom: height * 0.1 }, // 0.05% of screen height
+          ]}>
+
+          <View style={{ marginTop: (Platform.OS === 'ios' ? 9 : 12) }}>
+
+            {(userMeta?.category?.id === 2 || userMeta?.category?.id === 5) ? (
+              <ImageBackground
+                source={require('../../../assets/images/featurebg.png')}
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: 270,
+                  width: '100%',
+                }}
+              >
+                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                  {userMeta?.profile ? (
+                    <Image
+                      source={{ uri: userMeta?.profile }}
+                      style={{
+                        width: 180,
+                        height: 180,
+                        borderRadius: 90,
+                      }}
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    <View
+                      style={{
+                        width: 180,
+                        height: 180,
+                        borderRadius: 90,
+                        backgroundColor: '#8390D4',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <Text
+                        allowFontScaling={false}
                         style={{
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          height: 270,
-                          width: '100%',
+                          fontSize: 70,
+                          color: '#FFF',
+                          fontWeight: '600',
+                          textAlign: 'center',
+                          fontFamily: 'Urbanist-SemiBold',
                         }}
                       >
-                        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                          {userMeta?.profile? (
-                            <Image
-                              source={{ uri: userMeta?.profile }}
-                              style={{
-                                width: 180,
-                                height: 180,
-                                borderRadius: 90,
-                              }}
-                              resizeMode="cover"
-                            />
-                          ) : (
-                            <View
-                              style={{
-                                width: 180,
-                                height: 180,
-                                borderRadius: 90,
-                                backgroundColor: '#8390D4',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                              }}
-                            >
-                              <Text
-                                allowFontScaling={false}
-                                style={{
-                                  fontSize: 70,
-                                  color: '#FFF',
-                                  fontWeight: '600',
-                                  textAlign: 'center',
-                                  fontFamily: 'Urbanist-SemiBold',
-                                }}
-                              >
-                                {`${userMeta?.firstname?.[0] ?? ''}${
-                                  userMeta?.lastname?.[0] ?? ''
-                                }`.toUpperCase() || 'NA'}
-                              </Text>
-                            </View>
-                          )}
-                        </View>
-                      </ImageBackground>
-                    ) : storedForm?.[6]?.value?.length > 1 ? (
-                      
-                      <View>
-                        <FlatList
-                          ref={flatListRef}
-                          data={storedForm[6].value}
-                          horizontal
-                          pagingEnabled
-                          showsHorizontalScrollIndicator={false}
-                          keyExtractor={(item, index) => index.toString()}
-                          onScroll={onScroll}
-                          scrollEventThrottle={16}
-                          renderItem={({ item }) => (
-                            <Image
-                              source={{ uri: item.uri }}
-                              style={{ width: screenWidth, height: 270 }}
-                              resizeMode="cover"
-                            />
-                          )}
-                        />
-        
-                        {/* Custom Step Indicator */}
-                        <View style={styles.stepIndicatorContainer}>
-                          {storedForm[6].value.map((_: any, index: number) => {
-                            const isActive = index === activeIndex;
-                            return (
-                              <View
-                                key={index}
-                                style={
-                                  isActive
-                                    ? styles.activeStepCircle
-                                    : styles.inactiveStepCircle
-                                }
-                              />
-                            );
-                          })}
-                        </View>
-                      </View>
-                    ) : (
-                      <Image
-                        source={
-                          storedForm?.[6]?.value?.[0]?.uri
-                            ? { uri: storedForm[6].value[0].uri }
-                            : require('../../../assets/images/drone.png')
+                        {`${userMeta?.firstname?.[0] ?? ''}${userMeta?.lastname?.[0] ?? ''
+                          }`.toUpperCase() || 'NA'}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+              </ImageBackground>
+            ) : storedForm?.[6]?.value?.length > 1 ? (
+
+              <View>
+                <FlatList
+                  ref={flatListRef}
+                  data={storedForm[6].value}
+                  horizontal
+                  pagingEnabled
+                  showsHorizontalScrollIndicator={false}
+                  keyExtractor={(item, index) => index.toString()}
+                  onScroll={onScroll}
+                  scrollEventThrottle={16}
+                  renderItem={({ item }) => (
+                    <Image
+                      source={{ uri: item.uri }}
+                      style={{ width: screenWidth, height: 270 }}
+                      resizeMode="cover"
+                    />
+                  )}
+                />
+
+                {/* Custom Step Indicator */}
+                <View style={styles.stepIndicatorContainer}>
+                  {storedForm[6].value.map((_: any, index: number) => {
+                    const isActive = index === activeIndex;
+                    return (
+                      <View
+                        key={index}
+                        style={
+                          isActive
+                            ? styles.activeStepCircle
+                            : styles.inactiveStepCircle
                         }
-                        style={{ width: '100%', height: 270 }}
-                        resizeMode="cover"
                       />
-                    )}
+                    );
+                  })}
+                </View>
+              </View>
+            ) : (
+              <Image
+                source={
+                  storedForm?.[6]?.value?.[0]?.uri
+                    ? { uri: storedForm[6].value[0].uri }
+                    : require('../../../assets/images/drone.png')
+                }
+                style={{ width: '100%', height: 270 }}
+                resizeMode="cover"
+              />
+            )}
           </View>
 
           <View style={{ flex: 1, padding: 16 }}>
-           
+
             <View style={styles.card1}>
               <View style={{ gap: 8 }}>
                 <Text allowFontScaling={false} style={styles.QuaddText}>
@@ -777,18 +778,18 @@ const { height } = Dimensions.get('window');
                 </Text>
 
                 {(categoryid === 2 || categoryid === 5) && (
-                                  <View style={styles.datePosted1}>
-                                    <Image
-                                      source={require('../../../assets/images/duration_info.png')}
-                                      style={{ height: 16, width: 16 }}
-                                    />
-                                     <Text allowFontScaling={false} style={styles.datetext1}>
-                                      Service Duration:{' '}
-                                      <Text style={styles.durationValue}>{duration_value} Hours</Text>
-                                      </Text>
-                                  </View>
-                                )}
-                
+                  <View style={styles.datePosted1}>
+                    <Image
+                      source={require('../../../assets/images/duration_info.png')}
+                      style={{ height: 16, width: 16 }}
+                    />
+                    <Text allowFontScaling={false} style={styles.datetext1}>
+                      {t('service_duration')}:{' '}
+                      <Text style={styles.durationValue}>{duration_value} Hours</Text>
+                    </Text>
+                  </View>
+                )}
+
               </View>
               <View
                 style={{
@@ -800,169 +801,169 @@ const { height } = Dimensions.get('window');
                 }}
               >
                 <Text allowFontScaling={false} style={styles.productDesHeding}>
-                {userMeta?.category?.name === 'Food' ? 'Dish Description' : `${userMeta?.category?.name ?? ''} Description`}
-                  </Text>
+                  {userMeta?.category?.name === 'Food' ? 'Dish Description' : `${userMeta?.category?.name ?? ''} Description`}
+                </Text>
                 <Text allowFontScaling={false} style={styles.productDesc}>
                   {descriptionvalue}
                 </Text>
 
-               <View style={styles.datePosted}>
-                <Image
-                  source={require('../../../assets/images/calendar_icon1.png')}
-                  style={{ height: 16, width: 16 }}
+                <View style={styles.datePosted}>
+                  <Image
+                    source={require('../../../assets/images/calendar_icon1.png')}
+                    style={{ height: 16, width: 16 }}
                   />
-              <Text allowFontScaling={false} style={styles.datetext}>Date Posted: {formatDateWithDash(newdate)}</Text>
-              </View>
+                  <Text allowFontScaling={false} style={styles.datetext}>Date Posted: {formatDateWithDash(newdate)}</Text>
+                </View>
               </View>
             </View>
 
             <View style={styles.card}>
               <View style={styles.gap12}>
                 <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
-                          {userMeta?.category?.name === 'Food'
-                            ? 'Dish Details'
-                            : `${userMeta?.category?.name ?? ''} Details`}
+                  {userMeta?.category?.id === 3
+                    ? t('dish_details')
+                    : `${userMeta?.category?.name ? `${userMeta?.category?.name} ` : ''}${t('details')}`}
+                </Text>
+
+                <View style={{ gap: 12 }}>
+                  {fields.map(field => {
+                    const fieldId = field.param.id;
+
+                    const skipAliases = ['title', 'description', 'price'];
+                    if (
+                      skipAliases.includes(field.param.alias_name ?? '') ||
+                      ['Image', 'boolean'].includes(field.param.field_type)
+                    )
+                      return null;
+
+                    const storedValue = storedForm?.[fieldId]?.value;
+                    if (storedValue == null) return null;
+
+                    let displayValues: string[] = [];
+
+                    if (field.param.field_type === 'dropdown') {
+                      if (Array.isArray(storedValue)) {
+                        displayValues = storedValue
+                          .map((id: number) =>
+                            field.param.options.find((opt: any) => opt.id === id)?.option_name
+                          )
+                          .filter(Boolean) as string[];
+                      } else {
+                        const option = field.param.options.find((opt: any) => opt.id === storedValue);
+                        if (option) displayValues = [option.option_name];
+                      }
+                    } else if (Array.isArray(storedValue)) {
+                      displayValues = storedValue.map(String);
+                    } else {
+                      displayValues = [String(storedValue)];
+                    }
+
+                    return (
+                      <View key={fieldId} style={{}}>
+                        <Text allowFontScaling={false} style={styles.detailLabel1}>
+                          {field.param.field_name}
                         </Text>
 
-                 <View style={{ gap: 12 }}>
-                                {fields.map(field => {
-                                  const fieldId = field.param.id;
-                
-                                  const skipAliases = ['title', 'description', 'price'];
-                                  if (
-                                    skipAliases.includes(field.param.alias_name ?? '') ||
-                                    ['Image', 'boolean'].includes(field.param.field_type)
-                                  )
-                                    return null;
-                
-                                  const storedValue = storedForm?.[fieldId]?.value;
-                                  if (storedValue == null) return null;
-                
-                                  let displayValues: string[] = [];
-                
-                                  if (field.param.field_type === 'dropdown') {
-                                    if (Array.isArray(storedValue)) {
-                                      displayValues = storedValue
-                                        .map((id: number) =>
-                                          field.param.options.find((opt: any) => opt.id === id)?.option_name
-                                        )
-                                        .filter(Boolean) as string[];
-                                    } else {
-                                      const option = field.param.options.find((opt: any) => opt.id === storedValue);
-                                      if (option) displayValues = [option.option_name];
-                                    }
-                                  } else if (Array.isArray(storedValue)) {
-                                    displayValues = storedValue.map(String);
-                                  } else {
-                                    displayValues = [String(storedValue)];
-                                  }
-                
-                                  return (
-                                    <View key={fieldId} style={{  }}>
-                                      <Text allowFontScaling={false} style={styles.detailLabel1}>
-                                        {field.param.field_name}
-                                      </Text>
-                
-                                      {field.param.field_type === 'dropdown' ? (
-                                        <View style={styles.categoryContainer}>
-                                          {displayValues.map((val, idx) => (
-                                            <View key={idx} style={styles.categoryTag}>
-                                              <Text allowFontScaling={false} style={styles.catagoryText}>
-                                                {val}
-                                              </Text>
-                                            </View>
-                                          ))}
-                                        </View>
-                                      ) : (
-                                        <Text allowFontScaling={false} style={[styles.new, { marginTop:0}]}>
-                                          {displayValues.join(', ')}
-                                        </Text>
-                                      )}
-                                    </View>
-                                  );
-                                })}
+                        {field.param.field_type === 'dropdown' ? (
+                          <View style={styles.categoryContainer}>
+                            {displayValues.map((val, idx) => (
+                              <View key={idx} style={styles.categoryTag}>
+                                <Text allowFontScaling={false} style={styles.catagoryText}>
+                                  {val}
+                                </Text>
                               </View>
+                            ))}
+                          </View>
+                        ) : (
+                          <Text allowFontScaling={false} style={[styles.new, { marginTop: 0 }]}>
+                            {displayValues.join(', ')}
+                          </Text>
+                        )}
+                      </View>
+                    );
+                  })}
+                </View>
               </View>
             </View>
 
             <View style={styles.card}>
               <View style={{ gap: 12 }}>
-               <Text allowFontScaling={false} style={styles.productDeatilsHeading}>Seller Details</Text>
-            <View style={{ flexDirection: 'row',marginBottom:4  }}>
-            {userMeta?.profile ? (
-                <Image
-                    source={{ uri: userMeta.profile }}
-                                 style={styles.avatar}
-                               />
-                             ) : (
-                               <View style={styles.initialsCircle}>
-                                 <Text allowFontScaling={false} style={styles.initialsText}>
-                                   {getInitials(
-                                     userMeta?.firstname ?? 'Alan',
-                                     userMeta?.lastname ?? 'Walker'
-                                   )}
-                                 </Text>
-                               </View>
-                             )}
-           
-                             <View style={{ width: '80%' }}>
-                               <Text allowFontScaling={false} style={styles.userName}>
-                               {`${userMeta?.firstname ?? ''} ${userMeta?.lastname ?? ''}`.trim()}
-                             </Text>
-                               <Text allowFontScaling={false} style={styles.univeritytext}>
-                                 {userMeta?.university_name || 'University of Warwick,'}
-                               </Text>
-                               <Text allowFontScaling={false} style={[styles.univeritytext,]}>
-                               {userMeta?.city || ''}
-                               </Text>
-                             </View>
-                           </View>
-           
-           
-                           <View style={{ flexDirection: 'row' }}>
-                            <View style={styles.bottombutton}>
-                             <View style={{ flexDirection: 'row', alignItems: 'center' , gap: 6,}}>
-                               <Image
-                                 source={require('../../../assets/images/staricon.png')}
-                                 style={{ height: 16, width: 16 }}
-                               />
-           
-                               <Text allowFontScaling={false} style={ styles.chattext}>4.5</Text>
-                             </View>
-                             </View>
-                              <View style={[styles.chatcard, { marginLeft: 8, flexDirection: 'row', alignItems: 'center'}]}>
-                               <Image
-                                 source={require('../../../assets/images/message_chat.png')}
-                                 style={{ height: 16, width: 16, marginRight: 4 }}
-                               />
-                              <Text allowFontScaling={false} style={styles.chattext}>Chat with Seller</Text>
-                             </View>
-                           </View>
-                         </View>
-                       </View>
+                <Text allowFontScaling={false} style={styles.productDeatilsHeading}>{t('seller_details')}</Text>
+                <View style={{ flexDirection: 'row', marginBottom: 4 }}>
+                  {userMeta?.profile ? (
+                    <Image
+                      source={{ uri: userMeta.profile }}
+                      style={styles.avatar}
+                    />
+                  ) : (
+                    <View style={styles.initialsCircle}>
+                      <Text allowFontScaling={false} style={styles.initialsText}>
+                        {getInitials(
+                          userMeta?.firstname ?? 'Alan',
+                          userMeta?.lastname ?? 'Walker'
+                        )}
+                      </Text>
+                    </View>
+                  )}
+
+                  <View style={{ width: '80%' }}>
+                    <Text allowFontScaling={false} style={styles.userName}>
+                      {`${userMeta?.firstname ?? ''} ${userMeta?.lastname ?? ''}`.trim()}
+                    </Text>
+                    <Text allowFontScaling={false} style={styles.univeritytext}>
+                      {userMeta?.university_name || 'University of Warwick,'}
+                    </Text>
+                    <Text allowFontScaling={false} style={[styles.univeritytext,]}>
+                      {userMeta?.city || ''}
+                    </Text>
+                  </View>
+                </View>
+
+
+                <View style={{ flexDirection: 'row' }}>
+                  <View style={styles.bottombutton}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, }}>
+                      <Image
+                        source={require('../../../assets/images/staricon.png')}
+                        style={{ height: 16, width: 16 }}
+                      />
+
+                      <Text allowFontScaling={false} style={styles.chattext}>4.5</Text>
+                    </View>
+                  </View>
+                  <View style={[styles.chatcard, { marginLeft: 8, flexDirection: 'row', alignItems: 'center' }]}>
+                    <Image
+                      source={require('../../../assets/images/message_chat.png')}
+                      style={{ height: 16, width: 16, marginRight: 4 }}
+                    />
+                    <Text allowFontScaling={false} style={styles.chattext}>{t('chat_with_seller')}</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
           </View>
         </AnimatedReanimated.ScrollView>
-       
-          <Button
-              onPress={handleListPress}
-              title={(() => {
-                try {
-                  const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
-                  const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
 
-                  // if (isFeatured) {
-                  //   return `Update for £${diff1.toFixed(2)}`;
-                  // }
-                  // return 'Update';
-              if (categoryid===Number(4)) {
-                return `List for £${accomodation_amount.toFixed(2)}`
+        <Button
+          onPress={handleListPress}
+          title={(() => {
+            try {
+              const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+              const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
+
+              // if (isFeatured) {
+              //   return `Update for £${diff1.toFixed(2)}`;
+              // }
+              // return 'Update';
+              if (categoryid === Number(4)) {
+                return `${t('update')} for £${accomodation_amount.toFixed(2)}`;
               }
-              return 'List';
-                } catch (e) {
-                  console.log('Error parsing storedForm:', e);
-                  return 'Update';
-                }
-              })()}/>
+              return t('update');
+            } catch (e) {
+              console.log('Error parsing storedForm:', e);
+              return 'Update';
+            }
+          })()} />
 
         <Modal
           visible={showPopup}
@@ -1008,7 +1009,7 @@ const { height } = Dimensions.get('window');
                     lineHeight: 28,
                   }}
                 >
-                  Product Listed Successfully!
+                  {t('product_listed_success')}!
                 </Text>
                 <Text
                   allowFontScaling={false}
@@ -1023,8 +1024,8 @@ const { height } = Dimensions.get('window');
                     textAlign: 'center',
                   }}
                 >
-                  Your product is now live and visible to other students.
-                </Text>
+                  {t('product_listed_message')}                
+                  </Text>
 
                 <TouchableOpacity
                   style={styles.loginButton}
@@ -1049,7 +1050,7 @@ const { height } = Dimensions.get('window');
                       //     ],
                       //   }),
                       // );
-                      console.log("NAVIGATIONSTACK: ",navigation.getState());
+                      console.log("NAVIGATIONSTACK: ", navigation.getState());
                       navigation.reset({
                         index: 0,
                         routes: [
@@ -1068,7 +1069,7 @@ const { height } = Dimensions.get('window');
                       //   ],
                       // });
                       // navigation.replace('MyListing',{ animation: 'none' });
-                      
+
                       setShowPopup(false);
                     } catch (err) {
                       console.log('❌ Error clearing formData:', err);
@@ -1076,7 +1077,7 @@ const { height } = Dimensions.get('window');
                   }}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>
-                    Return to Choose Category
+                   {t('return_choose_category')}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -1091,7 +1092,7 @@ const { height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
 
-    datetext1: {
+  datetext1: {
     //color: 'rgba(255, 255, 255, 0.48)',
     color: '#9CD6FF',
     fontFamily: 'Urbanist-Medium',
@@ -1129,8 +1130,8 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
 
-  
-    headerWrapper: {
+
+  headerWrapper: {
     position: 'absolute',
     top: 0,
     width: Platform.OS === 'ios' ? '100%' : '100%',
@@ -1152,7 +1153,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'box-none',
     marginTop: (Platform.OS === 'ios' ? 0 : 0),
-    marginLeft: 1 
+    marginLeft: 1
   },
   backButtonContainer: {
     position: 'absolute',
@@ -1175,43 +1176,43 @@ const styles = StyleSheet.create({
 
 
 
-    chattext:{
-  color: 'rgba(255, 255, 255, 0.48)',
-  fontFamily: 'Urbanist-SemiBold',
-  fontSize: 14,
-  fontWeight: '600',
-  fontStyle: 'normal',
-  letterSpacing: -0.28,
+  chattext: {
+    color: 'rgba(255, 255, 255, 0.48)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 14,
+    fontWeight: '600',
+    fontStyle: 'normal',
+    letterSpacing: -0.28,
   },
-  chatcard:{
-  borderRadius: 10,
-    backgroundColor:'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+  chatcard: {
+    borderRadius: 10,
+    backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     gap: 4,
-    flex:1,
+    flex: 1,
     paddingHorizontal: 16,
-    paddingVertical:12,
-    height:'auto'
+    paddingVertical: 12,
+    height: 'auto'
     //width: '80%',
   },
 
-  bottombutton:{
-  borderRadius: 10,
-  backgroundColor:'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'center',
-  alignItems: 'center',
-  gap: 4,
-  padding: 16,
-  //width: '20%',
-  paddingHorizontal: 16,
-  paddingVertical:12,
+  bottombutton: {
+    borderRadius: 10,
+    backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    padding: 16,
+    //width: '20%',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
 
 
@@ -1232,8 +1233,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
   },
 
-   catagoryText: {
-    color:'#9CD6FF',
+  catagoryText: {
+    color: '#9CD6FF',
     fontFamily: 'Urbanist-Medium',
     fontSize: 12,
     fontWeight: '500',
@@ -1241,14 +1242,14 @@ const styles = StyleSheet.create({
     letterSpacing: -0.24,
   },
 
-   catagoryText1: {
+  catagoryText1: {
     fontFamily: 'Urbanist-Medium',
     fontSize: 12,
     fontWeight: '500',
     fontStyle: 'normal',
     lineHeight: 1.3,
     //color: '#fff',
-    color:'#9CD6FF'
+    color: '#9CD6FF'
   },
   categoryTag: {
     backgroundColor:
@@ -1264,10 +1265,10 @@ const styles = StyleSheet.create({
     paddingRight: 6,
     paddingTop: 2,
     paddingBottom: 2,
-    marginTop:6
+    marginTop: 6
   },
 
-   productDesHeding: {
+  productDesHeding: {
     color: 'rgba(255, 255, 255, 0.72)',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 16,
@@ -1276,7 +1277,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
 
-    header: {
+  header: {
     paddingTop: Platform.OS === 'ios' ? 50 : 50,
     paddingBottom: 12,
     paddingHorizontal: 16,
@@ -1296,7 +1297,7 @@ const styles = StyleSheet.create({
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
     //boxShadow: 'rgba(255, 255, 255, 0.12)  inset -1px 0px 5px 1px inset ',
 
-   boxShadow:
+    boxShadow:
       '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
@@ -1357,7 +1358,7 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     lineHeight: 22,
   },
-   detailLabel1: {
+  detailLabel1: {
     color: 'rgba(255, 255, 255, 0.72)',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 16,
@@ -1365,7 +1366,7 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     lineHeight: 22,
   },
-  
+
   detailValue: {
     fontSize: 14,
     fontWeight: '400',
@@ -1373,14 +1374,14 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     flex: 1,
   },
- 
+
   backBtn: {
     width: 30,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
- 
+
   stepIndicatorContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -1424,10 +1425,10 @@ const styles = StyleSheet.create({
     shadowRadius: 3.33,
     elevation: 2,
   },
- 
+
   fullScreenContainer: {
     flex: 1,
-   // marginTop: 30,
+    // marginTop: 30,
   },
 
   loginText: {
@@ -1532,14 +1533,14 @@ const styles = StyleSheet.create({
     paddingRight: 8,
     paddingTop: 6,
     paddingBottom: 6,
-    marginTop:12,
+    marginTop: 12,
     alignItems: 'center',
     gap: 3,
   },
 
-    datetext: {
+  datetext: {
     //color: 'rgba(255, 255, 255, 0.48)',
-    color:'#9CD6FF',
+    color: '#9CD6FF',
     fontFamily: 'Urbanist-Medium',
     fontSize: 12,
     fontWeight: '500',
@@ -1659,7 +1660,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.36,
   },
 
-    QuaddText: {
+  QuaddText: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 20,
@@ -1675,30 +1676,30 @@ const styles = StyleSheet.create({
     fontWeight: 700,
     letterSpacing: -0.1,
   },
-    card1: {
+  card1: {
     flexDirection: 'column',
     marginBottom: 6,
     padding: 16,
     borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     gap: 10,
-    marginTop:6
+    marginTop: 6
   },
 
-card: {
+  card: {
     flexDirection: 'column',
     marginBottom: 6,
     padding: 16,
     borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     gap: 12,
-    marginTop:6
+    marginTop: 6
   },
   h24_w24: {
     width: 24,
     height: 24,
   },
- 
+
   previewThumbnail: {
     color: '#FFF',
     textAlign: 'center',

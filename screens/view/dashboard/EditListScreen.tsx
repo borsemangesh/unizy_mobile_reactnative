@@ -44,6 +44,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { BlurView } from '@react-native-community/blur';
 import { Constant } from '../../utils/Constant';
+import { useTranslation } from 'react-i18next';
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImg = require('../../../assets/images/user.jpg');
@@ -85,6 +86,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   >([]);
 
   const screenHeight = Dimensions.get('window').height;
+  const { t } = useTranslation();
 
   interface Category {
     id: number;
@@ -123,10 +125,10 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   const scrollY = useSharedValue(0);
 
   console.log("📦 Route Params Received:", {
-  productId,
-  productName,
-  shareid
-});
+    productId,
+    productName,
+    shareid
+  });
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: event => {
@@ -322,59 +324,59 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             alias_name: 'description',
           };
           initialValues.quantity = {
-          value: data.remaining_quantity ?? '',
-          alias_name: 'quantity',
-        };
-        initialValues.service_duration = {
-          value: data.hours ?? '',
-          alias_name:'service_duration'
-        },
-
-          initialValues.isfeatured = {
-            value: !!data.isfeatured,
-            alias_name: 'isfeatured',
+            value: data.remaining_quantity ?? '',
+            alias_name: 'quantity',
           };
+          initialValues.service_duration = {
+            value: data.hours ?? '',
+            alias_name: 'service_duration'
+          },
 
-          if (Array.isArray(data.params)) {
-          data.params.forEach((param: any) => {
-            const fieldType = param.field_type?.toLowerCase();
-
-            
-            const baseField = {
-              alias_name: param.alias_name || null,
+            initialValues.isfeatured = {
+              value: !!data.isfeatured,
+              alias_name: 'isfeatured',
             };
 
-            let finalValue = null;
-            if (param.alias_name === "quantity") {
-              finalValue = data?.remaining_quantity ?? "";
-            }
-            else if(param.alias_name === "service_duration"){
-              finalValue = data?.hours ?? "";
-            }
-             else {
-              finalValue = param.param_value ?? "";
-            }
+          if (Array.isArray(data.params)) {
+            data.params.forEach((param: any) => {
+              const fieldType = param.field_type?.toLowerCase();
 
-            if (fieldType === "dropdown") {
-              if (Array.isArray(finalValue)) {
-                initialValues[param.id] = {
-                  ...baseField,
-                  value: finalValue.map((v: any) => Number(v)),
-                };
+
+              const baseField = {
+                alias_name: param.alias_name || null,
+              };
+
+              let finalValue = null;
+              if (param.alias_name === "quantity") {
+                finalValue = data?.remaining_quantity ?? "";
+              }
+              else if (param.alias_name === "service_duration") {
+                finalValue = data?.hours ?? "";
+              }
+              else {
+                finalValue = param.param_value ?? "";
+              }
+
+              if (fieldType === "dropdown") {
+                if (Array.isArray(finalValue)) {
+                  initialValues[param.id] = {
+                    ...baseField,
+                    value: finalValue.map((v: any) => Number(v)),
+                  };
+                } else {
+                  initialValues[param.id] = {
+                    ...baseField,
+                    value: finalValue ? Number(finalValue) : null,
+                  };
+                }
               } else {
                 initialValues[param.id] = {
                   ...baseField,
-                  value: finalValue ? Number(finalValue) : null,
+                  value: finalValue,
                 };
               }
-            } else {
-              initialValues[param.id] = {
-                ...baseField,
-                value: finalValue,
-              };
-            }
-          });
-        }
+            });
+          }
 
 
           // --- Files / Images ---
@@ -552,122 +554,122 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
       return false;
     }
   };
-  
-const handlePreview = async (latestFormValues: any) => {
-  try {
-    // ------------------ Mandatory validation ------------------
-    for (const field of fields) {
-      const param = field.param || field;
-      const { id, field_type, field_name, alias_name, mandatory } = param;
-      const fieldId = String(id);
 
-      const nameToShow = alias_name || field_name || 'Unnamed Field';
+  const handlePreview = async (latestFormValues: any) => {
+    try {
+      // ------------------ Mandatory validation ------------------
+      for (const field of fields) {
+        const param = field.param || field;
+        const { id, field_type, field_name, alias_name, mandatory } = param;
+        const fieldId = String(id);
 
-      let value =
-        latestFormValues[fieldId]?.value ??
-        latestFormValues[alias_name]?.value ??
-        '';
+        const nameToShow = alias_name || field_name || 'Unnamed Field';
 
-      if (field_type?.toLowerCase() === 'image') {
-        value = uploadedImages;
-      }
+        let value =
+          latestFormValues[fieldId]?.value ??
+          latestFormValues[alias_name]?.value ??
+          '';
 
-      if (mandatory) {
-        const isEmpty =
-          value === undefined ||
-          value === null ||
-          (typeof value === 'string' && value.trim() === '') ||
-          (Array.isArray(value) && value.length === 0);
+        if (field_type?.toLowerCase() === 'image') {
+          value = uploadedImages;
+        }
 
-        if (isEmpty) {
-          showToast(`${nameToShow} ${Constant.IS_MAN}`, 'error');
-          return;
+        if (mandatory) {
+          const isEmpty =
+            value === undefined ||
+            value === null ||
+            (typeof value === 'string' && value.trim() === '') ||
+            (Array.isArray(value) && value.length === 0);
+
+          if (isEmpty) {
+            showToast(`${nameToShow} ${Constant.IS_MAN}`, 'error');
+            return;
+          }
         }
       }
-    }
 
-    // ----------------------------------------------------------
-    // ✅ ADDING COMPUTED PRICE LOGIC HERE
-    // ----------------------------------------------------------
-    let computedPrice: number | null = null;
+      // ----------------------------------------------------------
+      // ✅ ADDING COMPUTED PRICE LOGIC HERE
+      // ----------------------------------------------------------
+      let computedPrice: number | null = null;
 
-    if (productId === 2 || productId === 5) {
-      let priceFieldId: number | null = null;
-      let durationFieldId: number | null = null;
+      if (productId === 2 || productId === 5) {
+        let priceFieldId: number | null = null;
+        let durationFieldId: number | null = null;
 
-      fields.forEach(f => {
-        const param = f.param || f;
-        if (param.alias_name === 'price') priceFieldId = param.id;
-        if (param.alias_name === 'service_duration') durationFieldId = param.id;
-      });
+        fields.forEach(f => {
+          const param = f.param || f;
+          if (param.alias_name === 'price') priceFieldId = param.id;
+          if (param.alias_name === 'service_duration') durationFieldId = param.id;
+        });
 
-      // if (priceFieldId !== null && durationFieldId !== null) {
-      //   const rawPrice = Number(latestFormValues[String(priceFieldId)]?.value || 0);
-      //   const rawDuration = Number(latestFormValues[String(durationFieldId)]?.value || 1);
+        // if (priceFieldId !== null && durationFieldId !== null) {
+        //   const rawPrice = Number(latestFormValues[String(priceFieldId)]?.value || 0);
+        //   const rawDuration = Number(latestFormValues[String(durationFieldId)]?.value || 1);
 
-      //   computedPrice = rawPrice * rawDuration;
-      // }
+        //   computedPrice = rawPrice * rawDuration;
+        // }
 
-       if (priceFieldId !== null && durationFieldId !== null) {
-        // read value from ID OR alias (fallback)
-        const rawPrice =
-          Number(latestFormValues[String(priceFieldId)]?.value) ||
-          Number(latestFormValues['price']?.value) ||
-          0;
+        if (priceFieldId !== null && durationFieldId !== null) {
+          // read value from ID OR alias (fallback)
+          const rawPrice =
+            Number(latestFormValues[String(priceFieldId)]?.value) ||
+            Number(latestFormValues['price']?.value) ||
+            0;
 
-        const rawDuration =Number(latestFormValues[String(durationFieldId)]?.value) ||Number(latestFormValues['service_duration']?.value) ||1;
-        //const rawDuration = Number(latestFormValues[String(durationFieldId)]?.value || 1);
+          const rawDuration = Number(latestFormValues[String(durationFieldId)]?.value) || Number(latestFormValues['service_duration']?.value) || 1;
+          //const rawDuration = Number(latestFormValues[String(durationFieldId)]?.value || 1);
 
-        computedPrice = rawPrice * rawDuration;
+          computedPrice = rawPrice * rawDuration;
+        }
       }
-    }
 
 
-    const dataToStore: any = { ...latestFormValues };
+      const dataToStore: any = { ...latestFormValues };
 
-    if (computedPrice !== null) {
-      fields.forEach(f => {
-        const param = f.param || f;
-        if (param.alias_name === 'price') {
+      if (computedPrice !== null) {
+        fields.forEach(f => {
+          const param = f.param || f;
+          if (param.alias_name === 'price') {
+            dataToStore[String(param.id)] = {
+              value: computedPrice.toString(),
+              alias_name: 'price',
+            };
+          }
+        });
+      }
+
+
+
+      // Handle image fields
+      fields.forEach(field => {
+        const param = field.param || field;
+        const fieldType = param.field_type?.toLowerCase();
+
+        if (fieldType === 'image') {
+          const uploadedForField = uploadedImages.map(img => ({
+            id: img.id,
+            uri: img.uri,
+            name: img.name,
+          }));
+
           dataToStore[String(param.id)] = {
-            value: computedPrice.toString(),
-            alias_name: 'price',
+            value: uploadedForField,
+            alias_name: param.alias_name ?? null,
           };
         }
       });
+
+      // Save data
+      await AsyncStorage.setItem('formData1', JSON.stringify(dataToStore));
+      console.log('✅ Form data saved:', dataToStore);
+
+      navigation.navigate('EditPreviewThumbnail');
+    } catch (error) {
+      console.log('Error:', error);
+      showToast(Constant.DATA_NOT_SAVE, 'error');
     }
-
-   
-
-    // Handle image fields
-    fields.forEach(field => {
-      const param = field.param || field;
-      const fieldType = param.field_type?.toLowerCase();
-
-      if (fieldType === 'image') {
-        const uploadedForField = uploadedImages.map(img => ({
-          id: img.id,
-          uri: img.uri,
-          name: img.name,
-        }));
-
-        dataToStore[String(param.id)] = {
-          value: uploadedForField,
-          alias_name: param.alias_name ?? null,
-        };
-      }
-    });
-
-    // Save data
-    await AsyncStorage.setItem('formData1', JSON.stringify(dataToStore));
-    console.log('✅ Form data saved:', dataToStore);
-
-    navigation.navigate('EditPreviewThumbnail');
-  } catch (error) {
-    console.log('Error:', error);
-    showToast(Constant.DATA_NOT_SAVE,'error');
-  }
-};
+  };
 
 
 
@@ -857,18 +859,18 @@ const handlePreview = async (latestFormValues: any) => {
         console.log('PARMSASDF: ', param);
 
         const rawValue =
-        formValues[param.id]?.value ??
-        (alias_name ? formValues[alias_name]?.value : '') ??
-        '';
+          formValues[param.id]?.value ??
+          (alias_name ? formValues[alias_name]?.value : '') ??
+          '';
 
-      // const finalValue =
-      //   rawValue !== null && rawValue !== undefined ? String(rawValue) : '';
-      //   formValues[param.id]?.value ??
-      //   (alias_name ? formValues[alias_name]?.value : '') ??
-      //   '';
+        // const finalValue =
+        //   rawValue !== null && rawValue !== undefined ? String(rawValue) : '';
+        //   formValues[param.id]?.value ??
+        //   (alias_name ? formValues[alias_name]?.value : '') ??
+        //   '';
 
-      const finalValue =
-        rawValue !== null && rawValue !== undefined ? String(rawValue) : '';
+        const finalValue =
+          rawValue !== null && rawValue !== undefined ? String(rawValue) : '';
 
         const isPriceField = alias_name?.toLowerCase() === 'price';
         const placeholderText =
@@ -920,7 +922,7 @@ const handlePreview = async (latestFormValues: any) => {
               multiline={false}
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               keyboardType={rnKeyboardType}
-             value={isPriceField ? `£ ${finalValue}` : finalValue}
+              value={isPriceField ? `£ ${finalValue}` : finalValue}
               onChangeText={text => {
                 if (isPriceField) {
                   // Remove £ and spaces before saving
@@ -1096,7 +1098,7 @@ const handlePreview = async (latestFormValues: any) => {
             >
               <Image source={uploadIcon1} style={styles.uploadIcon} />
               <Text allowFontScaling={false} style={styles.uploadText}>
-                Upload {field_name}
+                 {t('upload_images')}
               </Text>
             </TouchableOpacity>
             {uploadedImages.length > 0 && (
@@ -1199,18 +1201,18 @@ const handlePreview = async (latestFormValues: any) => {
 
               <View style={{ flex: 1 }}>
                 <Text allowFontScaling={false} style={styles.importantText1}>
-                  Important:
+                  {t('important')}
                 </Text>
                 <Text allowFontScaling={false} style={styles.importantText}>
-                  Featured listings require a small upfront fee —{' '}
+                  {t('featured_listing_note_1')} {' '}
                   <Text allowFontScaling={false} style={styles.importantText1}>
                     {featureFee}%
                   </Text>{' '}
-                  of your item’s price or up to{' '}
+                  {t('featured_listing_fee_percentage')}{' '}
                   <Text allowFontScaling={false} style={styles.importantText1}>
                     £{maxFeatureCap}
-                  </Text>{' '}
-                  (whichever is lower).
+                  </Text>{''}
+                  {t('featured_listing_fee_cap')}
                 </Text>
               </View>
             </View>
@@ -1394,7 +1396,7 @@ const handlePreview = async (latestFormValues: any) => {
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-            {`Edit${category ? ` ${category} ` : ''}`}
+            {t('edit')}{`${category ? ` ${category} ` : ''}`}
           </Text>
         </View>
 
@@ -1492,7 +1494,11 @@ const handlePreview = async (latestFormValues: any) => {
                   allowFontScaling={false}
                   style={styles.productdetailstext}
                 >
-                  {category === 'Food' ? 'Dish Details' : `${category ? `${category} Details` : ''}`}
+
+                  {productId === 3
+                    ? t('dish_details')
+                    : `${productName ? `${productName} ` : ''}${t('details')}`}
+                  {/* {category === 'Food' ? 'Dish Details' : `${category ? `${category} Details` : ''}`} */}
                 </Text>
 
                 {fields
@@ -1512,7 +1518,7 @@ const handlePreview = async (latestFormValues: any) => {
           </AnimatedReanimated.ScrollView >
 
           <Button
-            title="Preview Details"
+            title={t('preview_details')}
             onPress={() => handlePreview(formValues)}
           />
         </KeyboardAvoidingView>
@@ -1527,12 +1533,12 @@ const handlePreview = async (latestFormValues: any) => {
             options={multiSelectOptions}
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
-            title={`Select ${multiSelectModal?.fieldLabel || 'Category'}`}
+            title={`${t('select')} ${multiSelectModal?.fieldLabel || 'Category'}`}
             subtitle={
-              multiSelectModal?.ismultilple
-                ? `Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your listing.`
-                : `Select the ${multiSelectModal?.fieldLabel || 'category'} that best describes your listing.`
-            }
+            multiSelectModal?.ismultilple
+              ? `${t('pick_all')} ${multiSelectModal?.fieldLabel || 'categories'} ${t('best_describe')}`
+              : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'} ${t('that_fit_your_listing')}`
+          }
             //subtitle={`Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your item.`}
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>
@@ -1554,12 +1560,12 @@ const handlePreview = async (latestFormValues: any) => {
             options={multiSelectOptions}
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
-            title={`Select ${multiSelectModal?.fieldLabel || 'Category'}`}
+           title={`${t('select')} ${multiSelectModal?.fieldLabel || 'Category'}`}
             subtitle={
-              multiSelectModal?.ismultilple
-                ? `Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your listing.`
-                : `Select the ${multiSelectModal?.fieldLabel || 'category'} that best describes your listing.`
-            }
+            multiSelectModal?.ismultilple
+              ? `${t('pick_all')} ${multiSelectModal?.fieldLabel || 'categories'} ${t('best_describe')}`
+              : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'} ${t('that_fit_your_listing')}`
+          }
             //subtitle={`Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your item.`}
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>
@@ -1605,7 +1611,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'box-none',
     marginTop: (Platform.OS === 'ios' ? 0 : 0),
-    marginLeft: 1 
+    marginLeft: 1
   },
   backButtonContainer: {
     position: 'absolute',

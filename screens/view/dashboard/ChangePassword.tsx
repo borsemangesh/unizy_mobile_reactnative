@@ -42,6 +42,7 @@ import {
   openSettings,
 } from 'react-native-permissions';
 import { Constant } from '../../utils/Constant';
+import { useTranslation } from 'react-i18next';
 
 type changePasswordProps = {
   navigation: any;
@@ -64,7 +65,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
+  const { t } = useTranslation();
   const handlechangePassword = async () => {
     Keyboard.dismiss();
 
@@ -141,7 +142,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
             confirm_password: '',
           });
         }, 2000); // 3 second
-       
+
       } else {
         showToast(data?.message || 'Failed to update password', 'error');
       }
@@ -158,7 +159,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
     await AsyncStorage.clear();
     navigation.reset({
       index: 0,
-      routes: [{ name: 'SinglePage', params: {forgotPassword: true, resetToLogin: false,currentScreen: 'login',currentScreenIninner: 'forgotpassword' } }],
+      routes: [{ name: 'SinglePage', params: { forgotPassword: true, resetToLogin: false, currentScreen: 'login', currentScreenIninner: 'forgotpassword' } }],
     });
   };
 
@@ -177,7 +178,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
               </View>
             </TouchableOpacity>
             <Text allowFontScaling={false} style={styles.unizyText}>
-              Change Password
+              {t('change_password')}
             </Text>
             <View style={{ width: 48 }} />
           </View>
@@ -190,7 +191,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
           <View style={styles.blurCard}>
             <View style={styles.inputGroup}>
               <Text style={styles.label} allowFontScaling={false}>
-                Current Password*
+                {t('current_password')}
               </Text>
 
               <View style={{ position: 'relative' }}>
@@ -201,7 +202,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                     setUserMeta(prev => ({ ...prev, current_password: text }))
                   }
                   style={styles.input}
-                  placeholder="Enter Current Password"
+                  placeholder={t('enter_current_password')}
                   placeholderTextColor="#ccc"
                 />
 
@@ -223,7 +224,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
 
             <View style={styles.inputGroup}>
               <Text style={styles.label} allowFontScaling={false}>
-                New Password*
+                {t('new_password')}
               </Text>
 
               <View style={{ position: 'relative' }}>
@@ -234,7 +235,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                     setUserMeta(prev => ({ ...prev, new_password: text }))
                   }
                   style={styles.input}
-                  placeholder="Enter New Password"
+                  placeholder={t('enter_new_password')}
                   placeholderTextColor="#ccc"
                 />
 
@@ -256,7 +257,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
 
             <View style={styles.inputGroup}>
               <Text style={styles.label} allowFontScaling={false}>
-                Confirm Password*
+                {t('confirm_password')}
               </Text>
               {/* <TextInput
                 allowFontScaling={false}
@@ -277,7 +278,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                     setUserMeta(prev => ({ ...prev, confirm_password: text }))
                   }
                   style={styles.input}
-                  placeholder="Enter Confirm Password"
+                  placeholder={t('enter_confirm_password')}
                   placeholderTextColor="#ccc"
                 />
 
@@ -312,20 +313,20 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                 reducedTransparencyFallbackColor="transparent"
               />
               <Text allowFontScaling={false} style={styles.buttonText}>
-                Change Password
+                {t('change_password')}
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => {
               console.log("This is Forgot password")
               setShowDeleteModal(true);
-              }}>
+            }}>
               <Text
                 allowFontScaling={false}
                 style={styles.forgetText}
-                // onPress={() => navigation.goBack()}
+              // onPress={() => navigation.goBack()}
               >
-                Forgot Password?
+                {t('forgot_password')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -372,8 +373,14 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                   style={styles.logo}
                   resizeMode="contain"
                 />
-                <Text allowFontScaling={false} style={[styles.mainheader, { marginTop: 10 }]}>
-                Are you sure you want to proceed? You will be logged out of your account.
+                <Text allowFontScaling={false} style={styles.mainheader1}>
+                  {t('confirm_action')}
+                </Text>
+                <Text
+                  allowFontScaling={false}
+                  style={[styles.mainheader, { marginTop: 10 }]}
+                >
+                  {t('action')}
                 </Text>
 
                 <TouchableOpacity
@@ -383,7 +390,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                   }}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>
-                    Yes, Proceed
+                    {t('yes_proceed')}
                   </Text>
                 </TouchableOpacity>
 
@@ -394,7 +401,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                   }}
                 >
                   <Text allowFontScaling={false} style={styles.loginText1}>
-                    Cancel
+                    {t('cancel')}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -411,6 +418,15 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
 export default ChangePassword;
 
 const styles = StyleSheet.create({
+
+  mainheader1: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 20,
+    fontWeight: '600',
+    letterSpacing: -0.4,
+    lineHeight: 28,
+  },
   scrollContainer: {
     paddingHorizontal: 16,
     paddingBottom: 80,

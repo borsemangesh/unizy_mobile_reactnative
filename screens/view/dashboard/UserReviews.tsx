@@ -36,6 +36,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import Loader from '../../utils/component/Loader';
+import { useTranslation } from 'react-i18next';
 
 type CreatedBy = {
   id: number;
@@ -116,17 +117,19 @@ const UserReviews = ({ navigation }: UserReviewsProps)  => {
   const insets = useSafeAreaInsets(); // Safe area insets
   const { height: screenHeight } = Dimensions.get('window');
   const [totalRecords, setTotalRecords] = useState(0);
-
+  const { t } = useTranslation();
 
   type Category = {
   id: number | null; 
   name: string;
 };
-const [categories, setCategories] = useState<Category[]>([
-  { id: null, name: 'All' }
-]);
-const [selectedCategory, setSelectedCategory] = useState<Category>({ id: null, name: 'All' });
-
+ const [categories, setCategories] = useState<Category[]>([
+      { id: null, name: t('all') },
+    ]);
+    const [selectedCategory, setSelectedCategory] = useState<Category>({
+      id: null,
+      name: t('all'),
+    });
   const scrollY = useSharedValue(0);
  
   const scrollHandler = useAnimatedScrollHandler({
@@ -185,7 +188,7 @@ useEffect(() => {
     if (stored) {
       const parsed = JSON.parse(stored); 
       const catObjects = [
-        { id: null, name: 'All' }, 
+        { id: null, name: t('all') },
         ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
       ];
       setCategories(catObjects);
@@ -193,7 +196,7 @@ useEffect(() => {
     }
   };
   loadCategories();
-}, []);
+}, [t]);
 
 // useEffect(() => {
 //   setPage(1);
@@ -501,7 +504,7 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
                  </TouchableOpacity>
         
                  <Text allowFontScaling={false} style={styles.unizyText}>
-                   {members.firstname} Reviews
+                   {members.firstname} {t('reviews')}
                  </Text>
                </View>
           <Animated.FlatList
@@ -604,7 +607,7 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
                               resizeMode="contain"
                             />
                             <Text allowFontScaling={false} style={styles.emptyText}>
-                              No Reviews Found
+                               {t('no_reviews_found')}
                             </Text>
                           </View>
                           </View>

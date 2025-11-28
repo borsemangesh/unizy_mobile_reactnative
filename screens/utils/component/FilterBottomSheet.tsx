@@ -481,11 +481,11 @@ const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(n
               }}
             >
               <Text allowFontScaling={false} style={styles.modelTextHeader}>
-                Filters
+                {t('filters')}
               </Text>
               <TouchableOpacity onPress={handleClearFilters}>
                 <Text allowFontScaling={false} style={styles.clearAll}>
-                  Clear all
+                  {t('clear_all')}
                 </Text>
               </TouchableOpacity>
             </View>

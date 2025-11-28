@@ -537,17 +537,17 @@ const { height } = Dimensions.get('window');
                    {t('important')}
                 </Text>
                 <Text allowFontScaling={false} style={styles.importantText}>
-                  A
+                  {t('a')}
                   <Text allowFontScaling={false} style={styles.importantText1}>
                     {' '}
                     {categoryDetails?.commission ?? '0'}%
                   </Text>{' '}
-                  commission or a maximum of
+                  {t('commission_or_maximum')}
                   <Text allowFontScaling={false} style={styles.importantText1}>
                     {' '}
                     £{categoryDetails?.max_cappund ?? '0'}
                   </Text>
-                  , whichever is lower, will be added to the entered price.
+                  {t('whichever_lower')}
                 </Text>
               </View>
             </View>

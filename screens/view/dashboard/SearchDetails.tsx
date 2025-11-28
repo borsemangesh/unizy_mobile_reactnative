@@ -41,6 +41,7 @@ import MaskedView from '@react-native-masked-view/masked-view';
 import SelectFoodQuantity from '../../utils/component/SelectFoodQuantity';
 import SelectFoodQuantity_IOS from '../../utils/component/SelectFoodQuantity_IOS';
 import { Constant } from '../../utils/Constant';
+import { useTranslation } from 'react-i18next';
 
 type SearchDetailsProps = {
   navigation: any;
@@ -78,6 +79,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
   const [loading, setLoading] = useState(true);
   const [formValues, setFormValues] = useState<any>({});
   const screenWidth = Dimensions.get('window').width;
+const { t } = useTranslation();
 
   const [imageUri, setImageUri] = useState<string | null>(null);
 
@@ -256,14 +258,14 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
   };
 
   const handlePay = (overrideAmount?: number) => {
-    if (detail?.category?.name === 'Food' && overrideAmount === undefined) {
+    if (detail?.category?.id === 3 && overrideAmount === undefined) {
       setMultiSelectModal(prev => ({ ...prev, visible: true }));
       return;
     }
 
     const amountToPay = overrideAmount ?? Number(detail.price).toFixed(2);
 
-    console.log('Final Amount', famount);
+    //console.log('Final Amount', famount);
 
     navigation.navigate('PaymentScreen', {
       amount: amountToPay,
@@ -655,7 +657,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-            {detail?.category?.name ? `${detail.category.name} Details` : ''}
+            {detail?.category?.name ? `${detail.category.name} ${t('details')}` : ''}
           </Text>
 
           <TouchableOpacity
@@ -760,13 +762,13 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                         style={{ height: 16, width: 16 }}
                       />
                       <Text allowFontScaling={false} style={styles.datetext1}>
-                        Service Duration:{' '}
+                        {t('service_duration')}:{' '}
                         <Text style={styles.durationValue}>
                           {detail?.hours
                             ? `${detail.hours} ${
-                                detail.hours > 1 ? 'Hours' : 'Hour'
+                                detail.hours > 1 ? t('hours') : t('hour')
                               }`
-                            : '1 Hour'}
+                            : `1 ${t('hour')}`}
                         </Text>
                       </Text>
                     </View>
@@ -786,7 +788,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     allowFontScaling={false}
                     style={styles.productDesHeding}
                   >
-                    Product Description
+                    {t('product_description')}
                   </Text>
                   <Text allowFontScaling={false} style={styles.productDesc}>
                     {detail?.description || 'No description available'}
@@ -870,7 +872,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     allowFontScaling={false}
                     style={styles.productDeatilsHeading}
                   >
-                    Seller Details
+                   {t('seller_details')}
                   </Text>
 
                   <View style={{ flexDirection: 'row', marginBottom: 4 }}>
@@ -999,7 +1001,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                         style={{ height: 16, width: 16, marginRight: 4 }}
                       />
                       <Text allowFontScaling={false} style={styles.chattext}>
-                        Chat with Seller
+                        {t('chat_with_seller')}
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -1023,14 +1025,14 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         {detail?.category?.id !== 4 && (
         <PayButton
           amount={
-            detail?.category?.name === 'Food'
+            detail?.category?.id === 3
               ? undefined
               : Number(detail?.price)
           }
           label={
-            detail?.category?.name === 'Food'
-              ? 'Select Quantity'
-              : 'Pay'
+            detail?.category?.id === 3
+              ? t('select_quantity')
+              : t('pay')
           }
           onPress={() => handlePay()}
         />
@@ -1042,8 +1044,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
             options={quantityOptions}
             visible={multiSelectModal.visible}
             price={Number(detail?.price)}
-            title="Choose Quantity"
-            subtitle="Select the number of units you’d like to buy."
+            title={t('choose_quantity')}
+            subtitle={t('select_units')}
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>
               setMultiSelectModal(prev => ({ ...prev, visible: false }))
@@ -1069,8 +1071,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
             options={quantityOptions}
             visible={multiSelectModal.visible}
             price={Number(detail?.price)}
-            title="Choose Quantity"
-            subtitle="Select the number of units you’d like to buy."
+            title={t('choose_quantity')}
+            subtitle={t('select_units')}
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>
               setMultiSelectModal(prev => ({ ...prev, visible: false }))
@@ -1136,7 +1138,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       lineHeight: 28,
                     }}
                   >
-                    Complete Your Purchase
+                    {t('complete_your_purchase')}
                   </Text>
                   <Text
                     allowFontScaling={false}
@@ -1150,8 +1152,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       lineHeight: 19.6,
                     }}
                   >
-                    Chat with the seller will be available after you’ve bought
-                    this product or service.
+                    {t('chat_service')}
                   </Text>
 
                   <TouchableOpacity
@@ -1161,7 +1162,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText}>
-                      Go Back
+                      {t('go_back')}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -1230,7 +1231,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       lineHeight: 28,
                     }}
                   >
-                    Order Placed Successfully!
+                    {t('order_placed_success')}!
                   </Text>
 
                   <TouchableOpacity
@@ -1252,7 +1253,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText}>
-                      Return to Home
+                     {t('return_home')}
                     </Text>
                   </TouchableOpacity>
 
@@ -1275,7 +1276,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText1}>
-                      Chat with Seller
+                     {t('chat_with_seller')}
                     </Text>
                   </TouchableOpacity>
                 </View>

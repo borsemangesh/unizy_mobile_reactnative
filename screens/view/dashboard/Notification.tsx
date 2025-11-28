@@ -476,7 +476,7 @@ const Notification = ({ navigation }: NotificationProps) => {
             ListEmptyComponent={
               !initialLoading && !isLoading ? (
                 <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
-                  No Notification found
+                  {t('no_notification_found')}
                 </Text>
               ) : null
             }

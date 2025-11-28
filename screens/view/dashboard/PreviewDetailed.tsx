@@ -752,7 +752,7 @@ const { t } = useTranslation();
                       style={{ height: 16, width: 16 }}
                     />
                     <Text allowFontScaling={false} style={styles.datetext1}>
-                      Service Duration:{' '}
+                      {t('service_duration')}:{' '}
                       <Text style={styles.durationValue}>{duration_value} Hours</Text>
                     </Text>
                   </View>
@@ -863,7 +863,7 @@ const { t } = useTranslation();
 
             <View style={styles.card}>
               <View style={{ gap: 12 }}>
-                <Text allowFontScaling={false} style={styles.productDeatilsHeading}>Seller Details</Text>
+                <Text allowFontScaling={false} style={styles.productDeatilsHeading}>{t('seller_details')}</Text>
 
                 <View style={{ flexDirection: 'row', marginBottom: 4 }}>
 

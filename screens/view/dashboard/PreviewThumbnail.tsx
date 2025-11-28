@@ -235,7 +235,7 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
   const maxAllowedPrice1 = priceValue1 + maxCap1;
   const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2);
 
-const { t } = useTranslation();
+  const { t } = useTranslation();
 
 
 
@@ -438,7 +438,7 @@ const { t } = useTranslation();
                       allowFontScaling={false}
                       style={[styles.newtext]}
                     >
-                       {t('preview_featured_listing')}
+                      {t('preview_featured_listing')}
                     </Text>
                     <PreviewCard
                       tag={uniname}
@@ -455,7 +455,7 @@ const { t } = useTranslation();
                       allowFontScaling={false}
                       style={[styles.newtext1, {}]}
                     >
-                       {t('preview_regular_listing')}
+                      {t('preview_regular_listing')}
                     </Text>
                     <NewFeatureCard
                       tag={uniname}
@@ -506,17 +506,17 @@ const { t } = useTranslation();
                 {t('important')}
               </Text>
               <Text allowFontScaling={false} style={styles.importantText}>
-                A
+                {t('a')}
                 <Text allowFontScaling={false} style={styles.importantText1}>
                   {' '}
                   {categoryDetails?.commission ?? '0'}%
                 </Text>{' '}
-                commission or a maximum of
+                {t('commission_or_maximum')}
                 <Text allowFontScaling={false} style={styles.importantText1}>
                   {' '}
                   £{categoryDetails?.max_cappund ?? '0'}
                 </Text>
-                , whichever is lower, will be added to the entered price.
+                {t('whichever_lower')}
               </Text>
             </View>
           </View>

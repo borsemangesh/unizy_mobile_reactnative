@@ -40,6 +40,7 @@ import FilterBottomSheet from '../../utils/component/FilterBottomSheet';
 import SearchTutionCard from '../../utils/SearchTutionCard';
 import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
 import FilterAndroid from '../../utils/component/FilterAndroid';
+import { useTranslation } from 'react-i18next';
 type CreatedBy = {
   id: number;
   firstname: string;
@@ -308,6 +309,8 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
     }
   };
 
+  const { t } = useTranslation();
+  
 
   const filteredFeatures: Feature[] = featurelist.filter((item) =>
     item.title?.toLowerCase().includes(search.toLowerCase())
@@ -537,7 +540,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-            Search
+            {t('search')}
           </Text>
         </View>
 
@@ -561,7 +564,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
                 <TextInput
                   allowFontScaling={false}
                   style={styles.searchBar}
-                  placeholder="Search"
+                  placeholder={t('search')}
                   placeholderTextColor="#ccc"
                   value={search}
                   onChangeText={handleSearchChange}
@@ -615,7 +618,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
                     resizeMode="contain"
                   />
                   <Text allowFontScaling={false} style={styles.emptyText}>
-                    No Listings Found
+                    {t('No_Listings_Found')}
                   </Text>
                 </View>
               </View>

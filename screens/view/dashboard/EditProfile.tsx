@@ -1213,7 +1213,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   fontFamily: 'Urbanist-Medium',
                 }}
               >
-                Change Password
+                {t('change_password')}
               </Text>
             </TouchableOpacity>
           </AnimatedReanimated.ScrollView>
@@ -1305,7 +1305,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   onPress={otpverify}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>
-                    Verify
+                    {t('verify')}
                   </Text>
                 </TouchableOpacity>
 
@@ -1361,15 +1361,18 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 ]}
               />
 
-              <View style={styles.popupContainer}>
+              <View style={[styles.popupContainer,{gap: 3}]}>
                 <Image
                   source={require('../../../assets/images/profile_delete.png')}
                   style={styles.logo}
                   resizeMode="contain"
                 />
-                <Text allowFontScaling={false} style={[styles.mainheader, { marginTop: 10 }]}>
-                  Do you want to delete the profile picture!
-                </Text>
+                <Text allowFontScaling={false} style={styles.mainheader1}>
+                {t('remove_profile')}
+              </Text>
+              <Text allowFontScaling={false} style={styles.subheader2}>
+                {t('are_you_sure')}
+              </Text>
 
                 <TouchableOpacity
                   style={styles.loginButton}
@@ -1380,7 +1383,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   }}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>
-                    Yes, Delete
+                    {t('yes_remove')}
                   </Text>
                 </TouchableOpacity>
 
@@ -1406,6 +1409,24 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 export default EditProfile;
 
 const styles = StyleSheet.create({
+
+   subheader2: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginTop: 6,
+  },
+
+    mainheader1: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 20,
+    fontWeight: '600',
+    letterSpacing: -0.4,
+    lineHeight: 28,
+  },
   scrollContainer: {
     paddingHorizontal: 16,
     paddingBottom: 80,

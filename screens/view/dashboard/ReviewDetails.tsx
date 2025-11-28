@@ -41,6 +41,7 @@ import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import Loader from '../../utils/component/Loader';
+import { useTranslation } from 'react-i18next';
 
 type ReviewDetailsProps = {
   navigation: any;
@@ -54,6 +55,7 @@ type ReviewDetailsRouteProp = RouteProp<RootStackParamList, 'ReviewDetails'>;
 
 const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
   const route = useRoute<ReviewDetailsRouteProp>();
+  const { t } = useTranslation();
   const { category_id } = route.params;
   const { id } = route.params;
   const { purchase } = route.params;
@@ -120,12 +122,12 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
 
   const defaultProfile = require('../../../assets/images/user.jpg');
   const [categories, setCategories] = useState<Category[]>([
-    { id: null, name: 'All' },
-  ]);
-  const [selectedCategory, setSelectedCategory] = useState<Category>({
-    id: null,
-    name: 'All',
-  });
+      { id: null, name: t('all') },
+    ]);
+    const [selectedCategory, setSelectedCategory] = useState<Category>({
+      id: null,
+      name: t('all'),
+    });
   const [showButton, setShowButton] = useState(false);
   const [categoriesLoaded, setCategoriesLoaded] = useState(false);
 
@@ -137,7 +139,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
         const parsed = JSON.parse(stored);
 
         const catObjects = [
-          { id: null, name: 'All' },
+          { id: null, name: t('all') },
           ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
         ];
 
@@ -156,7 +158,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
     };
 
     loadCategories();
-  }, [category_id, purchase]);
+  }, [category_id, purchase,t]);
 
   useEffect(() => {
     if (selectedCategory?.id !== category_id) {
@@ -380,8 +382,8 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
 
           <Text allowFontScaling={false} style={styles.unizyText}>
             {selectedCategory?.name === 'All'
-              ? 'Reviews'
-              : `${selectedCategory?.name} Reviews`}
+              ? t('reviews')
+              : `${selectedCategory?.name} ${t('reviews')}`}
           </Text>
         </View>
 
@@ -449,13 +451,13 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
                 <StarRating rating={averageRating} starSize={24} />
 
                 <Text allowFontScaling={false} style={styles.reviewcount}>
-                  {totalReviews} Reviews
+                  {totalReviews} {t('reviews')}
                 </Text>
               </View>
 
               <View style={styles.innercontainer}>
                 <Text allowFontScaling={false} style={styles.mainlabel}>
-                  Reviews
+                  {t('reviews')}
                 </Text>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -489,7 +491,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
                     resizeMode="contain"
                   />
                   <Text allowFontScaling={false} style={styles.emptyText}>
-                    No reviews found
+                    {t('no_reviews_found')}
                   </Text>
                 </View>
               </View>
@@ -499,7 +501,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
 
         {showButton && (
           <Button
-            title="Write a Review"
+            title={t('write_a_review')}
             onPress={() =>
               navigation.navigate('AddReview', {
                 category_id: category_id,

@@ -498,7 +498,7 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
                     resizeMode="contain"
                   />
                   <Text allowFontScaling={false} style={styles.emptyText}>
-                    No Reviews Found
+                   {t('no_reviews_found')}
                   </Text>
                 </View>
               </View>
