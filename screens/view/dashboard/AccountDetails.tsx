@@ -753,7 +753,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
           <Button
             title={
               buttonLoading
-                ? t('laoding')
+                ? t('loading')
                 : data?.stripeAccount?.isboardcomplete
                 ? t('edit_bank_details')
                 : t('add_bank_details')
