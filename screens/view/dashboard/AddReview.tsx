@@ -246,11 +246,24 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
                   <TouchableOpacity
                     style={styles.loginButton}
                     onPress={() => {
-                      navigation.replace('Dashboard', {
-                        AddScreenBackactiveTab: 'Home',
-                        isNavigate: false,
-                      });
+                      // navigation.replace('Dashboard', {
+                      //   AddScreenBackactiveTab: 'Home',
+                      //   isNavigate: false,
+                      // });
+
                       setShowPopup1(false);
+                      navigation.reset({
+                        index: 0,
+                        routes: [
+                          {
+                            name: 'Dashboard',
+                            params: {
+                              AddScreenBackactiveTab: 'Home',
+                              isNavigate: false,
+                            },
+                          },
+                        ],
+                      });
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText}>
@@ -262,8 +275,19 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
                     style={styles.loginButton1}
                     //onPress={()=>{setShowPopup1(false);}}
                     onPress={() => {
-                      navigation.goBack();
+
+                      // navigation.goBack();
+                      navigation.replace('MyOrders'); 
                       setShowPopup1(false);
+                      // navigation.reset({
+                      //   index: 0,
+                      //   routes: [
+                      //     {
+                      //       name: 'MyOrders'
+                      //     },
+                      //   ],
+                      // });
+                      // navigation.goBack();
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText1}>

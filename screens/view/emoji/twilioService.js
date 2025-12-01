@@ -55,3 +55,28 @@ export const waitForTwilioReady = (client, timeoutMs = 10000) =>
 
     client.on("connectionStateChanged", handleStateChange);
   });
+
+/**
+ * Reset the Twilio client singleton - clears all listeners and shuts down the client
+ * This should be called on logout to prevent notifications from going to the wrong user
+ */
+export const resetTwilioClient = async () => {
+  if (twilioClientSingleton) {
+    try {
+      // Remove all event listeners to prevent notifications
+      twilioClientSingleton.removeAllListeners();
+      
+      // Shutdown the client to disconnect from Twilio
+      if (typeof twilioClientSingleton.shutdown === 'function') {
+        await twilioClientSingleton.shutdown();
+      }
+      
+      console.log('✅ Twilio client reset successfully');
+    } catch (err) {
+      console.warn('⚠️ Error resetting Twilio client:', err.message);
+    } finally {
+      // Always clear the singleton reference
+      twilioClientSingleton = null;
+    }
+  }
+};

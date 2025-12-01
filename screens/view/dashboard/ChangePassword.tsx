@@ -129,19 +129,22 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
         data = {};
       }
 
+   
       if (response.ok) {
         showToast(t(data?.message) || 'Password updated successfully', 'success');
 
         // navigation.navigate('EditProfile');
         // navigation.goBack();
-        setInterval(() => {
-          navigation.goBack();
+        // setInterval(() => {
+          await new Promise((resolve: any) => {
+            setTimeout(resolve, 2000);
+          }); // Wait 1.5s so toast stays visible
           setUserMeta({
             current_password: '',
             new_password: '',
             confirm_password: '',
           });
-        }, 2000); // 3 second
+//         }, 2000); // 3 second
 
       } else {
         showToast(t(data?.message) || 'Failed to update password', 'error');
@@ -151,7 +154,6 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
       showToast(Constant.SOMTHING_WENT_WRONG, 'error');
     }
   };
-
 
   const handleForceLogout = async () => {
     console.log('User inactive or unauthorized — logging out');
@@ -333,8 +335,6 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
         </KeyboardAvoidingView>
       </View>
 
-
-
       <Modal
         visible={showDeleteModal}
         transparent
@@ -409,7 +409,6 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
-
 
       <NewCustomToastContainer />
     </ImageBackground>
@@ -769,8 +768,8 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   logo: {
-    width: 120,
-    height: 120,
+    width: 64,
+    height: 64,
     borderRadius: 60,
   },
 
@@ -894,13 +893,19 @@ const styles = StyleSheet.create({
   },
 
   mainheader: {
-    fontFamily: 'Urbanist-SemiBold',
-    fontWeight: '500',
-    // marginBottom: 10,
-    fontSize: 20,
+    // fontFamily: 'Urbanist-SemiBold',
+    // fontWeight: '500',
+    // // marginBottom: 10,
+    // fontSize: 20,
 
-    color: '#fff',
+    // color: '#fff',
+    // textAlign: 'center',
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 16,
+    fontWeight: '400',
     textAlign: 'center',
+    marginTop: 6,
   },
 
   subheader: {

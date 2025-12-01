@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ImageSourcePropType,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 
 type NotificationCardProps = {
@@ -52,25 +53,80 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
       });
     } 
     else if(templateName==='OrderOTP'){
-      navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false})
+      if(Platform.OS === 'ios'){
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'Dashboard',
+              params: {
+                AddScreenBackactiveTab: 'Search',
+                isNavigate: false,
+              }
+            }
+          ],
+        });
+      } else {
+        navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false})
+      }
+     
     }
 
     else if (templateName==='NewReviewedAdd'){
-       navigation.replace('ReviewDetails', {
-        catagory_id: categoryid,
-        id: typeid,
-       purchase:false
-       });
+      if(Platform.OS === 'ios'){
+        navigation.navigate('ReviewDetails', {
+          catagory_id: categoryid,
+          id: typeid,
+         purchase:false
+         });
+      } else {
+        navigation.replace('ReviewDetails', {
+          catagory_id: categoryid,
+          id: typeid,
+         purchase:false
+         });
+      }
     }
 
     else if (templateName==='YourOrderCompleted'){
        navigation.replace('MyOrders');
     }
     else if (templateName === 'OrderCompletedRecivedPaymentSoon') {
-     navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false})
+      if(Platform.OS === 'ios'){
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'Dashboard',
+              params: {
+                AddScreenBackactiveTab: 'Search',
+                isNavigate: false,
+              }
+            }
+          ],
+        });
+      } else {
+        navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false})
+      }
     } 
      else if (templateName === 'PayoutSuccess') {
-      navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false,issales:true})
+      if(Platform.OS === 'ios'){
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'Dashboard',
+              params: {
+                AddScreenBackactiveTab: 'Search',
+                isNavigate: false,
+              }
+            }
+          ],
+        });
+      } else {
+        navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false})
+      }
+      
     } 
     else {
       // Default navigation (fallback to SearchDetails)

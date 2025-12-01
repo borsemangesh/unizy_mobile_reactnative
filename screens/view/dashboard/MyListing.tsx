@@ -451,11 +451,16 @@ const formatDate = (dateString?: string, t?: any) => {
         {/* Header Content */}
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
-            onPress={() =>
-              navigation.replace('Dashboard', {
-                AddScreenBackactiveTab: 'Home',
-                isNavigate: false,
-              })
+            onPress={() =>{
+              console.log("MYLISTSTACK",navigation.getState())
+              if(navigation.getState().routes[navigation.getState().index].name === 'MyListing'){
+                navigation.replace('Dashboard', {
+                  AddScreenBackactiveTab: 'Home',
+                  isNavigate: false,
+                })
+              }
+              
+            }
             }
             style={styles.backButtonContainer}
             activeOpacity={0.7}
@@ -852,18 +857,47 @@ const styles = StyleSheet.create({
   categoryTabsContainer: { marginBottom: 12, marginTop: 12, width: '105%', },
   categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' },
 
-  tabcard: {
+
+
+ tabcard: {
+   
     minHeight: 38,
     paddingVertical: 10,
     paddingHorizontal: 16,
-    borderRadius: 10,
     marginRight: 8,
+    borderWidth: 0.4,
+    borderColor: '#ffffff11',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    borderRadius: 10,
+    boxShadow:
+    'rgba(255, 255, 255, 0.02)inset 0.1px 0.1px 1px 0px,',
   },
   tabcard1: {
     minHeight: 38,
+    borderWidth: 0.4,
+    borderColor: '#ffffff11',
+
+    // boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
+
+    borderEndEndRadius: 10,
+    borderStartEndRadius: 10,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderBottomStartRadius: 10,
+    borderBlockStartColor: '#ffffff2e',
+    borderBlockColor: '#ffffff2e',
+
+    borderTopColor: '#ffffff2e',
+    borderBottomColor: '#ffffff2e',
+    borderLeftColor: '#ffffff2e',
+    borderRightColor: '#ffffff2e',
+
+    boxSizing: 'border-box',
     paddingVertical: 10,
     paddingHorizontal: 16,
-    borderRadius: 10,
     marginRight: 8,
   },
 
@@ -873,4 +907,3 @@ const styles = StyleSheet.create({
     width: '100%'
    },
 });
-

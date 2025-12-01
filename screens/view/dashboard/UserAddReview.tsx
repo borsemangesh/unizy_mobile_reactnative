@@ -241,8 +241,17 @@ const { t } = useTranslation();
                 style={styles.loginButton1}
                 //onPress={()=>{setShowPopup1(false);}}
                 onPress={() => {
+                  console.log('PRESS!@#');
                     setShowPopup1(false);
-                    navigation.replace('MyReviews'); 
+                    // navigation.replace('MyReviews'); 
+                     navigation.reset({
+                        index: 0,
+                        routes: [
+                          {
+                            name: 'MyOrders'
+                          },
+                        ],
+                      });
                       
                     }}
                     >

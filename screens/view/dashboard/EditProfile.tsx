@@ -713,24 +713,53 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     }));
   };
 
-  const getCityFromPostalCode = async (postalCode: any) => {
+  // const getCityFromPostalCode = async (postalCode: any) => {
+  //   try {
+  //     const response = await fetch(
+  //       `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
+  //     );
+
+  //     const data = await response.json();
+
+  //     return (
+  //       data[0]?.address?.city ||
+  //       data[0]?.address?.town ||
+  //       data[0]?.address?.village
+  //     );
+  //   } catch (error) {
+  //     console.log(error);
+  //     return null;
+  //   }
+  // };
+
+  const getCityFromPostalCode = async (postalCode: string) => {
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
+        {
+          headers: {
+            "User-Agent": "MyAndroidApp/1.0 (contact@myapp.com)",
+            "Accept-Language": "en-US",
+          },
+        }
       );
-
+  
       const data = await response.json();
-
+  
+      if (!data || data.length === 0) return null;
+  
       return (
-        data[0]?.address?.city ||
-        data[0]?.address?.town ||
-        data[0]?.address?.village
+        data[0].address.city ||
+        data[0].address.town ||
+        data[0].address.village ||
+        null
       );
     } catch (error) {
-      console.log(error);
+      console.log("Error fetching city:", error);
       return null;
     }
   };
+  
 
   const getInitials = (firstName = '', lastName = '') => {
     const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
@@ -1163,7 +1192,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                       if (filteredText.length > 0) {
                         ClickPostalCode(filteredText);
                       }
-                    }, 3000); // 3 seconds
+                    }, 1000); // 3 seconds
 
                     setTypingTimeout(timeout);
                   }}
@@ -1743,8 +1772,8 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   logo: {
-    width: 100,
-    height: 100,
+    width: 64,
+    height: 64,
     borderRadius: 60,
   },
 
@@ -1894,6 +1923,14 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
   },
+  mainheader1: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 20,
+    fontWeight: '600',
+    letterSpacing: -0.4,
+    lineHeight: 28,
+  },
 
   subheader: {
     color: 'rgba(255, 255, 255, 0.80)',
@@ -1902,6 +1939,14 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     textAlign: 'center',
     marginTop: 20,
+  },
+  subheader2: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginTop: 6,
   },
 
   subheader1: {
@@ -1924,7 +1969,7 @@ const styles = StyleSheet.create({
     paddingTop: 6,
     paddingBottom: 6,
     backgroundColor: 'rgba(170, 169, 176, 0.56)',
-    marginTop: 16,
+    marginTop: 5,
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
   },
