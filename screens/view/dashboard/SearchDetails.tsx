@@ -834,12 +834,14 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       {param.options && param.options.length > 0 ? (
                         <View style={styles.categoryContainer}>
                           {param.options
-                            .filter(opt =>
-                              (param.param_value?.toString() || '')
+                            .filter(opt => {
+                              const selectedValues = (param.param_value || '')
+                                .toString()
                                 .split(',')
-                                .map(v => v.trim())
-                                .includes(opt.option_id.toString()),
-                            )
+                                .map(v => v.trim());
+ 
+                              return selectedValues.includes((opt.option_id ?? '').toString());
+                            })
                             .map((opt: ParamOption) => (
                               <View key={opt.id} style={styles.categoryTag}>
                                 <Text

@@ -14,6 +14,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 function App() {
+  if (!__DEV__) {
+    console.log = () => {};
+    console.warn = () => {};
+    console.error = () => {};
+  }
   LogBox.ignoreAllLogs();
   enableScreens();
 

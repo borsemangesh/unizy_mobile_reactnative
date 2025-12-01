@@ -55,13 +55,11 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>This app requires access to your camera to allow taking photos.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app requires access to your location.</string>
+	<string>We use your camera to let you capture and upload photos for your profile and posts. For example, you can take a picture to personalize your account or share content.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app requires access to your photo library to allow uploading and saving images.</string>
+	<string>We access your photo library so you can upload images to your profile or attach media to your content. For example, you may choose a photo to update your profile picture.</string>
 	<key>NSRemoteNotificationUsageDescription</key>
-	<string>This app uses notifications for important alerts.</string>
+	<string>Notifications are used to alert you about important updates such as new offers, activity on your posts, and time-sensitive app alerts.</string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UIAppFonts</key>
