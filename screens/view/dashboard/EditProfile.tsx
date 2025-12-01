@@ -54,6 +54,7 @@ import {
 import Button from '../../utils/component/Button';
 import LinearGradient from 'react-native-linear-gradient';
 import { Constant } from '../../utils/Constant';
+import { useTranslation } from 'react-i18next';
 
 type EditProfileProps = {
   navigation: any;
@@ -160,6 +161,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     fetchUserProfile();
   }, []);
 
+  const { t } = useTranslation();
   const requestCameraPermission = async () => {
     // ANDROID
     if (Platform.OS === 'android') {
@@ -260,10 +262,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       showToast(errors[0], 'error');
       return;
     } else if (!isUpdateDisabled_personal) {
-      showToast(Constant.VERIFY_PERSONAL_MAIL, 'error');
+      showToast(t(Constant.VERIFY_PERSONAL_MAIL), 'error');
       return;
     } else if (!isUpdateDisabled) {
-      showToast(Constant.VERIFY_STUDENT_MAIL, 'error');
+      showToast(t(Constant.VERIFY_STUDENT_MAIL), 'error');
       return;
     }
 
@@ -272,7 +274,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       const userId = await AsyncStorage.getItem('userId');
 
       if (!token || !userId) {
-        showToast(Constant.USER_NOT_AUTH, 'error');
+        showToast(t(Constant.USER_NOT_AUTH), 'error');
         return;
       }
 
@@ -323,7 +325,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       const data = await response.json();
 
       if (response.ok) {
-        showToast(data?.message || 'Profile updated successfully', 'success');
+        showToast(t(data?.message) || 'Profile updated successfully', 'success');
         navigation.reset({
           index: 0,
           routes: [
@@ -358,13 +360,13 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         // }, 4500);
       } else {
         showToast(
-          data?.message || 'Failed to update profile.Please try again',
+          t(data?.message) || 'Failed to update profile.Please try again',
           'error',
         );
       }
     } catch (error) {
       console.error('Error during profile update:', error);
-      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+      showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
     }
   };
 
@@ -375,11 +377,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     const hasPermission = await requestCameraPermission();
     if (!hasPermission) return;
     Alert.alert(
-      'Select Option',
-      'Choose a source',
+      t('select_option'),
+      t('choose_source'),
       [
         {
-          text: 'Camera',
+          text: t('camera'),
           onPress: () => {
             launchCamera(
               {
@@ -398,7 +400,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           },
         },
         {
-          text: 'Gallery',
+          text: t('gallery'),
           onPress: () => {
             launchImageLibrary(
               {
@@ -416,7 +418,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           },
         },
         {
-          text: 'Cancel',
+          text: t('cancel'),
           style: 'cancel',
         },
       ],
@@ -433,7 +435,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       const url = `${MAIN_URL.baseUrl}user/update-profile`;
 
       if (!token || !userId) {
-        showToast(Constant.USER_NOT_AUTH, 'error');
+        showToast(t(Constant.USER_NOT_AUTH), 'error');
         return false;
       }
 
@@ -461,7 +463,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         return true;
       } else {
         showToast(
-          data?.message || 'Failed to upload image.Please try again',
+          t(data?.message) || 'Failed to upload image.Please try again',
           'error',
         );
         return false;
@@ -469,7 +471,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     } catch (error) {
       console.error('Upload error:', error);
       showToast(
-        Constant.SOMTHING_WENT_WRONG,
+        t(Constant.SOMTHING_WENT_WRONG),
         'error',
       );
       return false;
@@ -485,7 +487,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       const url = `${MAIN_URL.baseUrl}user/delete-profile?userId=${userId}`;
       photo
       if (!token || !userId) {
-        showToast(Constant.USER_NOT_AUTH, 'error');
+        showToast(t(Constant.USER_NOT_AUTH), 'error');
         return false;
       }
 
@@ -501,11 +503,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       const data = await response.json();
 
       if (response.ok) {
-        showToast(Constant.IMAGE_DELETE, 'success');
+        showToast(t(Constant.IMAGE_DELETE), 'success');
         return true;
       } else {
         showToast(
-          data?.message || 'Failed to delete image.Please try again',
+          t(data?.message) || 'Failed to delete image.Please try again',
           'error',
         );
         return false;
@@ -513,7 +515,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     } catch (error) {
       console.error('Upload error:', error);
       showToast(
-        Constant.SOMTHING_WENT_WRONG,
+        t(Constant.SOMTHING_WENT_WRONG),
         'error',
       );
       return false;
@@ -572,7 +574,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
         // setShowPopup2(true);
       } else {
-        showToast(data?.message, 'error');
+        showToast(t(data?.message), 'error');
       }
     } catch (err) {
       console.error(err);
@@ -615,7 +617,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         setShowPopup1(false);
 
       } else {
-        showToast(data?.message, 'error');
+        showToast(t(data?.message), 'error');
       }
     } catch (err) {
       console.error(err);
@@ -881,7 +883,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-            Edit Profile
+           {t('edit')} {t('profile')}
           </Text>
         </View>
 
@@ -961,7 +963,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             <View style={styles.blurCard}>
               <View style={styles.inputGroup}>
                 <Text style={styles.label} allowFontScaling={false}>
-                  First Name*
+                  {t('first_name')}
                 </Text>
                 <TextInput
                   value={userMeta.firstname || ''}
@@ -977,7 +979,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
               <View style={styles.inputGroup}>
                 <Text style={styles.label} allowFontScaling={false}>
-                  Last Name*
+                   {t('last_name')}
                 </Text>
                 <TextInput
                   value={userMeta.lastname || ''}
@@ -993,7 +995,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
               <View style={styles.inputGroup}>
                 <Text style={styles.label} allowFontScaling={false}>
-                  Personal Email ID*
+                  {t('personal_email_id')}
                 </Text>
                 <View
                   style={{
@@ -1073,7 +1075,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
               <View style={styles.inputGroup}>
                 <Text style={styles.label} allowFontScaling={false}>
-                  Student Email ID*
+                  {t('student_email_id')}
                 </Text>
                 <View
                   style={{
@@ -1152,7 +1154,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
               </View>
               <View style={styles.inputGroup}>
                 <Text style={styles.label} allowFontScaling={false}>
-                  Postal Code*
+                  {t('postal_code')}
                 </Text>
                 <TextInput
                   value={userMeta.postal_code || ''}
@@ -1204,7 +1206,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
               <View style={styles.inputGroup}>
                 <Text style={styles.label} allowFontScaling={false}>
-                  City*
+                  {t('city')}
                 </Text>
                 <TextInput
                   allowFontScaling={false}
@@ -1240,14 +1242,14 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   fontFamily: 'Urbanist-Medium',
                 }}
               >
-                Change Password
+                {t('change_password')}
               </Text>
             </TouchableOpacity>
           </AnimatedReanimated.ScrollView>
         </KeyboardAvoidingView>
 
         <Button
-          title="Save Details"
+          title={t('save_details')}
           onPress={() => {
             handleSaveProfile();
           }}
@@ -1285,12 +1287,12 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
               <View style={styles.popupContainer}>
                 <Text allowFontScaling={false} style={styles.mainheader}>
                   {emailName === 'personalEmail'
-                    ? 'Verify Personal Email ID'
-                    : 'Verify Student Email ID'}
+                    ? t('verify_personal_email')
+                    : t('verify_student_email_id')}
                 </Text>
 
                 <Text allowFontScaling={false} style={styles.subheader}>
-                  We have sent a 4-digit code to{' '}
+                  {t('we_sent_code_to')}{' '}
                   <Text
                     allowFontScaling={false}
                     style={{
@@ -1332,7 +1334,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   onPress={otpverify}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>
-                    Verify
+                    {t('verify')}
                   </Text>
                 </TouchableOpacity>
 
@@ -1341,13 +1343,13 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   allowFontScaling={false}
                   style={[styles.subheader, { marginBottom: 6 }]}
                 >
-                  Didn’t receive a code?{' '}
+                  {t('didnt_receive_code')}{' '}
                   <Text
                     allowFontScaling={false}
                     style={{ color: '#FFFFFF7A' }}
                     onPress={() => sendOtp(emailName)}
                   >
-                    Resend Code
+                    {t('resend_code')}
                   </Text>
                 </Text>
               </View>
@@ -1395,10 +1397,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   resizeMode="contain"
                 />
                 <Text allowFontScaling={false} style={styles.mainheader1}>
-                Remove Profile Picture
+                {t('remove_profile')}
               </Text>
               <Text allowFontScaling={false} style={styles.subheader2}>
-                Are you sure you want to remove your profile picture?
+                {t('are_you_sure')}
               </Text>
 
                 <TouchableOpacity
@@ -1410,7 +1412,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   }}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>
-                    Yes, Remove
+                    {t('yes_remove')}
                   </Text>
                 </TouchableOpacity>
 
@@ -1421,7 +1423,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   }}
                 >
                   <Text allowFontScaling={false} style={styles.loginText1}>
-                    Cancel
+                    {t('cancel')}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -1436,6 +1438,24 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 export default EditProfile;
 
 const styles = StyleSheet.create({
+
+   subheader2: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginTop: 6,
+  },
+
+    mainheader1: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 20,
+    fontWeight: '600',
+    letterSpacing: -0.4,
+    lineHeight: 28,
+  },
   scrollContainer: {
     paddingHorizontal: 16,
     paddingBottom: 80,

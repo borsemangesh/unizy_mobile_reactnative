@@ -1,6 +1,7 @@
 import { BlurView } from '@react-native-community/blur';
 import { RouteProp, useFocusEffect, useIsFocused, useRoute } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from "react-i18next";
 import {
   View,
   Text,
@@ -27,7 +28,7 @@ import { getRequest } from '../../utils/API';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-
+import i18n, { initI18n,changeAppLanguage,loadLanguageFromServer  } from "../../../localization/i18n";
 import BackgroundAnimation from '../Hello/BackgroundAnimation';
 import { Language } from '../../utils/Language';
 import { greetings } from '../../utils/Greetings';
@@ -42,6 +43,9 @@ import {
 import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 
 const { height } = Dimensions.get('window');
+
+  
+
 
 type SinglePageProps = {
   navigation: any;
@@ -59,7 +63,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   const [currentScreenIninner, setcurrentScreenIninner] = useState<
     'login' | 'signup' | 'forgotpassword' | 'sendOTP' | 'verify' | 'profile'
   >('login');
-
+    const { t } = useTranslation();
   //Hello Screen
   const [currentGreetingIndex, setCurrentGreetingIndex] = useState(0);
   const unizyTranslateY = React.useRef(new Animated.Value(-100)).current;
@@ -82,7 +86,7 @@ useEffect(() => {
     loginTranslateY.setValue(0);
     setCurrentScreen('login'); 
     setcurrentScreenIninner('login'); 
-    showToast(route.params?.logoutMessage,'success')
+    showToast(t(route.params?.logoutMessage),'success')
   }
 
   if(route.params?.forgotPassword){
@@ -94,6 +98,16 @@ useEffect(() => {
     
   }
 }, [route.params]);
+
+  // Debug: Log translation info
+  useEffect(() => {
+    console.log('=== LoginScreen i18n Debug ===');
+    console.log('Current language:', i18n.language);
+    console.log('Translation for "login":', t('login'));
+    console.log('Translation for "password":', t('password'));
+    console.log('Translation for "personal_email_id":', t('personal_email_id'));
+    console.log('==============================');
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -134,18 +148,24 @@ useEffect(() => {
 
   useEffect(() => {
     if (search.trim() !== '' && filteredLanguages.length === 0) {
-      showToast(Constant.NO_RESULT_FOUND, 'error');
+      showToast(t(Constant.NO_RESULT_FOUND), 'error');
     }
   }, [search, filteredLanguages]);
 
   const handleLanguageSelect = async (item: Language) => {
     try {
       loginTranslateY.setValue(0);
+      
       await AsyncStorage.setItem(
         'selectedLanguage',
-        JSON.stringify({ id: item.id, code: item.code, name: item.name }),
+        JSON.stringify(item.code),
       );
+      
+      await changeAppLanguage(item.code);
+     
+      console.log(t('select_language'))
       setSelected(item.code);
+      
       Animated.timing(loginunizyTranslateY, {
         toValue: 0,
         duration: 1000,
@@ -562,7 +582,7 @@ useEffect(() => {
   const handleSendResetLink = async () => {
     Keyboard.dismiss();
     if (!username1.trim()) {
-      showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
+      showToast(t(Constant.REQUIRED_ALL_FIELDS), 'error');
       return;
     }
 
@@ -570,7 +590,7 @@ useEffect(() => {
       /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;
 
     if (!emailRegex.test(username1.trim())) {
-      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
+      showToast(t(Constant.VALID_EMAI_LADDRESS), 'error');
       return;
     }
 
@@ -590,18 +610,20 @@ useEffect(() => {
 
       if (res.ok) {
         // Show toast
-        showToast(data.message || Constant.PASSWORD_RESET_LINK_SENT, 'success');
+        // showToast(t(data.message || Constant.PASSWORD_RESET_LINK_SENT, )'success');
+
+        showToast(t(data?.message) || t(Constant.PASSWORD_RESET_LINK_SENT), 'success');
         const toastDuration = 3000;
         setTimeout(() => {
           setShowPopup(true);
         }, toastDuration);
         setUsername1('');
       } else {
-        showToast(data.message || Constant.SOMTHING_WENT_WRONG, 'error');
+        showToast(t(data.message) || t(Constant.SOMTHING_WENT_WRONG), 'error');
       }
     } catch (error) {
       console.error('Error sending reset link:', error);
-      showToast(Constant.NETWORK_ERROR_PLEASE_TRY_AGAIN, 'error');
+      showToast(t(Constant.NETWORK_ERROR_PLEASE_TRY_AGAIN), 'error');
     }
   };
 
@@ -610,13 +632,13 @@ useEffect(() => {
     Keyboard.dismiss();
 
     if (!username.trim() || !password.trim()) {
-      showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
+      showToast(t(Constant.REQUIRED_ALL_FIELDS), 'error');
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(username.trim())) {
-      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
+      showToast(t(Constant.VALID_EMAI_LADDRESS), 'error');
       return;
     }
 
@@ -639,7 +661,7 @@ useEffect(() => {
         result = await response.json();
       } catch (err) {
         setLoading(false);
-        showToast(Constant.INVALID_SERVER_RESPONSE, 'error');
+        showToast(t(Constant.INVALID_SERVER_RESPONSE), 'error');
         return;
       }
 
@@ -647,8 +669,8 @@ useEffect(() => {
 
       if (!response.ok || result?.statusCode !== 200) {
         setLoading(false);
-        showToast(
-          result?.message || Constant.INVALID_EMAIL_OR_PASSWORD,
+        showToast(t(
+          result?.message )|| t(Constant.INVALID_EMAIL_OR_PASSWORD),
           'error',
         );
         return;
@@ -663,7 +685,7 @@ useEffect(() => {
         await AsyncStorage.setItem('userData', JSON.stringify(user));
         await AsyncStorage.setItem('userId', String(user.id));
 
-        showToast(result?.message || Constant.LOGIN_SUCCESSFUL, 'success');
+        showToast(t(result?.message) || t(Constant.LOGIN_SUCCESSFUL), 'success');
 
         setUsername('');
         setPassword('');
@@ -673,7 +695,7 @@ useEffect(() => {
         navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: true,loginMessage: result?.message,isFirsttimeLogin: true});
       } else {
         setLoading(false);
-        showToast(Constant.INVALID_USER_DATA_RECEIVED, 'error');
+        showToast(t(Constant.INVALID_USER_DATA_RECEIVED), 'error');
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -716,24 +738,24 @@ useEffect(() => {
       !signUppassword.trim() ||
       !confirmPassword.trim()
     ) {
-      showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
+      showToast(t(Constant.REQUIRED_ALL_FIELDS), 'error');
       return;
     }
     const emailRegex =
       /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;
     if (!emailRegex.test(signUpusername.trim())) {
-      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
+      showToast(t(Constant.VALID_EMAI_LADDRESS), 'error');
       return;
     }
 
     // const passwordRegex =/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     const passwordRegex =/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]|:;"'<>,.?/]).{8,}$/;
     if (!passwordRegex.test(signUppassword.trim())) {
-      showToast(Constant.PASSWORD_VALID, 'error');
+      showToast(t(Constant.PASSWORD_VALID), 'error');
       return;
     }
     if (signUppassword.trim() !== confirmPassword.trim()) {
-      showToast(Constant.PASSWORDS_DO_NOT_MATCH, 'error');
+      showToast(t(Constant.PASSWORDS_DO_NOT_MATCH), 'error');
       return;
     }
 
@@ -763,7 +785,7 @@ useEffect(() => {
       console.log('API response:', data);
 
       if (response.status === 201) {
-        showToast(data.message, 'success');
+        showToast(t(data.message), 'success');
 
         await AsyncStorage.setItem(
           'tempUserId',
@@ -781,11 +803,11 @@ useEffect(() => {
         })
     
       } else {
-        showToast(data.message || 'Signup failed', 'error');
+        showToast(t(data.message) || 'Signup failed', 'error');
       }
     } catch (err) {
       console.log('Error sending signup request:', err);
-      showToast(Constant.FAIL_TO_SEND_OTP, 'error');
+      showToast(t(Constant.FAIL_TO_SEND_OTP), 'error');
     }
   };
 
@@ -836,14 +858,14 @@ useEffect(() => {
     const otpValue = otp.join('');
 
     if (otpValue.length < 4 || otp.includes('')) {
-      showToast(Constant.PLEASE_ENTER_ALL_4_DIGITS_OF_THE_OTP, 'error');
+      showToast(t(Constant.PLEASE_ENTER_ALL_4_DIGITS_OF_THE_OTP), 'error');
       return;
     }
     try {
       const otp_id = await AsyncStorage.getItem('otp_id');
 
       if (!otp_id) {
-        showToast(Constant.OTP_ID_MISSING, 'error');
+        showToast(t(Constant.OTP_ID_MISSING), 'error');
         return;
       }
 
@@ -864,7 +886,7 @@ useEffect(() => {
       console.log('OTP Verify Response:', data);
 
       if (data?.statusCode === 200) {
-        showToast(data.message, 'success');
+        showToast(t(data.message), 'success');
         await AsyncStorage.setItem(
           'temp_user_id',
           data.data.temp_user_id.toString(),
@@ -886,11 +908,11 @@ useEffect(() => {
       setverifyimageLoaded(true);
     });
       } else {
-        showToast(data?.message || Constant.OPT_VERIFICATION_FAILED, 'error');
+        showToast(t(data?.message) || t(Constant.OPT_VERIFICATION_FAILED), 'error');
       }
     } catch (err) {
       console.error(err);
-      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+      showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
     }
   };
 
@@ -913,7 +935,7 @@ useEffect(() => {
 
       const data = await response.json();
       if (response.ok && data?.statusCode === 200) {
-        showToast(data.message, 'success');
+        showToast(t(data.message), 'success');
 
         await AsyncStorage.setItem(
           'tempUserId',
@@ -964,13 +986,13 @@ useEffect(() => {
     setOtp1(['', '', '', '']);
 
     if (!verifyusername.trim()) {
-      showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
+      showToast(t(Constant.REQUIRED_ALL_FIELDS), 'error');
       return;
     }
 
     const emailParts = verifyusername.split('@');
     if (emailParts.length !== 2) {
-      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
+      showToast(t(Constant.VALID_EMAI_LADDRESS), 'error');
       return;
     }
     console.log(emailParts)
@@ -980,7 +1002,7 @@ useEffect(() => {
     console.log(domain)
 
     if (!universityDomains.includes(domain)) {
-      showToast(Constant.VALID_EMAI_LADDRESS, 'error');
+      showToast(t(Constant.VALID_EMAI_LADDRESS), 'error');
       return;
     }
 
@@ -1003,7 +1025,7 @@ useEffect(() => {
       console.log('Send OTP Response:', data);
 
       if (data?.statusCode === 200) {
-        showToast(data.message, 'success');
+        showToast(t(data.message), 'success');
         await AsyncStorage.setItem(
           'temp_user_id',
           data.data.temp_user_id.toString(),
@@ -1040,11 +1062,11 @@ useEffect(() => {
         ]).start();
         });
       } else {
-        showToast(data?.message || 'Failed to send OTP', 'error');
+        showToast(t(data?.message) || 'Failed to send OTP', 'error');
       }
     } catch (err) {
       console.error('Error sending OTP:', err);
-      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+      showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
     }
   };
 
@@ -1080,14 +1102,14 @@ useEffect(() => {
     const otpValue = otp1.join('');
 
     if (otpValue.length < 4 || otp1.includes('')) {
-      showToast(Constant.PLEASE_ENTER_ALL_4_DIGITS_OF_THE_OTP, 'error');
+      showToast(t(Constant.PLEASE_ENTER_ALL_4_DIGITS_OF_THE_OTP), 'error');
       return;
     }
 
     try {
       const otp_id = await AsyncStorage.getItem('otp_id');
       if (!otp_id) {
-        showToast(Constant.OTP_ID_MISSING, 'error');
+        showToast(t(Constant.OTP_ID_MISSING), 'error');
         return;
       }
 
@@ -1108,7 +1130,7 @@ useEffect(() => {
       console.log('Student OTP Verify Response:', data);
 
       if (data?.statusCode === 200) {
-        showToast(data.message, 'success');
+        showToast(t(data.message), 'success');
 
         if (data?.data) {
           await AsyncStorage.setItem('user_email', data.data.email || '');
@@ -1137,11 +1159,11 @@ useEffect(() => {
     })
 
       } else {
-        showToast(data?.message || 'OTP verification failed', 'error');
+        showToast(t(data?.message) || 'OTP verification failed', 'error');
       }
     } catch (err) {
       console.error('Error verifying OTP:', err);
-      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+      showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
     }
   };
 
@@ -1175,18 +1197,18 @@ useEffect(() => {
         await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
         // await AsyncStorage.setItem('signupUsername', username);
 
-        showToast(data.message, 'success');
+        showToast(t(data.message), 'success');
         setShowOtp(true);
         //startAnimation();
         setTimeout(() => {
         verifyinputs.current[0]?.focus();
       }, 200);
       } else {
-        showToast(data?.message || Constant.FAIL_TO_SEND_OTP, 'error');
+        showToast(t(data?.message) || t(Constant.FAIL_TO_SEND_OTP), 'error');
       }
     } catch (err) {
       console.error('Error sending OTP:', err);
-      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+      showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
     }
   };
   //profile
@@ -1514,11 +1536,11 @@ useEffect(() => {
     };
 
     Alert.alert(
-      'Select Option',
-      'Choose a source',
+       t('select_option'),
+       t('choose_source'),
       [
         {
-          text: 'Camera',
+          text: t('camera'),
           onPress: () => {
             launchCamera(
               {
@@ -1531,7 +1553,7 @@ useEffect(() => {
           },
         },
         {
-          text: 'Gallery',
+          text: t('gallery'),
           onPress: () => {
             launchImageLibrary(
               {
@@ -1543,7 +1565,7 @@ useEffect(() => {
           },
         },
         {
-          text: 'Cancel',
+          text: t('cancel'),
           style: 'cancel',
         },
       ],
@@ -1591,7 +1613,7 @@ useEffect(() => {
 
       if (response.ok && result?.message) {
         console.log('Upload success');
-        showToast(result.message, 'success');
+        showToast(t(result.message), 'success');
 
         // setTimeout(() => {
         //   setShowPopup1(true);
@@ -2011,7 +2033,7 @@ useEffect(() => {
                               <TextInput
                                 allowFontScaling={false}
                                 style={Styles.personalEmailID_TextInput}
-                                placeholder={'Personal Email ID*'}
+                               placeholder={t('personal_email_id')}
                                 placeholderTextColor={
                                   'rgba(255, 255, 255, 0.48)'
                                 }
@@ -2040,7 +2062,7 @@ useEffect(() => {
                               <TextInput
                                 allowFontScaling={false}
                                 style={Styles.password_TextInput}
-                                placeholder={'Password*'}
+                               placeholder={t('password')}
                                 placeholderTextColor={
                                   'rgba(255, 255, 255, 0.48)'
                                 }
@@ -2087,7 +2109,8 @@ useEffect(() => {
                                 });
                               }}
                             >
-                              Forgot Password?
+                              
+                                  {t('forgot_password')}
                             </Text>
                           </View>
 
@@ -2100,7 +2123,7 @@ useEffect(() => {
                                 allowFontScaling={false}
                                 style={Styles.sendText}
                               >
-                                Login
+                                  {t('login')}
                               </Text>
                             </TouchableOpacity>
 
@@ -2127,7 +2150,8 @@ useEffect(() => {
                                   paddingBottom: Platform.OS === 'ios' ? 9 : 10,
                                 }}
                               >
-                                Don't have an account?
+                                
+                                {t('dont_have_account')}
                               </Text>
                               <TouchableOpacity
                                 onPress={() => {
@@ -2185,7 +2209,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.signupText}
                                 >
-                                  Sign up
+                                      {t('sign_up')}
                                 </Text>
                               </TouchableOpacity>
                             </View>
@@ -2213,15 +2237,14 @@ useEffect(() => {
                               allowFontScaling={false}
                               style={Styles.resetTitle}
                             >
-                              Reset Password
+                              {t('reset_password')}
                             </Text>
                             <View style={Styles.privacyContainer}>
                               <Text
                                 allowFontScaling={false}
                                 style={[Styles.termsText, { paddingBottom: 8 }]}
                               >
-                                Enter your personal email address and we’ll send
-                                you a link to reset your password
+                                {t('enter_email_to_reset')}
                               </Text>
                             </View>
 
@@ -2232,7 +2255,7 @@ useEffect(() => {
                                   Styles.personalEmailID_TextInput,
                                   { color: '#fff' },
                                 ]}
-                                placeholder="Personal Email ID*"
+                              placeholder={t('personal_email_id')}
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                 value={username1}
                                 maxLength={50}
@@ -2265,7 +2288,7 @@ useEffect(() => {
                                 allowFontScaling={false}
                                 style={Styles.sendText}
                               >
-                                Send Reset Link
+                                {t('send_reset_link')}
                               </Text>
                             </TouchableOpacity>
 
@@ -2294,7 +2317,7 @@ useEffect(() => {
                                   { color: 'rgba(140, 244, 255, 0.7)' },
                                 ]}
                               >
-                                Go Back
+                               {t('go_back')}
                               </Text>
                             </TouchableOpacity>
                           </Animated.View>
@@ -2347,9 +2370,7 @@ useEffect(() => {
                                     allowFontScaling={false}
                                     style={Styles.termsText1}
                                   >
-                                    A password reset link has been sent to your
-                                    personal email. Please check your inbox (or
-                                    spam folder) to continue.
+                                   {t('password_reset_link_sent')}
                                   </Text>
 
                                   <TouchableOpacity
@@ -2364,7 +2385,7 @@ useEffect(() => {
                                       allowFontScaling={false}
                                       style={Styles.loginText}
                                     >
-                                      Back to Login
+                                      {t('back_to_login')}
                                     </Text>
                                   </TouchableOpacity>
                                 </View>
@@ -2395,7 +2416,7 @@ useEffect(() => {
                               <TextInput
                                 allowFontScaling={false}
                                 style={Styles.personalEmailID_TextInput1}
-                                placeholder="First Name*"
+                                 placeholder={t('first_name')}
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                 value={firstName}
                                 onChangeText={text =>
@@ -2415,7 +2436,7 @@ useEffect(() => {
                               <TextInput
                                 allowFontScaling={false}
                                 style={Styles.personalEmailID_TextInput1}
-                                placeholder="Last Name*"
+                                placeholder={t("last_name")}
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                 value={lastName}
                                 selectionColor="white"
@@ -2473,7 +2494,7 @@ useEffect(() => {
                             <TextInput
                               allowFontScaling={false}
                               style={Styles.password_TextInput}
-                              placeholder="Personal Email ID*"
+                          placeholder={t("personal_email_id")}
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
                               value={signUpusername}
                               maxLength={50}
@@ -2512,11 +2533,9 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.infoText1}
                                 >
-                                  Important:{' '}
+                                  {t('important')}{' '}
                                 </Text>
-                                Use your personal email address for signup. Your
-                                university email will be requested separately
-                                for student verification.
+                               {t('use_personal_email_info')}
                               </Text>
                             </View>
                           )}
@@ -2525,7 +2544,7 @@ useEffect(() => {
                             <TextInput
                               allowFontScaling={false}
                               style={Styles.password_TextInput}
-                              placeholder="Create Password*"
+                              placeholder={t('create_password')}
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
                               value={signUppassword}
                               maxLength={20}
@@ -2564,7 +2583,7 @@ useEffect(() => {
                                 Styles.password_TextInput,
                                 { color: '#fff' },
                               ]}
-                              placeholder="Confirm Password*"
+                              placeholder={t("confirm_password")}
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
                               value={confirmPassword}
                               maxLength={20}
@@ -2609,7 +2628,7 @@ useEffect(() => {
                               allowFontScaling={false}
                               style={Styles.sendText}
                             >
-                              Send OTP
+                             {t('send_otp')}
                             </Text>
                           </TouchableOpacity>
 
@@ -2626,7 +2645,7 @@ useEffect(() => {
                               allowFontScaling={false}
                               style={Styles.signupPrompt}
                             >
-                              Already have an account?{' '}
+                              {t('already_have_account')}{' '}
                             </Text>
                             <TouchableOpacity
                               onPress={() => {
@@ -2659,7 +2678,7 @@ useEffect(() => {
                                 allowFontScaling={false}
                                 style={Styles.signupPrompt1}
                               >
-                                Login
+                                {t('login')}
                               </Text>
                             </TouchableOpacity>
                           </View>
@@ -2682,14 +2701,14 @@ useEffect(() => {
                                 allowFontScaling={false}
                                 style={Styles.sendOtpresetTitle}
                               >
-                                Verify Personal Email ID
+                                {t('verify_personal_email')}
                               </Text>
                               <View style={Styles.sendOtpprivacyContainer}>
                                 <Text
                                   allowFontScaling={false}
                                   style={Styles.termsText}
                                 >
-                                  We have sent a 4-digit code to{' '}
+                                 {t("we_sent_code_to")}{' '}
                                   <Text
                                     allowFontScaling={false}
                                     style={Styles.sendOtpresendText2}
@@ -2743,7 +2762,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.sendText}
                                 >
-                                  Verify & Continue
+                                  {t('verify_and_continue')}
                                 </Text>
                               </TouchableOpacity>
 
@@ -2758,7 +2777,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.sendOtpresendText}
                                 >
-                                  Didn’t receive a code?{' '}
+                                  {t('didnt_receive_code')}{' '}
                                 </Text>
                                 <TouchableOpacity onPress={handleresend}>
                                   <Text
@@ -2768,7 +2787,7 @@ useEffect(() => {
                                       { color: 'rgba(140, 244, 255, 0.7)' },
                                     ]}
                                   >
-                                    Resend Code
+                                    {t('resend_code')}
                                   </Text>
                                 </TouchableOpacity>
                               </View>
@@ -2784,7 +2803,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.sendOtpgoBackText}
                                 >
-                                  Entered wrong email?{' '}
+                                  {t('entered_wrong_email')}{' '}
                                 </Text>
                                 <TouchableOpacity
                                   onPress={() => {
@@ -2821,7 +2840,7 @@ useEffect(() => {
                                       { color: 'rgba(140, 244, 255, 0.7)' },
                                     ]}
                                   >
-                                    Go Back
+                                    {t('go_back')}
                                   </Text>
                                 </TouchableOpacity>
                               </View>
@@ -2849,13 +2868,13 @@ useEffect(() => {
                                 allowFontScaling={false}
                                 style={[Styles.verifyresetTitle,{paddingBottom: (Platform.OS === 'ios'  ? 16 : 0)}]}
                               >
-                                Verify University Email ID
+                              {t('verify_university_email')}
                               </Text>
                               <View style={Styles.verifylogin_container}>
                                 <TextInput
                                   allowFontScaling={false}
                                   style={Styles.verifypersonalEmailID_TextInput}
-                                  placeholder={'University Email ID*'}
+                                  placeholder={t('university_email_id')}
                                   placeholderTextColor={
                                     'rgba(255, 255, 255, 0.48)'
                                   }
@@ -2883,7 +2902,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.sendText}
                                 >
-                                  Send OTP
+                                  {t('send_otp')}
                                 </Text>
                               </TouchableOpacity>
                             </View>
@@ -2908,7 +2927,7 @@ useEffect(() => {
                                 allowFontScaling={false}
                                 style={Styles.verifyresetTitle}
                               >
-                                Verify University Email ID
+                               {t('verify_university_email')}
                               </Text>
 
                               <View style={Styles.verifyprivacyContainer}>
@@ -2916,7 +2935,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.verifytermsText}
                                 >
-                                  We have sent a 4-digit code to{' '}
+                                  {t('we_sent_code_to')}{' '}
                                   <Text
                                     allowFontScaling={false}
                                     style={Styles.resendText2}
@@ -2969,7 +2988,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.sendText}
                                 >
-                                  Verify & Continue
+                                {t('verify_and_continue')}
                                 </Text>
                               </TouchableOpacity>
 
@@ -2980,7 +2999,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.verifyresendText}
                                 >
-                                  Didn’t receive a code?{' '}
+                                  {t('didnt_receive_code')}{' '}
                                 </Text>
                                 <TouchableOpacity onPress={resubmitotp}>
                                   <Text
@@ -2990,7 +3009,7 @@ useEffect(() => {
                                       { color: 'rgba(140, 244, 255, 0.7)' },
                                     ]}
                                   >
-                                    Resend Code
+                                    {t('resend_code')}
                                   </Text>
                                 </TouchableOpacity>
                               </View>
@@ -3005,7 +3024,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.verifyresendText}
                                 >
-                                  Entered wrong email?{' '}
+                                 {t('entered_wrong_email')}{' '}
                                 </Text>
                                 <TouchableOpacity
                                   onPress={() => {
@@ -3053,7 +3072,7 @@ useEffect(() => {
                                       { color: 'rgba(140, 244, 255, 0.7)' },
                                     ]}
                                   >
-                                    Go Back
+                                 {t('go_back')}
                                   </Text>
                                 </TouchableOpacity>
                               </TouchableOpacity>
@@ -3080,7 +3099,7 @@ useEffect(() => {
                                 allowFontScaling={false}
                                 style={Styles.profileprofileresetTitle}
                               >
-                                Add a Photo
+                              {t('add_photo')}
                               </Text>
                               <View
                                 style={[
@@ -3092,8 +3111,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.profiletermsText}
                                 >
-                                  Personalize your account with a photo. You can
-                                  always change it later.
+                                  {t('personalize_account')}
                                 </Text>
                               </View>
 
@@ -3134,7 +3152,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.profileloginText}
                                 >
-                                  Continue
+                                  {t('continue')}
                                 </Text>
                               </TouchableOpacity>
 
@@ -3151,7 +3169,7 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.profilesignupPrompt}
                                 >
-                                  Want to do it later?{' '}
+                                 {t('want_to_do_later')}{' '}
                                 </Text>
                                 <TouchableOpacity
                                   onPress={() => {
@@ -3165,7 +3183,7 @@ useEffect(() => {
                                       { color: 'rgba(140, 244, 255, 0.7)' },
                                     ]}
                                   >
-                                    Skip
+                                    {t('skip')}
                                   </Text>
                                 </TouchableOpacity>
                               </View>
@@ -3235,14 +3253,13 @@ useEffect(() => {
                                   allowFontScaling={false}
                                   style={Styles.profiletermsText2}
                                 >
-                                  Account Created Successfully!
+                                 {t('account_created_successfully')}
                                 </Text>
                                 <Text
                                   allowFontScaling={false}
                                   style={Styles.profiletermsText1}
                                 >
-                                  Welcome to Unizy! Your account has been
-                                  created and your’re all set to start exploring
+                                 {t('welcome_to_unizy')}
                                 </Text>
                                 <TouchableOpacity
                                   style={Styles.profileloginButton}
@@ -3264,7 +3281,7 @@ useEffect(() => {
                                     allowFontScaling={false}
                                     style={Styles.profileloginText}
                                   >
-                                    Start Exploring
+                                  {t('start_exploring')}
                                   </Text>
                                 </TouchableOpacity>
                               </View>
@@ -3325,7 +3342,8 @@ useEffect(() => {
                       allowFontScaling={false}
                       style={Styles.bycountuningAgreementText}
                     >
-                      By continuing, you agree to our
+                    
+                         {t('by_continuing_agree')}
                     </Text>
                     {/* <Text allowFontScaling={false} style={Styles.teamsandConditionText}>
                       Terms & Conditions
@@ -3335,7 +3353,8 @@ useEffect(() => {
                         allowFontScaling={false}
                         style={Styles.teamsandConditionText}
                       >
-                        Terms & Conditions
+                      
+                        {t('terms_and_conditions')}
                       </Text>
                       <View
                         style={{
@@ -3358,7 +3377,7 @@ useEffect(() => {
                       allowFontScaling={false}
                       style={Styles.bycountuningAgreementText}
                     >
-                      and
+                      {t('and')}
                     </Text>
                     {/* <Text allowFontScaling={false} style={Styles.teamsandConditionText}>
                       Privacy Policy
@@ -3368,7 +3387,7 @@ useEffect(() => {
                         allowFontScaling={false}
                         style={Styles.teamsandConditionText}
                       >
-                        Privacy Policy
+                     {t('privacy_policy')}
                       </Text>
                       <View
                         style={{

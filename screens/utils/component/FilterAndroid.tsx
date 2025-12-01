@@ -21,6 +21,7 @@ import RangeSlider from 'rn-range-slider';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
  import FilterButton from './FilterButton';
  import FilterButtonApply from './FilterButtonApply';
+import { useTranslation } from 'react-i18next';
 
 
 interface FilterAndroidProps {
@@ -145,6 +146,7 @@ const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(n
   }
 }, [visible, initialFilters]);
 
+ const { t } = useTranslation();
 const modelClose= () => {
   onClose();
 }
@@ -444,11 +446,11 @@ const handleApply = () => {
                     alignItems: 'center',
                     paddingTop:16
                   }}>
-                 <Text allowFontScaling={false} style={styles.modelTextHeader}>Filters</Text>
+                 <Text allowFontScaling={false} style={styles.modelTextHeader}>{t('filters')}</Text>
                   <TouchableOpacity
                     onPress={handleClearFilters}
                   >
-                    <Text allowFontScaling={false} style={styles.clearAll}>Clear all</Text>
+                    <Text allowFontScaling={false} style={styles.clearAll}>{t('clear_all')}</Text>
                   </TouchableOpacity>
                   </View>
                 </View>
@@ -545,13 +547,13 @@ const handleApply = () => {
                 <View style={styles.bottomview}>
                   
                   <TouchableOpacity style={styles.cancelBtn} onPress={handleClose}>
-                    <Text allowFontScaling={false} style={styles.cancelText}>Cancel</Text>
+                    <Text allowFontScaling={false} style={styles.cancelText}>{t('cancel')}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.loginButton, {}]}
                     onPress={handleApply}
                   >
-                    <Text allowFontScaling={false} style={[styles.sendText]}>Apply</Text>
+                    <Text allowFontScaling={false} style={[styles.sendText]}>{t('apply')}</Text>
                   </TouchableOpacity>
                 </View>
                 

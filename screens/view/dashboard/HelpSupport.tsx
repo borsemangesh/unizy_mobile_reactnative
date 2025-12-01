@@ -19,6 +19,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const bgImage = require('../../../assets/images/backimg.png');
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
+import { useTranslation } from 'react-i18next';
 
 
 type HelpSupportProps = {
@@ -27,7 +28,7 @@ type HelpSupportProps = {
 
 
 const HelpSupport = ({ navigation }: HelpSupportProps)  => {
- 
+ const { t } = useTranslation();
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
@@ -42,7 +43,7 @@ const HelpSupport = ({ navigation }: HelpSupportProps)  => {
                 />
               </View>
             </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>Help and Support</Text>
+            <Text allowFontScaling={false} style={styles.unizyText}>{t('help_support')}</Text>
             <View style={{ width: 48 }} />
           </View>
         </View>

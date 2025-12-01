@@ -1,5 +1,6 @@
 import { BlurView } from '@react-native-community/blur';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -17,9 +18,9 @@ type NewProductCardProps = {
   inforTitlePrice: string;
   rating: string;
   productImage: ImageSourcePropType;
-  bookmark:boolean,
-  isfeature:boolean,
-  applybookmark?: () => void; 
+  bookmark: boolean,
+  isfeature: boolean,
+  applybookmark?: () => void;
 };
 
 export default function SearchListProductCard({
@@ -32,62 +33,62 @@ export default function SearchListProductCard({
   isfeature,
   applybookmark
 }: NewProductCardProps) {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.card}>
       <View style={styles.imageContainer}>
         <Image source={productImage} style={styles.image} />
 
-<View style={styles.tag}>
+        <View style={styles.tag}>
 
-   <BlurView 
-      blurType="light"
-      blurAmount={100}
-    style={[StyleSheet.absoluteFillObject,{borderRadius: 9}]}
-      />       
-        <Text allowFontScaling={false}  style={styles.tagText}>
-          {tag}
-        </Text>
-      </View>
-
-       {isfeature && (
-
-      
-        <View style={styles.tagTopLeft}>
-           <BlurView 
+          <BlurView
             blurType="light"
             blurAmount={100}
-          style={[StyleSheet.absoluteFillObject,{borderRadius: 9}]}
-            />
-          <Text allowFontScaling={false} style={styles.tagText}>Featured</Text>
+            style={[StyleSheet.absoluteFillObject, { borderRadius: 9 }]}
+          />
+          <Text allowFontScaling={false} style={styles.tagText}>
+            {tag}
+          </Text>
         </View>
-      )}
 
+        {isfeature && (
 
-         <View style={[styles.bookmark]}>
-                        <BlurView 
-                          blurType="light"
-                          blurAmount={100}
-                          style={[StyleSheet.absoluteFillObject,{borderRadius: 9}]}
-                        />
-                        <LinearGradient
-                                                colors={[
-                                                  'rgba(0, 1, 102, 0.20)',   // center strong blue tint
-                                                  'rgba(0, 1, 102, 0.024)'  // outer faint blue tint
-                                                ]}
-                                                style={StyleSheet.absoluteFillObject}
-                                                useAngle={false} // radial
-                                              />
-                  <TouchableOpacity onPress={applybookmark}>
-                   <Image
-                      source={
-                        bookmark
-                          ? require("../../assets/images/favourite_filled.png") // bookmarked
-                          : require("../../assets/images/favourite.png") // not bookmarked
-                      }
-                      style={styles.bookmarkIcon}
-                    />
-                  </TouchableOpacity>
-                </View>
+          <View style={styles.tagTopLeft}>
+            <BlurView
+              blurType="light"
+              blurAmount={100}
+              style={[StyleSheet.absoluteFillObject, { borderRadius: 9 }]}
+            />
+            <Text allowFontScaling={false} style={styles.tagText}>{t('featured')}</Text>
+          </View>
+        )}
+
+        <View style={[styles.bookmark]}>
+          <BlurView
+            blurType="light"
+            blurAmount={100}
+            style={[StyleSheet.absoluteFillObject, { borderRadius: 9 }]}
+          />
+          <LinearGradient
+            colors={[
+              'rgba(0, 1, 102, 0.20)',  
+              'rgba(0, 1, 102, 0.024)' 
+            ]}
+            style={StyleSheet.absoluteFillObject}
+            useAngle={false} // radial
+          />
+          <TouchableOpacity onPress={applybookmark}>
+            <Image
+              source={
+                bookmark
+                  ? require("../../assets/images/favourite_filled.png") // bookmarked
+                  : require("../../assets/images/favourite.png") // not bookmarked
+              }
+              style={styles.bookmarkIcon}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={styles.infoRow}>
@@ -98,28 +99,28 @@ export default function SearchListProductCard({
             flexDirection: 'row',
             width: '90%',
             justifyContent: 'space-between',
-            paddingTop:6
+            paddingTop: 6
 
           }}
         >
           <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
-          
-           {rating !== '0.0' && (
-          <View
-            style={{
-              flexDirection: 'row',
-              alignContent: 'center',
-              alignItems: 'center',
-              gap: 4,
-            }}
-          >
-            <Image
-              source={require('../../assets/images/staricon.png')}
-              style={styles.image1}
-            />
 
-            <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
-          </View>
+          {rating !== '0.0' && (
+            <View
+              style={{
+                flexDirection: 'row',
+                alignContent: 'center',
+                alignItems: 'center',
+                gap: 4,
+              }}
+            >
+              <Image
+                source={require('../../assets/images/staricon.png')}
+                style={styles.image1}
+              />
+
+              <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
+            </View>
           )}
         </View>
       </View>
@@ -162,12 +163,12 @@ const styles = StyleSheet.create({
     borderRightColor: '#ffffff2e',
 
     boxSizing: 'border-box',
-    minHeight:226
+    minHeight: 226
   },
   imageContainer: {
     // width: 186,
     width: '100%',
-    height:200,
+    height: 200,
     position: 'relative',
     padding: (Platform.OS === 'ios' ? 0 : 6),
     //paddingTop: (Platform.OS === 'ios' ? 0 : 6),
@@ -175,7 +176,7 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '100%',
-    padding: (Platform.OS === 'ios'? 5: 12),
+    padding: (Platform.OS === 'ios' ? 5 : 12),
     //paddingTop:(Platform.OS === 'ios'? 5: 12),
     borderRadius: 12,
     alignSelf: 'center',
@@ -185,16 +186,16 @@ const styles = StyleSheet.create({
   image1: {
     width: 10,
     height: 10,
-    resizeMode:'contain'
+    resizeMode: 'contain'
   },
   bookmark: {
-    overflow:'hidden',
+    overflow: 'hidden',
     position: 'absolute',
     top: Platform.OS === 'ios' ? 10 : 12,
     right: Platform.OS === 'ios' ? 10 : 12,
-     borderRadius: 12,
-     backgroundColor:
-       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(101, 101, 101, 0.13) 0%, rgba(117, 117, 117, 0.1) 100%)',
+    borderRadius: 12,
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(101, 101, 101, 0.13) 0%, rgba(117, 117, 117, 0.1) 100%)',
     width: 36,
     height: 36,
     display: 'flex',
@@ -205,7 +206,7 @@ const styles = StyleSheet.create({
     boxShadow: '0 2px 5px 0 rgba(109, 109, 109, 0.2)',
     borderWidth: 0.5,
     borderColor: '#ffffff2e',
-    
+
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
 
@@ -241,9 +242,9 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     marginHorizontal: 4,
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
-    overflow:'hidden',
+    overflow: 'hidden',
     alignSelf: 'flex-end', // 👈 ensures the View wraps the text
-    flexShrink: 1,    
+    flexShrink: 1,
     // position: 'absolute',
 
     maxWidth: '80%',   // restrict width relative to parent
@@ -257,23 +258,23 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     flexShrink: 1,
     //flexWrap: 'wrap',
-    width:'100%'
+    width: '100%'
   },
   tagTopLeft: {
-  position: 'absolute',
-  // top: 5,
-  // left: 5,
-   top: Platform.OS === 'ios' ? 8 : 10,
+    position: 'absolute',
+    // top: 5,
+    // left: 5,
+    top: Platform.OS === 'ios' ? 8 : 10,
     left: Platform.OS === 'ios' ? 8 : 10,
-  //backgroundColor: 'rgba(255,255,255,0.4)',
-  backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
-  borderRadius: 4,
-  padding: 4,
-  marginVertical: 4,
-  marginHorizontal: 4,
-  boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
-  overflow:'hidden'
-},
+    //backgroundColor: 'rgba(255,255,255,0.4)',
+    backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
+    borderRadius: 4,
+    padding: 4,
+    marginVertical: 4,
+    marginHorizontal: 4,
+    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
+    overflow: 'hidden'
+  },
   infoRow: {
     flexDirection: 'column',
     justifyContent: 'space-between',

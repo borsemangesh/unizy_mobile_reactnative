@@ -20,9 +20,8 @@ import {
   FlatList,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { showToast } from '../../utils/toast';
 import { MAIN_URL } from '../../utils/APIConstant';
-import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
+import { NewCustomToastContainer,showToast } from '../../utils/component/NewCustomToastManager';
 import { useFocusEffect } from '@react-navigation/native';
 import { BlurView } from '@react-native-community/blur';
 import DeviceInfo from 'react-native-device-info';
@@ -30,6 +29,7 @@ import Loader from '../../utils/component/Loader';
 import { Constant } from '../../utils/Constant';
 import { resetTwilioClient } from '../../view/emoji/twilioService';
 import { clearTwilioCache } from '../dashboard/MessageIndividualScreen';
+import { useTranslation } from "react-i18next";
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImg = require('../../../assets/images/user.jpg'); 
@@ -38,15 +38,25 @@ const logouticon=require('../../../assets/images/logout.png')
 const helpicon=require('../../../assets/images/help.png')
 const okicon=require('../../../assets/images/ok.png')
 
-const cardData = [
-  { id: '1', title: 'Payment Methods', image: require('../../../assets/images/payment.png') },
-  { id: '2', title: 'My Orders', image: require('../../../assets/images/cart.png') },
-  { id: '3', title: 'My Reviews', image: require('../../../assets/images/ok.png') },
-  { id: '4', title: 'Notifications', image: require('../../../assets/images/notify.png') },
-  { id: '5', title: 'Help & Support', image: require('../../../assets/images/helpicon.png') },
-  { id: '6', title: 'Logout', image: require('../../../assets/images/logout.png') },
-  {id:'7',title:'App Version',image: require('../../../assets/images/versionicon.png')}
+// const cardData = [
+//   { id: '1', title: 'Payment Methods', image: require('../../../assets/images/payment.png') },
+//   { id: '2', title: 'My Orders', image: require('../../../assets/images/cart.png') },
+//   { id: '3', title: 'My Reviews', image: require('../../../assets/images/ok.png') },
+//   { id: '4', title: 'Notifications', image: require('../../../assets/images/notify.png') },
+//   { id: '5', title: 'Help & Support', image: require('../../../assets/images/helpicon.png') },
+//   { id: '6', title: 'Logout', image: require('../../../assets/images/logout.png') },
+//   {id:'7',title:'App Version',image: require('../../../assets/images/versionicon.png')}
   
+// ];
+
+const cardData = [
+  { id: '1', titleKey: 'payment_methods', image: require('../../../assets/images/payment.png') },
+  { id: '2', titleKey: 'my_orders', image: require('../../../assets/images/cart.png') },
+  { id: '3', titleKey: 'my_reviews', image: require('../../../assets/images/ok.png') },
+  { id: '4', titleKey: 'notifications', image: require('../../../assets/images/notify.png') },
+  { id: '5', titleKey: 'help_support', image: require('../../../assets/images/helpicon.png') },
+  { id: '6', titleKey: 'logout', image: require('../../../assets/images/logout.png') },
+  { id: '7', titleKey: 'app_version', image: require('../../../assets/images/versionicon.png') },
 ];
 
 const arrowIcon = require('../../../assets/images/nextarrow.png');
@@ -87,8 +97,9 @@ useEffect(() => {
   }
 }, [expanded]);
 
+  const { t } = useTranslation();
 
-useEffect(() => {
+  useEffect(() => {
     const fetchUserProfile = async () => {
       try {
         setLoading(true);
@@ -215,8 +226,8 @@ useEffect(() => {
 
 
 const renderItem = ({ item }: any) => {
-  const isLogout = item.title.toLowerCase() === 'logout';
-  const isVersion = item.title.toLowerCase() === 'app version';
+  const isLogout = item.titleKey === 'logout';
+  const isVersion = item.titleKey === 'app_version';
  
 
   return (
@@ -242,7 +253,7 @@ const renderItem = ({ item }: any) => {
 
         setShowConfirm(true); 
       }
-        else if (item.title === 'My Orders') {
+        else if (item.titleKey  === 'my_orders') {
           if(Platform.OS === 'ios'){
             navigation.replace('MyOrders'); 
           } else {
@@ -250,7 +261,7 @@ const renderItem = ({ item }: any) => {
           }
           
         } 
-        else if (item.title === 'My Reviews') {
+        else if (item.titleKey  === 'my_reviews') {
           if(Platform.OS === 'ios'){
             navigation.replace('MyReviews'); 
           } else {
@@ -258,11 +269,11 @@ const renderItem = ({ item }: any) => {
           }
           // navigation.navigate('MyReviews'); 
         } 
-        else if (item.title === 'Help & Support') {
+        else if (item.titleKey  === 'help_support') {
           navigation.navigate('HelpSupport'); 
         } 
 
-        else if (item.title === 'Notifications') {
+        else if (item.titleKey  === 'notifications') {
           if(Platform.OS === 'ios'){
             navigation.replace('Notification'); 
           } else {
@@ -270,7 +281,7 @@ const renderItem = ({ item }: any) => {
           }
           
         }
-        else if(item.title === 'Payment Methods'){
+        else if(item.titleKey  === 'payment_methods'){
           openStripeOnboarding();
         } 
          else {
@@ -285,7 +296,7 @@ const renderItem = ({ item }: any) => {
           isLogout && { color: '#FF8282E0' },
         ]}
       >
-        {item.title}
+         {t(item.titleKey)}
       </Text>
       {isVersion ? (
         <Text allowFontScaling={false} style={styles.versionText}>{APP_VERSION}</Text>
@@ -332,8 +343,8 @@ return (
             <View style={styles.initialsCircle}>
               <Text allowFontScaling={false} style={styles.initialsText}>
                 {getInitials(
-                  userMeta?.firstname ?? 'A',
-                  userMeta?.lastname ?? 'W',
+                  userMeta?.firstname ?? ' ',
+                  userMeta?.lastname ?? ' ',
                 )}
               </Text>
             </View>
@@ -353,7 +364,7 @@ return (
                 ? `${userMeta.firstname ?? ''} ${
                     userMeta.lastname ?? ''
                   }`.trim()
-                : 'Loading...'}
+                : t('loading')}
             </Text>
           </View>
 
@@ -409,7 +420,7 @@ return (
         >
           <View style={styles.editcard}>
             <Text allowFontScaling={false} style={styles.edittext}>
-              Edit
+              {t('edit')}
             </Text>
           </View>
         </TouchableOpacity>
@@ -459,10 +470,10 @@ return (
                 resizeMode="contain"
               />
               <Text allowFontScaling={false} style={styles.mainheader}>
-                Confirm Logout
+                {t('confirm_logout')}
               </Text>
               <Text allowFontScaling={false} style={styles.subheader}>
-                Are you sure you want to log out from your account?
+                {t('logout_message')}
               </Text>
 
 
@@ -531,13 +542,13 @@ return (
                           name: 'SinglePage',
                           params: {
                             resetToLogin: true,
-                            logoutMessage: Constant.USER_LOGOUT,
+                            logoutMessage: t(Constant.USER_LOGOUT),
                           },
                         },
                       ],
                     });
                   } else {
-                    showToast(Constant.LOGOUT_FAIL,'error');
+                    showToast(t(Constant.LOGOUT_FAIL),'error');
                   }
 
                 } catch (error) {
@@ -547,7 +558,7 @@ return (
               }}
             >
               <Text allowFontScaling={false} style={styles.loginText}>
-                Log out
+                {t('logout')}
               </Text>
             </TouchableOpacity>
 
@@ -556,7 +567,7 @@ return (
                 onPress={() => setShowConfirm(false)}
               >
                 <Text allowFontScaling={false} style={styles.loginText1}>
-                  Cancel
+                  {t('cancel')}
                 </Text>
               </TouchableOpacity>
             </View>

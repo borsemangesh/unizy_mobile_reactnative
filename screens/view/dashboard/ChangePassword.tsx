@@ -42,6 +42,7 @@ import {
   openSettings,
 } from 'react-native-permissions';
 import { Constant } from '../../utils/Constant';
+import { useTranslation } from 'react-i18next';
 
 type changePasswordProps = {
   navigation: any;
@@ -64,7 +65,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
+  const { t } = useTranslation();
   const handlechangePassword = async () => {
     Keyboard.dismiss();
 
@@ -75,12 +76,12 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
       !new_password?.trim() ||
       !confirm_password?.trim()
     ) {
-      showToast(Constant.REQUIRED_ALL_FIELDS, 'error');
+      showToast(t(Constant.REQUIRED_ALL_FIELDS), 'error');
       return;
     }
 
     if (current_password === new_password) {
-      showToast(Constant.NEW_VALID_PASSWORD, 'error');
+      showToast(t(Constant.NEW_VALID_PASSWORD), 'error');
       return;
     }
 
@@ -88,12 +89,12 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]|:;"'<>,.?/]).{8,}$/;
 
     if (!passwordRegex.test(new_password.trim())) {
-      showToast(Constant.PASSWORD_VALID, 'error');
+      showToast(t(Constant.PASSWORD_VALID), 'error');
       return;
     }
 
     if (new_password !== confirm_password) {
-      showToast(Constant.PASSWORDS_DO_NOT_MATCH, 'error');
+      showToast(t(Constant.PASSWORDS_DO_NOT_MATCH), 'error');
       return;
     }
 
@@ -101,7 +102,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
       const token = await AsyncStorage.getItem('userToken');
 
       if (!token) {
-        showToast(Constant.USER_NOT_AUTH, 'error');
+        showToast(t(Constant.USER_NOT_AUTH), 'error');
         return;
       }
 
@@ -130,7 +131,8 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
 
    
       if (response.ok) {
-        showToast(data?.message, 'success');
+        showToast(t(data?.message) || 'Password updated successfully', 'success');
+
         // navigation.navigate('EditProfile');
         // navigation.goBack();
         // setInterval(() => {
@@ -142,11 +144,10 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
             new_password: '',
             confirm_password: '',
           });
+//         }, 2000); // 3 second
 
-          navigation.goBack();
-      
       } else {
-        showToast(data?.message || 'Failed to update password', 'error');
+        showToast(t(data?.message) || 'Failed to update password', 'error');
       }
     } catch (error) {
       console.log('Update Password Error:', error);
@@ -160,17 +161,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
     await AsyncStorage.clear();
     navigation.reset({
       index: 0,
-      routes: [
-        {
-          name: 'SinglePage',
-          params: {
-            forgotPassword: true,
-            resetToLogin: false,
-            currentScreen: 'login',
-            currentScreenIninner: 'forgotpassword',
-          },
-        },
-      ],
+      routes: [{ name: 'SinglePage', params: { forgotPassword: true, resetToLogin: false, currentScreen: 'login', currentScreenIninner: 'forgotpassword' } }],
     });
   };
 
@@ -189,7 +180,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
               </View>
             </TouchableOpacity>
             <Text allowFontScaling={false} style={styles.unizyText}>
-              Change Password
+              {t('change_password')}
             </Text>
             <View style={{ width: 48 }} />
           </View>
@@ -202,7 +193,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
           <View style={styles.blurCard}>
             <View style={styles.inputGroup}>
               <Text style={styles.label} allowFontScaling={false}>
-                Current Password*
+                {t('current_password')}
               </Text>
 
               <View style={{ position: 'relative' }}>
@@ -213,7 +204,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                     setUserMeta(prev => ({ ...prev, current_password: text }))
                   }
                   style={styles.input}
-                  placeholder="Enter Current Password"
+                  placeholder={t('enter_current_password')}
                   placeholderTextColor="#ccc"
                 />
 
@@ -235,7 +226,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
 
             <View style={styles.inputGroup}>
               <Text style={styles.label} allowFontScaling={false}>
-                New Password*
+                {t('new_password')}
               </Text>
 
               <View style={{ position: 'relative' }}>
@@ -246,7 +237,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                     setUserMeta(prev => ({ ...prev, new_password: text }))
                   }
                   style={styles.input}
-                  placeholder="Enter New Password"
+                  placeholder={t('enter_new_password')}
                   placeholderTextColor="#ccc"
                 />
 
@@ -268,7 +259,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
 
             <View style={styles.inputGroup}>
               <Text style={styles.label} allowFontScaling={false}>
-                Confirm Password*
+                {t('confirm_password')}
               </Text>
               {/* <TextInput
                 allowFontScaling={false}
@@ -289,7 +280,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                     setUserMeta(prev => ({ ...prev, confirm_password: text }))
                   }
                   style={styles.input}
-                  placeholder="Enter Confirm Password"
+                  placeholder={t('enter_confirm_password')}
                   placeholderTextColor="#ccc"
                 />
 
@@ -324,22 +315,20 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                 reducedTransparencyFallbackColor="transparent"
               />
               <Text allowFontScaling={false} style={styles.buttonText}>
-                Change Password
+                {t('change_password')}
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => {
-                console.log('This is Forgot password');
-                setShowDeleteModal(true);
-              }}
-            >
+            <TouchableOpacity onPress={() => {
+              console.log("This is Forgot password")
+              setShowDeleteModal(true);
+            }}>
               <Text
                 allowFontScaling={false}
                 style={styles.forgetText}
-                // onPress={() => navigation.goBack()}
+              // onPress={() => navigation.goBack()}
               >
-                Forgot Password?
+                {t('forgot_password')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -385,14 +374,13 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                   resizeMode="contain"
                 />
                 <Text allowFontScaling={false} style={styles.mainheader1}>
-                  Confirm Action
-                  </Text>
+                  {t('confirm_action')}
+                </Text>
                 <Text
                   allowFontScaling={false}
                   style={[styles.mainheader, { marginTop: 10 }]}
                 >
-                    Are you sure you want to proceed? You will be logged out of
-                  your account.
+                  {t('action')}
                 </Text>
 
                 <TouchableOpacity
@@ -402,7 +390,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                   }}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>
-                    Yes, Proceed
+                    {t('yes_proceed')}
                   </Text>
                 </TouchableOpacity>
 
@@ -413,7 +401,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                   }}
                 >
                   <Text allowFontScaling={false} style={styles.loginText1}>
-                    Cancel
+                    {t('cancel')}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -429,6 +417,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
 export default ChangePassword;
 
 const styles = StyleSheet.create({
+
   mainheader1: {
     color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-SemiBold',

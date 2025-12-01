@@ -40,6 +40,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import ButtonNew from '../../utils/component/ButtonNew';
 import Loader from '../../utils/component/Loader';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../localization/i18n';
 
 type ListingDetailsProps = {
   navigation: any;
@@ -72,7 +74,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
   const [slideUp1] = useState(new Animated.Value(0));
 
   const scrollY = useSharedValue(0);
-
+  const { t } = useTranslation();
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: event => {
       'worklet';
@@ -175,13 +177,13 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
 
       if (data1.message) {
         showToast(
-          data1.message,
+          t(data1.message),
           data1.statusCode === 200 ? 'success' : 'error',
         );
         // Refresh details so status updates immediately
         await fetchDetails();
       } else {
-        showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+        showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
       }
     } catch (error) {
       console.error('❌ API Error:', error);
@@ -196,6 +198,8 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
       return () => clearTimeout(timer);
     }
   }, [showPopup1]);
+
+
 
   const handleChange = (text: string, index: number) => {
     const newOtp = [...otp];
@@ -246,38 +250,50 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
 
       if (data?.statusCode === 200) {
         setLoading(false);
-        showToast(data.message, 'success');
+        showToast(t(data.message), 'success');
         setShowPopup2(true);
       } else {
         setLoading(false);
         setShowPopup1(false);
-        showToast(data?.message, 'error');
+        showToast(t(data?.message), 'error');
       }
     } catch (err) {
       setLoading(false);
       console.error(err);
-      showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+      showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
     }
   };
 
-  const formatDateWithDash = (dateString?: string) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "";
+ const formatDateWithDash = (dateString?: string, t?: any) => {
+  if (!dateString) return "";
+  
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "";
 
-    const day = date.getDate();
+  const day = date.getDate();
+  const lang = i18n.language; // detect language
 
-    let suffix = "th";
+  // Add suffix only for English
+  let suffix = "";
+  if (lang === "en") {
     if (day % 10 === 1 && day !== 11) suffix = "st";
     else if (day % 10 === 2 && day !== 12) suffix = "nd";
     else if (day % 10 === 3 && day !== 13) suffix = "rd";
+    else suffix = "th";
+  }
 
-    const monthShort = date
-      .toLocaleString("default", { month: "short" }); // "Nov"
+  // Month translation
+  const monthIndex = date.getMonth(); // 0–11
+  const monthKeys = [
+    "jan","feb","mar","apr","may","jun",
+    "jul","aug","sep","oct","nov","dec"
+  ];
 
-    const year = date.getFullYear();
-    return `${day}${suffix} ${monthShort} ${year}`;
-  };
+  const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+  const year = date.getFullYear();
+
+  return `${day}${suffix} ${monthShort} ${year}`;
+};
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
@@ -372,7 +388,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-            Listing Details
+            {t('listing_details')}
           </Text>
         </View>
 
@@ -461,7 +477,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                       £{data?.list?.price}
                     </Text>
                     <Text allowFontScaling={false} style={styles.datetlable}>
-                      {formatDateWithDash(data?.list?.created_at)}
+                      {formatDateWithDash(data?.list?.created_at,t)}
                     </Text>
                   </View>
 
@@ -475,27 +491,29 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                 </View>
               </View>
               <View style={styles.cardconstinerdivider} />
+
               <View style={styles.listingtyperow}>
                 <Text allowFontScaling={false} style={styles.lebleHeader}>
-                  Listing Type:
+                  {t('listing_type')}:
                 </Text>
                 <Text allowFontScaling={false} style={styles.status}>
-                  {data?.list?.isfeatured ? 'Featured' : 'Regular'}
+                  {data?.list?.isfeatured ? t('featured') : t('regular')}
                 </Text>
               </View>
               <View style={styles.listingtyperow}>
                 <Text allowFontScaling={false} style={styles.lebleHeader}>
-                  Listing Status:
+                  {t('listing_status')}:
                 </Text>
                 <Text allowFontScaling={false} style={styles.status}>
                   {' '}
-                  {data?.list?.isactive ? 'Active' : 'Inactive'}
+                  {data?.list?.isactive ? t('active') : t('inactive')}
                 </Text>
               </View>
+
               {data?.list?.category_id === 3 && data?.list?.isactive && (
                 <View style={styles.listingtyperow}>
                   <Text allowFontScaling={false} style={styles.lebleHeader}>
-                    Available Units:
+                    {t('Available_Units')}:
                   </Text>
 
                   <Text allowFontScaling={false} style={styles.status}>
@@ -503,6 +521,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                   </Text>
                 </View>
               )}
+
             </View>
 
             {/* <View style={styles.carddivider} /> */}
@@ -540,7 +559,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                         allowFontScaling={false}
                         style={styles.sellerHeaderlable}
                       >
-                        Sale Details
+                        {t('Sale_Details')}
                       </Text>
                     </View>
 
@@ -565,7 +584,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                             fontWeight: '600',
                           }}
                         >
-                          Completed
+                           {t('completed')}
                         </Text>
                         <Image
                           source={require('../../../assets/images/tick.png')}
@@ -580,7 +599,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
 
                   <View style={styles.listingtyperow}>
                     <Text allowFontScaling={false} style={styles.lebleHeader}>
-                      Buyer Name:
+                      {t('buyer_name')}
                     </Text>
                     <Text allowFontScaling={false} style={styles.status}>
                       {buyer.firstname} {buyer.lastname}
@@ -588,7 +607,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                   </View>
                   <View style={styles.listingtyperow1}>
                     <Text allowFontScaling={false} style={styles.lebleHeader}>
-                      Buyer’s University:
+                     {t('buyer_university')}:
                     </Text>
                     <Text allowFontScaling={false} numberOfLines={0} style={styles.unistatus}>
                       {buyer.university_name}
@@ -597,7 +616,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
 
                   <View style={styles.listingtyperow}>
                     <Text allowFontScaling={false} style={styles.lebleHeader}>
-                      City:
+                      {t('city')}:
                     </Text>
                     <Text allowFontScaling={false} style={styles.status}>
                       {buyer.city}
@@ -606,7 +625,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
 
                   <View style={styles.listingtyperow}>
                     <Text allowFontScaling={false} style={styles.lebleHeader}>
-                      Sold On:
+                      {t('sold_on')}:
                     </Text>
                     <Text allowFontScaling={false} style={styles.status}>
                       {new Date(buyer.date).toLocaleString('en-GB', {
@@ -623,7 +642,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                   {data?.list?.category_id === 3 && (
                     <View style={styles.listingtyperow}>
                       <Text allowFontScaling={false} style={styles.lebleHeader}>
-                        Units Purchased:
+                         {t('Units_Purchased')}:
                       </Text>
 
                       <Text allowFontScaling={false} style={styles.status}>
@@ -634,7 +653,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
 
                   <View style={styles.listingtyperow}>
                     <Text allowFontScaling={false} style={styles.lebleHeader}>
-                      Sold For:
+                     {t('sold_for')}:
                     </Text>
                     <Text allowFontScaling={false} style={styles.status}>
                       £{buyer.price}
@@ -666,7 +685,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                         }}
                       >
                         <Text allowFontScaling={false} style={styles.status1}>
-                          Enter OTP
+                         {t('enter_otp')}
                         </Text>
                       </TouchableOpacity>
                     </View>
@@ -712,12 +731,11 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
 
                 <View style={styles.popupContainer}>
                   <Text allowFontScaling={false} style={styles.mainheader}>
-                    Enter Delivery OTP
+                     {t('Enter_Delivery_OTP')}
                   </Text>
 
                   <Text allowFontScaling={false} style={styles.subheader}>
-                    Please enter the 6-digit OTP shared by the buyer to confirm
-                    delivery.
+                    {t('please_enter_6digit_otp')}
                   </Text>
 
                   <View style={styles.otpContainer}>
@@ -744,7 +762,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                   <TouchableOpacity
                     style={styles.loginButton}
                     onPress={otpverify}>
-                    <Text allowFontScaling={false} style={styles.loginText}>Verify</Text>
+                    <Text allowFontScaling={false} style={styles.loginText}> {t('verify')}</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -754,7 +772,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText1}>
-                      Cancel
+                       {t('cancel')}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -799,16 +817,16 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                     resizeMode="contain"
                   />
                   <Text allowFontScaling={false} style={styles.mainheader}>
-                    Order Fulfilled!
+                    {t('Order_Fulfilled')}
                   </Text>
                   <Text allowFontScaling={false} style={styles.subheader1}>
-                    Delivery Verified
+                    {t('Delivery_Verified')}
                   </Text>
                   <Text
                     allowFontScaling={false}
                     style={[styles.subheader1, { marginTop: 0 }]}
                   >
-                    The payment of £{price} has been transferred to your account.
+                   {t('The_payment_of')} £{price} {t('has_been_transferred_to_your_account')}
                   </Text>
                   <TouchableOpacity
                     style={styles.loginButton}
@@ -817,7 +835,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText}>
-                      Done
+                      {t('done')}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -860,10 +878,10 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                     resizeMode="contain"
                   />
                   <Text allowFontScaling={false} style={styles.mainheader}>
-                    Deactivate Listing
+                     {t('Deactivate_Listing')}
                   </Text>
                   <Text allowFontScaling={false} style={styles.subheader}>
-                    Are you sure you want to deactivate this listing?
+                    {t('deactivate_listing')}
                   </Text>
 
                   <TouchableOpacity
@@ -874,7 +892,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText}>
-                      Deactivate
+                      {t('Deactivate')}
                     </Text>
                   </TouchableOpacity>
 
@@ -883,7 +901,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                     onPress={() => setShowConfirm(false)}
                   >
                     <Text allowFontScaling={false} style={styles.loginText1}>
-                      Cancel
+                      {t('cancel')}
                     </Text>
                   </TouchableOpacity>
                 </View>

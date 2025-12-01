@@ -18,6 +18,8 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import SalesAllDetailsDropdown from '../../utils/component/SalesAllDetailsDropdown';
 import SalesAllDetailsDropdown_IOS from '../../utils/component/SalesAllDetailsDropdown_IOS';
 import Loader from '../../utils/component/Loader';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../localization/i18n';
 
 type TransactionPropos = {
   navigation: any;
@@ -66,6 +68,9 @@ export default function TransactionHistoryScreen(
   const { issales } = route?.params || {}
   const screenWidth = Dimensions.get('window').width;
   const tabsname = ['Purchases', 'Sales', 'Charges'];
+
+  const { t } = useTranslation();
+
   const tabWidth = (screenWidth * 0.9) / tabsname.length;
 
   const translateX = useRef(new Animated.Value(0)).current;
@@ -80,9 +85,22 @@ export default function TransactionHistoryScreen(
   const [overallEarning, setOverallEarning] = useState(0);
 
   const tabs = [{ key: 'Purchases' }, { key: 'Sales' }, { key: 'Charges' }];
+  const getTabLabel = (key: string) => {
+    switch (key) {
+      case 'Purchases':
+        return t('purchases');
+      case 'Sales':
+        return t('sales');
+      case 'Charges':
+        return t('charges');
+      default:
+        return key;
+    }
+  };
   const [isFilterVisible, setFilterVisible] = useState(false);
   const [SalesImageUrl, setSalesImageUrl] = useState('');
   const { height } = Dimensions.get('window');
+
 
   useEffect(() => {
     if (issales) {
@@ -249,7 +267,7 @@ export default function TransactionHistoryScreen(
     fetchTransactions();
   }, [selectedTab]);
 
-  const getFormattedDate = (dateString: string) => {
+  const getFormattedDate = (dateString: string, t?: any) => {
     const parts = dateString.split(" ");
     if (parts.length !== 3) return dateString;
 
@@ -258,20 +276,35 @@ export default function TransactionHistoryScreen(
 
     if (isNaN(day)) return dateString;
 
-    // Add suffix
-    const suffix =
-      day % 10 === 1 && day !== 11
-        ? "st"
-        : day % 10 === 2 && day !== 12
-          ? "nd"
-          : day % 10 === 3 && day !== 13
-            ? "rd"
-            : "th";
+    const lang = i18n.language;
 
-    const shortMonth = monthStr.substring(0, 3);
+    // English suffix logic
+    let suffix = "";
+    if (lang === "en") {
+      suffix =
+        day % 10 === 1 && day !== 11
+          ? "st"
+          : day % 10 === 2 && day !== 12
+            ? "nd"
+            : day % 10 === 3 && day !== 13
+              ? "rd"
+              : "th";
+    }
 
-    return `${day}${suffix} ${shortMonth} ${yearStr}`;
+    const months = [
+      "jan", "feb", "mar", "apr", "may", "jun",
+      "jul", "aug", "sep", "oct", "nov", "dec"
+    ];
+
+    const monthShort = monthStr.substring(0, 3).toLowerCase();
+    const monthIndex = months.indexOf(monthShort);
+
+    const translatedMonth =
+      t && monthIndex !== -1 ? t(months[monthIndex]) : monthStr;
+
+    return `${day}${suffix} ${translatedMonth} ${yearStr}`;
   };
+
   const [catagoryid, setCatagoryid] = useState(0)
 
   const [salesData, setSalesData] = useState<any[]>([]);
@@ -280,7 +313,7 @@ export default function TransactionHistoryScreen(
 
   const fetchSalesHistory = async (catagory_id: number) => {
     try {
-      // Get user token
+      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
         console.log('No token found');
@@ -295,6 +328,7 @@ export default function TransactionHistoryScreen(
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
+          language_code: language_code
         },
       });
 
@@ -326,6 +360,7 @@ export default function TransactionHistoryScreen(
 
 
   const [isSelected, setIsSelected] = useState(false);
+
 
   return (
     <View
@@ -370,7 +405,8 @@ export default function TransactionHistoryScreen(
                     textAlign: 'center',
                   }}
                 >
-                  {key}
+                  {getTabLabel(key)}
+
                 </Text>
               </View>
             </TouchableOpacity>
@@ -430,7 +466,7 @@ export default function TransactionHistoryScreen(
                 resizeMode="contain"
               />
               <Text allowFontScaling={false} style={styles.emptyText}>
-                No Transactions Found
+                {t('no_transactions_found')}
               </Text>
             </View>
           </View>
@@ -439,7 +475,7 @@ export default function TransactionHistoryScreen(
           transactions.map((section, idx) => (
             <View key={idx} style={styles.section}>
               <Text allowFontScaling={false} style={styles.dateText}>
-                {getFormattedDate(section.date)}
+                {getFormattedDate(section.date, t)}
               </Text>
               {section.items.map((item, i) => (
                 <View key={i} style={styles.card}>
@@ -482,11 +518,11 @@ export default function TransactionHistoryScreen(
                                 >
                                   {item?.category_id === 3
                                     ?
-                                    `${item?.purchased_quantity ?? 1} ${(item?.purchased_quantity ?? 1) > 1 ? 'units' : 'unit'
+                                    `${item?.purchased_quantity ?? 1} ${(item?.purchased_quantity ?? 1) > 1 ? t('units') : t('unit')
                                     }`
                                     : (item?.category_id === 2 || item?.category_id === 5)
                                       ?
-                                      `${item?.hours ?? 1} ${(item?.hours ?? 1) > 1 ? 'hours' : 'hour'
+                                      `${item?.hours ?? 1} ${(item?.hours ?? 1) > 1 ? t('hours') : t('hour')
                                       }`
                                       : ''
                                   }
@@ -536,7 +572,7 @@ export default function TransactionHistoryScreen(
 
                   <View style={styles.cardconstinerdivider} />
                   <Text style={styles.sellerText}>
-                    Purchased from{'  '}
+                    {t('purchased_from')}{'  '}
                     <Text style={styles.sellerTextName}>
                       {item.seller} ({item.university})
                     </Text>
@@ -574,7 +610,7 @@ export default function TransactionHistoryScreen(
                     allowFontScaling={false}
                     style={styles.Overall_Earnings_value}
                   >
-                    Overall Earnings
+                    {t('overall_earnings')}
                   </Text>
 
                   <Text
@@ -590,7 +626,7 @@ export default function TransactionHistoryScreen(
             {transactions.map((section, idx) => (
               <View key={idx} style={styles.section}>
                 <Text allowFontScaling={false} style={styles.dateText1}>
-                  {getFormattedDate(section.date)}
+                  {getFormattedDate(section.date, t)}
                 </Text>
 
                 {section.items.map((item, i) => (
@@ -635,7 +671,7 @@ export default function TransactionHistoryScreen(
                           allowFontScaling={false}
                           style={styles.allDetails}
                         >
-                          All Details
+                          {t('all_details')}
                         </Text>
                       </TouchableOpacity>
                     </View>
@@ -656,7 +692,7 @@ export default function TransactionHistoryScreen(
                           fontSize: 12,
                         }}
                       >
-                        Total Order: {item.total_orders}
+                        {t('total_order')}: {item.total_orders}
                       </Text>
                       <Text
                         allowFontScaling={false}
@@ -666,7 +702,7 @@ export default function TransactionHistoryScreen(
                           fontSize: 12,
                         }}
                       >
-                        Total Earnings: {item.total_earning}
+                        {t('total_earnings')}: {item.total_earning}
                       </Text>
                     </View>
                   </View>
@@ -678,7 +714,7 @@ export default function TransactionHistoryScreen(
           transactions.map((section, idx) => (
             <View key={idx} style={styles.section}>
               <Text allowFontScaling={false} style={styles.dateText}>
-                {getFormattedDate(section.date)}
+                {getFormattedDate(section.date, t)}
               </Text>
               {section.items.map((item, i) => (
                 <View key={i} style={styles.chargesCard}>
@@ -729,13 +765,13 @@ export default function TransactionHistoryScreen(
                           textDecorationLine: 'underline',
                         }}
                       >
-                        View Listing
+                        {t('view_listing')}
                       </Text>
                     </TouchableOpacity>
                   </View>
                   <View style={styles.cardconstinerdivider} />
                   <Text style={styles.viewListing}>
-                    Featured Listing Fee: {item.price}
+                    {t('featured_listing_fee')}: {item.price}
                   </Text>
                 </View>
               ))}

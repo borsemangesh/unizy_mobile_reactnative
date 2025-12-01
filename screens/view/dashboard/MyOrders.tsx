@@ -36,6 +36,8 @@ import Animated, {
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../localization/i18n';
 
 
 type CreatedBy = {
@@ -101,6 +103,7 @@ const MyOrders = ({ navigation }: MyOrdersProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
 
+    const { t } = useTranslation();
 
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const scrollY = useSharedValue(0);
@@ -165,10 +168,14 @@ const MyOrders = ({ navigation }: MyOrdersProps) => {
     name: string;
   };
 
-  const [categories, setCategories] = useState<Category[]>([
-    { id: null, name: 'All' }
+ const [categories, setCategories] = useState<Category[]>([
+    { id: null, name: t('all') },
   ]);
-  const [selectedCategory, setSelectedCategory] = useState<Category>({ id: null, name: 'All' });
+  const [selectedCategory, setSelectedCategory] = useState<Category>({
+    id: null,
+    name: t('all'),
+  });
+
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -176,7 +183,7 @@ const MyOrders = ({ navigation }: MyOrdersProps) => {
       if (stored) {
         const parsed = JSON.parse(stored);
         const catObjects = [
-          { id: null, name: 'All' },
+          { id: null, name: t('all') },
           ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
         ];
         setCategories(catObjects);
@@ -184,8 +191,8 @@ const MyOrders = ({ navigation }: MyOrdersProps) => {
       }
     };
     loadCategories();
-  }, []);
-
+  }, [t]);
+  
   useEffect(() => {
     setPage(1);
     displayListOfProduct(selectedCategory?.id ?? null, 1);
@@ -259,101 +266,187 @@ const MyOrders = ({ navigation }: MyOrdersProps) => {
     (item.featurelist?.title ?? '').toLowerCase().includes(search.toLowerCase())
   );
 
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return "";
+const formatDate = (dateString?: string, t?: any) => {
+  if (!dateString) return "";
 
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "";
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "";
 
-    const day = date.getDate();
+  const day = date.getDate();
+  const year = date.getFullYear();
+  const lang = i18n.language; // detect current language
 
-    let suffix = "th";
+  // ---------- Suffix only for English ----------
+  let suffix = "";
+  if (lang === "en") {
     if (day % 10 === 1 && day !== 11) suffix = "st";
     else if (day % 10 === 2 && day !== 12) suffix = "nd";
     else if (day % 10 === 3 && day !== 13) suffix = "rd";
+    else suffix = "th";
+  }
 
-    const monthShort = date
-      .toLocaleString("default", { month: "short" });
+  // ---------- Month translation ----------
+  const monthIndex = date.getMonth(); // 0–11
+  const monthKeys = [
+    "jan","feb","mar","apr","may","jun",
+    "jul","aug","sep","oct","nov","dec"
+  ];
 
-    const year = date.getFullYear();
+  const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
 
-    return `${day}${suffix} ${monthShort} ${year}`;
-  };
+  return `${day}${suffix} ${monthShort} ${year}`;
+};
+
+  // const formatDate1 = (dateString: string) => {
+  //   const date = new Date(dateString);
+  //   if (isNaN(date.getTime())) return dateString;
+
+  //   const day = date.getDate();
+  //   const month = date.toLocaleString('default', { month: 'short' }); // <-- changed
+  //   const year = date.getFullYear();
+
+  //   let suffix = 'th';
+  //   if (day % 10 === 1 && day % 100 !== 11) suffix = 'st';
+  //   else if (day % 10 === 2 && day % 100 !== 12) suffix = 'nd';
+  //   else if (day % 10 === 3 && day % 100 !== 13) suffix = 'rd';
+
+  //   return `${day}${suffix} ${month} ${year}`;
+  // };
+
+  const formatDate1 = (dateString: string, t?: any) => {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return dateString;
+
+  const day = date.getDate();
+  const year = date.getFullYear();
+  const lang = i18n.language; // current language
+
+  // Suffix → only English
+  let suffix = "";
+  if (lang === "en") {
+    if (day % 10 === 1 && day !== 11) suffix = "st";
+    else if (day % 10 === 2 && day !== 12) suffix = "nd";
+    else if (day % 10 === 3 && day !== 13) suffix = "rd";
+    else suffix = "th";
+  }
+
+  // Month translation
+  const monthIndex = date.getMonth();
+  const monthKeys = [
+    "jan","feb","mar","apr","may","jun",
+    "jul","aug","sep","oct","nov","dec"
+  ];
+
+  const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+
+  return `${day}${suffix} ${monthShort} ${year}`;
+};
 
 
-  const formatDate1 = (dateString: string) => {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return dateString;
-
-    const day = date.getDate();
-    const month = date.toLocaleString('default', { month: 'short' }); // <-- changed
-    const year = date.getFullYear();
-
-    let suffix = 'th';
-    if (day % 10 === 1 && day % 100 !== 11) suffix = 'st';
-    else if (day % 10 === 2 && day % 100 !== 12) suffix = 'nd';
-    else if (day % 10 === 3 && day % 100 !== 13) suffix = 'rd';
-
-    return `${day}${suffix} ${month} ${year}`;
-  };
 
 
+  // const groupByDate = (data: any[]) => {
+  //   const groupedMap: Record<string, any[]> = {};
 
-  const groupByDate = (data: any[]) => {
-    const groupedMap: Record<string, any[]> = {};
+  //   data.forEach(item => {
+  //     const d = new Date(item.created_at);
 
-    data.forEach(item => {
-      const d = new Date(item.created_at);
+  //     const rawDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
+  //       d.getDate()
+  //     ).padStart(2, '0')}`;
 
-      const rawDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
-        d.getDate()
-      ).padStart(2, '0')}`;
+  //     const displayDate = formatDate1(item.created_at);
 
-      const displayDate = formatDate1(item.created_at);
+  //     if (!groupedMap[rawDate]) {
+  //       groupedMap[rawDate] = [];
+  //     }
 
-      if (!groupedMap[rawDate]) {
-        groupedMap[rawDate] = [];
-      }
+  //     groupedMap[rawDate].push({
+  //       ...item,
+  //       type: 'item',
+  //       displayDate,
+  //       rawDate,
+  //     });
+  //   });
 
-      groupedMap[rawDate].push({
-        ...item,
-        type: 'item',
-        displayDate,
-        rawDate,
-      });
+  //   // Sort newest → oldest
+  //   const sortedDates = Object.keys(groupedMap).sort((a, b) => {
+  //     return new Date(b).getTime() - new Date(a).getTime();
+  //   });
+
+  //   const groupedArray: any[] = [];
+
+  //   // Build final list
+  //   sortedDates.forEach(rawDate => {
+  //     const items = groupedMap[rawDate].sort(
+  //       (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  //     );
+
+  //     groupedArray.push({
+  //       type: 'date',
+  //       id: `date-${rawDate}`,
+  //       displayDate: items[0].displayDate,
+  //     });
+
+  //     groupedArray.push(...items);
+  //   });
+
+  //   return groupedArray;
+  // };
+
+
+  const groupByDate = (data: any[], t?: any) => {
+  const groupedMap: Record<string, any[]> = {};
+
+  data.forEach(item => {
+    const d = new Date(item.created_at);
+
+    const rawDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
+      d.getDate()
+    ).padStart(2, '0')}`;
+
+    const displayDate = formatDate1(item.created_at, t);
+
+    if (!groupedMap[rawDate]) {
+      groupedMap[rawDate] = [];
+    }
+
+    groupedMap[rawDate].push({
+      ...item,
+      type: 'item',
+      displayDate,
+      rawDate,
+    });
+  });
+
+  const sortedDates = Object.keys(groupedMap).sort((a, b) => {
+    return new Date(b).getTime() - new Date(a).getTime();
+  });
+
+  const groupedArray: any[] = [];
+
+  sortedDates.forEach(rawDate => {
+    const items = groupedMap[rawDate].sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+
+    groupedArray.push({
+      type: 'date',
+      id: `date-${rawDate}`,
+      displayDate: items[0].displayDate,
     });
 
-    // Sort newest → oldest
-    const sortedDates = Object.keys(groupedMap).sort((a, b) => {
-      return new Date(b).getTime() - new Date(a).getTime();
-    });
+    groupedArray.push(...items);
+  });
 
-    const groupedArray: any[] = [];
-
-    // Build final list
-    sortedDates.forEach(rawDate => {
-      const items = groupedMap[rawDate].sort(
-        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
-
-      groupedArray.push({
-        type: 'date',
-        id: `date-${rawDate}`,
-        displayDate: items[0].displayDate,
-      });
-
-      groupedArray.push(...items);
-    });
-
-    return groupedArray;
-  };
+  return groupedArray;
+};
 
 
-
-  const groupedOrders = groupByDate(filteredFeatures);
+  const groupedOrders = groupByDate(filteredFeatures,t);
 
   const renderItem = ({ item, index }: { item: any; index: number }) => {
-    const displayDate = formatDate(item?.created_at);
+    const displayDate = formatDate(item?.created_at,t);
     if (item.type === 'date') {
       return (
         <Text allowFontScaling={false} style={styles.dateHeading}>
@@ -515,7 +608,7 @@ const MyOrders = ({ navigation }: MyOrdersProps) => {
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-            My Orders
+             {t('my_orders')}
           </Text>
         </View>
 
@@ -597,7 +690,7 @@ const MyOrders = ({ navigation }: MyOrdersProps) => {
                     resizeMode="contain"
                   />
                   <Text allowFontScaling={false} style={styles.emptyText}>
-                    No Orders Found
+                    {t('no_orders_found')}
                   </Text>
                 </View>
               </View>

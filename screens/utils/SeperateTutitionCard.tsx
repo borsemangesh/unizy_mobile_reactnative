@@ -1,5 +1,6 @@
 import { BlurView } from '@react-native-community/blur';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -18,10 +19,10 @@ type SeperateTutionCardProps = {
   rating: string;
   productImage?: ImageSourcePropType; // optional now
   bookmark: boolean;
-  showInitials:boolean;
-  initialsName: string; 
-  isfeature:boolean,
-  applybookmark?: () => void; 
+  showInitials: boolean;
+  initialsName: string;
+  isfeature: boolean,
+  applybookmark?: () => void;
 };
 
 
@@ -38,6 +39,8 @@ export default function SeperateTutionCard({
   applybookmark,
 }: SeperateTutionCardProps) {
   // helper to generate initials
+
+  const { t } = useTranslation();
   const getInitials = (name: string) => {
     if (!name) return '';
     const parts = name.trim().split(' ');
@@ -96,7 +99,7 @@ export default function SeperateTutionCard({
               style={[StyleSheet.absoluteFillObject, { borderRadius: 9 }]}
             />
             <Text allowFontScaling={false} style={styles.tagText}>
-              Featured
+              {t('featured')}
             </Text>
           </View>
         )}
@@ -166,44 +169,44 @@ export default function SeperateTutionCard({
 
 
 const styles = StyleSheet.create({
-//    tagTopLeft: {
-//   position: 'absolute',
-//   //top: 5,
-//  // left: 5,
-//   top: Platform.OS === 'ios' ? 8 : 8,
-//     left: Platform.OS === 'ios' ? 8 : 8,
-//   backgroundColor: 'rgba(255,255,255,0.4)',
-//   borderRadius: 4,
-//   padding: 4,
-//   marginVertical: 4,
-//   marginHorizontal: 4,
-//   overflow:'hidden',
-//   boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
-// },
+  //    tagTopLeft: {
+  //   position: 'absolute',
+  //   //top: 5,
+  //  // left: 5,
+  //   top: Platform.OS === 'ios' ? 8 : 8,
+  //     left: Platform.OS === 'ios' ? 8 : 8,
+  //   backgroundColor: 'rgba(255,255,255,0.4)',
+  //   borderRadius: 4,
+  //   padding: 4,
+  //   marginVertical: 4,
+  //   marginHorizontal: 4,
+  //   overflow:'hidden',
+  //   boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
+  // },
 
   tagTopLeft: {
-  position: 'absolute',
-  // top: 5,
-  // left: 5,
-   top: Platform.OS === 'ios' ? 8 : 10,
+    position: 'absolute',
+    // top: 5,
+    // left: 5,
+    top: Platform.OS === 'ios' ? 8 : 10,
     left: Platform.OS === 'ios' ? 8 : 10,
-  //backgroundColor: 'rgba(255,255,255,0.4)',
-  backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
-  borderRadius: 4,
-  paddingHorizontal: 6,
-  paddingVertical:2,
-  marginVertical: 4,
-  marginHorizontal: 4,
-  boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
-  overflow:'hidden'
-},
+    //backgroundColor: 'rgba(255,255,255,0.4)',
+    backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
+    borderRadius: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    marginVertical: 4,
+    marginHorizontal: 4,
+    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
+    overflow: 'hidden'
+  },
 
 
-    initialsCircle: {
+  initialsCircle: {
     width: 80,
     height: 80,
     borderRadius: 100,
-  backgroundColor: "#8390D4",
+    backgroundColor: "#8390D4",
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
@@ -213,9 +216,9 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "700",
     color: "#fff",
-   fontFamily: 'Urbanist-SemiBold',
+    fontFamily: 'Urbanist-SemiBold',
   },
-    card: {
+  card: {
     borderRadius: 16,
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
@@ -224,58 +227,58 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 8,
-    width:188,
+    width: 188,
     overflow: 'hidden',
-    height:'auto',
-    margin:6,
-    paddingBottom:10,
+    height: 'auto',
+    margin: 6,
+    paddingBottom: 10,
     //boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 15px 15px 6px',
   },
   imageContainer: {
     // width: 186,
-   // backgroundColor: 'rgba(154, 154, 255, 0.12)',
-    width: '100%',       
-    height: 180,            
-    overflow: 'hidden',       
-    justifyContent: 'center', 
+    // backgroundColor: 'rgba(154, 154, 255, 0.12)',
+    width: '100%',
+    height: 180,
+    overflow: 'hidden',
+    justifyContent: 'center',
     alignItems: 'center',
     //borderWidth: 0.4,
     borderColor: '#ffffff11',
     //boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
     padding: 6,
 
-      
+
   },
   image: {
     width: '100%',
     height: '100%',
-    
+
     padding: (Platform.OS === 'ios' ? 0 : 12),
     borderRadius: 12,
     //borderColor:'000',
     // borderWidth:2,
     alignSelf: 'center',
     resizeMode: 'stretch',
-    
-    
+
+
   },
 
   image1: {
     width: 10,
     height: 10,
-    resizeMode:'contain'
+    resizeMode: 'contain'
   },
   bookmark1: {
 
     position: 'absolute',
     top: Platform.OS === 'ios' ? 10 : 12,
     right: Platform.OS === 'ios' ? 10 : 12,
-    overflow:'hidden',
+    overflow: 'hidden',
     borderRadius: 12,
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(101, 101, 101, 0.13) 0%, rgba(117, 117, 117, 0.1) 100%)',
-   width: 36,
-   height: 36,
+    width: 36,
+    height: 36,
     display: 'flex',
     alignContent: 'center',
     justifyContent: 'center',
@@ -313,18 +316,18 @@ const styles = StyleSheet.create({
   //   marginHorizontal: 4,
   //   boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
   // },
-  tag:{
-  position: 'absolute',
+  tag: {
+    position: 'absolute',
     bottom: Platform.OS === 'ios' ? 8 : 10,
     right: Platform.OS === 'ios' ? 8 : 10,
     backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
     borderRadius: 4,
     paddingHorizontal: 6,
-    paddingVertical:2,
+    paddingVertical: 2,
     marginVertical: 4,
     marginHorizontal: 4,
     //boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
-    overflow:'hidden',
+    overflow: 'hidden',
     alignSelf: 'flex-end', // 👈 ensures the View wraps the text
     flexShrink: 1,
 
@@ -338,7 +341,7 @@ const styles = StyleSheet.create({
     color: '#000',
     textAlign: 'right',
     flexShrink: 1,
-    width:'100%'
+    width: '100%'
   },
   infoRow: {
     flexDirection: 'column',

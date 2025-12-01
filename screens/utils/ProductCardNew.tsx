@@ -57,8 +57,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    //marginHorizontal: 8,
-    // shadow for iOS
     shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 8,
@@ -70,7 +68,6 @@ const styles = StyleSheet.create({
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 15px 15px 6px',
   },
   imageContainer: {
-    // width: 186,
     width: '100%',
     height: 180,
     position: 'relative',
@@ -81,8 +78,6 @@ const styles = StyleSheet.create({
     height: '100%',
     padding:12,
     borderRadius:12,
-    //borderColor:'000',
-   // borderWidth:2,
     alignSelf:'center',
     resizeMode:'cover'
   },
@@ -110,7 +105,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 5,
     right: 5,
-    //backgroundColor: '#fff',
     backgroundColor:'rgba(255,255,255,0.4)',
     borderRadius: 4,
     padding: 4,
@@ -129,7 +123,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    //backgroundColor: '#fff',
     paddingHorizontal:6,
   },
   title: {

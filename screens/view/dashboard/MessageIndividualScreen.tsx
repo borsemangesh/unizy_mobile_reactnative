@@ -48,6 +48,9 @@ import { getTwilioClient, waitForTwilioReady } from "../../view/emoji/twilioServ
 import Loader from '../../utils/component/Loader';
 import { showToast } from '../../utils/toast';
 
+import { useTranslation } from "react-i18next";
+import i18n from '../../../localization/i18n';
+
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImage = require('../../../assets/images/user.jpg');
@@ -143,7 +146,6 @@ const saveJSON = async (key: any, value: any) => {
   try {
     await AsyncStorage.setItem(key, JSON.stringify(value));
   } catch (err: any) {
-    // Silent fail - cache is optional
     if (__DEV__) {
       console.warn('Cache save failed:', err.message);
     }
@@ -163,16 +165,13 @@ const loadJSON = async (key: any) => {
   }
 };
 
-// Helper function for safe fetch with timeout (production-ready)
 const fetchWithTimeout = async (
   url: string,
   options: RequestInit = {},
   timeoutMs: number = 15000
 ): Promise<Response> => {
-  // AbortController is available in React Native 0.60+
-  // For React Native 0.81.0, it's definitely available
+  
   if (typeof AbortController === 'undefined') {
-    // Fallback for very old React Native versions (unlikely but safe)
     throw new Error('AbortController not available');
   }
 
@@ -202,13 +201,6 @@ const MessagesIndividualScreen = ({
   const { members, sellerData, userConvName, currentUserIdList, source, conversationSid } =
     route.params;
 
-  // console.log('Received members:', members);
-  // console.log('sellerData----', sellerData?.featureId);
-  // console.log('source', source);
-  // console.log('convName', userConvName);
-
-  // console.log('currentUserIdList----', currentUserIdList);
-
   const [chatClient, setChatClient] = useState<any>(null);
   const chatClientRef = useRef<any>(null); // Track client for cleanup
 
@@ -235,9 +227,7 @@ const MessagesIndividualScreen = ({
   const textInputRef = useRef<TextInput>(null);
   const loadingFromScrollRef = useRef(false);
   const shouldAutoScrollRef = useRef(true);
-  const newestMessageSidRef = useRef<string | null>(null); // Track newest message to detect if it changed
-
-
+  const newestMessageSidRef = useRef<string | null>(null); 
 
   const hasScrollableContent = useSharedValue(false);
   const contentHeightRef = useRef(0);
@@ -246,6 +236,8 @@ const MessagesIndividualScreen = ({
 
 
   const scrollY = useSharedValue(0);
+
+    const { t } = useTranslation();
 
 
   const updateBlurState = () => {
@@ -347,7 +339,6 @@ const MessagesIndividualScreen = ({
   const keyboardHeightRef = useRef(0); // Stable ref to prevent shaking
   const keyboardHeightSetRef = useRef(false); // Track if height has been set for this keyboard session
 
-  // Update window height when dimensions change (for keyboard height calculation)
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
       windowHeightRef.current = window.height;
@@ -1138,6 +1129,7 @@ const MessagesIndividualScreen = ({
 
   // add new date format
   const formatMessageDate = (date: Date) => {
+    
     const d = new Date(date);
 
     // Today at midnight
@@ -1154,18 +1146,23 @@ const MessagesIndividualScreen = ({
 
     // Today check
     if (messageDate.getTime() === today.getTime()) {
-      return "Today";
+      // return "Today";
+       return t('today');
+    
     }
 
     // Yesterday check
     if (messageDate.getTime() === yesterday.getTime()) {
-      return "Yesterday";
+      return t('yesterday');
     }
 
     // Format with suffix (st, nd, rd, th)
     const day = d.getDate();
 
     const getSuffix = (n: number) => {
+
+    // detect current language
+  
       if (n > 3 && n < 21) return "th";
       switch (n % 10) {
         case 1:
@@ -1173,19 +1170,38 @@ const MessagesIndividualScreen = ({
         case 2:
           return "nd";
         case 3:
-          return "rd";
+          return 'rd';
         default:
           return "th";
       }
+
     };
 
-    const suffix = getSuffix(day);
 
-    const month = d.toLocaleString("en-GB", { month: "short" });
+        const lang = i18n.language; 
+
+    const suffix = lang == "en" ? getSuffix(day): "";
+
+    // const month = d.toLocaleString("en-GB", { month: "short" });
+
+
+  const monthIndex = d.getMonth(); // 0–11
+  const monthKeys = [
+    "jan","feb","mar","apr","may","jun",
+    "jul","aug","sep","oct","nov","dec"
+  ];
+
+  const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+
+
     const year = d.getFullYear();
 
+
+    console.log("month", monthShort);
+    
+
     // Final format: 20th Nov 2025
-    return `${day}${suffix} ${month} ${year}`;
+    return `${day}${suffix} ${monthShort} ${year}`;
   };
 
 
@@ -1874,7 +1890,7 @@ const MessagesIndividualScreen = ({
                           }}
                         >
                           {loadingOlderMessages && index === oldestDateIndex
-                            ? 'Loading...'
+                            ?  t('loading') 
                             : item?.date}
                         </Text>
                       </View>
@@ -2189,7 +2205,8 @@ const MessagesIndividualScreen = ({
                       fontSize: 17,
                       marginLeft: Platform.OS === 'ios' ? 5 : 0,
                     }}
-                    placeholder="Message"
+                    // placeholder="Message"
+                      placeholder=  {t('message')}
                     placeholderTextColor="#ccc"
                     onChangeText={handleTextChange}
                     value={messageText}

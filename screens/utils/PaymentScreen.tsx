@@ -7,6 +7,7 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { showToast } from './component/NewCustomToastManager';
 import Loader from './component/Loader';
 import { Constant } from './Constant';
+import { useTranslation } from 'react-i18next';
 
 
 type RootStackParamList = {
@@ -37,7 +38,7 @@ const PaymentScreen :React.FC<PaymentScreenProps> = ({ navigation }) => {
    
     const {onSuccess} =route.params;
  
- 
+  const { t } = useTranslation();
     console.log(amount)
  
   const handlePayPress = async () => {
@@ -142,17 +143,17 @@ const PaymentScreen :React.FC<PaymentScreenProps> = ({ navigation }) => {
       }
  
       console.log('Payment failed:', error);
-      showToast(Constant.PAYMENT_FAIL, 'error');
+      showToast(t(Constant.PAYMENT_FAIL), 'error');
       return;
     }
  
-    showToast(Constant.PAYMENT_COMPLETE,'success');
+    showToast(t(Constant.PAYMENT_COMPLETE),'success');
     if (onSuccess) await onSuccess();
     navigation.goBack();
  
   } catch (e) {
     console.error('Unexpected error during payment:', e);
-    showToast(Constant.SOMTHING_WENT_WRONG, 'error');
+    showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
   }
 };
  

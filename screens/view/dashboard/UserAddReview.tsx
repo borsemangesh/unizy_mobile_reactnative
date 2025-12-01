@@ -31,6 +31,7 @@ import AddRating from '../../utils/AddRating';
 import { BlurView } from '@react-native-community/blur';
 import Button from '../../utils/component/Button';
 import { Constant } from '../../utils/Constant';
+import { useTranslation } from 'react-i18next';
 
 type UserAddReviewProps = {
   navigation: any;
@@ -56,14 +57,15 @@ const UserAddReview : React.FC<UserAddReviewProps> = ({ navigation }) =>{
   const [showPopup1, setShowPopup1] = useState(false);
     const closePopup1 = () => setShowPopup1(false);
    const { width } = Dimensions.get('window');
+const { t } = useTranslation();
 
    const handleSubmit = async () => {
     if (rating === 0) {
-          showToast(Constant.ENTER_RATING,'error');
+          showToast(t(Constant.ENTER_RATING),'error');
           return;
         }
         if (username.trim() === '') {
-          showToast(Constant.ENTER_REVIEW,'error');
+          showToast(t(Constant.ENTER_REVIEW),'error');
           return;
         }
 
@@ -101,11 +103,11 @@ const UserAddReview : React.FC<UserAddReviewProps> = ({ navigation }) =>{
 
       if (result.statusCode === 200) {
         console.log('Review saved:', result);
-        showToast(result.message)
+        showToast(t(result.message))
         setShowPopup1(true); 
       } else {
         console.warn('Error saving review:', result);
-        showToast(result.message || 'Failed to submit review');
+        showToast(t(result.message) || 'Failed to submit review');
       }
     } catch (error) {
       console.error('Review error:', error);
@@ -132,7 +134,7 @@ const UserAddReview : React.FC<UserAddReviewProps> = ({ navigation }) =>{
                 />
               </View>
             </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>Write a Review</Text>
+            <Text allowFontScaling={false} style={styles.unizyText}>{t('write_a_review')}</Text>
             <View style={{ width: 48 }} />
           </View>
         </View>
@@ -140,8 +142,8 @@ const UserAddReview : React.FC<UserAddReviewProps> = ({ navigation }) =>{
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={{ flex: 1 ,paddingTop:Platform.OS === 'ios' ? 120 : 100,paddingHorizontal: 16}}>
           <View style={styles.innercontainer}>
-            <Text allowFontScaling={false} style={styles.mainlabel}>How many stars would you give?</Text>
-             <Text allowFontScaling={false} style={styles.sublabel}>Slide across the stars to rate this product</Text>
+            <Text allowFontScaling={false} style={styles.mainlabel}>{t('how_many_stars')}</Text>
+             <Text allowFontScaling={false} style={styles.sublabel}>{t('slide_to_rate')}</Text>
          </View>
 
          <View style={{  marginTop:16,marginBottom: 20, alignItems: 'center' }}>
@@ -151,13 +153,13 @@ const UserAddReview : React.FC<UserAddReviewProps> = ({ navigation }) =>{
         </View>
 
     <View style={styles.innercontainer}>
-        <Text allowFontScaling={false} style={styles.mainlabel1}>Tell us More </Text>
+        <Text allowFontScaling={false} style={styles.mainlabel1}>{t('tell_us_more')} </Text>
 
         <View style={styles.login_container}>
               <TextInput
               allowFontScaling={false}
                 style={[styles.personalEmailID_TextInput, { textAlignVertical: 'top', paddingTop: 10 }]}
-                placeholder={'Tell other students what you liked, what could be better...'}
+                placeholder={t('tell')}
                 placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
                 multiline={true}
                 value={username}
@@ -168,7 +170,7 @@ const UserAddReview : React.FC<UserAddReviewProps> = ({ navigation }) =>{
          </View>
         </View>
         </TouchableWithoutFeedback>
-         <Button title="Submit Review" onPress={() => handleSubmit()} />
+         <Button title={t('submit_review')} onPress={() => handleSubmit()} />
 
    <Modal
         visible={showPopup1}
@@ -210,7 +212,7 @@ const UserAddReview : React.FC<UserAddReviewProps> = ({ navigation }) =>{
                 fontWeight: '600',
                 letterSpacing: -0.4,
                 lineHeight: 28,
-              }}>Review Submitted Successfully!</Text>
+              }}>{t('review_submitted_success')}!</Text>
               
  
               <TouchableOpacity
@@ -232,7 +234,7 @@ const UserAddReview : React.FC<UserAddReviewProps> = ({ navigation }) =>{
                   setShowPopup1(false);
                 }}
               >
-                <Text allowFontScaling={false} style={styles.loginText}>Return to Home</Text>
+                <Text allowFontScaling={false} style={styles.loginText}>{t('return_home')}</Text>
               </TouchableOpacity>
 
                <TouchableOpacity
@@ -253,7 +255,7 @@ const UserAddReview : React.FC<UserAddReviewProps> = ({ navigation }) =>{
                       
                     }}
                     >
-                <Text allowFontScaling={false} style={styles.loginText1}>Return to My Reviews</Text>
+                <Text allowFontScaling={false} style={styles.loginText1}>{t('return_my_reviews')}</Text>
               </TouchableOpacity>
             </View>
           </BlurView>

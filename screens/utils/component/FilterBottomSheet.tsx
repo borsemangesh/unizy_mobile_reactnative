@@ -20,6 +20,7 @@ import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import Button from './Button';
 import FilterButton from './FilterButton';
 import FilterButtonApply from './FilterButtonApply';
+import { useTranslation } from 'react-i18next';
 
 
 type PriceRange = { min: number; max: number } | null;
@@ -164,6 +165,7 @@ const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(n
   }, [visible]);
   
 
+   const { t } = useTranslation();
 
   const handleTabPress = (tabName: string) => {
     setSelectedTab(tabName);
@@ -479,11 +481,11 @@ const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(n
               }}
             >
               <Text allowFontScaling={false} style={styles.modelTextHeader}>
-                Filters
+                {t('filters')}
               </Text>
               <TouchableOpacity onPress={handleClearFilters}>
                 <Text allowFontScaling={false} style={styles.clearAll}>
-                  Clear all
+                  {t('clear_all')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -549,12 +551,12 @@ const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(n
           {/* Bottom buttons */}
           <View style={styles.bottomview}>
             <FilterButton
-              title="Cancel"
+              title={t('cancel')}
               onPress={handleClose}
               style={styles.FilterButton_cancle}
             />
             <FilterButtonApply
-              title="Apply"
+              title={t('apply')}
               onPress={handleApply}
               style={styles.FilterButton_apply}
             />

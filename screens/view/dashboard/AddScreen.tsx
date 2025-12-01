@@ -50,6 +50,8 @@ import AnimatedReanimated, {
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { Constant } from '../../utils/Constant';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../localization/i18n';
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImg = require('../../../assets/images/user.jpg');
@@ -179,6 +181,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   useEffect(() => {
     const fetchFields = async () => {
       try {
+
+        const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+        console.log("language-code", language_code)
         const token = await AsyncStorage.getItem('userToken');
         if (!token) {
           console.log('No token found');
@@ -189,11 +194,14 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
         const url = `${MAIN_URL.baseUrl}category/listparams/user/${productId}`;
 
+        console.log(url)
+
         const response = await fetch(url, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
+            language_code: language_code
           },
         });
 
@@ -278,8 +286,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     if (expanded) {
       Animated.timing(animatedHeight, {
         toValue: 1,
-        duration: 800, 
-        useNativeDriver: false, 
+        duration: 800,
+        useNativeDriver: false,
       }).start();
     }
   }, [expanded]);
@@ -310,11 +318,11 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
       ...prev,
       [fieldId]: {
         value: value,
-        alias_name: aliasName ?? null, 
+        alias_name: aliasName ?? null,
       },
     }));
   };
-
+  const { t } = useTranslation();
   const handleMultiSelectToggle = (fieldId: number, optionId: number) => {
     const prevSelected: number[] = Array.isArray(formValues[fieldId])
       ? formValues[fieldId]
@@ -327,21 +335,33 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     setFormValues((prev: any) => ({ ...prev, [fieldId]: updated }));
   };
 
-  const getCurrentDate = () => {
-    const today = new Date();
+  const getCurrentDate = (t?: any) => {
+  const today = new Date();
 
-    const day = today.getDate();
-    const year = today.getFullYear();
+  const day = today.getDate();
+  const year = today.getFullYear();
+  const lang = i18n.language; // current selected language
 
-    const month = today.toLocaleString('default', { month: 'short' });
+  // Month translation
+  const monthIndex = today.getMonth(); // 0–11
+  const monthKeys = [
+    "jan","feb","mar","apr","may","jun",
+    "jul","aug","sep","oct","nov","dec"
+  ];
 
-    let suffix = 'th';
-    if (day % 10 === 1 && day !== 11) suffix = 'st';
-    else if (day % 10 === 2 && day !== 12) suffix = 'nd';
-    else if (day % 10 === 3 && day !== 13) suffix = 'rd';
+  const month = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
 
-    return `${day}${suffix} ${month} ${year}`;
-  };
+  // Suffix only for English
+  let suffix = "";
+  if (lang === "en") {
+    if (day % 10 === 1 && day !== 11) suffix = "st";
+    else if (day % 10 === 2 && day !== 12) suffix = "nd";
+    else if (day % 10 === 3 && day !== 13) suffix = "rd";
+    else suffix = "th";
+  }
+
+  return `${day}${suffix} ${month} ${year}`;
+};
 
   const pluralizeLabel = (label: string) => {
     if (!label) return '';
@@ -370,7 +390,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
       if (Platform.OS === 'android') {
         try {
           // Request CAMERA
-          const cameraGranted = await PermissionsAndroid.request(
+          const cameraGranted = await PermissionsAndroid.request(   
             PermissionsAndroid.PERMISSIONS.CAMERA,
             {
               title: 'Camera Permission',
@@ -560,9 +580,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             (Array.isArray(value) && value.length === 0)
           ) {
             if (field_type.toLowerCase() === 'image') {
-              showToast(`${field.param.field_name} ${Constant.ARE_MAN}`, 'error');
+              showToast(`${field.param.field_name} ${t(Constant.ARE_MAN)}`, 'error');
             } else {
-              showToast(`${field.param.field_name} ${Constant.IS_MAN}`, 'error');
+              showToast(`${field.param.field_name} ${t(Constant.IS_MAN)}`, 'error');
             }
             return; // Exit the function early if mandatory fields are missing
           }
@@ -650,21 +670,21 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
       navigation.navigate('PreviewThumbnail');
     } catch (error) {
       console.log('Error saving form data: ', error);
-      showToast(Constant.DATA_NOT_SAVE, 'error');
+      showToast(t(Constant.DATA_NOT_SAVE), 'error');
     }
   };
 
- 
+
   const handleSelectImage = async () => {
     const hasPermission = await requestCameraPermission();
     if (!hasPermission) return;
 
     Alert.alert(
-      'Select Option',
-      'Choose a source',
+      t('select_option'),
+      t('choose_source'),
       [
         {
-          text: 'Camera',
+          text: t('camera'),
           onPress: () => {
             launchCamera(
               { mediaType: 'photo', cameraType: 'front', quality: 1 }, // get max quality first
@@ -701,7 +721,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           },
         },
         {
-          text: 'Gallery',
+          text: t('gallery'),
           onPress: () => {
             launchImageLibrary(
               { mediaType: 'photo', quality: 1 },
@@ -737,7 +757,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             );
           },
         },
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('cancel'), style: 'cancel' },
       ],
       { cancelable: true },
     );
@@ -788,8 +808,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
         const placeholderText =
           alias_name?.toLowerCase() === 'price'
-            ? `£ Enter ${field_name}`
-            : `Enter ${field_name}`;
+            ? `£ ${t('enter')} ${field_name}`
+            : `${t('enter')} ${field_name}`;
 
         let rnKeyboardType:
           | 'default'
@@ -859,8 +879,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
         //const placeholderText = alias_name || field_name;
         const placeholderText =
           alias_name?.toLowerCase() === 'price'
-            ? `£ Enter ${field_name}`
-            : `Enter ${field_name}`;
+            ? `£ ${t('enter')} ${field_name}`
+            : `${t('enter')} ${field_name}`;
 
         let rnKeyboardType:
           | 'default'
@@ -934,9 +954,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               <View style={styles.dropdowncard}>
                 <Text allowFontScaling={false} style={styles.dropdowntext}>
                   {Array.isArray(formValues[id]?.value) &&
-                  formValues[id]?.value.length > 0
-                    ? `${formValues[id]?.value.length} Selected`
-                    : `Select ${field_name}`}
+                    formValues[id]?.value.length > 0
+                    ? `${formValues[id]?.value.length} ${t('selected')}`
+                    : `${t('select')} ${field_name}`}
                 </Text>
               </View>
               <Image
@@ -992,7 +1012,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
         const handleImageSelect = () => {
           if (uploadedImages.length >= maxvalue) {
-            showToast(`${Constant.MAXIMUM} ${maxvalue} ${Constant.IMAGE_ALLOWED}`);
+            showToast(`${t(Constant.MAXIMUM)} ${maxvalue} ${t(Constant.IMAGE_ALLOWED)}`);
             return;
           }
           handleSelectImage();
@@ -1008,7 +1028,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             >
               <Image source={uploadIcon1} style={styles.uploadIcon} />
               <Text allowFontScaling={false} style={styles.uploadText}>
-                Upload {field_name}
+                {t('upload_images')}
               </Text>
             </TouchableOpacity>
             {uploadedImages.length > 0 && (
@@ -1110,18 +1130,18 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               {/* Texts */}
               <View style={{ flex: 1 }}>
                 <Text allowFontScaling={false} style={styles.importantText1}>
-                  Important:
+                  {t('important')}
                 </Text>
                 <Text allowFontScaling={false} style={styles.importantText}>
-                  Featured listings require a small upfront fee —{' '}
+                  {t('featured_listing_note_1')} {' '}
                   <Text allowFontScaling={false} style={styles.importantText1}>
                     {featureFee}%
                   </Text>{' '}
-                  of your item’s price or up to{' '}
+                  {t('featured_listing_fee_percentage')}{' '}
                   <Text allowFontScaling={false} style={styles.importantText1}>
-                    £{maxFeatureCap}
-                  </Text>{' '}
-                  (whichever is lower).
+                    £{maxFeatureCap} {''}
+                  </Text>{''}
+                  {t('featured_listing_fee_cap')}
                 </Text>
               </View>
             </View>
@@ -1240,7 +1260,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-            {`List${productName ? ` ${productName} ` : ''}`}
+            {`${t('list')}${productName ? ` ${productName} ` : ''}`}
           </Text>
         </View>
 
@@ -1284,8 +1304,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               <View style={{ width: '80%' }}>
                 <Text allowFontScaling={false} style={styles.userName}>
                   {userMeta
-                    ? `${userMeta.firstname ?? ''} ${
-                        userMeta.lastname ?? ''
+                    ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''
                       }`.trim()
                     : 'Alan Walker'}
                 </Text>
@@ -1322,7 +1341,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                         style={{ height: 20, width: 20 }}
                       />
                       <Text allowFontScaling={false} style={styles.dateText}>
-                        {getCurrentDate()}
+                        {getCurrentDate(t)}
                       </Text>
                     </View>
                   </View>
@@ -1344,9 +1363,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                   allowFontScaling={false}
                   style={styles.productdetailstext}
                 >
-                  {productName === 'Food'
-                    ? 'Dish Details'
-                    : `${productName ? `${productName} ` : ''}Details`}
+                  {productId === 3
+                    ? t('dish_details')
+                    : `${productName ? `${productName} ` : ''}${t('details')}`}
                 </Text>
 
                 {fields
@@ -1361,7 +1380,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             {featuredField && <View>{renderField(featuredField)}</View>}
           </AnimatedReanimated.ScrollView>
         </KeyboardAvoidingView>
-        <Button title="Preview Details" onPress={() => handlePreview()} />
+        <Button title={t('preview_details')} onPress={() => handlePreview()} />
       </View>
 
       {Platform.OS === 'android' ? (
@@ -1370,15 +1389,11 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             options={multiSelectOptions}
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
-            title={`Select ${multiSelectModal?.fieldLabel || 'Category'}`}
+            title={`${t('select')} ${t(multiSelectModal?.fieldLabel?.toLowerCase() || 'category')}`}
             subtitle={
               multiSelectModal?.ismultilple
-                ? `Pick all ${pluralizeLabel(
-                    multiSelectModal?.fieldLabel || 'Category',
-                  )} that fit your listing.`
-                : `Select the ${
-                    multiSelectModal?.fieldLabel || 'category'
-                  } that best describes your listing.`
+                ? `${t('pick_all')} ${multiSelectModal?.fieldLabel || 'categories'} ${t('best_describe')}`
+                : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'} ${t('that_fit_your_listing')}`
             }
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>
@@ -1398,15 +1413,11 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             options={multiSelectOptions}
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
-            title={`Select ${multiSelectModal?.fieldLabel || 'Category'}`}
-            subtitle={
+            title={`${t('select')} ${t(multiSelectModal?.fieldLabel?.toLowerCase() || 'category')}`}
+           subtitle={
               multiSelectModal?.ismultilple
-                ? `Pick all ${pluralizeLabel(
-                    multiSelectModal?.fieldLabel || 'Category',
-                  )} that fit your listing.`
-                : `Select the ${
-                    multiSelectModal?.fieldLabel || 'category'
-                  } that best describes your listing.`
+                ? `${t('pick_all')} ${multiSelectModal?.fieldLabel || 'categories'} ${t('best_describe')}`
+                : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'} ${t('that_fit_your_listing')}`
             }
             //subtitle={`Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your item.`}
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}

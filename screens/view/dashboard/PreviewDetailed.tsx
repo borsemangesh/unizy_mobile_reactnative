@@ -35,6 +35,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { Constant } from '../../utils/Constant';
 import { Ellipse } from 'react-native-svg';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../localization/i18n';
 
 type previewDetailsProps = {
   navigation: any;
@@ -133,6 +135,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
   }, []);
 
 
+const { t } = useTranslation();
 
 
   type FormEntry = {
@@ -153,9 +156,9 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
     return entry ? entry.value : null;
   };
 
-  const titleValue = getValueByAlias(storedForm, 'title') || 'No Title';
+  const titleValue = getValueByAlias(storedForm, 'title') || t('no_des');
   //const priceValue = getValueByAlias(storedForm, 'price') || '0';
-  const descriptionvalue = getValueByAlias(storedForm, 'description') || 'No Description'
+  const descriptionvalue = getValueByAlias(storedForm, 'description') || t('no_des')
   const duration_value = getValueByAlias(storedForm, 'service_duration') || '1'
 
 
@@ -222,6 +225,11 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
     const fetchFields = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
+        const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+        if (!token) {
+          console.log('No token found');
+          return;
+        }
         const productId1 = await AsyncStorage.getItem('selectedProductId');
         setcategoryid(Number(productId1))
 
@@ -237,6 +245,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
+            language_code: language_code
           },
         });
 
@@ -289,7 +298,6 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
   }, []);
 
 
-
   type ImageField = {
     id?: string;
     uri: string;
@@ -329,7 +337,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
       if (!storedData) {
         console.log('⚠️ No form data found in storage');
-        showToast(Constant.DATA_NOT_SAVE, 'error');
+        showToast(t(Constant.DATA_NOT_SAVE), 'error');
         return;
       }
 
@@ -402,7 +410,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
       const apiMessage = createJson?.message || createJson?.error || "Something went wrong";
       const isSuccess = createRes.status === 200 || createRes.status === 201;
 
-      showToast(apiMessage, isSuccess ? "success" : "error");
+      showToast(t(apiMessage), isSuccess ? "success" : "error");
 
       if (!(createRes.status === 200 || createRes.status === 201)) {
         navigation.reset({
@@ -421,7 +429,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
       }
       const feature_id = createJson?.data?.id;
       if (!feature_id) {
-        showToast(Constant.SOMTHING_WENT_WRONG, 'error')
+        showToast(t(Constant.SOMTHING_WENT_WRONG), 'error')
         return;
       }
       for (const [param_id, images] of imageFields) {
@@ -450,11 +458,11 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
           const apiMessage = uploadJson?.message || uploadJson?.error || `Failed to upload ${image.name}`;
           const isSuccess = uploadRes.status === 200 || uploadRes.status === 201;
-          showToast(apiMessage, isSuccess ? "success" : "error");
+          showToast(t(apiMessage), isSuccess ? "success" : "error");
           if (!isSuccess) return;
         }
       }
-      showToast(Constant.DATA_UPLOAD, 'success');
+      showToast(t(Constant.DATA_UPLOAD), 'success');
       setShowPopup(true);
     }
     catch (error) {
@@ -465,21 +473,33 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
 
 
-  const getCurrentDate = () => {
-    const today = new Date();
+ const getCurrentDate = (t?: any) => {
+  const today = new Date();
 
-    const day = today.getDate();
-    const year = today.getFullYear();
+  const day = today.getDate();
+  const year = today.getFullYear();
+  const lang = i18n.language; // current selected language
 
-    const month = today.toLocaleString("default", { month: "short" });
+  // Month translation
+  const monthIndex = today.getMonth(); // 0–11
+  const monthKeys = [
+    "jan","feb","mar","apr","may","jun",
+    "jul","aug","sep","oct","nov","dec"
+  ];
 
-    let suffix = "th";
+  const month = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+
+  // Suffix only for English
+  let suffix = "";
+  if (lang === "en") {
     if (day % 10 === 1 && day !== 11) suffix = "st";
     else if (day % 10 === 2 && day !== 12) suffix = "nd";
     else if (day % 10 === 3 && day !== 13) suffix = "rd";
+    else suffix = "th";
+  }
 
-    return `${day}${suffix} ${month} ${year}`;
-  };
+  return `${day}${suffix} ${month} ${year}`;
+};
 
   const getInitials = (firstName = '', lastName = '') => {
     const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
@@ -620,7 +640,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-            Preview Details
+            {t('preview_details')}
           </Text>
         </View>
 
@@ -751,8 +771,8 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                       style={{ height: 16, width: 16 }}
                     />
                     <Text allowFontScaling={false} style={styles.datetext1}>
-                      Service Duration:{' '}
-                      <Text style={styles.durationValue}>{duration_value} Hours</Text>
+                      {t('service_duration')}:{' '}
+                      <Text style={styles.durationValue}>{duration_value} {t('hours')}</Text>
                     </Text>
                   </View>
                 )}
@@ -768,9 +788,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                 }}
               >
                 <Text allowFontScaling={false} style={styles.productDesHeding}>
-                  {userMeta?.category?.name === 'Food'
-                    ? 'Dish Description'
-                    : `${userMeta?.category?.name ?? ''} Description`}
+                  {userMeta?.category?.id === 3 ? t('dish_description') : `${userMeta?.category?.name ?? ''} ${t('des')}`}
                 </Text>
 
                 <Text allowFontScaling={false} style={styles.productDesc}>
@@ -782,7 +800,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                     source={require('../../../assets/images/calendar_icon1.png')}
                     style={{ height: 16, width: 16 }}
                   />
-                  <Text allowFontScaling={false} style={styles.datetext}>Date Posted: {getCurrentDate()}</Text>
+                  <Text allowFontScaling={false} style={styles.datetext}>{t('date_posted')}: {getCurrentDate(t)}</Text>
                 </View>
               </View>
             </View>
@@ -790,9 +808,13 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
             <View style={styles.card}>
               <View style={styles.gap12}>
                 <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
-                  {userMeta?.category?.name === 'Food'
+                  {/* {userMeta?.category?.id === 3
                     ? 'Dish Details'
-                    : `${userMeta?.category?.name ?? ''} Details`}
+                    : `${userMeta?.category?.name ?? ''} Details`} */}
+
+                    {userMeta?.category?.id === 3
+                    ? t('dish_details')
+                    : `${userMeta?.category?.name ? `${userMeta?.category?.name} ` : ''}${t('details')}`}
                 </Text>
                 <View style={{ gap: 12 }}>
                   {fields.map(field => {
@@ -858,7 +880,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
             <View style={styles.card}>
               <View style={{ gap: 12 }}>
-                <Text allowFontScaling={false} style={styles.productDeatilsHeading}>Seller Details</Text>
+                <Text allowFontScaling={false} style={styles.productDeatilsHeading}>{t('seller_details')}</Text>
 
                 <View style={{ flexDirection: 'row', marginBottom: 4 }}>
 
@@ -908,7 +930,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                       source={require('../../../assets/images/message_chat.png')}
                       style={{ height: 16, width: 16, marginRight: 4 }}
                     />
-                    <Text allowFontScaling={false} style={styles.chattext}>Chat with Seller</Text>
+                    <Text allowFontScaling={false} style={styles.chattext}>{t('chat_with_seller')}</Text>
                   </View>
                 </View>
               </View>
@@ -923,10 +945,15 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
               const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
               const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
 
+              // if (categoryid === Number(4)) {
+              //   return `List for £${accomodation_amount.toFixed(2)}`
+              // }
+              // return 'List';
+
               if (categoryid === Number(4)) {
-                return `List for £${accomodation_amount.toFixed(2)}`
+                return `${t('list')} for £${accomodation_amount.toFixed(2)}`;
               }
-              return 'List';
+              return t('list');
             } catch (e) {
               console.log('Error parsing storedForm:', e);
               return 'List';
@@ -978,7 +1005,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                     lineHeight: 28,
                   }}
                 >
-                  Product Listed Successfully!
+                  {t('product_listed_success')}!
                 </Text>
                 <Text
                   allowFontScaling={false}
@@ -993,7 +1020,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                     textAlign: 'center'
                   }}
                 >
-                  Your product is now live and visible to other students.
+                 {t('product_listed_message')}
                 </Text>
 
                 <TouchableOpacity
@@ -1026,7 +1053,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                   }}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>
-                    Return to Choose Category
+                   {t('return_choose_category')}
                   </Text>
                 </TouchableOpacity>
               </View>

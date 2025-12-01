@@ -41,6 +41,8 @@ import MaskedView from '@react-native-masked-view/masked-view';
 import SelectFoodQuantity from '../../utils/component/SelectFoodQuantity';
 import SelectFoodQuantity_IOS from '../../utils/component/SelectFoodQuantity_IOS';
 import { Constant } from '../../utils/Constant';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../localization/i18n';
 
 type SearchDetailsProps = {
   navigation: any;
@@ -78,6 +80,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
   const [loading, setLoading] = useState(true);
   const [formValues, setFormValues] = useState<any>({});
   const screenWidth = Dimensions.get('window').width;
+  const { t } = useTranslation();
 
   const [imageUri, setImageUri] = useState<string | null>(null);
 
@@ -149,6 +152,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
+        const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+        console.log("language-code", language_code)
         const token = await AsyncStorage.getItem('userToken');
         console.log(token);
         if (!token) return;
@@ -157,7 +162,11 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         //const url1 = `http://65.0.99.229:4320/category/feature-detail/30`;
 
         const res = await fetch(url1, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            language_code: language_code
+          },
+
         });
         const json = await res.json();
         setDetail(json.data);
@@ -234,36 +243,46 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     option_name: String(i + 1),
   }));
 
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return '';
+const formatDate = (dateString?: string, t?: any) => {
+  if (!dateString) return "";
 
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return '';
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "";
 
-    const day = date.getDate();
+  const day = date.getDate();
+  const year = date.getFullYear();
+  const lang = i18n.language; // detect current language
 
-    let suffix = 'th';
-    if (day % 10 === 1 && day !== 11) suffix = 'st';
-    else if (day % 10 === 2 && day !== 12) suffix = 'nd';
-    else if (day % 10 === 3 && day !== 13) suffix = 'rd';
+  // ---------- Suffix only for English ----------
+  let suffix = "";
+  if (lang === "en") {
+    if (day % 10 === 1 && day !== 11) suffix = "st";
+    else if (day % 10 === 2 && day !== 12) suffix = "nd";
+    else if (day % 10 === 3 && day !== 13) suffix = "rd";
+    else suffix = "th";
+  }
 
-    // Short month name (Jan, Feb, Mar...)
-    const monthShort = date.toLocaleString('default', { month: 'short' }); // "Nov"
+  // ---------- Month translation ----------
+  const monthIndex = date.getMonth(); // 0–11
+  const monthKeys = [
+    "jan","feb","mar","apr","may","jun",
+    "jul","aug","sep","oct","nov","dec"
+  ];
 
-    const year = date.getFullYear();
+  const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
 
-    return `${day}${suffix} ${monthShort} ${year}`;
-  };
+  return `${day}${suffix} ${monthShort} ${year}`;
+};
 
   const handlePay = (overrideAmount?: number) => {
-    if (detail?.category?.name === 'Food' && overrideAmount === undefined) {
+    if (detail?.category?.id === 3 && overrideAmount === undefined) {
       setMultiSelectModal(prev => ({ ...prev, visible: true }));
       return;
     }
 
     const amountToPay = overrideAmount ?? Number(detail.price).toFixed(2);
 
-    console.log('Final Amount', famount);
+    //console.log('Final Amount', famount);
 
     navigation.navigate('PaymentScreen', {
       amount: amountToPay,
@@ -291,9 +310,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
     if (detail?.profileshowinview) {
       const profileUri = detail?.createdby?.profile || null;
-      const initials = `${detail?.createdby?.firstname?.[0] ?? ''}${
-        detail?.createdby?.lastname?.[0] ?? ''
-      }`.toUpperCase();
+      const initials = `${detail?.createdby?.firstname?.[0] ?? ''}${detail?.createdby?.lastname?.[0] ?? ''
+        }`.toUpperCase();
 
       return (
         <ImageBackground
@@ -431,7 +449,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
       const data = await response.json();
       console.log('Bookmark response:', data);
       if (data?.message) {
-        showToast(data.message, data.statusCode === 200 ? 'success' : 'error');
+        showToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
       }
 
       // 3️⃣ Update bookmarkedIds for persistence
@@ -520,15 +538,15 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
           data.data?.order_otp?.toString() || '',
         );
 
-        showToast(Constant.PURCHASE_SUCCESS, 'success');
+        showToast(t(Constant.PURCHASE_SUCCESS), 'success');
         setShowPopup1(true);
       } else {
         showToast(
-          data?.message || 'Something went wrong.Please try again',
+          t(data?.message) || 'Something went wrong.Please try again',
           'error',
         );
         showToast(
-          data?.message || 'Something went wrong.Please try again',
+          t(data?.message) || 'Something went wrong.Please try again',
           'error',
         );
       }
@@ -655,7 +673,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-            {detail?.category?.name ? `${detail.category.name} Details` : ''}
+            {detail?.category?.name ? `${detail.category.name} ${t('details')}` : ''}
           </Text>
 
           <TouchableOpacity
@@ -727,13 +745,13 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
           contentContainerStyle={[
             // styles.scrollContainer,
             // { paddingBottom: Platform.OS === 'ios' ? 75 : height * 0.07 },
-                styles.scrollContainer,
-                {
-                  paddingBottom:
-                    detail?.category?.id === 4
-                      ? (Platform.OS === 'ios' ? 20 : height * 0.01) // when id = 4
-                      : (Platform.OS === 'ios' ? 75 : height * 0.07), // default
-                },
+            styles.scrollContainer,
+            {
+              paddingBottom:
+                detail?.category?.id === 4
+                  ? (Platform.OS === 'ios' ? 20 : height * 0.01) // when id = 4
+                  : (Platform.OS === 'ios' ? 75 : height * 0.07), // default
+            },
 
           ]}
         >
@@ -760,13 +778,12 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                         style={{ height: 16, width: 16 }}
                       />
                       <Text allowFontScaling={false} style={styles.datetext1}>
-                        Service Duration:{' '}
+                        {t('service_duration')}:{' '}
                         <Text style={styles.durationValue}>
                           {detail?.hours
-                            ? `${detail.hours} ${
-                                detail.hours > 1 ? 'Hours' : 'Hour'
-                              }`
-                            : '1 Hour'}
+                            ? `${detail.hours} ${detail.hours > 1 ? t('hours') : t('hour')
+                            }`
+                            : `1 ${t('hour')}`}
                         </Text>
                       </Text>
                     </View>
@@ -786,10 +803,10 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     allowFontScaling={false}
                     style={styles.productDesHeding}
                   >
-                    Product Description
+                    {t('product_description')}
                   </Text>
                   <Text allowFontScaling={false} style={styles.productDesc}>
-                    {detail?.description || 'No description available'}
+                    {detail?.description || t('no_description_available')}
                   </Text>
 
                   <View style={styles.datePosted}>
@@ -798,7 +815,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       style={{ height: 16, width: 16 }}
                     />
                     <Text allowFontScaling={false} style={styles.datetext}>
-                      Date Posted: {formatDate(detail?.created_at)}
+                      {t('date_posted')}: {formatDate(detail?.created_at, t)}
                     </Text>
                   </View>
                 </View>
@@ -810,11 +827,11 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     allowFontScaling={false}
                     style={styles.productDeatilsHeading1}
                   >
-                    {detail?.category?.name
-                      ? detail.category.name === 'Food'
-                        ? 'Dish Details'
-                        : `${detail.category.name} Details`
-                      : ''}
+                    {detail?.category?.id === 3
+                      ? t('dish_details')
+                      : detail?.category?.name
+                        ? `${detail.category.name} ${t('details')}`
+                        : ''}
                   </Text>
 
                   {detail?.params?.map((param: Param) => (
@@ -834,12 +851,14 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       {param.options && param.options.length > 0 ? (
                         <View style={styles.categoryContainer}>
                           {param.options
-                            .filter(opt =>
-                              (param.param_value?.toString() || '')
+                            .filter(opt => {
+                              const selectedValues = (param.param_value || '')
+                                .toString()
                                 .split(',')
-                                .map(v => v.trim())
-                                .includes(opt.option_id.toString()),
-                            )
+                                .map(v => v.trim());
+
+                              return selectedValues.includes((opt.option_id ?? '').toString());
+                            })
                             .map((opt: ParamOption) => (
                               <View key={opt.id} style={styles.categoryTag}>
                                 <Text
@@ -870,7 +889,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     allowFontScaling={false}
                     style={styles.productDeatilsHeading}
                   >
-                    Seller Details
+                    {t('seller_details')}
                   </Text>
 
                   <View style={{ flexDirection: 'row', marginBottom: 4 }}>
@@ -896,9 +915,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     <View style={{ width: '80%', gap: 0 }}>
                       <Text allowFontScaling={false} style={styles.userName}>
                         {detail?.createdby
-                          ? `${detail.createdby.firstname || ''} ${
-                              detail.createdby.lastname || ''
-                            }`
+                          ? `${detail.createdby.firstname || ''} ${detail.createdby.lastname || ''
+                          }`
                           : 'Unknown User'}
                       </Text>
 
@@ -958,7 +976,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       ]}
                       activeOpacity={0.8}
                       onPress={() => {
-                       
+
                         //  navigation.navigate('MessagesIndividualScreen', {
                         //     animation: 'none',
                         //     sellerData: {
@@ -971,7 +989,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                         //     },
                         //     source: 'sellerPage', 
                         //   });
-                        
+
                         if (detail?.category?.chat_with_seller) {
                           console.log(
                             'NAVIGATIONSTATUS: ',
@@ -999,7 +1017,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                         style={{ height: 16, width: 16, marginRight: 4 }}
                       />
                       <Text allowFontScaling={false} style={styles.chattext}>
-                        Chat with Seller
+                        {t('chat_with_seller')}
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -1009,7 +1027,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
           </View>
         </AnimatedReanimated.ScrollView>
 
-       
+
         {/* <PayButton
           amount={
             detail?.category?.name === 'Food'
@@ -1021,20 +1039,20 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         /> */}
 
         {detail?.category?.id !== 4 && (
-        <PayButton
-          amount={
-            detail?.category?.name === 'Food'
-              ? undefined
-              : Number(detail?.price)
-          }
-          label={
-            detail?.category?.name === 'Food'
-              ? 'Select Quantity'
-              : 'Pay'
-          }
-          onPress={() => handlePay()}
-        />
-      )}
+          <PayButton
+            amount={
+              detail?.category?.id === 3
+                ? undefined
+                : Number(detail?.price)
+            }
+            label={
+              detail?.category?.id === 3
+                ? t('select_quantity')
+                : t('pay')
+            }
+            onPress={() => handlePay()}
+          />
+        )}
 
         {Platform.OS === 'ios' ? (
           <SelectFoodQuantity_IOS
@@ -1042,8 +1060,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
             options={quantityOptions}
             visible={multiSelectModal.visible}
             price={Number(detail?.price)}
-            title="Choose Quantity"
-            subtitle="Select the number of units you’d like to buy."
+            title={t('choose_quantity')}
+            subtitle={t('select_units')}
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>
               setMultiSelectModal(prev => ({ ...prev, visible: false }))
@@ -1069,8 +1087,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
             options={quantityOptions}
             visible={multiSelectModal.visible}
             price={Number(detail?.price)}
-            title="Choose Quantity"
-            subtitle="Select the number of units you’d like to buy."
+            title={t('choose_quantity')}
+            subtitle={t('select_units')}
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>
               setMultiSelectModal(prev => ({ ...prev, visible: false }))
@@ -1136,7 +1154,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       lineHeight: 28,
                     }}
                   >
-                    Complete Your Purchase
+                    {t('complete_your_purchase')}
                   </Text>
                   <Text
                     allowFontScaling={false}
@@ -1150,8 +1168,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       lineHeight: 19.6,
                     }}
                   >
-                    Chat with the seller will be available after you’ve bought
-                    this product or service.
+                    {t('chat_service')}
                   </Text>
 
                   <TouchableOpacity
@@ -1161,7 +1178,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText}>
-                      Go Back
+                      {t('go_back')}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -1230,7 +1247,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       lineHeight: 28,
                     }}
                   >
-                    Order Placed Successfully!
+                    {t('order_placed_success')}!
                   </Text>
 
                   <TouchableOpacity
@@ -1252,7 +1269,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText}>
-                      Return to Home
+                      {t('return_home')}
                     </Text>
                   </TouchableOpacity>
 
@@ -1275,7 +1292,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText1}>
-                      Chat with Seller
+                      {t('chat_with_seller')}
                     </Text>
                   </TouchableOpacity>
                 </View>

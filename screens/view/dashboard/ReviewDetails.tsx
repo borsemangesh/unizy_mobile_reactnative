@@ -41,6 +41,8 @@ import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import Loader from '../../utils/component/Loader';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../../localization/i18n';
 
 type ReviewDetailsProps = {
   navigation: any;
@@ -54,6 +56,7 @@ type ReviewDetailsRouteProp = RouteProp<RootStackParamList, 'ReviewDetails'>;
 
 const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
   const route = useRoute<ReviewDetailsRouteProp>();
+  const { t } = useTranslation();
   const { category_id } = route.params;
   const { id } = route.params;
   const { purchase } = route.params;
@@ -120,12 +123,12 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
 
   const defaultProfile = require('../../../assets/images/user.jpg');
   const [categories, setCategories] = useState<Category[]>([
-    { id: null, name: 'All' },
-  ]);
-  const [selectedCategory, setSelectedCategory] = useState<Category>({
-    id: null,
-    name: 'All',
-  });
+      { id: null, name: t('all') },
+    ]);
+    const [selectedCategory, setSelectedCategory] = useState<Category>({
+      id: null,
+      name: t('all'),
+    });
   const [showButton, setShowButton] = useState(false);
   const [categoriesLoaded, setCategoriesLoaded] = useState(false);
 
@@ -137,7 +140,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
         const parsed = JSON.parse(stored);
 
         const catObjects = [
-          { id: null, name: 'All' },
+          { id: null, name: t('all') },
           ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
         ];
 
@@ -156,7 +159,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
     };
 
     loadCategories();
-  }, [category_id, purchase]);
+  }, [category_id, purchase,t]);
 
   useEffect(() => {
     if (selectedCategory?.id !== category_id) {
@@ -239,26 +242,39 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
     comment: string;
   };
 
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return "";
+ const formatDate = (dateString?: string, t?: any) => {
+  if (!dateString) return "";
 
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "";
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "";
 
-    const day = date.getDate();
-    let suffix = "th";
+  const day = date.getDate();
+  const year = date.getFullYear();
+  const lang = i18n.language; // detect current language
+
+  // ---------- Suffix only for English ----------
+  let suffix = "";
+  if (lang === "en") {
     if (day % 10 === 1 && day !== 11) suffix = "st";
     else if (day % 10 === 2 && day !== 12) suffix = "nd";
     else if (day % 10 === 3 && day !== 13) suffix = "rd";
-    const monthShort = date
-      .toLocaleString("default", { month: "short" }); // "Nov"
+    else suffix = "th";
+  }
 
-    const year = date.getFullYear();
-    return `${day}${suffix} ${monthShort} ${year}`;
-  };
+  // ---------- Month translation ----------
+  const monthIndex = date.getMonth(); // 0–11
+  const monthKeys = [
+    "jan","feb","mar","apr","may","jun",
+    "jul","aug","sep","oct","nov","dec"
+  ];
+
+  const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+
+  return `${day}${suffix} ${monthShort} ${year}`;
+};
 
   const renderItem = ({ item }: any) => {
-    const displayDate = formatDate(item.date);
+    const displayDate = formatDate(item.date,t);
     const displayTitle = item.featureTitle ?? 'Title';
 
     return (
@@ -380,8 +396,8 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
 
           <Text allowFontScaling={false} style={styles.unizyText}>
             {selectedCategory?.name === 'All'
-              ? 'Reviews'
-              : `${selectedCategory?.name} Reviews`}
+              ? t('reviews')
+              : `${selectedCategory?.name} ${t('reviews')}`}
           </Text>
         </View>
 
@@ -449,13 +465,13 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
                 <StarRating rating={averageRating} starSize={24} />
 
                 <Text allowFontScaling={false} style={styles.reviewcount}>
-                  {totalReviews} Reviews
+                  {totalReviews} {t('reviews')}
                 </Text>
               </View>
 
               <View style={styles.innercontainer}>
                 <Text allowFontScaling={false} style={styles.mainlabel}>
-                  Reviews
+                  {t('reviews')}
                 </Text>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -489,7 +505,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
                     resizeMode="contain"
                   />
                   <Text allowFontScaling={false} style={styles.emptyText}>
-                    No reviews found
+                    {t('no_reviews_found')}
                   </Text>
                 </View>
               </View>
@@ -499,7 +515,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
 
         {showButton && (
           <Button
-            title="Write a Review"
+            title={t('write_a_review')}
             onPress={() =>
               navigation.navigate('AddReview', {
                 category_id: category_id,

@@ -1,5 +1,6 @@
 import { BlurView } from '@react-native-community/blur';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -18,10 +19,10 @@ type NewProductCardProps = {
   rating: string;
   productImage?: ImageSourcePropType; // optional now
   bookmark: boolean;
-  showInitials:boolean;
-  initialsName: string; 
-  isfeature:boolean,
-  applybookmark?: () => void; 
+  showInitials: boolean;
+  initialsName: string;
+  isfeature: boolean,
+  applybookmark?: () => void;
 };
 
 export default function SearchTutionCard({
@@ -36,12 +37,13 @@ export default function SearchTutionCard({
   isfeature,
   applybookmark
 }: NewProductCardProps) {
-  
+  const { t } = useTranslation();
+
   return (
     <View style={styles.card}>
       <View style={styles.imageContainer}>
         {showInitials ? (
-         
+
           <Image
             source={require('../../assets/images/tutionbg.png')}
             style={styles.profileimage}
@@ -59,53 +61,53 @@ export default function SearchTutionCard({
         )}
 
         <View style={styles.tag}>
-          <BlurView 
-                blurType="light"
-                blurAmount={100}
-              style={[StyleSheet.absoluteFillObject,{borderRadius: 9}]}
-                />
+          <BlurView
+            blurType="light"
+            blurAmount={100}
+            style={[StyleSheet.absoluteFillObject, { borderRadius: 9 }]}
+          />
           <Text allowFontScaling={false} style={styles.tagText}>{tag}</Text>
         </View>
 
-      {isfeature && (
-              <View style={styles.tagTopLeft}>
+        {isfeature && (
+          <View style={styles.tagTopLeft}>
 
-                <BlurView 
-                  blurType="light"
-                  blurAmount={100}
-                  style={[StyleSheet.absoluteFillObject,{borderRadius: 9}]}
-                />
-                
-                <Text allowFontScaling={false} style={styles.tagText}>Featured</Text>
-              </View>
-            )}
-       
+            <BlurView
+              blurType="light"
+              blurAmount={100}
+              style={[StyleSheet.absoluteFillObject, { borderRadius: 9 }]}
+            />
+
+            <Text allowFontScaling={false} style={styles.tagText}>{t('featured')}</Text>
+          </View>
+        )}
+
         <View style={styles.bookmark1}>
-        <BlurView 
-          blurType="light"
-          blurAmount={100}
-          style={[StyleSheet.absoluteFillObject,{borderRadius: 12}]}
+          <BlurView
+            blurType="light"
+            blurAmount={100}
+            style={[StyleSheet.absoluteFillObject, { borderRadius: 12 }]}
           />
           <LinearGradient
-            colors={[ 'rgba(0, 1, 102, 0.20)','rgba(0, 1, 102, 0.024)']}
+            colors={['rgba(0, 1, 102, 0.20)', 'rgba(0, 1, 102, 0.024)']}
             style={StyleSheet.absoluteFillObject}
-            useAngle={false} 
-            />
-           <TouchableOpacity onPress={applybookmark}>
-          <Image
-            source={
-              bookmark
-                ? require('../../assets/images/favourite_filled.png')
-                : require('../../assets/images/favourite.png')
-            }
-            style={{ width: 20, height: 20 }}
+            useAngle={false}
           />
+          <TouchableOpacity onPress={applybookmark}>
+            <Image
+              source={
+                bookmark
+                  ? require('../../assets/images/favourite_filled.png')
+                  : require('../../assets/images/favourite.png')
+              }
+              style={{ width: 20, height: 20 }}
+            />
           </TouchableOpacity>
         </View>
       </View>
 
 
-<View style={styles.infoRow}>
+      <View style={styles.infoRow}>
         <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
 
         <View
@@ -113,29 +115,29 @@ export default function SearchTutionCard({
             flexDirection: 'row',
             width: '90%',
             justifyContent: 'space-between',
-            paddingTop:6
+            paddingTop: 6
 
           }}
         >
           <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
-         {rating !== '0.0' && (
-         
-          <View
-            style={{
-              flexDirection: 'row',
-              alignContent: 'center',
-              alignItems: 'center',
-              gap: 4,
-            }}
-          >
-            <Image
-              source={require('../../assets/images/staricon.png')}
-              style={styles.image1}
-            />
+          {rating !== '0.0' && (
 
-            <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
-          </View>
-         )}
+            <View
+              style={{
+                flexDirection: 'row',
+                alignContent: 'center',
+                alignItems: 'center',
+                gap: 4,
+              }}
+            >
+              <Image
+                source={require('../../assets/images/staricon.png')}
+                style={styles.image1}
+              />
+
+              <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
+            </View>
+          )}
         </View>
       </View>
 
@@ -144,43 +146,43 @@ export default function SearchTutionCard({
 }
 
 const styles = StyleSheet.create({
-//    tagTopLeft: {
-//   position: 'absolute',
-//   //top: 5,
-//  // left: 5,
-//   top: Platform.OS === 'ios' ? 8 : 8,
-//     left: Platform.OS === 'ios' ? 8 : 8,
-//   backgroundColor: 'rgba(255,255,255,0.4)',
-//   borderRadius: 4,
-//   padding: 4,
-//   marginVertical: 4,
-//   marginHorizontal: 4,
-//   boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
-// },
+  //    tagTopLeft: {
+  //   position: 'absolute',
+  //   //top: 5,
+  //  // left: 5,
+  //   top: Platform.OS === 'ios' ? 8 : 8,
+  //     left: Platform.OS === 'ios' ? 8 : 8,
+  //   backgroundColor: 'rgba(255,255,255,0.4)',
+  //   borderRadius: 4,
+  //   padding: 4,
+  //   marginVertical: 4,
+  //   marginHorizontal: 4,
+  //   boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
+  // },
 
   tagTopLeft: {
-  position: 'absolute',
-  // top: 5,
-  // left: 5,
-   top: Platform.OS === 'ios' ? 16 : 10,
+    position: 'absolute',
+    // top: 5,
+    // left: 5,
+    top: Platform.OS === 'ios' ? 16 : 10,
     left: Platform.OS === 'ios' ? 16 : 10,
-  //backgroundColor: 'rgba(255,255,255,0.4)',
-  backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
-  borderRadius: 4,
-  padding: 4,
-  marginVertical: 4,
-  marginHorizontal: 4,
-  boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
-  overflow:'hidden'
-},
+    //backgroundColor: 'rgba(255,255,255,0.4)',
+    backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
+    borderRadius: 4,
+    padding: 4,
+    marginVertical: 4,
+    marginHorizontal: 4,
+    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
+    overflow: 'hidden'
+  },
 
 
 
-    initialsCircle: {
+  initialsCircle: {
     width: 80,
     height: 80,
     borderRadius: 100,
-  backgroundColor: "#8390D4",
+    backgroundColor: "#8390D4",
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
@@ -190,15 +192,15 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "600",
     color: "#fff",
-   fontFamily: 'Urbanist-SemiBold',
-   lineHeight:38
+    fontFamily: 'Urbanist-SemiBold',
+    lineHeight: 38
   },
- card: {
+  card: {
     borderRadius: 16,
     // backgroundColor:
     //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
 
-    
+
     shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 8,
@@ -226,7 +228,7 @@ const styles = StyleSheet.create({
     borderRightColor: '#ffffff2e',
 
     boxSizing: 'border-box',
-    minHeight:226
+    minHeight: 226
   },
   // imageContainer: {
   //   backgroundColor: 'rgba(154, 154, 255, 0.12)',
@@ -235,23 +237,23 @@ const styles = StyleSheet.create({
   //   overflow: 'hidden',       
   //   justifyContent: 'center', 
   //   alignItems: 'center',
-    // borderWidth: 0.4,
-    // boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-    // borderBlockStartColor: '#ffffff2e',
-    // borderBlockColor: '#ffffff2e',
+  // borderWidth: 0.4,
+  // boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
+  // borderBlockStartColor: '#ffffff2e',
+  // borderBlockColor: '#ffffff2e',
 
-    // borderTopColor: '#ffffff2e',
-    // borderBottomColor: '#ffffff2e',
-    // borderLeftColor: '#ffffff2e',
-    // borderRightColor: '#ffffff2e',
+  // borderTopColor: '#ffffff2e',
+  // borderBottomColor: '#ffffff2e',
+  // borderLeftColor: '#ffffff2e',
+  // borderRightColor: '#ffffff2e',
   //   borderEndEndRadius: 15,
   //   borderStartEndRadius: 15,
   //   borderTopLeftRadius: 15,
   //   borderTopRightRadius: 15,
   //   borderBottomStartRadius: 15,
-      
+
   // },
-  
+
   // image: {
   //   width: '100%',
   //   height: '100%',
@@ -261,10 +263,10 @@ const styles = StyleSheet.create({
   //   resizeMode: 'stretch'
   // },
 
-    imageContainer: {
+  imageContainer: {
     // width: 186,
     width: '100%',
-    height:200,
+    height: 200,
     position: 'relative',
     //padding: (Platform.OS === 'ios' ? 0 : 6),
     justifyContent: 'center',
@@ -274,7 +276,7 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '100%',
-    padding: (Platform.OS === 'ios'? 5: 12),
+    padding: (Platform.OS === 'ios' ? 5 : 12),
     borderRadius: 12,
     resizeMode: 'contain',
     //borderWidth: 0.4,
@@ -287,11 +289,11 @@ const styles = StyleSheet.create({
     // borderRightColor: '#ffffff2e',
   },
 
-   profileimage: {
+  profileimage: {
     width: '100%',
     height: '100%',
-    padding: (Platform.OS === 'ios'? 5: 12),
-    borderRadius: (Platform.OS === 'ios' ? 12: 12),
+    padding: (Platform.OS === 'ios' ? 5 : 12),
+    borderRadius: (Platform.OS === 'ios' ? 12 : 12),
     // boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
     // borderBlockStartColor: '#ffffff2e',
     // borderBlockColor: '#ffffff2e',
@@ -300,23 +302,23 @@ const styles = StyleSheet.create({
     // borderBottomColor: '#ffffff2e',
     // borderLeftColor: '#ffffff2e',
     // borderRightColor: '#ffffff2e',
-    overflow:'hidden'
+    overflow: 'hidden'
   },
   image1: {
     width: 10,
     height: 10,
-    resizeMode:'contain'
+    resizeMode: 'contain'
   },
   bookmark1: {
     position: 'absolute',
     top: Platform.OS === 'ios' ? 12 : 12,
     right: Platform.OS === 'ios' ? 12 : 12,
-    overflow:'hidden',
+    overflow: 'hidden',
     borderRadius: 12,
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(101, 101, 101, 0.13) 0%, rgba(117, 117, 117, 0.1) 100%)',
-   width: 36,
-   height: 36,
+    width: 36,
+    height: 36,
     display: 'flex',
     alignContent: 'center',
     justifyContent: 'center',
@@ -333,7 +335,7 @@ const styles = StyleSheet.create({
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
   },
- 
+
   tag: {
     position: 'absolute',
     bottom: (Platform.OS === 'ios' ? 10 : 10),
@@ -341,13 +343,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
     borderRadius: 4,
     paddingHorizontal: 6,
-    paddingVertical:2,
+    paddingVertical: 2,
     marginVertical: 4,
     marginHorizontal: 4,
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
-    overflow:'hidden',
+    overflow: 'hidden',
     alignSelf: 'flex-end', // 👈 ensures the View wraps the text
-    flexShrink: 1,    
+    flexShrink: 1,
     // position: 'absolute',
 
     maxWidth: '80%',   // restrict width relative to parent
@@ -362,8 +364,8 @@ const styles = StyleSheet.create({
     color: '#000',
     textAlign: 'right',
     flexShrink: 1,
-    width:'100%'
-    
+    width: '100%'
+
   },
   infoRow: {
     flexDirection: 'column',
@@ -371,7 +373,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     //backgroundColor: '#fff',
     paddingHorizontal: 2,
-    
+
   },
   title: {
     fontSize: 12,

@@ -38,6 +38,7 @@ import Animated, {
 import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
+import { useTranslation } from 'react-i18next';
 
 
 type CreatedBy = {
@@ -109,7 +110,7 @@ type RouteParams = {
 const UserListing = ({ navigation }: UserListingProps)  => {
  const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
     const { members } =   route.params;
-
+const { t } = useTranslation();
 
   const [search, setSearch] = useState<string>('');
     const [page, setPage] = useState(1);
@@ -188,17 +189,21 @@ const UserListing = ({ navigation }: UserListingProps)  => {
     };
 
     const [categories, setCategories] = useState<Category[]>([
-      { id: null, name: 'All' }
-    ]);
-    const [selectedCategory, setSelectedCategory] = useState<Category>({ id: null, name: 'All' });
+        { id: null, name: t('all') },
+      ]);
+      const [selectedCategory, setSelectedCategory] = useState<Category>({
+        id: null,
+        name: t('all'),
+      });
+    
 
   useEffect(() => {
     const loadCategories = async () => {
       const stored = await AsyncStorage.getItem('categories');
       if (stored) {
         const parsed = JSON.parse(stored); 
-        const catObjects = [
-          { id: null, name: 'All' }, 
+       const catObjects = [
+          { id: null, name: t('all') },
           ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
         ];
         setCategories(catObjects);
@@ -206,7 +211,7 @@ const UserListing = ({ navigation }: UserListingProps)  => {
       }
     };
     loadCategories();
-  }, []);
+  }, [t]);
 
 useEffect(() => {
   setPage(1);
@@ -321,7 +326,7 @@ const handleBookmarkPress = async (productId: number) => {
     const data = await response.json();
     console.log('Bookmark response:', data);
     if (data?.message) {
-      showToast(data.message, data.statusCode === 200 ? 'success' : 'error');
+      showToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
     }
 
     displayListOfProduct(selectedCategory?.id ?? null, 1);
@@ -517,7 +522,7 @@ const handleBookmarkPress = async (productId: number) => {
                  </TouchableOpacity>
         
                  <Text allowFontScaling={false} style={styles.unizyText}>
-                   {members.firstname} Listings
+                   {members.firstname} {t('listings')}
                  </Text>
                </View>
 
@@ -607,7 +612,7 @@ const handleBookmarkPress = async (productId: number) => {
                               resizeMode="contain"
                             />
                             <Text allowFontScaling={false} style={styles.emptyText}>
-                              No Listings Found
+                               {t('No_Listings_Found')}
                             </Text>
                           </View>
                           </View>

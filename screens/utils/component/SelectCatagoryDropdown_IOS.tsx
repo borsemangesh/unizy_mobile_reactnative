@@ -1,5 +1,6 @@
 import { BlurView } from '@react-native-community/blur';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Dimensions,
   Image,
@@ -80,6 +81,7 @@ const SelectCatagoryDropdown = ({
     // Just close — don’t commit changes
     onClose();
   };
+      const { t } = useTranslation();
 
 
   return (
@@ -243,7 +245,7 @@ const SelectCatagoryDropdown = ({
           <View style={styles.bottomview}>
          
               <TouchableOpacity style={styles.cancelBtn} onPress={handleCancel}>
-                  <Text style={styles.cancelText}>Cancel</Text>
+                  <Text style={styles.cancelText}>{t('cancel')}</Text>
                 </TouchableOpacity>
 
            
@@ -252,7 +254,7 @@ const SelectCatagoryDropdown = ({
                   onPress={handleApply}
                 >
                   <Text style={[styles.cancelText, { color: '#000000' }]}>
-                    Apply
+                     {t('apply')}
                   </Text>
                 </TouchableOpacity>
           </View>

@@ -74,8 +74,6 @@ const [imageUri, setImageUri] = useState<string | null>(null);
 
         const token = await AsyncStorage.getItem('userToken');
         if (!token) return;
-        //const url1 = `${MAIN_URL.baseUrl}category/feature-detail/${id}`;
-        //console.log(url1)
        const url1 = `http://65.0.99.229:4320/category/feature-detail/30`;
 
         const res = await fetch(url1,

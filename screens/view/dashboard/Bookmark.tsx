@@ -18,7 +18,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
-
+import { useTranslation } from "react-i18next";
 const bgImage = require('../../../assets/images/backimg.png');
 import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import SearchListProductCard from '../../utils/SearchListProductCard';
@@ -94,6 +94,7 @@ type BookmarkProps = {
 };
 
 const Bookmark = ({ navigation }: BookmarkProps) => {
+  const { t } = useTranslation();
   const [search, setSearch] = useState<string>('');
   const [page, setPage] = useState(1);
   const pagesize = 10;
@@ -171,11 +172,11 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
   };
 
   const [categories, setCategories] = useState<Category[]>([
-    { id: null, name: 'All' },
+    { id: null, name: t('all') },
   ]);
   const [selectedCategory, setSelectedCategory] = useState<Category>({
     id: null,
-    name: 'All',
+    name: t('all'),
   });
 
   useEffect(() => {
@@ -184,7 +185,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
       if (stored) {
         const parsed = JSON.parse(stored);
         const catObjects = [
-          { id: null, name: 'All' },
+          { id: null, name: t('all') },
           ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
         ];
         setCategories(catObjects);
@@ -192,7 +193,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
       }
     };
     loadCategories();
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     setPage(1);
@@ -205,7 +206,6 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
       displayListOfProduct(selectedCategory?.id ?? null, 1, true);
     }, [selectedCategory]),
   );
-
   const displayListOfProduct = async (
     categoryId: number | null,
     pageNum: number,
@@ -366,7 +366,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
       const data = await response.json();
       console.log('Bookmark response:', data);
       if (data?.message) {
-        showToast(data.message, data.statusCode === 200 ? 'success' : 'error');
+        showToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
       }
 
       displayListOfProduct(selectedCategory?.id ?? null, 1);
@@ -430,7 +430,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
             navigation.navigate('SearchDetails', {
               id: feature.id,
               name:
-                selectedCategory.name === 'All'
+                selectedCategory.id === null
                   ? 'List'
                   : selectedCategory.name,
               from: 'bookmark',
@@ -581,7 +581,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-            Bookmarks
+            {t('Bookmarks')}
           </Text>
         </View>
 
@@ -688,7 +688,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
                     resizeMode="contain"
                   />
                   <Text allowFontScaling={false} style={styles.emptyText}>
-                    No Listings Found
+                   {t('No_Listings_Found')}
                   </Text>
                 </View>
               </View>
