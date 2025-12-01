@@ -522,7 +522,7 @@ const Notification = ({ navigation }: NotificationProps) => {
                  styles.listContainer,
                    {                   
                    paddingBottom: (Platform.OS === 'ios' ? 30:screenHeight * 0.150 + insets.bottom), 
-                    paddingTop: Platform.OS === 'ios' ? 120 : 130,
+                    paddingTop: Platform.OS === 'ios' ? 120 : 100,
                     
                     },
                 ]}
@@ -670,7 +670,7 @@ const styles = StyleSheet.create({
     // zIndex: 11,
     // pointerEvents: 'box-none',
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '6%' : 40,
+  //  top: Platform.OS === 'ios' ? '6%' : 40,
     width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
     alignItems: 'center',

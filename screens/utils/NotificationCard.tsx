@@ -67,7 +67,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
           ],
         });
       } else {
-        navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false})
+        navigation.navigate('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false})
       }
      
     }
@@ -80,7 +80,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
          purchase:false
          });
       } else {
-        navigation.replace('ReviewDetails', {
+        navigation.navigate('ReviewDetails', {
           catagory_id: categoryid,
           id: typeid,
          purchase:false
@@ -89,7 +89,18 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
     }
 
     else if (templateName==='YourOrderCompleted'){
-       navigation.replace('MyOrders');
+      if(Platform.OS ==='ios'){
+        navigation.reset({
+          index: 0,
+          routes: [
+            { name: 'MyOrders'}
+          ],
+        });
+      }
+      else{
+        navigation.navigate('MyOrders');
+      }
+       
     }
     else if (templateName === 'OrderCompletedRecivedPaymentSoon') {
       if(Platform.OS === 'ios'){
@@ -106,7 +117,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
           ],
         });
       } else {
-        navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false})
+        navigation.navigate('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false})
       }
     } 
      else if (templateName === 'PayoutSuccess') {
@@ -124,7 +135,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
           ],
         });
       } else {
-        navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false})
+        navigation.navigate('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false})
       }
       
     } 
