@@ -110,18 +110,19 @@ const ProductItem: React.FC<ProductItemProps> = ({
   <TouchableOpacity
     key={item.id}
     onPress={() => {
-       if(Platform.OS === 'IOS'){
-         navigation.reset({
-        index: 0,
-        routes: [{ name: 'ProductDetails', params: { category_id: item.id, category_name: item.name } }],
-      })
-       } else {
-         
-      navigation.replace('ProductDetails', {
-        category_id: item.id,
-        category_name: item.name,
-      }, { animation: 'none' });
-       }
+
+      if(Platform.OS === 'ios'){
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'ProductDetails', params: { category_id: item.id, category_name: item.name } }],
+        })
+      } else {
+        navigation.replace('ProductDetails', {
+          category_id: item.id,
+          category_name: item.name,
+        }, { animation: 'none' });
+
+      }
     }}
   >
     <View

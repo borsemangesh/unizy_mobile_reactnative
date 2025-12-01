@@ -200,8 +200,9 @@ import { Constant } from "./screens/utils/Constant";
 import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
 import messaging from '@react-native-firebase/messaging';
 import { navigate } from "./screens/view/navigationRef";
-import { handleNotification } from "./screens/utils/NotificationHandler";
+import { handleNotification, navigationReady } from "./screens/utils/NotificationHandler";
 import { initI18n } from "./localization/i18n";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function App() {
   LogBox.ignoreAllLogs();
