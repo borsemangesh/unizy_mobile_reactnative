@@ -1114,6 +1114,7 @@ useEffect(() => {
           await AsyncStorage.setItem('user_email', data.data.email || '');
           await AsyncStorage.setItem('firstname', data.data.firstname || '');
           await AsyncStorage.setItem('lastname', data.data.lastname || '');
+          await AsyncStorage.setItem('userId', String(data.data.userId));
           await AsyncStorage.setItem(
             'student_email',
             data.data.student_email || '',
