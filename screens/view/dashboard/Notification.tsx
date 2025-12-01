@@ -34,6 +34,7 @@ import { BlurView } from '@react-native-community/blur';
 import MaskedView from '@react-native-masked-view/masked-view';
 import Loader from '../../utils/component/Loader';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../../localization/i18n';
 
 
 type NotificationProps = {
@@ -248,47 +249,101 @@ const Notification = ({ navigation }: NotificationProps) => {
   const { t } = useTranslation();
 
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return dateString;
+  // const formatDate = (dateString: string) => {
+  //   const date = new Date(dateString);
+  //   if (isNaN(date.getTime())) return dateString;
 
-    const day = date.getDate();
-    const month = date.toLocaleString('default', { month: 'short' });
-    const year = date.getFullYear();
+  //   const day = date.getDate();
+  //   const month = date.toLocaleString('default', { month: 'short' });
+  //   const year = date.getFullYear();
 
-    let suffix = 'th';
-    if (day % 10 === 1 && day % 100 !== 11) suffix = 'st';
-    else if (day % 10 === 2 && day % 100 !== 12) suffix = 'nd';
-    else if (day % 10 === 3 && day % 100 !== 13) suffix = 'rd';
+  //   let suffix = 'th';
+  //   if (day % 10 === 1 && day % 100 !== 11) suffix = 'st';
+  //   else if (day % 10 === 2 && day % 100 !== 12) suffix = 'nd';
+  //   else if (day % 10 === 3 && day % 100 !== 13) suffix = 'rd';
 
-    return `${day}${suffix} ${month} ${year}`;
-  };
-  const groupByDate = (data: NotificationItem[]) => {
-    const grouped: any[] = [];
-    let lastDate: string | null = null;
+  //   return `${day}${suffix} ${month} ${year}`;
+  // };
+  // const groupByDate = (data: NotificationItem[]) => {
+  //   const grouped: any[] = [];
+  //   let lastDate: string | null = null;
 
-    data.forEach((item) => {
-      const displayDate = formatDate(item.created_at);
+  //   data.forEach((item) => {
+  //     const displayDate = formatDate(item.created_at);
 
-      if (displayDate !== lastDate) {
-        grouped.push({
-          type: 'date',
-          id: `date-${displayDate}`,
-          displayDate,
-        });
-        lastDate = displayDate;
-      }
+  //     if (displayDate !== lastDate) {
+  //       grouped.push({
+  //         type: 'date',
+  //         id: `date-${displayDate}`,
+  //         displayDate,
+  //       });
+  //       lastDate = displayDate;
+  //     }
 
+  //     grouped.push({
+  //       ...item,
+  //       type: 'item'
+  //     });
+  //   });
+
+  //   return grouped;
+  // };
+
+  const formatDate = (dateString: string, t?: any) => {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return dateString;
+
+  const day = date.getDate();
+  const year = date.getFullYear();
+  const lang = i18n.language; // detect active language
+
+  // English ordinal suffix
+  let suffix = "";
+  if (lang === "en") {
+    if (day % 10 === 1 && day !== 11) suffix = "st";
+    else if (day % 10 === 2 && day !== 12) suffix = "nd";
+    else if (day % 10 === 3 && day !== 13) suffix = "rd";
+    else suffix = "th";
+  }
+
+  // Month translation
+  const monthIndex = date.getMonth();
+  const monthKeys = [
+    "jan", "feb", "mar", "apr", "may", "jun",
+    "jul", "aug", "sep", "oct", "nov", "dec"
+  ];
+
+  const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+
+  return `${day}${suffix} ${monthShort} ${year}`;
+};
+
+  const groupByDate = (data: NotificationItem[], t: any) => {
+  const grouped: any[] = [];
+  let lastDate: string | null = null;
+
+  data.forEach((item) => {
+    const displayDate = formatDate(item.created_at, t);
+
+    if (displayDate !== lastDate) {
       grouped.push({
-        ...item,
-        type: 'item'
+        type: "date",
+        id: `date-${displayDate}`,
+        displayDate,
       });
+      lastDate = displayDate;
+    }
+
+    grouped.push({
+      ...item,
+      type: "item",
     });
+  });
 
-    return grouped;
-  };
+  return grouped;
+};
 
-  const groupedList = groupByDate(filteredNotifications);
+  const groupedList = groupByDate(filteredNotifications,t);
 
 
   const renderItem = ({ item, index }: { item: any; index: number }) => {

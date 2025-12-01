@@ -762,7 +762,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                   <TouchableOpacity
                     style={styles.loginButton}
                     onPress={otpverify}>
-                    <Text allowFontScaling={false} style={styles.loginText}> {t('Verify')}</Text>
+                    <Text allowFontScaling={false} style={styles.loginText}> {t('verify')}</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -826,7 +826,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                     allowFontScaling={false}
                     style={[styles.subheader1, { marginTop: 0 }]}
                   >
-                   {t('The_payment_of')}£{price}{t('has_been_transferred_to_your_account')}
+                   {t('The_payment_of')} £{price} {t('has_been_transferred_to_your_account')}
                   </Text>
                   <TouchableOpacity
                     style={styles.loginButton}

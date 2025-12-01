@@ -413,6 +413,8 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
         });
         const json = await response.json();
 
+        console.log(json)
+
         const mapped = json.data
           .filter((cat: any) => cat.isactive)
           .map((cat: any) => ({

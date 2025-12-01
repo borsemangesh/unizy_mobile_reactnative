@@ -514,7 +514,7 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                 {t('commission_or_maximum')}
                 <Text allowFontScaling={false} style={styles.importantText1}>
                   {' '}
-                  £{categoryDetails?.max_cappund ?? '0'}
+                  £{categoryDetails?.max_cappund ?? '0'}{' '}
                 </Text>
                 {t('whichever_lower')}
               </Text>

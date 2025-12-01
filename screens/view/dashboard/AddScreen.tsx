@@ -1023,7 +1023,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                   </Text>{' '}
                   {t('featured_listing_fee_percentage')}{' '}
                   <Text allowFontScaling={false} style={styles.importantText1}>
-                    £{maxFeatureCap}
+                    £{maxFeatureCap} {''}
                   </Text>{''}
                   {t('featured_listing_fee_cap')}
                 </Text>

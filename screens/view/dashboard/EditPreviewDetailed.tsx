@@ -262,6 +262,7 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
   useEffect(() => {
     const fetchFields = async () => {
       try {
+        const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
         const token = await AsyncStorage.getItem('userToken');
         const productId1 = await AsyncStorage.getItem('selectedProductId');
         setcategoryid(Number(productId1))
@@ -277,6 +278,7 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
+            language_code: language_code
           },
         });
 

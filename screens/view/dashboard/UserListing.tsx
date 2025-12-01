@@ -189,17 +189,21 @@ const { t } = useTranslation();
     };
 
     const [categories, setCategories] = useState<Category[]>([
-      { id: null, name: 'All' }
-    ]);
-    const [selectedCategory, setSelectedCategory] = useState<Category>({ id: null, name: 'All' });
+        { id: null, name: t('all') },
+      ]);
+      const [selectedCategory, setSelectedCategory] = useState<Category>({
+        id: null,
+        name: t('all'),
+      });
+    
 
   useEffect(() => {
     const loadCategories = async () => {
       const stored = await AsyncStorage.getItem('categories');
       if (stored) {
         const parsed = JSON.parse(stored); 
-        const catObjects = [
-          { id: null, name: 'All' }, 
+       const catObjects = [
+          { id: null, name: t('all') },
           ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
         ];
         setCategories(catObjects);
@@ -207,7 +211,7 @@ const { t } = useTranslation();
       }
     };
     loadCategories();
-  }, []);
+  }, [t]);
 
 useEffect(() => {
   setPage(1);
