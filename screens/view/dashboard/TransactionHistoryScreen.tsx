@@ -150,6 +150,7 @@ export default function TransactionHistoryScreen(
       try {
         setLoading(true);
         const token = await AsyncStorage.getItem('userToken');
+        const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
         console.log(token)
         if (!token) {
           console.log('No token found');
@@ -170,6 +171,7 @@ export default function TransactionHistoryScreen(
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
+             language_code: language_code
           },
         });
 

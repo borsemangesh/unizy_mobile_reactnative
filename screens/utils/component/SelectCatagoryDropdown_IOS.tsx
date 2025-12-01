@@ -149,7 +149,7 @@ const SelectCatagoryDropdown = ({
                       style={{ width: 24, height: 24 }}
                     />
                   </View>
-                  <Text allowFontScaling={false} style={styles.modelTextHeader}>{title}</Text>
+                  <Text adjustsFontSizeToFit allowFontScaling={false} style={[styles.modelTextHeader, { flexShrink: 1 }]}>{title}</Text>
                 </View>
                 <Text allowFontScaling={false} style={styles.orderandTotalEarings}>
                   {subtitle}

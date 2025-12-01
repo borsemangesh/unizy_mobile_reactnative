@@ -952,7 +952,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               }}
             >
               <View style={styles.dropdowncard}>
-                <Text allowFontScaling={false} style={styles.dropdowntext}>
+                <Text allowFontScaling={false} style={[styles.dropdowntext]}>
                   {Array.isArray(formValues[id]?.value) &&
                     formValues[id]?.value.length > 0
                     ? `${formValues[id]?.value.length} ${t('selected')}`

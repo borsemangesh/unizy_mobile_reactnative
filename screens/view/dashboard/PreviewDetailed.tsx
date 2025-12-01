@@ -57,6 +57,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const [showPopup, setShowPopup] = useState(false);
   const closePopup = () => setShowPopup(false);
   const scrollY1 = new Animated.Value(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [storedForm, setStoredForm] = useState<any | null>(null);
   const screenWidth = Dimensions.get('window').width;
@@ -65,7 +66,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const insets = useSafeAreaInsets();
   const [categoryid, setcategoryid] = useState(0);
   const { height } = Dimensions.get('window');
-
+  let isSubmitting = false;
   const [fields, setFields] = useState<any[]>([]);
   const today = new Date();
 
@@ -306,32 +307,35 @@ const { t } = useTranslation();
   };
 
   const handleListPress = async () => {
+     if (isSubmitting) {
+      console.log("⛔ Prevented double click!");
+      return;
+    }
+    isSubmitting = true;
+
+
     try {
       const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
       const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
 
       await listProduct();
-
-      // if (isFeatured) {
-      //   navigation.navigate('PaymentScreen', {
-      //     amount: diff1,
-      //     feature_id: 1,
-      //     nav: 'add',
-      //     onSuccess: async () => {
-      //       await listProduct();
-      //     },
-      //   });
-      // } else {
-      //   await listProduct();
-      // }
     } catch (e) {
       console.log('Error parsing storedForm:', e);
     }
+      finally {
+      setTimeout(() => {
+        isSubmitting = false;
+      }, 2000);
+  }
   };
 
   const listProduct = async () => {
-    try {
 
+     
+     if (isLoading) return;       
+
+    setIsLoading(true);
+    try {
       const paymentintent_id = await AsyncStorage.getItem("paymentintent_id");
       const storedData = await AsyncStorage.getItem('formData');
 
@@ -467,6 +471,9 @@ const { t } = useTranslation();
     }
     catch (error) {
       console.log('❌ Error in handleListPress:', error);
+    }
+    finally{
+      setIsLoading(false);
     }
   };
 
