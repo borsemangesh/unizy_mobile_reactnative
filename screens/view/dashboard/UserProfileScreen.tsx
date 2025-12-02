@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
       // paddingHorizontal: 16,
   //     position: 'absolute',
   // top: Platform.OS === 'ios' ? '6%' : 40,
-  // width: Platform.OS === 'ios' ? 393 : '100%',
+  // width: Platform.OS === 'ios' ? '100%' : '100%',
   // flexDirection: 'row',
   // alignItems: 'center',
   // justifyContent: 'center',
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
   // marginLeft: 1
   position: 'absolute',
     top: Platform.OS === 'ios' ? '6%' : 40,
-    width: Platform.OS === 'ios' ? 393 : '100%',
+    width: Platform.OS === 'ios' ? '100%' : '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

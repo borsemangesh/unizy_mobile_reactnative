@@ -979,8 +979,8 @@ const styles = StyleSheet.create({
   headerContent: {
     position: 'absolute',
     top: Platform.OS === 'ios' ? '8.5%' : 60,
-    width: Platform.OS === 'ios' ? 393 : '100%',
-    flexDirection: 'row',
+    width: Platform.OS === 'ios' ? '100%' : '100%',
+        flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 16,

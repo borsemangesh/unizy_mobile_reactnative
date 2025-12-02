@@ -837,7 +837,7 @@ const styles = StyleSheet.create({
   headerWrapper: {
     position: 'absolute',
     top: 0,
-    width: Platform.OS === 'ios' ? 393 : '100%',
+    width: Platform.OS === 'ios' ? '100%' : '100%',
     height: Platform.OS === 'ios' ? 180 : 180,
     zIndex: 10,
     overflow: 'hidden',
@@ -852,7 +852,7 @@ const styles = StyleSheet.create({
   headerContent: {
     position: 'absolute',
     top: Platform.OS === 'ios' ? '8.5%' : 58,
-    width: Platform.OS === 'ios' ? 393 : '100%',
+    width: Platform.OS === 'ios' ? '100%' : '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -979,7 +979,7 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
     paddingTop: Platform.OS === 'ios' ? 110 : 90,
     paddingHorizontal: 16,
-    width: Platform.OS === 'ios' ? 393 : '100%',
+    width: Platform.OS === 'ios' ? '100%' : '100%',
     alignSelf: 'center',
     marginTop: 20,
   },
@@ -993,7 +993,7 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     backgroundColor: 'transparent',
     zIndex: 5,
-    width: Platform.OS === 'ios' ? 393 : '100%',
+    width: Platform.OS === 'ios' ? '100%' : '100%',
     alignSelf: 'center',
   },
   overlay: {

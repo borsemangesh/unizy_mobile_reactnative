@@ -659,7 +659,7 @@ categoryTabsScrollContent: {
 header: {
   position: 'absolute',
   top: 0,
-  width: Platform.OS === 'ios' ? 393 : '100%',
+  width: Platform.OS === 'ios' ? '100%' : '100%', 
   zIndex: 20,
   paddingTop: Platform.OS === 'ios' ? 50 : 40,
   paddingBottom: Platform.OS === 'ios' ? 16 : 12,
@@ -686,7 +686,7 @@ backButtonContainer: {
  headerWrapper: {
   position: 'absolute',
   top: 0,
-  width: Platform.OS === 'ios' ? 393 : '100%',
+  width: Platform.OS === 'ios' ? '100%' : '100%',
   height: Platform.OS === 'ios' ? 180 : 180,
   zIndex: 10,
   overflow: 'hidden',
@@ -696,7 +696,7 @@ backButtonContainer: {
 headerContent: {
   // position: 'absolute',
   // top: Platform.OS === 'ios' ? '6%' : 40,
-  // width: Platform.OS === 'ios' ? 393 : '100%',
+  //width: Platform.OS === 'ios' ? '100%' : '100%',
   // flexDirection: 'row',
   // alignItems: 'center',
   // justifyContent: 'center',
@@ -706,7 +706,7 @@ headerContent: {
   // pointerEvents: 'box-none',
   position: 'absolute',
   top: Platform.OS === 'ios' ? '6%' : 40,
-  width: Platform.OS === 'ios' ? 393 : '100%',
+  width: Platform.OS === 'ios' ? '100%' : '100%',
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'center',

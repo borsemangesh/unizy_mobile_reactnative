@@ -565,7 +565,7 @@ const styles = StyleSheet.create({
   header: {
     position: 'absolute',
     top: 0,
-    width: Platform.OS === 'ios' ? 393 : '100%',
+    width: Platform.OS === 'ios' ? '100%' : '100%',
     zIndex: 20,
     paddingTop: Platform.OS === 'ios' ? 50 : 40,
     paddingBottom: Platform.OS === 'ios' ? 16 : 12,
@@ -592,7 +592,7 @@ const styles = StyleSheet.create({
   headerWrapper: {
     position: 'absolute',
     top: 0,
-    width: Platform.OS === 'ios' ? 393 : '100%',
+    width: Platform.OS === 'ios' ? '100%' : '100%',
     height: Platform.OS === 'ios' ? 180 : 180,
     zIndex: 10,
     overflow: 'hidden',
@@ -602,7 +602,7 @@ const styles = StyleSheet.create({
   headerContent: {
     position: 'absolute',
     top: Platform.OS === 'ios' ? '6%' : 40,
-    width: Platform.OS === 'ios' ? 393 : '100%',
+    width: Platform.OS === 'ios' ? '100%' : '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
