@@ -51,18 +51,14 @@ export default function SeperateTutionCard({
 
   return (
     <View style={styles.card}>
-      {/* 🔹 IMAGE / INITIALS SECTION */}
       <View style={styles.imageContainer}>
         {showInitials ? (
           <>
-            {/* Background image */}
             <Image
               source={require('../../assets/images/featurebg.png')}
               style={styles.image}
               resizeMode="stretch"
             />
-
-            {/* Initials Circle on top */}
             <View style={styles.initialsCircle}>
               <Text allowFontScaling={false} style={styles.initialsText}>
                 {(initialsName)}
@@ -70,7 +66,6 @@ export default function SeperateTutionCard({
             </View>
           </>
         ) : (
-          /* Profile image */
           <Image
             source={productImage}
             style={styles.image}
@@ -78,7 +73,6 @@ export default function SeperateTutionCard({
           />
         )}
 
-        {/* Tag (university, etc.) */}
         <View style={styles.tag}>
           <BlurView
             blurType="light"
@@ -89,8 +83,6 @@ export default function SeperateTutionCard({
             {tag}
           </Text>
         </View>
-
-        {/* Featured Tag */}
         {isfeature && (
           <View style={styles.tagTopLeft}>
             <BlurView
@@ -103,8 +95,6 @@ export default function SeperateTutionCard({
             </Text>
           </View>
         )}
-
-        {/* Bookmark */}
         <View style={styles.bookmark1}>
           <BlurView
             blurType="light"
@@ -128,7 +118,6 @@ export default function SeperateTutionCard({
         </View>
       </View>
 
-      {/* 🔹 TITLE / PRICE / RATING SECTION */}
       <View style={styles.infoRow}>
         <Text allowFontScaling={false} style={styles.title}>
           {infoTitle}
@@ -169,28 +158,10 @@ export default function SeperateTutionCard({
 
 
 const styles = StyleSheet.create({
-  //    tagTopLeft: {
-  //   position: 'absolute',
-  //   //top: 5,
-  //  // left: 5,
-  //   top: Platform.OS === 'ios' ? 8 : 8,
-  //     left: Platform.OS === 'ios' ? 8 : 8,
-  //   backgroundColor: 'rgba(255,255,255,0.4)',
-  //   borderRadius: 4,
-  //   padding: 4,
-  //   marginVertical: 4,
-  //   marginHorizontal: 4,
-  //   overflow:'hidden',
-  //   boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
-  // },
-
   tagTopLeft: {
     position: 'absolute',
-    // top: 5,
-    // left: 5,
     top: Platform.OS === 'ios' ? 8 : 10,
     left: Platform.OS === 'ios' ? 8 : 10,
-    //backgroundColor: 'rgba(255,255,255,0.4)',
     backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
     borderRadius: 4,
     paddingHorizontal: 6,
@@ -200,7 +171,6 @@ const styles = StyleSheet.create({
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
     overflow: 'hidden'
   },
-
 
   initialsCircle: {
     width: 80,
@@ -222,8 +192,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    //marginHorizontal: 8,
-    // shadow for iOS
     shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 8,
@@ -232,35 +200,23 @@ const styles = StyleSheet.create({
     height: 'auto',
     margin: 6,
     paddingBottom: 10,
-    //boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 15px 15px 6px',
   },
   imageContainer: {
-    // width: 186,
-    // backgroundColor: 'rgba(154, 154, 255, 0.12)',
     width: '100%',
     height: 180,
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    //borderWidth: 0.4,
     borderColor: '#ffffff11',
-    //boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
     padding: 6,
-
-
   },
   image: {
     width: '100%',
     height: '100%',
-
     padding: (Platform.OS === 'ios' ? 0 : 12),
     borderRadius: 12,
-    //borderColor:'000',
-    // borderWidth:2,
     alignSelf: 'center',
     resizeMode: 'stretch',
-
-
   },
 
   image1: {
@@ -269,7 +225,6 @@ const styles = StyleSheet.create({
     resizeMode: 'contain'
   },
   bookmark1: {
-
     position: 'absolute',
     top: Platform.OS === 'ios' ? 10 : 12,
     right: Platform.OS === 'ios' ? 10 : 12,
@@ -286,36 +241,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     boxShadow: '0 2px 5px 0 rgba(109, 109, 109, 0.2)',
     borderWidth: 0.5,
-    //borderColor: '#ffffff2e',
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
-
     borderTopColor: '#ffffff2e',
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
   },
-  // bookmark: {
-  //   position: 'absolute',
-  //   top: 10,
-  //   right: 10,
-  //   borderRadius: 20,
-  //   padding: 6,
-  // },
-  // tag: {
-  //   position: 'absolute',
-  //  // bottom: 5,
-  //   //right: 5,
-  //   bottom: Platform.OS === 'ios' ? 8 : 8,
-  //   right: Platform.OS === 'ios' ? 8 : 8,
-  //   //backgroundColor: '#fff',
-  //   backgroundColor: 'rgba(255,255,255,0.4)',
-  //   borderRadius: 4,
-  //   padding: 4,
-  //   marginVertical: 4,
-  //   marginHorizontal: 4,
-  //   boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
-  // },
+
   tag: {
     position: 'absolute',
     bottom: Platform.OS === 'ios' ? 8 : 10,
@@ -326,13 +259,11 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     marginVertical: 4,
     marginHorizontal: 4,
-    //boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
     overflow: 'hidden',
-    alignSelf: 'flex-end', // 👈 ensures the View wraps the text
+    alignSelf: 'flex-end',
     flexShrink: 1,
-
-    maxWidth: '80%',   // restrict width relative to parent
-    flexWrap: 'wrap',  // allow wrapping
+    maxWidth: '80%',  
+    flexWrap: 'wrap',
   },
   tagText: {
     fontSize: 10,
@@ -347,9 +278,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
-    //backgroundColor: '#fff',
     paddingHorizontal: 6,
-    //paddingTop:6
   },
   title: {
     fontSize: 12,

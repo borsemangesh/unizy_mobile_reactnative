@@ -180,7 +180,6 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
           t(data1.message),
           data1.statusCode === 200 ? 'success' : 'error',
         );
-        // Refresh details so status updates immediately
         await fetchDetails();
       } else {
         showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
@@ -271,9 +270,8 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
   if (isNaN(date.getTime())) return "";
 
   const day = date.getDate();
-  const lang = i18n.language; // detect language
+  const lang = i18n.language; 
 
-  // Add suffix only for English
   let suffix = "";
   if (lang === "en") {
     if (day % 10 === 1 && day !== 11) suffix = "st";
@@ -282,8 +280,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
     else suffix = "th";
   }
 
-  // Month translation
-  const monthIndex = date.getMonth(); // 0–11
+  const monthIndex = date.getMonth(); 
   const monthKeys = [
     "jan","feb","mar","apr","may","jun",
     "jul","aug","sep","oct","nov","dec"
@@ -379,7 +376,6 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                 />
               </AnimatedReanimated.View>
 
-              {/* Back Icon */}
               <AnimatedReanimated.Image
                 source={require('../../../assets/images/back.png')}
                 style={[{ height: 24, width: 24 }, animatedIconStyle]}
@@ -413,25 +409,21 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
               width: '100%',
             }}
           >
-            {/* Card */}
             <View style={[styles.card, { marginTop: (Platform.OS === 'ios' ? 6 : 10) }]}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 {(() => {
-                  // Check if category is housekeeping or tuition
                   const categoryName = data?.list?.category?.name || '';
                   const isProfileCategory = categoryName?.toLowerCase() === 'house keeping' || categoryName?.toLowerCase() === 'tuition';
                   const profilePhoto = data?.list?.createdby?.profile;
                   const firstName = data?.list?.createdby?.firstname;
                   const lastName = data?.list?.createdby?.lastname;
 
-                  // Get initials helper function
                   const getInitials = (first: string | null = '', last: string | null = '') => {
                     const f = first?.trim()?.charAt(0)?.toUpperCase() || '';
                     const l = last?.trim()?.charAt(0)?.toUpperCase() || '';
                     return (f + l) || '?';
                   };
 
-                  // Determine what to show
                   const shouldShowProfile = isProfileCategory && profilePhoto;
                   const shouldShowInitials = isProfileCategory && !profilePhoto;
 
@@ -524,7 +516,6 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
 
             </View>
 
-            {/* <View style={styles.carddivider} /> */}
             {Array.isArray(data?.buyers) && data.buyers.length > 0 && (
               <View style={styles.carddivider} />
             )}
@@ -532,7 +523,6 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
             {Array.isArray(data?.buyers) &&
               data.buyers.map((buyer: any, index: number) => (
                 <View key={index} style={styles.card}>
-                  {/* HEADER */}
                   <View
                     style={{
                       flexDirection: 'row',
@@ -724,7 +714,6 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
 
                 {loading && (
                   <View style={styles.fullLoader}>
-                    {/* <ActivityIndicator size="large" color="#fff" /> */}
                     <Loader />
                   </View>
                 )}
@@ -927,12 +916,10 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 999,   // ensure it appears above modal content
+    zIndex: 999, 
   },
   rightSection: {
     flexDirection: 'row',
-    //justifyContent: 'space-between',
-    //alignItems: 'center',
     width: '89%',
   },
   productlableprice: {
@@ -968,9 +955,7 @@ const styles = StyleSheet.create({
   },
   listingtyperow1: {
     width: '100%',
-    // display: 'flex',
     flexDirection: 'row',
-    //justifyContent: 'space-between',
   },
   unistatus: {
     color: 'rgba(255, 255, 255, 0.88)',
@@ -979,9 +964,8 @@ const styles = StyleSheet.create({
     letterSpacing: -0.28,
     lineHeight: 16,
     fontFamily: 'Urbanist-SemiBold',
-    //    maxWidth:'70%',
-    flex: 1,           // takes remaining space
-    textAlign: 'right', // right aligned
+    flex: 1,           
+    textAlign: 'right', 
     flexWrap: 'wrap',
   },
   headerWrapper: {
@@ -1012,7 +996,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 16,
     zIndex: 11,
-    //top: 7,
   },
   blurButtonWrapper: {
     width: 48,
@@ -1023,9 +1006,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', 
   },
-
 
   initialsCircle: {
     backgroundColor: '#8390D4',
@@ -1047,7 +1029,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     width: '100%',
     alignSelf: 'center',
-    gap: 6, // works in RN 0.71+, otherwise use marginRight
+    gap: 6, 
     marginTop: 16,
   },
 
@@ -1214,7 +1196,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
-    //marginTop:17
   },
 
   card: {
@@ -1261,11 +1242,7 @@ const styles = StyleSheet.create({
     height: 72,
     borderRadius: 14,
   },
-  // univercitycontainer: {
-  //   display: 'flex',
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-between',
-  // },
+ 
   productlebleHeader: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontSize: 14,
@@ -1320,16 +1297,8 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     fontFamily: 'Urbanist-SemiBold',
   },
-  // scrollContainer: {
-  //   paddingBottom: 180,
-  //   // paddingTop: 90,
-  //   // paddingHorizontal: 20,
-  //   paddingHorizontal: 16,
-  //   width: '100%',
-  // },
-
+ 
   scrollContainer: {
-    //paddingHorizontal: 20,
     paddingBottom: 80,
     paddingTop: Platform.OS === 'ios' ? 120 : 100,
     paddingHorizontal: 16,
@@ -1358,19 +1327,15 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     alignItems: 'center',
     justifyContent: 'center',
-    // boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderBlockStartColor: '#ffffff47',
     borderBlockColor: '#ffffff47',
-
     borderTopColor: '#ffffff47',
     borderBottomColor: '#ffffff47',
     borderLeftColor: '#ffffff47',
     borderRightColor: '#ffffff47',
-
     boxSizing: 'border-box',
   },
   cancelText: {

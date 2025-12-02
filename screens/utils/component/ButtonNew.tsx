@@ -5,8 +5,8 @@ import { BlurView } from '@react-native-community/blur';
 type ButtonProps = {
   onPress: () => void;
   title?: string;
-  buttonStyle?: StyleProp<ViewStyle>;  // external button container style
-  textStyle?: StyleProp<TextStyle>;    // external text style
+  buttonStyle?: StyleProp<ViewStyle>;  
+  textStyle?: StyleProp<TextStyle>;  
 };
 
 const ButtonNew = ({ onPress, title = 'Click', buttonStyle, textStyle }: ButtonProps) => {
@@ -15,7 +15,7 @@ const ButtonNew = ({ onPress, title = 'Click', buttonStyle, textStyle }: ButtonP
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.7}
-      style={[styles.buttonContainer, buttonStyle]} // merge external button styles
+      style={[styles.buttonContainer, buttonStyle]} 
     >
       <BlurView
         style={StyleSheet.absoluteFill}

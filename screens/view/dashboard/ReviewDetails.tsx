@@ -254,9 +254,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
 
   const day = date.getDate();
   const year = date.getFullYear();
-  const lang = i18n.language; // detect current language
-
-  // ---------- Suffix only for English ----------
+  const lang = i18n.language; 
   let suffix = "";
   if (lang === "en") {
     if (day % 10 === 1 && day !== 11) suffix = "st";
@@ -265,8 +263,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
     else suffix = "th";
   }
 
-  // ---------- Month translation ----------
-  const monthIndex = date.getMonth(); // 0–11
+  const monthIndex = date.getMonth(); 
   const monthKeys = [
     "jan","feb","mar","apr","may","jun",
     "jul","aug","sep","oct","nov","dec"
@@ -537,6 +534,52 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
 export default ReviewDetails;
 
 const styles = StyleSheet.create({
+
+  categoryTabsContainer: { 
+    marginBottom: 12, 
+    marginTop: 12, 
+    width: '105%',
+   },
+  categoryTabsScrollContent: { 
+    flexDirection: 'row', 
+    alignItems: 'center' 
+  },
+
+ tabcard: {  
+    minHeight: 38,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    marginRight: 8,
+    borderWidth: 0.4,
+    borderColor: '#ffffff11',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    borderRadius: 10,
+    boxShadow:
+    'rgba(255, 255, 255, 0.02)inset 0.1px 0.1px 1px 0px,',
+  },
+  tabcard1: {
+    minHeight: 38,
+    borderWidth: 0.4,
+    borderColor: '#ffffff11',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    borderEndEndRadius: 10,
+    borderStartEndRadius: 10,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderBottomStartRadius: 10,
+    borderBlockStartColor: '#ffffff2e',
+    borderBlockColor: '#ffffff2e',
+    borderTopColor: '#ffffff2e',
+    borderBottomColor: '#ffffff2e',
+    borderLeftColor: '#ffffff2e',
+    borderRightColor: '#ffffff2e',
+    boxSizing: 'border-box',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    marginRight: 8,
+  },
   emptyWrapper: {
     flex: 1,
     justifyContent: 'center',
@@ -544,7 +587,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-
 
   emptyContainer: {
     flex: 1,
@@ -632,17 +674,7 @@ const styles = StyleSheet.create({
     pointerEvents: 'box-none',
   },
 
-  categoryTabsContainer: {
-    width: '100%',
-    marginBottom: 12,
-    marginTop: 12,
-  },
-
-  categoryTabsScrollContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingRight: 16,
-  },
+  
   blurButtonWrapper: {
     width: 48,
     height: 48,
@@ -652,7 +684,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   itemContainer: {
     flex: 1,
@@ -708,7 +740,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
-
     position: 'absolute',
     bottom: 10,
   },
@@ -805,66 +836,15 @@ const styles = StyleSheet.create({
     marginTop: 1,
   },
 
-  tabcard: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginRight: 8,
-    borderWidth: 0.4,
-    borderColor: '#ffffff11',
 
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-    borderEndEndRadius: 10,
-    borderStartEndRadius: 10,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    borderBottomStartRadius: 10,
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-
-    boxSizing: 'border-box',
-  },
-  tabcard1: {
-    borderWidth: 0.4,
-    borderColor: '#ffffff11',
-
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-    borderEndEndRadius: 10,
-    borderStartEndRadius: 10,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    borderBottomStartRadius: 10,
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-
-    boxSizing: 'border-box',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginRight: 8,
-  },
   tabtext: {
-    color: '#fff', // selected tab text color
+    color: '#fff', 
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
   },
   othertext: {
-    color: '#FFFFFF7A', // unselected tab text color
+    color: '#FFFFFF7A', 
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,

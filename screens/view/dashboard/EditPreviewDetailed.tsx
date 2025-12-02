@@ -219,41 +219,38 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
     if (entry) return entry.value;
 
-    // fallback if alias_name missing
     if (formData[alias]) return formData[alias].value;
 
     return null;
   };
 
-const formatDateWithDash = (dateString?: string, t?: any) => {
-  if (!dateString) return "";
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) return "";
+  const formatDateWithDash = (dateString?: string, t?: any) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "";
 
-  const day = date.getDate();
-  const year = date.getFullYear();
-  const lang = i18n.language; // current app language
+    const day = date.getDate();
+    const year = date.getFullYear();
+    const lang = i18n.language;
 
-  // ---------- Suffix only for English ----------
-  let suffix = "";
-  if (lang === "en") {
-    if (day % 10 === 1 && day !== 11) suffix = "st";
-    else if (day % 10 === 2 && day !== 12) suffix = "nd";
-    else if (day % 10 === 3 && day !== 13) suffix = "rd";
-    else suffix = "th";
-  }
+    let suffix = "";
+    if (lang === "en") {
+      if (day % 10 === 1 && day !== 11) suffix = "st";
+      else if (day % 10 === 2 && day !== 12) suffix = "nd";
+      else if (day % 10 === 3 && day !== 13) suffix = "rd";
+      else suffix = "th";
+    }
 
-  // ---------- Month translation ----------
-  const monthIndex = date.getMonth(); // 0–11
-  const monthKeys = [
-    "jan","feb","mar","apr","may","jun",
-    "jul","aug","sep","oct","nov","dec"
-  ];
+    const monthIndex = date.getMonth(); // 0–11
+    const monthKeys = [
+      "jan", "feb", "mar", "apr", "may", "jun",
+      "jul", "aug", "sep", "oct", "nov", "dec"
+    ];
 
-  const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+    const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
 
-  return `${day}${suffix} ${monthShort} ${year}`;
-};
+    return `${day}${suffix} ${monthShort} ${year}`;
+  };
 
   const titleValue = getValueByAlias(storedForm, 'title') || t('no_title');
   //const priceValue = getValueByAlias(storedForm, 'price') || '0';
@@ -520,158 +517,138 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
   // };
 
 
-const handleListPress = async () => {
-  console.log("🔵 handleListPress called");
+  const handleListPress = async () => {
+    console.log("🔵 handleListPress called");
 
-  try {
-    // -----------------------------
-    // STEP 1: Fetch stored form data
-    // -----------------------------
-    const storedData = await AsyncStorage.getItem("formData1");
-    if (!storedData) {
-      console.log("⚠️ No form data found");
-      return;
-    }
+    try {
 
-    const formData: Record<string, FormField> = JSON.parse(storedData);
-    console.log("📌 Loaded formData:", formData);
-
-    // -----------------------------
-    // STEP 2: Get token and IDs
-    // -----------------------------
-    const token = await AsyncStorage.getItem("userToken");
-    const productId = await AsyncStorage.getItem("selectedProductId");
-    const shareid = await AsyncStorage.getItem("shareid");
-
-    if (!token) {
-      console.log("⚠️ Token missing");
-      return;
-    }
-
-    // -----------------------------
-    // STEP 3: Separate image + non-image fields
-    // -----------------------------
-    const imageFields: [string, ImageField[]][] = [];
-    const nonImageFields: [string, { value: any; alias_name: string | null }][] = [];
-
-    Object.entries(formData).forEach(([key, obj]) => {
-      const v = obj.value;
-      if (Array.isArray(v) && v.length > 0 && v.every(i => i?.uri)) {
-        imageFields.push([key, v as ImageField[]]);
-      } else {
-        nonImageFields.push([key, obj]);
+      const storedData = await AsyncStorage.getItem("formData1");
+      if (!storedData) {
+        console.log("⚠️ No form data found");
+        return;
       }
-    });
 
-    // -----------------------------
-    // STEP 4: Prepare payload for PATCH
-    // -----------------------------
-    const dataArray = nonImageFields
-      .filter(([key]) => !isNaN(Number(key)))
-      .map(([key, obj]) => ({
-        id: Number(key),
-        param_value: obj.value !== undefined && obj.value !== null && obj.value !== "" ? obj.value : null,
-      }))
-      .filter(i => i.param_value !== null);
+      const formData: Record<string, FormField> = JSON.parse(storedData);
+      console.log("📌 Loaded formData:", formData);
 
-    const createPayload = {
-      category_id: productId,
-      data: dataArray,
-    };
+      const token = await AsyncStorage.getItem("userToken");
+      const productId = await AsyncStorage.getItem("selectedProductId");
+      const shareid = await AsyncStorage.getItem("shareid");
 
-    console.log("📤 Sending UPDATE request:", createPayload);
-
-    // -----------------------------
-    // STEP 5: PATCH non-image fields
-    // -----------------------------
-    const createRes = await fetch(`${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(createPayload),
-    });
-
-    const createJson = await createRes.json();
-    console.log("📌 Create Response:", createJson);
-
-    if (![200, 201].includes(createRes.status)) {
-      showToast(t(createJson?.message || "Error"), "error");
-      navigation.reset({ index: 0, routes: [{ name: "MyListing" }] });
-      return;
-    }
-
-    showToast(t(createJson?.message || "Success"), "success");
-
-    // -----------------------------
-    // STEP 6: Get feature_id
-    // -----------------------------
-    const feature_id = createJson?.data?.id;
-    if (!feature_id) {
-      console.log("⚠️ feature_id missing");
-      return;
-    }
-
-   console.log("📌 imageFields:", JSON.stringify(imageFields, null, 2));
-
-    for (const [param_id, images] of imageFields) {
-      console.log("📌 param_id:", param_id, "images count:", images.length);
-      for (const image of images) {
-        if (!image || !image.uri) continue;
-
-        console.log("🟢 Uploading image:", image.name);
-
-        const form = new FormData();
-        form.append("files", {
-          uri: image.uri,
-          type: image.type || "image/jpeg",
-          name: image.name,
-        } as any);
-        form.append("feature_id", feature_id);
-        form.append("param_id", param_id);
-
-
-        console.log("  file uri:", image.uri);
-        
-
-        const uploadRes = await fetch(`${MAIN_URL.baseUrl}category/featurelist/image-update`, {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
-          body: form,
-        });
-
-        const uploadJson = await uploadRes.json();
-        console.log("📌 Upload Response:", uploadJson);
-
-        const isSuccess = [200, 201].includes(uploadRes.status);
-        showToast(
-          t(uploadJson?.message || "Image upload failed"),
-          isSuccess ? "success" : "error"
-        );
-
-        if (!isSuccess) return;
+      if (!token) {
+        console.log("⚠️ Token missing");
+        return;
       }
+
+      const imageFields: [string, ImageField[]][] = [];
+      const nonImageFields: [string, { value: any; alias_name: string | null }][] = [];
+
+      Object.entries(formData).forEach(([key, obj]) => {
+        const v = obj.value;
+        if (Array.isArray(v) && v.length > 0 && v.every(i => i?.uri)) {
+          imageFields.push([key, v as ImageField[]]);
+        } else {
+          nonImageFields.push([key, obj]);
+        }
+      });
+
+      // -----------------------------
+      // STEP 4: Prepare payload for PATCH
+      // -----------------------------
+      const dataArray = nonImageFields
+        .filter(([key]) => !isNaN(Number(key)))
+        .map(([key, obj]) => ({
+          id: Number(key),
+          param_value: obj.value !== undefined && obj.value !== null && obj.value !== "" ? obj.value : null,
+        }))
+        .filter(i => i.param_value !== null);
+
+      const createPayload = {
+        category_id: productId,
+        data: dataArray,
+      };
+
+      console.log("📤 Sending UPDATE request:", createPayload);
+
+      const createRes = await fetch(`${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(createPayload),
+      });
+
+      const createJson = await createRes.json();
+      console.log("📌 Create Response:", createJson);
+
+      if (![200, 201].includes(createRes.status)) {
+        showToast(t(createJson?.message || "Error"), "error");
+        navigation.reset({ index: 0, routes: [{ name: "MyListing" }] });
+        return;
+      }
+
+      showToast(t(createJson?.message || "Success"), "success");
+
+      const feature_id = createJson?.data?.id;
+      if (!feature_id) {
+        console.log("⚠️ feature_id missing");
+        return;
+      }
+
+      console.log("📌 imageFields:", JSON.stringify(imageFields, null, 2));
+
+      for (const [param_id, images] of imageFields) {
+        console.log("📌 param_id:", param_id, "images count:", images.length);
+        for (const image of images) {
+          if (!image || !image.uri) continue;
+
+          console.log("🟢 Uploading image:", image.name);
+
+          const form = new FormData();
+          form.append("files", {
+            uri: image.uri,
+            type: image.type || "image/jpeg",
+            name: image.name,
+          } as any);
+          form.append("feature_id", feature_id);
+          form.append("param_id", param_id);
+
+
+          console.log("  file uri:", image.uri);
+
+
+          const uploadRes = await fetch(`${MAIN_URL.baseUrl}category/featurelist/image-update`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}` },
+            body: form,
+          });
+
+          const uploadJson = await uploadRes.json();
+          console.log("📌 Upload Response:", uploadJson);
+
+          const isSuccess = [200, 201].includes(uploadRes.status);
+          showToast(
+            t(uploadJson?.message || "Image upload failed"),
+            isSuccess ? "success" : "error"
+          );
+
+          if (!isSuccess) return;
+        }
+      }
+
+      console.log("🎉 ALL DONE");
+      showToast(t(Constant.DATA_UPLOAD), "success");
+      setShowPopup(true);
+
+      await AsyncStorage.removeItem("formData1");
+      await AsyncStorage.removeItem("deletedImagesId");
+
+    } catch (err) {
+      console.log("❌ handleListPress Error:", err);
+      showToast(t(Constant.SOMTHING_WENT_WRONG), "error");
     }
-
-    // -----------------------------
-    // STEP 8: Done
-    // -----------------------------
-    console.log("🎉 ALL DONE");
-    showToast(t(Constant.DATA_UPLOAD), "success");
-    setShowPopup(true);
-
-    // -----------------------------
-    // STEP 9: Clear temp storage
-    // -----------------------------
-    await AsyncStorage.removeItem("formData1");
-    await AsyncStorage.removeItem("deletedImagesId");
-
-  } catch (err) {
-    console.log("❌ handleListPress Error:", err);
-    showToast(t(Constant.SOMTHING_WENT_WRONG), "error");
-  }
-};
+  };
 
 
 
@@ -732,12 +709,10 @@ const handleListPress = async () => {
           barStyle="light-content"
         />
 
-        {/* Header with Blur only at top */}
         <AnimatedReanimated.View
           style={[styles.headerWrapper, animatedBlurStyle]}
           pointerEvents="none"
         >
-          {/* Blur layer only at top with gradient fade */}
           <MaskedView
             style={StyleSheet.absoluteFill}
             maskElement={
@@ -770,7 +745,6 @@ const handleListPress = async () => {
           </MaskedView>
         </AnimatedReanimated.View>
 
-        {/* Header Content */}
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => navigation.replace('EditPreviewThumbnail')}
@@ -780,7 +754,6 @@ const handleListPress = async () => {
             <AnimatedReanimated.View
               style={[styles.blurButtonWrapper, animatedButtonStyle]}
             >
-              {/* Static background (visible when scrollY = 0) */}
               <AnimatedReanimated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -797,7 +770,6 @@ const handleListPress = async () => {
                 ]}
               />
 
-              {/* Blur view fades in as scroll increases */}
               <AnimatedReanimated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -831,16 +803,12 @@ const handleListPress = async () => {
             {t('preview_details')}
           </Text>
         </View>
-
-
-
-
         <AnimatedReanimated.ScrollView
           scrollEventThrottle={16}
           onScroll={scrollHandler}
           contentContainerStyle={[
             styles.scrollContainer,
-            { paddingBottom: height * 0.1 }, // 0.05% of screen height
+            { paddingBottom: height * 0.1 },
           ]}>
 
           <View style={{ marginTop: (Platform.OS === 'ios' ? 9 : 12) }}>
@@ -992,7 +960,7 @@ const handleListPress = async () => {
                     source={require('../../../assets/images/calendar_icon1.png')}
                     style={{ height: 16, width: 16 }}
                   />
-                  <Text allowFontScaling={false} style={styles.datetext}>{t('date_posted')}: {formatDateWithDash(newdate,t)}</Text>
+                  <Text allowFontScaling={false} style={styles.datetext}>{t('date_posted')}: {formatDateWithDash(newdate, t)}</Text>
                 </View>
               </View>
             </View>
@@ -1130,11 +1098,6 @@ const handleListPress = async () => {
             try {
               const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
               const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
-
-              // if (isFeatured) {
-              //   return `Update for £${diff1.toFixed(2)}`;
-              // }
-              // return 'Update';
               if (categoryid === Number(4)) {
                 return `${t('update')} for £${accomodation_amount.toFixed(2)}`;
               }
@@ -1204,8 +1167,8 @@ const handleListPress = async () => {
                     textAlign: 'center',
                   }}
                 >
-                  {t('product_listed_message')}                
-                  </Text>
+                  {t('product_listed_message')}
+                </Text>
 
                 <TouchableOpacity
                   style={styles.loginButton}
@@ -1225,16 +1188,6 @@ const handleListPress = async () => {
                           }
                         ],
                       });
-
-                      // navigation.reset({
-                      //   index: 1,
-                      //   routes: [
-                      //     { name: 'Home' },
-                      //     { name: 'MyListing' }
-                      //   ],
-                      // });
-                      // navigation.replace('MyListing',{ animation: 'none' });
-
                       setShowPopup(false);
                     } catch (err) {
                       console.log('❌ Error clearing formData:', err);
@@ -1242,7 +1195,7 @@ const handleListPress = async () => {
                   }}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>
-                   {t('return_choose_category')}
+                    {t('return_choose_category')}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -1258,7 +1211,6 @@ const handleListPress = async () => {
 const styles = StyleSheet.create({
 
   datetext1: {
-    //color: 'rgba(255, 255, 255, 0.48)',
     color: '#9CD6FF',
     fontFamily: 'Urbanist-Medium',
     fontSize: 12,
@@ -1282,15 +1234,12 @@ const styles = StyleSheet.create({
     height: 'auto',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.09) 100%)',
-    //boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     borderRadius: 8,
     paddingLeft: 8,
     paddingRight: 8,
     paddingTop: 6,
     paddingBottom: 6,
     marginTop: 8,
-    //alignItems: 'center',
-    //gap: 4,
     width: 'auto',
     alignSelf: 'flex-start',
   },
@@ -1335,7 +1284,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
 
 
@@ -1362,7 +1311,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     height: 'auto'
-    //width: '80%',
   },
 
   bottombutton: {
@@ -1375,7 +1323,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
     padding: 16,
-    //width: '20%',
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
@@ -1413,19 +1360,14 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontStyle: 'normal',
     lineHeight: 1.3,
-    //color: '#fff',
     color: '#9CD6FF'
   },
   categoryTag: {
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    //borderWidth: 0.9,
-    //borderColor: 'rgba(255, 255, 255, 0.08)',
-    //borderBlockEndColor: 'rgba(255, 255, 255, 0.08)',
     color: 'rgba(255, 255, 255, 0.48)',
     borderRadius: 4,
     marginRight: 8,
-    //boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.23)',
     paddingLeft: 6,
     paddingRight: 6,
     paddingTop: 2,
@@ -1460,8 +1402,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    //boxShadow: 'rgba(255, 255, 255, 0.12)  inset -1px 0px 5px 1px inset ',
-
     boxShadow:
       '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
     borderWidth: 0.4,
@@ -1477,24 +1417,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
   },
-
-  // initialsCircle: {
-  //   backgroundColor: '#8390D4',
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  //   width: 50,
-  //   height: 50,
-  //   borderRadius: 25,
-  //   marginRight: 12,
-  // },
-  // initialsText: {
-  //   color: '#fff',
-  //   fontSize: 18,
-  //   fontWeight: 600,
-  //   textAlign: 'center',
-  //   fontFamily: 'Urbanist-SemiBold',
-  // },
-
   priceText1: {
     color: '#002050',
     fontFamily: 'Urbanist-SemiBold',
@@ -1511,7 +1433,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderBottomWidth: 0.5,
     borderBottomColor: '#ccc',
-    backgroundColor: '#fff', // optional
+    backgroundColor: '#fff',
     borderRadius: 8,
     marginVertical: 4,
   },
@@ -1579,7 +1501,7 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 40,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)', // fallback for radial-gradient
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderColor: '#ffffff4e',
     borderWidth: 1,
     justifyContent: 'center',
@@ -1593,7 +1515,6 @@ const styles = StyleSheet.create({
 
   fullScreenContainer: {
     flex: 1,
-    // marginTop: 30,
   },
 
   loginText: {
@@ -1692,7 +1613,6 @@ const styles = StyleSheet.create({
     height: 'auto',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.09) 100%)',
-    //boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     borderRadius: 8,
     paddingLeft: 8,
     paddingRight: 8,
@@ -1704,7 +1624,6 @@ const styles = StyleSheet.create({
   },
 
   datetext: {
-    //color: 'rgba(255, 255, 255, 0.48)',
     color: '#9CD6FF',
     fontFamily: 'Urbanist-Medium',
     fontSize: 12,
@@ -1776,37 +1695,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
-  // catagoryText: {
-  //   fontFamily: 'Urbanist-Regular',
-  //   fontSize: 12,
-  //   fontWeight: '500',
-  //   fontStyle: 'normal',
-  //   lineHeight: 16,
-  //   color: '#fff',
-  // },
-  // categoryTag: {
-  //   backgroundColor:
-  //     'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  //   borderWidth: 0.9,
-  //   borderColor: 'rgba(255, 255, 255, 0.08)',
-  //   borderBlockEndColor: 'rgba(255, 255, 255, 0.08)',
-  //   color: 'rgba(255, 255, 255, 0.48)',
-  //   borderRadius: 4,
-  //   marginRight: 8,
-  //   boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.23)',
-  //   paddingLeft: 6,
-  //   paddingRight: 6,
-  //   paddingTop: 2,
-  //   paddingBottom: 2,
-  // },
-  // productDesHeding: {
-  //   color: 'rgba(255, 255, 255, 0.72)',
-  //   fontFamily: 'Urbanist-Regular',
-  //   fontSize: 16,
-  //   fontWeight: '600',
-  //   fontStyle: 'normal',
-  //   lineHeight: 22,
-  // },
   productDesc: {
     color: 'rgba(255, 255, 255, 0.64)',
     fontFamily: 'Urbanist-Regular',

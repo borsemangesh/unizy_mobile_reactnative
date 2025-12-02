@@ -212,14 +212,14 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
     isInitialLoad: boolean = false,
   ) => {
     let start = Date.now();
-    
+
     try {
       if (isInitialLoad) {
         setInitialLoading(true);
       } else {
         setIsLoading(true);
       }
-      
+
       const pagesize = 10;
 
       let url = `${MAIN_URL.baseUrl}category/mybookmark-list?page=${pageNum}&pagesize=${pagesize}`;
@@ -372,8 +372,6 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
       displayListOfProduct(selectedCategory?.id ?? null, 1);
     } catch (error) {
       console.error('Bookmark error:', error);
-
-      // Optional: revert bookmark if API call fails
       setBookmarkedIds(prev =>
         prev.includes(productId)
           ? prev.filter(id => id !== productId)
@@ -391,7 +389,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
 
     const isBookmarked =
       bookmarkedIds.length > 0
-        ? bookmarkedIds.includes(item.id) // after toggles
+        ? bookmarkedIds.includes(item.id)
         : feature.isbookmarked || feature.isbookmarked;
 
     let productImage: ImageSourcePropType | null = null;
@@ -403,9 +401,8 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
         productImage = { uri: feature.createdby.profile };
       } else {
         showInitials = true;
-        initials = `${feature.createdby?.firstname?.[0] ?? ''}${
-          feature.createdby?.lastname?.[0] ?? ''
-        }`;
+        initials = `${feature.createdby?.firstname?.[0] ?? ''}${feature.createdby?.lastname?.[0] ?? ''
+          }`;
       }
     } else {
       if (feature.thumbnail) {
@@ -656,30 +653,12 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
               </View>
             ) : null
           }
-          // ListEmptyComponent={
-          //   !initialLoading && !isLoading ? (
-          //     <View style={[styles.emptyWrapper]}>
-          //       <View style={styles.emptyContainer}>
-          //         <Image
-          //           source={require('../../../assets/images/noproduct.png')} // your image
-          //           style={styles.emptyImage}
-          //           resizeMode="contain"
-          //         />
-          //         <Text allowFontScaling={false} style={styles.emptyText}>
-          //           No Bookmarks Found
-          //         </Text>
-          //       </View>
-          //     </View>
-          //   ) : null
-          // }
           ListEmptyComponent={
             (isLoading || initialLoading) && featurelist.length === 0 ? (
-              // Show loader while fetching
               <View style={[styles.emptyWrapper, { justifyContent: 'center', flex: 1 }]}>
                 <Loader containerStyle={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }} />
               </View>
             ) : !isLoading && featurelist.length === 0 ? (
-              // Show "No Listings Found" if API finished and list is empty
               <View style={[styles.emptyWrapper, { justifyContent: 'center', alignItems: 'center', flex: 1 }]}>
                 <View style={styles.emptyContainer}>
                   <Image
@@ -688,11 +667,11 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
                     resizeMode="contain"
                   />
                   <Text allowFontScaling={false} style={styles.emptyText}>
-                   {t('No_Listings_Found')}
+                    {t('No_Listings_Found')}
                   </Text>
                 </View>
               </View>
-            ) : null // List has items, show nothing
+            ) : null
           }
         />
       </View>
@@ -726,7 +705,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
 
   header: {
@@ -738,7 +717,7 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === 'ios' ? 16 : 12,
     paddingHorizontal: 16,
     justifyContent: 'center',
-    overflow: 'hidden', // IMPORTANT for MaskedView
+    overflow: 'hidden',
     flexDirection: 'row',
     alignItems: 'center',
     elevation: 0,
@@ -787,8 +766,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     paddingHorizontal: 10,
-      marginBottom: Platform.OS === "ios" ? 20 : 10,
-    // marginTop: -5
+    marginBottom: Platform.OS === "ios" ? 20 : 10,
   },
 
   emptyContainer: {
@@ -801,8 +779,6 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.08)',
     borderRadius: 24,
     overflow: 'hidden',
-
-    //  marginBottom:20,
   },
   emptyImage: {
     width: 50,
@@ -817,7 +793,7 @@ const styles = StyleSheet.create({
     fontWeight: 600,
   },
   tabcard: {
-   
+
     minHeight: 38,
     paddingVertical: 10,
     paddingHorizontal: 16,
@@ -828,17 +804,14 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderRadius: 10,
     boxShadow:
-    'rgba(255, 255, 255, 0.02)inset 0.1px 0.1px 1px 0px,',
+      'rgba(255, 255, 255, 0.02)inset 0.1px 0.1px 1px 0px,',
   },
   tabcard1: {
     minHeight: 38,
     borderWidth: 0.4,
     borderColor: '#ffffff11',
-
-    // boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
     borderEndEndRadius: 10,
     borderStartEndRadius: 10,
     borderTopLeftRadius: 10,
@@ -846,25 +819,23 @@ const styles = StyleSheet.create({
     borderBottomStartRadius: 10,
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
-
     borderTopColor: '#ffffff2e',
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
-
     boxSizing: 'border-box',
     paddingVertical: 10,
     paddingHorizontal: 16,
     marginRight: 8,
   },
   tabtext: {
-    color: '#fff', // selected tab text color
+    color: '#fff', 
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
   },
   othertext: {
-    color: '#FFFFFF7A', // unselected tab text color
+    color: '#FFFFFF7A', 
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
@@ -878,15 +849,6 @@ const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
   },
-  // header: {
-  //   paddingTop: Platform.OS === 'ios' ? '15.2%'  : 50,
-  //   paddingBottom: 12,
-  //   paddingHorizontal: 16,
-  // },
-  // headerRow: {
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  // },
   backIconRow: {
     padding: 12,
     borderRadius: 40,
@@ -932,12 +894,8 @@ const styles = StyleSheet.create({
     marginRight: 5,
     paddingTop: 10,
     gap: 16,
-    // paddingBottom: 10,
   },
   row1: {
-    // flexDirection: 'row',
-    // justifyContent: 'flex-start',
-    //paddingBottom:1
   },
   itemContainer: {
     flex: 1,

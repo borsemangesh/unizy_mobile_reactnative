@@ -340,18 +340,13 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
   const day = today.getDate();
   const year = today.getFullYear();
-  const lang = i18n.language; // current selected language
-
-  // Month translation
-  const monthIndex = today.getMonth(); // 0–11
+  const lang = i18n.language;
+  const monthIndex = today.getMonth(); 
   const monthKeys = [
     "jan","feb","mar","apr","may","jun",
     "jul","aug","sep","oct","nov","dec"
   ];
-
   const month = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
-
-  // Suffix only for English
   let suffix = "";
   if (lang === "en") {
     if (day % 10 === 1 && day !== 11) suffix = "st";
@@ -475,94 +470,11 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     }
   };
 
-  // const handlePreview = async () => {
-  //   try {
-  //     for (const field of fields) {
-  //       const { id, field_type } = field.param;
-  //       let value = formValues[id]?.value;
-
-  //       if (field_type.toLowerCase() === 'image') {
-  //         value = uploadedImages;
-  //       }
-
-  //       if (field.mandatory) {
-  //         if (
-  //           value === undefined ||
-  //           value === null ||
-  //           (typeof value === 'string' && value.trim() === '') ||
-  //           (Array.isArray(value) && value.length === 0)
-  //         ) {
-  //           if (field_type.toLowerCase() === 'image') {
-  //             showToast(`${field.param.field_name} ${Constant.ARE_MAN}`, 'error');
-  //           } else {
-  //             showToast(`${field.param.field_name} ${Constant.IS_MAN}`, 'error');
-  //           }
-  //           return;
-  //         }
-  //       }
-  //     }
-
-  //     let computedPrice: number | null = null;
-
-  //     if (productId === 2 || productId === 5) {
-  //       let priceFieldId: number | null = null;
-  //       let durationFieldId: number | null = null;
-
-  //       fields.forEach(f => {
-  //         if (f.param.alias_name === 'price') priceFieldId = f.param.id;
-  //         if (f.param.alias_name === 'service_duration')
-  //           durationFieldId = f.param.id;
-  //       });
-
-  //       if (priceFieldId !== null && durationFieldId !== null) {
-  //         const rawPrice = Number(formValues[priceFieldId]?.value || 0);
-  //         const rawDuration = Number(formValues[durationFieldId]?.value || 1);
-
-  //         computedPrice = rawPrice * rawDuration;
-  //       }
-  //     }
-
-  //     const dataToStore: any = { ...formValues };
-
-  //     if (computedPrice !== null) {
-  //       fields.forEach(f => {
-  //         if (f.param.alias_name === 'price') {
-  //           dataToStore[f.param.id] = {
-  //             value: computedPrice.toString(),
-  //             alias_name: 'price',
-  //           };
-  //         }
-  //       });
-  //     }
-
-  //     fields.forEach(field => {
-  //       if (field.param.field_type.toLowerCase() === 'image') {
-  //         const uploadedForField = uploadedImages.map(img => ({
-  //           id: img.id,
-  //           uri: img.uri,
-  //           name: img.name,
-  //         }));
-
-  //         dataToStore[field.param.id] = {
-  //           value: uploadedForField,
-  //           alias_name: field.param.alias_name ?? null,
-  //         };
-  //       }
-  //     });
-
-  //     await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
-  //     navigation.navigate('PreviewThumbnail');
-  //   } catch (error) {
-  //     console.log('Error saving form data: ', error);
-  //     showToast(Constant.DATA_NOT_SAVE,'error');
-  //   }
-  // };
-
+ 
   const handlePreview = async () => {
     console.log("ReViewScrenn");
   
     try {
-      // Step 1: Validate mandatory fields
       for (const field of fields) {
         const { id, field_type } = field.param;
         let value = formValues[id]?.value;
@@ -571,7 +483,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           value = uploadedImages;
         }
   
-        // If the field is mandatory, check for its presence
         if (field.mandatory) {
           if (
             value === undefined ||
@@ -584,50 +495,42 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             } else {
               showToast(`${field.param.field_name} ${t(Constant.IS_MAN)}`, 'error');
             }
-            return; // Exit the function early if mandatory fields are missing
+            return;
           }
         }
       }
   
-      // Step 2: Handle price validation
       let computedPrice: number | null = null;
   
       if (productId === 2 || productId === 5) {
         let priceFieldId: number | null = null;
         let durationFieldId: number | null = null;
   
-        // Find the price and duration field IDs
         for (const f of fields) {
           if (f.param.alias_name === 'price') priceFieldId = f.param.id;
           if (f.param.alias_name === 'service_duration') durationFieldId = f.param.id;
         }
   
         if (priceFieldId !== null && durationFieldId !== null) {
-          let rawPrice = formValues[priceFieldId]?.value || '0'; // default to '0' if undefined
+          let rawPrice = formValues[priceFieldId]?.value || '0';
   
-          // Remove unwanted characters (currency symbols, commas, spaces, etc.)
-          rawPrice = String(rawPrice).replace(/[^\d.-]/g, ''); // Keep only digits, periods and hyphens
+          rawPrice = String(rawPrice).replace(/[^\d.-]/g, '');
   
           const priceNumber = parseFloat(rawPrice);
   
-          // Check if the price is valid
-          if (isNaN(priceNumber) || priceNumber < 99999) {
-            showToast("Price must be at least £99,999", "error");
-            return; // Stop the function if price is invalid
+          if (isNaN(priceNumber) || priceNumber > 99999) {
+            showToast(`${t('price_limit')} £99,999`, "error");
+            return;
           }
   
-          // Get the duration value (default to 1 if empty)
           const rawDuration = Number(formValues[durationFieldId]?.value || 1);
   
-          computedPrice = priceNumber * rawDuration; // Calculate the computed price
+          computedPrice = priceNumber * rawDuration;
         }
       }
   
-      // Step 3: Store data
       const dataToStore: any = { ...formValues };
-  
-      // If the computed price exists, store it
-      if (computedPrice !== null) {
+        if (computedPrice !== null) {
         for (const f of fields) {
           if (f.param.alias_name === 'price') {
             dataToStore[f.param.id] = {
@@ -638,7 +541,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
         }
       }
   
-      // Step 4: Handle image fields
       for (const field of fields) {
         if (field.param.field_type.toLowerCase() === 'image') {
           const uploadedForField = uploadedImages.map(img => ({
@@ -653,20 +555,15 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           };
         }
   
-        // Check if the alias_name is 'price' and apply condition
         if (field.param.alias_name === 'price') {
           const priceValue = parseFloat(dataToStore[field.param.id]?.value);
-  
-          // Check if the value is valid and greater than £99,999
-          if (priceValue > 99999) {
-            showToast("Price cannot exceed £99,999", "error");
-            return; // Exit the function immediately if the price is invalid
+            if (priceValue > 99999) {
+            showToast(`${t('price_limit')} £99,999`, "error");
+            return;
           }
         }
       }
-  
-      // Step 5: Save to AsyncStorage and navigate to preview
-      await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
+        await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
       navigation.navigate('PreviewThumbnail');
     } catch (error) {
       console.log('Error saving form data: ', error);
@@ -687,25 +584,23 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           text: 'Camera',
           onPress: () => {
             launchCamera(
-              { mediaType: 'photo', cameraType: 'front', quality: 1 }, // get max quality first
+              { mediaType: 'photo', cameraType: 'front', quality: 1 }, 
               async response => {
                 if (response.didCancel) return;
                 if (response.assets && response.assets[0].uri) {
                   const asset = response.assets[0];
                   let uri = asset.uri!;
                   let name = asset.fileName || 'Image';
-
-                  // check size
                   if (
                     asset.fileSize &&
                     asset.fileSize > MAX_SIZE_MB * 1024 * 1024
                   ) {
                     const compressed = await ImageResizer.createResizedImage(
                       uri,
-                      800, // width
-                      800, // height
+                      800, 
+                      800, 
                       'JPEG',
-                      80, // quality 0-100
+                      80, 
                     );
                     uri = compressed.uri;
                     name = compressed.name || name;
@@ -731,8 +626,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                   const asset = response.assets[0];
                   let uri = asset.uri!;
                   let name = asset.fileName || 'Image';
-
-                  // check size
                   if (
                     asset.fileSize &&
                     asset.fileSize > MAX_SIZE_MB * 1024 * 1024
@@ -786,7 +679,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
   const renderField = (field: any) => {
     const param = field?.param;
-    if (!param) return null; // skip if param is missing
+    if (!param) return null;
 
     const fieldType = param.field_type?.toLowerCase() ?? '';
     const field_ismultilple = param.ismultilple ?? false;
@@ -794,10 +687,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     const id = param.id;
     const options = Array.isArray(param.options) ? param.options : [];
 
-    if (!fieldType || !id) return null; // skip if critical info missing
+    if (!fieldType || !id) return null; 
 
     switch (fieldType) {
-      // ---------------- TEXT FIELD ----------------
       case 'text': {
         const { param } = field;
         const { field_name, keyboardtype, alias_name } = param;
@@ -848,8 +740,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 styles.login_container,
                 {
                   height: 44,
-                  textAlignVertical: 'center', // centers text vertically on Android
-                  paddingVertical: 0, // prevents padding changes on focus
+                  textAlignVertical: 'center', 
+                  paddingVertical: 0,
                 },
               ]}
               placeholder={placeholderText}
@@ -857,10 +749,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               keyboardType={rnKeyboardType}
               value={isPriceField && rawValue ? `£ ${rawValue}` : rawValue}
-              //onChangeText={text => handleValueChange(param.id, alias_name, text)}
               onChangeText={text => {
                 if (isPriceField) {
-                  // Remove £ and spaces before saving
                   const cleaned = text.replace(/£\s?/g, '');
                   handleValueChange(param.id, alias_name, cleaned);
                 } else {
@@ -872,11 +762,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
         );
       }
 
-      // ---------------- MULTI-LINE TEXT ----------------
       case 'multi-line-text': {
         const { param } = field;
         const { field_name, keyboardtype, alias_name } = param;
-        //const placeholderText = alias_name || field_name;
         const placeholderText =
           alias_name?.toLowerCase() === 'price'
             ? `£ ${t('enter')} ${field_name}`
@@ -971,9 +859,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 .filter((opt: any) => {
                   const value = formValues[id]?.value;
                   if (Array.isArray(value)) {
-                    return value.includes(opt.id); // show if selected in multi-select
+                    return value.includes(opt.id); 
                   }
-                  return value === opt.id; // show if selected in single-select
+                  return value === opt.id; 
                 })
                 .map((opt: any) => (
                   <View key={opt.id} style={styles.categoryTagWrapper}>
@@ -987,7 +875,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                               (v: any) => v !== opt.id,
                             );
                           } else {
-                            updated = null; // removing single-select
+                            updated = null;
                           }
                           return {
                             ...prev,
@@ -1470,7 +1358,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 16,
     zIndex: 11,
-    //top: 7,
   },
   blurButtonWrapper: {
     width: 48,
@@ -1481,7 +1368,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+    backgroundColor: 'rgba(255, 255, 255, 0.1)'
   },
 
   initialsCircle: {
@@ -1514,11 +1401,16 @@ const styles = StyleSheet.create({
     height: 20,
     tintColor: '#FFF',
   },
+  // dropdowncard: {
+  //   minHeight: 40,
+  //   alignItems: 'flex-start',
+  //   justifyContent: 'center',
+  // },
   dropdowncard: {
-    minHeight: 40,
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-  },
+  flex: 1,            // ⬅️ Add this
+  minHeight: 40,
+  justifyContent: 'center',
+},
   dropdowntext: {
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
@@ -1526,13 +1418,11 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     color: 'rgba(255, 255, 255, 0.48)',
     includeFontPadding: false,
-    //textAlignVertical: 'center',
   },
 
   eyeIcon1: {
     width: 19,
     height: 19,
-    // paddingRight: 16,
   },
 
   headerContainer: {
@@ -1574,8 +1464,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    //boxShadow: 'rgba(255, 255, 255, 0.12)  inset -1px 0px 5px 1px inset ',
-
     boxShadow:
       '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
     borderWidth: 0.4,
@@ -1591,26 +1479,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
   },
-  // header: {
-  //   height: 100,
-  //   paddingTop: 40,
-  //   paddingBottom: 12,
-  //   paddingHorizontal: 16,
-  //   justifyContent: 'center',
-  //   position: 'absolute',
-  //   top: 0,
-  //   left: 0,
-  //   right: 0,
-  //   zIndex: 10,
-  //   overflow: 'hidden',
-  //   backgroundColor:'transparent'
-
-  // },
-
-  // headerRow: {
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  // },
   backBtn: {
     width: 30,
     justifyContent: 'center',
@@ -1734,7 +1602,6 @@ const styles = StyleSheet.create({
     mixBlendMode: 'normal',
   },
   uploadText: {
-    //color: 'rgba(255, 255, 255, 0.48)',
     color: '#ACE3FF',
     fontSize: 14,
     mixBlendMode: 'normal',
@@ -1767,7 +1634,6 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     letterSpacing: -0.32,
     lineHeight: 24,
-    //paddingStart: 5,
   },
   deleteBtn: {
     width: 32,
@@ -1817,8 +1683,6 @@ const styles = StyleSheet.create({
   categoryContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    // marginBottom: 12,
-    // marginTop: 9,
   },
   categoryTag: {
     backgroundColor:
@@ -1842,7 +1706,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   featuredLabel: {
-    //color: '#fff',
     color: '#FFFFFFE0',
     fontSize: 14,
     fontFamily: 'Urbanist-Medium',
@@ -1896,7 +1759,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
-
     position: 'absolute',
     bottom: 10,
   },

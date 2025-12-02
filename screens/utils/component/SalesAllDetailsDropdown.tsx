@@ -130,8 +130,6 @@ const SalesAllDetailsDropdown = ({
         <Text style={{ color: 'white', textAlign: 'center', padding: 20 }}>Loading...</Text>
       );
     }
-
-    // If there's no sales data, show a message
     if (salesData.length === 0) {
       return (
         <Text style={{ color: 'white', textAlign: 'center', padding: 20 }}> {t('no_sales_data')}</Text>
@@ -143,10 +141,8 @@ const SalesAllDetailsDropdown = ({
   if (isNaN(date.getTime())) return "";
 
   const day = date.getDate();
-  const lang = i18n.language; // current selected language
-
-  // Month translation
-  const monthIndex = date.getMonth(); // 0–11
+  const lang = i18n.language; 
+  const monthIndex = date.getMonth(); 
   const monthKeys = [
     "jan","feb","mar","apr","may","jun",
     "jul","aug","sep","oct","nov","dec"
@@ -155,8 +151,6 @@ const SalesAllDetailsDropdown = ({
   const month = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
 
   const year = date.getFullYear();
-
-  // ---------- Suffix only for English ----------
   let suffix = "";
   if (lang === "en") {
     if (day % 10 === 1 && day !== 11) suffix = "st";

@@ -54,7 +54,7 @@ const FilterBottomSheet = ({
   const [defaultPriceRange, setDefaultPriceRange] = useState({ min: 0, max: 10000 });
 
 
-const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(null);
+  const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(null);
 
   const fetchFilters = async () => {
     try {
@@ -83,29 +83,26 @@ const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(n
             item.field_type?.toLowerCase() === 'dropdown' ||
             item.alias_name?.toLowerCase() === 'price',
         );
-        console.log("Current Filter: "+ dynamicFilters);
+        console.log("Current Filter: " + dynamicFilters);
         setFilters(dynamicFilters);
 
 
         const priceFilter = dynamicFilters.find(
-            (item: any) => item.alias_name?.toLowerCase() === 'price'
-          );
+          (item: any) => item.alias_name?.toLowerCase() === 'price'
+        );
 
-          if (priceFilter) {
-            const newRange = {
-              min: priceFilter.minvalue ?? 0,
-              max: priceFilter.maxvalue ?? 10000,
-            };
-           // setPriceRange(newRange);
-           // setDefaultPriceRange(newRange);
-            
-             if (!lastAppliedPriceRange) {
+        if (priceFilter) {
+          const newRange = {
+            min: priceFilter.minvalue ?? 0,
+            max: priceFilter.maxvalue ?? 10000,
+          };
+          if (!lastAppliedPriceRange) {
             setPriceRange(newRange);
             setDefaultPriceRange(newRange);
             setSliderLow(newRange.min);
             setSliderHigh(newRange.max);
           }
-          }
+        }
         if (!selectedTab && dynamicFilters.length) {
           setSelectedTab(dynamicFilters[0].field_name);
         }
@@ -119,40 +116,17 @@ const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(n
     if (visible) fetchFilters();
   }, [visible]);
 
-  // useEffect(() => {
-  //   if (visible && initialFilters?.filters?.length > 0) {
-  //     const savedDropdowns: any = {};
-
-  //     initialFilters.filters.forEach((f: any) => {
-  //       if (f.field_type === 'dropdown') {
-  //         savedDropdowns[f.id] = f.options;
-  //       }
-
-  //       if (f.alias_name?.toLowerCase() === 'price' && Array.isArray(f.options)) {
-  //         const [minVal, maxVal] = f.options;
-  //         setPriceRange({ min: minVal, max: maxVal });
-  //         setSliderLow(minVal);
-  //         setSliderHigh(maxVal);
-  //         setLastAppliedPriceRange({ min: minVal, max: maxVal }); // ✅ added
-  //       }
-  //     });
-
-  //     setDropdownSelections(savedDropdowns);
-  //   }
-  // }, [visible, initialFilters]);
-
-
   const [isFirstLoad, setIsFirstLoad] = useState(true);
 
   useEffect(() => {
     if (visible && initialFilters?.filters?.length > 0 && isFirstLoad) {
       const savedDropdowns: any = {};
-  
+
       initialFilters.filters.forEach((f: any) => {
         if (f.field_type === "dropdown") {
           savedDropdowns[f.id] = f.options;
         }
-  
+
         if (f.alias_name?.toLowerCase() === "price") {
           const [min, max] = f.options;
           setPriceRange({ min, max });
@@ -161,14 +135,14 @@ const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(n
           setLastAppliedPriceRange({ min, max });
         }
       });
-  
+
       setDropdownSelections(savedDropdowns);
       setIsFirstLoad(false); // 🔥 prevent re-running on next modal open
     }
   }, [visible]);
-  
 
-   const { t } = useTranslation();
+
+  const { t } = useTranslation();
 
   const handleTabPress = (tabName: string) => {
     setSelectedTab(tabName);
@@ -187,27 +161,23 @@ const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(n
 
   const handleClearFilters = () => {
     setDropdownSelections({});
-    setPriceRange(defaultPriceRange);  // ✅ reset from API range
+    setPriceRange(defaultPriceRange);
     setSliderLow(defaultPriceRange.min);
     setSliderHigh(defaultPriceRange.max);
-    //setSelectedTab(null);
-    //onClose();
   };
- 
-  const modelClose= () => {
+
+  const modelClose = () => {
     onClose();
   }
 
   const handleClose = () => {
-    // ✅ Restore last applied filters when cancelling
     if (initialFilters?.filters?.length > 0) {
       const savedDropdowns: Record<number, number[]> = {};
-  
       initialFilters.filters.forEach((f: any) => {
         if (f.field_type === "dropdown" && Array.isArray(f.options)) {
           savedDropdowns[f.id] = f.options;
         }
-  
+
         if (f.alias_name?.toLowerCase() === "price" && Array.isArray(f.options)) {
           const [min, max] = f.options;
           setPriceRange({ min, max });
@@ -215,16 +185,15 @@ const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(n
           setSliderHigh(max);
         }
       });
-  
+
       setDropdownSelections(savedDropdowns);
     } else {
       setDropdownSelections({});
-      setPriceRange(defaultPriceRange);  // ✅ reset from API range
+      setPriceRange(defaultPriceRange);
       setSliderLow(defaultPriceRange.min);
       setSliderHigh(defaultPriceRange.max);
     }
-  
-    onClose(); // Close sheet after restoring UI
+    onClose();
   };
 
   const renderRightContent = () => {
@@ -285,19 +254,19 @@ const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(n
           ))}
         </ScrollView>
       );
-    } 
+    }
     else if (currentFilter.alias_name === 'price') {
       return (
         <View style={{ zIndex: 999, position: 'relative' }}>
           <Text allowFontScaling={false} style={{ color: 'white', marginBottom: 10 }}>
-            Range: {sliderLow} - {sliderHigh}
+            {t('range')}: {sliderLow} - {sliderHigh}
           </Text>
-    
+
           <View style={{ paddingHorizontal: 20, paddingTop: 30, paddingBottom: 20 }}>
             <MultiSlider
               values={[sliderLow, sliderHigh]}
               sliderLength={150}
-    
+
               min={currentFilter?.minvalue ?? 0}
               max={currentFilter?.maxvalue ?? 100}
               step={1}
@@ -307,7 +276,7 @@ const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(n
                 setSliderHigh(high);
                 setPriceRange({ min: low, max: high })
               }}
-    
+
               selectedStyle={{
                 backgroundColor: '#fff',
               }}
@@ -335,7 +304,7 @@ const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(n
 
     return null;
   };
-  
+
   const handleApply = () => {
     const selectedFilters = filters
       .map(f => {
@@ -347,41 +316,39 @@ const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(n
             alias_name: f.alias_name,
             options: dropdownSelections[f.id],
           };
-        } 
+        }
         else if (f.alias_name?.toLowerCase() === 'price') {
-            const defaultMin = f.minvalue ?? 0;
-            const defaultMax = f.maxvalue ?? 10000;
-  
-            const prevMin = lastAppliedPriceRange?.min ?? defaultMin;
-            const prevMax = lastAppliedPriceRange?.max ?? defaultMax;
-  
-            if (priceRange.min !== prevMin || priceRange.max !== prevMax) {
-              return {
-                id: f.id,
-                field_name: f.field_name,
-                field_type: f.field_type,
-                alias_name: f.alias_name,
-                options: [priceRange.min, priceRange.max],
-              };
-            }
-  
-            // ✅ If unchanged but previously applied range exists, include it
-            if (lastAppliedPriceRange) {
-              return {
-                id: f.id,
-                field_name: f.field_name,
-                field_type: f.field_type,
-                alias_name: f.alias_name,
-                options: [lastAppliedPriceRange.min, lastAppliedPriceRange.max],
-              };
-            }
-  
-            return null;
+          const defaultMin = f.minvalue ?? 0;
+          const defaultMax = f.maxvalue ?? 10000;
+
+          const prevMin = lastAppliedPriceRange?.min ?? defaultMin;
+          const prevMax = lastAppliedPriceRange?.max ?? defaultMax;
+
+          if (priceRange.min !== prevMin || priceRange.max !== prevMax) {
+            return {
+              id: f.id,
+              field_name: f.field_name,
+              field_type: f.field_type,
+              alias_name: f.alias_name,
+              options: [priceRange.min, priceRange.max],
+            };
           }
+          if (lastAppliedPriceRange) {
+            return {
+              id: f.id,
+              field_name: f.field_name,
+              field_type: f.field_type,
+              alias_name: f.alias_name,
+              options: [lastAppliedPriceRange.min, lastAppliedPriceRange.max],
+            };
+          }
+
+          return null;
+        }
         return null;
       })
       .filter(Boolean);
-  
+
     const filterBody = {
       filters: selectedFilters,
       page: 1,
@@ -389,201 +356,178 @@ const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(n
       search: '',
       category_id: catagory_id,
     };
-  
+
     console.log('Selected filter body:', JSON.stringify(filterBody, null, 2));
     onApply(filterBody);
-  
-    // ✅ Save current applied range for next reopen
+
     setLastAppliedPriceRange(priceRange);
-  
+
     onClose();
   };
 
   return (
     <View
-    style={[
-      ,
-      { zIndex: 999, display: visible ? 'flex' : 'none',position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,width: '100%', height: '100%',},
-    ]}
-  >
-    {/* Background BlurView */}
-    <BlurView
-      style={{ top: 0, left: 0, right: 0, bottom: 0,width: '100%', height: '100%',}}
-      blurType="dark"
-      blurAmount={Platform.OS === 'ios' ?3 : 4}
-      reducedTransparencyFallbackColor="transparent"
+      style={[
+        ,
+        { zIndex: 999, display: visible ? 'flex' : 'none', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', },
+      ]}
     >
+      <BlurView
+        style={{ top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', }}
+        blurType="dark"
+        blurAmount={Platform.OS === 'ios' ? 3 : 4}
+        reducedTransparencyFallbackColor="transparent"
+      >
 
-    {/* Modal */}
-    <Modal
-      animationType="slide"
-      visible={visible}
-      transparent
-      onRequestClose={modelClose}
-    >
-      {/* <View
-        style={[{
-          flex: 1,
-          justifyContent: 'flex-end',
-          backgroundColor:
-            'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(34, 30, 252, 0.06) 0%, rgba(64, 122, 229, 0.1) 100%)',
-          zIndex: 1000,
-        },StyleSheet.absoluteFillObject,]}
-      > */}
-      <View style={{
+        <Modal
+          animationType="slide"
+          visible={visible}
+          transparent
+          onRequestClose={modelClose}
+        >
+          <View style={{
             flex: 1, justifyContent: 'flex-end', backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(34, 30, 252, 0.08) 0%, rgba(255, 255, 255, 0.10) 100%)'
           }}>
-        {/* Overlay Click to Close */}
-        <TouchableWithoutFeedback onPress={modelClose}>
-          <View style={StyleSheet.absoluteFillObject} />
-        </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={modelClose}>
+              <View style={StyleSheet.absoluteFillObject} />
+            </TouchableWithoutFeedback>
 
-        <View style={[styles.modelcontainer, { zIndex: 1001 }]}>
-          {' '}
-          {/* Ensure modal container has higher zIndex */}
-          {/* <BlurView
-            style={[{backgroundColor: 'rgba(81, 151, 255, 0.3)',width: '100%',height: '100%'}]}
-            blurType="dark"
-            blurAmount={Platform.OS === 'ios' ? 5 : 4}
-            reducedTransparencyFallbackColor="transparent"
-          > */}
-          <BlurView
-                  style={[
-                    {
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0, borderRadius: 30,
-                      backgroundColor: 'rgba(119, 173, 255, 0.07)'
-                    },
+            <View style={[styles.modelcontainer, { zIndex: 1001 }]}>
+              {' '}
+              <BlurView
+                style={[
+                  {
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0, borderRadius: 30,
+                    backgroundColor: 'rgba(119, 173, 255, 0.07)'
+                  },
 
-                  ]}
-                  blurType="light"
-                  blurAmount={18}
-                  pointerEvents='none'
-                  reducedTransparencyFallbackColor="white"
+                ]}
+                blurType="light"
+                blurAmount={18}
+                pointerEvents='none'
+                reducedTransparencyFallbackColor="white"
+              />
+              <View style={styles.modeltitleContainer1}>
+                <View
+                  style={{
+                    width: 50,
+                    height: 4,
+                    borderRadius: 2,
+                    alignSelf: 'center',
+                    backgroundColor: '#000228',
+                    marginTop: 8,
+                  }}
                 />
-          <View style={styles.modeltitleContainer1}>
-            <View
-              style={{
-                width: 50,
-                height: 4,
-                borderRadius: 2,
-                alignSelf: 'center',
-                backgroundColor: '#000228',
-                marginTop: 8,
-              }}
-            />
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                paddingTop: 16,
-              }}
-            >
-              <Text allowFontScaling={false} style={styles.modelTextHeader}>
-                {t('filters')}
-              </Text>
-              <TouchableOpacity onPress={handleClearFilters}>
-                <Text allowFontScaling={false} style={styles.clearAll}>
-                  {t('clear_all')}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View style={{ flex: 1, flexDirection: 'row' }}>
-            {/* Left-side filter tabs */}
-            <View style={styles.modelLeftSideContainer}>
-              <ScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{
-                  paddingBottom: Platform.OS === 'ios' ? 65 : 20,
-                }}
-              >
-                {filters.map(f => (
-                  <TouchableOpacity
-                    key={f.field_name}
-                    onPress={() => handleTabPress(f.field_name)}
-                    style={
-                      selectedTab === f.field_name
-                        ? styles.activeTab
-                        : styles.inactiveTab
-                    }
-                  >
-                    <View
-                      style={{ alignItems: 'center', width: '100%', gap: 4 }}
-                    >
-                      {f.logo ? (
-                        <Image
-                          source={{ uri: f.logo }}
-                          style={styles.filterLogo}
-                          resizeMode="contain"
-                        />
-                      ) : null}
-                      <Text
-                        allowFontScaling={false}
-                        style={[
-                          styles.filtertitle,
-                          selectedTab === f.field_name
-                            ? styles.activeTabText
-                            : styles.inactiveTabText,
-                        ]}
-                      >
-                        {f.field_name}
-                      </Text>
-                    </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    paddingTop: 16,
+                  }}
+                >
+                  <Text allowFontScaling={false} style={styles.modelTextHeader}>
+                    {t('filters')}
+                  </Text>
+                  <TouchableOpacity onPress={handleClearFilters}>
+                    <Text allowFontScaling={false} style={styles.clearAll}>
+                      {t('clear_all')}
+                    </Text>
                   </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
+                </View>
+              </View>
+              <View style={{ flex: 1, flexDirection: 'row' }}>
+                <View style={styles.modelLeftSideContainer}>
+                  <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{
+                      paddingBottom: Platform.OS === 'ios' ? 65 : 20,
+                    }}
+                  >
+                    {filters.map(f => (
+                      <TouchableOpacity
+                        key={f.field_name}
+                        onPress={() => handleTabPress(f.field_name)}
+                        style={
+                          selectedTab === f.field_name
+                            ? styles.activeTab
+                            : styles.inactiveTab
+                        }
+                      >
+                        <View
+                          style={{ alignItems: 'center', width: '100%', gap: 4 }}
+                        >
+                          {f.logo ? (
+                            <Image
+                              source={{ uri: f.logo }}
+                              style={styles.filterLogo}
+                              resizeMode="contain"
+                            />
+                          ) : null}
+                          <Text
+                            allowFontScaling={false}
+                            style={[
+                              styles.filtertitle,
+                              selectedTab === f.field_name
+                                ? styles.activeTabText
+                                : styles.inactiveTabText,
+                            ]}
+                          >
+                            {f.field_name}
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </View>
 
-            {/* Right-side content (filter options) */}
-            <ScrollView
-              style={styles.scrollview_style}
-              contentContainerStyle={{ padding: 16, paddingBottom: 70 }}
-              showsVerticalScrollIndicator={false}
-            >
-              <Text allowFontScaling={false} style={styles.filterHeadTitle}>
-                {selectedTab}
-              </Text>
-              {renderRightContent()}
-            </ScrollView>
+                <ScrollView
+                  style={styles.scrollview_style}
+                  contentContainerStyle={{ padding: 16, paddingBottom: 70 }}
+                  showsVerticalScrollIndicator={false}
+                >
+                  <Text allowFontScaling={false} style={styles.filterHeadTitle}>
+                    {selectedTab}
+                  </Text>
+                  {renderRightContent()}
+                </ScrollView>
+              </View>
+              {/* Bottom buttons */}
+              <View style={styles.bottomview}>
+                <FilterButton
+                  title={t('cancel')}
+                  onPress={handleClose}
+                  style={styles.FilterButton_cancle}
+                />
+                <FilterButtonApply
+                  title={t('apply')}
+                  onPress={handleApply}
+                  style={styles.FilterButton_apply}
+                />
+              </View>
+            </View>
           </View>
-          {/* Bottom buttons */}
-          <View style={styles.bottomview}>
-            <FilterButton
-              title={t('cancel')}
-              onPress={handleClose}
-              style={styles.FilterButton_cancle}
-            />
-            <FilterButtonApply
-              title={t('apply')}
-              onPress={handleApply}
-              style={styles.FilterButton_apply}
-            />
-          </View>
-          {/* </BlurView> */}
-        </View>
-      </View>
-    </Modal>
-    </BlurView>
-  </View>
+        </Modal>
+      </BlurView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  scrollview_style:{
-    
+  scrollview_style: {
+
     flex: 1,
     backgroundColor:
       Platform.OS === 'ios'
         ? 'rgba(0, 0, 0, 0.30)'
         : 'rgba(255, 255, 255, 0.07)',
-    
+
   },
-  FilterButton_apply:{
+  FilterButton_apply: {
     minHeight: 48,
     width: '49%',
     borderRadius: 40,
@@ -594,7 +538,7 @@ const styles = StyleSheet.create({
     boxShadow: '0 2px 8px 0 rgba(75, 75, 75, 0.19)',
   },
 
-  FilterButton_cancle:{
+  FilterButton_cancle: {
     minHeight: 48,
     width: '49%',
     borderRadius: 40,
@@ -612,14 +556,14 @@ const styles = StyleSheet.create({
     //marginBottom: 5,
     minHeight: 100,
     flexShrink: 1,
-    width: '100%',  
+    width: '100%',
     borderWidth: 0.5,
-    borderColor:'rgba(255, 255, 255, 0.001)',
-    marginBottom:4,
+    borderColor: 'rgba(255, 255, 255, 0.001)',
+    marginBottom: 4,
   },
-  
+
   activeTab: {
-    marginBottom:4,
+    marginBottom: 4,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor:
@@ -635,7 +579,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     width: '100%',
   },
-  
+
   filterLogo: {
     width: 20,        // adjust as needed
     height: 20,       // adjust as needed
@@ -653,7 +597,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     fontStyle: 'normal',
-    
+
   },
   inactiveTabText: {
     color: 'rgba(255, 255, 255, 0.64)',

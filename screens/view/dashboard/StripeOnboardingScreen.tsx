@@ -5,6 +5,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Linking } from 'react-native';
 import Loader from '../../utils/component/Loader';
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTranslation } from 'react-i18next';
 type RootStackParamList = {
   StripeOnboardingScreen: { onboardingUrl: string };
   StripeOnboardingComplete: undefined;
@@ -19,12 +20,12 @@ export default function StripeOnboardingScreen({ route, navigation }: any) {
   const { onboardingUrl } = route.params;
   const webViewRef = useRef<WebView>(null);
   const navigationHandledRef = useRef(false);
+  const { t } = useTranslation();
 
   const handleUrlChange = (navState: any) => {
     const url = navState.url;
     console.log('WebView URL changed:', url);
     
-    // Prevent multiple navigation calls
     if (navigationHandledRef.current) {
       return;
     }
@@ -32,29 +33,24 @@ export default function StripeOnboardingScreen({ route, navigation }: any) {
     if (url.includes('onboarding-complete')) {
       navigationHandledRef.current = true;
 
-      // Stop WebView from loading the redirect URL
       webViewRef.current?.stopLoading();
-      // Navigate to complete screen
       navigation.replace('StripeOnboardingComplete');
     } else if (url.includes("onboarding-cancel")) {
       navigationHandledRef.current = true;
      
       webViewRef.current?.stopLoading();
-      // Navigate to cancel screen
       navigation.replace('StripeOnboardingCancel');
     }
   };
 
-  // Intercept navigation requests to prevent WebView from loading redirect URLs
   const handleShouldStartLoadWithRequest = (request: any) => {
     const url = request.url;
-    // If it's a redirect URL, prevent WebView from loading it
     if (url.includes('onboarding-complete') || url.includes('onboarding-cancel')) {
       handleUrlChange({ url });
-      return false; // Prevent WebView from loading this URL
+      return false; 
     }
     
-    return true; // Allow normal navigation
+    return true; 
   };
 
   return (
@@ -81,14 +77,13 @@ export default function StripeOnboardingScreen({ route, navigation }: any) {
               }}
             />
             <Text allowFontScaling={false} style={styles.loadingText}>
-              Redirecting to Stripe..
+              {t('redirect_stripe')}
             </Text>
           </View>
         )}
       onError={(syntheticEvent) => {
         const { nativeEvent } = syntheticEvent;
         console.warn('WebView error: ', nativeEvent);
-        // If error occurs on redirect URL, it's expected - we handle it manually
         if (nativeEvent.url && (nativeEvent.url.includes('onboarding-complete') || nativeEvent.url.includes('onboarding-cancel'))) {
           console.log('Expected error on redirect URL, handling navigation manually');
           handleUrlChange({ url: nativeEvent.url });

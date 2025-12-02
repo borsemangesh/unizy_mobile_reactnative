@@ -24,12 +24,12 @@ interface SelectFoodQuantityProps {
   title?: string;
   subtitle?: string;
   onClose: () => void;
-  onSelect: (selectedId: number | number[]) => void; 
+  onSelect: (selectedId: number | number[]) => void;
   selectedValues?: number | number[];
-  price?: number | string;  
-  totalcount:number
-continueToPay?: (amount: number) => void;
- }
+  price?: number | string;
+  totalcount: number
+  continueToPay?: (amount: number) => void;
+}
 const SelectFoodQuantity = ({
   options,
   visible,
@@ -42,105 +42,102 @@ const SelectFoodQuantity = ({
   totalcount,
   continueToPay
 }: SelectFoodQuantityProps) => {
-  
+
   const screenHeight = Dimensions.get('window').height;
 
   const [count, setCount] = useState(1);
   const maxUnits = Number(totalcount);
- const unitPrice = Number(price ?? 0);
+  const unitPrice = Number(price ?? 0);
   const totalPrice = unitPrice * count;
- const { t } = useTranslation();
+  const { t } = useTranslation();
 
-const handleApply = async () => {
-  try {
-    await AsyncStorage.setItem('quantitycount', String(count)); 
-  } catch (e) {
-    console.log('storage error', e);
-  }
+  const handleApply = async () => {
+    try {
+      await AsyncStorage.setItem('quantitycount', String(count));
+    } catch (e) {
+      console.log('storage error', e);
+    }
 
-  if (continueToPay) {
-    const finalAmount = Number(totalPrice.toFixed(2));
-    continueToPay(finalAmount);
-  }
-};
+    if (continueToPay) {
+      const finalAmount = Number(totalPrice.toFixed(2));
+      continueToPay(finalAmount);
+    }
+  };
   return (
-    <View  style={[StyleSheet.absoluteFillObject,{zIndex: 999,display: visible ? 'flex' : 'none'}]}>
+    <View style={[StyleSheet.absoluteFillObject, { zIndex: 999, display: visible ? 'flex' : 'none' }]}>
       <BlurView
-      style={[StyleSheet.absoluteFillObject]}
-      blurType="dark"
-      blurAmount={Platform.OS === 'ios' ? 2 : 2}
-      reducedTransparencyFallbackColor="transparent"
-    />
-    <Modal
-      animationType="slide"
-      visible={visible}
-      transparent
-      onRequestClose={onClose}
-    >
+        style={[StyleSheet.absoluteFillObject]}
+        blurType="dark"
+        blurAmount={Platform.OS === 'ios' ? 2 : 2}
+        reducedTransparencyFallbackColor="transparent"
+      />
+      <Modal
+        animationType="slide"
+        visible={visible}
+        transparent
+        onRequestClose={onClose}>
 
-    <View style={{ flex: 1,justifyContent: 'flex-end', }}>
+        <View style={{ flex: 1, justifyContent: 'flex-end', }}>
+          <View style={styles.overlay}>
+            <TouchableWithoutFeedback onPress={onClose}>
+              <View style={StyleSheet.absoluteFillObject} />
+            </TouchableWithoutFeedback>
+            <View style={styles.modelcontainer}>
+              <BlurView
+                blurType={Platform.OS === 'ios' ? 'light' : 'dark'}
+                style={[
+                  {
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                    opacity: 1,
 
-      <View style={styles.overlay}>
+                  }
+                ]}
+                blurAmount={Platform.OS === 'ios' ? 50 : 10}
+                reducedTransparencyFallbackColor="none"
+              />
 
-  <TouchableWithoutFeedback onPress={onClose}>
-    <View style={StyleSheet.absoluteFillObject} />
-  </TouchableWithoutFeedback>
-        <View style={styles.modelcontainer}>
-          <BlurView
-          blurType={Platform.OS === 'ios' ? 'light' : 'dark'}
-            style={[
-              // StyleSheet.absoluteFill,
-             { position: 'absolute',
-              left: 0,
-              right: 0,
-              top: 0,
-              bottom: 0,
-              opacity: 1,
-           
-            }
-            ]}
-            blurAmount={Platform.OS === 'ios' ? 50 : 10}
-            reducedTransparencyFallbackColor="none"
-          />
+              <View style={styles.modeltitleContainer}>
+                <View style={{ width: '100%', alignSelf: 'center', alignItems: 'center', paddingBottom: 10 }}>
+                  <View style={{ height: 5, backgroundColor: 'rgba(0, 0, 0, 0.57)', flexDirection: 'row', width: '15%', borderRadius: 10, top: -10 }} />
 
-          <View style={styles.modeltitleContainer}>
-              <View style={{width: '100%',alignSelf: 'center',alignItems: 'center',paddingBottom: 10}}>
-              <View style={{height:5,backgroundColor: 'rgba(0, 0, 0, 0.57)',flexDirection: 'row',width: '15%',borderRadius: 10,top:-10}}/>
-
-              </View>
-            <View
-              style={{
-                flexDirection: 'column',
-              }}
-            >
-              <View style={styles.header}>
-                <View style={styles.optionHeader}>
-                  <View style={styles.checkboxImage}>
-                      <Image
-                      source={require('../../../assets/images/food_quan.png')}
-                      style={{ width: 24, height: 24 }}
-                    />
-                  </View>
-                  <Text allowFontScaling={false} style={styles.modelTextHeader}>{title}</Text>
                 </View>
-                <Text allowFontScaling={false} style={styles.orderandTotalEarings}>
-                  {subtitle}
-                </Text>
+                <View
+                  style={{
+                    flexDirection: 'column',
+                  }}
+                >
+                  <View style={styles.header}>
+                    <View style={styles.optionHeader}>
+                      <View style={styles.checkboxImage}>
+                        <Image
+                          source={require('../../../assets/images/food_quan.png')}
+                          style={{ width: 24, height: 24 }}
+                        />
+                      </View>
+                      <Text allowFontScaling={false} style={styles.modelTextHeader}>{title}</Text>
+                    </View>
+                    <Text allowFontScaling={false} style={styles.orderandTotalEarings}>
+                      {subtitle}
+                    </Text>
+                  </View>
+                </View>
               </View>
-            </View>
-          </View>
-          <View
-            style={{
-              width: '100%',
-              minHeight: screenHeight * 0.2, 
-              maxHeight: screenHeight * 0.6,
-              paddingHorizontal: 10,
-            }}
-          >
-            <ScrollView  showsVerticalScrollIndicator={false} contentContainerStyle={{ }}>
-              {options.map((option, index) => {
-              
-                  return (
+              <View
+                style={{
+                  width: '100%',
+                  minHeight: screenHeight * 0.2,
+                  maxHeight: screenHeight * 0.6,
+                  paddingHorizontal: 10,
+                }}
+              >
+                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{}}>
+                  {options.map((option, index) => {
+
+                    return (
                       <View
                         style={{
                           paddingHorizontal: 10,
@@ -171,12 +168,14 @@ const handleApply = async () => {
                               }}
                             >
                               {t('Available_Units')}:{' '}
-                              <Text style={{ color: '#fff',
+                              <Text style={{
+                                color: '#fff',
                                 fontSize: 17,
                                 fontWeight: 600,
                                 lineHeight: 18,
                                 letterSpacing: -0.28,
-                                fontFamily: 'Urbanist-SemiBold', }}>
+                                fontFamily: 'Urbanist-SemiBold',
+                              }}>
                                 {maxUnits}
                               </Text>
                             </Text>
@@ -188,7 +187,6 @@ const handleApply = async () => {
                                 gap: 8,
                               }}
                             >
-                              {/* Minus Button */}
                               <TouchableOpacity
                                 disabled={count === 1}
                                 onPress={() => setCount(prev => Math.max(1, prev - 1))}
@@ -202,8 +200,6 @@ const handleApply = async () => {
                                   style={{ width: 44, height: 44 }}
                                 />
                               </TouchableOpacity>
-
-                              {/* Count */}
                               <Text
                                 style={{
                                   color: '#FFF',
@@ -211,13 +207,12 @@ const handleApply = async () => {
                                   width: 30,
                                   textAlign: 'center',
                                   fontFamily: 'Urbanist-SemiBold',
-                                  fontWeight:600
+                                  fontWeight: 600
                                 }}
                               >
                                 {count}
                               </Text>
 
-                              {/* Plus Button */}
                               <TouchableOpacity
                                 disabled={count === maxUnits}
                                 onPress={() => setCount(prev => Math.min(maxUnits, prev + 1))}
@@ -237,32 +232,28 @@ const handleApply = async () => {
                       </View>
                     );
 
-              })}
-               <View style={styles.cardconstinerdivider} />
-            </ScrollView>
-    
+                  })}
+                  <View style={styles.cardconstinerdivider} />
+                </ScrollView>
+              </View>
+              <PayButton
+                amount={Number(totalPrice.toFixed(2))}
+                label={t('pay')}
+                onPress={handleApply}
+              />
+            </View>
           </View>
-  
-             <PayButton
-            amount={Number(totalPrice.toFixed(2))}
-            label={ t('pay')}
-            onPress={handleApply}
-          />
+
         </View>
-        
-
-      </View>
-
-      </View>
-    </Modal>
+      </Modal>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  tickImage:{
-   height:24,
-   width:24
+  tickImage: {
+    height: 24,
+    width: 24
   },
   cardconstinerdivider: {
     display: 'flex',
@@ -274,22 +265,20 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     height: 1,
     borderColor: '#52577cff',
-    marginTop:24
+    marginTop: 24
   },
   checkedBox: {
-    //backgroundColor: '#ffffff',
   },
   tickMark: {
-  color: '#260426ff', 
-  fontSize: 10,
-  textAlign: 'center',
-  fontWeight: '600',
-  lineHeight: 10, // keeps it centered
-},
-  
+    color: '#260426ff',
+    fontSize: 10,
+    textAlign: 'center',
+    fontWeight: '600',
+    lineHeight: 10, 
+  },
+
   radioButtonContainer: {
     marginTop: 10,
-    // alignItems: 'center',
   },
   radioButton: {
     width: 19,
@@ -301,7 +290,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   selectedRadio: {
-    backgroundColor: 'rgba(0, 0, 255, 0)', // Radio button color when selected
+    backgroundColor: 'rgba(0, 0, 255, 0)',
   },
   radioDot: {
     width: 10,
@@ -310,25 +299,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   checkboxWrapper: {
-  width: 19,
-  height: 19,
-  justifyContent: 'center',
-  alignItems: 'center',
-},
+    width: 19,
+    height: 19,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   checkboxContainer: {
-    //width: 19,
-    //height: 19,
-    height:'100%',
-    width:'100%',
-
+    height: '100%',
+    width: '100%',
     borderRadius: 5,
     borderWidth: 1,
     borderColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'transparent',
-    //marginTop: 10,
-   // overflow:'hidden'
   },
   orderandTotalEarings: {
     color: '#FFFFFF',
@@ -337,14 +321,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     lineHeight: 16,
     opacity: 0.64,
-    //textShadowColor: 'rgba(255,255,255,0.6)',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 1,
     marginTop: 10,
-    
+
   },
   header: {
-    
+
   },
   optionHeader: {
     flexDirection: 'row',
@@ -369,14 +352,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     paddingVertical: 16,
-    paddingHorizontal:20,
-    // backgroundColor: 'rgba(98, 132, 255, 0.46)',
+    paddingHorizontal: 20,
     backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(254, 254, 254, 0.11) 0%, rgba(39, 75, 253, 0.03) 100%)',
-
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-  
-  
   },
   broderTopLeftRightRadius_30: {
     borderTopLeftRadius: 30,
@@ -384,31 +363,16 @@ const styles = StyleSheet.create({
   },
   modelcontainer: {
     backgroundColor:
-  'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(0, 60, 163, 0.05) 0%, rgba(255, 255, 255, 0.03) 100%)',
-
-    
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(0, 60, 163, 0.05) 0%, rgba(255, 255, 255, 0.03) 100%)',
     width: '100%',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     alignItems: 'center',
-    // filter: 'drop-shadow(0 0.833px 3.333px rgba(255, 255, 255, 0.18))',
     gap: 5,
     opacity: 0.8,
-    overflow:'hidden'
+    overflow: 'hidden'
   },
-  // bottomview: {
-  //   padding: 16,
-  //   width: '100%',
-  //   display: 'flex',
-  //   flexDirection: 'row',
-  //   justifyContent: 'center',
-  //   paddingBottom: (Platform.OS === 'ios' ? 40 : 20),
-  //   paddingTop:16,
-  //   alignItems:'center',
-  //   alignContent:'center',
-  //   gap:8
 
-  // },
   radioButtonSelected: {
     backgroundColor: 'white',
     borderRadius: 10,
@@ -431,22 +395,18 @@ const styles = StyleSheet.create({
     shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25',
   },
   cancelBtn: {
-    minHeight:48,
+    minHeight: 48,
     flex: 1,
-    //marginRight: 8,
     padding: 12,
     borderRadius: 50,
-    // backgroundColor: 'gray',
     backgroundColor: '#ffffff1b',
     alignItems: 'center',
     justifyContent: 'center',
     boxShadow: '0 2px 8px 0 rgba(75, 75, 75, 0.19)',
   },
   overlay: {
-    //backgroundColor: 'rgba(0, 0, 0, 0.5)',
     flex: 1,
     justifyContent: 'flex-end',
-    // opacity: 0.8
   },
   filtertitle: {
     color: 'rgba(255, 255, 255, 0.64)',
@@ -535,15 +495,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '500',
     letterSpacing: 0.17,
-    //lineHeight: 19.6,
   },
 
   inactiveTab: {
     display: 'flex',
     alignItems: 'center',
-
     borderRadius: 14,
-
     justifyContent: 'center',
     padding: 16,
     gap: 4,
@@ -557,8 +514,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 0.5,
     borderColor: '#ffffff0e',
-    // boxShadow:
-    //   '0 0px 2px 1px rgba(255, 255, 255, 0.16)inset',
     justifyContent: 'center',
     padding: 16,
     gap: 4,

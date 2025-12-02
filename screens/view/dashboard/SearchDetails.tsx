@@ -159,7 +159,6 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         if (!token) return;
         const url1 = `${MAIN_URL.baseUrl}category/feature-detail/${id}`;
         console.log(url1);
-        //const url1 = `http://65.0.99.229:4320/category/feature-detail/30`;
 
         const res = await fetch(url1, {
           headers: {
@@ -171,7 +170,6 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         const json = await res.json();
         setDetail(json.data);
         console.log('json.data------', json.data);
-        console.log('details--------', json);
 
         if (res.status === 401 || res.status === 403) {
           handleForceLogout();
@@ -251,9 +249,8 @@ const formatDate = (dateString?: string, t?: any) => {
 
   const day = date.getDate();
   const year = date.getFullYear();
-  const lang = i18n.language; // detect current language
+  const lang = i18n.language; 
 
-  // ---------- Suffix only for English ----------
   let suffix = "";
   if (lang === "en") {
     if (day % 10 === 1 && day !== 11) suffix = "st";
@@ -262,8 +259,7 @@ const formatDate = (dateString?: string, t?: any) => {
     else suffix = "th";
   }
 
-  // ---------- Month translation ----------
-  const monthIndex = date.getMonth(); // 0–11
+  const monthIndex = date.getMonth();
   const monthKeys = [
     "jan","feb","mar","apr","may","jun",
     "jul","aug","sep","oct","nov","dec"
@@ -281,8 +277,6 @@ const formatDate = (dateString?: string, t?: any) => {
     }
 
     const amountToPay = overrideAmount ?? Number(detail.price).toFixed(2);
-
-    //console.log('Final Amount', famount);
 
     navigation.navigate('PaymentScreen', {
       amount: amountToPay,
@@ -394,7 +388,6 @@ const formatDate = (dateString?: string, t?: any) => {
               />
             )}
           />
-          {/* Step Indicator */}
           <View style={styles.stepIndicatorContainer}>
             {images.map((_: any, index: number) => (
               <View
@@ -426,12 +419,10 @@ const formatDate = (dateString?: string, t?: any) => {
 
       setDetail(
         (prev: any) =>
-          prev ? { ...prev, isbookmarked: !prev.isbookmarked } : prev, // if null, just return null
+          prev ? { ...prev, isbookmarked: !prev.isbookmarked } : prev, 
       );
 
       const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
-
-      // 2️⃣ Send API request
       const url = MAIN_URL.baseUrl + 'category/list-bookmark';
       const response = await fetch(url, {
         method: 'POST',
@@ -452,7 +443,6 @@ const formatDate = (dateString?: string, t?: any) => {
         showToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
       }
 
-      // 3️⃣ Update bookmarkedIds for persistence
       let updatedBookmarks;
       if (isCurrentlyBookmarked) {
         updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
@@ -470,7 +460,7 @@ const formatDate = (dateString?: string, t?: any) => {
 
       setDetail(
         (prev: any) =>
-          prev ? { ...prev, isbookmarked: !prev.isbookmarked } : prev, // if null, just return null
+          prev ? { ...prev, isbookmarked: !prev.isbookmarked } : prev, 
       );
     }
   };
@@ -568,12 +558,10 @@ const formatDate = (dateString?: string, t?: any) => {
           barStyle="light-content"
         />
 
-        {/* Header with Blur only at top */}
         <AnimatedReanimated.View
           style={[styles.headerWrapper, animatedBlurStyle]}
           pointerEvents="none"
         >
-          {/* Blur layer only at top with gradient fade */}
           <MaskedView
             style={StyleSheet.absoluteFill}
             maskElement={
@@ -606,12 +594,11 @@ const formatDate = (dateString?: string, t?: any) => {
           </MaskedView>
         </AnimatedReanimated.View>
 
-        {/* Header Content */}
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
               if (navigation.canGoBack()) {
-                navigation.goBack(); // go to previous screen if available
+                navigation.goBack(); 
               } else {
                 navigation.replace('Dashboard', {
                   AddScreenBackactiveTab: 'Home',
@@ -625,7 +612,6 @@ const formatDate = (dateString?: string, t?: any) => {
             <AnimatedReanimated.View
               style={[styles.blurButtonWrapper, animatedButtonStyle]}
             >
-              {/* Static background (visible when scrollY = 0) */}
               <AnimatedReanimated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -642,7 +628,6 @@ const formatDate = (dateString?: string, t?: any) => {
                 ]}
               />
 
-              {/* Blur view fades in as scroll increases */}
               <AnimatedReanimated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -664,7 +649,6 @@ const formatDate = (dateString?: string, t?: any) => {
                 />
               </AnimatedReanimated.View>
 
-              {/* Back Icon */}
               <AnimatedReanimated.Image
                 source={require('../../../assets/images/back.png')}
                 style={[{ height: 24, width: 24 }, animatedIconStyle]}
@@ -686,7 +670,6 @@ const formatDate = (dateString?: string, t?: any) => {
             <AnimatedReanimated.View
               style={[styles.blurButtonWrapper, animatedButtonStyle]}
             >
-              {/* Static background (visible when scrollY = 0) */}
               <AnimatedReanimated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -703,7 +686,6 @@ const formatDate = (dateString?: string, t?: any) => {
                 ]}
               />
 
-              {/* Blur view fades in as scroll increases */}
               <AnimatedReanimated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -729,8 +711,8 @@ const formatDate = (dateString?: string, t?: any) => {
               <AnimatedReanimated.Image
                 source={
                   detail?.isbookmarked
-                    ? require('../../../assets/images/favourite_filled.png') // bookmarked
-                    : require('../../../assets/images/favourite.png') // not bookmarked
+                    ? require('../../../assets/images/favourite_filled.png')
+                    : require('../../../assets/images/favourite.png')
                 }
                 style={styles.iconSmall}
               />
@@ -743,14 +725,12 @@ const formatDate = (dateString?: string, t?: any) => {
           showsVerticalScrollIndicator={false}
           onScroll={scrollHandler}
           contentContainerStyle={[
-            // styles.scrollContainer,
-            // { paddingBottom: Platform.OS === 'ios' ? 75 : height * 0.07 },
             styles.scrollContainer,
             {
               paddingBottom:
                 detail?.category?.id === 4
-                  ? (Platform.OS === 'ios' ? 20 : height * 0.01) // when id = 4
-                  : (Platform.OS === 'ios' ? 75 : height * 0.07), // default
+                  ? (Platform.OS === 'ios' ? 20 : height * 0.01) 
+                  : (Platform.OS === 'ios' ? 75 : height * 0.07),
             },
 
           ]}
@@ -839,15 +819,12 @@ const formatDate = (dateString?: string, t?: any) => {
                       key={param.id}
                       style={{ marginTop: 4, marginBottom: 0 }}
                     >
-                      {/* Param name */}
                       <Text
                         allowFontScaling={false}
                         style={styles.itemcondition}
                       >
                         {param.name}
                       </Text>
-
-                      {/* Param value */}
                       {param.options && param.options.length > 0 ? (
                         <View style={styles.categoryContainer}>
                           {param.options
@@ -940,7 +917,6 @@ const formatDate = (dateString?: string, t?: any) => {
                   <View style={{ flexDirection: 'row' }}>
                     <View style={styles.bottombutton}>
                       <TouchableOpacity
-                        //disabled={!detail?.ispurchased}
                         onPress={() => {
                           navigation.navigate('ReviewDetails', {
                             category_id: detail?.category_id,
@@ -976,20 +952,6 @@ const formatDate = (dateString?: string, t?: any) => {
                       ]}
                       activeOpacity={0.8}
                       onPress={() => {
-
-                        //  navigation.navigate('MessagesIndividualScreen', {
-                        //     animation: 'none',
-                        //     sellerData: {
-                        //       featureId: detail.id,
-                        //       firstname: detail.createdby.firstname,
-                        //       lastname: detail.createdby.lastname,
-                        //       profile: detail.createdby.profile,
-                        //       universityName: detail.university,
-                        //       id: detail.createdby.id,
-                        //     },
-                        //     source: 'sellerPage', 
-                        //   });
-
                         if (detail?.category?.chat_with_seller) {
                           console.log(
                             'NAVIGATIONSTATUS: ',
@@ -1005,7 +967,7 @@ const formatDate = (dateString?: string, t?: any) => {
                               universityName: detail.university,
                               id: detail.createdby.id,
                             },
-                            source: 'sellerPage', // 👈 another flag
+                            source: 'sellerPage', 
                           });
                         } else {
                           setShowPopup(true);
@@ -1026,17 +988,6 @@ const formatDate = (dateString?: string, t?: any) => {
             </View>
           </View>
         </AnimatedReanimated.ScrollView>
-
-
-        {/* <PayButton
-          amount={
-            detail?.category?.name === 'Food'
-              ? undefined
-              : Number(detail?.price)
-          }
-          label={detail?.category?.name === 'Food' ? 'Select Quantity' : 'Pay'}
-          onPress={() => handlePay()} 
-        /> */}
 
         {detail?.category?.id !== 4 && (
           <PayButton
@@ -1286,7 +1237,7 @@ const formatDate = (dateString?: string, t?: any) => {
                           universityName: detail.university,
                           id: detail.createdby.id,
                         },
-                        source: 'sellerPage', // 👈 another flag
+                        source: 'sellerPage',
                       });
                       setShowPopup1(false);
                     }}
@@ -1345,13 +1296,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: Platform.OS === 'ios' ? 16.2 : 16,
     zIndex: 11,
-    //top: 7,
   },
   rightButtoContainer: {
     position: 'absolute',
     right: Platform.OS === 'ios' ? 17.7 : 16,
     zIndex: 11,
-    //top: 7,
   },
   blurButtonWrapper: {
     width: 48,
@@ -1362,7 +1311,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', 
   },
 
   fullScreenContainer: {
@@ -1386,7 +1335,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    //boxShadow: 'rgba(255, 255, 255, 0.12)  inset -1px 0px 5px 1px inset ',
 
     boxShadow:
       '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
@@ -1426,7 +1374,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     height: 'auto',
-    //width: '80%',
   },
 
   bottombutton: {
@@ -1440,7 +1387,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
     padding: 16,
-    //width: '20%',
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
@@ -1465,7 +1411,6 @@ const styles = StyleSheet.create({
   MylistingsBackground: {
     height: 48,
     width: 48,
-
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 100,
@@ -1473,7 +1418,6 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(97, 179, 255, 0.2) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow:
       '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
-
     borderTopColor: '#ffffff5d',
     borderBottomColor: '#ffffff36',
     borderLeftColor: '#ffffff5d',
@@ -1487,13 +1431,13 @@ const styles = StyleSheet.create({
 
   stepIndicatorContainer: {
     position: 'absolute',
-    bottom: 12, // place above bottom edge of image
+    bottom: 12, 
     alignSelf: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     gap: 6,
-    zIndex: 10, // ensures it's on top of image
+    zIndex: 10,
   },
 
   stepCircle: {
@@ -1658,14 +1602,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 10,
   },
-  // scrollContainer: {
-  //   paddingBottom: 80,
-  //  // paddingTop: 90,
-  //   // paddingHorizontal: 20,
-  // },
-
+  
   scrollContainer: {
-    //paddingHorizontal: 20,
     paddingBottom: 80,
     paddingTop: Platform.OS === 'ios' ? 110 : 100,
   },
@@ -1675,7 +1613,6 @@ const styles = StyleSheet.create({
     height: 'auto',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.09) 100%)',
-    //boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     borderRadius: 8,
     paddingLeft: 8,
     paddingRight: 8,
@@ -1691,15 +1628,12 @@ const styles = StyleSheet.create({
     height: 'auto',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.09) 100%)',
-    //boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     borderRadius: 8,
     paddingLeft: 8,
     paddingRight: 8,
     paddingTop: 6,
     paddingBottom: 6,
     marginTop: 8,
-    //alignItems: 'center',
-    //gap: 4,
     width: 'auto',
     alignSelf: 'flex-start',
   },
@@ -1713,7 +1647,6 @@ const styles = StyleSheet.create({
     letterSpacing: -0.24,
   },
   datetext: {
-    //color: 'rgba(255, 255, 255, 0.48)',
     color: '#9CD6FF',
     fontFamily: 'Urbanist-Medium',
     fontSize: 12,
@@ -1723,7 +1656,6 @@ const styles = StyleSheet.create({
   },
 
   datetext1: {
-    //color: 'rgba(255, 255, 255, 0.48)',
     color: '#9CD6FF',
     fontFamily: 'Urbanist-Medium',
     fontSize: 12,
@@ -1806,7 +1738,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontStyle: 'normal',
     lineHeight: 1.3,
-    //color: '#fff',
     color: '#9CD6FF',
   },
   categoryTag: {
@@ -1815,7 +1746,6 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.48)',
     borderRadius: 4,
     marginRight: 8,
-    //boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.23)',
     paddingLeft: 6,
     paddingRight: 6,
     paddingTop: 2,
@@ -1835,7 +1765,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-Medium',
     fontSize: 14,
     fontWeight: '500',
-    //fontStyle: 'normal',
     lineHeight: 18,
   },
   productDeatilsHeading: {
@@ -1862,7 +1791,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 20,
     fontWeight: '600',
-    //fontStyle: 'normal',
     letterSpacing: -0.4,
     lineHeight: 24,
   },

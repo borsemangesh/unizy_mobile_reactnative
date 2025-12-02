@@ -125,11 +125,6 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
   const scrollY = useSharedValue(0);
 
-  // console.log("📦 Route Params Received:", {
-  //   productId,
-  //   productName,
-  //   shareid
-  // });
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: event => {
@@ -184,8 +179,6 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
         console.log("language-code", language_code)
         const token = await AsyncStorage.getItem('userToken');
-
-        // const productId1 = await AsyncStorage.getItem('selectedProductId');
         if (!token) {
           console.log('No token found');
           return;
@@ -210,7 +203,6 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
         if (json?.metadata) {
           if (json.metadata.category) {
-            // Convert null or undefined to 0
             setFeatureFee(
               parseFloat(json.metadata.category.feature_fee ?? '0'),
             );
@@ -309,17 +301,12 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
           await AsyncStorage.setItem('newDate', data.created_at)
 
           const initialValues: any = {};
-
-          // --- Basic Fields ---
           initialValues.title = { value: data.title || '', alias_name: 'title' };
-          //initialValues.price = { value: data.originalprice || '', alias_name: 'price' };
-
-
 
           initialValues.price = {
             value:
               (data?.category_id === 2 || data?.category_id === 5)
-                ? (Number(data?.originalprice) / Number(data?.hours || 1))   // divide price by hours
+                ? (Number(data?.originalprice) / Number(data?.hours || 1))
                 : data?.originalprice || '',
             alias_name: 'price',
           };
@@ -382,9 +369,6 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
               }
             });
           }
-
-
-          // --- Files / Images ---
           if (Array.isArray(data.files) && data.files.length > 0) {
             const mappedImages = data.files.map((file: any) => ({
               id: file.id,
@@ -393,9 +377,6 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             }));
             setUploadedImages(mappedImages);
           }
-
-
-          // ✅ Update state + persist data
           setFormValues(initialValues);
           await AsyncStorage.setItem('formData1', JSON.stringify(initialValues));
 
@@ -433,15 +414,12 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   const [expanded, setExpanded] = useState(false);
   const animatedHeight = useRef(new Animated.Value(0)).current;
 
-
-
-
   useEffect(() => {
     if (expanded) {
       Animated.timing(animatedHeight, {
         toValue: 1,
-        duration: 800, // slow expansion
-        useNativeDriver: false, // height cannot use native driver
+        duration: 800,
+        useNativeDriver: false,
       }).start();
     }
   }, [expanded]);
@@ -455,7 +433,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
       ...prev,
       [fieldId]: {
         value: value,
-        alias_name: aliasName ?? null, // null if no alias_name
+        alias_name: aliasName ?? null,
       },
     }));
   };
@@ -477,7 +455,6 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
     try {
       if (Platform.OS === 'android') {
         try {
-          // Request CAMERA
           const cameraGranted = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.CAMERA,
             {
@@ -489,7 +466,6 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             }
           );
 
-          // Request Gallery Permission (Android 13+)
           const readImagesGranted = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
             {
@@ -501,7 +477,6 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             }
           ).catch(() => null);
 
-          // Request for Android 12 and below
           const readStorageGranted = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
             {
@@ -547,7 +522,6 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         );
 
         if (results.every((r) => r === true)) {
-          //Alert.alert('Success', 'Camera and gallery permissions granted');
           return true;
         } else {
           Alert.alert('Permission Denied', 'Camera or gallery permission denied');
@@ -562,7 +536,6 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
   const handlePreview = async (latestFormValues: any) => {
     try {
-      // ------------------ Mandatory validation ------------------
       for (const field of fields) {
         const param = field.param || field;
         const { id, field_type, field_name, alias_name, mandatory } = param;
@@ -592,10 +565,6 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
           }
         }
       }
-
-      // ----------------------------------------------------------
-      // ✅ ADDING COMPUTED PRICE LOGIC HERE
-      // ----------------------------------------------------------
       let computedPrice: number | null = null;
 
       if (productId === 2 || productId === 5) {
@@ -608,23 +577,13 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
           if (param.alias_name === 'service_duration') durationFieldId = param.id;
         });
 
-        // if (priceFieldId !== null && durationFieldId !== null) {
-        //   const rawPrice = Number(latestFormValues[String(priceFieldId)]?.value || 0);
-        //   const rawDuration = Number(latestFormValues[String(durationFieldId)]?.value || 1);
-
-        //   computedPrice = rawPrice * rawDuration;
-        // }
-
         if (priceFieldId !== null && durationFieldId !== null) {
-          // read value from ID OR alias (fallback)
           const rawPrice =
             Number(latestFormValues[String(priceFieldId)]?.value) ||
             Number(latestFormValues['price']?.value) ||
             0;
 
           const rawDuration = Number(latestFormValues[String(durationFieldId)]?.value) || Number(latestFormValues['service_duration']?.value) || 1;
-          //const rawDuration = Number(latestFormValues[String(durationFieldId)]?.value || 1);
-
           computedPrice = rawPrice * rawDuration;
         }
       }
@@ -643,10 +602,6 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
           }
         });
       }
-
-
-
-      // Handle image fields
       fields.forEach(field => {
         const param = field.param || field;
         const fieldType = param.field_type?.toLowerCase();
@@ -665,7 +620,6 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         }
       });
 
-      // Save data
       await AsyncStorage.setItem('formData1', JSON.stringify(dataToStore));
       console.log('✅ Form data saved:', dataToStore);
 
@@ -677,14 +631,12 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   };
 
 
-
-
   const handleSelectImage = async () => {
     const hasPermission = await requestCameraPermission();
     if (!hasPermission) return;
 
     Alert.alert(
-     'Select Option',
+      'Select Option',
       "Choose a source",
       [
         {
@@ -698,8 +650,6 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                   const asset = response.assets[0];
                   let uri = asset.uri!;
                   let name = asset.fileName || 'Image';
-
-                  // ✅ compress large images
                   if (
                     asset.fileSize &&
                     asset.fileSize > MAX_SIZE_MB * 1024 * 1024
@@ -714,13 +664,11 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                     uri = compressed.uri;
                     name = compressed.name || name;
                   }
-
-                  // ✅ Add status: 'new' for newly selected images
                   const newImage = {
-                    id: Date.now().toString(), // temporary client ID
+                    id: Date.now().toString(),
                     uri,
                     name,
-                    status: 'new', // mark as new image
+                    status: 'new',
                   };
 
                   setUploadedImages(prev => [...prev, newImage]);
@@ -756,13 +704,11 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                     uri = compressed.uri;
                     name = compressed.name || name;
                   }
-
-                  // ✅ Add status: 'new' for newly selected images
                   const newImage = {
                     id: Date.now().toString(),
                     uri,
                     name,
-                    status: 'new', // mark as new
+                    status: 'new',
                   };
 
                   setUploadedImages(prev => [...prev, newImage]);
@@ -798,68 +744,38 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
   const [isCheckbox, setCheckBox] = useState(false);
 
-  // const handleDeleteImage = async (fileId: string) => {
-  //   // Remove the image from uploadedImages
-  //   setUploadedImages(prev => prev.filter(img => img.id !== fileId));
-
-  //   // Add the deleted image ID to the deletedImageIds array
-  //   setDeletedImageIds(prevDeletedIds => {
-  //     const updatedDeletedIds = [...prevDeletedIds, fileId];
-  //     // Create an object to store only the deleted image IDs
-  //     const dataToStore = { deleted_image_ids: updatedDeletedIds };
-
-  //     // Save to AsyncStorage
-  //     AsyncStorage.setItem('deletedImagesId', JSON.stringify(dataToStore))
-  //       .then(() => {
-  //         console.log(`Deleted image ID: ${fileId} saved to AsyncStorage.`);
-  //       })
-  //       .catch(error => {
-  //         console.error('Error saving to AsyncStorage:', error);
-  //       });
-
-  //     return updatedDeletedIds;
-  //   });
-
-  //   console.log(`Deleted image with ID: ${fileId}`);
-  // };
-
-
   const handleDeleteImage = async (fileId: string) => {
-  setUploadedImages(prev => prev.filter(img => img.id !== fileId));
+    setUploadedImages(prev => prev.filter(img => img.id !== fileId));
 
-  console.log(`Deleted image locally with ID: ${fileId}`);
-};
+    console.log(`Deleted image locally with ID: ${fileId}`);
+  };
 
 
-const formatDateWithDash = (dateString?: string, t?: any) => {
-  if (!dateString) return "";
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) return "";
+  const formatDateWithDash = (dateString?: string, t?: any) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "";
 
-  const day = date.getDate();
-  const year = date.getFullYear();
-  const lang = i18n.language; // current app language
+    const day = date.getDate();
+    const year = date.getFullYear();
+    const lang = i18n.language;
+    let suffix = "";
+    if (lang === "en") {
+      if (day % 10 === 1 && day !== 11) suffix = "st";
+      else if (day % 10 === 2 && day !== 12) suffix = "nd";
+      else if (day % 10 === 3 && day !== 13) suffix = "rd";
+      else suffix = "th";
+    }
+    const monthIndex = date.getMonth();
+    const monthKeys = [
+      "jan", "feb", "mar", "apr", "may", "jun",
+      "jul", "aug", "sep", "oct", "nov", "dec"
+    ];
 
-  // ---------- Suffix only for English ----------
-  let suffix = "";
-  if (lang === "en") {
-    if (day % 10 === 1 && day !== 11) suffix = "st";
-    else if (day % 10 === 2 && day !== 12) suffix = "nd";
-    else if (day % 10 === 3 && day !== 13) suffix = "rd";
-    else suffix = "th";
-  }
+    const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
 
-  // ---------- Month translation ----------
-  const monthIndex = date.getMonth(); // 0–11
-  const monthKeys = [
-    "jan","feb","mar","apr","may","jun",
-    "jul","aug","sep","oct","nov","dec"
-  ];
-
-  const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
-
-  return `${day}${suffix} ${monthShort} ${year}`;
-};
+    return `${day}${suffix} ${monthShort} ${year}`;
+  };
 
   const renderField = (field: any) => {
 
@@ -873,26 +789,17 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
     const options = Array.isArray(param.options) ? param.options : [];
     const isToggle = false;
 
-    if (!fieldType || !id) return null; // skip if critical info missing
+    if (!fieldType || !id) return null;
 
     switch (fieldType) {
-      // ---------------- TEXT FIELD ----------------
       case 'text': {
         const { param } = field;
         const { field_name, keyboardtype, alias_name } = param;
-        //console.log('PARMSASDF: ', param);
 
         const rawValue =
           formValues[param.id]?.value ??
           (alias_name ? formValues[alias_name]?.value : '') ??
           '';
-
-        // const finalValue =
-        //   rawValue !== null && rawValue !== undefined ? String(rawValue) : '';
-        //   formValues[param.id]?.value ??
-        //   (alias_name ? formValues[alias_name]?.value : '') ??
-        //   '';
-
         const finalValue =
           rawValue !== null && rawValue !== undefined ? String(rawValue) : '';
 
@@ -949,7 +856,6 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
               value={isPriceField ? `£ ${finalValue}` : finalValue}
               onChangeText={text => {
                 if (isPriceField) {
-                  // Remove £ and spaces before saving
                   const cleaned = text.replace(/£\s?/g, '');
                   handleValueChange(param.id, alias_name, cleaned);
                 } else {
@@ -961,7 +867,6 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
         );
       }
 
-      // ---------------- MULTI-LINE TEXT ----------------
       case 'multi-line-text': {
         const { param } = field;
         const { field_name, keyboardtype, alias_name } = param;
@@ -1053,7 +958,6 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
                 setMultiSelectOptions(options);
               }}
             >
-              {/* 🔹 Always show placeholder text here */}
               <Text allowFontScaling={false} style={styles.dropdowntext}>
                 {`${t('select')} ${field_name}`}
               </Text>
@@ -1064,8 +968,6 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
                 resizeMode="contain"
               />
             </TouchableOpacity>
-
-            {/* 🔹 Selected tags appear below */}
             <View style={styles.categoryContainer}>
               {selectedOptions.map((opt: any) => (
                 <View key={opt.id} style={styles.categoryTagWrapper}>
@@ -1122,7 +1024,7 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
             >
               <Image source={uploadIcon1} style={styles.uploadIcon} />
               <Text allowFontScaling={false} style={styles.uploadText}>
-                 {t('upload_images')}
+                {t('upload_images')}
               </Text>
             </TouchableOpacity>
             {uploadedImages.length > 0 && (
@@ -1169,8 +1071,6 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
                         <Image source={deleteIcon} style={styles.deleteIcon} />
                       </TouchableOpacity>
                     </View>
-
-                    {/* Horizontal line if not the last image */}
                     {uploadedImages.length > 1 &&
                       index !== uploadedImages.length - 1 && (
                         <View
@@ -1192,15 +1092,8 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
       case 'boolean': {
         const { param } = field;
         const { id, field_name, alias_name } = param;
-
-        // ✅ Read the value from formValues (default false)
-        // const toggleValue = !!formValues[param.]?.value;
         const toggleValue = formValues[param.id]?.value ?? formValues[alias_name]?.value ?? formValues[field_name]?.value ?? '';
-
         console.log('toggleValue', toggleValue);
-
-
-
         return (
           <View key={field.id} style={styles.featurecard}>
             {/* Label + toggle */}
@@ -1243,56 +1136,11 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
           </View>
         );
       }
-
-      // case 'boolean':
-      //   return (
-      //     <View key={field.id} style={styles.featurecard}>
-      //       {/* Main row with label and toggle */}
-      //       <View style={styles.featuredRow}>
-      //         {/* <Text style={styles.featuredLabel}>{field.param.field_name}</Text> */}
-      //         {renderLabel1(field.param.field_name, field.mandatory)}
-
-      //         <ToggleButton
-      //           value={!!formValues[field.param.id]?.value}
-      //           onValueChange={val =>
-      //             handleValueChange(field.param.id, field.param.alias_name, val)
-      //           }
-      //         />
-      //       </View>
-
-      //       <View style={styles.textbg}>
-      //         <Image
-      //           source={require('../../../assets/images/info_icon.png')}
-      //           style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
-      //         />
-
-      //         {/* Texts */}
-      //         <View style={{ flex: 1 }}>
-      //           <Text allowFontScaling={false} style={styles.importantText1}>
-      //             Important:
-      //           </Text>
-      //           <Text allowFontScaling={false} style={styles.importantText}>
-      //             Featured listings require a small upfront fee —{' '}
-      //             <Text allowFontScaling={false} style={styles.importantText1}>
-      //               {featureFee}%
-      //             </Text>{' '}
-      //             of your item’s price or up to{' '}
-      //             <Text allowFontScaling={false} style={styles.importantText1}>
-      //               £{maxFeatureCap}
-      //             </Text>{' '}
-      //             (whichever is lower).
-      //           </Text>
-      //         </View>
-      //       </View>
-      //     </View>
-      //   );
-
       default:
         return null;
     }
   };
 
-  // Identify the featured toggle (boolean field) to render it separately from the main container
   const featuredField = fields.find(
     (f: any) => f?.param?.field_type?.toLowerCase() === 'boolean',
   );
@@ -1300,36 +1148,15 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-        {/* <View style={styles.header}>
-                    <View style={styles.headerRow}>
-                    <TouchableOpacity  onPress={() => {navigation.goBack();}}>
-                       <View style={styles.backIconRow}>
-                          <Image
-                            source={require('../../../assets/images/back.png')}
-                            style={{ height: 24, width: 24 }}
-                            />
-                        </View>
-                        </TouchableOpacity>
-                      <Text allowFontScaling={false} style={styles.unizyText}>
-                        {`Edit${category ? ` ${category} ` : ''}`}
-                      </Text>
-                        <View style={{ width: 48 }} />
-                          </View>
-          </View> */}
-
-
         <StatusBar
           translucent
           backgroundColor="transparent"
           barStyle="light-content"
         />
-
-        {/* Header with Blur only at top */}
         <AnimatedReanimated.View
           style={[styles.headerWrapper, animatedBlurStyle]}
           pointerEvents="none"
         >
-          {/* Blur layer only at top with gradient fade */}
           <MaskedView
             style={StyleSheet.absoluteFill}
             maskElement={
@@ -1346,7 +1173,6 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
               style={StyleSheet.absoluteFill}
               blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
               blurAmount={Platform.OS === 'ios' ? 45 : 45}
-              // overlayColor="rgba(255,255,255,0.05)"
               reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
             />
             <LinearGradient
@@ -1362,7 +1188,6 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
           </MaskedView>
         </AnimatedReanimated.View>
 
-        {/* Header Content */}
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => { navigation.goBack() }}
@@ -1372,7 +1197,6 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
             <AnimatedReanimated.View
               style={[styles.blurButtonWrapper, animatedButtonStyle]}
             >
-              {/* Static background (visible when scrollY = 0) */}
               <AnimatedReanimated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -1388,8 +1212,6 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
                   })),
                 ]}
               />
-
-              {/* Blur view fades in as scroll increases */}
               <AnimatedReanimated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -1410,8 +1232,6 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
                   reducedTransparencyFallbackColor="transparent"
                 />
               </AnimatedReanimated.View>
-
-              {/* Back Icon */}
               <AnimatedReanimated.Image
                 source={require('../../../assets/images/back.png')}
                 style={[{ height: 24, width: 24 }, animatedIconStyle]}
@@ -1423,10 +1243,6 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
             {t('edit')}{`${category ? ` ${category} ` : ''}`}
           </Text>
         </View>
-
-
-
-
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -1436,7 +1252,7 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
             onScroll={scrollHandler}
             contentContainerStyle={[
               styles.scrollContainer,
-              { paddingBottom: height * 0.1 }, // 0.05% of screen height
+              { paddingBottom: height * 0.1 },
             ]}>
 
             <View style={styles.userRow}>
@@ -1491,7 +1307,7 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
                         source={require('../../../assets/images/calendar_icon1.png')}
                         style={{ height: 20, width: 20 }}
                       />
-                      <Text allowFontScaling={false} style={styles.dateText}>{formatDateWithDash(newdate,t)}</Text>
+                      <Text allowFontScaling={false} style={styles.dateText}>{formatDateWithDash(newdate, t)}</Text>
                     </View>
                   </View>
                 </View>
@@ -1508,12 +1324,6 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
                   }),
                 }}
               >
-                {/* <Text
-                  allowFontScaling={false}
-                  style={styles.productdetailstext}
-                >
-                  Product Details
-                </Text> */}
                 <Text
                   allowFontScaling={false}
                   style={styles.productdetailstext}
@@ -1522,7 +1332,6 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
                   {productId === 3
                     ? t('dish_details')
                     : `${category ? `${category} ` : ''}${t('details')}`}
-                  {/* {category === 'Food' ? 'Dish Details' : `${category ? `${category} Details` : ''}`} */}
                 </Text>
 
                 {fields
@@ -1533,7 +1342,6 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
                   .map((field: any) => renderField(field))}
               </Animated.View>
             </View>
-            {/* Featured listing toggle rendered as a separate section */}
             {featuredField && (
               <View>
                 {renderField(featuredField)}
@@ -1547,9 +1355,6 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
           />
         </KeyboardAvoidingView>
       </View>
-
-
-
       {Platform.OS === 'android' ? (
         <>
 
@@ -1559,11 +1364,10 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
             ismultilple={multiSelectModal?.ismultilple}
             title={`${t('select')} ${multiSelectModal?.fieldLabel || 'Category'}`}
             subtitle={
-            multiSelectModal?.ismultilple
-              ? `${t('pick_all')} ${multiSelectModal?.fieldLabel || 'categories'} ${t('best_describe')}`
-              : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'} ${t('that_fit_your_listing')}`
-          }
-            //subtitle={`Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your item.`}
+              multiSelectModal?.ismultilple
+                ? `${t('pick_all')} ${multiSelectModal?.fieldLabel || 'categories'} ${t('best_describe')}`
+                : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'} ${t('that_fit_your_listing')}`
+            }
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>
               setMultiSelectModal(prev => ({ ...prev, visible: false }))
@@ -1584,13 +1388,12 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
             options={multiSelectOptions}
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
-           title={`${t('select')} ${multiSelectModal?.fieldLabel || 'Category'}`}
+            title={`${t('select')} ${multiSelectModal?.fieldLabel || 'Category'}`}
             subtitle={
-            multiSelectModal?.ismultilple
-              ? `${t('pick_all')} ${multiSelectModal?.fieldLabel || 'categories'} ${t('best_describe')}`
-              : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'} ${t('that_fit_your_listing')}`
-          }
-            //subtitle={`Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your item.`}
+              multiSelectModal?.ismultilple
+                ? `${t('pick_all')} ${multiSelectModal?.fieldLabel || 'categories'} ${t('best_describe')}`
+                : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'} ${t('that_fit_your_listing')}`
+            }
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>
               setMultiSelectModal(prev => ({ ...prev, visible: false }))
@@ -1641,7 +1444,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 16,
     zIndex: 11,
-    //top: 7,
   },
   blurButtonWrapper: {
     width: 48,
@@ -1652,10 +1454,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
-
-
 
   imagelistcard: {
     backgroundColor:
@@ -1666,8 +1466,6 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff33',
     marginTop: 10,
   },
-
-
 
   fileIcon: {
     width: 30,
@@ -1683,7 +1481,6 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     letterSpacing: -0.32,
     lineHeight: 24,
-    //paddingStart: 5,
   },
   deleteBtn: {
     width: 32,
@@ -1849,9 +1646,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  // scrollContainer: {
-  //   paddingHorizontal: 16,
-  // },
   scrollContainer: {
     paddingHorizontal: 16,
     paddingBottom: 80,
@@ -1899,8 +1693,6 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
   },
-
-
   productdetailstext: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-SemiBold',
@@ -1918,7 +1710,6 @@ const styles = StyleSheet.create({
     mixBlendMode: 'normal',
   },
   uploadText: {
-    //color: 'rgba(255, 255, 255, 0.48)',
     color: '#ACE3FF',
     fontSize: 14,
     mixBlendMode: 'normal',
@@ -1932,8 +1723,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
   },
-
-
   textstyle: {
     color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-Regular',
@@ -1954,8 +1743,6 @@ const styles = StyleSheet.create({
     gap: 4,
     marginTop: 12,
   },
-
-
   input: {
     backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: 8,
@@ -1967,8 +1754,6 @@ const styles = StyleSheet.create({
   categoryContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    // marginBottom: 12,
-    // marginTop: 9,
   },
   categoryTag: {
     backgroundColor:

@@ -37,8 +37,8 @@ const SalesAllDetailsDropdown_IOS = ({
 
 }: FilterBottomSheetProps) => {
 
-  const [salesData, setSalesData] = useState<any[]>([]);// Holds the sales data
-  const [loading, setLoading] = useState<boolean>(false); // Loading state
+  const [salesData, setSalesData] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const screenHeight = Dimensions.get('window').height;
 
   const background = require('../../../assets/images/placeholder_history.png');
@@ -46,18 +46,13 @@ const SalesAllDetailsDropdown_IOS = ({
 
   const fetchSalesHistory = async (catagory_id: number) => {
     try {
-      // Get user token
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
         console.log('No token found');
         return;
       }
-
-      // Construct the URL
       const url = `${MAIN_URL.baseUrl}transaction/sales-history?feature_id=${catagory_id}`;
       console.log('SalesHistory URL:', url);
-
-      // Make the API call
       const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -67,7 +62,6 @@ const SalesAllDetailsDropdown_IOS = ({
       });
       const json = await response.json();
 
-      // Handle response status codes
       if (response.status === 200) {
         setSalesData(json.data.features.buyers);
         console.log("SalesHistory ResponseByers JSON:", json.data);
@@ -78,18 +72,12 @@ const SalesAllDetailsDropdown_IOS = ({
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      // Parse the JSON response
-
       console.log("SalesHistory Response:", json);
 
       if (json.statusCode === 401 || json.statusCode === 403) {
         // handleForceLogout();
         return;
       }
-
-      // Update the sales data to only contain the 'buyers' array
-      // <-- Corrected part
 
     } catch (err) {
       console.log('Error fetching sales history:', err);
@@ -128,14 +116,11 @@ const SalesAllDetailsDropdown_IOS = ({
   const totalEarnings = salesData.reduce((acc, buyer) => acc + parseFloat(buyer.amount || 0), 0).toFixed(2);
 
   const renderRightContent = () => {
-    // Check if the sales data is still loading
     if (loading) {
       return (
         <Text style={{ color: 'white', textAlign: 'center', padding: 20 }}>Loading...</Text>
       );
     }
-
-    // If there's no sales data, show a message
     if (salesData.length === 0) {
       return (
         <Text style={{ color: 'white', textAlign: 'center', padding: 20 }}>{t('no_sales_data')}</Text>
@@ -147,10 +132,8 @@ const SalesAllDetailsDropdown_IOS = ({
   if (isNaN(date.getTime())) return "";
 
   const day = date.getDate();
-  const lang = i18n.language; // current selected language
-
-  // Month translation
-  const monthIndex = date.getMonth(); // 0–11
+  const lang = i18n.language;
+  const monthIndex = date.getMonth();
   const monthKeys = [
     "jan","feb","mar","apr","may","jun",
     "jul","aug","sep","oct","nov","dec"
@@ -160,7 +143,6 @@ const SalesAllDetailsDropdown_IOS = ({
 
   const year = date.getFullYear();
 
-  // ---------- Suffix only for English ----------
   let suffix = "";
   if (lang === "en") {
     if (day % 10 === 1 && day !== 11) suffix = "st";
@@ -385,9 +367,7 @@ const SalesAllDetailsDropdown_IOS = ({
                   {renderRightContent()}
                 </ScrollView>
               </View>
-              {/* </BlurView> */}
             </View>
-            {/* </View> */}
           </View>
         </Modal>
       </BlurView>

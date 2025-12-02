@@ -8,11 +8,10 @@ export const handleNotification = async (
   isBackground: boolean = false,
 ) => {
   try {
-    // 🔒 SECURITY: Check if user is logged in before processing notifications
     const isLogin = await AsyncStorage.getItem('ISLOGIN');
     if (isLogin !== 'true') {
       console.log('⚠️ Ignoring notification - user not logged in');
-      return; // Don't process notifications if user is logged out
+      return; 
     }
 
     console.log(

@@ -533,7 +533,6 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
                 />
               </Animated.View>
 
-              {/* Back Icon */}
               <Animated.Image
                 source={require('../../../assets/images/back.png')}
                 style={[{ height: 24, width: 24 }, animatedIconStyle]}
@@ -615,7 +614,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
               <View style={[styles.emptyWrapper]}>
                 <View style={styles.emptyContainer}>
                   <Image
-                    source={require('../../../assets/images/noproduct.png')} // your image
+                    source={require('../../../assets/images/noproduct.png')} 
                     style={styles.emptyImage}
                     resizeMode="contain"
                   />
@@ -657,7 +656,6 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
 export default SearchPage;
 
 const styles = StyleSheet.create({
-
 
   header: {
     position: 'absolute',
@@ -731,10 +729,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.1)', 
   },
 
-
-  background: { flex: 1, width: '100%', height: '100%' },
-  fullScreenContainer: { flex: 1 },
-
+  background: { 
+    flex: 1, 
+    width: '100%',
+     height: '100%' 
+    },
+  fullScreenContainer: { 
+    flex: 1 
+  },
 
   emptyWrapper: {
     flex: 1,
@@ -744,8 +746,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
     paddingHorizontal: 10,
   },
-
-
 
   emptyContainer: {
     flex: 1,
@@ -757,8 +757,6 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.08)',
     borderRadius: 24,
     overflow: 'hidden',
-    //minHeight:'80%',
-    //marginBottom:20,
   },
   emptyImage: {
     width: 50,
@@ -779,7 +777,6 @@ const styles = StyleSheet.create({
   backIconRow: {
     padding: 12,
     borderRadius: 40,
-
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -812,7 +809,6 @@ const styles = StyleSheet.create({
     padding: (Platform.OS === 'ios' ? 12 : 0),
     marginTop: (Platform.OS === 'ios' ? 4 : 20),
     height: 50,
-
     width: '84%',
     gap: (Platform.OS === 'ios' ? 8 : 0)
   },
@@ -836,7 +832,6 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     marginRight: 5,
     paddingTop: 10,
-
   },
   row1: {
 
@@ -850,7 +845,6 @@ const styles = StyleSheet.create({
   ylistingsBackground: {
     height: 48,
     width: 48,
-
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 100,

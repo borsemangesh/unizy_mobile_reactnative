@@ -31,10 +31,20 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
   const title = remoteMessage.notification?.title || remoteMessage.data?.title || "Notification";
   const body = remoteMessage.notification?.body || remoteMessage.data?.body || "";
 
-   if (remoteMessage.notification) {
-    console.log("⚠ Skipping Notifee (FCM auto-notification exists)");
-    return;
-  }
+  //  if (remoteMessage.notification) {
+  //   console.log("⚠ Skipping Notifee (FCM auto-notification exists)");
+  //   return;
+  // }
+
+  const isFCMAutoNotification =
+  !!remoteMessage.notification ||
+  remoteMessage.data?.['google.original_priority'] ||
+  remoteMessage.data?.['google.delivered_priority'];
+
+if (isFCMAutoNotification) {
+  console.log("⚠ Auto FCM notification detected — skipping Notifee");
+  return;
+}
 
   await notifee.displayNotification({
     title,

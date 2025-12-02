@@ -37,9 +37,9 @@ type MyOrderCardProps = {
   category_id: number;
   date: string;
   ispurchase: boolean;
-  profileshowinview:boolean 
-  createdby:CreatedBy,
-  isreviewadded:boolean
+  profileshowinview: boolean
+  createdby: CreatedBy,
+  isreviewadded: boolean
 };
 
 const MyOrderCard: React.FC<MyOrderCardProps> = ({
@@ -58,17 +58,16 @@ const MyOrderCard: React.FC<MyOrderCardProps> = ({
 }) => {
 
 
-   const getInitials = (firstname?: string, lastname?: string) => {
+  const getInitials = (firstname?: string, lastname?: string) => {
     if (!firstname && !lastname) return '';
     return `${firstname?.[0] ?? ''}${lastname?.[0] ?? ''}`.toUpperCase();
   };
 
-      const { t } = useTranslation();
+  const { t } = useTranslation();
 
-   const renderProfileSection = () => {
+  const renderProfileSection = () => {
     if (profileshowinview) {
       if (createdby?.profile) {
-        // Case 1: profile URL present
         return (
           <Image
             source={{ uri: createdby.profile }}
@@ -77,7 +76,6 @@ const MyOrderCard: React.FC<MyOrderCardProps> = ({
           />
         );
       } else {
-        // Case 2: show initials
         return (
           <View style={styles.initialsCircle}>
             <Text allowFontScaling={false} style={styles.initialsText}>
@@ -87,41 +85,35 @@ const MyOrderCard: React.FC<MyOrderCardProps> = ({
         );
       }
     } else {
-      // Case 3: fallback to product image
       return (
         <Image source={productImage} style={styles.image} resizeMode="cover" />
       );
     }
   };
 
-const handleViewTransaction = () => {
-   //navigation.navigate('TransactionDetail', { shareid });
-  //  navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false})
-  navigation.reset({
-    index: 0,
-    routes: [
-      {
-        name: 'Dashboard',
-        params: {
-          AddScreenBackactiveTab: 'Search',
-          isNavigate: false,
+  const handleViewTransaction = () => {
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: 'Dashboard',
+          params: {
+            AddScreenBackactiveTab: 'Search',
+            isNavigate: false,
+          },
         },
-      },
-    ],
-  });
+      ],
+    });
   };
 
   const handleWriteReview = () => {
-      navigation.navigate('UserAddReview', {category_id:category_id,feature_id:shareid});
+    navigation.navigate('UserAddReview', { category_id: category_id, feature_id: shareid });
   };
 
   return (
     <TouchableOpacity style={styles.card} activeOpacity={0.8}>
-      {/* Top Row: Image + Title + Price + Status */}
       <View style={styles.row}>
-        {/* <Image source={productImage} style={styles.image} resizeMode="cover" /> */}
         {renderProfileSection()}
-
         <View style={styles.details}>
           <Text allowFontScaling={false} style={styles.title}>
             {infoTitle}
@@ -140,21 +132,14 @@ const handleViewTransaction = () => {
           ) : (
             <View style={styles.statusTag}>
               <Text allowFontScaling={false} style={styles.statusText}>
-               {t('awaiting_delivery')}
+                {t('awaiting_delivery')}
               </Text>
             </View>
           )}
         </View>
       </View>
-
-      {/* Dotted Line */}
-      {/* <View style={styles.dashedLine} />
-
-       <View style={styles.dashedLine1} /> */}
       <View style={styles.cardconstinerdivider} />
-       
-
-       {ispurchase && !isreviewadded ? (
+      {ispurchase && !isreviewadded ? (
         <View style={styles.buttonRow}>
           <TouchableOpacity
             style={styles.primaryButton}
@@ -175,7 +160,6 @@ const handleViewTransaction = () => {
           </TouchableOpacity>
         </View>
       ) : (
-        // Awaiting card => One button
         <TouchableOpacity
           style={styles.singleButton}
           activeOpacity={0.7}
@@ -193,48 +177,41 @@ export default MyOrderCard;
 
 const styles = StyleSheet.create({
 
-   cardconstinerdivider: {
-    
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        width: '98%',
-        height: (Platform.OS === 'ios' ? 2 : 1.5),
-        borderStyle: 'dashed',
-        borderBottomWidth: (Platform.OS === 'ios' ? 0.9 : 1),
-        // backgroundColor: 'rgba(169, 211, 255, 0.08)',
-        borderColor: (Platform.OS === 'ios' ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)' : '#4169B8'),
-        marginVertical:6,
-        marginLeft:2
+  cardconstinerdivider: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '98%',
+    height: (Platform.OS === 'ios' ? 2 : 1.5),
+    borderStyle: 'dashed',
+    borderBottomWidth: (Platform.OS === 'ios' ? 0.9 : 1),
+    borderColor: (Platform.OS === 'ios' ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)' : '#4169B8'),
+    marginVertical: 6,
+    marginLeft: 2
 
-      },
-  
+  },
+
   card: {
     backgroundColor: 'rgba(255,255,255,0.08)',
     borderRadius: 16,
     padding: 12,
-    // marginVertical: 4,
     marginHorizontal: 8,
-    //borderWidth: 1,
-    //borderColor: 'rgba(255,255,255,0.1)',
   },
   row: {
     flexDirection: 'row',
-   // alignItems: 'flex-start',
-   alignItems: 'stretch',
-   paddingBottom:6
+    alignItems: 'stretch',
+    paddingBottom: 6
   },
   image: {
     width: 72,
     height: 72,
     borderRadius: 14,
-  
   },
   details: {
     flex: 1,
     marginLeft: 12,
-    justifyContent: 'space-between', 
+    justifyContent: 'space-between',
   },
   title: {
     fontSize: 14,
@@ -259,54 +236,47 @@ const styles = StyleSheet.create({
   },
   statusText: {
     fontSize: 11,
-    color:'#ABC7FF',
+    color: '#ABC7FF',
     fontFamily: 'Urbanist-Medium',
   },
   dashedLine: {
     borderBottomWidth: 1,
     borderColor: '#6592D4',
     borderStyle: 'dashed',
-    //paddingVertical: 10,
-    //marginVertical:6,
     width: '100%',
-    opacity: 0, 
-    
+    opacity: 0,
   },
 
   dashedLine1: {
     borderBottomWidth: 1,
     borderColor: '#5b70abff',
     borderStyle: 'dashed',
-    //paddingVertical: 10,
-    marginVertical:6,
+    marginVertical: 6,
     width: '100%',
-    
   },
-  // Buttons section
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     gap: 8,
   },
 
-  initialsCircle:{
+  initialsCircle: {
     backgroundColor: '#8390D4',
     alignItems: 'center',
     justifyContent: 'center',
     width: 72,
     height: 72,
     borderRadius: 14,
-    //marginRight: 12,
-    overflow:'hidden'
+    overflow: 'hidden'
   },
-  initialsText:{
-   color: '#fff',
-  fontSize: 30,
-  fontWeight:600,
-  textAlign: 'center',
-  fontFamily: 'Urbanist-SemiBold',
+  initialsText: {
+    color: '#fff',
+    fontSize: 30,
+    fontWeight: 600,
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
   },
- 
+
   singleButton: {
     display: 'flex',
     width: '100%',
@@ -317,7 +287,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     paddingTop: 6,
     paddingBottom: 6,
-     backgroundColor: 'rgba(255,255,255,0.12)',
+    backgroundColor: 'rgba(255,255,255,0.12)',
     marginTop: 6,
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
@@ -326,7 +296,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.12)',
     paddingVertical: 10,
     alignItems: 'center',
-    flex:1,
+    flex: 1,
     height: 48,
     justifyContent: 'center',
     gap: 4,
@@ -338,7 +308,7 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
   },
   secondaryButton: {
-    flex:1,
+    flex: 1,
     height: 48,
     justifyContent: 'center',
     alignItems: 'center',
@@ -352,17 +322,17 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
   },
   btnText: {
-    color:'#ABC7FF',
-    fontWeight:500,
+    color: '#ABC7FF',
+    fontWeight: 500,
     fontSize: 13,
     fontFamily: 'Urbanist-Medium',
-    letterSpacing:0.5
+    letterSpacing: 0.5
   },
   btnTextSecondary: {
     color: '#002050',
-    fontWeight:500,
+    fontWeight: 500,
     fontSize: 13,
     fontFamily: 'Urbanist-Medium',
-    letterSpacing:0.5
+    letterSpacing: 0.5
   },
 });

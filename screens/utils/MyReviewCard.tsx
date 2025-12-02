@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 import { SquircleView } from 'react-native-figma-squircle';
- 
+
 
 type CreatedBy = {
   id: number;
@@ -42,9 +42,9 @@ type MyReviewCardProps = {
   isfeature?: boolean;
   navigation?: any;
   shareid: number;
-  date:string
-  profileshowinview:boolean 
-  createdby:CreatedBy,
+  date: string
+  profileshowinview: boolean
+  createdby: CreatedBy,
 };
 
 const MyReviewCard: React.FC<MyReviewCardProps> = ({
@@ -59,109 +59,102 @@ const MyReviewCard: React.FC<MyReviewCardProps> = ({
   profileshowinview,
   createdby,
 }) => {
-  const fullStar = require('../../assets/images/starfill.png'); 
-  const emptyStar = require('../../assets/images/starempty.png'); 
+  const fullStar = require('../../assets/images/starfill.png');
+  const emptyStar = require('../../assets/images/starempty.png');
 
-    const getInitials = (firstname?: string, lastname?: string) => {
-      if (!firstname && !lastname) return '';
-      return `${firstname?.[0] ?? ''}${lastname?.[0] ?? ''}`.toUpperCase();
-    };
-  
-     const renderProfileSection = () => {
-      if (profileshowinview) {
-        if (createdby?.profile) {
-          return (
-             <SquircleView
-              style={styles.image}
-              squircleParams={{
-                cornerSmoothing: 1,
-                cornerRadius: 14,
-                fillColor: 'rgba(255, 255, 255, 0.08)',
-              }}>
+  const getInitials = (firstname?: string, lastname?: string) => {
+    if (!firstname && !lastname) return '';
+    return `${firstname?.[0] ?? ''}${lastname?.[0] ?? ''}`.toUpperCase();
+  };
+
+  const renderProfileSection = () => {
+    if (profileshowinview) {
+      if (createdby?.profile) {
+        return (
+          <SquircleView
+            style={styles.image}
+            squircleParams={{
+              cornerSmoothing: 1,
+              cornerRadius: 14,
+              fillColor: 'rgba(255, 255, 255, 0.08)',
+            }}>
             <Image
               source={{ uri: createdby.profile }}
               style={styles.image}
               resizeMode="cover"
             />
-            </SquircleView>
-          );
-        } else {
-          return (
+          </SquircleView>
+        );
+      } else {
+        return (
 
-             <SquircleView
-              style={styles.initialsCircle}
-              squircleParams={{
-                cornerSmoothing: 1,
-                cornerRadius: 14,
-                fillColor: '#8390D4',
-              }}>
+          <SquircleView
+            style={styles.initialsCircle}
+            squircleParams={{
+              cornerSmoothing: 1,
+              cornerRadius: 14,
+              fillColor: '#8390D4',
+            }}>
             <View style={styles.initialsCircle}>
-             
+
               <Text allowFontScaling={false} style={styles.initialsText}>
                 {getInitials(createdby?.firstname, createdby?.lastname)}
               </Text>
-             
+
             </View>
-             </SquircleView>
-          );
-        }
-      } else {
-        return (
-          <Image source={productImage} style={styles.image} resizeMode="cover" />
+          </SquircleView>
         );
       }
-    };
-  
+    } else {
+      return (
+        <Image source={productImage} style={styles.image} resizeMode="cover" />
+      );
+    }
+  };
+
   return (
 
-     <TouchableOpacity
+    <TouchableOpacity
       activeOpacity={0.8}
     >
-    
-    <SquircleView
-      style={styles.card}
-      squircleParams={{
-        cornerSmoothing: 1,
-        cornerRadius: 18,
-        fillColor: 'rgba(255, 255, 255, 0.08)',
-      }}
- 
-    >
-   
-     <View style={styles.row}>
-      
-      {renderProfileSection()}
-      <View style={styles.details}>
-        <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
-        <Text allowFontScaling={false} style={styles.price}>£{inforTitlePrice}</Text>
-        <Text allowFontScaling={false} style={styles.date}>{date}
-        </Text>
-      </View>
-    </View>
 
-   {/* <View style={styles.dashedLine} />
-  
-  <View style={styles.dashedLine1} /> */}
+      <SquircleView
+        style={styles.card}
+        squircleParams={{
+          cornerSmoothing: 1,
+          cornerRadius: 18,
+          fillColor: 'rgba(255, 255, 255, 0.08)',
+        }}>
 
-  <View style={styles.cardconstinerdivider} />
+        <View style={styles.row}>
 
-  <View style={styles.bottomContent}>
-    <View style={styles.starsRow}>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Image
-          key={i}
-          source={i < Number(rating) ? fullStar : emptyStar}
-          style={styles.star}
-        />
-      ))}
-    </View>
+          {renderProfileSection()}
+          <View style={styles.details}>
+            <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
+            <Text allowFontScaling={false} style={styles.price}>£{inforTitlePrice}</Text>
+            <Text allowFontScaling={false} style={styles.date}>{date}
+            </Text>
+          </View>
+        </View>
+        <View style={styles.cardconstinerdivider} />
 
-    {reviewText ? (
-      <Text allowFontScaling={false} style={styles.reviewText} numberOfLines={3}>
-        {reviewText}
-      </Text>
-    ) : null}
-  </View>
+        <View style={styles.bottomContent}>
+          <View style={styles.starsRow}>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Image
+                key={i}
+                source={i < Number(rating) ? fullStar : emptyStar}
+                style={styles.star}
+              />
+            ))}
+          </View>
+
+          {reviewText ? (
+            <Text allowFontScaling={false} style={styles.reviewText} numberOfLines={3}>
+              {reviewText}
+            </Text>
+          ) : null}
+        </View>
       </SquircleView>
 
     </TouchableOpacity>
@@ -172,66 +165,58 @@ export default MyReviewCard;
 
 const styles = StyleSheet.create({
 
-   cardconstinerdivider: {
-  
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      width: '100%',
-      height: (Platform.OS === 'ios' ? 2 : 1.5),
-      borderStyle: 'dashed',
-      borderBottomWidth: (Platform.OS === 'ios' ? 0.9 : 1),
-      // backgroundColor: 'rgba(169, 211, 255, 0.08)',
-      borderColor: (Platform.OS === 'ios' ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)' : '#4169B8'),
-      marginVertical:6,
-    },
+  cardconstinerdivider: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    height: (Platform.OS === 'ios' ? 2 : 1.5),
+    borderStyle: 'dashed',
+    borderBottomWidth: (Platform.OS === 'ios' ? 0.9 : 1),
+    borderColor: (Platform.OS === 'ios' ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)' : '#4169B8'),
+    marginVertical: 6,
+  },
 
-    dashedLine: {
+  dashedLine: {
     borderBottomWidth: 1,
     borderColor: '#6592D4',
     borderStyle: 'dashed',
-    //paddingVertical: 10,
-    //marginVertical:6,
     width: '100%',
-    opacity: 0, 
-    
+    opacity: 0,
+
   },
 
   dashedLine1: {
     borderBottomWidth: 1,
     borderColor: '#5b70abff',
     borderStyle: 'dashed',
-    //paddingVertical: 10,
-    marginVertical:6,
+    marginVertical: 6,
     width: '100%',
-    
+
   },
 
-bottomContent: {
- // marginTop:2,
-},
+  bottomContent: {
+  },
   card: {
     backgroundColor: 'rgba(255,255,255,0.08)',
     borderRadius: 18,
     padding: 12,
     marginVertical: 8,
-    //borderWidth: 1,
-    //borderColor: 'rgba(255,255,255,0.1)',
-    overflow:'hidden'
+    overflow: 'hidden'
   },
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    paddingBottom:6
+    paddingBottom: 6
   },
   image: {
     width: 70,
     height: 70,
     borderRadius: 14,
-    overflow:'hidden'
+    overflow: 'hidden'
   },
-    initialsCircle:{
+  initialsCircle: {
     backgroundColor: '#8390D4',
     alignItems: 'center',
     justifyContent: 'center',
@@ -239,14 +224,14 @@ bottomContent: {
     height: 70,
     borderRadius: 14,
     //marginRight: 12,
-    overflow:'hidden'
+    overflow: 'hidden'
   },
-  initialsText:{
-   color: '#fff',
-  fontSize: 30,
-  fontWeight:600,
-  textAlign: 'center',
-  fontFamily: 'Urbanist-SemiBold',
+  initialsText: {
+    color: '#fff',
+    fontSize: 30,
+    fontWeight: 600,
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
   },
   details: {
     flex: 1,
@@ -270,16 +255,16 @@ bottomContent: {
     color: '#FFFFFFE0',
     marginTop: 6,
     fontFamily: 'Urbanist-Medium',
-    fontWeight:500,
+    fontWeight: 500,
   },
   starsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop:6
-   
+    paddingTop: 6
+
   },
   star: {
-    width: 16, // adjust to match your design
+    width: 16,
     height: 16,
     marginRight: 4,
   },
@@ -288,7 +273,7 @@ bottomContent: {
     color: '#FFFFFFE0',
     marginTop: 8,
     fontFamily: 'Urbanist-Regular',
-    fontWeight:400,
+    fontWeight: 400,
     lineHeight: 18,
   },
 });

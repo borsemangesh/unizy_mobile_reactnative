@@ -20,7 +20,7 @@ type NotificationCardProps = {
   typeid: number;
   typename: string;
   templateName?: string;
-  categoryid:number
+  categoryid: number
 };
 
 const NotificationCard: React.FC<NotificationCardProps> = ({
@@ -33,13 +33,11 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
   categoryid,
   templateName = '',
 }) => {
-  const fullStar = require('../../assets/images/starfill.png'); // your full star
-  const emptyStar = require('../../assets/images/starempty.png'); // your empty star
+  const fullStar = require('../../assets/images/starfill.png'); 
+  const emptyStar = require('../../assets/images/starempty.png'); 
 
-  // Determine navigation route and params based on template name
   const handleNavigation = () => {
     if (templateName === 'ItemSold') {
-      // Navigate to ListingDetails
       navigation.navigate('ViewListingDetails', {
         shareid: typeid,
         catagory_id: categoryid,
@@ -47,13 +45,13 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
       });
     } else if (templateName === 'FeatureListed') {
       navigation.navigate('ListingDetails', {
-       shareid: typeid,
+        shareid: typeid,
         catagory_id: categoryid,
         catagory_name: typename,
       });
-    } 
-    else if(templateName==='OrderOTP'){
-      if(Platform.OS === 'ios'){
+    }
+    else if (templateName === 'OrderOTP') {
+      if (Platform.OS === 'ios') {
         navigation.reset({
           index: 0,
           routes: [
@@ -67,43 +65,43 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
           ],
         });
       } else {
-        navigation.navigate('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false})
+        navigation.navigate('Dashboard', { AddScreenBackactiveTab: 'Search', isNavigate: false })
       }
-     
+
     }
 
-    else if (templateName==='NewReviewedAdd'){
-      if(Platform.OS === 'ios'){
+    else if (templateName === 'NewReviewedAdd') {
+      if (Platform.OS === 'ios') {
         navigation.navigate('ReviewDetails', {
           catagory_id: categoryid,
           id: typeid,
-         purchase:false
-         });
+          purchase: false
+        });
       } else {
         navigation.navigate('ReviewDetails', {
           catagory_id: categoryid,
           id: typeid,
-         purchase:false
-         });
+          purchase: false
+        });
       }
     }
 
-    else if (templateName==='YourOrderCompleted'){
-      if(Platform.OS ==='ios'){
+    else if (templateName === 'YourOrderCompleted') {
+      if (Platform.OS === 'ios') {
         navigation.reset({
           index: 0,
           routes: [
-            { name: 'MyOrders'}
+            { name: 'MyOrders' }
           ],
         });
       }
-      else{
+      else {
         navigation.navigate('MyOrders');
       }
-       
+
     }
     else if (templateName === 'OrderCompletedRecivedPaymentSoon') {
-      if(Platform.OS === 'ios'){
+      if (Platform.OS === 'ios') {
         navigation.reset({
           index: 0,
           routes: [
@@ -117,11 +115,11 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
           ],
         });
       } else {
-        navigation.navigate('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false})
+        navigation.navigate('Dashboard', { AddScreenBackactiveTab: 'Search', isNavigate: false })
       }
-    } 
-     else if (templateName === 'PayoutSuccess') {
-      if(Platform.OS === 'ios'){
+    }
+    else if (templateName === 'PayoutSuccess') {
+      if (Platform.OS === 'ios') {
         navigation.reset({
           index: 0,
           routes: [
@@ -135,12 +133,11 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
           ],
         });
       } else {
-        navigation.navigate('Dashboard',{AddScreenBackactiveTab: 'Search',isNavigate: false})
+        navigation.navigate('Dashboard', { AddScreenBackactiveTab: 'Search', isNavigate: false })
       }
-      
-    } 
+
+    }
     else {
-      // Default navigation (fallback to SearchDetails)
       navigation.navigate('SearchDetails', {
         id: typeid,
         name: typename,
@@ -166,13 +163,6 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
           {infoTitle}
         </Text>
       </View>
-
-      {/* <View style={styles.bottomContent}>
-      <Text allowFontScaling={false} style={styles.reviewText} numberOfLines={3}>
-        {reviewText}
-      </Text>
-  </View> */}
-
       <View style={styles.bottomContent}>
         <Text>
           {reviewText.map((part, index) => (
@@ -193,35 +183,28 @@ export default NotificationCard;
 
 const styles = StyleSheet.create({
 
-imgcontainer:{
+  imgcontainer: {
     width: 40,
     height: 40,
-    borderRadius: 12, 
-    padding:8,
-    alignItems:'center',
-   
+    borderRadius: 12,
+    padding: 8,
+    alignItems: 'center',
     borderWidth: 0.4,
     borderColor: '#ffffff11',
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxSizing: 'border-box'
-    },
+  },
 
-bottomContent: {
- marginTop:10,
-//  marginVertical:10
-},
+  bottomContent: {
+    marginTop: 10,
+  },
   card: {
     backgroundColor: 'rgba(255,255,255,0.08)',
     borderRadius: 24,
     padding: 16,
     marginVertical: 8,
-    
-    
-
-    // borderWidth: 1,
-    // borderColor: 'rgba(255,255,255,0.1)',
   },
   row: {
     flexDirection: 'row',
@@ -230,38 +213,37 @@ bottomContent: {
   image: {
     width: 20,
     height: 20,
-    resizeMode:'contain',
-    marginTop:2  
-    
+    resizeMode: 'contain',
+    marginTop: 2
+
   },
-  
+
   title: {
     fontSize: 17,
     color: '#FFFFFFE0',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     marginBottom: 4,
-    alignSelf:'center',
-    marginLeft:8,
-    
+    alignSelf: 'center',
+    marginLeft: 8,
+
   },
- 
-  
+
   reviewText: {
     fontSize: 14,
     color: '#FFFFFFCC',
     marginTop: 8,
     fontFamily: 'Urbanist-Medium',
-    fontWeight:500,
+    fontWeight: 500,
     lineHeight: 20,
   },
 
-    reviewText_bold: {
+  reviewText_bold: {
     fontSize: 14,
     color: '#FFFFFFE0',
     marginTop: 8,
     fontFamily: 'Urbanist-SemiBold',
-    fontWeight:600,
+    fontWeight: 600,
     lineHeight: 20,
   },
 });

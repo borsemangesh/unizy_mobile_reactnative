@@ -171,7 +171,7 @@ export default function TransactionHistoryScreen(
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
-             language_code: language_code
+            language_code: language_code
           },
         });
 
@@ -281,7 +281,6 @@ export default function TransactionHistoryScreen(
 
     const lang = i18n.language;
 
-    // English suffix logic
     let suffix = "";
     if (lang === "en") {
       suffix =
@@ -474,7 +473,6 @@ export default function TransactionHistoryScreen(
             </View>
           </View>
         ) : selectedTab === 'Purchases' ? (
-          // Purchases UI (your current UI)
           transactions.map((section, idx) => (
             <View key={idx} style={styles.section}>
               <Text allowFontScaling={false} style={styles.dateText}>
@@ -845,13 +843,8 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.08)',
     borderRadius: 24,
     overflow: 'hidden',
-
     minHeight: '100%',
 
-    //  marginBottom:20,
-
-
-    //  marginBottom:20,
   },
   emptyImage: {
     width: 50,
@@ -865,19 +858,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600
   },
-  // cardconstinerdivider: {
-  //   display: 'flex',
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-between',
-  //   alignItems: 'center',
-  //   width: '100%',
-  //   borderStyle: 'dashed',
-  //   borderBottomWidth: 0.9,
-  //   height: 2,
-  //   borderColor:
-  //     'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  // },
-
+ 
   cardconstinerdivider: {
     display: 'flex',
     flexDirection: 'row',
@@ -895,7 +876,6 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 12,
-    // padding:8,
     alignItems: 'center',
     alignSelf: 'center',
     justifyContent: 'center',
@@ -919,12 +899,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    // paddingTop: 70,
     paddingHorizontal: 15,
   },
   activeTabButton: {
     backgroundColor: 'rgba(255, 255, 255, 0.16)',
-
     boxShadow:
       '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25),rgba(76, 112, 242, 0.18) inset 0px -1.761px 0px 100px',
   },
@@ -1061,14 +1039,12 @@ const styles = StyleSheet.create({
     color: '#9CD6FF',
     fontSize: 12,
     fontWeight: '600',
-    // marginTop: 10,
     fontFamily: 'Urbanist-SemiBold',
   },
   sellerText_New: {
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '600',
-    // marginTop: 10,
     fontFamily: 'Urbanist-SemiBold',
   },
 
@@ -1087,7 +1063,6 @@ const styles = StyleSheet.create({
     marginTop: 2
   },
   allDetails: {
-    // marginTop: 10,
     color: '#FFFFFF',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
@@ -1122,14 +1097,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
   },
   viewListing: {
-    // marginTop: 8,
     color: 'rgba(149, 239, 255, 0.87)',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 12,
   },
-
-  //Tabls
 
   bottomTabContainer: {
 
@@ -1140,14 +1112,10 @@ const styles = StyleSheet.create({
     marginBottom: Platform.OS === 'ios' ? 15 : 15,
     borderRadius: 50,
     alignSelf: 'center',
-    // padding: 4,
     borderWidth: 0.4,
-    // margin: 4,
     borderColor: 'transparent',
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23), -0.90px -0.80px 1px 0px rgba(255, 255, 255, 0.19)inset, 0.90px 0.80px 0.90px 0px rgba(255, 255, 255, 0.19)inset',
-    // backgroundColor: 'rgba(0, 23, 128, 0.49)',
     backgroundColor: 'rgba(40, 55, 149, 0.12)',
-
     borderEndEndRadius: 50,
     borderStartEndRadius: 50,
     borderTopLeftRadius: 50,
@@ -1159,7 +1127,7 @@ const styles = StyleSheet.create({
   },
   bubble: {
 
-    height: 38,//'93%',
+    height: 38,
     backgroundColor: 'rgba(255, 255, 255, 0.16)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18)',
     position: 'absolute',
@@ -1177,14 +1145,12 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
-    // marginTop: 2,
     marginLeft: 2,
 
   },
 
   tabItem: {
-    //justifyContent: 'center',
-    //alignItems: 'center',
+   
   },
   iconWrapper: {
     height: 50, //

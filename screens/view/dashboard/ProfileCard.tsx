@@ -21,7 +21,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import { MAIN_URL } from '../../utils/APIConstant';
-import { NewCustomToastContainer,showToast } from '../../utils/component/NewCustomToastManager';
+import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
 import { useFocusEffect } from '@react-navigation/native';
 import { BlurView } from '@react-native-community/blur';
 import DeviceInfo from 'react-native-device-info';
@@ -32,22 +32,11 @@ import { clearTwilioCache } from '../dashboard/MessageIndividualScreen';
 import { useTranslation } from "react-i18next";
 
 const bgImage = require('../../../assets/images/backimg.png');
-const profileImg = require('../../../assets/images/user.jpg'); 
-const logouticon=require('../../../assets/images/logout.png')
+const profileImg = require('../../../assets/images/user.jpg');
+const logouticon = require('../../../assets/images/logout.png')
 
-const helpicon=require('../../../assets/images/help.png')
-const okicon=require('../../../assets/images/ok.png')
-
-// const cardData = [
-//   { id: '1', title: 'Payment Methods', image: require('../../../assets/images/payment.png') },
-//   { id: '2', title: 'My Orders', image: require('../../../assets/images/cart.png') },
-//   { id: '3', title: 'My Reviews', image: require('../../../assets/images/ok.png') },
-//   { id: '4', title: 'Notifications', image: require('../../../assets/images/notify.png') },
-//   { id: '5', title: 'Help & Support', image: require('../../../assets/images/helpicon.png') },
-//   { id: '6', title: 'Logout', image: require('../../../assets/images/logout.png') },
-//   {id:'7',title:'App Version',image: require('../../../assets/images/versionicon.png')}
-  
-// ];
+const helpicon = require('../../../assets/images/help.png')
+const okicon = require('../../../assets/images/ok.png')
 
 const cardData = [
   { id: '1', titleKey: 'payment_methods', image: require('../../../assets/images/payment.png') },
@@ -66,36 +55,36 @@ type ProfileCardContentProps = {
   navigation: any;
 };
 const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
-  
+
   const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
   const [isHidden, setIsHidden] = useState(true);
 
- interface UserMeta {
-  firstname: string | null;
-  lastname: string | null;
-  profile: string | null;
-  student_email: string | null;
-  email?: string | null;
-  university_name?: string | null;
-}
-
-const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
-const [expanded, setExpanded] = useState(false);
-const animatedHeight = useRef(new Animated.Value(0)).current;
- const [showConfirm, setShowConfirm] = useState(false);
- const [loading, setLoading] = useState(true);
-
-
-useEffect(() => {
-  if (expanded) {
-    Animated.timing(animatedHeight, {
-      toValue: 1,
-      duration: 800, 
-      useNativeDriver: false,
-    }).start();
+  interface UserMeta {
+    firstname: string | null;
+    lastname: string | null;
+    profile: string | null;
+    student_email: string | null;
+    email?: string | null;
+    university_name?: string | null;
   }
-}, [expanded]);
+
+  const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
+  const [expanded, setExpanded] = useState(false);
+  const animatedHeight = useRef(new Animated.Value(0)).current;
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+
+  useEffect(() => {
+    if (expanded) {
+      Animated.timing(animatedHeight, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: false,
+      }).start();
+    }
+  }, [expanded]);
 
   const { t } = useTranslation();
 
@@ -105,8 +94,7 @@ useEffect(() => {
         setLoading(true);
         const token = await AsyncStorage.getItem('userToken');
         const userId = await AsyncStorage.getItem('userId');
-
-        console.log("profile card page.... ",userId);
+        const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
 
         if (!token || !userId) {
           console.warn('Missing token or user ID in AsyncStorage');
@@ -121,26 +109,27 @@ useEffect(() => {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
+            language_code: language_code
           },
         });
 
         const data = await response.json();
 
         if (response.status === 401 || response.status === 403) {
-        handleForceLogout();
-        return;
-      }
+          handleForceLogout();
+          return;
+        }
 
-      if (data.statusCode === 401 || data.statusCode === 403) {
-        handleForceLogout();
-        return;
-      }
+        if (data.statusCode === 401 || data.statusCode === 403) {
+          handleForceLogout();
+          return;
+        }
 
         if (response.ok) {
           const user = data.data;
 
-          console.log("user data .........",user);
-          
+          console.log("user data .........", user);
+
           setUserMeta({
             firstname: user.firstname ?? null,
             lastname: user.lastname ?? null,
@@ -149,16 +138,16 @@ useEffect(() => {
             email: user.email ?? null,
             university_name: user.university_name ?? null,
           });
-          
+
         } else {
           console.warn('Failed to fetch user profile:', data?.message || response.status);
         }
       } catch (error) {
         console.error('Error fetching user profile:', error);
       }
-       finally {
-      setLoading(false);
-    }
+      finally {
+        setLoading(false);
+      }
     };
     const handleForceLogout = async () => {
       console.log('User inactive or unauthorized — logging out');
@@ -185,13 +174,13 @@ useEffect(() => {
           },
         },
       );
- 
+
       const json = await response.json();
- 
+
       if (json?.statusCode === 200 && json.data.onboardingLink) {
         const onboardingLink = json?.data?.onboardingLink;
- 
-        if(Platform.OS === 'ios'){
+
+        if (Platform.OS === 'ios') {
           navigation.replace("StripeOnboardingScreen", {
             onboardingUrl: onboardingLink,
           });
@@ -199,18 +188,17 @@ useEffect(() => {
           navigation.navigate("StripeOnboardingScreen", {
             onboardingUrl: onboardingLink,
           });
+        }
+
+
       }
-       
-     
-      }
-      else if(json?.data?.stripeAccount?.isboardcomplete)
-      {
-            
-            if(Platform.OS === 'ios'){
-              navigation.replace("AccountDeatils", { showSuccess: true })
-            } else {
-              navigation.navigate("AccountDeatils", { showSuccess: true })
-          }
+      else if (json?.data?.stripeAccount?.isboardcomplete) {
+
+        if (Platform.OS === 'ios') {
+          navigation.replace("AccountDeatils", { showSuccess: true })
+        } else {
+          navigation.navigate("AccountDeatils", { showSuccess: true })
+        }
       }
       else {
         Alert.alert('Error', json?.message || 'Something went wrong.Please try again');
@@ -225,359 +213,338 @@ useEffect(() => {
   };
 
 
-const renderItem = ({ item }: any) => {
-  const isLogout = item.titleKey === 'logout';
-  const isVersion = item.titleKey === 'app_version';
- 
-
-  return (
-    <TouchableOpacity
-      style={styles.cardContainer}
-      onPress={async () => {
-        if (isLogout) {      
-        // await AsyncStorage.setItem('ISLOGIN', 'false');
-        // navigation.reset({
-        //   index: 0,
-        //   routes: [{ name: 'SinglePage', params: { resetToLogin: true , logoutMessage: 'User Logout Successfully'} }],
-        // });
+  const renderItem = ({ item }: any) => {
+    const isLogout = item.titleKey === 'logout';
+    const isVersion = item.titleKey === 'app_version';
 
 
-        await AsyncStorage.setItem('userToken', '');
-                    await AsyncStorage.setItem('userData', '');
-                    await AsyncStorage.setItem('userId', '');
+    return (
+      <TouchableOpacity
+        style={styles.cardContainer}
+        onPress={async () => {
+          if (isLogout) {
 
-                    
-                    await AsyncStorage.setItem('twilio_convo_', '');
-                    await AsyncStorage.setItem('twilio_msg_', '');
-                   
+            await AsyncStorage.setItem('userToken', '');
+            await AsyncStorage.setItem('userData', '');
+            await AsyncStorage.setItem('userId', '')
+            await AsyncStorage.setItem('twilio_convo_', '');
+            await AsyncStorage.setItem('twilio_msg_', '');
 
-        setShowConfirm(true); 
-      }
-        else if (item.titleKey  === 'my_orders') {
-          if(Platform.OS === 'ios'){
-            navigation.replace('MyOrders'); 
-          } else {
-            navigation.navigate('MyOrders'); 
+            setShowConfirm(true);
           }
-          
-        } 
-        else if (item.titleKey  === 'my_reviews') {
-          if(Platform.OS === 'ios'){
-            navigation.replace('MyReviews'); 
-          } else {
-            navigation.navigate('MyReviews'); 
-          }
-          // navigation.navigate('MyReviews'); 
-        } 
-        else if (item.titleKey  === 'help_support') {
-          navigation.navigate('HelpSupport'); 
-        } 
+          else if (item.titleKey === 'my_orders') {
+            if (Platform.OS === 'ios') {
+              navigation.replace('MyOrders');
+            } else {
+              navigation.navigate('MyOrders');
+            }
 
-        else if (item.titleKey  === 'notifications') {
-          if(Platform.OS === 'ios'){
-            navigation.replace('Notification'); 
-          } else {
-            navigation.navigate('Notification'); 
           }
-          
-        }
-        else if(item.titleKey  === 'payment_methods'){
-          openStripeOnboarding();
-        } 
-         else {
-          console.log(item.title, 'pressed');
-        }
-      }}
-    >
-      <Image source={item.image} style={styles.cardImage} />
-      <Text allowFontScaling={false}
-        style={[
-          styles.cardText,
-          isLogout && { color: '#FF8282E0' },
-        ]}
+          else if (item.titleKey === 'my_reviews') {
+            if (Platform.OS === 'ios') {
+              navigation.replace('MyReviews');
+            } else {
+              navigation.navigate('MyReviews');
+            }
+          }
+          else if (item.titleKey === 'help_support') {
+            navigation.navigate('HelpSupport');
+          }
+
+          else if (item.titleKey === 'notifications') {
+            if (Platform.OS === 'ios') {
+              navigation.replace('Notification');
+            } else {
+              navigation.navigate('Notification');
+            }
+
+          }
+          else if (item.titleKey === 'payment_methods') {
+            openStripeOnboarding();
+          }
+          else {
+            console.log(item.title, 'pressed');
+          }
+        }}
       >
-         {t(item.titleKey)}
-      </Text>
-      {isVersion ? (
-        <Text allowFontScaling={false} style={styles.versionText}>{APP_VERSION}</Text>
-      ) : !isLogout && (
-        <Image source={arrowIcon} style={styles.cardArrow} />
-      )}
-    </TouchableOpacity>
-  );
-};
-  const APP_VERSION = 'v1.0.0'; 
+        <Image source={item.image} style={styles.cardImage} />
+        <Text allowFontScaling={false}
+          style={[
+            styles.cardText,
+            isLogout && { color: '#FF8282E0' },
+          ]}
+        >
+          {t(item.titleKey)}
+        </Text>
+        {isVersion ? (
+          <Text allowFontScaling={false} style={styles.versionText}>{APP_VERSION}</Text>
+        ) : !isLogout && (
+          <Image source={arrowIcon} style={styles.cardArrow} />
+        )}
+      </TouchableOpacity>
+    );
+  };
+  const APP_VERSION = 'v1.0.0';
 
-const clickBack = () =>{
-    navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})
+  const clickBack = () => {
+    navigation.replace('Dashboard', { AddScreenBackactiveTab: 'Home', isNavigate: false })
   }
   const getInitials = (firstName = '', lastName = '') => {
-  const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
-  const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
-  return (f + l) || '?';
-};
+    const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
+    const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
+    return (f + l) || '?';
+  };
 
-if (loading) {
+  if (loading) {
+    return (
+      <View style={{ flex: 1 }}>
+        <Loader />
+      </View>
+    );
+  }
+
   return (
-    <View style={{ flex: 1 }}>
-      <Loader />
-    </View>
-  );
-}
+    <View style={styles.fullScreenContainer}>
 
-return (
-  <View style={styles.fullScreenContainer}>
-
-    <View
-      style={{
-        paddingTop: Platform.OS === 'ios' ? 0: 0,
-        marginHorizontal: 16,
-        gap: 24,
-      }}
-    >
-      <View style={styles.userRow}>
-        <View style={{ gap: 10 }}>
-          {userMeta?.profile ? (
-            <Image source={{ uri: userMeta.profile }} style={styles.avatar} />
-          ) : (
-            <View style={styles.initialsCircle}>
-              <Text allowFontScaling={false} style={styles.initialsText}>
-                {getInitials(
-                  userMeta?.firstname ?? ' ',
-                  userMeta?.lastname ?? ' ',
-                )}
-              </Text>
-            </View>
-          )}
-        </View>
-
-        <View style={{ }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <Text allowFontScaling={false} style={styles.userName}>
-              {userMeta
-                ? `${userMeta.firstname ?? ''} ${
-                    userMeta.lastname ?? ''
-                  }`.trim()
-                : t('loading')}
-            </Text>
+      <View
+        style={{
+          paddingTop: Platform.OS === 'ios' ? 0 : 0,
+          marginHorizontal: 16,
+          gap: 24,
+        }}
+      >
+        <View style={styles.userRow}>
+          <View style={{ gap: 10 }}>
+            {userMeta?.profile ? (
+              <Image source={{ uri: userMeta.profile }} style={styles.avatar} />
+            ) : (
+              <View style={styles.initialsCircle}>
+                <Text allowFontScaling={false} style={styles.initialsText}>
+                  {getInitials(
+                    userMeta?.firstname ?? ' ',
+                    userMeta?.lastname ?? ' ',
+                  )}
+                </Text>
+              </View>
+            )}
           </View>
 
-          <View style={{ flexDirection: 'column', gap: 6, marginTop: 4 }}>
+          <View style={{}}>
             <View
-              style={{ flexDirection: 'row', alignItems: 'center', gap: 8}}
-            >
-              <Image
-                source={require('../../../assets/images/buildings.png')}
-                style={{ width: 16, height: 16 }}
-              />
-              <Text allowFontScaling={false} style={styles.userSub}>
-                {userMeta?.university_name
-                  ? userMeta.university_name.length > 25
-                    ? userMeta.university_name.slice(0, 25) + '…'
-                    : userMeta.university_name
-                  : 'University Name'}
-              </Text>
-            </View>
-
-            <View
-              style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
-            >
-              <Image
-                source={require('../../../assets/images/sms.png')}
-                style={{ width: 16, height: 16 }}
-              />
-              <Text allowFontScaling={false} style={styles.userSub}>
-                {userMeta?.email || 'studentname@gmail.com'}
-              </Text>
-            </View>
-
-            <View
-              style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
-            >
-              <Image
-                source={require('../../../assets/images/sms.png')}
-                style={{ width: 16, height: 16 }}
-              />
-              <Text allowFontScaling={false} style={styles.userSub}>
-                {userMeta?.student_email || 'studentname@university.ac.uk'}
-              </Text>
-            </View>
-          </View>
-       
-        </View>
-        
-        <TouchableOpacity
-        style={{position: 'absolute',right: 15,top: 14,}}
-          onPress={() => {
-            navigation.navigate('EditProfile');
-          }}
-        >
-          <View style={styles.editcard}>
-            <Text allowFontScaling={false} style={styles.edittext}>
-              {t('edit')}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.listContainer}>
-        <FlatList
-          data={cardData}
-          keyExtractor={item => item.id}
-          renderItem={renderItem}
-          ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-        />
-      </View>
-    </View>
-
-    <Modal
-      visible={showConfirm}
-      transparent
-      animationType="fade"
-      onRequestClose={() => setShowConfirm(false)}
-    >
-      <TouchableWithoutFeedback onPress={() => setShowConfirm(false)}>
-        <View style={styles.overlay}>
-          <BlurView
-            style={{
-              flex: 1,
-              alignContent: 'center',
-              justifyContent: 'center',
-              width: '100%',
-              alignItems: 'center',
-            }}
-            blurType="light"
-            blurAmount={10}
-            reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-          >
-            <View
-              style={[
-                StyleSheet.absoluteFill,
-                { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-              ]}
-            />
-
-            <View style={styles.popupContainer}>
-              <Image
-                source={require('../../../assets/images/alert_logout.png')}
-                style={styles.logo}
-                resizeMode="contain"
-              />
-              <Text allowFontScaling={false} style={styles.mainheader}>
-                {t('confirm_logout')}
-              </Text>
-              <Text allowFontScaling={false} style={styles.subheader}>
-                {t('logout_message')}
-              </Text>
-
-
-              <TouchableOpacity
-              style={styles.loginButton}
-              onPress={async () => {
-                try {
-                  const deviceId = await DeviceInfo.getUniqueId();
-                  const user_id = await AsyncStorage.getItem('userId'); // <-- your stored user id
-
-                  const body = {
-                    device_type: 'android',
-                    device_id: deviceId,
-                    user_id: Number(user_id),
-                  };
-
-                  const response = await fetch(`${MAIN_URL.baseUrl}user/delete-fcm-token`, {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(body),
-                  });
-
-                  const apiData = await response.json();
-
-                  console.log("Logout API Response:", apiData);
-
-                  // If API success → proceed to logout
-                  if (apiData?.statusCode === 200) {
-                    setShowConfirm(false);
-                    
-                    // 🔒 SECURITY: Clear Twilio client and cache to prevent notifications to wrong user
-                    try {
-                      // Reset Twilio client singleton (removes all listeners)
-                      await resetTwilioClient();
-                      
-                      // Clear all Twilio caches (in-memory and AsyncStorage)
-                      await clearTwilioCache();
-                      
-                      // Delete FCM token locally (optional but good practice)
-                      try {
-                        const messaging = require('@react-native-firebase/messaging').default;
-                        await messaging().deleteToken();
-                        if (__DEV__) {
-                          console.log('✅ FCM token deleted locally');
-                        }
-                      } catch (fcmError) {
-                        console.warn('⚠️ Error deleting FCM token:', fcmError);
-                      }
-                      
-                      if (__DEV__) {
-                        console.log('✅ Twilio client and cache cleared on logout');
-                      }
-                    } catch (clearError) {
-                      console.warn('⚠️ Error clearing Twilio data on logout:', clearError);
-                      // Continue with logout even if clearing fails
-                    }
-                    
-                    await AsyncStorage.setItem('ISLOGIN', 'false');
-
-                    navigation.reset({
-                      index: 0,
-                      routes: [
-                        {
-                          name: 'SinglePage',
-                          params: {
-                            resetToLogin: true,
-                            logoutMessage: t(Constant.USER_LOGOUT),
-                          },
-                        },
-                      ],
-                    });
-                  } else {
-                    showToast(t(Constant.LOGOUT_FAIL),'error');
-                  }
-
-                } catch (error) {
-                 // console.log("Logout API Error:", error);
-                  console.log("Something went wrong. Try again!");
-                }
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
               }}
             >
-              <Text allowFontScaling={false} style={styles.loginText}>
-                {t('logout')}
+              <Text allowFontScaling={false} style={styles.userName}>
+                {userMeta
+                  ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''
+                    }`.trim()
+                  : t('loading')}
               </Text>
-            </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.loginButton1}
-                onPress={() => setShowConfirm(false)}
-              >
-                <Text allowFontScaling={false} style={styles.loginText1}>
-                  {t('cancel')}
-                </Text>
-              </TouchableOpacity>
             </View>
-          </BlurView>
+
+            <View style={{ flexDirection: 'column', gap: 6, marginTop: 4 }}>
+              <View
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
+              >
+                <Image
+                  source={require('../../../assets/images/buildings.png')}
+                  style={{ width: 16, height: 16 }}
+                />
+                <Text allowFontScaling={false} style={styles.userSub}>
+                  {userMeta?.university_name
+                    ? userMeta.university_name.length > 25
+                      ? userMeta.university_name.slice(0, 25) + '…'
+                      : userMeta.university_name
+                    : 'University Name'}
+                </Text>
+              </View>
+
+              <View
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
+              >
+                <Image
+                  source={require('../../../assets/images/sms.png')}
+                  style={{ width: 16, height: 16 }}
+                />
+                <Text allowFontScaling={false} style={styles.userSub}>
+                  {userMeta?.email || 'studentname@gmail.com'}
+                </Text>
+              </View>
+
+              <View
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
+              >
+                <Image
+                  source={require('../../../assets/images/sms.png')}
+                  style={{ width: 16, height: 16 }}
+                />
+                <Text allowFontScaling={false} style={styles.userSub}>
+                  {userMeta?.student_email || 'studentname@university.ac.uk'}
+                </Text>
+              </View>
+            </View>
+
+          </View>
+
+          <TouchableOpacity
+            style={{ position: 'absolute', right: 15, top: 14, }}
+            onPress={() => {
+              navigation.navigate('EditProfile');
+            }}
+          >
+            <View style={styles.editcard}>
+              <Text allowFontScaling={false} style={styles.edittext}>
+                {t('edit')}
+              </Text>
+            </View>
+          </TouchableOpacity>
         </View>
-      </TouchableWithoutFeedback>
-    </Modal>
-    <NewCustomToastContainer />
-  </View>
-);
+
+        <View style={styles.listContainer}>
+          <FlatList
+            data={cardData}
+            keyExtractor={item => item.id}
+            renderItem={renderItem}
+            ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+          />
+        </View>
+      </View>
+
+      <Modal
+        visible={showConfirm}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowConfirm(false)}
+      >
+        <TouchableWithoutFeedback onPress={() => setShowConfirm(false)}>
+          <View style={styles.overlay}>
+            <BlurView
+              style={{
+                flex: 1,
+                alignContent: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                alignItems: 'center',
+              }}
+              blurType="light"
+              blurAmount={10}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            >
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                ]}
+              />
+
+              <View style={styles.popupContainer}>
+                <Image
+                  source={require('../../../assets/images/alert_logout.png')}
+                  style={styles.logo}
+                  resizeMode="contain"
+                />
+                <Text allowFontScaling={false} style={styles.mainheader}>
+                  {t('confirm_logout')}
+                </Text>
+                <Text allowFontScaling={false} style={styles.subheader}>
+                  {t('logout_message')}
+                </Text>
+
+
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  onPress={async () => {
+                    try {
+                      const deviceId = await DeviceInfo.getUniqueId();
+                      const user_id = await AsyncStorage.getItem('userId'); 
+
+                      const body = {
+                        device_type: 'android',
+                        device_id: deviceId,
+                        user_id: Number(user_id),
+                      };
+
+                      const response = await fetch(`${MAIN_URL.baseUrl}user/delete-fcm-token`, {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(body),
+                      });
+
+                      const apiData = await response.json();
+
+                      console.log("Logout API Response:", apiData);
+
+                      if (apiData?.statusCode === 200) {
+                        setShowConfirm(false);
+                        try {
+                          await resetTwilioClient();
+                          await clearTwilioCache();
+                          try {
+                            const messaging = require('@react-native-firebase/messaging').default;
+                            await messaging().deleteToken();
+                            if (__DEV__) {
+                              console.log('✅ FCM token deleted locally');
+                            }
+                          } catch (fcmError) {
+                            console.warn('⚠️ Error deleting FCM token:', fcmError);
+                          }
+
+                          if (__DEV__) {
+                            console.log('✅ Twilio client and cache cleared on logout');
+                          }
+                        } catch (clearError) {
+                          console.warn('⚠️ Error clearing Twilio data on logout:', clearError);
+                        }
+
+                        await AsyncStorage.setItem('ISLOGIN', 'false');
+
+                        navigation.reset({
+                          index: 0,
+                          routes: [
+                            {
+                              name: 'SinglePage',
+                              params: {
+                                resetToLogin: true,
+                                logoutMessage: t(Constant.USER_LOGOUT),
+                              },
+                            },
+                          ],
+                        });
+                      } else {
+                        showToast(t(Constant.LOGOUT_FAIL), 'error');
+                      }
+
+                    } catch (error) {
+                      console.log("Something went wrong. Try again!");
+                    }
+                  }}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText}>
+                    {t('logout')}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.loginButton1}
+                  onPress={() => setShowConfirm(false)}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText1}>
+                    {t('cancel')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </BlurView>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+      <NewCustomToastContainer />
+    </View>
+  );
 };
 
 export default ProfileCard;
@@ -590,7 +557,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 
-    popupContainer: {
+  popupContainer: {
     width: '85%',
     padding: 20,
     borderRadius: 24,
@@ -679,31 +646,31 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
 
-  editcard:{
+  editcard: {
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderColor: '#ffffff11',
-    borderRadius:10,
+    borderRadius: 10,
     boxSizing: 'border-box',
     //gap:10,
     alignSelf: 'flex-start',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px', 
+    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
 
   },
 
-  edittext:{
+  edittext: {
     fontFamily: 'Urbanist-SemiBold',
-    fontSize:14,
-    color:'#fff',
-    fontWeight:600,
-    textAlign:'center',
-    
-    
+    fontSize: 14,
+    color: '#fff',
+    fontWeight: 600,
+    textAlign: 'center',
+
+
   },
 
-  initialsCircle:{
+  initialsCircle: {
     backgroundColor: '#8390D4',
     alignItems: 'center',
     justifyContent: 'center',
@@ -711,42 +678,42 @@ const styles = StyleSheet.create({
     height: 88,
     borderRadius: 20,
 
-    
+
     marginRight: 12
   },
-  initialsText:{
-   color: '#fff',
-  fontSize: 36,
-  fontWeight:600,
-  textAlign: 'center',
-  fontFamily: 'Urbanist-SemiBold',
+  initialsText: {
+    color: '#fff',
+    fontSize: 36,
+    fontWeight: 600,
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
   },
   listContainer: {
     // padding: 16,
-    
+
   },
   versionRow: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  marginTop: 4,
-  width: '100%',
-  paddingHorizontal: 10, // optional, align with card content
-},
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 4,
+    width: '100%',
+    paddingHorizontal: 10, // optional, align with card content
+  },
 
-versionLabel: {
-  color: '#888',
-  fontSize: 12,
-},
+  versionLabel: {
+    color: '#888',
+    fontSize: 12,
+  },
 
 
   versionText: {
-  position: 'absolute',
-  right: 20,
-  color: '#fff',
-  fontSize: 14,
-  fontWeight: '500',
-   fontFamily: 'Urbanist-SemiBold',
-},
+    position: 'absolute',
+    right: 20,
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '500',
+    fontFamily: 'Urbanist-SemiBold',
+  },
 
   cardContainer: {
     flexDirection: 'row',
@@ -754,16 +721,16 @@ versionLabel: {
     backgroundColor: 'rgba(255,255,255,0.06)',
     borderRadius: 12,
     padding: 12,
-    minHeight:52,
+    minHeight: 52,
     //marginTop:6,
 
-    
+
   },
   cardImage: {
     width: 25,
     height: 25,
-   // borderRadius: 25,
-    resizeMode:'contain'
+    // borderRadius: 25,
+    resizeMode: 'contain'
   },
   cardText: {
     flex: 1,
@@ -771,7 +738,7 @@ versionLabel: {
     fontSize: 14,
     fontWeight: '600',
     color: '#fff',
-     fontFamily: 'Urbanist-SemiBold',
+    fontFamily: 'Urbanist-SemiBold',
   },
   cardArrow: {
     width: 24,
@@ -787,14 +754,14 @@ versionLabel: {
     // flex: 1,
   },
   header: {
-  
-    paddingTop: (Platform.OS === 'ios' ? '15.2%': 40),
+
+    paddingTop: (Platform.OS === 'ios' ? '15.2%' : 40),
 
     justifyContent: 'center',
     position: 'absolute',
     alignItems: 'center',
     alignSelf: 'center',
-   top:  Platform.OS === 'ios' ? 10 : 10, 
+    top: Platform.OS === 'ios' ? 10 : 10,
     left: 0,
     right: 0,
     zIndex: 10,
@@ -827,7 +794,7 @@ versionLabel: {
     justifyContent: 'center',
     alignItems: 'center',
   },
- 
+
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
@@ -843,7 +810,7 @@ versionLabel: {
   },
   userRow: {
     flexDirection: 'row',
-    alignItems: 'center', 
+    alignItems: 'center',
     // justifyContent: 'space-between',
     borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
@@ -879,5 +846,5 @@ versionLabel: {
     fontWeight: '500',
     lineHeight: 16,
   },
- 
+
 });

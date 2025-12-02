@@ -58,16 +58,16 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
   const [showPopup1, setShowPopup1] = useState(false);
   const closePopup1 = () => setShowPopup1(false);
   const { width } = Dimensions.get('window');
- const { t } = useTranslation();
- 
+  const { t } = useTranslation();
+
 
   const handleSubmit = async () => {
     if (rating === 0) {
-      showToast(t(Constant.ENTER_RATING),'error');
+      showToast(t(Constant.ENTER_RATING), 'error');
       return;
     }
     if (username.trim() === '') {
-      showToast(t(Constant.ENTER_REVIEW),'error');
+      showToast(t(Constant.ENTER_REVIEW), 'error');
       return;
     }
 
@@ -144,7 +144,7 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
         </View>
         {isLoading && (
           <View style={styles.fullLoader}>
-            <Loader/>
+            <Loader />
           </View>
         )}
 
@@ -246,11 +246,6 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
                   <TouchableOpacity
                     style={styles.loginButton}
                     onPress={() => {
-                      // navigation.replace('Dashboard', {
-                      //   AddScreenBackactiveTab: 'Home',
-                      //   isNavigate: false,
-                      // });
-
                       setShowPopup1(false);
                       navigation.reset({
                         index: 0,
@@ -273,21 +268,9 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
 
                   <TouchableOpacity
                     style={styles.loginButton1}
-                    //onPress={()=>{setShowPopup1(false);}}
                     onPress={() => {
-
-                      // navigation.goBack();
-                      navigation.replace('MyOrders'); 
+                      navigation.replace('MyOrders');
                       setShowPopup1(false);
-                      // navigation.reset({
-                      //   index: 0,
-                      //   routes: [
-                      //     {
-                      //       name: 'MyOrders'
-                      //     },
-                      //   ],
-                      // });
-                      // navigation.goBack();
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText1}>
@@ -317,7 +300,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 999,   // ensure it appears above modal content
+    zIndex: 999,  
   },
   overlay: {
     flex: 1,
@@ -400,7 +383,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     marginTop: 8,
-    //textAlign:'center'
   },
 
   sublabel: {
@@ -408,11 +390,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     fontFamily: 'Urbanist-Medium',
-    //textAlign:'center'
     marginTop: 4,
   },
   innercontainer: {
-    //  paddingHorizontal: 16,
     marginBottom: 8,
     flexDirection: 'column',
     justifyContent: 'space-between',
@@ -496,12 +476,10 @@ const styles = StyleSheet.create({
     borderBottomStartRadius: 10,
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
-
     borderTopColor: '#ffffff2e',
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
-
     boxSizing: 'border-box',
   },
   tabcard1: {
@@ -531,13 +509,13 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   tabtext: {
-    color: '#fff', // selected tab text color
+    color: '#fff', 
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
   },
   othertext: {
-    color: '#FFFFFF7A', // unselected tab text color
+    color: '#FFFFFF7A',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,

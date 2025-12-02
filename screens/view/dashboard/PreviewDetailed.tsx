@@ -815,10 +815,6 @@ const { t } = useTranslation();
             <View style={styles.card}>
               <View style={styles.gap12}>
                 <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
-                  {/* {userMeta?.category?.id === 3
-                    ? 'Dish Details'
-                    : `${userMeta?.category?.name ?? ''} Details`} */}
-
                     {userMeta?.category?.id === 3
                     ? t('dish_details')
                     : `${userMeta?.category?.name ? `${userMeta?.category?.name} ` : ''}${t('details')}`}
@@ -951,12 +947,6 @@ const { t } = useTranslation();
             try {
               const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
               const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
-
-              // if (categoryid === Number(4)) {
-              //   return `List for £${accomodation_amount.toFixed(2)}`
-              // }
-              // return 'List';
-
               if (categoryid === Number(4)) {
                 return `${t('list')} for £${accomodation_amount.toFixed(2)}`;
               }
@@ -1040,7 +1030,7 @@ const { t } = useTranslation();
 
                       navigation.dispatch(
                         CommonActions.reset({
-                          index: 0, // make this the active screen
+                          index: 0,
                           routes: [
                             {
                               name: 'Dashboard',
@@ -1075,7 +1065,6 @@ const { t } = useTranslation();
 
 const styles = StyleSheet.create({
   datetext1: {
-    //color: 'rgba(255, 255, 255, 0.48)',
     color: '#9CD6FF',
     fontFamily: 'Urbanist-Medium',
     fontSize: 12,
@@ -1099,15 +1088,12 @@ const styles = StyleSheet.create({
     height: 'auto',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.09) 100%)',
-    //boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     borderRadius: 8,
     paddingLeft: 8,
     paddingRight: 8,
     paddingTop: 6,
     paddingBottom: 6,
     marginTop: 8,
-    //alignItems: 'center',
-    //gap: 4,
     width: 'auto',
     alignSelf: 'flex-start',
   },
@@ -1139,7 +1125,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 16,
     zIndex: 11,
-    //top: 7,
   },
   blurButtonWrapper: {
     width: 48,
@@ -1150,7 +1135,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', 
   },
 
 
@@ -1175,7 +1160,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     height: 'auto'
-    //width: '80%',
   },
 
   bottombutton: {
@@ -1188,7 +1172,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
     padding: 16,
-    //width: '20%',
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
@@ -1226,19 +1209,14 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontStyle: 'normal',
     lineHeight: 1.3,
-    //color: '#fff',
     color: '#9CD6FF'
   },
   categoryTag: {
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    //borderWidth: 0.9,
-    //borderColor: 'rgba(255, 255, 255, 0.08)',
-    //borderBlockEndColor: 'rgba(255, 255, 255, 0.08)',
     color: 'rgba(255, 255, 255, 0.48)',
     borderRadius: 4,
     marginRight: 8,
-    //boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.23)',
     paddingLeft: 6,
     paddingRight: 6,
     paddingTop: 2,
@@ -1259,27 +1237,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-Medium',
     fontSize: 14,
     fontWeight: '500',
-    //fontStyle: 'normal',
     lineHeight: 18,
   },
-
-  //     initialsCircle:{
-  //  backgroundColor: '#8390D4',
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  //    width: 50,
-  //     height: 50,
-  //     borderRadius: 25,
-  //     marginRight: 12,
-  //   },
-  //   initialsText:{
-  //    color: '#fff',
-  //   fontSize: 18,
-  //   fontWeight:600,
-  //   textAlign: 'center',
-  //   fontFamily: 'Urbanist-SemiBold',
-  //   },
-
 
   priceText1: {
     color: '#002050',
@@ -1289,7 +1248,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
 
-
   detailRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -1298,7 +1256,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderBottomWidth: 0.5,
     borderBottomColor: '#ccc',
-    backgroundColor: '#fff', // optional
+    backgroundColor: '#fff',
     borderRadius: 8,
     marginVertical: 4,
   },
@@ -1333,7 +1291,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : 50,
     paddingBottom: 12,
@@ -1352,8 +1309,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    //boxShadow: 'rgba(255, 255, 255, 0.12)  inset -1px 0px 5px 1px inset ',
-
     boxShadow:
       '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
     borderWidth: 0.4,
@@ -1401,7 +1356,7 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 40,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)', // fallback for radial-gradient
+    backgroundColor: 'rgba(255, 255, 255, 0.2)', 
     borderColor: '#ffffff4e',
     borderWidth: 1,
     justifyContent: 'center',
@@ -1415,7 +1370,6 @@ const styles = StyleSheet.create({
 
   fullScreenContainer: {
     flex: 1,
-    //marginTop: 30,
   },
 
   loginText: {
@@ -1466,7 +1420,6 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.1)',
     alignItems: 'center',
     overflow: 'hidden',
-
     backgroundColor: 'rgba(255,255,255,0.15)',
   },
   overlay: {
@@ -1502,14 +1455,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 10,
   },
-  // scrollContainer: {
-  //   //paddingBottom: (Platform.OS === 'ios' ? 70:50),
-  //   //paddingTop: 90,
-  //   // paddingHorizontal: 20,
-  // },
-
   scrollContainer: {
-    //paddingHorizontal: 20,
     paddingBottom: 80,
     paddingTop: Platform.OS === 'ios' ? 120 : 100,
   },
@@ -1519,7 +1465,6 @@ const styles = StyleSheet.create({
     height: 'auto',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.09) 100%)',
-    //boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     borderRadius: 8,
     paddingLeft: 8,
     paddingRight: 8,
@@ -1531,7 +1476,6 @@ const styles = StyleSheet.create({
   },
 
   datetext: {
-    //color: 'rgba(255, 255, 255, 0.48)',
     color: '#9CD6FF',
     fontFamily: 'Urbanist-Medium',
     fontSize: 12,
@@ -1562,12 +1506,6 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     letterSpacing: -0.32,
   },
-  // avatar: {
-  //   width: 50,
-  //   height: 50,
-  //   borderRadius: 25,
-  //   marginRight: 12,
-  // },
   avatar: {
     width: 50,
     height: 50,
@@ -1597,14 +1535,6 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     lineHeight: 20,
   },
-  // itemcondition: {
-  //   color: 'rgba(255, 255, 255, 0.72)',
-  //   fontFamily: 'Urbanist-Regular',
-  //   fontSize: 16,
-  //   fontWeight: '600',
-  //   fontStyle: 'normal',
-  //   lineHeight: 22,
-  // },
   itemcondition: {
     color: 'rgba(255, 255, 255, 0.72)',
     fontFamily: 'Urbanist-SemiBold',
@@ -1617,45 +1547,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
-  // catagoryText: {
-  //   fontFamily: 'Urbanist-Regular',
-  //   fontSize: 12,
-  //   fontWeight: '500',
-  //   fontStyle: 'normal',
-  //   lineHeight: 16,
-  //   color: '#fff',
-  // },
-  // categoryTag: {
-  //   backgroundColor:
-  //     'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  //   borderWidth: 0.9,
-  //   borderColor: 'rgba(255, 255, 255, 0.08)',
-  //   borderBlockEndColor: 'rgba(255, 255, 255, 0.08)',
-  //   color: 'rgba(255, 255, 255, 0.48)',
-  //   borderRadius: 4,
-  //   marginRight: 8,
-  //   boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.23)',
-  //   paddingLeft: 6,
-  //   paddingRight: 6,
-  //   paddingTop: 2,
-  //   paddingBottom: 2,
-  // },
-  // productDesHeding: {
-  //   color: 'rgba(255, 255, 255, 0.72)',
-  //   fontFamily: 'Urbanist-Regular',
-  //   fontSize: 16,
-  //   fontWeight: '600',
-  //   fontStyle: 'normal',
-  //   lineHeight: 22,
-  // },
-  // productDesc: {
-  //   color: 'rgba(255, 255, 255, 0.64)',
-  //   fontFamily: 'Urbanist-Regular',
-  //   fontSize: 14,
-  //   fontWeight: '500',
-  //   fontStyle: 'normal',
-  //   lineHeight: 20,
-  // },
+  
   productDeatilsHeading: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-SemiBold',
@@ -1665,30 +1557,11 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     letterSpacing: -0.36,
   },
-
-  // QuaddText: {
-  //   color: 'rgba(255, 255, 255, 0.88)',
-  //   fontFamily: 'Urbanist-SemiBold',
-  //   fontSize: 20,
-  //   fontWeight: '600',
-  //   letterSpacing: -0.4,
-  //   lineHeight: 24,
-  // },
-  // priceText: {
-  //   color: '#fff',
-  //   fontFamily: 'Urbanist-SemiBold',
-  //   fontSize: 20,
-  //   fontWeight: '700',
-  //   letterSpacing: -0.4,
-  //   lineHeight: 24,
-  // },
-
   QuaddText: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 20,
     fontWeight: '600',
-    //fontStyle: 'normal',
     letterSpacing: -0.4,
     lineHeight: 24,
   },
@@ -1700,18 +1573,6 @@ const styles = StyleSheet.create({
     letterSpacing: -0.1,
     paddingTop: 8
   },
-
-
-  // card: {
-  //   flexDirection: 'column',
-  //   marginBottom: 6,
-  //   padding: 16,
-  //   borderRadius: 24,
-  //   backgroundColor: 'rgba(255, 255, 255, 0.06)',
-  //   gap: 12,
-  //   marginTop: 12
-  // },
-
   card: {
     flexDirection: 'column',
     marginBottom: 6,
@@ -1734,23 +1595,6 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
   },
-  // backIconRow: {
-  //   padding: 12,
-  //   borderRadius: 40,
-  //   backgroundColor:
-  //     'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-  //   boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-  //   borderWidth: 0.4,
-  //   borderColor: '#ffffff2c',
-  //   height: 48,
-  //   width: 48,
-  //   position: 'absolute',
-  //   top: -10,
-  //   left: 0,
-  //   right: 0,
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  // },
   previewThumbnail: {
     color: '#FFF',
     textAlign: 'center',

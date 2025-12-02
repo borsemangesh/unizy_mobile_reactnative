@@ -23,7 +23,7 @@ interface SelectCatagoryDropdownProps {
   title?: string;
   subtitle?: string;
   onClose: () => void;
-  onSelect: (selectedId: number | number[]) => void; 
+  onSelect: (selectedId: number | number[]) => void;
   selectedValues?: number | number[];
 }
 const SelectCatagoryDropdown = ({
@@ -36,8 +36,8 @@ const SelectCatagoryDropdown = ({
   onSelect,
   selectedValues
 }: SelectCatagoryDropdownProps) => {
-  const [selectedCheckboxes, setSelectedCheckboxes] = useState<number[]>([]); // For checkboxes
-  const [selectedRadio, setSelectedRadio] = useState<number | null>(null); // For radio buttons
+  const [selectedCheckboxes, setSelectedCheckboxes] = useState<number[]>([]);
+  const [selectedRadio, setSelectedRadio] = useState<number | null>(null);
   const screenHeight = Dimensions.get('window').height;
 
   const [tempSelectedCheckboxes, setTempSelectedCheckboxes] = useState<number[]>([]);
@@ -78,198 +78,181 @@ const SelectCatagoryDropdown = ({
   };
 
   const handleCancel = () => {
-    // Just close — don’t commit changes
     onClose();
   };
-const { t } = useTranslation();
+  const { t } = useTranslation();
 
   return (
-    <View  style={[StyleSheet.absoluteFillObject,{zIndex: 999,display: visible ? 'flex' : 'none'}]}>
+    <View style={[StyleSheet.absoluteFillObject, { zIndex: 999, display: visible ? 'flex' : 'none' }]}>
       <BlurView
-      // style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%'}} 
-      style={[StyleSheet.absoluteFillObject]}
-      blurType="dark"
-      blurAmount={Platform.OS === 'ios' ? 2 : 2}
-      reducedTransparencyFallbackColor="transparent"
-    />
-    <Modal
-      animationType="slide"
-      visible={visible}
-      transparent
-      // backdropColor={'rgba(0, 0, 0, 0.5)'}
-      onRequestClose={onClose}
-    >
+        style={[StyleSheet.absoluteFillObject]}
+        blurType="dark"
+        blurAmount={Platform.OS === 'ios' ? 2 : 2}
+        reducedTransparencyFallbackColor="transparent"
+      />
+      <Modal
+        animationType="slide"
+        visible={visible}
+        transparent
+        onRequestClose={onClose}>
 
-    <View style={{ flex: 1,justifyContent: 'flex-end', }}>
+        <View style={{ flex: 1, justifyContent: 'flex-end', }}>
 
-      <View style={styles.overlay}>
+          <View style={styles.overlay}>
+            <TouchableWithoutFeedback onPress={onClose}>
+              <View style={StyleSheet.absoluteFillObject} />
+            </TouchableWithoutFeedback>
+            <View style={styles.modelcontainer}>
+              <BlurView
+                blurType={Platform.OS === 'ios' ? 'light' : 'dark'}
+                style={[
+                  {
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                    opacity: 1,
+                  }
+                ]}
+                blurAmount={Platform.OS === 'ios' ? 50 : 10}
+                reducedTransparencyFallbackColor="none"
+              />
 
-  <TouchableWithoutFeedback onPress={onClose}>
-    <View style={StyleSheet.absoluteFillObject} />
-  </TouchableWithoutFeedback>
-        <View style={styles.modelcontainer}>
-          <BlurView
-          blurType={Platform.OS === 'ios' ? 'light' : 'dark'}
-            style={[
-              // StyleSheet.absoluteFill,
-             { position: 'absolute',
-              left: 0,
-              right: 0,
-              top: 0,
-              bottom: 0,
-              opacity: 1,
-            // backgroundColor: 'rgba(108, 142, 255, 0.8)',
-            }
-              // styles.broderTopLeftRightRadius_30,
-            ]}
-            blurAmount={Platform.OS === 'ios' ? 50 : 10}
-            reducedTransparencyFallbackColor="none"
-          />
+              <View style={styles.modeltitleContainer}>
+                <View style={{ width: '100%', alignSelf: 'center', alignItems: 'center', paddingBottom: 10 }}>
+                  <View style={{ height: 5, backgroundColor: 'rgba(0, 0, 0, 0.57)', flexDirection: 'row', width: '15%', borderRadius: 10, top: -10 }} />
 
-          <View style={styles.modeltitleContainer}>
-              <View style={{width: '100%',alignSelf: 'center',alignItems: 'center',paddingBottom: 10}}>
-              <View style={{height:5,backgroundColor: 'rgba(0, 0, 0, 0.57)',flexDirection: 'row',width: '15%',borderRadius: 10,top:-10}}/>
-
-              </View>
-            <View
-              style={{
-                flexDirection: 'column',
-              }}
-            >
-              <View style={styles.header}>
-                <View style={styles.optionHeader}>
-                  <View style={styles.checkboxImage}>
-                      <Image
-                      source={
-                          ismultilple
-                            ? require('../../../assets/images/checkboxicon.png')
-                            : require('../../../assets/images/radiobuttonicon.png')
-                        }
-                      style={{ width: 24, height: 24 }}
-                    />
-                  </View>
-                  <Text adjustsFontSizeToFit allowFontScaling={false} style={[styles.modelTextHeader, { flexShrink: 1 }]}>{title}</Text>
                 </View>
-                <Text allowFontScaling={false} style={styles.orderandTotalEarings}>
-                  {subtitle}
-                </Text>
+                <View
+                  style={{
+                    flexDirection: 'column',
+                  }}
+                >
+                  <View style={styles.header}>
+                    <View style={styles.optionHeader}>
+                      <View style={styles.checkboxImage}>
+                        <Image
+                          source={
+                            ismultilple
+                              ? require('../../../assets/images/checkboxicon.png')
+                              : require('../../../assets/images/radiobuttonicon.png')
+                          }
+                          style={{ width: 24, height: 24 }}
+                        />
+                      </View>
+                      <Text adjustsFontSizeToFit allowFontScaling={false} style={[styles.modelTextHeader, { flexShrink: 1 }]}>{title}</Text>
+                    </View>
+                    <Text allowFontScaling={false} style={styles.orderandTotalEarings}>
+                      {subtitle}
+                    </Text>
+                  </View>
+                </View>
               </View>
-            </View>
-          </View>
-          {/* </LinearGradient> */}
-          <View
-            style={{
-              width: '100%',
-              minHeight: screenHeight * 0.1, 
-              maxHeight: screenHeight * 0.6,
-              paddingHorizontal: 10,
-            }}
-          >
-            <ScrollView  showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom:16 }}>
-              {options.map((option, index) => {
-              
-                const isSelectedRadio = tempSelectedRadio === option.id;
-                const isSelectedCheckbox = tempSelectedCheckboxes.includes(option.id);
+              <View
+                style={{
+                  width: '100%',
+                  minHeight: screenHeight * 0.1,
+                  maxHeight: screenHeight * 0.6,
+                  paddingHorizontal: 10,
+                }}
+              >
+                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 16 }}>
+                  {options.map((option, index) => {
 
-                return (
-                  <View
-                    style={{
-                      // marginBottom: 10,
-                      paddingHorizontal: 10,
-                      marginTop: 10,
-                    }}
-                    key={index}
-                  >
-                   
-                    <TouchableOpacity
-                      onPress={() =>{
-                        ismultilple
-                          ? toggleCheckbox(option.id)
-                          : handleRadioButton(option.id)
-                      }
-                    }
-                      style={styles.radioButtonContainer}
-                    >
+                    const isSelectedRadio = tempSelectedRadio === option.id;
+                    const isSelectedCheckbox = tempSelectedCheckboxes.includes(option.id);
+
+                    return (
                       <View
                         style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
                           paddingHorizontal: 10,
-                          justifyContent: 'flex-start',
+                          marginTop: 10,
                         }}
-                      >
-              {ismultilple ? (
-                <View style={styles.checkboxWrapper}>
-                  {isSelectedCheckbox ? (
-                    <Image
-                      source={require('../../../assets/images/tickicon.png')}
-                      style={styles.tickImage}
-                      resizeMode="contain"
-                    />
-                  ) : (
-                    <View style={styles.checkboxContainer} />
-                  )}
-                </View>
-              ) : (
-                <View style={[styles.radioButton, isSelectedRadio && styles.selectedRadio]}>
-                  {isSelectedRadio && <View style={styles.radioDot} />}
-                </View>
-              )}
-                        {/* Option Name */}
-                        <Text allowFontScaling={false}
-                          style={{
-                            color: '#FFF',
-                            fontSize: 16,
-                            marginLeft: 10,
-                            fontWeight: '600',
-                            lineHeight: 22,
-                            letterSpacing: -0.28,
-                            fontFamily: 'Urbanist-SemiBold',
+                        key={index}>
 
-                          }}
+                        <TouchableOpacity
+                          onPress={() => {
+                            ismultilple
+                              ? toggleCheckbox(option.id)
+                              : handleRadioButton(option.id)
+                          }
+                          }
+                          style={styles.radioButtonContainer}
                         >
-                          {option.option_name}
-                        </Text>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              paddingHorizontal: 10,
+                              justifyContent: 'flex-start',
+                            }}
+                          >
+                            {ismultilple ? (
+                              <View style={styles.checkboxWrapper}>
+                                {isSelectedCheckbox ? (
+                                  <Image
+                                    source={require('../../../assets/images/tickicon.png')}
+                                    style={styles.tickImage}
+                                    resizeMode="contain"
+                                  />
+                                ) : (
+                                  <View style={styles.checkboxContainer} />
+                                )}
+                              </View>
+                            ) : (
+                              <View style={[styles.radioButton, isSelectedRadio && styles.selectedRadio]}>
+                                {isSelectedRadio && <View style={styles.radioDot} />}
+                              </View>
+                            )}
+                            <Text allowFontScaling={false}
+                              style={{
+                                color: '#FFF',
+                                fontSize: 16,
+                                marginLeft: 10,
+                                fontWeight: '600',
+                                lineHeight: 22,
+                                letterSpacing: -0.28,
+                                fontFamily: 'Urbanist-SemiBold',
+
+                              }}
+                            >
+                              {option.option_name}
+                            </Text>
+                          </View>
+                        </TouchableOpacity>
                       </View>
-                    </TouchableOpacity>
-                  </View>
-                );
-              })}
-            </ScrollView>
-        
-          </View>
-          <View style={styles.cardconstinerdivider} />
-          <View style={styles.bottomview}>
-         
-              <TouchableOpacity style={styles.cancelBtn} onPress={handleCancel}>
+                    );
+                  })}
+                </ScrollView>
+
+              </View>
+              <View style={styles.cardconstinerdivider} />
+              <View style={styles.bottomview}>
+
+                <TouchableOpacity style={styles.cancelBtn} onPress={handleCancel}>
                   <Text style={styles.cancelText}> {t('cancel')}</Text>
                 </TouchableOpacity>
-
-           
-            <TouchableOpacity
+                <TouchableOpacity
                   style={[styles.cancelBtn, { backgroundColor: '#ffffff4e' }]}
-                  onPress={handleApply}
-                >
+                  onPress={handleApply}>
                   <Text style={[styles.cancelText, { color: '#000000' }]}>
                     {t('apply')}
                   </Text>
                 </TouchableOpacity>
+              </View>
+            </View>
           </View>
         </View>
-
-
-      </View>
-
-      </View>
-    </Modal>
+      </Modal>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  tickImage:{
-   height:24,
-   width:24
+  tickImage: {
+    height: 24,
+    width: 24
   },
   cardconstinerdivider: {
     display: 'flex',
@@ -283,19 +266,17 @@ const styles = StyleSheet.create({
     borderColor: '#52577cff'
   },
   checkedBox: {
-    //backgroundColor: '#ffffff',
   },
   tickMark: {
-  color: '#260426ff', 
-  fontSize: 10,
-  textAlign: 'center',
-  fontWeight: '600',
-  lineHeight: 10, // keeps it centered
-},
-  
+    color: '#260426ff',
+    fontSize: 10,
+    textAlign: 'center',
+    fontWeight: '600',
+    lineHeight: 10, 
+  },
+
   radioButtonContainer: {
     marginTop: 10,
-    // alignItems: 'center',
   },
   radioButton: {
     width: 19,
@@ -307,7 +288,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   selectedRadio: {
-    backgroundColor: 'rgba(0, 0, 255, 0)', // Radio button color when selected
+    backgroundColor: 'rgba(0, 0, 255, 0)',
   },
   radioDot: {
     width: 10,
@@ -316,25 +297,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   checkboxWrapper: {
-  width: 19,
-  height: 19,
-  justifyContent: 'center',
-  alignItems: 'center',
-},
+    width: 19,
+    height: 19,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   checkboxContainer: {
-    //width: 19,
-    //height: 19,
-    height:'100%',
-    width:'100%',
-
+    height: '100%',
+    width: '100%',
     borderRadius: 5,
     borderWidth: 1,
     borderColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'transparent',
-    //marginTop: 10,
-   // overflow:'hidden'
   },
   orderandTotalEarings: {
     color: '#FFFFFF',
@@ -343,14 +319,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     lineHeight: 16,
     opacity: 0.64,
-    //textShadowColor: 'rgba(255,255,255,0.6)',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 1,
     marginTop: 10,
-    
+
   },
   header: {
-    
+
   },
   optionHeader: {
     flexDirection: 'row',
@@ -375,14 +350,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     paddingVertical: 16,
-    paddingHorizontal:20,
+    paddingHorizontal: 20,
     // backgroundColor: 'rgba(98, 132, 255, 0.46)',
     backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(254, 254, 254, 0.11) 0%, rgba(39, 75, 253, 0.03) 100%)',
-
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-  
-  
   },
   broderTopLeftRightRadius_30: {
     borderTopLeftRadius: 30,
@@ -390,17 +362,14 @@ const styles = StyleSheet.create({
   },
   modelcontainer: {
     backgroundColor:
-  'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(0, 60, 163, 0.05) 0%, rgba(255, 255, 255, 0.03) 100%)',
-
-    
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(0, 60, 163, 0.05) 0%, rgba(255, 255, 255, 0.03) 100%)',
     width: '100%',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     alignItems: 'center',
-    // filter: 'drop-shadow(0 0.833px 3.333px rgba(255, 255, 255, 0.18))',
     gap: 5,
     opacity: 0.8,
-    overflow:'hidden'
+    overflow: 'hidden'
   },
   bottomview: {
     padding: 16,
@@ -409,10 +378,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     paddingBottom: (Platform.OS === 'ios' ? 40 : 20),
-    paddingTop:16,
-    alignItems:'center',
-    alignContent:'center',
-    gap:8
+    paddingTop: 16,
+    alignItems: 'center',
+    alignContent: 'center',
+    gap: 8
 
   },
   radioButtonSelected: {
@@ -429,7 +398,6 @@ const styles = StyleSheet.create({
     height: 15,
     flexShrink: 0,
     borderColor: '#ffffff4e',
-
     alignItems: 'center',
     borderRadius: 50,
     justifyContent: 'center',
@@ -437,22 +405,18 @@ const styles = StyleSheet.create({
     shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25',
   },
   cancelBtn: {
-    minHeight:48,
+    minHeight: 48,
     flex: 1,
-    //marginRight: 8,
     padding: 12,
     borderRadius: 50,
-    // backgroundColor: 'gray',
     backgroundColor: '#ffffff1b',
     alignItems: 'center',
     justifyContent: 'center',
     boxShadow: '0 2px 8px 0 rgba(75, 75, 75, 0.19)',
   },
   overlay: {
-    //backgroundColor: 'rgba(0, 0, 0, 0.5)',
     flex: 1,
     justifyContent: 'flex-end',
-    // opacity: 0.8
   },
   filtertitle: {
     color: 'rgba(255, 255, 255, 0.64)',
@@ -486,7 +450,6 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     boxShadow:
       '0 2px 8px 0 rgba(0, 0, 0, 0.25)inset 0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-
     justifyContent: 'center',
     padding: 16,
     gap: 4,
@@ -541,15 +504,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '500',
     letterSpacing: 0.17,
-    //lineHeight: 19.6,
   },
 
   inactiveTab: {
     display: 'flex',
     alignItems: 'center',
-
     borderRadius: 14,
-
     justifyContent: 'center',
     padding: 16,
     gap: 4,
@@ -563,8 +523,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 0.5,
     borderColor: '#ffffff0e',
-    // boxShadow:
-    //   '0 0px 2px 1px rgba(255, 255, 255, 0.16)inset',
     justifyContent: 'center',
     padding: 16,
     gap: 4,

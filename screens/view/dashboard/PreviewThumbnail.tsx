@@ -1,5 +1,3 @@
-
-
 import {
   Animated,
   Dimensions,
@@ -40,7 +38,7 @@ type PreviewThumbnailProps = {
   navigation: any;
 };
 type CategoryDetailsType = {
-  commission: string;     // e.g., "10.00"
+  commission: string;     
   max_cappund: string;
   feature_fee: string,
   max_feature_cap: string
@@ -74,13 +72,9 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
   const [uniname, setUniname] = useState<string>(''); // initialize with empty string
   const [categoryId, setCategoryId] = useState<number | null>(null);
 
-
   const [fullName, setFullName] = useState('');
   const [initials, setInitials] = useState('');
   const [profile, setProfile] = useState('');
-
-
-
 
   const { height } = Dimensions.get('window');
   const bottomPadding = height * 0.0005;
@@ -138,7 +132,6 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
   useEffect(() => {
     const fetchStoredData = async () => {
       try {
-        // 1️⃣ Fetch stored form data
         const storedData = await AsyncStorage.getItem('formData');
         if (storedData) {
           const parsedData = JSON.parse(storedData);
@@ -157,8 +150,6 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
 
           const full = `${parsedUserMeta?.firstname} ${parsedUserMeta?.lastname}`.trim();
           setFullName(full);
-
-          // Create initials (first letter of each, uppercased)
           const init = `${parsedUserMeta?.firstname?.charAt(0) ?? ''}${parsedUserMeta?.lastname?.charAt(0) ?? ''}`.toUpperCase();
           setInitials(init);
 
@@ -203,14 +194,7 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
   };
 
   const titleValue = getValueByAlias(storedForm, 'title') || 'No Title';
-  //const priceValue = getValueByAlias(storedForm, 'price') || '0';
   const imageArray = storedForm?.[6]?.value || [];
-
-  // console.log(priceValue)
-  // const commisionprice = priceValue + priceValue * 0.12;
-  // const featurecommisionprice = priceValue + priceValue * 0.8;
-
-
   const raw = getValueByAlias(storedForm, 'price') ?? '0';
   const priceValue = parseFloat(String(raw)) || 0;
 
@@ -237,10 +221,6 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
 
   const { t } = useTranslation();
 
-
-
-  //console.log(commisionprice)
-
   return (
     <ImageBackground
       source={require('../../../assets/images/backimg.png')}
@@ -248,33 +228,15 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
       resizeMode="cover"
     >
       <View style={styles.fullScreenContainer}>
-        {/* <View style={styles.header}>
-              <View style={styles.headerRow}>
-            <TouchableOpacity onPress={() => {
-             navigation.goBack();
-          }}>          
-            <View style={styles.backIconRow}>
-              <Image
-                 source={require('../../../assets/images/back.png')}
-                  style={{ height: 24, width: 24 }}/>
-               </View>
-             </TouchableOpacity>
-           <Text allowFontScaling={false} style={styles.unizyText}>Preview Thumbnail</Text>
-             <View style={{ width: 48 }} />
-             </View>
-           </View> */}
         <StatusBar
           translucent
           backgroundColor="transparent"
           barStyle="light-content"
         />
-
-        {/* Header with Blur only at top */}
         <AnimatedReanimated.View
           style={[styles.headerWrapper, animatedBlurStyle]}
           pointerEvents="none"
         >
-          {/* Blur layer only at top with gradient fade */}
           <MaskedView
             style={StyleSheet.absoluteFill}
             maskElement={
@@ -317,7 +279,6 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
             <AnimatedReanimated.View
               style={[styles.blurButtonWrapper, animatedButtonStyle]}
             >
-              {/* Static background (visible when scrollY = 0) */}
               <AnimatedReanimated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -333,8 +294,6 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                   })),
                 ]}
               />
-
-              {/* Blur view fades in as scroll increases */}
               <AnimatedReanimated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -356,7 +315,6 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                 />
               </AnimatedReanimated.View>
 
-              {/* Back Icon */}
               <AnimatedReanimated.Image
                 source={require('../../../assets/images/back.png')}
                 style={[{ height: 24, width: 24 }, animatedIconStyle]}
@@ -537,7 +495,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 16,
     zIndex: 11,
-    //top: 7,
   },
   blurButtonWrapper: {
     width: 48,
@@ -602,7 +559,6 @@ const styles = StyleSheet.create({
   backIconRow: {
     padding: 12,
     borderRadius: 40,
-
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -623,8 +579,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
   },
-
-
   newtext: {
     color: '#fff',
     fontSize: 16,
@@ -641,7 +595,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 6,
     marginTop: 24,
     marginBottom: 16
-
   },
   textbg: {
     overflow: 'hidden',

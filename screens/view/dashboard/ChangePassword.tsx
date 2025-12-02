@@ -132,20 +132,14 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
    
       if (response.ok) {
         showToast(t(data?.message) || 'Password updated successfully', 'success');
-
-        // navigation.navigate('EditProfile');
-        // navigation.goBack();
-        // setInterval(() => {
           await new Promise((resolve: any) => {
             setTimeout(resolve, 2000);
-          }); // Wait 1.5s so toast stays visible
+          });
           setUserMeta({
             current_password: '',
             new_password: '',
             confirm_password: '',
           });
-//         }, 2000); // 3 second
-
       } else {
         showToast(t(data?.message) || 'Failed to update password', 'error');
       }
@@ -168,7 +162,6 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-        {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerRow}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -261,17 +254,6 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
               <Text style={styles.label} allowFontScaling={false}>
                 {t('confirm_password')}
               </Text>
-              {/* <TextInput
-                allowFontScaling={false}
-                value={userMeta.confirm_password || ''}
-                onChangeText={text =>
-                  setUserMeta(prev => ({ ...prev, confirm_password: text }))
-                }
-                style={styles.input}
-                placeholder="Enter Confirm Password"
-                placeholderTextColor="#ccc"
-              /> */}
-
               <View style={{ position: 'relative' }}>
                 <TextInput
                   value={userMeta.confirm_password || ''}
@@ -326,7 +308,6 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
               <Text
                 allowFontScaling={false}
                 style={styles.forgetText}
-              // onPress={() => navigation.goBack()}
               >
                 {t('forgot_password')}
               </Text>
@@ -458,7 +439,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 16,
     zIndex: 11,
-    //top: 7,
   },
   blurButtonWrapper: {
     width: 48,
@@ -469,7 +449,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', 
   },
 
   tabcard: {
@@ -478,11 +458,9 @@ const styles = StyleSheet.create({
     marginRight: 8,
     borderWidth: 0.4,
     borderColor: '#ffffff11',
-
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
     borderEndEndRadius: 10,
     borderStartEndRadius: 10,
     borderTopLeftRadius: 10,
@@ -490,12 +468,10 @@ const styles = StyleSheet.create({
     borderBottomStartRadius: 10,
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
-
     borderTopColor: '#ffffff2e',
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
-
     boxSizing: 'border-box',
   },
   tabcard1: {
@@ -525,13 +501,13 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   tabtext: {
-    color: '#fff', // selected tab text color
+    color: '#fff', 
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
   },
   othertext: {
-    color: '#FFFFFF7A', // unselected tab text color
+    color: '#FFFFFF7A',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
@@ -544,12 +520,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    // paddingTop: Platform.OS === 'ios' ? '6%' : 30,
-    // paddingBottom: 12,
-    // // paddingHorizontal: 16,
-    // paddingTop: Platform.OS === 'ios' ? '15.3%' : 50,
-    // paddingBottom: 12,
-    // paddingHorizontal: 16,
     position: 'absolute',
     top: Platform.OS === 'ios' ? '7.1%' : 50,
     width: Platform.OS === 'ios' ? 393 : '100%',
@@ -587,7 +557,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
-    // marginRight: 12,
     width: 265,
     height: 28,
     opacity: 1,
@@ -616,11 +585,8 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10,
     paddingTop: 10,
-    //paddingBottom:80,
   },
   row1: {
-    // flexDirection: 'row',
-    // justifyContent: 'flex-start',
   },
   itemContainer: {
     flex: 1,
@@ -689,20 +655,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginTop: 16,
     borderRadius: 24,
-    // padding: 16,
-    // marginBottom:16,
-
-    // overflow: 'hidden',
     paddingHorizontal: 16,
     paddingVertical: 16,
     backgroundColor: 'rgba(255,255,255,0.08)',
     gap: 12,
   },
   inputGroup: {
-    // marginBottom: 14,
     height: 64,
-    // paddingHorizontal:8,
-    // paddingVertical:12
   },
   label: {
     color: '#fff',
@@ -822,7 +781,7 @@ const styles = StyleSheet.create({
   },
 
   inputEmail: {
-    flex: 1, // THIS PART IS MOST IMPORTANT!!
+    flex: 1,
     color: '#fff',
     fontSize: 16,
     backgroundColor: 'transparent',
@@ -830,14 +789,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 12,
-    minWidth: 0, // Prevents unwanted expansion
+    minWidth: 0,
     height: 44,
   },
 
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.08)', // matches glass effect
+    backgroundColor: 'rgba(255,255,255,0.08)', 
     borderRadius: 14,
   },
 
@@ -848,12 +807,11 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     color: '#fff',
     height: 44,
-    // width:329
   },
 
   updateButton: {
     marginLeft: 38,
-    backgroundColor: '#FFFFFF8F', // contrast glass effect
+    backgroundColor: '#FFFFFF8F', 
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
@@ -861,9 +819,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.17,
     shadowRadius: 5,
     elevation: 2,
-    // width: 70,
-
-    width: 90, // Fixed width
+    width: 90,
     height: 34,
   },
   updateButtonText: {
@@ -872,7 +828,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
   },
 
-  // -----------------to handle personal email--------------------//
   overlay: {
     flex: 1,
     justifyContent: 'center',
@@ -893,13 +848,6 @@ const styles = StyleSheet.create({
   },
 
   mainheader: {
-    // fontFamily: 'Urbanist-SemiBold',
-    // fontWeight: '500',
-    // // marginBottom: 10,
-    // fontSize: 20,
-
-    // color: '#fff',
-    // textAlign: 'center',
     color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-Regular',
     fontSize: 16,
@@ -980,9 +928,8 @@ const styles = StyleSheet.create({
   otpContainer: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    // width: '100%',
     alignSelf: 'center',
-    gap: 8, // works in RN 0.71+, otherwise use marginRight
+    gap: 8, 
     marginTop: 16,
     paddingHorizontal: 20,
   },
@@ -1044,7 +991,6 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
     alignSelf: 'center',
-    // position: 'absolute',
     bottom: Platform.OS === 'ios' ? 0 : 0,
     marginTop: 16,
   },

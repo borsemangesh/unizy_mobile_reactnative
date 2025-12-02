@@ -580,18 +580,52 @@ const styles = StyleSheet.create({
   },
 
 
-  categoryTabsContainer: {
+ categoryTabsContainer: { 
+    marginBottom: 12, 
+    marginTop: 12, 
     width: '105%',
-    marginBottom: 12,
-    marginTop: 12,
-    paddingLeft: 10
+   },
+  categoryTabsScrollContent: { 
+    flexDirection: 'row', 
+    alignItems: 'center' 
   },
 
-  categoryTabsScrollContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingRight: 16,
+ tabcard: {  
+    minHeight: 38,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    marginRight: 8,
+    borderWidth: 0.4,
+    borderColor: '#ffffff11',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    borderRadius: 10,
+    boxShadow:
+    'rgba(255, 255, 255, 0.02)inset 0.1px 0.1px 1px 0px,',
   },
+  tabcard1: {
+    minHeight: 38,
+    borderWidth: 0.4,
+    borderColor: '#ffffff11',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    borderEndEndRadius: 10,
+    borderStartEndRadius: 10,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderBottomStartRadius: 10,
+    borderBlockStartColor: '#ffffff2e',
+    borderBlockColor: '#ffffff2e',
+    borderTopColor: '#ffffff2e',
+    borderBottomColor: '#ffffff2e',
+    borderLeftColor: '#ffffff2e',
+    borderRightColor: '#ffffff2e',
+    boxSizing: 'border-box',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    marginRight: 8,
+  },
+
   blurButtonWrapper: {
     width: 48,
     height: 48,
@@ -645,32 +679,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600
-  },
-
-  tabcard: {
-    minHeight: 38,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    marginRight: 8,
-    borderWidth: 0.4,
-    borderColor: '#ffffff11',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    borderRadius: 10,
-    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
-  },
-  tabcard1: {
-    minHeight: 38,
-    borderWidth: 0.4,
-    borderColor: '#ffffff11',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    borderRadius: 10,
-    boxSizing: 'border-box',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    marginRight: 8,
-    overflow: 'hidden'
   },
 
   tabtext: {

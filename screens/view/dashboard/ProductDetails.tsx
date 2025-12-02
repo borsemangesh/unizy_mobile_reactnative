@@ -247,6 +247,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
 
       const url = MAIN_URL.baseUrl + 'category/feature-list/search';
       const token = await AsyncStorage.getItem('userToken');
+      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
 
       if (!token) {
         if (isInitialLoad) setInitialLoading(false);
@@ -259,6 +260,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
+          language_code: language_code
         },
         body: JSON.stringify(body),
       });
@@ -419,8 +421,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
       setIsLoading(true);
       setFeaturelist([]);
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) return;
+      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
 
+      if (!token) return;
 
       const newFilterBody = {
         ...filterBody,
@@ -433,7 +436,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
 
       setAppliedFilter(newFilterBody);
 
-
       const url = `${MAIN_URL.baseUrl}category/filter-apply`;
 
       console.log(url)
@@ -443,6 +445,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
+          language_code: language_code
         },
         body: JSON.stringify(newFilterBody),
       });
@@ -613,7 +616,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
                 />
               </Animated.View>
 
-              {/* Back Icon */}
               <Animated.Image
                 source={require('../../../assets/images/back.png')}
                 style={[{ height: 24, width: 24 }, animatedIconStyle]}
@@ -742,8 +744,6 @@ export default ProductDetails;
 
 const styles = StyleSheet.create({
 
-
-
   header: {
     position: 'absolute',
     top: 0,
@@ -796,7 +796,6 @@ const styles = StyleSheet.create({
     marginLeft: 1
   },
 
-
   categoryTabsContainer: {
     width: '100%',
     marginBottom: 12,
@@ -821,7 +820,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
 
-
   emptyWrapper: {
     flex: 1,
     justifyContent: 'center',
@@ -829,7 +827,6 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 10,
   },
-
 
   emptyContainer: {
     flex: 1,
@@ -869,7 +866,6 @@ const styles = StyleSheet.create({
   backIconRow: {
     padding: 12,
     borderRadius: 40,
-
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',

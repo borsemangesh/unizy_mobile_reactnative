@@ -84,7 +84,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     // profile:''
   });
 
-  //------------------- Get data method ------------------------//
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -110,10 +109,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         });
 
         const data = await response.json();
-
-
-
-
         if (response.status === 401 || response.status === 403) {
           handleForceLogout();
           return;
@@ -194,12 +189,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             return true;
 
           case RESULTS.DENIED:
-            // User denied previously → we can ask again
             const result = await request(PERMISSIONS.IOS.CAMERA);
             return result === RESULTS.GRANTED;
 
           case RESULTS.BLOCKED:
-            // User selected "Don't Allow" + "Don't ask again"
             Alert.alert(
               'Camera Permission Needed',
               'Camera access is blocked. Please enable it in Settings.',
@@ -222,7 +215,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     return true;
   };
 
-  //-----------------------Handel validation ---------------------//
   const validateForm = () => {
     const errors = [];
     if (!userMeta.firstname || userMeta.firstname.trim() === '') {
@@ -289,7 +281,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         showToast(Constant.IMAGE_UPLOAD, 'success');
         await new Promise((resolve: any) => {
           setTimeout(resolve, 2000);
-        }); // Wait 1.5s so toast stays visible
+        });
       }
 
 
@@ -338,26 +330,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             },
           ],
         });
-        // setTimeout(() => {
-        //   // navigation.replace('Dashboard', {
-        //   //   AddScreenBackactiveTab: 'Profile',
-        //   //   isNavigate: false,
-        //   // });
-
-        //   navigation.reset({
-        //     index: 0,
-        //     routes: [
-        //       {
-        //         name: 'Dashboard',
-        //         params: {
-        //           AddScreenBackactiveTab: 'Profile',
-        //           isNavigate: false,
-        //         }
-        //       }
-        //     ],
-        //   });
-
-        // }, 4500);
       } else {
         showToast(
           t(data?.message) || 'Failed to update profile.Please try again',
@@ -369,8 +341,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
     }
   };
-
-  //------------------ image upload functionality ---------------//
 
   const handleSelectImage = async () => {
     console.log('Choose image');
@@ -522,11 +492,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     }
   };
 
-  //------------------------- to handel personal email ------------------------//
-
-  // const [emailModalVisible, setEmailModalVisible] = useState(false);
-  // const [verificationCode, setVerificationCode] = useState(['', '', '', '']); // One input per digit
-
   const [otp, setOtp] = useState(['', '', '', '']);
 
   const [save_otp, setSaveOtp] = useState(0);
@@ -569,16 +534,12 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       console.log('send Otp...........', data);
 
       if (data?.statusCode === 200) {
-        // showToast(data.message, 'success');   change
         setSaveOtp(data.data.otp_id);
-
-        // setShowPopup2(true);
       } else {
         showToast(t(data?.message), 'error');
       }
     } catch (err) {
       console.error(err);
-      // showToast(Constant.SOMTHING_WENT_WRONG, 'error');
     }
   };
 
@@ -713,25 +674,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     }));
   };
 
-  // const getCityFromPostalCode = async (postalCode: any) => {
-  //   try {
-  //     const response = await fetch(
-  //       `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
-  //     );
-
-  //     const data = await response.json();
-
-  //     return (
-  //       data[0]?.address?.city ||
-  //       data[0]?.address?.town ||
-  //       data[0]?.address?.village
-  //     );
-  //   } catch (error) {
-  //     console.log(error);
-  //     return null;
-  //   }
-  // };
-
   const getCityFromPostalCode = async (postalCode: string) => {
     try {
       const response = await fetch(
@@ -743,11 +685,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           },
         }
       );
-  
+
       const data = await response.json();
-  
+
       if (!data || data.length === 0) return null;
-  
+
       return (
         data[0].address.city ||
         data[0].address.town ||
@@ -759,7 +701,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       return null;
     }
   };
-  
+
 
   const getInitials = (firstName = '', lastName = '') => {
     const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
@@ -883,7 +825,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-           {t('edit')} {t('profile')}
+            {t('edit')} {t('profile')}
           </Text>
         </View>
 
@@ -931,17 +873,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                       </Text>
                     </View>
                   )}
-
-
-                  {/* <Image
-                    source={
-                      photo
-                        ? { uri: photo }
-                        : require('../../../assets/images/add1.png')
-                    }
-                    style={styles.profilelogo}
-                    resizeMode="cover"
-                  /> */}
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -979,7 +910,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
               <View style={styles.inputGroup}>
                 <Text style={styles.label} allowFontScaling={false}>
-                   {t('last_name')}
+                  {t('last_name')}
                 </Text>
                 <TextInput
                   value={userMeta.lastname || ''}
@@ -1003,8 +934,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     alignItems: 'center',
                     backgroundColor: 'rgba(255,255,255,0.08)',
                     borderRadius: 12,
-                    // paddingHorizontal: 12,
-                    minHeight: 44, // or any desired height
+                    minHeight: 44, 
                   }}
                 >
                   <TextInput
@@ -1045,7 +975,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                       height: 32,
 
                       backgroundColor: isUpdateDisabled_personal
-                        ? '#99999980' // Fallback color for disabled
+                        ? '#99999980' 
                         : 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
                       boxShadow: isUpdateDisabled_personal
                         ? ''
@@ -1158,41 +1088,21 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 </Text>
                 <TextInput
                   value={userMeta.postal_code || ''}
-                  // onChangeText={text => {
-                  //   const filteredText = text.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-                  //   if (filteredText.trim().length > 7) return;
-                  //   setUserMeta(prev => ({
-                  //     ...prev,
-                  //     postal_code: filteredText,
-                  //   }));
-                  //   if (filteredText.trim().length <= 7) {
-                  //     ClickPostalCode(filteredText);
-                  //   }
-                  // }}
                   onChangeText={text => {
-                    // Keep only letters + numbers, convert to uppercase
                     const filteredText = text.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-
-                    // Limit length
                     if (filteredText.length > 7) return;
-
-                    // Update state
                     setUserMeta(prev => ({
                       ...prev,
                       postal_code: filteredText,
                     }));
-
-                    // Clear old timer
                     if (typingTimeout) {
                       clearTimeout(typingTimeout);
                     }
-
-                    // Start new 3-sec timer
                     const timeout = setTimeout(() => {
                       if (filteredText.length > 0) {
                         ClickPostalCode(filteredText);
                       }
-                    }, 1000); // 3 seconds
+                    }, 1000);
 
                     setTypingTimeout(timeout);
                   }}
@@ -1330,7 +1240,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
                 <TouchableOpacity
                   style={styles.loginButton}
-
                   onPress={otpverify}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>
@@ -1390,24 +1299,23 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 ]}
               />
 
-              <View style={[styles.popupContainer,{gap: 3}]}>
+              <View style={[styles.popupContainer, { gap: 3 }]}>
                 <Image
                   source={require('../../../assets/images/profile_delete.png')}
                   style={styles.logo}
                   resizeMode="contain"
                 />
                 <Text allowFontScaling={false} style={styles.mainheader1}>
-                {t('remove_profile')}
-              </Text>
-              <Text allowFontScaling={false} style={styles.subheader2}>
-                {t('are_you_sure')}
-              </Text>
+                  {t('remove_profile')}
+                </Text>
+                <Text allowFontScaling={false} style={styles.subheader2}>
+                  {t('are_you_sure')}
+                </Text>
 
                 <TouchableOpacity
                   style={styles.loginButton}
                   onPress={async () => {
                     setShowDeleteModal(false);
-                    // await handleDeleteImage();
                     setPhoto(null);
                   }}
                 >
@@ -1439,7 +1347,7 @@ export default EditProfile;
 
 const styles = StyleSheet.create({
 
-   subheader2: {
+  subheader2: {
     color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-Regular',
     fontSize: 14,
@@ -1448,7 +1356,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
 
-    mainheader1: {
+  mainheader1: {
     color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 20,
@@ -1923,7 +1831,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
   },
- 
+
   subheader: {
     color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-Regular',

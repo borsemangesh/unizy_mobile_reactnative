@@ -47,7 +47,6 @@ export default function SearchTutionCard({
           <Image
             source={require('../../assets/images/tutionbg.png')}
             style={styles.profileimage}
-            // style={{resizeMode: 'contain'}}
             resizeMode="cover"
           />
         ) : null}
@@ -146,27 +145,10 @@ export default function SearchTutionCard({
 }
 
 const styles = StyleSheet.create({
-  //    tagTopLeft: {
-  //   position: 'absolute',
-  //   //top: 5,
-  //  // left: 5,
-  //   top: Platform.OS === 'ios' ? 8 : 8,
-  //     left: Platform.OS === 'ios' ? 8 : 8,
-  //   backgroundColor: 'rgba(255,255,255,0.4)',
-  //   borderRadius: 4,
-  //   padding: 4,
-  //   marginVertical: 4,
-  //   marginHorizontal: 4,
-  //   boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
-  // },
-
   tagTopLeft: {
     position: 'absolute',
-    // top: 5,
-    // left: 5,
     top: Platform.OS === 'ios' ? 16 : 10,
     left: Platform.OS === 'ios' ? 16 : 10,
-    //backgroundColor: 'rgba(255,255,255,0.4)',
     backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
     borderRadius: 4,
     padding: 4,
@@ -175,8 +157,6 @@ const styles = StyleSheet.create({
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
     overflow: 'hidden'
   },
-
-
 
   initialsCircle: {
     width: 80,
@@ -197,10 +177,6 @@ const styles = StyleSheet.create({
   },
   card: {
     borderRadius: 16,
-    // backgroundColor:
-    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-
     shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 8,
@@ -230,45 +206,11 @@ const styles = StyleSheet.create({
     boxSizing: 'border-box',
     minHeight: 226
   },
-  // imageContainer: {
-  //   backgroundColor: 'rgba(154, 154, 255, 0.12)',
-  //   width: '100%',       
-  //   height: 180,            
-  //   overflow: 'hidden',       
-  //   justifyContent: 'center', 
-  //   alignItems: 'center',
-  // borderWidth: 0.4,
-  // boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-  // borderBlockStartColor: '#ffffff2e',
-  // borderBlockColor: '#ffffff2e',
-
-  // borderTopColor: '#ffffff2e',
-  // borderBottomColor: '#ffffff2e',
-  // borderLeftColor: '#ffffff2e',
-  // borderRightColor: '#ffffff2e',
-  //   borderEndEndRadius: 15,
-  //   borderStartEndRadius: 15,
-  //   borderTopLeftRadius: 15,
-  //   borderTopRightRadius: 15,
-  //   borderBottomStartRadius: 15,
-
-  // },
-
-  // image: {
-  //   width: '100%',
-  //   height: '100%',
-  //   padding: (Platform.OS === 'ios' ? 4 : 12),
-  //   borderRadius: 12,
-  //   alignSelf: 'center',
-  //   resizeMode: 'stretch'
-  // },
-
+ 
   imageContainer: {
-    // width: 186,
     width: '100%',
     height: 200,
     position: 'relative',
-    //padding: (Platform.OS === 'ios' ? 0 : 6),
     justifyContent: 'center',
     alignItems: 'center',
     padding: (Platform.OS === 'ios' ? 0 : 6),
@@ -279,14 +221,6 @@ const styles = StyleSheet.create({
     padding: (Platform.OS === 'ios' ? 5 : 12),
     borderRadius: 12,
     resizeMode: 'contain',
-    //borderWidth: 0.4,
-    //boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-    // borderBlockStartColor: '#ffffff2e',
-    // borderBlockColor: '#ffffff2e',
-    // borderTopColor: '#ffffff2e',
-    // borderBottomColor: '#ffffff2e',
-    // borderLeftColor: '#ffffff2e',
-    // borderRightColor: '#ffffff2e',
   },
 
   profileimage: {
@@ -294,14 +228,6 @@ const styles = StyleSheet.create({
     height: '100%',
     padding: (Platform.OS === 'ios' ? 5 : 12),
     borderRadius: (Platform.OS === 'ios' ? 12 : 12),
-    // boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-    // borderBlockStartColor: '#ffffff2e',
-    // borderBlockColor: '#ffffff2e',
-
-    // borderTopColor: '#ffffff2e',
-    // borderBottomColor: '#ffffff2e',
-    // borderLeftColor: '#ffffff2e',
-    // borderRightColor: '#ffffff2e',
     overflow: 'hidden'
   },
   image1: {
@@ -329,7 +255,6 @@ const styles = StyleSheet.create({
     //borderColor: '#ffffff2e',
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
-
     borderTopColor: '#ffffff2e',
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
@@ -348,11 +273,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
     overflow: 'hidden',
-    alignSelf: 'flex-end', // 👈 ensures the View wraps the text
+    alignSelf: 'flex-end',
     flexShrink: 1,
-    // position: 'absolute',
-
-    maxWidth: '80%',   // restrict width relative to parent
+    maxWidth: '80%', 
     flexWrap: 'wrap',
   },
 
@@ -371,7 +294,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
-    //backgroundColor: '#fff',
     paddingHorizontal: 2,
 
   },

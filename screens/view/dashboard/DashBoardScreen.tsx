@@ -111,7 +111,7 @@ const ProductItem: React.FC<ProductItemProps> = ({
     key={item.id}
     onPress={() => {
 
-      if(Platform.OS === 'ios'){
+      if (Platform.OS === 'ios') {
         navigation.reset({
           index: 0,
           routes: [{ name: 'ProductDetails', params: { category_id: item.id, category_name: item.name } }],
@@ -1232,14 +1232,14 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                 >
 
                   {activeTab === 'Search'
-                  ? t('transaction_history')
-                  : activeTab === 'Profile'
-                    ? t('profile')
-                    : activeTab === 'Bookmark'
-                      ? t('messages')
-                      : activeTab === 'Add'   // ✅ new tab
-                        ? t('settings')            // make sure "settings" exists in translation
-                        : null}
+                    ? t('transaction_history')
+                    : activeTab === 'Profile'
+                      ? t('profile')
+                      : activeTab === 'Bookmark'
+                        ? t('messages')
+                        : activeTab === 'Add'   
+                          ? t('settings') 
+                          : null}
                 </Text>
               </View>
               <AnimatedReanimated.ScrollView
@@ -1261,7 +1261,6 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
               </AnimatedReanimated.ScrollView>
             </View>
           ) : (
-            // other tabs (Home, Add, etc)
             <ScrollView
               style={{ flex: 1 }}
               showsVerticalScrollIndicator={false}
@@ -1357,10 +1356,6 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
 export default DashBoardScreen;
 
 const styles = StyleSheet.create({
-
-
-
-
   headerWrapper: {
     position: 'absolute',
     top: 0,
@@ -1387,7 +1382,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 16,
     zIndex: 11,
-    //top: 7,
   },
   blurButtonWrapper: {
     width: 48,
@@ -1400,11 +1394,6 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
-
-
-
-
-
   stepCircle: {
     width: 12,
     height: 12,
@@ -1714,7 +1703,6 @@ const styles = StyleSheet.create({
   cardIcon1: {
     width: 36,
     height: 36,
-    //marginRight: 12,
     resizeMode: 'center',
   },
   cardTextContainer: {
