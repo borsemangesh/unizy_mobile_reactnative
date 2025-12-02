@@ -51,6 +51,18 @@ const itemOptions = [
   { id: 3, option_name: 'Used' },
 ];
 
+interface ImageField {
+  id?: number;
+  uri: string;
+  type?: string;
+  name: string;
+}
+interface FormField {
+  value: any;
+  alias_name: string | null;
+}
+
+
 const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const [showPopup, setShowPopup] = useState(false);
   const closePopup = () => setShowPopup(false);
@@ -330,6 +342,7 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
   }, []);
 
   type ImageField = {
+    isNew: any;
     id?: string;
     uri: string;
     name: string;
@@ -337,174 +350,329 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
   };
 
 
-  const handleListPress = async () => {
-    console.log('🔵 handleListPress called');
-    try {
-      console.log('Step 1: Fetching formData from AsyncStorage...');
-      const storedData = await AsyncStorage.getItem('formData1');
-      console.log('✅ AsyncStorage.getItem(formData) result:', storedData);
+  // const handleListPress = async () => {
+  //   console.log('🔵 handleListPress called');
+  //   try {
+  //     console.log('Step 1: Fetching formData from AsyncStorage...');
+  //     const storedData = await AsyncStorage.getItem('formData1');
+  //     console.log('✅ AsyncStorage.getItem(formData) result:', storedData);
 
-      if (!storedData) {
-        console.log('⚠️ No form data found in storage');
-        return;
-      }
+  //     if (!storedData) {
+  //       console.log('⚠️ No form data found in storage');
+  //       return;
+  //     }
 
-      const formData: Record<
-        string,
-        { value: any; alias_name: string | null }
-      > = JSON.parse(storedData);
-      console.log('✅ Parsed formData:', formData);
+  //     const formData: Record<
+  //       string,
+  //       { value: any; alias_name: string | null }
+  //     > = JSON.parse(storedData);
+  //     console.log('✅ Parsed formData:', formData);
 
-      console.log('Step 2: Fetching userToken...');
-      const token = await AsyncStorage.getItem('userToken');
-      const productId1 = await AsyncStorage.getItem('selectedProductId');
-      const shareid = await AsyncStorage.getItem('shareid');
+  //     console.log('Step 2: Fetching userToken...');
+  //     const token = await AsyncStorage.getItem('userToken');
+  //     const productId1 = await AsyncStorage.getItem('selectedProductId');
+  //     const shareid = await AsyncStorage.getItem('shareid');
 
-      if (!token) {
-        console.log('⚠️ Token not found. Cannot upload.');
-        return;
-      }
+  //     if (!token) {
+  //       console.log('⚠️ Token not found. Cannot upload.');
+  //       return;
+  //     }
 
-      console.log('Step 3: Splitting formData...');
+  //     console.log('Step 3: Splitting formData...');
 
-      const imageFields = Object.entries(formData)
-        .filter(([key, obj]) => {
-          const v = obj.value;
-          return (
-            Array.isArray(v) &&
-            v.length > 0 &&
-            v.every((item: any) => item?.uri)
-          );
-        })
-        .map(([key, obj]) => [key, obj.value as ImageField[]]) as [
-          string,
-          ImageField[],
-        ][];
+  //     const imageFields = Object.entries(formData)
+  //       .filter(([key, obj]) => {
+  //         const v = obj.value;
+  //         return (
+  //           Array.isArray(v) &&
+  //           v.length > 0 &&
+  //           v.every((item: any) => item?.uri)
+  //         );
+  //       })
+  //       .map(([key, obj]) => [key, obj.value as ImageField[]]) as [
+  //         string,
+  //         ImageField[],
+  //       ][];
 
-      const nonImageFields = Object.entries(formData).filter(([key, obj]) => {
-        const v = obj.value;
-        return !(Array.isArray(v) && v.every((item: any) => item?.uri));
-      });
+  //     const nonImageFields = Object.entries(formData).filter(([key, obj]) => {
+  //       const v = obj.value;
+  //       return !(Array.isArray(v) && v.every((item: any) => item?.uri));
+  //     });
 
-      console.log('✅ Non-image fields:', nonImageFields);
-      console.log('✅ Image fields:', imageFields);
+  //     console.log('✅ Non-image fields:', nonImageFields);
+  //     console.log('✅ Image fields:', imageFields);
 
-      // --- Build data array safely ---
-      const dataArray = nonImageFields
-        .filter(([key, obj]) => !isNaN(Number(key)))
-        .map(([key, obj]) => {
-          const val = obj.value;
-          return {
-            id: Number(key),
-            param_value: val !== undefined && val !== null && val !== '' ? val : null,
-          };
-        })
-        .filter(item => item.param_value !== null);
+  //     // --- Build data array safely ---
+  //     const dataArray = nonImageFields
+  //       .filter(([key, obj]) => !isNaN(Number(key)))
+  //       .map(([key, obj]) => {
+  //         const val = obj.value;
+  //         return {
+  //           id: Number(key),
+  //           param_value: val !== undefined && val !== null && val !== '' ? val : null,
+  //         };
+  //       })
+  //       .filter(item => item.param_value !== null);
 
-      console.log('✅ Data array for create API:', dataArray);
+  //     console.log('✅ Data array for create API:', dataArray);
 
-      const createPayload = {
-        category_id: productId1, // dynamic or static
-        data: dataArray,
-      };
-      console.log(
-        'API',
-        `${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`,
-      );
-      const createRes = await fetch(
-        `${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(createPayload),
-        },
-      );
+  //     const createPayload = {
+  //       category_id: productId1, // dynamic or static
+  //       data: dataArray,
+  //     };
+  //     console.log(
+  //       'API',
+  //       `${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`,
+  //     );
+  //     const createRes = await fetch(
+  //       `${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`,
+  //       {
+  //         method: 'PATCH',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //         body: JSON.stringify(createPayload),
+  //       },
+  //     );
 
-      const createJson = await createRes.json();
-      console.log('✅ Create API response:', createJson);
+  //     const createJson = await createRes.json();
+  //     console.log('✅ Create API response:', createJson);
 
-      const apiMessage = createJson?.message || createJson?.error || "Something went wrong";
-      const isSuccess = createRes.status === 200 || createRes.status === 201;
+  //     const apiMessage = createJson?.message || createJson?.error || "Something went wrong";
+  //     const isSuccess = createRes.status === 200 || createRes.status === 201;
 
-      showToast(t(apiMessage), isSuccess ? "success" : "error");
+  //     showToast(t(apiMessage), isSuccess ? "success" : "error");
 
-      if (!(createRes.status === 200 || createRes.status === 201)) {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'MyListing', },],
-        });
-        return;
-      }
+  //     if (!(createRes.status === 200 || createRes.status === 201)) {
+  //       navigation.reset({
+  //         index: 0,
+  //         routes: [{ name: 'MyListing', },],
+  //       });
+  //       return;
+  //     }
 
-      const feature_id = createJson?.data?.id;
-      if (!feature_id) {
-        return
-      }
+  //     const feature_id = createJson?.data?.id;
+  //     if (!feature_id) {
+  //       return
+  //     }
 
-      const storedDataImages = await AsyncStorage.getItem('deletedImagesId');
-      const deletedImageIds = storedDataImages ? JSON.parse(storedDataImages).deleted_image_ids || [] : [];
-
-
-      for (const [param_id, images] of imageFields) {
-        if (!Array.isArray(images)) {
-          continue;
-        }
-
-        for (const image of images) {
-          if (!image || !image.uri) {
-            continue;
-          }
-
-          if (deletedImageIds.includes(image.id)) {
-            continue;
-          }
-          const data = new FormData();
-          data.append('files', {
-            uri: image.uri,
-            type: image.type || 'image/jpeg',
-            name: image.name,
-          } as any);
-          data.append('feature_id', feature_id);
-          data.append('param_id', param_id);
-          data.append('deleted_image_ids', JSON.stringify(deletedImageIds));
-
-          console.log('✅ FormData prepared for upload', JSON.stringify(data));
-
-          const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-update`;
-
-          const uploadRes = await fetch(uploadUrl, {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            body: data,
-          });
-          const uploadJson = await uploadRes.json();
-
-          try {
-            console.log("✅ Upload API Parsed JSON:", uploadJson);
-            const apiMessage = uploadJson?.message || uploadJson?.error || `Failed to upload ${image.name}`;
-            const isSuccess = uploadRes.status === 200 || uploadRes.status === 201;
-            showToast(t(apiMessage), isSuccess ? "success" : "error");
-            if (!isSuccess) return;
-          } catch (err) {
-            console.error('❌ Failed to parse upload response as JSON', err);
-          }
-        }
-      }
+  //     const storedDataImages = await AsyncStorage.getItem('deletedImagesId');
+  //     const deletedImageIds = storedDataImages ? JSON.parse(storedDataImages).deleted_image_ids || [] : [];
 
 
-      console.log('✅ All uploads done. Showing toast.');
-      showToast(t(Constant.DATA_UPLOAD), 'success');
-      setShowPopup(true);
-    } catch (error) {
-      console.log('❌ Error in handleListPress:', error);
-      showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
+  //     for (const [param_id, images] of imageFields) {
+  //       if (!Array.isArray(images)) {
+  //         continue;
+  //       }
+
+  //       for (const image of images) {
+  //         if (!image || !image.uri) {
+  //           continue;
+  //         }
+
+  //         if (deletedImageIds.includes(image.id)) {
+  //           continue;
+  //         }
+  //         const data = new FormData();
+  //         data.append('files', {
+  //           uri: image.uri,
+  //           type: image.type || 'image/jpeg',
+  //           name: image.name,
+  //         } as any);
+  //         data.append('feature_id', feature_id);
+  //         data.append('param_id', param_id);
+  //         data.append('deleted_image_ids', JSON.stringify(deletedImageIds));
+
+  //         console.log('✅ FormData prepared for upload', JSON.stringify(data));
+
+  //         const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-update`;
+
+  //         const uploadRes = await fetch(uploadUrl, {
+  //           method: 'POST',
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //           body: data,
+  //         });
+  //         const uploadJson = await uploadRes.json();
+
+  //         try {
+  //           console.log("✅ Upload API Parsed JSON:", uploadJson);
+  //           const apiMessage = uploadJson?.message || uploadJson?.error || `Failed to upload ${image.name}`;
+  //           const isSuccess = uploadRes.status === 200 || uploadRes.status === 201;
+  //           showToast(t(apiMessage), isSuccess ? "success" : "error");
+  //           if (!isSuccess) return;
+  //         } catch (err) {
+  //           console.error('❌ Failed to parse upload response as JSON', err);
+  //         }
+  //       }
+  //     }
+
+
+  //     console.log('✅ All uploads done. Showing toast.');
+  //     showToast(t(Constant.DATA_UPLOAD), 'success');
+  //     setShowPopup(true);
+  //   } catch (error) {
+  //     console.log('❌ Error in handleListPress:', error);
+  //     showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
+  //   }
+  // };
+
+
+const handleListPress = async () => {
+  console.log("🔵 handleListPress called");
+
+  try {
+    // -----------------------------
+    // STEP 1: Fetch stored form data
+    // -----------------------------
+    const storedData = await AsyncStorage.getItem("formData1");
+    if (!storedData) {
+      console.log("⚠️ No form data found");
+      return;
     }
-  };
+
+    const formData: Record<string, FormField> = JSON.parse(storedData);
+    console.log("📌 Loaded formData:", formData);
+
+    // -----------------------------
+    // STEP 2: Get token and IDs
+    // -----------------------------
+    const token = await AsyncStorage.getItem("userToken");
+    const productId = await AsyncStorage.getItem("selectedProductId");
+    const shareid = await AsyncStorage.getItem("shareid");
+
+    if (!token) {
+      console.log("⚠️ Token missing");
+      return;
+    }
+
+    // -----------------------------
+    // STEP 3: Separate image + non-image fields
+    // -----------------------------
+    const imageFields: [string, ImageField[]][] = [];
+    const nonImageFields: [string, { value: any; alias_name: string | null }][] = [];
+
+    Object.entries(formData).forEach(([key, obj]) => {
+      const v = obj.value;
+      if (Array.isArray(v) && v.length > 0 && v.every(i => i?.uri)) {
+        imageFields.push([key, v as ImageField[]]);
+      } else {
+        nonImageFields.push([key, obj]);
+      }
+    });
+
+    // -----------------------------
+    // STEP 4: Prepare payload for PATCH
+    // -----------------------------
+    const dataArray = nonImageFields
+      .filter(([key]) => !isNaN(Number(key)))
+      .map(([key, obj]) => ({
+        id: Number(key),
+        param_value: obj.value !== undefined && obj.value !== null && obj.value !== "" ? obj.value : null,
+      }))
+      .filter(i => i.param_value !== null);
+
+    const createPayload = {
+      category_id: productId,
+      data: dataArray,
+    };
+
+    console.log("📤 Sending UPDATE request:", createPayload);
+
+    // -----------------------------
+    // STEP 5: PATCH non-image fields
+    // -----------------------------
+    const createRes = await fetch(`${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(createPayload),
+    });
+
+    const createJson = await createRes.json();
+    console.log("📌 Create Response:", createJson);
+
+    if (![200, 201].includes(createRes.status)) {
+      showToast(t(createJson?.message || "Error"), "error");
+      navigation.reset({ index: 0, routes: [{ name: "MyListing" }] });
+      return;
+    }
+
+    showToast(t(createJson?.message || "Success"), "success");
+
+    // -----------------------------
+    // STEP 6: Get feature_id
+    // -----------------------------
+    const feature_id = createJson?.data?.id;
+    if (!feature_id) {
+      console.log("⚠️ feature_id missing");
+      return;
+    }
+
+   console.log("📌 imageFields:", JSON.stringify(imageFields, null, 2));
+
+    for (const [param_id, images] of imageFields) {
+      console.log("📌 param_id:", param_id, "images count:", images.length);
+      for (const image of images) {
+        if (!image || !image.uri) continue;
+
+        console.log("🟢 Uploading image:", image.name);
+
+        const form = new FormData();
+        form.append("files", {
+          uri: image.uri,
+          type: image.type || "image/jpeg",
+          name: image.name,
+        } as any);
+        form.append("feature_id", feature_id);
+        form.append("param_id", param_id);
+
+
+        console.log("  file uri:", image.uri);
+        
+
+        const uploadRes = await fetch(`${MAIN_URL.baseUrl}category/featurelist/image-update`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: form,
+        });
+
+        const uploadJson = await uploadRes.json();
+        console.log("📌 Upload Response:", uploadJson);
+
+        const isSuccess = [200, 201].includes(uploadRes.status);
+        showToast(
+          t(uploadJson?.message || "Image upload failed"),
+          isSuccess ? "success" : "error"
+        );
+
+        if (!isSuccess) return;
+      }
+    }
+
+    // -----------------------------
+    // STEP 8: Done
+    // -----------------------------
+    console.log("🎉 ALL DONE");
+    showToast(t(Constant.DATA_UPLOAD), "success");
+    setShowPopup(true);
+
+    // -----------------------------
+    // STEP 9: Clear temp storage
+    // -----------------------------
+    await AsyncStorage.removeItem("formData1");
+    await AsyncStorage.removeItem("deletedImagesId");
+
+  } catch (err) {
+    console.log("❌ handleListPress Error:", err);
+    showToast(t(Constant.SOMTHING_WENT_WRONG), "error");
+  }
+};
+
 
 
 
@@ -786,7 +954,7 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
                 </Text>
 
                 <Text allowFontScaling={false} style={styles.priceText}>
-                  {`$${commissionPrice}`}
+                  {`£${commissionPrice}`}
                 </Text>
 
                 {(categoryid === 2 || categoryid === 5) && (
@@ -1048,21 +1216,6 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
                       await AsyncStorage.removeItem('isfeatured')
                       console.log('✅ formData cleared from AsyncStorage');
 
-                      // navigation.dispatch(
-                      //   CommonActions.reset({
-                      //     index: 0, // make this the active screen
-                      //     routes: [
-                      //       {
-                      //         name: 'Dashboard',
-                      //         params: {
-                      //           AddScreenBackactiveTab: 'Home',
-                      //           isNavigate: false,
-                      //         },
-                      //       },
-                      //     ],
-                      //   }),
-                      // );
-                      console.log("NAVIGATIONSTACK: ", navigation.getState());
                       navigation.reset({
                         index: 0,
                         routes: [

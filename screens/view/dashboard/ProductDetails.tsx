@@ -468,7 +468,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
 
     try {
       setIsLoading(true);
-
+      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
       const token = await AsyncStorage.getItem('userToken');
       if (!token) return;
 
@@ -486,6 +486,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
+          language_code: language_code
         },
         body: JSON.stringify(nextFilterBody),
       });

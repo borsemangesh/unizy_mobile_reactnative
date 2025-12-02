@@ -398,8 +398,10 @@ const formatDate = (dateString?: string, t?: any) => {
   const groupByDate = (data: any[], t?: any) => {
   const groupedMap: Record<string, any[]> = {};
 
+  
   data.forEach(item => {
     const d = new Date(item.created_at);
+
 
     const rawDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
       d.getDate()
@@ -407,6 +409,7 @@ const formatDate = (dateString?: string, t?: any) => {
 
     const displayDate = formatDate1(item.created_at, t);
 
+  
     if (!groupedMap[rawDate]) {
       groupedMap[rawDate] = [];
     }
@@ -418,10 +421,13 @@ const formatDate = (dateString?: string, t?: any) => {
       rawDate,
     });
   });
+  
+
 
   const sortedDates = Object.keys(groupedMap).sort((a, b) => {
     return new Date(b).getTime() - new Date(a).getTime();
   });
+
 
   const groupedArray: any[] = [];
 
@@ -429,18 +435,19 @@ const formatDate = (dateString?: string, t?: any) => {
     const items = groupedMap[rawDate].sort(
       (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
-
+ 
     groupedArray.push({
       type: 'date',
       id: `date-${rawDate}`,
       displayDate: items[0].displayDate,
     });
-
+   
     groupedArray.push(...items);
   });
 
   return groupedArray;
 };
+  
 
 
   const groupedOrders = groupByDate(filteredFeatures,t);

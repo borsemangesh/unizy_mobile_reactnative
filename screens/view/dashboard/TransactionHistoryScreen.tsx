@@ -277,6 +277,7 @@ export default function TransactionHistoryScreen(
     const day = parseInt(dayStr);
 
     if (isNaN(day)) return dateString;
+    if (isNaN(day)) return dateString;
 
     const lang = i18n.language;
 

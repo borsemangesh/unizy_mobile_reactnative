@@ -240,7 +240,7 @@ const AddScreenContent: React.FC<AddScreenContentProps> = ({ navigation, product
 
   return (
     <View style={styles.tabContent3}>
-      <Text allowFontScaling={false} style={[styles.tabContentText3]}>{t('List_Product')}</Text>
+      <Text allowFontScaling={false} style={[styles.tabContentText3]}>{t('List_product')}</Text>
       <AnimatedSlideUp>
         <FlatList
           data={products}

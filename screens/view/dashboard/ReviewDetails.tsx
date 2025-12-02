@@ -180,6 +180,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
       setInitialLoading(true);
       const userId = await AsyncStorage.getItem('userId');
       const token = await AsyncStorage.getItem('userToken');
+      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
       console.log(token);
       if (!token) return;
       //const url1 = `${MAIN_URL.baseUrl}category/users/10/reviews`;
@@ -194,7 +195,10 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
       console.log(url1);
 
       const response = await fetch(url1, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+           Authorization: `Bearer ${token}`,
+           language_code: language_code
+       },
       });
 
       const result = await response.json();

@@ -377,11 +377,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     const hasPermission = await requestCameraPermission();
     if (!hasPermission) return;
     Alert.alert(
-      t('select_option'),
-      t('choose_source'),
+      'Select Option',
+      "Choose a source",
       [
         {
-          text: t('camera'),
+          text: 'Camera',
           onPress: () => {
             launchCamera(
               {
@@ -400,7 +400,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           },
         },
         {
-          text: t('gallery'),
+          text: "Gallery",
           onPress: () => {
             launchImageLibrary(
               {
@@ -418,7 +418,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           },
         },
         {
-          text: t('cancel'),
+          text: 'Cancel',
           style: 'cancel',
         },
       ],
@@ -1923,15 +1923,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
   },
-  mainheader1: {
-    color: 'rgba(255, 255, 255, 0.80)',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 20,
-    fontWeight: '600',
-    letterSpacing: -0.4,
-    lineHeight: 28,
-  },
-
+ 
   subheader: {
     color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-Regular',
@@ -1939,14 +1931,6 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     textAlign: 'center',
     marginTop: 20,
-  },
-  subheader2: {
-    color: 'rgba(255, 255, 255, 0.80)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 14,
-    fontWeight: '400',
-    textAlign: 'center',
-    marginTop: 6,
   },
 
   subheader1: {

@@ -59,6 +59,8 @@ const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(n
   const fetchFilters = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
+      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+
       if (!token) return;
 
       const body = { category_id: catagory_id };
@@ -69,6 +71,7 @@ const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(n
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
+          language_code: language_code
         },
         body: JSON.stringify(body),
       });

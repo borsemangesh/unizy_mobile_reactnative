@@ -680,11 +680,11 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     if (!hasPermission) return;
 
     Alert.alert(
-      t('select_option'),
-      t('choose_source'),
+     'Select Option',
+      "Choose a source",
       [
         {
-          text: t('camera'),
+          text: 'Camera',
           onPress: () => {
             launchCamera(
               { mediaType: 'photo', cameraType: 'front', quality: 1 }, // get max quality first
@@ -721,7 +721,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           },
         },
         {
-          text: t('gallery'),
+          text: 'Gallery',
           onPress: () => {
             launchImageLibrary(
               { mediaType: 'photo', quality: 1 },
@@ -757,7 +757,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             );
           },
         },
-        { text: t('cancel'), style: 'cancel' },
+        { text: 'Cancel', style: 'cancel' },
       ],
       { cancelable: true },
     );

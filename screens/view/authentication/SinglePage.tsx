@@ -1141,6 +1141,7 @@ useEffect(() => {
             'student_email',
             data.data.student_email || '',
           );
+          await AsyncStorage.setItem('userId', String(data.data.userId));
 
           if (data?.data?.token?.access_token) {
             await AsyncStorage.setItem(
@@ -1536,11 +1537,11 @@ useEffect(() => {
     };
 
     Alert.alert(
-       t('select_option'),
-       t('choose_source'),
+       'Select Option',
+      "Choose a source",
       [
         {
-          text: t('camera'),
+          text: 'Camera',
           onPress: () => {
             launchCamera(
               {
@@ -1553,7 +1554,7 @@ useEffect(() => {
           },
         },
         {
-          text: t('gallery'),
+          text: 'Gallery',
           onPress: () => {
             launchImageLibrary(
               {
@@ -1565,7 +1566,7 @@ useEffect(() => {
           },
         },
         {
-          text: t('cancel'),
+          text: 'Cancel',
           style: 'cancel',
         },
       ],

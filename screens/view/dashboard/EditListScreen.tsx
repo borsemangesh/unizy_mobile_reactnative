@@ -125,11 +125,11 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
   const scrollY = useSharedValue(0);
 
-  console.log("📦 Route Params Received:", {
-    productId,
-    productName,
-    shareid
-  });
+  // console.log("📦 Route Params Received:", {
+  //   productId,
+  //   productName,
+  //   shareid
+  // });
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: event => {
@@ -684,11 +684,11 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
     if (!hasPermission) return;
 
     Alert.alert(
-       t('select_option'),
-       t('choose_source'),
+     'Select Option',
+      "Choose a source",
       [
         {
-          text: t('camera'),
+          text: 'Camera',
           onPress: () => {
             launchCamera(
               { mediaType: 'photo', cameraType: 'front', quality: 1 },
@@ -730,7 +730,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
           },
         },
         {
-          text: t('gallery'),
+          text: 'Gallery',
           onPress: () => {
             launchImageLibrary(
               { mediaType: 'photo', quality: 1 },
@@ -771,7 +771,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             );
           },
         },
-        { text: t('cancel'), style: 'cancel' },
+        { text: 'Cancel', style: 'cancel' },
       ],
       { cancelable: true },
     );
@@ -798,30 +798,38 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
   const [isCheckbox, setCheckBox] = useState(false);
 
+  // const handleDeleteImage = async (fileId: string) => {
+  //   // Remove the image from uploadedImages
+  //   setUploadedImages(prev => prev.filter(img => img.id !== fileId));
+
+  //   // Add the deleted image ID to the deletedImageIds array
+  //   setDeletedImageIds(prevDeletedIds => {
+  //     const updatedDeletedIds = [...prevDeletedIds, fileId];
+  //     // Create an object to store only the deleted image IDs
+  //     const dataToStore = { deleted_image_ids: updatedDeletedIds };
+
+  //     // Save to AsyncStorage
+  //     AsyncStorage.setItem('deletedImagesId', JSON.stringify(dataToStore))
+  //       .then(() => {
+  //         console.log(`Deleted image ID: ${fileId} saved to AsyncStorage.`);
+  //       })
+  //       .catch(error => {
+  //         console.error('Error saving to AsyncStorage:', error);
+  //       });
+
+  //     return updatedDeletedIds;
+  //   });
+
+  //   console.log(`Deleted image with ID: ${fileId}`);
+  // };
+
+
   const handleDeleteImage = async (fileId: string) => {
-    // Remove the image from uploadedImages
-    setUploadedImages(prev => prev.filter(img => img.id !== fileId));
+  setUploadedImages(prev => prev.filter(img => img.id !== fileId));
 
-    // Add the deleted image ID to the deletedImageIds array
-    setDeletedImageIds(prevDeletedIds => {
-      const updatedDeletedIds = [...prevDeletedIds, fileId];
-      // Create an object to store only the deleted image IDs
-      const dataToStore = { deleted_image_ids: updatedDeletedIds };
+  console.log(`Deleted image locally with ID: ${fileId}`);
+};
 
-      // Save to AsyncStorage
-      AsyncStorage.setItem('deletedImagesId', JSON.stringify(dataToStore))
-        .then(() => {
-          console.log(`Deleted image ID: ${fileId} saved to AsyncStorage.`);
-        })
-        .catch(error => {
-          console.error('Error saving to AsyncStorage:', error);
-        });
-
-      return updatedDeletedIds;
-    });
-
-    console.log(`Deleted image with ID: ${fileId}`);
-  };
 
 const formatDateWithDash = (dateString?: string, t?: any) => {
   if (!dateString) return "";
@@ -872,7 +880,7 @@ const formatDateWithDash = (dateString?: string, t?: any) => {
       case 'text': {
         const { param } = field;
         const { field_name, keyboardtype, alias_name } = param;
-        console.log('PARMSASDF: ', param);
+        //console.log('PARMSASDF: ', param);
 
         const rawValue =
           formValues[param.id]?.value ??
