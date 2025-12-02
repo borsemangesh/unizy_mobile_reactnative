@@ -111,6 +111,8 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
   const { height: screenHeight } = Dimensions.get('window');
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const scrollY = useSharedValue(0);
+  const isEmpty = featurelist.length === 0;
+  const { height } = Dimensions.get('window');
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: event => {
@@ -380,6 +382,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
     }
   };
 
+
   const renderItem = ({ item, index }: { item: Feature; index: number }) => {
     const isLastOddItem =
       filteredFeatures.length % 2 !== 0 &&
@@ -475,14 +478,14 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
-      <View style={styles.fullScreenContainer}>
-        <StatusBar
+       <StatusBar
           translucent
           backgroundColor="transparent"
           barStyle="light-content"
         />
 
-        <Animated.View
+
+<Animated.View
           style={[styles.headerWrapper, animatedBlurStyle]}
           pointerEvents="none"
         >
@@ -517,6 +520,8 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
             />
           </MaskedView>
         </Animated.View>
+      <View style={styles.fullScreenContainer}>
+       
 
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
@@ -580,6 +585,54 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
           <Text allowFontScaling={false} style={styles.unizyText}>
             {t('Bookmarks')}
           </Text>
+          <TouchableOpacity
+            style={[styles.backButtonContainer]}
+            // activeOpacity={0}
+          >
+            <Animated.View
+              style={[styles.blurButtonWrapper_none]}
+            >
+
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 0],
+                      [0, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'transparent',
+                    borderRadius: 40,
+                  })),{display: 'none'}
+                ]}
+              />
+
+              {/* Blur view fades in as scroll increases */}
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 0],
+                      [0, 0],
+                      'clamp',
+                    ),
+                  })),{display: 'none'}
+                ]}
+              >
+                
+              </Animated.View>
+
+              {/* Back Icon */}
+              <Animated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 25, width: 25,display: 'none' }]}
+              />
+            </Animated.View>
+          </TouchableOpacity>
         </View>
 
         <Animated.FlatList
@@ -629,7 +682,16 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
           }
           contentContainerStyle={[
             styles.listContainer,
-            { paddingTop: Platform.OS === 'ios' ? 114 : 100, flexGrow: 1 },
+              {
+                paddingTop: (Platform.OS === 'ios'? 120 : 100),
+                paddingBottom: isEmpty
+                  ? 10                      
+                  : Platform.select({
+                    ios: height * 0.01,   // ⬅ apply padding when list has data
+                    android: height * 0.04,
+                  }),
+                flexGrow: 1,
+              },
           ]}
           onScroll={scrollHandler}
           scrollEventThrottle={16}
@@ -653,6 +715,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
               </View>
             ) : null
           }
+         
           ListEmptyComponent={
             (isLoading || initialLoading) && featurelist.length === 0 ? (
               <View style={[styles.emptyWrapper, { justifyContent: 'center', flex: 1 }]}>
@@ -684,15 +747,12 @@ export default Bookmark;
 
 const styles = StyleSheet.create({
   categoryTabsContainer: {
-    width: '105%',
-    marginTop: 12,
-    paddingLeft: 10,
+    width: '105%',paddingBottom: 16,paddingTop: 8 
   },
 
   categoryTabsScrollContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingRight: 16,
 
   },
 
@@ -708,37 +768,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
 
-  header: {
-    position: 'absolute',
-    top: 0,
-    width: Platform.OS === 'ios' ? 393 : '100%',
-    zIndex: 20,
-    paddingTop: Platform.OS === 'ios' ? 50 : 40,
-    paddingBottom: Platform.OS === 'ios' ? 16 : 12,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-    overflow: 'hidden',
-    flexDirection: 'row',
-    alignItems: 'center',
-    elevation: 0,
-    backgroundColor: 'transparent',
-    borderBottomWidth: 0,
-    shadowOpacity: 0,
-    shadowColor: 'transparent',
-    alignSelf: 'center',
-    minHeight: Platform.OS === 'ios' ? 80 : 88,
-  },
   backButtonContainer: {
-    position: 'absolute',
-    left: 16,
     zIndex: 11,
-    top: 7,
   },
 
   headerWrapper: {
     position: 'absolute',
     top: 0,
-    width: Platform.OS === 'ios' ? 393 : '100%',
+    width: Platform.OS === 'ios' ? '100%' : '100%',
     height: Platform.OS === 'ios' ? 180 : 180,
     zIndex: 10,
     overflow: 'hidden',
@@ -747,17 +784,27 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '6%' : 40,
-    width: Platform.OS === 'ios' ? 393 : '100%',
+    top: (Platform.OS === 'ios' ? 60 : 40),
+    width: Platform.OS === 'ios' ? '100%' : '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-    marginTop: 2,
-    marginLeft: 1
+  },
+  blurButtonWrapper_none: {
+
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    // borderWidth: 0.4,
+    borderColor: 'transparent',
+    backgroundColor: 'transparent',
   },
 
   emptyWrapper: {
@@ -843,8 +890,6 @@ const styles = StyleSheet.create({
 
   background: {
     flex: 1,
-    width: '100%',
-    height: '100%',
   },
   fullScreenContainer: {
     flex: 1,
@@ -867,11 +912,9 @@ const styles = StyleSheet.create({
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
-    flex: 1,
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
-    marginTop: 17,
   },
   search_container: {
     flexDirection: 'row',
@@ -890,10 +933,8 @@ const styles = StyleSheet.create({
     width: '85%',
   },
   listContainer: {
-    marginLeft: 8,
-    marginRight: 5,
-    paddingTop: 10,
-    gap: 16,
+    paddingHorizontal: 16,
+    width: '100%',
   },
   row1: {
   },

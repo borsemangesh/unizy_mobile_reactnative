@@ -40,6 +40,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import Loader from '../../utils/component/Loader';
 import i18n from '../../../localization/i18n';
+import ProfileCard from './ProfileCard';
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 type Feature = {
@@ -360,15 +361,7 @@ const formatDate = (dateString?: string, t?: any) => {
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
-      <View style={styles.fullScreenContainer}>
-        <StatusBar
-          translucent
-          backgroundColor="transparent"
-          barStyle="light-content"
-        />
-
-
-        <StatusBar
+       <StatusBar
           translucent
           backgroundColor="transparent"
           barStyle="light-content"
@@ -410,43 +403,8 @@ const formatDate = (dateString?: string, t?: any) => {
             />
           </MaskedView>
         </Animated.View>
-
-        {/* <Animated.View
-          style={[styles.headerWrapper, animatedBlurStyle]}
-          pointerEvents="none"
-        >
-
-          <MaskedView
-            style={StyleSheet.absoluteFill}
-            maskElement={
-              <LinearGradient
-                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
-                locations={[0, 0.8]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={[StyleSheet.absoluteFill,
-                  ]}
-              />
-            }
-          >
-            <BlurView
-              style={[StyleSheet.absoluteFill]}
-              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
-              blurAmount={Platform.OS === 'ios' ? 45 : 45}
-              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
-            />
-            <LinearGradient
-              colors={[
-                'rgba(255, 255, 255, 0.45)',
-                'rgba(255, 255, 255, 0.02)',
-                'rgba(255, 255, 255, 0.02)',
-              ]}
-              style={StyleSheet.absoluteFill}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 0, y: 1 }}
-            />
-          </MaskedView>
-        </Animated.View> */}
+      <View style={styles.fullScreenContainer}>
+       
 
         {/* Header Content */}
         <View style={styles.headerContent} pointerEvents="box-none">
@@ -516,9 +474,57 @@ const formatDate = (dateString?: string, t?: any) => {
           <Text allowFontScaling={false} style={styles.unizyText}>
             {t('My_Listings')}
           </Text>
+          <TouchableOpacity
+            style={[styles.backButtonContainer]}
+            // activeOpacity={0}
+          >
+            <Animated.View
+              style={[styles.blurButtonWrapper_none]}
+            >
+
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 0],
+                      [0, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'transparent',
+                    borderRadius: 40,
+                  })),{display: 'none'}
+                ]}
+              />
+
+              {/* Blur view fades in as scroll increases */}
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 0],
+                      [0, 0],
+                      'clamp',
+                    ),
+                  })),{display: 'none'}
+                ]}
+              >
+                
+              </Animated.View>
+
+              {/* Back Icon */}
+              <Animated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 25, width: 25,display: 'none' }]}
+              />
+            </Animated.View>
+          </TouchableOpacity>
         </View>
         {/* List */}
-        <View style={{ flex: 1, overflow: 'hidden' }}>
+        {/* <View style={{ flex: 1, overflow: 'hidden' }}> */}
           <Animated.FlatList
             data={featureList}
             scrollEnabled={true} 
@@ -573,7 +579,7 @@ const formatDate = (dateString?: string, t?: any) => {
             contentContainerStyle={[
               styles.listContainer,
               {
-                paddingTop: Platform.OS === 'ios' ? 114 : 100,
+                paddingTop: (Platform.OS === 'ios'? 120 : 100),
                 paddingBottom: isEmpty
                   ? 10                      
                   : Platform.select({
@@ -628,7 +634,7 @@ const formatDate = (dateString?: string, t?: any) => {
               ) : null 
             }
           />
-        </View>
+        {/* </View> */}
       </View>
       <NewCustomToastContainer />
     </ImageBackground>
@@ -638,14 +644,15 @@ const formatDate = (dateString?: string, t?: any) => {
 export default MyListing;
 
 const styles = StyleSheet.create({
-  // emptyWrapper: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  background: { flex: 1 },
+  fullScreenContainer: { flex: 1 },
+
   emptyWrapper: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
     marginBottom: Platform.OS === "ios" ? 20 : 10,
-    // marginTop: -5
   },
 
   emptyContainer: {
@@ -675,12 +682,6 @@ const styles = StyleSheet.create({
     fontWeight: 600
   },
 
-
-  // categoryTabsScrollContent: {
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   paddingRight: 16,
-  // },
   blurButtonWrapper: {
     width: 48,
     height: 48,
@@ -692,20 +693,10 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
     backgroundColor: 'rgba(255, 255, 255, 0.1)', 
   },
-  // tabcard: {
-  //   minHeight: 38,
-  //   paddingVertical: 10,
-  //   paddingHorizontal: 16,
-  //   marginRight: 8,
-  //   borderColor: '#ffffff11',
-  //   borderRadius: 10,
-  //   boxShadow:
-  //     'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
-  // },
   headerWrapper: {
     position: 'absolute',
     top: 0,
-    width: Platform.OS === 'ios' ? 393 : '100%',
+    width: Platform.OS === 'ios' ? '100%' : '100%',
     height: Platform.OS === 'ios' ? 180 : 180,
     zIndex: 10,
     overflow: 'hidden',
@@ -713,92 +704,20 @@ const styles = StyleSheet.create({
     pointerEvents: 'none',
   },
   headerContent: {
-    // position: 'absolute',
-    // top: Platform.OS === 'ios' ? 60 : 40,
-    // width: '100%',
-    // alignItems: 'center',
-    // zIndex: 20,
-
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '6%' : 40,
-    width: Platform.OS === 'ios' ? 393 : '100%',
+    top: (Platform.OS === 'ios' ? 60 : 40),
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: 16,
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-    marginTop: 2,
-    marginLeft: 1
-  },
-  // tabcard1: {
-  //   minHeight: 38,
-
-  //   borderColor: '#ffffff',
-  //   backgroundColor:
-  //     'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  //   borderEndEndRadius: 10,
-  //   borderStartEndRadius: 10,
-  //   borderTopLeftRadius: 10,
-  //   borderTopRightRadius: 10,
-  //   borderBottomStartRadius: 10,
-  //   borderBlockStartColor: '#ffffff2e',
-  //   borderBlockColor: '#ffffff2e',
-  //   borderTopColor: '#ffffff2e',
-  //   borderBottomColor: '#ffffff2e',
-  //   borderLeftColor: '#ffffff2e',
-  //   borderRightColor: '#ffffff2e',
-  //   boxSizing: 'border-box',
-  //   paddingVertical: 10,
-  //   paddingHorizontal: 16,
-  //   marginRight: 8,
-  // },
-  tabtext: {
-    color: '#fff', 
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14,
-  },
-  othertext: {
-    color: '#FFFFFF7A', 
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14,
+    justifyContent: 'space-between',
   },
 
-  background: {
-    flex: 1,
-  },
-  fullScreenContainer: {
-    flex: 1,
-  },
-
-  header: {
-    position: 'absolute',
-    top: 0,
-    width: Platform.OS === 'ios' ? 393 : '100%',
-    zIndex: 20,
-    paddingTop: Platform.OS === 'ios' ? 50 : 40,
-    paddingBottom: Platform.OS === 'ios' ? 16 : 12,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-    overflow: 'hidden',
-    flexDirection: 'row',
-    alignItems: 'center',
-    elevation: 0,
-    backgroundColor: 'transparent',
-    borderBottomWidth: 0,
-    shadowOpacity: 0,
-    shadowColor: 'transparent',
-    alignSelf: 'center',
-    minHeight: Platform.OS === 'ios' ? 80 : 88,
-  },
   backButtonContainer: {
-    position: 'absolute',
-    left: 16,
     zIndex: 11,
-    top: 7,
   },
   headerRow: {
     flexDirection: 'row',
@@ -819,6 +738,18 @@ const styles = StyleSheet.create({
 
     borderColor: '#ffffff2c',
   },
+
+  blurButtonWrapper_none: {
+
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: 'transparent',
+    backgroundColor: 'transparent',
+  },
   unizyText: {
 
     color: '#FFFFFF',
@@ -826,8 +757,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
-    width: '100%',
-    marginTop: 17,
   },
   search_container: {
     flexDirection: 'row',
@@ -854,7 +783,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 
-  categoryTabsContainer: { marginBottom: 12, marginTop: 12, width: '105%', },
+  categoryTabsContainer: {width: '105%',paddingBottom: 16,paddingTop: 8 },
   categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' },
 
 
@@ -877,8 +806,6 @@ const styles = StyleSheet.create({
     minHeight: 38,
     borderWidth: 0.4,
     borderColor: '#ffffff11',
-
-    // boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
 
@@ -900,8 +827,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginRight: 8,
   },
-
-
+  tabtext: {
+    color: '#fff', 
+    fontWeight: '600',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 14,
+  },
+  othertext: {
+    color: '#FFFFFF7A',
+    fontWeight: '600',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 14,
+  },
 
   itemContainer: { 
     width: '100%'

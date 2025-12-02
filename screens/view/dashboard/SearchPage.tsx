@@ -438,8 +438,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
-      <View style={styles.fullScreenContainer}>
-        <StatusBar
+       <StatusBar
           translucent
           backgroundColor="transparent"
           barStyle="light-content"
@@ -480,6 +479,8 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
             />
           </MaskedView>
         </Animated.View>
+      <View style={styles.fullScreenContainer}>
+       
 
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
@@ -543,6 +544,54 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
           <Text allowFontScaling={false} style={styles.unizyText}>
             {t('search')}
           </Text>
+          <TouchableOpacity
+            style={[styles.backButtonContainer]}
+            // activeOpacity={0}
+          >
+            <Animated.View
+              style={[styles.blurButtonWrapper_none]}
+            >
+
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 0],
+                      [0, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'transparent',
+                    borderRadius: 40,
+                  })),{display: 'none'}
+                ]}
+              />
+
+              {/* Blur view fades in as scroll increases */}
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 0],
+                      [0, 0],
+                      'clamp',
+                    ),
+                  })),{display: 'none'}
+                ]}
+              >
+                
+              </Animated.View>
+
+              {/* Back Icon */}
+              <Animated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 25, width: 25,display: 'none' }]}
+              />
+            </Animated.View>
+          </TouchableOpacity>
         </View>
 
 
@@ -551,7 +600,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
           renderItem={renderItem}
           numColumns={2}
           showsVerticalScrollIndicator={true}   
-          showsHorizontalScrollIndicator={true}
+          showsHorizontalScrollIndicator={false}
           onEndReachedThreshold={0.5}
           columnWrapperStyle={styles.row1}
           keyExtractor={(item, index) => {
@@ -559,7 +608,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
             return index.toString();
           }}
           ListHeaderComponent={
-            <View style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 8 }}>
+            <View style={{ flexDirection: 'row', gap: 8}}>
               <View style={styles.search_container}>
                 <Image source={searchIcon} style={styles.searchIcon} />
                 <TextInput
@@ -596,7 +645,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
           }
           contentContainerStyle={[
             styles.listContainer,
-            { paddingTop: Platform.OS === 'ios' ? 121 : 100, paddingBottom: isEmpty ? 10 : 40, flexGrow: 1 },
+            { paddingTop: Platform.OS === 'ios' ? 120 : 100, paddingBottom: isEmpty ? 10 : 40, flexGrow: 1 },
           ]}
           onScroll={scrollHandler}
           scrollEventThrottle={16}
@@ -656,38 +705,26 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
 export default SearchPage;
 
 const styles = StyleSheet.create({
+  blurButtonWrapper_none: {
 
-  header: {
-    position: 'absolute',
-    top: 0,
-    width: Platform.OS === 'ios' ? 393 : '100%',
-    zIndex: 20,
-    paddingTop: Platform.OS === 'ios' ? 50 : 40,
-    paddingBottom: Platform.OS === 'ios' ? 16 : 12,
-    paddingHorizontal: 16,
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
     justifyContent: 'center',
-    overflow: 'hidden', 
-    flexDirection: 'row',
     alignItems: 'center',
-    elevation: 0,
+    borderColor: 'transparent',
     backgroundColor: 'transparent',
-    borderBottomWidth: 0,
-    shadowOpacity: 0,
-    shadowColor: 'transparent',
-    alignSelf: 'center',
-    minHeight: Platform.OS === 'ios' ? 80 : 88,
   },
+
   backButtonContainer: {
-    position: 'absolute',
-    left: 16,
     zIndex: 11,
-    top: 7,
   },
 
   headerWrapper: {
     position: 'absolute',
     top: 0,
-    width: Platform.OS === 'ios' ? 393 : '100%',
+    width: Platform.OS === 'ios' ? '100%' : '100%',
     height: Platform.OS === 'ios' ? 180 : 180,
     zIndex: 10,
     overflow: 'hidden',
@@ -696,17 +733,15 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '6%' : 40,
-    width: Platform.OS === 'ios' ? 393 : '100%',
+    top: (Platform.OS === 'ios' ? 60 : 40),
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: 16,
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-    marginTop: 2,
-    marginLeft: 1
+    justifyContent: 'space-between',
   },
 
   dateHeading: {
@@ -744,7 +779,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     marginTop: 16,
-    paddingHorizontal: 10,
+    // paddingHorizontal: 10,
   },
 
   emptyContainer: {
@@ -791,10 +826,8 @@ const styles = StyleSheet.create({
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
-    flex: 1,
     textAlign: 'center',
     fontWeight: '600',
-    marginTop: 17
   },
   search_container: {
 
@@ -807,7 +840,7 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     padding: (Platform.OS === 'ios' ? 12 : 0),
-    marginTop: (Platform.OS === 'ios' ? 4 : 20),
+    marginTop: (Platform.OS === 'ios' ? 4 : 0),
     height: 50,
     width: '84%',
     gap: (Platform.OS === 'ios' ? 8 : 0)
@@ -829,9 +862,12 @@ const styles = StyleSheet.create({
 
   },
   listContainer: {
-    marginLeft: 8,
-    marginRight: 5,
-    paddingTop: 10,
+    // marginLeft: 8,
+    // marginRight: 5,
+    // paddingTop: 10,
+    paddingHorizontal: 16,
+    width: '100%',
+
   },
   row1: {
 
@@ -876,7 +912,7 @@ const styles = StyleSheet.create({
     borderLeftColor: '#ffffff5d',
     borderRightColor: '#ffffff36',
     borderWidth: 0.3,
-    marginTop: (Platform.OS === 'ios' ? 4 : 20),
+    marginTop: (Platform.OS === 'ios' ? 4 : 0),
   },
   iconSmall: {
     width: 24,

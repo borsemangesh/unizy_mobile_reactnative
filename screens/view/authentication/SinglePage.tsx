@@ -1527,8 +1527,17 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       const flag = await AsyncStorage.getItem('ISLOGIN');
       animRef.current?.pause();
       if (flag === 'true') {
-
-        navigation.replace('Dashboard', { AddScreenBackactiveTab: 'Home', isNavigate: true, isFirsttimeLogin: false });
+       
+        // navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: true,isFirsttimeLogin: false});
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'Dashboard',
+              params: {AddScreenBackactiveTab: 'Home',isNavigate: true,isFirsttimeLogin: false},
+            },
+          ],
+        });
       } else {
         // User is not logged in → show hello screen
         setCurrentScreen('hello');

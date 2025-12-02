@@ -1,3 +1,1053 @@
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+// import React, { useState, useEffect, useRef } from 'react';
+// import {
+//   View,
+//   Text,
+//   ImageBackground,
+//   Image,
+//   TouchableOpacity,
+//   StyleSheet,
+//   ScrollView,
+//   TextInput,
+//   Switch,
+//   Alert,
+//   KeyboardAvoidingView,
+//   Modal,
+//   Animated,
+//   Dimensions,
+//   Easing,
+//   Platform,
+//   FlatList,
+//   TouchableWithoutFeedback,
+// } from 'react-native';
+// import { MAIN_URL } from '../../utils/APIConstant';
+// import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
+// import { useFocusEffect } from '@react-navigation/native';
+// import { BlurView } from '@react-native-community/blur';
+// import DeviceInfo from 'react-native-device-info';
+// import Loader from '../../utils/component/Loader';
+// import { Constant } from '../../utils/Constant';
+// import { resetTwilioClient } from '../../view/emoji/twilioService';
+// import { clearTwilioCache } from '../dashboard/MessageIndividualScreen';
+// import { useTranslation } from "react-i18next";
+
+// const bgImage = require('../../../assets/images/backimg.png');
+// const profileImg = require('../../../assets/images/user.jpg'); 
+// const logouticon=require('../../../assets/images/logout.png')
+
+// const helpicon=require('../../../assets/images/help.png')
+// const okicon=require('../../../assets/images/ok.png')
+
+// // const cardData = [
+// //   { id: '1', title: 'Payment Methods', image: require('../../../assets/images/payment.png') },
+// //   { id: '2', title: 'My Orders', image: require('../../../assets/images/cart.png') },
+// //   { id: '3', title: 'My Reviews', image: require('../../../assets/images/ok.png') },
+// //   { id: '4', title: 'Notifications', image: require('../../../assets/images/notify.png') },
+// //   { id: '5', title: 'Help & Support', image: require('../../../assets/images/helpicon.png') },
+// //   { id: '6', title: 'Logout', image: require('../../../assets/images/logout.png') },
+// //   {id:'7',title:'App Version',image: require('../../../assets/images/versionicon.png')}
+  
+// // ];
+
+// const cardData = [
+//   { id: '1', titleKey: 'payment_methods', image: require('../../../assets/images/payment.png') },
+//   { id: '2', titleKey: 'my_orders', image: require('../../../assets/images/cart.png') },
+//   { id: '3', titleKey: 'my_reviews', image: require('../../../assets/images/ok.png') },
+//   { id: '4', titleKey: 'notifications', image: require('../../../assets/images/notify.png') },
+//   { id: '5', titleKey: 'help_support', image: require('../../../assets/images/helpicon.png') },
+//   { id: '6', titleKey: 'logout', image: require('../../../assets/images/logout.png') },
+//   { id: '8', titleKey: 'delete_account', image: require('../../../assets/images/delprofile.png') },
+//   { id: '7', titleKey: 'app_version', image: require('../../../assets/images/versionicon.png') },
+// ];
+
+// const arrowIcon = require('../../../assets/images/nextarrow.png');
+
+
+// type ProfileCardContentProps = {
+//   navigation: any;
+// };
+// const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
+  
+//   const screenHeight = Dimensions.get('window').height;
+//   const [slideUp1] = useState(new Animated.Value(0));
+//   const [isHidden, setIsHidden] = useState(true);
+
+//  interface UserMeta {
+//   firstname: string | null;
+//   lastname: string | null;
+//   profile: string | null;
+//   student_email: string | null;
+//   email?: string | null;
+//   university_name?: string | null;
+// }
+
+// const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
+// const [expanded, setExpanded] = useState(false);
+// const animatedHeight = useRef(new Animated.Value(0)).current;
+//  const [showConfirm, setShowConfirm] = useState(false);
+//  const [showConfirm1, setShowConfirm1] = useState(false);
+//  const [loading, setLoading] = useState(true);
+
+
+// useEffect(() => {
+//   if (expanded) {
+//     Animated.timing(animatedHeight, {
+//       toValue: 1,
+//       duration: 800, 
+//       useNativeDriver: false,
+//     }).start();
+//   }
+// }, [expanded]);
+
+//   const { t } = useTranslation();
+
+//   useEffect(() => {
+//     const fetchUserProfile = async () => {
+//       try {
+//         setLoading(true);
+//         const token = await AsyncStorage.getItem('userToken');
+//         const userId = await AsyncStorage.getItem('userId');
+
+//         console.log("profile card page.... ",userId);
+
+//         if (!token || !userId) {
+//           console.warn('Missing token or user ID in AsyncStorage');
+//           return;
+//         }
+
+//         console.log(token)
+
+//         const url = `${MAIN_URL.baseUrl}user/user-profile/${userId}`;
+//         const response = await fetch(url, {
+//           method: 'GET',
+//           headers: {
+//             'Authorization': `Bearer ${token}`,
+//             'Content-Type': 'application/json',
+//           },
+//         });
+
+//         const data = await response.json();
+
+//         if (response.status === 401 || response.status === 403) {
+//         handleForceLogout();
+//         return;
+//       }
+
+//       if (data.statusCode === 401 || data.statusCode === 403) {
+//         handleForceLogout();
+//         return;
+//       }
+
+//         if (response.ok) {
+//           const user = data.data;
+
+//           console.log("user data .........",user);
+          
+//           setUserMeta({
+//             firstname: user.firstname ?? null,
+//             lastname: user.lastname ?? null,
+//             profile: user.profile ?? null,
+//             student_email: user.student_email ?? null,
+//             email: user.email ?? null,
+//             university_name: user.university_name ?? null,
+//           });
+          
+//         } else {
+//           console.warn('Failed to fetch user profile:', data?.message || response.status);
+//         }
+//       } catch (error) {
+//         console.error('Error fetching user profile:', error);
+//       }
+//        finally {
+//       setLoading(false);
+//     }
+//     };
+//     const handleForceLogout = async () => {
+//       console.log('User inactive or unauthorized — logging out');
+//       setLoading(false);
+//       await AsyncStorage.clear();
+//       navigation.reset({
+//         index: 0,
+//         routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+//       });
+//     };
+
+//     fetchUserProfile();
+//   }, []);
+//   const openStripeOnboarding = async () => {
+//     try {
+//       const token = await AsyncStorage.getItem('userToken');
+//       const response = await fetch(
+//         `${MAIN_URL.baseUrl}transaction/account-detail`,
+//         {
+//           method: 'GET',
+//           headers: {
+//             'Content-Type': 'application/json',
+//             Authorization: `Bearer ${token}`,
+//           },
+//         },
+//       );
+ 
+//       const json = await response.json();
+ 
+//       if (json?.statusCode === 200 && json.data.onboardingLink) {
+//         const onboardingLink = json?.data?.onboardingLink;
+ 
+//         if(Platform.OS === 'ios'){
+//           navigation.replace("StripeOnboardingScreen", {
+//             onboardingUrl: onboardingLink,
+//           });
+//         } else {
+//           navigation.navigate("StripeOnboardingScreen", {
+//             onboardingUrl: onboardingLink,
+//           });
+//       }
+       
+     
+//       }
+//       else if(json?.data?.stripeAccount?.isboardcomplete)
+//       {
+            
+//             if(Platform.OS === 'ios'){
+//               navigation.replace("AccountDeatils", { showSuccess: true })
+//             } else {
+//               navigation.navigate("AccountDeatils", { showSuccess: true })
+//           }
+//       }
+//       else {
+//         Alert.alert('Error', json?.message || 'Something went wrong.Please try again');
+//       }
+//     } catch (error) {
+//       if (error instanceof Error) {
+//         Alert.alert('Error', error.message);
+//       } else {
+//         Alert.alert('Error', 'Something went wrong.Please try again');
+//       }
+//     }
+//   };
+
+
+// const renderItem = ({ item }: any) => {
+//   const isLogout = item.titleKey === 'logout';
+//   const isDelete = item.titleKey === 'delete_account';
+//   const isVersion = item.titleKey === 'app_version';
+ 
+
+//   return (
+//     <TouchableOpacity
+//       style={styles.cardContainer}
+//       onPress={async () => {
+//         if (isLogout) {      
+//         // await AsyncStorage.setItem('ISLOGIN', 'false');
+//         // navigation.reset({
+//         //   index: 0,
+//         //   routes: [{ name: 'SinglePage', params: { resetToLogin: true , logoutMessage: 'User Logout Successfully'} }],
+//         // });
+
+
+//         // await AsyncStorage.setItem('userToken', '');
+//         //             await AsyncStorage.setItem('userData', '');
+//         //             await AsyncStorage.setItem('userId', '');
+
+                    
+//         //             await AsyncStorage.setItem('twilio_convo_', '');
+//         //             await AsyncStorage.setItem('twilio_msg_', '');
+                   
+
+//         setShowConfirm(true); 
+//       } else if(isDelete) {
+       
+//         setShowConfirm1(true); 
+//       }
+//         else if (item.titleKey  === 'my_orders') {
+//           if(Platform.OS === 'ios'){
+//             navigation.replace('MyOrders'); 
+//           } else {
+//             navigation.navigate('MyOrders'); 
+//           }
+          
+//         } 
+//         else if (item.titleKey  === 'my_reviews') {
+//           if(Platform.OS === 'ios'){
+//             navigation.replace('MyReviews'); 
+//           } else {
+//             navigation.navigate('MyReviews'); 
+//           }
+//           // navigation.navigate('MyReviews'); 
+//         } 
+//         else if (item.titleKey  === 'help_support') {
+//           navigation.navigate('HelpSupport'); 
+//         } 
+
+//         else if (item.titleKey  === 'notifications') {
+//           if(Platform.OS === 'ios'){
+//             navigation.replace('Notification'); 
+//           } else {
+//             navigation.navigate('Notification'); 
+//           }
+          
+//         }
+//         else if(item.titleKey  === 'payment_methods'){
+//           openStripeOnboarding();
+//         } 
+//          else {
+//           console.log(item.title, 'pressed');
+//         }
+//       }}
+//     >
+//       <Image source={item.image} style={styles.cardImage} />
+//       <Text allowFontScaling={false}
+//         style={[
+//           styles.cardText,
+//           isLogout && { color: '#FF8282E0' },isDelete && { color: '#FF8282E0' },
+//         ]}
+//       >
+//          {t(item.titleKey)}
+//       </Text>
+//       {isVersion ? (
+//         <Text allowFontScaling={false} style={styles.versionText}>{APP_VERSION}</Text>
+//       ) : !isLogout || isDelete&& (
+//         <Image source={arrowIcon} style={styles.cardArrow} />
+//       )}
+//     </TouchableOpacity>
+//   );
+// };
+//   const APP_VERSION = 'v1.0.0'; 
+
+// const clickBack = () =>{
+//     navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})
+//   }
+//   const getInitials = (firstName = '', lastName = '') => {
+//   const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
+//   const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
+//   return (f + l) || '?';
+// };
+
+// if (loading) {
+//   return (
+//     <View style={{ flex: 1 }}>
+//       <Loader />
+//     </View>
+//   );
+// }
+
+// return (
+//   <View style={styles.fullScreenContainer}>
+
+//     <View
+//       style={{
+//         paddingTop: Platform.OS === 'ios' ? 0: 0,
+//         marginHorizontal: 16,
+//         gap: 24,
+//       }}
+//     >
+//       <View style={styles.userRow}>
+//         <View style={{ gap: 10 }}>
+//           {userMeta?.profile ? (
+//             <Image source={{ uri: userMeta.profile }} style={styles.avatar} />
+//           ) : (
+//             <View style={styles.initialsCircle}>
+//               <Text allowFontScaling={false} style={styles.initialsText}>
+//                 {getInitials(
+//                   userMeta?.firstname ?? ' ',
+//                   userMeta?.lastname ?? ' ',
+//                 )}
+//               </Text>
+//             </View>
+//           )}
+//         </View>
+
+//         <View style={{ }}>
+//           <View
+//             style={{
+//               flexDirection: 'row',
+//               justifyContent: 'space-between',
+//               alignItems: 'center',
+//             }}
+//           >
+//             <Text allowFontScaling={false} style={styles.userName}>
+//               {userMeta
+//                 ? `${userMeta.firstname ?? ''} ${
+//                     userMeta.lastname ?? ''
+//                   }`.trim()
+//                 : t('loading')}
+//             </Text>
+//           </View>
+
+//           <View style={{ flexDirection: 'column', gap: 6, marginTop: 4 }}>
+//             <View
+//               style={{ flexDirection: 'row', alignItems: 'center', gap: 8}}
+//             >
+//               <Image
+//                 source={require('../../../assets/images/buildings.png')}
+//                 style={{ width: 16, height: 16 }}
+//               />
+//               <Text allowFontScaling={false} style={styles.userSub}>
+//                 {userMeta?.university_name
+//                   ? userMeta.university_name.length > 25
+//                     ? userMeta.university_name.slice(0, 25) + '…'
+//                     : userMeta.university_name
+//                   : 'University Name'}
+//               </Text>
+//             </View>
+
+//             <View
+//               style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
+//             >
+//               <Image
+//                 source={require('../../../assets/images/sms.png')}
+//                 style={{ width: 16, height: 16 }}
+//               />
+//               <Text allowFontScaling={false} style={styles.userSub}>
+//                 {userMeta?.email || 'studentname@gmail.com'}
+//               </Text>
+//             </View>
+
+//             <View
+//               style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
+//             >
+//               <Image
+//                 source={require('../../../assets/images/sms.png')}
+//                 style={{ width: 16, height: 16 }}
+//               />
+//               <Text allowFontScaling={false} style={styles.userSub}>
+//                 {userMeta?.student_email || 'studentname@university.ac.uk'}
+//               </Text>
+//             </View>
+//           </View>
+       
+//         </View>
+        
+//         <TouchableOpacity
+//         style={{position: 'absolute',right: 15,top: 14,}}
+//           onPress={() => {
+//             navigation.navigate('EditProfile');
+//           }}
+//         >
+//           <View style={styles.editcard}>
+//             <Text allowFontScaling={false} style={styles.edittext}>
+//               {t('edit')}
+//             </Text>
+//           </View>
+//         </TouchableOpacity>
+//       </View>
+
+//       <View style={styles.listContainer}>
+//         <FlatList
+//           data={cardData}
+//           keyExtractor={item => item.id}
+//           renderItem={renderItem}
+//           ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+//         />
+//       </View>
+//     </View>
+
+//     <Modal
+//       visible={showConfirm}
+//       transparent
+//       animationType="fade"
+//       onRequestClose={() => setShowConfirm(false)}
+//     >
+//       <TouchableWithoutFeedback onPress={() => setShowConfirm(false)}>
+//         <View style={styles.overlay}>
+//           <BlurView
+//             style={{
+//               flex: 1,
+//               alignContent: 'center',
+//               justifyContent: 'center',
+//               width: '100%',
+//               alignItems: 'center',
+//             }}
+//             blurType="light"
+//             blurAmount={10}
+//             reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+//           >
+//             <View
+//               style={[
+//                 StyleSheet.absoluteFill,
+//                 { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+//               ]}
+//             />
+
+//             <View style={styles.popupContainer}>
+//               <Image
+//                 source={require('../../../assets/images/alert_logout.png')}
+//                 style={styles.logo}
+//                 resizeMode="contain"
+//               />
+//               <Text allowFontScaling={false} style={styles.mainheader}>
+//                 {t('confirm_logout')}
+//               </Text>
+//               <Text allowFontScaling={false} style={styles.subheader}>
+//                 {t('logout_message')}
+//               </Text>
+
+
+//               <TouchableOpacity
+//               style={styles.loginButton}
+//               onPress={async () => {
+//                 try {
+//                   const deviceId = await DeviceInfo.getUniqueId();
+//                   const user_id = await AsyncStorage.getItem('userId'); // <-- your stored user id
+
+//                   const body = {
+//                     device_type: (Platform.OS === 'ios') ? 'ios': 'android',
+//                     device_id: deviceId,
+//                     user_id: Number(user_id),
+//                   };
+
+//                   const response = await fetch(`${MAIN_URL.baseUrl}user/delete-fcm-token`, {
+//                     method: 'POST',
+//                     headers: {
+//                       'Content-Type': 'application/json',
+//                     },
+//                     body: JSON.stringify(body),
+//                   });
+
+//                   const apiData = await response.json();
+
+//                   console.log("Logout API Response:", apiData);
+
+//                   // If API success → proceed to logout
+//                   if (apiData?.statusCode === 200) {
+//                     await AsyncStorage.setItem('userToken', '');
+//                     await AsyncStorage.setItem('userData', '');
+//                     await AsyncStorage.setItem('userId', '');
+            
+                    
+//                     await AsyncStorage.setItem('twilio_convo_', '');
+//                     await AsyncStorage.setItem('twilio_msg_', '');
+//                     setShowConfirm(false);
+
+                    
+//                     // 🔒 SECURITY: Clear Twilio client and cache to prevent notifications to wrong user
+//                     try {
+//                       // Reset Twilio client singleton (removes all listeners)
+//                       await resetTwilioClient();
+                      
+//                       // Clear all Twilio caches (in-memory and AsyncStorage)
+//                       await clearTwilioCache();
+                      
+//                       // Delete FCM token locally (optional but good practice)
+//                       try {
+//                         const messaging = require('@react-native-firebase/messaging').default;
+//                         await messaging().deleteToken();
+//                         if (__DEV__) {
+//                           console.log('✅ FCM token deleted locally');
+//                         }
+//                       } catch (fcmError) {
+//                         console.warn('⚠️ Error deleting FCM token:', fcmError);
+//                       }
+                      
+//                       if (__DEV__) {
+//                         console.log('✅ Twilio client and cache cleared on logout');
+//                       }
+//                     } catch (clearError) {
+//                       console.warn('⚠️ Error clearing Twilio data on logout:', clearError);
+//                       // Continue with logout even if clearing fails
+//                     }
+                    
+//                     await AsyncStorage.setItem('ISLOGIN', 'false');
+
+//                     navigation.reset({
+//                       index: 0,
+//                       routes: [
+//                         {
+//                           name: 'SinglePage',
+//                           params: {
+//                             resetToLogin: true,
+//                             logoutMessage: t(Constant.USER_LOGOUT),
+//                           },
+//                         },
+//                       ],
+//                     });
+//                   } else {
+//                     showToast(t(Constant.LOGOUT_FAIL),'error');
+//                   }
+
+//                 } catch (error) {
+//                  // console.log("Logout API Error:", error);
+//                   console.log("Something went wrong. Try again!");
+//                 }
+//               }}
+//             >
+//               <Text allowFontScaling={false} style={styles.loginText}>
+//                 {t('logout')}
+//               </Text>
+//             </TouchableOpacity>
+
+//               <TouchableOpacity
+//                 style={styles.loginButton1}
+//                 onPress={() => setShowConfirm(false)}
+//               >
+//                 <Text allowFontScaling={false} style={styles.loginText1}>
+//                   {t('cancel')}
+//                 </Text>
+//               </TouchableOpacity>
+//             </View>
+//           </BlurView>
+//         </View>
+//       </TouchableWithoutFeedback>
+//     </Modal>
+
+//     <Modal
+//       visible={showConfirm1}
+//       transparent
+//       animationType="fade"
+//       onRequestClose={() => setShowConfirm1(false)}
+//     >
+//       <TouchableWithoutFeedback onPress={() => setShowConfirm1(false)}>
+//         <View style={styles.overlay}>
+//           <BlurView
+//             style={{
+//               flex: 1,
+//               alignContent: 'center',
+//               justifyContent: 'center',
+//               width: '100%',
+//               alignItems: 'center',
+//             }}
+//             blurType="light"
+//             blurAmount={10}
+//             reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+//           >
+//             <View
+//               style={[
+//                 StyleSheet.absoluteFill,
+//                 { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+//               ]}
+//             />
+
+//             <View style={styles.popupContainer}>
+//               <Image
+//                 source={require('../../../assets/images/delprofile.png')}
+//                 style={styles.logo}
+//                 resizeMode="contain"
+//               />
+//               <Text allowFontScaling={false} style={styles.mainheader}>
+//                 {t('delete_account')}
+//               </Text>
+//               <Text allowFontScaling={false} style={styles.subheader}>
+//                 {t('delete_message')}
+//               </Text>
+
+
+//               <TouchableOpacity
+//               style={styles.loginButton}
+//               onPress={async () => {
+//                 try {
+//                   const deviceId = await DeviceInfo.getUniqueId();
+//                   const user_id = await AsyncStorage.getItem('userId'); // <-- your stored user id
+
+//                   const body = {
+//                     device_type: (Platform.OS === 'ios') ? 'ios': 'android',
+//                     device_id: deviceId,
+//                     user_id: Number(user_id),
+//                   };
+
+//                   const response = await fetch(`${MAIN_URL.baseUrl}user/account-delete`, {
+//                     method: 'POST',
+//                     headers: {
+//                       'Content-Type': 'application/json',
+//                     },
+//                     body: JSON.stringify(body),
+//                   });
+
+//                   const apiData = await response.json();
+
+//                   console.log("Logout API Response:", apiData);
+
+//                   // If API success → proceed to logout
+//                   if (apiData?.statusCode === 200) {
+//                     await AsyncStorage.setItem('userToken', '');
+//                     await AsyncStorage.setItem('userData', '');
+//                     await AsyncStorage.setItem('userId', '');
+            
+                    
+//                     await AsyncStorage.setItem('twilio_convo_', '');
+//                     await AsyncStorage.setItem('twilio_msg_', '');
+//                     setShowConfirm1(false);
+                    
+//                     // 🔒 SECURITY: Clear Twilio client and cache to prevent notifications to wrong user
+//                     try {
+//                       // Reset Twilio client singleton (removes all listeners)
+//                       await resetTwilioClient();
+                      
+//                       // Clear all Twilio caches (in-memory and AsyncStorage)
+//                       await clearTwilioCache();
+                      
+//                       // Delete FCM token locally (optional but good practice)
+//                       try {
+//                         const messaging = require('@react-native-firebase/messaging').default;
+//                         await messaging().deleteToken();
+//                         if (__DEV__) {
+//                           console.log('✅ FCM token deleted locally');
+//                         }
+//                       } catch (fcmError) {
+//                         console.warn('⚠️ Error deleting FCM token:', fcmError);
+//                       }
+                      
+//                       if (__DEV__) {
+//                         console.log('✅ Twilio client and cache cleared on logout');
+//                       }
+//                     } catch (clearError) {
+//                       console.warn('⚠️ Error clearing Twilio data on logout:', clearError);
+//                       // Continue with logout even if clearing fails
+//                     }
+                    
+//                     await AsyncStorage.setItem('ISLOGIN', 'false');
+
+//                     navigation.reset({
+//                       index: 0,
+//                       routes: [
+//                         {
+//                           name: 'SinglePage',
+//                           params: {
+//                             resetToLogin: true,
+//                             logoutMessage: t(Constant.USER_LOGOUT),
+//                           },
+//                         },
+//                       ],
+//                     });
+//                   } else {
+//                     showToast(t(Constant.LOGOUT_FAIL),'error');
+//                   }
+
+//                 } catch (error) {
+//                  // console.log("Logout API Error:", error);
+//                   console.log("Something went wrong. Try again!");
+//                 }
+//               }}
+//             >
+//               <Text allowFontScaling={false} style={styles.loginText}>
+//                 {t('yes_delete')}
+//               </Text>
+//             </TouchableOpacity>
+
+//               <TouchableOpacity
+//                 style={styles.loginButton1}
+//                 onPress={() => setShowConfirm1(false)}
+//               >
+//                 <Text allowFontScaling={false} style={styles.loginText1}>
+//                   {t('cancel')}
+//                 </Text>
+//               </TouchableOpacity>
+//             </View>
+//           </BlurView>
+//         </View>
+//       </TouchableWithoutFeedback>
+//     </Modal>
+
+    
+
+//     <NewCustomToastContainer />
+//   </View>
+// );
+// };
+
+// export default ProfileCard;
+
+// const styles = StyleSheet.create({
+
+//   logo: {
+//     width: 64,
+//     height: 64,
+//     marginBottom: 20,
+//   },
+
+//     popupContainer: {
+//     width: '85%',
+//     padding: 20,
+//     borderRadius: 24,
+//     borderWidth: 1,
+//     borderColor: 'rgba(255, 255, 255, 0.1)',
+//     alignItems: 'center',
+//     overflow: 'hidden',
+
+//     backgroundColor: 'rgba(255, 255, 255, 0.04)',
+//   },
+
+//   mainheader: {
+//     color: 'rgba(255, 255, 255, 0.80)',
+//     fontFamily: 'Urbanist-SemiBold',
+//     fontSize: 20,
+//     fontWeight: '600',
+//     letterSpacing: -0.4,
+//     lineHeight: 28,
+
+//   },
+//   subheader: {
+//     color: 'rgba(255, 255, 255, 0.80)',
+//     fontFamily: 'Urbanist-Regular',
+//     fontSize: 14,
+//     fontWeight: '400',
+//     textAlign: 'center',
+//     marginTop: 6,
+//   },
+
+//   loginText: {
+//     color: '#002050',
+//     textAlign: 'center',
+//     fontFamily: 'Urbanist-Medium',
+//     fontSize: 17,
+//     fontWeight: 500,
+//     letterSpacing: 1,
+//     width: '100%',
+//   },
+//   loginText1: {
+//     color: '#FFFFFF7A',
+//     textAlign: 'center',
+//     fontFamily: 'Urbanist-Medium',
+//     fontSize: 17,
+//     fontWeight: 500,
+//     letterSpacing: 1,
+//     width: '100%',
+//   },
+
+//   loginButton: {
+//     display: 'flex',
+//     width: '100%',
+//     height: 52,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     gap: 4,
+//     borderRadius: 100,
+//     paddingTop: 6,
+//     paddingBottom: 6,
+//     backgroundColor: 'rgba(255, 255, 255, 0.56)',
+//     marginTop: 20,
+//     borderWidth: 0.5,
+//     borderColor: '#ffffff2c',
+//   },
+
+//   loginButton1: {
+//     display: 'flex',
+//     width: '100%',
+//     height: 52,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     gap: 4,
+//     borderRadius: 100,
+//     paddingTop: 6,
+//     paddingBottom: 6,
+//     backgroundColor: 'rgba(170, 169, 176, 0.56)',
+//     marginTop: 8,
+//     borderWidth: 0.5,
+//     borderColor: '#ffffff2c',
+//   },
+
+
+//   overlay: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     backgroundColor: 'rgba(0,0,0,0.5)',
+//   },
+
+//   editcard:{
+//     paddingVertical: 8,
+//     paddingHorizontal: 16,
+//     borderColor: '#ffffff11',
+//     borderRadius:10,
+//     boxSizing: 'border-box',
+//     //gap:10,
+//     alignSelf: 'flex-start',
+//     backgroundColor:
+//       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
+//     boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px', 
+
+//   },
+
+//   edittext:{
+//     fontFamily: 'Urbanist-SemiBold',
+//     fontSize:14,
+//     color:'#fff',
+//     fontWeight:600,
+//     textAlign:'center',
+    
+    
+//   },
+
+//   initialsCircle:{
+//     backgroundColor: '#8390D4',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//     width: 88,
+//     height: 88,
+//     borderRadius: 20,
+
+    
+//     marginRight: 12
+//   },
+//   initialsText:{
+//    color: '#fff',
+//   fontSize: 36,
+//   fontWeight:600,
+//   textAlign: 'center',
+//   fontFamily: 'Urbanist-SemiBold',
+//   },
+//   listContainer: {
+//     // padding: 16,
+    
+//   },
+//   versionRow: {
+//   flexDirection: 'row',
+//   justifyContent: 'space-between',
+//   marginTop: 4,
+//   width: '100%',
+//   paddingHorizontal: 10, // optional, align with card content
+// },
+
+// versionLabel: {
+//   color: '#888',
+//   fontSize: 12,
+// },
+
+
+//   versionText: {
+//   position: 'absolute',
+//   right: 20,
+//   color: '#fff',
+//   fontSize: 14,
+//   fontWeight: '500',
+//    fontFamily: 'Urbanist-SemiBold',
+// },
+
+//   cardContainer: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     backgroundColor: 'rgba(255,255,255,0.06)',
+//     borderRadius: 12,
+//     padding: 12,
+//     minHeight:52,
+//     //marginTop:6,
+
+    
+//   },
+//   cardImage: {
+//     width: 25,
+//     height: 25,
+//    // borderRadius: 25,
+//     resizeMode:'contain'
+//   },
+//   cardText: {
+//     flex: 1,
+//     marginLeft: 12,
+//     fontSize: 14,
+//     fontWeight: '600',
+//     color: '#fff',
+//      fontFamily: 'Urbanist-SemiBold',
+//   },
+//   cardArrow: {
+//     width: 24,
+//     height: 24,
+//   },
+
+//   background: {
+//     flex: 1,
+//     width: '100%',
+//     height: '100%',
+//   },
+//   fullScreenContainer: {
+//     // flex: 1,
+//   },
+//   header: {
+  
+//     paddingTop: (Platform.OS === 'ios' ? '15.2%': 40),
+
+//     justifyContent: 'center',
+//     position: 'absolute',
+//     alignItems: 'center',
+//     alignSelf: 'center',
+//    top:  Platform.OS === 'ios' ? 10 : 10, 
+//     left: 0,
+//     right: 0,
+//     zIndex: 10,
+//     overflow: 'hidden',
+//   },
+//   headerRow: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+
+//   },
+//   backBtn: {
+//     width: 30,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//   },
+//   backIconRow: {
+//     padding: 12,
+//     borderRadius: 40,
+//     backgroundColor:
+//       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+//     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
+//     borderWidth: 0.4,
+//     borderColor: '#ffffff2c',
+//     height: 48,
+//     width: 48,
+//     position: 'absolute',
+//     left: 0,
+//     right: 0,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//   },
+ 
+//   unizyText: {
+//     color: '#FFFFFF',
+//     fontSize: 20,
+//     flex: 1,
+//     fontWeight: '600',
+//     textAlign: 'center',
+//     fontFamily: 'Urbanist-SemiBold',
+//   },
+//   scrollContainer: {
+//     paddingHorizontal: 20,
+//     paddingBottom: 80,
+//     paddingTop: 100,
+//   },
+//   userRow: {
+//     flexDirection: 'row',
+//     alignItems: 'center', 
+//     // justifyContent: 'space-between',
+//     borderRadius: 24,
+//     backgroundColor: 'rgba(255, 255, 255, 0.06)',
+//     // gap: 10,
+//     padding: 12,
+//   },
+//   productdetails: {
+//     marginTop: 10,
+//     padding: 12,
+//     backgroundColor: 'rgba(255, 255, 255, 0.05)',
+//     borderRadius: 24,
+//     overflow: 'hidden',
+//   },
+//   avatar: {
+//     width: 88,
+//     height: 88,
+//     borderRadius: 20,
+//     marginRight: 12,
+//   },
+//   userName: {
+//     position: 'relative',
+//     color: 'rgba(255, 255, 255, 0.88)',
+//     fontFamily: 'Urbanist-SemiBold',
+//     fontSize: 16,
+//     fontWeight: '600',
+//     lineHeight: 24,
+//     letterSpacing: -0.32,
+//   },
+//   userSub: {
+//     color: 'rgba(255, 255, 255, 0.88)',
+//     fontFamily: 'Urbanist-Medium',
+//     fontSize: 12,
+//     fontWeight: '500',
+//     lineHeight: 16,
+//   },
+ 
+// });
+
+
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect, useRef } from 'react';
 import {
@@ -32,11 +1082,22 @@ import { clearTwilioCache } from '../dashboard/MessageIndividualScreen';
 import { useTranslation } from "react-i18next";
 
 const bgImage = require('../../../assets/images/backimg.png');
-const profileImg = require('../../../assets/images/user.jpg');
-const logouticon = require('../../../assets/images/logout.png')
+const profileImg = require('../../../assets/images/user.jpg'); 
+const logouticon=require('../../../assets/images/logout.png')
 
-const helpicon = require('../../../assets/images/help.png')
-const okicon = require('../../../assets/images/ok.png')
+const helpicon=require('../../../assets/images/help.png')
+const okicon=require('../../../assets/images/ok.png')
+
+// const cardData = [
+//   { id: '1', title: 'Payment Methods', image: require('../../../assets/images/payment.png') },
+//   { id: '2', title: 'My Orders', image: require('../../../assets/images/cart.png') },
+//   { id: '3', title: 'My Reviews', image: require('../../../assets/images/ok.png') },
+//   { id: '4', title: 'Notifications', image: require('../../../assets/images/notify.png') },
+//   { id: '5', title: 'Help & Support', image: require('../../../assets/images/helpicon.png') },
+//   { id: '6', title: 'Logout', image: require('../../../assets/images/logout.png') },
+//   {id:'7',title:'App Version',image: require('../../../assets/images/versionicon.png')}
+  
+// ];
 
 const cardData = [
   { id: '1', titleKey: 'payment_methods', image: require('../../../assets/images/payment.png') },
@@ -45,6 +1106,7 @@ const cardData = [
   { id: '4', titleKey: 'notifications', image: require('../../../assets/images/notify.png') },
   { id: '5', titleKey: 'help_support', image: require('../../../assets/images/helpicon.png') },
   { id: '6', titleKey: 'logout', image: require('../../../assets/images/logout.png') },
+  { id: '8', titleKey: 'delete_account', image: require('../../../assets/images/delprofile.png') },
   { id: '7', titleKey: 'app_version', image: require('../../../assets/images/versionicon.png') },
 ];
 
@@ -55,36 +1117,37 @@ type ProfileCardContentProps = {
   navigation: any;
 };
 const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
-
+  
   const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
   const [isHidden, setIsHidden] = useState(true);
 
-  interface UserMeta {
-    firstname: string | null;
-    lastname: string | null;
-    profile: string | null;
-    student_email: string | null;
-    email?: string | null;
-    university_name?: string | null;
+ interface UserMeta {
+  firstname: string | null;
+  lastname: string | null;
+  profile: string | null;
+  student_email: string | null;
+  email?: string | null;
+  university_name?: string | null;
+}
+
+const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
+const [expanded, setExpanded] = useState(false);
+const animatedHeight = useRef(new Animated.Value(0)).current;
+ const [showConfirm, setShowConfirm] = useState(false);
+ const [showConfirm1, setShowConfirm1] = useState(false);
+ const [loading, setLoading] = useState(true);
+
+
+useEffect(() => {
+  if (expanded) {
+    Animated.timing(animatedHeight, {
+      toValue: 1,
+      duration: 800, 
+      useNativeDriver: false,
+    }).start();
   }
-
-  const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
-  const [expanded, setExpanded] = useState(false);
-  const animatedHeight = useRef(new Animated.Value(0)).current;
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-
-  useEffect(() => {
-    if (expanded) {
-      Animated.timing(animatedHeight, {
-        toValue: 1,
-        duration: 800,
-        useNativeDriver: false,
-      }).start();
-    }
-  }, [expanded]);
+}, [expanded]);
 
   const { t } = useTranslation();
 
@@ -94,7 +1157,8 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
         setLoading(true);
         const token = await AsyncStorage.getItem('userToken');
         const userId = await AsyncStorage.getItem('userId');
-        const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+
+        console.log("profile card page.... ",userId);
 
         if (!token || !userId) {
           console.warn('Missing token or user ID in AsyncStorage');
@@ -109,27 +1173,26 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
-            language_code: language_code
           },
         });
 
         const data = await response.json();
 
         if (response.status === 401 || response.status === 403) {
-          handleForceLogout();
-          return;
-        }
+        handleForceLogout();
+        return;
+      }
 
-        if (data.statusCode === 401 || data.statusCode === 403) {
-          handleForceLogout();
-          return;
-        }
+      if (data.statusCode === 401 || data.statusCode === 403) {
+        handleForceLogout();
+        return;
+      }
 
         if (response.ok) {
           const user = data.data;
 
-          console.log("user data .........", user);
-
+          console.log("user data .........",user);
+          
           setUserMeta({
             firstname: user.firstname ?? null,
             lastname: user.lastname ?? null,
@@ -138,16 +1201,16 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
             email: user.email ?? null,
             university_name: user.university_name ?? null,
           });
-
+          
         } else {
           console.warn('Failed to fetch user profile:', data?.message || response.status);
         }
       } catch (error) {
         console.error('Error fetching user profile:', error);
       }
-      finally {
-        setLoading(false);
-      }
+       finally {
+      setLoading(false);
+    }
     };
     const handleForceLogout = async () => {
       console.log('User inactive or unauthorized — logging out');
@@ -174,13 +1237,13 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
           },
         },
       );
-
+ 
       const json = await response.json();
-
+ 
       if (json?.statusCode === 200 && json.data.onboardingLink) {
         const onboardingLink = json?.data?.onboardingLink;
-
-        if (Platform.OS === 'ios') {
+ 
+        if(Platform.OS === 'ios'){
           navigation.replace("StripeOnboardingScreen", {
             onboardingUrl: onboardingLink,
           });
@@ -188,17 +1251,18 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
           navigation.navigate("StripeOnboardingScreen", {
             onboardingUrl: onboardingLink,
           });
-        }
-
-
       }
-      else if (json?.data?.stripeAccount?.isboardcomplete) {
-
-        if (Platform.OS === 'ios') {
-          navigation.replace("AccountDeatils", { showSuccess: true })
-        } else {
-          navigation.navigate("AccountDeatils", { showSuccess: true })
-        }
+       
+     
+      }
+      else if(json?.data?.stripeAccount?.isboardcomplete)
+      {
+            
+            if(Platform.OS === 'ios'){
+              navigation.replace("AccountDeatils", { showSuccess: true })
+            } else {
+              navigation.navigate("AccountDeatils", { showSuccess: true })
+          }
       }
       else {
         Alert.alert('Error', json?.message || 'Something went wrong.Please try again');
@@ -213,338 +1277,521 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
   };
 
 
-  const renderItem = ({ item }: any) => {
-    const isLogout = item.titleKey === 'logout';
-    const isVersion = item.titleKey === 'app_version';
-
-
-    return (
-      <TouchableOpacity
-        style={styles.cardContainer}
-        onPress={async () => {
-          if (isLogout) {
-
-            await AsyncStorage.setItem('userToken', '');
-            await AsyncStorage.setItem('userData', '');
-            await AsyncStorage.setItem('userId', '')
-            await AsyncStorage.setItem('twilio_convo_', '');
-            await AsyncStorage.setItem('twilio_msg_', '');
-
-            setShowConfirm(true);
-          }
-          else if (item.titleKey === 'my_orders') {
-            if (Platform.OS === 'ios') {
-              navigation.replace('MyOrders');
-            } else {
-              navigation.navigate('MyOrders');
-            }
-
-          }
-          else if (item.titleKey === 'my_reviews') {
-            if (Platform.OS === 'ios') {
-              navigation.replace('MyReviews');
-            } else {
-              navigation.navigate('MyReviews');
-            }
-          }
-          else if (item.titleKey === 'help_support') {
-            navigation.navigate('HelpSupport');
-          }
-
-          else if (item.titleKey === 'notifications') {
-            if (Platform.OS === 'ios') {
-              navigation.replace('Notification');
-            } else {
-              navigation.navigate('Notification');
-            }
-
-          }
-          else if (item.titleKey === 'payment_methods') {
-            openStripeOnboarding();
-          }
-          else {
-            console.log(item.title, 'pressed');
-          }
-        }}
-      >
-        <Image source={item.image} style={styles.cardImage} />
-        <Text allowFontScaling={false}
-          style={[
-            styles.cardText,
-            isLogout && { color: '#FF8282E0' },
-          ]}
-        >
-          {t(item.titleKey)}
-        </Text>
-        {isVersion ? (
-          <Text allowFontScaling={false} style={styles.versionText}>{APP_VERSION}</Text>
-        ) : !isLogout && (
-          <Image source={arrowIcon} style={styles.cardArrow} />
-        )}
-      </TouchableOpacity>
-    );
-  };
-  const APP_VERSION = 'v1.0.0';
-
-  const clickBack = () => {
-    navigation.replace('Dashboard', { AddScreenBackactiveTab: 'Home', isNavigate: false })
-  }
-  const getInitials = (firstName = '', lastName = '') => {
-    const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
-    const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
-    return (f + l) || '?';
-  };
-
-  if (loading) {
-    return (
-      <View style={{ flex: 1 }}>
-        <Loader />
-      </View>
-    );
-  }
+const renderItem = ({ item }: any) => {
+  const isLogout = item.titleKey === 'logout';
+  const isDelete = item.titleKey === 'delete_account';
+  const isVersion = item.titleKey === 'app_version';
+ 
 
   return (
-    <View style={styles.fullScreenContainer}>
+    <TouchableOpacity
+      style={styles.cardContainer}
+      onPress={async () => {
+        if (isLogout) {      
+        // await AsyncStorage.setItem('ISLOGIN', 'false');
+        // navigation.reset({
+        //   index: 0,
+        //   routes: [{ name: 'SinglePage', params: { resetToLogin: true , logoutMessage: 'User Logout Successfully'} }],
+        // });
 
-      <View
-        style={{
-          paddingTop: Platform.OS === 'ios' ? 0 : 0,
-          marginHorizontal: 16,
-          gap: 24,
-        }}
+
+        // await AsyncStorage.setItem('userToken', '');
+        //             await AsyncStorage.setItem('userData', '');
+        //             await AsyncStorage.setItem('userId', '');
+
+                    
+        //             await AsyncStorage.setItem('twilio_convo_', '');
+        //             await AsyncStorage.setItem('twilio_msg_', '');
+                   
+
+        setShowConfirm(true); 
+      } else if(isDelete) {
+       
+        setShowConfirm1(true); 
+      }
+        else if (item.titleKey  === 'my_orders') {
+          if(Platform.OS === 'ios'){
+            navigation.replace('MyOrders'); 
+          } else {
+            navigation.navigate('MyOrders'); 
+          }
+          
+        } 
+        else if (item.titleKey  === 'my_reviews') {
+          if(Platform.OS === 'ios'){
+            navigation.replace('MyReviews'); 
+          } else {
+            navigation.navigate('MyReviews'); 
+          }
+          // navigation.navigate('MyReviews'); 
+        } 
+        else if (item.titleKey  === 'help_support') {
+          navigation.navigate('HelpSupport'); 
+        } 
+
+        else if (item.titleKey  === 'notifications') {
+          if(Platform.OS === 'ios'){
+            navigation.replace('Notification'); 
+          } else {
+            navigation.navigate('Notification'); 
+          }
+          
+        }
+        else if(item.titleKey  === 'payment_methods'){
+          openStripeOnboarding();
+        } 
+         else {
+          console.log(item.title, 'pressed');
+        }
+      }}
+    >
+      <Image source={item.image} style={styles.cardImage} />
+      <Text allowFontScaling={false}
+        style={[
+          styles.cardText,
+          isLogout && { color: '#FF8282E0' },isDelete && { color: '#FF8282E0' },
+        ]}
       >
-        <View style={styles.userRow}>
-          <View style={{ gap: 10 }}>
-            {userMeta?.profile ? (
-              <Image source={{ uri: userMeta.profile }} style={styles.avatar} />
-            ) : (
-              <View style={styles.initialsCircle}>
-                <Text allowFontScaling={false} style={styles.initialsText}>
-                  {getInitials(
-                    userMeta?.firstname ?? ' ',
-                    userMeta?.lastname ?? ' ',
-                  )}
-                </Text>
-              </View>
-            )}
-          </View>
+         {t(item.titleKey)}
+      </Text>
+      {isVersion ? (
+        <Text allowFontScaling={false} style={styles.versionText}>{APP_VERSION}</Text>
+      ) : !isLogout || isDelete&& (
+        <Image source={arrowIcon} style={styles.cardArrow} />
+      )}
+    </TouchableOpacity>
+  );
+};
+  const APP_VERSION = 'v1.0.0'; 
 
-          <View style={{}}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <Text allowFontScaling={false} style={styles.userName}>
-                {userMeta
-                  ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''
-                    }`.trim()
-                  : t('loading')}
-              </Text>
-            </View>
+const clickBack = () =>{
+    navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: false})
+  }
+  const getInitials = (firstName = '', lastName = '') => {
+  const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
+  const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
+  return (f + l) || '?';
+};
 
-            <View style={{ flexDirection: 'column', gap: 6, marginTop: 4 }}>
-              <View
-                style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
-              >
-                <Image
-                  source={require('../../../assets/images/buildings.png')}
-                  style={{ width: 16, height: 16 }}
-                />
-                <Text allowFontScaling={false} style={styles.userSub}>
-                  {userMeta?.university_name
-                    ? userMeta.university_name.length > 25
-                      ? userMeta.university_name.slice(0, 25) + '…'
-                      : userMeta.university_name
-                    : 'University Name'}
-                </Text>
-              </View>
-
-              <View
-                style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
-              >
-                <Image
-                  source={require('../../../assets/images/sms.png')}
-                  style={{ width: 16, height: 16 }}
-                />
-                <Text allowFontScaling={false} style={styles.userSub}>
-                  {userMeta?.email || 'studentname@gmail.com'}
-                </Text>
-              </View>
-
-              <View
-                style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
-              >
-                <Image
-                  source={require('../../../assets/images/sms.png')}
-                  style={{ width: 16, height: 16 }}
-                />
-                <Text allowFontScaling={false} style={styles.userSub}>
-                  {userMeta?.student_email || 'studentname@university.ac.uk'}
-                </Text>
-              </View>
-            </View>
-
-          </View>
-
-          <TouchableOpacity
-            style={{ position: 'absolute', right: 15, top: 14, }}
-            onPress={() => {
-              navigation.navigate('EditProfile');
-            }}
-          >
-            <View style={styles.editcard}>
-              <Text allowFontScaling={false} style={styles.edittext}>
-                {t('edit')}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.listContainer}>
-          <FlatList
-            data={cardData}
-            keyExtractor={item => item.id}
-            renderItem={renderItem}
-            ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-          />
-        </View>
-      </View>
-
-      <Modal
-        visible={showConfirm}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowConfirm(false)}
-      >
-        <TouchableWithoutFeedback onPress={() => setShowConfirm(false)}>
-          <View style={styles.overlay}>
-            <BlurView
-              style={{
-                flex: 1,
-                alignContent: 'center',
-                justifyContent: 'center',
-                width: '100%',
-                alignItems: 'center',
-              }}
-              blurType="light"
-              blurAmount={10}
-              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-            >
-              <View
-                style={[
-                  StyleSheet.absoluteFill,
-                  { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-                ]}
-              />
-
-              <View style={styles.popupContainer}>
-                <Image
-                  source={require('../../../assets/images/alert_logout.png')}
-                  style={styles.logo}
-                  resizeMode="contain"
-                />
-                <Text allowFontScaling={false} style={styles.mainheader}>
-                  {t('confirm_logout')}
-                </Text>
-                <Text allowFontScaling={false} style={styles.subheader}>
-                  {t('logout_message')}
-                </Text>
-
-
-                <TouchableOpacity
-                  style={styles.loginButton}
-                  onPress={async () => {
-                    try {
-                      const deviceId = await DeviceInfo.getUniqueId();
-                      const user_id = await AsyncStorage.getItem('userId'); 
-
-                      const body = {
-                        device_type: 'android',
-                        device_id: deviceId,
-                        user_id: Number(user_id),
-                      };
-
-                      const response = await fetch(`${MAIN_URL.baseUrl}user/delete-fcm-token`, {
-                        method: 'POST',
-                        headers: {
-                          'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(body),
-                      });
-
-                      const apiData = await response.json();
-
-                      console.log("Logout API Response:", apiData);
-
-                      if (apiData?.statusCode === 200) {
-                        setShowConfirm(false);
-                        try {
-                          await resetTwilioClient();
-                          await clearTwilioCache();
-                          try {
-                            const messaging = require('@react-native-firebase/messaging').default;
-                            await messaging().deleteToken();
-                            if (__DEV__) {
-                              console.log('✅ FCM token deleted locally');
-                            }
-                          } catch (fcmError) {
-                            console.warn('⚠️ Error deleting FCM token:', fcmError);
-                          }
-
-                          if (__DEV__) {
-                            console.log('✅ Twilio client and cache cleared on logout');
-                          }
-                        } catch (clearError) {
-                          console.warn('⚠️ Error clearing Twilio data on logout:', clearError);
-                        }
-
-                        await AsyncStorage.setItem('ISLOGIN', 'false');
-
-                        navigation.reset({
-                          index: 0,
-                          routes: [
-                            {
-                              name: 'SinglePage',
-                              params: {
-                                resetToLogin: true,
-                                logoutMessage: t(Constant.USER_LOGOUT),
-                              },
-                            },
-                          ],
-                        });
-                      } else {
-                        showToast(t(Constant.LOGOUT_FAIL), 'error');
-                      }
-
-                    } catch (error) {
-                      console.log("Something went wrong. Try again!");
-                    }
-                  }}
-                >
-                  <Text allowFontScaling={false} style={styles.loginText}>
-                    {t('logout')}
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.loginButton1}
-                  onPress={() => setShowConfirm(false)}
-                >
-                  <Text allowFontScaling={false} style={styles.loginText1}>
-                    {t('cancel')}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </BlurView>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-      <NewCustomToastContainer />
+if (loading) {
+  return (
+    <View style={{ flex: 1 }}>
+      <Loader />
     </View>
   );
+}
+
+return (
+  <View style={styles.fullScreenContainer}>
+
+    <View
+      style={{
+        paddingTop: Platform.OS === 'ios' ? 0: 0,
+        marginHorizontal: 16,
+        gap: 24,
+      }}
+    >
+      <View style={styles.userRow}>
+        <View style={{ gap: 10 }}>
+          {userMeta?.profile ? (
+            <Image source={{ uri: userMeta.profile }} style={styles.avatar} />
+          ) : (
+            <View style={styles.initialsCircle}>
+              <Text allowFontScaling={false} style={styles.initialsText}>
+                {getInitials(
+                  userMeta?.firstname ?? ' ',
+                  userMeta?.lastname ?? ' ',
+                )}
+              </Text>
+            </View>
+          )}
+        </View>
+
+        <View style={{ }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <Text allowFontScaling={false} style={styles.userName}>
+              {userMeta
+                ? `${userMeta.firstname ?? ''} ${
+                    userMeta.lastname ?? ''
+                  }`.trim()
+                : t('loading')}
+            </Text>
+          </View>
+
+          <View style={{ flexDirection: 'column', gap: 6, marginTop: 4 }}>
+            <View
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 8}}
+            >
+              <Image
+                source={require('../../../assets/images/buildings.png')}
+                style={{ width: 16, height: 16 }}
+              />
+              <Text allowFontScaling={false} style={styles.userSub}>
+                {userMeta?.university_name
+                  ? userMeta.university_name.length > 25
+                    ? userMeta.university_name.slice(0, 25) + '…'
+                    : userMeta.university_name
+                  : 'University Name'}
+              </Text>
+            </View>
+
+            <View
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
+            >
+              <Image
+                source={require('../../../assets/images/sms.png')}
+                style={{ width: 16, height: 16 }}
+              />
+              <Text allowFontScaling={false} style={styles.userSub}>
+                {userMeta?.email || 'studentname@gmail.com'}
+              </Text>
+            </View>
+
+            <View
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
+            >
+              <Image
+                source={require('../../../assets/images/sms.png')}
+                style={{ width: 16, height: 16 }}
+              />
+              <Text allowFontScaling={false} style={styles.userSub}>
+                {userMeta?.student_email || 'studentname@university.ac.uk'}
+              </Text>
+            </View>
+          </View>
+       
+        </View>
+        
+        <TouchableOpacity
+        style={{position: 'absolute',right: 15,top: 14,}}
+          onPress={() => {
+            navigation.navigate('EditProfile');
+          }}
+        >
+          <View style={styles.editcard}>
+            <Text allowFontScaling={false} style={styles.edittext}>
+              {t('edit')}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.listContainer}>
+        <FlatList
+          data={cardData}
+          keyExtractor={item => item.id}
+          renderItem={renderItem}
+          ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+        />
+      </View>
+    </View>
+
+    <Modal
+      visible={showConfirm}
+      transparent
+      animationType="fade"
+      onRequestClose={() => setShowConfirm(false)}
+    >
+      <TouchableWithoutFeedback onPress={() => setShowConfirm(false)}>
+        <View style={styles.overlay}>
+          <BlurView
+            style={{
+              flex: 1,
+              alignContent: 'center',
+              justifyContent: 'center',
+              width: '100%',
+              alignItems: 'center',
+            }}
+            blurType="light"
+            blurAmount={10}
+            reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+          >
+            <View
+              style={[
+                StyleSheet.absoluteFill,
+                { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+              ]}
+            />
+
+            <View style={styles.popupContainer}>
+              <Image
+                source={require('../../../assets/images/alert_logout.png')}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+              <Text allowFontScaling={false} style={styles.mainheader}>
+                {t('confirm_logout')}
+              </Text>
+              <Text allowFontScaling={false} style={styles.subheader}>
+                {t('logout_message')}
+              </Text>
+
+
+              <TouchableOpacity
+              style={styles.loginButton}
+              onPress={async () => {
+                try {
+                  const deviceId = await DeviceInfo.getUniqueId();
+                  const user_id = await AsyncStorage.getItem('userId'); // <-- your stored user id
+
+                  const body = {
+                    device_type: (Platform.OS === 'ios') ? 'ios': 'android',
+                    device_id: deviceId,
+                    user_id: Number(user_id),
+                  };
+
+                  const response = await fetch(`${MAIN_URL.baseUrl}user/delete-fcm-token`, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(body),
+                  });
+
+                  const apiData = await response.json();
+
+                  console.log("Logout API Response:", apiData);
+
+                  // If API success → proceed to logout
+                  if (apiData?.statusCode === 200) {
+                    await AsyncStorage.setItem('userToken', '');
+                    await AsyncStorage.setItem('userData', '');
+                    await AsyncStorage.setItem('userId', '');
+            
+                    
+                    await AsyncStorage.setItem('twilio_convo_', '');
+                    await AsyncStorage.setItem('twilio_msg_', '');
+                    setShowConfirm(false);
+
+                    
+                    // 🔒 SECURITY: Clear Twilio client and cache to prevent notifications to wrong user
+                    try {
+                      // Reset Twilio client singleton (removes all listeners)
+                      await resetTwilioClient();
+                      
+                      // Clear all Twilio caches (in-memory and AsyncStorage)
+                      await clearTwilioCache();
+                      
+                      // Delete FCM token locally (optional but good practice)
+                      try {
+                        const messaging = require('@react-native-firebase/messaging').default;
+                        await messaging().deleteToken();
+                        if (__DEV__) {
+                          console.log('✅ FCM token deleted locally');
+                        }
+                      } catch (fcmError) {
+                        console.warn('⚠️ Error deleting FCM token:', fcmError);
+                      }
+                      
+                      if (__DEV__) {
+                        console.log('✅ Twilio client and cache cleared on logout');
+                      }
+                    } catch (clearError) {
+                      console.warn('⚠️ Error clearing Twilio data on logout:', clearError);
+                      // Continue with logout even if clearing fails
+                    }
+                    
+                    await AsyncStorage.setItem('ISLOGIN', 'false');
+
+                    navigation.reset({
+                      index: 0,
+                      routes: [
+                        {
+                          name: 'SinglePage',
+                          params: {
+                            resetToLogin: true,
+                            logoutMessage: t(Constant.USER_LOGOUT),
+                          },
+                        },
+                      ],
+                    });
+                  } else {
+                    showToast(t(Constant.LOGOUT_FAIL),'error');
+                  }
+
+                } catch (error) {
+                 // console.log("Logout API Error:", error);
+                  console.log("Something went wrong. Try again!");
+                }
+              }}
+            >
+              <Text allowFontScaling={false} style={styles.loginText}>
+                {t('logout')}
+              </Text>
+            </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.loginButton1}
+                onPress={() => setShowConfirm(false)}
+              >
+                <Text allowFontScaling={false} style={styles.loginText1}>
+                  {t('cancel')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </BlurView>
+        </View>
+      </TouchableWithoutFeedback>
+    </Modal>
+
+    <Modal
+      visible={showConfirm1}
+      transparent
+      animationType="fade"
+      onRequestClose={() => setShowConfirm1(false)}
+    >
+      <TouchableWithoutFeedback onPress={() => setShowConfirm1(false)}>
+        <View style={styles.overlay}>
+          <BlurView
+            style={{
+              flex: 1,
+              alignContent: 'center',
+              justifyContent: 'center',
+              width: '100%',
+              alignItems: 'center',
+            }}
+            blurType="light"
+            blurAmount={10}
+            reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+          >
+            <View
+              style={[
+                StyleSheet.absoluteFill,
+                { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+              ]}
+            />
+
+            <View style={styles.popupContainer}>
+              <Image
+                source={require('../../../assets/images/delprofile.png')}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+              <Text allowFontScaling={false} style={styles.mainheader}>
+                {t('delete_account')}
+              </Text>
+              <Text allowFontScaling={false} style={styles.subheader}>
+                {t('delete_message')}
+              </Text>
+
+
+              <TouchableOpacity
+              style={styles.loginButton}
+              onPress={async () => {
+                try {
+                  const deviceId = await DeviceInfo.getUniqueId();
+                  const user_id = await AsyncStorage.getItem('userId'); // <-- your stored user id
+
+                  const body = {
+                    device_type: (Platform.OS === 'ios') ? 'ios': 'android',
+                    device_id: deviceId,
+                    user_id: Number(user_id),
+                  };
+
+                  const response = await fetch(`${MAIN_URL.baseUrl}user/account-delete`, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(body),
+                  });
+
+                  const apiData = await response.json();
+
+                  console.log("Logout API Response:", apiData);
+
+                  // If API success → proceed to logout
+                  if (apiData?.statusCode === 200) {
+                    await AsyncStorage.setItem('userToken', '');
+                    await AsyncStorage.setItem('userData', '');
+                    await AsyncStorage.setItem('userId', '');
+            
+                    
+                    await AsyncStorage.setItem('twilio_convo_', '');
+                    await AsyncStorage.setItem('twilio_msg_', '');
+                    setShowConfirm1(false);
+                    
+                    // 🔒 SECURITY: Clear Twilio client and cache to prevent notifications to wrong user
+                    try {
+                      // Reset Twilio client singleton (removes all listeners)
+                      await resetTwilioClient();
+                      
+                      // Clear all Twilio caches (in-memory and AsyncStorage)
+                      await clearTwilioCache();
+                      
+                      // Delete FCM token locally (optional but good practice)
+                      try {
+                        const messaging = require('@react-native-firebase/messaging').default;
+                        await messaging().deleteToken();
+                        if (__DEV__) {
+                          console.log('✅ FCM token deleted locally');
+                        }
+                      } catch (fcmError) {
+                        console.warn('⚠️ Error deleting FCM token:', fcmError);
+                      }
+                      
+                      if (__DEV__) {
+                        console.log('✅ Twilio client and cache cleared on logout');
+                      }
+                    } catch (clearError) {
+                      console.warn('⚠️ Error clearing Twilio data on logout:', clearError);
+                      // Continue with logout even if clearing fails
+                    }
+                    
+                    await AsyncStorage.setItem('ISLOGIN', 'false');
+
+                    navigation.reset({
+                      index: 0,
+                      routes: [
+                        {
+                          name: 'SinglePage',
+                          params: {
+                            resetToLogin: true,
+                            logoutMessage: t(Constant.USER_LOGOUT),
+                          },
+                        },
+                      ],
+                    });
+                  } else {
+                    showToast(t(Constant.LOGOUT_FAIL),'error');
+                  }
+
+                } catch (error) {
+                 // console.log("Logout API Error:", error);
+                  console.log("Something went wrong. Try again!");
+                }
+              }}
+            >
+              <Text allowFontScaling={false} style={styles.loginText}>
+                {t('yes_delete')}
+              </Text>
+            </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.loginButton1}
+                onPress={() => setShowConfirm1(false)}
+              >
+                <Text allowFontScaling={false} style={styles.loginText1}>
+                  {t('cancel')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </BlurView>
+        </View>
+      </TouchableWithoutFeedback>
+    </Modal>
+
+    
+
+    <NewCustomToastContainer />
+  </View>
+);
 };
 
 export default ProfileCard;
@@ -557,7 +1804,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 
-  popupContainer: {
+    popupContainer: {
     width: '85%',
     padding: 20,
     borderRadius: 24,
@@ -646,31 +1893,31 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
 
-  editcard: {
+  editcard:{
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderColor: '#ffffff11',
-    borderRadius: 10,
+    borderRadius:10,
     boxSizing: 'border-box',
     //gap:10,
     alignSelf: 'flex-start',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px', 
 
   },
 
-  edittext: {
+  edittext:{
     fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14,
-    color: '#fff',
-    fontWeight: 600,
-    textAlign: 'center',
-
-
+    fontSize:14,
+    color:'#fff',
+    fontWeight:600,
+    textAlign:'center',
+    
+    
   },
 
-  initialsCircle: {
+  initialsCircle:{
     backgroundColor: '#8390D4',
     alignItems: 'center',
     justifyContent: 'center',
@@ -678,42 +1925,42 @@ const styles = StyleSheet.create({
     height: 88,
     borderRadius: 20,
 
-
+    
     marginRight: 12
   },
-  initialsText: {
-    color: '#fff',
-    fontSize: 36,
-    fontWeight: 600,
-    textAlign: 'center',
-    fontFamily: 'Urbanist-SemiBold',
+  initialsText:{
+   color: '#fff',
+  fontSize: 36,
+  fontWeight:600,
+  textAlign: 'center',
+  fontFamily: 'Urbanist-SemiBold',
   },
   listContainer: {
     // padding: 16,
-
+    
   },
   versionRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 4,
-    width: '100%',
-    paddingHorizontal: 10, // optional, align with card content
-  },
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  marginTop: 4,
+  width: '100%',
+  paddingHorizontal: 10, // optional, align with card content
+},
 
-  versionLabel: {
-    color: '#888',
-    fontSize: 12,
-  },
+versionLabel: {
+  color: '#888',
+  fontSize: 12,
+},
 
 
   versionText: {
-    position: 'absolute',
-    right: 20,
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '500',
-    fontFamily: 'Urbanist-SemiBold',
-  },
+  position: 'absolute',
+  right: 20,
+  color: '#fff',
+  fontSize: 14,
+  fontWeight: '500',
+   fontFamily: 'Urbanist-SemiBold',
+},
 
   cardContainer: {
     flexDirection: 'row',
@@ -721,16 +1968,16 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.06)',
     borderRadius: 12,
     padding: 12,
-    minHeight: 52,
+    minHeight:52,
     //marginTop:6,
 
-
+    
   },
   cardImage: {
     width: 25,
     height: 25,
-    // borderRadius: 25,
-    resizeMode: 'contain'
+   // borderRadius: 25,
+    resizeMode:'contain'
   },
   cardText: {
     flex: 1,
@@ -738,7 +1985,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#fff',
-    fontFamily: 'Urbanist-SemiBold',
+     fontFamily: 'Urbanist-SemiBold',
   },
   cardArrow: {
     width: 24,
@@ -754,14 +2001,14 @@ const styles = StyleSheet.create({
     // flex: 1,
   },
   header: {
-
-    paddingTop: (Platform.OS === 'ios' ? '15.2%' : 40),
+  
+    paddingTop: (Platform.OS === 'ios' ? '15.2%': 40),
 
     justifyContent: 'center',
     position: 'absolute',
     alignItems: 'center',
     alignSelf: 'center',
-    top: Platform.OS === 'ios' ? 10 : 10,
+   top:  Platform.OS === 'ios' ? 10 : 10, 
     left: 0,
     right: 0,
     zIndex: 10,
@@ -794,7 +2041,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
+ 
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
@@ -810,7 +2057,7 @@ const styles = StyleSheet.create({
   },
   userRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'center', 
     // justifyContent: 'space-between',
     borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
@@ -846,5 +2093,5 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     lineHeight: 16,
   },
-
+ 
 });
