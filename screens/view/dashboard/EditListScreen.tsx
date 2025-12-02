@@ -553,121 +553,121 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
     }
   };
   
-const handlePreview = async (latestFormValues: any) => {
-  try {
-    // ------------------ Mandatory validation ------------------
-    for (const field of fields) {
-      const param = field.param || field;
-      const { id, field_type, field_name, alias_name, mandatory } = param;
-      const fieldId = String(id);
+  const handlePreview = async (latestFormValues: any) => {
+    try {
+      // ------------------ Mandatory validation ------------------
+      for (const field of fields) {
+        const param = field.param || field;
+        const { id, field_type, field_name, alias_name, mandatory } = param;
+        const fieldId = String(id);
 
-      const nameToShow = alias_name || field_name || 'Unnamed Field';
+        const nameToShow = alias_name || field_name || 'Unnamed Field';
 
-      let value =
-        latestFormValues[fieldId]?.value ??
-        latestFormValues[alias_name]?.value ??
-        '';
+        let value =
+          latestFormValues[fieldId]?.value ??
+          latestFormValues[alias_name]?.value ??
+          '';
 
-      if (field_type?.toLowerCase() === 'image') {
-        value = uploadedImages;
-      }
+        if (field_type?.toLowerCase() === 'image') {
+          value = uploadedImages;
+        }
 
-      if (mandatory) {
-        const isEmpty =
-          value === undefined ||
-          value === null ||
-          (typeof value === 'string' && value.trim() === '') ||
-          (Array.isArray(value) && value.length === 0);
+        if (mandatory) {
+          const isEmpty =
+            value === undefined ||
+            value === null ||
+            (typeof value === 'string' && value.trim() === '') ||
+            (Array.isArray(value) && value.length === 0);
 
-        if (isEmpty) {
-          showToast(`${nameToShow} ${Constant.IS_MAN}`, 'error');
-          return;
+          if (isEmpty) {
+            showToast(`${nameToShow} ${Constant.IS_MAN}`, 'error');
+            return;
+          }
         }
       }
-    }
 
-    // ----------------------------------------------------------
-    // ✅ ADDING COMPUTED PRICE LOGIC HERE
-    // ----------------------------------------------------------
-    let computedPrice: number | null = null;
+      // ----------------------------------------------------------
+      // ✅ ADDING COMPUTED PRICE LOGIC HERE
+      // ----------------------------------------------------------
+      let computedPrice: number | null = null;
 
-    if (productId === 2 || productId === 5) {
-      let priceFieldId: number | null = null;
-      let durationFieldId: number | null = null;
+      if (productId === 2 || productId === 5) {
+        let priceFieldId: number | null = null;
+        let durationFieldId: number | null = null;
 
-      fields.forEach(f => {
-        const param = f.param || f;
-        if (param.alias_name === 'price') priceFieldId = param.id;
-        if (param.alias_name === 'service_duration') durationFieldId = param.id;
-      });
+        fields.forEach(f => {
+          const param = f.param || f;
+          if (param.alias_name === 'price') priceFieldId = param.id;
+          if (param.alias_name === 'service_duration') durationFieldId = param.id;
+        });
 
-      // if (priceFieldId !== null && durationFieldId !== null) {
-      //   const rawPrice = Number(latestFormValues[String(priceFieldId)]?.value || 0);
-      //   const rawDuration = Number(latestFormValues[String(durationFieldId)]?.value || 1);
+        // if (priceFieldId !== null && durationFieldId !== null) {
+        //   const rawPrice = Number(latestFormValues[String(priceFieldId)]?.value || 0);
+        //   const rawDuration = Number(latestFormValues[String(durationFieldId)]?.value || 1);
 
-      //   computedPrice = rawPrice * rawDuration;
-      // }
+        //   computedPrice = rawPrice * rawDuration;
+        // }
 
-       if (priceFieldId !== null && durationFieldId !== null) {
-        // read value from ID OR alias (fallback)
-        const rawPrice =
-          Number(latestFormValues[String(priceFieldId)]?.value) ||
-          Number(latestFormValues['price']?.value) ||
-          0;
+        if (priceFieldId !== null && durationFieldId !== null) {
+          // read value from ID OR alias (fallback)
+          const rawPrice =
+            Number(latestFormValues[String(priceFieldId)]?.value) ||
+            Number(latestFormValues['price']?.value) ||
+            0;
 
-        const rawDuration =Number(latestFormValues[String(durationFieldId)]?.value) ||Number(latestFormValues['service_duration']?.value) ||1;
-        //const rawDuration = Number(latestFormValues[String(durationFieldId)]?.value || 1);
+          const rawDuration = Number(latestFormValues[String(durationFieldId)]?.value) || Number(latestFormValues['service_duration']?.value) || 1;
+          //const rawDuration = Number(latestFormValues[String(durationFieldId)]?.value || 1);
 
-        computedPrice = rawPrice * rawDuration;
+          computedPrice = rawPrice * rawDuration;
+        }
       }
-    }
 
 
-    const dataToStore: any = { ...latestFormValues };
+      const dataToStore: any = { ...latestFormValues };
 
-    if (computedPrice !== null) {
-      fields.forEach(f => {
-        const param = f.param || f;
-        if (param.alias_name === 'price') {
+      if (computedPrice !== null) {
+        fields.forEach(f => {
+          const param = f.param || f;
+          if (param.alias_name === 'price') {
+            dataToStore[String(param.id)] = {
+              value: computedPrice.toString(),
+              alias_name: 'price',
+            };
+          }
+        });
+      }
+
+
+
+      // Handle image fields
+      fields.forEach(field => {
+        const param = field.param || field;
+        const fieldType = param.field_type?.toLowerCase();
+
+        if (fieldType === 'image') {
+          const uploadedForField = uploadedImages.map(img => ({
+            id: img.id,
+            uri: img.uri,
+            name: img.name,
+          }));
+
           dataToStore[String(param.id)] = {
-            value: computedPrice.toString(),
-            alias_name: 'price',
+            value: uploadedForField,
+            alias_name: param.alias_name ?? null,
           };
         }
       });
+
+      // Save data
+      await AsyncStorage.setItem('formData1', JSON.stringify(dataToStore));
+      console.log('✅ Form data saved:', dataToStore);
+
+      navigation.navigate('EditPreviewThumbnail');
+    } catch (error) {
+      console.log('Error:', error);
+      showToast(Constant.DATA_NOT_SAVE, 'error');
     }
-
-   
-
-    // Handle image fields
-    fields.forEach(field => {
-      const param = field.param || field;
-      const fieldType = param.field_type?.toLowerCase();
-
-      if (fieldType === 'image') {
-        const uploadedForField = uploadedImages.map(img => ({
-          id: img.id,
-          uri: img.uri,
-          name: img.name,
-        }));
-
-        dataToStore[String(param.id)] = {
-          value: uploadedForField,
-          alias_name: param.alias_name ?? null,
-        };
-      }
-    });
-
-    // Save data
-    await AsyncStorage.setItem('formData1', JSON.stringify(dataToStore));
-    console.log('✅ Form data saved:', dataToStore);
-
-    navigation.navigate('EditPreviewThumbnail');
-  } catch (error) {
-    console.log('Error:', error);
-    showToast(Constant.DATA_NOT_SAVE,'error');
-  }
-};
+  };
 
 
 

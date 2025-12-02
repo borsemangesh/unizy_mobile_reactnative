@@ -93,6 +93,10 @@ const [categoryid, setcategoryid] = useState(0);
     category?: Category | null;
     city?:string|null;
   }
+  interface FormField {
+    value: any;
+    alias_name: string | null;
+  }
 
   const flatListRef = useRef(null);
 const { height } = Dimensions.get('window');
@@ -321,176 +325,297 @@ const { height } = Dimensions.get('window');
   };
 
   
-  const handleListPress = async () => {
-    console.log('🔵 handleListPress called');
-    try {
-      console.log('Step 1: Fetching formData from AsyncStorage...');
-      const storedData = await AsyncStorage.getItem('formData1');
-      console.log('✅ AsyncStorage.getItem(formData) result:', storedData);
+//   const handleListPress = async () => {
+//     console.log('🔵 handleListPress called');
+//     try {
+//       console.log('Step 1: Fetching formData from AsyncStorage...');
+//       const storedData = await AsyncStorage.getItem('formData1');
+//       console.log('✅ AsyncStorage.getItem(formData) result:', storedData);
 
-      if (!storedData) {
-        console.log('⚠️ No form data found in storage');
-        return;
-      }
+//       if (!storedData) {
+//         console.log('⚠️ No form data found in storage');
+//         return;
+//       }
 
-      const formData: Record<
-        string,
-        { value: any; alias_name: string | null }
-      > = JSON.parse(storedData);
-      console.log('✅ Parsed formData:', formData);
+//       const formData: Record<
+//         string,
+//         { value: any; alias_name: string | null }
+//       > = JSON.parse(storedData);
+//       console.log('✅ Parsed formData:', formData);
 
-      console.log('Step 2: Fetching userToken...');
-      const token = await AsyncStorage.getItem('userToken');
-      const productId1 = await AsyncStorage.getItem('selectedProductId');
-      const shareid = await AsyncStorage.getItem('shareid');
+//       console.log('Step 2: Fetching userToken...');
+//       const token = await AsyncStorage.getItem('userToken');
+//       const productId1 = await AsyncStorage.getItem('selectedProductId');
+//       const shareid = await AsyncStorage.getItem('shareid');
 
-      if (!token) {
-        console.log('⚠️ Token not found. Cannot upload.');
-        return;
-      }
+//       if (!token) {
+//         console.log('⚠️ Token not found. Cannot upload.');
+//         return;
+//       }
 
-      console.log('Step 3: Splitting formData...');
+//       console.log('Step 3: Splitting formData...');
 
-      const imageFields = Object.entries(formData)
-        .filter(([key, obj]) => {
-          const v = obj.value;
-          return (
-            Array.isArray(v) &&
-            v.length > 0 &&
-            v.every((item: any) => item?.uri)
-          );
-        })
-        .map(([key, obj]) => [key, obj.value as ImageField[]]) as [
-        string,
-        ImageField[],
-      ][];
+//       const imageFields = Object.entries(formData)
+//         .filter(([key, obj]) => {
+//           const v = obj.value;
+//           return (
+//             Array.isArray(v) &&
+//             v.length > 0 &&
+//             v.every((item: any) => item?.uri)
+//           );
+//         })
+//         .map(([key, obj]) => [key, obj.value as ImageField[]]) as [
+//         string,
+//         ImageField[],
+//       ][];
 
-      const nonImageFields = Object.entries(formData).filter(([key, obj]) => {
-        const v = obj.value;
-        return !(Array.isArray(v) && v.every((item: any) => item?.uri));
-      });
+//       const nonImageFields = Object.entries(formData).filter(([key, obj]) => {
+//         const v = obj.value;
+//         return !(Array.isArray(v) && v.every((item: any) => item?.uri));
+//       });
 
-      console.log('✅ Non-image fields:', nonImageFields);
-      console.log('✅ Image fields:', imageFields);
+//       console.log('✅ Non-image fields:', nonImageFields);
+//       console.log('✅ Image fields:', imageFields);
 
-      // --- Build data array safely ---
-const dataArray = nonImageFields
-  .filter(([key, obj]) => !isNaN(Number(key)))
-  .map(([key, obj]) => {
-    const val = obj.value;
-    return {
-      id: Number(key),
-      param_value: val !== undefined && val !== null && val !== '' ? val : null,
-    };
-  })
-  .filter(item => item.param_value !== null); 
+//       // --- Build data array safely ---
+// const dataArray = nonImageFields
+//   .filter(([key, obj]) => !isNaN(Number(key)))
+//   .map(([key, obj]) => {
+//     const val = obj.value;
+//     return {
+//       id: Number(key),
+//       param_value: val !== undefined && val !== null && val !== '' ? val : null,
+//     };
+//   })
+//   .filter(item => item.param_value !== null); 
 
-      console.log('✅ Data array for create API:', dataArray);
+//       console.log('✅ Data array for create API:', dataArray);
 
-      const createPayload = {
-        category_id: productId1, // dynamic or static
-        data: dataArray,
-      };
-      console.log(
-        'API',
-        `${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`,
-      );
-      const createRes = await fetch(
-        `${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(createPayload),
-        },
-      );
+//       const createPayload = {
+//         category_id: productId1, // dynamic or static
+//         data: dataArray,
+//       };
+//       console.log(
+//         'API',
+//         `${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`,
+//       );
+//       const createRes = await fetch(
+//         `${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`,
+//         {
+//           method: 'PATCH',
+//           headers: {
+//             'Content-Type': 'application/json',
+//             Authorization: `Bearer ${token}`,
+//           },
+//           body: JSON.stringify(createPayload),
+//         },
+//       );
 
-      const createJson = await createRes.json();
-      console.log('✅ Create API response:', createJson);
+//       const createJson = await createRes.json();
+//       console.log('✅ Create API response:', createJson);
 
-      const apiMessage = createJson?.message || createJson?.error || "Something went wrong";
-      const isSuccess = createRes.status === 200 || createRes.status === 201;
+//       const apiMessage = createJson?.message || createJson?.error || "Something went wrong";
+//       const isSuccess = createRes.status === 200 || createRes.status === 201;
 
-      showToast(apiMessage, isSuccess ? "success" : "error");
+//       showToast(apiMessage, isSuccess ? "success" : "error");
 
-      if (!(createRes.status === 200 || createRes.status === 201)) {
-         navigation.reset({
-                index: 0,
-                routes: [{ name: 'MyListing',},],
-              });
-        return;
-      }
+//       if (!(createRes.status === 200 || createRes.status === 201)) {
+//          navigation.reset({
+//                 index: 0,
+//                 routes: [{ name: 'MyListing',},],
+//               });
+//         return;
+//       }
 
-      const feature_id = createJson?.data?.id;
-      if (!feature_id) {
-        return
-      }
+//       const feature_id = createJson?.data?.id;
+//       if (!feature_id) {
+//         return
+//       }
 
-  const storedDataImages = await AsyncStorage.getItem('deletedImagesId');
-  const deletedImageIds = storedDataImages ? JSON.parse(storedDataImages).deleted_image_ids || [] : [];
+//   const storedDataImages = await AsyncStorage.getItem('deletedImagesId');
+//   const deletedImageIds = storedDataImages ? JSON.parse(storedDataImages).deleted_image_ids || [] : [];
 
 
-  for (const [param_id, images] of imageFields) {
-    if (!Array.isArray(images)) {
-      continue;
-    }
+//   for (const [param_id, images] of imageFields) {
+//     if (!Array.isArray(images)) {
+//       continue;
+//     }
 
-    for (const image of images) {
-      if (!image || !image.uri) {
-        continue;
-      }
+//     for (const image of images) {
+//       if (!image || !image.uri) {
+//         continue;
+//       }
 
-      if (deletedImageIds.includes(image.id)) {
-        continue;
-      }
-      const data = new FormData();
-      data.append('files', {
-        uri: image.uri,
-        type: image.type || 'image/jpeg',
-        name: image.name,
-      } as any);
-      data.append('feature_id', feature_id);
-      data.append('param_id', param_id);
-      data.append('deleted_image_ids', JSON.stringify(deletedImageIds));
+//       if (deletedImageIds.includes(image.id)) {
+//         continue;
+//       }
+//       const data = new FormData();
+//       data.append('files', {
+//         uri: image.uri,
+//         type: image.type || 'image/jpeg',
+//         name: image.name,
+//       } as any);
+//       data.append('feature_id', feature_id);
+//       data.append('param_id', param_id);
+//       data.append('deleted_image_ids', JSON.stringify(deletedImageIds));
 
-      console.log('✅ FormData prepared for upload', JSON.stringify(data));
+//       console.log('✅ FormData prepared for upload', JSON.stringify(data));
 
-      const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-update`;
+//       const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-update`;
 
-      const uploadRes = await fetch(uploadUrl, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: data,
-      });
-      const uploadJson = await uploadRes.json();
+//       const uploadRes = await fetch(uploadUrl, {
+//         method: 'POST',
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//         body: data,
+//       });
+//       const uploadJson = await uploadRes.json();
 
-      try {
-          console.log("✅ Upload API Parsed JSON:", uploadJson);
-          const apiMessage = uploadJson?.message || uploadJson?.error || `Failed to upload ${image.name}`;
-          const isSuccess = uploadRes.status === 200 || uploadRes.status === 201;
-          showToast(apiMessage, isSuccess ? "success" : "error");
-          if (!isSuccess) return;
-      } catch (err) {
-        console.error('❌ Failed to parse upload response as JSON', err);
-      }    
-    }
-  }
+//       try {
+//           console.log("✅ Upload API Parsed JSON:", uploadJson);
+//           const apiMessage = uploadJson?.message || uploadJson?.error || `Failed to upload ${image.name}`;
+//           const isSuccess = uploadRes.status === 200 || uploadRes.status === 201;
+//           showToast(apiMessage, isSuccess ? "success" : "error");
+//           if (!isSuccess) return;
+//       } catch (err) {
+//         console.error('❌ Failed to parse upload response as JSON', err);
+//       }    
+//     }
+//   }
 
   
-      console.log('✅ All uploads done. Showing toast.');
-      showToast(Constant.DATA_UPLOAD,'success');
-      showToast(Constant.DATA_UPLOAD,'success');
-      setShowPopup(true);
-    } catch (error) {
-      console.log('❌ Error in handleListPress:', error);
-      showToast(Constant.SOMTHING_WENT_WRONG,'error');
-      showToast(Constant.SOMTHING_WENT_WRONG,'error');
+//       console.log('✅ All uploads done. Showing toast.');
+//       showToast(Constant.DATA_UPLOAD,'success');
+//       showToast(Constant.DATA_UPLOAD,'success');
+//       setShowPopup(true);
+//     } catch (error) {
+//       console.log('❌ Error in handleListPress:', error);
+//       showToast(Constant.SOMTHING_WENT_WRONG,'error');
+//       showToast(Constant.SOMTHING_WENT_WRONG,'error');
+//     }
+//   };
+
+const handleListPress = async () => {
+  
+
+  try {
+    const storedData = await AsyncStorage.getItem("formData1");
+    if (!storedData) {
+      console.log("⚠️ No form data found");
+      return;
     }
-  };
+
+    const formData: Record<string, FormField> = JSON.parse(storedData);
+    console.log("📌 Loaded formData:", formData);
+
+    const token = await AsyncStorage.getItem("userToken");
+    const productId = await AsyncStorage.getItem("selectedProductId");
+    const shareid = await AsyncStorage.getItem("shareid");
+
+    if (!token) {
+      console.log("⚠️ Token missing");
+      return;
+    }
+    const imageFields: [string, ImageField[]][] = [];
+    const nonImageFields: [string, { value: any; alias_name: string | null }][] = [];
+
+    Object.entries(formData).forEach(([key, obj]) => {
+      const v = obj.value;
+      if (Array.isArray(v) && v.length > 0 && v.every(i => i?.uri)) {
+        imageFields.push([key, v as ImageField[]]);
+      } else {
+        nonImageFields.push([key, obj]);
+      }
+    });
+
+    const dataArray = nonImageFields
+      .filter(([key]) => !isNaN(Number(key)))
+      .map(([key, obj]) => ({
+        id: Number(key),
+        param_value: obj.value !== undefined && obj.value !== null && obj.value !== "" ? obj.value : null,
+      }))
+      .filter(i => i.param_value !== null);
+
+    const createPayload = {
+      category_id: productId,
+      data: dataArray,
+    };
+
+    const createRes = await fetch(`${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(createPayload),
+    });
+
+    const createJson = await createRes.json();
+
+    if (![200, 201].includes(createRes.status)) {
+      showToast(createJson?.message || "Error", "error");
+      navigation.reset({ index: 0, routes: [{ name: "MyListing" }] });
+      return;
+    }
+
+    showToast(createJson?.message || "Success", "success");
+    const feature_id = createJson?.data?.id;
+    if (!feature_id) {
+      console.log("⚠️ feature_id missing");
+      return;
+    }
+
+   console.log("📌 imageFields:", JSON.stringify(imageFields, null, 2));
+
+    for (const [param_id, images] of imageFields) {
+      console.log("📌 param_id:", param_id, "images count:", images.length);
+      for (const image of images) {
+        if (!image || !image.uri) continue;
+
+        console.log("🟢 Uploading image:", image.name);
+
+        const form = new FormData();
+        form.append("files", {
+          uri: image.uri,
+          type: image.type || "image/jpeg",
+          name: image.name,
+        } as any);
+        form.append("feature_id", feature_id);
+        form.append("param_id", param_id);
+
+
+        console.log("  file uri:", image.uri);
+        
+
+        const uploadRes = await fetch(`${MAIN_URL.baseUrl}category/featurelist/image-update`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: form,
+        });
+
+        const uploadJson = await uploadRes.json();
+        console.log("📌 Upload Response:", uploadJson);
+
+        const isSuccess = [200, 201].includes(uploadRes.status);
+        showToast(
+          uploadJson?.message || "Image upload failed"),
+          isSuccess ? "success" : "error";
+
+        if (!isSuccess) return;
+      }
+    }
+    showToast(Constant.DATA_UPLOAD, "success");
+    setShowPopup(true);
+
+    await AsyncStorage.removeItem("formData1");
+    await AsyncStorage.removeItem("deletedImagesId");
+
+  } catch (err) {
+    console.log("❌ handleListPress Error:", err);
+    showToast(Constant.SOMTHING_WENT_WRONG, "error");
+  }
+};
 
 
 
