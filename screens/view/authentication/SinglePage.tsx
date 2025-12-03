@@ -592,7 +592,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;
 
     if (!emailRegex.test(username1.trim())) {
-      showToast(t(Constant.VALID_EMAI_LADDRESS), 'error');
+      showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
       return;
     }
 
@@ -640,7 +640,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(username.trim())) {
-      showToast(t(Constant.VALID_EMAI_LADDRESS), 'error');
+      showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
       return;
     }
 
@@ -746,7 +746,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
     const emailRegex =
       /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;
     if (!emailRegex.test(signUpusername.trim())) {
-      showToast(t(Constant.VALID_EMAI_LADDRESS), 'error');
+      showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
       return;
     }
 
@@ -994,7 +994,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
     const emailParts = verifyusername.split('@');
     if (emailParts.length !== 2) {
-      showToast(t(Constant.VALID_EMAI_LADDRESS), 'error');
+      showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
       return;
     }
     console.log(emailParts)
@@ -1004,7 +1004,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
     console.log(domain)
 
     if (!universityDomains.includes(domain)) {
-      showToast(t(Constant.VALID_EMAI_LADDRESS), 'error');
+      showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
       return;
     }
 

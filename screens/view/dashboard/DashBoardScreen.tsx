@@ -916,7 +916,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
         },{paddingHorizontal:16,paddingTop:4,paddingBottom: 16}]}
       >
         <Text allowFontScaling={false} style={styles.featuredText}>
-          Featured Listings
+        {t('Featured_Listings')}
         </Text>
       </Animated.View>
       {isLoading ? (
@@ -939,7 +939,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
               resizeMode="contain"
             />
             <Text allowFontScaling={false} style={styles.emptyText}>
-              No Listings Found
+             {t('No_Listings_Found')}
             </Text>
           </View>
         </View>
