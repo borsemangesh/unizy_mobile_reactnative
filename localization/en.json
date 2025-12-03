@@ -455,5 +455,6 @@
   "price_limit":"Price cannot be exceeded",
   "redirect_stripe":"Redirecting to Stripe..",
   "delete_message": "This action is permanent. All your data, listings, and messages will be permanently removed.",
-  "delete_account": "Delete Account"
+  "delete_account": "Delete Account",
+  "USER_DELETE":"Account Deleted Successfully"
 }

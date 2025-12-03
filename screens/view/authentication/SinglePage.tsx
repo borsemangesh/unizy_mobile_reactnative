@@ -140,7 +140,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   const filteredLanguages = languages
     .map(lang => ({
       id: lang.id,
-      code: lang.iso_code,
+      code: lang.iso_code.trim(),
       name: lang.language_name,
       flag: lang.logo || require('../../../assets/images/english.png'),
     }))
@@ -1755,7 +1755,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                       contentContainerStyle={selectlang_styles.listContent}
                       style={selectlang_styles.flatListStyle}
                       data={filteredLanguages}
-                      keyExtractor={item => item.code}
+                      //keyExtractor={item => item.code}
+                      keyExtractor={item => item.id.toString()}
                       renderItem={({ item }) => (
                         <TouchableOpacity
                           style={selectlang_styles.languageItem}
