@@ -436,10 +436,8 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   {(() => {
-                    const categoryName = data?.list?.category?.name || '';
-                    const isProfileCategory =
-                      categoryName?.toLowerCase() === 'house keeping' ||
-                      categoryName?.toLowerCase() === 'tuition';
+                    const categoryName = data?.list?.category?.id || 0;
+                    const isProfileCategory =categoryName === 2 ||categoryName === 5;
                     const profilePhoto = data?.list?.createdby?.profile;
                     const firstName = data?.list?.createdby?.firstname;
                     const lastName = data?.list?.createdby?.lastname;
@@ -739,7 +737,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
         data?.list?.ispurchased === true ? (
           <View style={[styles.bottomview, { justifyContent: 'center' }]}>
             <ButtonNew
-              title="Deactivate"
+              title= {t('Deactivate')}
               textStyle={[styles.cancelText, { width: '100%' }]}
               buttonStyle={{
                 width: '100%',

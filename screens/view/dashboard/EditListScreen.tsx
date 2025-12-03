@@ -1239,9 +1239,18 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             </AnimatedReanimated.View>
           </TouchableOpacity>
 
-          <Text allowFontScaling={false} style={styles.unizyText}>
+          {/* <Text allowFontScaling={false} style={styles.unizyText}>
             {t('edit')}{`${category ? ` ${category} ` : ''}`}
-          </Text>
+          </Text> */}
+          <View style={{ position: 'absolute', left: 0, right: 0, alignItems: 'center' }}>
+            <Text
+              allowFontScaling={false}
+              style={styles.unizyText}
+              numberOfLines={2}
+            >
+              {t('edit')}{`${category ? ` ${category} ` : ''}`}
+            </Text>
+          </View>
         </View>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
@@ -1634,10 +1643,12 @@ const styles = StyleSheet.create({
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
-    flex: 1,
+    //flex: 1,
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
+    width: '70%',
+    alignSelf: 'center'
   },
 
   backBtn: {

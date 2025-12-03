@@ -144,7 +144,9 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       name: lang.language_name,
       flag: lang.logo || require('../../../assets/images/english.png'),
     }))
-    .filter(lang => lang.name.toLowerCase().includes(search.toLowerCase()));
+    .filter(lang =>
+      (lang.name || '').toLowerCase().includes(search.toLowerCase())
+    );
 
   useEffect(() => {
     if (search.trim() !== '' && filteredLanguages.length === 0) {
@@ -1527,14 +1529,14 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       const flag = await AsyncStorage.getItem('ISLOGIN');
       animRef.current?.pause();
       if (flag === 'true') {
-       
+
         // navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: true,isFirsttimeLogin: false});
         navigation.reset({
           index: 0,
           routes: [
             {
               name: 'Dashboard',
-              params: {AddScreenBackactiveTab: 'Home',isNavigate: true,isFirsttimeLogin: false},
+              params: { AddScreenBackactiveTab: 'Home', isNavigate: true, isFirsttimeLogin: false },
             },
           ],
         });
@@ -1760,7 +1762,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                       renderItem={({ item }) => (
                         <TouchableOpacity
                           style={selectlang_styles.languageItem}
-                          onPress={() => { handleLanguageSelect(item); slideUp.setValue(100); }}
+                          onPress={() => { handleLanguageSelect(item); }}
                         >
                           <View
                             style={{

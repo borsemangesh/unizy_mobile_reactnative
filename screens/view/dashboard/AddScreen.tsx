@@ -336,27 +336,27 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   };
 
   const getCurrentDate = (t?: any) => {
-  const today = new Date();
+    const today = new Date();
 
-  const day = today.getDate();
-  const year = today.getFullYear();
-  const lang = i18n.language;
-  const monthIndex = today.getMonth(); 
-  const monthKeys = [
-    "jan","feb","mar","apr","may","jun",
-    "jul","aug","sep","oct","nov","dec"
-  ];
-  const month = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
-  let suffix = "";
-  if (lang === "en") {
-    if (day % 10 === 1 && day !== 11) suffix = "st";
-    else if (day % 10 === 2 && day !== 12) suffix = "nd";
-    else if (day % 10 === 3 && day !== 13) suffix = "rd";
-    else suffix = "th";
-  }
+    const day = today.getDate();
+    const year = today.getFullYear();
+    const lang = i18n.language;
+    const monthIndex = today.getMonth();
+    const monthKeys = [
+      "jan", "feb", "mar", "apr", "may", "jun",
+      "jul", "aug", "sep", "oct", "nov", "dec"
+    ];
+    const month = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+    let suffix = "";
+    if (lang === "en") {
+      if (day % 10 === 1 && day !== 11) suffix = "st";
+      else if (day % 10 === 2 && day !== 12) suffix = "nd";
+      else if (day % 10 === 3 && day !== 13) suffix = "rd";
+      else suffix = "th";
+    }
 
-  return `${day}${suffix} ${month} ${year}`;
-};
+    return `${day}${suffix} ${month} ${year}`;
+  };
 
   const pluralizeLabel = (label: string) => {
     if (!label) return '';
@@ -385,7 +385,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
       if (Platform.OS === 'android') {
         try {
           // Request CAMERA
-          const cameraGranted = await PermissionsAndroid.request(   
+          const cameraGranted = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.CAMERA,
             {
               title: 'Camera Permission',
@@ -470,19 +470,19 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     }
   };
 
- 
+
   const handlePreview = async () => {
     console.log("ReViewScrenn");
-  
+
     try {
       for (const field of fields) {
         const { id, field_type } = field.param;
         let value = formValues[id]?.value;
-  
+
         if (field_type.toLowerCase() === 'image') {
           value = uploadedImages;
         }
-  
+
         if (field.mandatory) {
           if (
             value === undefined ||
@@ -499,38 +499,38 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           }
         }
       }
-  
+
       let computedPrice: number | null = null;
-  
+
       if (productId === 2 || productId === 5) {
         let priceFieldId: number | null = null;
         let durationFieldId: number | null = null;
-  
+
         for (const f of fields) {
           if (f.param.alias_name === 'price') priceFieldId = f.param.id;
           if (f.param.alias_name === 'service_duration') durationFieldId = f.param.id;
         }
-  
+
         if (priceFieldId !== null && durationFieldId !== null) {
           let rawPrice = formValues[priceFieldId]?.value || '0';
-  
+
           rawPrice = String(rawPrice).replace(/[^\d.-]/g, '');
-  
+
           const priceNumber = parseFloat(rawPrice);
-  
+
           if (isNaN(priceNumber) || priceNumber > 99999) {
             showToast(`${t('price_limit')} £99,999`, "error");
             return;
           }
-  
+
           const rawDuration = Number(formValues[durationFieldId]?.value || 1);
-  
+
           computedPrice = priceNumber * rawDuration;
         }
       }
-  
+
       const dataToStore: any = { ...formValues };
-        if (computedPrice !== null) {
+      if (computedPrice !== null) {
         for (const f of fields) {
           if (f.param.alias_name === 'price') {
             dataToStore[f.param.id] = {
@@ -540,7 +540,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           }
         }
       }
-  
+
       for (const field of fields) {
         if (field.param.field_type.toLowerCase() === 'image') {
           const uploadedForField = uploadedImages.map(img => ({
@@ -548,22 +548,22 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             uri: img.uri,
             name: img.name,
           }));
-  
+
           dataToStore[field.param.id] = {
             value: uploadedForField,
             alias_name: field.param.alias_name ?? null,
           };
         }
-  
+
         if (field.param.alias_name === 'price') {
           const priceValue = parseFloat(dataToStore[field.param.id]?.value);
-            if (priceValue > 99999) {
+          if (priceValue > 99999) {
             showToast(`${t('price_limit')} £99,999`, "error");
             return;
           }
         }
       }
-        await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
+      await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
       navigation.navigate('PreviewThumbnail');
     } catch (error) {
       console.log('Error saving form data: ', error);
@@ -577,14 +577,14 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     if (!hasPermission) return;
 
     Alert.alert(
-     'Select Option',
+      'Select Option',
       "Choose a source",
       [
         {
           text: 'Camera',
           onPress: () => {
             launchCamera(
-              { mediaType: 'photo', cameraType: 'front', quality: 1 }, 
+              { mediaType: 'photo', cameraType: 'front', quality: 1 },
               async response => {
                 if (response.didCancel) return;
                 if (response.assets && response.assets[0].uri) {
@@ -597,10 +597,10 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                   ) {
                     const compressed = await ImageResizer.createResizedImage(
                       uri,
-                      800, 
-                      800, 
+                      800,
+                      800,
                       'JPEG',
-                      80, 
+                      80,
                     );
                     uri = compressed.uri;
                     name = compressed.name || name;
@@ -687,7 +687,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     const id = param.id;
     const options = Array.isArray(param.options) ? param.options : [];
 
-    if (!fieldType || !id) return null; 
+    if (!fieldType || !id) return null;
 
     switch (fieldType) {
       case 'text': {
@@ -740,7 +740,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 styles.login_container,
                 {
                   height: 44,
-                  textAlignVertical: 'center', 
+                  textAlignVertical: 'center',
                   paddingVertical: 0,
                 },
               ]}
@@ -859,9 +859,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 .filter((opt: any) => {
                   const value = formValues[id]?.value;
                   if (Array.isArray(value)) {
-                    return value.includes(opt.id); 
+                    return value.includes(opt.id);
                   }
-                  return value === opt.id; 
+                  return value === opt.id;
                 })
                 .map((opt: any) => (
                   <View key={opt.id} style={styles.categoryTagWrapper}>
@@ -1147,9 +1147,18 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             </AnimatedReanimated.View>
           </TouchableOpacity>
 
-          <Text allowFontScaling={false} style={styles.unizyText}>
+          {/* <Text allowFontScaling={false}  style={styles.unizyText}>
             {`${t('list')}${productName ? ` ${productName} ` : ''}`}
-          </Text>
+          </Text> */}
+          <View style={{ position: 'absolute', left: 0, right: 0, alignItems: 'center' }}>
+            <Text
+              allowFontScaling={false}
+              style={styles.unizyText}
+              numberOfLines={2}
+            >
+              {`${t('list')}${productName ? ` ${productName} ` : ''}`}
+            </Text>
+          </View>
         </View>
 
         <KeyboardAvoidingView
@@ -1302,7 +1311,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
             title={`${t('select')} ${t(multiSelectModal?.fieldLabel?.toLowerCase() || 'category')}`}
-           subtitle={
+            subtitle={
               multiSelectModal?.ismultilple
                 ? `${t('pick_all')} ${multiSelectModal?.fieldLabel || 'categories'} ${t('best_describe')}`
                 : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'} ${t('that_fit_your_listing')}`
@@ -1407,10 +1416,10 @@ const styles = StyleSheet.create({
   //   justifyContent: 'center',
   // },
   dropdowncard: {
-  flex: 1,            // ⬅️ Add this
-  minHeight: 40,
-  justifyContent: 'center',
-},
+    flex: 1,            // ⬅️ Add this
+    minHeight: 40,
+    justifyContent: 'center',
+  },
   dropdowntext: {
     fontFamily: 'Urbanist-Regular',
     fontWeight: '400',
@@ -1474,10 +1483,12 @@ const styles = StyleSheet.create({
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
-    flex: 1,
+    // flex: 1,
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
+    width: '70%',
+    alignSelf: 'center'
   },
   backBtn: {
     width: 30,

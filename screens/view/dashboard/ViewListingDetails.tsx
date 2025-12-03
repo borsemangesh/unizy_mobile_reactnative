@@ -412,8 +412,8 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
             <View style={[styles.card, { marginTop: (Platform.OS === 'ios' ? 6 : 10) }]}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 {(() => {
-                  const categoryName = data?.list?.category?.name || '';
-                  const isProfileCategory = categoryName?.toLowerCase() === 'house keeping' || categoryName?.toLowerCase() === 'tuition';
+                  const categoryName = data?.list?.category?.id || 0;
+                    const isProfileCategory =categoryName === 2 ||categoryName === 5;
                   const profilePhoto = data?.list?.createdby?.profile;
                   const firstName = data?.list?.createdby?.firstname;
                   const lastName = data?.list?.createdby?.lastname;

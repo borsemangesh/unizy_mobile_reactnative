@@ -1280,7 +1280,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? 60 : 60,
+    top: (Platform.OS === 'ios' ? 60 : 40),
     width: Platform.OS === 'ios' ? '100%' : '100%',
     flexDirection: 'row',
     alignItems: 'center',

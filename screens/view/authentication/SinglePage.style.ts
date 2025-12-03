@@ -422,12 +422,11 @@ export const Styles = StyleSheet.create({
     textShadowColor: 'rgba(255,255,255,0.6)',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 1,
+   // flexShrink:1
   },
   teamsandConditionContainer: {
     flexDirection: 'row',
-    //alignItems: 'center',
-    //justifyContent: 'center',
-   // marginTop:3
+   //flexWrap: 'wrap',       
   },
 
   teamandCondition: {
@@ -442,6 +441,7 @@ export const Styles = StyleSheet.create({
     fontFamily: 'Urbanist-Regular',
     fontSize: 14,
     fontWeight: 400,
+   // flexShrink:1
   },
 
   privacyPolicyText: {

@@ -84,6 +84,69 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     // profile:''
   });
 
+  const [showPopup1, setShowPopup1] = useState(false);
+  const closePopup1 = () => setShowPopup1(false);
+  const [emailName, setEmailName] = useState('');
+  const inputs = useRef<Array<TextInput | null>>([]);
+  const [isUpdateDisabled_personal, setIsUpdateDisabled_personal] =
+    useState(true);
+  const [isUpdateDisabled, setIsUpdateDisabled] = useState(true);
+  const [updateText, setUpdateText] = useState('Update');
+  const { t } = useTranslation();
+
+  const [initialEmail, setInitialEmail] = useState(''); // store original email
+  const [initialPersonalEmail, setInitialPersonalEmail] = useState(''); // store original email
+
+  const screenHeight = Dimensions.get('window').height;
+  const [slideUp1] = useState(new Animated.Value(0));
+
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: event => {
+      'worklet';
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  const animatedBlurStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 100], [0, 1], 'clamp');
+    return { opacity };
+  });
+
+  const animatedButtonStyle = useAnimatedStyle(() => {
+    'worklet';
+    const borderColor = interpolateColor(
+      scrollY.value,
+      [0, 300],
+      ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+    );
+    const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
+    return {
+      borderColor,
+      backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
+    };
+  });
+
+  const animatedIconStyle = useAnimatedStyle(() => {
+    'worklet';
+    const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
+    const tintColor = interpolateColor(
+      scrollY.value,
+      [0, 150],
+      ['#FFFFFF', '#002050'],
+    );
+    return {
+      opacity,
+      tintColor,
+    };
+  });
+
+  const blurAmount = useDerivedValue(() =>
+    interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
+  );
+
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -156,7 +219,30 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     fetchUserProfile();
   }, []);
 
-  const { t } = useTranslation();
+  const [universityDomains, setUniversityDomains] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchUniversities = async () => {
+      try {
+        const url4 = MAIN_URL.baseUrl + 'user/university-list';
+        const res = await fetch(url4);
+        const json = await res.json();
+        if (json?.data) {
+          const domains = json.data.map((u: any) =>
+            u.domain_name.toLowerCase(),
+          );
+          setUniversityDomains(domains);
+        }
+      } catch (err) {
+        console.error('Error fetching universities:', err);
+      }
+    };
+
+    fetchUniversities();
+  }, []);
+
+
+
   const requestCameraPermission = async () => {
     // ANDROID
     if (Platform.OS === 'android') {
@@ -215,33 +301,47 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     return true;
   };
 
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    return emailRegex.test(email.trim());
+  };
+
+  const validateStudentEmail = (email:string) => {
+  if (!email) return false;
+
+  const emailParts = email.split('@');
+  if (emailParts.length !== 2) return false;
+
+  const domain = '@' + emailParts[1].trim().toLowerCase();
+  return universityDomains.includes(domain);
+};
   const validateForm = () => {
     const errors = [];
     if (!userMeta.firstname || userMeta.firstname.trim() === '') {
-      errors.push('First name is required.');
+      errors.push(t('first_name_req'));
     }
     if (!userMeta.lastname || userMeta.lastname.trim() === '') {
-      errors.push('Last name is required.');
+      errors.push(t('last_name_req'));
     }
     if (
-      !userMeta.email ||
-      !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(userMeta.email)
+      !userMeta.email?.trim() ||
+      !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(userMeta.email.trim())
     ) {
-      errors.push('Personal Email ID is invalid.');
+      errors.push(t('personal_req'));
     }
     if (
-      !userMeta.student_email ||
+      !userMeta.student_email?.trim() ||
       !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
-        userMeta.student_email,
+        userMeta.student_email.trim(),
       )
     ) {
-      errors.push('Student Email ID is invalid.');
+      errors.push(t('student_req'));
     }
     if (!userMeta.city || userMeta.city.trim() === '') {
-      errors.push('City is required.');
+      errors.push(t('city_req'));
     }
     if (!userMeta.postal_code || userMeta.postal_code.trim() === '') {
-      errors.push('Postal code is required.');
+      errors.push(t('postal_code_req'));
     }
     return errors;
   };
@@ -297,14 +397,15 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       const url = `${MAIN_URL.baseUrl}user/profile-edit`;
 
       const body = {
-        firstname: userMeta.firstname,
-        lastname: userMeta.lastname,
-        email: userMeta.email,
-        student_email: userMeta.student_email,
-        city: userMeta.city,
+        firstname: userMeta.firstname?.trim(),
+        lastname: userMeta.lastname?.trim(),
+        email: userMeta.email?.trim(),
+        student_email: userMeta.student_email?.trim(),
+        city: userMeta.city?.trim(),
         postal_code: userMeta.postal_code,
       };
 
+      console.log(body)
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
@@ -315,6 +416,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       });
 
       const data = await response.json();
+      console.log(data)
 
       if (response.ok) {
         showToast(t(data?.message) || 'Profile updated successfully', 'success');
@@ -511,11 +613,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       let createPayload;
       if (flag == 'studentEmail') {
         createPayload = {
-          student_email: userMeta.student_email,
+          student_email: userMeta.student_email?.trim(),
         };
       } else if (flag == 'personalEmail') {
         createPayload = {
-          email: userMeta.email,
+          email: userMeta.email?.trim(),
         };
       }
 
@@ -599,71 +701,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   };
 
 
-  const [showPopup1, setShowPopup1] = useState(false);
-  const closePopup1 = () => setShowPopup1(false);
-
-  const [emailName, setEmailName] = useState('');
-
-  const inputs = useRef<Array<TextInput | null>>([]);
-
-  const [isUpdateDisabled_personal, setIsUpdateDisabled_personal] =
-    useState(true);
-  const [isUpdateDisabled, setIsUpdateDisabled] = useState(true);
-  const [updateText, setUpdateText] = useState('Update');
-
-
-  const [initialEmail, setInitialEmail] = useState(''); // store original email
-  const [initialPersonalEmail, setInitialPersonalEmail] = useState(''); // store original email
-
-  const screenHeight = Dimensions.get('window').height;
-  const [slideUp1] = useState(new Animated.Value(0));
-
-  const scrollY = useSharedValue(0);
-
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: event => {
-      'worklet';
-      scrollY.value = event.contentOffset.y;
-    },
-  });
-
-  const animatedBlurStyle = useAnimatedStyle(() => {
-    'worklet';
-    const opacity = interpolate(scrollY.value, [0, 100], [0, 1], 'clamp');
-    return { opacity };
-  });
-
-  const animatedButtonStyle = useAnimatedStyle(() => {
-    'worklet';
-    const borderColor = interpolateColor(
-      scrollY.value,
-      [0, 300],
-      ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
-    );
-    const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
-    return {
-      borderColor,
-      backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
-    };
-  });
-
-  const animatedIconStyle = useAnimatedStyle(() => {
-    'worklet';
-    const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
-    const tintColor = interpolateColor(
-      scrollY.value,
-      [0, 150],
-      ['#FFFFFF', '#002050'],
-    );
-    return {
-      opacity,
-      tintColor,
-    };
-  });
-
-  const blurAmount = useDerivedValue(() =>
-    interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
-  );
+  
 
   const ClickPostalCode = async (postalCode: any) => {
     const cityName = await getCityFromPostalCode(postalCode);
@@ -934,7 +972,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     alignItems: 'center',
                     backgroundColor: 'rgba(255,255,255,0.08)',
                     borderRadius: 12,
-                    minHeight: 44, 
+                    minHeight: 44,
                   }}
                 >
                   <TextInput
@@ -953,8 +991,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     allowFontScaling={false}
                     value={userMeta.email || ''}
                     onChangeText={text => {
-                      setUserMeta(prev => ({ ...prev, email: text }));
-                      if (text === initialPersonalEmail) {
+                      setUserMeta(prev => ({ ...prev, email: text.trim() }));
+                      if (text.trim() === initialPersonalEmail) {
                         console.log('condition_true (unchanged)');
                         setIsUpdateDisabled_personal(true);
                       } else {
@@ -975,7 +1013,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                       height: 32,
 
                       backgroundColor: isUpdateDisabled_personal
-                        ? '#99999980' 
+                        ? '#99999980'
                         : 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
                       boxShadow: isUpdateDisabled_personal
                         ? ''
@@ -988,11 +1026,23 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                       opacity: isUpdateDisabled_personal ? 0.5 : 1,
                     }}
                     disabled={isUpdateDisabled_personal}
-                    onPress={() => (
-                      setShowPopup1(true),
-                      sendOtp('personalEmail'),
-                      setEmailName('personalEmail')
-                    )}
+                    // onPress={() => (
+                    //   setShowPopup1(true),
+                    //   sendOtp('personalEmail'),
+                    //   setEmailName('personalEmail')
+                    // )}
+
+                    onPress={() => {
+                      const email = userMeta.email || '';
+
+                      if (!isValidEmail(email.trim())) {
+                        showToast(t(Constant.VALID_EMAI_LADDRESS), 'error');
+                        return;
+                      }
+                      setShowPopup1(true);
+                      sendOtp('personalEmail');
+                      setEmailName('personalEmail');
+                    }}
                   >
                     <Image
                       source={require('../../../assets/images/editcontained.png')}
@@ -1033,18 +1083,18 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     allowFontScaling={false}
                     value={userMeta.student_email || ''}
                     onChangeText={text => {
-                      setUserMeta(prev => ({ ...prev, student_email: text }));
+                      setUserMeta(prev => ({ ...prev, student_email: text.trim() }));
 
-                      if (text === initialEmail) {
+                      if (text.trim() === initialEmail) {
                         console.log('condition_true (unchanged)');
                         setIsUpdateDisabled(true);
                       } else {
                         console.log('condition_false (changed)');
                         setIsUpdateDisabled(false);
                       }
-
-                      console.log('text ---', text);
-                      console.log('initialEmail ----', initialEmail);
+                      if (text.length > 0 && !validateStudentEmail(text)) {
+                      showToast(t(Constant.VALID_EMAI_LADDRESS), 'error');
+                    }
                     }}
                     keyboardType="email-address"
                     placeholder="Enter Student Email"
@@ -1068,12 +1118,23 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                       opacity: isUpdateDisabled ? 0.5 : 1,
                     }}
                     disabled={isUpdateDisabled}
-                    onPress={() => (
-                      setShowPopup1(true),
-                      sendOtp('studentEmail'),
-                      setEmailName('studentEmail')
-                    )}
-                  >
+                    // onPress={() => (
+                    //   setShowPopup1(true),
+                    //   sendOtp('studentEmail'),
+                    //   setEmailName('studentEmail')
+                    // )}
+                    onPress={() => {
+                      const email1 = userMeta.student_email || '';
+                      if (!validateStudentEmail(email1.trim())) {
+                        showToast(t(Constant.VALID_EMAI_LADDRESS), 'error');
+                        return;
+                      }
+
+                      setShowPopup1(true);
+                      sendOtp('studentEmail');
+                      setEmailName('studentEmail');
+                    }}
+                    >
                     <Image
                       source={require('../../../assets/images/editcontained.png')}
                       style={styles.updateIcon}
