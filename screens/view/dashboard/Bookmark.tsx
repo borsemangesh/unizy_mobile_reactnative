@@ -812,7 +812,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    paddingHorizontal: 10,
+    // paddingHorizontal: 10,
     marginBottom: Platform.OS === "ios" ? 20 : 10,
   },
 
