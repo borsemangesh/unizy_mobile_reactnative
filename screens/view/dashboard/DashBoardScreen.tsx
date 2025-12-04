@@ -131,9 +131,14 @@ const ProductItem: React.FC<ProductItemProps> = ({
       ]}
     >
       <Image source={item.icon} style={styles.cardIcon} />
-      <Text allowFontScaling={false} style={styles.cardText} numberOfLines={0}>
-        {item.name}
-      </Text>
+      <View style={{width: 150,
+    paddingLeft: 9,}}>
+        <Text  allowFontScaling={false} style={styles.cardText} numberOfLines={2}>
+          {item.name}
+        </Text>
+
+      </View>
+      
     </View>
   </TouchableOpacity>
 );
@@ -1614,7 +1619,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderRadius: 10,
     paddingHorizontal: 12,
-    paddingVertical: 19,
+    // paddingVertical: 19,
     alignItems: 'center',
     marginVertical: (Platform.OS === 'ios' ? 5 : 5.5),
     marginHorizontal: (Platform.OS === 'ios' ? 5 : 5.5),
@@ -1655,8 +1660,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 16,
     fontWeight: '600',
-    paddingLeft: 9,
-    flexShrink: 1,
   },
 
   featuredText: {
