@@ -9,7 +9,10 @@ import { name as appName } from './app.json';
 import notifee, { EventType } from '@notifee/react-native';
 import { navigate } from './screens/view/NavigationService';
 import { handleNotification } from './screens/utils/NotificationHandler';
+import { setupCrashlytics } from "./screens/utils/crashalaytics/setupCrashlytics";
 
+
+setupCrashlytics();
 // 1️⃣ Background FCM handler
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log("📩 Background FCM Message:", remoteMessage);
