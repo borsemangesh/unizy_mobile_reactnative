@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     padding: 12,
     marginVertical: 8,
     borderWidth: 1,
-    marginHorizontal: 8,
+    // marginHorizontal: 8,
     borderColor: 'rgba(255,255,255,0.1)',
     gap: 10
   },

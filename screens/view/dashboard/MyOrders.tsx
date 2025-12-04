@@ -102,6 +102,9 @@ const MyOrders = ({ navigation }: MyOrdersProps) => {
   const [featurelist, setFeaturelist] = useState<Feature[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
+  const { height: screenHeight } = Dimensions.get('window');
+  const { height } = Dimensions.get('window');
+  const isEmpty = featurelist.length === 0;
 
     const { t } = useTranslation();
 
@@ -297,21 +300,6 @@ const formatDate = (dateString?: string, t?: any) => {
   return `${day}${suffix} ${monthShort} ${year}`;
 };
 
-  // const formatDate1 = (dateString: string) => {
-  //   const date = new Date(dateString);
-  //   if (isNaN(date.getTime())) return dateString;
-
-  //   const day = date.getDate();
-  //   const month = date.toLocaleString('default', { month: 'short' }); // <-- changed
-  //   const year = date.getFullYear();
-
-  //   let suffix = 'th';
-  //   if (day % 10 === 1 && day % 100 !== 11) suffix = 'st';
-  //   else if (day % 10 === 2 && day % 100 !== 12) suffix = 'nd';
-  //   else if (day % 10 === 3 && day % 100 !== 13) suffix = 'rd';
-
-  //   return `${day}${suffix} ${month} ${year}`;
-  // };
 
   const formatDate1 = (dateString: string, t?: any) => {
   const date = new Date(dateString);
@@ -341,58 +329,6 @@ const formatDate = (dateString?: string, t?: any) => {
 
   return `${day}${suffix} ${monthShort} ${year}`;
 };
-
-
-
-
-  // const groupByDate = (data: any[]) => {
-  //   const groupedMap: Record<string, any[]> = {};
-
-  //   data.forEach(item => {
-  //     const d = new Date(item.created_at);
-
-  //     const rawDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
-  //       d.getDate()
-  //     ).padStart(2, '0')}`;
-
-  //     const displayDate = formatDate1(item.created_at);
-
-  //     if (!groupedMap[rawDate]) {
-  //       groupedMap[rawDate] = [];
-  //     }
-
-  //     groupedMap[rawDate].push({
-  //       ...item,
-  //       type: 'item',
-  //       displayDate,
-  //       rawDate,
-  //     });
-  //   });
-
-  //   // Sort newest → oldest
-  //   const sortedDates = Object.keys(groupedMap).sort((a, b) => {
-  //     return new Date(b).getTime() - new Date(a).getTime();
-  //   });
-
-  //   const groupedArray: any[] = [];
-
-  //   // Build final list
-  //   sortedDates.forEach(rawDate => {
-  //     const items = groupedMap[rawDate].sort(
-  //       (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-  //     );
-
-  //     groupedArray.push({
-  //       type: 'date',
-  //       id: `date-${rawDate}`,
-  //       displayDate: items[0].displayDate,
-  //     });
-
-  //     groupedArray.push(...items);
-  //   });
-
-  //   return groupedArray;
-  // };
 
 
   const groupByDate = (data: any[], t?: any) => {
@@ -618,10 +554,59 @@ const formatDate = (dateString?: string, t?: any) => {
               />
             </Animated.View>
           </TouchableOpacity>
-
-          <Text allowFontScaling={false} style={styles.unizyText}>
+          <View style={{width: 280}}>
+          <Text numberOfLines={2} allowFontScaling={false} style={styles.unizyText}>
              {t('my_orders')}
           </Text>
+          </View>
+          <TouchableOpacity
+            style={[styles.backButtonContainer]}
+            // activeOpacity={0}
+          >
+            <Animated.View
+              style={[styles.blurButtonWrapper_none]}
+            >
+
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 0],
+                      [0, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'transparent',
+                    borderRadius: 40,
+                  })),{display: 'none'}
+                ]}
+              />
+
+              {/* Blur view fades in as scroll increases */}
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 0],
+                      [0, 0],
+                      'clamp',
+                    ),
+                  })),{display: 'none'}
+                ]}
+              >
+                
+              </Animated.View>
+
+              {/* Back Icon */}
+              <Animated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 25, width: 25,display: 'none' }]}
+              />
+            </Animated.View>
+          </TouchableOpacity>
         </View>
 
         <Animated.FlatList
@@ -678,7 +663,16 @@ const formatDate = (dateString?: string, t?: any) => {
           }
           contentContainerStyle={[
             styles.listContainer,
-            { paddingTop: Platform.OS === 'ios' ? 114 : 100, flexGrow: 1 },
+            {
+              paddingTop: (Platform.OS === 'ios'? 120 : 100),
+              paddingBottom: isEmpty
+                ? 10                      
+                : Platform.select({
+                  ios: height * 0.01,   // ⬅ apply padding when list has data
+                  android: height * 0.04,
+                }),
+              flexGrow: 1,
+            },
           ]}
           onScroll={scrollHandler}
           scrollEventThrottle={16}
@@ -721,28 +715,33 @@ export default MyOrders;
 
 const styles = StyleSheet.create({
 
-  categoryTabsContainer: { 
-    marginBottom: 12, 
-    marginTop: 12, 
-    width: '105%',
-   },
-  categoryTabsScrollContent: { 
-    flexDirection: 'row', 
-    alignItems: 'center' 
+  categoryTabsContainer: {width: '105%',paddingBottom: 16,paddingTop: 8 },
+  categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' },
+  blurButtonWrapper_none: {
+
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: 'transparent',
+    backgroundColor: 'transparent',
   },
 
  tabcard: {  
-    minHeight: 38,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    marginRight: 8,
-    borderWidth: 0.4,
-    borderColor: '#ffffff11',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    borderRadius: 10,
-    boxShadow:
-    'rgba(255, 255, 255, 0.02)inset 0.1px 0.1px 1px 0px,',
+   
+  minHeight: 38,
+  paddingVertical: 10,
+  paddingHorizontal: 16,
+  marginRight: 8,
+  borderWidth: 0.4,
+  borderColor: '#ffffff11',
+  backgroundColor:
+    'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
+  borderRadius: 10,
+  boxShadow:
+  'rgba(255, 255, 255, 0.02)inset 0.1px 0.1px 1px 0px,',
   },
   tabcard1: {
     minHeight: 38,
@@ -767,19 +766,6 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
 
-  // categoryTabsContainer: {
-  //   width: '105%',
-  //   marginBottom: 12,
-  //   marginTop: 14,
-  //   paddingLeft: 10,
-  // },
-
-  // categoryTabsScrollContent: {
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   paddingRight: 16,
-  // },
-
   blurButtonWrapper: {
     width: 48,
     height: 48,
@@ -791,32 +777,8 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
     backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
   },
-
-  header: {
-    position: 'absolute',
-    top: 0,
-    width: Platform.OS === 'ios' ? '100%' : '100%',
-    zIndex: 20,
-    paddingTop: Platform.OS === 'ios' ? 50 : 40,
-    paddingBottom: Platform.OS === 'ios' ? 16 : 12,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-    overflow: 'hidden', // IMPORTANT for MaskedView
-    flexDirection: 'row',
-    alignItems: 'center',
-    elevation: 0,
-    backgroundColor: 'transparent',
-    borderBottomWidth: 0,
-    shadowOpacity: 0,
-    shadowColor: 'transparent',
-    alignSelf: 'center',
-    minHeight: Platform.OS === 'ios' ? 80 : 88,
-  },
   backButtonContainer: {
-    position: 'absolute',
-    left: 16,
     zIndex: 11,
-    top: 7,
   },
 
   headerWrapper: {
@@ -831,17 +793,15 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? 60 : 40,
-    width: Platform.OS === 'ios' ? '100%' : '100%',
+    top: (Platform.OS === 'ios' ? 60 : 40),
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: 16,
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-    marginTop: 2,
-    marginLeft: 1
+    justifyContent: 'space-between',
   },
 
   dateHeading: {
@@ -850,7 +810,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 500,
     marginLeft: 12,
-    marginTop: 16
   },
 
   loaderWrapper: {
@@ -956,7 +915,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     width: '100%',
-    marginTop: 17,
+    // marginTop: 17,
   },
   search_container: {
     flexDirection: 'row',
@@ -975,13 +934,8 @@ const styles = StyleSheet.create({
     width: '85%',
   },
   listContainer: {
-    // marginLeft: 8,
-    // marginRight: 8,
-    //marginTop:-12,
-    // marginBottom:12,
-    marginLeft: 10,
-    marginRight: 10,
-    paddingBottom: 10,
+    paddingHorizontal: 16,
+    width: '100%',
   },
   row1: {
   },

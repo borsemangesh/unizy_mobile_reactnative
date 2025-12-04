@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.08)',
     borderRadius: 16,
     padding: 12,
-    marginHorizontal: 8,
+    // marginHorizontal: 8,
   },
   row: {
     flexDirection: 'row',

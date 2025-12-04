@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     height: 'auto',
 
-    //marginHorizontal: 6,
+    marginBottom: 14,
     paddingBottom: 10,
     borderWidth: 0.4,
     borderColor: '#ffffff11',

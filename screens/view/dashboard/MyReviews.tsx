@@ -103,6 +103,8 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
   const insets = useSafeAreaInsets(); // Safe area insets
   const { height: screenHeight } = Dimensions.get('window');
   const { t } = useTranslation();
+  const { height } = Dimensions.get('window');
+  const isEmpty = featurelist.length === 0;
 
   type Category = {
     id: number | null;
@@ -416,9 +418,59 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
             </Animated.View>
           </TouchableOpacity>
 
-          <Text allowFontScaling={false} style={styles.unizyText}>
-           {t('my_reviews')}
+          <Text  numberOfLines={2} allowFontScaling={false} style={styles.unizyText}>
+           {t('my_reviews')} 
           </Text>
+         
+          <TouchableOpacity
+            style={[styles.backButtonContainer]}
+            // activeOpacity={0}
+          >
+            <Animated.View
+              style={[styles.blurButtonWrapper_none]}
+            >
+
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 0],
+                      [0, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'transparent',
+                    borderRadius: 40,
+                  })),{display: 'none'}
+                ]}
+              />
+
+              {/* Blur view fades in as scroll increases */}
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 0],
+                      [0, 0],
+                      'clamp',
+                    ),
+                  })),{display: 'none'}
+                ]}
+              >
+                
+              </Animated.View>
+
+              {/* Back Icon */}
+              <Animated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 25, width: 25,display: 'none' }]}
+              />
+            </Animated.View>
+          </TouchableOpacity>
+
         </View>
 
         <Animated.FlatList
@@ -476,7 +528,16 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
           }
           contentContainerStyle={[
             styles.listContainer,
-            { paddingTop: Platform.OS === 'ios' ? 115 : 100, flexGrow: 1 },
+            {
+              paddingTop: (Platform.OS === 'ios'? 120 : 100),
+              paddingBottom: isEmpty
+                ? 10                      
+                : Platform.select({
+                  ios: height * 0.01,   // ⬅ apply padding when list has data
+                  android: height * 0.04,
+                }),
+              flexGrow: 1,
+            },
           ]}
           onScroll={scrollHandler}
           scrollEventThrottle={16}
@@ -526,7 +587,17 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
 export default MyReviews;
 
 const styles = StyleSheet.create({
+  blurButtonWrapper_none: {
 
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: 'transparent',
+    backgroundColor: 'transparent',
+  },
   header: {
     position: 'absolute',
     top: 0,
@@ -548,10 +619,10 @@ const styles = StyleSheet.create({
     minHeight: Platform.OS === 'ios' ? 80 : 88,
   },
   backButtonContainer: {
-    position: 'absolute',
-    left: 16,
+    // position: 'absolute',
+    // left: 16,
     zIndex: 11,
-    top: 7,
+    // top: 7,
   },
 
   headerWrapper: {
@@ -566,29 +637,19 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '6%' : 40,
-    width: Platform.OS === 'ios' ? '100%' : '100%',
+    top: (Platform.OS === 'ios' ? 60 : 40),
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: 16,
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-    marginTop: 2,
-    marginLeft: 1
+    justifyContent: 'space-between',
   },
 
-
- categoryTabsContainer: { 
-    marginBottom: 12, 
-    marginTop: 12, 
-    width: '105%',
-   },
-  categoryTabsScrollContent: { 
-    flexDirection: 'row', 
-    alignItems: 'center' 
-  },
+  categoryTabsContainer: {width: '105%',paddingBottom: 16,paddingTop: 8 },
+  categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center'},
 
  tabcard: {  
     minHeight: 38,
@@ -697,8 +758,6 @@ const styles = StyleSheet.create({
 
   background: {
     flex: 1,
-    width: '100%',
-    height: '100%'
   },
   fullScreenContainer: {
     flex: 1,
@@ -729,33 +788,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
-    width: '100%',
-    marginTop: 17,
   },
-  search_container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 16,
-    marginRight: 16,
-    borderRadius: 40,
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  },
-  searchIcon: {
-    margin: 10,
-    height: 24,
-    width: 24
-  },
-  searchBar: {
-    fontSize: 17,
-    color: '#fff',
-    width: '85%',
-  },
+  
   listContainer: {
-    marginLeft: 10,
-    marginRight: 10,
-    paddingBottom: 10,
+    paddingHorizontal: 16,
+    width: '100%',
   },
   row1: {
 

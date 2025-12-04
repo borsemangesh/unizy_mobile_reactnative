@@ -434,9 +434,39 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
             </Animated.View>
           </TouchableOpacity>
 
+            <View style={{width: 280}}>
           <Text allowFontScaling={false} style={styles.unizyText}>
             {t('bank_details')}
           </Text>
+          </View>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => {
+             
+            }}
+            style={styles.backButtonContainer}
+          >
+            <Animated.View
+              style={[styles.blurButtonWrapper_none]}
+            >
+              <Animated.View
+                style={[StyleSheet.absoluteFill,{display: 'none'}]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
+                />
+              </Animated.View>
+
+              {/* Back Icon */}
+              <Animated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 24, width: 24 ,display: 'none'}]}
+              />
+            </Animated.View>
+          </TouchableOpacity>
         </View>
 
         {loading ? (
@@ -839,23 +869,34 @@ const styles = StyleSheet.create({
     pointerEvents: 'none',
   },
   backButtonContainer: {
-    position: 'absolute',
-    left: 16,
+    // position: 'absolute',
+    // left: 16,
     zIndex: 11,
   },
   headerContent: {
+    // position: 'absolute',
+    // top: Platform.OS === 'ios' ? '8.5%' : 60,
+    // width: Platform.OS === 'ios' ? '100%' : '100%',
+    // flexDirection: 'row',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // paddingHorizontal: 16,
+    // zIndex: 11,
+    // alignSelf: 'center',
+    // pointerEvents: 'box-none',
+    // marginTop: Platform.OS === 'ios' ? 0 : 0,
+    // marginLeft: 1,
+
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '8.5%' : 58,
-    width: Platform.OS === 'ios' ? '100%' : '100%',
+    top: (Platform.OS === 'ios' ? 60 : 40),
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: 16,
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-    marginTop: (Platform.OS === 'ios' ? 0 : 0),
-    marginLeft: 1 
+    justifyContent: 'space-between',
   },
   blurButtonWrapper: {
     width: 48,
@@ -868,10 +909,21 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
     backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
   },
+  blurButtonWrapper_none: {
+
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: 'transparent',
+    backgroundColor: 'transparent',
+  },
   background: {
     flex: 1,
-    width: '100%',
-    height: '100%',
+    // width: '100%',
+    // height: '100%',
   },
   unizyText: {
     color: '#FFFFFF',

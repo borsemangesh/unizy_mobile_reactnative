@@ -494,14 +494,15 @@ export default function TransactionHistoryScreen(
                           <Image source={{ uri: item.category_logo }} style={styles.image} resizeMode="cover" />
                         </View>
                         <View style={{ gap: 4 }}>
+                        <View style={{width: 320}}>
                           <Text
+                          numberOfLines={2}
                             allowFontScaling={false}
                             style={styles.itemTitle}
                           >
-                            {item.title.length > 24
-                              ? `${item.title.substring(0, 24)}...`
-                              : item.title}
+                            {item.title}
                           </Text>
+                          </View>
                           <View style={{ flexDirection: 'row', gap: 4, width: '91%', justifyContent: 'space-between' }}>
                             <Text allowFontScaling={false} style={styles.price}>
                               {item.price}
@@ -607,12 +608,15 @@ export default function TransactionHistoryScreen(
                     padding: 1,
                   }}
                 >
+                  <View style={{width: 150}}>
                   <Text
                     allowFontScaling={false}
+                    numberOfLines={2}
                     style={styles.Overall_Earnings_value}
                   >
                     {t('overall_earnings')}
                   </Text>
+                  </View>
 
                   <Text
                     allowFontScaling={false}
@@ -651,11 +655,13 @@ export default function TransactionHistoryScreen(
                           <Image source={background} style={styles.imgcontainer} resizeMode="cover" />
                           <Image source={{ uri: item.category_logo }} style={styles.image} resizeMode="cover" />
                         </View>
+                        <View style={{width: 200}}>
                         <Text style={styles.salesTitle}>
                           {item.title.length > 24
                             ? `${item.title.substring(0, 24)}...`
                             : item.title}
                         </Text>
+                        </View>
                       </View>
 
                       <TouchableOpacity
@@ -738,14 +744,15 @@ export default function TransactionHistoryScreen(
                         <Image source={background} style={styles.imgcontainer} resizeMode="cover" />
                         <Image source={{ uri: item.category_logo }} style={styles.image} resizeMode="cover" />
                       </View>
+                      <View style={{width: 200}}>
                       <Text
+                      numberOfLines={2}
                         allowFontScaling={false}
                         style={styles.chargesTitle}
                       >
-                        {item.title.length > 24
-                          ? `${item.title.substring(0, 24)}...`
-                          : item.title}
+                        {item.title}
                       </Text>
+                      </View>
                     </View>
                     <TouchableOpacity
                       onPress={() => {

@@ -19,6 +19,7 @@ import {
   Dimensions,
   KeyboardAvoidingView,
   Keyboard,
+  Animated,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -32,6 +33,7 @@ import { BlurView } from '@react-native-community/blur';
 import Button from '../../utils/component/Button';
 import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
+import { useAnimatedStyle, interpolate, useSharedValue, interpolateColor } from 'react-native-reanimated';
 
 type UserAddReviewProps = {
   navigation: any;
@@ -53,9 +55,26 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
 
   const [username, setUsername] = useState<string>('');
   const [showPopup1, setShowPopup1] = useState(false);
-  const closePopup1 = () => setShowPopup1(false);
-  const { width } = Dimensions.get('window');
-  const { t } = useTranslation();
+    const closePopup1 = () => setShowPopup1(false);
+   const { width } = Dimensions.get('window');
+const { t } = useTranslation();
+const scrollY = useSharedValue(0);
+const animatedIconStyle = useAnimatedStyle(() => {
+  'worklet';
+
+  const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
+
+  const tintColor = interpolateColor(
+    scrollY.value,
+    [0, 150],
+    ['#FFFFFF', '#002050'],
+  );
+
+  return {
+    opacity,
+    tintColor,
+  };
+});
 
   const handleSubmit = async () => {
     if (rating === 0) {
@@ -130,8 +149,19 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
                 />
               </View>
             </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>{t('write_a_review')}</Text>
-            <View style={{ width: 48 }} />
+            <View style={{width:300}}>
+            <Text numberOfLines={2} allowFontScaling={false} style={styles.unizyText}>{t('write_a_review')}</Text>
+            </View>
+            <TouchableOpacity onPress={() =>{
+            
+              }}>
+              <View style={[styles.backIconRow,{display:'none'}]}>
+                <Image
+                  source={require('../../../assets/images/back.png')}
+                  style={{ height: 24, width: 24,display:'none' }}
+                />
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -262,6 +292,45 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
 export default UserAddReview;
 
 const styles = StyleSheet.create({
+
+
+  headerContent: {
+    position: 'absolute',
+    top: (Platform.OS === 'ios' ? 60 : 40),
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
+    justifyContent: 'space-between',
+  },
+  backButtonContainer: {
+    zIndex: 11,
+  },
+  blurButtonWrapper: {
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+  },
+  blurButtonWrapper_none: {
+
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: 'transparent',
+    backgroundColor: 'transparent',
+  },
 
   overlay: {
     flex: 1,
@@ -494,26 +563,22 @@ const styles = StyleSheet.create({
 
   background: {
     flex: 1,
-    width: '100%',
-    height: '100%'
   },
   fullScreenContainer: {
     flex: 1,
   },
   header: {
-
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '6.7%' : 40,
-    width: Platform.OS === 'ios' ? 393 : '100%',
+    top: (Platform.OS === 'ios' ? 60 : 40),
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: 16,
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-    marginTop: (Platform.OS === 'ios' ? 0 : 0),
-    marginLeft: 1
+    justifyContent: 'space-between',
+    alignContent: 'center'
   },
   headerRow: {
     flexDirection: 'row',
@@ -537,7 +602,6 @@ const styles = StyleSheet.create({
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
-    flex: 1,
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',

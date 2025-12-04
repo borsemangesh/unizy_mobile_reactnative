@@ -120,6 +120,9 @@ const UserReviews = ({ navigation }: UserReviewsProps)  => {
   const [totalRecords, setTotalRecords] = useState(0);
   const { t } = useTranslation();
 
+  const { height } = Dimensions.get('window');
+  const isEmpty = featureList.length === 0;
+
   type Category = {
   id: number | null; 
   name: string;
@@ -378,6 +381,7 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
   const createdby = item.createdby ?? null;
   const profileshowinview = item.profileshowinview ?? false;
 
+
   return (
     <View
       style={[
@@ -516,118 +520,176 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
                      />
                    </Animated.View>
                  </TouchableOpacity>
-        
-                 <Text allowFontScaling={false} style={styles.unizyText}>
+                  <View style={{width:300}}>
+                 <Text allowFontScaling={false} numberOfLines={2} style={styles.unizyText}>
                    {members.firstname} {t('reviews')}
                  </Text>
-               </View>
-          <Animated.FlatList
-            data={featureList}
-            renderItem={renderItem}
-            keyExtractor={(item, index) => {
-              'worklet';
-              return index.toString();
-            }}
-            ListHeaderComponent={
-              <View
-                style={styles.categoryTabsContainer}
-                pointerEvents="box-none"
-              >
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={styles.categoryTabsScrollContent}
-                  nestedScrollEnabled={true}
+                 </View>
+                 <TouchableOpacity
+                  style={[styles.backButtonContainer]}
+                  // activeOpacity={0}
                 >
-                  {categories.map((cat, index) => {
-                    const isSelected = selectedCategory.name === cat.name;
-                    return (
-                      <TouchableOpacity
-                        key={index}
-                        onPress={() => setSelectedCategory(cat)}
-                        activeOpacity={0.7}
-                      >
-                        {/* <View
-                          style={isSelected ? styles.tabcard : styles.tabcard1}
-                        > */}
-                        <SquircleView
-                          style={isSelected ? styles.tabcard : styles.tabcard1}
-                          squircleParams={{
-                            cornerSmoothing: 1,
-                            cornerRadius: 10,
-                            fillColor: isSelected
-                              ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)'
-                              : 'rgba(255, 255, 255, 0.06)',
-                          }}
-                        >
-                          <Text
-                            allowFontScaling={false}
-                            style={
-                              isSelected ? styles.tabtext : styles.othertext
-                            }
-                          >
-                            {cat.name}
-                          </Text>
-                        </SquircleView>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </ScrollView>
-              </View>
-            }
-            contentContainerStyle={[
-              styles.listContainer,
-              { paddingTop: Platform.OS === 'ios' ? 125 : 100,flexGrow:1 },
-            ]}
-            onScroll={scrollHandler}
-            scrollEventThrottle={16}
-            onEndReachedThreshold={0.5}
-            // onEndReached={() => {
-            //   const nextPage = page + 1;
-            //   setPage(nextPage);
-            //   displayListOfProduct(selectedCategory?.id ?? null, nextPage);
-            // }}
-            onEndReached={() => {
-              if (featureList.length >= totalRecords) return; 
-              if (isLoadingMore) return; 
+                  <Animated.View
+                    style={[styles.blurButtonWrapper_none]}
+                  >
 
-              setIsLoadingMore(true);
-              const nextPage = page + 1;
-              setPage(nextPage);
-              displayListOfProduct(selectedCategory?.id ?? null, nextPage)
-                .finally(() => setIsLoadingMore(false));
-            }}
-            ListFooterComponent={
-              isLoadingMore ? (
-                <View style={{ paddingVertical: 20, alignItems: 'center' }}>
-                  <Loader
-                    containerStyle={{
-                      width: 50,
-                      height: 50,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}
-                  />
-                </View>
-              ) : null
-            }
-            ListEmptyComponent={
-              !initialLoading && !isLoading ? (
-               <View style={[styles.emptyWrapper]}>
-                          <View style={styles.emptyContainer}>
-                            <Image
-                              source={require('../../../assets/images/noproduct.png')} // your image
-                              style={styles.emptyImage}
-                              resizeMode="contain"
-                            />
-                            <Text allowFontScaling={false} style={styles.emptyText}>
-                               {t('no_reviews_found')}
+                    <Animated.View
+                      style={[
+                        StyleSheet.absoluteFill,
+                        useAnimatedStyle(() => ({
+                          opacity: interpolate(
+                            scrollY.value,
+                            [0, 0],
+                            [0, 0],
+                            'clamp',
+                          ),
+                          backgroundColor: 'transparent',
+                          borderRadius: 40,
+                        })),{display: 'none'}
+                      ]}
+                    />
+
+              {/* Blur view fades in as scroll increases */}
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 0],
+                      [0, 0],
+                      'clamp',
+                    ),
+                  })),{display: 'none'}
+                ]}
+              >
+                
+              </Animated.View>
+
+              {/* Back Icon */}
+              <Animated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 25, width: 25,display: 'none' }]}
+              />
+            </Animated.View>
+          </TouchableOpacity>
+               </View>
+            <Animated.FlatList
+              data={featureList}
+              renderItem={renderItem}
+              keyExtractor={(item, index) => {
+                'worklet';
+                return index.toString();
+              }}
+              ListHeaderComponent={
+                <View
+                  style={styles.categoryTabsContainer}
+                  pointerEvents="box-none"
+                >
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={styles.categoryTabsScrollContent}
+                    nestedScrollEnabled={true}
+                  >
+                    {categories.map((cat, index) => {
+                      const isSelected = selectedCategory.name === cat.name;
+                      return (
+                        <TouchableOpacity
+                          key={index}
+                          onPress={() => setSelectedCategory(cat)}
+                          activeOpacity={0.7}
+                        >
+                          {/* <View
+                            style={isSelected ? styles.tabcard : styles.tabcard1}
+                          > */}
+                          <SquircleView
+                            style={isSelected ? styles.tabcard : styles.tabcard1}
+                            squircleParams={{
+                              cornerSmoothing: 1,
+                              cornerRadius: 10,
+                              fillColor: isSelected
+                                ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)'
+                                : 'rgba(255, 255, 255, 0.06)',
+                            }}
+                          >
+                            <Text
+                              allowFontScaling={false}
+                              style={
+                                isSelected ? styles.tabtext : styles.othertext
+                              }
+                            >
+                              {cat.name}
                             </Text>
-                          </View>
-                          </View>
-              ) : null
-            }
-          />
+                          </SquircleView>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </ScrollView>
+                </View>
+              }
+              contentContainerStyle={[
+                styles.listContainer,
+                {
+                  paddingTop: (Platform.OS === 'ios'? 120 : 100),
+                  paddingBottom: isEmpty
+                    ? 10                      
+                    : Platform.select({
+                      ios: height * 0.01,   // ⬅ apply padding when list has data
+                      android: height * 0.04,
+                    }),
+                  flexGrow: 1,
+                },
+              ]}
+              onScroll={scrollHandler}
+              scrollEventThrottle={16}
+              onEndReachedThreshold={0.5}
+              // onEndReached={() => {
+              //   const nextPage = page + 1;
+              //   setPage(nextPage);
+              //   displayListOfProduct(selectedCategory?.id ?? null, nextPage);
+              // }}
+              onEndReached={() => {
+                if (featureList.length >= totalRecords) return; 
+                if (isLoadingMore) return; 
+
+                setIsLoadingMore(true);
+                const nextPage = page + 1;
+                setPage(nextPage);
+                displayListOfProduct(selectedCategory?.id ?? null, nextPage)
+                  .finally(() => setIsLoadingMore(false));
+              }}
+              ListFooterComponent={
+                isLoadingMore ? (
+                  <View style={{ paddingVertical: 20, alignItems: 'center' }}>
+                    <Loader
+                      containerStyle={{
+                        width: 50,
+                        height: 50,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                    />
+                  </View>
+                ) : null
+              }
+              ListEmptyComponent={
+                !initialLoading && !isLoading ? (
+                <View style={[styles.emptyWrapper]}>
+                            <View style={styles.emptyContainer}>
+                              <Image
+                                source={require('../../../assets/images/noproduct.png')} // your image
+                                style={styles.emptyImage}
+                                resizeMode="contain"
+                              />
+                              <Text allowFontScaling={false} style={styles.emptyText}>
+                                {t('no_reviews_found')}
+                              </Text>
+                            </View>
+                            </View>
+                ) : null
+              }
+            />
 
       </View>
       <NewCustomToastContainer/>
@@ -640,31 +702,22 @@ export default UserReviews;
 
 const styles = StyleSheet.create({
 
-   header: {
-    position: 'absolute',
-    top: 0,
-    width: Platform.OS === 'ios' ? '100%' : '100%',
-    zIndex: 20,
-    paddingTop: Platform.OS === 'ios' ? 50 : 40,
-    paddingBottom: Platform.OS === 'ios' ? 16 : 12,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-    overflow: 'hidden', // IMPORTANT for MaskedView
-    flexDirection: 'row',
-    alignItems: 'center',
-    elevation: 0,
-    backgroundColor: 'transparent',
-    borderBottomWidth: 0,
-    shadowOpacity: 0,
-    shadowColor: 'transparent',
-    alignSelf: 'center',
-    minHeight: Platform.OS === 'ios' ? 80 : 88,
-  },
   backButtonContainer: {
-    position: 'absolute',
-    left: 16,
+    // position: 'absolute',
+    // left: 16,
     zIndex: 11,
-    top: 7,
+    // top: 7,
+  },
+  blurButtonWrapper_none: {
+
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: 'transparent',
+    backgroundColor: 'transparent',
   },
 
    headerWrapper: {
@@ -681,30 +734,19 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '6%' : 40,
-    width: Platform.OS === 'ios' ? '100%' : '100%',
+    top: (Platform.OS === 'ios' ? 60 : 40),
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    // paddingHorizontal: 16,
+    paddingHorizontal: 16,
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-    marginTop: 2,
-    marginLeft: 1
+    justifyContent: 'space-between',
   },
 
-   categoryTabsContainer: {
-    width: '100%',
-    marginBottom: 12,
-    paddingLeft: 10
-  },
- 
-  categoryTabsScrollContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingRight: 16,
-  },
+  categoryTabsContainer: {width: '105%',paddingBottom: 16,paddingTop: 8 },
+  categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' },
   blurButtonWrapper: {
     width: 48,
     height: 48,
@@ -795,12 +837,10 @@ tabcard: {
 
   background: { 
     flex: 1,
-     width: '100%',
-      height: '100%' },
+  },
   fullScreenContainer: {
      flex: 1,
-     //marginTop: 10
-     },
+  },
 
   headerRow: {
     flexDirection: 'row',
@@ -827,34 +867,10 @@ tabcard: {
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
-    width: '100%',
-    marginTop: 17,
-  },
-  search_container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 16,
-    marginRight: 16,
-    borderRadius: 40,
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  },
-  searchIcon: { 
-    margin: 10, 
-    height: 24, 
-    width: 24 
-  },
-  searchBar: {
-    fontSize: 17,
-    color: '#fff',
-    width: '85%',
   },
   listContainer: {
-    marginLeft: 10,
-    marginRight: 10,
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingHorizontal: 16,
+    width: '100%',
   },
   row1: {
     // flexDirection: 'row',

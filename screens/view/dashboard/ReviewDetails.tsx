@@ -246,6 +246,9 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
     comment: string;
   };
 
+  const { height: screenHeight } = Dimensions.get('window');
+
+  const isEmpty = users.length === 0;
  const formatDate = (dateString?: string, t?: any) => {
   if (!dateString) return "";
 
@@ -394,12 +397,66 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
               />
             </Animated.View>
           </TouchableOpacity>
-
+          <View style={{width: 250}}>
           <Text allowFontScaling={false} style={styles.unizyText}>
             {selectedCategory?.name === 'All'
               ? t('reviews')
               : `${selectedCategory?.name} ${t('reviews')}`}
           </Text>
+          </View>
+
+          <TouchableOpacity
+            onPress={() => {
+              navigation.goBack();
+            }}
+            style={styles.backButtonContainer}
+            activeOpacity={0.7}
+          >
+            <Animated.View
+              style={[styles.blurButtonWrapper_none, ]}
+            >
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 30],
+                      [1, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 40,display: 'none',
+                  })),
+                ]}
+              />
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 50],
+                      [0, 1],
+                      'clamp',
+                    ),
+                  })),{display: 'none'}
+                ]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
+                />
+              </Animated.View>
+
+              <Animated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 24, width: 24 ,display: 'none'}, ]}
+              />
+            </Animated.View>
+          </TouchableOpacity>
         </View>
 
         <Animated.FlatList
@@ -407,23 +464,32 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
           renderItem={renderItem}
           keyExtractor={item => item.id.toString()}
           onScroll={scrollHandler}
+          showsVerticalScrollIndicator={false}
           scrollEventThrottle={16}
-          contentContainerStyle={{
-            paddingTop: Platform.OS === 'ios' ? 120 : 110,
-            paddingBottom: Platform.select({
-              ios: height * 0.01,
-              android: height * 0.1,
-            }),
-          }}
+          contentContainerStyle={[
+            styles.listContainer,
+            {
+              paddingTop: (Platform.OS === 'ios'? 120 : 100),
+              paddingBottom: isEmpty
+                ? 10                      
+                : Platform.select({
+                  ios: height * 0.01,   // ⬅ apply padding when list has data
+                  android: height * 0.04,
+                }),
+              flexGrow: 1,
+            },
+          ]}
           ListHeaderComponent={
             <>
+            <View
+              style={styles.categoryTabsContainer}
+              pointerEvents="box-none"
+            >
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{
-                  paddingHorizontal: 16,
-                  paddingVertical: 10,
-                }}
+                contentContainerStyle={styles.categoryTabsScrollContent}
+              
               >
                 {categories.map((cat, index) => {
                   const isSelected = selectedCategory.name === cat.name;
@@ -490,6 +556,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
                   </Text>
                 </View>
               </View>
+              </View>
             </>
           }
           ListEmptyComponent={
@@ -534,16 +601,13 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
 export default ReviewDetails;
 
 const styles = StyleSheet.create({
-
-  categoryTabsContainer: { 
-    marginBottom: 12, 
-    marginTop: 12, 
-    width: '105%',
-   },
-  categoryTabsScrollContent: { 
-    flexDirection: 'row', 
-    alignItems: 'center' 
+  listContainer: {
+    paddingHorizontal: 16,
+    width: '100%',
   },
+
+  categoryTabsContainer: {width: '105%',paddingBottom: 16,paddingTop: 8 },
+   categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' },
 
  tabcard: {  
     minHeight: 38,
@@ -620,8 +684,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
-    width: '100%',
-    marginTop: 17,
   },
 
   header: {
@@ -645,10 +707,10 @@ const styles = StyleSheet.create({
     minHeight: Platform.OS === 'ios' ? 80 : 88,
   },
   backButtonContainer: {
-    position: 'absolute',
-    left: 16,
+    // position: 'absolute',
+    // left: 16,
     zIndex: 11,
-    top: 7,
+    // top: 7,
   },
 
   headerWrapper: {
@@ -661,17 +723,29 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'none',
   },
-  headerContent: {
+  // headerContent: {
+  //   position: 'absolute',
+  //   top: Platform.OS === 'ios' ? '6%' : 40,
+  //   width: Platform.OS === 'ios' ? '100%' : '100%',
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  //   paddingHorizontal: 16,
+  //   zIndex: 11,
+  //   alignSelf: 'center',
+  //   pointerEvents: 'box-none',
+  // },
+   headerContent: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '6%' : 40,
-    width: Platform.OS === 'ios' ? '100%' : '100%',
+    top: (Platform.OS === 'ios' ? 60 : 40),
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: 16,
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
+    justifyContent: 'space-between',
   },
 
   
@@ -686,9 +760,20 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
+  blurButtonWrapper_none: {
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    // borderWidth: 0.4,
+    // borderColor: '#ffffff2c',
+    // backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
   itemContainer: {
     flex: 1,
-    marginHorizontal: 4,
+    // marginHorizontal: 4,
   },
 
   subrating: {
@@ -712,10 +797,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-Medium',
   },
   innercontainer: {
-    paddingHorizontal: 16,
-    marginBottom: 8,
+    // paddingHorizontal: 16,
+    // marginBottom: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    width: '95%',
   },
   payText: {
     color: '#002050',

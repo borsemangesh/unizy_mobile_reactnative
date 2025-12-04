@@ -383,9 +383,66 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
             </AnimatedReanimated.View>
           </TouchableOpacity>
 
-          <Text allowFontScaling={false} style={styles.unizyText}>
+          <View style={{width: 280}}>
+          <Text numberOfLines={2} allowFontScaling={false} style={styles.unizyText}>
             {t('listing_details')}
           </Text>
+            
+          </View>
+          <TouchableOpacity
+            onPress={() => {
+              // navigation.goBack();
+            }}
+            style={styles.backButtonContainer}
+            activeOpacity={0.7}
+          >
+            <AnimatedReanimated.View
+              style={[styles.blurButtonWrapper_none]}
+            >
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 30],
+                      [1, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 40,
+                  })),{display: 'none'}
+                ]}
+              />
+
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 50],
+                      [0, 1],
+                      'clamp',
+                    ),
+                  })),{display: 'none'}
+                ]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
+                />
+              </AnimatedReanimated.View>
+
+              {/* Back Icon */}
+              <AnimatedReanimated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 24, width: 24,display: 'none'  }]}
+              />
+            </AnimatedReanimated.View>
+          </TouchableOpacity>
         </View>
 
         <AnimatedReanimated.ScrollView
@@ -906,6 +963,17 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
 
 
 const styles = StyleSheet.create({
+  blurButtonWrapper_none: {
+
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: 'transparent',
+    backgroundColor: 'transparent',
+  },
 
   fullLoader: {
     position: "absolute",
@@ -979,22 +1047,33 @@ const styles = StyleSheet.create({
     pointerEvents: 'none',
   },
   headerContent: {
+    // position: 'absolute',
+    // top: Platform.OS === 'ios' ? '8.5%' : 60,
+    // width: Platform.OS === 'ios' ? '100%' : '100%',
+    // flexDirection: 'row',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // paddingHorizontal: 16,
+    // zIndex: 11,
+    // alignSelf: 'center',
+    // pointerEvents: 'box-none',
+    // marginTop: Platform.OS === 'ios' ? 0 : 0,
+    // marginLeft: 1,
+
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '8.5%' : 60,
-    width: Platform.OS === 'ios' ? '100%' : '100%',
+    top: (Platform.OS === 'ios' ? 60 : 40),
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: 16,
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-    marginTop: (Platform.OS === 'ios' ? 0 : 0),
-    marginLeft: 1
+    justifyContent: 'space-between',
   },
   backButtonContainer: {
-    position: 'absolute',
-    left: 16,
+    // position: 'absolute',
+    // left: 16,
     zIndex: 11,
   },
   blurButtonWrapper: {
@@ -1192,7 +1271,6 @@ const styles = StyleSheet.create({
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
-    flex: 1,
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',

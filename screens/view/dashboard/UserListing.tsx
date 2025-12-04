@@ -125,6 +125,8 @@ const UserListing = ({ navigation }: UserListingProps) => {
   const { height: screenHeight } = Dimensions.get('window');
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const scrollY = useSharedValue(0);
+  const { height } = Dimensions.get('window');
+  const isEmpty = featurelist.length === 0;
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -519,9 +521,62 @@ const UserListing = ({ navigation }: UserListingProps) => {
             </Animated.View>
           </TouchableOpacity>
 
+          <View style={{width:300}}>
           <Text allowFontScaling={false} style={styles.unizyText}>
             {members.firstname} {t('listings')}
           </Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => { navigation.goBack(); }}
+            style={styles.backButtonContainer}
+            activeOpacity={0.7}
+          >
+            <Animated.View
+              style={[styles.blurButtonWrapper_none, animatedButtonStyle]}
+            >
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 30],
+                      [1, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 40, display:'none',
+                  })),
+                ]}
+              />
+
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 50],
+                      [0, 1],
+                      'clamp',
+                    ),
+                  })),{display: 'none'}
+                ]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
+                />
+              </Animated.View>
+
+              <Animated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 24, width: 24,display: 'none' }]}
+              />
+            </Animated.View>
+          </TouchableOpacity>
         </View>
         <Animated.FlatList
           data={filteredFeatures}
@@ -574,9 +629,22 @@ const UserListing = ({ navigation }: UserListingProps) => {
               </ScrollView>
             </View>
           }
+          // contentContainerStyle={[
+          //   styles.listContainer,
+          //   { paddingTop: Platform.OS === 'ios' ? 115 : 100, flexGrow: 1 },
+          // ]}
           contentContainerStyle={[
             styles.listContainer,
-            { paddingTop: Platform.OS === 'ios' ? 115 : 100, flexGrow: 1 },
+            {
+              paddingTop: (Platform.OS === 'ios'? 120 : 100),
+              paddingBottom: isEmpty
+                ? 10                      
+                : Platform.select({
+                  ios: height * 0.01,   // ⬅ apply padding when list has data
+                  android: height * 0.04,
+                }),
+              flexGrow: 1,
+            },
           ]}
           onScroll={scrollHandler}
           scrollEventThrottle={16}
@@ -622,15 +690,8 @@ export default UserListing;
 
 const styles = StyleSheet.create({
 
-  categoryTabsContainer: {
-    marginBottom: 12,
-    marginTop: 12,
-    width: '105%',
-  },
-  categoryTabsScrollContent: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
+  categoryTabsContainer: {width: '105%',paddingBottom: 16,paddingTop: 8 },
+  categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' },
 
   tabcard: {
     minHeight: 38,
@@ -681,6 +742,17 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
   },
 
+  blurButtonWrapper_none: {
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0,
+    borderColor: 'transparent',
+    backgroundColor: 'transparent', // fallback tint
+  },
 header: {
   position: 'absolute',
   top: 0,
@@ -702,10 +774,10 @@ header: {
   minHeight: Platform.OS === 'ios' ? 80 : 88,
 },
 backButtonContainer: {
-  position: 'absolute',
-  left: 16,
+  // position: 'absolute',
+  // left: 16,
   zIndex: 11,
-  top: 7,
+  // top: 7,
 },
 
  headerWrapper: {
@@ -719,28 +791,16 @@ backButtonContainer: {
   pointerEvents: 'none',
 },
 headerContent: {
-  // position: 'absolute',
-  // top: Platform.OS === 'ios' ? '6%' : 40,
-  // width: Platform.OS === 'ios' ? '100%' : '100%',
-  // flexDirection: 'row',
-  // alignItems: 'center',
-  // justifyContent: 'center',
-  // paddingHorizontal: 16,
-  // zIndex: 11,
-  // alignSelf: 'center',
-  // pointerEvents: 'box-none',
   position: 'absolute',
-  top: Platform.OS === 'ios' ? '6%' : 40,
-  width: Platform.OS === 'ios' ? '100%' : '100%',
+  top: (Platform.OS === 'ios' ? 60 : 40),
+  width: '100%',
   flexDirection: 'row',
   alignItems: 'center',
-  justifyContent: 'center',
   paddingHorizontal: 16,
   zIndex: 11,
   alignSelf: 'center',
   pointerEvents: 'box-none',
-  marginTop: 2,
-  marginLeft: 1
+  justifyContent: 'space-between',
 },
 
 
@@ -796,8 +856,6 @@ headerContent: {
 
   background: {
     flex: 1,
-    width: '100%',
-    height: '100%'
   },
   fullScreenContainer: {
     flex: 1
@@ -820,11 +878,9 @@ headerContent: {
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
-    flex: 1,
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
-    marginTop: 17
   },
   search_container: {
     flexDirection: 'row',
@@ -843,11 +899,8 @@ headerContent: {
     width: '85%',
   },
   listContainer: {
-    marginLeft: 5,
-    marginRight: 5,
-    paddingTop: 10,
-    gap: 16,
-    paddingBottom: 10
+    paddingHorizontal: 16,
+    width: '100%',
   },
   row1: {
   },

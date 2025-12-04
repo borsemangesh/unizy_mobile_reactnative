@@ -32,13 +32,21 @@ target 'unizy' do
     'PhotoLibraryAddOnly'
   ])
 
-  # ✔ Only Firebase pods require modular headers
+  # CORE FIREBASE MODULES
   pod 'FirebaseCoreInternal', :modular_headers => true
   pod 'GoogleUtilities', :modular_headers => true
   pod 'FirebaseMessaging', :modular_headers => true
   pod 'FirebaseCore', :modular_headers => true
   pod 'FirebaseInstallations', :modular_headers => true
-  # pod 'notifee_react-native', :path => '../node_modules/@notifee/react-native'
+
+  # CRASHLYTICS + ANALYTICS
+  pod 'Firebase/Crashlytics', :modular_headers => true
+  pod 'Firebase/Analytics', :modular_headers => true
+
+  # REQUIRED DEPENDENCIES FOR SWIFT PODS
+  pod 'GoogleDataTransport', :modular_headers => true
+  pod 'nanopb', :modular_headers => true
+  pod 'FirebaseCoreExtension', :modular_headers => true
 
   post_install do |installer|
     react_native_post_install(

@@ -153,8 +153,17 @@ return (
                 />
               </View>
             </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>{t('contact_info')}</Text>
-            <View style={{ width: 48 }} />
+            <Text numberOfLines={2} allowFontScaling={false} style={styles.unizyText}>{t('contact_info')}</Text>
+            <TouchableOpacity onPress={() =>{
+              // navigation.goBack();
+              }}>
+              <View style={[styles.backIconRow,{ backgroundColor:'transparent',boxShadow: 'transparent',borderWidth: 0,borderColor: 'transparent',}]}>
+                <Image
+                  source={require('../../../assets/images/back.png')}
+                  style={{ height: 24, width: 24,display: 'none'}}
+                />
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -241,33 +250,29 @@ const styles = StyleSheet.create({
     flex: 1
     },
     header: {
-      // paddingTop: Platform.OS === 'ios' ? 50 : 50,
-      // paddingBottom: 12,
-      // paddingHorizontal: 16,
-  //     position: 'absolute',
-  // top: Platform.OS === 'ios' ? '6%' : 40,
-  // width: Platform.OS === 'ios' ? '100%' : '100%',
-  // flexDirection: 'row',
-  // alignItems: 'center',
-  // justifyContent: 'center',
-  // paddingHorizontal: 16,
-  // zIndex: 11,
-  // alignSelf: 'center',
-  // pointerEvents: 'box-none',
-  // marginTop: 2,
-  // marginLeft: 1
+  
+  // position: 'absolute',
+  //   top: Platform.OS === 'ios' ? '6%' : 40,
+  //   width: Platform.OS === 'ios' ? '100%' : '100%',
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  //   paddingHorizontal: 16,
+  //   zIndex: 11,
+  //   alignSelf: 'center',
+  //   pointerEvents: 'box-none',
+  //   marginTop: 9,
+  //   marginLeft: 2
   position: 'absolute',
-    top: Platform.OS === 'ios' ? '6%' : 40,
-    width: Platform.OS === 'ios' ? '100%' : '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-    zIndex: 11,
-    alignSelf: 'center',
-    pointerEvents: 'box-none',
-    marginTop: 9,
-    marginLeft: 2
+  top: (Platform.OS === 'ios' ? 60 : 40),
+  width: '100%',
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingHorizontal: 16,
+  zIndex: 11,
+  alignSelf: 'center',
+  pointerEvents: 'box-none',
+  justifyContent: 'space-between',
     },
     headerRow: {
       flexDirection: 'row',

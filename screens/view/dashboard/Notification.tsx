@@ -249,46 +249,6 @@ const Notification = ({ navigation }: NotificationProps) => {
   const { t } = useTranslation();
 
 
-  // const formatDate = (dateString: string) => {
-  //   const date = new Date(dateString);
-  //   if (isNaN(date.getTime())) return dateString;
-
-  //   const day = date.getDate();
-  //   const month = date.toLocaleString('default', { month: 'short' });
-  //   const year = date.getFullYear();
-
-  //   let suffix = 'th';
-  //   if (day % 10 === 1 && day % 100 !== 11) suffix = 'st';
-  //   else if (day % 10 === 2 && day % 100 !== 12) suffix = 'nd';
-  //   else if (day % 10 === 3 && day % 100 !== 13) suffix = 'rd';
-
-  //   return `${day}${suffix} ${month} ${year}`;
-  // };
-  // const groupByDate = (data: NotificationItem[]) => {
-  //   const grouped: any[] = [];
-  //   let lastDate: string | null = null;
-
-  //   data.forEach((item) => {
-  //     const displayDate = formatDate(item.created_at);
-
-  //     if (displayDate !== lastDate) {
-  //       grouped.push({
-  //         type: 'date',
-  //         id: `date-${displayDate}`,
-  //         displayDate,
-  //       });
-  //       lastDate = displayDate;
-  //     }
-
-  //     grouped.push({
-  //       ...item,
-  //       type: 'item'
-  //     });
-  //   });
-
-  //   return grouped;
-  // };
-
   const formatDate = (dateString: string, t?: any) => {
   const date = new Date(dateString);
   if (isNaN(date.getTime())) return dateString;
@@ -510,53 +470,49 @@ const Notification = ({ navigation }: NotificationProps) => {
           </View>
         </View>
 
-        <View>
 
-
-          <Animated.FlatList
-            onScroll={scrollHandler}
-            scrollEventThrottle={16}
-            data={groupedList}
-            renderItem={renderItem}
-            contentContainerStyle={[
-                 styles.listContainer,
-                   {                   
-                   paddingBottom: (Platform.OS === 'ios' ? 30:screenHeight * 0.150 + insets.bottom), 
-                    paddingTop: Platform.OS === 'ios' ? 120 : 100,
-                    
-                    },
-                ]}
-            keyExtractor={(item, index) => `${item.type}-${index}`}
-            onEndReachedThreshold={0.5}
-            onEndReached={() => {
-              const nextPage = page + 1;
-              setPage(nextPage);
-              displayListOfProduct(nextPage);
-            }}
-            ListFooterComponent={
-              isLoadingMore ? (
-                <View style={{ paddingVertical: 20, alignItems: 'center' }}>
-                  <Loader
-                    containerStyle={{
-                      width: 50,
-                      height: 50,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}
-                  />
-                </View>
-              ) : null
-            }
-            ListEmptyComponent={
-              !initialLoading && !isLoading ? (
-                <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
-                  {t('no_notification_found')}
-                </Text>
-              ) : null
-            }
-          />
-
-        </View>
+        <Animated.FlatList
+          onScroll={scrollHandler}
+          scrollEventThrottle={16}
+          data={groupedList}
+          renderItem={renderItem}
+          contentContainerStyle={[
+                styles.listContainer,
+                  {                   
+                  paddingBottom: (Platform.OS === 'ios' ? 30:screenHeight * 0.150 + insets.bottom), 
+                  paddingTop: Platform.OS === 'ios' ? 120 : 100,
+                  
+                  },
+              ]}
+          keyExtractor={(item, index) => `${item.type}-${index}`}
+          onEndReachedThreshold={0.5}
+          onEndReached={() => {
+            const nextPage = page + 1;
+            setPage(nextPage);
+            displayListOfProduct(nextPage);
+          }}
+          ListFooterComponent={
+            isLoadingMore ? (
+              <View style={{ paddingVertical: 20, alignItems: 'center' }}>
+                <Loader
+                  containerStyle={{
+                    width: 50,
+                    height: 50,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                />
+              </View>
+            ) : null
+          }
+          ListEmptyComponent={
+            !initialLoading && !isLoading ? (
+              <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
+                {t('no_notification_found')}
+              </Text>
+            ) : null
+          }
+        />
       </View>
       <NewCustomToastContainer />
     </ImageBackground>
@@ -609,7 +565,6 @@ const styles = StyleSheet.create({
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
-    flex: 1,
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
@@ -662,45 +617,27 @@ const styles = StyleSheet.create({
 
   header: {
     // position: 'absolute',
-    // top: Platform.OS === 'ios' ? '4%' : 40,
-    // left: 0,
-    // right: 0,
-    // height: 100,
-    // justifyContent: 'center',
-    // zIndex: 11,
-    // pointerEvents: 'box-none',
-    position: 'absolute',
-  //  top: Platform.OS === 'ios' ? '6%' : 40,
     width: Platform.OS === 'ios' ? '100%' : '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 16,
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-    marginTop: 5,
-    marginLeft: 1,
   
 
   },
   headerRow: {
-    // flexDirection: 'row',
-    // alignItems: 'center',
-    // // paddingHorizontal: 16,
-    // justifyContent: 'space-between',
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '6%' : 40,
-    width: Platform.OS === 'ios' ? '100%' : '100%',
+    top: (Platform.OS === 'ios' ? 60 : 40),
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: 16,
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-    marginTop: 2,
-    marginLeft: 1,
+    justifyContent: 'space-between',
  
   },
   headerSpacer: {

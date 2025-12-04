@@ -622,8 +622,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
               />
             </Animated.View>
           </TouchableOpacity>
-
-          <Text allowFontScaling={false} style={styles.unizyText}>{`${category_name}`}</Text>
+          <View style={{width: 280}}>
+            <Text allowFontScaling={false} numberOfLines={2} style={styles.unizyText}>{`${category_name}`}</Text>
+          </View>
           <TouchableOpacity
             style={[styles.backButtonContainer]}
             // activeOpacity={0}
