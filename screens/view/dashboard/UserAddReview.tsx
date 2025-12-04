@@ -37,59 +37,57 @@ type UserAddReviewProps = {
   navigation: any;
 };
 
-
-
 type RootStackParamList = {
-  AddReview: { category_id: number,feature_id:number};
+  AddReview: { category_id: number, feature_id: number };
 };
 
 type UserAddReviewRouteProp = RouteProp<RootStackParamList, 'AddReview'>;
 
-const UserAddReview : React.FC<UserAddReviewProps> = ({ navigation }) =>{
+const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
 
   const route = useRoute<UserAddReviewRouteProp>();
-  const {feature_id} =route.params;
+  const { feature_id } = route.params;
   const { category_id } = route.params;
-   const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
   const [username, setUsername] = useState<string>('');
   const [showPopup1, setShowPopup1] = useState(false);
-    const closePopup1 = () => setShowPopup1(false);
-   const { width } = Dimensions.get('window');
-const { t } = useTranslation();
+  const closePopup1 = () => setShowPopup1(false);
+  const { width } = Dimensions.get('window');
+  const { t } = useTranslation();
 
-   const handleSubmit = async () => {
+  const handleSubmit = async () => {
     if (rating === 0) {
-          showToast(t(Constant.ENTER_RATING),'error');
-          return;
-        }
-        if (username.trim() === '') {
-          showToast(t(Constant.ENTER_REVIEW),'error');
-          return;
-        }
+      showToast(t(Constant.ENTER_RATING), 'error');
+      return;
+    }
+    if (username.trim() === '') {
+      showToast(t(Constant.ENTER_REVIEW), 'error');
+      return;
+    }
 
     try {
       setIsLoading(true);
 
       const token = await AsyncStorage.getItem('userToken');
       const userId = await AsyncStorage.getItem('userId');
-        if (!token) {
-          console.log('No token found');
-          return;
-        }
-        console.log(category_id)
+      if (!token) {
+        console.log('No token found');
+        return;
+      }
+      console.log(category_id)
 
-    const createPayload = {
+      const createPayload = {
         rating: rating,
         comment: username,
         feature_id: feature_id,
       };
       console.log(createPayload)
-        
-    const url1 = `${MAIN_URL.baseUrl}category/users/reviews/${category_id}`;
 
-    console.log(url1)
+      const url1 = `${MAIN_URL.baseUrl}category/users/reviews/${category_id}`;
+
+      console.log(url1)
       const response = await fetch(url1, {
         method: 'POST',
         headers: {
@@ -104,7 +102,7 @@ const { t } = useTranslation();
       if (result.statusCode === 200) {
         console.log('Review saved:', result);
         showToast(t(result.message))
-        setShowPopup1(true); 
+        setShowPopup1(true);
       } else {
         console.warn('Error saving review:', result);
         showToast(t(result.message) || 'Failed to submit review');
@@ -120,13 +118,11 @@ const { t } = useTranslation();
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-        {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerRow}>
-            <TouchableOpacity onPress={() =>{
-              // navigation.replace('ReviewDetails',{category_id:category_id,id: feature_id,})
-                navigation.goBack();
-              }}>
+            <TouchableOpacity onPress={() => {
+              navigation.goBack();
+            }}>
               <View style={styles.backIconRow}>
                 <Image
                   source={require('../../../assets/images/back.png')}
@@ -138,113 +134,108 @@ const { t } = useTranslation();
             <View style={{ width: 48 }} />
           </View>
         </View>
-      
+
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <View style={{ flex: 1 ,paddingTop:Platform.OS === 'ios' ? 120 : 100,paddingHorizontal: 16}}>
-          <View style={styles.innercontainer}>
-            <Text allowFontScaling={false} style={styles.mainlabel}>{t('how_many_stars')}</Text>
-             <Text allowFontScaling={false} style={styles.sublabel}>{t('slide_to_rate')}</Text>
-         </View>
-
-         <View style={{  marginTop:16,marginBottom: 20, alignItems: 'center' }}>
-        {/* <AddRating starSize={40} /> */}
-
-        <AddRating starSize={40} onChange={setRating} />
-        </View>
-
-    <View style={styles.innercontainer}>
-        <Text allowFontScaling={false} style={styles.mainlabel1}>{t('tell_us_more')} </Text>
-
-        <View style={styles.login_container}>
-              <TextInput
-              allowFontScaling={false}
-                style={[styles.personalEmailID_TextInput, { textAlignVertical: 'top', paddingTop: 10 }]}
-                placeholder={t('tell')}
-                placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
-                multiline={true}
-                value={username}
-                onChangeText={usernameText => setUsername(usernameText)}
-                onSubmitEditing={Keyboard.dismiss}
-              />
+          <View style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 120 : 100, paddingHorizontal: 16 }}>
+            <View style={styles.innercontainer}>
+              <Text allowFontScaling={false} style={styles.mainlabel}>{t('how_many_stars')}</Text>
+              <Text allowFontScaling={false} style={styles.sublabel}>{t('slide_to_rate')}</Text>
             </View>
-         </View>
-        </View>
+
+            <View style={{ marginTop: 16, marginBottom: 20, alignItems: 'center' }}>
+              <AddRating starSize={40} onChange={setRating} />
+            </View>
+
+            <View style={styles.innercontainer}>
+              <Text allowFontScaling={false} style={styles.mainlabel1}>{t('tell_us_more')} </Text>
+
+              <View style={styles.login_container}>
+                <TextInput
+                  allowFontScaling={false}
+                  style={[styles.personalEmailID_TextInput, { textAlignVertical: 'top', paddingTop: 10 }]}
+                  placeholder={t('tell')}
+                  placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
+                  multiline={true}
+                  value={username}
+                  onChangeText={usernameText => setUsername(usernameText)}
+                  onSubmitEditing={Keyboard.dismiss}
+                />
+              </View>
+            </View>
+          </View>
         </TouchableWithoutFeedback>
-         <Button title={t('submit_review')} onPress={() => handleSubmit()} />
+        <Button title={t('submit_review')} onPress={() => handleSubmit()} />
 
-   <Modal
-        visible={showPopup1}
-        transparent
-        animationType="fade"
-        onRequestClose={closePopup1}
-      >
-        <TouchableWithoutFeedback onPress={closePopup1}>
-        <View style={styles.overlay}>
-          <BlurView
-            style={{
-              flex: 1,
-              alignContent: 'center',
-              justifyContent: 'center',
-              width: '100%',
-              alignItems: 'center',
-            }}
-            blurType="light"
-            blurAmount={10}
-            reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-          >
-            <View
-              style={[
-                StyleSheet.absoluteFill,
-                { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-              ]}
-            />
- 
-            <View style={styles.popupContainer}>
-              <Image
-                source={require('../../../assets/images/success_icon.png')}
-                style={styles.logo}
-                resizeMode="contain"
-              />
-              <Text allowFontScaling={false} style={{
-                color: 'rgba(255, 255, 255, 0.80)',
-                fontFamily: 'Urbanist-SemiBold',
-                fontSize: 20,
-                fontWeight: '600',
-                letterSpacing: -0.4,
-                lineHeight: 28,
-              }}>{t('review_submitted_success')}!</Text>
-              
- 
-              <TouchableOpacity
-                style={styles.loginButton}
-                onPress={()=>{
-                  navigation.reset({
-                    index: 0,
-                    routes: [
-                      {
-                        name: 'Dashboard',
-                        params: {
-                          AddScreenBackactiveTab: 'Home',
-                          isNavigate: false,
-                        }
-                      }
-                    ],
-                  });
-                  // navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home', isNavigate:false }) ;
-                  setShowPopup1(false);
+        <Modal
+          visible={showPopup1}
+          transparent
+          animationType="fade"
+          onRequestClose={closePopup1}
+        >
+          <TouchableWithoutFeedback onPress={closePopup1}>
+            <View style={styles.overlay}>
+              <BlurView
+                style={{
+                  flex: 1,
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                  alignItems: 'center',
                 }}
+                blurType="light"
+                blurAmount={10}
+                reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
               >
-                <Text allowFontScaling={false} style={styles.loginText}>{t('return_home')}</Text>
-              </TouchableOpacity>
+                <View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                  ]}
+                />
 
-               <TouchableOpacity
-                style={styles.loginButton1}
-                //onPress={()=>{setShowPopup1(false);}}
-                onPress={() => {
-                  console.log('PRESS!@#');
-                    setShowPopup1(false);
-                    // navigation.replace('MyReviews'); 
-                     navigation.reset({
+                <View style={styles.popupContainer}>
+                  <Image
+                    source={require('../../../assets/images/success_icon.png')}
+                    style={styles.logo}
+                    resizeMode="contain"
+                  />
+                  <Text allowFontScaling={false} style={{
+                    color: 'rgba(255, 255, 255, 0.80)',
+                    fontFamily: 'Urbanist-SemiBold',
+                    fontSize: 20,
+                    fontWeight: '600',
+                    letterSpacing: -0.4,
+                    lineHeight: 28,
+                  }}>{t('review_submitted_success')}!</Text>
+
+
+                  <TouchableOpacity
+                    style={styles.loginButton}
+                    onPress={() => {
+                      navigation.reset({
+                        index: 0,
+                        routes: [
+                          {
+                            name: 'Dashboard',
+                            params: {
+                              AddScreenBackactiveTab: 'Home',
+                              isNavigate: false,
+                            }
+                          }
+                        ],
+                      });
+                      setShowPopup1(false);
+                    }}
+                  >
+                    <Text allowFontScaling={false} style={styles.loginText}>{t('return_home')}</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.loginButton1}
+                    onPress={() => {
+                      console.log('PRESS!@#');
+                      setShowPopup1(false);
+                      navigation.reset({
                         index: 0,
                         routes: [
                           {
@@ -252,20 +243,18 @@ const { t } = useTranslation();
                           },
                         ],
                       });
-                      
+
                     }}
-                    >
-                <Text allowFontScaling={false} style={styles.loginText1}>{t('return_my_reviews')}</Text>
-              </TouchableOpacity>
+                  >
+                    <Text allowFontScaling={false} style={styles.loginText1}>{t('return_my_reviews')}</Text>
+                  </TouchableOpacity>
+                </View>
+              </BlurView>
             </View>
-          </BlurView>
-        </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-
-
+          </TouchableWithoutFeedback>
+        </Modal>
       </View>
-      <NewCustomToastContainer/>
+      <NewCustomToastContainer />
     </ImageBackground>
   );
 };
@@ -274,18 +263,18 @@ export default UserAddReview;
 
 const styles = StyleSheet.create({
 
-     overlay: {
+  overlay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
-     logo: {
+  logo: {
     width: 64,
     height: 64,
     marginBottom: 20,
   },
- 
+
   popupContainer: {
     width: '85%',
     padding: 20,
@@ -294,11 +283,11 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.1)',
     alignItems: 'center',
     overflow: 'hidden',
- 
+
     backgroundColor: 'rgba(255,255,255,0.15)',
   },
 
-    loginText: {
+  loginText: {
     color: '#002050',
     textAlign: 'center',
     fontFamily: 'Urbanist-Medium',
@@ -307,7 +296,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     width: '100%',
   },
-   loginText1: {
+  loginText1: {
     color: '#FFFFFF7A',
     textAlign: 'center',
     fontFamily: 'Urbanist-Medium',
@@ -316,8 +305,8 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     width: '100%',
   },
- 
-      loginButton: {
+
+  loginButton: {
     display: 'flex',
     width: '100%',
     height: 48,
@@ -333,7 +322,7 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
   },
 
-      loginButton1: {
+  loginButton1: {
     display: 'flex',
     width: '100%',
     height: 48,
@@ -348,42 +337,42 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
   },
- 
 
-    mainlabel:{
+
+  mainlabel: {
     color: '#fff',
-    fontSize: 18, 
-    fontWeight: '600', 
+    fontSize: 18,
+    fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
-    marginTop:8
+    marginTop: 8
     //textAlign:'center'
-    },
+  },
 
-    sublabel:{
-    color: '#FFFFFFA3', 
-    fontSize: 14, 
+  sublabel: {
+    color: '#FFFFFFA3',
+    fontSize: 14,
     fontWeight: '600',
     fontFamily: 'Urbanist-Medium',
     //textAlign:'center'
-    marginTop:4
-    },
-    innercontainer:{
-        //  paddingHorizontal: 16, 
-         marginBottom: 8, 
-         flexDirection: 'column', 
-         justifyContent: 'space-between' 
-    },
-    mainlabel1:{
+    marginTop: 4
+  },
+  innercontainer: {
+    //  paddingHorizontal: 16, 
+    marginBottom: 8,
+    flexDirection: 'column',
+    justifyContent: 'space-between'
+  },
+  mainlabel1: {
     color: '#fff',
-    fontSize: 18, 
-    fontWeight: '600', 
+    fontSize: 18,
+    fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
-    },
+  },
 
-    login_container: {
+  login_container: {
     display: 'flex',
     width: '100%',
-    minHeight:160,
+    minHeight: 160,
     gap: 10,
     alignSelf: 'stretch',
     borderRadius: 12,
@@ -393,7 +382,7 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-    marginTop:6
+    marginTop: 6
   },
   personalEmailID_TextInput: {
     width: '98%',
@@ -402,22 +391,22 @@ const styles = StyleSheet.create({
     fontSize: 17,
     lineHeight: 22,
     fontStyle: 'normal',
-    color:"#fff",
-    paddingLeft:12,
+    color: "#fff",
+    paddingLeft: 12,
     height: '100%'
-    
+
 
   },
-   payText: {
-  color: '#002050',
-  fontFamily: 'Urbanist-Medium',
-  fontSize: 17,
-  fontWeight: '500',
-  letterSpacing: 1,
-  textAlign:'center'
-},
+  payText: {
+    color: '#002050',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: '500',
+    letterSpacing: 1,
+    textAlign: 'center'
+  },
 
-    previewBtn: {
+  previewBtn: {
     display: 'flex',
     width: '90%',
     alignSelf: 'center',
@@ -441,7 +430,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 16,
     marginRight: 8,
-     borderWidth: 0.4,
+    borderWidth: 0.4,
     borderColor: '#ffffff11',
 
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
@@ -464,7 +453,7 @@ const styles = StyleSheet.create({
     boxSizing: 'border-box',
   },
   tabcard1: {
-     borderWidth: 0.4,
+    borderWidth: 0.4,
     borderColor: '#ffffff11',
 
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
@@ -493,28 +482,29 @@ const styles = StyleSheet.create({
     color: '#fff',   // selected tab text color
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
-    fontSize:14
+    fontSize: 14
 
   },
   othertext: {
     color: '#FFFFFF7A',   // unselected tab text color
     fontWeight: '600',
-     fontFamily: 'Urbanist-SemiBold',
-     fontSize:14
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 14
   },
 
-  background: { 
+  background: {
     flex: 1,
-     width: '100%',
-      height: '100%' },
+    width: '100%',
+    height: '100%'
+  },
   fullScreenContainer: {
-     flex: 1,
-     },
+    flex: 1,
+  },
   header: {
 
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '6.7%' : 60,
-    width: Platform.OS === 'ios' ? '100%' : '100%',
+    top: Platform.OS === 'ios' ? '6.7%' : 40,
+    width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -523,7 +513,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'box-none',
     marginTop: (Platform.OS === 'ios' ? 0 : 0),
-    marginLeft: 1 
+    marginLeft: 1
   },
   headerRow: {
     flexDirection: 'row',
@@ -533,12 +523,12 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 40,
 
-     display: 'flex',
+    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-      boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
+    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
     height: 48,
@@ -550,8 +540,8 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
     fontWeight: '600',
-     fontFamily: 'Urbanist-SemiBold',
+    fontFamily: 'Urbanist-SemiBold',
   },
-  
+
 
 });

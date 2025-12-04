@@ -145,7 +145,7 @@ const MyOrderCard: React.FC<MyOrderCardProps> = ({
             style={styles.primaryButton}
             activeOpacity={0.7}
             onPress={handleViewTransaction}>
-            <Text allowFontScaling={false} style={styles.btnText}>
+            <Text allowFontScaling={false} style={[styles.btnText]}>
               {t('view_in_transactions')}
             </Text>
           </TouchableOpacity>
@@ -164,7 +164,7 @@ const MyOrderCard: React.FC<MyOrderCardProps> = ({
           style={styles.singleButton}
           activeOpacity={0.7}
           onPress={handleViewTransaction}>
-          <Text allowFontScaling={false} style={styles.btnText}>
+          <Text allowFontScaling={false} style={[styles.btnText,]}>
             {t('view_in_transactions')}
           </Text>
         </TouchableOpacity>
@@ -326,7 +326,8 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     fontSize: 13,
     fontFamily: 'Urbanist-Medium',
-    letterSpacing: 0.5
+    letterSpacing: 0.5,
+    textAlign:'center'
   },
   btnTextSecondary: {
     color: '#002050',

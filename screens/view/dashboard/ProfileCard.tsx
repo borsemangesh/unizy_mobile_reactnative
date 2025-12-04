@@ -355,16 +355,15 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                 />
                 <Text allowFontScaling={false} style={styles.userSub}>
                   {userMeta?.university_name
-                    ? userMeta.university_name.length > 25
-                      ? userMeta.university_name.slice(0, 25) + '…'
+                    ? userMeta.university_name.length > 21
+                      ? userMeta.university_name.slice(0, 21) + '…'
                       : userMeta.university_name
                     : 'University Name'}
                 </Text>
               </View>
 
               <View
-                style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
-              >
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                 <Image
                   source={require('../../../assets/images/sms.png')}
                   style={{ width: 16, height: 16 }}

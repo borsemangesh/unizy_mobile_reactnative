@@ -120,13 +120,11 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const isFromOnboarding = useRef(false);
 
-  // Debug log to check route params
   useEffect(() => {
     console.log('AccountDetails - Route params:', routeParams);
     console.log('AccountDetails - showSuccess value:', showSuccess);
   }, [routeParams, showSuccess]);
 
-  // Debug log when popup state changes
   useEffect(() => {
     console.log('AccountDetails - showSuccessPopup state:', showSuccessPopup);
   }, [showSuccessPopup]);
@@ -265,7 +263,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
     const primaryBanks = merchants.filter(
       (bank: any) => bank.default_for_currency === true,
     );
-    console.log('Primary Banks:', primaryBanks);
+   // console.log('Primary Banks:', primaryBanks);
     return primaryBanks;
   };
 
@@ -276,15 +274,6 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
       : [data.stripeAccount.merchant];
     const otherBanks = merchants.filter(
       (bank: any) => !bank.default_for_currency,
-    );
-    console.log('Other Banks:', otherBanks);
-    console.log(
-      'Total merchants:',
-      merchants.length,
-      'Primary banks count:',
-      getPrimaryBanks().length,
-      'Other banks count:',
-      otherBanks.length,
     );
     return otherBanks;
   };
@@ -771,6 +760,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
         animationType="fade"
         onRequestClose={() => setShowSuccessPopup(false)}
       >
+        <TouchableWithoutFeedback onPress={() => setShowSuccessPopup(false)}>
         <View style={styles.overlay}>
           <BlurView
             style={StyleSheet.absoluteFill}
@@ -815,6 +805,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
             </TouchableOpacity>
           </View>
         </View>
+        </TouchableWithoutFeedback>
       </Modal>
 
       <NewCustomToastContainer />

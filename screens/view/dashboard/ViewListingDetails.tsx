@@ -806,7 +806,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                     resizeMode="contain"
                   />
                   <Text allowFontScaling={false} style={styles.mainheader}>
-                    {t('Order_Fulfilled')}
+                    {t('order_fulfilled')}
                   </Text>
                   <Text allowFontScaling={false} style={styles.subheader1}>
                     {t('Delivery_Verified')}
