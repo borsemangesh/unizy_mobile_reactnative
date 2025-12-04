@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState } from 'react';
 import {
   Image,
@@ -27,7 +25,6 @@ type HelpSupportProps = {
   navigation: any;
 };
 
-
 const HelpSupport = ({ navigation }: HelpSupportProps) => {
   const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
@@ -37,7 +34,14 @@ const HelpSupport = ({ navigation }: HelpSupportProps) => {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerRow}>
-            <TouchableOpacity onPress={() => navigation.replace('Dashboard', { AddScreenBackactiveTab: 'Profile', isNavigate: false })}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.replace('Dashboard', {
+                  AddScreenBackactiveTab: 'Profile',
+                  isNavigate: false,
+                })
+              }
+            >
               <View style={styles.backIconRow}>
                 <Image
                   source={require('../../../assets/images/back.png')}
@@ -45,7 +49,9 @@ const HelpSupport = ({ navigation }: HelpSupportProps) => {
                 />
               </View>
             </TouchableOpacity>
-            <Text allowFontScaling={false} style={styles.unizyText}>{t('help_support')}</Text>
+            <Text allowFontScaling={false} style={styles.unizyText}>
+              {t('help_support')}
+            </Text>
             <View style={{ width: 48 }} />
           </View>
         </View>
@@ -53,9 +59,11 @@ const HelpSupport = ({ navigation }: HelpSupportProps) => {
         <View style={{ flex: 1 }}>
           <WebView
             source={{ uri: 'https://unizy.app/#about' }}
-            style={{ flex: 1 }}
+            style={{ flex: 1, backgroundColor: '#0C56C4' }}
             onLoadStart={() => setLoading(true)}
-            onLoadEnd={() => setLoading(false)}
+            onLoad={() => setLoading(false)}
+            onError={() => setLoading(false)}
+            onHttpError={() => setLoading(false)}
           />
         </View>
 
@@ -64,7 +72,6 @@ const HelpSupport = ({ navigation }: HelpSupportProps) => {
             <Loader />
           </View>
         )}
-
       </View>
       <NewCustomToastContainer />
     </ImageBackground>
@@ -74,11 +81,9 @@ const HelpSupport = ({ navigation }: HelpSupportProps) => {
 export default HelpSupport;
 
 const styles = StyleSheet.create({
-
-
   loaderOverlay: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? 100 : 90,   // below header
+    top: Platform.OS === 'ios' ? 100 : 90, // below header
     left: 0,
     right: 0,
     bottom: 0,
@@ -90,11 +95,11 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
   fullScreenContainer: {
     flex: 1,
-    marginTop: 10
+    marginTop: 10,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 40 : 30,
@@ -129,5 +134,4 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     marginRight: 12,
   },
-
 });
