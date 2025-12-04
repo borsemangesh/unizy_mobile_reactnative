@@ -1762,7 +1762,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                       renderItem={({ item }) => (
                         <TouchableOpacity
                           style={selectlang_styles.languageItem}
-                          onPress={() => { handleLanguageSelect(item); }}
+                          onPress={() => { handleLanguageSelect(item);slideUp.setValue(100); }}
                         >
                           <View
                             style={{

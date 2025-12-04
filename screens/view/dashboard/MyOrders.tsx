@@ -401,8 +401,6 @@ const formatDate = (dateString?: string, t?: any) => {
   
   data.forEach(item => {
     const d = new Date(item.created_at);
-
-
     const rawDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
       d.getDate()
     ).padStart(2, '0')}`;
@@ -427,7 +425,6 @@ const formatDate = (dateString?: string, t?: any) => {
   const sortedDates = Object.keys(groupedMap).sort((a, b) => {
     return new Date(b).getTime() - new Date(a).getTime();
   });
-
 
   const groupedArray: any[] = [];
 
