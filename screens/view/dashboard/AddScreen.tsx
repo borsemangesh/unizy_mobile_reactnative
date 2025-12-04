@@ -1340,10 +1340,10 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             options={multiSelectOptions}
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
-            title={`${t('select')} ${t(multiSelectModal?.fieldLabel?.toLowerCase() || 'category')}`}
+            title={`${t('select')} ${t(multiSelectModal?.fieldLabel || 'category')}`}
             subtitle={
               multiSelectModal?.ismultilple
-                ? `${t('pick_all')} ${multiSelectModal?.fieldLabel || 'categories'} ${t('best_describe')}`
+                ? `${t('pick_all')} ${pluralizeLabel(multiSelectModal?.fieldLabel || 'category')} ${t('best_describe')}`
                 : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'} ${t('that_fit_your_listing')}`
             }
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
@@ -1364,10 +1364,10 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             options={multiSelectOptions}
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
-            title={`${t('select')} ${t(multiSelectModal?.fieldLabel?.toLowerCase() || 'category')}`}
+            title={`${t('select')} ${t(multiSelectModal?.fieldLabel || 'category')}`}
             subtitle={
               multiSelectModal?.ismultilple
-                ? `${t('pick_all')} ${multiSelectModal?.fieldLabel || 'categories'} ${t('best_describe')}`
+                ? `${t('pick_all')} ${pluralizeLabel(multiSelectModal?.fieldLabel || 'category')} ${t('best_describe')}`
                 : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'} ${t('that_fit_your_listing')}`
             }
             //subtitle={`Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your item.`}

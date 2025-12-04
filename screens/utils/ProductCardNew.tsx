@@ -6,15 +6,14 @@ type NewProductCardProps = {
   tag: string;
   infoTitle: string;
   inforTitlePrice: string;
-  rating:string;
+  rating: string;
   productImage: ImageSourcePropType
 };
 
 
-export default function NewProductCard({tag,infoTitle,inforTitlePrice,rating,productImage}:NewProductCardProps) {
+export default function NewProductCard({ tag, infoTitle, inforTitlePrice, rating, productImage }: NewProductCardProps) {
   return (
     <View style={styles.card}>
-      
       <View style={styles.imageContainer}>
         <Image
           source={productImage}
@@ -23,8 +22,6 @@ export default function NewProductCard({tag,infoTitle,inforTitlePrice,rating,pro
         <View style={styles.tag}>
           <Text allowFontScaling={false} style={styles.tagText}>{tag}</Text>
         </View>
-
-      
         <View style={styles.bookmark1}>
           <Image
             source={require('../../assets/images/newbookmark.png')}
@@ -32,22 +29,20 @@ export default function NewProductCard({tag,infoTitle,inforTitlePrice,rating,pro
           />
         </View>
       </View>
-
       <View style={styles.infoRow}>
         <View>
           <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
           <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
         </View>
-       
-        <View style={styles.ratingAbsolute}>
-        <Image
-          source={require('../../assets/images/staricon.png')}
-          style={styles.image1}/>
 
-        <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
+        <View style={styles.ratingAbsolute}>
+          <Image
+            source={require('../../assets/images/staricon.png')}
+            style={styles.image1} />
+          <Text allowFontScaling={false} style={styles.ratingText}>{rating}</Text>
+        </View>
       </View>
-      </View> 
-     
+
     </View>
   );
 }
@@ -62,39 +57,39 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     width: '100%',
     overflow: 'hidden',
-    height:'auto',
-    margin:6,
-    paddingBottom:10,
+    height: 'auto',
+    margin: 6,
+    paddingBottom: 10,
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 15px 15px 6px',
   },
   imageContainer: {
     width: '100%',
     height: 180,
     position: 'relative',
-    padding:6
+    padding: 6
   },
   image: {
     width: '100%',
     height: '100%',
-    padding:12,
-    borderRadius:12,
-    alignSelf:'center',
-    resizeMode:'cover'
+    padding: 12,
+    borderRadius: 12,
+    alignSelf: 'center',
+    resizeMode: 'cover'
   },
 
-   image1: {
+  image1: {
     width: 16,
     height: 16,
-    
+
   },
   bookmark1: {
     position: 'absolute',
     top: 5,
     right: 5,
     borderRadius: 20,
-    
+
   },
-   bookmark: {
+  bookmark: {
     position: 'absolute',
     top: 10,
     right: 10,
@@ -105,25 +100,25 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 5,
     right: 5,
-    backgroundColor:'rgba(255,255,255,0.4)',
+    backgroundColor: 'rgba(255,255,255,0.4)',
     borderRadius: 4,
     padding: 4,
-    marginVertical:4,
-    marginHorizontal:4,
-     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
+    marginVertical: 4,
+    marginHorizontal: 4,
+    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 5px 5px 1px',
   },
   tagText: {
     fontSize: 10,
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: '600',
     color: '#000',
-    
+
   },
   infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal:6,
+    paddingHorizontal: 6,
   },
   title: {
     fontSize: 12,
@@ -131,7 +126,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontFamily: 'Urbanist-SemiBold',
   },
-   title1: {
+  title1: {
     fontSize: 12,
     fontWeight: '400',
     color: '#000',
@@ -142,24 +137,24 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     color: '#fff',
-     fontFamily: 'Urbanist-SemiBold',
+    fontFamily: 'Urbanist-SemiBold',
   },
-  
+
   ratingText: {
     fontSize: 12,
     fontWeight: '600',
     color: '#fff',
-     fontFamily: 'Urbanist-SemiBold',
+    fontFamily: 'Urbanist-SemiBold',
     marginLeft: 4,
   },
   ratingAbsolute: {
     position: 'absolute',
-    bottom:10,
+    bottom: 10,
     right: 10,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
-},
+  },
 });

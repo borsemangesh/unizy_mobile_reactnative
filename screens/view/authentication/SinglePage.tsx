@@ -99,15 +99,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
     }
   }, [route.params]);
 
-  // Debug: Log translation info
-  useEffect(() => {
-    console.log('=== LoginScreen i18n Debug ===');
-    console.log('Current language:', i18n.language);
-    console.log('Translation for "login":', t('login'));
-    console.log('Translation for "password":', t('password'));
-    console.log('Translation for "personal_email_id":', t('personal_email_id'));
-    console.log('==============================');
-  }, []);
+
 
   useEffect(() => {
     (async () => {
@@ -1762,7 +1754,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                       renderItem={({ item }) => (
                         <TouchableOpacity
                           style={selectlang_styles.languageItem}
-                          onPress={() => { handleLanguageSelect(item);slideUp.setValue(100); }}
+                          onPress={() => { handleLanguageSelect(item); slideUp.setValue(100); }}
                         >
                           <View
                             style={{

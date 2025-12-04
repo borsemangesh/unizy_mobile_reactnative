@@ -568,7 +568,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
         data: dataArray,
       };
 
-      console.log("📤 Sending UPDATE request:", createPayload);
+      console.log("Sending UPDATE request:", createPayload);
 
       const createRes = await fetch(`${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`, {
         method: "PATCH",
@@ -580,7 +580,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
       });
 
       const createJson = await createRes.json();
-      console.log("📌 Create Response:", createJson);
+      console.log(" Create Response:", createJson);
 
       if (![200, 201].includes(createRes.status)) {
         showToast(t(createJson?.message || "Error"), "error");
@@ -592,18 +592,18 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
       const feature_id = createJson?.data?.id;
       if (!feature_id) {
-        console.log("⚠️ feature_id missing");
+       // console.log(" feature_id missing");
         return;
       }
 
-      console.log("📌 imageFields:", JSON.stringify(imageFields, null, 2));
+      console.log(" imageFields:", JSON.stringify(imageFields, null, 2));
 
       for (const [param_id, images] of imageFields) {
-        console.log("📌 param_id:", param_id, "images count:", images.length);
+        console.log(" param_id:", param_id, "images count:", images.length);
         for (const image of images) {
           if (!image || !image.uri) continue;
 
-          console.log("🟢 Uploading image:", image.name);
+          console.log(" Uploading image:", image.name);
 
           const form = new FormData();
           form.append("files", {
@@ -625,7 +625,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
           });
 
           const uploadJson = await uploadRes.json();
-          console.log("📌 Upload Response:", uploadJson);
+          console.log(" Upload Response:", uploadJson);
 
           const isSuccess = [200, 201].includes(uploadRes.status);
           showToast(

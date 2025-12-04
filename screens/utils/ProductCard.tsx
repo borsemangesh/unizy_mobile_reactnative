@@ -40,8 +40,6 @@ export default function ProductCard({
               blurAmount={100}
               style={StyleSheet.absoluteFillObject}
             />
-
-
             <Text allowFontScaling={false} style={styles.tagText}>
               {tag}
             </Text>
@@ -61,8 +59,6 @@ export default function ProductCard({
               ]}
               style={StyleSheet.absoluteFillObject}
               useAngle={false}
-
-
             />
 
             <TouchableOpacity onPress={onBookmarkPress}>
@@ -106,7 +102,6 @@ const styles = StyleSheet.create({
   card: {
     width: screenWidth * 0.85,
     height: (Platform.OS == 'ios' ? screenHeight * 0.35 : screenHeight * 0.35),
-
     marginHorizontal: 8,
     borderRadius: 34,
     backgroundColor: "rgba(255, 255, 255, 0.17)",
