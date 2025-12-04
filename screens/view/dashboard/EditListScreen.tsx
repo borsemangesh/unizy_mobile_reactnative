@@ -1242,7 +1242,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
           {/* <Text allowFontScaling={false} style={styles.unizyText}>
             {t('edit')}{`${category ? ` ${category} ` : ''}`}
           </Text> */}
-          <View style={{ position: 'absolute', left: 0, right: 0, alignItems: 'center' }}>
+          <View style={{ width: 300 }}>
             <Text
               allowFontScaling={false}
               style={styles.unizyText}
@@ -1251,6 +1251,60 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
               {t('edit')}{`${category ? ` ${category} ` : ''}`}
             </Text>
           </View>
+
+          <TouchableOpacity
+            onPress={() => {
+             
+            }}
+            style={styles.backButtonContainer}
+            activeOpacity={0.7}
+          >
+            <AnimatedReanimated.View
+              style={[styles.blurButtonWrapper_none, ]}
+            >
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 30],
+                      [1, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 40,
+                  })),{display: 'none'}
+                ]}
+              />
+
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 50],
+                      [0, 1],
+                      'clamp',
+                    ),
+                  })),
+                ]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
+                />
+              </AnimatedReanimated.View>
+
+              <AnimatedReanimated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 24, width: 24,display: 'none' } ]}
+              />
+            </AnimatedReanimated.View>
+          </TouchableOpacity>
         </View>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
@@ -1424,6 +1478,17 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 export default EditListScreen;
 
 const styles = StyleSheet.create({
+  blurButtonWrapper_none: {
+
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: 'transparent',
+    backgroundColor: 'transparent',
+  },
 
   headerWrapper: {
     position: 'absolute',
@@ -1436,22 +1501,32 @@ const styles = StyleSheet.create({
     pointerEvents: 'none',
   },
   headerContent: {
+    // position: 'absolute',
+    // top: Platform.OS === 'ios' ? '8.5%' : 60,
+    // width: Platform.OS === 'ios' ? '100%' : '100%',
+    // flexDirection: 'row',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // paddingHorizontal: 16,
+    // zIndex: 11,
+    // alignSelf: 'center',
+    // pointerEvents: 'box-none',
+    // marginTop: (Platform.OS === 'ios' ? 0 : 0),
+    // marginLeft: 1
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '8.5%' : 60,
-    width: Platform.OS === 'ios' ? '100%' : '100%',
+    top: (Platform.OS === 'ios' ? 60 : 40),
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: 16,
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-    marginTop: (Platform.OS === 'ios' ? 0 : 0),
-    marginLeft: 1
+    justifyContent: 'space-between',
   },
   backButtonContainer: {
-    position: 'absolute',
-    left: 16,
+    // position: 'absolute',
+    // left: 16,
     zIndex: 11,
   },
   blurButtonWrapper: {

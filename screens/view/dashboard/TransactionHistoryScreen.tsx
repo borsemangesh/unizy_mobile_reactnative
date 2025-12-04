@@ -1,4 +1,3 @@
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -494,7 +493,7 @@ export default function TransactionHistoryScreen(
                           <Image source={{ uri: item.category_logo }} style={styles.image} resizeMode="cover" />
                         </View>
                         <View style={{ gap: 4 }}>
-                        <View style={{width: 320}}>
+                        <View style={{width: 140 }}>
                           <Text
                           numberOfLines={2}
                             allowFontScaling={false}
@@ -503,7 +502,7 @@ export default function TransactionHistoryScreen(
                             {item.title}
                           </Text>
                           </View>
-                          <View style={{ flexDirection: 'row', gap: 4, width: '91%', justifyContent: 'space-between' }}>
+                          <View style={{ flexDirection: 'row', gap: 4, width: '90%', justifyContent: 'space-between' }}>
                             <Text allowFontScaling={false} style={styles.price}>
                               {item.price}
                             </Text>
@@ -608,7 +607,7 @@ export default function TransactionHistoryScreen(
                     padding: 1,
                   }}
                 >
-                  <View style={{width: 150}}>
+                  <View style={{width: 120}}>
                   <Text
                     allowFontScaling={false}
                     numberOfLines={2}
@@ -655,8 +654,8 @@ export default function TransactionHistoryScreen(
                           <Image source={background} style={styles.imgcontainer} resizeMode="cover" />
                           <Image source={{ uri: item.category_logo }} style={styles.image} resizeMode="cover" />
                         </View>
-                        <View style={{width: 200}}>
-                        <Text style={styles.salesTitle}>
+                        <View style={{width: 160}}>
+                        <Text numberOfLines={2} style={styles.salesTitle}>
                           {item.title.length > 24
                             ? `${item.title.substring(0, 24)}...`
                             : item.title}
@@ -744,7 +743,7 @@ export default function TransactionHistoryScreen(
                         <Image source={background} style={styles.imgcontainer} resizeMode="cover" />
                         <Image source={{ uri: item.category_logo }} style={styles.image} resizeMode="cover" />
                       </View>
-                      <View style={{width: 200}}>
+                      <View style={{width: 160}}>
                       <Text
                       numberOfLines={2}
                         allowFontScaling={false}
