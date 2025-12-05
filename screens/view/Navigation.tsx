@@ -51,6 +51,8 @@ import UserAddReview from './dashboard/UserAddReview';
 import { navigationRef } from './NavigationService';
 import ChangePassword from './dashboard/ChangePassword';
 import { navigationReady } from '../utils/NotificationHandler';
+import TeamsAndCondition from './authentication/termsconditinAndPrivacyPolicy/TeamsAndCondition';
+import PrivacyAndPolicy from './authentication/termsconditinAndPrivacyPolicy/PrivacyAndPolicy';
 
 const Stack = createNativeStackNavigator();
 
@@ -365,6 +367,23 @@ export const Navigation = () => {
         <Stack.Screen
           name="HelpSupport"
           component={HelpSupport}
+          options={{
+            headerShown: false,
+            presentation: 'fullScreenModal',
+          }}
+        />
+
+        <Stack.Screen
+          name="TeamsAndCondition"
+          component={TeamsAndCondition}
+          options={{
+            headerShown: false,
+            presentation: 'fullScreenModal',
+          }}
+        />
+        <Stack.Screen
+          name="PrivacyAndPolicy"
+          component={PrivacyAndPolicy}
           options={{
             headerShown: false,
             presentation: 'fullScreenModal',

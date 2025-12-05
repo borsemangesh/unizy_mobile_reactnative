@@ -51,7 +51,7 @@ type SinglePageProps = {
   navigation: any;
 };
 type RootStackParamList = {
-  SinglePage: { resetToLogin?: boolean, logoutMessage: string, forgotPassword: boolean, currentScreen: string, currentScreenIninner: string };
+  SinglePage: { resetToLogin?: boolean, logoutMessage: string, termandProlicy: boolean,forgotPassword: boolean, currentScreen: string, currentScreenIninner: string };
 };
 type SinglePageRouteProp = RouteProp<RootStackParamList, 'SinglePage'>;
 
@@ -94,6 +94,14 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       loginTranslateY.setValue(0);
       setCurrentScreen('login');
       setcurrentScreenIninner('forgotpassword');
+      // showToast(route.params?.logoutMessage,'success')
+
+    }
+    if (route.params?.termandProlicy) {
+      loginOpacity.setValue(1);
+      loginTranslateY.setValue(0);
+      setCurrentScreen('login');
+      setcurrentScreenIninner('login');
       // showToast(route.params?.logoutMessage,'success')
 
     }
@@ -3207,23 +3215,25 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
                         {t('by_continuing_agree')}
                       </Text>
-                      <View style={{ alignSelf: 'flex-start' }}>
-                        <Text
-                          allowFontScaling={false}
-                          style={Styles.teamsandConditionText}
-                        >
+                      <TouchableOpacity onPress={() => navigation.navigate('TeamsAndCondition')}>
+                        <View style={{ alignSelf: 'flex-start' }}>
+                          <Text
+                            allowFontScaling={false}
+                            style={Styles.teamsandConditionText}
+                          >
 
-                          {t('terms_and_conditions')}
-                        </Text>
-                        <View
-                          style={{
-                            marginLeft: 5,
-                            height: 1.2,
-                            backgroundColor: 'rgba(124, 234, 255, 0.9)',
-                            marginTop: 0,
-                          }}
-                        />
-                      </View>
+                            {t('terms_and_conditions')}
+                          </Text>
+                          <View
+                            style={{
+                              marginLeft: 5,
+                              height: 1.2,
+                              backgroundColor: 'rgba(124, 234, 255, 0.9)',
+                              marginTop: 0,
+                            }}
+                          />
+                        </View>
+                      </TouchableOpacity>
                     </View>
 
                     <View
@@ -3238,22 +3248,24 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                       >
                         {t('and')}
                       </Text>
-                      <View style={{ alignSelf: 'flex-start' }}>
-                        <Text
-                          allowFontScaling={false}
-                          style={Styles.teamsandConditionText}
-                        >
-                          {t('privacy_policy')}
-                        </Text>
-                        <View
-                          style={{
-                            marginLeft: 5,
-                            height: 1.2,
-                            backgroundColor: 'rgba(124, 234, 255, 0.9)',
-                            marginTop: 0,
-                          }}
-                        />
-                      </View>
+                      <TouchableOpacity onPress={() => navigation.navigate('PrivacyAndPolicy')}>
+                        <View style={{ alignSelf: 'flex-start' }}>
+                          <Text
+                            allowFontScaling={false}
+                            style={Styles.teamsandConditionText}
+                          >
+                            {t('privacy_policy')}
+                          </Text>
+                          <View
+                            style={{
+                              marginLeft: 5,
+                              height: 1.2,
+                              backgroundColor: 'rgba(124, 234, 255, 0.9)',
+                              marginTop: 0,
+                            }}
+                          />
+                        </View>
+                      </TouchableOpacity>
                     </View>
                   </Animated.View>
                 )}

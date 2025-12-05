@@ -1196,7 +1196,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                       [0, 1],
                       'clamp',
                     ),
-                  })),
+                  })),{display: 'none'}
                 ]}
               >
                 <BlurView
