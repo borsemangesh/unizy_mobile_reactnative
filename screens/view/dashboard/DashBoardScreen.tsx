@@ -1602,7 +1602,7 @@ const styles = StyleSheet.create({
     // marginHorizontal:1
     paddingHorizontal: 12,
     paddingBottom: 12,
-    paddingTop: 4
+    // paddingTop: 4
   },
 
   row: {

@@ -598,7 +598,7 @@ const formatDate = (dateString?: string, t?: any) => {
           <TouchableOpacity
             onPress={() => {
               if (navigation.canGoBack()) {
-                navigation.goBack(); 
+                navigation.goBack();
               } else {
                 navigation.replace('Dashboard', {
                   AddScreenBackactiveTab: 'Home',
@@ -657,7 +657,9 @@ const formatDate = (dateString?: string, t?: any) => {
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-            {detail?.category?.name ? `${detail.category.name} ${t('details')}` : ''}
+            {detail?.category?.name
+              ? `${detail.category.name} ${t('details')}`
+              : ''}
           </Text>
 
           <TouchableOpacity
@@ -729,10 +731,13 @@ const formatDate = (dateString?: string, t?: any) => {
             {
               paddingBottom:
                 detail?.category?.id === 4
-                  ? (Platform.OS === 'ios' ? 20 : height * 0.01) 
-                  : (Platform.OS === 'ios' ? 75 : height * 0.07),
+                  ? Platform.OS === 'ios'
+                    ? 20
+                    : height * 0.01
+                  : Platform.OS === 'ios'
+                  ? 75
+                  : height * 0.07,
             },
-
           ]}
         >
           <View style={{ marginTop: 12 }}>
@@ -761,8 +766,9 @@ const formatDate = (dateString?: string, t?: any) => {
                         {t('service_duration')}:{' '}
                         <Text style={styles.durationValue}>
                           {detail?.hours
-                            ? `${detail.hours} ${detail.hours > 1 ? t('hours') : t('hour')
-                            }`
+                            ? `${detail.hours} ${
+                                detail.hours > 1 ? t('hours') : t('hour')
+                              }`
                             : `1 ${t('hour')}`}
                         </Text>
                       </Text>
@@ -810,8 +816,8 @@ const formatDate = (dateString?: string, t?: any) => {
                     {detail?.category?.id === 3
                       ? t('dish_details')
                       : detail?.category?.name
-                        ? `${detail.category.name} ${t('details')}`
-                        : ''}
+                      ? `${detail.category.name} ${t('details')}`
+                      : ''}
                   </Text>
 
                   {detail?.params?.map((param: Param) => (
@@ -834,7 +840,9 @@ const formatDate = (dateString?: string, t?: any) => {
                                 .split(',')
                                 .map(v => v.trim());
 
-                              return selectedValues.includes((opt.option_id ?? '').toString());
+                              return selectedValues.includes(
+                                (opt.option_id ?? '').toString(),
+                              );
                             })
                             .map((opt: ParamOption) => (
                               <View key={opt.id} style={styles.categoryTag}>
@@ -892,8 +900,9 @@ const formatDate = (dateString?: string, t?: any) => {
                     <View style={{ width: '80%', gap: 0 }}>
                       <Text allowFontScaling={false} style={styles.userName}>
                         {detail?.createdby
-                          ? `${detail.createdby.firstname || ''} ${detail.createdby.lastname || ''
-                          }`
+                          ? `${detail.createdby.firstname || ''} ${
+                              detail.createdby.lastname || ''
+                            }`
                           : 'Unknown User'}
                       </Text>
 
@@ -967,7 +976,7 @@ const formatDate = (dateString?: string, t?: any) => {
                               universityName: detail.university,
                               id: detail.createdby.id,
                             },
-                            source: 'sellerPage', 
+                            source: 'sellerPage',
                           });
                         } else {
                           setShowPopup(true);
@@ -985,6 +994,24 @@ const formatDate = (dateString?: string, t?: any) => {
                   </View>
                 </View>
               </View>
+              <View style={styles.reportButtonCard}>
+                <Image
+                  source={require('../../../assets/images/report.png')}
+                  style={{ height: 16, width: 16, }}
+                />
+                <Text
+                  style={{
+                    color: ' rgba(255, 130, 130, 0.88)',
+                    fontFamily: 'Urbanist-SemiBold',
+                    fontSize: 14,
+                    fontWeight: '600',
+                    fontStyle: 'normal',
+                    letterSpacing: -0.28,
+                  }}
+                >
+                  Report this Listing
+                </Text>
+              </View>
             </View>
           </View>
         </AnimatedReanimated.ScrollView>
@@ -992,15 +1019,9 @@ const formatDate = (dateString?: string, t?: any) => {
         {detail?.category?.id !== 4 && (
           <PayButton
             amount={
-              detail?.category?.id === 3
-                ? undefined
-                : Number(detail?.price)
+              detail?.category?.id === 3 ? undefined : Number(detail?.price)
             }
-            label={
-              detail?.category?.id === 3
-                ? t('select_quantity')
-                : t('pay')
-            }
+            label={detail?.category?.id === 3 ? t('select_quantity') : t('pay')}
             onPress={() => handlePay()}
           />
         )}
@@ -1258,6 +1279,18 @@ const formatDate = (dateString?: string, t?: any) => {
 };
 
 const styles = StyleSheet.create({
+
+  reportButtonCard:{
+    flexDirection: 'row',
+    marginBottom: 6,
+    borderRadius: 12,
+    padding: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    marginTop: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+  },
   durationValue: {
     color: '#FFF',
     fontFamily: 'Urbanist-SemiBold',
