@@ -1,94 +1,123 @@
-import { Button, Dimensions, Image, ImageBackground, Keyboard, Modal, Platform, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
-import { showToast } from "../../utils/toast";
-import { MAIN_URL } from "../../utils/APIConstant";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { BlurView } from "@react-native-community/blur";
-import { useRoute } from "@react-navigation/native";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import AddRating from "../../utils/AddRating";
-import { Constant } from "../../utils/Constant";
-import Loader from "../../utils/component/Loader";
-import { NewCustomToastContainer } from "../../utils/component/NewCustomToastManager";
+
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+  Image,
+  ImageBackground,
+  Text,
+  TextInput,
+  View,
+  TouchableOpacity,
+  FlatList,
+  Platform,
+  StyleSheet,
+  StatusBar,
+  ScrollView,
+  ActivityIndicator,
+  ImageSourcePropType,
+  ListRenderItem,
+  Modal,
+  TouchableWithoutFeedback,
+  Dimensions,
+  KeyboardAvoidingView,
+  Keyboard,
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MAIN_URL } from '../../utils/APIConstant';
 
 const bgImage = require('../../../assets/images/backimg.png');
+import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
+import {
+  NewCustomToastContainer,
+  showToast,
+} from '../../utils/component/NewCustomToastManager';
+import { BlurView } from '@react-native-community/blur';
+import Button from '../../utils/component/Button';
+import Loader from '../../utils/component/Loader';
+import { Constant } from '../../utils/Constant';
+import { useTranslation } from 'react-i18next';
 
 type ReportProductProps = {
     navigation: any
 }
 const ReportProduct = ({ navigation }: ReportProductProps) => {
-
-
+    const route = useRoute();
+    const { feature_id } = route.params as { feature_id: number, };
     const [rating, setRating] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
   
-    const [username, setUsername] = useState<string>('');
+    const [desc, setDesc] = useState<string>('');
     const [showPopup1, setShowPopup1] = useState(false);
     const closePopup1 = () => setShowPopup1(false);
     const { width } = Dimensions.get('window');
     const { t } = useTranslation();
+    const [title, settitle] = useState('');
+    const closePopup2 = () => setShowPopup1(false);
   
   
-    // const handleSubmit = async () => {
-    //   if (rating === 0) {
-    //     showToast(t(Constant.ENTER_RATING), 'error');
-    //     return;
-    //   }
-    //   if (username.trim() === '') {
-    //     showToast(t(Constant.ENTER_REVIEW), 'error');
-    //     return;
-    //   }
-  
-    //   try {
-    //     setIsLoading(true);
-  
-    //     const token = await AsyncStorage.getItem('userToken');
-    //     const userId = await AsyncStorage.getItem('userId');
-    //     if (!token) {
-    //       console.log('No token found');
-    //       return;
-    //     }
-    //     // console.log(category_id);
-  
-    //     const listingReportPayload = {
-    //         report_type: rating,
-    //         reference_id: 1,
-    //         reported_by: 1,
-    //         title: '',
-    //         description: ''
-    //     };
-    //     // console.log(createPayload);
-  
-    //     const url1 = `${MAIN_URL.baseUrl}category/users/reviews`;
-  
-    //     console.log(url1);
-    //     const response = await fetch(url1, {
-    //       method: 'POST',
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //         Authorization: `Bearer ${token}`,
-    //       },
-    //       body: JSON.stringify(createPayload),
-    //     });
-  
-    //     const result = await response.json();
-  
-    //     if (result.statusCode === 200) {
-    //       console.log('Review saved:', result);
-    //       showToast(t(result.message));
-    //       setShowPopup1(true);
-    //     } else {
-    //       console.warn('Error saving review:', result);
-    //       showToast(t(result.message) || 'Failed to submit review');
-    //     }
-    //   } catch (error) {
-    //     console.error('Review error:', error);
-    //   } finally {
-    //     setIsLoading(false);
-    //   }
-    // };
+    const handleSubmit = async () => {
+      console.log('Report Click');
+      if (title.trim() === '') {
+        showToast(t(Constant.TITLE_ISMAND), 'error');
+        return;
+      }
+
+      if (desc.trim() === '') {
+        showToast(t(Constant.DESC_REQ), 'error');
+        return;
+      }
+
+      try {
+        setIsLoading(true);
+
+        const token = await AsyncStorage.getItem('userToken');
+        const userId = await AsyncStorage.getItem('userId');
+        if (!token) {
+          console.log('No token found');
+          return;
+        }
+        // console.log(category_id);
+
+        const listingReportPayload = {
+        //   report_type: 'listing',
+          reference_id: feature_id,
+          reported_by: userId,
+          title: title,
+          description: desc,
+        };
+        
+
+        const url1 = `${MAIN_URL.baseUrl}category/listing-report`;
+        console.log("ReportListingurl:",url1);
+        console.log("ReportListingpayload:",listingReportPayload);
+
+        console.log(url1);
+        const response = await fetch(url1, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(listingReportPayload),
+        });
+
+        const result = await response.json();
+
+        if (result.statusCode === 200) {
+          console.log('Review saved:', result);
+          showToast(t(result.message));
+          setShowPopup1(true);
+        } else {
+          console.warn('Error saving review:', result);
+          showToast(t(result.message) || 'Failed to submit review');
+        }
+      } catch (error) {
+        console.error('Review error:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     return (
-        <ImageBackground source={bgImage} style={styles.background}>
+      <ImageBackground source={bgImage} style={styles.background}>
         <View style={styles.fullScreenContainer}>
           {/* Header */}
           <View style={styles.header}>
@@ -106,7 +135,7 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
                 </View>
               </TouchableOpacity>
               <Text allowFontScaling={false} style={styles.unizyText}>
-                {t('write_a_review')}
+                {t('report_listing')}   
               </Text>
               <View style={{ width: 48 }} />
             </View>
@@ -116,35 +145,43 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
               <Loader />
             </View>
           )}
-  
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+
+          <TouchableWithoutFeedback
+            onPress={Keyboard.dismiss}
+            accessible={false}
+          >
             <View
               style={{
                 flex: 1,
+                gap: 10,
                 paddingTop: Platform.OS === 'ios' ? 120 : 100,
                 paddingHorizontal: 16,
               }}
             >
-              <View style={styles.innercontainer}>
-                <Text allowFontScaling={false} style={styles.mainlabel}>
-                  {t('how_many_stars')}
+              
+              <Text allowFontScaling={false} style={styles.mainlabel1}>
+                  {t('Report Title')}
                 </Text>
-                <Text allowFontScaling={false} style={styles.sublabel}>
-                  {t('slide_to_rate')}
-                </Text>
+              <View style={styles.login_container1}>
+             
+                <TextInput
+                  allowFontScaling={false}
+                  style={[styles.personalEmailID_TextInput1]}
+                  placeholder={t('enter_report_title')}
+                  placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                  value={title}
+                  maxLength={50}
+                  onChangeText={text => {
+                    settitle(text);
+                  }}
+                />
               </View>
-  
-              <View
-                style={{ marginTop: 16, marginBottom: 20, alignItems: 'center' }}
-              >
-                <AddRating starSize={40} onChange={setRating} />
-              </View>
-  
+
               <View style={styles.innercontainer}>
                 <Text allowFontScaling={false} style={styles.mainlabel1}>
                   {t('tell_us_more')}{' '}
                 </Text>
-  
+
                 <View style={styles.login_container}>
                   <TextInput
                     allowFontScaling={false}
@@ -155,104 +192,87 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
                     placeholder={t('tell')}
                     placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
                     multiline={true}
-                    value={username}
-                    onChangeText={usernameText => setUsername(usernameText)}
+                    value={desc}
+                    onChangeText={de => setDesc(de)}
                     onSubmitEditing={Keyboard.dismiss}
                   />
                 </View>
               </View>
             </View>
           </TouchableWithoutFeedback>
-          <Button title={t('submit_review')} 
-        //   onPress={() => } 
-          />
-  
-          <Modal
-            visible={showPopup1}
-            transparent
-            animationType="fade"
-            onRequestClose={closePopup1}
+          <Button title={t('submit')} onPress={() => {
+                handleSubmit()
+          }} />
+
+
+<Modal
+          visible={showPopup1}
+          transparent
+          animationType="fade"
+          onRequestClose={closePopup2}
+        >
+          <TouchableWithoutFeedback
+            onPress={() => {
+              navigation.replace('MyListing');
+            }}
           >
-            <TouchableWithoutFeedback onPress={closePopup1}>
-              <View style={styles.overlay}>
-                <BlurView
-                  style={{
-                    flex: 1,
-                    alignContent: 'center',
-                    justifyContent: 'center',
-                    width: '100%',
-                    alignItems: 'center',
-                  }}
-                  blurType="light"
-                  blurAmount={10}
-                  reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-                >
-                  <View
-                    style={[
-                      StyleSheet.absoluteFill,
-                      { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-                    ]}
+            <View style={styles.overlay}>
+              <BlurView
+                style={{
+                  flex: 1,
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                  alignItems: 'center',
+                }}
+                blurType="dark"
+                blurAmount={1000}
+                reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+              >
+                <View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                  ]}
+                />
+
+                <View style={styles.popupContainer}>
+                  <Image
+                    source={require('../../../assets/images/success_icon.png')}
+                    style={styles.logo}
+                    resizeMode="contain"
                   />
-  
-                  <View style={styles.popupContainer}>
-                    <Image
-                      source={require('../../../assets/images/success_icon.png')}
-                      style={styles.logo}
-                      resizeMode="contain"
-                    />
-                    <Text
-                      allowFontScaling={false}
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.80)',
-                        fontFamily: 'Urbanist-SemiBold',
-                        fontSize: 20,
-                        fontWeight: '600',
-                        letterSpacing: -0.4,
-                        lineHeight: 28,
-                      }}
-                    >
-                      {t('review_submitted_success')}!
+                  <Text allowFontScaling={false} style={styles.mainheader}>
+                    {t('success_report')}
+                  </Text>
+                  <Text allowFontScaling={false} style={styles.subheader1}>
+                    {t('report_submitted_success')}
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.loginButton}
+                    onPress={() => {
+                    //   navigation.replace('MyListing');
+
+                    //   navigation.reset({
+                    //     index: 0,
+                    //     routes: [
+                    //       {
+                    //         name: 'MyListing',
+                    //       },
+                    //     ],
+                    //   });
+                    navigation.goBack();
+                    }}
+                  >
+                    <Text allowFontScaling={false} style={styles.loginText}>
+                     {t('done')}
                     </Text>
-  
-                    <TouchableOpacity
-                      style={styles.loginButton}
-                      onPress={() => {
-                        setShowPopup1(false);
-                        navigation.reset({
-                          index: 0,
-                          routes: [
-                            {
-                              name: 'Dashboard',
-                              params: {
-                                AddScreenBackactiveTab: 'Home',
-                                isNavigate: false,
-                              },
-                            },
-                          ],
-                        });
-                      }}
-                    >
-                      <Text allowFontScaling={false} style={styles.loginText}>
-                        {t('return_home')}
-                      </Text>
-                    </TouchableOpacity>
-  
-                    <TouchableOpacity
-                      style={styles.loginButton1}
-                      onPress={() => {
-                        navigation.replace('MyOrders');
-                        setShowPopup1(false);
-                      }}
-                    >
-                      <Text allowFontScaling={false} style={styles.loginText1}>
-                        {t('return_reviews')}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                </BlurView>
-              </View>
-            </TouchableWithoutFeedback>
-          </Modal>
+                  </TouchableOpacity>
+                </View>
+              </BlurView>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
         </View>
         <NewCustomToastContainer />
       </ImageBackground>
@@ -261,6 +281,24 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
 
 
 const styles = StyleSheet.create({
+    mainheader: {
+        color: 'rgba(255, 255, 255, 0.80)',
+        fontFamily: 'Urbanist-SemiBold',
+        fontSize: 20,
+        fontWeight: '600',
+        letterSpacing: -0.4,
+        lineHeight: 28,
+      },
+      subheader1: {
+        color: 'rgba(255, 255, 255, 0.48)',
+        fontFamily: 'Urbanist-Regular',
+        fontSize: 14,
+        fontWeight: '400',
+        textAlign: 'center',
+        marginTop: 6,
+        letterSpacing: -0.28,
+        lineHeight: 19.6,
+      },
     fullLoader: {
       position: "absolute",
       top: 0,
@@ -373,6 +411,23 @@ const styles = StyleSheet.create({
       fontWeight: '600',
       fontFamily: 'Urbanist-SemiBold',
     },
+    login_container1: {
+        display: 'flex',
+        width: '100%',
+        height: 44,
+        gap: (Platform.OS === 'ios' ? 10 : 10),
+        alignSelf: 'stretch',
+        borderRadius: 12,
+        borderWidth: 0.6,
+        borderColor: '#ffffff2c',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignContent: 'center',
+        alignItems: 'center',
+        backgroundColor:
+          'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+        boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+      },
   
     login_container: {
       display: 'flex',
@@ -400,6 +455,17 @@ const styles = StyleSheet.create({
       paddingLeft: 12,
       height: '100%',
     },
+    personalEmailID_TextInput1: {
+        width: '93%',
+        //padding:12,
+        fontFamily: 'Urbanist-Regular',
+        fontWeight: '400',
+        fontSize: 17,
+        lineHeight: 22,
+        fontStyle: 'normal',
+        color:"#fff",
+        
+      },
     payText: {
       color: '#002050',
       fontFamily: 'Urbanist-Medium',

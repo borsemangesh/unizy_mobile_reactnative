@@ -999,7 +999,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
               </View>
               <TouchableOpacity  
               onPress={()=>{
-                navigation.navigate('ReportProduct')
+                navigation.navigate('ReportProduct',{ feature_id: id })
               }}>
               <View style={styles.reportButtonCard}>
                 <Image
