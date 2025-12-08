@@ -826,6 +826,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
   },
   listContainer: {
+    marginBottom: 100
   },
   versionRow: {
     flexDirection: 'row',

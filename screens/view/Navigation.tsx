@@ -53,6 +53,7 @@ import ChangePassword from './dashboard/ChangePassword';
 import { navigationReady } from '../utils/NotificationHandler';
 import TeamsAndCondition from './authentication/termsconditinAndPrivacyPolicy/TeamsAndCondition';
 import PrivacyAndPolicy from './authentication/termsconditinAndPrivacyPolicy/PrivacyAndPolicy';
+import ReportProduct from './dashboard/ReportProduct';
 
 const Stack = createNativeStackNavigator();
 
@@ -384,6 +385,14 @@ export const Navigation = () => {
         <Stack.Screen
           name="PrivacyAndPolicy"
           component={PrivacyAndPolicy}
+          options={{
+            headerShown: false,
+            presentation: 'fullScreenModal',
+          }}
+        />
+        <Stack.Screen
+          name="ReportProduct"
+          component={ReportProduct}
           options={{
             headerShown: false,
             presentation: 'fullScreenModal',

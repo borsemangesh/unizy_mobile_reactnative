@@ -994,6 +994,10 @@ const formatDate = (dateString?: string, t?: any) => {
                   </View>
                 </View>
               </View>
+              <TouchableOpacity  
+              onPress={()=>{
+                navigation.navigate('ReportProduct')
+              }}>
               <View style={styles.reportButtonCard}>
                 <Image
                   source={require('../../../assets/images/report.png')}
@@ -1009,9 +1013,10 @@ const formatDate = (dateString?: string, t?: any) => {
                     letterSpacing: -0.28,
                   }}
                 >
-                  Report this Listing
+                  {t('report_this_risting')}
                 </Text>
               </View>
+              </TouchableOpacity>
             </View>
           </View>
         </AnimatedReanimated.ScrollView>

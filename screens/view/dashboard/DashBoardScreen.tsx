@@ -131,7 +131,7 @@ const ProductItem: React.FC<ProductItemProps> = ({
       ]}
     >
       <Image source={item.icon} style={styles.cardIcon} />
-      <View style={{width: 150,
+      <View style={{width: 140,
     paddingLeft: 9,}}>
         <Text  allowFontScaling={false} style={styles.cardText} numberOfLines={2}>
           {item.name}
@@ -1160,7 +1160,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
         )}
 
         <KeyboardAvoidingView
-          style={{ flex: 1 }}
+          style={{ flex: 1}}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
         >
