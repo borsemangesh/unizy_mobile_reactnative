@@ -592,7 +592,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
       const feature_id = createJson?.data?.id;
       if (!feature_id) {
-       // console.log(" feature_id missing");
+        // console.log(" feature_id missing");
         return;
       }
 
@@ -949,7 +949,12 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
                 }}
               >
                 <Text allowFontScaling={false} style={styles.productDesHeding}>
-                  {userMeta?.category?.id === 3 ? t('dish_description') : `${userMeta?.category?.name ?? ''} ${t('des')}`}
+                  {userMeta?.category?.id === 2 || userMeta?.category?.id === 5
+                    ? t('service_description')
+                    : userMeta?.category?.id === 3
+                      ? t('dish_description')
+                      : `${userMeta?.category?.name ?? ''} ${t('des')}`
+                  }
                 </Text>
                 <Text allowFontScaling={false} style={styles.productDesc}>
                   {descriptionvalue}

@@ -74,12 +74,12 @@ type ReviewItem = {
   thumbnail: string;
   profileshowinview: boolean;
   createdby: CreatedBy;
-  price:number
+  price: number
 };
 
-type university={
-  id:number,
-  name:string
+type university = {
+  id: number,
+  name: string
 }
 
 type UserReviewsProps = {
@@ -93,17 +93,17 @@ type RouteParams = {
     lastname: string;
     id: number;
     profile: string | null;
-    university: {id:number,name:string};
-  };  
+    university: { id: number, name: string };
+  };
 };
 
 
 
-const UserReviews = ({ navigation }: UserReviewsProps)  => {
+const UserReviews = ({ navigation }: UserReviewsProps) => {
 
 
- const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
-    const { members } =   route.params;
+  const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
+  const { members } = route.params;
 
   const [featurelist, setFeaturelist] = useState<ReviewItem[]>([]);
   const [search, setSearch] = useState<string>('');
@@ -120,35 +120,32 @@ const UserReviews = ({ navigation }: UserReviewsProps)  => {
   const [totalRecords, setTotalRecords] = useState(0);
   const { t } = useTranslation();
 
-  const { height } = Dimensions.get('window');
-  const isEmpty = featureList.length === 0;
-
   type Category = {
-  id: number | null; 
-  name: string;
-};
- const [categories, setCategories] = useState<Category[]>([
-      { id: null, name: t('all') },
-    ]);
-    const [selectedCategory, setSelectedCategory] = useState<Category>({
-      id: null,
-      name: t('all'),
-    });
+    id: number | null;
+    name: string;
+  };
+  const [categories, setCategories] = useState<Category[]>([
+    { id: null, name: t('all') },
+  ]);
+  const [selectedCategory, setSelectedCategory] = useState<Category>({
+    id: null,
+    name: t('all'),
+  });
   const scrollY = useSharedValue(0);
- 
+
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: event => {
       'worklet';
       scrollY.value = event.contentOffset.y;
     },
   });
- 
+
   const animatedBlurStyle = useAnimatedStyle(() => {
     'worklet';
     const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
     return { opacity };
   });
- 
+
   const animatedButtonStyle = useAnimatedStyle(() => {
     'worklet';
     const borderColor = interpolateColor(
@@ -164,245 +161,232 @@ const UserReviews = ({ navigation }: UserReviewsProps)  => {
   });
   const animatedIconStyle = useAnimatedStyle(() => {
     'worklet';
- 
+
     const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
- 
+
     const tintColor = interpolateColor(
       scrollY.value,
       [0, 150],
       ['#FFFFFF', '#002050'],
     );
- 
+
     return {
       opacity,
       tintColor,
     };
   });
- 
+
   const blurAmount = useDerivedValue(() =>
     interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
   );
 
-
-
-
-useEffect(() => {
-  const loadCategories = async () => {
-    const stored = await AsyncStorage.getItem('categories');
-    if (stored) {
-      const parsed = JSON.parse(stored); 
-      const catObjects = [
-        { id: null, name: t('all') },
-        ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
-      ];
-      setCategories(catObjects);
-      setSelectedCategory(catObjects[0]); 
-    }
-  };
-  loadCategories();
-}, [t]);
-
-// useEffect(() => {
-//   setPage(1);
-//   displayListOfProduct(selectedCategory?.id ?? null, 1);
-// }, [selectedCategory]);
-
-useEffect(() => {
-  // Skip on initial mount - let the initial load handle it
-  if (isInitialMount.current) {
-    return;
-  }
-
-  setPage(1);
-  setFeatureList([]);      
-  setTotalRecords(0);     
-  setIsLoadingMore(false); 
-  displayListOfProduct(selectedCategory?.id ?? null, 1, false);
-}, [selectedCategory]);
-
-useEffect(() => {
-  // Only load on initial mount
-  if (isInitialMount.current) {
-    isInitialMount.current = false;
-    setPage(1);
-    displayListOfProduct(selectedCategory?.id ?? null, 1, true);
-  }
-}, []);
-
-
-const displayListOfProduct = async (categoryId: number | null, pageNum: number, isInitialLoad: boolean = false) => {
-  let start = Date.now();
-  
-  try {
-    if (isInitialLoad) {
-      setInitialLoading(true);
-    } else {
-      setIsLoading(true);
-    }
-    
-    const pagesize = 10;
-    let url = `${MAIN_URL.baseUrl}user/user-review?page=${pageNum}&pagesize=${pagesize}&user_id=${members.id}`;
-
-    if (categoryId) {
-      url += `&category_id=${categoryId}`;
-    }
-
-    console.log(url)
-    const token = await AsyncStorage.getItem('userToken');
-    if (!token) {
-      if (isInitialLoad) {
-        await new Promise(r => setTimeout(r, 1000));
-        setInitialLoading(false);
+  useEffect(() => {
+    const loadCategories = async () => {
+      const stored = await AsyncStorage.getItem('categories');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        const catObjects = [
+          { id: null, name: t('all') },
+          ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
+        ];
+        setCategories(catObjects);
+        setSelectedCategory(catObjects[0]);
       }
+    };
+    loadCategories();
+  }, [t]);
+
+
+  useEffect(() => {
+    if (isInitialMount.current) {
       return;
     }
 
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
+    setPage(1);
+    setFeatureList([]);
+    setTotalRecords(0);
+    setIsLoadingMore(false);
+    displayListOfProduct(selectedCategory?.id ?? null, 1, false);
+  }, [selectedCategory]);
 
-    const jsonResponse = await response.json();
-
-    const reviews: ReviewItem[] = jsonResponse.data?.features ?? [];
-    const total = jsonResponse.data?.totalRecords ?? reviews.length;
-    setTotalRecords(total);
-
-    if (jsonResponse.statusCode === 200) {
-      if (pageNum === 1) {
-      setFeatureList(reviews);
-      // If reviews are loaded, hide initial loader immediately
-      if (isInitialLoad) {
-        setInitialLoading(false);
-      }
-    } else {
-      setFeatureList(prev => [...prev, ...reviews]); 
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      setPage(1);
+      displayListOfProduct(selectedCategory?.id ?? null, 1, true);
     }
-      
-    } 
-    else if (jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403) {
+  }, []);
+
+
+  const displayListOfProduct = async (categoryId: number | null, pageNum: number, isInitialLoad: boolean = false) => {
+    let start = Date.now();
+
+    try {
       if (isInitialLoad) {
-        await new Promise(r => setTimeout(r, 1000));
-        setInitialLoading(false);
+        setInitialLoading(true);
       } else {
-        setIsLoading(false);
+        setIsLoading(true);
       }
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+
+      const pagesize = 10;
+      let url = `${MAIN_URL.baseUrl}user/user-review?page=${pageNum}&pagesize=${pagesize}&user_id=${members.id}`;
+
+      if (categoryId) {
+        url += `&category_id=${categoryId}`;
+      }
+
+      console.log(url)
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        if (isInitialLoad) {
+          await new Promise(r => setTimeout(r, 1000));
+          setInitialLoading(false);
+        }
+        return;
+      }
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
-    } 
-    else {
+
+      const jsonResponse = await response.json();
+
+      const reviews: ReviewItem[] = jsonResponse.data?.features ?? [];
+      const total = jsonResponse.data?.totalRecords ?? reviews.length;
+      setTotalRecords(total);
+
+      if (jsonResponse.statusCode === 200) {
+        if (pageNum === 1) {
+          setFeatureList(reviews);
+          if (isInitialLoad) {
+            setInitialLoading(false);
+          }
+        } else {
+          setFeatureList(prev => [...prev, ...reviews]);
+        }
+
+      }
+      else if (jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403) {
+        if (isInitialLoad) {
+          await new Promise(r => setTimeout(r, 1000));
+          setInitialLoading(false);
+        } else {
+          setIsLoading(false);
+        }
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+        });
+      }
+      else {
+        if (isInitialLoad) {
+          await new Promise(r => setTimeout(r, 1000));
+          setInitialLoading(false);
+        } else {
+          setIsLoading(false);
+        }
+      }
+
+    } catch (err) {
+      console.log('Error:', err);
       if (isInitialLoad) {
         await new Promise(r => setTimeout(r, 1000));
         setInitialLoading(false);
       } else {
         setIsLoading(false);
       }
+    } finally {
+      if (isInitialLoad) {
+        let elapsed = Date.now() - start;
+        let remaining = Math.max(0, 1000 - elapsed);
+        await new Promise(r => setTimeout(r, remaining));
+        setInitialLoading(false);
+      } else {
+        setIsLoading(false);
+      }
     }
-
-  } catch (err) {
-    console.log('Error:', err);
-    if (isInitialLoad) {
-      await new Promise(r => setTimeout(r, 1000));
-      setInitialLoading(false);
-    } else {
-      setIsLoading(false);
-    }
-  } finally {
-    if (isInitialLoad) {
-      let elapsed = Date.now() - start;
-      let remaining = Math.max(0, 1000 - elapsed);
-      await new Promise(r => setTimeout(r, remaining));
-      setInitialLoading(false);
-    } else {
-      setIsLoading(false);
-    }
-  }
-};
+  };
 
 
 
-const filteredFeatures = featurelist.filter(item =>
-  (item.feature_title ?? '').toLowerCase().includes(search.toLowerCase())
-);
-
- const formatDate = (dateString?: string, t?: any) => {
-  if (!dateString) return "";
-
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) return "";
-
-  const day = date.getDate();
-  const year = date.getFullYear();
-  const lang = i18n.language; // detect current language
-
-  // ---------- Suffix only for English ----------
-  let suffix = "";
-  if (lang === "en") {
-    if (day % 10 === 1 && day !== 11) suffix = "st";
-    else if (day % 10 === 2 && day !== 12) suffix = "nd";
-    else if (day % 10 === 3 && day !== 13) suffix = "rd";
-    else suffix = "th";
-  }
-
-  // ---------- Month translation ----------
-  const monthIndex = date.getMonth(); // 0–11
-  const monthKeys = [
-    "jan","feb","mar","apr","may","jun",
-    "jul","aug","sep","oct","nov","dec"
-  ];
-
-  const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
-
-  return `${day}${suffix} ${monthShort} ${year}`;
-};
-
-
-const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
-  const isLastOddItem =
-    filteredFeatures.length % 2 !== 0 &&
-    index === filteredFeatures.length - 1;
-
-  const displayDate = formatDate(item.created_at,t);
-
-  const productImage = item.thumbnail
-    ? { uri: item.thumbnail }
-    : require('../../../assets/images/drone.png');
-
-  const displayPrice = item.price
-  const displayTitle = item.feature_title ?? "Title";
-  const rating = item.rating?.toString() ?? "0";
-  const comment = item.comment ?? '';
-
-  const createdby = item.createdby ?? null;
-  const profileshowinview = item.profileshowinview ?? false;
-
-
-  return (
-    <View
-      style={[
-        styles.itemContainer,
-        isLastOddItem && { marginRight: 'auto' },
-      ]}
-    >
-      <MyReviewCard
-        infoTitle={displayTitle}
-        inforTitlePrice={displayPrice}
-        rating={rating}
-        productImage={productImage}
-        reviewText={comment}
-        shareid={item.id}
-        date={displayDate}
-        createdby={createdby}
-        profileshowinview={profileshowinview}
-      />
-    </View>
+  const filteredFeatures = featurelist.filter(item =>
+    (item.feature_title ?? '').toLowerCase().includes(search.toLowerCase())
   );
-};
+
+  const formatDate = (dateString?: string, t?: any) => {
+    if (!dateString) return "";
+
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "";
+
+    const day = date.getDate();
+    const year = date.getFullYear();
+    const lang = i18n.language;
+
+    let suffix = "";
+    if (lang === "en") {
+      if (day % 10 === 1 && day !== 11) suffix = "st";
+      else if (day % 10 === 2 && day !== 12) suffix = "nd";
+      else if (day % 10 === 3 && day !== 13) suffix = "rd";
+      else suffix = "th";
+    }
+
+    const monthIndex = date.getMonth();
+    const monthKeys = [
+      "jan", "feb", "mar", "apr", "may", "jun",
+      "jul", "aug", "sep", "oct", "nov", "dec"
+    ];
+
+    const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+
+    return `${day}${suffix} ${monthShort} ${year}`;
+  };
+
+
+  const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
+    const isLastOddItem =
+      filteredFeatures.length % 2 !== 0 &&
+      index === filteredFeatures.length - 1;
+
+    const displayDate = formatDate(item.created_at, t);
+
+    const productImage = item.thumbnail
+      ? { uri: item.thumbnail }
+      : require('../../../assets/images/drone.png');
+
+    const displayPrice = item.price
+    const displayTitle = item.feature_title ?? "Title";
+    const rating = item.rating?.toString() ?? "0";
+    const comment = item.comment ?? '';
+
+    const createdby = item.createdby ?? null;
+    const profileshowinview = item.profileshowinview ?? false;
+
+    return (
+      <View
+        style={[
+          styles.itemContainer,
+          isLastOddItem && { marginRight: 'auto' },
+        ]}
+      >
+        <MyReviewCard
+          infoTitle={displayTitle}
+          inforTitlePrice={displayPrice}
+          rating={rating}
+          productImage={productImage}
+          reviewText={comment}
+          shareid={item.id}
+          date={displayDate}
+          createdby={createdby}
+          profileshowinview={profileshowinview}
+        />
+      </View>
+    );
+  };
 
 
   return (
@@ -425,274 +409,208 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
             }}
           />
         )}
-            <StatusBar
-                 translucent
-                 backgroundColor="transparent"
-                 barStyle="light-content"
-               />
-        
-               <Animated.View
-                 style={[styles.headerWrapper, animatedBlurStyle]}
-                 pointerEvents="none"
-               >
-                 <MaskedView
-                   style={StyleSheet.absoluteFill}
-                   maskElement={
-                     <LinearGradient
-                       colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
-                       locations={[0, 0.8]}
-                       start={{ x: 0, y: 0 }}
-                       end={{ x: 0, y: 1 }}
-                       style={StyleSheet.absoluteFill}
-                     />
-                   }
-                 >
-                   <BlurView
-                     style={StyleSheet.absoluteFill}
-                     blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
-                     blurAmount={Platform.OS === 'ios' ? 45 : 45}
-                    //  overlayColor="rgba(255,255,255,0.05)"
-                     reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
-                   />
-                   <LinearGradient
-                     colors={[
-                       'rgba(255, 255, 255, 0.45)',
-                       'rgba(255, 255, 255, 0.02)',
-                       'rgba(255, 255, 255, 0.02)',
-                     ]}
-                     style={StyleSheet.absoluteFill}
-                     start={{ x: 0, y: 0 }}
-                     end={{ x: 0, y: 1 }}
-                   />
-                 </MaskedView>
-               </Animated.View>
-        
-               <View style={styles.headerContent} pointerEvents="box-none">
-                 <TouchableOpacity
-                   onPress={() => { navigation.goBack();}}
-                   style={styles.backButtonContainer}
-                   activeOpacity={0.7}
-                 >
-                   <Animated.View
-                     style={[styles.blurButtonWrapper, animatedButtonStyle]}
-                   >
-                     <Animated.View
-                       style={[
-                         StyleSheet.absoluteFill,
-                         useAnimatedStyle(() => ({
-                           opacity: interpolate(
-                             scrollY.value,
-                             [0, 30],
-                             [1, 0],
-                             'clamp',
-                           ),
-                           backgroundColor: 'rgba(255,255,255,0.1)',
-                           borderRadius: 40,
-                         })),
-                       ]}
-                     />
-        
-                     <Animated.View
-                       style={[
-                         StyleSheet.absoluteFill,
-                         useAnimatedStyle(() => ({
-                           opacity: interpolate(
-                             scrollY.value,
-                             [0, 50],
-                             [0, 1],
-                             'clamp',
-                           ),
-                         })),
-                       ]}
-                     >
-                       <BlurView
-                         style={StyleSheet.absoluteFill}
-                         blurType="light"
-                         blurAmount={10}
-                         reducedTransparencyFallbackColor="transparent"
-                       />
-                     </Animated.View>
-        
-                     {/* Back Icon */}
-                     <Animated.Image
-                       source={require('../../../assets/images/back.png')}
-                       style={[{ height: 24, width: 24 }, animatedIconStyle]}
-                     />
-                   </Animated.View>
-                 </TouchableOpacity>
-                  <View style={{width:300}}>
-                 <Text allowFontScaling={false} numberOfLines={2} style={styles.unizyText}>
-                   {members.firstname} {t('reviews')}
-                 </Text>
-                 </View>
-                 <TouchableOpacity
-                  style={[styles.backButtonContainer]}
-                  // activeOpacity={0}
-                >
-                  <Animated.View
-                    style={[styles.blurButtonWrapper_none]}
-                  >
+        <StatusBar
+          translucent
+          backgroundColor="transparent"
+          barStyle="light-content"
+        />
 
-                    <Animated.View
-                      style={[
-                        StyleSheet.absoluteFill,
-                        useAnimatedStyle(() => ({
-                          opacity: interpolate(
-                            scrollY.value,
-                            [0, 0],
-                            [0, 0],
-                            'clamp',
-                          ),
-                          backgroundColor: 'transparent',
-                          borderRadius: 40,
-                        })),{display: 'none'}
-                      ]}
-                    />
+        <Animated.View
+          style={[styles.headerWrapper, animatedBlurStyle]}
+          pointerEvents="none"
+        >
+          <MaskedView
+            style={StyleSheet.absoluteFill}
+            maskElement={
+              <LinearGradient
+                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                locations={[0, 0.8]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            }
+          >
+            <BlurView
+              style={StyleSheet.absoluteFill}
+              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+              blurAmount={Platform.OS === 'ios' ? 45 : 45}
+              //  overlayColor="rgba(255,255,255,0.05)"
+              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+            />
+            <LinearGradient
+              colors={[
+                'rgba(255, 255, 255, 0.45)',
+                'rgba(255, 255, 255, 0.02)',
+                'rgba(255, 255, 255, 0.02)',
+              ]}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+            />
+          </MaskedView>
+        </Animated.View>
 
-              {/* Blur view fades in as scroll increases */}
+        <View style={styles.headerContent} pointerEvents="box-none">
+          <TouchableOpacity
+            onPress={() => { navigation.goBack(); }}
+            style={styles.backButtonContainer}
+            activeOpacity={0.7}
+          >
+            <Animated.View
+              style={[styles.blurButtonWrapper, animatedButtonStyle]}
+            >
               <Animated.View
                 style={[
                   StyleSheet.absoluteFill,
                   useAnimatedStyle(() => ({
                     opacity: interpolate(
                       scrollY.value,
-                      [0, 0],
-                      [0, 0],
+                      [0, 30],
+                      [1, 0],
                       'clamp',
                     ),
-                  })),{display: 'none'}
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 40,
+                  })),
+                ]}
+              />
+
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 50],
+                      [0, 1],
+                      'clamp',
+                    ),
+                  })),
                 ]}
               >
-                
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
+                />
               </Animated.View>
 
               {/* Back Icon */}
               <Animated.Image
                 source={require('../../../assets/images/back.png')}
-                style={[{ height: 25, width: 25,display: 'none' }]}
+                style={[{ height: 24, width: 24 }, animatedIconStyle]}
               />
             </Animated.View>
           </TouchableOpacity>
-               </View>
-            <Animated.FlatList
-              data={featureList}
-              renderItem={renderItem}
-              keyExtractor={(item, index) => {
-                'worklet';
-                return index.toString();
-              }}
-              ListHeaderComponent={
-                <View
-                  style={styles.categoryTabsContainer}
-                  pointerEvents="box-none"
-                >
-                  <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={styles.categoryTabsScrollContent}
-                    nestedScrollEnabled={true}
-                  >
-                    {categories.map((cat, index) => {
-                      const isSelected = selectedCategory.name === cat.name;
-                      return (
-                        <TouchableOpacity
-                          key={index}
-                          onPress={() => setSelectedCategory(cat)}
-                          activeOpacity={0.7}
-                        >
-                          {/* <View
-                            style={isSelected ? styles.tabcard : styles.tabcard1}
-                          > */}
-                          <SquircleView
-                            style={isSelected ? styles.tabcard : styles.tabcard1}
-                            squircleParams={{
-                              cornerSmoothing: 1,
-                              cornerRadius: 10,
-                              fillColor: isSelected
-                                ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)'
-                                : 'rgba(255, 255, 255, 0.06)',
-                            }}
-                          >
-                            <Text
-                              allowFontScaling={false}
-                              style={
-                                isSelected ? styles.tabtext : styles.othertext
-                              }
-                            >
-                              {cat.name}
-                            </Text>
-                          </SquircleView>
-                        </TouchableOpacity>
-                      );
-                    })}
-                  </ScrollView>
-                </View>
-              }
-              contentContainerStyle={[
-                styles.listContainer,
-                {
-                  paddingTop: (Platform.OS === 'ios'? 120 : 100),
-                  paddingBottom: isEmpty
-                    ? 10                      
-                    : Platform.select({
-                      ios: height * 0.01,   // ⬅ apply padding when list has data
-                      android: height * 0.04,
-                    }),
-                  flexGrow: 1,
-                },
-              ]}
-              onScroll={scrollHandler}
-              scrollEventThrottle={16}
-              onEndReachedThreshold={0.5}
-              // onEndReached={() => {
-              //   const nextPage = page + 1;
-              //   setPage(nextPage);
-              //   displayListOfProduct(selectedCategory?.id ?? null, nextPage);
-              // }}
-              onEndReached={() => {
-                if (featureList.length >= totalRecords) return; 
-                if (isLoadingMore) return; 
 
-                setIsLoadingMore(true);
-                const nextPage = page + 1;
-                setPage(nextPage);
-                displayListOfProduct(selectedCategory?.id ?? null, nextPage)
-                  .finally(() => setIsLoadingMore(false));
-              }}
-              ListFooterComponent={
-                isLoadingMore ? (
-                  <View style={{ paddingVertical: 20, alignItems: 'center' }}>
-                    <Loader
-                      containerStyle={{
-                        width: 50,
-                        height: 50,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}
-                    />
-                  </View>
-                ) : null
-              }
-              ListEmptyComponent={
-                !initialLoading && !isLoading ? (
-                <View style={[styles.emptyWrapper]}>
-                            <View style={styles.emptyContainer}>
-                              <Image
-                                source={require('../../../assets/images/noproduct.png')} // your image
-                                style={styles.emptyImage}
-                                resizeMode="contain"
-                              />
-                              <Text allowFontScaling={false} style={styles.emptyText}>
-                                {t('no_reviews_found')}
-                              </Text>
-                            </View>
-                            </View>
-                ) : null
-              }
-            />
+          <Text allowFontScaling={false} style={styles.unizyText}>
+            {members.firstname} {t('reviews')}
+          </Text>
+        </View>
+        <Animated.FlatList
+          data={featureList}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => {
+            'worklet';
+            return index.toString();
+          }}
+          ListHeaderComponent={
+            <View
+              style={styles.categoryTabsContainer}
+              pointerEvents="box-none"
+            >
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.categoryTabsScrollContent}
+                nestedScrollEnabled={true}
+              >
+                {categories.map((cat, index) => {
+                  const isSelected = selectedCategory.name === cat.name;
+                  return (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => setSelectedCategory(cat)}
+                      activeOpacity={0.7}
+                    >
+                      <SquircleView
+                        style={isSelected ? styles.tabcard : styles.tabcard1}
+                        squircleParams={{
+                          cornerSmoothing: 1,
+                          cornerRadius: 10,
+                          fillColor: isSelected
+                            ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)'
+                            : 'rgba(255, 255, 255, 0.06)',
+                        }}
+                      >
+                        <Text
+                          allowFontScaling={false}
+                          style={
+                            isSelected ? styles.tabtext : styles.othertext
+                          }
+                        >
+                          {cat.name}
+                        </Text>
+                      </SquircleView>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+            </View>
+          }
+          contentContainerStyle={[
+            styles.listContainer,
+            { paddingTop: Platform.OS === 'ios' ? 125 : 100, flexGrow: 1 },
+          ]}
+          onScroll={scrollHandler}
+          scrollEventThrottle={16}
+          onEndReachedThreshold={0.5}
+          onEndReached={() => {
+            if (featureList.length >= totalRecords) return;
+            if (isLoadingMore) return;
+
+            setIsLoadingMore(true);
+            const nextPage = page + 1;
+            setPage(nextPage);
+            displayListOfProduct(selectedCategory?.id ?? null, nextPage)
+              .finally(() => setIsLoadingMore(false));
+          }}
+          ListFooterComponent={
+            isLoadingMore ? (
+              <View style={{ paddingVertical: 20, alignItems: 'center' }}>
+                <Loader
+                  containerStyle={{
+                    width: 50,
+                    height: 50,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                />
+              </View>
+            ) : null
+          }
+          ListEmptyComponent={
+            !initialLoading && !isLoading ? (
+              <View style={[styles.emptyWrapper]}>
+                <View style={styles.emptyContainer}>
+                  <Image
+                    source={require('../../../assets/images/noproduct.png')}
+                    style={styles.emptyImage}
+                    resizeMode="contain"
+                  />
+                  <Text allowFontScaling={false} style={styles.emptyText}>
+                    {t('no_reviews_found')}
+                  </Text>
+                </View>
+              </View>
+            ) : null
+          }
+        />
 
       </View>
-      <NewCustomToastContainer/>
+      <NewCustomToastContainer />
     </ImageBackground>
   );
 
@@ -702,28 +620,37 @@ export default UserReviews;
 
 const styles = StyleSheet.create({
 
-  backButtonContainer: {
-    // position: 'absolute',
-    // left: 16,
-    zIndex: 11,
-    // top: 7,
-  },
-  blurButtonWrapper_none: {
-
-    width: 48,
-    height: 48,
-    borderRadius: 40,
-    overflow: 'hidden',
+  header: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    zIndex: 20,
+    paddingTop: Platform.OS === 'ios' ? 50 : 40,
+    paddingBottom: Platform.OS === 'ios' ? 16 : 12,
+    paddingHorizontal: 16,
     justifyContent: 'center',
+    overflow: 'hidden', 
+    flexDirection: 'row',
     alignItems: 'center',
-    borderColor: 'transparent',
+    elevation: 0,
     backgroundColor: 'transparent',
+    borderBottomWidth: 0,
+    shadowOpacity: 0,
+    shadowColor: 'transparent',
+    alignSelf: 'center',
+    minHeight: Platform.OS === 'ios' ? 80 : 88,
+  },
+  backButtonContainer: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 11,
+    top: 7,
   },
 
-   headerWrapper: {
+  headerWrapper: {
     position: 'absolute',
     top: Platform.OS === 'ios' ? '6%' : 40,
-    width: Platform.OS === 'ios' ? '100%' : '100%',
+    width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -734,19 +661,30 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: (Platform.OS === 'ios' ? 60 : 40),
-    width: '100%',
+    top: Platform.OS === 'ios' ? '6%' : 40,
+    width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
+    justifyContent: 'center',
+    // paddingHorizontal: 16,
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-    justifyContent: 'space-between',
+    marginTop: 2,
+    marginLeft: 1
   },
 
-  categoryTabsContainer: {width: '105%',paddingBottom: 16,paddingTop: 8 },
-  categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' },
+  categoryTabsContainer: {
+    width: '100%',
+    marginBottom: 12,
+    paddingLeft: 10
+  },
+
+  categoryTabsScrollContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingRight: 16,
+  },
   blurButtonWrapper: {
     width: 48,
     height: 48,
@@ -759,27 +697,25 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
   },
 
-    emptyWrapper: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      width:'100%',
-      // paddingHorizontal: 10,
-    },
-
- 
-   emptyContainer: {
+  emptyWrapper: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    width:'100%',
+    width: '100%',
+    paddingHorizontal: 10,
+  },
+
+
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     borderWidth: 0.3,
     borderColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius:24,
-    overflow:'hidden',
-    //minHeight:'80%',
-   //marginBottom:20,
+    borderRadius: 24,
+    overflow: 'hidden',
   },
   emptyImage: {
     width: 50,
@@ -791,55 +727,58 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
-    fontWeight:600
+    fontWeight: 600
   },
 
-tabcard: {
-  minHeight:38,
+  tabcard: {
+    minHeight: 38,
     paddingVertical: 10,
     paddingHorizontal: 16,
     marginRight: 8,
-     borderWidth: 0.4,
+    borderWidth: 0.4,
     borderColor: '#ffffff11',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
-      borderRadius:10,
-    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',  
-},
+    borderRadius: 10,
+    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+  },
   tabcard1: {
-     minHeight:38,
-     borderWidth: 0.4,
+    minHeight: 38,
+    borderWidth: 0.4,
     borderColor: '#ffffff11',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
 
-    borderRadius:10,
+    borderRadius: 10,
     boxSizing: 'border-box',
     paddingVertical: 10,
     paddingHorizontal: 16,
     marginRight: 8,
-    overflow:'hidden'
+    overflow: 'hidden'
   },
 
   tabtext: {
-    color: '#fff',   // selected tab text color
+    color: '#fff',   
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
-    fontSize:14
+    fontSize: 14
 
   },
   othertext: {
-    color: '#FFFFFF7A',   // unselected tab text color
+    color: '#FFFFFF7A',  
     fontWeight: '600',
-     fontFamily: 'Urbanist-SemiBold',
-     fontSize:14
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 14
   },
 
-  background: { 
+  background: {
     flex: 1,
+    width: '100%',
+    height: '100%'
   },
   fullScreenContainer: {
-     flex: 1,
+    flex: 1,
+    //marginTop: 10
   },
 
   headerRow: {
@@ -850,12 +789,12 @@ tabcard: {
     padding: 12,
     borderRadius: 40,
 
-     display: 'flex',
+    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor:
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-      boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
+    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
     height: 48,
@@ -867,14 +806,36 @@ tabcard: {
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
+    width: '100%',
+    marginTop: 17,
+  },
+  search_container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 16,
+    marginRight: 16,
+    borderRadius: 40,
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+  },
+  searchIcon: {
+    margin: 10,
+    height: 24,
+    width: 24
+  },
+  searchBar: {
+    fontSize: 17,
+    color: '#fff',
+    width: '85%',
   },
   listContainer: {
-    paddingHorizontal: 16,
-    width: '100%',
+    marginLeft: 10,
+    marginRight: 10,
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   row1: {
-    // flexDirection: 'row',
-    // justifyContent: 'flex-start',
   },
   itemContainer: {
     flex: 1,

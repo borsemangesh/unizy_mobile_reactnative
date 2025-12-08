@@ -241,34 +241,34 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     option_name: String(i + 1),
   }));
 
-const formatDate = (dateString?: string, t?: any) => {
-  if (!dateString) return "";
+  const formatDate = (dateString?: string, t?: any) => {
+    if (!dateString) return "";
 
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) return "";
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "";
 
-  const day = date.getDate();
-  const year = date.getFullYear();
-  const lang = i18n.language; 
+    const day = date.getDate();
+    const year = date.getFullYear();
+    const lang = i18n.language;
 
-  let suffix = "";
-  if (lang === "en") {
-    if (day % 10 === 1 && day !== 11) suffix = "st";
-    else if (day % 10 === 2 && day !== 12) suffix = "nd";
-    else if (day % 10 === 3 && day !== 13) suffix = "rd";
-    else suffix = "th";
-  }
+    let suffix = "";
+    if (lang === "en") {
+      if (day % 10 === 1 && day !== 11) suffix = "st";
+      else if (day % 10 === 2 && day !== 12) suffix = "nd";
+      else if (day % 10 === 3 && day !== 13) suffix = "rd";
+      else suffix = "th";
+    }
 
-  const monthIndex = date.getMonth();
-  const monthKeys = [
-    "jan","feb","mar","apr","may","jun",
-    "jul","aug","sep","oct","nov","dec"
-  ];
+    const monthIndex = date.getMonth();
+    const monthKeys = [
+      "jan", "feb", "mar", "apr", "may", "jun",
+      "jul", "aug", "sep", "oct", "nov", "dec"
+    ];
 
-  const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+    const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
 
-  return `${day}${suffix} ${monthShort} ${year}`;
-};
+    return `${day}${suffix} ${monthShort} ${year}`;
+  };
 
   const handlePay = (overrideAmount?: number) => {
     if (detail?.category?.id === 3 && overrideAmount === undefined) {
@@ -419,7 +419,7 @@ const formatDate = (dateString?: string, t?: any) => {
 
       setDetail(
         (prev: any) =>
-          prev ? { ...prev, isbookmarked: !prev.isbookmarked } : prev, 
+          prev ? { ...prev, isbookmarked: !prev.isbookmarked } : prev,
       );
 
       const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
@@ -460,7 +460,7 @@ const formatDate = (dateString?: string, t?: any) => {
 
       setDetail(
         (prev: any) =>
-          prev ? { ...prev, isbookmarked: !prev.isbookmarked } : prev, 
+          prev ? { ...prev, isbookmarked: !prev.isbookmarked } : prev,
       );
     }
   };
@@ -735,8 +735,8 @@ const formatDate = (dateString?: string, t?: any) => {
                     ? 20
                     : height * 0.01
                   : Platform.OS === 'ios'
-                  ? 75
-                  : height * 0.07,
+                    ? 75
+                    : height * 0.07,
             },
           ]}
         >
@@ -766,9 +766,8 @@ const formatDate = (dateString?: string, t?: any) => {
                         {t('service_duration')}:{' '}
                         <Text style={styles.durationValue}>
                           {detail?.hours
-                            ? `${detail.hours} ${
-                                detail.hours > 1 ? t('hours') : t('hour')
-                              }`
+                            ? `${detail.hours} ${detail.hours > 1 ? t('hours') : t('hour')
+                            }`
                             : `1 ${t('hour')}`}
                         </Text>
                       </Text>
@@ -789,7 +788,12 @@ const formatDate = (dateString?: string, t?: any) => {
                     allowFontScaling={false}
                     style={styles.productDesHeding}
                   >
-                    {t('product_description')}
+                    {detail?.category?.id === 2 || detail?.category?.id === 5
+                      ? t('service_description')
+                      : detail?.category?.id === 3
+                        ? t('dish_description')
+                        : `${detail?.category?.name ?? ''} ${t('des')}`
+                    }
                   </Text>
                   <Text allowFontScaling={false} style={styles.productDesc}>
                     {detail?.description || t('no_description_available')}
@@ -816,8 +820,8 @@ const formatDate = (dateString?: string, t?: any) => {
                     {detail?.category?.id === 3
                       ? t('dish_details')
                       : detail?.category?.name
-                      ? `${detail.category.name} ${t('details')}`
-                      : ''}
+                        ? `${detail.category.name} ${t('details')}`
+                        : ''}
                   </Text>
 
                   {detail?.params?.map((param: Param) => (
@@ -900,9 +904,8 @@ const formatDate = (dateString?: string, t?: any) => {
                     <View style={{ width: '80%', gap: 0 }}>
                       <Text allowFontScaling={false} style={styles.userName}>
                         {detail?.createdby
-                          ? `${detail.createdby.firstname || ''} ${
-                              detail.createdby.lastname || ''
-                            }`
+                          ? `${detail.createdby.firstname || ''} ${detail.createdby.lastname || ''
+                          }`
                           : 'Unknown User'}
                       </Text>
 
@@ -1013,7 +1016,7 @@ const formatDate = (dateString?: string, t?: any) => {
                     letterSpacing: -0.28,
                   }}
                 >
-                  {t('report_this_risting')}
+                  {t('report_listing')}
                 </Text>
               </View>
               </TouchableOpacity>
@@ -1285,7 +1288,7 @@ const formatDate = (dateString?: string, t?: any) => {
 
 const styles = StyleSheet.create({
 
-  reportButtonCard:{
+  reportButtonCard: {
     flexDirection: 'row',
     marginBottom: 6,
     borderRadius: 12,
@@ -1347,7 +1350,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', 
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
 
   fullScreenContainer: {
@@ -1467,7 +1470,7 @@ const styles = StyleSheet.create({
 
   stepIndicatorContainer: {
     position: 'absolute',
-    bottom: 12, 
+    bottom: 12,
     alignSelf: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
@@ -1638,7 +1641,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 10,
   },
-  
+
   scrollContainer: {
     paddingBottom: 80,
     paddingTop: Platform.OS === 'ios' ? 110 : 100,

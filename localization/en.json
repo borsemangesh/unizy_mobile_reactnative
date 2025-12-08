@@ -671,5 +671,11 @@
   "postal_code_req":"Postal code is required.",
   "student_req":"Student Email ID is invalid.",
   "personal_req":"Personal Email ID is invalid.",
-  "report_this_risting":"Report this Listing"
+  "report_listing":"Report this Listing",
+  "enter_first_name":"Enter First Name",
+  "enter_last_name":"Enter Last Name",
+  "enter_personal_email_id":"Enter Personal Email ID",
+  "enter_student_email_id":"Enter Student Email ID",
+  "enter_postal_code":"Enter Postal Code",
+  "enter_city":"Enter City"
 }

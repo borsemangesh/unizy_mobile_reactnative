@@ -40,7 +40,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import Loader from '../../utils/component/Loader';
 import i18n from '../../../localization/i18n';
-import ProfileCard from './ProfileCard';
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 type Feature = {
@@ -361,7 +360,15 @@ const formatDate = (dateString?: string, t?: any) => {
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
-       <StatusBar
+      <View style={styles.fullScreenContainer}>
+        <StatusBar
+          translucent
+          backgroundColor="transparent"
+          barStyle="light-content"
+        />
+
+
+        <StatusBar
           translucent
           backgroundColor="transparent"
           barStyle="light-content"
@@ -403,10 +410,6 @@ const formatDate = (dateString?: string, t?: any) => {
             />
           </MaskedView>
         </Animated.View>
-      <View style={styles.fullScreenContainer}>
-       
-
-        {/* Header Content */}
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() =>{
@@ -416,8 +419,7 @@ const formatDate = (dateString?: string, t?: any) => {
                   AddScreenBackactiveTab: 'Home',
                   isNavigate: false,
                 })
-              }
-              
+              }             
             }
             }
             style={styles.backButtonContainer}
@@ -474,57 +476,8 @@ const formatDate = (dateString?: string, t?: any) => {
           <Text allowFontScaling={false} style={styles.unizyText}>
             {t('My_Listings')}
           </Text>
-          <TouchableOpacity
-            style={[styles.backButtonContainer]}
-            // activeOpacity={0}
-          >
-            <Animated.View
-              style={[styles.blurButtonWrapper_none]}
-            >
-
-              <Animated.View
-                style={[
-                  StyleSheet.absoluteFill,
-                  useAnimatedStyle(() => ({
-                    opacity: interpolate(
-                      scrollY.value,
-                      [0, 0],
-                      [0, 0],
-                      'clamp',
-                    ),
-                    backgroundColor: 'transparent',
-                    borderRadius: 40,
-                  })),{display: 'none'}
-                ]}
-              />
-
-              {/* Blur view fades in as scroll increases */}
-              <Animated.View
-                style={[
-                  StyleSheet.absoluteFill,
-                  useAnimatedStyle(() => ({
-                    opacity: interpolate(
-                      scrollY.value,
-                      [0, 0],
-                      [0, 0],
-                      'clamp',
-                    ),
-                  })),{display: 'none'}
-                ]}
-              >
-                
-              </Animated.View>
-
-              {/* Back Icon */}
-              <Animated.Image
-                source={require('../../../assets/images/back.png')}
-                style={[{ height: 25, width: 25,display: 'none' }]}
-              />
-            </Animated.View>
-          </TouchableOpacity>
         </View>
-        {/* List */}
-        {/* <View style={{ flex: 1, overflow: 'hidden' }}> */}
+        <View style={{ flex: 1, overflow: 'hidden' }}>
           <Animated.FlatList
             data={featureList}
             scrollEnabled={true} 
@@ -579,11 +532,11 @@ const formatDate = (dateString?: string, t?: any) => {
             contentContainerStyle={[
               styles.listContainer,
               {
-                paddingTop: (Platform.OS === 'ios'? 120 : 100),
+                paddingTop: Platform.OS === 'ios' ? 114 : 100,
                 paddingBottom: isEmpty
                   ? 10                      
                   : Platform.select({
-                    ios: height * 0.01,   // ⬅ apply padding when list has data
+                    ios: height * 0.01,  
                     android: height * 0.04,
                   }),
                 flexGrow: 1,
@@ -634,7 +587,7 @@ const formatDate = (dateString?: string, t?: any) => {
               ) : null 
             }
           />
-        {/* </View> */}
+        </View>
       </View>
       <NewCustomToastContainer />
     </ImageBackground>
@@ -644,9 +597,6 @@ const formatDate = (dateString?: string, t?: any) => {
 export default MyListing;
 
 const styles = StyleSheet.create({
-  background: { flex: 1 },
-  fullScreenContainer: { flex: 1 },
-
   emptyWrapper: {
     flex: 1,
     justifyContent: 'center',
@@ -656,8 +606,6 @@ const styles = StyleSheet.create({
   },
 
   emptyContainer: {
-
-
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -696,7 +644,7 @@ const styles = StyleSheet.create({
   headerWrapper: {
     position: 'absolute',
     top: 0,
-    width: Platform.OS === 'ios' ? '100%' : '100%',
+    width: Platform.OS === 'ios' ? 393 : '100%',
     height: Platform.OS === 'ios' ? 180 : 180,
     zIndex: 10,
     overflow: 'hidden',
@@ -705,19 +653,63 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: (Platform.OS === 'ios' ? 60 : 40),
-    width: '100%',
+    top: Platform.OS === 'ios' ? '6%' : 40,
+    width: Platform.OS === 'ios' ? 393 : '100%',
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     paddingHorizontal: 16,
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-    justifyContent: 'space-between',
+    marginTop: 2,
+    marginLeft: 1
+  },
+  tabtext: {
+    color: '#fff', 
+    fontWeight: '600',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 14,
+  },
+  othertext: {
+    color: '#FFFFFF7A', 
+    fontWeight: '600',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 14,
   },
 
+  background: {
+    flex: 1,
+  },
+  fullScreenContainer: {
+    flex: 1,
+  },
+
+  header: {
+    position: 'absolute',
+    top: 0,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    zIndex: 20,
+    paddingTop: Platform.OS === 'ios' ? 50 : 40,
+    paddingBottom: Platform.OS === 'ios' ? 16 : 12,
+    paddingHorizontal: 16,
+    justifyContent: 'center',
+    overflow: 'hidden',
+    flexDirection: 'row',
+    alignItems: 'center',
+    elevation: 0,
+    backgroundColor: 'transparent',
+    borderBottomWidth: 0,
+    shadowOpacity: 0,
+    shadowColor: 'transparent',
+    alignSelf: 'center',
+    minHeight: Platform.OS === 'ios' ? 80 : 88,
+  },
   backButtonContainer: {
+    position: 'absolute',
+    left: 16,
     zIndex: 11,
+    top: 7,
   },
   headerRow: {
     flexDirection: 'row',
@@ -738,18 +730,6 @@ const styles = StyleSheet.create({
 
     borderColor: '#ffffff2c',
   },
-
-  blurButtonWrapper_none: {
-
-    width: 48,
-    height: 48,
-    borderRadius: 40,
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderColor: 'transparent',
-    backgroundColor: 'transparent',
-  },
   unizyText: {
 
     color: '#FFFFFF',
@@ -757,6 +737,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
+    width: '100%',
+    marginTop: 17,
   },
   search_container: {
     flexDirection: 'row',
@@ -783,13 +765,17 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 
-  categoryTabsContainer: {width: '105%',paddingBottom: 16,paddingTop: 8 },
-  categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' },
+  categoryTabsContainer: { 
+    marginBottom: 12, 
+    marginTop: 12, 
+    width: '105%',
+   },
+  categoryTabsScrollContent: { 
+    flexDirection: 'row', 
+    alignItems: 'center' 
+  },
 
-
-
- tabcard: {
-   
+ tabcard: {  
     minHeight: 38,
     paddingVertical: 10,
     paddingHorizontal: 16,
@@ -808,7 +794,6 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff11',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
     borderEndEndRadius: 10,
     borderStartEndRadius: 10,
     borderTopLeftRadius: 10,
@@ -816,29 +801,17 @@ const styles = StyleSheet.create({
     borderBottomStartRadius: 10,
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
-
     borderTopColor: '#ffffff2e',
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
-
     boxSizing: 'border-box',
     paddingVertical: 10,
     paddingHorizontal: 16,
     marginRight: 8,
   },
-  tabtext: {
-    color: '#fff', 
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14,
-  },
-  othertext: {
-    color: '#FFFFFF7A',
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14,
-  },
+
+
 
   itemContainer: { 
     width: '100%'

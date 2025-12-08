@@ -941,7 +941,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   }
                   allowFontScaling={false}
                   style={styles.input}
-                  placeholder="Enter First Name"
+                  placeholder={t('enter_first_name')}
                   placeholderTextColor="#ccc"
                 />
               </View>
@@ -957,7 +957,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   }
                   allowFontScaling={false}
                   style={styles.input}
-                  placeholder="Enter Last Name"
+                  placeholder={t('enter_last_name')}
                   placeholderTextColor="#ccc"
                 />
               </View>
@@ -1004,7 +1004,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                       console.log('initialEmail ----', initialEmail);
                     }}
                     keyboardType="email-address"
-                    placeholder="Enter Email"
+                    placeholder={t('enter_personal_emial_id')}
                     placeholderTextColor="#ccc"
                   />
                   <TouchableOpacity
@@ -1036,7 +1036,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                       const email = userMeta.email || '';
 
                       if (!isValidEmail(email.trim())) {
-                        showToast(t(Constant.VALID_EMAI_LADDRESS), 'error');
+                        showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
                         return;
                       }
                       setShowPopup1(true);
@@ -1093,11 +1093,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                         setIsUpdateDisabled(false);
                       }
                       if (text.length > 0 && !validateStudentEmail(text)) {
-                      showToast(t(Constant.VALID_EMAI_LADDRESS), 'error');
+                      showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
                     }
                     }}
                     keyboardType="email-address"
-                    placeholder="Enter Student Email"
+                    placeholder={t('enter_student_email_id')}
                     placeholderTextColor="#ccc"
                   />
                   <TouchableOpacity
@@ -1126,7 +1126,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     onPress={() => {
                       const email1 = userMeta.student_email || '';
                       if (!validateStudentEmail(email1.trim())) {
-                        showToast(t(Constant.VALID_EMAI_LADDRESS), 'error');
+                        showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
                         return;
                       }
 
@@ -1170,7 +1170,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   allowFontScaling={false}
                   style={styles.input}
                   keyboardType="default"
-                  placeholder="Enter Postal Code"
+                  placeholder={t('enter_postal_code')}
                   placeholderTextColor="#ccc"
                 />
               </View>
@@ -1186,7 +1186,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     setUserMeta(prev => ({ ...prev, city: text }))
                   }
                   style={styles.input}
-                  placeholder="Enter City"
+                  placeholder={t('enter_city')}
                   placeholderTextColor="#ccc"
                 />
               </View>

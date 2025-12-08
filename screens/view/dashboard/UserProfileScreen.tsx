@@ -12,8 +12,6 @@ const back = require('../../../assets/images/back.png');
 const smileyhappy = require('../../../assets/images/smileyhappy.png');
 const arrowIcon = require('../../../assets/images/nextarrow.png');
 
-
-
 type RouteParams = {
   source?: 'chatList' | 'sellerPage';
   members: {
@@ -21,25 +19,24 @@ type RouteParams = {
     lastname: string;
     id: number;
     profile: string | null;
-    university: {id:number,name:string};
-  };  
+    university: { id: number, name: string };
+  };
 };
 
-
-type UserProfileScreenProps ={
+type UserProfileScreenProps = {
   navigation: any;
 }
 
-const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
+const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
 
-   const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
-    const { members } =   route.params;
-    const [messageText, setMessageText] = useState('');
-    const [userList, setUserList] = useState<any>(null);
-    const { t } = useTranslation();
+  const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
+  const { members } = route.params;
+  const [messageText, setMessageText] = useState('');
+  const [userList, setUserList] = useState<any>(null);
+  const { t } = useTranslation();
 
 
-    useEffect(() => {
+  useEffect(() => {
     const fetchUserChatData = async (query: string = "") => {
       try {
         const token = await AsyncStorage.getItem('userToken');
@@ -51,8 +48,8 @@ const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
         }
 
         const url = `${MAIN_URL.baseUrl}user/info?user_id=${members.id}`;
-        console.log('url----------',url);
-      
+        console.log('url----------', url);
+
         const response = await fetch(url, {
           method: 'GET',
           headers: {
@@ -67,8 +64,8 @@ const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
           return;
         }
 
-      const UserData = data.data;
-       setUserList(UserData);
+        const UserData = data.data;
+        setUserList(UserData);
       } catch (error) {
         console.error('Chat setup failed:', error);
       }
@@ -77,75 +74,74 @@ const UserProfileScreen = ({navigation}:UserProfileScreenProps) => {
     fetchUserChatData();
   }, []);
 
-const getInitials = (firstName = '', lastName = '') => {
-  const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
-  const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
-  return (f + l) || '?';
-};
+  const getInitials = (firstName = '', lastName = '') => {
+    const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
+    const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
+    return (f + l) || '?';
+  };
 
-const renderItem = ({ item }: any) => {
-      const isLogout = item.title.toLowerCase() === 'logout';
-      const isVersion = item.title.toLowerCase() === 'app version';
-    
-      return (
-        <TouchableOpacity
-          style={styles.cardContainer}
-          onPress={async () => {
-           if (item.id === '2') {
-             
-              navigation.navigate('UserListing', {
-                animation: 'none',              
-                members: members,
-                source: 'chatList',
-              });
-           
-            } 
-            else if (item.id === '1') {
-              navigation.navigate('UserReviews', {
-                animation: 'none',              
-                members: members,
-                source: 'chatList',
-              });
-            } 
-          }}
+  const renderItem = ({ item }: any) => {
+    const isLogout = item.title.toLowerCase() === 'logout';
+    const isVersion = item.title.toLowerCase() === 'app version';
+
+    return (
+      <TouchableOpacity
+        style={styles.cardContainer}
+        onPress={async () => {
+          if (item.id === '2') {
+
+            navigation.navigate('UserListing', {
+              animation: 'none',
+              members: members,
+              source: 'chatList',
+            });
+
+          }
+          else if (item.id === '1') {
+            navigation.navigate('UserReviews', {
+              animation: 'none',
+              members: members,
+              source: 'chatList',
+            });
+          }
+        }}
+      >
+        <Image source={item.image} style={styles.cardImage} />
+        <Text allowFontScaling={false}
+          style={[
+            styles.cardText,
+            isLogout && { color: '#FF8282E0' },
+          ]}
         >
-          <Image source={item.image} style={styles.cardImage} />
-          <Text allowFontScaling={false}
-            style={[
-              styles.cardText,
-              isLogout && { color: '#FF8282E0' },
-            ]}
-          >
-            {item.title}
-          </Text>
-          <Image source={arrowIcon} style={styles.cardImage} />
-         
-        </TouchableOpacity>
-      );
-    };
+          {item.title}
+        </Text>
+        <Image source={arrowIcon} style={styles.cardImage} />
+
+      </TouchableOpacity>
+    );
+  };
 
 
- const cardData = [
-  {
-    id: '1',
-    title: `${userList?.firstname || ''} ${t('reviews')}`,
-    image: require('../../../assets/images/ok.png'),
-  },
-  {
-    id: '2',
-    title: `${userList?.firstname || ''} ${t('listings')}`,
-    image: require('../../../assets/images/mylistingicon.png'),
-  },
-];
-return (
+  const cardData = [
+    {
+      id: '1',
+      title: `${userList?.firstname || ''} ${t('reviews')}`,
+      image: require('../../../assets/images/ok.png'),
+    },
+    {
+      id: '2',
+      title: `${userList?.firstname || ''} ${t('listings')}`,
+      image: require('../../../assets/images/mylistingicon.png'),
+    },
+  ];
+  return (
     <ImageBackground source={bgImage} style={{ flex: 1 }} resizeMode="cover">
-     <View style={styles.fullScreenContainer}>
-        {/* Header */}
+      <View style={styles.fullScreenContainer}>
         <View style={styles.header}>
           <View style={styles.headerRow}>
-            <TouchableOpacity onPress={() =>{
+            <TouchableOpacity onPress={() => {
               navigation.goBack();
-              }}>
+            }}>
               <View style={styles.backIconRow}>
                 <Image
                   source={require('../../../assets/images/back.png')}
@@ -153,75 +149,54 @@ return (
                 />
               </View>
             </TouchableOpacity>
-            <Text numberOfLines={2} allowFontScaling={false} style={styles.unizyText}>{t('contact_info')}</Text>
-            <TouchableOpacity onPress={() =>{
-              // navigation.goBack();
-              }}>
-              <View style={[styles.backIconRow,{ backgroundColor:'transparent',boxShadow: 'transparent',borderWidth: 0,borderColor: 'transparent',}]}>
-                <Image
-                  source={require('../../../assets/images/back.png')}
-                  style={{ height: 24, width: 24,display: 'none'}}
-                />
-              </View>
-            </TouchableOpacity>
+            <Text allowFontScaling={false} style={styles.unizyText}>{t('contact_info')}</Text>
+            <View style={{ width: 48 }} />
           </View>
         </View>
 
         <View style={styles.container}>
-   
-      <View style={styles.profileContainer}>
-        {/* {userList?.profileUrl ? (
-          <Image 
-            source={{ uri: userList.profileUrl }}
-            style={styles.profileImage}
-          />
-        ) : (
-          <Image 
-            source={profileImage}
-            style={styles.profileImage}
-          />
-        )} */}
 
-          {userList?.profileUrl ? (
-          <Image
-            source={{ uri: userList.profileUrl }}
-            style={styles.profileImage}
-          />
-        ) : (
-          <View style={styles.initialsCircle}>
-            <Text allowFontScaling={false} style={styles.initialsText}>
-              {getInitials(
-                userList?.firstname ?? '',
-                userList?.lastname ?? ''
-              )}
+          <View style={styles.profileContainer}>
+            {userList?.profileUrl ? (
+              <Image
+                source={{ uri: userList.profileUrl }}
+                style={styles.profileImage}
+              />
+            ) : (
+              <View style={styles.initialsCircle}>
+                <Text allowFontScaling={false} style={styles.initialsText}>
+                  {getInitials(
+                    userList?.firstname ?? '',
+                    userList?.lastname ?? ''
+                  )}
+                </Text>
+              </View>
+            )}
+
+
+            <Text allowFontScaling={false} style={styles.nameText}>
+              {userList?.firstname || ''} {userList?.lastname || ''}
+            </Text>
+            <Text allowFontScaling={false} style={styles.subText}>
+              {userList?.university_name
+                ? (userList?.city
+                  ? `${userList.university_name}, ${userList.city}`
+                  : userList.university_name)
+                : userList?.city
+                  ? userList.city
+                  : '-'}
             </Text>
           </View>
-        )}
-
-
-        <Text allowFontScaling={false} style={styles.nameText}>
-          {userList?.firstname || ''} {userList?.lastname || ''}
-        </Text>
-        <Text allowFontScaling={false} style={styles.subText}>
-          {userList?.university_name 
-            ? (userList?.city 
-                ? `${userList.university_name}, ${userList.city}`
-                : userList.university_name)
-            : userList?.city 
-              ? userList.city
-              : '-'}
-        </Text>
+          <View style={styles.listContainer}>
+            <FlatList
+              data={cardData}
+              keyExtractor={(item) => item.id}
+              renderItem={renderItem}
+              ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+            />
+          </View>
+        </View>
       </View>
-      <View style={styles.listContainer}>
-      <FlatList
-        data={cardData}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-      />
-      </View>
-    </View>
-    </View>
     </ImageBackground>
   );
 
@@ -229,7 +204,7 @@ return (
 
 const styles = StyleSheet.create({
 
-   initialsCircle:{
+  initialsCircle: {
     backgroundColor: '#8390D4',
     alignItems: 'center',
     justifyContent: 'center',
@@ -238,162 +213,166 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     marginBottom: 15,
   },
-  initialsText:{
-   color: '#fff',
+  initialsText: {
+    color: '#fff',
     fontSize: 44,
-    fontWeight:600,
+    fontWeight: 600,
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
   },
- 
+
   fullScreenContainer: {
     flex: 1
-    },
-    header: {
-  
-  // position: 'absolute',
-  //   top: Platform.OS === 'ios' ? '6%' : 40,
-  //   width: Platform.OS === 'ios' ? '100%' : '100%',
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  //   paddingHorizontal: 16,
-  //   zIndex: 11,
-  //   alignSelf: 'center',
-  //   pointerEvents: 'box-none',
-  //   marginTop: 9,
-  //   marginLeft: 2
-  position: 'absolute',
-  top: (Platform.OS === 'ios' ? 60 : 40),
-  width: '100%',
-  flexDirection: 'row',
-  alignItems: 'center',
-  paddingHorizontal: 16,
-  zIndex: 11,
-  alignSelf: 'center',
-  pointerEvents: 'box-none',
-  justifyContent: 'space-between',
-    },
-    headerRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    backIconRow: {
-      padding: 12,
-      borderRadius: 40,
-  
-       display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor:
-        'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-        boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-      borderWidth: 0.4,
-      borderColor: '#ffffff2c',
-      height: 48,
-      width: 48,
-    },
-    unizyText: {
-      color: '#FFFFFF',
-      fontSize: 20,
-      flex: 1,
-      textAlign: 'center',
-      fontWeight: '600',
-       fontFamily: 'Urbanist-SemiBold',
-    },
+  },
+  header: {
+    // paddingTop: Platform.OS === 'ios' ? 50 : 50,
+    // paddingBottom: 12,
+    // paddingHorizontal: 16,
+    //     position: 'absolute',
+    // top: Platform.OS === 'ios' ? '6%' : 40,
+    // width: Platform.OS === 'ios' ? 393 : '100%',
+    // flexDirection: 'row',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // paddingHorizontal: 16,
+    // zIndex: 11,
+    // alignSelf: 'center',
+    // pointerEvents: 'box-none',
+    // marginTop: 2,
+    // marginLeft: 1
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? '6%' : 40,
+    width: Platform.OS === 'ios' ? 393 : '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    zIndex: 11,
+    alignSelf: 'center',
+    pointerEvents: 'box-none',
+    marginTop: 9,
+    marginLeft: 2
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backIconRow: {
+    padding: 12,
+    borderRadius: 40,
 
-    listContainer: {
-      padding: 16,
-      
-    },
-    cardImage: {
-      width: 25,
-      height: 25,
-     // borderRadius: 25,
-      resizeMode:'contain'
-    },
-    cardText: {
-      flex: 1,
-      marginLeft: 12,
-      fontSize: 14,
-      fontWeight: '600',
-      color: 'rgba(255,255,255,0.88)',
-       fontFamily: 'Urbanist-SemiBold',
-    },
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:
+      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    height: 48,
+    width: 48,
+  },
+  unizyText: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    flex: 1,
+    textAlign: 'center',
+    fontWeight: '600',
+    fontFamily: 'Urbanist-SemiBold',
+  },
 
-    container: {
-      // flex: 1,
-      // backgroundColor: '#0047FF', // Gradient-like deep blue
-      // alignItems: 'center',
-      paddingTop: 120,
-    },
-  
-    headerText: {
-      fontSize: 22,
-      color: '#fff',
-      fontWeight: '600',
-      marginBottom: 40,
-    },
-    profileContainer: {
-      alignItems: 'center',
-      // marginBottom: 50,
-    },
-    profileImage: {
-      width: 120,
-      height: 120,
-      borderRadius: 60,
-      marginBottom: 15,
-    },
-    nameText: {
-      color: '#fff',
-      fontSize: 24,
-      //fontWeight: '600',
-      fontFamily: 'Urbanist-SemiBold',
-      fontWeight:600
-    },
-    subText: {
-      color: 'rgba(255,255,255,0.72)',
-      fontSize: 14,
-      marginTop:12,
-      textAlign: 'center',
-      paddingHorizontal:16,
-      fontFamily: 'Urbanist-Medium',
-      fontWeight:500
-    },
-    buttonsContainer: {
-      width: '100%',
-      paddingHorizontal: 16,
-    },
-    button: {
-      flexDirection: 'row',
-      backgroundColor: 'rgba(255,255,255,0.15)',
-      borderRadius: 12,
-      paddingVertical: 18,
-      paddingHorizontal: 20,
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      marginBottom: 15,
-    },
-    buttonText: {
-      flex: 1,
-      color: '#fff',
-      fontSize: 16,
-      marginLeft: 10,
-    },
-    icon: {
-      marginRight: 10,
-    },
+  listContainer: {
+    padding: 16,
 
-    cardContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: 'rgba(255,255,255,0.06)',
-      borderRadius: 12,
-      padding: 12,
-      height:50,
-      marginTop:6,  
-      
-    },
+  },
+  cardImage: {
+    width: 25,
+    height: 25,
+    // borderRadius: 25,
+    resizeMode: 'contain'
+  },
+  cardText: {
+    flex: 1,
+    marginLeft: 12,
+    fontSize: 14,
+    fontWeight: '600',
+    color: 'rgba(255,255,255,0.88)',
+    fontFamily: 'Urbanist-SemiBold',
+  },
+
+  container: {
+    // flex: 1,
+    // backgroundColor: '#0047FF', // Gradient-like deep blue
+    // alignItems: 'center',
+    paddingTop: 120,
+  },
+
+  headerText: {
+    fontSize: 22,
+    color: '#fff',
+    fontWeight: '600',
+    marginBottom: 40,
+  },
+  profileContainer: {
+    alignItems: 'center',
+    // marginBottom: 50,
+  },
+  profileImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    marginBottom: 15,
+  },
+  nameText: {
+    color: '#fff',
+    fontSize: 24,
+    //fontWeight: '600',
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: 600
+  },
+  subText: {
+    color: 'rgba(255,255,255,0.72)',
+    fontSize: 14,
+    marginTop: 12,
+    textAlign: 'center',
+    paddingHorizontal: 16,
+    fontFamily: 'Urbanist-Medium',
+    fontWeight: 500
+  },
+  buttonsContainer: {
+    width: '100%',
+    paddingHorizontal: 16,
+  },
+  button: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    borderRadius: 12,
+    paddingVertical: 18,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 15,
+  },
+  buttonText: {
+    flex: 1,
+    color: '#fff',
+    fontSize: 16,
+    marginLeft: 10,
+  },
+  icon: {
+    marginRight: 10,
+  },
+
+  cardContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    borderRadius: 12,
+    padding: 12,
+    height: 50,
+    marginTop: 6,
+
+  },
 
 });
 
