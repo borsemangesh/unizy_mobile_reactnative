@@ -131,7 +131,7 @@ const ProductItem: React.FC<ProductItemProps> = ({
       ]}
     >
       <Image source={item.icon} style={styles.cardIcon} />
-      <View style={{width:item.id == 1 ? 260 : 120,
+      <View style={{width: 130,
     paddingLeft: 9,}}>
         <Text  allowFontScaling={false} style={styles.cardText} numberOfLines={2}>
           {item.name}
@@ -1256,6 +1256,10 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                   flex: 1,
                   paddingTop: Platform.OS === 'ios' ? 126 : 120,
                 }}
+                contentContainerStyle={{
+                  paddingTop: Platform.OS === 'ios' ? 126 : 120,
+                  paddingBottom: 100, // 👈 FIX: ensures scrolling to bottom
+                }}
                 showsVerticalScrollIndicator={false}
               >
                 {activeTab === 'Search' ? (
@@ -1271,6 +1275,9 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
             <ScrollView
               style={{ flex: 1 }}
               showsVerticalScrollIndicator={false}
+              contentContainerStyle={{
+                paddingBottom: 100, // 👈 REQUIRED FIX for bottom scroll issue
+              }}
             >
               {renderActiveTabContent()}
             </ScrollView>
