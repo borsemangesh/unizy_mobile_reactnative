@@ -160,7 +160,7 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
             >
               
               <Text allowFontScaling={false} style={styles.mainlabel1}>
-                  {t('report_title')}
+                  {t('Report Title')}
                 </Text>
               <View style={styles.login_container1}>
              
