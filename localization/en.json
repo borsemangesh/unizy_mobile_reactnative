@@ -261,7 +261,7 @@
   "help_support": "Help & Support",
   "logout_message": "Are you sure you want to log out from your account?",
   "Bookmarks": "Bookmarks",
-  "List_product": "List Product",
+  "List_product": "Explore Categories",
   "transaction_history": "Transaction History",
   "purchases": "Purchases",
   "unit": "Unit",
@@ -684,5 +684,13 @@
   "enter_personal_email_id":"Enter Personal Email ID",
   "enter_student_email_id":"Enter Student Email ID",
   "enter_postal_code":"Enter Postal Code",
-  "enter_city":"Enter City"
+  "enter_city":"Enter City",
+  "post_tution":"Tutoring Service",
+  "post_house_option":"Post Housekeeping Service",
+  "post_food":"Post Home-Cooked Dish",
+  "post_product":"List Item",
+  "post_accomodation":"Available Rentals",
+  "meal_overview":"Meal Overview",
+  "rental_details":"Rental Details"
+
 }

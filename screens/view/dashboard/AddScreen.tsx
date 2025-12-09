@@ -1147,28 +1147,46 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             </AnimatedReanimated.View>
           </TouchableOpacity>
 
-          {/* <Text allowFontScaling={false}  style={styles.unizyText}>
-            {`${t('list')}${productName ? ` ${productName} ` : ''}`}
-          </Text> */}
           <View style={{ width: 300 }}>
-            <Text
+            {/* <Text
               allowFontScaling={false}
               style={styles.unizyText}
               numberOfLines={2}
             >
               {`${t('list')}${productName ? ` ${productName} ` : ''}`}
+            </Text> */}
+
+            <Text
+              allowFontScaling={false}
+              style={styles.unizyText}
+              numberOfLines={2}
+            >
+              {(() => {
+                switch (productId) {
+                  case 2:
+                    return `${t('post_tution')}`;
+                  case 3:
+                    return `${t('post_food')}`;
+                  case 4:
+                    return `${t('post_accomodation')}`;
+                  case 5:
+                    return `${t('post_house_option')}`;
+                  default:
+                    return `${t('post_product')}`;
+                }
+              })()}
             </Text>
           </View>
 
           <TouchableOpacity
             onPress={() => {
-             
+
             }}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
             <AnimatedReanimated.View
-              style={[styles.blurButtonWrapper_none, ]}
+              style={[styles.blurButtonWrapper_none,]}
             >
               <AnimatedReanimated.View
                 style={[
@@ -1182,7 +1200,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                     ),
                     backgroundColor: 'rgba(255,255,255,0.1)',
                     borderRadius: 40,
-                  })),{display: 'none'}
+                  })), { display: 'none' }
                 ]}
               />
 
@@ -1196,7 +1214,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                       [0, 1],
                       'clamp',
                     ),
-                  })),{display: 'none'}
+                  })), { display: 'none' }
                 ]}
               >
                 <BlurView
@@ -1209,7 +1227,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
               <AnimatedReanimated.Image
                 source={require('../../../assets/images/back.png')}
-                style={[{ height: 24, width: 24,display: 'none' } ]}
+                style={[{ height: 24, width: 24, display: 'none' }]}
               />
             </AnimatedReanimated.View>
           </TouchableOpacity>
@@ -1314,9 +1332,20 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                   allowFontScaling={false}
                   style={styles.productdetailstext}
                 >
-                  {productId === 3
-                    ? t('dish_details')
-                    : `${productName ? `${productName} ` : ''}${t('details')}`}
+                  {(() => {
+                    switch (productId) {
+                      case 2:
+                        return `${t('post_tution')} ${t('details')}`;
+                      case 3:
+                        return t('dish_details');
+                      case 4:
+                        return t('rental_details');
+                      case 5:
+                        return t('housekeeping_details');
+                      default:
+                        return t('product_details');
+                    }
+                  })()}
                 </Text>
 
                 {fields

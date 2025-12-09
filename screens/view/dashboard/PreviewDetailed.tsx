@@ -136,7 +136,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
   }, []);
 
 
-const { t } = useTranslation();
+  const { t } = useTranslation();
 
 
   type FormEntry = {
@@ -307,7 +307,7 @@ const { t } = useTranslation();
   };
 
   const handleListPress = async () => {
-     if (isSubmitting) {
+    if (isSubmitting) {
       console.log("⛔ Prevented double click!");
       return;
     }
@@ -322,17 +322,17 @@ const { t } = useTranslation();
     } catch (e) {
       console.log('Error parsing storedForm:', e);
     }
-      finally {
+    finally {
       setTimeout(() => {
         isSubmitting = false;
       }, 2000);
-  }
+    }
   };
 
   const listProduct = async () => {
 
-     
-     if (isLoading) return;       
+
+    if (isLoading) return;
 
     setIsLoading(true);
     try {
@@ -472,7 +472,7 @@ const { t } = useTranslation();
     catch (error) {
       console.log('❌ Error in handleListPress:', error);
     }
-    finally{
+    finally {
       setIsLoading(false);
     }
   };
@@ -480,33 +480,33 @@ const { t } = useTranslation();
 
 
 
- const getCurrentDate = (t?: any) => {
-  const today = new Date();
+  const getCurrentDate = (t?: any) => {
+    const today = new Date();
 
-  const day = today.getDate();
-  const year = today.getFullYear();
-  const lang = i18n.language; // current selected language
+    const day = today.getDate();
+    const year = today.getFullYear();
+    const lang = i18n.language; // current selected language
 
-  // Month translation
-  const monthIndex = today.getMonth(); // 0–11
-  const monthKeys = [
-    "jan","feb","mar","apr","may","jun",
-    "jul","aug","sep","oct","nov","dec"
-  ];
+    // Month translation
+    const monthIndex = today.getMonth(); // 0–11
+    const monthKeys = [
+      "jan", "feb", "mar", "apr", "may", "jun",
+      "jul", "aug", "sep", "oct", "nov", "dec"
+    ];
 
-  const month = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+    const month = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
 
-  // Suffix only for English
-  let suffix = "";
-  if (lang === "en") {
-    if (day % 10 === 1 && day !== 11) suffix = "st";
-    else if (day % 10 === 2 && day !== 12) suffix = "nd";
-    else if (day % 10 === 3 && day !== 13) suffix = "rd";
-    else suffix = "th";
-  }
+    // Suffix only for English
+    let suffix = "";
+    if (lang === "en") {
+      if (day % 10 === 1 && day !== 11) suffix = "st";
+      else if (day % 10 === 2 && day !== 12) suffix = "nd";
+      else if (day % 10 === 3 && day !== 13) suffix = "rd";
+      else suffix = "th";
+    }
 
-  return `${day}${suffix} ${month} ${year}`;
-};
+    return `${day}${suffix} ${month} ${year}`;
+  };
 
   const getInitials = (firstName = '', lastName = '') => {
     const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
@@ -795,7 +795,12 @@ const { t } = useTranslation();
                 }}
               >
                 <Text allowFontScaling={false} style={styles.productDesHeding}>
-                  {userMeta?.category?.id === 3 ? t('dish_description') : `${userMeta?.category?.name ?? ''} ${t('des')}`}
+                  {userMeta?.category?.id === 2 || userMeta?.category?.id === 5
+                    ? t('service_description')
+                    : userMeta?.category?.id === 3
+                      ? t('dish_description')
+                      : `${userMeta?.category?.name ?? ''} ${t('des')}`
+                  }
                 </Text>
 
                 <Text allowFontScaling={false} style={styles.productDesc}>
@@ -815,9 +820,20 @@ const { t } = useTranslation();
             <View style={styles.card}>
               <View style={styles.gap12}>
                 <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
-                    {userMeta?.category?.id === 3
-                    ? t('dish_details')
-                    : `${userMeta?.category?.name ? `${userMeta?.category?.name} ` : ''}${t('details')}`}
+                  {(() => {
+                    switch (userMeta?.category?.id) {
+                     case 2:
+                        return `${t('post_tution')} ${t('details')}`;
+                      case 3:
+                        return t('dish_details');
+                      case 4:
+                        return t('rental_details');
+                      case 5:
+                        return t('housekeeping_details');
+                      default:
+                        return t('product_details');
+                    }
+                  })()}
                 </Text>
                 <View style={{ gap: 12 }}>
                   {fields.map(field => {
@@ -1017,7 +1033,7 @@ const { t } = useTranslation();
                     textAlign: 'center'
                   }}
                 >
-                 {t('product_listed_message')}
+                  {t('product_listed_message')}
                 </Text>
 
                 <TouchableOpacity
@@ -1050,7 +1066,7 @@ const { t } = useTranslation();
                   }}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>
-                   {t('return_choose_category')}
+                    {t('return_choose_category')}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -1135,7 +1151,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', 
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
 
 
@@ -1356,7 +1372,7 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 40,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)', 
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderColor: '#ffffff4e',
     borderWidth: 1,
     justifyContent: 'center',
@@ -1547,7 +1563,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
-  
+
   productDeatilsHeading: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-SemiBold',

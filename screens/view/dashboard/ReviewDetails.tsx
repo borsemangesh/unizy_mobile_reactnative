@@ -123,12 +123,12 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
 
   const defaultProfile = require('../../../assets/images/user.jpg');
   const [categories, setCategories] = useState<Category[]>([
-      { id: null, name: t('all') },
-    ]);
-    const [selectedCategory, setSelectedCategory] = useState<Category>({
-      id: null,
-      name: t('all'),
-    });
+    { id: null, name: t('all') },
+  ]);
+  const [selectedCategory, setSelectedCategory] = useState<Category>({
+    id: null,
+    name: t('all'),
+  });
   const [showButton, setShowButton] = useState(false);
   const [categoriesLoaded, setCategoriesLoaded] = useState(false);
 
@@ -159,7 +159,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
     };
 
     loadCategories();
-  }, [category_id, purchase,t]);
+  }, [category_id, purchase, t]);
 
   useEffect(() => {
     if (selectedCategory?.id !== category_id) {
@@ -196,9 +196,9 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
 
       const response = await fetch(url1, {
         headers: {
-           Authorization: `Bearer ${token}`,
-           language_code: language_code
-       },
+          Authorization: `Bearer ${token}`,
+          language_code: language_code
+        },
       });
 
       const result = await response.json();
@@ -249,36 +249,36 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
   const { height: screenHeight } = Dimensions.get('window');
 
   const isEmpty = users.length === 0;
- const formatDate = (dateString?: string, t?: any) => {
-  if (!dateString) return "";
+  const formatDate = (dateString?: string, t?: any) => {
+    if (!dateString) return "";
 
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) return "";
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "";
 
-  const day = date.getDate();
-  const year = date.getFullYear();
-  const lang = i18n.language; 
-  let suffix = "";
-  if (lang === "en") {
-    if (day % 10 === 1 && day !== 11) suffix = "st";
-    else if (day % 10 === 2 && day !== 12) suffix = "nd";
-    else if (day % 10 === 3 && day !== 13) suffix = "rd";
-    else suffix = "th";
-  }
+    const day = date.getDate();
+    const year = date.getFullYear();
+    const lang = i18n.language;
+    let suffix = "";
+    if (lang === "en") {
+      if (day % 10 === 1 && day !== 11) suffix = "st";
+      else if (day % 10 === 2 && day !== 12) suffix = "nd";
+      else if (day % 10 === 3 && day !== 13) suffix = "rd";
+      else suffix = "th";
+    }
 
-  const monthIndex = date.getMonth(); 
-  const monthKeys = [
-    "jan","feb","mar","apr","may","jun",
-    "jul","aug","sep","oct","nov","dec"
-  ];
+    const monthIndex = date.getMonth();
+    const monthKeys = [
+      "jan", "feb", "mar", "apr", "may", "jun",
+      "jul", "aug", "sep", "oct", "nov", "dec"
+    ];
 
-  const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+    const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
 
-  return `${day}${suffix} ${monthShort} ${year}`;
-};
+    return `${day}${suffix} ${monthShort} ${year}`;
+  };
 
   const renderItem = ({ item }: any) => {
-    const displayDate = formatDate(item.date,t);
+    const displayDate = formatDate(item.date, t);
     const displayTitle = item.featureTitle ?? 'Title';
 
     return (
@@ -397,12 +397,32 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
               />
             </Animated.View>
           </TouchableOpacity>
-          <View style={{width: 250}}>
-          <Text allowFontScaling={false} style={styles.unizyText}>
+          <View style={{ width: 250 }}>
+            {/* <Text allowFontScaling={false} style={styles.unizyText}>
             {selectedCategory?.name === 'All'
               ? t('reviews')
               : `${selectedCategory?.name} ${t('reviews')}`}
-          </Text>
+          </Text> */}
+            <Text allowFontScaling={false} style={styles.unizyText}>
+              {(() => {
+                if (selectedCategory?.name === 'All') {
+                  return t('reviews');
+                }
+
+                switch (selectedCategory?.id) {
+                  case 2:
+                    return `${t('Tution')} ${t('reviews')}`;
+                  case 3:
+                    return `${t('food')} ${t('reviews')}`;
+                  case 4:
+                    return `${t('Accomodation')} ${t('reviews')}`;
+                  case 5:
+                    return `${t('housekeeping')} ${t('reviews')}`;
+                  default:
+                    return `${t('Product')} ${t('reviews')}`;
+                }
+              })()}
+            </Text>
           </View>
 
           <TouchableOpacity
@@ -413,7 +433,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
             activeOpacity={0.7}
           >
             <Animated.View
-              style={[styles.blurButtonWrapper_none, ]}
+              style={[styles.blurButtonWrapper_none,]}
             >
               <Animated.View
                 style={[
@@ -426,7 +446,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
                       'clamp',
                     ),
                     backgroundColor: 'rgba(255,255,255,0.1)',
-                    borderRadius: 40,display: 'none',
+                    borderRadius: 40, display: 'none',
                   })),
                 ]}
               />
@@ -440,7 +460,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
                       [0, 1],
                       'clamp',
                     ),
-                  })),{display: 'none'}
+                  })), { display: 'none' }
                 ]}
               >
                 <BlurView
@@ -453,7 +473,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
 
               <Animated.Image
                 source={require('../../../assets/images/back.png')}
-                style={[{ height: 24, width: 24 ,display: 'none'}, ]}
+                style={[{ height: 24, width: 24, display: 'none' },]}
               />
             </Animated.View>
           </TouchableOpacity>
@@ -469,9 +489,9 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
           contentContainerStyle={[
             styles.listContainer,
             {
-              paddingTop: (Platform.OS === 'ios'? 120 : 100),
+              paddingTop: (Platform.OS === 'ios' ? 120 : 100),
               paddingBottom: isEmpty
-                ? 10                      
+                ? 10
                 : Platform.select({
                   ios: height * 0.01,   // ⬅ apply padding when list has data
                   android: height * 0.04,
@@ -481,81 +501,81 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
           ]}
           ListHeaderComponent={
             <>
-            <View
-              style={styles.categoryTabsContainer}
-              pointerEvents="box-none"
-            >
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.categoryTabsScrollContent}
-              
-              >
-                {categories.map((cat, index) => {
-                  const isSelected = selectedCategory.name === cat.name;
-                  return (
-                    <TouchableOpacity
-                      key={index}
-                      onPress={() => setSelectedCategory(cat)}
-                      style={isSelected ? styles.tabcard : styles.tabcard1}
-                    >
-                      <Text
-                        allowFontScaling={false}
-                        style={isSelected ? styles.tabtext : styles.othertext}
-                      >
-                        {cat.name}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </ScrollView>
-
               <View
-                style={{
-                  paddingHorizontal: 16,
-                  marginBottom: 12,
-                  alignItems: 'center',
-                }}
+                style={styles.categoryTabsContainer}
+                pointerEvents="box-none"
               >
-                <Text
-                  allowFontScaling={false}
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.categoryTabsScrollContent}
+
+                >
+                  {categories.map((cat, index) => {
+                    const isSelected = selectedCategory.name === cat.name;
+                    return (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => setSelectedCategory(cat)}
+                        style={isSelected ? styles.tabcard : styles.tabcard1}
+                      >
+                        <Text
+                          allowFontScaling={false}
+                          style={isSelected ? styles.tabtext : styles.othertext}
+                        >
+                          {cat.name}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </ScrollView>
+
+                <View
                   style={{
-                    fontSize: 60,
-                    fontWeight: '700',
-                    color: '#fff',
-                    marginBottom: 4,
+                    paddingHorizontal: 16,
+                    marginBottom: 12,
+                    alignItems: 'center',
                   }}
                 >
-                  {averageRating}
-                </Text>
-
-                <StarRating rating={averageRating} starSize={24} />
-
-                <Text allowFontScaling={false} style={styles.reviewcount}>
-                  {totalReviews} {t('reviews')}
-                </Text>
-              </View>
-
-              <View style={styles.innercontainer}>
-                <Text allowFontScaling={false} style={styles.mainlabel}>
-                  {t('reviews')}
-                </Text>
-
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Image
-                    source={require('../../../assets/images/staricon.png')}
+                  <Text
+                    allowFontScaling={false}
                     style={{
-                      width: 16,
-                      height: 16,
-                      marginRight: 4,
-                      tintColor: 'rgba(140, 225, 255, 0.9)',
+                      fontSize: 60,
+                      fontWeight: '700',
+                      color: '#fff',
+                      marginBottom: 4,
                     }}
-                  />
-                  <Text allowFontScaling={false} style={styles.subrating}>
-                    {averageRating} ({totalReviews})
+                  >
+                    {averageRating}
+                  </Text>
+
+                  <StarRating rating={averageRating} starSize={24} />
+
+                  <Text allowFontScaling={false} style={styles.reviewcount}>
+                    {totalReviews} {t('reviews')}
                   </Text>
                 </View>
-              </View>
+
+                <View style={styles.innercontainer}>
+                  <Text allowFontScaling={false} style={styles.mainlabel}>
+                    {t('reviews')}
+                  </Text>
+
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Image
+                      source={require('../../../assets/images/staricon.png')}
+                      style={{
+                        width: 16,
+                        height: 16,
+                        marginRight: 4,
+                        tintColor: 'rgba(140, 225, 255, 0.9)',
+                      }}
+                    />
+                    <Text allowFontScaling={false} style={styles.subrating}>
+                      {averageRating} ({totalReviews})
+                    </Text>
+                  </View>
+                </View>
               </View>
             </>
           }
@@ -606,10 +626,10 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 
-  categoryTabsContainer: {width: '105%',paddingBottom: 16,paddingTop: 8 },
-   categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' },
+  categoryTabsContainer: { width: '105%', paddingBottom: 16, paddingTop: 8 },
+  categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' },
 
- tabcard: {  
+  tabcard: {
     minHeight: 38,
     paddingVertical: 10,
     paddingHorizontal: 16,
@@ -620,7 +640,7 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderRadius: 10,
     boxShadow:
-    'rgba(255, 255, 255, 0.02)inset 0.1px 0.1px 1px 0px,',
+      'rgba(255, 255, 255, 0.02)inset 0.1px 0.1px 1px 0px,',
   },
   tabcard1: {
     minHeight: 38,
@@ -735,7 +755,7 @@ const styles = StyleSheet.create({
   //   alignSelf: 'center',
   //   pointerEvents: 'box-none',
   // },
-   headerContent: {
+  headerContent: {
     position: 'absolute',
     top: (Platform.OS === 'ios' ? 60 : 40),
     width: '100%',
@@ -748,7 +768,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
 
-  
+
   blurButtonWrapper: {
     width: 48,
     height: 48,
@@ -924,13 +944,13 @@ const styles = StyleSheet.create({
 
 
   tabtext: {
-    color: '#fff', 
+    color: '#fff',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
   },
   othertext: {
-    color: '#FFFFFF7A', 
+    color: '#FFFFFF7A',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,

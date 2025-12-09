@@ -656,11 +656,29 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
             </AnimatedReanimated.View>
           </TouchableOpacity>
 
-          <Text allowFontScaling={false} style={styles.unizyText}>
+          {/* <Text allowFontScaling={false} style={styles.unizyText}>
             {detail?.category?.name
               ? `${detail.category.name} ${t('details')}`
               : ''}
+          </Text> */}
+
+          <Text allowFontScaling={false} style={styles.unizyText}>
+            {(() => {
+              switch (detail?.category?.id) {
+                case 2:
+                  return `${t('Tution')} ${t('details')}`;
+                case 3:
+                  return `${t('food')} ${t('details')}`;
+                case 4:
+                  return `${t('Accomodation')} ${t('details')}`;
+                case 5:
+                  return `${t('housekeeping')} ${t('details')}`;
+                default:
+                  return `${t('Product')} ${t('details')}`;
+              }
+            })()}
           </Text>
+
 
           <TouchableOpacity
             onPress={() => {
@@ -784,7 +802,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     alignSelf: 'stretch',
                   }}
                 >
-                  <Text
+                  {/* <Text
                     allowFontScaling={false}
                     style={styles.productDesHeding}
                   >
@@ -794,6 +812,23 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                         ? t('dish_description')
                         : `${detail?.category?.name ?? ''} ${t('des')}`
                     }
+                  </Text> */}
+
+                  <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
+                    {(() => {
+                      switch (detail?.category?.id) {
+                        case 2:
+                          return `${t('post_tution')} ${t('details')}`;
+                        case 3:
+                          return t('dish_details');
+                        case 4:
+                          return t('rental_details');
+                        case 5:
+                          return t('housekeeping_details');
+                        default:
+                          return t('product_details');
+                      }
+                    })()}
                   </Text>
                   <Text allowFontScaling={false} style={styles.productDesc}>
                     {detail?.description || t('no_description_available')}
@@ -813,7 +848,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
               <View style={styles.card}>
                 <View style={styles.gap12}>
-                  <Text
+                  {/* <Text
                     allowFontScaling={false}
                     style={styles.productDeatilsHeading1}
                   >
@@ -822,6 +857,23 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       : detail?.category?.name
                         ? `${detail.category.name} ${t('details')}`
                         : ''}
+                  </Text> */}
+
+                  <Text allowFontScaling={false} style={styles.productDeatilsHeading1}>
+                    {(() => {
+                      switch (detail?.category?.id) {
+                        case 2:
+                          return `${t('post_tution')} ${t('details')}`;
+                        case 3:
+                          return t('dish_details');
+                        case 4:
+                          return t('rental_details');
+                        case 5:
+                          return t('housekeeping_details');
+                        default:
+                          return t('product_details');
+                      }
+                    })()}
                   </Text>
 
                   {detail?.params?.map((param: Param) => (
@@ -997,28 +1049,28 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                   </View>
                 </View>
               </View>
-              <TouchableOpacity  
-              onPress={()=>{
-                navigation.navigate('ReportProduct',{ feature_id: id })
-              }}>
-              <View style={styles.reportButtonCard}>
-                <Image
-                  source={require('../../../assets/images/report.png')}
-                  style={{ height: 16, width: 16, }}
-                />
-                <Text
-                  style={{
-                    color: ' rgba(255, 130, 130, 0.88)',
-                    fontFamily: 'Urbanist-SemiBold',
-                    fontSize: 14,
-                    fontWeight: '600',
-                    fontStyle: 'normal',
-                    letterSpacing: -0.28,
-                  }}
-                >
-                  {t('report_listing')}
-                </Text>
-              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('ReportProduct', { feature_id: id })
+                }}>
+                <View style={styles.reportButtonCard}>
+                  <Image
+                    source={require('../../../assets/images/report.png')}
+                    style={{ height: 16, width: 16, }}
+                  />
+                  <Text
+                    style={{
+                      color: ' rgba(255, 130, 130, 0.88)',
+                      fontFamily: 'Urbanist-SemiBold',
+                      fontSize: 14,
+                      fontWeight: '600',
+                      fontStyle: 'normal',
+                      letterSpacing: -0.28,
+                    }}
+                  >
+                    {t('report_listing')}
+                  </Text>
+                </View>
               </TouchableOpacity>
             </View>
           </View>
