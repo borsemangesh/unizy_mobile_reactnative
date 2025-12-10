@@ -240,6 +240,7 @@ const UserListing = ({ navigation }: UserListingProps) => {
       console.log(url)
 
       const token = await AsyncStorage.getItem('userToken');
+      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
       if (!token) return;
 
       const response = await fetch(url, {
@@ -247,6 +248,8 @@ const UserListing = ({ navigation }: UserListingProps) => {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
+          language_code: language_code
+
         },
       });
 

@@ -125,6 +125,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
     try {
       console.log('shareidListDetails:', shareid, catagory_id);
       const token = await AsyncStorage.getItem('userToken');
+      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
       if (!token) return;
       const url = `${MAIN_URL.baseUrl}category/mylisting-details/${shareid}`;
       console.log('APIListingDetailsurl: ', url);
@@ -134,6 +135,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
+          language_code: language_code
         },
       });
 
@@ -158,6 +160,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
   const handleDeactivate = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
+      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
       if (!token) return;
 
       const url2 = `${MAIN_URL.baseUrl}category/feature/active-inactive`;
@@ -166,6 +169,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
+          language_code: language_code
         },
         body: JSON.stringify({
           product_id: shareid,

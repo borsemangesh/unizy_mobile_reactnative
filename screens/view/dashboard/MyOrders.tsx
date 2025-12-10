@@ -225,6 +225,7 @@ const MyOrders = ({ navigation }: MyOrdersProps) => {
       console.log(url)
 
       const token = await AsyncStorage.getItem('userToken');
+      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
       if (!token) return;
 
       const response = await fetch(url, {
@@ -232,6 +233,7 @@ const MyOrders = ({ navigation }: MyOrdersProps) => {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
+          language_code: language_code
         },
       });
 

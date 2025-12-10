@@ -266,8 +266,16 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
                   <TouchableOpacity
                     style={styles.loginButton1}
                     onPress={() => {
-                      navigation.replace('MyOrders');
                       setShowPopup1(false);
+                      navigation.reset({
+                        index: 0,
+                        routes: [
+                          {
+                            name: 'MyReviews'
+                          },
+                        ],
+                      });
+
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText1}>

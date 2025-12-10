@@ -238,6 +238,7 @@ const UserReviews = ({ navigation }: UserReviewsProps) => {
 
       console.log(url)
       const token = await AsyncStorage.getItem('userToken');
+      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
       if (!token) {
         if (isInitialLoad) {
           await new Promise(r => setTimeout(r, 1000));
@@ -251,6 +252,7 @@ const UserReviews = ({ navigation }: UserReviewsProps) => {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
+          language_code: language_code
         },
       });
 

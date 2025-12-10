@@ -206,6 +206,7 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
 
 
       const token = await AsyncStorage.getItem('userToken');
+      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
       if (!token) return;
 
       const response = await fetch(url, {
@@ -213,6 +214,7 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
+          language_code: language_code
         },
       });
 

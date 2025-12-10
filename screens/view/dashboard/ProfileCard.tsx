@@ -97,6 +97,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
         setLoading(true);
         const token = await AsyncStorage.getItem('userToken');
         const userId = await AsyncStorage.getItem('userId');
+        const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
 
         console.log("profile card page.... ", userId);
 
@@ -113,6 +114,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
+            language_code: language_code
           },
         });
 

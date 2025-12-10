@@ -107,12 +107,13 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
       }
 
       const url = `${MAIN_URL.baseUrl}user/update-password`;
-
+      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
       const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
+          language_code: language_code
         },
         body: JSON.stringify({
           current_password,

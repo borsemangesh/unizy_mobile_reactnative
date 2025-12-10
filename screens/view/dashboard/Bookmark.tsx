@@ -341,7 +341,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
         'bookmarkedIds',
         JSON.stringify(updatedBookmarks),
       );
-
+      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
       const token = await AsyncStorage.getItem('userToken');
       if (!token) return;
 
@@ -353,6 +353,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
+          language_code: language_code
         },
         body: JSON.stringify({ feature_id: productId }),
       });
@@ -474,50 +475,50 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
-       <StatusBar
-          translucent
-          backgroundColor="transparent"
-          barStyle="light-content"
-        />
+      <StatusBar
+        translucent
+        backgroundColor="transparent"
+        barStyle="light-content"
+      />
 
 
-<Animated.View
-          style={[styles.headerWrapper, animatedBlurStyle]}
-          pointerEvents="none"
-        >
-          <MaskedView
-            style={StyleSheet.absoluteFill}
-            maskElement={
-              <LinearGradient
-                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
-                locations={[0, 0.8]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={StyleSheet.absoluteFill}
-              />
-            }
-          >
-            <BlurView
-              style={StyleSheet.absoluteFill}
-              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
-              blurAmount={Platform.OS === 'ios' ? 45 : 45}
-              //  overlayColor="rgba(255,255,255,0.05)"
-              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
-            />
+      <Animated.View
+        style={[styles.headerWrapper, animatedBlurStyle]}
+        pointerEvents="none"
+      >
+        <MaskedView
+          style={StyleSheet.absoluteFill}
+          maskElement={
             <LinearGradient
-              colors={[
-                'rgba(255, 255, 255, 0.45)',
-                'rgba(255, 255, 255, 0.02)',
-                'rgba(255, 255, 255, 0.02)',
-              ]}
-              style={StyleSheet.absoluteFill}
+              colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+              locations={[0, 0.8]}
               start={{ x: 0, y: 0 }}
               end={{ x: 0, y: 1 }}
+              style={StyleSheet.absoluteFill}
             />
-          </MaskedView>
-        </Animated.View>
+          }
+        >
+          <BlurView
+            style={StyleSheet.absoluteFill}
+            blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+            blurAmount={Platform.OS === 'ios' ? 45 : 45}
+            //  overlayColor="rgba(255,255,255,0.05)"
+            reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+          />
+          <LinearGradient
+            colors={[
+              'rgba(255, 255, 255, 0.45)',
+              'rgba(255, 255, 255, 0.02)',
+              'rgba(255, 255, 255, 0.02)',
+            ]}
+            style={StyleSheet.absoluteFill}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+          />
+        </MaskedView>
+      </Animated.View>
       <View style={styles.fullScreenContainer}>
-       
+
 
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
@@ -583,7 +584,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
           </Text>
           <TouchableOpacity
             style={[styles.backButtonContainer]}
-            // activeOpacity={0}
+          // activeOpacity={0}
           >
             <Animated.View
               style={[styles.blurButtonWrapper_none]}
@@ -601,7 +602,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
                     ),
                     backgroundColor: 'transparent',
                     borderRadius: 40,
-                  })),{display: 'none'}
+                  })), { display: 'none' }
                 ]}
               />
 
@@ -616,16 +617,16 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
                       [0, 0],
                       'clamp',
                     ),
-                  })),{display: 'none'}
+                  })), { display: 'none' }
                 ]}
               >
-                
+
               </Animated.View>
 
               {/* Back Icon */}
               <Animated.Image
                 source={require('../../../assets/images/back.png')}
-                style={[{ height: 25, width: 25,display: 'none' }]}
+                style={[{ height: 25, width: 25, display: 'none' }]}
               />
             </Animated.View>
           </TouchableOpacity>
@@ -678,16 +679,16 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
           }
           contentContainerStyle={[
             styles.listContainer,
-              {
-                paddingTop: (Platform.OS === 'ios'? 120 : 100),
-                paddingBottom: isEmpty
-                  ? 10                      
-                  : Platform.select({
-                    ios: height * 0.01,   // ⬅ apply padding when list has data
-                    android: height * 0.04,
-                  }),
-                flexGrow: 1,
-              },
+            {
+              paddingTop: (Platform.OS === 'ios' ? 120 : 100),
+              paddingBottom: isEmpty
+                ? 10
+                : Platform.select({
+                  ios: height * 0.01,   // ⬅ apply padding when list has data
+                  android: height * 0.04,
+                }),
+              flexGrow: 1,
+            },
           ]}
           onScroll={scrollHandler}
           scrollEventThrottle={16}
@@ -711,7 +712,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
               </View>
             ) : null
           }
-         
+
           ListEmptyComponent={
             (isLoading || initialLoading) && featurelist.length === 0 ? (
               <View style={[styles.emptyWrapper, { justifyContent: 'center', flex: 1 }]}>
@@ -743,7 +744,7 @@ export default Bookmark;
 
 const styles = StyleSheet.create({
   categoryTabsContainer: {
-    width: '105%',paddingBottom: 16,paddingTop: 8 
+    width: '105%', paddingBottom: 16, paddingTop: 8
   },
 
   categoryTabsScrollContent: {
@@ -872,13 +873,13 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   tabtext: {
-    color: '#fff', 
+    color: '#fff',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
   },
   othertext: {
-    color: '#FFFFFF7A', 
+    color: '#FFFFFF7A',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,

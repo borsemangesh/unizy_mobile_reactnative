@@ -282,6 +282,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
     try {
       setButtonLoading(true);
       const token = await AsyncStorage.getItem('userToken');
+      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
       if (!token) {
         showToast(Constant.UNABLE_TO_LOGIN, 'error');
         setButtonLoading(false);
@@ -296,6 +297,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
+          language_code: language_code
         },
       });
 

@@ -71,7 +71,7 @@ type MyListingProps = {
 };
 
 const MyListing = ({ navigation }: MyListingProps) => {
-    const { t } = useTranslation();
+  const { t } = useTranslation();
   const [featurelist, setFeaturelist] = useState<Feature[]>([]);
   const [search, setSearch] = useState<string>('');
   const [page, setPage] = useState(1);
@@ -210,6 +210,8 @@ const MyListing = ({ navigation }: MyListingProps) => {
       }
 
       const token = await AsyncStorage.getItem('userToken');
+      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+
       if (!token) {
         if (isInitialLoad) {
           await new Promise(r => setTimeout(r, 1000));
@@ -224,6 +226,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
+          language_code: language_code
         },
       });
 
@@ -286,7 +289,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
 
   const renderItem = useCallback(
     ({ item, index }: { item: Feature; index: number }) => {
-      const displayDate = formatDate(item.created_at,t);
+      const displayDate = formatDate(item.created_at, t);
       const displayTitle =
         item.title && item.title.trim() !== '' ? item.title : 'Title';
       const displayPrice = item.price != null ? item.price : 0;
@@ -326,36 +329,36 @@ const MyListing = ({ navigation }: MyListingProps) => {
     [categories, navigation],
   );
 
-const formatDate = (dateString?: string, t?: any) => {
-  if (!dateString) return "";
+  const formatDate = (dateString?: string, t?: any) => {
+    if (!dateString) return "";
 
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) return "";
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "";
 
-  const day = date.getDate();
-  const year = date.getFullYear();
-  const lang = i18n.language; // detect current language
+    const day = date.getDate();
+    const year = date.getFullYear();
+    const lang = i18n.language; // detect current language
 
-  // ---------- Suffix only for English ----------
-  let suffix = "";
-  if (lang === "en") {
-    if (day % 10 === 1 && day !== 11) suffix = "st";
-    else if (day % 10 === 2 && day !== 12) suffix = "nd";
-    else if (day % 10 === 3 && day !== 13) suffix = "rd";
-    else suffix = "th";
-  }
+    // ---------- Suffix only for English ----------
+    let suffix = "";
+    if (lang === "en") {
+      if (day % 10 === 1 && day !== 11) suffix = "st";
+      else if (day % 10 === 2 && day !== 12) suffix = "nd";
+      else if (day % 10 === 3 && day !== 13) suffix = "rd";
+      else suffix = "th";
+    }
 
-  // ---------- Month translation ----------
-  const monthIndex = date.getMonth(); // 0–11
-  const monthKeys = [
-    "jan","feb","mar","apr","may","jun",
-    "jul","aug","sep","oct","nov","dec"
-  ];
+    // ---------- Month translation ----------
+    const monthIndex = date.getMonth(); // 0–11
+    const monthKeys = [
+      "jan", "feb", "mar", "apr", "may", "jun",
+      "jul", "aug", "sep", "oct", "nov", "dec"
+    ];
 
-  const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+    const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
 
-  return `${day}${suffix} ${monthShort} ${year}`;
-};
+    return `${day}${suffix} ${monthShort} ${year}`;
+  };
   const isEmpty = featureList.length === 0;
 
   return (
@@ -412,14 +415,14 @@ const formatDate = (dateString?: string, t?: any) => {
         </Animated.View>
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
-            onPress={() =>{
-              console.log("MYLISTSTACK",navigation.getState())
-              if(navigation.getState().routes[navigation.getState().index].name === 'MyListing'){
+            onPress={() => {
+              console.log("MYLISTSTACK", navigation.getState())
+              if (navigation.getState().routes[navigation.getState().index].name === 'MyListing') {
                 navigation.replace('Dashboard', {
                   AddScreenBackactiveTab: 'Home',
                   isNavigate: false,
                 })
-              }             
+              }
             }
             }
             style={styles.backButtonContainer}
@@ -472,14 +475,14 @@ const formatDate = (dateString?: string, t?: any) => {
               />
             </Animated.View>
           </TouchableOpacity>
-          <View style={{width: 280}}>
-          <Text allowFontScaling={false} style={styles.unizyText}>
-            {t('My_Listings')}
-          </Text>
+          <View style={{ width: 280 }}>
+            <Text allowFontScaling={false} style={styles.unizyText}>
+              {t('My_Listings')}
+            </Text>
           </View>
           <TouchableOpacity
             style={[styles.backButtonContainer]}
-            // activeOpacity={0}
+          // activeOpacity={0}
           >
             <Animated.View
               style={[styles.blurButtonWrapper_none]}
@@ -497,7 +500,7 @@ const formatDate = (dateString?: string, t?: any) => {
                     ),
                     backgroundColor: 'transparent',
                     borderRadius: 40,
-                  })),{display: 'none'}
+                  })), { display: 'none' }
                 ]}
               />
 
@@ -512,16 +515,16 @@ const formatDate = (dateString?: string, t?: any) => {
                       [0, 0],
                       'clamp',
                     ),
-                  })),{display: 'none'}
+                  })), { display: 'none' }
                 ]}
               >
-                
+
               </Animated.View>
 
               {/* Back Icon */}
               <Animated.Image
                 source={require('../../../assets/images/back.png')}
-                style={[{ height: 25, width: 25,display: 'none' }]}
+                style={[{ height: 25, width: 25, display: 'none' }]}
               />
             </Animated.View>
           </TouchableOpacity>
@@ -529,7 +532,7 @@ const formatDate = (dateString?: string, t?: any) => {
         <View style={{ flex: 1, overflow: 'hidden' }}>
           <Animated.FlatList
             data={featureList}
-            scrollEnabled={true} 
+            scrollEnabled={true}
             showsVerticalScrollIndicator={false}
             nestedScrollEnabled={false}
             renderItem={renderItem}
@@ -594,9 +597,9 @@ const formatDate = (dateString?: string, t?: any) => {
             contentContainerStyle={[
               styles.listContainer,
               {
-                paddingTop: (Platform.OS === 'ios'? 120 : 100),
+                paddingTop: (Platform.OS === 'ios' ? 120 : 100),
                 paddingBottom: isEmpty
-                  ? 10                      
+                  ? 10
                   : Platform.select({
                     ios: height * 0.01,   // ⬅ apply padding when list has data
                     android: height * 0.04,
@@ -646,7 +649,7 @@ const formatDate = (dateString?: string, t?: any) => {
                     </Text>
                   </View>
                 </View>
-              ) : null 
+              ) : null
             }
           />
         </View>
@@ -660,7 +663,7 @@ export default MyListing;
 
 const styles = StyleSheet.create({
 
-  categoryTabsContainer: {width: '105%',paddingBottom: 16,paddingTop: 8 },
+  categoryTabsContainer: { width: '105%', paddingBottom: 16, paddingTop: 8 },
   categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' },
   blurButtonWrapper_none: {
 
@@ -673,7 +676,7 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
     backgroundColor: 'transparent',
   },
-  
+
   emptyWrapper: {
     flex: 1,
     justifyContent: 'center',
@@ -716,7 +719,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 0.4,
     borderColor: '#ffffff2c',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', 
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   headerWrapper: {
     position: 'absolute',
@@ -753,13 +756,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   tabtext: {
-    color: '#fff', 
+    color: '#fff',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
   },
   othertext: {
-    color: '#FFFFFF7A', 
+    color: '#FFFFFF7A',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
@@ -861,7 +864,7 @@ const styles = StyleSheet.create({
   //   alignItems: 'center' 
   // },
 
- tabcard: {  
+  tabcard: {
     minHeight: 38,
     paddingVertical: 10,
     paddingHorizontal: 16,
@@ -872,7 +875,7 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderRadius: 10,
     boxShadow:
-    'rgba(255, 255, 255, 0.02)inset 0.1px 0.1px 1px 0px,',
+      'rgba(255, 255, 255, 0.02)inset 0.1px 0.1px 1px 0px,',
   },
   tabcard1: {
     minHeight: 38,
@@ -899,7 +902,7 @@ const styles = StyleSheet.create({
 
 
 
-  itemContainer: { 
+  itemContainer: {
     width: '100%'
-   },
+  },
 });

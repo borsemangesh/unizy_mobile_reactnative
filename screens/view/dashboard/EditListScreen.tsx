@@ -46,6 +46,7 @@ import { BlurView } from '@react-native-community/blur';
 import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
+import Loader from '../../utils/component/Loader';
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImg = require('../../../assets/images/user.jpg');
@@ -65,7 +66,7 @@ type AddScreenRouteProp = RouteProp<RootStackParamList, 'AddScreen'>;
 const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   const [formValues, setFormValues] = useState<any>({});
   const [fields, setFields] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const MAX_SIZE_MB = 1;
   const today = new Date();
   const formattedDate = today.toLocaleDateString('en-GB');
@@ -176,6 +177,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
     console.log('Product ID: ', productId, productName, shareid);
     const fetchFields = async () => {
       try {
+        setLoading(true)
         const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
         console.log("language-code", language_code)
         const token = await AsyncStorage.getItem('userToken');
@@ -1305,88 +1307,94 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             </AnimatedReanimated.View>
           </TouchableOpacity>
         </View>
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        >
-          <AnimatedReanimated.ScrollView
-            scrollEventThrottle={16}
-            onScroll={scrollHandler}
-            contentContainerStyle={[
-              styles.scrollContainer,
-              { paddingBottom: height * 0.1 },
-            ]}>
 
-            <View style={styles.userRow}>
-              <View style={{ width: '20%', alignItems: 'center', justifyContent: 'center' }}>
-                {userMeta?.profile ? (
-                  <Image
-                    source={{ uri: userMeta.profile }}
-                    style={styles.avatar}
-                  />
-                ) : (
-                  <View style={styles.initialsCircle}>
-                    <Text allowFontScaling={false} style={styles.initialsText}>
-                      {getInitials(userMeta?.firstname ?? 'Alan', userMeta?.lastname ?? 'Walker')}
-                    </Text>
-                  </View>
-                )}
-              </View>
+        {loading ? (
+          <View style={styles.loaderWrapper}>
+            <Loader containerStyle={styles.loaderContainer} />
+          </View>
+        ) : (
+          <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          >
+            <AnimatedReanimated.ScrollView
+              scrollEventThrottle={16}
+              onScroll={scrollHandler}
+              contentContainerStyle={[
+                styles.scrollContainer,
+                { paddingBottom: height * 0.1 },
+              ]}>
 
-              <View style={{ width: '80%' }}>
-                <Text allowFontScaling={false} style={styles.userName}>
-                  {userMeta
-                    ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''}`.trim()
-                    : 'Alan Walker'}
-                </Text>
+              <View style={styles.userRow}>
+                <View style={{ width: '20%', alignItems: 'center', justifyContent: 'center' }}>
+                  {userMeta?.profile ? (
+                    <Image
+                      source={{ uri: userMeta.profile }}
+                      style={styles.avatar}
+                    />
+                  ) : (
+                    <View style={styles.initialsCircle}>
+                      <Text allowFontScaling={false} style={styles.initialsText}>
+                        {getInitials(userMeta?.firstname ?? 'Alan', userMeta?.lastname ?? 'Walker')}
+                      </Text>
+                    </View>
+                  )}
+                </View>
 
-                <View
-                  style={{
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    display: 'flex',
-                    alignItems: 'stretch',
-                  }}
-                >
-                  <Text allowFontScaling={false} style={styles.userSub}>
-                    {userMeta?.university_name || 'University of Warwick,'}
+                <View style={{ width: '80%' }}>
+                  <Text allowFontScaling={false} style={styles.userName}>
+                    {userMeta
+                      ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''}`.trim()
+                      : 'Alan Walker'}
                   </Text>
+
                   <View
                     style={{
-                      flexDirection: 'row',
+                      flexDirection: 'column',
                       justifyContent: 'space-between',
+                      display: 'flex',
+                      alignItems: 'stretch',
                     }}
                   >
-                    <Text allowFontScaling={false} style={styles.userSub2}>{userMeta?.city || ''}</Text>
+                    <Text allowFontScaling={false} style={styles.userSub}>
+                      {userMeta?.university_name || 'University of Warwick,'}
+                    </Text>
                     <View
                       style={{
                         flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 3,
+                        justifyContent: 'space-between',
                       }}
                     >
-                      <Image
-                        source={require('../../../assets/images/calendar_icon1.png')}
-                        style={{ height: 20, width: 20 }}
-                      />
-                      <Text allowFontScaling={false} style={styles.dateText}>{formatDateWithDash(newdate, t)}</Text>
+                      <Text allowFontScaling={false} style={styles.userSub2}>{userMeta?.city || ''}</Text>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 3,
+                        }}
+                      >
+                        <Image
+                          source={require('../../../assets/images/calendar_icon1.png')}
+                          style={{ height: 20, width: 20 }}
+                        />
+                        <Text allowFontScaling={false} style={styles.dateText}>{formatDateWithDash(newdate, t)}</Text>
+                      </View>
                     </View>
                   </View>
                 </View>
               </View>
-            </View>
 
-            <View style={styles.productdetails}>
-              <Animated.View
-                style={{
-                  transform: [{ translateY: slideUp1 }],
-                  opacity: slideUp1.interpolate({
-                    inputRange: [-screenHeight, 0],
-                    outputRange: [0, 1],
-                  }),
-                }}
-              >
-                {/* <Text
+              <View style={styles.productdetails}>
+                <Animated.View
+                  style={{
+                    transform: [{ translateY: slideUp1 }],
+                    opacity: slideUp1.interpolate({
+                      inputRange: [-screenHeight, 0],
+                      outputRange: [0, 1],
+                    }),
+                  }}
+                >
+                  {/* <Text
                   allowFontScaling={false}
                   style={styles.productdetailstext}
                 >
@@ -1395,47 +1403,48 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                     ? t('dish_details')
                     : `${category ? `${category} ` : ''}${t('details')}`}
                 </Text> */}
-                <Text
-                  allowFontScaling={false}
-                  style={styles.productdetailstext}
-                >
-                  {(() => {
-                    switch (productId) {
-                      case 2:
-                        return `${t('post_tution')} ${t('details')}`;
-                      case 3:
-                        return t('dish_details');
-                      case 4:
-                        return t('rental_details');
-                      case 5:
-                        return t('housekeeping_details');
-                      default:
-                        return t('product_details');
-                    }
-                  })()}
-                </Text>
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.productdetailstext}
+                  >
+                    {(() => {
+                      switch (productId) {
+                        case 2:
+                          return `${t('post_tution')} ${t('details')}`;
+                        case 3:
+                          return t('dish_details');
+                        case 4:
+                          return t('rental_details');
+                        case 5:
+                          return t('housekeeping_details');
+                        default:
+                          return t('product_details');
+                      }
+                    })()}
+                  </Text>
 
 
-                {fields
-                  .filter(
-                    (f: any) =>
-                      f?.param?.field_type?.toLowerCase() !== 'boolean',
-                  )
-                  .map((field: any) => renderField(field))}
-              </Animated.View>
-            </View>
-            {featuredField && (
-              <View>
-                {renderField(featuredField)}
+                  {fields
+                    .filter(
+                      (f: any) =>
+                        f?.param?.field_type?.toLowerCase() !== 'boolean',
+                    )
+                    .map((field: any) => renderField(field))}
+                </Animated.View>
               </View>
-            )}
-          </AnimatedReanimated.ScrollView >
+              {featuredField && (
+                <View>
+                  {renderField(featuredField)}
+                </View>
+              )}
+            </AnimatedReanimated.ScrollView >
+          </KeyboardAvoidingView>
+        )}
+        <Button
+          title={t('preview_details')}
+          onPress={() => handlePreview(formValues)}
+        />
 
-          <Button
-            title={t('preview_details')}
-            onPress={() => handlePreview(formValues)}
-          />
-        </KeyboardAvoidingView>
       </View>
       {Platform.OS === 'android' ? (
         <>
@@ -1497,8 +1506,20 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 export default EditListScreen;
 
 const styles = StyleSheet.create({
-  blurButtonWrapper_none: {
 
+  loaderContainer: {
+    width: 100,
+    height: 100,
+  },
+  loaderWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    //height: Platform.OS === 'ios' ? 547 : 300,
+    paddingVertical: (Platform.OS === 'ios' ? 0 : 40),
+  },
+  blurButtonWrapper_none: {
     width: 48,
     height: 48,
     borderRadius: 40,

@@ -269,13 +269,12 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
                   <TouchableOpacity
                     style={styles.loginButton1}
                     onPress={() => {
-                      console.log('PRESS!@#');
                       setShowPopup1(false);
                       navigation.reset({
                         index: 0,
                         routes: [
                           {
-                            name: 'MyOrders'
+                            name: 'MyReviews'
                           },
                         ],
                       });

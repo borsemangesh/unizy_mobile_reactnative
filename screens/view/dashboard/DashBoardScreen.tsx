@@ -131,14 +131,16 @@ const ProductItem: React.FC<ProductItemProps> = ({
       ]}
     >
       <Image source={item.icon} style={styles.cardIcon} />
-      <View style={{width: 130,
-    paddingLeft: 9,}}>
-        <Text  allowFontScaling={false} style={styles.cardText} numberOfLines={2}>
+      <View style={{
+        width: 130,
+        paddingLeft: 9,
+      }}>
+        <Text allowFontScaling={false} style={styles.cardText} numberOfLines={2}>
           {item.name}
         </Text>
 
       </View>
-      
+
     </View>
   </TouchableOpacity>
 );
@@ -473,12 +475,17 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
       const fetchFeatures = async () => {
         try {
           const token = await AsyncStorage.getItem('userToken');
+          const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+
           if (!token) return;
 
           const url1 = MAIN_URL.baseUrl + 'category/feature-list';
           console.log("FeatureListingDashboard:", url1);
           const res = await fetch(url1, {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: {
+              Authorization: `Bearer ${token}`,
+              language_code: language_code
+            },
           });
 
           const json = await res.json();
@@ -854,6 +861,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   const handleBookmarkPress = async (productId: number) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
+      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
       if (!token) return;
 
       setFeatures(prev =>
@@ -872,6 +880,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
+          language_code: language_code
         },
         body: JSON.stringify({ feature_id: productId }),
       });
@@ -915,96 +924,95 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
           <>
             <View style={styles.productsWrapper}>{renderProducts()}</View>
 
-      <Animated.View
-        style={[{
-          transform: [{ translateY: cardSlideupAnimation }],
-        },{paddingHorizontal:16,paddingTop:4,paddingBottom: 16}]}
-      >
-        <Text allowFontScaling={false} style={styles.featuredText}>
-        {t('Featured_Listings')}
-        </Text>
-      </Animated.View>
-      {isLoading ? (
-        <View style={styles.emptyWrapper}>
-          <Loader
-            containerStyle={{
-              width: 100,
-              height: 100,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          />
-        </View>
-      ) : features.length === 0 ? (
-        <View style={styles.emptyWrapper}>
-          <View style={styles.emptyContainer}>
-            <Image
-              source={require('../../../assets/images/noproduct.png')}
-              style={styles.emptyImage}
-              resizeMode="contain"
-            />
-            <Text allowFontScaling={false} style={styles.emptyText}>
-             {t('No_Listings_Found')}
-            </Text>
-          </View>
-        </View>
-      ) : (
-        <ScrollView
-          directionalLockEnabled
-          style={{ paddingHorizontal: 0, marginLeft: 8 }}
-          horizontal
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-        >
-          {features.map(item => (
             <Animated.View
-              key={item.id}
-              style={{ transform: [{ translateY: cardSlideupAnimation }] }}
+              style={[{
+                transform: [{ translateY: cardSlideupAnimation }],
+              }, { paddingHorizontal: 16, paddingTop: 4, paddingBottom: 16 }]}
             >
-              {item.profileshowinview ? (
-                <TutitionCard
-                  tag={item.university?.name || 'University of Warwick'}
-                  title={item.title}
-                  infoTitle={`${item.createdby?.firstname || ''} ${
-                    item.createdby?.lastname || ''
-                  }`}
-                  inforTitlePrice={`£ ${item.price}`}
-                  rating={item.avg_rating}
-                  productImage={{ uri: item.createdby?.profile }}
-                  onBookmarkPress={() => handleBookmarkPress(item.id)}
-                  isBookmarked={item.isbookmarked}
-                  onpress={() => {
-                    navigation.navigate(
-                      'SearchDetails',
-                      { id: item.id },
-                      { animation: 'none' },
-                    );
-                  }}
-                />
-              ) : (
-                <ProductCard
-                  tag={item.university?.name || 'University of Warwick'}
-                  infoTitle={item.title}
-                  inforTitlePrice={`£ ${item.price}`}
-                  rating={item.avg_rating}
-                  productImage={{ uri: item.thumbnail }}
-                  onBookmarkPress={() => handleBookmarkPress(item.id)}
-                  isBookmarked={item.isbookmarked}
-                  onpress={() => {
-                    navigation.replace(
-                      'SearchDetails',
-                      { id: item.id },
-                      { animation: 'none' },
-                    );
-                  }}
-                />
-              )}
+              <Text allowFontScaling={false} style={styles.featuredText}>
+                {t('Featured_Listings')}
+              </Text>
             </Animated.View>
-          ))}
-        </ScrollView>
-      )}
-    </>
-  );
+            {isLoading ? (
+              <View style={styles.emptyWrapper}>
+                <Loader
+                  containerStyle={{
+                    width: 100,
+                    height: 100,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                />
+              </View>
+            ) : features.length === 0 ? (
+              <View style={styles.emptyWrapper}>
+                <View style={styles.emptyContainer}>
+                  <Image
+                    source={require('../../../assets/images/noproduct.png')}
+                    style={styles.emptyImage}
+                    resizeMode="contain"
+                  />
+                  <Text allowFontScaling={false} style={styles.emptyText}>
+                    {t('No_Listings_Found')}
+                  </Text>
+                </View>
+              </View>
+            ) : (
+              <ScrollView
+                directionalLockEnabled
+                style={{ paddingHorizontal: 0, marginLeft: 8 }}
+                horizontal
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+              >
+                {features.map(item => (
+                  <Animated.View
+                    key={item.id}
+                    style={{ transform: [{ translateY: cardSlideupAnimation }] }}
+                  >
+                    {item.profileshowinview ? (
+                      <TutitionCard
+                        tag={item.university?.name || 'University of Warwick'}
+                        title={item.title}
+                        infoTitle={`${item.createdby?.firstname || ''} ${item.createdby?.lastname || ''
+                          }`}
+                        inforTitlePrice={`£ ${item.price}`}
+                        rating={item.avg_rating}
+                        productImage={{ uri: item.createdby?.profile }}
+                        onBookmarkPress={() => handleBookmarkPress(item.id)}
+                        isBookmarked={item.isbookmarked}
+                        onpress={() => {
+                          navigation.navigate(
+                            'SearchDetails',
+                            { id: item.id },
+                            { animation: 'none' },
+                          );
+                        }}
+                      />
+                    ) : (
+                      <ProductCard
+                        tag={item.university?.name || 'University of Warwick'}
+                        infoTitle={item.title}
+                        inforTitlePrice={`£ ${item.price}`}
+                        rating={item.avg_rating}
+                        productImage={{ uri: item.thumbnail }}
+                        onBookmarkPress={() => handleBookmarkPress(item.id)}
+                        isBookmarked={item.isbookmarked}
+                        onpress={() => {
+                          navigation.replace(
+                            'SearchDetails',
+                            { id: item.id },
+                            { animation: 'none' },
+                          );
+                        }}
+                      />
+                    )}
+                  </Animated.View>
+                ))}
+              </ScrollView>
+            )}
+          </>
+        );
       case 'Search':
         return <SearchScreenContent navigation={navigation} />;
       case 'Add':
@@ -1092,12 +1100,12 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-        
+
         {activeTab === 'Home' && (
           <View
             style={[
               styles.header,
-              { paddingTop: (Platform.OS === 'ios' ? 60 : 40),gap: 16,paddingHorizontal: 16 },
+              { paddingTop: (Platform.OS === 'ios' ? 60 : 40), gap: 16, paddingHorizontal: 16 },
             ]}
           >
             <Animated.View
@@ -1160,7 +1168,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
         )}
 
         <KeyboardAvoidingView
-          style={{ flex: 1}}
+          style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
         >
@@ -1244,8 +1252,8 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                       ? t('profile')
                       : activeTab === 'Bookmark'
                         ? t('messages')
-                        : activeTab === 'Add'   
-                          ? t('settings') 
+                        : activeTab === 'Add'
+                          ? t('settings')
                           : null}
                 </Text>
               </View>
@@ -1257,7 +1265,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                   paddingTop: Platform.OS === 'ios' ? 126 : 120,
                 }}
                 contentContainerStyle={{
-                  paddingBottom: 0, 
+                  paddingBottom: 0,
                 }}
                 showsVerticalScrollIndicator={false}
               >
@@ -1457,7 +1465,7 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     // paddingVertical: 4,
-    padding: (Platform.OS === 'ios'? 12:0),
+    padding: (Platform.OS === 'ios' ? 12 : 0),
     // marginTop:(Platform.OS === 'ios' ? 16:20),
     height: 50,
     gap: (Platform.OS === 'ios' ? 8 : 0)
@@ -1566,7 +1574,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     // paddingHorizontal: 16,
     paddingTop: 16,
-    paddingBottom: 6 
+    paddingBottom: 6
     // marginVertical:6
   },
   headerRow: {
