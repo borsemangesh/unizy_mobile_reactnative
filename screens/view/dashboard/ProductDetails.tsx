@@ -373,7 +373,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
       <View
         style={[
           styles.itemContainer,
-          { flex: isLastOddItem ? 0.5 : 0.5, marginRight: isLastOddItem ? 0.5 : 0.5, paddingHorizontal: 4 },
+          { flex: isLastOddItem ? 0.5 : 0.5, marginRight: isLastOddItem ? 0.5 : 0.5 },
         ]}
       >
         <TouchableOpacity
@@ -961,7 +961,7 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     flex: 1,
-    marginHorizontal: 4,
+    paddingHorizontal: 4
   },
   ylistingsBackground: {
     height: 48,

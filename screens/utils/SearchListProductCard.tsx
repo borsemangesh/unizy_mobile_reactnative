@@ -138,11 +138,11 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 8,
-    width: '100%',
+    width: '96%',
     overflow: 'hidden',
     height: 'auto',
 
-    // marginBottom: 14,
+    // marginBottom: 10,
     paddingBottom: 10,
     borderWidth: 0.4,
     borderColor: '#ffffff11',

@@ -875,8 +875,9 @@ const styles = StyleSheet.create({
   itemContainer: {
     flex: 1,
     // marginHorizontal: 8,
-    // paddingBottom: 15,
-    paddingTop: 10
+    // paddingBottom: 10,
+    paddingTop: 10,
+    marginHorizontal: 4,
   },
   ylistingsBackground: {
     height: 48,

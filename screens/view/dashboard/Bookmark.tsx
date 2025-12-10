@@ -941,5 +941,6 @@ const styles = StyleSheet.create({
   itemContainer: {
     flex: 1,
     marginHorizontal: 4,
+    paddingBottom: 10
   },
 });

@@ -379,7 +379,10 @@ const UserListing = ({ navigation }: UserListingProps) => {
       <View
         style={[
           styles.itemContainer,
-          { flex: isLastOddItem ? 0.5 : 0.5, marginRight: 0.5 },
+          {
+            flex: isLastOddItem ? 0.5 : 0.5,
+            marginRight: isLastOddItem ? 0.5 : 0.5,
+          },
         ]}
       >
         <TouchableOpacity
@@ -690,7 +693,9 @@ export default UserListing;
 
 const styles = StyleSheet.create({
 
-  categoryTabsContainer: {width: '105%',paddingBottom: 16,paddingTop: 8 },
+  categoryTabsContainer: {
+    width: '105%',paddingBottom: 16,paddingTop: 8 
+  },
   categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' },
 
   tabcard: {
@@ -905,7 +910,10 @@ headerContent: {
   row1: {
   },
   itemContainer: {
+    // flex: 1,
+    // marginHorizontal: 4,
     flex: 1,
     marginHorizontal: 4,
+    paddingVertical: 6
   },
 });
