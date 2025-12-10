@@ -472,10 +472,59 @@ const formatDate = (dateString?: string, t?: any) => {
               />
             </Animated.View>
           </TouchableOpacity>
-
+          <View style={{width: 280}}>
           <Text allowFontScaling={false} style={styles.unizyText}>
             {t('My_Listings')}
           </Text>
+          </View>
+          <TouchableOpacity
+            style={[styles.backButtonContainer]}
+            // activeOpacity={0}
+          >
+            <Animated.View
+              style={[styles.blurButtonWrapper_none]}
+            >
+
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 0],
+                      [0, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'transparent',
+                    borderRadius: 40,
+                  })),{display: 'none'}
+                ]}
+              />
+
+              {/* Blur view fades in as scroll increases */}
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 0],
+                      [0, 0],
+                      'clamp',
+                    ),
+                  })),{display: 'none'}
+                ]}
+              >
+                
+              </Animated.View>
+
+              {/* Back Icon */}
+              <Animated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 25, width: 25,display: 'none' }]}
+              />
+            </Animated.View>
+          </TouchableOpacity>
         </View>
         <View style={{ flex: 1, overflow: 'hidden' }}>
           <Animated.FlatList
@@ -529,14 +578,27 @@ const formatDate = (dateString?: string, t?: any) => {
                 </ScrollView>
               </View>
             }
+            // contentContainerStyle={[
+            //   styles.listContainer,
+            //   {
+            //     paddingTop: Platform.OS === 'ios' ? 114 : 100,
+            //     paddingBottom: isEmpty
+            //       ? 10                      
+            //       : Platform.select({
+            //         ios: height * 0.01,  
+            //         android: height * 0.04,
+            //       }),
+            //     flexGrow: 1,
+            //   },
+            // ]}
             contentContainerStyle={[
               styles.listContainer,
               {
-                paddingTop: Platform.OS === 'ios' ? 114 : 100,
+                paddingTop: (Platform.OS === 'ios'? 120 : 100),
                 paddingBottom: isEmpty
                   ? 10                      
                   : Platform.select({
-                    ios: height * 0.01,  
+                    ios: height * 0.01,   // ⬅ apply padding when list has data
                     android: height * 0.04,
                   }),
                 flexGrow: 1,
@@ -597,6 +659,21 @@ const formatDate = (dateString?: string, t?: any) => {
 export default MyListing;
 
 const styles = StyleSheet.create({
+
+  categoryTabsContainer: {width: '105%',paddingBottom: 16,paddingTop: 8 },
+  categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' },
+  blurButtonWrapper_none: {
+
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: 'transparent',
+    backgroundColor: 'transparent',
+  },
+  
   emptyWrapper: {
     flex: 1,
     justifyContent: 'center',
@@ -652,18 +729,28 @@ const styles = StyleSheet.create({
     pointerEvents: 'none',
   },
   headerContent: {
+    // position: 'absolute',
+    // top: Platform.OS === 'ios' ? '6%' : 40,
+    // width: Platform.OS === 'ios' ? 393 : '100%',
+    // flexDirection: 'row',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // paddingHorizontal: 16,
+    // zIndex: 11,
+    // alignSelf: 'center',
+    // pointerEvents: 'box-none',
+    // marginTop: 2,
+    // marginLeft: 1
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '6%' : 40,
-    width: Platform.OS === 'ios' ? 393 : '100%',
+    top: (Platform.OS === 'ios' ? 60 : 40),
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: 16,
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-    marginTop: 2,
-    marginLeft: 1
+    justifyContent: 'space-between',
   },
   tabtext: {
     color: '#fff', 
@@ -706,10 +793,10 @@ const styles = StyleSheet.create({
     minHeight: Platform.OS === 'ios' ? 80 : 88,
   },
   backButtonContainer: {
-    position: 'absolute',
-    left: 16,
+    // position: 'absolute',
+    // left: 16,
     zIndex: 11,
-    top: 7,
+    // top: 7,
   },
   headerRow: {
     flexDirection: 'row',
@@ -738,7 +825,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     width: '100%',
-    marginTop: 17,
   },
   search_container: {
     flexDirection: 'row',
@@ -765,15 +851,15 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 
-  categoryTabsContainer: { 
-    marginBottom: 12, 
-    marginTop: 12, 
-    width: '105%',
-   },
-  categoryTabsScrollContent: { 
-    flexDirection: 'row', 
-    alignItems: 'center' 
-  },
+  // categoryTabsContainer: { 
+  //   marginBottom: 12, 
+  //   marginTop: 12, 
+  //   width: '105%',
+  //  },
+  // categoryTabsScrollContent: { 
+  //   flexDirection: 'row', 
+  //   alignItems: 'center' 
+  // },
 
  tabcard: {  
     minHeight: 38,

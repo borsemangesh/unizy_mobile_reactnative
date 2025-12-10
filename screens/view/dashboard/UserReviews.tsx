@@ -119,6 +119,7 @@ const UserReviews = ({ navigation }: UserReviewsProps) => {
   const { height: screenHeight } = Dimensions.get('window');
   const [totalRecords, setTotalRecords] = useState(0);
   const { t } = useTranslation();
+  const isEmpty = featureList.length === 0;
 
   type Category = {
     id: number | null;
@@ -504,10 +505,60 @@ const UserReviews = ({ navigation }: UserReviewsProps) => {
               />
             </Animated.View>
           </TouchableOpacity>
-
+          <View style={{width: 280}}>
           <Text allowFontScaling={false} style={styles.unizyText}>
             {members.firstname} {t('reviews')}
           </Text>
+          </View>
+
+          <TouchableOpacity
+            style={[styles.backButtonContainer]}
+            // activeOpacity={0}
+          >
+            <Animated.View
+              style={[styles.blurButtonWrapper_none]}
+            >
+
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 0],
+                      [0, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'transparent',
+                    borderRadius: 40,
+                  })),{display: 'none'}
+                ]}
+              />
+
+              {/* Blur view fades in as scroll increases */}
+              <Animated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 0],
+                      [0, 0],
+                      'clamp',
+                    ),
+                  })),{display: 'none'}
+                ]}
+              >
+                
+              </Animated.View>
+
+              {/* Back Icon */}
+              <Animated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 25, width: 25,display: 'none' }]}
+              />
+            </Animated.View>
+          </TouchableOpacity>
         </View>
         <Animated.FlatList
           data={featureList}
@@ -560,9 +611,22 @@ const UserReviews = ({ navigation }: UserReviewsProps) => {
               </ScrollView>
             </View>
           }
+          // contentContainerStyle={[
+          //   styles.listContainer,
+          //   { paddingTop: Platform.OS === 'ios' ? 125 : 100, flexGrow: 1 },
+          // ]}
           contentContainerStyle={[
             styles.listContainer,
-            { paddingTop: Platform.OS === 'ios' ? 125 : 100, flexGrow: 1 },
+            {
+              paddingTop: (Platform.OS === 'ios'? 120 : 100),
+              paddingBottom: isEmpty
+                ? 10                      
+                : Platform.select({
+                  ios: screenHeight * 0.01,   // ⬅ apply padding when list has data
+                  android: screenHeight * 0.04,
+                }),
+              flexGrow: 0.97,
+            },
           ]}
           onScroll={scrollHandler}
           scrollEventThrottle={16}
@@ -620,6 +684,20 @@ export default UserReviews;
 
 const styles = StyleSheet.create({
 
+  categoryTabsContainer: {width: '105%',paddingBottom: 16,paddingTop: 8,paddingLeft: 10 },
+  categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' },
+  blurButtonWrapper_none: {
+
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: 'transparent',
+    backgroundColor: 'transparent',
+  },
+
   header: {
     position: 'absolute',
     top: 0,
@@ -641,10 +719,10 @@ const styles = StyleSheet.create({
     minHeight: Platform.OS === 'ios' ? 80 : 88,
   },
   backButtonContainer: {
-    position: 'absolute',
-    left: 16,
+    // position: 'absolute',
+    // left: 16,
     zIndex: 11,
-    top: 7,
+    // top: 7,
   },
 
   headerWrapper: {
@@ -660,31 +738,41 @@ const styles = StyleSheet.create({
     pointerEvents: 'box-none',
   },
   headerContent: {
+    // position: 'absolute',
+    // top: Platform.OS === 'ios' ? '6%' : 40,
+    // width: Platform.OS === 'ios' ? 393 : '100%',
+    // flexDirection: 'row',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // // paddingHorizontal: 16,
+    // zIndex: 11,
+    // alignSelf: 'center',
+    // pointerEvents: 'box-none',
+    // marginTop: 2,
+    // marginLeft: 1
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '6%' : 40,
-    width: Platform.OS === 'ios' ? 393 : '100%',
+    top: (Platform.OS === 'ios' ? 60 : 40),
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    // paddingHorizontal: 16,
+    paddingHorizontal: 16,
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-    marginTop: 2,
-    marginLeft: 1
+    justifyContent: 'space-between',
   },
 
-  categoryTabsContainer: {
-    width: '100%',
-    marginBottom: 12,
-    paddingLeft: 10
-  },
+  // categoryTabsContainer: {
+  //   width: '100%',
+  //   marginBottom: 12,
+  //   paddingLeft: 10
+  // },
 
-  categoryTabsScrollContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingRight: 16,
-  },
+  // categoryTabsScrollContent: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   paddingRight: 16,
+  // },
   blurButtonWrapper: {
     width: 48,
     height: 48,
@@ -702,7 +790,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    paddingHorizontal: 10,
+    paddingHorizontal: 9,
   },
 
 
@@ -807,7 +895,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     width: '100%',
-    marginTop: 17,
   },
   search_container: {
     flexDirection: 'row',

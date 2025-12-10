@@ -225,10 +225,8 @@ const styles = StyleSheet.create({
     flex: 1
   },
   header: {
-    // paddingTop: Platform.OS === 'ios' ? 50 : 50,
-    // paddingBottom: 12,
-    // paddingHorizontal: 16,
-    //     position: 'absolute',
+  
+    // position: 'absolute',
     // top: Platform.OS === 'ios' ? '6%' : 40,
     // width: Platform.OS === 'ios' ? 393 : '100%',
     // flexDirection: 'row',
@@ -238,20 +236,18 @@ const styles = StyleSheet.create({
     // zIndex: 11,
     // alignSelf: 'center',
     // pointerEvents: 'box-none',
-    // marginTop: 2,
-    // marginLeft: 1
+    // marginTop: 9,
+    // marginLeft: 2
     position: 'absolute',
-    top: Platform.OS === 'ios' ? '6%' : 40,
-    width: Platform.OS === 'ios' ? 393 : '100%',
+    top: (Platform.OS === 'ios' ? 60 : 40),
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: 16,
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-    marginTop: 9,
-    marginLeft: 2
+    justifyContent: 'space-between',
   },
   headerRow: {
     flexDirection: 'row',
