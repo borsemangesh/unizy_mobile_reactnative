@@ -105,6 +105,7 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
         if (result.statusCode === 200) {
           console.log('Review saved:', result);
           showToast(t(result.message));
+          setIsLoading(false);
           setShowPopup1(true);
         } else {
           console.warn('Error saving review:', result);
@@ -112,7 +113,9 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
         }
       } catch (error) {
         console.error('Review error:', error);
+        setIsLoading(false);
       } finally {
+        setIsLoading(false);
         setIsLoading(false);
       }
     };
@@ -154,13 +157,13 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
               style={{
                 flex: 1,
                 gap: 10,
-                paddingTop: Platform.OS === 'ios' ? 120 : 100,
-                paddingHorizontal: 16,
+                paddingTop: Platform.OS === 'ios' ? 120 : 120,
+                paddingHorizontal: 20,
               }}
             >
               
               <Text allowFontScaling={false} style={styles.mainlabel1}>
-                  {t('Report Title')}
+                  {t('report_title')}
                 </Text>
               <View style={styles.login_container1}>
              
@@ -274,6 +277,12 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
           </TouchableWithoutFeedback>
         </Modal>
         </View>
+        {isLoading && (
+        <View style={styles.loaderOverlay}>
+          <Loader />
+        </View>
+      )}
+
         <NewCustomToastContainer />
       </ImageBackground>
     );
@@ -281,6 +290,18 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
 
 
 const styles = StyleSheet.create({
+  loaderOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+  },
+  
     mainheader: {
         color: 'rgba(255, 255, 255, 0.80)',
         fontFamily: 'Urbanist-SemiBold',
@@ -427,6 +448,7 @@ const styles = StyleSheet.create({
         backgroundColor:
           'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
         boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+
       },
   
     login_container: {

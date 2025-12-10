@@ -275,10 +275,12 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             return true;
 
           case RESULTS.DENIED:
+            // User denied previously → we can ask again
             const result = await request(PERMISSIONS.IOS.CAMERA);
             return result === RESULTS.GRANTED;
 
           case RESULTS.BLOCKED:
+            // User selected "Don't Allow" + "Don't ask again"
             Alert.alert(
               'Camera Permission Needed',
               'Camera access is blocked. Please enable it in Settings.',

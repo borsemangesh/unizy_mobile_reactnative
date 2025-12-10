@@ -29,7 +29,7 @@ import {
 } from '../../utils/component/NewCustomToastManager';
 import { RouteProp, useRoute } from '@react-navigation/native';
 // import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
-import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
+import { check, openSettings, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import SelectCatagoryDropdown_IOS from '../../utils/component/SelectCatagoryDropdown_IOS';
 
 import AnimatedReanimated, {
@@ -452,86 +452,63 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
 
   const requestCameraPermission = async () => {
-    try {
-      if (Platform.OS === 'android') {
-        try {
-          const cameraGranted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.CAMERA,
-            {
-              title: 'Camera Permission',
-              message: 'App needs access to your camera',
-              buttonNeutral: 'Ask Me Later',
-              buttonNegative: 'Cancel',
-              buttonPositive: 'OK',
-            }
-          );
-
-          const readImagesGranted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
-            {
-              title: 'Gallery Permission',
-              message: 'App needs access to your photos',
-              buttonNeutral: 'Ask Me Later',
-              buttonNegative: 'Cancel',
-              buttonPositive: 'OK',
-            }
-          ).catch(() => null);
-
-          const readStorageGranted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-            {
-              title: 'Storage Permission',
-              message: 'App needs access to your gallery photos',
-              buttonNeutral: 'Ask Me Later',
-              buttonNegative: 'Cancel',
-              buttonPositive: 'OK',
-            }
-          ).catch(() => null);
-
-          // Final permission result
-          const galleryGranted =
-            readImagesGranted === PermissionsAndroid.RESULTS.GRANTED ||
-            readStorageGranted === PermissionsAndroid.RESULTS.GRANTED;
-
-          return (
-            cameraGranted === PermissionsAndroid.RESULTS.GRANTED &&
-            galleryGranted
-          );
-        } catch (err) {
-          console.warn(err);
-          return false;
-        }
-      } else {
-        // iOS Permissions
-        const permissionsToCheck = [
-          PERMISSIONS.IOS.CAMERA,
-          PERMISSIONS.IOS.PHOTO_LIBRARY,
-        ];
-
-        const results = await Promise.all(
-          permissionsToCheck.map(async (perm) => {
-            const status = await check(perm);
-            if (status === RESULTS.GRANTED) return true;
-            if (status === RESULTS.BLOCKED) {
-              console.warn(`${perm} is blocked. Enable it in Settings.`);
-              return false;
-            }
-            const req = await request(perm);
-            return req === RESULTS.GRANTED;
-          }),
+    // ANDROID
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            title: 'Camera Permission',
+            message: 'App needs access to your camera',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
         );
 
-        if (results.every((r) => r === true)) {
-          return true;
-        } else {
-          Alert.alert('Permission Denied', 'Camera or gallery permission denied');
-          return false;
-        }
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        console.warn(err);
+        return false;
       }
-    } catch (error) {
-      console.warn('Permission Error:', error);
-      return false;
     }
+
+    // iOS
+    if (Platform.OS === 'ios') {
+      try {
+        const status = await check(PERMISSIONS.IOS.CAMERA);
+
+        switch (status) {
+          case RESULTS.GRANTED:
+            return true;
+
+          case RESULTS.DENIED:
+            // User denied previously → we can ask again
+            const result = await request(PERMISSIONS.IOS.CAMERA);
+            return result === RESULTS.GRANTED;
+
+          case RESULTS.BLOCKED:
+            // User selected "Don't Allow" + "Don't ask again"
+            Alert.alert(
+              'Camera Permission Needed',
+              'Camera access is blocked. Please enable it in Settings.',
+              [
+                { text: 'Open Settings', onPress: () => openSettings() },
+                { text: 'Cancel', style: 'cancel' },
+              ],
+            );
+            return false;
+
+          default:
+            return false;
+        }
+      } catch (err) {
+        console.warn(err);
+        return false;
+      }
+    }
+
+    return true;
   };
 
   const handlePreview = async (latestFormValues: any) => {
