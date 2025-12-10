@@ -46,7 +46,7 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
   firstName = null,
   lastName = null,
 }) => {
-  const isProfileCategory = categoryName?.toLowerCase() === 'house keeping' || categoryName?.toLowerCase() === 'tuition';
+  const isProfileCategory = catagory_id === 2 || catagory_id === 5;
   const { t } = useTranslation();
   const getInitials = (first: string | null = '', last: string | null = '') => {
     const f = first?.trim()?.charAt(0)?.toUpperCase() || '';

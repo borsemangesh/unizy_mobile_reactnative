@@ -36,6 +36,7 @@ import MaskedView from '@react-native-masked-view/masked-view';
 import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
+import Loader from '../../utils/component/Loader';
 
 type previewDetailsProps = {
   navigation: any;
@@ -78,6 +79,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const [categoryid, setcategoryid] = useState(0);
   const [fields, setFields] = useState<any[]>([]); // seller fields from API
   const today = new Date();
+  const [isLoading, setIsLoading] = useState(false);
 
   // Format as DD-MM-YYYY
   const formattedDate = `${today.getDate().toString().padStart(2, '0')}-${(
@@ -520,6 +522,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const handleListPress = async () => {
     console.log("🔵 handleListPress called");
 
+    setIsLoading(true)
     try {
 
       const storedData = await AsyncStorage.getItem("formData1");
@@ -536,7 +539,6 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
       const shareid = await AsyncStorage.getItem("shareid");
 
       if (!token) {
-        console.log("⚠️ Token missing");
         return;
       }
 
@@ -552,9 +554,6 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
         }
       });
 
-      // -----------------------------
-      // STEP 4: Prepare payload for PATCH
-      // -----------------------------
       const dataArray = nonImageFields
         .filter(([key]) => !isNaN(Number(key)))
         .map(([key, obj]) => ({
@@ -592,7 +591,6 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
       const feature_id = createJson?.data?.id;
       if (!feature_id) {
-        // console.log(" feature_id missing");
         return;
       }
 
@@ -613,11 +611,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
           } as any);
           form.append("feature_id", feature_id);
           form.append("param_id", param_id);
-
-
           console.log("  file uri:", image.uri);
-
-
           const uploadRes = await fetch(`${MAIN_URL.baseUrl}category/featurelist/image-update`, {
             method: "POST",
             headers: { Authorization: `Bearer ${token}` },
@@ -636,8 +630,6 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
           if (!isSuccess) return;
         }
       }
-
-      console.log("🎉 ALL DONE");
       showToast(t(Constant.DATA_UPLOAD), "success");
       setShowPopup(true);
 
@@ -647,6 +639,9 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
     } catch (err) {
       console.log("❌ handleListPress Error:", err);
       showToast(t(Constant.SOMTHING_WENT_WRONG), "error");
+    }
+    finally {
+      setIsLoading(false);
     }
   };
 
@@ -1225,12 +1220,29 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
           </View>
         </Modal>
       </View>
+      {isLoading && (
+        <View style={styles.loaderOverlay}>
+          <Loader />
+        </View>
+      )}
       <NewCustomToastContainer />
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+
+  loaderOverlay: {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(0,0,0,0.4)',
+  justifyContent: 'center',
+  alignItems: 'center',
+  zIndex: 9999,
+},
 
   datetext1: {
     color: '#9CD6FF',

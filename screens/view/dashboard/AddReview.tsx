@@ -142,18 +142,14 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
             <View style={{ width: 48 }} />
           </View>
         </View>
-        {isLoading && (
-          <View style={styles.fullLoader}>
-            <Loader />
-          </View>
-        )}
+      
 
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
           <View
             style={{
               flex: 1,
-              paddingTop: Platform.OS === 'ios' ? 120 : 100,
-              paddingHorizontal: 16,
+              paddingTop: Platform.OS === 'ios' ? 120 : 120,
+              paddingHorizontal: 20,
             }}
           >
             <View style={styles.innercontainer}>
@@ -283,6 +279,11 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
           </TouchableWithoutFeedback>
         </Modal>
       </View>
+        {isLoading && (
+          <View style={styles.fullLoader}>
+            <Loader />
+          </View>
+        )}
       <NewCustomToastContainer />
     </ImageBackground>
   );

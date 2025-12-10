@@ -1,4 +1,3 @@
-
 // import React, { useEffect, useState } from 'react';
 // import {
 //   Image,
@@ -804,13 +803,6 @@ const Notification = ({ navigation }: NotificationProps) => {
     if (isLoading || !initialLoading) return;
     if (isLoading || !initialLoading) return;
     try {
-      if (isInitialLoad) {
-        setInitialLoading(true);
-        setIsLoading(true);
-      } else {
-        setIsLoading(false);
-        setInitialLoading(false);
-      }
 
       const pagesize = 10;
       let url = `${MAIN_URL.baseUrl}user/mynotification?page=${pageNum}&pagesize=${pagesize}`;
@@ -1004,7 +996,7 @@ const Notification = ({ navigation }: NotificationProps) => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-        {/* {initialLoading && notificationList.length === 0 && (
+        {initialLoading && notificationList.length === 0 && (
           <Loader
             containerStyle={{
               position: 'absolute',
@@ -1014,13 +1006,13 @@ const Notification = ({ navigation }: NotificationProps) => {
               bottom: 0,
               justifyContent: 'center',
               alignItems: 'center',
-              paddingTop: Platform.OS === 'ios' ? 600 : 200,
+              paddingTop: Platform.OS === 'ios' ? 0 : 0,
               zIndex: 1000,
               elevation: Platform.OS === 'android' ? 100 : 0,
               pointerEvents: 'none',
             }}
           />
-        )} */}
+        )}
 
         <Animated.View
           style={[styles.headerWrapper, animatedBlurStyle]}
@@ -1147,13 +1139,6 @@ const Notification = ({ navigation }: NotificationProps) => {
               </View>
             ) : null
           }
-          // ListEmptyComponent={
-          //   !initialLoading && !isLoading ? (
-          //     <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
-          //       {t('no_notification_found')}
-          //     </Text>
-          //   ) : null
-          // }
           contentContainerStyle={[
             styles.listContainer,
             {
@@ -1168,11 +1153,7 @@ const Notification = ({ navigation }: NotificationProps) => {
             },
           ]}
           ListEmptyComponent={
-            !initialLoading && !isLoading ?  (
-              <View style={styles.loaderWrapper}>
-                <Loader containerStyle={styles.loaderContainer} />
-              </View>
-            ) : (
+            !initialLoading && !isLoading ? (
               <View style={[styles.emptyWrapper]}>
                 <View style={styles.emptyContainer}>
                   <Image
@@ -1185,7 +1166,7 @@ const Notification = ({ navigation }: NotificationProps) => {
                   </Text>
                 </View>
               </View>
-            )
+            ) : null
           }
         />
       </View>

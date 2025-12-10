@@ -34,6 +34,7 @@ import Button from '../../utils/component/Button';
 import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
 import { useAnimatedStyle, interpolate, useSharedValue, interpolateColor } from 'react-native-reanimated';
+import Loader from '../../utils/component/Loader';
 
 type UserAddReviewProps = {
   navigation: any;
@@ -55,26 +56,26 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
 
   const [username, setUsername] = useState<string>('');
   const [showPopup1, setShowPopup1] = useState(false);
-    const closePopup1 = () => setShowPopup1(false);
-   const { width } = Dimensions.get('window');
-const { t } = useTranslation();
-const scrollY = useSharedValue(0);
-const animatedIconStyle = useAnimatedStyle(() => {
-  'worklet';
+  const closePopup1 = () => setShowPopup1(false);
+  const { width } = Dimensions.get('window');
+  const { t } = useTranslation();
+  const scrollY = useSharedValue(0);
+  const animatedIconStyle = useAnimatedStyle(() => {
+    'worklet';
 
-  const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
+    const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
 
-  const tintColor = interpolateColor(
-    scrollY.value,
-    [0, 150],
-    ['#FFFFFF', '#002050'],
-  );
+    const tintColor = interpolateColor(
+      scrollY.value,
+      [0, 150],
+      ['#FFFFFF', '#002050'],
+    );
 
-  return {
-    opacity,
-    tintColor,
-  };
-});
+    return {
+      opacity,
+      tintColor,
+    };
+  });
 
   const handleSubmit = async () => {
     if (rating === 0) {
@@ -149,16 +150,16 @@ const animatedIconStyle = useAnimatedStyle(() => {
                 />
               </View>
             </TouchableOpacity>
-            <View style={{width:300}}>
-            <Text numberOfLines={2} allowFontScaling={false} style={styles.unizyText}>{t('write_a_review')}</Text>
+            <View style={{ width: 300 }}>
+              <Text numberOfLines={2} allowFontScaling={false} style={styles.unizyText}>{t('write_a_review')}</Text>
             </View>
-            <TouchableOpacity onPress={() =>{
-            
-              }}>
-              <View style={[styles.backIconRow,{display:'none'}]}>
+            <TouchableOpacity onPress={() => {
+
+            }}>
+              <View style={[styles.backIconRow, { display: 'none' }]}>
                 <Image
                   source={require('../../../assets/images/back.png')}
-                  style={{ height: 24, width: 24,display:'none' }}
+                  style={{ height: 24, width: 24, display: 'none' }}
                 />
               </View>
             </TouchableOpacity>
@@ -166,7 +167,11 @@ const animatedIconStyle = useAnimatedStyle(() => {
         </View>
 
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-          <View style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 120 : 100, paddingHorizontal: 16 }}>
+          <View style={{
+            flex: 1,
+            paddingTop: Platform.OS === 'ios' ? 120 : 120,
+            paddingHorizontal: 20,
+          }}>
             <View style={styles.innercontainer}>
               <Text allowFontScaling={false} style={styles.mainlabel}>{t('how_many_stars')}</Text>
               <Text allowFontScaling={false} style={styles.sublabel}>{t('slide_to_rate')}</Text>
@@ -284,6 +289,11 @@ const animatedIconStyle = useAnimatedStyle(() => {
           </TouchableWithoutFeedback>
         </Modal>
       </View>
+      {isLoading && (
+        <View style={styles.fullLoader}>
+          <Loader />
+        </View>
+      )}
       <NewCustomToastContainer />
     </ImageBackground>
   );
@@ -292,8 +302,17 @@ const animatedIconStyle = useAnimatedStyle(() => {
 export default UserAddReview;
 
 const styles = StyleSheet.create({
-
-
+  fullLoader: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    height: "100%",
+    width: "100%",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999,
+  },
   headerContent: {
     position: 'absolute',
     top: (Platform.OS === 'ios' ? 60 : 40),
