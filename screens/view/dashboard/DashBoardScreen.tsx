@@ -1254,10 +1254,10 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                 onScroll={scrollHandler}
                 style={{
                   flex: 1,
-                  paddingTop: Platform.OS === 'ios' ? 126 : 120,
+                  paddingTop: Platform.OS === 'ios' ? 60 : 120,
                 }}
                 contentContainerStyle={{
-                  paddingTop: Platform.OS === 'ios' ? 126 : 120,
+                  paddingTop: Platform.OS === 'ios' ? 60 : 120,
                   paddingBottom: 100, // 👈 FIX: ensures scrolling to bottom
                 }}
                 showsVerticalScrollIndicator={false}
