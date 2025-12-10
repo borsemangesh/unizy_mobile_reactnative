@@ -585,7 +585,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
                 <Loader containerStyle={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }} />
               </View>
             ) : !loading && users.length === 0 ? (
-              <View style={[styles.emptyWrapper, { justifyContent: 'center', alignItems: 'center', flex: 1, paddingHorizontal: 16 }]}>
+              <View style={[styles.emptyWrapper, { justifyContent: 'center', alignItems: 'center', flex: 1, }]}>
                 <View style={styles.emptyContainer}>
                   <Image
                     source={require('../../../assets/images/noproduct.png')}
@@ -669,7 +669,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    height: '100%',
+    // height: '100%',
   },
 
   emptyContainer: {
@@ -682,8 +682,8 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.08)',
     borderRadius: 24,
     overflow: 'hidden',
-    minHeight: '80%',
-    marginTop: 200,
+    // minHeight: '80%',
+    marginTop: 10,
   },
   emptyImage: {
     width: 50,
