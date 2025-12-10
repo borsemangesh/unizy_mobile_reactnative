@@ -197,10 +197,6 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
     loadCategories();
   }, [t]);
 
-  useEffect(() => {
-    setPage(1);
-    displayListOfProduct(selectedCategory?.id ?? null, 1, false);
-  }, [selectedCategory]);
 
   useFocusEffect(
     useCallback(() => {

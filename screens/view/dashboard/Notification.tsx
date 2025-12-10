@@ -143,7 +143,7 @@ const Notification = ({ navigation }: NotificationProps) => {
   const [initialLoading, setInitialLoading] = useState(true);
   const insets = useSafeAreaInsets(); // Safe area insets
   const { height: screenHeight } = Dimensions.get('window');
-
+  const isEmpty = notificationList.length === 0;
 
 
   useEffect(() => {
@@ -154,12 +154,14 @@ const Notification = ({ navigation }: NotificationProps) => {
 
   const displayListOfProduct = async (pageNum: number, isInitialLoad: boolean = false) => {
     let start = Date.now();
-
+    if (isLoading || !initialLoading) return;
     try {
       if (isInitialLoad) {
         setInitialLoading(true);
-      } else {
         setIsLoading(true);
+      } else {
+        setIsLoading(false);
+        setInitialLoading(false);
       }
 
       const pagesize = 10;
@@ -354,7 +356,7 @@ const Notification = ({ navigation }: NotificationProps) => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-        {initialLoading && notificationList.length === 0 && (
+        {/* {initialLoading && notificationList.length === 0 && (
           <Loader
             containerStyle={{
               position: 'absolute',
@@ -370,7 +372,7 @@ const Notification = ({ navigation }: NotificationProps) => {
               pointerEvents: 'none',
             }}
           />
-        )}
+        )} */}
 
         <Animated.View
           style={[styles.headerWrapper, animatedBlurStyle]}
@@ -476,14 +478,6 @@ const Notification = ({ navigation }: NotificationProps) => {
           scrollEventThrottle={16}
           data={groupedList}
           renderItem={renderItem}
-          contentContainerStyle={[
-                styles.listContainer,
-                  {                   
-                  paddingBottom: (Platform.OS === 'ios' ? 30:screenHeight * 0.150 + insets.bottom), 
-                  paddingTop: Platform.OS === 'ios' ? 120 : 100,
-                  
-                  },
-              ]}
           keyExtractor={(item, index) => `${item.type}-${index}`}
           onEndReachedThreshold={0.5}
           onEndReached={() => {
@@ -505,12 +499,45 @@ const Notification = ({ navigation }: NotificationProps) => {
               </View>
             ) : null
           }
+          // ListEmptyComponent={
+          //   !initialLoading && !isLoading ? (
+          //     <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
+          //       {t('no_notification_found')}
+          //     </Text>
+          //   ) : null
+          // }
+          contentContainerStyle={[
+            styles.listContainer,
+            {
+              paddingTop: (Platform.OS === 'ios'? 120 : 100),
+              paddingBottom: isEmpty
+                ? 10                      
+                : Platform.select({
+                  ios: screenHeight * 0.01,   // ⬅ apply padding when list has data
+                  android: screenHeight * 0.04,
+                }),
+              flexGrow: 1,
+            },
+          ]}
           ListEmptyComponent={
-            !initialLoading && !isLoading ? (
-              <Text allowFontScaling={false} style={{ color: '#fff', textAlign: 'center', marginTop: 20 }}>
-                {t('no_notification_found')}
-              </Text>
-            ) : null
+            !initialLoading && !isLoading ?  (
+              <View style={styles.loaderWrapper}>
+                <Loader containerStyle={styles.loaderContainer} />
+              </View>
+            ) : (
+              <View style={[styles.emptyWrapper]}>
+                <View style={styles.emptyContainer}>
+                  <Image
+                    source={require('../../../assets/images/noproduct.png')}
+                    style={styles.emptyImage}
+                    resizeMode="contain"
+                  />
+                  <Text allowFontScaling={false} style={styles.emptyText}>
+                   {t('no_notification_found')}
+                  </Text>
+                </View>
+              </View>
+            )
           }
         />
       </View>
@@ -522,6 +549,50 @@ const Notification = ({ navigation }: NotificationProps) => {
 export default Notification;
 
 const styles = StyleSheet.create({
+  loaderWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    minHeight: Platform.OS === 'ios' ? 400 : 300,
+    paddingVertical: 40,
+  },
+  loaderContainer: {
+    width: 100,
+    height: 100,
+  },
+  emptyWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    // marginTop: 16,
+    // paddingHorizontal: 10,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height:680,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderWidth: 0.3,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 24,
+    overflow: 'hidden',
+  },
+  emptyImage: {
+    width: 50,
+    height: 50,
+    marginBottom: 20,
+  },
+  emptyText: {
+    fontSize: 20,
+    color: '#fff',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: 600
+  },
 
   backButtonContainer: {
     width: 48,

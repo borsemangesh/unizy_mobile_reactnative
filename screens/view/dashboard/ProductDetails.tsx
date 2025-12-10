@@ -727,7 +727,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
                 <Loader containerStyle={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }} />
               </View>
             ) : !isLoading && featurelist.length === 0 ? (
-              <View style={[styles.emptyWrapper, { justifyContent: 'center', alignItems: 'center', flex: 1 }]}>
+              <View style={[styles.emptyWrapper, { justifyContent: 'center', alignItems: 'center', flex: 1,paddingHorizontal: 10 }]}>
                 <View style={styles.emptyContainer}>
                   <Image
                     source={require('../../../assets/images/noproduct.png')}

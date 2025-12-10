@@ -2033,8 +2033,8 @@ export const Styles = StyleSheet.create({
   mainTemsAndConditions: {
     position: 'absolute',
     bottom: (Platform.OS === 'ios' ? 30 : 20), // adjust spacing
-    left: 0,
-    right: 0,
+    left: 10,
+    right: 10,
     alignItems: 'center',
   },
 });

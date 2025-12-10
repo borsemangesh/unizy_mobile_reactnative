@@ -1257,7 +1257,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                   paddingTop: Platform.OS === 'ios' ? 126 : 120,
                 }}
                 contentContainerStyle={{
-                  paddingBottom: 100, 
+                  paddingBottom: 0, 
                 }}
                 showsVerticalScrollIndicator={false}
               >
