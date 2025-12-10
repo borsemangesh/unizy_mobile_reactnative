@@ -843,7 +843,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    height: (Platform.OS === 'ios' ? 570 : 300),
+    height: (Platform.OS === 'ios' ? 570 : 600),
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     borderWidth: 0.3,
     borderColor: 'rgba(255, 255, 255, 0.08)',

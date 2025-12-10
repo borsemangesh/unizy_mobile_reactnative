@@ -1243,24 +1243,45 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             {t('edit')}{`${category ? ` ${category} ` : ''}`}
           </Text> */}
           <View style={{ width: 300 }}>
-            <Text
+            {/* <Text
               allowFontScaling={false}
               style={styles.unizyText}
               numberOfLines={2}
             >
               {t('edit')}{`${category ? ` ${category} ` : ''}`}
+            </Text> */}
+
+            <Text
+              allowFontScaling={false}
+              style={styles.unizyText}
+              numberOfLines={2}
+            >
+              {(() => {
+                switch (productId) {
+                  case 2:
+                    return `${t('post_tution')}`;
+                  case 3:
+                    return `${t('post_food')}`;
+                  case 4:
+                    return `${t('post_accomodation')}`;
+                  case 5:
+                    return `${t('post_house_option')}`;
+                  default:
+                    return `${t('post_product')}`;
+                }
+              })()}
             </Text>
           </View>
 
           <TouchableOpacity
             onPress={() => {
-             
+
             }}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
             <AnimatedReanimated.View
-              style={[styles.blurButtonWrapper_none, ]}
+              style={[styles.blurButtonWrapper_none,]}
             >
               <AnimatedReanimated.View
                 style={[
@@ -1274,7 +1295,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                     ),
                     backgroundColor: 'rgba(255,255,255,0.1)',
                     borderRadius: 40,
-                  })),{display: 'none'}
+                  })), { display: 'none' }
                 ]}
               />
 
@@ -1301,7 +1322,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
               <AnimatedReanimated.Image
                 source={require('../../../assets/images/back.png')}
-                style={[{ height: 24, width: 24,display: 'none' } ]}
+                style={[{ height: 24, width: 24, display: 'none' }]}
               />
             </AnimatedReanimated.View>
           </TouchableOpacity>
@@ -1387,7 +1408,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                   }),
                 }}
               >
-                <Text
+                {/* <Text
                   allowFontScaling={false}
                   style={styles.productdetailstext}
                 >
@@ -1395,7 +1416,27 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                   {productId === 3
                     ? t('dish_details')
                     : `${category ? `${category} ` : ''}${t('details')}`}
+                </Text> */}
+                <Text
+                  allowFontScaling={false}
+                  style={styles.productdetailstext}
+                >
+                  {(() => {
+                    switch (productId) {
+                      case 2:
+                        return `${t('post_tution')} ${t('details')}`;
+                      case 3:
+                        return t('dish_details');
+                      case 4:
+                        return t('rental_details');
+                      case 5:
+                        return t('housekeeping_details');
+                      default:
+                        return t('product_details');
+                    }
+                  })()}
                 </Text>
+
 
                 {fields
                   .filter(

@@ -972,10 +972,27 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
             <View style={styles.card}>
               <View style={styles.gap12}>
-                <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
+                {/* <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
                   {userMeta?.category?.id === 3
                     ? t('dish_details')
                     : `${userMeta?.category?.name ? `${userMeta?.category?.name} ` : ''}${t('details')}`}
+                </Text> */}
+
+                <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
+                  {(() => {
+                    switch (userMeta?.category?.id) {
+                      case 2:
+                        return `${t('post_tution')} ${t('details')}`;
+                      case 3:
+                        return t('dish_details');
+                      case 4:
+                        return t('rental_details');
+                      case 5:
+                        return t('housekeeping_details');
+                      default:
+                        return t('product_details');
+                    }
+                  })()}
                 </Text>
 
                 <View style={{ gap: 12 }}>

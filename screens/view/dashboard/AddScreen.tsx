@@ -38,6 +38,7 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import { BlurView } from '@react-native-community/blur';
 import SelectCatagoryDropdown_IOS from '../../utils/component/SelectCatagoryDropdown_IOS';
+import Loader from '../../utils/component/Loader';
 
 import AnimatedReanimated, {
   useSharedValue,
@@ -181,7 +182,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   useEffect(() => {
     const fetchFields = async () => {
       try {
-
+        setLoading(true)
         const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
         console.log("language-code", language_code)
         const token = await AsyncStorage.getItem('userToken');
@@ -252,16 +253,20 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           );
           setFields(sellerFields);
         }
+        
         if (response.status === 401 || response.status === 403) {
+          //setLoading(false)
           handleForceLogout();
           return;
         }
 
         if (json.statusCode === 401 || json.statusCode === 403) {
+          //setLoading(false)
           handleForceLogout();
           return;
         }
       } catch (err) {
+        setLoading(false)
         console.log('Error fetching fields', err);
       } finally {
         setLoading(false);
@@ -1233,133 +1238,142 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           </TouchableOpacity>
         </View>
 
+   {loading ? (
+            <View style={styles.loaderWrapper}>
+              <Loader containerStyle={styles.loaderContainer} />
+            </View>
+          ) : (
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <AnimatedReanimated.ScrollView
-            scrollEventThrottle={16}
-            onScroll={scrollHandler}
-            contentContainerStyle={[
-              styles.scrollContainer,
-              { paddingBottom: height * 0.1 }, // 0.05% of screen height
-            ]}
-          >
-            <View style={styles.userRow}>
-              <View
-                style={{
-                  width: '20%',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                {userMeta?.profile ? (
-                  <Image
-                    source={{ uri: userMeta.profile }}
-                    style={styles.avatar}
-                  />
-                ) : (
-                  <View style={styles.initialsCircle}>
-                    <Text allowFontScaling={false} style={styles.initialsText}>
-                      {getInitials(
-                        userMeta?.firstname ?? 'Alan',
-                        userMeta?.lastname ?? 'Walker',
-                      )}
-                    </Text>
-                  </View>
-                )}
-              </View>
-
-              <View style={{ width: '80%' }}>
-                <Text allowFontScaling={false} style={styles.userName}>
-                  {userMeta
-                    ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''
-                      }`.trim()
-                    : 'Alan Walker'}
-                </Text>
-
+       
+            <AnimatedReanimated.ScrollView
+              scrollEventThrottle={16}
+              onScroll={scrollHandler}
+              contentContainerStyle={[
+                styles.scrollContainer,
+                { paddingBottom: height * 0.1 }, // 0.05% of screen height
+              ]}
+            >
+              <View style={styles.userRow}>
                 <View
                   style={{
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    display: 'flex',
-                    alignItems: 'stretch',
+                    width: '20%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
                 >
-                  <Text allowFontScaling={false} style={styles.userSub}>
-                    {userMeta?.university_name || 'University of Warwick,'}
+                  {userMeta?.profile ? (
+                    <Image
+                      source={{ uri: userMeta.profile }}
+                      style={styles.avatar}
+                    />
+                  ) : (
+                    <View style={styles.initialsCircle}>
+                      <Text allowFontScaling={false} style={styles.initialsText}>
+                        {getInitials(
+                          userMeta?.firstname ?? 'Alan',
+                          userMeta?.lastname ?? 'Walker',
+                        )}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+
+                <View style={{ width: '80%' }}>
+                  <Text allowFontScaling={false} style={styles.userName}>
+                    {userMeta
+                      ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''
+                        }`.trim()
+                      : 'Alan Walker'}
                   </Text>
+
                   <View
                     style={{
-                      flexDirection: 'row',
+                      flexDirection: 'column',
                       justifyContent: 'space-between',
+                      display: 'flex',
+                      alignItems: 'stretch',
                     }}
                   >
-                    <Text allowFontScaling={false} style={styles.userSub2}>
-                      {userMeta?.city || 'Coventry'}
+                    <Text allowFontScaling={false} style={styles.userSub}>
+                      {userMeta?.university_name || 'University of Warwick,'}
                     </Text>
                     <View
                       style={{
                         flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 3,
+                        justifyContent: 'space-between',
                       }}
                     >
-                      <Image
-                        source={require('../../../assets/images/calendar_icon1.png')}
-                        style={{ height: 20, width: 20 }}
-                      />
-                      <Text allowFontScaling={false} style={styles.dateText}>
-                        {getCurrentDate(t)}
+                      <Text allowFontScaling={false} style={styles.userSub2}>
+                        {userMeta?.city || 'Coventry'}
                       </Text>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 3,
+                        }}
+                      >
+                        <Image
+                          source={require('../../../assets/images/calendar_icon1.png')}
+                          style={{ height: 20, width: 20 }}
+                        />
+                        <Text allowFontScaling={false} style={styles.dateText}>
+                          {getCurrentDate(t)}
+                        </Text>
+                      </View>
                     </View>
                   </View>
                 </View>
               </View>
-            </View>
 
-            <View style={styles.productdetails}>
-              <Animated.View
-                style={{
-                  transform: [{ translateY: slideUp1 }],
-                  opacity: slideUp1.interpolate({
-                    inputRange: [-screenHeight, 0],
-                    outputRange: [0, 1],
-                  }),
-                }}
-              >
-                <Text
-                  allowFontScaling={false}
-                  style={styles.productdetailstext}
+              <View style={styles.productdetails}>
+                <Animated.View
+                  style={{
+                    transform: [{ translateY: slideUp1 }],
+                    opacity: slideUp1.interpolate({
+                      inputRange: [-screenHeight, 0],
+                      outputRange: [0, 1],
+                    }),
+                  }}
                 >
-                  {(() => {
-                    switch (productId) {
-                      case 2:
-                        return `${t('post_tution')} ${t('details')}`;
-                      case 3:
-                        return t('dish_details');
-                      case 4:
-                        return t('rental_details');
-                      case 5:
-                        return t('housekeeping_details');
-                      default:
-                        return t('product_details');
-                    }
-                  })()}
-                </Text>
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.productdetailstext}
+                  >
+                    {(() => {
+                      switch (productId) {
+                        case 2:
+                          return `${t('post_tution')} ${t('details')}`;
+                        case 3:
+                          return t('dish_details');
+                        case 4:
+                          return t('rental_details');
+                        case 5:
+                          return t('housekeeping_details');
+                        default:
+                          return t('product_details');
+                      }
+                    })()}
+                  </Text>
 
-                {fields
-                  .filter(
-                    (f: any) =>
-                      f?.param?.field_type?.toLowerCase() !== 'boolean',
-                  )
-                  .map((field: any) => renderField(field))}
-              </Animated.View>
-            </View>
-            {/* Featured listing toggle rendered as a separate section */}
-            {featuredField && <View>{renderField(featuredField)}</View>}
-          </AnimatedReanimated.ScrollView>
+                  {fields
+                    .filter(
+                      (f: any) =>
+                        f?.param?.field_type?.toLowerCase() !== 'boolean',
+                    )
+                    .map((field: any) => renderField(field))}
+                </Animated.View>
+              </View>
+              {/* Featured listing toggle rendered as a separate section */}
+              {featuredField && <View>{renderField(featuredField)}</View>}
+            </AnimatedReanimated.ScrollView>
+         
+
         </KeyboardAvoidingView>
+         )}
         <Button title={t('preview_details')} onPress={() => handlePreview()} />
       </View>
 
@@ -1976,5 +1990,17 @@ const styles = StyleSheet.create({
     padding: 10,
     marginTop: 16,
     alignItems: 'center',
+  },
+  loaderContainer: {
+    width: 100,
+    height: 100,
+  },
+  loaderWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    //height: Platform.OS === 'ios' ? 547 : 300,
+    paddingVertical: (Platform.OS === 'ios' ? 0 : 40),
   },
 });

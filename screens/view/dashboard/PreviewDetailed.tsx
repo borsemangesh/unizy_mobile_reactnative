@@ -22,6 +22,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CommonActions } from '@react-navigation/native';
 import Button from '../../utils/component/Button';
 import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
+import Loader from '../../utils/component/Loader';
 
 import AnimatedReanimated, {
   useSharedValue,
@@ -822,7 +823,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                 <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
                   {(() => {
                     switch (userMeta?.category?.id) {
-                     case 2:
+                      case 2:
                         return `${t('post_tution')} ${t('details')}`;
                       case 3:
                         return t('dish_details');
@@ -1074,12 +1075,29 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
           </View>
         </Modal>
       </View>
+      {isLoading && (
+        <View style={styles.loaderOverlay}>
+          <Loader />
+        </View>
+      )}
       <NewCustomToastContainer />
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+
+  loaderOverlay: {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(0,0,0,0.4)',
+  justifyContent: 'center',
+  alignItems: 'center',
+  zIndex: 9999,
+},
   datetext1: {
     color: '#9CD6FF',
     fontFamily: 'Urbanist-Medium',
