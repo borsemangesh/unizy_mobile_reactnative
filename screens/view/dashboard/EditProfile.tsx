@@ -55,6 +55,7 @@ import Button from '../../utils/component/Button';
 import LinearGradient from 'react-native-linear-gradient';
 import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
+import Loader from '../../utils/component/Loader';
 
 type EditProfileProps = {
   navigation: any;
@@ -93,7 +94,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   const [isUpdateDisabled, setIsUpdateDisabled] = useState(true);
   const [updateText, setUpdateText] = useState('Update');
   const { t } = useTranslation();
-
+  const [loading, setLoading] = useState(false);
   const [initialEmail, setInitialEmail] = useState(''); // store original email
   const [initialPersonalEmail, setInitialPersonalEmail] = useState(''); // store original email
 
@@ -184,7 +185,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
         if (response.ok) {
           const user = data.data;
-          console.log('user', user);
 
           setUserMeta({
             firstname: user.firstname ?? null,
@@ -308,15 +308,15 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     return emailRegex.test(email.trim());
   };
 
-  const validateStudentEmail = (email:string) => {
-  if (!email) return false;
+  const validateStudentEmail = (email: string) => {
+    if (!email) return false;
 
-  const emailParts = email.split('@');
-  if (emailParts.length !== 2) return false;
+    const emailParts = email.split('@');
+    if (emailParts.length !== 2) return false;
 
-  const domain = '@' + emailParts[1].trim().toLowerCase();
-  return universityDomains.includes(domain);
-};
+    const domain = '@' + emailParts[1].trim().toLowerCase();
+    return universityDomains.includes(domain);
+  };
   const validateForm = () => {
     const errors = [];
     if (!userMeta.firstname || userMeta.firstname.trim() === '') {
@@ -364,6 +364,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     }
 
     try {
+      setLoading(true)
       const token = await AsyncStorage.getItem('userToken');
       const userId = await AsyncStorage.getItem('userId');
 
@@ -397,6 +398,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
 
       const url = `${MAIN_URL.baseUrl}user/profile-edit`;
+      console.log(url)
 
       const body = {
         firstname: userMeta.firstname?.trim(),
@@ -420,20 +422,22 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       const data = await response.json();
       console.log(data)
 
-      if (response.ok) {
+      if (data.statusCode === 200) {
         showToast(t(data?.message) || 'Profile updated successfully', 'success');
-        navigation.reset({
-          index: 0,
-          routes: [
-            {
-              name: 'Dashboard',
-              params: {
-                AddScreenBackactiveTab: 'Profile',
-                isNavigate: false,
+        setTimeout(() => {
+          navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: 'Dashboard',
+                params: {
+                  AddScreenBackactiveTab: 'Profile',
+                  isNavigate: false,
+                },
               },
-            },
-          ],
-        });
+            ],
+          });
+        }, 3000);
       } else {
         showToast(
           t(data?.message) || 'Failed to update profile.Please try again',
@@ -443,6 +447,9 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     } catch (error) {
       console.error('Error during profile update:', error);
       showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
+    }
+    finally {
+      setLoading(false)
     }
   };
 
@@ -503,7 +510,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   const handleUploadImage = async (imageUri: string | null) => {
     try {
       if (!imageUri) return true; // No new image, treat as success
-
+      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
       const token = await AsyncStorage.getItem('userToken');
       const userId = await AsyncStorage.getItem('userId');
       const url = `${MAIN_URL.baseUrl}user/update-profile`;
@@ -527,6 +534,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
+          language_code: language_code
         },
         body: formData,
       });
@@ -703,7 +711,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   };
 
 
-  
+
 
   const ClickPostalCode = async (postalCode: any) => {
     const cityName = await getCityFromPostalCode(postalCode);
@@ -1095,8 +1103,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                         setIsUpdateDisabled(false);
                       }
                       if (text.length > 0 && !validateStudentEmail(text)) {
-                      showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
-                    }
+                        showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
+                      }
                     }}
                     keyboardType="email-address"
                     placeholder={t('enter_student_email_id')}
@@ -1136,7 +1144,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                       sendOtp('studentEmail');
                       setEmailName('studentEmail');
                     }}
-                    >
+                  >
                     <Image
                       source={require('../../../assets/images/editcontained.png')}
                       style={styles.updateIcon}
@@ -1228,7 +1236,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           }}
         />
       </View>
-      <NewCustomToastContainer />
 
       <Modal
         visible={showPopup1}
@@ -1402,6 +1409,12 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
+      {loading && (
+        <View style={styles.loaderOverlay}>
+          <Loader />
+        </View>
+      )}
+      <NewCustomToastContainer />
     </ImageBackground>
   );
 };
@@ -1409,6 +1422,17 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 export default EditProfile;
 
 const styles = StyleSheet.create({
+  loaderOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+  },
 
   subheader2: {
     color: 'rgba(255, 255, 255, 0.80)',

@@ -89,7 +89,7 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
 
     try {
       setIsLoading(true);
-
+      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
       const token = await AsyncStorage.getItem('userToken');
       const userId = await AsyncStorage.getItem('userId');
       if (!token) {
@@ -113,6 +113,7 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
+          language_code: language_code
         },
         body: JSON.stringify(createPayload)
       });

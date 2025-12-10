@@ -263,6 +263,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
     const fetchListDetails = async () => {
       try {
+        setLoading(true)
         const token = await AsyncStorage.getItem('userToken');
         const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
         if (!token) {
