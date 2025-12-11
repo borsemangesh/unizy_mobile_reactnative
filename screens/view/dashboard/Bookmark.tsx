@@ -758,9 +758,29 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    // borderWidth: 0.4,
+    // borderColor: '#ffffff2c',
+    // backgroundColor: 'rgba(255, 255, 255, 0.1)',
+
+
+
+
+
+    borderWidth: 0.3,
+    borderColor: '#ffffff11',
+
+    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
+
+    borderBlockStartColor: '#ffffff2e',
+    borderBlockColor: '#ffffff2e',
+
+    borderTopColor: '#ffffff2e',
+    borderBottomColor: '#ffffff2e',
+    borderLeftColor: '#ffffff2e',
+    borderRightColor: '#ffffff2e',
+    boxSizing: 'border-box',
   },
 
   backButtonContainer: {
@@ -836,17 +856,49 @@ const styles = StyleSheet.create({
   },
   tabcard: {
 
+    // minHeight: 38,
+    // paddingVertical: 10,
+    // paddingHorizontal: 16,
+    // marginRight: 8,
+    // borderWidth: 0.4,
+    // borderColor: '#ffffff11',
+    // backgroundColor:
+    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    // borderRadius: 10,
+    // boxShadow:
+    //   'rgba(255, 255, 255, 0.02)inset 0.1px 0.1px 1px 0px,',
     minHeight: 38,
     paddingVertical: 10,
     paddingHorizontal: 16,
     marginRight: 8,
     borderWidth: 0.4,
-    borderColor: '#ffffff11',
+    borderColor: 'rgba(255, 255, 255, 0)',
     backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderRadius: 10,
-    boxShadow:
-      'rgba(255, 255, 255, 0.02)inset 0.1px 0.1px 1px 0px,',
+    // boxShadow:
+    //   'rgba(255, 255, 255, 0.02)inset 0.1px 0.1px 1px 0px,',
+
+
+
+
+  // borderWidth: 0.3,
+  // borderColor: '#ffffff11',
+
+  boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
+  // backgroundColor:
+  //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
+
+  // borderBlockStartColor: '#ffffff2e',
+  // borderBlockColor: '#ffffff2e',
+
+  // borderTopColor: '#ffffff2e',
+  // borderBottomColor: '#ffffff2e',
+  // borderLeftColor: '#ffffff2e',
+  // borderRightColor: '#ffffff2e',
+  // boxSizing: 'border-box',
+
+
   },
   tabcard1: {
     minHeight: 38,
@@ -869,6 +921,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 16,
     marginRight: 8,
+    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
   },
   tabtext: {
     color: '#fff',

@@ -699,32 +699,8 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
     backgroundColor: 'transparent',
   },
-
-  header: {
-    position: 'absolute',
-    top: 0,
-    width: Platform.OS === 'ios' ? 393 : '100%',
-    zIndex: 20,
-    paddingTop: Platform.OS === 'ios' ? 50 : 40,
-    paddingBottom: Platform.OS === 'ios' ? 16 : 12,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-    overflow: 'hidden', 
-    flexDirection: 'row',
-    alignItems: 'center',
-    elevation: 0,
-    backgroundColor: 'transparent',
-    borderBottomWidth: 0,
-    shadowOpacity: 0,
-    shadowColor: 'transparent',
-    alignSelf: 'center',
-    minHeight: Platform.OS === 'ios' ? 80 : 88,
-  },
   backButtonContainer: {
-    // position: 'absolute',
-    // left: 16,
     zIndex: 11,
-    // top: 7,
   },
 
   headerWrapper: {
@@ -740,18 +716,6 @@ const styles = StyleSheet.create({
     pointerEvents: 'box-none',
   },
   headerContent: {
-    // position: 'absolute',
-    // top: Platform.OS === 'ios' ? '6%' : 40,
-    // width: Platform.OS === 'ios' ? 393 : '100%',
-    // flexDirection: 'row',
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    // // paddingHorizontal: 16,
-    // zIndex: 11,
-    // alignSelf: 'center',
-    // pointerEvents: 'box-none',
-    // marginTop: 2,
-    // marginLeft: 1
     position: 'absolute',
     top: (Platform.OS === 'ios' ? 60 : 40),
     width: '100%',
@@ -764,17 +728,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
 
-  // categoryTabsContainer: {
-  //   width: '100%',
-  //   marginBottom: 12,
-  //   paddingLeft: 10
-  // },
-
-  // categoryTabsScrollContent: {
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   paddingRight: 16,
-  // },
   blurButtonWrapper: {
     width: 48,
     height: 48,
@@ -782,9 +735,26 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+    // borderWidth: 0.4,
+    // borderColor: '#ffffff2c',
+    // backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
+
+
+    borderWidth: 0.3,
+    borderColor: '#ffffff11',
+
+    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
+
+    borderBlockStartColor: '#ffffff2e',
+    borderBlockColor: '#ffffff2e',
+
+    borderTopColor: '#ffffff2e',
+    borderBottomColor: '#ffffff2e',
+    borderLeftColor: '#ffffff2e',
+    borderRightColor: '#ffffff2e',
+    boxSizing: 'border-box',
   },
 
   emptyWrapper: {
