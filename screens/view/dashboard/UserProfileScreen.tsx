@@ -5,6 +5,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
+import Loader from '../../utils/component/Loader';
+import { NewCustomToastContainer,showToast } from '../../utils/component/NewCustomToastManager';
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImage = require('../../../assets/images/user.jpg');
@@ -34,11 +36,13 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
   const [messageText, setMessageText] = useState('');
   const [userList, setUserList] = useState<any>(null);
   const { t } = useTranslation();
+  const [loading, setLoading] = useState(false);
 
 
   useEffect(() => {
     const fetchUserChatData = async (query: string = "") => {
       try {
+        setLoading(true)
         const token = await AsyncStorage.getItem('userToken');
         const userId = await AsyncStorage.getItem('userId');
 
@@ -67,7 +71,11 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
         const UserData = data.data;
         setUserList(UserData);
       } catch (error) {
+        setLoading(false)
         console.error('Chat setup failed:', error);
+      }
+      finally{
+        setLoading(false)
       }
     };
 
@@ -197,12 +205,30 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
           </View>
         </View>
       </View>
+      {loading && (
+        <View style={styles.fullLoader}>
+          <Loader />
+        </View>
+      )}
+      <NewCustomToastContainer />
     </ImageBackground>
   );
 
 };
 
 const styles = StyleSheet.create({
+
+  fullLoader: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    height: "100%",
+    width: "100%",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999,
+  },
 
   initialsCircle: {
     backgroundColor: '#8390D4',

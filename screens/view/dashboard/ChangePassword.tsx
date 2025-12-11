@@ -281,7 +281,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
           </TouchableOpacity>
 
           <Text allowFontScaling={false} style={styles.unizyText}>
-            {t('edit')} {t('profile')}
+            {t('change_password')}
           </Text>
           <TouchableOpacity
             onPress={() => {

@@ -60,6 +60,7 @@ type CreatedBy = {
 };
 
 type Listing = {
+  avg_rating: string;
   id: number;
   created_by: number;
   category_id: number;
@@ -402,7 +403,7 @@ const UserListing = ({ navigation }: UserListingProps) => {
               tag={feature.createdby.university_name || 'University'}
               infoTitle={feature.feature_title}
               inforTitlePrice={`£ ${feature.price}`}
-              rating={'4.5'}
+              rating={item.avg_rating}
               productImage={feature.createdby?.profile ? { uri: feature.createdby.profile } : undefined}
               bookmark={isBookmarked}
               showInitials={showInitials}
@@ -415,7 +416,7 @@ const UserListing = ({ navigation }: UserListingProps) => {
               tag={feature.createdby.university_name || 'University'}
               infoTitle={feature.feature_title}
               inforTitlePrice={`£ ${feature.price}`}
-              rating={'4.5'}
+              rating={item.avg_rating}
               productImage={productImage ?? require('../../../assets/images/drone.png')}
               bookmark={isBookmarked}
               isfeature={feature.isfeatured}

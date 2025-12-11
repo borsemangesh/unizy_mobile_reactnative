@@ -253,7 +253,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           );
           setFields(sellerFields);
         }
-        
+
         if (response.status === 401 || response.status === 403) {
           //setLoading(false)
           handleForceLogout();
@@ -893,7 +893,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             <TouchableOpacity
               style={styles.pickerContainer}
               onPress={() => {
-        
+
                 setMultiSelectModal({
                   visible: true,
                   ismultilple: !!field.param.ismultilple,
@@ -1297,16 +1297,16 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           </TouchableOpacity>
         </View>
 
-   {loading ? (
-            <View style={styles.loaderWrapper}>
-              <Loader containerStyle={styles.loaderContainer} />
-            </View>
-          ) : (
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        >
-       
+        {loading ? (
+          <View style={styles.loaderWrapper}>
+            <Loader containerStyle={styles.loaderContainer} />
+          </View>
+        ) : (
+          <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          >
+
             <AnimatedReanimated.ScrollView
               scrollEventThrottle={16}
               onScroll={scrollHandler}
@@ -1429,10 +1429,10 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               {/* Featured listing toggle rendered as a separate section */}
               {featuredField && <View>{renderField(featuredField)}</View>}
             </AnimatedReanimated.ScrollView>
-         
 
-        </KeyboardAvoidingView>
-         )}
+
+          </KeyboardAvoidingView>
+        )}
         <Button title={t('preview_details')} onPress={() => handlePreview()} />
       </View>
 
@@ -1536,6 +1536,17 @@ const styles = StyleSheet.create({
     // left: 16,
     zIndex: 11,
   },
+  // blurButtonWrapper: {
+  //   width: 48,
+  //   height: 48,
+  //   borderRadius: 40,
+  //   overflow: 'hidden',
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   borderWidth: 0.4,
+  //   borderColor: '#ffffff2c',
+  //   backgroundColor: 'rgba(255, 255, 255, 0.1)'
+  // },
   blurButtonWrapper: {
     width: 48,
     height: 48,
@@ -1543,9 +1554,25 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)'
+    // borderWidth: 0.4,
+    // borderColor: '#ffffff2c',
+    // backgroundColor: 'rgba(255, 255, 255, 0.1)',
+
+    borderWidth: 0.3,
+    borderColor: '#ffffff11',
+
+    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
+
+    borderBlockStartColor: '#ffffff2e',
+    borderBlockColor: '#ffffff2e',
+
+    borderTopColor: '#ffffff2e',
+    borderBottomColor: '#ffffff2e',
+    borderLeftColor: '#ffffff2e',
+    borderRightColor: '#ffffff2e',
+    boxSizing: 'border-box',
   },
   blurButtonWrapper_none: {
 

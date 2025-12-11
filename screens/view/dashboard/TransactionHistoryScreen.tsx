@@ -164,7 +164,6 @@ export default function TransactionHistoryScreen(
           url = `${MAIN_URL.baseUrl}transaction/charges`;
         }
 
-
         const response = await fetch(url, {
           method: 'GET',
           headers: {

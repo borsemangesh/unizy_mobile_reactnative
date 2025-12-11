@@ -78,7 +78,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
   const { id } = route.params as { id: number };
   const { name } = route.params as { name: string };
   const [detail, setDetail] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [formValues, setFormValues] = useState<any>({});
   const screenWidth = Dimensions.get('window').width;
   const { t } = useTranslation();
