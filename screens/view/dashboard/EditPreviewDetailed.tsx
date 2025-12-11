@@ -175,13 +175,13 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
         }
         if (storedData) {
           const parsedData = JSON.parse(storedData);
-          console.log('Stored Form Data:', parsedData);
+
           setStoredForm(parsedData);
         } else {
-          console.log('No form data found');
+
         }
       } catch (error) {
-        console.log('Error reading form data: ', error);
+
       }
     };
 
@@ -197,7 +197,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
           setUserMeta(meta);
         }
       } catch (error) {
-        console.log('Error loading userMeta', error);
+
       }
     };
 
@@ -277,10 +277,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
         const token = await AsyncStorage.getItem('userToken');
         const productId1 = await AsyncStorage.getItem('selectedProductId');
         setcategoryid(Number(productId1))
-        if (!token) {
-          console.log('No token found');
-          return;
-        }
+   
 
         const url = `${MAIN_URL.baseUrl}category/listparams/user/${productId1}`;
 
@@ -331,7 +328,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
           setFields(sellerFields);
         }
       } catch (err) {
-        console.log('Error fetching fields', err);
+
       } finally {
         //setLoading(false);
       }
@@ -520,19 +517,19 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
 
   const handleListPress = async () => {
-    console.log("🔵 handleListPress called");
+
 
     setIsLoading(true)
     try {
 
       const storedData = await AsyncStorage.getItem("formData1");
       if (!storedData) {
-        console.log("⚠️ No form data found");
+        // console.log("⚠️ No form data found");
         return;
       }
 
       const formData: Record<string, FormField> = JSON.parse(storedData);
-      console.log("📌 Loaded formData:", formData);
+
 
       const token = await AsyncStorage.getItem("userToken");
       const productId = await AsyncStorage.getItem("selectedProductId");
@@ -567,7 +564,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
         data: dataArray,
       };
 
-      console.log("Sending UPDATE request:", createPayload);
+
 
       const createRes = await fetch(`${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`, {
         method: "PATCH",
@@ -579,7 +576,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
       });
 
       const createJson = await createRes.json();
-      console.log(" Create Response:", createJson);
+   
 
       if (![200, 201].includes(createRes.status)) {
         showToast(t(createJson?.message || "Error"), "error");
@@ -594,14 +591,14 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
         return;
       }
 
-      console.log(" imageFields:", JSON.stringify(imageFields, null, 2));
+
 
       for (const [param_id, images] of imageFields) {
-        console.log(" param_id:", param_id, "images count:", images.length);
+
         for (const image of images) {
           if (!image || !image.uri) continue;
 
-          console.log(" Uploading image:", image.name);
+
 
           const form = new FormData();
           form.append("files", {
@@ -611,7 +608,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
           } as any);
           form.append("feature_id", feature_id);
           form.append("param_id", param_id);
-          console.log("  file uri:", image.uri);
+
           const uploadRes = await fetch(`${MAIN_URL.baseUrl}category/featurelist/image-update`, {
             method: "POST",
             headers: { Authorization: `Bearer ${token}` },
@@ -619,7 +616,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
           });
 
           const uploadJson = await uploadRes.json();
-          console.log(" Upload Response:", uploadJson);
+
 
           const isSuccess = [200, 201].includes(uploadRes.status);
           showToast(
@@ -637,7 +634,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
       await AsyncStorage.removeItem("deletedImagesId");
 
     } catch (err) {
-      console.log("❌ handleListPress Error:", err);
+
       showToast(t(Constant.SOMTHING_WENT_WRONG), "error");
     }
     finally {
@@ -1120,7 +1117,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
               }
               return t('update');
             } catch (e) {
-              console.log('Error parsing storedForm:', e);
+
               return 'Update';
             }
           })()} />
@@ -1194,7 +1191,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
                       await AsyncStorage.removeItem('formData1');
                       await AsyncStorage.removeItem('selectedProductId');
                       await AsyncStorage.removeItem('isfeatured')
-                      console.log('✅ formData cleared from AsyncStorage');
+
 
                       navigation.reset({
                         index: 0,
@@ -1207,7 +1204,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
                       });
                       setShowPopup(false);
                     } catch (err) {
-                      console.log('❌ Error clearing formData:', err);
+
                     }
                   }}
                 >

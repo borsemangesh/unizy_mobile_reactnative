@@ -202,7 +202,7 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
         url += `&category_id=${categoryId}`;
       }
 
-      console.log(url)
+
 
 
       const token = await AsyncStorage.getItem('userToken');
@@ -237,7 +237,7 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
       }
     } catch (err) {
       setIsLoading(false);
-      console.log('Error:', err);
+
     }
   };
 

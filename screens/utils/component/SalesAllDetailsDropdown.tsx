@@ -52,7 +52,6 @@ const SalesAllDetailsDropdown = ({
 
       // Construct the URL
       const url = `${MAIN_URL.baseUrl}transaction/sales-history?feature_id=${catagory_id}`;
-      console.log('SalesHistory URL:', url);
 
       // Make the API call
       const response = await fetch(url, {
@@ -67,8 +66,7 @@ const SalesAllDetailsDropdown = ({
       // Handle response status codes
       if (response.status === 200) {
         setSalesData(json.data.features.buyers);
-        console.log("SalesHistory ResponseByers JSON:", json.data);
-        console.log("SalesHistory ResponseByers:", json.data.features.buyers);
+    
 
       }
 
@@ -78,7 +76,7 @@ const SalesAllDetailsDropdown = ({
 
       // Parse the JSON response
 
-      console.log("SalesHistory Response:", json);
+
 
       if (json.statusCode === 401 || json.statusCode === 403) {
         // handleForceLogout();
@@ -98,7 +96,7 @@ const SalesAllDetailsDropdown = ({
 
 
   useEffect(() => {
-    console.log('Component mounted, fetching sales history', salesDataResponse);
+   
 
     fetchSalesHistory(catagory_id);
     // setSalesData(salesDataResponse);
@@ -111,7 +109,7 @@ const SalesAllDetailsDropdown = ({
 
   const { t } = useTranslation();
   const handleForceLogout = async () => {
-    console.log('User inactive or unauthorized — logging out');
+   
     await AsyncStorage.clear();
   };
 

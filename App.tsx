@@ -215,7 +215,7 @@ function App() {
       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
   
     if (enabled) {
-      console.log('Authorization status:', authStatus);
+      // console.log('Authorization status:', authStatus);
     }
   }
 
@@ -241,10 +241,10 @@ function App() {
             alert: true,
             badge: true,
           });
-          console.log("🔔 iOS Notification permission:", notifeeSettings);
+
 
           const token = await messaging().getToken();
-          console.log("🔥 FCM Token:", token);
+
         }
 
         else {
@@ -254,14 +254,14 @@ function App() {
             authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
             const notifeeSettings = await notifee.requestPermission();
-            console.log("🔔 Notifee permission:", notifeeSettings);
+
 
           if (enabled) {
-            console.log("✅ Notification permission granted");
+
             const token = await messaging().getToken();
-            console.log("🔥 FCM Token:", token);
+
           } else {
-            console.log("❌ Notification permission denied");
+            // console.log("❌ Notification permission denied");
           }
         }
       
@@ -272,17 +272,17 @@ function App() {
             importance: AndroidImportance.HIGH,
             sound: 'default',
           });
-          console.log("✅ Notification channel created");
+
         }
 
         unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
-          console.log("📩 Foreground Message:", remoteMessage);
+
 
           // 🔒 SECURITY: Check if user is logged in before processing notifications
           try {
             const isLogin = await AsyncStorage.getItem('ISLOGIN');
             if (isLogin !== 'true') {
-              console.log('⚠️ Ignoring foreground notification - user not logged in');
+
               return; // Don't show notifications if user is logged out
             }
           } catch (err) {
@@ -303,7 +303,7 @@ function App() {
                   rawNotificationData = remoteMessage.data.data;
                 }
               } catch (e) {
-                console.log("Could not parse data.data, using as is");
+
                 rawNotificationData = remoteMessage.data.data;
               }
             } else {
@@ -321,7 +321,7 @@ function App() {
               }
             });
 
-            console.log("📱 Displaying notification:", { title, body, data: notificationData });
+
 
             const notificationConfig: any = {
               title,
@@ -352,13 +352,13 @@ function App() {
 
         unsubscribeForeground = notifee.onForegroundEvent(async ({ type, detail }) => {
           if (type === EventType.PRESS) {
-            console.log("🟦 Notification tapped in foreground");
+
             
             // 🔒 SECURITY: Check if user is logged in before handling notification tap
             try {
               const isLogin = await AsyncStorage.getItem('ISLOGIN');
               if (isLogin !== 'true') {
-                console.log('⚠️ Ignoring notification tap - user not logged in');
+
                 return; // Don't navigate if user is logged out
               }
             } catch (err) {
@@ -375,13 +375,13 @@ function App() {
         // This handles when user taps notification while app is closed
         messaging().getInitialNotification().then(async (remoteMessage) => {
           if (remoteMessage) {
-            console.log("📩 App opened from notification (closed state):", remoteMessage);
+
             
             // 🔒 SECURITY: Check if user is logged in
             try {
               const isLogin = await AsyncStorage.getItem('ISLOGIN');
               if (isLogin !== 'true') {
-                console.log('⚠️ Ignoring initial notification - user not logged in');
+
                 return;
               }
             } catch (err) {
@@ -419,13 +419,13 @@ function App() {
 
         // 🔔 Handle notification when app is opened from background state
         messaging().onNotificationOpenedApp(async (remoteMessage) => {
-          console.log("📩 App opened from notification (background state):", remoteMessage);
+
           
           // 🔒 SECURITY: Check if user is logged in
           try {
             const isLogin = await AsyncStorage.getItem('ISLOGIN');
             if (isLogin !== 'true') {
-              console.log('⚠️ Ignoring notification - user not logged in');
+
               return;
             }
           } catch (err) {

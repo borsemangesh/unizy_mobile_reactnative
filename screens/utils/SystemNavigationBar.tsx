@@ -155,7 +155,7 @@ export type BarTheme = {
   },
 };
 
-console.log()
+
 
 const theme = async (barTheme: BarTheme) => {
   const scheme = Appearance.getColorScheme();

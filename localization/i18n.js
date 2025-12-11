@@ -37,7 +37,7 @@ export const initI18n = async () => {
       });
     }
   } catch (err) {
-    console.log('Error loading cached translations', err);
+  
   }
  
   await i18n
@@ -58,7 +58,7 @@ export const loadLanguageFromServer = async (langCode) => {
   try {
     // Replace with your actual API endpoint
     const response = await fetch(`${MAIN_URL.baseUrl}user/language-text?lancode=${langCode}`);
-    console.log(response);
+  
     if (!response.ok) {
       throw new Error(`Failed to load translations for ${langCode}`);
     }
@@ -66,7 +66,7 @@ export const loadLanguageFromServer = async (langCode) => {
     const json = await response.json();
     const translations = json.data;   // only the actual translations
 
-    console.log(translations);
+
     
     // Add the translations to i18next
     if (!i18n.hasResourceBundle(langCode, 'translation')) {
@@ -96,7 +96,6 @@ export const changeAppLanguage = async (langCode) => {
     await i18n.changeLanguage(langCode);
     await AsyncStorage.setItem(STORAGE_KEY, langCode);
   } catch (err) {
-    console.log('Error changing language:', err.message);
     throw err;
   }
 };

@@ -10,18 +10,15 @@ export const handleNotification = async (
   try {
     const isLogin = await AsyncStorage.getItem('ISLOGIN');
     if (isLogin !== 'true') {
-      console.log('⚠️ Ignoring notification - user not logged in');
+   
       return; 
     }
-
     console.log(
       ` Handling ${
         isBackground ? 'background' : 'foreground'
       } notification data:`,
       notificationData,
     );
-
-    console.log(' Notification Data handler :', notificationData);
     const parseValue = (value: any) => {
       if (typeof value === 'string') {
         try {
@@ -57,7 +54,7 @@ export const handleNotification = async (
         notificationData?.feature_id ||
         notificationData?.data?.feature_id ||
         null;
-      console.log(' Extracted feature_id:', featureId);
+  
       if (Platform.OS === 'ios') {
         resetNavigation('ViewListingDetails', {
           shareid: featureId,
@@ -80,7 +77,7 @@ export const handleNotification = async (
         notificationData?.feature_id ||
         notificationData?.data?.feature_id ||
         null;
-      console.log(' Extracted feature_id:', featureId);
+
       if (Platform.OS === 'ios') {
         resetNavigation('ListingDetails', {
           shareid: featureId,
@@ -237,8 +234,6 @@ export const handleNotification = async (
         ...(sellerData && { sellerData }),
       };
 
-      console.log(' Final navigation params:', JSON.stringify(params, null, 2));
-
       await AsyncStorage.removeItem('notificationNavigationCompleted');
       await AsyncStorage.setItem(
         'pendingNotificationNavigation',
@@ -272,9 +267,9 @@ export const handleNotification = async (
       // await waitForNavigation();
       // navigate("MessagesIndividualScreen", params);
     } else {
-      console.log(
-        ' Notification data did not match any known navigation patterns',
-      );
+      // console.log(
+      //   ' Notification data did not match any known navigation patterns',
+      // );
     }
   } catch (error) {
     console.error('Error handling notification:', error);

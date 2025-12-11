@@ -48,11 +48,10 @@ const SalesAllDetailsDropdown_IOS = ({
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
-        console.log('No token found');
+
         return;
       }
       const url = `${MAIN_URL.baseUrl}transaction/sales-history?feature_id=${catagory_id}`;
-      console.log('SalesHistory URL:', url);
       const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -64,15 +63,12 @@ const SalesAllDetailsDropdown_IOS = ({
 
       if (response.status === 200) {
         setSalesData(json.data.features.buyers);
-        console.log("SalesHistory ResponseByers JSON:", json.data);
-        console.log("SalesHistory ResponseByers:", json.data.features.buyers);
-
       }
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      console.log("SalesHistory Response:", json);
+
 
       if (json.statusCode === 401 || json.statusCode === 403) {
         // handleForceLogout();
@@ -89,7 +85,7 @@ const SalesAllDetailsDropdown_IOS = ({
 
 
   useEffect(() => {
-    console.log('Component mounted, fetching sales history', salesDataResponse);
+ 
 
     fetchSalesHistory(catagory_id);
     // setSalesData(salesDataResponse);
@@ -103,7 +99,7 @@ const SalesAllDetailsDropdown_IOS = ({
   };
 
   const handleForceLogout = async () => {
-    console.log('User inactive or unauthorized — logging out');
+
     await AsyncStorage.clear();
   };
 

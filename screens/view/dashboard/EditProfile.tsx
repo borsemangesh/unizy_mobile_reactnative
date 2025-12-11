@@ -160,9 +160,9 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           return;
         }
 
-        console.log(token);
+
         const url = `${MAIN_URL.baseUrl}user/user-profile/${userId}`;
-        console.log('url', url);
+
 
         const response = await fetch(url, {
           method: 'GET',
@@ -208,7 +208,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       }
     };
     const handleForceLogout = async () => {
-      console.log('User inactive or unauthorized — logging out');
+
       await AsyncStorage.clear();
       navigation.reset({
         index: 0,
@@ -376,10 +376,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       if (newphoto !== null) {
         const uploadSuccess = await handleUploadImage(newphoto);
 
-        if (!uploadSuccess) {
-          console.log('Image upload failed — stopping profile update.');
-          return;
-        }
+      
 
         showToast(Constant.IMAGE_UPLOAD, 'success');
         await new Promise((resolve: any) => {
@@ -398,7 +395,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
 
       const url = `${MAIN_URL.baseUrl}user/profile-edit`;
-      console.log(url)
+ 
 
       const body = {
         firstname: userMeta.firstname?.trim(),
@@ -409,7 +406,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         postal_code: userMeta.postal_code,
       };
 
-      console.log(body)
+
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
@@ -420,7 +417,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       });
 
       const data = await response.json();
-      console.log(data)
+
 
       if (data.statusCode === 200) {
         showToast(t(data?.message) || 'Profile updated successfully', 'success');
@@ -454,7 +451,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   };
 
   const handleSelectImage = async () => {
-    console.log('Choose image');
+
     const hasPermission = await requestCameraPermission();
     if (!hasPermission) return;
     Alert.alert(
@@ -610,12 +607,12 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
   const sendOtp = async (res?: any) => {
     let flag = res;
-    console.log('res---------', flag);
+
 
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
-        console.log('⚠️ Token not found. Cannot upload.');
+
         return;
       }
 
@@ -631,7 +628,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         };
       }
 
-      console.log('createPayload', createPayload);
+
 
       const res = await fetch(url, {
         method: 'POST',
@@ -643,7 +640,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       });
 
       const data = await res.json();
-      console.log('send Otp...........', data);
+
 
       if (data?.statusCode === 200) {
         setSaveOtp(data.data.otp_id);
@@ -661,12 +658,12 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
-        console.log('⚠️ Token not found. Cannot upload.');
+
         return;
       }
       const otpValue = otp.join('');
 
-      console.log('otpValue', otpValue);
+
 
       const url = MAIN_URL.baseUrl + 'user/verify-update';
       const createPayload = {
@@ -684,7 +681,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       });
 
       const data = await res.json();
-      console.log('OTP Verify Response:', data);
+
 
       if (data?.statusCode === 200) {
         setShowPopup1(false);
@@ -745,7 +742,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         null
       );
     } catch (error) {
-      console.log("Error fetching city:", error);
+
       return null;
     }
   };
@@ -1003,15 +1000,14 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     onChangeText={text => {
                       setUserMeta(prev => ({ ...prev, email: text.trim() }));
                       if (text.trim() === initialPersonalEmail) {
-                        console.log('condition_true (unchanged)');
+ 
                         setIsUpdateDisabled_personal(true);
                       } else {
-                        console.log('condition_false (changed)');
+   
                         setIsUpdateDisabled_personal(false);
                       }
 
-                      console.log('text ---', text);
-                      console.log('initialEmail ----', initialEmail);
+              
                     }}
                     keyboardType="email-address"
                     placeholder={t('enter_personal_emial_id')}
@@ -1096,10 +1092,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                       setUserMeta(prev => ({ ...prev, student_email: text.trim() }));
 
                       if (text.trim() === initialEmail) {
-                        console.log('condition_true (unchanged)');
+
                         setIsUpdateDisabled(true);
                       } else {
-                        console.log('condition_false (changed)');
+ 
                         setIsUpdateDisabled(false);
                       }
                       if (text.length > 0 && !validateStudentEmail(text)) {

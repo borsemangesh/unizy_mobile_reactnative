@@ -150,9 +150,9 @@ export default function TransactionHistoryScreen(
         setLoading(true);
         const token = await AsyncStorage.getItem('userToken');
         const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
-        console.log(token)
+
         if (!token) {
-          console.log('No token found');
+          // console.log('No token found');
           return;
         }
         let url = '';
@@ -164,7 +164,7 @@ export default function TransactionHistoryScreen(
           url = `${MAIN_URL.baseUrl}transaction/charges`;
         }
 
-        console.log("TokenTransaction: ", token);
+
         const response = await fetch(url, {
           method: 'GET',
           headers: {
@@ -253,14 +253,14 @@ export default function TransactionHistoryScreen(
         setLoading(false);
         setTransactions(formatted);
       } catch (err) {
-        console.log('Error fetching transactions:', err);
+
       } finally {
         setLoading(false);
       }
     };
 
     const handleForceLogout = async () => {
-      console.log('User inactive or unauthorized — logging out');
+
       await AsyncStorage.clear();
     };
 
@@ -317,12 +317,11 @@ export default function TransactionHistoryScreen(
       const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
-        console.log('No token found');
+        // console.log('No token found');
         return;
       }
 
       const url = `${MAIN_URL.baseUrl}transaction/sales-history?feature_id=${catagory_id}`;
-      console.log('SalesHistory URL:', url);
 
       const response = await fetch(url, {
         method: 'GET',
@@ -343,7 +342,7 @@ export default function TransactionHistoryScreen(
       }
 
       const json = await response.json();
-      console.log("SalesHistory Response:", json);
+
 
       if (json.statusCode === 401 || json.statusCode === 403) {
         // handleForceLogout();
@@ -353,7 +352,7 @@ export default function TransactionHistoryScreen(
       setFilterVisible(true);
 
     } catch (err) {
-      console.log('Error fetching sales history:', err);
+      // console.log('Error fetching sales history:', err);
     } finally {
       setLoading(false);
     }
@@ -391,7 +390,7 @@ export default function TransactionHistoryScreen(
               onPress={() => {
                 setActiveTab(key as any);
                 setSelectedTab(key);
-                console.log('Key: ', key);
+                // console.log('Key: ', key);
               }}
             >
               <View style={styles.iconWrapper}>
@@ -669,7 +668,7 @@ export default function TransactionHistoryScreen(
                       <TouchableOpacity
                         onPress={() => {
                           setSalesImageUrl(item.category_logo);
-                          console.log('FeatureID: ', item.featureId);
+
                           setCatagoryid(item.featureId);
                           // setFilterVisible(true);
                           fetchSalesHistory(item.featureId);
@@ -758,7 +757,7 @@ export default function TransactionHistoryScreen(
                     </View>
                     <TouchableOpacity
                       onPress={() => {
-                        console.log('Fetature ID: ' + item.featureId);
+
                         navigation1.navigate('ViewListingDetails', {
                           shareid: item.featureId,
                         });

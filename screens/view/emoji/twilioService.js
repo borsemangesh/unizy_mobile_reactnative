@@ -71,7 +71,7 @@ export const resetTwilioClient = async () => {
         await twilioClientSingleton.shutdown();
       }
       
-      console.log('✅ Twilio client reset successfully');
+
     } catch (err) {
       console.warn('⚠️ Error resetting Twilio client:', err.message);
     } finally {

@@ -75,7 +75,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
 
       const timestamp = Date.now();
       const url = `${MAIN_URL.baseUrl}twilio/mychats?search=${query}&_t=${timestamp}`;
-      console.log("twilioURL:", url);
+
 
       const response = await fetch(url, {
         method: "GET",
@@ -87,7 +87,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
 
       const data = await response.json();
 
-      console.log("dataiii", data);
+
 
 
       if (!response.ok) {

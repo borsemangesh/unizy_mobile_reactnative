@@ -237,7 +237,7 @@ const UserListing = ({ navigation }: UserListingProps) => {
         url += `&category_id=${categoryId}`;
       }
 
-      console.log(url)
+
 
       const token = await AsyncStorage.getItem('userToken');
       const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
@@ -254,7 +254,7 @@ const UserListing = ({ navigation }: UserListingProps) => {
       });
 
       const jsonResponse = await response.json();
-      console.log('API Response:', jsonResponse);
+
       if (jsonResponse.statusCode === 200) {
         setIsLoading(false);
         if (pageNum === 1) {
@@ -275,11 +275,11 @@ const UserListing = ({ navigation }: UserListingProps) => {
 
       else {
         setIsLoading(false);
-        console.log('API Error:', jsonResponse.message);
+
       }
     } catch (err) {
       setIsLoading(true);
-      console.log('Error:', err);
+
     }
   };
 
@@ -312,8 +312,7 @@ const UserListing = ({ navigation }: UserListingProps) => {
       if (!token) return;
 
       const url = MAIN_URL.baseUrl + 'category/list-bookmark';
-      console.log(url)
-      console.log(productId)
+
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -328,7 +327,7 @@ const UserListing = ({ navigation }: UserListingProps) => {
       }
 
       const data = await response.json();
-      console.log('Bookmark response:', data);
+
       if (data?.message) {
         showToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
       }

@@ -236,7 +236,7 @@ const UserReviews = ({ navigation }: UserReviewsProps) => {
         url += `&category_id=${categoryId}`;
       }
 
-      console.log(url)
+
       const token = await AsyncStorage.getItem('userToken');
       const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
       if (!token) {
@@ -295,7 +295,7 @@ const UserReviews = ({ navigation }: UserReviewsProps) => {
       }
 
     } catch (err) {
-      console.log('Error:', err);
+
       if (isInitialLoad) {
         await new Promise(r => setTimeout(r, 1000));
         setInitialLoading(false);

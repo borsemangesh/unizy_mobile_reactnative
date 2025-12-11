@@ -109,7 +109,7 @@ export const clearTwilioCache = async () => {
     if (twilioKeys.length > 0) {
       await AsyncStorage.multiRemove(twilioKeys);
       if (__DEV__) {
-        console.log(`✅ Cleared ${twilioKeys.length} Twilio cache entries`);
+
       }
     }
     activeTwilioClients.forEach((client: any) => {
@@ -415,7 +415,7 @@ const MessagesIndividualScreen = ({
 
         const twilio = await new TwilioChatClient(data.data.token);
 
-        console.log(twilio)
+
 
         if (!twilio) {
           throw new Error('Failed to initialize Twilio client');
@@ -423,7 +423,6 @@ const MessagesIndividualScreen = ({
 
         if (!isMounted) return;
 
-        console.log("Twilio client initialized successfully");
         setChatClient(twilio);
         chatClientRef.current = twilio;
         activeTwilioClients.add(twilio);
@@ -592,7 +591,7 @@ const MessagesIndividualScreen = ({
             const alreadyJoined = participants.some((p: any) => p.identity === userId);
             if (!alreadyJoined) {
               await convo.join();
-              console.log("Joined conversation:", convName);
+     
             }
           } catch (joinErr: any) {
             if (!joinErr.message?.includes("Conflict") && !joinErr.message?.includes("already")) {
@@ -749,22 +748,22 @@ const MessagesIndividualScreen = ({
 
       const messageAuthor = m.author || m.state?.author || m.attributes?.author;
 
-      console.log('New Twilio message:', {
-        body: m.body,
-        author: messageAuthor,
-        checkUser: checkUser,
-        currentUserId: currentUserId,
-        userId: userId,
-        isFromMe:
-          String(messageAuthor) === String(checkUser) ||
-          String(messageAuthor) === String(currentUserId) ||
-          String(messageAuthor) === String(userId),
-        messageStructure: {
-          hasAuthor: !!m.author,
-          hasState: !!m.state,
-          hasStateAuthor: !!m.state?.author,
-        },
-      });
+      // console.log('New Twilio message:', {
+      //   body: m.body,
+      //   author: messageAuthor,
+      //   checkUser: checkUser,
+      //   currentUserId: currentUserId,
+      //   userId: userId,
+      //   isFromMe:
+      //     String(messageAuthor) === String(checkUser) ||
+      //     String(messageAuthor) === String(currentUserId) ||
+      //     String(messageAuthor) === String(userId),
+      //   messageStructure: {
+      //     hasAuthor: !!m.author,
+      //     hasState: !!m.state,
+      //     hasStateAuthor: !!m.state?.author,
+      //   },
+      // });
 
       const isFromMe =
         String(messageAuthor) === String(checkUser) ||
@@ -1324,7 +1323,7 @@ const MessagesIndividualScreen = ({
 
               <TouchableOpacity
                 onPress={() => {
-                  console.log('CHATBACK', source);
+
                   if (Platform.OS === 'ios') {
                     if (navigation.canGoBack()) {
                       navigation.goBack();

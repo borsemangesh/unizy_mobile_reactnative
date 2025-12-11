@@ -83,7 +83,7 @@ const FilterBottomSheet = ({
             item.field_type?.toLowerCase() === 'dropdown' ||
             item.alias_name?.toLowerCase() === 'price',
         );
-        console.log("Current Filter: " + dynamicFilters);
+
         setFilters(dynamicFilters);
 
 
@@ -108,7 +108,7 @@ const FilterBottomSheet = ({
         }
       }
     } catch (err) {
-      console.log('Error fetching filters:', err);
+
     }
   };
 
@@ -356,8 +356,6 @@ const FilterBottomSheet = ({
       search: '',
       category_id: catagory_id,
     };
-
-    console.log('Selected filter body:', JSON.stringify(filterBody, null, 2));
     onApply(filterBody);
 
     setLastAppliedPriceRange(priceRange);

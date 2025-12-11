@@ -266,7 +266,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
         }
       }
     } catch (err) {
-      console.log('Error:', err);
+      // console.log('Error:', err);
       if (isInitialLoad) {
         await new Promise(r => setTimeout(r, 1000));
         setInitialLoading(false);

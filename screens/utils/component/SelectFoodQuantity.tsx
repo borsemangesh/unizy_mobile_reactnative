@@ -55,7 +55,7 @@ const SelectFoodQuantity = ({
     try {
       await AsyncStorage.setItem('quantitycount', String(count));
     } catch (e) {
-      console.log('storage error', e);
+      // console.log('storage error', e);
     }
 
     if (continueToPay) {

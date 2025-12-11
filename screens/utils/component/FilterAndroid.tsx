@@ -65,8 +65,7 @@ const FilterAndroid = ({
       const body = { category_id: catagory_id };
       const url = MAIN_URL.baseUrl + 'category/feature/filter';
 
-      console.log(body)
-      console.log(url)
+
 
       const res = await fetch(url, {
         method: 'POST',
@@ -108,7 +107,7 @@ const FilterAndroid = ({
         }
       }
     } catch (err) {
-      console.log('Error fetching filters:', err);
+      // console.log('Error fetching filters:', err);
     }
   };
 
@@ -358,7 +357,7 @@ const FilterAndroid = ({
       category_id: catagory_id,
     };
 
-    console.log('Selected filter body:', JSON.stringify(filterBody, null, 2));
+
     onApply(filterBody);
 
     // ✅ Save current applied range for next reopen

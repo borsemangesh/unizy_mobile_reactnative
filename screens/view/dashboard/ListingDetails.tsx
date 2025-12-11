@@ -125,12 +125,12 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 
   const fetchDetails = useCallback(async () => {
     try {
-      console.log('shareidListDetails:', shareid, catagory_id);
+
       const token = await AsyncStorage.getItem('userToken');
       const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
       if (!token) return;
       const url = `${MAIN_URL.baseUrl}category/mylisting-details/${shareid}`;
-      console.log('APIListingDetailsurl: ', url);
+
 
       const response = await fetch(url, {
         method: 'GET',
@@ -142,7 +142,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
       });
 
       const result = await response.json();
-      console.log('APIListingDetailsResponse: ', result);
+
       if (response.ok) {
         setData(result.data);
       } else {
@@ -179,7 +179,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
       });
 
       const data1 = await response.json();
-      console.log('API Response List details:', data1);
+
 
       if (data1.message) {
         showToast(
@@ -219,12 +219,12 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
   const otpverify = async () => {
     Keyboard.dismiss();
     setLoading(true);
-    console.log('closePopup1', closePopup1);
+
     try {
       const token = await AsyncStorage.getItem('userToken');
       const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
       if (!token) {
-        console.log('⚠️ Token not found. Cannot upload.');
+
         setLoading(false);
         return;
       }
@@ -238,8 +238,6 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
         orderid: selectedOrderId,
       };
 
-      console.log(url);
-      console.log(createPayload);
 
       const res = await fetch(url, {
         method: 'POST',
@@ -252,7 +250,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
       });
 
       const data = await res.json();
-      console.log('OTP Verify Response:', data);
+
       setShowPopup1(false);
       if (data?.statusCode === 200) {
         setLoading(false);

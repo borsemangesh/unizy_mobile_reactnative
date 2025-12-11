@@ -222,7 +222,7 @@ const MyOrders = ({ navigation }: MyOrdersProps) => {
         url += `&category_id=${categoryId}`;
       }
 
-      console.log(url)
+
 
       const token = await AsyncStorage.getItem('userToken');
       const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
@@ -238,7 +238,7 @@ const MyOrders = ({ navigation }: MyOrdersProps) => {
       });
 
       const jsonResponse = await response.json();
-      console.log('API Response:', jsonResponse);
+
       if (jsonResponse.statusCode === 200) {
 
         const allItems = jsonResponse?.data?.categories?.flatMap((cat: any) => cat.items) ?? [];
@@ -259,11 +259,11 @@ const MyOrders = ({ navigation }: MyOrdersProps) => {
 
       else {
         setIsLoading(false);
-        console.log('API Error:', jsonResponse.message);
+
       }
     } catch (err) {
       setIsLoading(false);
-      console.log('Error:', err);
+
     }
   };
 

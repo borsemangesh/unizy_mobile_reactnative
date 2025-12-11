@@ -24,7 +24,7 @@ export default function StripeOnboardingScreen({ route, navigation }: any) {
 
   const handleUrlChange = (navState: any) => {
     const url = navState.url;
-    console.log('WebView URL changed:', url);
+
     
     if (navigationHandledRef.current) {
       return;
@@ -85,7 +85,7 @@ export default function StripeOnboardingScreen({ route, navigation }: any) {
         const { nativeEvent } = syntheticEvent;
         console.warn('WebView error: ', nativeEvent);
         if (nativeEvent.url && (nativeEvent.url.includes('onboarding-complete') || nativeEvent.url.includes('onboarding-cancel'))) {
-          console.log('Expected error on redirect URL, handling navigation manually');
+
           handleUrlChange({ url: nativeEvent.url });
         }
       }}

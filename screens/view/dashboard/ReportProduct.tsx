@@ -54,7 +54,7 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
   
   
     const handleSubmit = async () => {
-      console.log('Report Click');
+
       if (title.trim() === '') {
         showToast(t(Constant.TITLE_ISMAND), 'error');
         return;
@@ -71,7 +71,7 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
         const token = await AsyncStorage.getItem('userToken');
         const userId = await AsyncStorage.getItem('userId');
         if (!token) {
-          console.log('No token found');
+          // console.log('No token found');
           return;
         }
         // console.log(category_id);
@@ -86,10 +86,9 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
         
 
         const url1 = `${MAIN_URL.baseUrl}category/listing-report`;
-        console.log("ReportListingurl:",url1);
-        console.log("ReportListingpayload:",listingReportPayload);
 
-        console.log(url1);
+
+
         const response = await fetch(url1, {
           method: 'POST',
           headers: {
@@ -102,7 +101,7 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
         const result = await response.json();
 
         if (result.statusCode === 200) {
-          console.log('Review saved:', result);
+
           showToast(t(result.message));
           setIsLoading(false);
           setShowPopup1(true);

@@ -93,21 +93,21 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
       const token = await AsyncStorage.getItem('userToken');
       const userId = await AsyncStorage.getItem('userId');
       if (!token) {
-        console.log('No token found');
+        // console.log('No token found');
         return;
       }
-      console.log(category_id)
+
 
       const createPayload = {
         rating: rating,
         comment: username,
         feature_id: feature_id,
       };
-      console.log(createPayload)
+
 
       const url1 = `${MAIN_URL.baseUrl}category/users/reviews/${category_id}`;
 
-      console.log(url1)
+
       const response = await fetch(url1, {
         method: 'POST',
         headers: {
@@ -121,7 +121,7 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
       const result = await response.json();
 
       if (result.statusCode === 200) {
-        console.log('Review saved:', result);
+
         showToast(t(result.message))
         setShowPopup1(true);
       } else {
@@ -129,8 +129,8 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
         showToast(t(result.message) || 'Failed to submit review');
       }
     } catch (error) {
-      console.error('Review error:', error);
-      console.log('Something went wrong');
+      // console.error('Review error:', error);
+
     } finally {
       setIsLoading(false);
     }

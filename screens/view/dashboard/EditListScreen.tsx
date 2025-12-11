@@ -174,15 +174,15 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
 
   useEffect(() => {
-    console.log('Product ID: ', productId, productName, shareid);
+
     const fetchFields = async () => {
       try {
         setLoading(true)
         const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
-        console.log("language-code", language_code)
+
         const token = await AsyncStorage.getItem('userToken');
         if (!token) {
-          console.log('No token found');
+
           return;
         }
 
@@ -242,7 +242,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
           const sellerFields = json.data.filter(
             (item: any) => item.seller === true,
           );
-          console.log('SellerFields: ', sellerFields);
+
           setFields(sellerFields);
           fetchListDetails();
         }
@@ -256,7 +256,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
           return;
         }
       } catch (err) {
-        console.log('Error fetching fields', err);
+
       } finally {
         setLoading(false);
       }
@@ -269,13 +269,12 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         const token = await AsyncStorage.getItem('userToken');
         const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
         if (!token) {
-          console.log('No token found');
+
           return;
         }
 
         const url = `${MAIN_URL.baseUrl}category/feature-detail/${shareid}`;
-        console.log('DetailsURL:', url);
-        console.log('Token:', token);
+
 
         const response = await fetch(url, {
           method: 'GET',
@@ -291,7 +290,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         }
 
         const json = await response.json();
-        console.log('✅ API Response Details:', json);
+
         await AsyncStorage.setItem('selectedProductId', String(productId));
 
         if (json?.data) {
@@ -383,7 +382,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
           setFormValues(initialValues);
           await AsyncStorage.setItem('formData1', JSON.stringify(initialValues));
 
-          console.log('✅ Stored formData1:', initialValues);
+
         }
 
         if (response.status === 401 || response.status === 403) {
@@ -396,7 +395,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
           return;
         }
       } catch (err) {
-        console.log('Error fetching fields', err);
+
       } finally {
         setLoading(false);
       }
@@ -404,7 +403,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
 
     const handleForceLogout = async () => {
-      console.log('User inactive or unauthorized — logging out');
+
       await AsyncStorage.clear();
       navigation.reset({
         index: 0,
@@ -601,11 +600,11 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
       });
 
       await AsyncStorage.setItem('formData1', JSON.stringify(dataToStore));
-      console.log('✅ Form data saved:', dataToStore);
+
 
       navigation.navigate('EditPreviewThumbnail');
     } catch (error) {
-      console.log('Error:', error);
+      // console.log('Error:', error);
       showToast(t(Constant.DATA_NOT_SAVE), 'error');
     }
   };
@@ -727,7 +726,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   const handleDeleteImage = async (fileId: string) => {
     setUploadedImages(prev => prev.filter(img => img.id !== fileId));
 
-    console.log(`Deleted image locally with ID: ${fileId}`);
+
   };
 
 
@@ -1073,7 +1072,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         const { param } = field;
         const { id, field_name, alias_name } = param;
         const toggleValue = formValues[param.id]?.value ?? formValues[alias_name]?.value ?? formValues[field_name]?.value ?? '';
-        console.log('toggleValue', toggleValue);
+
         return (
           <View key={field.id} style={styles.featurecard}>
             {/* Label + toggle */}

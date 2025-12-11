@@ -244,7 +244,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
       });
 
       const jsonResponse = await response.json();
-      console.log('API Response:', jsonResponse);
+
       if (jsonResponse.statusCode === 200) {
         if (pageNum === 1) {
           setFeaturelist(jsonResponse.data.features);
@@ -272,10 +272,10 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
         } else {
           setIsLoading(false);
         }
-        console.log('API Error:', jsonResponse.message);
+
       }
     } catch (err) {
-      console.log('Error:', err);
+      // console.log('Error:', err);
       if (isInitialLoad) {
         await new Promise(r => setTimeout(r, 1000));
         setInitialLoading(false);
@@ -346,8 +346,6 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
       if (!token) return;
 
       const url = MAIN_URL.baseUrl + 'category/list-bookmark';
-      console.log(url);
-      console.log(productId);
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -363,7 +361,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
       }
 
       const data = await response.json();
-      console.log('Bookmark response:', data);
+
       if (data?.message) {
         showToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
       }

@@ -192,7 +192,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
   const { t } = useTranslation();
   const clickfilter = () => {
     setFilterVisible(true);
-    setTimeout(() => console.log("Filter open state:", isFilterVisible), 100);
+    // setTimeout(() => console.log("Filter open state:", isFilterVisible), 100);
   };
 
   function debounce<T extends (...args: any[]) => void>(func: T, delay: number) {
@@ -213,7 +213,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       if (appliedFilter) {
-        console.log("🔁 Returning with filter active — keeping filter results");
+
         return;
       }
       setPage(1);
@@ -288,7 +288,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
         });
       }
     } catch (err) {
-      console.log('Error:', err);
+      // console.log('Error:', err);
     } finally {
       const elapsed = Date.now() - start;
       const remaining = Math.max(0, 500 - elapsed);
@@ -324,7 +324,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
       const data = await response.json();
-      console.log('Bookmark response:', data);
+
       showToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
 
     } catch (error) {
@@ -415,7 +415,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
   };
 
   const handleFilterApply = async (filterBody: any) => {
-    console.log("Display the Filter apply", filterBody);
+
     try {
       setAppliedFilter(filterBody);
       setIsLoading(true);
@@ -432,13 +432,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
         search: search,
       };
 
-      console.log("NewFilterBody:", newFilterBody);
+
 
       setAppliedFilter(newFilterBody);
 
       const url = `${MAIN_URL.baseUrl}category/filter-apply`;
 
-      console.log(url)
+
 
       const response = await fetch(url, {
         method: 'POST',
@@ -451,7 +451,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
       });
 
       const jsonResponse = await response.json();
-      console.log('Filter Apply Response:', jsonResponse);
+
 
       if (jsonResponse.statusCode === 200) {
         const filteredFeatures = jsonResponse.data.features;
@@ -460,7 +460,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
         setPage(2);
       }
     } catch (err) {
-      console.log('Error applying filters:', err);
+      // console.log('Error applying filters:', err);
     } finally {
       setIsLoading(false);
     }
@@ -482,7 +482,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
       };
 
       const url = `${MAIN_URL.baseUrl}category/filter-apply`;
-      console.log('Fetching next filter page:', nextFilterBody);
+
 
       const response = await fetch(url, {
         method: 'POST',
@@ -495,7 +495,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
       });
 
       const jsonResponse = await response.json();
-      console.log('Next Page Filter Response:', jsonResponse);
+
 
       if (jsonResponse.statusCode === 200) {
         const moreFeatures = jsonResponse.data.features || [];
@@ -504,7 +504,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
         setPage(prev => prev + 1);
       }
     } catch (err) {
-      console.log('Error loading more filtered results:', err);
+      // console.log('Error loading more filtered results:', err);
     } finally {
       setIsLoading(false);
     }
@@ -762,7 +762,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
           visible={isFilterVisible}
           initialFilters={appliedFilter}
           onClose={() => {
-            console.log('Filter Close click: ', isFilterVisible);
+  
             setFilterVisible(false);
           }}
           onApply={filterBody => handleFilterApply(filterBody)}
@@ -775,7 +775,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
           visible={isFilterVisible}
           initialFilters={appliedFilter}
           onClose={() => {
-            console.log('Filter Close click: ', isFilterVisible);
+
             setFilterVisible(false);
           }}
           onApply={filterBody => handleFilterApply(filterBody)}

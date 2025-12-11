@@ -155,12 +155,12 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
       try {
         setLoading(true);
         const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
-        console.log("language-code", language_code)
+
         const token = await AsyncStorage.getItem('userToken');
-        console.log(token);
+
         if (!token) return;
         const url1 = `${MAIN_URL.baseUrl}category/feature-detail/${id}`;
-        console.log(url1);
+
 
         const res = await fetch(url1, {
           headers: {
@@ -171,7 +171,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         });
         const json = await res.json();
         setDetail(json.data);
-        console.log('json.data------', json.data);
+
 
         if (res.status === 401 || res.status === 403) {
           handleForceLogout();
@@ -191,7 +191,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     };
 
     const handleForceLogout = async () => {
-      console.log('Force logging out user...');
+;
       await AsyncStorage.clear();
       navigation.reset({
         index: 0,
@@ -337,7 +337,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                 }}
                 resizeMode="cover"
                 onError={() => {
-                  console.log('Profile image failed to load');
+
                   setImageUri(null);
                 }}
               />
@@ -441,7 +441,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
       }
 
       const data = await response.json();
-      console.log('Bookmark response:', data);
+
       if (data?.message) {
         showToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
       }
@@ -477,15 +477,14 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
   const purchaseProduct = async () => {
     const token = await AsyncStorage.getItem('userToken');
     if (!token) {
-      console.log('⚠️ Token not found. Cannot upload.');
+
       return;
     }
     const finalamount = await AsyncStorage.getItem('finalamount');
     const paymentintent_id = await AsyncStorage.getItem('paymentintent_id');
     const quantity = await AsyncStorage.getItem('quantitycount');
 
-    console.log('COUNT', quantity);
-    console.log('AMOUNT', finalamount);
+
 
     try {
       const createPayload = {
@@ -497,7 +496,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
       const url = `${MAIN_URL.baseUrl}transaction/post-order-complete`;
 
-      console.log('Step 5: Calling create API with payload:', createPayload);
+
 
       const response = await fetch(url, {
         method: 'POST',
@@ -508,7 +507,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         body: JSON.stringify(createPayload),
       });
       const data = await response.json();
-      console.log('Response:', data);
+
 
       if (response.ok && data?.statusCode === 200) {
         await AsyncStorage.removeItem('finalamount');
@@ -1020,10 +1019,10 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       activeOpacity={0.8}
                       onPress={() => {
                         if (detail?.category?.chat_with_seller) {
-                          console.log(
-                            'NAVIGATIONSTATUS: ',
-                            navigation.getState(),
-                          );
+                          // console.log(
+                          //   'NAVIGATIONSTATUS: ',
+                          //   navigation.getState(),
+                          // );
                           navigation.navigate('MessagesIndividualScreen', {
                             animation: 'none',
                             sellerData: {

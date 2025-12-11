@@ -8,9 +8,9 @@ type StripeOnboardingCompleteProps = {
 
 export default function StripeOnboardingComplete({ navigation }: StripeOnboardingCompleteProps) {
   useEffect(() => {
-    console.log("Stripe onboarding completed!");
+
     AsyncStorage.removeItem('onboardingSuccessPopupShown').then(() => {
-      console.log("Navigating to AccountDetails with showSuccess=true");
+
       navigation.replace("AccountDeatils", { showSuccess: true });
     });
   }, [navigation]);

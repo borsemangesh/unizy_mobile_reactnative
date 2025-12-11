@@ -185,9 +185,9 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
   }, []);
 
   const clickfilter = () => {
-    console.log("Filter PopUp: ", isFilterVisible);
+
     setFilterVisible(true);
-    console.log("Filter PopUpAfter: ", isFilterVisible);
+
   };
 
 
@@ -199,7 +199,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
       setIsLoading(true);
       const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
 
-      console.log('CID', category_id)
+
 
       const body = {
         search: query,
@@ -208,7 +208,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
         category_id: category_id,
       };
 
-      console.log('📤 Request Body:', JSON.stringify(body, null, 2));
+
 
       const url = MAIN_URL.baseUrl + 'category/feature-list/search';
       const token = await AsyncStorage.getItem('userToken');
@@ -225,7 +225,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
       });
 
       const jsonResponse = await response.json();
-      console.log('API Response:', jsonResponse);
+
 
       if (jsonResponse.statusCode === 200) {
         const newFeatures = jsonResponse.data.features;
@@ -240,7 +240,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
         setPage(prev => prev + 1);
       }
     } catch (err) {
-      console.log('Error:', err);
+      // console.log('Error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -291,7 +291,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
       }
 
       const data = await response.json();
-      console.log('Bookmark response:', data);
+
       if (data?.message) {
         showToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
       }
@@ -413,7 +413,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
       });
 
       const jsonResponse = await response.json();
-      console.log('Filter Apply Response:', jsonResponse);
+
 
       if (jsonResponse.statusCode === 200) {
         const filteredFeatures = jsonResponse.data.features || [];
@@ -428,7 +428,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
         setPage(prev => prev + 1);
       }
     } catch (err) {
-      console.log('Error applying filters:', err);
+      // console.log('Error applying filters:', err);
     } finally {
       setIsLoading(false);
     }

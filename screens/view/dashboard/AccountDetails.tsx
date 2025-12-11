@@ -121,12 +121,11 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
   const isFromOnboarding = useRef(false);
 
   useEffect(() => {
-    console.log('AccountDetails - Route params:', routeParams);
-    console.log('AccountDetails - showSuccess value:', showSuccess);
+
   }, [routeParams, showSuccess]);
 
   useEffect(() => {
-    console.log('AccountDetails - showSuccessPopup state:', showSuccessPopup);
+
   }, [showSuccessPopup]);
 
   const fetchAccountDetails = useCallback(async () => {
@@ -137,7 +136,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
         return;
       }
       const url = `${MAIN_URL.baseUrl}transaction/account-detail`;
-      console.log('API Account Details URL: ', url);
+
 
       const response = await fetch(url, {
         method: 'GET',
@@ -148,7 +147,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
       });
 
       const result = await response.json();
-      console.log('API Account Details Response: ', result);
+
       if (response.ok && result.statusCode === 200) {
         setData(result.data);
       } else {
@@ -210,36 +209,20 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
       isFromOnboarding.current = true;
 
       if (loading || !data) {
-        console.log('Waiting for data to load...');
+
         return;
       }
 
       const hasData = hasBankData();
-      console.log('Bank data check - hasData:', hasData);
-
-      if (!hasData) {
-        console.log('No bank data present, not showing popup');
-        return;
-      }
-
       const popupShown = await AsyncStorage.getItem(
         'onboardingSuccessPopupShown',
       );
-      console.log(
-        'Popup check - showSuccess:',
-        showSuccess,
-        'popupShown:',
-        popupShown,
-        'hasBankData:',
-        hasData,
-      );
-
       if ((!popupShown || popupShown !== 'true') && hasData) {
-        console.log('Showing success popup - all conditions met');
+
         setShowSuccessPopup(true);
         await AsyncStorage.setItem('onboardingSuccessPopupShown', 'true');
       } else {
-        console.log('Popup already shown previously or no bank data, skipping');
+
       }
     };
 
@@ -263,7 +246,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
     const primaryBanks = merchants.filter(
       (bank: any) => bank.default_for_currency === true,
     );
-   // console.log('Primary Banks:', primaryBanks);
+
     return primaryBanks;
   };
 
@@ -290,8 +273,6 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
       }
 
       const url = `${MAIN_URL.baseUrl}transaction/account-onboarding-link`;
-      console.log('API Account Link URL: ', url);
-
       const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -302,17 +283,12 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
       });
 
       const result = await response.json();
-      console.log('API Account Link Response: ', result);
-      console.log('Account Link URL from response: ', result.data?.url);
+;
 
       if (response.ok && result.statusCode === 200) {
         const accountLinkUrl = result.data?.url;
 
         if (accountLinkUrl) {
-          console.log(
-            'Navigating to StripeOnboardingScreen with URL:',
-            accountLinkUrl,
-          );
           navigation.navigate('StripeOnboardingScreen', {
             onboardingUrl: accountLinkUrl,
           });

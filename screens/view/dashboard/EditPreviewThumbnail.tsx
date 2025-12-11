@@ -149,16 +149,16 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
         const storedData = await AsyncStorage.getItem('formData1');
         if (storedData) {
           const parsedData = JSON.parse(storedData);
-          console.log('Stored Form Data:', parsedData);
+
           setStoredForm(parsedData);
         } else {
-          console.log('No form data found');
+          // console.log('No form data found');
         }
 
         const storedUserMeta = await AsyncStorage.getItem('userMeta');
         if (storedUserMeta) {
           const parsedUserMeta: UserMeta = JSON.parse(storedUserMeta);
-          console.log('Stored User Meta:', parsedUserMeta);
+          // console.log('Stored User Meta:', parsedUserMeta);
 
           setUniname(parsedUserMeta?.university_name ?? '');
           setCategoryId(parsedUserMeta?.category?.id ?? null);
@@ -181,15 +181,15 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
               feature_fee: feature_fee ?? '0',
               max_feature_cap: max_feature_cap ?? '0',
             });
-            console.log('Category Details set:', { commission, max_cappund });
+            // console.log('Category Details set:', { commission, max_cappund });
           } else {
-            console.log('No category in userMeta');
+            // console.log('No category in userMeta');
           }
         } else {
-          console.log('No userMeta found');
+     
         }
       } catch (error) {
-        console.log('Error reading stored data: ', error);
+        // console.log('Error reading stored data: ', error);
       }
     };
 
@@ -252,7 +252,7 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
     maxAllowedPrice1,
   ).toFixed(2);
 
-  //console.log(commisionprice)
+
 
   return (
     <ImageBackground

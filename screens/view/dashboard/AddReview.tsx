@@ -77,21 +77,20 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
       const token = await AsyncStorage.getItem('userToken');
       const userId = await AsyncStorage.getItem('userId');
       if (!token) {
-        console.log('No token found');
         return;
       }
-      console.log(category_id);
+
 
       const createPayload = {
         rating: rating,
         comment: username,
         feature_id: feature_id,
       };
-      console.log(createPayload);
+
 
       const url1 = `${MAIN_URL.baseUrl}category/users/reviews/${category_id}`;
 
-      console.log(url1);
+
       const response = await fetch(url1, {
         method: 'POST',
         headers: {
@@ -105,7 +104,7 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
       const result = await response.json();
 
       if (result.statusCode === 200) {
-        console.log('Review saved:', result);
+
         showToast(t(result.message));
         setShowPopup1(true);
       } else {

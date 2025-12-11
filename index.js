@@ -15,14 +15,14 @@ import { setupCrashlytics } from "./screens/utils/crashalaytics/setupCrashlytics
 setupCrashlytics();
 // 1️⃣ Background FCM handler
 messaging().setBackgroundMessageHandler(async remoteMessage => {
-  console.log("📩 Background FCM Message:", remoteMessage);
+;
 
   // 🔒 SECURITY: Check if user is logged in before processing notifications
   const AsyncStorage = require('@react-native-async-storage/async-storage').default;
   try {
     const isLogin = await AsyncStorage.getItem('ISLOGIN');
     if (isLogin !== 'true') {
-      console.log('⚠️ Ignoring background notification - user not logged in');
+      // console.log('⚠️ Ignoring background notification - user not logged in');
       return; // Don't show notifications if user is logged out
     }
   } catch (err) {
@@ -45,7 +45,7 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
   remoteMessage.data?.['google.delivered_priority'];
 
 if (isFCMAutoNotification) {
-  console.log("⚠ Auto FCM notification detected — skipping Notifee");
+  // console.log("⚠ Auto FCM notification detected — skipping Notifee");
   return;
 }
 
@@ -66,16 +66,13 @@ if (isFCMAutoNotification) {
 
 notifee.onBackgroundEvent(async ({ type, detail }) => {
   if (type === EventType.PRESS) {
-    console.log("🟦 Notification tapped in background/quit");
-    console.log("detail", detail);
-    console.log("type", type);
-    
+
     // 🔒 SECURITY: Check if user is logged in before handling notification tap
     const AsyncStorage = require('@react-native-async-storage/async-storage').default;
     try {
       const isLogin = await AsyncStorage.getItem('ISLOGIN');
       if (isLogin !== 'true') {
-        console.log('⚠️ Ignoring notification tap - user not logged in');
+
         return; // Don't navigate if user is logged out
       }
     } catch (err) {

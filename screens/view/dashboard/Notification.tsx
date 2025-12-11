@@ -162,7 +162,7 @@ const Notification = ({ navigation }: NotificationProps) => {
       const pagesize = 10;
       let url = `${MAIN_URL.baseUrl}user/mynotification?page=${pageNum}&pagesize=${pagesize}`;
 
-      console.log(url)
+
 
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
@@ -173,7 +173,7 @@ const Notification = ({ navigation }: NotificationProps) => {
         return;
       }
       const language_code = await AsyncStorage.getItem('selectedLanguage') || 'es'
-        console.log("language-code: ", language_code)
+
 
       const response = await fetch(url, {
         method: 'GET',
@@ -190,9 +190,7 @@ const Notification = ({ navigation }: NotificationProps) => {
       if (jsonResponse.statusCode === 200) {
         const newData = jsonResponse?.data?.notifications ?? [];
 
-        console.log("newData.........", newData);
-        console.log("token.........", token);
-        console.log("url---------", url);
+
 
 
         if (pageNum === 1) {
@@ -223,7 +221,7 @@ const Notification = ({ navigation }: NotificationProps) => {
         }
       }
     } catch (err) {
-      console.log('Error:', err);
+
       if (isInitialLoad) {
         await new Promise(r => setTimeout(r, 1000));
         setInitialLoading(false);

@@ -119,7 +119,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
           setLanguages(sortedLanguages);
         }
       } catch (err) {
-        console.log('Error fetching languages', err);
+        // console.log('Error fetching languages', err);
       } finally {
         setLoading(false);
       }
@@ -155,7 +155,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
       await changeAppLanguage(item.code);
 
-      console.log(t('select_language'))
+    
       setSelected(item.code);
 
       Animated.timing(loginunizyTranslateY, {
@@ -172,7 +172,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         setUsername('');
       });
     } catch (err) {
-      console.log('Error saving selected language', err);
+      // console.log('Error saving selected language', err);
     }
   };
 
@@ -598,7 +598,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       });
 
       const data = await res.json();
-      console.log("RESPONSE: ", data);
+
 
       if (res.ok) {
         // Show toast
@@ -657,7 +657,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         return;
       }
 
-      console.log('Login response:', JSON.stringify(result, null, 2));
+
 
       if (!response.ok || result?.statusCode !== 200) {
         setLoading(false);
@@ -761,7 +761,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         confirmPassword: confirmPassword,
       };
 
-      console.log('Request body:', JSON.stringify(body, null, 2));
+
 
       const url = MAIN_URL.baseUrl + 'user/user-signup';
 
@@ -774,7 +774,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       });
 
       const data = await response.json();
-      console.log('API response:', data);
+     
 
       if (response.status === 201) {
         showToast(t(data.message), 'success');
@@ -798,7 +798,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         showToast(t(data.message) || 'Signup failed', 'error');
       }
     } catch (err) {
-      console.log('Error sending signup request:', err);
       showToast(t(Constant.FAIL_TO_SEND_OTP), 'error');
     }
   };
@@ -875,7 +874,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       });
 
       const data = await res.json();
-      console.log('OTP Verify Response:', data);
+
 
       if (data?.statusCode === 200) {
         showToast(t(data.message), 'success');
@@ -936,7 +935,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
         await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
 
-        console.log('OTP resent successfully:', data.message);
+
         setTimeout(() => {
           inputs.current[0]?.focus();
         }, 200);
@@ -987,11 +986,11 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
       return;
     }
-    console.log(emailParts)
+  
 
     //const domain = '@' + emailParts[1].toLowerCase();
     const domain = '@' + emailParts[1].trim().toLowerCase();
-    console.log(domain)
+
 
     if (!universityDomains.includes(domain)) {
       showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
@@ -1014,7 +1013,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       });
 
       const data = await res.json();
-      console.log('Send OTP Response:', data);
+
 
       if (data?.statusCode === 200) {
         showToast(t(data.message), 'success');
@@ -1057,7 +1056,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         showToast(t(data?.message) || 'Failed to send OTP', 'error');
       }
     } catch (err) {
-      console.error('Error sending OTP:', err);
+
       showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
     }
   };
@@ -1119,7 +1118,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       });
 
       const data = await res.json();
-      console.log('Student OTP Verify Response:', data);
+
 
       if (data?.statusCode === 200) {
         showToast(t(data.message), 'success');
@@ -1180,7 +1179,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       });
 
       const data = await res.json();
-      console.log('Send OTP Response:', data);
+
 
       if (data?.statusCode === 200) {
         await AsyncStorage.setItem(
@@ -1518,16 +1517,15 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
     setLoading(true);
     try {
       if (!uri) {
-        console.log('No photo selected');
+
         Alert.alert(Constant.ALERT_MESSAGE_PLEASE_SELECT_AN_IMAGE_FIRST);
         setLoading(false);
         return;
       }
 
-      console.log('Photo URI:', uri);
 
       const token = await AsyncStorage.getItem('userToken');
-      console.log('Token retrieved:', token);
+
 
       const formData = new FormData();
       formData.append('file', {
@@ -1537,7 +1535,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       } as any);
 
       const url = MAIN_URL.baseUrl + 'user/update-profile';
-      console.log('Sending API request…', url);
+
 
       const response = await fetch(url, {
         method: 'POST',
@@ -1548,20 +1546,20 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       });
 
       const result = await response.json();
-      console.log('API result:', result);
+
 
       if (response.ok && result?.message) {
-        console.log('Upload success');
+
         showToast(t(result.message), 'success');
 
         // setTimeout(() => {
         //   setShowPopup1(true);
         // }, 2000);
       } else {
-        console.log('Upload failed');
+  
       }
     } catch (err) {
-      console.log('Error:', err);
+
     } finally {
       setLoading(false);
     }

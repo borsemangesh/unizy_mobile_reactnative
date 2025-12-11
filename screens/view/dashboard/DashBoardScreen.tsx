@@ -414,7 +414,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
         if (!token) return;
 
         const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
-        console.log("language-code", language_code)
+ 
 
 
         const url2 = MAIN_URL.baseUrl + 'user/category';
@@ -429,7 +429,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
         });
         const json = await response.json();
 
-        console.log(json)
+
 
         const mapped = json.data
           .filter((cat: any) => cat.isactive)
@@ -480,7 +480,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
           if (!token) return;
 
           const url1 = MAIN_URL.baseUrl + 'category/feature-list';
-          console.log("FeatureListingDashboard:", url1);
+
           const res = await fetch(url1, {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -489,7 +489,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
           });
 
           const json = await res.json();
-          console.log('✅ Features API response:', json);
+
 
           if (json.statusCode === 200) {
             setFeatures(json.data.features || []);
@@ -502,7 +502,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
             });
           }
         } catch (err) {
-          console.log('❌ Error fetching features:', err);
+
           setIsLoading(false);
         } finally {
           setIsLoading(false);
@@ -523,15 +523,15 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
       if (!token) return;
       const deviceId = await DeviceInfo.getUniqueId();
       const url1 = MAIN_URL.baseUrl + 'user/devicetoken';
-      console.log('📤 FCM URL:', url1);
+
       const fcmToken = await messaging().getToken();
-      console.log('📤 FCM fcmToken:', fcmToken);
+
       const requestBody = {
         device_token: fcmToken,
         device_type: Platform.OS,
         device_id: deviceId
       };
-      console.log('Body:', JSON.stringify(requestBody));
+
       const response = await fetch(url1, {
         method: 'POST',
         headers: {
@@ -542,10 +542,10 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
       });
 
       if (response.ok) {
-        console.log('✅ FCM token sent to server successfully');
+
       } else {
         const error = await response.text();
-        console.log('❌ Server error:', error);
+
       }
     } catch (error) {
       console.error('❌ Error sending token to server:', error);
@@ -572,7 +572,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
 
   useEffect(() => {
     if (activeTab === 'Home' && route.params?.isNavigate) {
-      console.log("isNav: ", isNav)
+
       if (route.params?.isFirsttimeLogin) {
         navigation.setParams({ isFirsttimeLogin: false });
         showToast(t(route.params?.loginMessage) || t(Constant.LOGIN_SUCCESSFUL), 'success');
@@ -890,7 +890,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
       }
 
       const data = await response.json();
-      console.log('Bookmark response:', data);
+
       if (data?.message) {
         showToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
       }

@@ -39,7 +39,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation }) => {
   const { onSuccess } = route.params;
 
   const { t } = useTranslation();
-  console.log(amount)
+
 
   const handlePayPress = async () => {
 
@@ -60,8 +60,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation }) => {
         };
       }
 
-      console.log(url)
-      console.log(body)
+
 
       const response = await fetch(url, {
         method: 'POST',
@@ -74,7 +73,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation }) => {
 
 
       const responseJson = await response.json();
-      console.log("API Response JSON:", responseJson);
+
       const clientSecret = responseJson.data;
       const ephemeralKey = responseJson.metadata?.ephemeralKey;
       const customerId = responseJson.metadata?.customerId;
@@ -83,7 +82,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation }) => {
 
 
       if (clientSecret) {
-        console.log('Payment successful:', clientSecret);
+     
         await AsyncStorage.setItem("finalamount", String(famount));
 
         await AsyncStorage.setItem("paymentintent_id", paymentintent_id);
@@ -134,12 +133,12 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation }) => {
 
       if (error) {
         if (error.code === 'Canceled') {
-          console.log('User cancelled payment');
+ 
           navigation.goBack();
           return;
         }
 
-        console.log('Payment failed:', error);
+
         showToast(t(Constant.PAYMENT_FAIL), 'error');
         return;
       }

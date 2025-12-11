@@ -145,13 +145,13 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
         showToast(t(data?.message) || 'Failed to update password', 'error');
       }
     } catch (error) {
-      console.log('Update Password Error:', error);
+
       showToast(Constant.SOMTHING_WENT_WRONG, 'error');
     }
   };
 
   const handleForceLogout = async () => {
-    console.log('User inactive or unauthorized — logging out');
+
     // setLoading(false);
     await AsyncStorage.clear();
     navigation.reset({
@@ -303,7 +303,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => {
-              console.log("This is Forgot password")
+
               setShowDeleteModal(true);
             }}>
               <Text

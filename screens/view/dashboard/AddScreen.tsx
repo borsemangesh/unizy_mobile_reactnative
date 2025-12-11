@@ -184,18 +184,18 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
       try {
         setLoading(true)
         const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
-        console.log("language-code", language_code)
+
         const token = await AsyncStorage.getItem('userToken');
         if (!token) {
-          console.log('No token found');
+          // console.log('No token found');
           return;
         }
 
-        console.log(token);
+
 
         const url = `${MAIN_URL.baseUrl}category/listparams/user/${productId}`;
 
-        console.log(url)
+
 
         const response = await fetch(url, {
           method: 'GET',
@@ -267,14 +267,14 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
         }
       } catch (err) {
         setLoading(false)
-        console.log('Error fetching fields', err);
+
       } finally {
         setLoading(false);
       }
     };
 
     const handleForceLogout = async () => {
-      console.log('User inactive or unauthorized — logging out');
+
       await AsyncStorage.clear();
       navigation.reset({
         index: 0,
@@ -537,7 +537,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
 
   const handlePreview = async () => {
-    console.log("ReViewScrenn");
 
     try {
       for (const field of fields) {
@@ -631,7 +630,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
       await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
       navigation.navigate('PreviewThumbnail');
     } catch (error) {
-      console.log('Error saving form data: ', error);
+
       showToast(t(Constant.DATA_NOT_SAVE), 'error');
     }
   };
@@ -894,7 +893,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             <TouchableOpacity
               style={styles.pickerContainer}
               onPress={() => {
-                console.log('field_ismultilple' + field.ismultilple);
+        
                 setMultiSelectModal({
                   visible: true,
                   ismultilple: !!field.param.ismultilple,

@@ -107,13 +107,13 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
         const storedData = await AsyncStorage.getItem('formData');
         if (storedData) {
           const parsedData = JSON.parse(storedData);
-          console.log('Stored Form Data:', parsedData);
+
           setStoredForm(parsedData);
         } else {
-          console.log('No form data found');
+  
         }
       } catch (error) {
-        console.log('Error reading form data: ', error);
+ 
       }
     };
 
@@ -129,7 +129,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
           setUserMeta(meta);
         }
       } catch (error) {
-        console.log('Error loading userMeta', error);
+
       }
     };
 
@@ -228,17 +228,11 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
       try {
         const token = await AsyncStorage.getItem('userToken');
         const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
-        if (!token) {
-          console.log('No token found');
-          return;
-        }
+     
         const productId1 = await AsyncStorage.getItem('selectedProductId');
         setcategoryid(Number(productId1))
 
-        if (!token) {
-          console.log('No token found');
-          return;
-        }
+
 
         const url = `${MAIN_URL.baseUrl}category/listparams/user/${productId1}`;
 
@@ -290,7 +284,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
           setFields(sellerFields);
         }
       } catch (err) {
-        console.log('Error fetching fields', err);
+        // console.log('Error fetching fields', err);
       } finally {
         //setLoading(false);
       }
@@ -309,7 +303,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
   const handleListPress = async () => {
     if (isSubmitting) {
-      console.log("⛔ Prevented double click!");
+
       return;
     }
     isSubmitting = true;
@@ -321,7 +315,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
       await listProduct();
     } catch (e) {
-      console.log('Error parsing storedForm:', e);
+
     }
     finally {
       setTimeout(() => {
@@ -341,7 +335,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
       const storedData = await AsyncStorage.getItem('formData');
 
       if (!storedData) {
-        console.log('⚠️ No form data found in storage');
+
         showToast(t(Constant.DATA_NOT_SAVE), 'error');
         return;
       }
@@ -350,13 +344,13 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
         string,
         { value: any; alias_name: string | null }
       > = JSON.parse(storedData);
-      console.log('✅ Parsed formData:', formData);
+
 
       const token = await AsyncStorage.getItem('userToken');
       const productId1 = await AsyncStorage.getItem('selectedProductId');
 
       if (!token) {
-        console.log('⚠️ Token not found. Cannot upload.');
+
         return;
       }
 
@@ -384,7 +378,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
         param_value: obj.value,
       }));
 
-      console.log('✅ Data array for create API:', dataArray);
+
 
       const createPayload = {
         category_id: productId1,
@@ -396,7 +390,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
         featureamount: diff1
       };
 
-      console.log('Step 5: Calling create API with payload:', createPayload);
+
 
       const createRes = await fetch(
         `${MAIN_URL.baseUrl}category/featurelist/create`,
@@ -410,7 +404,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
         },
       );
 
-      console.log(`✅ Create API status: ${createRes.status}`);
+
       const createJson = await createRes.json();
       const apiMessage = createJson?.message || createJson?.error || "Something went wrong";
       const isSuccess = createRes.status === 200 || createRes.status === 201;
@@ -459,7 +453,6 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
           const uploadJson = await uploadRes.json();
 
-          console.log("✅ Upload API Parsed JSON:", uploadJson);
 
           const apiMessage = uploadJson?.message || uploadJson?.error || `Failed to upload ${image.name}`;
           const isSuccess = uploadRes.status === 200 || uploadRes.status === 201;
@@ -471,7 +464,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
       setShowPopup(true);
     }
     catch (error) {
-      console.log('❌ Error in handleListPress:', error);
+      // console.log('❌ Error in handleListPress:', error);
     }
     finally {
       setIsLoading(false);
@@ -969,7 +962,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
               }
               return t('list');
             } catch (e) {
-              console.log('Error parsing storedForm:', e);
+              // console.log('Error parsing storedForm:', e);
               return 'List';
             }
           })()}
@@ -1043,7 +1036,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                     try {
                       await AsyncStorage.removeItem('formData');
                       await AsyncStorage.removeItem('selectedProductId');
-                      console.log('✅ formData cleared from AsyncStorage');
+
 
                       navigation.dispatch(
                         CommonActions.reset({
@@ -1062,7 +1055,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
                       setShowPopup(false);
                     } catch (err) {
-                      console.log('❌ Error clearing formData:', err);
+                      // console.log('❌ Error clearing formData:', err);
                     }
                   }}
                 >

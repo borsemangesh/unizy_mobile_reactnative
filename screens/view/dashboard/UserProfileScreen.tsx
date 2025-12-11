@@ -48,7 +48,7 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
         }
 
         const url = `${MAIN_URL.baseUrl}user/info?user_id=${members.id}`;
-        console.log('url----------', url);
+
 
         const response = await fetch(url, {
           method: 'GET',

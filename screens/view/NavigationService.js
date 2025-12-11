@@ -26,15 +26,15 @@ export function navigate(name, params) {
       } else if (attempts >= maxAttempts) {
         clearInterval(retryInterval);
         console.error(`❌ Navigation to ${name} failed after ${maxAttempts} attempts`);
-        console.log('💾 Storing navigation in AsyncStorage for Dashboard to pick up...');
+
         AsyncStorage.setItem('pendingNotificationNavigation', JSON.stringify({
           screen: name,
           params: params,
           timestamp: Date.now(),
         })).then(() => {
-          console.log('✅ Navigation stored in AsyncStorage successfully');
+ 
         }).catch((error) => {
-          console.error('❌ Failed to store navigation in AsyncStorage:', error);
+          // console.error('❌ Failed to store navigation in AsyncStorage:', error);
         });
       }
     }, 300);
@@ -60,11 +60,11 @@ export function resetNavigation(name, params) {
         );
       }
     } catch (error) {
-      console.error(`❌ Navigation reset error to ${name}:`, error);
+      // console.error(`❌ Navigation reset error to ${name}:`, error);
       try {
         navigationRef.navigate(name, params);
       } catch (e) {
-        console.error(`❌ Navigation fallback also failed:`, e);
+        // console.error(`❌ Navigation fallback also failed:`, e);
       }
     }
   } else {

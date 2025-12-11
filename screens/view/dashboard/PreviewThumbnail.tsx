@@ -135,10 +135,10 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
         const storedData = await AsyncStorage.getItem('formData');
         if (storedData) {
           const parsedData = JSON.parse(storedData);
-          console.log('Stored Form Data:', parsedData);
+
           setStoredForm(parsedData);
         } else {
-          console.log('No form data found');
+          // console.log('No form data found');
         }
 
         const storedUserMeta = await AsyncStorage.getItem('userMeta');
@@ -155,20 +155,20 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
 
 
 
-          console.log('Stored User Meta:', parsedUserMeta);
+
 
           if (parsedUserMeta.category) {
             const { commission, max_cappund, feature_fee, max_feature_cap, } = parsedUserMeta.category;
             setCategoryDetails({ commission: commission ?? '0', max_cappund: max_cappund ?? '0', feature_fee: feature_fee ?? '0', max_feature_cap: max_feature_cap ?? '0' });
-            console.log('Category Details set:', { commission, max_cappund });
+
           } else {
-            console.log('No category in userMeta');
+            // console.log('No category in userMeta');
           }
         } else {
-          console.log('No userMeta found');
+          // console.log('No userMeta found');
         }
       } catch (error) {
-        console.log('Error reading stored data: ', error);
+        // console.log('Error reading stored data: ', error);
       }
     };
 

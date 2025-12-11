@@ -99,14 +99,14 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
         const userId = await AsyncStorage.getItem('userId');
         const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
 
-        console.log("profile card page.... ", userId);
+
 
         if (!token || !userId) {
           console.warn('Missing token or user ID in AsyncStorage');
           return;
         }
 
-        console.log(token)
+
 
         const url = `${MAIN_URL.baseUrl}user/user-profile/${userId}`;
         const response = await fetch(url, {
@@ -133,7 +133,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
         if (response.ok) {
           const user = data.data;
 
-          console.log("user data .........", user);
+
 
           setUserMeta({
             firstname: user.firstname ?? null,
@@ -155,7 +155,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
       }
     };
     const handleForceLogout = async () => {
-      console.log('User inactive or unauthorized — logging out');
+
       setLoading(false);
       await AsyncStorage.clear();
       navigation.reset({
@@ -266,7 +266,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
             openStripeOnboarding();
           }
           else {
-            console.log(item.title, 'pressed');
+
           }
         }}
       >
@@ -479,7 +479,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
 
                       const apiData = await response.json();
 
-                      console.log("Logout API Response:", apiData);
+ 
 
                       if (apiData?.statusCode === 200) {
                         await AsyncStorage.setItem('userToken', '');
@@ -495,14 +495,14 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                             const messaging = require('@react-native-firebase/messaging').default;
                             await messaging().deleteToken();
                             if (__DEV__) {
-                              console.log('✅ FCM token deleted locally');
+
                             }
                           } catch (fcmError) {
                             console.warn('⚠️ Error deleting FCM token:', fcmError);
                           }
 
                           if (__DEV__) {
-                            console.log('✅ Twilio client and cache cleared on logout');
+   
                           }
                         } catch (clearError) {
                           console.warn('⚠️ Error clearing Twilio data on logout:', clearError);
@@ -632,14 +632,14 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                             const messaging = require('@react-native-firebase/messaging').default;
                             await messaging().deleteToken();
                             if (__DEV__) {
-                              console.log('✅ FCM token deleted locally');
+
                             }
                           } catch (fcmError) {
                             console.warn('⚠️ Error deleting FCM token:', fcmError);
                           }
 
                           if (__DEV__) {
-                            console.log('✅ Twilio client and cache cleared on logout');
+
                           }
                         } catch (clearError) {
                           console.warn('⚠️ Error clearing Twilio data on logout:', clearError);
@@ -664,7 +664,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                       }
 
                     } catch (error) {
-                      console.log("Something went wrong. Try again!");
+                      // console.log("Something went wrong. Try again!");
                     }
                   }}
                 >
