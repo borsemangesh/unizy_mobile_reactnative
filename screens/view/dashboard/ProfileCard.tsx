@@ -206,6 +206,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
         }
       }
       else {
+        console.log(json?.message)
         showToast( t(json?.message) || t(Constant.SOMTHING_WENT_WRONG),'error',);
       }
     } catch (error) {

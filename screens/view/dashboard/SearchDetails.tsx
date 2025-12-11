@@ -43,6 +43,7 @@ import SelectFoodQuantity_IOS from '../../utils/component/SelectFoodQuantity_IOS
 import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
+import Loader from '../../utils/component/Loader';
 
 type SearchDetailsProps = {
   navigation: any;
@@ -152,6 +153,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
+        setLoading(true);
         const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
         console.log("language-code", language_code)
         const token = await AsyncStorage.getItem('userToken');
@@ -182,6 +184,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         }
       } catch (error) {
         console.error('Error fetching details:', error);
+        setLoading(false);
       } finally {
         setLoading(false);
       }
@@ -1333,12 +1336,30 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
           </TouchableWithoutFeedback>
         </Modal>
       </View>
+       {loading && (
+        <View style={styles.fullLoader}>
+          <Loader />
+        </View>
+      )}
       <NewCustomToastContainer />
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+
+
+   fullLoader: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    height: "100%",
+    width: "100%",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999,
+  },
 
   reportButtonCard: {
     flexDirection: 'row',

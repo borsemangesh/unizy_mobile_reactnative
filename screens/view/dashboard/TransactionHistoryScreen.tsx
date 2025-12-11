@@ -450,9 +450,12 @@ export default function TransactionHistoryScreen(
       <ScrollView
         style={{
           width: '100%',
-          paddingBottom: Platform.OS === 'ios' ? height * 0.1 : height * 0.24,
+          flex:1,
+          paddingBottom: Platform.OS === 'ios' ? height * 0.1 : height * 0.2,
+          
         }}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{flexGrow:1}}
       >
         {loading ? (
           <View style={styles.loaderWrapper}>
@@ -460,7 +463,7 @@ export default function TransactionHistoryScreen(
           </View>
         ) : transactions.length === 0 ? (
           <View style={styles.emptyWrapper}>
-            <View style={styles.emptyContainer}>
+            <View style={[styles.emptyContainer,{height: (Platform.OS === 'ios' ? height*0.70 : height*0.72)}]}>
               <Image
                 source={require('../../../assets/images/noproduct.png')}
                 style={styles.emptyImage}
@@ -831,27 +834,44 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
   },
-  emptyWrapper: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    height: '100%',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    height: (Platform.OS === 'ios' ? 570 : 600),
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    borderWidth: 0.3,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
-    borderRadius: 24,
-    overflow: 'hidden',
-    minHeight: '100%',
 
-  },
+  emptyWrapper: {
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: '100%',
+},
+emptyContainer: {
+  width: '100%',
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: 'rgba(255, 255, 255, 0.06)',
+  borderWidth: 0.3,
+  borderColor: 'rgba(255, 255, 255, 0.08)',
+  borderRadius: 24,
+  paddingVertical: 40,
+},
+  // emptyWrapper: {
+  //   flex: 1,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   width: '100%',
+  //   //height: '100%',
+  // },
+  // emptyContainer: {
+  //   //flex: 1,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   width: '100%',
+  //   //height: (Platform.OS === 'ios' ? 570 : 600),
+  //   backgroundColor: 'rgba(255, 255, 255, 0.06)',
+  //   borderWidth: 0.3,
+  //   borderColor: 'rgba(255, 255, 255, 0.08)',
+  //   borderRadius: 24,
+  //   overflow: 'hidden',
+  // //  minHeight: '100%',
+
+  // },
   emptyImage: {
     width: 50,
     height: 50,

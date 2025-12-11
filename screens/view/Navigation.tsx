@@ -1,26 +1,15 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
-import HelloScreen from './Hello/HelloScreen';
-import LoginScreen from './Login/LoginScreen';
-import SelectLanguage_Popup from './SelectLanguage/SelectLanguage_Popup';
-import ResetPassword from './Login/ResetPassword';
-import ResendPopup from './Login/ResendPopup';
-import SignupScreen from './Login/SignupScreen';
 import RevarifyStudentStatus from './revarify/RevarifyStudentStatus';
 import DashBoardScreen from './dashboard/DashBoardScreen';
-import OTPScreen from './Login/OTPScreen';
-import VerifyScreen from './Login/VerifyScreen';
-import ProfileScreen from './Login/ProfileScreen';
 import { enableScreens } from 'react-native-screens';
 import SinglePage from './authentication/SinglePage';
 import AddScreen from './dashboard/AddScreen';
 import PreviewThumbnail from './dashboard/PreviewThumbnail';
 import PreviewDetailed from './dashboard/PreviewDetailed';
 import ProductDetails from './dashboard/ProductDetails';
-import Temp from './authentication/Temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState, useEffect } from 'react';
-import SplashScreen from './Hello/SplashScreen';
 import Bookmark from './dashboard/Bookmark';
 import MyListing from './dashboard/MyListing';
 import SearchDetails from './dashboard/SearchDetails';
@@ -32,7 +21,6 @@ import ReviewDetails from './dashboard/ReviewDetails';
 import AddReview from './dashboard/AddReview';
 import MyReviews from './dashboard/MyReviews';
 import MyOrders from './dashboard/MyOrders';
-import MyProductDetails from './dashboard/MyProductDetails';
 import HelpSupport from './dashboard/HelpSupport';
 import Notification from './dashboard/Notification';
 import EditListScreen from './dashboard/EditListScreen';
@@ -85,15 +73,7 @@ export const Navigation = () => {
         initialRouteName="SinglePage"
         screenOptions={{ headerShown: false, animation: 'none' }}
       >
-        <Stack.Screen
-          name="Splashscreen"
-          component={SplashScreen}
-          options={{
-            headerShown: false,
-            animation: 'none',
-            presentation: 'fullScreenModal',
-          }}
-        />
+       
         <Stack.Screen
           name="SinglePage"
           component={SinglePage}
@@ -113,21 +93,7 @@ export const Navigation = () => {
             presentation: 'fullScreenModal',
           }}
         />
-
-        <Stack.Screen
-          name="Temp"
-          component={Temp}
-          options={{
-            headerShown: false,
-            animation: 'none',
-            presentation: 'fullScreenModal',
-          }}
-        />
-        <Stack.Screen
-          name="HelloScreen"
-          component={HelloScreen}
-          options={{ headerShown: false, gestureEnabled: true }}
-        />
+       
 
         <Stack.Screen
           name="AddScreen"
@@ -205,44 +171,7 @@ export const Navigation = () => {
             presentation: 'fullScreenModal',
           }}
         />
-        <Stack.Screen
-          name="LoginScreen"
-          component={LoginScreen}
-          options={{
-            headerShown: false,
-            presentation: 'fullScreenModal',
-            gestureEnabled: true,
-          }}
-        />
-        {/* <Stack.Screen name="Dashboard" component={DashBoardScreen} options={{headerShown: false,headerTransparent: true,presentation: 'fullScreenModal',gestureEnabled: true,}} /> */}
-        <Stack.Screen
-          name="LanguagePopup"
-          component={SelectLanguage_Popup}
-          options={{
-            headerShown: false,
-            gestureEnabled: true,
-            animation: 'fade_from_bottom',
-            animationDuration: 700,
-          }}
-        />
-        <Stack.Screen
-          name="Reset"
-          component={ResetPassword}
-          options={{
-            headerShown: false,
-            presentation: 'fullScreenModal',
-            gestureEnabled: true,
-          }}
-        />
-        <Stack.Screen
-          name="Signup"
-          component={SignupScreen}
-          options={{
-            headerShown: false,
-            presentation: 'fullScreenModal',
-            gestureEnabled: true,
-          }}
-        />
+        
         <Stack.Screen
           name="MessagesIndividualScreen"
           component={MessagesIndividualScreen}
@@ -257,21 +186,7 @@ export const Navigation = () => {
           component={RevarifyStudentStatus}
           options={{ headerShown: false }}
         />
-        <Stack.Screen
-          name="OTPScreen"
-          component={OTPScreen}
-          options={{ headerShown: false, presentation: 'fullScreenModal' }}
-        />
-        <Stack.Screen
-          name="VerifyScreen"
-          component={VerifyScreen}
-          options={{ headerShown: false, presentation: 'fullScreenModal' }}
-        />
-        <Stack.Screen
-          name="ProfileScreen"
-          component={ProfileScreen}
-          options={{ headerShown: false, presentation: 'fullScreenModal' }}
-        />
+        
         <Stack.Screen
           name="Bookmark"
           component={Bookmark}
@@ -350,15 +265,6 @@ export const Navigation = () => {
          <Stack.Screen
           name="UserAddReview"
           component={UserAddReview}
-          options={{
-            headerShown: false,
-            presentation: 'fullScreenModal',
-          }}
-        />
-
-        <Stack.Screen
-          name="MyProductDetails"
-          component={MyProductDetails}
           options={{
             headerShown: false,
             presentation: 'fullScreenModal',
