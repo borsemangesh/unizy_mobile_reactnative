@@ -72,15 +72,20 @@
 
 	<!-- Camera & Photos -->
 	<key>NSCameraUsageDescription</key>
-	<string>The app uses the camera to let you capture photos for in-app features, such as updating your profile picture or attaching images when submitting forms, reports, or other content.</string>
+	<string>This app requires access to your camera so you can capture photos for features like updating your profile picture or adding images when creating posts, submitting listings, or reporting an issue.</string>
 
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>The app accesses your photo library so you can choose images to upload, for example when updating your profile or attaching photos while submitting forms or reports.</string>
+	<string>This app needs access to your photo library so you can select and upload images when updating your profile, creating posts or listings, or attaching photos while reporting an issue.</string>
 
 	<!-- Notifications -->
 	<key>NSRemoteNotificationUsageDescription</key>
-	<string>The app uses notifications to keep you informed about important updates and activity, such as new messages, reminders, and status changes related to your account or submissions.</string>
+	<string>This app uses notifications to alert you about important updates such as new chats, post/activity updates, reminders, and status changes related to your account.</string>
 
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app uses your location only while you are using the app to support location-based features if needed.</string>
+ 
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app may access your location to support certain features even when the app is not actively in use.</string>
 	<!-- RN New Architecture -->
 	<key>RCTNewArchEnabled</key>
 	<true/>
