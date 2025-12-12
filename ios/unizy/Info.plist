@@ -72,14 +72,14 @@
 
 	<!-- Camera & Photos -->
 	<key>NSCameraUsageDescription</key>
-	<string>We use your camera so you can take photos to upload within the app. For example, you can capture an image to update your profile or attach it to a submission.</string>
+	<string>The app uses the camera to let you capture photos for in-app features, such as updating your profile picture or attaching images when submitting forms, reports, or other content.</string>
 
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We use your photo library so you can select and upload images in the app. For example, you can choose a photo to update your profile or attach it to a submission.</string>
+	<string>The app accesses your photo library so you can choose images to upload, for example when updating your profile or attaching photos while submitting forms or reports.</string>
 
 	<!-- Notifications -->
 	<key>NSRemoteNotificationUsageDescription</key>
-	<string>We use notifications to keep you informed about important updates and activity in the app, such as alerts about new messages or status updates.</string>
+	<string>The app uses notifications to keep you informed about important updates and activity, such as new messages, reminders, and status changes related to your account or submissions.</string>
 
 	<!-- RN New Architecture -->
 	<key>RCTNewArchEnabled</key>
