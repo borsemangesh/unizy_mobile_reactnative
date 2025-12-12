@@ -59,7 +59,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       const userId = await AsyncStorage.getItem('userId');
-     // console.log(token)
+      console.log(token)
 
       if (!token || !userId) {
         console.warn('Missing token or userId');

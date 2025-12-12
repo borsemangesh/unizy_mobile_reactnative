@@ -1906,7 +1906,7 @@ const MessagesIndividualScreen = ({
                 </TouchableOpacity>
               </View> */}
 
-              {members?.isblocked ? (
+              {!members?.isblocked ? (
                 <View
                   style={{
                     flexDirection: 'row',
