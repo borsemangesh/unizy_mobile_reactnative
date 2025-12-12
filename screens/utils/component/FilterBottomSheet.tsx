@@ -10,14 +10,13 @@ import {
   Platform,
   TouchableWithoutFeedback,
 } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {  useEffect, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
-import { CONSTDEFAULT } from '../CONSTDEFAULT';
+
 import { MAIN_URL } from '../APIConstant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import RangeSlider from 'rn-range-slider';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
-import Button from './Button';
+
 import FilterButton from './FilterButton';
 import FilterButtonApply from './FilterButtonApply';
 import { useTranslation } from 'react-i18next';

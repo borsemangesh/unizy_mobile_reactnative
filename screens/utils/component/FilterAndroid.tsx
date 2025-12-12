@@ -832,3 +832,7 @@ const styles = StyleSheet.create({
 
 export default FilterAndroid;
 
+function crashlytics() {
+  throw new Error('Function not implemented.');
+}
+

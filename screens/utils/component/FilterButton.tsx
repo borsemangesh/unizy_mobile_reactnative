@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, StyleSheet, Text, TouchableOpacity, ViewStyle, StyleProp } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, ViewStyle, StyleProp } from 'react-native';
 import { BlurView } from '@react-native-community/blur';
 
 type ButtonProps = {

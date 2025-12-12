@@ -74,15 +74,12 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     elevation: 5,
     alignSelf: "center",
-    position: "relative", // ensures absolute child aligns correctly
-    // opacity: 0.1
+    position: "relative",
     ...(Platform.OS === 'android' && { overflow: 'hidden' })
-
   },
   toastText: {
     fontSize: 16,
     fontWeight: "500",
-    // marginBottom: 3, // ensures text doesn’t touch progress bar
   },
   progressBarContainer: {
     position: "absolute",
