@@ -695,6 +695,7 @@
   "report_text":"Add anything that might help us review this....",
   "block":"Block",
   "block_user":"Block User",
-  "block_msg":"Are you sure you want to block this user? They will no longer be able to contact you."
+  "block_msg":"Are you sure you want to block this user? They will no longer be able to contact you.",
+  "block_info":"This user is blocked. Messaging is currently disabled."
 
 }
