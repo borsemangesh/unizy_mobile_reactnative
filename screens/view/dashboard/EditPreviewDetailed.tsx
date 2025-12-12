@@ -1185,7 +1185,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
                 </Text>
 
                 <TouchableOpacity
-                  style={styles.loginButton}
+                  style={[styles.loginButton]}
                   onPress={async () => {
                     try {
                       await AsyncStorage.removeItem('formData1');
@@ -1208,7 +1208,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
                     }
                   }}
                 >
-                  <Text allowFontScaling={false} style={styles.loginText}>
+                  <Text  allowFontScaling={false} style={styles.loginText}>
                     {t('return_choose_category')}
                   </Text>
                 </TouchableOpacity>
@@ -1582,19 +1582,23 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: 500,
     letterSpacing: 1,
-    width: '100%',
+    flexWrap: 'wrap',
+  alignSelf: 'center',
+  maxWidth: '96%',  // ensures wrapping into 2 lines
+  width: '100%'
   },
 
   loginButton: {
     display: 'flex',
     width: '100%',
-    height: 48,
+    height: 52,
+    maxHeight: 52,
     justifyContent: 'center',
-    alignItems: 'center',
+    // alignItems: 'center',
     gap: 4,
     borderRadius: 100,
-    paddingTop: 6,
-    paddingBottom: 6,
+    // paddingTop: 6,
+    // paddingBottom: 6,
     backgroundColor: 'rgba(255, 255, 255, 0.56)',
     marginTop: 16,
     borderWidth: 0.5,
