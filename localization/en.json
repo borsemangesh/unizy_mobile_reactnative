@@ -261,7 +261,7 @@
   "help_support": "Help & Support",
   "logout_message": "Are you sure you want to log out from your account?",
   "Bookmarks": "Bookmarks",
-  "List_product": "Explore Categories",
+  "List_product": "Choose Category",
   "transaction_history": "Transaction History",
   "purchases": "Purchases",
   "unit": "Unit",
@@ -691,6 +691,10 @@
   "post_product":"List Item",
   "post_accomodation":"Available Rentals",
   "meal_overview":"Meal Overview",
-  "rental_details":"Rental Details"
+  "rental_details":"Rental Details",
+  "report_text":"Add anything that might help us review this....",
+  "block":"Block",
+  "block_user":"Block User",
+  "block_msg":"Are you sure you want to block this user? They will no longer be able to contact you."
 
 }

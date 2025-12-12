@@ -59,6 +59,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       const userId = await AsyncStorage.getItem('userId');
+     // console.log(token)
 
       if (!token || !userId) {
         console.warn('Missing token or userId');
@@ -75,6 +76,8 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
 
       const timestamp = Date.now();
       const url = `${MAIN_URL.baseUrl}twilio/mychats?search=${query}&_t=${timestamp}`;
+
+      console.log(url)
 
 
       const response = await fetch(url, {
@@ -242,7 +245,16 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
             onPress={() => {
               navigation.navigate('MessagesIndividualScreen', {
                 animation: 'none',
-                members: chat.members,
+                 members: chat.members,
+
+                // members: {
+                //   ...chat.members,
+                //   isblocked:
+                //     chat.members?.isblocked === true ||
+                //     chat.members?.isblocked === "true" ||
+                //     chat.members?.isblocked === 1 ||
+                //     chat.members?.isblocked === "1",
+                // },
                 userConvName: chat.conv_name,
                 currentUserIdList: chat.current_user_id,
                 conversationSid: chat.twilio_conversation_sid,

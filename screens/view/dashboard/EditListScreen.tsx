@@ -452,6 +452,27 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
     setFormValues((prev: any) => ({ ...prev, [fieldId]: updated }));
   };
 
+  const pluralizeLabel = (label: string) => {
+    if (!label) return '';
+
+    const words = label.trim().split(' ');
+    const lastWord = words[words.length - 1];
+    if (lastWord.toLowerCase().endsWith('s')) return label;
+
+    let plural = lastWord;
+
+    if (/(ch|sh|x|s|z)$/i.test(lastWord)) {
+      plural = lastWord + 'es';
+    } else if (/[aeiou]y$/i.test(lastWord)) {
+      plural = lastWord + 's';
+    } else if (/y$/i.test(lastWord)) {
+      plural = lastWord.slice(0, -1) + 'ies';
+    } else {
+      plural = lastWord + 's';
+    }
+    words[words.length - 1] = plural;
+    return words.join(' ');
+  };
 
   const requestCameraPermission = async () => {
     // ANDROID
@@ -1455,7 +1476,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             title={`${t('select')} ${multiSelectModal?.fieldLabel || 'Category'}`}
             subtitle={
               multiSelectModal?.ismultilple
-                ? `${t('pick_all')} ${multiSelectModal?.fieldLabel || 'categories'} ${t('best_describe')}`
+                ? `${t('pick_all')} ${pluralizeLabel(multiSelectModal?.fieldLabel || 'category')} ${t('best_describe')}`
                 : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'} ${t('that_fit_your_listing')}`
             }
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
@@ -1481,7 +1502,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             title={`${t('select')} ${multiSelectModal?.fieldLabel || 'Category'}`}
             subtitle={
               multiSelectModal?.ismultilple
-                ? `${t('pick_all')} ${multiSelectModal?.fieldLabel || 'categories'} ${t('best_describe')}`
+                ? `${t('pick_all')} ${pluralizeLabel(multiSelectModal?.fieldLabel || 'category')} ${t('best_describe')}`
                 : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'} ${t('that_fit_your_listing')}`
             }
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}

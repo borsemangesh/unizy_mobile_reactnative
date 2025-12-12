@@ -1010,7 +1010,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
               
                     }}
                     keyboardType="email-address"
-                    placeholder={t('enter_personal_emial_id')}
+                    placeholder={t('enter_personal_email_id')}
                     placeholderTextColor="#ccc"
                   />
                   <TouchableOpacity

@@ -74,6 +74,7 @@ type RouteParams = {
     lastname: string;
     id: number;
     profile: string | null;
+    isblocked: boolean
     university: { id: number; name: string };
   };
   userConvName: string;
@@ -89,6 +90,9 @@ type RouteParams = {
   };
   conversationSid: string;
 };
+
+
+
 
 const conversationCache: any = {};
 const messageCache: any = {};
@@ -188,7 +192,7 @@ const MessagesIndividualScreen = ({
   const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
   const { members, sellerData, userConvName, currentUserIdList, source, conversationSid } =
     route.params;
-
+  const [isblock, setisblock] = useState(true)
   const [chatClient, setChatClient] = useState<any>(null);
   const chatClientRef = useRef<any>(null); // Track client for cleanup
 
@@ -509,7 +513,7 @@ const MessagesIndividualScreen = ({
             if (res.ok && apiData.data?.conv_name) convName = apiData.data.conv_name;
 
             if (!apiData.data) {
-             // console.warn("Conversation not available for sellerPage");
+              // console.warn("Conversation not available for sellerPage");
               setInitialLoading(false);
               return;
             }
@@ -568,7 +572,7 @@ const MessagesIndividualScreen = ({
               //console.warn("Failed to get conversation by uniqueName, creating new:", err.message);
               try {
                 convo = await chatClient.createConversation({ uniqueName: convName });
-               // console.log("Created new conversation:", convName);
+                // console.log("Created new conversation:", convName);
               } catch (createErr: any) {
                 throw new Error(`Failed to create conversation: ${createErr.message}`);
               }
@@ -591,7 +595,7 @@ const MessagesIndividualScreen = ({
             const alreadyJoined = participants.some((p: any) => p.identity === userId);
             if (!alreadyJoined) {
               await convo.join();
-     
+
             }
           } catch (joinErr: any) {
             if (!joinErr.message?.includes("Conflict") && !joinErr.message?.includes("already")) {
@@ -1729,7 +1733,7 @@ const MessagesIndividualScreen = ({
 
                   if (!(Platform.OS === 'ios' && isShortContentLockedRef.current) && (isFromMe || shouldAutoScrollRef.current)) {
                     if (isFromMe) {
-                      shouldAutoScrollRef.current = true; 
+                      shouldAutoScrollRef.current = true;
                     }
                     InteractionManager.runAfterInteractions(() => {
                       setTimeout(
@@ -1757,7 +1761,7 @@ const MessagesIndividualScreen = ({
                   }
                 }
               }}
-            
+
               onLayout={event => {
                 if (Platform.OS === 'ios' && isShortContentLockedRef.current) {
                   return;
@@ -1809,7 +1813,7 @@ const MessagesIndividualScreen = ({
                 zIndex: 1000,
               }), [inputBarBottom, isContentShort, keyboardVisible])}
             >
-              <View
+              {/* <View
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
@@ -1900,7 +1904,142 @@ const MessagesIndividualScreen = ({
                     }}
                   />
                 </TouchableOpacity>
-              </View>
+              </View> */}
+
+              {members?.isblocked ? (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    width: '100%',
+                  }}
+                >
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      flex: 1,
+                      borderRadius: 40,
+                      height: 48,
+                      paddingHorizontal: 16,
+                      paddingVertical: 4,
+                      overflow: 'hidden',
+                      position: 'relative',
+                    }}
+                  >
+                    <BlurView
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        borderRadius: 10,
+                      }}
+                      blurType="light"
+                      blurAmount={5}
+                      reducedTransparencyFallbackColor="#ffffff34"
+                    />
+
+                    <TextInput
+                      ref={textInputRef}
+                      allowFontScaling={false}
+                      style={{
+                        flex: 1,
+                        color: '#fff',
+                        fontFamily: 'Urbanist-Medium',
+                        fontSize: 17,
+                        marginLeft: Platform.OS === 'ios' ? 5 : 0,
+                      }}
+                      placeholder={t('message')}
+                      placeholderTextColor="#ccc"
+                      onChangeText={handleTextChange}
+                      value={messageText}
+                    />
+                  </View>
+
+                  <TouchableOpacity
+                    onPress={handleSendMessage}
+                    disabled={isSendDisabled}
+                    hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                    style={{
+                      marginLeft: 8,
+                      width: 48,
+                      height: 48,
+                      borderRadius: 24,
+                      overflow: 'hidden',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      position: 'relative',
+                      opacity: isSendDisabled ? 0.5 : 1,
+                    }}
+                  >
+                    <BlurView
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        borderRadius: 24,
+                      }}
+                      blurType="light"
+                      blurAmount={10}
+                      reducedTransparencyFallbackColor="#ffffff66"
+                    />
+
+                    <Image
+                      source={require('../../../assets/images/sendmessage.png')}
+                      style={{
+                        width: 22,
+                        height: 22,
+                        tintColor: '#fff',
+                        zIndex: 1,
+                      }}
+                    />
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    width: '100%',
+                    backgroundColor:
+                      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
+                    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+                    padding: 12,
+                    borderWidth: 0.5,
+                    borderRadius: 12,
+                    borderColor: '#ffffff31',
+                    justifyContent:'center'
+
+                  }}
+                >
+                   <Image
+                      source={require('../../../assets/images/block_triangle.png')}
+                      style={{
+                        width: 20,
+                        height: 20,
+                        tintColor: '#fff',
+                        zIndex: 1,
+                        marginRight:6
+                      }}
+                    />
+
+                  <Text
+                    style={{
+                      color: '#fff',
+                      fontSize: 16,
+                      fontFamily: 'Urbanist-SemiBold',
+                      fontWeight: 600,
+                      opacity: 0.8,
+                    }}
+                  >
+                    This user is blocked. Messaging is currently disabled.
+                  </Text>
+                </View>
+              )}
               <View
                 style={{
                   height: Platform.OS === 'ios' ? 4 : 4,
@@ -2077,7 +2216,7 @@ const styles = StyleSheet.create({
   messageText: {
     fontFamily: 'Urbanist-Medium',
     color: '#FFFFFFE0',
-    fontSize: 16, 
+    fontSize: 16,
     lineHeight: 21,
     fontWeight: '500',
     fontStyle: 'normal',
@@ -2139,7 +2278,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100%', 
+    height: '100%',
   },
   mainContainer: {
     width: '100%',
