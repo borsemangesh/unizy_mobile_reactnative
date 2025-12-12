@@ -2008,11 +2008,13 @@ const MessagesIndividualScreen = ({
                     backgroundColor:
                       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
                     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-                    padding: 12,
+                    padding: (Platform.OS === 'ios' ? 18 : 12),
                     borderWidth: 0.5,
                     borderRadius: 12,
                     borderColor: '#ffffff31',
-                    justifyContent:'center'
+                    justifyContent:'center',
+                    gap: 5
+                  
 
                   }}
                 >
@@ -2022,12 +2024,14 @@ const MessagesIndividualScreen = ({
                         width: 20,
                         height: 20,
                         tintColor: '#fff',
-                        zIndex: 1,
-                        marginRight:6
+                        // zIndex: 1,
+                        // marginRight:6
                       }}
                     />
 
                   <Text
+                    allowFontScaling={false}
+                    numberOfLines={2}
                     style={{
                       color: '#fff',
                       fontSize: 16,
