@@ -43,7 +43,7 @@ const CustomToast: React.FC<CustomToastProps> = ({
   }, []);
 
   return (
-    <View style={[StyleSheet.absoluteFillObject,styles.toastWrapper, { backgroundColor: bgColor }]}>
+    <View style={[StyleSheet.absoluteFillObject,styles.toastWrapper, { backgroundColor: bgColor,borderRadius: 16 }]}>
       <BlurView 
        style={[StyleSheet.absoluteFillObject,{ backgroundColor: bgColor,borderRadius: 16 }]}
         blurType="dark"

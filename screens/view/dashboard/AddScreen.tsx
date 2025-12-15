@@ -2049,18 +2049,6 @@ const styles = StyleSheet.create({
     padding: 16,
   },
 
-  modalContent: {
-    backgroundColor: '#222',
-    borderRadius: 12,
-    padding: 16,
-    maxHeight: '80%',
-  },
-
-  modalTitle: {
-    color: '#fff',
-    fontSize: 18,
-    marginBottom: 12,
-  },
 
   modalOption: {
     flexDirection: 'row',

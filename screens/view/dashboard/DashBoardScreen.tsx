@@ -325,7 +325,7 @@ const AddScreenContent: React.FC<AddScreenContentProps> = ({ navigation, product
                   style={styles.popupButton}
                   onPress={handleGoToPayment}
                 >
-                  <Text allowFontScaling={false} style={styles.popupButtonText}>
+                  <Text numberOfLines={2} allowFontScaling={false} style={styles.popupButtonText}>
                     {t('go_payments')}
                   </Text>
                 </TouchableOpacity>
@@ -1857,7 +1857,8 @@ const styles = StyleSheet.create({
   popupButton: {
     display: 'flex',
     width: '100%',
-    height: 52,
+    height: 55,
+    maxHeight: 55,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 4,
