@@ -1914,7 +1914,7 @@ const MessagesIndividualScreen = ({
                     style={styles.blockIcon}
                   />
                   <Text style={styles.blockText}>
-                    {t('block_info')}
+                    {t('block_info_user')}
                   </Text>
                 </View>
 
@@ -2067,7 +2067,7 @@ const styles = StyleSheet.create({
     height: 20,
     tintColor: '#fff',
     zIndex: 1,
-    marginRight: 6,
+    marginLeft:8
   },
 
   blockText: {
@@ -2076,6 +2076,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: '600',
     opacity: 0.8,
+    paddingLeft:8
   },
 
   leftBubbleWrapper: {
