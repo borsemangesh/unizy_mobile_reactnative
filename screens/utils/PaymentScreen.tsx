@@ -101,72 +101,145 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation }) => {
     }
   };
 
+  const [processing, setProcessing] = useState(true);
+
+  // const initializePaymentSheet = async () => {
+  //   setProcessing(true);
+    
+  //   const result = await handlePayPress();
+  //   if (!result) {
+  //     setProcessing(false);
+  //     return;
+  //   }
+
+  //   const { clientSecret, ephemeralKey, customerId } = result;
+
+  //   const { error } = await initPaymentSheet({
+  //     customerId: customerId,
+  //     customerEphemeralKeySecret: ephemeralKey,
+  //     paymentIntentClientSecret: clientSecret,
+  //     merchantDisplayName: "Your Company",
+  //     allowsDelayedPaymentMethods: true,
+  //   });
+
+
+  //   if (!error) {
+  //     setLoading(false);
+  //     openSheet();
+  //   } else {
+  //     setLoading(false);
+  //     showToast(Constant.PAYMENT_FAIL, "error");
+  //   }
+  // };
 
   const initializePaymentSheet = async () => {
+    setProcessing(true);
+  
     const result = await handlePayPress();
-    if (!result) return; // safeguard
-
+    if (!result) {
+      setProcessing(false);
+      return;
+    }
+  
     const { clientSecret, ephemeralKey, customerId } = result;
-
+  
     const { error } = await initPaymentSheet({
-      customerId: customerId,
+      customerId,
       customerEphemeralKeySecret: ephemeralKey,
       paymentIntentClientSecret: clientSecret,
       merchantDisplayName: "Your Company",
       allowsDelayedPaymentMethods: true,
     });
-
-
+  
     if (!error) {
-      setLoading(false);
       openSheet();
     } else {
-      setLoading(false);
+      setProcessing(false);
       showToast(Constant.PAYMENT_FAIL, "error");
     }
   };
+  
 
+
+  // const openSheet = async () => {
+  //   try {
+  //     const { error } = await presentPaymentSheet();
+
+  //     if (error) {
+  //       if (error.code === 'Canceled') {
+ 
+  //         navigation.goBack();
+  //         return;
+  //       }
+
+
+  //       showToast(t(Constant.PAYMENT_FAIL), 'error');
+  //       return;
+  //     }
+
+  //     showToast(t(Constant.PAYMENT_COMPLETE), 'success');
+  //     if (onSuccess) await onSuccess();
+  //     navigation.goBack();
+
+  //   } catch (e) {
+  //     console.error('Unexpected error during payment:', e);
+  //     showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
+  //   }
+  // };
 
   const openSheet = async () => {
     try {
       const { error } = await presentPaymentSheet();
-
+  
       if (error) {
+        setProcessing(false);
+  
         if (error.code === 'Canceled') {
- 
           navigation.goBack();
           return;
         }
-
-
+  
         showToast(t(Constant.PAYMENT_FAIL), 'error');
         return;
       }
-
+  
+      // ✅ Keep loader ON until navigation finishes
       showToast(t(Constant.PAYMENT_COMPLETE), 'success');
+  
       if (onSuccess) await onSuccess();
+  
       navigation.goBack();
-
     } catch (e) {
-      console.error('Unexpected error during payment:', e);
+      setProcessing(false);
       showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
     }
   };
+  
 
   useEffect(() => {
     initializePaymentSheet();
   }, []);
 
   return (
+    // <ImageBackground
+    //   source={require("../../assets/images/backimg.png")}
+    //   style={styles.bg}
+    // >
+    //   {loading && (
+    //     <Loader />
+    //   )}
+    //   {/* <View /> */}
+    // </ImageBackground>
     <ImageBackground
-      source={require("../../assets/images/backimg.png")}
-      style={styles.bg}
-    >
-      {loading && (
-        <Loader />
-      )}
-      <View />
-    </ImageBackground>
+    source={require("../../assets/images/backimg.png")}
+    style={styles.bg}
+  >
+    {processing && <Loader />}
+
+    {!processing && (
+      <ActivityIndicator size="large" color="#000" />
+    )}
+  </ImageBackground>
   );
 
 };
