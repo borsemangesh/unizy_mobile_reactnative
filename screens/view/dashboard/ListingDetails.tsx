@@ -131,6 +131,8 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
       if (!token) return;
       const url = `${MAIN_URL.baseUrl}category/mylisting-details/${shareid}`;
 
+      console.log(url)
+
 
       const response = await fetch(url, {
         method: 'GET',
@@ -271,35 +273,35 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
   };
 
   const formatDateWithDash = (dateString?: string, t?: any) => {
-  if (!dateString) return '';
-  
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) return '';
+    if (!dateString) return '';
 
-  const day = date.getDate();
-  const year = date.getFullYear();
-  const lang = i18n.language; // current language
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
 
-  // ---------- Suffix only for English ----------
-  let suffix = '';
-  if (lang === 'en') {
-    if (day % 10 === 1 && day !== 11) suffix = 'st';
-    else if (day % 10 === 2 && day !== 12) suffix = 'nd';
-    else if (day % 10 === 3 && day !== 13) suffix = 'rd';
-    else suffix = 'th';
-  }
+    const day = date.getDate();
+    const year = date.getFullYear();
+    const lang = i18n.language; // current language
 
-  // ---------- Month translation ----------
-  const monthIndex = date.getMonth(); // 0–11
-  const monthKeys = [
-    'jan','feb','mar','apr','may','jun',
-    'jul','aug','sep','oct','nov','dec'
-  ];
+    // ---------- Suffix only for English ----------
+    let suffix = '';
+    if (lang === 'en') {
+      if (day % 10 === 1 && day !== 11) suffix = 'st';
+      else if (day % 10 === 2 && day !== 12) suffix = 'nd';
+      else if (day % 10 === 3 && day !== 13) suffix = 'rd';
+      else suffix = 'th';
+    }
 
-  const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+    // ---------- Month translation ----------
+    const monthIndex = date.getMonth(); // 0–11
+    const monthKeys = [
+      'jan', 'feb', 'mar', 'apr', 'may', 'jun',
+      'jul', 'aug', 'sep', 'oct', 'nov', 'dec'
+    ];
 
-  return `${day}${suffix} ${monthShort} ${year}`;
-};
+    const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+
+    return `${day}${suffix} ${monthShort} ${year}`;
+  };
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
@@ -424,7 +426,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     ),
                     backgroundColor: 'rgba(255,255,255,0.1)',
                     borderRadius: 40,
-                  })),{display: 'none'}
+                  })), { display: 'none' }
                 ]}
               />
 
@@ -438,7 +440,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                       [0, 1],
                       'clamp',
                     ),
-                  })),{display: 'none'}
+                  })), { display: 'none' }
                 ]}
               >
                 <BlurView
@@ -452,7 +454,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
               {/* Back Icon */}
               <AnimatedReanimated.Image
                 source={require('../../../assets/images/back.png')}
-                style={[{ height: 24, width: 24,display: 'none'  }]}
+                style={[{ height: 24, width: 24, display: 'none' }]}
               />
             </AnimatedReanimated.View>
           </TouchableOpacity>
@@ -495,7 +497,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   {(() => {
                     const categoryName = data?.list?.category?.id || 0;
-                    const isProfileCategory =categoryName === 2 ||categoryName === 5;
+                    const isProfileCategory = categoryName === 2 || categoryName === 5;
                     const profilePhoto = data?.list?.createdby?.profile;
                     const firstName = data?.list?.createdby?.firstname;
                     const lastName = data?.list?.createdby?.lastname;
@@ -562,7 +564,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                         £{data?.list?.price}
                       </Text>
                       <Text allowFontScaling={false} style={styles.datetlable}>
-                        {formatDateWithDash(data?.list?.created_at,t)}
+                        {formatDateWithDash(data?.list?.created_at, t)}
                       </Text>
                     </View>
 
@@ -789,7 +791,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
           )}
         </AnimatedReanimated.ScrollView>
 
-        {data?.list?.category_id === 3 &&
+        {/* {data?.list?.category_id === 3 &&
         data?.list?.remaining_quantity > 0 &&
         data?.list?.isactive &&
         data?.list?.ispurchased === true ? (
@@ -883,7 +885,92 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
               />
             </View>
           )
-        )}
+        )} */}
+
+        {!data?.list?.admin_action &&
+          (data?.list?.category_id === 3 &&
+            data?.list?.remaining_quantity > 0 &&
+            data?.list?.isactive &&
+            data?.list?.ispurchased === true ? (
+            <View style={[styles.bottomview, { justifyContent: 'center' }]}>
+              <ButtonNew
+                title={t('Deactivate')}
+                textStyle={[styles.cancelText, { width: '100%' }]}
+                buttonStyle={{
+                  width: '100%',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.23)',
+                  backgroundColor:
+                    'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.10) 100%)',
+                  borderColor: '#ffffff47',
+                  boxSizing: 'border-box',
+                }}
+                onPress={() => {
+                  if (data?.list?.isactive) {
+                    setShowConfirm(true);
+                  } else {
+                    handleDeactivate();
+                  }
+                }}
+              />
+            </View>
+          ) : (
+            (!data?.list?.ispurchased ||
+              data?.list?.category_id === 2 ||
+              data?.list?.category_id === 5) && (
+              <View style={styles.bottomview}>
+                <ButtonNew
+                  title={data?.list?.isactive ? t('Deactivate') : t('Activate')}
+                  textStyle={[styles.cancelText, { width: '100%' }]}
+                  buttonStyle={{
+                    width: '49%',
+                    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
+                    backgroundColor:
+                      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.10) 100%)',
+                    borderColor: '#ffffff47',
+                    boxSizing: 'border-box',
+                  }}
+                  onPress={() => {
+                    if (data?.list?.isactive) {
+                      setShowConfirm(true);
+                    } else {
+                      handleDeactivate();
+                    }
+                  }}
+                />
+
+                <ButtonNew
+                  title={t('Edit_Listing')}
+                  textStyle={{
+                    color: '#000000',
+                    fontFamily: 'Urbanist-Regular',
+                    fontSize: 16,
+                    fontWeight: '500',
+                    letterSpacing: 0.17,
+                    lineHeight: 22,
+                  }}
+                  buttonStyle={{ width: '49%', backgroundColor: '#ffffffa7' }}
+                  onPress={() => {
+                    if (!data?.list?.isactive) {
+                      showToast(t('unable_edit'), 'error');
+                      return;
+                    }
+
+                    const params = {
+                      productId: catagory_id,
+                      productName: catagory_name,
+                      shareid: shareid,
+                    };
+
+                    Platform.OS === 'ios'
+                      ? navigation.navigate('EditListScreen', params, { animation: 'none' })
+                      : navigation.replace('EditListScreen', params, { animation: 'none' });
+                  }}
+                />
+              </View>
+            )
+          ))}
+
+
 
         <Modal
           visible={showPopup1}
@@ -920,7 +1007,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 
                 <View style={styles.popupContainer}>
                   <Text allowFontScaling={false} style={styles.mainheader}>
-                  {t('Enter_Delivery_OTP')}
+                    {t('Enter_Delivery_OTP')}
                   </Text>
 
                   <Text allowFontScaling={false} style={styles.subheader}>
@@ -973,7 +1060,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     onPress={otpverify}
                   >
                     <Text allowFontScaling={false} style={styles.loginText}>
-                     {t('verify')}
+                      {t('verify')}
                     </Text>
                   </TouchableOpacity>
 
@@ -1034,13 +1121,13 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     {t('order_fulfilled')}
                   </Text>
                   <Text allowFontScaling={false} style={styles.subheader1}>
-                  {t('Delivery_Verified')}
+                    {t('Delivery_Verified')}
                   </Text>
                   <Text
                     allowFontScaling={false}
                     style={[styles.subheader1, { marginTop: 0 }]}
                   >
-                  {t('The_payment_of')} £{price} {t('has_been_transferred_to_your_account')}
+                    {t('The_payment_of')} £{price} {t('has_been_transferred_to_your_account')}
                   </Text>
                   <TouchableOpacity
                     style={styles.loginButton}
@@ -1058,7 +1145,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText}>
-                     {t('done')}
+                      {t('done')}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -1101,7 +1188,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     resizeMode="contain"
                   />
                   <Text allowFontScaling={false} style={styles.mainheader}>
-                   {t('Deactivate_Listing')}
+                    {t('Deactivate_Listing')}
                   </Text>
                   <Text allowFontScaling={false} style={styles.subheader}>
                     {t('deactivate_listing')}
@@ -1115,7 +1202,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText}>
-                     {t('Deactivate')}
+                      {t('Deactivate')}
                     </Text>
                   </TouchableOpacity>
 
@@ -1124,7 +1211,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     onPress={() => setShowConfirm(false)}
                   >
                     <Text allowFontScaling={false} style={styles.loginText1}>
-                       {t('cancel')}
+                      {t('cancel')}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -1220,7 +1307,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.28,
     lineHeight: 16,
     fontFamily: 'Urbanist-SemiBold',
-    flex: 1, 
+    flex: 1,
     textAlign: 'right',
     flexWrap: 'wrap',
   },
@@ -1582,7 +1669,7 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     fontFamily: 'Urbanist-SemiBold',
   },
- 
+
   scrollContainer: {
     //paddingHorizontal: 20,
     paddingBottom: 80,
