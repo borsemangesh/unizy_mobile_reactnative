@@ -1274,19 +1274,24 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     style={styles.logo}
                     resizeMode="contain"
                   />
-                  <Text
-                    allowFontScaling={false}
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.80)',
-                      fontFamily: 'Urbanist-SemiBold',
-                      fontSize: 20,
-                      fontWeight: '600',
-                      letterSpacing: -0.4,
-                      lineHeight: 28,
-                    }}
-                  >
-                    {t('order_placed_success')}!
-                  </Text>
+                  <View style={{width: '100%'}}>
+                    <Text
+                      allowFontScaling={false}
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.80)',
+                        fontFamily: 'Urbanist-SemiBold',
+                        fontSize: 20,
+                        fontWeight: '600',
+                        letterSpacing: -0.4,
+                        textAlign: 'center',
+                        lineHeight: 28
+                      }}
+                    > {t('order_placed_success') }!
+                    </Text>
+
+                  </View>
+                  
+                   
 
                   <TouchableOpacity
                     style={styles.loginButton}

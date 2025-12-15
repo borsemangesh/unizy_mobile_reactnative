@@ -9,7 +9,11 @@ type ButtonProps = {
 
 const Button = ({ onPress, title = 'Click' }: ButtonProps) => {
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.7} style={styles.buttonContainer}>
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.7}
+      style={styles.buttonContainer}
+    >
       <BlurView
         style={StyleSheet.absoluteFill}
         blurType="light"
@@ -17,14 +21,16 @@ const Button = ({ onPress, title = 'Click' }: ButtonProps) => {
         pointerEvents="none"
         reducedTransparencyFallbackColor="transparent"
       />
-      <Text allowFontScaling={false} style={styles.buttonText}>{title}</Text>
+      <Text allowFontScaling={false} style={styles.buttonText}>
+        {title}
+      </Text>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    width: (Platform.OS === 'ios'? '90%' : '93%'),
+    width: (Platform.OS === 'ios'? '93%' : '93%'),
     height: 48,
     justifyContent: 'center',
     alignItems: 'center',
@@ -35,7 +41,7 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
     alignSelf: 'center',
     position: 'absolute',
-    bottom: (Platform.OS === 'ios'? 34 : 20),
+    bottom: (Platform.OS === 'ios'? 35 : 20),
     },
 
   buttonText: {
@@ -45,7 +51,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: 500,
     letterSpacing: 1,
-    opacity: 0.9
+    opacity: 0.9,
   },
 });
 
