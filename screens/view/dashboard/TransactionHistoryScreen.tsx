@@ -503,7 +503,7 @@ export default function TransactionHistoryScreen(
                             {item.title}
                           </Text>
                           </View>
-                          <View style={{ flexDirection: 'row', gap: 4, width: '90%', justifyContent: 'space-between' }}>
+                          <View style={{ flexDirection: 'row', gap: 4, width: '92%', justifyContent: 'space-between'}}>
                             <Text allowFontScaling={false} style={styles.price}>
                               {item.price}
                             </Text>
@@ -1027,6 +1027,7 @@ emptyContainer: {
     borderRadius: 4,
     justifyContent: 'center',
     height: 20,
+    alignItems: 'flex-end'
   },
   statusText: {
     color: '#9CDDFF',
