@@ -161,6 +161,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         if (!token) return;
         const url1 = `${MAIN_URL.baseUrl}category/feature-detail/${id}`;
 
+        console.log(url1)
+
 
         const res = await fetch(url1, {
           headers: {
@@ -191,7 +193,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     };
 
     const handleForceLogout = async () => {
-;
+      ;
       await AsyncStorage.clear();
       navigation.reset({
         index: 0,
@@ -1051,29 +1053,31 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                   </View>
                 </View>
               </View>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('ReportProduct', { feature_id: id })
-                }}>
-                <View style={styles.reportButtonCard}>
-                  <Image
-                    source={require('../../../assets/images/report.png')}
-                    style={{ height: 16, width: 16, }}
-                  />
-                  <Text
-                    style={{
-                      color: ' rgba(255, 130, 130, 0.88)',
-                      fontFamily: 'Urbanist-SemiBold',
-                      fontSize: 14,
-                      fontWeight: '600',
-                      fontStyle: 'normal',
-                      letterSpacing: -0.28,
-                    }}
-                  >
-                    {t('report_listing')}
-                  </Text>
-                </View>
-              </TouchableOpacity>
+              {!detail?.already_reported && (
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('ReportProduct', { feature_id: id });
+                  }}
+                >
+                  <View style={styles.reportButtonCard}>
+                    <Image
+                      source={require('../../../assets/images/report.png')}
+                      style={{ height: 16, width: 16 }}
+                    />
+                    <Text
+                      style={{
+                        color: 'rgba(255, 130, 130, 0.88)',
+                        fontFamily: 'Urbanist-SemiBold',
+                        fontSize: 14,
+                        fontWeight: '600',
+                        letterSpacing: -0.28,
+                      }}
+                    >
+                      {t('report_listing')}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </AnimatedReanimated.ScrollView>
@@ -1335,7 +1339,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
           </TouchableWithoutFeedback>
         </Modal>
       </View>
-       {loading && (
+      {loading && (
         <View style={styles.fullLoader}>
           <Loader />
         </View>
@@ -1348,7 +1352,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 const styles = StyleSheet.create({
 
 
-   fullLoader: {
+  fullLoader: {
     position: "absolute",
     top: 0,
     left: 0,
