@@ -668,7 +668,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
             {(() => {
               switch (detail?.category?.id) {
                 case 2:
-                  return `${t('Tution')} ${t('details')}`;
+                  return t('tutoring_service_details')
                 case 3:
                   return `${t('food')} ${t('details')}`;
                 case 4:
@@ -820,7 +820,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     {(() => {
                       switch (detail?.category?.id) {
                         case 2:
-                          return `${t('post_tution')} ${t('details')}`;
+                          return t('tutoring_service_details');
                         case 3:
                           return t('dish_details');
                         case 4:
@@ -865,7 +865,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     {(() => {
                       switch (detail?.category?.id) {
                         case 2:
-                          return `${t('post_tution')} ${t('details')}`;
+                          return t('tutoring_service_details');
                         case 3:
                           return t('dish_details');
                         case 4:

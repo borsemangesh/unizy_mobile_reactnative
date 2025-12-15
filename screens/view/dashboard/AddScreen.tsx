@@ -1405,7 +1405,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                     {(() => {
                       switch (productId) {
                         case 2:
-                          return `${t('post_tution')} ${t('details')}`;
+                          return t('tutoring_service_details');
                         case 3:
                           return t('dish_details');
                         case 4:

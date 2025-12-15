@@ -697,6 +697,7 @@
   "block_user":"Block User",
   "block_msg":"Are you sure you want to block this user? They will no longer be able to contact you.",
   "block_info":"This chat is blocked. You can no longer send or receive messages.",
-  "block_info_user": "This chat is temporarily restricted and under review."
+  "block_info_user": "This chat is temporarily restricted and under review.",
+  "tutoring_service_details":"Tutoring Service Details"
 
 }
