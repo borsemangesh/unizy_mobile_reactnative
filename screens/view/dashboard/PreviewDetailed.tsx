@@ -1434,13 +1434,14 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: 500,
     letterSpacing: 1,
-    width: '100%',
+    // width: '100%',
   },
 
   loginButton: {
     display: 'flex',
     width: '100%',
-    height: 48,
+    height: 54,
+    maxHeight: 54,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 4,

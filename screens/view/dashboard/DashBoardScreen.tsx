@@ -15,9 +15,6 @@ import {
   Easing,
   Platform,
   KeyboardAvoidingView,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
-  ActivityIndicator,
   StatusBar,
   Modal,
   TouchableWithoutFeedback,
@@ -29,8 +26,6 @@ import AnimatedReanimated, {
   useAnimatedScrollHandler,
   useAnimatedStyle,
   interpolate,
-  interpolateColor,
-  useDerivedValue,
 } from 'react-native-reanimated';
 // import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
@@ -41,7 +36,6 @@ import messaging from "@react-native-firebase/messaging";
 
 import AnimatedSlideUp from '../../utils/AnimatedSlideUp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Navigation } from '../Navigation';
 import { MAIN_URL } from '../../utils/APIConstant';
 import TutitionCard from '../../utils/TutitionCard';
 import ProfileCard from './ProfileCard';
@@ -52,7 +46,6 @@ import MessagesScreen from './MessageScreen';
 import { Constant } from '../../utils/Constant';
 import TransactionHistoryScreen from './TransactionHistoryScreen';
 import { BlurView } from '@react-native-community/blur';
-import BottomNavigation from '../../utils/component/BottomNavigation';
 import DeviceInfo from 'react-native-device-info';
 import Loader from '../../utils/component/Loader';
 
@@ -60,11 +53,6 @@ const mylistings = require('../../../assets/images/mylistingicon.png');
 const mylistings1 = require('../../../assets/images/favourite.png');
 
 const searchIcon = require('../../../assets/images/searchicon.png');
-const producticon = require('../../../assets/images/producticon.png');
-const foodicon = require('../../../assets/images/fod_icon.png');
-const accomicon = require('../../../assets/images/bed_icon.png');
-const tuitionicon = require('../../../assets/images/book.png');
-const houseicon = require('../../../assets/images/housekeeping.png');
 
 // Bottom tab icons
 const homeIcon = require('../../../assets/images/tab1.png');
@@ -90,16 +78,6 @@ type ProductItemProps = {
   item: Product;
 };
 
-const iconMap: Record<string, any> = {
-  Products: require('../../../assets/images/producticon.png'),
-  Product: require('../../../assets/images/producticon.png'),
-  Food: require('../../../assets/images/fod_icon.png'),
-  Food2: require('../../../assets/images/fod_icon.png'),
-  Accommodation: require('../../../assets/images/bed_icon.png'),
-  Accomodation: require('../../../assets/images/bed_icon.png'),
-  Tuition: require('../../../assets/images/book.png'),
-  'House Keeping': require('../../../assets/images/housekeeping.png'),
-};
 
 
 
@@ -544,7 +522,6 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
       if (response.ok) {
 
       } else {
-        const error = await response.text();
 
       }
     } catch (error) {
@@ -778,12 +755,6 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
         rightRows.push(secondPageRight[i] || null);
       }
     }
-    const handleScrollEndDrag = (e: any) => {
-      const offsetX = e.nativeEvent.contentOffset.x;
-      const index = Math.round(offsetX / width);
-      scrollViewRef.current?.scrollTo({ x: index * width, animated: true });
-      setActiveIndex(index);
-    };
 
     const onScroll = Animated.event(
       [{ nativeEvent: { contentOffset: { x: scrollX } } }],
@@ -1062,37 +1033,8 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
     return { opacity };
   });
 
-  const animatedButtonStyle = useAnimatedStyle(() => {
-    'worklet';
-    const borderColor = interpolateColor(
-      scrollY.value,
-      [0, 300],
-      ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
-    );
-    const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
-    return {
-      borderColor,
-      backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
-    };
-  });
 
-  const animatedIconStyle = useAnimatedStyle(() => {
-    'worklet';
-    const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
-    const tintColor = interpolateColor(
-      scrollY.value,
-      [0, 150],
-      ['#FFFFFF', '#002050'],
-    );
-    return {
-      opacity,
-      tintColor,
-    };
-  });
 
-  const blurAmount = useDerivedValue(() =>
-    interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
-  );
 
 
   const { t } = useTranslation();

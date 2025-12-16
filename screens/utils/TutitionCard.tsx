@@ -442,7 +442,7 @@ export default function TutitionCard({
                     }}
                   />
                   <View style={styles.initialsCircle}>
-                    <Text allowFontScaling={false} style={styles.initialsText}>
+                    <Text numberOfLines={1}  allowFontScaling={false} style={styles.initialsText}>
                       {infoTitle
                         ? infoTitle
                           .split(' ')
@@ -550,35 +550,24 @@ const styles = StyleSheet.create({
     height: (Platform.OS == 'ios' ? screenHeight * 0.35 : screenHeight * 0.35),
     marginHorizontal: 8,
     borderRadius: 34,
-    // backgroundColor: 'rgba(255, 255, 255, 0.17)',
     shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 4 },
     borderWidth: 0.5,
-    // borderColor: '#ffffff79',
     overflow: 'hidden',
-    // borderBlockStartColor: '#ffffff2e',
-    // borderBlockColor: '#ffffff2e',
-    // borderTopColor: '#ffffff2e',
-    // borderBottomColor: '#ffffff2e',
-    // borderLeftColor: '#ffffff2e',
-    // borderRightColor: '#ffffff2e',
-
-
-
     borderColor: '#ffffff11',
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.17) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
-
     borderTopColor: '#ffffff2e',
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
     boxSizing: 'border-box',
+    flexWrap: 'wrap',
 
   },
 

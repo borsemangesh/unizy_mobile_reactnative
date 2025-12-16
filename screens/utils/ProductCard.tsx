@@ -1,251 +1,16 @@
-
-// import { BlurView } from "@react-native-community/blur";
-// import React from "react";
-// import { View, Text, Image, StyleSheet, ImageSourcePropType, Platform, Dimensions, Touchable, TouchableOpacity } from "react-native";
-// import LinearGradient from "react-native-linear-gradient";
-
-// type ProductCardProps = {
-//   tag: string;
-//   infoTitle: string;
-//   inforTitlePrice: string;
-//   rating: string;
-//   productImage: ImageSourcePropType;
-//   isBookmarked: boolean;
-//   onBookmarkPress?: () => void;
-//   onpress?: () => void,
-// };
-
-// const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
-
-// export default function ProductCard({
-//   tag,
-//   infoTitle,
-//   inforTitlePrice,
-//   rating,
-//   productImage,
-//   onBookmarkPress,
-//   isBookmarked,
-//   onpress,
-
-// }: ProductCardProps) {
-//   return (
-//     <TouchableOpacity onPress={onpress} >
-//       <View style={styles.card}>
-//         <View style={styles.imageContainer}>
-//           <Image source={productImage} style={styles.image} resizeMode="cover" />
-
-//           <View style={styles.tag}>
-//             <BlurView
-//               blurType="light"
-//               blurAmount={100}
-//               style={StyleSheet.absoluteFillObject}
-//             />
-//             <Text allowFontScaling={false} style={styles.tagText}>
-//               {tag}
-//             </Text>
-//           </View>
-
-//           <View style={[styles.bookmark]}>
-//             <BlurView
-//               blurType="light"
-//               blurAmount={100}
-//               style={StyleSheet.absoluteFillObject}
-
-//             />
-//             <LinearGradient
-//               colors={[
-//                 'rgba(0, 1, 102, 0.20)',
-//                 'rgba(0, 1, 102, 0.024)'
-//               ]}
-//               style={StyleSheet.absoluteFillObject}
-//               useAngle={false}
-//             />
-
-//             <TouchableOpacity onPress={onBookmarkPress}>
-//               <Image
-//                 source={
-//                   isBookmarked
-//                     ? require("../../assets/images/favourite_filled.png")
-//                     : require("../../assets/images/favourite.png")
-//                 }
-//                 style={styles.bookmarkIcon}
-//               />
-//             </TouchableOpacity>
-//           </View>
-
-//         </View>
-
-//         {/* Info */}
-//         <View style={styles.infoRow}>
-//           <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
-//           <View style={styles.priceRow}>
-//             <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
-//             {rating !== '0.0' && (
-//               <View style={styles.ratingRow}>
-//                 <Image
-//                   source={require('../../assets/images/staricon.png')}
-//                   style={styles.starIcon}
-//                 />
-//                 <Text allowFontScaling={false} style={styles.ratingText}>
-//                   {rating}
-//                 </Text>
-//               </View>
-//             )}
-//           </View>
-//         </View>
-//       </View>
-//     </TouchableOpacity>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   card: {
-//     width: screenWidth * 0.85,
-//     height: (Platform.OS == 'ios' ? screenHeight * 0.35 : screenHeight * 0.35),
-//     marginHorizontal: 8,
-//     borderRadius: 34,
-//     backgroundColor: "rgba(255, 255, 255, 0.17)",
-//     shadowColor: "#000",
-//     shadowOpacity: 0.15,
-//     shadowRadius: 8,
-//     borderWidth: 0.5,
-//     borderColor: "#ffffff79",
-//     overflow: "hidden",
-//     borderBlockStartColor: '#ffffff2e',
-//     borderBlockColor: '#ffffff2e',
-//     borderTopColor: '#ffffff2e',
-//     borderBottomColor: '#ffffff2e',
-//     borderLeftColor: '#ffffff2e',
-//     borderRightColor: '#ffffff2e',
-
-//   },
-//   imageContainer: {
-//     width: "100%",
-//     height: '78%',
-//     position: "relative",
-//     paddingHorizontal: 14,
-//     paddingTop: 14
-//   },
-//   image: {
-
-//     width: "100%",
-//     height: "100%",
-//     borderRadius: 20,
-//     backgroundColor: "#ccc",
-
-//   },
-
-//   tag: {
-//     position: 'absolute',
-//     bottom: 10,
-//     right: 20,
-//     borderRadius: 12,
-//     paddingHorizontal: 8,
-//     paddingVertical: 4,
-//     zIndex: 2,
-//     padding: 8,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
-//     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-//     minHeight: 29,
-//     overflow: 'hidden',
-//     alignSelf: 'flex-end',
-//     flexShrink: 1,
-//     alignContent: 'center',
-//     maxWidth: (Platform.OS == 'ios' ? '58%' : '56%'),
-//     flexWrap: 'wrap'
-//   },
-
-//   tagText: {
-//     color: 'rgba(0, 0, 0, 0.80)',
-//     fontFamily: 'Urbanist-SemiBold',
-//     fontWeight: 600,
-//     fontSize: 11,
-//     fontStyle: 'normal',
-//     lineHeight: 14,
-//     width: '100%',
-//     textAlign: 'right',
-//     flexShrink: 1,
-//     textAlignVertical: 'center',
-//     includeFontPadding: false,
-//   },
-//   bookmark: {
-//     position: "absolute",
-//     top: Platform.OS === "ios" ? 20 : 20,
-//     right: Platform.OS === "ios" ? 20 : 20,
-//     width: 44,
-//     height: 44,
-//     justifyContent: "center",
-//     alignItems: "center",
-//     zIndex: 2,
-//     borderRadius: 16,
-//     backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-//     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18)',
-//     shadowColor: "#000",
-//     shadowOpacity: 0.15,
-//     shadowRadius: 8,
-//     borderWidth: 0.5,
-//     borderColor: "#ffffff79",
-//     overflow: "hidden",
-//     borderBlockStartColor: 'rgba(255, 255, 255, 0.25)',
-//     borderBlockColor: 'rgba(255, 255, 255, 0.25)',
-//     borderTopColor: 'rgba(255, 255, 255, 0.25)',
-//     borderBottomColor: 'rgba(255, 255, 255, 0.25)',
-//     borderLeftColor: 'rgba(255, 255, 255, 0.25)',
-//     borderRightColor: 'rgba(255, 255, 255, 0.25)',
-//   },
-//   bookmarkIcon: {
-//     width: 24,
-//     height: 24,
-//   },
-//   infoRow: {
-//     flexDirection: "column",
-//     justifyContent: "center",
-//     alignItems: "center",
-//     width: "90%",
-//     alignSelf: "center",
-//     marginTop: 8,
-//   },
-//   title: {
-//     fontSize: 17,
-//     fontWeight: '600',
-//     color: '#fff',
-//     width: '100%',
-//     fontFamily: 'Urbanist-SemiBold',
-
-//   },
-//   priceRow: {
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     width: "100%",
-//   },
-//   price: {
-//     fontSize: 17,
-//     fontWeight: '700',
-//     color: '#fff',
-//     fontFamily: 'Urbanist-SemiBold',
-//   },
-//   ratingRow: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     gap: 6,
-//   },
-//   starIcon: {
-//     width: 16,
-//     height: 16,
-//   },
-//   ratingText: {
-//     fontSize: 16,
-//     fontWeight: "600",
-//     color: "#fff",
-//   },
-// });
-
-import { BlurView } from "@react-native-community/blur";
-import React from "react";
-import { View, Text, Image, StyleSheet, ImageSourcePropType, Platform, Dimensions, Touchable, TouchableOpacity } from "react-native";
-import LinearGradient from "react-native-linear-gradient";
+import { BlurView } from '@react-native-community/blur';
+import React from 'react';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ImageSourcePropType,
+  Platform,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
 type ProductCardProps = {
   tag: string;
@@ -255,10 +20,10 @@ type ProductCardProps = {
   productImage: ImageSourcePropType;
   isBookmarked: boolean;
   onBookmarkPress?: () => void;
-  onpress?: () => void,
+  onpress?: () => void;
 };
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export default function ProductCard({
   tag,
@@ -269,13 +34,16 @@ export default function ProductCard({
   onBookmarkPress,
   isBookmarked,
   onpress,
-
 }: ProductCardProps) {
   return (
-    <TouchableOpacity onPress={onpress} >
+    <TouchableOpacity onPress={onpress}>
       <View style={styles.card}>
         <View style={styles.imageContainer}>
-          <Image source={productImage} style={styles.image} resizeMode="cover" />
+          <Image
+            source={productImage}
+            style={styles.image}
+            resizeMode="cover"
+          />
 
           <View style={styles.tag}>
             <BlurView
@@ -293,13 +61,9 @@ export default function ProductCard({
               blurType="light"
               blurAmount={100}
               style={StyleSheet.absoluteFillObject}
-
             />
             <LinearGradient
-              colors={[
-                'rgba(0, 1, 102, 0.20)',
-                'rgba(0, 1, 102, 0.024)'
-              ]}
+              colors={['rgba(0, 1, 102, 0.20)', 'rgba(0, 1, 102, 0.024)']}
               style={StyleSheet.absoluteFillObject}
               useAngle={false}
             />
@@ -308,21 +72,24 @@ export default function ProductCard({
               <Image
                 source={
                   isBookmarked
-                    ? require("../../assets/images/favourite_filled.png")
-                    : require("../../assets/images/favourite.png")
+                    ? require('../../assets/images/favourite_filled.png')
+                    : require('../../assets/images/favourite.png')
                 }
                 style={styles.bookmarkIcon}
               />
             </TouchableOpacity>
           </View>
-
         </View>
 
         {/* Info */}
         <View style={styles.infoRow}>
-          <Text allowFontScaling={false} style={styles.title}>{infoTitle}</Text>
+          <Text numberOfLines={1} allowFontScaling={false} style={styles.title}>
+            {infoTitle}
+          </Text>
           <View style={styles.priceRow}>
-            <Text allowFontScaling={false} style={styles.price}>{inforTitlePrice}</Text>
+            <Text allowFontScaling={false} style={styles.price}>
+              {inforTitlePrice}
+            </Text>
             {rating !== '0.0' && (
               <View style={styles.ratingRow}>
                 <Image
@@ -344,28 +111,17 @@ export default function ProductCard({
 const styles = StyleSheet.create({
   card: {
     width: screenWidth * 0.85,
-    height: (Platform.OS == 'ios' ? screenHeight * 0.35 : screenHeight * 0.35),
+    height: Platform.OS == 'ios' ? screenHeight * 0.35 : screenHeight * 0.35,
     marginHorizontal: 8,
     borderRadius: 34,
-    // backgroundColor: "rgba(255, 255, 255, 0.17)",
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 8,
     borderWidth: 0.5,
-    // borderColor: "#ffffff79",
-    overflow: "hidden",
-    // borderBlockStartColor: '#ffffff2e',
-    // borderBlockColor: '#ffffff2e',
-    // borderTopColor: '#ffffff2e',
-    // borderBottomColor: '#ffffff2e',
-    // borderLeftColor: '#ffffff2e',
-    // borderRightColor: '#ffffff2e',
-
-
-
-    
+    overflow: 'hidden',
     borderColor: '#ffffff11',
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
+    boxShadow:
+      '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.17) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderBlockStartColor: '#ffffff2e',
@@ -376,22 +132,19 @@ const styles = StyleSheet.create({
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
     boxSizing: 'border-box',
-
   },
   imageContainer: {
-    width: "100%",
+    width: '100%',
     height: '78%',
-    position: "relative",
+    position: 'relative',
     paddingHorizontal: 14,
-    paddingTop: 14
+    paddingTop: 14,
   },
   image: {
-
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
     borderRadius: 20,
-    backgroundColor: "#ccc",
-
+    backgroundColor: '#ccc',
   },
 
   tag: {
@@ -405,15 +158,16 @@ const styles = StyleSheet.create({
     padding: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
+    backgroundColor:
+      'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.48) 100%)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
     minHeight: 29,
     overflow: 'hidden',
     alignSelf: 'flex-end',
     flexShrink: 1,
     alignContent: 'center',
-    maxWidth: (Platform.OS == 'ios' ? '58%' : '56%'),
-    flexWrap: 'wrap'
+    maxWidth: Platform.OS == 'ios' ? '58%' : '56%',
+    flexWrap: 'wrap',
   },
 
   tagText: {
@@ -430,23 +184,24 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
   },
   bookmark: {
-    position: "absolute",
-    top: Platform.OS === "ios" ? 20 : 20,
-    right: Platform.OS === "ios" ? 20 : 20,
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 20 : 20,
+    right: Platform.OS === 'ios' ? 20 : 20,
     width: 44,
     height: 44,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     zIndex: 2,
     borderRadius: 16,
-    backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18)',
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 8,
     borderWidth: 0.5,
-    borderColor: "#ffffff79",
-    overflow: "hidden",
+    borderColor: '#ffffff79',
+    overflow: 'hidden',
     borderBlockStartColor: 'rgba(255, 255, 255, 0.25)',
     borderBlockColor: 'rgba(255, 255, 255, 0.25)',
     borderTopColor: 'rgba(255, 255, 255, 0.25)',
@@ -459,11 +214,11 @@ const styles = StyleSheet.create({
     height: 24,
   },
   infoRow: {
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "90%",
-    alignSelf: "center",
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '90%',
+    alignSelf: 'center',
     marginTop: 8,
   },
   title: {
@@ -472,12 +227,12 @@ const styles = StyleSheet.create({
     color: '#fff',
     width: '100%',
     fontFamily: 'Urbanist-SemiBold',
-
+    flexWrap: 'wrap',
   },
   priceRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
   },
   price: {
     fontSize: 17,
@@ -486,8 +241,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
   },
   ratingRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 6,
   },
   starIcon: {
@@ -496,7 +251,7 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     fontSize: 16,
-    fontWeight: "600",
-    color: "#fff",
+    fontWeight: '600',
+    color: '#fff',
   },
 });

@@ -227,6 +227,8 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600,
+    width: '81%',
+    maxWidth: '84%',
 
   },
   price: {
