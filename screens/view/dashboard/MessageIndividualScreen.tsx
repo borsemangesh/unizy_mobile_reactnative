@@ -88,10 +88,11 @@ type RouteParams = {
     profile: string | null;
     universityName: { id: number; name: string };
     id: number;
+    isblocked: boolean,
+    blocked_you: boolean
   };
   conversationSid: string;
 };
-
 
 
 
@@ -193,6 +194,8 @@ const MessagesIndividualScreen = ({
   const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
   const { members, sellerData, userConvName, currentUserIdList, source, conversationSid } =
     route.params;
+
+  const chatUser =source === 'sellerPage'? sellerData: members;
   const [isblock, setisblock] = useState(true)
   const [chatClient, setChatClient] = useState<any>(null);
   const chatClientRef = useRef<any>(null); // Track client for cleanup
@@ -1907,7 +1910,9 @@ const MessagesIndividualScreen = ({
                 </TouchableOpacity>
               </View> */}
 
-              {members?.blocked_you ? (
+
+
+              {chatUser?.blocked_you ? (
                 <View style={styles.blockBanner}>
                   <Image
                     source={require('../../../assets/images/block_triangle.png')}
@@ -1918,7 +1923,7 @@ const MessagesIndividualScreen = ({
                   </Text>
                 </View>
 
-              ) : members?.isblocked ? (
+              ) : chatUser?.isblocked ? (
                 <View style={styles.blockBanner}>
                   <Image
                     source={require('../../../assets/images/block_triangle.png')}
@@ -1990,7 +1995,7 @@ export default MessagesIndividualScreen;
 
 const styles = StyleSheet.create({
 
-    inputRow: {
+  inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
@@ -2067,7 +2072,7 @@ const styles = StyleSheet.create({
     height: 20,
     tintColor: '#fff',
     zIndex: 1,
-    marginLeft:8
+    marginLeft: 8
   },
 
   blockText: {
@@ -2076,7 +2081,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: '600',
     opacity: 0.8,
-    paddingLeft:8
+    paddingLeft: 8
   },
 
   leftBubbleWrapper: {

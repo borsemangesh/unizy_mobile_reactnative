@@ -1034,6 +1034,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                               profile: detail.createdby.profile,
                               universityName: detail.university,
                               id: detail.createdby.id,
+                              isblocked: detail.blocked_you,
+                              blocked_you: detail.blocked_by
                             },
                             source: 'sellerPage',
                           });
@@ -1274,7 +1276,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     style={styles.logo}
                     resizeMode="contain"
                   />
-                  <View style={{width: '100%'}}>
+                  <View style={{ width: '100%' }}>
                     <Text
                       allowFontScaling={false}
                       style={{
@@ -1286,12 +1288,12 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                         textAlign: 'center',
                         lineHeight: 28
                       }}
-                    > {t('order_placed_success') }!
+                    > {t('order_placed_success')}!
                     </Text>
 
                   </View>
-                  
-                   
+
+
 
                   <TouchableOpacity
                     style={styles.loginButton}
@@ -1328,6 +1330,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                           profile: detail.createdby.profile,
                           universityName: detail.university,
                           id: detail.createdby.id,
+                          isblocked: detail.blocked_you,
+                          blocked_you: detail.blocked_by
                         },
                         source: 'sellerPage',
                       });
