@@ -6,7 +6,9 @@ const MAIN_URL = {
 
     // baseUrl:'http://18.175.150.246:4320/',
 
-    baseUrl:'http://13.134.87.43:4320/'
+    // baseUrl:'http://13.134.87.43:4320/'
+
+    baseUrl:"https://api.unizy.app/",
       
     };
 
