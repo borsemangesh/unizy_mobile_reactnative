@@ -904,7 +904,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               }}
             >
               <View style={styles.dropdowncard}>
-                <Text allowFontScaling={false} style={[styles.dropdowntext]}>
+                <Text numberOfLines={2} allowFontScaling={false} style={[styles.dropdowntext]}>
                   {Array.isArray(formValues[id]?.value) &&
                     formValues[id]?.value.length > 0
                     ? `${formValues[id]?.value.length} ${t('selected')}`
@@ -1625,6 +1625,8 @@ const styles = StyleSheet.create({
     flex: 1,            // ⬅️ Add this
     minHeight: 40,
     justifyContent: 'center',
+    alignItems: 'flex-start',
+    alignSelf: 'center',
   },
   dropdowntext: {
     fontFamily: 'Urbanist-Regular',
@@ -2029,6 +2031,7 @@ const styles = StyleSheet.create({
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
     padding: 12,
     height: 44,
+    textAlign: 'center',
   },
 
   pickerStyle: {
