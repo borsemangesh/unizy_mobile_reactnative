@@ -887,8 +887,33 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
           )
         )} */}
 
-        {!data?.list?.admin_action &&
-          (data?.list?.category_id === 3 &&
+        {data?.list?.admin_action ? (
+          <View style={styles.bottomview}>
+            <TouchableOpacity
+              onPress={() => {
+              }}
+            >
+              <View style={styles.reportButtonCard}>
+                <Image
+                  source={require('../../../assets/images/report.png')}
+                  style={{ height: 16, width: 16 }}
+                />
+                <Text
+                  style={{
+                    color: 'rgba(255, 130, 130, 0.88)',
+                    fontFamily: 'Urbanist-SemiBold',
+                    fontSize: 14,
+                    fontWeight: '600',
+                    letterSpacing: -0.28,
+                  }}
+                >
+                  {t('admin_block_msg')}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          data?.list?.category_id === 3 &&
             data?.list?.remaining_quantity > 0 &&
             data?.list?.isactive &&
             data?.list?.ispurchased === true ? (
@@ -968,7 +993,8 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                 />
               </View>
             )
-          ))}
+          )
+        )}
 
 
 
@@ -1226,6 +1252,50 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 };
 
 const styles = StyleSheet.create({
+
+   reportButtonCard: {
+    flexDirection: 'row',
+    marginBottom: 6,
+    borderRadius: 12,
+    padding: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    marginTop: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+  },
+
+  blockBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+    padding: 12,
+    borderWidth: 0.5,
+    borderRadius: 12,
+    borderColor: '#ffffff31',
+    justifyContent: 'center',
+  },
+
+  blockIcon: {
+    width: 20,
+    height: 20,
+    tintColor: '#fff',
+    zIndex: 1,
+    marginLeft: 8
+  },
+
+  blockText: {
+    color: '#fff',
+    fontSize: 16,
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: '600',
+    opacity: 0.8,
+    paddingLeft: 8
+  },
+
   blurButtonWrapper_none: {
 
     width: 48,

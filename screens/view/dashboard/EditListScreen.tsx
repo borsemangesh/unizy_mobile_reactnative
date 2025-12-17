@@ -205,12 +205,11 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
         if (json?.metadata) {
           if (json.metadata.category) {
-            setFeatureFee(
-              parseFloat(json.metadata.category.feature_fee ?? '0'),
-            );
+            setFeatureFee(json.metadata.category.feature_fee ?? '0'),
+            
             setMaxFeatureCap(
-              parseFloat(json.metadata.category.max_feature_cap ?? '0'),
-            );
+              json.metadata.category.max_feature_cap ?? '0')
+
           }
           setUserMeta({
             firstname: json.metadata.firstname ?? null,

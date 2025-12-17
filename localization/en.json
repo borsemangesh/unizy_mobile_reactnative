@@ -722,5 +722,7 @@
   "buy_header": "Purchase Successful",
   "buy_subheader": "Your payment is securely held until delivery is completed.",
   "buy_note": "Never share the OTP before receiving the item or service.",
-  "buy_button": "Go to Transactions"
+  "buy_button": "Go to Transactions",
+  "report_user_msg": "You have reported this listing",
+"admin_block_msg": "This listing has been disabled by the admin"
 }

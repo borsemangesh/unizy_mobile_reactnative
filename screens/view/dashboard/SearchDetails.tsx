@@ -533,7 +533,11 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         );
 
         showToast(t(Constant.PURCHASE_SUCCESS), 'success');
-        setShowPopup1(true);
+        //setShowPopup1(true);
+        setTimeout(() => {
+          navigation.navigate('BuyerInfo');
+        }, 2000);
+
       } else {
         showToast(
           t(data?.message) || 'Something went wrong.Please try again',
@@ -1080,11 +1084,37 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                   </View>
                 </TouchableOpacity>
               )}
+
+
+              {!detail?.already_reported && (
+                <TouchableOpacity
+                  onPress={() => {
+                  }}
+                >
+                  <View style={styles.reportButtonCard}>
+                    <Image
+                      source={require('../../../assets/images/report.png')}
+                      style={{ height: 16, width: 16 }}
+                    />
+                    <Text
+                      style={{
+                        color: 'rgba(255, 130, 130, 0.88)',
+                        fontFamily: 'Urbanist-SemiBold',
+                        fontSize: 14,
+                        fontWeight: '600',
+                        letterSpacing: -0.28,
+                      }}
+                    >
+                      {t('report_user_msg')}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </AnimatedReanimated.ScrollView>
 
-        {detail?.category?.id !== 4 && (
+        {!detail?.already_reported && detail?.category?.id !== 4 && (
           <PayButton
             amount={
               detail?.category?.id === 3 ? undefined : Number(detail?.price)
@@ -1302,11 +1332,11 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                         index: 0,
                         routes: [
                           {
-                            name: 'BuyerInfo',
-                            // params: {
-                            //   AddScreenBackactiveTab: 'Home',
-                            //   isNavigate: false,
-                            // },
+                            name: 'Dashboard',
+                            params: {
+                              AddScreenBackactiveTab: 'Home',
+                              isNavigate: false,
+                            },
                           },
                         ],
                       });

@@ -215,12 +215,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
         if (json?.metadata) {
           if (json.metadata.category) {
             // Convert null or undefined to 0
-            setFeatureFee(
-              parseFloat(json.metadata.category.feature_fee ?? '0'),
-            );
-            setMaxFeatureCap(
-              parseFloat(json.metadata.category.max_feature_cap ?? '0'),
-            );
+            setFeatureFee(json.metadata.category.feature_fee ?? '0');
+            setMaxFeatureCap(json.metadata.category.max_feature_cap ?? '0')
           }
           setUserMeta({
             firstname: json.metadata.firstname ?? null,
