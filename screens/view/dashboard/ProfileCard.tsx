@@ -237,10 +237,12 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
           }
           else if (item.titleKey === 'my_orders') {
             if (Platform.OS === 'ios') {
-              navigation.replace('MyOrders');
+              // navigation.replace('MyOrders');
+
+              navigation.replace('BuyerInfo')
             } else {
               //navigation.navigate('MyOrders');
-              navigation.navigate('SellerInfo')
+              navigation.navigate('BuyerInfo')
             }
 
           }
