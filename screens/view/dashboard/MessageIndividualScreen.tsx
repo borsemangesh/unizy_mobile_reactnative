@@ -2,14 +2,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useRef,
   useState,
 } from 'react';
 
 import {
-  ActivityIndicator,
-  Alert,
   Dimensions,
   FlatList,
   Image,
@@ -17,16 +14,12 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Animated as RNAnimated } from 'react-native';
-import Svg, { ClipPath, Defs, Rect } from 'react-native-svg';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { Client as TwilioChatClient } from '@twilio/conversations';
 import { RouteProp, useRoute } from '@react-navigation/native';
@@ -36,24 +29,17 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import Animated, {
   useSharedValue,
-  useAnimatedScrollHandler,
   useAnimatedStyle,
   interpolate,
-  interpolateColor,
-  useDerivedValue,
 } from 'react-native-reanimated';
-// @ts-ignore - react-native-vector-icons types
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { getTwilioClient, waitForTwilioReady } from "../../view/emoji/twilioService";
+import { waitForTwilioReady } from "../../view/emoji/twilioService";
 import Loader from '../../utils/component/Loader';
-import { showToast } from '../../utils/toast';
 
 import { useTranslation } from "react-i18next";
 import i18n from '../../../localization/i18n';
 
 
 const bgImage = require('../../../assets/images/backimg.png');
-const profileImage = require('../../../assets/images/user.jpg');
 const back = require('../../../assets/images/back.png');
 
 
@@ -61,11 +47,6 @@ type MessagesIndividualScreenProps = {
   navigation: any;
 };
 
-interface chatMeta {
-  author: string | null;
-  body: string | null;
-  createdAt: Date | null;
-}
 
 type RouteParams = {
   source?: 'chatList' | 'sellerPage';
@@ -227,7 +208,6 @@ const MessagesIndividualScreen = ({
   const hasScrollableContent = useSharedValue(false);
   const contentHeightRef = useRef(0);
   const viewportHeightRef = useRef(0);
-  const prevContentHeightRef = useRef(0);
   const scrollY = useSharedValue(0);
   const { t } = useTranslation();
 
@@ -239,21 +219,6 @@ const MessagesIndividualScreen = ({
     }
   };
 
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: event => {
-      'worklet';
-      const contentH = event.contentSize.height;
-      const viewportH = event.layoutMeasurement.height;
-      const currentY = event.contentOffset.y;
-      scrollY.value = currentY;
-
-
-      const maxScrollY = Math.max(0, contentH - viewportH);
-      const distanceFromTop = maxScrollY - currentY;
-      const isAtTop = distanceFromTop <= 10;
-      hasScrollableContent.value = contentH > viewportH && !isAtTop;
-    },
-  });
 
   const animatedBlurStyle = useAnimatedStyle(() => {
     'worklet';
@@ -261,68 +226,12 @@ const MessagesIndividualScreen = ({
     return { opacity };
   });
 
-  const animatedButtonStyle = useAnimatedStyle(() => {
-    'worklet';
-    const borderColor = interpolateColor(
-      scrollY.value,
-      [0, 300],
-      ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
-    );
-    const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
-    return {
-      borderColor,
-      backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
-    };
-  });
 
-  const animatedIconStyle = useAnimatedStyle(() => {
-    'worklet';
-    const opacity = interpolate(scrollY.value, [0, 300], [0.8, 1], 'clamp');
-    const tintColor = interpolateColor(
-      scrollY.value,
-      [0, 150],
-      ['#FFFFFF', '#002050'],
-    );
-    return {
-      opacity,
-      tintColor,
-    };
-  });
 
-  const blurAmount = useDerivedValue(() => {
-    'worklet';
-    return interpolate(scrollY.value, [0, 300], [0, 10], 'clamp');
-  });
 
-  const animatedStaticBackgroundStyle = useAnimatedStyle(() => {
-    'worklet';
-    return {
-      opacity: interpolate(
-        scrollY.value,
-        [0, 30],
-        [1, 0],
-        'clamp',
-      ),
-      backgroundColor: 'rgba(255,255,255,0.1)',
-      borderRadius: 40,
-    };
-  });
 
-  const animatedBlurViewStyle = useAnimatedStyle(() => {
-    'worklet';
-    return {
-      opacity: interpolate(
-        scrollY.value,
-        [0, 50],
-        [0, 1],
-        'clamp',
-      ),
-    };
-  });
 
-  const WINDOW_HEIGHT = Dimensions.get('window').height;
   const INPUT_BAR_HEIGHT = Platform.OS === 'ios' ? 70 : 64;
-  const BOTTOM_SPACING = Platform.OS === 'ios' ? 0 : 0;
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
@@ -336,61 +245,44 @@ const MessagesIndividualScreen = ({
     return () => subscription?.remove();
   }, []);
 
-  const isInitialMountRef = useRef(true);
   const filterNumbersAndNumberWords = (text: string): string => {
-    let filtered = text.replace(/[0-9]/g, '');
-
+    let digitCount = 0;
+  
+    // Mask digits after first 3
+    let filtered = text.replace(/\d/g, (digit) => {
+      digitCount++;
+      return digitCount <= 3 ? digit : '*';
+    });
+  
+    // Remove number words
     const numberWords = [
-      'zero',
-      'one',
-      'two',
-      'three',
-      'four',
-      'five',
-      'six',
-      'seven',
-      'eight',
-      'nine',
-      'ten',
-      'eleven',
-      'twelve',
-      'thirteen',
-      'fourteen',
-      'fifteen',
-      'sixteen',
-      'seventeen',
-      'eighteen',
-      'nineteen',
-      'twenty',
-      'thirty',
-      'forty',
-      'fifty',
-      'sixty',
-      'seventy',
-      'eighty',
-      'ninety',
-      'hundred',
-      'thousand',
-      'million',
-      'billion',
-      'trillion',
+      'zero', 'one', 'two', 'three', 'four', 'five',
+      'six', 'seven', 'eight', 'nine', 'ten',
+      'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen',
+      'sixteen', 'seventeen', 'eighteen', 'nineteen',
+      'twenty', 'thirty', 'forty', 'fifty',
+      'sixty', 'seventy', 'eighty', 'ninety',
+      'hundred', 'thousand', 'million', 'billion', 'trillion',
     ];
-
+  
     const numberWordsPattern = new RegExp(
       `\\b(${numberWords.join('|')})\\b`,
-      'gi',
+      'gi'
     );
-
+  
     filtered = filtered.replace(numberWordsPattern, '');
-
-    filtered = filtered.replace(/\s{3,}/g, '  ');
-
+  
+    // Normalize spaces
+    filtered = filtered.replace(/\s{2,}/g, ' ').trim();
+  
     return filtered;
   };
+  
+  
 
   const handleTextChange = (text: string) => {
-    const filteredText = filterNumbersAndNumberWords(text);
-    setMessageText(filteredText);
+    // const filteredText = filterNumbersAndNumberWords(text);
+    setMessageText(text);
   };
   useEffect(() => {
     let isMounted = true;
@@ -756,23 +648,6 @@ const MessagesIndividualScreen = ({
 
       const messageAuthor = m.author || m.state?.author || m.attributes?.author;
 
-      // console.log('New Twilio message:', {
-      //   body: m.body,
-      //   author: messageAuthor,
-      //   checkUser: checkUser,
-      //   currentUserId: currentUserId,
-      //   userId: userId,
-      //   isFromMe:
-      //     String(messageAuthor) === String(checkUser) ||
-      //     String(messageAuthor) === String(currentUserId) ||
-      //     String(messageAuthor) === String(userId),
-      //   messageStructure: {
-      //     hasAuthor: !!m.author,
-      //     hasState: !!m.state,
-      //     hasStateAuthor: !!m.state?.author,
-      //   },
-      // });
-
       const isFromMe =
         String(messageAuthor) === String(checkUser) ||
         String(messageAuthor) === String(currentUserId) ||
@@ -786,7 +661,6 @@ const MessagesIndividualScreen = ({
           return timeB - timeA;
         });
 
-        // Update cache (merged from duplicate listener)
         const convName = conversation.uniqueName;
         messageCache[convName] = updated;
         saveJSON(CACHE_KEY_MSG_PREFIX + convName, updated);
@@ -794,11 +668,9 @@ const MessagesIndividualScreen = ({
         return updated;
       });
 
-      // Scroll to bottom when user's own message is added
-      // BUT NOT when content is short and locked on iOS
       if (isFromMe && !(Platform.OS === 'ios' && isShortContentLockedRef.current)) {
         shouldAutoScrollRef.current = true;
-        // Use multiple requestAnimationFrame to ensure layout is complete
+
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             InteractionManager.runAfterInteractions(() => {
@@ -824,105 +696,100 @@ const MessagesIndividualScreen = ({
       }
     };
 
-    conversation.on('messageAdded', handleNewMessage);
+
 
     return () => {
-      // console.log(' Cleaning Twilio listener');
+
       conversation.removeListener('messageAdded', handleNewMessage);
     };
-  }, [conversation, checkUser, currentUserId]); // Add missing dependencies
-
+  }, [conversation, checkUser, currentUserId]);
   // ----------------------------------------------------------
   // STEP 4: Send Message
   // ----------------------------------------------------------
   const handleSendMessage = async () => {
-    // Filter numbers and number words before sending
+    // Apply filter ONLY on send
     const filteredMessage = filterNumbersAndNumberWords(messageText.trim());
-
+  
     if (!filteredMessage) {
-      setMessageText(''); // Clear the input
+      setMessageText('');
       return;
     }
-
-    // Clear message text immediately for better perceived performance
+  
+    // Clear input immediately
     setMessageText('');
-
-    // Reset auto-scroll flag when user sends a message
     shouldAutoScrollRef.current = true;
-
+  
     try {
-      // Parallel AsyncStorage reads for better performance
       const [token, userId] = await Promise.all([
         AsyncStorage.getItem('userToken'),
         AsyncStorage.getItem('userId'),
       ]);
-
+  
+      // CASE 1: Conversation already exists
       if (conversation) {
-        // Send message - handleNewMessage will handle scrolling automatically
         await conversation.sendMessage(filteredMessage);
         return;
       }
-
-      // Case 2: Conversation not yet created → create now after first message
+  
+      // CASE 2: Create conversation first
       if (!sellerData?.featureId) {
         console.error('Missing featureId');
         return;
       }
-
-      const urlCreate = `${MAIN_URL.baseUrl}twilio/conversation-create`;
-      const body = { feature_id: sellerData.featureId };
-
-      const createResponse = await fetch(urlCreate, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      });
-
+  
+      const createResponse = await fetch(
+        `${MAIN_URL.baseUrl}twilio/conversation-create`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ feature_id: sellerData.featureId }),
+        }
+      );
+  
       const createData = await createResponse.json();
-
+  
       if (!createResponse.ok || !createData?.data?.conv_name) {
-        console.error('Failed to create conversation:', createData.message);
+        console.error('Conversation creation failed:', createData.message);
         return;
       }
-
+  
       const convName = createData.data.conv_name;
-      const currentUserIdFromApi = createData.data.current_user_id;
-
-      // Convert to string to match Twilio's author format
-      setCheckUser(String(currentUserIdFromApi));
-
-      // Also set currentUserId from AsyncStorage
+      const apiUserId = createData.data.current_user_id;
+  
+      setCheckUser(String(apiUserId));
+  
       if (userId) {
         setCurrentUserId(String(userId));
       }
-
-      // Get or create Twilio conversation
+  
       let convo;
       try {
         convo = await chatClient.getConversationByUniqueName(convName);
       } catch {
         convo = await chatClient.createConversation({ uniqueName: convName });
       }
-
-      // Join conversation
+  
       try {
         await convo.join();
       } catch (err: any) {
         if (!err.message?.includes('Conflict')) {
-          console.error('Join failed:', err);
+          console.error('Join error:', err);
         }
       }
+  
       setConversation(convo);
+  
       await new Promise(resolve => setTimeout(resolve, 50));
       await convo.sendMessage(filteredMessage);
-
+  
     } catch (error) {
       console.error('Message send failed:', error);
     }
   };
+  
 
   const getInitials = (firstName = '', lastName = '') =>
     (firstName?.[0] || '') + (lastName?.[0] || '');
@@ -1185,8 +1052,6 @@ const MessagesIndividualScreen = ({
   }, [initialLoading, messages.length === 0 ? null : messages[0]?.sid]);
   const headerTop = Platform.OS === 'ios' ? 50 : 40;
   const headerHeight = 100;
-  const headerTotalHeight = headerTop + headerHeight;
-  const inputBarHeight = INPUT_BAR_HEIGHT;
 
   const isSendDisabled = initialLoading || !messageText.trim();
 
@@ -1563,7 +1428,7 @@ const MessagesIndividualScreen = ({
               scrollEventThrottle={16}
               scrollEnabled={true}
               ListHeaderComponent={null}
-              onScrollToIndexFailed={info => {
+              onScrollToIndexFailed={() => {
                 setTimeout(() => {
                   flatListRef.current?.scrollToEnd({ animated: false });
                 }, 100);
