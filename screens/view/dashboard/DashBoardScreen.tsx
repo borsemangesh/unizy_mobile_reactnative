@@ -402,7 +402,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
-            language_code: language_code
+            languagecode: language_code
           },
         });
         const json = await response.json();
@@ -462,7 +462,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
           const res = await fetch(url1, {
             headers: {
               Authorization: `Bearer ${token}`,
-              language_code: language_code
+              languagecode: language_code
             },
           });
 
@@ -851,7 +851,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
-          language_code: language_code
+          languagecode: language_code
         },
         body: JSON.stringify({ feature_id: productId }),
       });

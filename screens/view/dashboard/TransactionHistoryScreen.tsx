@@ -169,7 +169,7 @@ export default function TransactionHistoryScreen(
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
-            language_code: language_code
+            languagecode: language_code
           },
         });
 
@@ -327,7 +327,7 @@ export default function TransactionHistoryScreen(
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
-          language_code: language_code
+          languagecode: language_code
         },
       });
 

@@ -113,7 +113,7 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
-          language_code: language_code
+          languagecode: language_code
         },
         body: JSON.stringify(createPayload)
       });

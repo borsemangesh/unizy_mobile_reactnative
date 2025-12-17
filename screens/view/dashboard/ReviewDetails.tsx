@@ -197,7 +197,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
       const response = await fetch(url1, {
         headers: {
           Authorization: `Bearer ${token}`,
-          language_code: language_code
+          languagecode: language_code
         },
       });
 

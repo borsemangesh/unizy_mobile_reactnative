@@ -278,7 +278,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
-          language_code: language_code
+          languagecode: language_code
         },
       });
 

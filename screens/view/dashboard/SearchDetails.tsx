@@ -167,7 +167,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         const res = await fetch(url1, {
           headers: {
             Authorization: `Bearer ${token}`,
-            language_code: language_code
+            languagecode: language_code
           },
 
         });
@@ -202,6 +202,9 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     };
     fetchDetails();
   }, [id]);
+
+
+
 
   const [isBookmarked, setIsBookmarked] = useState(false);
 

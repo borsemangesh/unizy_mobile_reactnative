@@ -180,7 +180,7 @@ const Notification = ({ navigation }: NotificationProps) => {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
-          language_code: language_code
+          languagecode: language_code
         },
       });
 

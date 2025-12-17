@@ -260,7 +260,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
-          language_code: language_code
+          languagecode: language_code
         },
         body: JSON.stringify(body),
       });
@@ -445,7 +445,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
-          language_code: language_code
+          languagecode: language_code
         },
         body: JSON.stringify(newFilterBody),
       });
@@ -489,7 +489,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
-          language_code: language_code
+          languagecode: language_code
         },
         body: JSON.stringify(nextFilterBody),
       });

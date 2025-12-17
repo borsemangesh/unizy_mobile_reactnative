@@ -351,7 +351,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
-          language_code: language_code
+          languagecode: language_code
         },
         body: JSON.stringify({ feature_id: productId }),
       });

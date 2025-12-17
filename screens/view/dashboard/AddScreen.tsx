@@ -185,6 +185,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
         setLoading(true)
         const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
 
+
         const token = await AsyncStorage.getItem('userToken');
         if (!token) {
           // console.log('No token found');
@@ -202,7 +203,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
-            language_code: language_code
+            languagecode: language_code
           },
         });
 

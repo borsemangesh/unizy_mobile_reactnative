@@ -531,7 +531,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
-          language_code: language_code
+          languagecode: language_code
         },
         body: formData,
       });

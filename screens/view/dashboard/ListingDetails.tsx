@@ -139,7 +139,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
-          language_code: language_code
+          languagecode: language_code
         },
       });
 
@@ -173,7 +173,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
-          language_code: language_code
+          languagecode: language_code
         },
         body: JSON.stringify({
           product_id: shareid,
@@ -246,7 +246,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
-          language_code: language_code
+          languagecode: language_code
         },
         body: JSON.stringify(createPayload),
       });
