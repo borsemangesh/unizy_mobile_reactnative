@@ -306,9 +306,9 @@ const SellerInfo = ({ navigation }: SellerInfoProps) => {
           <Button
             title={t('sell_button')}
             onPress={() => {
-              navigation.replace('Dashboard', {
-                AddScreenBackactiveTab: 'Profile',
-                isNavigate: false,
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'MyListing'}],
               });
             }}
           />

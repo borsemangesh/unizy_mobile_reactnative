@@ -237,12 +237,9 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
           }
           else if (item.titleKey === 'my_orders') {
             if (Platform.OS === 'ios') {
-              // navigation.replace('MyOrders');
-
-              navigation.replace('BuyerInfo')
+              navigation.replace('MyOrders');
             } else {
-              //navigation.navigate('MyOrders');
-              navigation.navigate('BuyerInfo')
+              navigation.navigate('MyOrders');
             }
 
           }
