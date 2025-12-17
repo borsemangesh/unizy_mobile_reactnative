@@ -461,7 +461,11 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
         }
       }
       showToast(t(Constant.DATA_UPLOAD), 'success');
-      setShowPopup(true);
+      //setShowPopup(true);
+
+      setTimeout(() => {
+        navigation.navigate('SellerInfo');
+      }, 2000);
     }
     catch (error) {
       // console.log('❌ Error in handleListPress:', error);

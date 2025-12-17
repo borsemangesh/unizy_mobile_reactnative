@@ -42,6 +42,8 @@ import { navigationReady } from '../utils/NotificationHandler';
 import TeamsAndCondition from './authentication/termsconditinAndPrivacyPolicy/TeamsAndCondition';
 import PrivacyAndPolicy from './authentication/termsconditinAndPrivacyPolicy/PrivacyAndPolicy';
 import ReportProduct from './dashboard/ReportProduct';
+import SellerInfo from './dashboard/SellerInfo';
+import BuyerInfo from './dashboard/BuyerInfo';
 
 const Stack = createNativeStackNavigator();
 
@@ -357,6 +359,24 @@ export const Navigation = () => {
               <Stack.Screen
               name="ChangePassword"
               component={ChangePassword}
+              options={{
+                headerShown: false,
+                presentation: 'fullScreenModal',
+              }}
+            />
+
+              <Stack.Screen
+              name="SellerInfo"
+              component={SellerInfo}
+              options={{
+                headerShown: false,
+                presentation: 'fullScreenModal',
+              }}
+            />
+
+              <Stack.Screen
+              name="BuyerInfo"
+              component={BuyerInfo}
               options={{
                 headerShown: false,
                 presentation: 'fullScreenModal',

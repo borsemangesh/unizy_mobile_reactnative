@@ -239,7 +239,8 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
             if (Platform.OS === 'ios') {
               navigation.replace('MyOrders');
             } else {
-              navigation.navigate('MyOrders');
+              //navigation.navigate('MyOrders');
+              navigation.navigate('SellerInfo')
             }
 
           }

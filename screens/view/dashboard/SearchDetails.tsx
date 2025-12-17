@@ -1302,11 +1302,11 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                         index: 0,
                         routes: [
                           {
-                            name: 'Dashboard',
-                            params: {
-                              AddScreenBackactiveTab: 'Home',
-                              isNavigate: false,
-                            },
+                            name: 'BuyerInfo',
+                            // params: {
+                            //   AddScreenBackactiveTab: 'Home',
+                            //   isNavigate: false,
+                            // },
                           },
                         ],
                       });
