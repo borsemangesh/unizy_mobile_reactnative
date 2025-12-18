@@ -278,7 +278,7 @@ const SellerInfo = ({ navigation }: SellerInfoProps) => {
                 ? 10
                 : Platform.select({
                     ios: height * 0.05, // ⬅ apply padding when list has data
-                    android: height * 0.04,
+                    android: height * 0.06,
                   }),
               flexGrow: 1,
             },
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     width: '100%',
-    paddingHorizontal: 16
+    paddingHorizontal: 20,
   },
   backButtonContainer: {
     position: 'absolute',
@@ -365,8 +365,9 @@ const styles = StyleSheet.create({
     pointerEvents: 'none',
   },
   headerContent: {
-    gap:8,
+    gap: 8,
     alignItems: 'center',
+    marginBottom: 16
   },
 
   bottomFixed: {
@@ -396,8 +397,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '500',
     fontFamily: 'Urbanist-Medium',
-    lineHeight: 14,
-    letterSpacing: 1,
+    lineHeight: 22,
+    marginTop:8,
+    letterSpacing: 0,
   },
   newtext: {
     color: '#fff',
@@ -516,10 +518,13 @@ const styles = StyleSheet.create({
   },
 
   hederRowContainer: {
-    flexDirection:'row',alignItems:'center',gap:8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   itemContainer: {
-    paddingTop: 20
+    paddingTop: 20,
+    paddingBottom: 10,
   },
   icon: {
     width: 24,
@@ -529,7 +534,7 @@ const styles = StyleSheet.create({
   textContainer: {
     // width: '86%'
     paddingLeft: 48,
-    marginTop: -12
+    marginTop: -12,
   },
   title: {
     fontSize: 16,
@@ -537,7 +542,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     lineHeight: 24,
     fontFamily: 'Urbanist-SemiBold',
-    
   },
   subtitle: {
     fontSize: 14,

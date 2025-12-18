@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     width: '100%',
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
   },
   backButtonContainer: {
     position: 'absolute',
@@ -375,6 +375,7 @@ const styles = StyleSheet.create({
   headerContent: {
     gap: 8,
     alignItems: 'center',
+    marginBottom: 16
   },
 
   bottomFixed: {
@@ -393,7 +394,7 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
     fontWeight: '700',
-    fontFamily: 'Urbanist-SemiBold',
+    fontFamily:"Urbanist-SemiBold",
     lineHeight: 24,
     letterSpacing: 0.2,
   },
@@ -404,8 +405,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '500',
     fontFamily: 'Urbanist-Medium',
-    lineHeight: 14,
-    letterSpacing: 1,
+    lineHeight: 22,
+    marginTop:8,
+    letterSpacing: 0,
   },
   newtext: {
     color: '#fff',
@@ -530,6 +532,7 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     paddingTop: 20,
+    paddingBottom: 10,
   },
   icon: {
     width: 24,

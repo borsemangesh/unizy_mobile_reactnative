@@ -1089,7 +1089,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
               )}
 
 
-              {/* {!detail?.already_reported && (
+              {detail?.isreported && (
                 <TouchableOpacity
                   onPress={() => {
                   }}
@@ -1112,7 +1112,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     </Text>
                   </View>
                 </TouchableOpacity>
-              )} */}
+              )} 
             </View>
           </View>
         </AnimatedReanimated.ScrollView>
