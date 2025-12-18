@@ -735,7 +735,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   );
 
   const renderLabel1 = (field_name: any, mandatory: any) => (
-    <Text allowFontScaling={false} style={styles.textstyle1}>
+    <Text allowFontScaling={false} numberOfLines={2} style={styles.textstyle1}>
       {field_name}
       {mandatory && <Text style={{ color: '#fff' }}>*</Text>}
     </Text>
@@ -1097,7 +1097,9 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
           <View key={field.id} style={styles.featurecard}>
             {/* Label + toggle */}
             <View style={styles.featuredRow}>
-              {renderLabel1(field_name, field.mandatory)}
+              <View style={{width: '80%'}}>
+              {renderLabel1(field.param.field_name, field.mandatory)}
+              </View>
 
               <ToggleButton
                 value={toggleValue}
