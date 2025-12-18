@@ -1117,7 +1117,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
           </View>
         </AnimatedReanimated.ScrollView>
 
-        {!detail?.already_reported && detail?.category?.id !== 4 && (
+        {!detail?.isreported && detail?.category?.id !== 4 && (
           <PayButton
             amount={
               detail?.category?.id === 3 ? undefined : Number(detail?.price)
