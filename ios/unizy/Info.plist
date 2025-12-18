@@ -72,10 +72,10 @@
 
 	<!-- Camera & Photos -->
 	<key>NSCameraUsageDescription</key>
-	<string>This app requires access to your camera so you can capture photos for features like updating your profile picture or adding images when creating posts, submitting listings, or reporting an issue.</string>
+	<string>Allows you to take photos to upload to your profile or include in posts, listings, or issue reports.</string>
 
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app needs access to your photo library so you can select and upload images when updating your profile, creating posts or listings, or attaching photos while reporting an issue.</string>
+	<string>Allows you to select existing photos to upload to your profile or include in posts, listings, or issue reports.</string>
 
 	<!-- Notifications -->
 	<key>NSRemoteNotificationUsageDescription</key>

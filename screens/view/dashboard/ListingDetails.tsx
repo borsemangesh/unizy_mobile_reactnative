@@ -494,7 +494,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                   { marginTop: Platform.OS === 'ios' ? 6 : 10 },
                 ]}
               >
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{ flexDirection: 'row' }}>
                   {(() => {
                     const categoryName = data?.list?.category?.id || 0;
                     const isProfileCategory = categoryName === 2 || categoryName === 5;
@@ -550,12 +550,15 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     }
                   })()}
                   <View style={{ marginLeft: 10, gap: 8 }}>
-                    <Text
-                      allowFontScaling={false}
-                      style={styles.productlebleHeader}
-                    >
-                      {data?.list?.title}
-                    </Text>
+                    <View style={{width: '88%'}}>
+                      <Text
+                        numberOfLines={2}
+                        allowFontScaling={false}
+                        style={styles.productlebleHeader}
+                      >
+                        {data?.list?.title}
+                      </Text>
+                    </View>
                     <View style={styles.rightSection}>
                       <Text
                         allowFontScaling={false}
@@ -1690,7 +1693,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.24,
     lineHeight: 16,
     fontFamily: 'Urbanist-SemiBold',
-    paddingTop: 10,
+    // paddingTop: 10,
   },
 
   dottext: {

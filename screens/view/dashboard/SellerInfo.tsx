@@ -274,15 +274,17 @@ const SellerInfo = ({ navigation }: SellerInfoProps) => {
             styles.listContainer,
             {
               paddingTop: Platform.OS === 'ios' ? 70 : 70,
-              paddingBottom: isEmpty
-                ? 10
-                : Platform.select({
-                    ios: height * 0.05, // ⬅ apply padding when list has data
-                    android: height * 0.06,
-                  }),
+              paddingBottom: 100,
+              // paddingBottom: isEmpty
+              //   ? 10
+              //   : Platform.select({
+              //       ios: height * 0.05, // ⬅ apply padding when list has data
+              //       android: height * 0.04,
+              //     }),
               flexGrow: 1,
             },
           ]}
+          ListFooterComponent={<View style={{ height: 100 }} />} 
           onScroll={scrollHandler}
           scrollEventThrottle={16}
         />
