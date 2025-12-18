@@ -237,7 +237,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation }) => {
     {processing && <Loader />}
 
     {!processing && (
-      <ActivityIndicator size="large" color="#000" />
+      <Loader/>
     )}
   </ImageBackground>
   );
