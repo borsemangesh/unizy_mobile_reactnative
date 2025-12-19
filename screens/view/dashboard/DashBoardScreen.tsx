@@ -1011,7 +1011,8 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   };
   const clicklisting = async () => {
     setIsNav(false);
-    navigation.replace('MyListing', { animation: 'none' });
+    // navigation.replace('MyListing', { animation: 'none' });
+    navigation.replace('OnboardingScreen', { animation: 'none' });
   };
 
 

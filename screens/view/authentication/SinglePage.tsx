@@ -684,7 +684,13 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         setIsPasswordVisible(false);
         setTextandBackIcon(false);
         await AsyncStorage.setItem('ISLOGIN', 'true');
-        navigation.replace('Dashboard', { AddScreenBackactiveTab: 'Home', isNavigate: true, loginMessage: result?.message, isFirsttimeLogin: true });
+        const res = await AsyncStorage.getItem('ISONBOARDING');
+        if(res === 'true'){
+          navigation.replace('Dashboard', { AddScreenBackactiveTab: 'Home', isNavigate: true, loginMessage: result?.message, isFirsttimeLogin: true });
+        } else{
+          navigation.replace('OnBoarding');
+        }
+       
       } else {
         setLoading(false);
         showToast(t(Constant.INVALID_USER_DATA_RECEIVED), 'error');
@@ -1577,7 +1583,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       animRef.current?.pause();
       if (flag === 'true') {
 
-        // navigation.replace('Dashboard',{AddScreenBackactiveTab: 'Home',isNavigate: true,isFirsttimeLogin: false});
         navigation.reset({
           index: 0,
           routes: [
@@ -3221,10 +3226,15 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                       'ISLOGIN',
                                       'true',
                                     );
-                                    navigation.replace('Dashboard', {
-                                      AddScreenBackactiveTab: 'Home',
-                                      isNavigate: true,
-                                    });
+                                    await AsyncStorage.setItem(
+                                    'ISONBOARDING',
+                                      'true',
+                                    );
+                                    navigation.replace('OnboardingScreen');
+                                    // navigation.replace('Dashboard', {
+                                    //   AddScreenBackactiveTab: 'Home',
+                                    //   isNavigate: true,
+                                    // });
                                   }}
                                 >
                                   <Text

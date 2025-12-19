@@ -44,6 +44,7 @@ import PrivacyAndPolicy from './authentication/termsconditinAndPrivacyPolicy/Pri
 import ReportProduct from './dashboard/ReportProduct';
 import SellerInfo from './dashboard/SellerInfo';
 import BuyerInfo from './dashboard/BuyerInfo';
+import OnboardingScreen from './onboarding/OnboardingScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -382,6 +383,14 @@ export const Navigation = () => {
                 presentation: 'fullScreenModal',
               }}
             />
+            <Stack.Screen
+              name="OnboardingScreen"
+              component={OnboardingScreen}
+              options={{
+                headerShown: false,
+                presentation: 'fullScreenModal',
+              }}
+              />
       </Stack.Navigator>
     </NavigationContainer>
   );
