@@ -31,10 +31,8 @@ const OnboardingScreen = ({ navigation }: OnBoardingProps) => {
         offset: (index + 1) * width,
       });
     } else {
-      // await AsyncStorage.setItem(
-      //   'ISONBOARDING',
-      //     'false',
-      //   );
+      await AsyncStorage.setItem('ISONBOARDING', 'true');
+
       navigation.replace('Dashboard', {
         AddScreenBackactiveTab: 'Home',
         isNavigate: false,
@@ -43,10 +41,9 @@ const OnboardingScreen = ({ navigation }: OnBoardingProps) => {
   };
 
   const handleSkip = async () => {
-    // await AsyncStorage.setItem(
-    //   'ISONBOARDING',
-    //     'false',
-    //   );
+ 
+    await AsyncStorage.setItem('ISONBOARDING', 'true');
+
     navigation.replace('Dashboard', {
       AddScreenBackactiveTab: 'Home',
       isNavigate: false,
