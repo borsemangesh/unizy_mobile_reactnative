@@ -127,6 +127,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
     try {
 
       const token = await AsyncStorage.getItem('userToken');
+      console.log(token)
       const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
       if (!token) return;
       const url = `${MAIN_URL.baseUrl}category/mylisting-details/${shareid}`;
@@ -891,7 +892,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
         )} */}
 
         {data?.list?.admin_action ? (
-          <View style={styles.bottomview}>
+          <View style={[styles.bottomview, { justifyContent: 'center' }]}>
             <TouchableOpacity
               onPress={() => {
               }}
