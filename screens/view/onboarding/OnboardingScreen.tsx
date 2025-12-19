@@ -79,15 +79,27 @@ const OnboardingScreen = ({ navigation }: OnBoardingProps) => {
         <Pagination data={OnboardingData} index={index} />
 
         <View style={styles.bottomRow}>
-          {/* Skip button (hide on last screen) */}
+          
+          
+
+          {/* Next / Finish button */}
+          {isLast ? (
+            <>
+
+          <TouchableOpacity style={styles.finishbutton} onPress={handleNext}>
+            <Text style={styles.buttonText}>
+              {t('info_finish')}
+            </Text>
+          </TouchableOpacity>
+
+            </>
+          ):(<>
           {!isLast && (
             <TouchableOpacity style={styles.buttonskip} onPress={handleSkip}>
               <Text style={styles.skip}>{t('info_skip')}</Text>
             </TouchableOpacity>
           )}
-
-          {/* Next / Finish button */}
-          <TouchableOpacity style={styles.button} onPress={handleNext}>
+             <TouchableOpacity style={styles.button} onPress={handleNext}>
             <Text style={styles.buttonText}>
               {isLast ? t('info_finish') : t('info_next')}
             </Text>
@@ -100,6 +112,7 @@ const OnboardingScreen = ({ navigation }: OnBoardingProps) => {
               />
             )}
           </TouchableOpacity>
+          </>)}
         </View>
       </View>
     </ImageBackground>
@@ -137,6 +150,18 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 25,
     width: '50%',
+    textAlign: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    alignContent  :'center',
+    justifyContent:'center',
+    gap: 4
+  },
+  finishbutton: {
+    backgroundColor: ' rgba(255, 255, 255, 0.56)',
+    paddingVertical: 12,
+    borderRadius: 25,
+    width: '100%',
     textAlign: 'center',
     alignItems: 'center',
     flexDirection: 'row',
