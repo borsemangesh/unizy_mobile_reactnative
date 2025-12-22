@@ -1240,17 +1240,8 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             </AnimatedReanimated.View>
           </TouchableOpacity>
 
-          {/* <Text allowFontScaling={false} style={styles.unizyText}>
-            {t('edit')}{`${category ? ` ${category} ` : ''}`}
-          </Text> */}
           <View style={{ width: 300 }}>
-            {/* <Text
-              allowFontScaling={false}
-              style={styles.unizyText}
-              numberOfLines={2}
-            >
-              {t('edit')}{`${category ? ` ${category} ` : ''}`}
-            </Text> */}
+          
 
             <Text
               allowFontScaling={false}
@@ -1310,7 +1301,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                       [0, 1],
                       'clamp',
                     ),
-                  })),
+                  })), { display: 'none' }
                 ]}
               >
                 <BlurView
@@ -1415,15 +1406,6 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                     }),
                   }}
                 >
-                  {/* <Text
-                  allowFontScaling={false}
-                  style={styles.productdetailstext}
-                >
-
-                  {productId === 3
-                    ? t('dish_details')
-                    : `${category ? `${category} ` : ''}${t('details')}`}
-                </Text> */}
                   <Text
                     allowFontScaling={false}
                     style={styles.productdetailstext}
@@ -1537,7 +1519,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    //height: Platform.OS === 'ios' ? 547 : 300,
     paddingVertical: (Platform.OS === 'ios' ? 0 : 40),
   },
   blurButtonWrapper_none: {
@@ -1562,18 +1543,6 @@ const styles = StyleSheet.create({
     pointerEvents: 'none',
   },
   headerContent: {
-    // position: 'absolute',
-    // top: Platform.OS === 'ios' ? '8.5%' : 60,
-    // width: Platform.OS === 'ios' ? '100%' : '100%',
-    // flexDirection: 'row',
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    // paddingHorizontal: 16,
-    // zIndex: 11,
-    // alignSelf: 'center',
-    // pointerEvents: 'box-none',
-    // marginTop: (Platform.OS === 'ios' ? 0 : 0),
-    // marginLeft: 1
     position: 'absolute',
     top: (Platform.OS === 'ios' ? 60 : 40),
     width: '100%',
@@ -1586,21 +1555,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   backButtonContainer: {
-    // position: 'absolute',
-    // left: 16,
     zIndex: 11,
   },
-  // blurButtonWrapper: {
-  //   width: 48,
-  //   height: 48,
-  //   borderRadius: 40,
-  //   overflow: 'hidden',
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   borderWidth: 0.4,
-  //   borderColor: '#ffffff2c',
-  //   backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  // },
 
   blurButtonWrapper: {
     width: 48,
@@ -1609,20 +1565,13 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    // borderWidth: 0.4,
-    // borderColor: '#ffffff2c',
-    // backgroundColor: 'rgba(255, 255, 255, 0.1)',
-
     borderWidth: 0.3,
     borderColor: '#ffffff11',
-
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
-
     borderTopColor: '#ffffff2e',
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
@@ -1807,7 +1756,6 @@ const styles = StyleSheet.create({
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
-    //flex: 1,
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
@@ -1833,7 +1781,6 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    // marginTop:12,
   },
   productdetails: {
     marginTop: 10,
@@ -1952,7 +1899,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   featuredLabel: {
-    //color: '#fff',
     color: '#FFFFFFE0',
     fontSize: 14,
     fontFamily: 'Urbanist-Medium',

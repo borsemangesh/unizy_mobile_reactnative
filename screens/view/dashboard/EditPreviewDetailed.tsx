@@ -345,177 +345,6 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
     type?: string;
   };
 
-
-  // const handleListPress = async () => {
-  //   console.log('🔵 handleListPress called');
-  //   try {
-  //     console.log('Step 1: Fetching formData from AsyncStorage...');
-  //     const storedData = await AsyncStorage.getItem('formData1');
-  //     console.log('✅ AsyncStorage.getItem(formData) result:', storedData);
-
-  //     if (!storedData) {
-  //       console.log('⚠️ No form data found in storage');
-  //       return;
-  //     }
-
-  //     const formData: Record<
-  //       string,
-  //       { value: any; alias_name: string | null }
-  //     > = JSON.parse(storedData);
-  //     console.log('✅ Parsed formData:', formData);
-
-  //     console.log('Step 2: Fetching userToken...');
-  //     const token = await AsyncStorage.getItem('userToken');
-  //     const productId1 = await AsyncStorage.getItem('selectedProductId');
-  //     const shareid = await AsyncStorage.getItem('shareid');
-
-  //     if (!token) {
-  //       console.log('⚠️ Token not found. Cannot upload.');
-  //       return;
-  //     }
-
-  //     console.log('Step 3: Splitting formData...');
-
-  //     const imageFields = Object.entries(formData)
-  //       .filter(([key, obj]) => {
-  //         const v = obj.value;
-  //         return (
-  //           Array.isArray(v) &&
-  //           v.length > 0 &&
-  //           v.every((item: any) => item?.uri)
-  //         );
-  //       })
-  //       .map(([key, obj]) => [key, obj.value as ImageField[]]) as [
-  //         string,
-  //         ImageField[],
-  //       ][];
-
-  //     const nonImageFields = Object.entries(formData).filter(([key, obj]) => {
-  //       const v = obj.value;
-  //       return !(Array.isArray(v) && v.every((item: any) => item?.uri));
-  //     });
-
-  //     console.log('✅ Non-image fields:', nonImageFields);
-  //     console.log('✅ Image fields:', imageFields);
-
-  //     // --- Build data array safely ---
-  //     const dataArray = nonImageFields
-  //       .filter(([key, obj]) => !isNaN(Number(key)))
-  //       .map(([key, obj]) => {
-  //         const val = obj.value;
-  //         return {
-  //           id: Number(key),
-  //           param_value: val !== undefined && val !== null && val !== '' ? val : null,
-  //         };
-  //       })
-  //       .filter(item => item.param_value !== null);
-
-  //     console.log('✅ Data array for create API:', dataArray);
-
-  //     const createPayload = {
-  //       category_id: productId1, // dynamic or static
-  //       data: dataArray,
-  //     };
-  //     console.log(
-  //       'API',
-  //       `${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`,
-  //     );
-  //     const createRes = await fetch(
-  //       `${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`,
-  //       {
-  //         method: 'PATCH',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //         body: JSON.stringify(createPayload),
-  //       },
-  //     );
-
-  //     const createJson = await createRes.json();
-  //     console.log('✅ Create API response:', createJson);
-
-  //     const apiMessage = createJson?.message || createJson?.error || "Something went wrong";
-  //     const isSuccess = createRes.status === 200 || createRes.status === 201;
-
-  //     showToast(t(apiMessage), isSuccess ? "success" : "error");
-
-  //     if (!(createRes.status === 200 || createRes.status === 201)) {
-  //       navigation.reset({
-  //         index: 0,
-  //         routes: [{ name: 'MyListing', },],
-  //       });
-  //       return;
-  //     }
-
-  //     const feature_id = createJson?.data?.id;
-  //     if (!feature_id) {
-  //       return
-  //     }
-
-  //     const storedDataImages = await AsyncStorage.getItem('deletedImagesId');
-  //     const deletedImageIds = storedDataImages ? JSON.parse(storedDataImages).deleted_image_ids || [] : [];
-
-
-  //     for (const [param_id, images] of imageFields) {
-  //       if (!Array.isArray(images)) {
-  //         continue;
-  //       }
-
-  //       for (const image of images) {
-  //         if (!image || !image.uri) {
-  //           continue;
-  //         }
-
-  //         if (deletedImageIds.includes(image.id)) {
-  //           continue;
-  //         }
-  //         const data = new FormData();
-  //         data.append('files', {
-  //           uri: image.uri,
-  //           type: image.type || 'image/jpeg',
-  //           name: image.name,
-  //         } as any);
-  //         data.append('feature_id', feature_id);
-  //         data.append('param_id', param_id);
-  //         data.append('deleted_image_ids', JSON.stringify(deletedImageIds));
-
-  //         console.log('✅ FormData prepared for upload', JSON.stringify(data));
-
-  //         const uploadUrl = `${MAIN_URL.baseUrl}category/featurelist/image-update`;
-
-  //         const uploadRes = await fetch(uploadUrl, {
-  //           method: 'POST',
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //           body: data,
-  //         });
-  //         const uploadJson = await uploadRes.json();
-
-  //         try {
-  //           console.log("✅ Upload API Parsed JSON:", uploadJson);
-  //           const apiMessage = uploadJson?.message || uploadJson?.error || `Failed to upload ${image.name}`;
-  //           const isSuccess = uploadRes.status === 200 || uploadRes.status === 201;
-  //           showToast(t(apiMessage), isSuccess ? "success" : "error");
-  //           if (!isSuccess) return;
-  //         } catch (err) {
-  //           console.error('❌ Failed to parse upload response as JSON', err);
-  //         }
-  //       }
-  //     }
-
-
-  //     console.log('✅ All uploads done. Showing toast.');
-  //     showToast(t(Constant.DATA_UPLOAD), 'success');
-  //     setShowPopup(true);
-  //   } catch (error) {
-  //     console.log('❌ Error in handleListPress:', error);
-  //     showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
-  //   }
-  // };
-
-
   const handleListPress = async () => {
 
 
@@ -524,7 +353,6 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
       const storedData = await AsyncStorage.getItem("formData1");
       if (!storedData) {
-        // console.log("⚠️ No form data found");
         return;
       }
 
@@ -721,7 +549,6 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
               style={StyleSheet.absoluteFill}
               blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
               blurAmount={Platform.OS === 'ios' ? 45 : 45}
-              // overlayColor="rgba(255,255,255,0.05)"
               reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
             />
             <LinearGradient
@@ -791,12 +618,70 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
             </AnimatedReanimated.View>
           </TouchableOpacity>
 
+           <View style={{width: 280}}>
           <Text allowFontScaling={false} style={styles.unizyText}>
             {t('preview_details')}
-          </Text>
+            </Text>
+          </View>
+          
+          <TouchableOpacity
+            onPress={() => navigation.replace('EditPreviewThumbnail')}
+            style={styles.backButtonContainer}
+            activeOpacity={0.7}
+          >
+            <AnimatedReanimated.View
+              style={[styles.blurButtonWrapper_none]}
+            >
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 30],
+                      [1, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 40,
+                  })), {display: 'none'}
+                ]}
+              />
+
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 50],
+                      [0, 1],
+                      'clamp',
+                    ),
+                  })),{display: 'none'}
+                ]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
+                />
+              </AnimatedReanimated.View>
+
+              {/* Back Icon */}
+              <AnimatedReanimated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 24, width: 24,display: 'none' }]}
+              />
+            </AnimatedReanimated.View>
+          </TouchableOpacity>
+
+
         </View>
         <AnimatedReanimated.ScrollView
           scrollEventThrottle={16}
+          showsVerticalScrollIndicator={false}
           onScroll={scrollHandler}
           contentContainerStyle={[
             styles.scrollContainer,
@@ -875,7 +760,6 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
                   )}
                 />
 
-                {/* Custom Step Indicator */}
                 <View style={styles.stepIndicatorContainer}>
                   {storedForm[6].value.map((_: any, index: number) => {
                     const isActive = index === activeIndex;
@@ -964,11 +848,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
             <View style={styles.card}>
               <View style={styles.gap12}>
-                {/* <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
-                  {userMeta?.category?.id === 3
-                    ? t('dish_details')
-                    : `${userMeta?.category?.name ? `${userMeta?.category?.name} ` : ''}${t('details')}`}
-                </Text> */}
+     
 
                 <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
                   {(() => {
@@ -1287,58 +1167,35 @@ const styles = StyleSheet.create({
     pointerEvents: 'none',
   },
   headerContent: {
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? '8.5%' : 60,
-    width: Platform.OS === 'ios' ? '100%' : '100%',
+  position: 'absolute',
+    top: (Platform.OS === 'ios' ? 60 : 40),
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: 16,
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-    marginTop: (Platform.OS === 'ios' ? 0 : 0),
-    marginLeft: 1
+    justifyContent: 'space-between',
   },
   backButtonContainer: {
-    position: 'absolute',
-    left: 16,
+  
     zIndex: 11,
-    //top: 7,
   },
-  // blurButtonWrapper: {
-  //   width: 48,
-  //   height: 48,
-  //   borderRadius: 40,
-  //   overflow: 'hidden',
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   borderWidth: 0.4,
-  //   borderColor: '#ffffff2c',
-  //   backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  // },
-
    blurButtonWrapper: {
-    width: 48,
+     width: 48,
     height: 48,
     borderRadius: 40,
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    // borderWidth: 0.4,
-    // borderColor: '#ffffff2c',
-    // backgroundColor: 'rgba(255, 255, 255, 0.1)',
-
     borderWidth: 0.3,
     borderColor: '#ffffff11',
-
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
-
     borderTopColor: '#ffffff2e',
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
@@ -1346,7 +1203,17 @@ const styles = StyleSheet.create({
     boxSizing: 'border-box',
   },
 
+ blurButtonWrapper_none: {
 
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: 'transparent',
+    backgroundColor: 'transparent',
+  },
 
   chattext: {
     color: 'rgba(255, 255, 255, 0.48)',
@@ -1470,7 +1337,6 @@ const styles = StyleSheet.create({
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
-    flex: 1,
     textAlign: 'center',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',

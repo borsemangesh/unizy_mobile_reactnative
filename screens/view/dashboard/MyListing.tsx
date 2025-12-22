@@ -5,16 +5,12 @@ import {
   Image,
   ImageBackground,
   Text,
-  TextInput,
   View,
   TouchableOpacity,
-  FlatList,
   Platform,
   StyleSheet,
-  StyleSheet as RNStyleSheet,
   StatusBar,
   ScrollView,
-  ActivityIndicator,
   Dimensions,
   BackHandler,
 } from 'react-native';
@@ -32,15 +28,13 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 const bgImage = require('../../../assets/images/backimg.png');
 import MyListingCard from '../../utils/MyListingCard';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useFocusEffect } from '@react-navigation/native';
 import Loader from '../../utils/component/Loader';
 import i18n from '../../../localization/i18n';
-const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 type Feature = {
   id: number;
@@ -76,15 +70,12 @@ const MyListing = ({ navigation }: MyListingProps) => {
   const [search, setSearch] = useState<string>('');
   const [page, setPage] = useState(1);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const pagesize = 10;
   const [featureList, setFeatureList] = useState<any[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
     null,
   );
   const [isLoading, setIsLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
-  const isInitialMount = useRef(true);
-  const insets = useSafeAreaInsets();
   const { height: screenHeight } = Dimensions.get('window');
   const { height } = Dimensions.get('window');
 
@@ -138,9 +129,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
     };
   });
 
-  const blurAmount = useDerivedValue(() =>
-    interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
-  );
   const [categories, setCategories] = useState<Category[]>([
     { id: null, name: t('all') },
   ]);
@@ -148,7 +136,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
     id: null,
     name: t('all'),
   });
-
 
   useEffect(() => {
     setPage(1);
@@ -170,19 +157,18 @@ const MyListing = ({ navigation }: MyListingProps) => {
     loadCategories();
   }, [t]);
 
-
   useEffect(() => {
     const backAction = () => {
       navigation.replace('Dashboard', {
         AddScreenBackactiveTab: 'Home',
         isNavigate: false,
-      })
+      });
       return true;
     };
 
     const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
+      'hardwareBackPress',
+      backAction,
     );
 
     return () => backHandler.remove();
@@ -198,7 +184,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
     try {
       if (isInitialLoad) {
         setInitialLoading(true);
-
       } else {
         setIsLoading(true);
       }
@@ -210,7 +195,8 @@ const MyListing = ({ navigation }: MyListingProps) => {
       }
 
       const token = await AsyncStorage.getItem('userToken');
-      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+      const language_code =
+        (await AsyncStorage.getItem('selectedLanguage')) || 'en';
 
       if (!token) {
         if (isInitialLoad) {
@@ -226,7 +212,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
-          languagecode: language_code
+          languagecode: language_code,
         },
       });
 
@@ -288,7 +274,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
   };
 
   const renderItem = useCallback(
-    ({ item, index }: { item: Feature; index: number }) => {
+    ({ item }: { item: Feature; index: number }) => {
       const displayDate = formatDate(item.created_at, t);
       const displayTitle =
         item.title && item.title.trim() !== '' ? item.title : 'Title';
@@ -330,29 +316,39 @@ const MyListing = ({ navigation }: MyListingProps) => {
   );
 
   const formatDate = (dateString?: string, t?: any) => {
-    if (!dateString) return "";
+    if (!dateString) return '';
 
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "";
+    if (isNaN(date.getTime())) return '';
 
     const day = date.getDate();
     const year = date.getFullYear();
     const lang = i18n.language; // detect current language
 
     // ---------- Suffix only for English ----------
-    let suffix = "";
-    if (lang === "en") {
-      if (day % 10 === 1 && day !== 11) suffix = "st";
-      else if (day % 10 === 2 && day !== 12) suffix = "nd";
-      else if (day % 10 === 3 && day !== 13) suffix = "rd";
-      else suffix = "th";
+    let suffix = '';
+    if (lang === 'en') {
+      if (day % 10 === 1 && day !== 11) suffix = 'st';
+      else if (day % 10 === 2 && day !== 12) suffix = 'nd';
+      else if (day % 10 === 3 && day !== 13) suffix = 'rd';
+      else suffix = 'th';
     }
 
     // ---------- Month translation ----------
     const monthIndex = date.getMonth(); // 0–11
     const monthKeys = [
-      "jan", "feb", "mar", "apr", "may", "jun",
-      "jul", "aug", "sep", "oct", "nov", "dec"
+      'jan',
+      'feb',
+      'mar',
+      'apr',
+      'may',
+      'jun',
+      'jul',
+      'aug',
+      'sep',
+      'oct',
+      'nov',
+      'dec',
     ];
 
     const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
@@ -369,7 +365,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
           backgroundColor="transparent"
           barStyle="light-content"
         />
-
 
         <StatusBar
           translucent
@@ -416,22 +411,23 @@ const MyListing = ({ navigation }: MyListingProps) => {
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
-              console.log("MYLISTSTACK", navigation.getState())
-              if (navigation.getState().routes[navigation.getState().index].name === 'MyListing') {
+              console.log('MYLISTSTACK', navigation.getState());
+              if (
+                navigation.getState().routes[navigation.getState().index]
+                  .name === 'MyListing'
+              ) {
                 navigation.replace('Dashboard', {
                   AddScreenBackactiveTab: 'Home',
                   isNavigate: false,
-                })
+                });
               }
-            }
-            }
+            }}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
             <Animated.View
               style={[styles.blurButtonWrapper, animatedButtonStyle]}
             >
-
               <Animated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -482,12 +478,9 @@ const MyListing = ({ navigation }: MyListingProps) => {
           </View>
           <TouchableOpacity
             style={[styles.backButtonContainer]}
-          // activeOpacity={0}
+            // activeOpacity={0}
           >
-            <Animated.View
-              style={[styles.blurButtonWrapper_none]}
-            >
-
+            <Animated.View style={[styles.blurButtonWrapper_none]}>
               <Animated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -500,7 +493,8 @@ const MyListing = ({ navigation }: MyListingProps) => {
                     ),
                     backgroundColor: 'transparent',
                     borderRadius: 40,
-                  })), { display: 'none' }
+                  })),
+                  { display: 'none' },
                 ]}
               />
 
@@ -515,11 +509,10 @@ const MyListing = ({ navigation }: MyListingProps) => {
                       [0, 0],
                       'clamp',
                     ),
-                  })), { display: 'none' }
+                  })),
+                  { display: 'none' },
                 ]}
-              >
-
-              </Animated.View>
+              ></Animated.View>
 
               {/* Back Icon */}
               <Animated.Image
@@ -586,9 +579,9 @@ const MyListing = ({ navigation }: MyListingProps) => {
             //   {
             //     paddingTop: Platform.OS === 'ios' ? 114 : 100,
             //     paddingBottom: isEmpty
-            //       ? 10                      
+            //       ? 10
             //       : Platform.select({
-            //         ios: height * 0.01,  
+            //         ios: height * 0.01,
             //         android: height * 0.04,
             //       }),
             //     flexGrow: 1,
@@ -597,17 +590,16 @@ const MyListing = ({ navigation }: MyListingProps) => {
             contentContainerStyle={[
               styles.listContainer,
               {
-                paddingTop: (Platform.OS === 'ios' ? 120 : 100),
+                paddingTop: Platform.OS === 'ios' ? 120 : 100,
                 paddingBottom: isEmpty
                   ? 10
                   : Platform.select({
-                    ios: height * 0.01,   // ⬅ apply padding when list has data
-                    android: height * 0.04,
-                  }),
+                      ios: height * 0.01, // ⬅ apply padding when list has data
+                      android: height * 0.04,
+                    }),
                 flexGrow: 1,
               },
             ]}
-
             onScroll={scrollHandler}
             scrollEventThrottle={16}
             onEndReachedThreshold={0.5}
@@ -631,13 +623,29 @@ const MyListing = ({ navigation }: MyListingProps) => {
               ) : null
             }
             ListEmptyComponent={
-
               (isLoading || initialLoading) && featurelist.length === 0 ? (
-                <View style={[styles.emptyWrapper, { justifyContent: 'center', flex: 1 }]}>
-                  <Loader containerStyle={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }} />
+                <View
+                  style={[
+                    styles.emptyWrapper,
+                    { justifyContent: 'center', flex: 1 },
+                  ]}
+                >
+                  <Loader
+                    containerStyle={{
+                      width: 50,
+                      height: 50,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  />
                 </View>
               ) : !isLoading && featurelist.length === 0 ? (
-                <View style={[styles.emptyWrapper, { justifyContent: 'center', alignItems: 'center', flex: 1 }]}>
+                <View
+                  style={[
+                    styles.emptyWrapper,
+                    { justifyContent: 'center', alignItems: 'center', flex: 1 },
+                  ]}
+                >
                   <View style={styles.emptyContainer}>
                     <Image
                       source={require('../../../assets/images/noproduct.png')}
@@ -662,11 +670,9 @@ const MyListing = ({ navigation }: MyListingProps) => {
 export default MyListing;
 
 const styles = StyleSheet.create({
-
-  categoryTabsContainer: { width: '105%', paddingBottom: 16, paddingTop: 8},
+  categoryTabsContainer: { width: '105%', paddingBottom: 16, paddingTop: 8 },
   categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' },
   blurButtonWrapper_none: {
-
     width: 48,
     height: 48,
     borderRadius: 40,
@@ -682,7 +688,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    marginBottom: Platform.OS === "ios" ? 20 : 10,
+    marginBottom: Platform.OS === 'ios' ? 20 : 10,
   },
 
   emptyContainer: {
@@ -695,7 +701,6 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.08)',
     borderRadius: 24,
     overflow: 'hidden',
-
   },
   emptyImage: {
     width: 50,
@@ -707,7 +712,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
-    fontWeight: 600
+    fontWeight: 600,
   },
 
   blurButtonWrapper: {
@@ -717,22 +722,14 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    // borderWidth: 0.4,
-    // borderColor: '#ffffff2c',
-    // backgroundColor: 'rgba(255, 255, 255, 0.1)',
-
-
-
     borderWidth: 0.3,
     borderColor: '#ffffff11',
-
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
+    boxShadow:
+      '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
-
     borderTopColor: '#ffffff2e',
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
@@ -750,20 +747,8 @@ const styles = StyleSheet.create({
     pointerEvents: 'none',
   },
   headerContent: {
-    // position: 'absolute',
-    // top: Platform.OS === 'ios' ? '6%' : 40,
-    // width: Platform.OS === 'ios' ? 393 : '100%',
-    // flexDirection: 'row',
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    // paddingHorizontal: 16,
-    // zIndex: 11,
-    // alignSelf: 'center',
-    // pointerEvents: 'box-none',
-    // marginTop: 2,
-    // marginLeft: 1
     position: 'absolute',
-    top: (Platform.OS === 'ios' ? 60 : 40),
+    top: Platform.OS === 'ios' ? 60 : 40,
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -814,10 +799,7 @@ const styles = StyleSheet.create({
     minHeight: Platform.OS === 'ios' ? 80 : 88,
   },
   backButtonContainer: {
-    // position: 'absolute',
-    // left: 16,
     zIndex: 11,
-    // top: 7,
   },
   headerRow: {
     flexDirection: 'row',
@@ -839,7 +821,6 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
   },
   unizyText: {
-
     color: '#FFFFFF',
     fontSize: 20,
     textAlign: 'center',
@@ -871,17 +852,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     width: '100%',
   },
-
-  // categoryTabsContainer: { 
-  //   marginBottom: 12, 
-  //   marginTop: 12, 
-  //   width: '105%',
-  //  },
-  // categoryTabsScrollContent: { 
-  //   flexDirection: 'row', 
-  //   alignItems: 'center' 
-  // },
-
   tabcard: {
     minHeight: 38,
     paddingVertical: 10,
@@ -892,29 +862,10 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderRadius: 10,
-    // boxShadow:
-    //   'rgba(255, 255, 255, 0.02)inset 0.1px 0.1px 1px 0px,',
 
 
-
-
-  // borderWidth: 0.3,
-  // borderColor: '#ffffff11',
-
-  boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
-  // backgroundColor:
-  //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-  // borderBlockStartColor: '#ffffff2e',
-  // borderBlockColor: '#ffffff2e',
-
-  // borderTopColor: '#ffffff2e',
-  // borderBottomColor: '#ffffff2e',
-  // borderLeftColor: '#ffffff2e',
-  // borderRightColor: '#ffffff2e',
-  // boxSizing: 'border-box',
-
-
+    boxShadow:
+      '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
   },
   tabcard1: {
     minHeight: 38,
@@ -937,13 +888,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 16,
     marginRight: 8,
-  boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-
+    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
   },
 
-
-
   itemContainer: {
-    width: '100%'
+    width: '100%',
   },
 });

@@ -6,13 +6,9 @@ import {
   Image,
   StyleSheet,
   Platform,
-  ScrollView,
   StatusBar,
   Modal,
   TouchableWithoutFeedback,
-  TextInput,
-  Keyboard,
-  Alert,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -172,7 +168,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
     fetchAccountDetails();
   }, [fetchAccountDetails]);
 
-  // Reset onboarding flag when screen loses focus
+
   useFocusEffect(
     useCallback(() => {
       return () => {
@@ -437,8 +433,6 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                   reducedTransparencyFallbackColor="transparent"
                 />
               </Animated.View>
-
-              {/* Back Icon */}
               <Animated.Image
                 source={require('../../../assets/images/back.png')}
                 style={[{ height: 24, width: 24 ,display: 'none'}]}
@@ -471,7 +465,6 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                 width: '100%',
               }}
             >
-              {/* Profile Details Card */}
               <SquircleView
                 style={styles.card}
                 squircleParams={{
@@ -852,19 +845,6 @@ const styles = StyleSheet.create({
     zIndex: 11,
   },
   headerContent: {
-    // position: 'absolute',
-    // top: Platform.OS === 'ios' ? '8.5%' : 60,
-    // width: Platform.OS === 'ios' ? '100%' : '100%',
-    // flexDirection: 'row',
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    // paddingHorizontal: 16,
-    // zIndex: 11,
-    // alignSelf: 'center',
-    // pointerEvents: 'box-none',
-    // marginTop: Platform.OS === 'ios' ? 0 : 0,
-    // marginLeft: 1,
-
     position: 'absolute',
     top: (Platform.OS === 'ios' ? 60 : 40),
     width: '100%',

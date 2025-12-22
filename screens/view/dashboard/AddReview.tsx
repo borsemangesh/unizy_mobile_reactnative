@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Image,
   ImageBackground,
@@ -17,12 +17,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 
 const bgImage = require('../../../assets/images/backimg.png');
-import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
+import { useRoute, RouteProp } from '@react-navigation/native';
 import {
   NewCustomToastContainer,
   showToast,
 } from '../../utils/component/NewCustomToastManager';
-import StarRating from '../../utils/StarRating';
 import AddRating from '../../utils/AddRating';
 import { BlurView } from '@react-native-community/blur';
 import Button from '../../utils/component/Button';
@@ -532,18 +531,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    // position: 'absolute',
-    // top: Platform.OS === 'ios' ? '6.7%' : 60,
-    // width: Platform.OS === 'ios' ? '100%' : '100%',
-    // flexDirection: 'row',
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    // paddingHorizontal: 16,
-    // zIndex: 11,
-    // alignSelf: 'center',
-    // pointerEvents: 'box-none',
-    // marginTop: Platform.OS === 'ios' ? 0 : 0,
-    // marginLeft: 1,
     position: 'absolute',
     top: (Platform.OS === 'ios' ? 60 : 40),
     width: '100%',
@@ -567,11 +554,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    // backgroundColor:
-    //   'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    // boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-    // borderWidth: 0.4,
-    // borderColor: '#ffffff2c',
     height: 48,
     width: 48,
 
