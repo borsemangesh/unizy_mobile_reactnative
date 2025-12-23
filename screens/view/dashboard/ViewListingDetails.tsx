@@ -236,7 +236,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
         orderid: selectedOrderId,
       };
 
-;
+      ;
 
       const res = await fetch(url, {
         method: 'POST',
@@ -266,34 +266,34 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
     }
   };
 
- const formatDateWithDash = (dateString?: string, t?: any) => {
-  if (!dateString) return "";
-  
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) return "";
+  const formatDateWithDash = (dateString?: string, t?: any) => {
+    if (!dateString) return "";
 
-  const day = date.getDate();
-  const lang = i18n.language; 
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "";
 
-  let suffix = "";
-  if (lang === "en") {
-    if (day % 10 === 1 && day !== 11) suffix = "st";
-    else if (day % 10 === 2 && day !== 12) suffix = "nd";
-    else if (day % 10 === 3 && day !== 13) suffix = "rd";
-    else suffix = "th";
-  }
+    const day = date.getDate();
+    const lang = i18n.language;
 
-  const monthIndex = date.getMonth(); 
-  const monthKeys = [
-    "jan","feb","mar","apr","may","jun",
-    "jul","aug","sep","oct","nov","dec"
-  ];
+    let suffix = "";
+    if (lang === "en") {
+      if (day % 10 === 1 && day !== 11) suffix = "st";
+      else if (day % 10 === 2 && day !== 12) suffix = "nd";
+      else if (day % 10 === 3 && day !== 13) suffix = "rd";
+      else suffix = "th";
+    }
 
-  const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
-  const year = date.getFullYear();
+    const monthIndex = date.getMonth();
+    const monthKeys = [
+      "jan", "feb", "mar", "apr", "may", "jun",
+      "jul", "aug", "sep", "oct", "nov", "dec"
+    ];
 
-  return `${day}${suffix} ${monthShort} ${year}`;
-};
+    const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
+    const year = date.getFullYear();
+
+    return `${day}${suffix} ${monthShort} ${year}`;
+  };
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
@@ -386,11 +386,11 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
             </AnimatedReanimated.View>
           </TouchableOpacity>
 
-          <View style={{width: 280}}>
-          <Text numberOfLines={2} allowFontScaling={false} style={styles.unizyText}>
-            {t('listing_details')}
-          </Text>
-            
+          <View style={{ width: 280 }}>
+            <Text numberOfLines={2} allowFontScaling={false} style={styles.unizyText}>
+              {t('listing_details')}
+            </Text>
+
           </View>
           <TouchableOpacity
             onPress={() => {
@@ -414,7 +414,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                     ),
                     backgroundColor: 'rgba(255,255,255,0.1)',
                     borderRadius: 40,
-                  })),{display: 'none'}
+                  })), { display: 'none' }
                 ]}
               />
 
@@ -428,7 +428,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                       [0, 1],
                       'clamp',
                     ),
-                  })),{display: 'none'}
+                  })), { display: 'none' }
                 ]}
               >
                 <BlurView
@@ -442,7 +442,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
               {/* Back Icon */}
               <AnimatedReanimated.Image
                 source={require('../../../assets/images/back.png')}
-                style={[{ height: 24, width: 24,display: 'none'  }]}
+                style={[{ height: 24, width: 24, display: 'none' }]}
               />
             </AnimatedReanimated.View>
           </TouchableOpacity>
@@ -470,10 +470,10 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
             }}
           >
             <View style={[styles.card, { marginTop: (Platform.OS === 'ios' ? 6 : 10) }]}>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <View style={{ flexDirection: 'row'}}>
                 {(() => {
                   const categoryName = data?.list?.category?.id || 0;
-                    const isProfileCategory =categoryName === 2 ||categoryName === 5;
+                  const isProfileCategory = categoryName === 2 || categoryName === 5;
                   const profilePhoto = data?.list?.createdby?.profile;
                   const firstName = data?.list?.createdby?.firstname;
                   const lastName = data?.list?.createdby?.lastname;
@@ -518,28 +518,35 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                   }
                 })()}
                 <View style={{ marginLeft: 10, gap: 8 }}>
-                  <Text
-                    allowFontScaling={false}
-                    style={styles.productlebleHeader}
-                  >
-                    {data?.list?.title}
-                  </Text>
+                  <View style={{ width: '88%' }}>
+                    <Text
+                      numberOfLines={2}
+                      allowFontScaling={false}
+                      style={styles.productlebleHeader}
+                    >
+                      {data?.list?.title}
+                    </Text>
+                  </View>
                   <View style={styles.rightSection}>
-                    <Text allowFontScaling={false} style={styles.productlableprice}>
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.productlableprice}
+                    >
                       £{data?.list?.price}
                     </Text>
                     <Text allowFontScaling={false} style={styles.datetlable}>
-                      {formatDateWithDash(data?.list?.created_at,t)}
+                      {formatDateWithDash(data?.list?.created_at, t)}
                     </Text>
                   </View>
 
-
                   <View style={styles.univercitycontainer}>
-                    <Text allowFontScaling={false} style={styles.universitylable}>
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.universitylable}
+                    >
                       {data?.list?.createdby?.university_name}
                     </Text>
                   </View>
-
                 </View>
               </View>
               <View style={styles.cardconstinerdivider} />
@@ -634,7 +641,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                             fontWeight: '600',
                           }}
                         >
-                           {t('completed')}
+                          {t('completed')}
                         </Text>
                         <Image
                           source={require('../../../assets/images/tick.png')}
@@ -657,7 +664,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                   </View>
                   <View style={styles.listingtyperow1}>
                     <Text allowFontScaling={false} style={styles.lebleHeader}>
-                     {t('buyer_university')}:
+                      {t('buyer_university')}:
                     </Text>
                     <Text allowFontScaling={false} numberOfLines={0} style={styles.unistatus}>
                       {buyer.university_name}
@@ -692,7 +699,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                   {data?.list?.category_id === 3 && (
                     <View style={styles.listingtyperow}>
                       <Text allowFontScaling={false} style={styles.lebleHeader}>
-                         {t('Units_Purchased')}:
+                        {t('Units_Purchased')}:
                       </Text>
 
                       <Text allowFontScaling={false} style={styles.status}>
@@ -703,7 +710,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
 
                   <View style={styles.listingtyperow}>
                     <Text allowFontScaling={false} style={styles.lebleHeader}>
-                     {t('sold_for')}:
+                      {t('sold_for')}:
                     </Text>
                     <Text allowFontScaling={false} style={styles.status}>
                       £{buyer.price}
@@ -735,7 +742,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                         }}
                       >
                         <Text allowFontScaling={false} style={styles.status1}>
-                         {t('enter_otp')}
+                          {t('enter_otp')}
                         </Text>
                       </TouchableOpacity>
                     </View>
@@ -780,7 +787,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
 
                 <View style={styles.popupContainer}>
                   <Text allowFontScaling={false} style={styles.mainheader}>
-                     {t('Enter_Delivery_OTP')}
+                    {t('Enter_Delivery_OTP')}
                   </Text>
 
                   <Text allowFontScaling={false} style={styles.subheader}>
@@ -821,7 +828,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.loginText1}>
-                       {t('cancel')}
+                      {t('cancel')}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -875,7 +882,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                     allowFontScaling={false}
                     style={[styles.subheader1, { marginTop: 0 }]}
                   >
-                   {t('The_payment_of')} £{price} {t('has_been_transferred_to_your_account')}
+                    {t('The_payment_of')} £{price} {t('has_been_transferred_to_your_account')}
                   </Text>
                   <TouchableOpacity
                     style={styles.loginButton}
@@ -927,7 +934,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                     resizeMode="contain"
                   />
                   <Text allowFontScaling={false} style={styles.mainheader}>
-                     {t('Deactivate_Listing')}
+                    {t('Deactivate_Listing')}
                   </Text>
                   <Text allowFontScaling={false} style={styles.subheader}>
                     {t('deactivate_listing')}
@@ -987,7 +994,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 999, 
+    zIndex: 999,
   },
   rightSection: {
     flexDirection: 'row',
@@ -1035,8 +1042,8 @@ const styles = StyleSheet.create({
     letterSpacing: -0.28,
     lineHeight: 16,
     fontFamily: 'Urbanist-SemiBold',
-    flex: 1,           
-    textAlign: 'right', 
+    flex: 1,
+    textAlign: 'right',
     flexWrap: 'wrap',
   },
   headerWrapper: {
@@ -1127,7 +1134,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     width: '100%',
     alignSelf: 'center',
-    gap: 6, 
+    gap: 6,
     marginTop: 16,
   },
 
@@ -1339,7 +1346,7 @@ const styles = StyleSheet.create({
     height: 72,
     borderRadius: 14,
   },
- 
+
   productlebleHeader: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontSize: 14,
@@ -1347,7 +1354,8 @@ const styles = StyleSheet.create({
     letterSpacing: -0.24,
     lineHeight: 16,
     fontFamily: 'Urbanist-SemiBold',
-    paddingTop: 10,
+    //paddingTop: 10,
+    //maxWidth:'95%'
   },
 
   dottext: {
@@ -1394,7 +1402,7 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     fontFamily: 'Urbanist-SemiBold',
   },
- 
+
   scrollContainer: {
     paddingBottom: 80,
     paddingTop: Platform.OS === 'ios' ? 120 : 100,

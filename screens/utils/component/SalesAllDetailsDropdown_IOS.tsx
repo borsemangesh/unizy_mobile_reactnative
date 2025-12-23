@@ -186,6 +186,7 @@ const SalesAllDetailsDropdown_IOS = ({
                       fontFamily: 'Urbanist-SemiBold',
                       fontSize: 14,
                     }}
+                    allowFontScaling={false}
                   >
                     {buyer.firstname} {buyer.lastname}
                   </Text>
@@ -196,6 +197,7 @@ const SalesAllDetailsDropdown_IOS = ({
                       fontFamily: 'Urbanist-SemiBold',
                       fontSize: 12,
                     }}
+                    allowFontScaling={false}
                   >
                     {buyer.university_name}
                   </Text>
@@ -225,6 +227,7 @@ const SalesAllDetailsDropdown_IOS = ({
                         fontSize: 14,
                         marginLeft: 8, 
                       }}
+                      allowFontScaling={false}
                     >
                       £ {parseFloat(buyer.amount).toFixed(2)}
                     </Text>
@@ -237,6 +240,7 @@ const SalesAllDetailsDropdown_IOS = ({
                       fontFamily: 'Urbanist-regular',
                       fontSize: 12,
                     }}
+                    allowFontScaling={false}
                   >
                     {formatPurchaseDate(buyer.purchase_date, t)}
                   </Text>
@@ -245,7 +249,7 @@ const SalesAllDetailsDropdown_IOS = ({
             </View>
           ))
         ) : (
-          <Text style={{ color: 'white', textAlign: 'center', padding: 20 }}>
+          <Text allowFontScaling={false} style={{ color: 'white', textAlign: 'center', padding: 20 }}>
             {t('no_sales_data')}
           </Text>
         )}
@@ -315,7 +319,7 @@ const SalesAllDetailsDropdown_IOS = ({
                     <Image source={background} style={styles.imgcontainer} resizeMode="cover" />
                     <Image source={{ uri: SalesImageUrl }} style={styles.image} resizeMode="cover" />
                   </View>
-                  <Text style={styles.salesTitle}>{dropDowntitle}</Text>
+                  <Text allowFontScaling={false} style={styles.salesTitle}>{dropDowntitle}</Text>
                 </View>
 
                 <View style={styles.cardconstinerdivider} />
@@ -327,6 +331,7 @@ const SalesAllDetailsDropdown_IOS = ({
                       fontWeight: '600',
                       color: '#FFFFFF',
                     }}
+                    allowFontScaling={false}
                   >
                     {t('total_order')}: {salesData.length}
                   </Text>
@@ -337,6 +342,7 @@ const SalesAllDetailsDropdown_IOS = ({
                       fontWeight: '600',
                       color: '#FFFFFF',
                     }}
+                    allowFontScaling={false}
                   >
                     {t('total_earnings')}: £ {totalEarnings}
 
@@ -422,6 +428,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     letterSpacing: 1,
     fontFamily: 'Urbanist-SemiBold',
+    maxWidth:"80%"
   },
   image: {
     width: 24,
