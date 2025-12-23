@@ -591,18 +591,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden'
 
   },
-  // bottomview: {
-  //   padding: 10,
-  //   width: '100%',
-  //   height: '10%',
-  //   display: 'flex',
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-between',
-  //   paddingBottom: 20,
-  //   backgroundColor: 'rgba(0, 0, 0, 0.001)',
-  //   marginBottom:16
-  // },
-
   bottomview: {
     padding: 10,
     width: '100%',
@@ -610,7 +598,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    // backgroundColor: '#5d5c5c14',
     paddingBottom: 20,
     backgroundColor: 'rgba(0, 0, 0, 0.001)',
   },
@@ -662,7 +649,6 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
     minHeight: 48,
     flex: 1,
-    //marginRight: 8,
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 50,

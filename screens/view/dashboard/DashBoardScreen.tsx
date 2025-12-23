@@ -1043,12 +1043,15 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-
         {activeTab === 'Home' && (
           <View
             style={[
               styles.header,
-              { paddingTop: (Platform.OS === 'ios' ? 60 : 40), gap: 16, paddingHorizontal: 16 },
+              {
+                paddingTop: Platform.OS === 'ios' ? 60 : 40,
+                gap: 16,
+                paddingHorizontal: 16,
+              },
             ]}
           >
             <Animated.View
@@ -1116,8 +1119,8 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
           keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
         >
           {activeTab === 'Search' ||
-            activeTab === 'Profile' ||
-            activeTab === 'Bookmark' ? (
+          activeTab === 'Profile' ||
+          activeTab === 'Bookmark' ? (
             <View style={{ flex: 1 }}>
               <StatusBar
                 translucent
@@ -1188,16 +1191,15 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                     fontFamily: 'Urbanist-SemiBold',
                   }}
                 >
-
                   {activeTab === 'Search'
                     ? t('transaction_history')
                     : activeTab === 'Profile'
-                      ? t('profile')
-                      : activeTab === 'Bookmark'
-                        ? t('messages')
-                        : activeTab === 'Add'
-                          ? t('settings')
-                          : null}
+                    ? t('profile')
+                    : activeTab === 'Bookmark'
+                    ? t('messages')
+                    : activeTab === 'Add'
+                    ? t('settings')
+                    : null}
                 </Text>
               </View>
               <AnimatedReanimated.ScrollView
@@ -1275,7 +1277,37 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
             </View>
           ) : (
             <>
-
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { borderRadius: 25, backgroundColor: 'transparent' },
+                ]}
+              >
+                <BlurView
+                  style={[
+                    StyleSheet.absoluteFill,
+                    {
+                      borderRadius: 25,
+                      backgroundColor: 'transparent',
+                      overflow: 'hidden',
+                    },
+                  ]}
+                  blurType="light"
+                  blurAmount={1.3}
+                  reducedTransparencyFallbackColor="rgba(15, 21, 131, 0.05)"
+                  overlayColor="rgba(15, 21, 131, 0.05)"
+                >
+                  <View
+                    style={{
+                      // opacity: Platform.OS === 'ios' ? 0.4 : 0,
+                      // backgroundColor: 'rgba(0, 3, 65, 0.98)',
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 25,
+                    }}
+                  ></View>
+                </BlurView>
+              </View>
             </>
           )}
 
@@ -1471,7 +1503,7 @@ const styles = StyleSheet.create({
   tabItem: {
   },
   iconWrapper: {
-    height: 50, //
+    height: 50,
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',

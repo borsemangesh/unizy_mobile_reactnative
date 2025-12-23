@@ -364,7 +364,13 @@ export default function TransactionHistoryScreen(
   return (
     <View
       style={[
-        { flex: 1, marginTop: 11, paddingHorizontal: 16, height: '100%', width: '100%' },
+        {
+          flex: 1,
+          marginTop: 11,
+          paddingHorizontal: 16,
+          height: '100%',
+          width: '100%',
+        },
       ]}
     >
       <View style={[styles.bottomTabContainer]}>
@@ -405,7 +411,6 @@ export default function TransactionHistoryScreen(
                   }}
                 >
                   {getTabLabel(key)}
-
                 </Text>
               </View>
             </TouchableOpacity>
@@ -448,12 +453,11 @@ export default function TransactionHistoryScreen(
       <ScrollView
         style={{
           width: '100%',
-          flex:1,
+          flex: 1,
           paddingBottom: Platform.OS === 'ios' ? height * 0.1 : height * 0.2,
-          
         }}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{flexGrow:1}}
+        contentContainerStyle={{ flexGrow: 1 }}
       >
         {loading ? (
           <View style={styles.loaderWrapper}>
@@ -461,7 +465,14 @@ export default function TransactionHistoryScreen(
           </View>
         ) : transactions.length === 0 ? (
           <View style={styles.emptyWrapper}>
-            <View style={[styles.emptyContainer,{height: (Platform.OS === 'ios' ? height*0.70 : height*0.72)}]}>
+            <View
+              style={[
+                styles.emptyContainer,
+                {
+                  height: Platform.OS === 'ios' ? height * 0.7 : height * 0.72,
+                },
+              ]}
+            >
               <Image
                 source={require('../../../assets/images/noproduct.png')}
                 style={styles.emptyImage}
@@ -481,33 +492,50 @@ export default function TransactionHistoryScreen(
               {section.items.map((item, i) => (
                 <View key={i} style={styles.card}>
                   <View style={styles.row}>
-                    <View style={{ flex: 1 }}>
-                      <View
+                    <View style={{ flexDirection: 'row',alignItems:'center',gap:12 }}>
+                      {/* <View
                         style={{
                           flexDirection: 'row',
                           gap: 12,
                           alignItems: 'center',
                         }}
-                      >
-                        <View >
-                          <Image source={background} style={styles.imgcontainer} resizeMode="cover" />
-                          <Image source={{ uri: item.category_logo }} style={styles.image} resizeMode="cover" />
+                      > */}
+                        <View>
+                          <Image
+                            source={background}
+                            style={styles.imgcontainer}
+                            resizeMode="cover"
+                          />
+                          <Image
+                            source={{ uri: item.category_logo }}
+                            style={styles.image}
+                            resizeMode="cover"
+                          />
                         </View>
                         <View style={{ gap: 4 }}>
-                        <View style={{width: 140 }}>
-                          <Text
-                          numberOfLines={2}
-                            allowFontScaling={false}
-                            style={styles.itemTitle}
-                          >
-                            {item.title}
-                          </Text>
+                          <View style={{  width: '90%' }}>
+                            <Text
+                              numberOfLines={2}
+                              allowFontScaling={false}
+                              style={styles.itemTitle}
+                            >
+                              {item.title}
+                            </Text>
                           </View>
-                          <View style={{ flexDirection: 'row', gap: 4, width: '92%', justifyContent: 'space-between'}}>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                            gap: 4,
+                            width: '89.2%',
+                              justifyContent: 'space-between',
+                            }}
+                          >
                             <Text allowFontScaling={false} style={styles.price}>
                               {item.price}
                             </Text>
-                            {(item?.category_id === 3 || item?.category_id === 2 || item?.category_id === 5) && (
+                            {(item?.category_id === 3 ||
+                              item?.category_id === 2 ||
+                              item?.category_id === 5) && (
                               <View style={styles.statusBox}>
                                 <Text
                                   allowFontScaling={false}
@@ -519,21 +547,25 @@ export default function TransactionHistoryScreen(
                                   }}
                                 >
                                   {item?.category_id === 3
-                                    ?
-                                    `${item?.purchased_quantity ?? 1} ${(item?.purchased_quantity ?? 1) > 1 ? t('units') : t('unit')
-                                    }`
-                                    : (item?.category_id === 2 || item?.category_id === 5)
-                                      ?
-                                      `${item?.hours ?? 1} ${(item?.hours ?? 1) > 1 ? t('hours') : t('hour')
+                                    ? `${item?.purchased_quantity ?? 1} ${
+                                        (item?.purchased_quantity ?? 1) > 1
+                                          ? t('units')
+                                          : t('unit')
                                       }`
-                                      : ''
-                                  }
+                                    : item?.category_id === 2 ||
+                                      item?.category_id === 5
+                                    ? `${item?.hours ?? 1} ${
+                                        (item?.hours ?? 1) > 1
+                                          ? t('hours')
+                                          : t('hour')
+                                      }`
+                                    : ''}
                                 </Text>
                               </View>
                             )}
                           </View>
                         </View>
-                      </View>
+                      {/* </View> */}
                     </View>
                   </View>
 
@@ -574,7 +606,8 @@ export default function TransactionHistoryScreen(
 
                   <View style={styles.cardconstinerdivider} />
                   <Text style={styles.sellerText}>
-                    {t('purchased_from')}{'  '}
+                    {t('purchased_from')}
+                    {'  '}
                     <Text style={styles.sellerTextName}>
                       {item.seller} ({item.university})
                     </Text>
@@ -594,9 +627,17 @@ export default function TransactionHistoryScreen(
                   width: '100%',
                 }}
               >
-                <View >
-                  <Image source={background} style={styles.imgcontainer} resizeMode="cover" />
-                  <Image source={totalEaning} style={styles.image} resizeMode="cover" />
+                <View>
+                  <Image
+                    source={background}
+                    style={styles.imgcontainer}
+                    resizeMode="cover"
+                  />
+                  <Image
+                    source={totalEaning}
+                    style={styles.image}
+                    resizeMode="cover"
+                  />
                 </View>
                 <View
                   style={{
@@ -608,14 +649,14 @@ export default function TransactionHistoryScreen(
                     padding: 1,
                   }}
                 >
-                  <View style={{width: 120}}>
-                  <Text
-                    allowFontScaling={false}
-                    numberOfLines={2}
-                    style={styles.Overall_Earnings_value}
-                  >
-                    {t('overall_earnings')}
-                  </Text>
+                  <View style={{ width: 120 }}>
+                    <Text
+                      allowFontScaling={false}
+                      numberOfLines={2}
+                      style={styles.Overall_Earnings_value}
+                    >
+                      {t('overall_earnings')}
+                    </Text>
                   </View>
 
                   <Text
@@ -651,16 +692,24 @@ export default function TransactionHistoryScreen(
                           gap: 12,
                         }}
                       >
-                        <View >
-                          <Image source={background} style={styles.imgcontainer} resizeMode="cover" />
-                          <Image source={{ uri: item.category_logo }} style={styles.image} resizeMode="cover" />
+                        <View>
+                          <Image
+                            source={background}
+                            style={styles.imgcontainer}
+                            resizeMode="cover"
+                          />
+                          <Image
+                            source={{ uri: item.category_logo }}
+                            style={styles.image}
+                            resizeMode="cover"
+                          />
                         </View>
-                        <View style={{width: 160}}>
-                        <Text numberOfLines={2} style={styles.salesTitle}>
-                          {item.title.length > 24
-                            ? `${item.title.substring(0, 24)}...`
-                            : item.title}
-                        </Text>
+                        <View style={{ width: 160 }}>
+                          <Text numberOfLines={2} style={styles.salesTitle}>
+                            {item.title.length > 24
+                              ? `${item.title.substring(0, 24)}...`
+                              : item.title}
+                          </Text>
                         </View>
                       </View>
 
@@ -740,23 +789,30 @@ export default function TransactionHistoryScreen(
                         justifyContent: 'center',
                       }}
                     >
-                      <View >
-                        <Image source={background} style={styles.imgcontainer} resizeMode="cover" />
-                        <Image source={{ uri: item.category_logo }} style={styles.image} resizeMode="cover" />
+                      <View>
+                        <Image
+                          source={background}
+                          style={styles.imgcontainer}
+                          resizeMode="cover"
+                        />
+                        <Image
+                          source={{ uri: item.category_logo }}
+                          style={styles.image}
+                          resizeMode="cover"
+                        />
                       </View>
-                      <View style={{width: 160}}>
-                      <Text
-                      numberOfLines={2}
-                        allowFontScaling={false}
-                        style={styles.chargesTitle}
-                      >
-                        {item.title}
-                      </Text>
+                      <View style={{ width: 160 }}>
+                        <Text
+                          numberOfLines={2}
+                          allowFontScaling={false}
+                          style={styles.chargesTitle}
+                        >
+                          {item.title}
+                        </Text>
                       </View>
                     </View>
                     <TouchableOpacity
                       onPress={() => {
-
                         navigation1.navigate('ViewListingDetails', {
                           shareid: item.featureId,
                         });
@@ -788,7 +844,6 @@ export default function TransactionHistoryScreen(
         )}
       </ScrollView>
 
-
       {Platform.OS === 'android' ? (
         <>
           <SalesAllDetailsDropdown
@@ -810,11 +865,8 @@ export default function TransactionHistoryScreen(
             salesDataResponse={salesData}
             dropDowntitle={salesTitle}
           />
-
         </>
       )}
-
-
     </View>
   );
 }

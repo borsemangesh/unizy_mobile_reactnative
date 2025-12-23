@@ -4,26 +4,18 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
-  ImageBackground,
   Image,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
-  TextInput,
-  Switch,
-  Alert,
-  KeyboardAvoidingView,
   Modal,
   Animated,
   Dimensions,
-  Easing,
   Platform,
   FlatList,
   TouchableWithoutFeedback,
 } from 'react-native';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
-import { useFocusEffect } from '@react-navigation/native';
 import { BlurView } from '@react-native-community/blur';
 import DeviceInfo from 'react-native-device-info';
 import Loader from '../../utils/component/Loader';
@@ -32,12 +24,7 @@ import { resetTwilioClient } from '../../view/emoji/twilioService';
 import { clearTwilioCache } from '../dashboard/MessageIndividualScreen';
 import { useTranslation } from "react-i18next";
 
-const bgImage = require('../../../assets/images/backimg.png');
-const profileImg = require('../../../assets/images/user.jpg');
-const logouticon = require('../../../assets/images/logout.png')
 
-const helpicon = require('../../../assets/images/help.png')
-const okicon = require('../../../assets/images/ok.png')
 
 const cardData = [
   { id: '1', titleKey: 'payment_methods', image: require('../../../assets/images/payment.png') },
@@ -58,7 +45,6 @@ type ProfileCardContentProps = {
 };
 const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
 
-  const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
   const [isHidden, setIsHidden] = useState(true);
 
@@ -289,9 +275,6 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
   };
   const APP_VERSION = 'v1.0.0';
 
-  const clickBack = () => {
-    navigation.replace('Dashboard', { AddScreenBackactiveTab: 'Home', isNavigate: false })
-  }
   const getInitials = (firstName = '', lastName = '') => {
     const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
     const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
@@ -410,6 +393,8 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
             data={cardData}
             keyExtractor={item => item.id}
             renderItem={renderItem}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: (Platform.OS === 'ios' ? 10 : 110) }}
             ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
           />
         </View>
