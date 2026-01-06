@@ -63,6 +63,8 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [showConfirm1, setShowConfirm1] = useState(false);
   const [loading, setLoading] = useState(true);
+  const isLoadingRef = useRef(false);
+
 
 
   useEffect(() => {
@@ -152,19 +154,32 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
 
     fetchUserProfile();
   }, []);
+
   const openStripeOnboarding = async () => {
+
+     if (isLoadingRef.current) return;
+     isLoadingRef.current = true;
+    //setLoading(true);
     try {
       const token = await AsyncStorage.getItem('userToken');
-      const response = await fetch(
-        `${MAIN_URL.baseUrl}transaction/account-detail`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+    const url = `${MAIN_URL.baseUrl}transaction/account-detail`;
+
+    console.log('API URL:', url);
+    console.log('Token:', token);
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log('Response status:', response.status);
+    console.log('Response ok:', response.ok);
+
+    //const responseText = await response.text(); // use text() first
+    //console.log('Raw response:', responseText);
 
       const json = await response.json();
 
@@ -202,6 +217,10 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
         showToast(t(Constant.SOMTHING_WENT_WRONG),'error');
       }
     }
+    finally {
+    isLoadingRef.current = false;
+    //setLoading(false);
+  }
   };
 
 

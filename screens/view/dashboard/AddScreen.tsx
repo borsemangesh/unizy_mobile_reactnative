@@ -721,6 +721,12 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               keyboardType={rnKeyboardType}
               value={isPriceField && rawValue ? `£ ${rawValue}` : rawValue}
               onChangeText={text => {
+                 let value = text;
+                 if (alias_name?.toLowerCase() === 'quantity') {
+                  if (value === '0') {
+                    return;
+                  }
+                }
                 if (isPriceField) {
                   const cleaned = text.replace(/£\s?/g, '');
                   handleValueChange(param.id, alias_name, cleaned);

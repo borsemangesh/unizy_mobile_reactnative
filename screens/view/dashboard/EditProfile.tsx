@@ -684,7 +684,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
 
       if (data?.statusCode === 200) {
+        showToast(t(data?.message), 'success');
         setShowPopup1(false);
+        setIsUpdateDisabled(true)
+        setIsUpdateDisabled_personal(true)
+
 
       } else {
         showToast(t(data?.message), 'error');
