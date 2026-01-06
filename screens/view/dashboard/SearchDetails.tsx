@@ -249,6 +249,15 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     option_name: String(i + 1),
   }));
 
+
+  const priceText =
+  detail?.category?.id === 2
+    ? `£${Number(detail.price).toFixed(2)}/${t('hr')}`
+    : detail?.category?.id === 4
+    ? `£${Number(detail.price).toFixed(2)}/${t('week')}`
+    : detail?.category?.id === 5
+    ? `£${Number(detail.price).toFixed(2)}/${t('session')}`
+    : `£${Number(detail.price).toFixed(2)}`;
   const formatDate = (dateString?: string, t?: any) => {
     if (!dateString) return "";
 
@@ -781,7 +790,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                         {detail.title}
                       </Text>
                       <Text allowFontScaling={false} style={styles.priceText}>
-                        £{Number(detail.price).toFixed(2)}
+                       {priceText}
                       </Text>
                     </>
                   )}
@@ -813,19 +822,15 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     alignSelf: 'stretch',
                   }}
                 >
-                  {/* <Text
+                  <Text
                     allowFontScaling={false}
                     style={styles.productDesHeding}
                   >
-                    {detail?.category?.id === 2 || detail?.category?.id === 5
-                      ? t('service_description')
-                      : detail?.category?.id === 3
-                        ? t('dish_description')
-                        : `${detail?.category?.name ?? ''} ${t('des')}`
-                    }
-                  </Text> */}
+                    {t('des')}`
+                    
+                  </Text>
 
-                  <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
+                  {/* <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
                     {(() => {
                       switch (detail?.category?.id) {
                         case 2:
@@ -840,7 +845,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                           return t('product_details');
                       }
                     })()}
-                  </Text>
+                  </Text> */}
                   <Text allowFontScaling={false} style={styles.productDesc}>
                     {detail?.description || t('no_description_available')}
                   </Text>

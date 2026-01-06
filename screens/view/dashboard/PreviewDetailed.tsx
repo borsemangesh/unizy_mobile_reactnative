@@ -301,28 +301,70 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
     type?: string;
   };
 
-  const handleListPress = async () => {
-    if (isSubmitting) {
 
-      return;
-    }
-    isSubmitting = true;
+ const handleListPress = async () => {
+  if (isSubmitting) return;
 
+  isSubmitting = true;
 
-    try {
-      const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
-      const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
+  try {
+    const form =
+      typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
 
+    const isFeatured =
+      form?.['13']?.value === true || form?.['13']?.value === 'true';
+
+    if (categoryid === 4) {
+      navigation.navigate('PaymentScreen', {
+        amount: accomodation_amount,
+        feature_id: 1,
+        nav: 'add',
+
+        onSuccess: async () => {
+          try {
+            await listProduct();
+          } finally {
+            isSubmitting = false; // ✅ reset AFTER payment success
+          }
+        },
+
+        onCancel: () => {
+          isSubmitting = false; // ✅ reset if user cancels payment
+        },
+      });
+    } else {
       await listProduct();
-    } catch (e) {
+      isSubmitting = false; // ✅ reset after direct listing
+    }
+  } catch (e) {
+    console.log('Error:', e);
+    isSubmitting = false;
+  }
+};
 
-    }
-    finally {
-      setTimeout(() => {
-        isSubmitting = false;
-      }, 2000);
-    }
-  };
+
+  // const handleListPress = async () => {
+  //   if (isSubmitting) {
+
+  //     return;
+  //   }
+  //   isSubmitting = true;
+
+
+  //   try {
+  //     const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
+  //     const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
+
+  //     await listProduct();
+  //   } catch (e) {
+
+  //   }
+  //   finally {
+  //     setTimeout(() => {
+  //       isSubmitting = false;
+  //     }, 2000);
+  //   }
+  // };
 
   const listProduct = async () => {
 
@@ -460,11 +502,26 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
           if (!isSuccess) return;
         }
       }
-      showToast(t(Constant.DATA_UPLOAD), 'success');
+      //showToast(t(Constant.DATA_UPLOAD), 'success');
       //setShowPopup(true);
 
-      setTimeout(() => {
-        navigation.navigate('SellerInfo');
+          setTimeout(() => {
+        if (userMeta?.category?.id === 4) {
+           navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: 'Dashboard',
+                    params: {
+                      AddScreenBackactiveTab: 'Add',
+                      isNavigate: false,
+                    },
+                  },
+                ],
+              })
+        } else {
+          navigation.navigate('SellerInfo');
+        }
       }, 2000);
     }
     catch (error) {
@@ -525,7 +582,13 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
   const calculatedPrice = priceValue + commissionAmount;
   const maxAllowedPrice = priceValue + maxCap;
   const commissionPrice = +Math.min(calculatedPrice, maxAllowedPrice).toFixed(2);
-
+  const priceText =
+  userMeta?.category?.id === 2
+    ? `£${commissionPrice}/${t('hr')}`
+    : userMeta?.category?.id === 4
+    ? `£${commissionPrice}/${t('week')}`
+    : userMeta?.category?.id === 5 ? `£${commissionPrice}/${t('session')}` 
+    : `£${commissionPrice}`;
 
   const raw1 = getValueByAlias(storedForm, 'price') ?? '0';
   const priceValue1 = parseFloat(String(raw1)) || 0;
@@ -766,7 +829,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                 </Text>
 
                 <Text allowFontScaling={false} style={styles.priceText}>
-                  {`£${commissionPrice}`}
+                  {priceText}
                 </Text>
 
                 {(categoryid === 2 || categoryid === 5) && (
@@ -793,12 +856,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                 }}
               >
                 <Text allowFontScaling={false} style={styles.productDesHeding}>
-                  {userMeta?.category?.id === 2 || userMeta?.category?.id === 5
-                    ? t('service_description')
-                    : userMeta?.category?.id === 3
-                      ? t('dish_description')
-                      : `${userMeta?.category?.name ?? ''} ${t('des')}`
-                  }
+                  {t('des')}    
                 </Text>
 
                 <Text allowFontScaling={false} style={styles.productDesc}>

@@ -850,6 +850,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
               ]}
               placeholder={placeholderText}
               multiline={false}
+              cursorColor='#fff'
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               keyboardType={rnKeyboardType}
               value={isPriceField ? `£ ${finalValue}` : finalValue}
@@ -919,6 +920,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
               ]}
               placeholder={placeholderText}
               multiline={true}
+              cursorColor='#fff'
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               keyboardType={rnKeyboardType}
               value={rawValue}

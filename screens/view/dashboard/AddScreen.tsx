@@ -715,6 +715,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                   paddingVertical: 0,
                 },
               ]}
+              cursorColor="#fff"
               placeholder={placeholderText}
               multiline={false}
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
@@ -785,6 +786,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 { textAlign: 'left', textAlignVertical: 'top', height: 100 },
               ]}
               placeholder={placeholderText}
+              cursorColor="#fff"
               multiline={true}
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               keyboardType={rnKeyboardType}
@@ -817,10 +819,18 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               }}
             >
               <View style={styles.dropdowncard}>
-                <Text numberOfLines={2} allowFontScaling={false} style={[styles.dropdowntext]}>
+                {/* <Text numberOfLines={2} allowFontScaling={false} style={[styles.dropdowntext]}>
                   {Array.isArray(formValues[id]?.value) &&
                     formValues[id]?.value.length > 0
                     ? `${formValues[id]?.value.length} ${t('selected')}`
+                    : `${t('select')} ${field_name}`}
+                </Text> */}
+
+                <Text numberOfLines={2} allowFontScaling={false} style={styles.dropdowntext}>
+                  {Array.isArray(formValues[id]?.value) && formValues[id]?.value.length > 0
+                    ? `${formValues[id]?.value.length} ${t('selected')}`
+                    : formValues[id]?.value
+                    ? `1 ${t('selected')}`
                     : `${t('select')} ${field_name}`}
                 </Text>
               </View>

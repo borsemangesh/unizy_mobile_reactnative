@@ -252,6 +252,14 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
     maxAllowedPrice1,
   ).toFixed(2);
 
+   const priceText =
+  categoryId === 2
+    ? `£${commissionPrice}/${t('hr')}`
+    : categoryId === 4
+    ? `£${commissionPrice}/${t('week')}`
+    : categoryId === 5 ? `£${commissionPrice}/${t('session')}` 
+    : `£${commissionPrice}`;
+
 
 
   return (
@@ -391,7 +399,7 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                         tag={uniname}
                         title={titleValue}
                         infoTitle={fullName}
-                        inforTitlePrice={`£${commissionPrice}`}
+                        inforTitlePrice={priceText}
                         rating={storedForm[12]?.value || '4.5'}
                         productImage={{ uri: profile }}
                         isBookmarked={false}
@@ -407,7 +415,7 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                         tag={uniname}
                         infoTitle={titleValue}
                         rating={storedForm[12]?.value || '4.5'}
-                        inforTitlePrice={`£${commissionPrice}`}
+                        inforTitlePrice={priceText}
                         productImage={{ uri: profile }}
                         bookmark={false}
                         showInitials={!profile || profile === null || profile.trim() === ''}
@@ -418,7 +426,7 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                       tag={uniname}
                       infoTitle={titleValue}
                       rating={storedForm[12]?.value || '4.5'}
-                      inforTitlePrice={`£${commissionPrice}`}
+                     inforTitlePrice={priceText}
                       productImage={profile ? { uri: profile } : undefined}
                       bookmark={false}
                       showInitials={!profile || profile === null || profile.trim() === ''}
@@ -436,7 +444,7 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                     <PreviewCard
                       tag={uniname}
                       infoTitle={titleValue}
-                      inforTitlePrice={`£${commissionPrice}`}
+                     inforTitlePrice={priceText}
                       rating={storedForm[12]?.value || '4.5'}
                       productImage={
                         imageArray.length > 0
@@ -453,7 +461,7 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                     <NewFeatureCard
                       tag={uniname}
                       infoTitle={titleValue}
-                      inforTitlePrice={`£${commissionPrice}`}
+                      inforTitlePrice={priceText}
                       rating={storedForm[12]?.value || '4.5'}
                       productImage={
                         imageArray.length > 0
@@ -466,7 +474,7 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                   <NewProductCard
                     tag={uniname}
                     infoTitle={titleValue}
-                    inforTitlePrice={`£${commissionPrice}`}
+                    inforTitlePrice={priceText}
                     rating={storedForm[12]?.value || '4.5'}
                     productImage={
                       imageArray.length > 0
@@ -489,8 +497,8 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
 
         <View style={styles.bottomFixed}>
 
+ {categoryId !== 4 && (
           <View style={styles.textbg}>
-
             <Image
               source={require('../../../assets/images/info_icon.png')}
               style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
@@ -514,10 +522,11 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
               </Text>
             </View>
           </View>
+           )}
 
           <Button
             title={t('next')}
-            onPress={() => navigation.navigate('EditPreviewDetailed')}
+            onPress={() => navigation.navigate('PreviewDetailed')}
           />
         </View>
       </View>

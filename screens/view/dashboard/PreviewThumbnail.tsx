@@ -192,6 +192,8 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
 
     return entry ? entry.value : null;
   };
+    const { t } = useTranslation();
+
 
   const titleValue = getValueByAlias(storedForm, 'title') || 'No Title';
   const imageArray = storedForm?.[6]?.value || [];
@@ -219,7 +221,15 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
   const maxAllowedPrice1 = priceValue1 + maxCap1;
   const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2);
 
-  const { t } = useTranslation();
+
+  const priceText =
+  categoryId === 2
+    ? `£${commissionPrice}/${t('hr')}`
+    : categoryId === 4
+    ? `£${commissionPrice}/${t('week')}`
+    : categoryId === 5 ? `£${commissionPrice}/${t('session')}` 
+    : `£${commissionPrice}`;
+
 
   return (
     <ImageBackground
@@ -356,7 +366,7 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                         tag={uniname}
                         title={titleValue}
                         infoTitle={fullName}
-                        inforTitlePrice={`£${commissionPrice}`}
+                        inforTitlePrice={priceText}
                         rating={storedForm[12]?.value || '4.5'}
                         productImage={{ uri: profile }}
                         isBookmarked={false}
@@ -372,7 +382,7 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                         tag={uniname}
                         infoTitle={titleValue}
                         rating={storedForm[12]?.value || '4.5'}
-                        inforTitlePrice={`£${commissionPrice}`}
+                        inforTitlePrice={priceText}
                         productImage={{ uri: profile }}
                         bookmark={false}
                         showInitials={!profile || profile === null || profile.trim() === ''}
@@ -383,14 +393,15 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                       tag={uniname}
                       infoTitle={titleValue}
                       rating={storedForm[12]?.value || '4.5'}
-                      inforTitlePrice={`£${commissionPrice}`}
+                      inforTitlePrice={priceText}
                       productImage={profile ? { uri: profile } : undefined}
                       bookmark={false}
                       showInitials={!profile || profile === null || profile.trim() === ''}
                       isfeature={false} initialsName={initials}
                     />
                   )
-                ) : storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
+                ) 
+                : storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
                   <>
                     <Text
                       allowFontScaling={false}
@@ -401,7 +412,7 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                     <PreviewCard
                       tag={uniname}
                       infoTitle={titleValue}
-                      inforTitlePrice={`£${commissionPrice}`}
+                      inforTitlePrice={priceText}
                       rating={storedForm[12]?.value || '4.5'}
                       productImage={
                         imageArray.length > 0
@@ -418,7 +429,7 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                     <NewFeatureCard
                       tag={uniname}
                       infoTitle={titleValue}
-                      inforTitlePrice={`£${commissionPrice}`}
+                      inforTitlePrice={priceText}
                       rating={storedForm[12]?.value || '4.5'}
                       productImage={
                         imageArray.length > 0
@@ -431,7 +442,7 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                   <NewProductCard
                     tag={uniname}
                     infoTitle={titleValue}
-                    inforTitlePrice={`£${commissionPrice}`}
+                    inforTitlePrice={priceText}
                     rating={storedForm[12]?.value || '4.5'}
                     productImage={
                       imageArray.length > 0
@@ -452,8 +463,10 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
           </View>
         </AnimatedReanimated.ScrollView>
 
+   
         <View style={styles.bottomFixed}>
 
+ {categoryId !== 4 && (
           <View style={styles.textbg}>
             <Image
               source={require('../../../assets/images/info_icon.png')}
@@ -478,13 +491,16 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
               </Text>
             </View>
           </View>
+           )}
 
           <Button
             title={t('next')}
             onPress={() => navigation.navigate('PreviewDetailed')}
           />
         </View>
+       
       </View>
+
       <NewCustomToastContainer />
     </ImageBackground>
   );

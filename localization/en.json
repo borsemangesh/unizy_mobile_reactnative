@@ -485,7 +485,7 @@
   "housekeeping": "House Keeping",
   "housekeeping_description": "Provide cleaning, laundry, or everyday chore services.",
   "list_housekeeping": "List House Keeping",
-  "housekeeping_details": "House Keeping Details",
+  "housekeeping_details": "Chore Details",
   "hk_service_name": "Service Name",
   "enter_hk_service_name": "Enter Service Name",
   "hk_service_description": "Service Description",
@@ -700,7 +700,7 @@
   "block_info_user": "This chat is temporarily restricted and under review.",
   "tutoring_service_details": "Tutoring Details",
   "sell_title1": "Get Notified When a Purchase Is Initiated",
-  "sell_info1": "You’ll receive a notification when a buyer completes payment and the purchase is initiated",
+  "sell_info1": "You’ll receive a notification when a buyer initiates a purchase.",
   "sell_title2": "Check Order Details in My Listings",
   "sell_info2": "Open My Listings and tap the purchased listing to view buyer details and purchase status.",
   "sell_title3": "Chat & Arrange the Handover",
@@ -751,5 +751,8 @@
   "info_content4": "In-App Chat",
   "info_subcontent4": "Connect with sellers after purchase to decide delivery or service details.",
   "info_bottom_header4": "OTP Based Completion",
-  "info_bottom_subheader4": "Payments are held securely and released after OTP confirmation."
+  "info_bottom_subheader4": "Payments are held securely and released after OTP confirmation.",
+  "hr":"hr",
+  "week":"week",
+  "session":"session"
 }

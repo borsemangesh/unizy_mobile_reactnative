@@ -685,6 +685,14 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
     maxAllowedPrice1,
   ).toFixed(2);
   const diff1 = commissionPrice1 - priceValue1;
+  
+  const priceText =
+  userMeta?.category?.id === 2
+    ? `£${commissionPrice}/${t('hr')}`
+    : userMeta?.category?.id === 4
+    ? `£${commissionPrice}/${t('week')}`
+    : userMeta?.category?.id === 5 ? `£${commissionPrice}/${t('session')}` 
+    : `£${commissionPrice}`;
 
   return (
     <ImageBackground
@@ -914,7 +922,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
                 </Text>
 
                 <Text allowFontScaling={false} style={styles.priceText}>
-                  {`£${commissionPrice}`}
+                  {priceText}
                 </Text>
 
                 {(categoryid === 2 || categoryid === 5) && (
@@ -941,12 +949,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
                 }}
               >
                 <Text allowFontScaling={false} style={styles.productDesHeding}>
-                  {userMeta?.category?.id === 2 || userMeta?.category?.id === 5
-                    ? t('service_description')
-                    : userMeta?.category?.id === 3
-                      ? t('dish_description')
-                      : `${userMeta?.category?.name ?? ''} ${t('des')}`
-                  }
+                 {t('des')}
                 </Text>
                 <Text allowFontScaling={false} style={styles.productDesc}>
                   {descriptionvalue}
