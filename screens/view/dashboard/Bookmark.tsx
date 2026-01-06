@@ -222,11 +222,15 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
 
       let url = `${MAIN_URL.baseUrl}category/mybookmark-list?page=${pageNum}&pagesize=${pagesize}`;
 
+      
+
       if (categoryId) {
         url += `&category_id=${categoryId}`;
       }
 
+      console.log(url)
       const token = await AsyncStorage.getItem('userToken');
+      console.log(token)
       if (!token) {
         if (isInitialLoad) {
           await new Promise(r => setTimeout(r, 1000));
@@ -437,7 +441,15 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
             <SearchTutionCard
               tag={feature.university?.name || 'University of Warwick'}
               infoTitle={feature.title}
-              inforTitlePrice={`£ ${feature.price}`}
+              inforTitlePrice={
+                feature.category_id === 2
+                  ? `£${feature.price}/${t('hr')}`
+                  : feature.category_id === 4
+                  ? `£${feature.price}/${t('week')}`
+                  : feature.category_id === 5
+                  ? `£${feature.price}/${t('session')}`
+                  : `£${feature.price}`
+              }
               rating={feature.isfeatured ? '4.5' : '4.5'}
               productImage={
                 feature.createdby?.profile
@@ -455,7 +467,15 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
             <SearchListProductCard
               tag={feature.university?.name || 'University of Warwick'}
               infoTitle={feature.title}
-              inforTitlePrice={`£ ${feature.price}`}
+              inforTitlePrice={
+                feature.category_id === 2
+                  ? `£${feature.price}/${t('hr')}`
+                  : feature.category_id === 4
+                  ? `£${feature.price}/${t('week')}`
+                  : feature.category_id === 5
+                  ? `£${feature.price}/${t('session')}`
+                  : `£${feature.price}`
+              }
               rating={feature.isfeatured ? '4.5' : '4.5'}
               productImage={
                 productImage ?? require('../../../assets/images/drone.png')

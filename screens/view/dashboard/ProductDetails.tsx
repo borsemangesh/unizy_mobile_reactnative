@@ -388,7 +388,15 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
             <SearchTutionCard
               tag={item.university?.name || 'University of Warwick'}
               infoTitle={item.title}
-              inforTitlePrice={`£ ${item.price}`}
+              inforTitlePrice={
+                item.category_id === 2
+                  ? `£${item.price}/${t('hr')}`
+                  : item.category_id === 4
+                  ? `£${item.price}/${t('week')}`
+                  : item.category_id === 5
+                  ? `£${item.price}/${t('session')}`
+                  : `£${item.price}`
+              }
               rating={item.avg_rating}
               showInitials={showInitials}
               initialsName={initials.toUpperCase()}
@@ -401,7 +409,15 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
             <SearchListProductCard
               tag={item.university?.name || 'University of Warwick'}
               infoTitle={item.title}
-              inforTitlePrice={`£ ${item.price}`}
+              inforTitlePrice={
+                item.category_id === 2
+                  ? `£${item.price}/${t('hr')}`
+                  : item.category_id === 4
+                  ? `£${item.price}/${t('week')}`
+                  : item.category_id === 5
+                  ? `£${item.price}/${t('session')}`
+                  : `£${item.price}`
+              }
               rating={item.avg_rating}
               productImage={productImage ?? require('../../../assets/images/drone.png')}
               bookmark={item.isbookmarked}
