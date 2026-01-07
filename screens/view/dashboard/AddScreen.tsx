@@ -35,10 +35,20 @@ import {
 } from '../../utils/component/NewCustomToastManager';
 import { RouteProp, useRoute } from '@react-navigation/native';
 // import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
-import { check, openSettings, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
+import {
+  check,
+  openSettings,
+  PERMISSIONS,
+  request,
+  RESULTS,
+} from 'react-native-permissions';
 import { BlurView } from '@react-native-community/blur';
 import SelectCatagoryDropdown_IOS from '../../utils/component/SelectCatagoryDropdown_IOS';
 import Loader from '../../utils/component/Loader';
+import {
+  NestableScrollContainer,
+  NestableDraggableFlatList,
+} from 'react-native-draggable-flatlist';
 
 import AnimatedReanimated, {
   useSharedValue,
@@ -81,6 +91,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const [fields, setFields] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const MAX_SIZE_MB = 1;
+  const MAX_IMAGES = 5;
   const today = new Date();
   const formattedDate = today.toLocaleDateString('en-GB');
   const displayDate = formattedDate.replace(/\//g, '-');
@@ -179,12 +190,94 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const { height } = Dimensions.get('window');
   const bottomPadding = height * 0.0005;
 
+  const [showThumnail, setShowThumnail] = useState(false);
+  const [uri, setUri] = useState('');
+
+  const renderImageItem = ({ item, drag, isActive }: any) => {
+    return (
+     
+      <View style={styles.imagelistcard}>
+        <TouchableOpacity
+          onLongPress={drag}
+          onPress={() => {
+            setShowThumnail(true);
+            setUri(item.uri);
+          }}
+          disabled={isActive}
+          style={[{ opacity: isActive ? 0.7 : 1 }]}
+          activeOpacity={0.9}
+        >
+          <View
+            key={item.id}
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingRight: 6,
+              paddingVertical: 6,
+              paddingLeft: 8,
+            }}
+          >
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 8,
+                flex: 1,
+              }}
+            >
+              <Image
+                source={require('../../../assets/images/sixdots.png')}
+                style={styles.threedots}
+              />
+              <Image
+                source={fileIcon}
+                style={{ width: 32, height: 32, marginRight: 5 }}
+              />
+              <Text
+                allowFontScaling={false}
+                style={[styles.fileName, { flexShrink: 1 }]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {item.name}
+              </Text>
+            </View>
+
+            <TouchableOpacity
+              onPress={() =>
+                setUploadedImages(prev =>
+                  prev.filter(img => img.id !== item.id),
+                )
+              }
+            >
+              <Image
+                source={deleteIcon}
+                style={{ width: 38, height: 38, resizeMode: 'contain' }}
+              />
+            </TouchableOpacity>
+          </View>
+          {uploadedImages.length > 1 && item !== uploadedImages.length - 1 && (
+            <View
+              style={{
+                height: 1,
+                backgroundColor:
+                  'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%)',
+                marginHorizontal: 10,
+              }}
+            />
+          )}
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
   useEffect(() => {
     const fetchFields = async () => {
       try {
-        setLoading(true)
-        const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
-
+        setLoading(true);
+        const language_code =
+          (await AsyncStorage.getItem('selectedLanguage')) || 'en';
 
         const token = await AsyncStorage.getItem('userToken');
         if (!token) {
@@ -192,18 +285,14 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           return;
         }
 
-
-
         const url = `${MAIN_URL.baseUrl}category/listparams/user/${productId}`;
-
-
 
         const response = await fetch(url, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
-            languagecode: language_code
+            languagecode: language_code,
           },
         });
 
@@ -217,7 +306,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           if (json.metadata.category) {
             // Convert null or undefined to 0
             setFeatureFee(json.metadata.category.feature_fee ?? '0');
-            setMaxFeatureCap(json.metadata.category.max_feature_cap ?? '0')
+            setMaxFeatureCap(json.metadata.category.max_feature_cap ?? '0');
           }
           setUserMeta({
             firstname: json.metadata.firstname ?? null,
@@ -263,15 +352,13 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           return;
         }
       } catch (err) {
-        setLoading(false)
-
+        setLoading(false);
       } finally {
         setLoading(false);
       }
     };
 
     const handleForceLogout = async () => {
-
       await AsyncStorage.clear();
       navigation.reset({
         index: 0,
@@ -345,16 +432,26 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     const lang = i18n.language;
     const monthIndex = today.getMonth();
     const monthKeys = [
-      "jan", "feb", "mar", "apr", "may", "jun",
-      "jul", "aug", "sep", "oct", "nov", "dec"
+      'jan',
+      'feb',
+      'mar',
+      'apr',
+      'may',
+      'jun',
+      'jul',
+      'aug',
+      'sep',
+      'oct',
+      'nov',
+      'dec',
     ];
     const month = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
-    let suffix = "";
-    if (lang === "en") {
-      if (day % 10 === 1 && day !== 11) suffix = "st";
-      else if (day % 10 === 2 && day !== 12) suffix = "nd";
-      else if (day % 10 === 3 && day !== 13) suffix = "rd";
-      else suffix = "th";
+    let suffix = '';
+    if (lang === 'en') {
+      if (day % 10 === 1 && day !== 11) suffix = 'st';
+      else if (day % 10 === 2 && day !== 12) suffix = 'nd';
+      else if (day % 10 === 3 && day !== 13) suffix = 'rd';
+      else suffix = 'th';
     }
 
     return `${day}${suffix} ${month} ${year}`;
@@ -442,9 +539,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     return true;
   };
 
-
   const handlePreview = async () => {
-
     try {
       for (const field of fields) {
         const { id, field_type } = field.param;
@@ -462,9 +557,15 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             (Array.isArray(value) && value.length === 0)
           ) {
             if (field_type.toLowerCase() === 'image') {
-              showToast(`${field.param.field_name} ${t(Constant.ARE_MAN)}`, 'error');
+              showToast(
+                `${field.param.field_name} ${t(Constant.ARE_MAN)}`,
+                'error',
+              );
             } else {
-              showToast(`${field.param.field_name} ${t(Constant.IS_MAN)}`, 'error');
+              showToast(
+                `${field.param.field_name} ${t(Constant.IS_MAN)}`,
+                'error',
+              );
             }
             return;
           }
@@ -479,7 +580,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
         for (const f of fields) {
           if (f.param.alias_name === 'price') priceFieldId = f.param.id;
-          if (f.param.alias_name === 'service_duration') durationFieldId = f.param.id;
+          if (f.param.alias_name === 'service_duration')
+            durationFieldId = f.param.id;
         }
 
         if (priceFieldId !== null && durationFieldId !== null) {
@@ -490,7 +592,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           const priceNumber = parseFloat(rawPrice);
 
           if (isNaN(priceNumber) || priceNumber > 99999) {
-            showToast(`${t('price_limit')} £99,999`, "error");
+            showToast(`${t('price_limit')} £99,999`, 'error');
             return;
           }
 
@@ -529,7 +631,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
         if (field.param.alias_name === 'price') {
           const priceValue = parseFloat(dataToStore[field.param.id]?.value);
           if (priceValue > 99999) {
-            showToast(`${t('price_limit')} £99,999`, "error");
+            showToast(`${t('price_limit')} £99,999`, 'error');
             return;
           }
         }
@@ -537,11 +639,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
       await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
       navigation.navigate('PreviewThumbnail');
     } catch (error) {
-
       showToast(t(Constant.DATA_NOT_SAVE), 'error');
     }
   };
-
 
   const handleSelectImage = async () => {
     const hasPermission = await requestCameraPermission();
@@ -549,7 +649,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
     Alert.alert(
       'Select Option',
-      "Choose a source",
+      'Choose a source',
       [
         {
           text: 'Camera',
@@ -590,32 +690,26 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           text: 'Gallery',
           onPress: () => {
             launchImageLibrary(
-              { mediaType: 'photo', quality: 1 },
+              {
+                mediaType: 'photo',
+                quality: 1,
+                selectionLimit: MAX_IMAGES,
+              },
               async response => {
                 if (response.didCancel) return;
-                if (response.assets && response.assets[0].uri) {
-                  const asset = response.assets[0];
-                  let uri = asset.uri!;
-                  let name = asset.fileName || 'Image';
-                  if (
-                    asset.fileSize &&
-                    asset.fileSize > MAX_SIZE_MB * 1024 * 1024
-                  ) {
-                    const compressed = await ImageResizer.createResizedImage(
-                      uri,
-                      800,
-                      800,
-                      'JPEG',
-                      80,
-                    );
-                    uri = compressed.uri;
-                    name = compressed.name || name;
-                  }
 
-                  setUploadedImages(prev => [
-                    ...prev,
-                    { id: Date.now().toString(), uri, name },
-                  ]);
+                if (response.assets) {
+                  const images = await Promise.all(
+                    response.assets.map(async asset => ({
+                      id: `${Date.now()}-${Math.random()}`,
+                      uri: asset.uri!,
+                      name: asset.fileName || 'Image',
+                    })),
+                  );
+
+                  setUploadedImages(prev =>
+                    [...prev, ...images].slice(0, MAX_IMAGES),
+                  );
                 }
               },
             );
@@ -715,15 +809,14 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                   paddingVertical: 0,
                 },
               ]}
-              cursorColor="#fff"
               placeholder={placeholderText}
               multiline={false}
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               keyboardType={rnKeyboardType}
               value={isPriceField && rawValue ? `£ ${rawValue}` : rawValue}
               onChangeText={text => {
-                 let value = text;
-                 if (alias_name?.toLowerCase() === 'quantity') {
+                let value = text;
+                if (alias_name?.toLowerCase() === 'quantity') {
                   if (value === '0') {
                     return;
                   }
@@ -786,7 +879,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 { textAlign: 'left', textAlignVertical: 'top', height: 100 },
               ]}
               placeholder={placeholderText}
-              cursorColor="#fff"
               multiline={true}
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               keyboardType={rnKeyboardType}
@@ -808,7 +900,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             <TouchableOpacity
               style={styles.pickerContainer}
               onPress={() => {
-
                 setMultiSelectModal({
                   visible: true,
                   ismultilple: !!field.param.ismultilple,
@@ -819,18 +910,14 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               }}
             >
               <View style={styles.dropdowncard}>
-                {/* <Text numberOfLines={2} allowFontScaling={false} style={[styles.dropdowntext]}>
+                <Text
+                  numberOfLines={2}
+                  allowFontScaling={false}
+                  style={[styles.dropdowntext]}
+                >
                   {Array.isArray(formValues[id]?.value) &&
-                    formValues[id]?.value.length > 0
+                  formValues[id]?.value.length > 0
                     ? `${formValues[id]?.value.length} ${t('selected')}`
-                    : `${t('select')} ${field_name}`}
-                </Text> */}
-
-                <Text numberOfLines={2} allowFontScaling={false} style={styles.dropdowntext}>
-                  {Array.isArray(formValues[id]?.value) && formValues[id]?.value.length > 0
-                    ? `${formValues[id]?.value.length} ${t('selected')}`
-                    : formValues[id]?.value
-                    ? `1 ${t('selected')}`
                     : `${t('select')} ${field_name}`}
                 </Text>
               </View>
@@ -887,7 +974,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
         const handleImageSelect = () => {
           if (uploadedImages.length >= maxvalue) {
-            showToast(`${t(Constant.MAXIMUM)} ${maxvalue} ${t(Constant.IMAGE_ALLOWED)}`);
+            showToast(
+              `${t(Constant.MAXIMUM)} ${maxvalue} ${t(Constant.IMAGE_ALLOWED)}`,
+            );
             return;
           }
           handleSelectImage();
@@ -907,75 +996,25 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               </Text>
             </TouchableOpacity>
             {uploadedImages.length > 0 && (
-              <View style={styles.imagelistcard}>
-                {uploadedImages.map((file, index) => (
-                  <View key={file.id} style={{ width: '100%' }}>
-                    {/* Image row */}
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        paddingRight: 6,
-                        paddingVertical: 6,
-                        paddingLeft: 8,
-                      }}
-                    >
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          gap: 8,
-                          flex: 1,
-                        }}
-                      >
-                        <Image
-                          source={require('../../../assets/images/sixdots.png')}
-                          style={styles.threedots}
-                        />
-                        <Image
-                          source={fileIcon}
-                          style={{ width: 32, height: 32, marginRight: 5 }}
-                        />
-                        <Text
-                          allowFontScaling={false}
-                          style={[styles.fileName, { flexShrink: 1 }]}
-                          numberOfLines={1}
-                          ellipsizeMode="tail"
-                        >
-                          {file.name}
-                        </Text>
-                      </View>
-
-                      <TouchableOpacity
-                        onPress={() =>
-                          setUploadedImages(prev =>
-                            prev.filter(img => img.id !== file.id),
-                          )
-                        }
-                      >
-                        <Image
-                          source={deleteIcon}
-                          style={{ width: 38, height: 38, resizeMode: 'contain' }}
-                        />
-                        {/* <Image source={deleteIcon} style={styles.deleteIcon} /> */}
-                      </TouchableOpacity>
-                    </View>
-
-                    {/* Horizontal line if not the last image */}
-                    {uploadedImages.length > 1 &&
-                      index !== uploadedImages.length - 1 && (
-                        <View
-                          style={{
-                            height: 1,
-                            backgroundColor:
-                              'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%)',
-                            marginHorizontal: 10,
-                          }}
-                        />
-                      )}
-                  </View>
-                ))}
+               <View style={{
+                backgroundColor:
+                'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
+              boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.32)',
+              borderRadius: 12,
+              borderWidth: 0.4,
+              borderColor: '#ffffff33',
+              marginTop: 10,
+               }}>
+              <NestableDraggableFlatList
+                data={uploadedImages}
+                keyExtractor={item => item.id}
+                renderItem={renderImageItem}
+                // numColumns={3}
+                autoscrollSpeed={30}
+                // activationDistance={20}
+                onDragEnd={({ data }) => setUploadedImages(data)}
+                containerStyle={{ minHeight: 100 }}
+              />
               </View>
             )}
           </View>
@@ -986,8 +1025,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
         return (
           <View key={field.id} style={styles.featurecard}>
             <View style={styles.featuredRow}>
-              <View style={{width: '80%'}}>
-              {renderLabel1(field.param.field_name, field.mandatory)}
+              <View style={{ width: '80%' }}>
+                {renderLabel1(field.param.field_name, field.mandatory)}
               </View>
               <ToggleButton
                 value={!!formValues[field.param.id]?.value}
@@ -1003,20 +1042,20 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
               />
 
-              
               <View style={{ flex: 1 }}>
                 <Text allowFontScaling={false} style={styles.importantText1}>
                   {t('important')}
                 </Text>
                 <Text allowFontScaling={false} style={styles.importantText}>
-                  {t('featured_listing_note_1')} {' '}
+                  {t('featured_listing_note_1')}{' '}
                   <Text allowFontScaling={false} style={styles.importantText1}>
                     {featureFee}%
                   </Text>{' '}
                   {t('featured_listing_fee_percentage')}{' '}
                   <Text allowFontScaling={false} style={styles.importantText1}>
                     £{maxFeatureCap} {''}
-                  </Text>{''}
+                  </Text>
+                  {''}
                   {t('featured_listing_fee_cap')}
                 </Text>
               </View>
@@ -1167,15 +1206,11 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           </View>
 
           <TouchableOpacity
-            onPress={() => {
-
-            }}
+            onPress={() => {}}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
-            <AnimatedReanimated.View
-              style={[styles.blurButtonWrapper_none,]}
-            >
+            <AnimatedReanimated.View style={[styles.blurButtonWrapper_none]}>
               <AnimatedReanimated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -1188,7 +1223,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                     ),
                     backgroundColor: 'rgba(255,255,255,0.1)',
                     borderRadius: 40,
-                  })), { display: 'none' }
+                  })),
+                  { display: 'none' },
                 ]}
               />
 
@@ -1202,7 +1238,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                       [0, 1],
                       'clamp',
                     ),
-                  })), { display: 'none' }
+                  })),
+                  { display: 'none' },
                 ]}
               >
                 <BlurView
@@ -1230,136 +1267,196 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             style={{ flex: 1 }}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           >
-
-            <AnimatedReanimated.ScrollView
-              scrollEventThrottle={16}
-              onScroll={scrollHandler}
-              contentContainerStyle={[
-                styles.scrollContainer,
-                { paddingBottom: height * 0.1 }, // 0.05% of screen height
-              ]}
-            >
-              <View style={styles.userRow}>
-                <View
-                  style={{
-                    width: '20%',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {userMeta?.profile ? (
-                    <Image
-                      source={{ uri: userMeta.profile }}
-                      style={styles.avatar}
-                    />
-                  ) : (
-                    <View style={styles.initialsCircle}>
-                      <Text allowFontScaling={false} style={styles.initialsText}>
-                        {getInitials(
-                          userMeta?.firstname ?? 'Alan',
-                          userMeta?.lastname ?? 'Walker',
-                        )}
-                      </Text>
-                    </View>
-                  )}
-                </View>
-
-                <View style={{ width: '80%' }}>
-                  <Text allowFontScaling={false} style={styles.userName}>
-                    {userMeta
-                      ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''
-                        }`.trim()
-                      : 'Alan Walker'}
-                  </Text>
-
+            <NestableScrollContainer>
+              <AnimatedReanimated.ScrollView
+                scrollEventThrottle={16}
+                onScroll={scrollHandler}
+                contentContainerStyle={[
+                  styles.scrollContainer,
+                  { paddingBottom: height * 0.1 }, // 0.05% of screen height
+                ]}
+              >
+                <View style={styles.userRow}>
                   <View
                     style={{
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                      display: 'flex',
-                      alignItems: 'stretch',
+                      width: '20%',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                     }}
                   >
-                    <Text allowFontScaling={false} style={styles.userSub}>
-                      {userMeta?.university_name || 'University of Warwick,'}
+                    {userMeta?.profile ? (
+                      <Image
+                        source={{ uri: userMeta.profile }}
+                        style={styles.avatar}
+                      />
+                    ) : (
+                      <View style={styles.initialsCircle}>
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.initialsText}
+                        >
+                          {getInitials(
+                            userMeta?.firstname ?? 'Alan',
+                            userMeta?.lastname ?? 'Walker',
+                          )}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+
+                  <View style={{ width: '80%' }}>
+                    <Text allowFontScaling={false} style={styles.userName}>
+                      {userMeta
+                        ? `${userMeta.firstname ?? ''} ${
+                            userMeta.lastname ?? ''
+                          }`.trim()
+                        : 'Alan Walker'}
                     </Text>
+
                     <View
                       style={{
-                        flexDirection: 'row',
+                        flexDirection: 'column',
                         justifyContent: 'space-between',
+                        display: 'flex',
+                        alignItems: 'stretch',
                       }}
                     >
-                      <Text allowFontScaling={false} style={styles.userSub2}>
-                        {userMeta?.city || 'Coventry'}
+                      <Text allowFontScaling={false} style={styles.userSub}>
+                        {userMeta?.university_name || 'University of Warwick,'}
                       </Text>
                       <View
                         style={{
                           flexDirection: 'row',
-                          alignItems
-                          : 'center',
-                          gap: 3,
+                          justifyContent: 'space-between',
                         }}
                       >
-                        <Image
-                          source={require('../../../assets/images/calendar_icon1.png')}
-                          style={{ height: 20, width: 20 }}
-                        />
-                        <Text allowFontScaling={false} style={styles.dateText}>
-                          {getCurrentDate(t)}
+                        <Text allowFontScaling={false} style={styles.userSub2}>
+                          {userMeta?.city || 'Coventry'}
                         </Text>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: 3,
+                          }}
+                        >
+                          <Image
+                            source={require('../../../assets/images/calendar_icon1.png')}
+                            style={{ height: 20, width: 20 }}
+                          />
+                          <Text
+                            allowFontScaling={false}
+                            style={styles.dateText}
+                          >
+                            {getCurrentDate(t)}
+                          </Text>
+                        </View>
                       </View>
                     </View>
                   </View>
                 </View>
-              </View>
 
-              <View style={styles.productdetails}>
-                <Animated.View
-                  style={{
-                    transform: [{ translateY: slideUp1 }],
-                    opacity: slideUp1.interpolate({
-                      inputRange: [-screenHeight, 0],
-                      outputRange: [0, 1],
-                    }),
-                  }}
-                >
-                  <Text
-                    allowFontScaling={false}
-                    style={styles.productdetailstext}
+                <View style={styles.productdetails}>
+                  <Animated.View
+                    style={{
+                      transform: [{ translateY: slideUp1 }],
+                      opacity: slideUp1.interpolate({
+                        inputRange: [-screenHeight, 0],
+                        outputRange: [0, 1],
+                      }),
+                    }}
                   >
-                    {(() => {
-                      switch (productId) {
-                        case 2:
-                          return t('tutoring_service_details');
-                        case 3:
-                          return t('dish_details');
-                        case 4:
-                          return t('rental_details');
-                        case 5:
-                          return t('housekeeping_details');
-                        default:
-                          return t('product_details');
-                      }
-                    })()}
-                  </Text>
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.productdetailstext}
+                    >
+                      {(() => {
+                        switch (productId) {
+                          case 2:
+                            return t('tutoring_service_details');
+                          case 3:
+                            return t('dish_details');
+                          case 4:
+                            return t('rental_details');
+                          case 5:
+                            return t('housekeeping_details');
+                          default:
+                            return t('product_details');
+                        }
+                      })()}
+                    </Text>
 
-                  {fields
-                    .filter(
-                      (f: any) =>
-                        f?.param?.field_type?.toLowerCase() !== 'boolean',
-                    )
-                    .map((field: any) => renderField(field))}
-                </Animated.View>
-              </View>
-              {/* Featured listing toggle rendered as a separate section */}
-              {featuredField && <View>{renderField(featuredField)}</View>}
-            </AnimatedReanimated.ScrollView>
-
-
+                    {fields
+                      .filter(
+                        (f: any) =>
+                          f?.param?.field_type?.toLowerCase() !== 'boolean',
+                      )
+                      .map((field: any) => renderField(field))}
+                  </Animated.View>
+                </View>
+                {/* Featured listing toggle rendered as a separate section */}
+                {featuredField && <View>{renderField(featuredField)}</View>}
+              </AnimatedReanimated.ScrollView>
+            </NestableScrollContainer>
           </KeyboardAvoidingView>
         )}
         <Button title={t('preview_details')} onPress={() => handlePreview()} />
       </View>
+
+      <Modal
+        visible={showThumnail}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => {}}
+      >
+        <TouchableWithoutFeedback>
+          <View style={styles.overlay}>
+            <BlurView
+              style={{
+                flex: 1,
+                alignContent: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                alignItems: 'center',
+              }}
+              blurType="light"
+              blurAmount={10}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            >
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
+                ]}
+              />
+
+              <View style={styles.popupContainer}>
+                <Image
+                  source={{ uri: uri }}
+                  style={{
+                    width: '100%',
+                    height: 300,
+                    paddingLeft: 3,
+                    paddingEnd: 3,
+                  }}
+                  resizeMode="contain"
+                />
+
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  onPress={() => {
+                    setShowThumnail(false);
+                  }}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText}>
+                    {t('close')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </BlurView>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
 
       {Platform.OS === 'android' ? (
         <>
@@ -1367,11 +1464,17 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             options={multiSelectOptions}
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
-            title={`${t('select')} ${t(multiSelectModal?.fieldLabel || 'category')}`}
+            title={`${t('select')} ${t(
+              multiSelectModal?.fieldLabel || 'category',
+            )}`}
             subtitle={
               multiSelectModal?.ismultilple
-                ? `${t('pick_all')} ${pluralizeLabel(multiSelectModal?.fieldLabel || 'category')} ${t('best_describe')}`
-                : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'} ${t('that_fit_your_listing')}`
+                ? `${t('pick_all')} ${pluralizeLabel(
+                    multiSelectModal?.fieldLabel || 'category',
+                  )} ${t('best_describe')}`
+                : `${t('select_the')} ${
+                    multiSelectModal?.fieldLabel || 'category'
+                  } ${t('that_fit_your_listing')}`
             }
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>
@@ -1391,11 +1494,17 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             options={multiSelectOptions}
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
-            title={`${t('select')} ${t(multiSelectModal?.fieldLabel || 'category')}`}
+            title={`${t('select')} ${t(
+              multiSelectModal?.fieldLabel || 'category',
+            )}`}
             subtitle={
               multiSelectModal?.ismultilple
-                ? `${t('pick_all')} ${pluralizeLabel(multiSelectModal?.fieldLabel || 'category')} ${t('best_describe')}`
-                : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'} ${t('that_fit_your_listing')}`
+                ? `${t('pick_all')} ${pluralizeLabel(
+                    multiSelectModal?.fieldLabel || 'category',
+                  )} ${t('best_describe')}`
+                : `${t('select_the')} ${
+                    multiSelectModal?.fieldLabel || 'category'
+                  } ${t('that_fit_your_listing')}`
             }
             //subtitle={`Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your item.`}
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
@@ -1420,6 +1529,48 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 export default AddScreen;
 
 const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  popupContainer: {
+    width: '90%',
+    padding: 16,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'center',
+    overflow: 'hidden',
+
+    backgroundColor: 'rgba(255, 255, 255, 0.10)',
+  },
+  loginButton: {
+    display: 'flex',
+    width: '100%',
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 100,
+    paddingTop: 6,
+    paddingBottom: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.56)',
+    marginTop: 16,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+  },
+  loginText: {
+    color: '#002050',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: 500,
+    letterSpacing: 1,
+    width: '100%',
+  },
+
   headerWrapper: {
     position: 'absolute',
     top: 0,
@@ -1430,23 +1581,10 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'none',
   },
-  // headerContent: {
-  //   position: 'absolute',
-  //   top: Platform.OS === 'ios' ? '8.4%' : 60,
-  //   width: Platform.OS === 'ios' ? '100%' : '100%',
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  //   paddingHorizontal: 16,
-  //   zIndex: 11,
-  //   alignSelf: 'center',
-  //   pointerEvents: 'box-none',
-  //   marginTop: Platform.OS === 'ios' ? 0 : 0,
-  //   marginLeft: 0,
-  // },
+
   headerContent: {
     position: 'absolute',
-    top: (Platform.OS === 'ios' ? 60 : 40),
+    top: Platform.OS === 'ios' ? 60 : 40,
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -1486,7 +1624,8 @@ const styles = StyleSheet.create({
     borderWidth: 0.3,
     borderColor: '#ffffff11',
 
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
+    boxShadow:
+      '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
 
@@ -1500,7 +1639,6 @@ const styles = StyleSheet.create({
     boxSizing: 'border-box',
   },
   blurButtonWrapper_none: {
-
     width: 48,
     height: 48,
     borderRadius: 40,
@@ -1547,7 +1685,7 @@ const styles = StyleSheet.create({
   //   justifyContent: 'center',
   // },
   dropdowncard: {
-    flex: 1,            // ⬅️ Add this
+    flex: 1, // ⬅️ Add this
     minHeight: 40,
     justifyContent: 'center',
     alignItems: 'flex-start',
@@ -1621,7 +1759,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     width: '70%',
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   backBtn: {
     width: 30,
@@ -1720,13 +1858,13 @@ const styles = StyleSheet.create({
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
   },
   imagelistcard: {
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.32)',
-    borderRadius: 12,
-    borderWidth: 0.4,
-    borderColor: '#ffffff33',
-    marginTop: 10,
+    // backgroundColor:
+    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    // boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.32)',
+    // borderRadius: 12,
+    // borderWidth: 0.4,
+    // borderColor: '#ffffff33',
+    // marginTop: 10,
   },
 
   productdetailstext: {
@@ -1978,7 +2116,6 @@ const styles = StyleSheet.create({
     padding: 16,
   },
 
-
   modalOption: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -2004,6 +2141,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     //height: Platform.OS === 'ios' ? 547 : 300,
-    paddingVertical: (Platform.OS === 'ios' ? 0 : 40),
+    paddingVertical: Platform.OS === 'ios' ? 0 : 40,
   },
 });

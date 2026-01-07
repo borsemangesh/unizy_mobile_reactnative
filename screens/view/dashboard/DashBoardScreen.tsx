@@ -185,16 +185,16 @@ const AddScreenContent: React.FC<AddScreenContentProps> = ({ navigation, product
 
   const handleProductPress = (item: any) => {
 
-    if (isOnboardingComplete === false) {
+    // if (isOnboardingComplete === false) {
 
-      setShowOnboardingPopup(true);
-    } else if (isOnboardingComplete === true) {
+    //   setShowOnboardingPopup(true);
+    // } else if (isOnboardingComplete === true) {
 
       navigation.replace('AddScreen', {
         productId: item.id,
         productName: item.name,
       }, { animation: 'none' });
-    }
+    // }
 
   };
 

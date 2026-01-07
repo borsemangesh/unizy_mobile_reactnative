@@ -754,5 +754,6 @@
   "info_bottom_subheader4": "Payments are held securely and released after OTP confirmation.",
   "hr":"hr",
   "week":"week",
-  "session":"session"
+  "session":"session",
+  "close": "Close"
 }

@@ -13,6 +13,8 @@ import {
   Animated,
   Dimensions,
   StatusBar,
+  Modal,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImageResizer from 'react-native-image-resizer';
@@ -31,7 +33,10 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 // import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
 import { check, openSettings, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import SelectCatagoryDropdown_IOS from '../../utils/component/SelectCatagoryDropdown_IOS';
-
+import {
+  NestableScrollContainer,
+  NestableDraggableFlatList,
+} from 'react-native-draggable-flatlist';
 import AnimatedReanimated, {
   useSharedValue,
   useAnimatedScrollHandler,
@@ -121,7 +126,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
   const { height } = Dimensions.get('window');
   const bottomPadding = height * 0.0005;
-
+  const MAX_IMAGES = 5;
   const [slideUp1] = useState(new Animated.Value(0));
 
   const scrollY = useSharedValue(0);
@@ -679,38 +684,63 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         {
           text: 'Gallery',
           onPress: () => {
+            // launchImageLibrary(
+            //   { mediaType: 'photo', quality: 1 },
+            //   async response => {
+            //     if (response.didCancel) return;
+            //     if (response.assets && response.assets[0].uri) {
+            //       const asset = response.assets[0];
+            //       let uri = asset.uri!;
+            //       let name = asset.fileName || 'Image';
+
+            //       // check size
+            //       if (
+            //         asset.fileSize &&
+            //         asset.fileSize > MAX_SIZE_MB * 1024 * 1024
+            //       ) {
+            //         const compressed = await ImageResizer.createResizedImage(
+            //           uri,
+            //           800,
+            //           800,
+            //           'JPEG',
+            //           80,
+            //         );
+            //         uri = compressed.uri;
+            //         name = compressed.name || name;
+            //       }
+            //       const newImage = {
+            //         id: Date.now().toString(),
+            //         uri,
+            //         name,
+            //         status: 'new',
+            //       };
+
+            //       setUploadedImages(prev => [...prev, newImage]);
+            //     }
+            //   },
+            // );
+
             launchImageLibrary(
-              { mediaType: 'photo', quality: 1 },
+              {
+                mediaType: 'photo',
+                quality: 1,
+                selectionLimit: MAX_IMAGES,
+              },
               async response => {
                 if (response.didCancel) return;
-                if (response.assets && response.assets[0].uri) {
-                  const asset = response.assets[0];
-                  let uri = asset.uri!;
-                  let name = asset.fileName || 'Image';
 
-                  // check size
-                  if (
-                    asset.fileSize &&
-                    asset.fileSize > MAX_SIZE_MB * 1024 * 1024
-                  ) {
-                    const compressed = await ImageResizer.createResizedImage(
-                      uri,
-                      800,
-                      800,
-                      'JPEG',
-                      80,
-                    );
-                    uri = compressed.uri;
-                    name = compressed.name || name;
-                  }
-                  const newImage = {
-                    id: Date.now().toString(),
-                    uri,
-                    name,
-                    status: 'new',
-                  };
+                if (response.assets) {
+                  const images = await Promise.all(
+                    response.assets.map(async asset => ({
+                      id: `${Date.now()}-${Math.random()}`,
+                      uri: asset.uri!,
+                      name: asset.fileName || 'Image',
+                    })),
+                  );
 
-                  setUploadedImages(prev => [...prev, newImage]);
+                  setUploadedImages(prev =>
+                    [...prev, ...images].slice(0, MAX_IMAGES),
+                  );
                 }
               },
             );
@@ -747,6 +777,88 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
     setUploadedImages(prev => prev.filter(img => img.id !== fileId));
 
 
+  };
+
+  const [showThumnail, setShowThumnail] = useState(false);
+  const [uri, setUri] = useState('');
+
+  const renderImageItem = ({ item, drag, isActive }: any) => {
+    return (
+     
+      <View style={styles.imagelistcard}>
+        <TouchableOpacity
+          onLongPress={drag}
+          onPress={() => {
+            setShowThumnail(true);
+            setUri(item.uri);
+          }}
+          disabled={isActive}
+          style={[{ opacity: isActive ? 0.7 : 1 }]}
+          activeOpacity={0.9}
+        >
+          <View
+            key={item.id}
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingRight: 6,
+              paddingVertical: 6,
+              paddingLeft: 8,
+            }}
+          >
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 8,
+                flex: 1,
+              }}
+            >
+              <Image
+                source={require('../../../assets/images/sixdots.png')}
+                style={styles.threedots}
+              />
+              <Image
+                source={fileIcon}
+                style={{ width: 32, height: 32, marginRight: 5 }}
+              />
+              <Text
+                allowFontScaling={false}
+                style={[styles.fileName, { flexShrink: 1 }]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {item.name}
+              </Text>
+            </View>
+
+            <TouchableOpacity
+              onPress={() =>
+                setUploadedImages(prev =>
+                  prev.filter(img => img.id !== item.id),
+                )
+              }
+            >
+              <Image
+                source={deleteIcon}
+                style={{ width: 38, height: 38, resizeMode: 'contain' }}
+              />
+            </TouchableOpacity>
+          </View>
+          {uploadedImages.length > 1 && item !== uploadedImages.length - 1 && (
+            <View
+              style={{
+                height: 1,
+                backgroundColor:
+                  'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%)',
+                marginHorizontal: 10,
+              }}
+            />
+          )}
+        </TouchableOpacity>
+      </View>
+    );
   };
 
 
@@ -1029,10 +1141,31 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
               </Text>
             </TouchableOpacity>
             {uploadedImages.length > 0 && (
+               <View style={{
+                backgroundColor:
+                'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
+              boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.32)',
+              borderRadius: 12,
+              borderWidth: 0.4,
+              borderColor: '#ffffff33',
+              marginTop: 10,
+               }}>
+              <NestableDraggableFlatList
+                data={uploadedImages}
+                keyExtractor={item => item.id}
+                renderItem={renderImageItem}
+                // numColumns={3}
+                autoscrollSpeed={30}
+                // activationDistance={20}
+                onDragEnd={({ data }) => setUploadedImages(data)}
+                containerStyle={{ minHeight: 100 }}
+              />
+              </View>
+            )}
+            {/* {uploadedImages.length > 0 && (
               <View style={styles.imagelistcard}>
                 {uploadedImages.map((file, index) => (
                   <View key={file.id} style={{ width: '100%' }}>
-                    {/* Image row */}
                     <View
                       style={{
                         flexDirection: 'row',
@@ -1086,7 +1219,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                   </View>
                 ))}
               </View>
-            )}
+            )} */}
           </View>
         );
       }
@@ -1336,132 +1469,134 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             <Loader containerStyle={styles.loaderContainer} />
           </View>
         ) : (
-          <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          >
-            <AnimatedReanimated.ScrollView
-              scrollEventThrottle={16}
-              onScroll={scrollHandler}
-              contentContainerStyle={[
-                styles.scrollContainer,
-                { paddingBottom: height * 0.1 },
-              ]}>
+          <NestableScrollContainer>
+            <KeyboardAvoidingView
+              style={{ flex: 1 }}
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            >
+              <AnimatedReanimated.ScrollView
+                scrollEventThrottle={16}
+                onScroll={scrollHandler}
+                contentContainerStyle={[
+                  styles.scrollContainer,
+                  { paddingBottom: height * 0.1 },
+                ]}>
 
-              <View style={styles.userRow}>
-                <View style={{ width: '20%', alignItems: 'center', justifyContent: 'center' }}>
-                  {userMeta?.profile ? (
-                    <Image
-                      source={{ uri: userMeta.profile }}
-                      style={styles.avatar}
-                    />
-                  ) : (
-                    <View style={styles.initialsCircle}>
-                      <Text allowFontScaling={false} style={styles.initialsText}>
-                        {getInitials(userMeta?.firstname ?? 'Alan', userMeta?.lastname ?? 'Walker')}
-                      </Text>
-                    </View>
-                  )}
-                </View>
+                <View style={styles.userRow}>
+                  <View style={{ width: '20%', alignItems: 'center', justifyContent: 'center' }}>
+                    {userMeta?.profile ? (
+                      <Image
+                        source={{ uri: userMeta.profile }}
+                        style={styles.avatar}
+                      />
+                    ) : (
+                      <View style={styles.initialsCircle}>
+                        <Text allowFontScaling={false} style={styles.initialsText}>
+                          {getInitials(userMeta?.firstname ?? 'Alan', userMeta?.lastname ?? 'Walker')}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
 
-                <View style={{ width: '80%' }}>
-                  <Text allowFontScaling={false} style={styles.userName}>
-                    {userMeta
-                      ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''}`.trim()
-                      : 'Alan Walker'}
-                  </Text>
-
-                  <View
-                    style={{
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                      display: 'flex',
-                      alignItems: 'stretch',
-                    }}
-                  >
-                    <Text allowFontScaling={false} style={styles.userSub}>
-                      {userMeta?.university_name || 'University of Warwick,'}
+                  <View style={{ width: '80%' }}>
+                    <Text allowFontScaling={false} style={styles.userName}>
+                      {userMeta
+                        ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''}`.trim()
+                        : 'Alan Walker'}
                     </Text>
+
                     <View
                       style={{
-                        flexDirection: 'row',
+                        flexDirection: 'column',
                         justifyContent: 'space-between',
+                        display: 'flex',
+                        alignItems: 'stretch',
                       }}
                     >
-                      <Text allowFontScaling={false} style={styles.userSub2}>{userMeta?.city || ''}</Text>
+                      <Text allowFontScaling={false} style={styles.userSub}>
+                        {userMeta?.university_name || 'University of Warwick,'}
+                      </Text>
                       <View
                         style={{
                           flexDirection: 'row',
-                          alignItems: 'center',
-                          gap: 3,
+                          justifyContent: 'space-between',
                         }}
                       >
-                        <Image
-                          source={require('../../../assets/images/calendar_icon1.png')}
-                          style={{ height: 20, width: 20 }}
-                        />
-                        <Text allowFontScaling={false} style={styles.dateText}>{formatDateWithDash(newdate, t)}</Text>
+                        <Text allowFontScaling={false} style={styles.userSub2}>{userMeta?.city || ''}</Text>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: 3,
+                          }}
+                        >
+                          <Image
+                            source={require('../../../assets/images/calendar_icon1.png')}
+                            style={{ height: 20, width: 20 }}
+                          />
+                          <Text allowFontScaling={false} style={styles.dateText}>{formatDateWithDash(newdate, t)}</Text>
+                        </View>
                       </View>
                     </View>
                   </View>
                 </View>
-              </View>
 
-              <View style={styles.productdetails}>
-                <Animated.View
-                  style={{
-                    transform: [{ translateY: slideUp1 }],
-                    opacity: slideUp1.interpolate({
-                      inputRange: [-screenHeight, 0],
-                      outputRange: [0, 1],
-                    }),
-                  }}
-                >
-                  {/* <Text
-                  allowFontScaling={false}
-                  style={styles.productdetailstext}
-                >
-
-                  {productId === 3
-                    ? t('dish_details')
-                    : `${category ? `${category} ` : ''}${t('details')}`}
-                </Text> */}
-                  <Text
+                <View style={styles.productdetails}>
+                  <Animated.View
+                    style={{
+                      transform: [{ translateY: slideUp1 }],
+                      opacity: slideUp1.interpolate({
+                        inputRange: [-screenHeight, 0],
+                        outputRange: [0, 1],
+                      }),
+                    }}
+                  >
+                    {/* <Text
                     allowFontScaling={false}
                     style={styles.productdetailstext}
                   >
-                    {(() => {
-                      switch (productId) {
-                        case 2:
-                          return t('tutoring_service_details');
-                        case 3:
-                          return t('dish_details');
-                        case 4:
-                          return t('rental_details');
-                        case 5:
-                          return t('housekeeping_details');
-                        default:
-                          return t('product_details');
-                      }
-                    })()}
-                  </Text>
+
+                    {productId === 3
+                      ? t('dish_details')
+                      : `${category ? `${category} ` : ''}${t('details')}`}
+                  </Text> */}
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.productdetailstext}
+                    >
+                      {(() => {
+                        switch (productId) {
+                          case 2:
+                            return t('tutoring_service_details');
+                          case 3:
+                            return t('dish_details');
+                          case 4:
+                            return t('rental_details');
+                          case 5:
+                            return t('housekeeping_details');
+                          default:
+                            return t('product_details');
+                        }
+                      })()}
+                    </Text>
 
 
-                  {fields
-                    .filter(
-                      (f: any) =>
-                        f?.param?.field_type?.toLowerCase() !== 'boolean',
-                    )
-                    .map((field: any) => renderField(field))}
-                </Animated.View>
-              </View>
-              {featuredField && (
-                <View>
-                  {renderField(featuredField)}
+                    {fields
+                      .filter(
+                        (f: any) =>
+                          f?.param?.field_type?.toLowerCase() !== 'boolean',
+                      )
+                      .map((field: any) => renderField(field))}
+                  </Animated.View>
                 </View>
-              )}
-            </AnimatedReanimated.ScrollView >
-          </KeyboardAvoidingView>
+                {featuredField && (
+                  <View>
+                    {renderField(featuredField)}
+                  </View>
+                )}
+              </AnimatedReanimated.ScrollView >
+            </KeyboardAvoidingView>
+          </NestableScrollContainer>
         )}
         <Button
           title={t('preview_details')}
@@ -1469,6 +1604,62 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         />
 
       </View>
+
+      <Modal
+        visible={showThumnail}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => {}}
+      >
+        <TouchableWithoutFeedback>
+          <View style={styles.overlay}>
+            <BlurView
+              style={{
+                flex: 1,
+                alignContent: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                alignItems: 'center',
+              }}
+              blurType="light"
+              blurAmount={10}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            >
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
+                ]}
+              />
+
+              <View style={styles.popupContainer}>
+                <Image
+                  source={{ uri: uri }}
+                  style={{
+                    width: '100%',
+                    height: 300,
+                    paddingLeft: 3,
+                    paddingEnd: 3,
+                  }}
+                  resizeMode="contain"
+                />
+
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  onPress={() => {
+                    setShowThumnail(false);
+                  }}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText}>
+                    {t('close')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </BlurView>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+
       {Platform.OS === 'android' ? (
         <>
 
@@ -1529,6 +1720,48 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 export default EditListScreen;
 
 const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  popupContainer: {
+    width: '90%',
+    padding: 16,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'center',
+    overflow: 'hidden',
+
+    backgroundColor: 'rgba(255, 255, 255, 0.10)',
+  },
+  loginButton: {
+    display: 'flex',
+    width: '100%',
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 100,
+    paddingTop: 6,
+    paddingBottom: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.56)',
+    marginTop: 16,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+  },
+  loginText: {
+    color: '#002050',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: 500,
+    letterSpacing: 1,
+    width: '100%',
+  },
+
 
   loaderContainer: {
     width: 100,
@@ -1633,13 +1866,13 @@ const styles = StyleSheet.create({
   },
 
   imagelistcard: {
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.32)',
-    borderRadius: 12,
-    borderWidth: 0.4,
-    borderColor: '#ffffff33',
-    marginTop: 10,
+    // backgroundColor:
+    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    // boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.32)',
+    // borderRadius: 12,
+    // borderWidth: 0.4,
+    // borderColor: '#ffffff33',
+    // marginTop: 10,
   },
 
   fileIcon: {

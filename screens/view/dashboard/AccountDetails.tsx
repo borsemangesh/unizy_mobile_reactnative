@@ -540,8 +540,9 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                 <>
                   {getPrimaryBanks().map((bank: any, index: number) => (
                     <View
-                      key={`primary-${index}`}
+                      
                       style={{ width: '100%', gap: 16 }}
+                      key={`primary-${index}`}
                     >
                       <SquircleView
                         style={styles.card}

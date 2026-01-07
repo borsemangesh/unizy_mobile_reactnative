@@ -1,4 +1,3 @@
-
 import React, { useEffect ,useState } from "react";
 import { LogBox, StatusBar, View, StyleSheet, ImageBackground, Platform, PermissionsAndroid, Alert } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -12,6 +11,7 @@ import { navigate } from "./screens/view/navigationRef";
 import { handleNotification, navigationReady } from "./screens/utils/NotificationHandler";
 import { initI18n } from "./localization/i18n";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 function App() {
   LogBox.ignoreAllLogs();
@@ -278,6 +278,8 @@ function App() {
   }, []);
 
   return (
+
+    <GestureHandlerRootView style={{ flex: 1 }}>
     
     <StripeProvider publishableKey={Constant.PUBLIC_KEY}>
       
@@ -296,7 +298,7 @@ function App() {
     </SafeAreaProvider>
     </ImageBackground>
     </StripeProvider>
-
+    </GestureHandlerRootView>
     
   );
 }
