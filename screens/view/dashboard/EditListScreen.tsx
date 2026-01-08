@@ -52,6 +52,8 @@ import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import Loader from '../../utils/component/Loader';
+import DatePicker from 'react-native-date-picker';
+import dayjs from 'dayjs';
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImg = require('../../../assets/images/user.jpg');
@@ -60,15 +62,15 @@ const fileIcon = require('../../../assets/images/file.png');
 const deleteIcon = require('../../../assets/images/delete.png');
 const uploadIcon1 = require('../../../assets/images/fileupload.png');
 
-type AddScreenContentProps = {
+type EditListScreenContentProps = {
   navigation: any;
 };
 type RootStackParamList = {
-  AddScreen: { productId: number; productName: string; shareid: number };
+  EditListScreen: { productId: number; productName: string; shareid: number };
 };
-type AddScreenRouteProp = RouteProp<RootStackParamList, 'AddScreen'>;
+type AddScreenRouteProp = RouteProp<RootStackParamList, 'EditListScreen'>;
 
-const EditListScreen = ({ navigation }: AddScreenContentProps) => {
+const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
   const [formValues, setFormValues] = useState<any>({});
   const [fields, setFields] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -80,6 +82,17 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
   const [newdate, setnewdate] = useState('')
   const [category, setcategory] = useState('')
   const [featureitem, setfeatureitem] = useState(false)
+
+  const [dateStep, setDateStep] = useState<'start' | 'end'>('start');
+  const [tempStartDate, setTempStartDate] = useState<Date | undefined>(undefined);
+
+
+  const [datePickerVisible, setDatePickerVisible] = useState(false);
+  const [activeDateField, setActiveDateField] = useState<{
+    param: any;
+    type: 'start' | 'end';
+  } | null>(null);
+
   const [multiSelectModal, setMultiSelectModal] = useState<{
     visible: boolean;
     ismultilple: boolean;
@@ -211,9 +224,9 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         if (json?.metadata) {
           if (json.metadata.category) {
             setFeatureFee(json.metadata.category.feature_fee ?? '0'),
-            
-            setMaxFeatureCap(
-              json.metadata.category.max_feature_cap ?? '0')
+
+              setMaxFeatureCap(
+                json.metadata.category.max_feature_cap ?? '0')
 
           }
           setUserMeta({
@@ -278,6 +291,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         }
 
         const url = `${MAIN_URL.baseUrl}category/feature-detail/${shareid}`;
+        console.log(url)
 
 
         const response = await fetch(url, {
@@ -355,19 +369,32 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                 finalValue = param.param_value ?? "";
               }
 
+              // if (fieldType === "dropdown") {
+              //   if (Array.isArray(finalValue)) {
+              //     initialValues[param.id] = {
+              //       ...baseField,
+              //       value: finalValue.map((v: any) => Number(v)),
+              //     };
+              //   } else {
+              //     initialValues[param.id] = {
+              //       ...baseField,
+              //       value: finalValue ? Number(finalValue) : null,
+              //     };
+              //   }
+              // } 
+
               if (fieldType === "dropdown") {
-                if (Array.isArray(finalValue)) {
-                  initialValues[param.id] = {
-                    ...baseField,
-                    value: finalValue.map((v: any) => Number(v)),
-                  };
-                } else {
-                  initialValues[param.id] = {
-                    ...baseField,
-                    value: finalValue ? Number(finalValue) : null,
-                  };
-                }
-              } else {
+                const selectedOption = param.options?.find(
+                  (opt: any) => Number(opt.option_id ?? opt.id) === Number(finalValue)
+                );
+
+                initialValues[param.id] = {
+                  ...baseField,
+                  value: finalValue ? Number(finalValue) : null,
+                  other_text: selectedOption?.other_text ?? null,
+                };
+              }
+              else {
                 initialValues[param.id] = {
                   ...baseField,
                   value: finalValue,
@@ -538,8 +565,105 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
     return true;
   };
 
+  // const handlePreview = async (latestFormValues: any) => {
+  //   try {
+  //     for (const field of fields) {
+  //       const param = field.param || field;
+  //       const { id, field_type, field_name, alias_name, mandatory } = param;
+  //       const fieldId = String(id);
+
+  //       const nameToShow = alias_name || field_name || 'Unnamed Field';
+
+  //       let value =
+  //         latestFormValues[fieldId]?.value ??
+  //         latestFormValues[alias_name]?.value ??
+  //         '';
+
+  //       if (field_type?.toLowerCase() === 'image') {
+  //         value = uploadedImages;
+  //       }
+
+  //       if (mandatory) {
+  //         const isEmpty =
+  //           value === undefined ||
+  //           value === null ||
+  //           (typeof value === 'string' && value.trim() === '') ||
+  //           (Array.isArray(value) && value.length === 0);
+
+  //         if (isEmpty) {
+  //           showToast(`${nameToShow} ${t(Constant.IS_MAN)}`, 'error');
+  //           return;
+  //         }
+  //       }
+  //     }
+  //     let computedPrice: number | null = null;
+
+  //     if (productId === 2 || productId === 5) {
+  //       let priceFieldId: number | null = null;
+  //       let durationFieldId: number | null = null;
+
+  //       fields.forEach(f => {
+  //         const param = f.param || f;
+  //         if (param.alias_name === 'price') priceFieldId = param.id;
+  //         if (param.alias_name === 'service_duration') durationFieldId = param.id;
+  //       });
+
+  //       if (priceFieldId !== null && durationFieldId !== null) {
+  //         const rawPrice =
+  //           Number(latestFormValues[String(priceFieldId)]?.value) ||
+  //           Number(latestFormValues['price']?.value) ||
+  //           0;
+
+  //         const rawDuration = Number(latestFormValues[String(durationFieldId)]?.value) || Number(latestFormValues['service_duration']?.value) || 1;
+  //         computedPrice = rawPrice * rawDuration;
+  //       }
+  //     }
+
+
+  //     const dataToStore: any = { ...latestFormValues };
+
+  //     if (computedPrice !== null) {
+  //       fields.forEach(f => {
+  //         const param = f.param || f;
+  //         if (param.alias_name === 'price') {
+  //           dataToStore[String(param.id)] = {
+  //             value: computedPrice.toString(),
+  //             alias_name: 'price',
+  //           };
+  //         }
+  //       });
+  //     }
+  //     fields.forEach(field => {
+  //       const param = field.param || field;
+  //       const fieldType = param.field_type?.toLowerCase();
+
+  //       if (fieldType === 'image') {
+  //         const uploadedForField = uploadedImages.map(img => ({
+  //           id: img.id,
+  //           uri: img.uri,
+  //           name: img.name,
+  //         }));
+
+  //         dataToStore[String(param.id)] = {
+  //           value: uploadedForField,
+  //           alias_name: param.alias_name ?? null,
+  //         };
+  //       }
+  //     });
+
+  //     await AsyncStorage.setItem('formData1', JSON.stringify(dataToStore));
+
+
+  //     navigation.navigate('EditPreviewThumbnail');
+  //   } catch (error) {
+  //     // console.log('Error:', error);
+  //     showToast(t(Constant.DATA_NOT_SAVE), 'error');
+  //   }
+  // };
+
   const handlePreview = async (latestFormValues: any) => {
     try {
+      // 1️⃣ Mandatory validation
       for (const field of fields) {
         const param = field.param || field;
         const { id, field_type, field_name, alias_name, mandatory } = param;
@@ -569,6 +693,8 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
           }
         }
       }
+
+      // 2️⃣ Price calculation logic
       let computedPrice: number | null = null;
 
       if (productId === 2 || productId === 5) {
@@ -587,14 +713,19 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             Number(latestFormValues['price']?.value) ||
             0;
 
-          const rawDuration = Number(latestFormValues[String(durationFieldId)]?.value) || Number(latestFormValues['service_duration']?.value) || 1;
+          const rawDuration =
+            Number(latestFormValues[String(durationFieldId)]?.value) ||
+            Number(latestFormValues['service_duration']?.value) ||
+            1;
+
           computedPrice = rawPrice * rawDuration;
         }
       }
 
-
+      // 3️⃣ Clone form values
       const dataToStore: any = { ...latestFormValues };
 
+      // 4️⃣ Override computed price
       if (computedPrice !== null) {
         fields.forEach(f => {
           const param = f.param || f;
@@ -606,6 +737,8 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
           }
         });
       }
+
+      // 5️⃣ Image handling
       fields.forEach(field => {
         const param = field.param || field;
         const fieldType = param.field_type?.toLowerCase();
@@ -624,15 +757,33 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         }
       });
 
-      await AsyncStorage.setItem('formData1', JSON.stringify(dataToStore));
+      // ✅ 6️⃣ DROPDOWN FIX — persist `other_text`
+      fields.forEach(field => {
+        const param = field.param || field;
+        const fieldType = param.field_type?.toLowerCase();
+        const fieldId = String(param.id);
 
+        if (fieldType === 'dropdown') {
+          const fieldData = latestFormValues[fieldId];
+          if (!fieldData) return;
+
+          dataToStore[fieldId] = {
+            value: fieldData.value,
+            other_text: fieldData.other_text ?? null,
+            alias_name: param.alias_name ?? null,
+          };
+        }
+      });
+
+      // 7️⃣ Save for preview
+      await AsyncStorage.setItem('formData1', JSON.stringify(dataToStore));
 
       navigation.navigate('EditPreviewThumbnail');
     } catch (error) {
-      // console.log('Error:', error);
       showToast(t(Constant.DATA_NOT_SAVE), 'error');
     }
   };
+
 
 
   const handleSelectImage = async () => {
@@ -784,7 +935,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 
   const renderImageItem = ({ item, drag, isActive }: any) => {
     return (
-     
+
       <View style={styles.imagelistcard}>
         <TouchableOpacity
           onLongPress={drag}
@@ -903,7 +1054,10 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
     if (!fieldType || !id) return null;
 
     switch (fieldType) {
-      case 'text': {
+
+      case 'text':
+      case 'date':
+         {
         const { param } = field;
         const { field_name, keyboardtype, alias_name } = param;
 
@@ -1044,6 +1198,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         );
       }
 
+
       case 'dropdown': {
         const value = formValues[id]?.value;
 
@@ -1105,8 +1260,13 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
                     }}
                   >
                     <Text allowFontScaling={false} style={styles.categoryTag}>
-                      {opt.option_name} ✕
+                      {opt.option_name}
+                      {formValues[id]?.other_text
+                        ? `: ${formValues[id].other_text}`
+                        : ''}
+                      {' '}✕
                     </Text>
+
                   </TouchableOpacity>
                 </View>
               ))}
@@ -1141,85 +1301,36 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
               </Text>
             </TouchableOpacity>
             {uploadedImages.length > 0 && (
-               <View style={{
+              <View style={{
                 backgroundColor:
-                'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
-              boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.32)',
-              borderRadius: 12,
-              borderWidth: 0.4,
-              borderColor: '#ffffff33',
-              marginTop: 10,
-               }}>
-              <NestableDraggableFlatList
-                data={uploadedImages}
-                keyExtractor={item => item.id}
-                renderItem={renderImageItem}
-                // numColumns={3}
-                autoscrollSpeed={30}
-                // activationDistance={20}
-                onDragEnd={({ data }) => setUploadedImages(data)}
-                containerStyle={{ minHeight: 100 }}
-              />
+                  'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
+                boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.32)',
+                borderRadius: 12,
+                borderWidth: 0.4,
+                borderColor: '#ffffff33',
+                marginTop: 10,
+              }}>
+                <NestableDraggableFlatList
+                  data={uploadedImages}
+                  keyExtractor={item => item.id}
+                  renderItem={renderImageItem}
+                  // numColumns={3}
+                  autoscrollSpeed={30}
+                  // activationDistance={20}
+                  onDragEnd={({ data }) => setUploadedImages(data)}
+                  contentContainerStyle={{
+                    flexGrow: 1,
+                    justifyContent: 'center',
+                  }}
+                  containerStyle={{
+                    minHeight: Platform.select({
+                      ios: 100,
+                      android: 60,
+                    }),
+                  }}
+                />
               </View>
             )}
-            {/* {uploadedImages.length > 0 && (
-              <View style={styles.imagelistcard}>
-                {uploadedImages.map((file, index) => (
-                  <View key={file.id} style={{ width: '100%' }}>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        padding: 10,
-                      }}
-                    >
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          gap: 10,
-                          flex: 1,
-                        }}
-                      >
-                        <Image
-                          source={require('../../../assets/images/sixdots.png')}
-                          style={styles.threedots}
-                        />
-                        <Image
-                          source={fileIcon}
-                          style={{ width: 32, height: 32, marginRight: 5 }}
-                        />
-                        <Text
-                          allowFontScaling={false}
-                          style={[styles.fileName, { flexShrink: 1 }]}
-                          numberOfLines={1}
-                          ellipsizeMode="tail"
-                        >
-                          {file.name}
-                        </Text>
-                      </View>
-
-
-                      <TouchableOpacity onPress={() => handleDeleteImage(file.id)}>
-                        <Image source={deleteIcon} style={styles.deleteIcon} />
-                      </TouchableOpacity>
-                    </View>
-                    {uploadedImages.length > 1 &&
-                      index !== uploadedImages.length - 1 && (
-                        <View
-                          style={{
-                            height: 1,
-                            backgroundColor:
-                              'radial-gradient(87.5% 87.5% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%)',
-                            marginHorizontal: 10,
-                          }}
-                        />
-                      )}
-                  </View>
-                ))}
-              </View>
-            )} */}
           </View>
         );
       }
@@ -1232,8 +1343,8 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
           <View key={field.id} style={styles.featurecard}>
             {/* Label + toggle */}
             <View style={styles.featuredRow}>
-              <View style={{width: '80%'}}>
-              {renderLabel1(field.param.field_name, field.mandatory)}
+              <View style={{ width: '80%' }}>
+                {renderLabel1(field.param.field_name, field.mandatory)}
               </View>
 
               <ToggleButton
@@ -1609,7 +1720,7 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
         visible={showThumnail}
         transparent={true}
         animationType="fade"
-        onRequestClose={() => {}}
+        onRequestClose={() => { }}
       >
         <TouchableWithoutFeedback>
           <View style={styles.overlay}>
@@ -1677,10 +1788,13 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             onClose={() =>
               setMultiSelectModal(prev => ({ ...prev, visible: false }))
             }
-            onSelect={(selectedIds: number[] | number) => {
+            onSelect={(data: any) => {
               setFormValues((prev: any) => ({
                 ...prev,
-                [multiSelectModal.fieldId!]: { value: selectedIds },
+                [multiSelectModal.fieldId!]: {
+                  value: data.selected,
+                  other_text: data.text || null,
+                },
               }));
             }}
           />
@@ -1703,10 +1817,13 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
             onClose={() =>
               setMultiSelectModal(prev => ({ ...prev, visible: false }))
             }
-            onSelect={(selectedIds: number[] | number) => {
+            onSelect={(data: any) => {
               setFormValues((prev: any) => ({
                 ...prev,
-                [multiSelectModal.fieldId!]: { value: selectedIds },
+                [multiSelectModal.fieldId!]: {
+                  value: data.selected,
+                  other_text: data.text || null,
+                },
               }));
             }}
           />
@@ -1720,6 +1837,19 @@ const EditListScreen = ({ navigation }: AddScreenContentProps) => {
 export default EditListScreen;
 
 const styles = StyleSheet.create({
+  dateBox: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+  },
+
+  calendarIcon: {
+    width: 18,
+    height: 18,
+    tintColor: '#fff', // remove if icon already white
+  },
   overlay: {
     flex: 1,
     justifyContent: 'center',

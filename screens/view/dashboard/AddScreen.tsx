@@ -45,8 +45,8 @@ import {
 import { BlurView } from '@react-native-community/blur';
 import SelectCatagoryDropdown_IOS from '../../utils/component/SelectCatagoryDropdown_IOS';
 import Loader from '../../utils/component/Loader';
-// import DatePicker from 'react-native-date-picker';
-// import dayjs from 'dayjs';
+import DatePicker from 'react-native-date-picker';
+import dayjs from 'dayjs';
 import {
   NestableScrollContainer,
   NestableDraggableFlatList,
@@ -98,11 +98,16 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const formattedDate = today.toLocaleDateString('en-GB');
   const displayDate = formattedDate.replace(/\//g, '-');
   const [photo, setPhoto] = useState<string | null>(null);
-// const [dateStep, setDateStep] = useState<'start' | 'end'>('start');
-// const [tempStartDate, setTempStartDate] = useState<Date | undefined>(undefined);
+  const [dateStep, setDateStep] = useState<'start' | 'end'>('start');
+  const [tempStartDate, setTempStartDate] = useState<Date | undefined>(undefined);
 
-//   const [datePickerVisible, setDatePickerVisible] = useState(false);
-//   const [activeDateField, setActiveDateField] = useState<any>(null);
+
+  const [datePickerVisible, setDatePickerVisible] = useState(false);
+  const [activeDateField, setActiveDateField] = useState<{
+    param: any;
+    type: 'start' | 'end';
+  } | null>(null);
+
 
   const [multiSelectModal, setMultiSelectModal] = useState<{
     visible: boolean;
@@ -110,13 +115,13 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     fieldId?: number;
     fieldLabel?: string;
   }>({ visible: false, ismultilple: false });
- 
+
   type UploadedImage = {
-  id: string;
-  uri: string;
-  name: string;
-};
-const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
+    id: string;
+    uri: string;
+    name: string;
+  };
+  const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
 
   const [multiSelectOptions, setMultiSelectOptions] = useState<any[]>([]);
   // const [uploadedImages, setUploadedImages] = useState<
@@ -209,7 +214,7 @@ const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
 
   const renderImageItem = ({ item, drag, isActive }: any) => {
     return (
-     
+
       <View style={styles.imagelistcard}>
         <TouchableOpacity
           onLongPress={drag}
@@ -573,7 +578,22 @@ const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
         }
 
         if (field.mandatory) {
-          if (
+
+          if (field_type.toLowerCase() === 'date') {
+            const startDate = value?.startDate;
+            const endDate = value?.endDate;
+
+            if (!startDate || !endDate) {
+              showToast(
+                t('select_both_dates'),
+                'error',
+              );
+              return;
+            }
+          }
+
+
+          else if (
             value === undefined ||
             value === null ||
             (typeof value === 'string' && value.trim() === '') ||
@@ -778,9 +798,7 @@ const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
     if (!fieldType || !id) return null;
 
     switch (fieldType) {
-      case 'text':
-      case 'date':
-      {
+      case 'text': {
         const { param } = field;
         const { field_name, keyboardtype, alias_name } = param;
 
@@ -1031,16 +1049,16 @@ const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
               </Text>
             </TouchableOpacity>
             {uploadedImages.length > 0 && (
-               <View style={{
+              <View style={{
                 backgroundColor:
-                'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
-              boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.32)',
-              borderRadius: 12,
-              borderWidth: 0.4,
-              borderColor: '#ffffff33',
-              marginTop: 10,
-               }}>
-              {/* <NestableDraggableFlatList
+                  'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
+                boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.32)',
+                borderRadius: 12,
+                borderWidth: 0.4,
+                borderColor: '#ffffff33',
+                marginTop: 10,
+              }}>
+                {/* <NestableDraggableFlatList
                 data={uploadedImages}
                 keyExtractor={(item: { id: any; }) => item.id}
                 renderItem={renderImageItem}
@@ -1051,71 +1069,97 @@ const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
                 containerStyle={{ minHeight: 100 }}
               /> */}
 
-              <NestableDraggableFlatList<UploadedImage>
-                data={uploadedImages}
-                keyExtractor={(item) => item.id}
-                renderItem={renderImageItem}
-                autoscrollSpeed={30}
-                onDragEnd={({ data }) => setUploadedImages(data)}
-                containerStyle={{ minHeight: 100 }}
-              />
+                <NestableDraggableFlatList<UploadedImage>
+                  data={uploadedImages}
+                  keyExtractor={(item) => item.id}
+                  renderItem={renderImageItem}
+                  autoscrollSpeed={30}
+                  onDragEnd={({ data }) => setUploadedImages(data)}
+                  contentContainerStyle={{
+                      flexGrow: 1,
+                      justifyContent: 'center',
+                    }}
+                  containerStyle={{
+                    minHeight: Platform.select({
+                      ios: 100,
+                      android: 60,
+                    }),
+                  }}
+                />
               </View>
             )}
           </View>
         );
       }
 
-      // case 'date': {
-      //   const { param } = field;
-      //   const { field_name, alias_name } = param;
 
-      //   const value = formValues[param.id]?.value;
+      case 'date': {
+        const { param } = field;
+        const { field_name } = param;
 
-      //   const displayValue = (() => {
-      //     if (value?.startDate && value?.endDate) {
-      //       return `${dayjs(value.startDate).format('DD MMM YYYY')} - ${dayjs(
-      //         value.endDate
-      //       ).format('DD MMM YYYY')}`;
-      //     }
+        const value = formValues[param.id]?.value;
+        const startDate = value?.startDate;
+        const endDate = value?.endDate;
 
-      //     if (value?.startDate) {
-      //       return `${dayjs(value.startDate).format('DD MMM YYYY')} - ${t('select_end_date')}`;
-      //     }
+        return (
+          <View key={field.id} style={styles.productTextView}>
+            {renderLabel(field_name, field.mandatory)}
 
-      //     return '';
-      //   })();
+            <View style={{ flexDirection: 'row', gap: 12 }}>
+              {/* FROM DATE */}
+              <TouchableOpacity
+                style={[styles.pickerContainer, styles.dateBox]}
+                onPress={() => {
+                  setActiveDateField({ param, type: 'start' });
+                  setDatePickerVisible(true);
+                }}
+              >
+                <Text
+                  style={[
+                    styles.dropdowntext,
+                    { color: startDate ? '#fff' : 'rgba(255,255,255,0.6)' },
+                  ]}
+                >
+                  {startDate
+                    ? dayjs(startDate).format('DD-MM-YYYY')
+                    : t('start_date')}
+                </Text>
 
+                <Image
+                  source={require('../../../assets/images/calendar_icon.png')}
+                  style={styles.calendarIcon}
+                />
+              </TouchableOpacity>
 
-      //   return (
-      //     <View key={field.id} style={styles.productTextView}>
-      //       {renderLabel(field_name, field.mandatory)}
+              {/* TO DATE */}
+              <TouchableOpacity
+                style={[styles.pickerContainer, styles.dateBox]}
+                onPress={() => {
+                  setActiveDateField({ param, type: 'end' });
+                  setDatePickerVisible(true);
+                }}
+              >
+                <Text
+                  style={[
+                    styles.dropdowntext,
+                    { color: endDate ? '#fff' : 'rgba(255,255,255,0.6)' },
+                  ]}
+                >
+                  {endDate
+                    ? dayjs(endDate).format('DD-MM-YYYY')
+                    : t('end_date')}
+                </Text>
 
-      //       <TouchableOpacity
-      //         style={styles.pickerContainer}
-      //         onPress={() => {
-      //           setActiveDateField(param);
-      //           setDatePickerVisible(true);
-      //         }}
-      //       >
-      //         <View style={styles.dropdowncard}>
-      //           <Text
-      //             allowFontScaling={false}
-      //             style={styles.dropdowntext}
-      //             numberOfLines={1}
-      //           >
-      //             {displayValue || `${t('select')} ${field_name}`}
-      //           </Text>
-      //         </View>
+                <Image
+                  source={require('../../../assets/images/calendar_icon.png')}
+                  style={styles.calendarIcon}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        );
+      }
 
-      //         <Image
-      //           source={require('../../../assets/images/right.png')}
-      //           style={styles.dropdownIcon}
-      //           resizeMode="contain"
-      //         />
-      //       </TouchableOpacity>
-      //     </View>
-      //   );
-      // }
 
       case 'boolean':
         return (
@@ -1303,7 +1347,7 @@ const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
           </View>
 
           <TouchableOpacity
-            onPress={() => {}}
+            onPress={() => { }}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
@@ -1404,52 +1448,51 @@ const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
                   <View style={{ width: '80%' }}>
                     <Text allowFontScaling={false} style={styles.userName}>
                       {userMeta
-                        ? `${userMeta.firstname ?? ''} ${
-                            userMeta.lastname ?? ''
+                        ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''
                           }`.trim()
                         : 'Alan Walker'}
                     </Text>
 
-                  <View
-                    style={{
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                      display: 'flex',
-                      alignItems: 'stretch',
-                    }}
-                  >
-                    <Text allowFontScaling={false} style={styles.userSub}>
-                      {userMeta?.university_name || 'University of Warwick,'}
-                    </Text>
                     <View
                       style={{
-                        flexDirection: 'row',
+                        flexDirection: 'column',
                         justifyContent: 'space-between',
+                        display: 'flex',
+                        alignItems: 'stretch',
                       }}
                     >
-                      <Text allowFontScaling={false} style={styles.userSub2}>
-                        {userMeta?.city || 'Coventry'}
+                      <Text allowFontScaling={false} style={styles.userSub}>
+                        {userMeta?.university_name || 'University of Warwick,'}
                       </Text>
                       <View
                         style={{
                           flexDirection: 'row',
-                          alignItems
-                            : 'center',
-                          gap: 3,
+                          justifyContent: 'space-between',
                         }}
                       >
-                        <Image
-                          source={require('../../../assets/images/calendar_icon1.png')}
-                          style={{ height: 20, width: 20 }}
-                        />
-                        <Text allowFontScaling={false} style={styles.dateText}>
-                          {getCurrentDate(t)}
+                        <Text allowFontScaling={false} style={styles.userSub2}>
+                          {userMeta?.city || 'Coventry'}
                         </Text>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems
+                              : 'center',
+                            gap: 3,
+                          }}
+                        >
+                          <Image
+                            source={require('../../../assets/images/calendar_icon1.png')}
+                            style={{ height: 20, width: 20 }}
+                          />
+                          <Text allowFontScaling={false} style={styles.dateText}>
+                            {getCurrentDate(t)}
+                          </Text>
+                        </View>
                       </View>
                     </View>
                   </View>
                 </View>
-              </View>
 
                 <View style={styles.productdetails}>
                   <Animated.View
@@ -1498,57 +1541,57 @@ const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
         <Button title={t('preview_details')} onPress={() => handlePreview()} />
       </View>
 
-      {/* <DatePicker
+      <DatePicker
         modal
         mode="date"
         open={datePickerVisible}
-        date={tempStartDate ?? new Date()}
-          minimumDate={
-            dateStep === 'end' && tempStartDate
-              ? tempStartDate
-              : undefined
-          }
+        date={new Date()}
+        minimumDate={
+          activeDateField?.type === 'end'
+            ? formValues[activeDateField.param.id]?.value?.startDate ?? new Date()
+            : new Date()
+        }
         onConfirm={(date) => {
           if (!activeDateField) return;
 
-          if (dateStep === 'start') {
-            // Save start date
-            handleValueChange(
-              activeDateField.id,
-              activeDateField.alias_name ?? activeDateField.field_name,
-              { startDate: date, endDate: null }
-            );
+          const currentValue =
+            formValues[activeDateField.param.id]?.value || {};
 
-            setTempStartDate(date);
-            setDateStep('end');
-
-            // 🔑 CLOSE then REOPEN picker
-            setDatePickerVisible(false);
-            setTimeout(() => setDatePickerVisible(true), 150);
-          } else {
-            // Save end date
+          if (activeDateField.type === 'start') {
             handleValueChange(
-              activeDateField.id,
-              activeDateField.alias_name ?? activeDateField.field_name,
+              activeDateField.param.id,
+              activeDateField.param.alias_name ??
+              activeDateField.param.field_name,
               {
-                startDate: tempStartDate,
+                startDate: date,
+                endDate:
+                  currentValue.endDate &&
+                    dayjs(currentValue.endDate).isBefore(date)
+                    ? null
+                    : currentValue.endDate,
+              }
+            );
+          } else {
+            handleValueChange(
+              activeDateField.param.id,
+              activeDateField.param.alias_name ??
+              activeDateField.param.field_name,
+              {
+                startDate: currentValue.startDate,
                 endDate: date,
               }
             );
-
-            setDatePickerVisible(false);
-            setActiveDateField(null);
-            setTempStartDate(undefined);
-            setDateStep('start');
           }
+
+          setDatePickerVisible(false);
+          setActiveDateField(null);
         }}
         onCancel={() => {
           setDatePickerVisible(false);
           setActiveDateField(null);
-          setTempStartDate(undefined);
-          setDateStep('start');
         }}
-      /> */}
+      />
+
 
 
 
@@ -1559,7 +1602,7 @@ const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
         visible={showThumnail}
         transparent={true}
         animationType="fade"
-        onRequestClose={() => {}}
+        onRequestClose={() => { }}
       >
         <TouchableWithoutFeedback>
           <View style={styles.overlay}>
@@ -1622,11 +1665,10 @@ const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
             subtitle={
               multiSelectModal?.ismultilple
                 ? `${t('pick_all')} ${pluralizeLabel(
-                    multiSelectModal?.fieldLabel || 'category',
-                  )} ${t('best_describe')}`
-                : `${t('select_the')} ${
-                    multiSelectModal?.fieldLabel || 'category'
-                  } ${t('that_fit_your_listing')}`
+                  multiSelectModal?.fieldLabel || 'category',
+                )} ${t('best_describe')}`
+                : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'
+                } ${t('that_fit_your_listing')}`
             }
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>
@@ -1656,11 +1698,10 @@ const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
             subtitle={
               multiSelectModal?.ismultilple
                 ? `${t('pick_all')} ${pluralizeLabel(
-                    multiSelectModal?.fieldLabel || 'category',
-                  )} ${t('best_describe')}`
-                : `${t('select_the')} ${
-                    multiSelectModal?.fieldLabel || 'category'
-                  } ${t('that_fit_your_listing')}`
+                  multiSelectModal?.fieldLabel || 'category',
+                )} ${t('best_describe')}`
+                : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'
+                } ${t('that_fit_your_listing')}`
             }
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>
@@ -1688,6 +1729,20 @@ const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
 export default AddScreen;
 
 const styles = StyleSheet.create({
+
+  dateBox: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+  },
+
+  calendarIcon: {
+    width: 18,
+    height: 18,
+    tintColor: '#fff', // remove if icon already white
+  },
   overlay: {
     flex: 1,
     justifyContent: 'center',

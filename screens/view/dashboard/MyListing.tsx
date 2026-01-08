@@ -150,10 +150,18 @@ const MyListing = ({ navigation }: MyListingProps) => {
   });
 
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   setPage(1);
+  //   displayListOfProduct(selectedCategory?.id ?? null, 1, false);
+  // }, [selectedCategory]);
+
+  useFocusEffect(
+  useCallback(() => {
     setPage(1);
     displayListOfProduct(selectedCategory?.id ?? null, 1, false);
-  }, [selectedCategory]);
+  }, [selectedCategory])
+);
+
   useEffect(() => {
     const loadCategories = async () => {
       const stored = await AsyncStorage.getItem('categories');

@@ -147,8 +147,10 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
           setfeatureitem(false);
         }
         const storedData = await AsyncStorage.getItem('formData1');
+        console.log('DATA',storedData)
         if (storedData) {
           const parsedData = JSON.parse(storedData);
+          console.log(parsedData)
 
           setStoredForm(parsedData);
         } else {
@@ -526,7 +528,7 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
 
           <Button
             title={t('next')}
-            onPress={() => navigation.navigate('PreviewDetailed')}
+            onPress={() => navigation.navigate('EditPreviewDetailed')}
           />
         </View>
       </View>

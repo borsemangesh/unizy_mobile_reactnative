@@ -73,6 +73,8 @@ interface UserMeta {
 
 const EditProfile = ({ navigation }: EditProfileProps) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
+
   const [photo, setPhoto] = useState<string | null>(null);
   const [newphoto, setNewPhoto] = useState<string | null>(null);
   const [userMeta, setUserMeta] = useState<UserMeta>({
@@ -195,6 +197,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             postal_code: user.postal_code ?? null,
           });
           setPhoto(user.profile);
+          setOriginalPhoto(user.profile);
           setInitialEmail(user.student_email ?? '');
           setInitialPersonalEmail(user.email ?? '');
         } else {
@@ -373,26 +376,41 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         return;
       }
 
-      if (newphoto !== null) {
-        const uploadSuccess = await handleUploadImage(newphoto);
+      // if (newphoto !== null) {
+      //   const uploadSuccess = await handleUploadImage(newphoto);
 
       
 
-        showToast(Constant.IMAGE_UPLOAD, 'success');
-        await new Promise((resolve: any) => {
-          setTimeout(resolve, 2000);
-        });
+      //   showToast(Constant.IMAGE_UPLOAD, 'success');
+      //   await new Promise((resolve: any) => {
+      //     setTimeout(resolve, 2000);
+      //   });
+      // }
+
+
+      // if (photo == null) {
+
+      //   await handleDeleteImage();
+      //   await new Promise((resolve: any) => {
+      //     setTimeout(resolve, 2000);
+      //   });
+      // }
+
+    if (newphoto) {
+      const uploadSuccess = await handleUploadImage(newphoto);
+
+      if (!uploadSuccess) {
+        setLoading(false);
+        return;
       }
 
+      showToast(t(Constant.IMAGE_UPLOAD), 'success');
+    }
 
-      if (photo == null) {
-
-        await handleDeleteImage();
-        await new Promise((resolve: any) => {
-          setTimeout(resolve, 2000);
-        });
-      }
-
+    // 2️⃣ Delete image ONLY if user REMOVED existing image
+    else if (photo === null && originalPhoto !== null) {
+      await handleDeleteImage();
+    }
 
       const url = `${MAIN_URL.baseUrl}user/profile-edit`;
  
@@ -450,6 +468,61 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     }
   };
 
+  
+  const handleUploadImage = async (imageUri: string | null) => {
+    try {
+      if (!imageUri) return true; // No new image, treat as success
+      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+      const token = await AsyncStorage.getItem('userToken');
+      const userId = await AsyncStorage.getItem('userId');
+      const url = `${MAIN_URL.baseUrl}user/update-profile`;
+
+      if (!token || !userId) {
+        showToast(t(Constant.USER_NOT_AUTH), 'error');
+        return false;
+      }
+
+      const formData = new FormData();
+      formData.append('file', {
+        uri: imageUri,
+        type: 'image/jpeg',
+        name: `profile_${userId}.jpg`,
+      } as any);
+
+      formData.append('userId', userId);
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+          languagecode: language_code
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        return true;
+      } else {
+        showToast(
+          t(data?.message) || 'Failed to upload image.Please try again',
+          'error',
+        );
+        return false;
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      showToast(
+        t(Constant.SOMTHING_WENT_WRONG),
+        'error',
+      );
+      return false;
+    }
+  };
+
+
   const handleSelectImage = async () => {
 
     const hasPermission = await requestCameraPermission();
@@ -504,58 +577,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     );
   };
 
-  const handleUploadImage = async (imageUri: string | null) => {
-    try {
-      if (!imageUri) return true; // No new image, treat as success
-      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
-      const token = await AsyncStorage.getItem('userToken');
-      const userId = await AsyncStorage.getItem('userId');
-      const url = `${MAIN_URL.baseUrl}user/update-profile`;
-
-      if (!token || !userId) {
-        showToast(t(Constant.USER_NOT_AUTH), 'error');
-        return false;
-      }
-
-      const formData = new FormData();
-      formData.append('file', {
-        uri: imageUri,
-        type: 'image/jpeg',
-        name: `profile_${userId}.jpg`,
-      } as any);
-
-      formData.append('userId', userId);
-
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
-          languagecode: language_code
-        },
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        return true;
-      } else {
-        showToast(
-          t(data?.message) || 'Failed to upload image.Please try again',
-          'error',
-        );
-        return false;
-      }
-    } catch (error) {
-      console.error('Upload error:', error);
-      showToast(
-        t(Constant.SOMTHING_WENT_WRONG),
-        'error',
-      );
-      return false;
-    }
-  };
 
   const handleDeleteImage = async () => {
     try {

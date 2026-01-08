@@ -38,6 +38,8 @@ import { Constant } from '../../utils/Constant';
 import { Ellipse } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
+import dayjs from 'dayjs';
+
 
 type previewDetailsProps = {
   navigation: any;
@@ -415,24 +417,55 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
         return !(Array.isArray(v) && v.every((item: any) => item?.uri));
       });
 
-      // const dataArray = nonImageFields.map(([key, obj]) => ({
-      //   id: Number(key),
-      //   param_value: obj.value,
-      // }));
+ 
+
+      // const dataArray = nonImageFields.map(([key, obj]: any) => {
+      //     const payload: any = {
+      //       id: Number(key),
+      //       param_value: obj.value,
+      //     };
+
+      //     // 👇 include othertext only if present
+      //     if (obj.otherText && String(obj.otherText).trim() !== '') {
+      //       payload.other_text = obj.otherText;
+      //     }
+
+      //     return payload;
+      //   });
 
       const dataArray = nonImageFields.map(([key, obj]: any) => {
-          const payload: any = {
+        const value = obj.value;
+
+        // ✅ DATE FIELD HANDLING
+        if (
+          value &&
+          typeof value === 'object' &&
+          !Array.isArray(value) &&
+          value.startDate &&
+          value.endDate
+        ) {
+          return {
             id: Number(key),
-            param_value: obj.value,
+            param_value: null,
+            startDate: value.startDate,
+            endDate: value.endDate,
           };
+        }
 
-          // 👇 include othertext only if present
-          if (obj.otherText && String(obj.otherText).trim() !== '') {
-            payload.other_text = obj.otherText;
-          }
+        // ✅ NORMAL FIELD
+        const payload: any = {
+          id: Number(key),
+          param_value: value,
+        };
 
-          return payload;
-        });
+        // 👇 include other_text only if present
+        if (obj.otherText && String(obj.otherText).trim() !== '') {
+          payload.other_text = obj.otherText;
+        }
+
+        return payload;
+      });
+
 
 
 
@@ -922,19 +955,6 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
                     let displayValues: string[] = [];
 
-                    // if (field.param.field_type === 'dropdown') {
-                    //   if (Array.isArray(storedValue)) {
-                    //     displayValues = storedValue
-                    //       .map((id: number) =>
-                    //         field.param.options.find((opt: any) => opt.id === id)?.option_name
-                    //       )
-                    //       .filter(Boolean) as string[];
-                    //   } else {
-                    //     const option = field.param.options.find((opt: any) => opt.id === storedValue);
-                    //     if (option) displayValues = [option.option_name];
-                    //   }
-                    // } 
-                    
                     if (field.param.field_type === 'dropdown') {
                     const otherText = storedForm?.[fieldId]?.otherText;
 
@@ -960,6 +980,21 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                           displayValues = [option.option_name];
                         }
                       }
+                    }
+                  }
+
+                  else if (field.param.field_type === 'date') {
+                    const startDate = storedValue?.startDate;
+                    const endDate = storedValue?.endDate;
+
+                    if (startDate && endDate) {
+                      displayValues = [
+                        `${dayjs(startDate).format('DD-MM-YYYY')} - ${dayjs(endDate).format(
+                          'DD-MM-YYYY'
+                        )}`,
+                      ];
+                    } else {
+                      displayValues = [];
                     }
                   }
 

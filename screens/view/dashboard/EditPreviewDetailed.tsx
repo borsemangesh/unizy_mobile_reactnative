@@ -523,6 +523,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
     try {
 
       const storedData = await AsyncStorage.getItem("formData1");
+      console.log(storedData)
       if (!storedData) {
         // console.log("⚠️ No form data found");
         return;
@@ -1006,18 +1007,53 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
                     let displayValues: string[] = [];
 
+                    // if (field.param.field_type === 'dropdown') {
+                    //   if (Array.isArray(storedValue)) {
+                    //     displayValues = storedValue
+                    //       .map((id: number) =>
+                    //         field.param.options.find((opt: any) => opt.id === id)?.option_name
+                    //       )
+                    //       .filter(Boolean) as string[];
+                    //   } else {
+                    //     const option = field.param.options.find((opt: any) => opt.id === storedValue);
+                    //     if (option) displayValues = [option.option_name];
+                    //   }
+                    // }
+
                     if (field.param.field_type === 'dropdown') {
+                      const storedField = storedForm?.[fieldId];
+                      const storedValue = storedField?.value;
+                      const otherText = storedField?.other_text ?? null;
+
                       if (Array.isArray(storedValue)) {
                         displayValues = storedValue
-                          .map((id: number) =>
-                            field.param.options.find((opt: any) => opt.id === id)?.option_name
-                          )
+                          .map((id: number) => {
+                            const opt = field.param.options.find(
+                              (o: any) => Number(o.id) === Number(id)
+                            );
+                            if (!opt) return null;
+
+                            return otherText
+                              ? `${opt.option_name} (${otherText})`
+                              : opt.option_name;
+                          })
                           .filter(Boolean) as string[];
                       } else {
-                        const option = field.param.options.find((opt: any) => opt.id === storedValue);
-                        if (option) displayValues = [option.option_name];
+                        const opt = field.param.options.find(
+                          (o: any) => Number(o.id) === Number(storedValue)
+                        );
+                        if (opt) {
+                          displayValues = [
+                            otherText
+                              ? `${opt.option_name} (${otherText})`
+                              : opt.option_name,
+                          ];
+                        }
                       }
-                    } else if (Array.isArray(storedValue)) {
+                    }
+
+                    
+                    else if (Array.isArray(storedValue)) {
                       displayValues = storedValue.map(String);
                     } else {
                       displayValues = [String(storedValue)];

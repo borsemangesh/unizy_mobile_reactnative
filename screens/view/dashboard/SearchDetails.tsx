@@ -44,6 +44,7 @@ import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import Loader from '../../utils/component/Loader';
+import dayjs from 'dayjs';
 
 type SearchDetailsProps = {
   navigation: any;
@@ -61,12 +62,32 @@ type ParamOption = {
   option_name: string;
 };
 
+// type Param = {
+//   id: number;
+//   name: string;
+//   options: ParamOption[];
+//   field_type: string;
+//   param_value: string;
+// };
+
+type DateRangeValue = {
+  startDate?: string;
+  endDate?: string;
+};
+
+type ParamValue =
+  | string
+  | number
+  | number[]
+  | DateRangeValue
+  | null;
+
 type Param = {
   id: number;
   name: string;
-  options: ParamOption[];
+  options: ParamOption[] | null;
   field_type: string;
-  param_value: string;
+  param_value: ParamValue;
 };
 
 const SearchDetails = ({ navigation }: SearchDetailsProps) => {
@@ -560,6 +581,10 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     }
   };
 
+  function isDateRangeValue(value: ParamValue): value is DateRangeValue {
+    return typeof value === 'object' && value !== null && ('startDate' in value || 'endDate' in value);
+  }
+
   return (
     <ImageBackground
       source={require('../../../assets/images/backimg.png')}
@@ -893,7 +918,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     })()}
                   </Text>
 
-                  {detail?.params?.map((param: Param) => (
+                  {/* {detail?.params?.map((param: Param) => (
                     <View
                       key={param.id}
                       style={{ marginTop: 4, marginBottom: 0 }}
@@ -932,16 +957,76 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                             ))}
 
                         </View>
+                     ) : param.field_type === 'date' ? (
+                  <Text
+                    allowFontScaling={false}
+                    style={[styles.new, { marginTop: 0 }]}
+                  >
+                    {param.param_value?.startDate && param.param_value?.endDate
+                      ? `${dayjs(param.param_value.startDate).format('DD-MM-YYYY')} - ${dayjs(
+                          param.param_value.endDate,
+                        ).format('DD-MM-YYYY')}`
+                      : '—'}
+                  </Text>
+                ) : (
+                  <Text
+                    allowFontScaling={false}
+                    style={[styles.new, { marginTop: 0 }]}
+                  >
+                    {String(param.param_value ?? '—')}
+                  </Text>
+                )
+                      
+                      }
+                    </View>
+                  ))} */}
+
+                  {detail?.params?.map((param: Param) => (
+                    <View key={param.id} style={{ marginTop: 4, marginBottom: 0 }}>
+                      <Text allowFontScaling={false} style={styles.itemcondition}>
+                        {param.name}
+                      </Text>
+
+                      {param.options && param.options.length > 0 ? (
+                        <View style={styles.categoryContainer}>
+                          {param.options
+                            .filter(opt => {
+                              const selectedValues = (param.param_value || '')
+                                .toString()
+                                .split(',')
+                                .map(v => v.trim());
+                              return selectedValues.includes((opt.option_id ?? '').toString());
+                            })
+                            .map((opt: ParamOption) => (
+                              <View key={opt.id} style={styles.categoryTag}>
+                                <Text allowFontScaling={false} style={styles.catagoryText}>
+                                  {opt.other_text
+                                    ? `${opt.option_name} (${opt.other_text})`
+                                    : opt.option_name}
+                                </Text>
+                              </View>
+                            ))}
+                        </View>
+                      ) : param.field_type === 'date' &&
+                        typeof param.param_value === 'object' &&
+                        param.param_value !== null &&
+                        'startDate' in param.param_value &&
+                        'endDate' in param.param_value ? (
+                        <Text allowFontScaling={false} style={[styles.new, { marginTop: 0 }]}>
+                          {param.param_value.startDate && param.param_value.endDate
+                            ? `${dayjs(param.param_value.startDate).format('DD-MM-YYYY')} - ${dayjs(
+                              param.param_value.endDate,
+                            ).format('DD-MM-YYYY')}`
+                            : '—'}
+                        </Text>
                       ) : (
-                        <Text
-                          allowFontScaling={false}
-                          style={[styles.new, { marginTop: 0 }]}
-                        >
-                          {param.param_value || '—'}
+                        <Text allowFontScaling={false} style={[styles.new, { marginTop: 0 }]}>
+                          {String(param.param_value ?? '—')}
                         </Text>
                       )}
                     </View>
                   ))}
+
                 </View>
               </View>
 
