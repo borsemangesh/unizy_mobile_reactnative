@@ -415,10 +415,24 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
         return !(Array.isArray(v) && v.every((item: any) => item?.uri));
       });
 
-      const dataArray = nonImageFields.map(([key, obj]) => ({
-        id: Number(key),
-        param_value: obj.value,
-      }));
+      // const dataArray = nonImageFields.map(([key, obj]) => ({
+      //   id: Number(key),
+      //   param_value: obj.value,
+      // }));
+
+      const dataArray = nonImageFields.map(([key, obj]: any) => {
+          const payload: any = {
+            id: Number(key),
+            param_value: obj.value,
+          };
+
+          // 👇 include othertext only if present
+          if (obj.otherText && String(obj.otherText).trim() !== '') {
+            payload.other_text = obj.otherText;
+          }
+
+          return payload;
+        });
 
 
 
@@ -432,10 +446,11 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
         featureamount: diff1
       };
 
+      console.log('Create Feature Payload:',JSON.stringify(createPayload, null, 2));
 
 
       const createRes = await fetch(
-        `${MAIN_URL.baseUrl}category/featurelist/create`,
+        `${MAIN_URL.baseUrl}category/featurelistv2/create`,
         {
           method: 'POST',
           headers: {
@@ -505,7 +520,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
       //showToast(t(Constant.DATA_UPLOAD), 'success');
       //setShowPopup(true);
 
-          setTimeout(() => {
+        setTimeout(() => {
         if (userMeta?.category?.id === 4) {
            navigation.reset({
                 index: 0,
@@ -522,10 +537,10 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
         } else {
           navigation.navigate('SellerInfo');
         }
-      }, 2000);
+      }, 300);
     }
     catch (error) {
-      // console.log('❌ Error in handleListPress:', error);
+      console.log('❌ Error in handleListPress:', error);
     }
     finally {
       setIsLoading(false);
@@ -907,18 +922,48 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
                     let displayValues: string[] = [];
 
+                    // if (field.param.field_type === 'dropdown') {
+                    //   if (Array.isArray(storedValue)) {
+                    //     displayValues = storedValue
+                    //       .map((id: number) =>
+                    //         field.param.options.find((opt: any) => opt.id === id)?.option_name
+                    //       )
+                    //       .filter(Boolean) as string[];
+                    //   } else {
+                    //     const option = field.param.options.find((opt: any) => opt.id === storedValue);
+                    //     if (option) displayValues = [option.option_name];
+                    //   }
+                    // } 
+                    
                     if (field.param.field_type === 'dropdown') {
-                      if (Array.isArray(storedValue)) {
-                        displayValues = storedValue
-                          .map((id: number) =>
-                            field.param.options.find((opt: any) => opt.id === id)?.option_name
-                          )
-                          .filter(Boolean) as string[];
-                      } else {
-                        const option = field.param.options.find((opt: any) => opt.id === storedValue);
-                        if (option) displayValues = [option.option_name];
+                    const otherText = storedForm?.[fieldId]?.otherText;
+
+                    if (Array.isArray(storedValue)) {
+                      displayValues = storedValue
+                        .map((id: number) => {
+                          const option = field.param.options.find((opt: any) => opt.id === id);
+                          if (!option) return null;
+
+                          if (option.is_other && otherText) {
+                            return `${option.option_name} (${otherText})`;
+                          }
+
+                          return option.option_name;
+                        })
+                        .filter(Boolean) as string[];
+                    } else {
+                      const option = field.param.options.find((opt: any) => opt.id === storedValue);
+                      if (option) {
+                        if (option.is_other && otherText) {
+                          displayValues = [`${option.option_name} (${otherText})`];
+                        } else {
+                          displayValues = [option.option_name];
+                        }
                       }
-                    } else if (Array.isArray(storedValue)) {
+                    }
+                  }
+
+                    else if (Array.isArray(storedValue)) {
                       displayValues = storedValue.map(String);
                     } else {
                       displayValues = [String(storedValue)];

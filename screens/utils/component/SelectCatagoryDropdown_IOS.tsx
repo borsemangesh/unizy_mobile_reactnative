@@ -10,22 +10,43 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { NewCustomToastContainer, showToast } from './NewCustomToastManager';
+
+// interface SelectCatagoryDropdownProps {
+//   options: { id: number; option_name: string }[];
+//   visible: boolean;
+//   ismultilple: boolean;
+//   title?: string;
+//   subtitle?: string;
+//   onClose: () => void;
+//   onSelect: (selectedId: number | number[]) => void;
+//   selectedValues?: number | number[];
+// }
 
 interface SelectCatagoryDropdownProps {
-  options: { id: number; option_name: string }[];
+  options: {
+    is_other: boolean; id: number; option_name: string 
+}[];
   visible: boolean;
   ismultilple: boolean;
   title?: string;
   subtitle?: string;
   onClose: () => void;
-  onSelect: (selectedId: number | number[]) => void;
+  onSelect: (
+  selected:
+    | number
+    | number[]
+    | { selected: number | number[]; text?: string }
+) => void;
   selectedValues?: number | number[];
 }
+
 const SelectCatagoryDropdown = ({
   options,
   visible,
@@ -39,12 +60,13 @@ const SelectCatagoryDropdown = ({
   const [selectedCheckboxes, setSelectedCheckboxes] = useState<number[]>([]); 
   const [selectedRadio, setSelectedRadio] = useState<number | null>(null); 
   const screenHeight = Dimensions.get('window').height;
-
+const [otherText, setOtherText] = useState('');
   const [tempSelectedCheckboxes, setTempSelectedCheckboxes] = useState<number[]>([]);
   const [tempSelectedRadio, setTempSelectedRadio] = useState<number | null>(null);
 
-  useEffect(() => {
+   useEffect(() => {
     if (visible) {
+      setOtherText('')
       if (Array.isArray(selectedValues)) {
         setTempSelectedCheckboxes(selectedValues);
       } else if (selectedValues) {
@@ -68,14 +90,44 @@ const SelectCatagoryDropdown = ({
     setTempSelectedRadio(id);
   };
 
+  // const handleApply = () => {
+  //   if (ismultilple) {
+  //     onSelect(tempSelectedCheckboxes);
+  //   } else if (tempSelectedRadio != null) {
+  //     onSelect(tempSelectedRadio);
+  //   }
+  //   onClose();
+  // };
+
   const handleApply = () => {
-    if (ismultilple) {
-      onSelect(tempSelectedCheckboxes);
-    } else if (tempSelectedRadio != null) {
-      onSelect(tempSelectedRadio);
+    const hasTextOption = options.some(
+      opt => opt.is_other && (
+        ismultilple
+          ? tempSelectedCheckboxes.includes(opt.id)
+          : tempSelectedRadio === opt.id
+      )
+    );
+  
+    if (hasTextOption && (!otherText || otherText.trim() === '')) {
+      showToast("Please add description","error")
+      return; 
     }
+  
+    if (ismultilple) {
+      onSelect({
+        selected: tempSelectedCheckboxes,
+        text: hasTextOption ? otherText : undefined,
+      });
+    } else if (tempSelectedRadio != null) {
+      onSelect({
+        selected: tempSelectedRadio,
+        text: hasTextOption ? otherText : undefined,
+      });
+    }
+  
     onClose();
   };
+  
 
   const handleCancel = () => {
     onClose();
@@ -161,7 +213,7 @@ const SelectCatagoryDropdown = ({
                     Platform.OS === 'ios' ? 'rgba(0, 0, 0, 0.40)' : 'none',
                 }}
               >
-                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 16 }}>
+                {/* <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 16 }}>
                   {options.map((option, index) => {
 
                     const isSelectedRadio = tempSelectedRadio === option.id;
@@ -229,7 +281,110 @@ const SelectCatagoryDropdown = ({
                       </View>
                     );
                   })}
-                </ScrollView>
+                </ScrollView> */}
+                 <ScrollView
+                                  showsVerticalScrollIndicator={false}
+                                  contentContainerStyle={{ paddingBottom: 16 }}
+                                >
+                                  {options.map((option, index) => {
+                                    const isSelectedRadio = tempSelectedRadio === option.id;
+                                    const isSelectedCheckbox = tempSelectedCheckboxes.includes(option.id);
+                                    const isOtherOption = option?.is_other === true;
+                
+                                    const showOtherInput =
+                                      isOtherOption &&
+                                      (ismultilple ? isSelectedCheckbox : isSelectedRadio);
+                
+                                    return (
+                                      <View
+                                        key={index}
+                                        style={{
+                                          paddingHorizontal: 10,
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <TouchableOpacity
+                                          onPress={() =>
+                                            ismultilple
+                                              ? toggleCheckbox(option.id)
+                                              : handleRadioButton(option.id)
+                                          }
+                                          style={styles.radioButtonContainer}
+                                        >
+                                          <View
+                                            style={{
+                                              flexDirection: 'row',
+                                              alignItems: 'center',
+                                              paddingHorizontal: 10,
+                                              justifyContent: 'flex-start',
+                                            }}
+                                          >
+                                            {ismultilple ? (
+                                              <View style={styles.checkboxWrapper}>
+                                                {isSelectedCheckbox ? (
+                                                  <Image
+                                                    source={require('../../../assets/images/tickicon.png')}
+                                                    style={styles.tickImage}
+                                                    resizeMode="contain"
+                                                  />
+                                                ) : (
+                                                  <View style={styles.checkboxContainer} />
+                                                )}
+                                              </View>
+                                            ) : (
+                                              <View
+                                                style={[
+                                                  styles.radioButton,
+                                                  isSelectedRadio && styles.selectedRadio,
+                                                ]}
+                                              >
+                                                {isSelectedRadio && <View style={styles.radioDot} />}
+                                              </View>
+                                            )}
+                
+                                            <Text
+                                              allowFontScaling={false}
+                                              style={{
+                                                color: '#FFF',
+                                                fontSize: 16,
+                                                marginLeft: 10,
+                                                fontWeight: '600',
+                                                lineHeight: 22,
+                                                letterSpacing: -0.28,
+                                                fontFamily: 'Urbanist-SemiBold',
+                                              }}
+                                            >
+                                              {option.option_name}
+                                            </Text>
+                                          </View>
+                                        </TouchableOpacity>
+                
+                                        {/* 🔽 OTHER TEXT INPUT */}
+                                        {showOtherInput && (
+                                          <View style={{ marginLeft: 8, marginTop: 8 }}>
+                                            <TextInput
+                                              value={otherText}
+                                              onChangeText={setOtherText}
+                                              placeholder={`${t('please_specify')}*`}
+                                              placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                                              cursorColor="#fff"
+                                              style={{
+                                                borderWidth: 1,
+                                                borderColor: '#ffffff4e',
+                                                borderRadius: 8,
+                                                paddingHorizontal: 12,
+                                                paddingVertical: 16,
+                                                color: '#fff',
+                                                fontSize: 16,
+                                                
+                                              }}
+                                            />
+                                          </View>
+                                        )}
+                                      </View>
+                                    );
+                                  })}
+                                </ScrollView>
 
               </View>
               <View style={styles.cardconstinerdivider} />
@@ -251,6 +406,7 @@ const SelectCatagoryDropdown = ({
           </View>
         </View>
       </Modal>
+      <NewCustomToastContainer />   
     </View>
   );
 };

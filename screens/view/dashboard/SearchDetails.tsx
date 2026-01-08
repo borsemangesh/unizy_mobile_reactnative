@@ -55,6 +55,7 @@ const profileImg = require('../../../assets/images/user.jpg');
 const mylistings1 = require('../../../assets/images/favourite.png');
 
 type ParamOption = {
+  other_text: any;
   id: number;
   option_id: number;
   option_name: string;
@@ -157,6 +158,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
 
         const token = await AsyncStorage.getItem('userToken');
+        console.log(token)
 
         if (!token) return;
         const url1 = `${MAIN_URL.baseUrl}category/feature-detail/${id}`;
@@ -786,10 +788,10 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                         {detail?.category?.id === 2
                           ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t('hr')}`
                           : detail?.category?.id === 4
-                          ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t('week')}`
-                          : detail?.category?.id === 5
-                          ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t('session')}`
-                          : `£${Number(detail?.price ?? 0).toFixed(2)}`}
+                            ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t('week')}`
+                            : detail?.category?.id === 5
+                              ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t('session')}`
+                              : `£${Number(detail?.price ?? 0).toFixed(2)}`}
                       </Text>
                     </>
                   )}
@@ -826,7 +828,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     style={styles.productDesHeding}
                   >
                     {t('des')}`
-                    
+
                   </Text>
 
                   {/* <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
@@ -904,6 +906,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       </Text>
                       {param.options && param.options.length > 0 ? (
                         <View style={styles.categoryContainer}>
+
                           {param.options
                             .filter(opt => {
                               const selectedValues = (param.param_value || '')
@@ -921,10 +924,13 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                                   allowFontScaling={false}
                                   style={styles.catagoryText}
                                 >
-                                  {opt.option_name}
+                                  {opt.other_text
+                                    ? `${opt.option_name} (${opt.other_text})`
+                                    : opt.option_name}
                                 </Text>
                               </View>
                             ))}
+
                         </View>
                       ) : (
                         <Text
@@ -1116,7 +1122,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     </Text>
                   </View>
                 </TouchableOpacity>
-              )} 
+              )}
             </View>
           </View>
         </AnimatedReanimated.ScrollView>

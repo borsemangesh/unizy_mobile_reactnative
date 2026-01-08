@@ -133,9 +133,11 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
     const fetchStoredData = async () => {
       try {
         const storedData = await AsyncStorage.getItem('formData');
+          console.log(' storedData:', storedData);
+
         if (storedData) {
           const parsedData = JSON.parse(storedData);
-
+           console.log('parsedDataData:', parsedData);
           setStoredForm(parsedData);
         } else {
           // console.log('No form data found');

@@ -45,6 +45,8 @@ import {
 import { BlurView } from '@react-native-community/blur';
 import SelectCatagoryDropdown_IOS from '../../utils/component/SelectCatagoryDropdown_IOS';
 import Loader from '../../utils/component/Loader';
+// import DatePicker from 'react-native-date-picker';
+// import dayjs from 'dayjs';
 import {
   NestableScrollContainer,
   NestableDraggableFlatList,
@@ -96,6 +98,11 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const formattedDate = today.toLocaleDateString('en-GB');
   const displayDate = formattedDate.replace(/\//g, '-');
   const [photo, setPhoto] = useState<string | null>(null);
+// const [dateStep, setDateStep] = useState<'start' | 'end'>('start');
+// const [tempStartDate, setTempStartDate] = useState<Date | undefined>(undefined);
+
+//   const [datePickerVisible, setDatePickerVisible] = useState(false);
+//   const [activeDateField, setActiveDateField] = useState<any>(null);
 
   const [multiSelectModal, setMultiSelectModal] = useState<{
     visible: boolean;
@@ -103,11 +110,18 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     fieldId?: number;
     fieldLabel?: string;
   }>({ visible: false, ismultilple: false });
+ 
+  type UploadedImage = {
+  id: string;
+  uri: string;
+  name: string;
+};
+const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
 
   const [multiSelectOptions, setMultiSelectOptions] = useState<any[]>([]);
-  const [uploadedImages, setUploadedImages] = useState<
-    { id: string; uri: string; name: string }[]
-  >([]);
+  // const [uploadedImages, setUploadedImages] = useState<
+  //   { id: string; uri: string; name: string }[]
+  // >([]);
 
   const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
@@ -280,12 +294,15 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           (await AsyncStorage.getItem('selectedLanguage')) || 'en';
 
         const token = await AsyncStorage.getItem('userToken');
+        console.log(token)
         if (!token) {
           // console.log('No token found');
           return;
         }
 
         const url = `${MAIN_URL.baseUrl}category/listparams/user/${productId}`;
+        console.log(url)
+
 
         const response = await fetch(url, {
           method: 'GET',
@@ -413,15 +430,21 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   };
   const { t } = useTranslation();
   const handleMultiSelectToggle = (fieldId: number, optionId: number) => {
-    const prevSelected: number[] = Array.isArray(formValues[fieldId])
-      ? formValues[fieldId]
+    const prevSelected: number[] = Array.isArray(formValues[fieldId]?.value)
+      ? formValues[fieldId].value
       : [];
 
     const updated = prevSelected.includes(optionId)
       ? prevSelected.filter(id => id !== optionId)
       : [...prevSelected, optionId];
 
-    setFormValues((prev: any) => ({ ...prev, [fieldId]: updated }));
+    setFormValues((prev: any) => ({
+      ...prev,
+      [fieldId]: {
+        ...prev[fieldId],
+        value: updated,
+      },
+    }));
   };
 
   const getCurrentDate = (t?: any) => {
@@ -755,7 +778,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     if (!fieldType || !id) return null;
 
     switch (fieldType) {
-      case 'text': {
+      case 'text':
+      case 'date':
+      {
         const { param } = field;
         const { field_name, keyboardtype, alias_name } = param;
 
@@ -910,15 +935,12 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               }}
             >
               <View style={styles.dropdowncard}>
-                <Text
-                  numberOfLines={2}
-                  allowFontScaling={false}
-                  style={[styles.dropdowntext]}
-                >
-                  {Array.isArray(formValues[id]?.value) &&
-                  formValues[id]?.value.length > 0
+                <Text numberOfLines={2} allowFontScaling={false} style={styles.dropdowntext}>
+                  {Array.isArray(formValues[id]?.value) && formValues[id]?.value.length > 0
                     ? `${formValues[id]?.value.length} ${t('selected')}`
-                    : `${t('select')} ${field_name}`}
+                    : formValues[id]?.value
+                      ? `1 ${t('selected')}`
+                      : `${t('select')} ${field_name}`}
                 </Text>
               </View>
               <Image
@@ -927,11 +949,12 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 resizeMode="contain"
               />
             </TouchableOpacity>
-
             <View style={styles.categoryContainer}>
               {options
                 .filter((opt: any) => {
                   const value = formValues[id]?.value;
+                  if (!value) return false;
+
                   if (Array.isArray(value)) {
                     return value.includes(opt.id);
                   }
@@ -943,28 +966,40 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                       onPress={() => {
                         setFormValues((prev: any) => {
                           const currentValue = prev[id]?.value;
-                          let updated;
+                          let updatedValue;
+
                           if (Array.isArray(currentValue)) {
-                            updated = currentValue.filter(
-                              (v: any) => v !== opt.id,
+                            updatedValue = currentValue.filter(
+                              (v: number) => v !== opt.id
                             );
                           } else {
-                            updated = null;
+                            updatedValue = null;
                           }
+
                           return {
                             ...prev,
-                            [id]: { ...prev[id], value: updated },
+                            [id]: {
+                              ...prev[id],
+                              value: updatedValue,
+                              // clear otherText only when removing "Other"
+                              otherText: opt.is_other ? undefined : prev[id]?.otherText,
+                            },
                           };
                         });
                       }}
                     >
                       <Text allowFontScaling={false} style={styles.categoryTag}>
-                        {opt.option_name} ✕
+                        {opt.option_name}
+                        {opt.is_other && formValues[id]?.otherText
+                          ? `: ${formValues[id].otherText}`
+                          : ''}
+                        {' '}✕
                       </Text>
                     </TouchableOpacity>
                   </View>
                 ))}
             </View>
+
           </View>
         );
 
@@ -1005,13 +1040,22 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               borderColor: '#ffffff33',
               marginTop: 10,
                }}>
-              <NestableDraggableFlatList
+              {/* <NestableDraggableFlatList
                 data={uploadedImages}
-                keyExtractor={item => item.id}
+                keyExtractor={(item: { id: any; }) => item.id}
                 renderItem={renderImageItem}
                 // numColumns={3}
                 autoscrollSpeed={30}
                 // activationDistance={20}
+                onDragEnd={({ data }) => setUploadedImages(data)}
+                containerStyle={{ minHeight: 100 }}
+              /> */}
+
+              <NestableDraggableFlatList<UploadedImage>
+                data={uploadedImages}
+                keyExtractor={(item) => item.id}
+                renderItem={renderImageItem}
+                autoscrollSpeed={30}
                 onDragEnd={({ data }) => setUploadedImages(data)}
                 containerStyle={{ minHeight: 100 }}
               />
@@ -1020,6 +1064,58 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           </View>
         );
       }
+
+      // case 'date': {
+      //   const { param } = field;
+      //   const { field_name, alias_name } = param;
+
+      //   const value = formValues[param.id]?.value;
+
+      //   const displayValue = (() => {
+      //     if (value?.startDate && value?.endDate) {
+      //       return `${dayjs(value.startDate).format('DD MMM YYYY')} - ${dayjs(
+      //         value.endDate
+      //       ).format('DD MMM YYYY')}`;
+      //     }
+
+      //     if (value?.startDate) {
+      //       return `${dayjs(value.startDate).format('DD MMM YYYY')} - ${t('select_end_date')}`;
+      //     }
+
+      //     return '';
+      //   })();
+
+
+      //   return (
+      //     <View key={field.id} style={styles.productTextView}>
+      //       {renderLabel(field_name, field.mandatory)}
+
+      //       <TouchableOpacity
+      //         style={styles.pickerContainer}
+      //         onPress={() => {
+      //           setActiveDateField(param);
+      //           setDatePickerVisible(true);
+      //         }}
+      //       >
+      //         <View style={styles.dropdowncard}>
+      //           <Text
+      //             allowFontScaling={false}
+      //             style={styles.dropdowntext}
+      //             numberOfLines={1}
+      //           >
+      //             {displayValue || `${t('select')} ${field_name}`}
+      //           </Text>
+      //         </View>
+
+      //         <Image
+      //           source={require('../../../assets/images/right.png')}
+      //           style={styles.dropdownIcon}
+      //           resizeMode="contain"
+      //         />
+      //       </TouchableOpacity>
+      //     </View>
+      //   );
+      // }
 
       case 'boolean':
         return (
@@ -1041,6 +1137,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 source={require('../../../assets/images/info_icon.png')}
                 style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
               />
+
 
               <View style={{ flex: 1 }}>
                 <Text allowFontScaling={false} style={styles.importantText1}>
@@ -1313,48 +1410,46 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                         : 'Alan Walker'}
                     </Text>
 
+                  <View
+                    style={{
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      display: 'flex',
+                      alignItems: 'stretch',
+                    }}
+                  >
+                    <Text allowFontScaling={false} style={styles.userSub}>
+                      {userMeta?.university_name || 'University of Warwick,'}
+                    </Text>
                     <View
                       style={{
-                        flexDirection: 'column',
+                        flexDirection: 'row',
                         justifyContent: 'space-between',
-                        display: 'flex',
-                        alignItems: 'stretch',
                       }}
                     >
-                      <Text allowFontScaling={false} style={styles.userSub}>
-                        {userMeta?.university_name || 'University of Warwick,'}
+                      <Text allowFontScaling={false} style={styles.userSub2}>
+                        {userMeta?.city || 'Coventry'}
                       </Text>
                       <View
                         style={{
                           flexDirection: 'row',
-                          justifyContent: 'space-between',
+                          alignItems
+                            : 'center',
+                          gap: 3,
                         }}
                       >
-                        <Text allowFontScaling={false} style={styles.userSub2}>
-                          {userMeta?.city || 'Coventry'}
+                        <Image
+                          source={require('../../../assets/images/calendar_icon1.png')}
+                          style={{ height: 20, width: 20 }}
+                        />
+                        <Text allowFontScaling={false} style={styles.dateText}>
+                          {getCurrentDate(t)}
                         </Text>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            gap: 3,
-                          }}
-                        >
-                          <Image
-                            source={require('../../../assets/images/calendar_icon1.png')}
-                            style={{ height: 20, width: 20 }}
-                          />
-                          <Text
-                            allowFontScaling={false}
-                            style={styles.dateText}
-                          >
-                            {getCurrentDate(t)}
-                          </Text>
-                        </View>
                       </View>
                     </View>
                   </View>
                 </View>
+              </View>
 
                 <View style={styles.productdetails}>
                   <Animated.View
@@ -1402,6 +1497,63 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
         )}
         <Button title={t('preview_details')} onPress={() => handlePreview()} />
       </View>
+
+      {/* <DatePicker
+        modal
+        mode="date"
+        open={datePickerVisible}
+        date={tempStartDate ?? new Date()}
+          minimumDate={
+            dateStep === 'end' && tempStartDate
+              ? tempStartDate
+              : undefined
+          }
+        onConfirm={(date) => {
+          if (!activeDateField) return;
+
+          if (dateStep === 'start') {
+            // Save start date
+            handleValueChange(
+              activeDateField.id,
+              activeDateField.alias_name ?? activeDateField.field_name,
+              { startDate: date, endDate: null }
+            );
+
+            setTempStartDate(date);
+            setDateStep('end');
+
+            // 🔑 CLOSE then REOPEN picker
+            setDatePickerVisible(false);
+            setTimeout(() => setDatePickerVisible(true), 150);
+          } else {
+            // Save end date
+            handleValueChange(
+              activeDateField.id,
+              activeDateField.alias_name ?? activeDateField.field_name,
+              {
+                startDate: tempStartDate,
+                endDate: date,
+              }
+            );
+
+            setDatePickerVisible(false);
+            setActiveDateField(null);
+            setTempStartDate(undefined);
+            setDateStep('start');
+          }
+        }}
+        onCancel={() => {
+          setDatePickerVisible(false);
+          setActiveDateField(null);
+          setTempStartDate(undefined);
+          setDateStep('start');
+        }}
+      /> */}
+
+
+
+
+
 
       <Modal
         visible={showThumnail}
@@ -1480,10 +1632,14 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             onClose={() =>
               setMultiSelectModal(prev => ({ ...prev, visible: false }))
             }
-            onSelect={(selectedIds: number[] | number) => {
+
+            onSelect={(data: any) => {
               setFormValues((prev: any) => ({
                 ...prev,
-                [multiSelectModal.fieldId!]: { value: selectedIds },
+                [multiSelectModal.fieldId!]: {
+                  value: data.selected,
+                  otherText: data.text,
+                },
               }));
             }}
           />
@@ -1506,15 +1662,18 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                     multiSelectModal?.fieldLabel || 'category'
                   } ${t('that_fit_your_listing')}`
             }
-            //subtitle={`Pick all ${multiSelectModal?.fieldLabel || 'categories'} that fit your item.`}
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>
               setMultiSelectModal(prev => ({ ...prev, visible: false }))
             }
-            onSelect={(selectedIds: number[] | number) => {
+
+            onSelect={(data: any) => {
               setFormValues((prev: any) => ({
                 ...prev,
-                [multiSelectModal.fieldId!]: { value: selectedIds },
+                [multiSelectModal.fieldId!]: {
+                  value: data.selected,
+                  otherText: data.text,
+                },
               }));
             }}
           />
