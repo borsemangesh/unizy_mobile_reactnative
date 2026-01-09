@@ -37,6 +37,7 @@ import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import Loader from '../../utils/component/Loader';
+import dayjs from 'dayjs';
 
 type previewDetailsProps = {
   navigation: any;
@@ -1007,18 +1008,6 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
                     let displayValues: string[] = [];
 
-                    // if (field.param.field_type === 'dropdown') {
-                    //   if (Array.isArray(storedValue)) {
-                    //     displayValues = storedValue
-                    //       .map((id: number) =>
-                    //         field.param.options.find((opt: any) => opt.id === id)?.option_name
-                    //       )
-                    //       .filter(Boolean) as string[];
-                    //   } else {
-                    //     const option = field.param.options.find((opt: any) => opt.id === storedValue);
-                    //     if (option) displayValues = [option.option_name];
-                    //   }
-                    // }
 
                     if (field.param.field_type === 'dropdown') {
                       const storedField = storedForm?.[fieldId];
@@ -1051,7 +1040,21 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
                         }
                       }
                     }
-
+                    else if (field.param.field_type === 'date') {
+                      const startDate = storedValue?.startDate;
+                      const endDate = storedValue?.endDate;
+  
+                      if (startDate && endDate) {
+                        displayValues = [
+                          `${dayjs(startDate).format('DD-MM-YYYY')} - ${dayjs(endDate).format(
+                            'DD-MM-YYYY'
+                          )}`,
+                        ];
+                      } else {
+                        displayValues = [];
+                      }
+                    }
+  
                     
                     else if (Array.isArray(storedValue)) {
                       displayValues = storedValue.map(String);

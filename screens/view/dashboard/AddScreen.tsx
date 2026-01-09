@@ -732,28 +732,42 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
         {
           text: 'Gallery',
           onPress: () => {
+            const remainingSlots = MAX_IMAGES - uploadedImages.length;
+        
+            if (remainingSlots <= 0) {
+              showToast(
+                `${t(Constant.MAXIMUM)} ${MAX_IMAGES} ${t(Constant.IMAGE_ALLOWED)}`,
+                'error',
+              );
+              return;
+            }
+        
             launchImageLibrary(
               {
                 mediaType: 'photo',
                 quality: 1,
-                selectionLimit: MAX_IMAGES,
+                selectionLimit: remainingSlots, // ✅ KEY FIX
               },
-              async response => {
+              response => {
                 if (response.didCancel) return;
-
-                if (response.assets) {
-                  const images = await Promise.all(
-                    response.assets.map(async asset => ({
-                      id: `${Date.now()}-${Math.random()}`,
-                      uri: asset.uri!,
-                      name: asset.fileName || 'Image',
-                    })),
+                if (!response.assets) return;
+        
+                // Safety check (Android sometimes ignores selectionLimit)
+                if (response.assets.length > remainingSlots) {
+                  showToast(
+                    `${t('you_can_select_only')} ${remainingSlots} ${t('more_images')}`,
+                    'error',
                   );
-
-                  setUploadedImages(prev =>
-                    [...prev, ...images].slice(0, MAX_IMAGES),
-                  );
+                  return;
                 }
+        
+                const images = response.assets.map(asset => ({
+                  id: `${Date.now()}-${Math.random()}`,
+                  uri: asset.uri!,
+                  name: asset.fileName || 'Image',
+                }));
+        
+                setUploadedImages(prev => [...prev, ...images]);
               },
             );
           },
@@ -1060,17 +1074,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 borderColor: '#ffffff33',
                 marginTop: 10,
               }}>
-                {/* <NestableDraggableFlatList
-                data={uploadedImages}
-                keyExtractor={(item: { id: any; }) => item.id}
-                renderItem={renderImageItem}
-                // numColumns={3}
-                autoscrollSpeed={30}
-                // activationDistance={20}
-                onDragEnd={({ data }) => setUploadedImages(data)}
-                containerStyle={{ minHeight: 100 }}
-              /> */}
-
                 <NestableDraggableFlatList<UploadedImage>
                   data={uploadedImages}
                   keyExtractor={(item) => item.id}
@@ -1083,7 +1086,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                     }}
                   containerStyle={{
                     minHeight: Platform.select({
-                      ios: 100,
+                      ios: 60,
                       android: 60,
                     }),
                   }}
@@ -1318,13 +1321,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           </TouchableOpacity>
 
           <View style={{ width: 300 }}>
-            {/* <Text
-              allowFontScaling={false}
-              style={styles.unizyText}
-              numberOfLines={2}
-            >
-              {`${t('list')}${productName ? ` ${productName} ` : ''}`}
-            </Text> */}
 
             <Text
               allowFontScaling={false}
@@ -1534,7 +1530,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                       .map((field: any) => renderField(field))}
                   </Animated.View>
                 </View>
-                {/* Featured listing toggle rendered as a separate section */}
+                
                 {featuredField && <View>{renderField(featuredField)}</View>}
               </AnimatedReanimated.ScrollView>
             </NestableScrollContainer>
@@ -1593,12 +1589,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           setActiveDateField(null);
         }}
       />
-
-
-
-
-
-
 
       <Modal
         visible={showThumnail}

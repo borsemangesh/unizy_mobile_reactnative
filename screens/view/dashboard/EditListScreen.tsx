@@ -31,7 +31,13 @@ import {
 } from '../../utils/component/NewCustomToastManager';
 import { RouteProp, useRoute } from '@react-navigation/native';
 // import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
-import { check, openSettings, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
+import {
+  check,
+  openSettings,
+  PERMISSIONS,
+  request,
+  RESULTS,
+} from 'react-native-permissions';
 import SelectCatagoryDropdown_IOS from '../../utils/component/SelectCatagoryDropdown_IOS';
 import {
   NestableScrollContainer,
@@ -79,13 +85,14 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
   const formattedDate = today.toLocaleDateString('en-GB');
   const displayDate = formattedDate.replace(/\//g, '-');
   const [photo, setPhoto] = useState<string | null>(null);
-  const [newdate, setnewdate] = useState('')
-  const [category, setcategory] = useState('')
-  const [featureitem, setfeatureitem] = useState(false)
+  const [newdate, setnewdate] = useState('');
+  const [category, setcategory] = useState('');
+  const [featureitem, setfeatureitem] = useState(false);
 
   const [dateStep, setDateStep] = useState<'start' | 'end'>('start');
-  const [tempStartDate, setTempStartDate] = useState<Date | undefined>(undefined);
-
+  const [tempStartDate, setTempStartDate] = useState<Date | undefined>(
+    undefined,
+  );
 
   const [datePickerVisible, setDatePickerVisible] = useState(false);
   const [activeDateField, setActiveDateField] = useState<{
@@ -144,7 +151,6 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
 
   const scrollY = useSharedValue(0);
 
-
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: event => {
       'worklet';
@@ -190,17 +196,15 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
     interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
   );
 
-
   useEffect(() => {
-
     const fetchFields = async () => {
       try {
-        setLoading(true)
-        const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+        setLoading(true);
+        const language_code =
+          (await AsyncStorage.getItem('selectedLanguage')) || 'en';
 
         const token = await AsyncStorage.getItem('userToken');
         if (!token) {
-
           return;
         }
 
@@ -211,7 +215,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
-            languagecode: language_code
+            languagecode: language_code,
           },
         });
 
@@ -224,10 +228,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
         if (json?.metadata) {
           if (json.metadata.category) {
             setFeatureFee(json.metadata.category.feature_fee ?? '0'),
-
-              setMaxFeatureCap(
-                json.metadata.category.max_feature_cap ?? '0')
-
+              setMaxFeatureCap(json.metadata.category.max_feature_cap ?? '0');
           }
           setUserMeta({
             firstname: json.metadata.firstname ?? null,
@@ -253,7 +254,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           );
         }
         await AsyncStorage.setItem('selectedProductId', String(productId));
-        await AsyncStorage.setItem('shareid', String(shareid))
+        await AsyncStorage.setItem('shareid', String(shareid));
 
         if (json?.data) {
           const sellerFields = json.data.filter(
@@ -273,33 +274,30 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           return;
         }
       } catch (err) {
-
       } finally {
         setLoading(false);
       }
     };
 
-
     const fetchListDetails = async () => {
       try {
-        setLoading(true)
+        setLoading(true);
         const token = await AsyncStorage.getItem('userToken');
-        const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+        const language_code =
+          (await AsyncStorage.getItem('selectedLanguage')) || 'en';
         if (!token) {
-
           return;
         }
 
         const url = `${MAIN_URL.baseUrl}category/feature-detail/${shareid}`;
-        console.log(url)
-
+        console.log(url);
 
         const response = await fetch(url, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
-            languagecode: language_code
+            languagecode: language_code,
           },
         });
 
@@ -313,20 +311,26 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
 
         if (json?.data) {
           const data = json.data;
-          setfeatureitem(data.isfeatured)
+          setfeatureitem(data.isfeatured);
           setnewdate(data.created_at);
-          setcategory(data.category.name)
+          setcategory(data.category.name);
 
-          await AsyncStorage.setItem('isfeatured', JSON.stringify(data.isfeatured));
-          await AsyncStorage.setItem('newDate', data.created_at)
+          await AsyncStorage.setItem(
+            'isfeatured',
+            JSON.stringify(data.isfeatured),
+          );
+          await AsyncStorage.setItem('newDate', data.created_at);
 
           const initialValues: any = {};
-          initialValues.title = { value: data.title || '', alias_name: 'title' };
+          initialValues.title = {
+            value: data.title || '',
+            alias_name: 'title',
+          };
 
           initialValues.price = {
             value:
-              (data?.category_id === 2 || data?.category_id === 5)
-                ? (Number(data?.originalprice) / Number(data?.hours || 1))
+              data?.category_id === 2 || data?.category_id === 5
+                ? Number(data?.originalprice) / Number(data?.hours || 1)
                 : data?.originalprice || '',
             alias_name: 'price',
           };
@@ -339,34 +343,30 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
             value: data.remaining_quantity ?? '',
             alias_name: 'quantity',
           };
-          initialValues.service_duration = {
+          (initialValues.service_duration = {
             value: data.hours ?? '',
-            alias_name: 'service_duration'
-          },
-
-            initialValues.isfeatured = {
+            alias_name: 'service_duration',
+          }),
+            (initialValues.isfeatured = {
               value: !!data.isfeatured,
               alias_name: 'isfeatured',
-            };
+            });
 
           if (Array.isArray(data.params)) {
             data.params.forEach((param: any) => {
               const fieldType = param.field_type?.toLowerCase();
-
 
               const baseField = {
                 alias_name: param.alias_name || null,
               };
 
               let finalValue = null;
-              if (param.alias_name === "quantity") {
-                finalValue = data?.remaining_quantity ?? "";
-              }
-              else if (param.alias_name === "service_duration") {
-                finalValue = data?.hours ?? "";
-              }
-              else {
-                finalValue = param.param_value ?? "";
+              if (param.alias_name === 'quantity') {
+                finalValue = data?.remaining_quantity ?? '';
+              } else if (param.alias_name === 'service_duration') {
+                finalValue = data?.hours ?? '';
+              } else {
+                finalValue = param.param_value ?? '';
               }
 
               // if (fieldType === "dropdown") {
@@ -381,11 +381,12 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
               //       value: finalValue ? Number(finalValue) : null,
               //     };
               //   }
-              // } 
+              // }
 
-              if (fieldType === "dropdown") {
+              if (fieldType === 'dropdown') {
                 const selectedOption = param.options?.find(
-                  (opt: any) => Number(opt.option_id ?? opt.id) === Number(finalValue)
+                  (opt: any) =>
+                    Number(opt.option_id ?? opt.id) === Number(finalValue),
                 );
 
                 initialValues[param.id] = {
@@ -393,8 +394,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                   value: finalValue ? Number(finalValue) : null,
                   other_text: selectedOption?.other_text ?? null,
                 };
-              }
-              else {
+              } else {
                 initialValues[param.id] = {
                   ...baseField,
                   value: finalValue,
@@ -411,9 +411,10 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
             setUploadedImages(mappedImages);
           }
           setFormValues(initialValues);
-          await AsyncStorage.setItem('formData1', JSON.stringify(initialValues));
-
-
+          await AsyncStorage.setItem(
+            'formData1',
+            JSON.stringify(initialValues),
+          );
         }
 
         if (response.status === 401 || response.status === 403) {
@@ -426,15 +427,12 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           return;
         }
       } catch (err) {
-
       } finally {
         setLoading(false);
       }
     };
 
-
     const handleForceLogout = async () => {
-
       await AsyncStorage.clear();
       navigation.reset({
         index: 0,
@@ -619,7 +617,6 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
   //       }
   //     }
 
-
   //     const dataToStore: any = { ...latestFormValues };
 
   //     if (computedPrice !== null) {
@@ -652,7 +649,6 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
   //     });
 
   //     await AsyncStorage.setItem('formData1', JSON.stringify(dataToStore));
-
 
   //     navigation.navigate('EditPreviewThumbnail');
   //   } catch (error) {
@@ -704,7 +700,8 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
         fields.forEach(f => {
           const param = f.param || f;
           if (param.alias_name === 'price') priceFieldId = param.id;
-          if (param.alias_name === 'service_duration') durationFieldId = param.id;
+          if (param.alias_name === 'service_duration')
+            durationFieldId = param.id;
         });
 
         if (priceFieldId !== null && durationFieldId !== null) {
@@ -784,15 +781,13 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
     }
   };
 
-
-
   const handleSelectImage = async () => {
     const hasPermission = await requestCameraPermission();
     if (!hasPermission) return;
 
     Alert.alert(
       'Select Option',
-      "Choose a source",
+      'Choose a source',
       [
         {
           text: 'Camera',
@@ -835,64 +830,42 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
         {
           text: 'Gallery',
           onPress: () => {
-            // launchImageLibrary(
-            //   { mediaType: 'photo', quality: 1 },
-            //   async response => {
-            //     if (response.didCancel) return;
-            //     if (response.assets && response.assets[0].uri) {
-            //       const asset = response.assets[0];
-            //       let uri = asset.uri!;
-            //       let name = asset.fileName || 'Image';
-
-            //       // check size
-            //       if (
-            //         asset.fileSize &&
-            //         asset.fileSize > MAX_SIZE_MB * 1024 * 1024
-            //       ) {
-            //         const compressed = await ImageResizer.createResizedImage(
-            //           uri,
-            //           800,
-            //           800,
-            //           'JPEG',
-            //           80,
-            //         );
-            //         uri = compressed.uri;
-            //         name = compressed.name || name;
-            //       }
-            //       const newImage = {
-            //         id: Date.now().toString(),
-            //         uri,
-            //         name,
-            //         status: 'new',
-            //       };
-
-            //       setUploadedImages(prev => [...prev, newImage]);
-            //     }
-            //   },
-            // );
-
+            const remainingSlots = MAX_IMAGES - uploadedImages.length;
+        
+            if (remainingSlots <= 0) {
+              showToast(
+                `${t(Constant.MAXIMUM)} ${MAX_IMAGES} ${t(Constant.IMAGE_ALLOWED)}`,
+                'error',
+              );
+              return;
+            }
+        
             launchImageLibrary(
               {
                 mediaType: 'photo',
                 quality: 1,
-                selectionLimit: MAX_IMAGES,
+                selectionLimit: remainingSlots, // ✅ KEY FIX
               },
-              async response => {
+              response => {
                 if (response.didCancel) return;
-
-                if (response.assets) {
-                  const images = await Promise.all(
-                    response.assets.map(async asset => ({
-                      id: `${Date.now()}-${Math.random()}`,
-                      uri: asset.uri!,
-                      name: asset.fileName || 'Image',
-                    })),
+                if (!response.assets) return;
+        
+                // Safety check (Android sometimes ignores selectionLimit)
+                if (response.assets.length > remainingSlots) {
+                  showToast(
+                    `${t('you_can_select_only')} ${remainingSlots} ${t('more_images')}`,
+                    'error',
                   );
-
-                  setUploadedImages(prev =>
-                    [...prev, ...images].slice(0, MAX_IMAGES),
-                  );
+                  return;
                 }
+        
+                const images = response.assets.map(asset => ({
+                  id: `${Date.now()}-${Math.random()}`,
+                  uri: asset.uri!,
+                  name: asset.fileName || 'Image',
+                }));
+        
+                setUploadedImages(prev => [...prev, ...images]);
               },
             );
           },
@@ -926,8 +899,6 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
 
   const handleDeleteImage = async (fileId: string) => {
     setUploadedImages(prev => prev.filter(img => img.id !== fileId));
-
-
   };
 
   const [showThumnail, setShowThumnail] = useState(false);
@@ -935,7 +906,6 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
 
   const renderImageItem = ({ item, drag, isActive }: any) => {
     return (
-
       <View style={styles.imagelistcard}>
         <TouchableOpacity
           onLongPress={drag}
@@ -1011,27 +981,43 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
       </View>
     );
   };
-
+  const getSafeDate = (value?: any) => {
+    if (value instanceof Date && !isNaN(value.getTime())) {
+      return value;
+    }
+    const parsed = new Date(value);
+    return isNaN(parsed.getTime()) ? new Date() : parsed;
+  };
 
   const formatDateWithDash = (dateString?: string, t?: any) => {
-    if (!dateString) return "";
+    if (!dateString) return '';
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "";
+    if (isNaN(date.getTime())) return '';
 
     const day = date.getDate();
     const year = date.getFullYear();
     const lang = i18n.language;
-    let suffix = "";
-    if (lang === "en") {
-      if (day % 10 === 1 && day !== 11) suffix = "st";
-      else if (day % 10 === 2 && day !== 12) suffix = "nd";
-      else if (day % 10 === 3 && day !== 13) suffix = "rd";
-      else suffix = "th";
+    let suffix = '';
+    if (lang === 'en') {
+      if (day % 10 === 1 && day !== 11) suffix = 'st';
+      else if (day % 10 === 2 && day !== 12) suffix = 'nd';
+      else if (day % 10 === 3 && day !== 13) suffix = 'rd';
+      else suffix = 'th';
     }
     const monthIndex = date.getMonth();
     const monthKeys = [
-      "jan", "feb", "mar", "apr", "may", "jun",
-      "jul", "aug", "sep", "oct", "nov", "dec"
+      'jan',
+      'feb',
+      'mar',
+      'apr',
+      'may',
+      'jun',
+      'jul',
+      'aug',
+      'sep',
+      'oct',
+      'nov',
+      'dec',
     ];
 
     const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
@@ -1040,7 +1026,6 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
   };
 
   const renderField = (field: any) => {
-
     const param = field?.param;
     if (!param) return null;
 
@@ -1054,10 +1039,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
     if (!fieldType || !id) return null;
 
     switch (fieldType) {
-
-      case 'text':
-      case 'date':
-         {
+      case 'text': {
         const { param } = field;
         const { field_name, keyboardtype, alias_name } = param;
 
@@ -1073,7 +1055,6 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           alias_name?.toLowerCase() === 'price'
             ? `£ ${t('enter')} ${field_name}`
             : `${t('enter')} ${field_name}`;
-
 
         let rnKeyboardType:
           | 'default'
@@ -1116,7 +1097,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
               ]}
               placeholder={placeholderText}
               multiline={false}
-              cursorColor='#fff'
+              cursorColor="#fff"
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               keyboardType={rnKeyboardType}
               value={isPriceField ? `£ ${finalValue}` : finalValue}
@@ -1186,7 +1167,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
               ]}
               placeholder={placeholderText}
               multiline={true}
-              cursorColor='#fff'
+              cursorColor="#fff"
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               keyboardType={rnKeyboardType}
               value={rawValue}
@@ -1197,7 +1178,6 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           </View>
         );
       }
-
 
       case 'dropdown': {
         const value = formValues[id]?.value;
@@ -1263,10 +1243,9 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                       {opt.option_name}
                       {formValues[id]?.other_text
                         ? `: ${formValues[id].other_text}`
-                        : ''}
-                      {' '}✕
+                        : ''}{' '}
+                      ✕
                     </Text>
-
                   </TouchableOpacity>
                 </View>
               ))}
@@ -1281,7 +1260,9 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
 
         const handleImageSelect = () => {
           if (uploadedImages.length >= maxvalue) {
-            showToast(`${t(Constant.MAXIMUM)} ${maxvalue} ${t(Constant.IMAGE_ALLOWED)}`);
+            showToast(
+              `${t(Constant.MAXIMUM)} ${maxvalue} ${t(Constant.IMAGE_ALLOWED)}`,
+            );
             return;
           }
           handleSelectImage();
@@ -1301,15 +1282,17 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
               </Text>
             </TouchableOpacity>
             {uploadedImages.length > 0 && (
-              <View style={{
-                backgroundColor:
-                  'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
-                boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.32)',
-                borderRadius: 12,
-                borderWidth: 0.4,
-                borderColor: '#ffffff33',
-                marginTop: 10,
-              }}>
+              <View
+                style={{
+                  backgroundColor:
+                    'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
+                  boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.32)',
+                  borderRadius: 12,
+                  borderWidth: 0.4,
+                  borderColor: '#ffffff33',
+                  marginTop: 10,
+                }}
+              >
                 <NestableDraggableFlatList
                   data={uploadedImages}
                   keyExtractor={item => item.id}
@@ -1324,7 +1307,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                   }}
                   containerStyle={{
                     minHeight: Platform.select({
-                      ios: 100,
+                      ios: 60,
                       android: 60,
                     }),
                   }}
@@ -1334,10 +1317,82 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           </View>
         );
       }
+
+      case 'date': {
+        const { param } = field;
+        const { field_name } = param;
+
+        const value = formValues[param.id]?.value;
+        const startDate = value?.startDate;
+        const endDate = value?.endDate;
+
+        return (
+          <View key={field.id} style={styles.productTextView}>
+            {renderLabel(field_name, field.mandatory)}
+
+            <View style={{ flexDirection: 'row', gap: 12 }}>
+              {/* FROM DATE */}
+              <TouchableOpacity
+                style={[styles.pickerContainer, styles.dateBox]}
+                onPress={() => {
+                  setActiveDateField({ param, type: 'start' });
+                  setDatePickerVisible(true);
+                }}
+              >
+                <Text
+                  style={[
+                    styles.dropdowntext,
+                    { color: startDate ? '#fff' : 'rgba(255,255,255,0.6)' },
+                  ]}
+                >
+                  {startDate
+                    ? dayjs(startDate).format('DD-MM-YYYY')
+                    : t('start_date')}
+                </Text>
+
+                <Image
+                  source={require('../../../assets/images/calendar_icon.png')}
+                  style={styles.calendarIcon}
+                />
+              </TouchableOpacity>
+
+              {/* TO DATE */}
+              <TouchableOpacity
+                style={[styles.pickerContainer, styles.dateBox]}
+                onPress={() => {
+                  setActiveDateField({ param, type: 'end' });
+                  setDatePickerVisible(true);
+                }}
+              >
+                <Text
+                  style={[
+                    styles.dropdowntext,
+                    { color: endDate ? '#fff' : 'rgba(255,255,255,0.6)' },
+                  ]}
+                >
+                  {endDate
+                    ? dayjs(endDate).format('DD-MM-YYYY')
+                    : t('end_date')}
+                </Text>
+
+                <Image
+                  source={require('../../../assets/images/calendar_icon.png')}
+                  style={styles.calendarIcon}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        );
+      }
+
       case 'boolean': {
         const { param } = field;
         const { id, field_name, alias_name } = param;
-        const toggleValue = formValues[param.id]?.value ?? formValues[alias_name]?.value ?? formValues[field_name]?.value ?? '';
+        const toggleValue =
+          formValues[param.id]?.value ??
+          formValues[alias_name]?.value ??
+          formValues[field_name]?.value ??
+          '';
 
         return (
           <View key={field.id} style={styles.featurecard}>
@@ -1368,14 +1423,15 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                   {t('important')}
                 </Text>
                 <Text allowFontScaling={false} style={styles.importantText}>
-                  {t('featured_listing_note_1')} {' '}
+                  {t('featured_listing_note_1')}{' '}
                   <Text allowFontScaling={false} style={styles.importantText1}>
                     {featureFee}%
                   </Text>{' '}
                   {t('featured_listing_fee_percentage')}{' '}
                   <Text allowFontScaling={false} style={styles.importantText1}>
                     £{maxFeatureCap}{' '}
-                  </Text>{''}
+                  </Text>
+                  {''}
                   {t('featured_listing_fee_cap')}
                 </Text>
               </View>
@@ -1437,7 +1493,9 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
 
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
-            onPress={() => { navigation.goBack() }}
+            onPress={() => {
+              navigation.goBack();
+            }}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
@@ -1485,19 +1543,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
               />
             </AnimatedReanimated.View>
           </TouchableOpacity>
-
-          {/* <Text allowFontScaling={false} style={styles.unizyText}>
-            {t('edit')}{`${category ? ` ${category} ` : ''}`}
-          </Text> */}
           <View style={{ width: 300 }}>
-            {/* <Text
-              allowFontScaling={false}
-              style={styles.unizyText}
-              numberOfLines={2}
-            >
-              {t('edit')}{`${category ? ` ${category} ` : ''}`}
-            </Text> */}
-
             <Text
               allowFontScaling={false}
               style={styles.unizyText}
@@ -1521,15 +1567,11 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           </View>
 
           <TouchableOpacity
-            onPress={() => {
-
-            }}
+            onPress={() => {}}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
-            <AnimatedReanimated.View
-              style={[styles.blurButtonWrapper_none,]}
-            >
+            <AnimatedReanimated.View style={[styles.blurButtonWrapper_none]}>
               <AnimatedReanimated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -1542,7 +1584,8 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                     ),
                     backgroundColor: 'rgba(255,255,255,0.1)',
                     borderRadius: 40,
-                  })), { display: 'none' }
+                  })),
+                  { display: 'none' },
                 ]}
               />
 
@@ -1591,10 +1634,16 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                 contentContainerStyle={[
                   styles.scrollContainer,
                   { paddingBottom: height * 0.1 },
-                ]}>
-
+                ]}
+              >
                 <View style={styles.userRow}>
-                  <View style={{ width: '20%', alignItems: 'center', justifyContent: 'center' }}>
+                  <View
+                    style={{
+                      width: '20%',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
                     {userMeta?.profile ? (
                       <Image
                         source={{ uri: userMeta.profile }}
@@ -1602,8 +1651,14 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                       />
                     ) : (
                       <View style={styles.initialsCircle}>
-                        <Text allowFontScaling={false} style={styles.initialsText}>
-                          {getInitials(userMeta?.firstname ?? 'Alan', userMeta?.lastname ?? 'Walker')}
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.initialsText}
+                        >
+                          {getInitials(
+                            userMeta?.firstname ?? 'Alan',
+                            userMeta?.lastname ?? 'Walker',
+                          )}
                         </Text>
                       </View>
                     )}
@@ -1612,7 +1667,9 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                   <View style={{ width: '80%' }}>
                     <Text allowFontScaling={false} style={styles.userName}>
                       {userMeta
-                        ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''}`.trim()
+                        ? `${userMeta.firstname ?? ''} ${
+                            userMeta.lastname ?? ''
+                          }`.trim()
                         : 'Alan Walker'}
                     </Text>
 
@@ -1633,7 +1690,9 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                           justifyContent: 'space-between',
                         }}
                       >
-                        <Text allowFontScaling={false} style={styles.userSub2}>{userMeta?.city || ''}</Text>
+                        <Text allowFontScaling={false} style={styles.userSub2}>
+                          {userMeta?.city || ''}
+                        </Text>
                         <View
                           style={{
                             flexDirection: 'row',
@@ -1645,7 +1704,12 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                             source={require('../../../assets/images/calendar_icon1.png')}
                             style={{ height: 20, width: 20 }}
                           />
-                          <Text allowFontScaling={false} style={styles.dateText}>{formatDateWithDash(newdate, t)}</Text>
+                          <Text
+                            allowFontScaling={false}
+                            style={styles.dateText}
+                          >
+                            {formatDateWithDash(newdate, t)}
+                          </Text>
                         </View>
                       </View>
                     </View>
@@ -1662,15 +1726,6 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                       }),
                     }}
                   >
-                    {/* <Text
-                    allowFontScaling={false}
-                    style={styles.productdetailstext}
-                  >
-
-                    {productId === 3
-                      ? t('dish_details')
-                      : `${category ? `${category} ` : ''}${t('details')}`}
-                  </Text> */}
                     <Text
                       allowFontScaling={false}
                       style={styles.productdetailstext}
@@ -1691,7 +1746,6 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                       })()}
                     </Text>
 
-
                     {fields
                       .filter(
                         (f: any) =>
@@ -1700,12 +1754,8 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                       .map((field: any) => renderField(field))}
                   </Animated.View>
                 </View>
-                {featuredField && (
-                  <View>
-                    {renderField(featuredField)}
-                  </View>
-                )}
-              </AnimatedReanimated.ScrollView >
+                {featuredField && <View>{renderField(featuredField)}</View>}
+              </AnimatedReanimated.ScrollView>
             </KeyboardAvoidingView>
           </NestableScrollContainer>
         )}
@@ -1713,14 +1763,65 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           title={t('preview_details')}
           onPress={() => handlePreview(formValues)}
         />
-
       </View>
+      <DatePicker
+        modal
+        mode="date"
+        open={datePickerVisible}
+        date={new Date()}
+        minimumDate={
+          activeDateField?.type === 'end'
+            ? getSafeDate(
+                formValues[activeDateField?.param?.id]?.value?.startDate,
+              )
+            : new Date()
+        }
+        onConfirm={date => {
+          if (!activeDateField) return;
+
+          const currentValue =
+            formValues[activeDateField.param.id]?.value || {};
+
+          if (activeDateField.type === 'start') {
+            handleValueChange(
+              activeDateField.param.id,
+              activeDateField.param.alias_name ??
+                activeDateField.param.field_name,
+              {
+                startDate: date,
+                endDate:
+                  currentValue.endDate &&
+                  dayjs(currentValue.endDate).isBefore(date)
+                    ? null
+                    : currentValue.endDate,
+              },
+            );
+          } else {
+            handleValueChange(
+              activeDateField.param.id,
+              activeDateField.param.alias_name ??
+                activeDateField.param.field_name,
+              {
+                startDate: currentValue.startDate,
+                endDate: date,
+              },
+            );
+          }
+
+          setDatePickerVisible(false);
+          setActiveDateField(null);
+        }}
+        onCancel={() => {
+          setDatePickerVisible(false);
+          setActiveDateField(null);
+        }}
+      />
 
       <Modal
         visible={showThumnail}
         transparent={true}
         animationType="fade"
-        onRequestClose={() => { }}
+        onRequestClose={() => {}}
       >
         <TouchableWithoutFeedback>
           <View style={styles.overlay}>
@@ -1773,16 +1874,21 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
 
       {Platform.OS === 'android' ? (
         <>
-
           <SelectCatagoryDropdown
             options={multiSelectOptions}
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
-            title={`${t('select')} ${multiSelectModal?.fieldLabel || 'Category'}`}
+            title={`${t('select')} ${
+              multiSelectModal?.fieldLabel || 'Category'
+            }`}
             subtitle={
               multiSelectModal?.ismultilple
-                ? `${t('pick_all')} ${pluralizeLabel(multiSelectModal?.fieldLabel || 'category')} ${t('best_describe')}`
-                : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'} ${t('that_fit_your_listing')}`
+                ? `${t('pick_all')} ${pluralizeLabel(
+                    multiSelectModal?.fieldLabel || 'category',
+                  )} ${t('best_describe')}`
+                : `${t('select_the')} ${
+                    multiSelectModal?.fieldLabel || 'category'
+                  } ${t('that_fit_your_listing')}`
             }
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>
@@ -1798,20 +1904,24 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
               }));
             }}
           />
-
         </>
       ) : (
         <>
-
           <SelectCatagoryDropdown_IOS
             options={multiSelectOptions}
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
-            title={`${t('select')} ${multiSelectModal?.fieldLabel || 'Category'}`}
+            title={`${t('select')} ${
+              multiSelectModal?.fieldLabel || 'Category'
+            }`}
             subtitle={
               multiSelectModal?.ismultilple
-                ? `${t('pick_all')} ${pluralizeLabel(multiSelectModal?.fieldLabel || 'category')} ${t('best_describe')}`
-                : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'} ${t('that_fit_your_listing')}`
+                ? `${t('pick_all')} ${pluralizeLabel(
+                    multiSelectModal?.fieldLabel || 'category',
+                  )} ${t('best_describe')}`
+                : `${t('select_the')} ${
+                    multiSelectModal?.fieldLabel || 'category'
+                  } ${t('that_fit_your_listing')}`
             }
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>
@@ -1892,7 +2002,6 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 
-
   loaderContainer: {
     width: 100,
     height: 100,
@@ -1903,7 +2012,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     //height: Platform.OS === 'ios' ? 547 : 300,
-    paddingVertical: (Platform.OS === 'ios' ? 0 : 40),
+    paddingVertical: Platform.OS === 'ios' ? 0 : 40,
   },
   blurButtonWrapper_none: {
     width: 48,
@@ -1940,7 +2049,7 @@ const styles = StyleSheet.create({
     // marginTop: (Platform.OS === 'ios' ? 0 : 0),
     // marginLeft: 1
     position: 'absolute',
-    top: (Platform.OS === 'ios' ? 60 : 40),
+    top: Platform.OS === 'ios' ? 60 : 40,
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -1981,7 +2090,8 @@ const styles = StyleSheet.create({
     borderWidth: 0.3,
     borderColor: '#ffffff11',
 
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
+    boxShadow:
+      '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
 
@@ -2058,7 +2168,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '500',
     lineHeight: 14,
-    marginTop: 4
+    marginTop: 4,
   },
   userSub2: {
     color: 'rgba(255, 255, 255, 0.88)',
@@ -2066,7 +2176,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '500',
     lineHeight: 16,
-    marginTop: 1
+    marginTop: 1,
   },
   userSub1: {
     color: 'rgba(255, 255, 255, 0.48)',
@@ -2074,7 +2184,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '500',
     lineHeight: 16,
-    marginTop: 1
+    marginTop: 1,
   },
 
   initialsCircle: {
@@ -2177,7 +2287,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     width: '70%',
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
 
   backBtn: {
@@ -2255,7 +2365,6 @@ const styles = StyleSheet.create({
     mixBlendMode: 'normal',
     fontFamily: 'Urbanist-Medium',
     fontWeight: 500,
-
   },
 
   filecard: {
@@ -2409,7 +2518,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     fontStyle: 'normal',
     color: '#fff',
-    minHeight: 40
+    minHeight: 40,
   },
   pickerContainer: {
     borderRadius: 12,

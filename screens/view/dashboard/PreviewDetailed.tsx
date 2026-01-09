@@ -498,6 +498,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
       const createJson = await createRes.json();
       const apiMessage = createJson?.message || createJson?.error || "Something went wrong";
       const isSuccess = createRes.status === 200 || createRes.status === 201;
+      console.log("isSuccess: ",isSuccess, apiMessage);
 
       showToast(t(apiMessage), isSuccess ? "success" : "error");
 
