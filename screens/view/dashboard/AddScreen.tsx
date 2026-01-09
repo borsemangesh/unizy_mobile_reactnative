@@ -856,6 +856,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               multiline={false}
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               keyboardType={rnKeyboardType}
+              cursorColor='#fff'
               value={isPriceField && rawValue ? `£ ${rawValue}` : rawValue}
               onChangeText={text => {
                 let value = text;
@@ -923,6 +924,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               ]}
               placeholder={placeholderText}
               multiline={true}
+              cursorColor='#fff'
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               keyboardType={rnKeyboardType}
               value={formValues[param.id]?.value || ''}
