@@ -212,6 +212,7 @@ const SelectFoodQuantity_IOS = ({
                           >
                             {t('Available_Units')}:{' '}
                             <Text
+                            allowFontScaling={false}
                               style={{
                                 color: '#fff',
                                 fontSize: 17,
@@ -249,6 +250,7 @@ const SelectFoodQuantity_IOS = ({
                             </TouchableOpacity>
 
                             <Text
+                            allowFontScaling={false}
                               style={{
                                 color: '#FFF',
                                 fontSize: 20,

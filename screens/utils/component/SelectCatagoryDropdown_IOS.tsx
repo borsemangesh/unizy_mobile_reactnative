@@ -391,13 +391,13 @@ const [otherText, setOtherText] = useState('');
               <View style={styles.bottomview}>
 
                 <TouchableOpacity style={styles.cancelBtn} onPress={handleCancel}>
-                  <Text style={styles.cancelText}>{t('cancel')}</Text>
+                  <Text allowFontScaling={false} style={styles.cancelText}>{t('cancel')}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   style={[styles.cancelBtn, { backgroundColor: '#ffffff4e' }]}
                   onPress={handleApply}>
-                  <Text style={[styles.cancelText, { color: '#000000' }]}>
+                  <Text allowFontScaling={false} style={[styles.cancelText, { color: '#000000' }]}>
                     {t('apply')}
                   </Text>
                 </TouchableOpacity>

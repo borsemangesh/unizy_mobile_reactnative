@@ -364,6 +364,9 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                       >
                         {t('preview_featured_listing')}
                       </Text>
+                      <Text allowFontScaling={false} style={styles.previewDesc}>
+                        {t('feature_note')}
+                      </Text>
                       <NewTutitionCard
                         tag={uniname}
                         title={titleValue}
@@ -380,6 +383,9 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                       >
                         {t('preview_regular_listing')}
                       </Text>
+                      <Text allowFontScaling={false} style={styles.previewDesc}>
+                        {t('normal_note')}
+                      </Text>
                       <SeperateTutionCard
                         tag={uniname}
                         infoTitle={titleValue}
@@ -391,26 +397,36 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                         isfeature={true} initialsName={initials} />
                     </>
                   ) : (
-                    <SeperateTutionCard
-                      tag={uniname}
-                      infoTitle={titleValue}
-                      rating={storedForm[12]?.value || '4.5'}
-                      inforTitlePrice={priceText}
-                      productImage={profile ? { uri: profile } : undefined}
-                      bookmark={false}
-                      showInitials={!profile || profile === null || profile.trim() === ''}
-                      isfeature={false} initialsName={initials}
-                    />
+                    <><Text
+                        allowFontScaling={false}
+                        style={styles.newtext1}
+                      >
+                        {t('preview_regular_listing')}
+                      </Text><Text allowFontScaling={false} style={styles.previewDesc}>
+                          {t('normal_note')}
+                        </Text>
+                        <SeperateTutionCard
+                          tag={uniname}
+                          infoTitle={titleValue}
+                          rating={storedForm[12]?.value || '4.5'}
+                          inforTitlePrice={priceText}
+                          productImage={profile ? { uri: profile } : undefined}
+                          bookmark={false}
+                          showInitials={!profile || profile === null || profile.trim() === ''}
+                          isfeature={false} initialsName={initials} /></>
                   )
                 ) 
                 : storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
                   <>
                     <Text
-                      allowFontScaling={false}
-                      style={[styles.newtext]}
-                    >
-                      {t('preview_featured_listing')}
-                    </Text>
+                        allowFontScaling={false}
+                        style={styles.newtext}
+                      >
+                        {t('preview_featured_listing')}
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.previewDesc}>
+                        {t('feature_note')}
+                      </Text>
                     <PreviewCard
                       tag={uniname}
                       infoTitle={titleValue}
@@ -423,11 +439,14 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                       }
                     />
                     <Text
-                      allowFontScaling={false}
-                      style={[styles.newtext1, {}]}
-                    >
-                      {t('preview_regular_listing')}
-                    </Text>
+                        allowFontScaling={false}
+                        style={styles.newtext1}
+                      >
+                        {t('preview_regular_listing')}
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.previewDesc}>
+                        {t('normal_note')}
+                      </Text>
                     <NewFeatureCard
                       tag={uniname}
                       infoTitle={titleValue}
@@ -441,17 +460,22 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                     />
                   </>
                 ) : (
-                  <NewProductCard
-                    tag={uniname}
-                    infoTitle={titleValue}
-                    inforTitlePrice={priceText}
-                    rating={storedForm[12]?.value || '4.5'}
-                    productImage={
-                      imageArray.length > 0
-                        ? { uri: imageArray[0].uri }
-                        : require('../../../assets/images/drone.png')
-                    }
-                  />
+                  <><Text
+                        allowFontScaling={false}
+                        style={styles.newtext1}
+                      >
+                        {t('preview_regular_listing')}
+                      </Text><Text allowFontScaling={false} style={styles.previewDesc}>
+                          {t('normal_note')}
+                        </Text>
+                        <NewProductCard
+                          tag={uniname}
+                          infoTitle={titleValue}
+                          inforTitlePrice={priceText}
+                          rating={storedForm[12]?.value || '4.5'}
+                          productImage={imageArray.length > 0
+                            ? { uri: imageArray[0].uri }
+                            : require('../../../assets/images/drone.png')} /></>
                 )}
               </>
             ) : (
@@ -509,6 +533,15 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
 };
 
 const styles = StyleSheet.create({
+
+  previewDesc: {
+  marginTop: 2,
+  marginBottom: 8,
+  color: '#ccc',
+  fontSize: 12,
+  fontFamily: 'Urbanist-Medium',
+  fontWeight: 500,
+},
   backButtonContainer: {
     position: 'absolute',
     left: 16,

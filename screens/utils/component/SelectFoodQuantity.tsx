@@ -168,7 +168,9 @@ const SelectFoodQuantity = ({
                               }}
                             >
                               {t('Available_Units')}:{' '}
-                              <Text style={{
+                              <Text 
+                              allowFontScaling={false}
+                              style={{
                                 color: '#fff',
                                 fontSize: 17,
                                 fontWeight: 600,
@@ -201,6 +203,7 @@ const SelectFoodQuantity = ({
                                 />
                               </TouchableOpacity>
                               <Text
+                              allowFontScaling={false}
                                 style={{
                                   color: '#FFF',
                                   fontSize: 20,

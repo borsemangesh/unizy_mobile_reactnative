@@ -88,7 +88,7 @@ const OnboardingScreen = ({ navigation }: OnBoardingProps) => {
                 style={styles.finishbutton}
                 onPress={handleNext}
               >
-                <Text style={styles.buttonText}>{t('info_finish')}</Text>
+                <Text allowFontScaling = {false} style={styles.buttonText}>{t('info_finish')}</Text>
               </TouchableOpacity>
             </>
           ) : (
@@ -98,11 +98,11 @@ const OnboardingScreen = ({ navigation }: OnBoardingProps) => {
                   style={styles.buttonskip}
                   onPress={handleSkip}
                 >
-                  <Text style={styles.skip}>{t('info_skip')}</Text>
+                  <Text allowFontScaling = {false} style={styles.skip}>{t('info_skip')}</Text>
                 </TouchableOpacity>
               )}
               <TouchableOpacity style={styles.button} onPress={handleNext}>
-                <Text style={styles.buttonText}>
+                <Text allowFontScaling = {false} style={styles.buttonText}>
                   {isLast ? t('info_finish') : t('info_next')}
                 </Text>
 

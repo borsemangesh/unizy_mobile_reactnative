@@ -9,14 +9,14 @@ const OnboardingItem = ({ item }: any) => {
     <View style={styles.container}>
       
 
-      <Text style={styles.title}>{t(item.s1header)}</Text>
-      <Text style={styles.subtitle}>{t(item.s1text1)}</Text>
+      <Text allowFontScaling = {false} style={styles.title}>{t(item.s1header)}</Text>
+      <Text allowFontScaling = {false} style={styles.subtitle}>{t(item.s1text1)}</Text>
       <Image source={item.image1} style={styles.image} resizeMode="contain" />
-      <Text style={styles.title}>{t(item.s1header2)}</Text>
-      <Text style={styles.subtitle}>{t(item.s1text2)}</Text>
+      <Text allowFontScaling = {false} style={styles.title}>{t(item.s1header2)}</Text>
+      <Text allowFontScaling = {false} style={styles.subtitle}>{t(item.s1text2)}</Text>
       <Image source={item.image2} style={[styles.image,{marginTop: 15}]} resizeMode="contain" />
-      <Text style={[styles.title,{marginTop: 10}]}>{t(item.s1header3)}</Text>
-      <Text style={styles.subtitle}>{t(item.s1text3)}</Text>
+      <Text allowFontScaling = {false} style={[styles.title,{marginTop: 10}]}>{t(item.s1header3)}</Text>
+      <Text allowFontScaling = {false} style={styles.subtitle}>{t(item.s1text3)}</Text>
     </View>
   );
 };

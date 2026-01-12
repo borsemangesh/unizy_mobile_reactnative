@@ -3371,6 +3371,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                       }}
                     >
                       <Text
+                      allowFontScaling={false}
                         style={[
                           Styles.bycountuningAgreementText,
                           { textAlign: 'center' }, // center the entire text
@@ -3378,6 +3379,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                       >
                         {t('by_continuing_agree') + ' '}
                         <Text
+                        allowFontScaling={false}
                           style={[
                             Styles.teamsandConditionText,
                             { textDecorationLine: 'underline' }, // underline T&C
@@ -3390,6 +3392,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                         {` ${t('and')} `}
 
                         <Text
+                          allowFontScaling={false}
                           style={[
                             Styles.teamsandConditionText,
                             { textDecorationLine: 'underline' }, // underline Privacy Policy
