@@ -1,9 +1,13 @@
 # Resolve react_native_pods.rb with node to allow for hoisting
-require Pod::Executable.execute_command('node', ['-p',
-  'require.resolve(
-    "react-native/scripts/react_native_pods.rb",
-    {paths: [process.argv[1]]},
-  )', __dir__]).strip
+require Pod::Executable.execute_command(
+  'node',
+  ['-p',
+   'require.resolve(
+      "react-native/scripts/react_native_pods.rb",
+      { paths: [process.argv[1]] }
+    )',
+   __dir__]
+).strip
 
 require_relative '../node_modules/react-native-permissions/scripts/setup'
 
@@ -32,18 +36,18 @@ target 'unizy' do
     'PhotoLibraryAddOnly'
   ])
 
-  # CORE FIREBASE MODULES
+  # Firebase core
   pod 'FirebaseCoreInternal', :modular_headers => true
   pod 'GoogleUtilities', :modular_headers => true
   pod 'FirebaseMessaging', :modular_headers => true
   pod 'FirebaseCore', :modular_headers => true
   pod 'FirebaseInstallations', :modular_headers => true
 
-  # CRASHLYTICS + ANALYTICS
+  # Firebase features
   pod 'Firebase/Crashlytics', :modular_headers => true
   pod 'Firebase/Analytics', :modular_headers => true
 
-  # REQUIRED DEPENDENCIES FOR SWIFT PODS
+  # Required Swift dependencies
   pod 'GoogleDataTransport', :modular_headers => true
   pod 'nanopb', :modular_headers => true
   pod 'FirebaseCoreExtension', :modular_headers => true
@@ -52,7 +56,16 @@ target 'unizy' do
     react_native_post_install(
       installer,
       config[:reactNativePath],
-      :mac_catalyst_enabled => false,
+      :mac_catalyst_enabled => false
     )
+
+    # 🔥 REQUIRED FIX FOR Reanimated 4 + RNWorklets
+    installer.pods_project.targets.each do |target|
+      if target.name == 'RNReanimated'
+        target.build_configurations.each do |config|
+          config.build_settings['CLANG_ENABLE_MODULES'] = 'YES'
+        end
+      end
+    end
   end
 end

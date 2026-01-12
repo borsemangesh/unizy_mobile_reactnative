@@ -65,7 +65,7 @@
 	<key>NSRemoteNotificationUsageDescription</key>
 	<string>This app uses notifications to alert you about important updates such as new chats, post/activity updates, reminders, and status changes related to your account.</string>
 	<key>RCTNewArchEnabled</key>
-	<false/>
+	<true/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>MonumentExtended-Regular.otf</string>
