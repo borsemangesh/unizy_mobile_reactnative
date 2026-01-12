@@ -629,7 +629,7 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
           if (!isSuccess) return;
         }
       }
-      showToast(t(Constant.DATA_UPLOAD), "success");
+      //showToast(t(Constant.DATA_UPLOAD), "success");
       setShowPopup(true);
 
       await AsyncStorage.removeItem("formData1");

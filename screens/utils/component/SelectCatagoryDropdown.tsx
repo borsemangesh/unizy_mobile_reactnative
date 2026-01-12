@@ -343,6 +343,7 @@ const SelectCatagoryDropdown = ({
                             <TextInput
                               value={otherText}
                               onChangeText={setOtherText}
+                              allowFontScaling={false}
                               placeholder={`${t('please_specify')}*`}
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
                               cursorColor="#fff"

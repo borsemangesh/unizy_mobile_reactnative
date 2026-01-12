@@ -58,8 +58,10 @@ import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import Loader from '../../utils/component/Loader';
-import DatePicker from 'react-native-date-picker';
+// import DatePicker from 'react-native-date-picker';
 import dayjs from 'dayjs';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImg = require('../../../assets/images/user.jpg');
@@ -93,6 +95,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
   const [tempStartDate, setTempStartDate] = useState<Date | undefined>(
     undefined,
   );
+  const [tempDate, setTempDate] = useState<Date>(new Date());
 
   const [datePickerVisible, setDatePickerVisible] = useState(false);
   const [activeDateField, setActiveDateField] = useState<{
@@ -831,7 +834,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           text: 'Gallery',
           onPress: () => {
             const remainingSlots = MAX_IMAGES - uploadedImages.length;
-        
+
             if (remainingSlots <= 0) {
               showToast(
                 `${t(Constant.MAXIMUM)} ${MAX_IMAGES} ${t(Constant.IMAGE_ALLOWED)}`,
@@ -839,7 +842,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
               );
               return;
             }
-        
+
             launchImageLibrary(
               {
                 mediaType: 'photo',
@@ -849,7 +852,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
               response => {
                 if (response.didCancel) return;
                 if (!response.assets) return;
-        
+
                 // Safety check (Android sometimes ignores selectionLimit)
                 if (response.assets.length > remainingSlots) {
                   showToast(
@@ -858,13 +861,13 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                   );
                   return;
                 }
-        
+
                 const images = response.assets.map(asset => ({
                   id: `${Date.now()}-${Math.random()}`,
                   uri: asset.uri!,
                   name: asset.fileName || 'Image',
                 }));
-        
+
                 setUploadedImages(prev => [...prev, ...images]);
               },
             );
@@ -1318,6 +1321,73 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
         );
       }
 
+      // case 'date': {
+      //   const { param } = field;
+      //   const { field_name } = param;
+
+      //   const value = formValues[param.id]?.value;
+      //   const startDate = value?.startDate;
+      //   const endDate = value?.endDate;
+
+      //   return (
+      //     <View key={field.id} style={styles.productTextView}>
+      //       {renderLabel(field_name, field.mandatory)}
+
+      //       <View style={{ flexDirection: 'row', gap: 12 }}>
+      //         {/* FROM DATE */}
+      //         <TouchableOpacity
+      //           style={[styles.pickerContainer, styles.dateBox]}
+      //           onPress={() => {
+      //             setActiveDateField({ param, type: 'start' });
+      //             setDatePickerVisible(true);
+      //           }}
+      //         >
+      //           <Text
+      //             style={[
+      //               styles.dropdowntext,
+      //               { color: startDate ? '#fff' : 'rgba(255,255,255,0.6)' },
+      //             ]}
+      //           >
+      //             {startDate
+      //               ? dayjs(startDate).format('DD-MM-YYYY')
+      //               : t('start_date')}
+      //           </Text>
+
+      //           <Image
+      //             source={require('../../../assets/images/calendar_icon.png')}
+      //             style={styles.calendarIcon}
+      //           />
+      //         </TouchableOpacity>
+
+      //         {/* TO DATE */}
+      //         <TouchableOpacity
+      //           style={[styles.pickerContainer, styles.dateBox]}
+      //           onPress={() => {
+      //             setActiveDateField({ param, type: 'end' });
+      //             setDatePickerVisible(true);
+      //           }}
+      //         >
+      //           <Text
+      //             style={[
+      //               styles.dropdowntext,
+      //               { color: endDate ? '#fff' : 'rgba(255,255,255,0.6)' },
+      //             ]}
+      //           >
+      //             {endDate
+      //               ? dayjs(endDate).format('DD-MM-YYYY')
+      //               : t('end_date')}
+      //           </Text>
+
+      //           <Image
+      //             source={require('../../../assets/images/calendar_icon.png')}
+      //             style={styles.calendarIcon}
+      //           />
+      //         </TouchableOpacity>
+      //       </View>
+      //     </View>
+      //   );
+      // }
+
       case 'date': {
         const { param } = field;
         const { field_name } = param;
@@ -1340,6 +1410,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                 }}
               >
                 <Text
+                  allowFontScaling={false}
                   style={[
                     styles.dropdowntext,
                     { color: startDate ? '#fff' : 'rgba(255,255,255,0.6)' },
@@ -1365,6 +1436,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                 }}
               >
                 <Text
+                  allowFontScaling={false}
                   style={[
                     styles.dropdowntext,
                     { color: endDate ? '#fff' : 'rgba(255,255,255,0.6)' },
@@ -1567,7 +1639,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           </View>
 
           <TouchableOpacity
-            onPress={() => {}}
+            onPress={() => { }}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
@@ -1667,8 +1739,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                   <View style={{ width: '80%' }}>
                     <Text allowFontScaling={false} style={styles.userName}>
                       {userMeta
-                        ? `${userMeta.firstname ?? ''} ${
-                            userMeta.lastname ?? ''
+                        ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''
                           }`.trim()
                         : 'Alan Walker'}
                     </Text>
@@ -1764,7 +1835,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           onPress={() => handlePreview(formValues)}
         />
       </View>
-      <DatePicker
+      {/* <DatePicker
         modal
         mode="date"
         open={datePickerVisible}
@@ -1815,13 +1886,163 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           setDatePickerVisible(false);
           setActiveDateField(null);
         }}
-      />
+      /> */}
+
+
+      {Platform.OS === 'ios' && datePickerVisible && activeDateField && (
+        <Modal transparent animationType="slide">
+          <View style={{ flex: 1, backgroundColor: '#00000066' }}>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                setDatePickerVisible(false);
+                setActiveDateField(null);
+              }}
+            >
+              <View style={{ flex: 1 }} />
+            </TouchableWithoutFeedback>
+
+            <View style={{ backgroundColor: '#fff' }}>
+              {/* HEADER */}
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  padding: 12,
+                  borderBottomWidth: 0.5,
+                  borderColor: '#ddd',
+                }}
+              >
+                <TouchableOpacity
+                  onPress={() => {
+                    setDatePickerVisible(false);
+                    setActiveDateField(null);
+                  }}
+                >
+                  <Text allowFontScaling={false} style={{ color: '#999', fontSize: 16 }}>Cancel</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    const currentValue =
+                      formValues[activeDateField.param.id]?.value || {};
+
+                    if (activeDateField.type === 'start') {
+                      handleValueChange(
+                        activeDateField.param.id,
+                        activeDateField.param.alias_name ??
+                        activeDateField.param.field_name,
+                        {
+                          startDate: tempDate,
+                          endDate:
+                            currentValue.endDate &&
+                              dayjs(currentValue.endDate).isBefore(tempDate)
+                              ? null
+                              : currentValue.endDate,
+                        },
+                      );
+                    } else {
+                      handleValueChange(
+                        activeDateField.param.id,
+                        activeDateField.param.alias_name ??
+                        activeDateField.param.field_name,
+                        {
+                          startDate: currentValue.startDate,
+                          endDate: tempDate,
+                        },
+                      );
+                    }
+
+                    setDatePickerVisible(false);
+                    setActiveDateField(null);
+                  }}
+                >
+                  <Text allowFontScaling={false} style={{ color: '#007AFF', fontSize: 16 }}>Done</Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* DATE PICKER */}
+              <DateTimePicker
+                value={tempDate}
+                mode="date"
+                display="spinner"
+                minimumDate={
+                  activeDateField.type === 'end'
+                    ? formValues[activeDateField.param.id]?.value?.startDate ??
+                    new Date()
+                    : new Date()
+                }
+                onChange={(event, selectedDate) => {
+                  if (selectedDate) {
+                    setTempDate(selectedDate);
+                  }
+                }}
+              />
+            </View>
+          </View>
+        </Modal>
+      )}
+
+      {Platform.OS === 'android' && datePickerVisible && activeDateField && (
+        <DateTimePicker
+          value={tempDate}
+          mode="date"
+          display="calendar"
+          minimumDate={
+            activeDateField.type === 'end'
+              ? formValues[activeDateField.param.id]?.value?.startDate ??
+              new Date()
+              : new Date()
+          }
+          onChange={(event, selectedDate) => {
+            if (event.type === 'dismissed') {
+              setDatePickerVisible(false);
+              setActiveDateField(null);
+              return;
+            }
+
+            if (selectedDate) {
+              const currentValue =
+                formValues[activeDateField.param.id]?.value || {};
+
+              if (activeDateField.type === 'start') {
+                handleValueChange(
+                  activeDateField.param.id,
+                  activeDateField.param.alias_name ??
+                  activeDateField.param.field_name,
+                  {
+                    startDate: selectedDate,
+                    endDate:
+                      currentValue.endDate &&
+                        dayjs(currentValue.endDate).isBefore(selectedDate)
+                        ? null
+                        : currentValue.endDate,
+                  },
+                );
+              } else {
+                handleValueChange(
+                  activeDateField.param.id,
+                  activeDateField.param.alias_name ??
+                  activeDateField.param.field_name,
+                  {
+                    startDate: currentValue.startDate,
+                    endDate: selectedDate,
+                  },
+                );
+              }
+            }
+
+            setDatePickerVisible(false);
+            setActiveDateField(null);
+          }}
+        />
+      )}
+
 
       <Modal
         visible={showThumnail}
         transparent={true}
         animationType="fade"
-        onRequestClose={() => {}}
+        onRequestClose={() => { }}
       >
         <TouchableWithoutFeedback>
           <View style={styles.overlay}>
@@ -1878,17 +2099,15 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
             options={multiSelectOptions}
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
-            title={`${t('select')} ${
-              multiSelectModal?.fieldLabel || 'Category'
-            }`}
+            title={`${t('select')} ${multiSelectModal?.fieldLabel || 'Category'
+              }`}
             subtitle={
               multiSelectModal?.ismultilple
                 ? `${t('pick_all')} ${pluralizeLabel(
-                    multiSelectModal?.fieldLabel || 'category',
-                  )} ${t('best_describe')}`
-                : `${t('select_the')} ${
-                    multiSelectModal?.fieldLabel || 'category'
-                  } ${t('that_fit_your_listing')}`
+                  multiSelectModal?.fieldLabel || 'category',
+                )} ${t('best_describe')}`
+                : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'
+                } ${t('that_fit_your_listing')}`
             }
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>
@@ -1911,17 +2130,15 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
             options={multiSelectOptions}
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
-            title={`${t('select')} ${
-              multiSelectModal?.fieldLabel || 'Category'
-            }`}
+            title={`${t('select')} ${multiSelectModal?.fieldLabel || 'Category'
+              }`}
             subtitle={
               multiSelectModal?.ismultilple
                 ? `${t('pick_all')} ${pluralizeLabel(
-                    multiSelectModal?.fieldLabel || 'category',
-                  )} ${t('best_describe')}`
-                : `${t('select_the')} ${
-                    multiSelectModal?.fieldLabel || 'category'
-                  } ${t('that_fit_your_listing')}`
+                  multiSelectModal?.fieldLabel || 'category',
+                )} ${t('best_describe')}`
+                : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'
+                } ${t('that_fit_your_listing')}`
             }
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
             onClose={() =>

@@ -363,6 +363,7 @@ const [otherText, setOtherText] = useState('');
                                         {showOtherInput && (
                                           <View style={{ marginLeft: 8, marginTop: 8 }}>
                                             <TextInput
+                                            allowFontScaling={false}
                                               value={otherText}
                                               onChangeText={setOtherText}
                                               placeholder={`${t('please_specify')}*`}

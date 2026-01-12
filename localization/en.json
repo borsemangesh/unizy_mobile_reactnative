@@ -324,9 +324,6 @@
   "category_clothing_accessories": "Clothing, Shoes & Accessories",
   "category_books_study": "Books & Study Materials",
   "featured_listing": "List as Featured Listing",
-  "featured_listing_note_1": "Featured listings require a small upfront fee -",
-  "featured_listing_fee_percentage": "of your item's price or up to",
-  "featured_listing_fee_cap": "(whichever is lower)",
   "preview_details": "Preview Details",
   "preview_thumbnail": "Preview Thumbnail",
   "preview_featured_listing": "Featured Listing Preview",
@@ -586,9 +583,6 @@
   "that_fit_your_listing": "that fits your listing.",
   "select_the": "Select the",
   "best_describe": "that best describe your listing.",
-  "a": "a",
-  "commission_or_maximum": "commission or a maximum of",
-  "whichever_lower": "whichever is lower, will be added to the entered price.",
   "seller_details": "Seller Details",
   "update": "Update",
   "no_reviews_found": "No Reviews Found",
@@ -758,6 +752,15 @@
   "please_specify":"Please specify",
   "start_date":"Start Date",
   "end_date":"End Date",
-  "select_both_dates":"Please select both start date and end date."
+  "select_both_dates":"Please select both start date and end date.",
+  "close":"Close",
+  "featured_listing_note_1": "A featured commission of",
+  "featured_listing_fee_percentage": "of the item price or",
+  "featured_listing_fee_cap": "whichever is lower, will be deducted only after a successful transaction, with no upfront fee charged.",
+  "a": "A commission of",
+  "commission_or_maximum": "of the item price or",
+  "whichever_lower": "whichever is lower, is added to the seller-entered price. The total amount shown is the final price payable by the buyer.",
+  "feature_note":"This is how your featured listing will appear on the dashboard.",
+  "normal_note":"This is how your listing will appear across all listings and search results."
 
 }
