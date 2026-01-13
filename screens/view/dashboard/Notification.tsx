@@ -328,10 +328,19 @@ const Notification = ({ navigation }: NotificationProps) => {
 
     const productImage = require('../../../assets/images/bellicon.png');
 
-    const templateName = item.template?.name || '';
-    const featureId = item.metadata?.feature_id || item.metadata?.id || 0;
-    const featureTitle = item.metadata?.category.name || item.metadata?.category.name || 'Product';
-    const category_id = item.metadata?.category.id || item.metadata?.category.id || 0;
+    // const templateName = item.template?.name || '';
+    // const featureId = item.metadata?.feature_id || item.metadata?.id || 0;
+    // const featureTitle = item.metadata?.category.name || item.metadata?.category.name || 'Product';
+    // const category_id = item.metadata?.category.id || item.metadata?.category.id || 0;
+
+    const templateName = item?.template?.name ?? '';
+
+    const featureId = item?.metadata?.feature_id ?? item?.metadata?.id ?? 0;
+
+    const featureTitle = item?.metadata?.category?.name ?? 'Product';
+
+    const category_id = item?.metadata?.category?.id ?? 0;
+
 
     return (
       <View style={styles.itemContainer}>
