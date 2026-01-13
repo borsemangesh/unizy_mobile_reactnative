@@ -126,10 +126,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
 
   const [multiSelectOptions, setMultiSelectOptions] = useState<any[]>([]);
-  // const [uploadedImages, setUploadedImages] = useState<
-  //   { id: string; uri: string; name: string }[]
-  // >([]);
-
   const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
 
@@ -209,7 +205,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const { productId, productName } = route.params;
 
   const { height } = Dimensions.get('window');
-  const bottomPadding = height * 0.0005;
 
   const [showThumnail, setShowThumnail] = useState(false);
   const [uri, setUri] = useState('');
