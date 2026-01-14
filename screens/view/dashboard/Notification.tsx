@@ -174,7 +174,6 @@ const Notification = ({ navigation }: NotificationProps) => {
       }
       const language_code = await AsyncStorage.getItem('selectedLanguage') || 'es'
 
-
       const response = await fetch(url, {
         method: 'GET',
         headers: {

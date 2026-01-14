@@ -216,8 +216,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
   const renderImageItem = ({ item, drag, isActive }: any) => {
     return (
-
       <View style={styles.imagelistcard}>
+        {' '}
         <TouchableOpacity
           onLongPress={drag}
           onPress={() => {
@@ -228,6 +228,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           style={[{ opacity: isActive ? 0.7 : 1 }]}
           activeOpacity={0.9}
         >
+          {' '}
           <View
             key={item.id}
             style={{
@@ -239,6 +240,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               paddingLeft: 8,
             }}
           >
+            {' '}
             <View
               style={{
                 flexDirection: 'row',
@@ -247,24 +249,25 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 flex: 1,
               }}
             >
+              {' '}
               <Image
                 source={require('../../../assets/images/sixdots.png')}
                 style={styles.threedots}
-              />
+              />{' '}
               <Image
                 source={fileIcon}
                 style={{ width: 32, height: 32, marginRight: 5 }}
-              />
+              />{' '}
               <Text
                 allowFontScaling={false}
                 style={[styles.fileName, { flexShrink: 1 }]}
                 numberOfLines={1}
                 ellipsizeMode="tail"
               >
-                {item.name}
-              </Text>
-            </View>
-
+                {' '}
+                {item.name}{' '}
+              </Text>{' '}
+            </View>{' '}
             <TouchableOpacity
               onPress={() =>
                 setUploadedImages(prev =>
@@ -272,12 +275,13 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 )
               }
             >
+              {' '}
               <Image
                 source={deleteIcon}
                 style={{ width: 38, height: 38, resizeMode: 'contain' }}
-              />
-            </TouchableOpacity>
-          </View>
+              />{' '}
+            </TouchableOpacity>{' '}
+          </View>{' '}
           {uploadedImages.length > 1 && item !== uploadedImages.length - 1 && (
             <View
               style={{
@@ -287,8 +291,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 marginHorizontal: 10,
               }}
             />
-          )}
-        </TouchableOpacity>
+          )}{' '}
+        </TouchableOpacity>{' '}
       </View>
     );
   };
@@ -873,6 +877,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               keyboardType={rnKeyboardType}
               cursorColor='#fff'
+              selectionColor="#FFFFFF"
               value={isPriceField && rawValue ? `£ ${rawValue}` : rawValue}
               onChangeText={text => {
                 let value = text;
@@ -941,6 +946,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               placeholder={placeholderText}
               multiline={true}
               cursorColor='#fff'
+              selectionColor="#FFFFFF"
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               keyboardType={rnKeyboardType}
               value={formValues[param.id]?.value || ''}
@@ -970,7 +976,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 setMultiSelectOptions(options);
               }}
             >
-              <View style={styles.dropdowncard}>
+              {/* <View style={styles.dropdowncard}>
                 <Text numberOfLines={2} allowFontScaling={false} style={styles.dropdowntext}>
                   {Array.isArray(formValues[id]?.value) && formValues[id]?.value.length > 0
                     ? `${formValues[id]?.value.length} ${t('selected')}`
@@ -978,7 +984,31 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                       ? `1 ${t('selected')}`
                       : `${t('select')} ${field_name}`}
                 </Text>
+              </View> */}
+              <View style={styles.dropdowncard}>
+                {(() => {
+                  const selectedValue = formValues[id]?.value;
+
+                  const selectedCount = Array.isArray(selectedValue)
+                    ? selectedValue.length
+                    : selectedValue != null
+                    ? 1
+                    : 0;
+
+                  return (
+                    <Text
+                      numberOfLines={2}
+                      allowFontScaling={false}
+                      style={styles.dropdowntext}
+                    >
+                      {selectedCount > 0
+                        ? `${selectedCount} ${t('selected')}`
+                        : `${t('select')} ${field_name}`}
+                    </Text>
+                  );
+                })()}
               </View>
+
               <Image
                 source={require('../../../assets/images/right.png')}
                 style={styles.dropdownIcon}
@@ -999,15 +1029,41 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 .map((opt: any) => (
                   <View key={opt.id} style={styles.categoryTagWrapper}>
                     <TouchableOpacity
+                      // onPress={() => {
+                      //   setFormValues((prev: any) => {
+                      //     const currentValue = prev[id]?.value;
+                      //     let updatedValue;
+
+                      //     if (Array.isArray(currentValue)) {
+                      //       updatedValue = currentValue.filter(
+                      //         (v: number) => v !== opt.id
+                      //       );
+                      //     } else {
+                      //       updatedValue = null;
+                      //     }
+
+                      //     return {
+                      //       ...prev,
+                      //       [id]: {
+                      //         ...prev[id],
+                      //         value: updatedValue,
+                      //         // clear otherText only when removing "Other"
+                      //         otherText: opt.is_other ? undefined : prev[id]?.otherText,
+                      //       },
+                      //     };
+                      //   });
+                      // }}
                       onPress={() => {
                         setFormValues((prev: any) => {
                           const currentValue = prev[id]?.value;
                           let updatedValue;
 
                           if (Array.isArray(currentValue)) {
-                            updatedValue = currentValue.filter(
-                              (v: number) => v !== opt.id
+                            const filtered = currentValue.filter(
+                              (v: number) => v !== opt.id,
                             );
+                            updatedValue =
+                              filtered.length > 0 ? filtered : null;
                           } else {
                             updatedValue = null;
                           }
@@ -1017,8 +1073,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                             [id]: {
                               ...prev[id],
                               value: updatedValue,
-                              // clear otherText only when removing "Other"
-                              otherText: opt.is_other ? undefined : prev[id]?.otherText,
+                              otherText: opt.is_other
+                                ? undefined
+                                : prev[id]?.otherText,
                             },
                           };
                         });
@@ -1028,14 +1085,13 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                         {opt.option_name}
                         {opt.is_other && formValues[id]?.otherText
                           ? `: ${formValues[id].otherText}`
-                          : ''}
-                        {' '}✕
+                          : ''}{' '}
+                        ✕
                       </Text>
                     </TouchableOpacity>
                   </View>
                 ))}
             </View>
-
           </View>
         );
 
@@ -1410,15 +1466,21 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             style={{ flex: 1 }}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           >
-            <NestableScrollContainer>
-              <AnimatedReanimated.ScrollView
+            <NestableScrollContainer
+            scrollEventThrottle={16}
+            onScroll={scrollHandler}
+            contentContainerStyle={[
+              styles.scrollContainer,
+              { paddingBottom: height * 0.1 }, // 0.05% of screen height
+            ]}>
+              {/* <AnimatedReanimated.ScrollView
                 scrollEventThrottle={16}
                 onScroll={scrollHandler}
                 contentContainerStyle={[
                   styles.scrollContainer,
                   { paddingBottom: height * 0.1 }, // 0.05% of screen height
                 ]}
-              >
+              > */}
                 <View style={styles.userRow}>
                   <View
                     style={{
@@ -1536,7 +1598,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 </View>
                 
                 {featuredField && <View>{renderField(featuredField)}</View>}
-              </AnimatedReanimated.ScrollView>
+              {/* </AnimatedReanimated.ScrollView> */}
             </NestableScrollContainer>
           </KeyboardAvoidingView>
         )}
@@ -1824,6 +1886,29 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 export default AddScreen;
 
 const styles = StyleSheet.create({
+
+
+  // imageListWrapper: {
+  //   marginTop: 10,
+  //   borderRadius: 12,
+  //   backgroundColor: 'rgba(255,255,255,0.08)',
+  //   borderWidth: 1,
+  //   borderColor: 'rgba(255,255,255,0.2)',
+  // },
+
+
+  // imageRow: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   gap: 10,
+  // },
+
+  // thumb: {
+  //   width: 40,
+  //   height: 40,
+  //   borderRadius: 6,
+  // },
+
 
   dateBox: {
     flex: 1,

@@ -1101,6 +1101,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
               placeholder={placeholderText}
               multiline={false}
               cursorColor="#fff"
+              selectionColor="#FFFFFF"
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               keyboardType={rnKeyboardType}
               value={isPriceField ? `£ ${finalValue}` : finalValue}
@@ -1171,6 +1172,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
               placeholder={placeholderText}
               multiline={true}
               cursorColor="#fff"
+              selectionColor="#FFFFFF"
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               keyboardType={rnKeyboardType}
               value={rawValue}
@@ -1695,19 +1697,26 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
             <Loader containerStyle={styles.loaderContainer} />
           </View>
         ) : (
-          <NestableScrollContainer>
+          <NestableScrollContainer
+          scrollEventThrottle={16}
+                onScroll={scrollHandler}
+                contentContainerStyle={[
+                  styles.scrollContainer,
+                  { paddingBottom: height * 0.1 },
+                ]}
+          >
             <KeyboardAvoidingView
               style={{ flex: 1 }}
               behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             >
-              <AnimatedReanimated.ScrollView
+              {/* <AnimatedReanimated.ScrollView
                 scrollEventThrottle={16}
                 onScroll={scrollHandler}
                 contentContainerStyle={[
                   styles.scrollContainer,
                   { paddingBottom: height * 0.1 },
                 ]}
-              >
+              > */}
                 <View style={styles.userRow}>
                   <View
                     style={{
@@ -1826,7 +1835,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                   </Animated.View>
                 </View>
                 {featuredField && <View>{renderField(featuredField)}</View>}
-              </AnimatedReanimated.ScrollView>
+              {/* </AnimatedReanimated.ScrollView> */}
             </KeyboardAvoidingView>
           </NestableScrollContainer>
         )}
