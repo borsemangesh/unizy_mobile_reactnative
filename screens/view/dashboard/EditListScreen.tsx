@@ -1035,6 +1035,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
     const fieldType = param.field_type?.toLowerCase() ?? '';
     const field_ismultilple = param.ismultilple ?? false;
     const field_name = param.field_name ?? '';
+    const placeholder = param.placeholder ?? '';
     const id = param.id;
     const options = Array.isArray(param.options) ? param.options : [];
     const isToggle = false;
@@ -1044,7 +1045,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
     switch (fieldType) {
       case 'text': {
         const { param } = field;
-        const { field_name, keyboardtype, alias_name } = param;
+        const { field_name, keyboardtype, alias_name,placeholder } = param;
 
         const rawValue =
           formValues[param.id]?.value ??
@@ -1054,10 +1055,12 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           rawValue !== null && rawValue !== undefined ? String(rawValue) : '';
 
         const isPriceField = alias_name?.toLowerCase() === 'price';
-        const placeholderText =
-          alias_name?.toLowerCase() === 'price'
-            ? `£ ${t('enter')} ${field_name}`
-            : `${t('enter')} ${field_name}`;
+        // const placeholderText =
+        //   alias_name?.toLowerCase() === 'price'
+        //     ? `£ ${t('enter')} ${field_name}`
+        //     : `${t('enter')} ${field_name}`;
+
+        const placeholderText = placeholder ? placeholder : `${t('enter')} ${field_name}`;
 
         let rnKeyboardType:
           | 'default'
@@ -1120,12 +1123,14 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
 
       case 'multi-line-text': {
         const { param } = field;
-        const { field_name, keyboardtype, alias_name } = param;
+        const { field_name, keyboardtype, alias_name, placeholder } = param;
         // const placeholderText = alias_name || field_name;
-        const placeholderText =
-          alias_name?.toLowerCase() === 'price'
-            ? `£ ${t('enter')} ${field_name}`
-            : `${t('enter')} ${field_name}`;
+        // const placeholderText =
+        //   alias_name?.toLowerCase() === 'price'
+        //     ? `£ ${t('enter')} ${field_name}`
+        //     : `${t('enter')} ${field_name}`;
+
+        const placeholderText = placeholder ? placeholder : `${t('enter')} ${field_name}`;
 
         let rnKeyboardType:
           | 'default'
@@ -1212,7 +1217,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
               }}
             >
               <Text allowFontScaling={false} style={styles.dropdowntext}>
-                {`${t('select')} ${field_name}`}
+                {`${placeholder}`}
               </Text>
 
               <Image

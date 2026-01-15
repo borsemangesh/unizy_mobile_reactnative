@@ -812,6 +812,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     const fieldType = param.field_type?.toLowerCase() ?? '';
     const field_ismultilple = param.ismultilple ?? false;
     const field_name = param.field_name ?? '';
+    const placeholder = param.placeholder ?? '';
     const id = param.id;
     const options = Array.isArray(param.options) ? param.options : [];
 
@@ -820,16 +821,19 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     switch (fieldType) {
       case 'text': {
         const { param } = field;
-        const { field_name, keyboardtype, alias_name } = param;
+        const { field_name, keyboardtype, alias_name,placeholder } = param;
 
         const rawValue = formValues[param.id]?.value || '';
 
         const isPriceField = alias_name?.toLowerCase() === 'price';
 
-        const placeholderText =
-          alias_name?.toLowerCase() === 'price'
-            ? `£ ${t('enter')} ${field_name}`
-            : `${t('enter')} ${field_name}`;
+        // const placeholderText =
+        //   alias_name?.toLowerCase() === 'price'
+        //     ? `£ ${t('enter')} ${field_name}`
+        //     : `${t('enter')} ${field_name}`;
+
+        const placeholderText = placeholder ? placeholder : `${t('enter')} ${field_name}`;
+          
 
         let rnKeyboardType:
           | 'default'
@@ -900,11 +904,13 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
       case 'multi-line-text': {
         const { param } = field;
-        const { field_name, keyboardtype, alias_name } = param;
-        const placeholderText =
-          alias_name?.toLowerCase() === 'price'
-            ? `£ ${t('enter')} ${field_name}`
-            : `${t('enter')} ${field_name}`;
+        const { field_name, keyboardtype, alias_name,placeholder } = param;
+        // const placeholderText =
+        //   alias_name?.toLowerCase() === 'price'
+        //     ? `£ ${t('enter')} ${field_name}`
+        //     : `${t('enter')} ${field_name}`;
+        const placeholderText = placeholder ? placeholder : `${t('enter')} ${field_name}`;
+
 
         let rnKeyboardType:
           | 'default'
@@ -1001,9 +1007,13 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                       allowFontScaling={false}
                       style={styles.dropdowntext}
                     >
-                      {selectedCount > 0
+                      {/* {selectedCount > 0
                         ? `${selectedCount} ${t('selected')}`
-                        : `${t('select')} ${field_name}`}
+                        : `${t('select')} ${field_name}`} */}
+                        {selectedCount > 0
+                        ? `${selectedCount} ${t('selected')}`
+                        : `${placeholder}` }
+                        
                     </Text>
                   );
                 })()}
