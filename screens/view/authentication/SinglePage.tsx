@@ -556,6 +556,33 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
     fetchUniversities();
   }, []);
 
+
+  useEffect(() => {
+  if (currentScreenIninner === 'sendOTP') {
+    // Small delay ensures animation + render is complete
+    const timer = setTimeout(() => {
+      inputs.current[0]?.focus();
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }
+}, [currentScreenIninner]);
+
+useEffect(() => {
+  if (
+    currentScreenIninner === 'verify' &&
+    showOtp &&
+    verifyimageLoaded
+  ) {
+    const timer = setTimeout(() => {
+      verifyinputs.current[0]?.focus();
+    }, 300); // wait for animation + render
+
+    return () => clearTimeout(timer);
+  }
+}, [currentScreenIninner, showOtp, verifyimageLoaded]);
+
+
   const stepIndex = (() => {
     switch (currentScreenIninner) {
       case 'signup':
@@ -731,6 +758,15 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
   };
 
+// const handleSendOTP = async () => {
+//  clickOnSendOTP(() => {
+//           setCurrentScreen('login');
+//           setcurrentScreenIninner('sendOTP');
+//         })
+// }
+
+
+
   const handleSendOTP = async () => {
 
     setOtp(['', '', '', '']);
@@ -767,7 +803,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       const body = {
         firstname: firstName,
         lastname: lastName,
-        postal_code: '123456',
+        postal_code: '',
         email: signUpusername,
         password: signUppassword,
         confirmPassword: confirmPassword,
@@ -814,13 +850,11 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
     }
   };
 
-  //otp
+  
+  
   const [otp, setOtp] = useState(['', '', '', '']);
   const inputs = useRef<(TextInput | null)[]>([]);
-  // useEffect(() => {
-  //   const timer = setTimeout(() => inputs.current[0]?.focus(), 300);
-  //   return () => clearTimeout(timer);
-  // }, []);
+ 
   const handleChange = (text: string, index: number) => {
     const newOtp = [...otp];
     newOtp[index] = text;

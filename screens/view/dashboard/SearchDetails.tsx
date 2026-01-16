@@ -852,7 +852,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     allowFontScaling={false}
                     style={styles.productDesHeding}
                   >
-                    {t('des')}`
+                    {t('des')}
 
                   </Text>
 

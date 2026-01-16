@@ -167,6 +167,7 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
 
               <View style={styles.login_container}>
                 <TextInput
+                cursorColor='#fff'
                   allowFontScaling={false}
                   style={[
                     styles.personalEmailID_TextInput,

@@ -50,6 +50,8 @@ import AnimatedReanimated, {
   interpolate,
   interpolateColor,
   useDerivedValue,
+  useAnimatedRef,
+  useScrollViewOffset,
 } from 'react-native-reanimated';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
@@ -96,6 +98,9 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
     undefined,
   );
   const [tempDate, setTempDate] = useState<Date>(new Date());
+
+  const scrollRef = useAnimatedRef<any>();
+  const scrollY = useScrollViewOffset(scrollRef);
 
   const [datePickerVisible, setDatePickerVisible] = useState(false);
   const [activeDateField, setActiveDateField] = useState<{
@@ -152,7 +157,10 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
   const MAX_IMAGES = 5;
   const [slideUp1] = useState(new Animated.Value(0));
 
-  const scrollY = useSharedValue(0);
+    const AnimatedNestableScroll =
+    Animated.createAnimatedComponent(NestableScrollContainer);
+  
+  //const scrollY = useSharedValue(0);
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: event => {
@@ -1702,14 +1710,26 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
             <Loader containerStyle={styles.loaderContainer} />
           </View>
         ) : (
-          <NestableScrollContainer
-          scrollEventThrottle={16}
-                onScroll={scrollHandler}
-                contentContainerStyle={[
-                  styles.scrollContainer,
-                  { paddingBottom: height * 0.1 },
-                ]}
-          >
+          // <NestableScrollContainer
+          // scrollEventThrottle={16}
+          //       onScroll={scrollHandler}
+          //       contentContainerStyle={[
+          //         styles.scrollContainer,
+          //         { paddingBottom: height * 0.1 },
+          //       ]}
+          // >
+
+          <AnimatedNestableScroll
+            nestedScrollEnabled
+            ref={scrollRef}
+            scrollEventThrottle={16}
+            onScroll={scrollHandler}
+            contentContainerStyle={[
+              styles.scrollContainer,
+              { paddingBottom: height * 0.1 }, // 0.05% of screen height
+            ]}>
+
+           
             <KeyboardAvoidingView
               style={{ flex: 1 }}
               behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -1842,7 +1862,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                 {featuredField && <View>{renderField(featuredField)}</View>}
               {/* </AnimatedReanimated.ScrollView> */}
             </KeyboardAvoidingView>
-          </NestableScrollContainer>
+          </AnimatedNestableScroll>
         )}
         <Button
           title={t('preview_details')}

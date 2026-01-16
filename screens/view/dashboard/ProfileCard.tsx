@@ -223,6 +223,34 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
   }
   };
 
+  const logoutCleanup = async () => {
+  try {
+    // Clear AsyncStorage in ONE call (much faster)
+    await AsyncStorage.multiSet([
+      ['userToken', ''],
+      ['userData', ''],
+      ['userId', ''],
+      ['twilio_convo_', ''],
+      ['twilio_msg_', ''],
+      ['ISLOGIN', 'false'],
+    ]);
+
+    // Twilio cleanup (don’t block UI)
+    resetTwilioClient()?.catch(() => {});
+    clearTwilioCache()?.catch(() => {});
+
+    // FCM token delete (optional but safe)
+    try {
+      const messaging = require('@react-native-firebase/messaging').default;
+      await messaging().deleteToken();
+    } catch (e) {
+      console.warn('⚠️ FCM delete failed:', e);
+    }
+
+  } catch (e) {
+    console.warn('⚠️ Logout cleanup error:', e);
+  }
+};
 
   const renderItem = ({ item }: any) => {
     const isLogout = item.titleKey === 'logout';
@@ -486,33 +514,33 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
  
 
                       if (apiData?.statusCode === 200) {
-                        await AsyncStorage.setItem('userToken', '');
-                        await AsyncStorage.setItem('userData', '');
-                        await AsyncStorage.setItem('userId', '');
-                        await AsyncStorage.setItem('twilio_convo_', '');
-                        await AsyncStorage.setItem('twilio_msg_', '');
+                        // await AsyncStorage.setItem('userToken', '');
+                        // await AsyncStorage.setItem('userData', '');
+                        // await AsyncStorage.setItem('userId', '');
+                        // await AsyncStorage.setItem('twilio_convo_', '');
+                        // await AsyncStorage.setItem('twilio_msg_', '');
                         setShowConfirm(false);
-                        try {
-                          await resetTwilioClient();
-                          await clearTwilioCache();
-                          try {
-                            const messaging = require('@react-native-firebase/messaging').default;
-                            await messaging().deleteToken();
-                            if (__DEV__) {
+                        // try {
+                        //   await resetTwilioClient();
+                        //   await clearTwilioCache();
+                        //   try {
+                        //     const messaging = require('@react-native-firebase/messaging').default;
+                        //     await messaging().deleteToken();
+                        //     if (__DEV__) {
 
-                            }
-                          } catch (fcmError) {
-                            console.warn('⚠️ Error deleting FCM token:', fcmError);
-                          }
+                        //     }
+                        //   } catch (fcmError) {
+                        //     console.warn('⚠️ Error deleting FCM token:', fcmError);
+                        //   }
 
-                          if (__DEV__) {
+                        //   if (__DEV__) {
    
-                          }
-                        } catch (clearError) {
-                          console.warn('⚠️ Error clearing Twilio data on logout:', clearError);
-                        }
+                        //   }
+                        // } catch (clearError) {
+                        //   console.warn('⚠️ Error clearing Twilio data on logout:', clearError);
+                        // }
 
-                        await AsyncStorage.setItem('ISLOGIN', 'false');
+                        // await AsyncStorage.setItem('ISLOGIN', 'false');
 
                         navigation.reset({
                           index: 0,
@@ -526,6 +554,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                             },
                           ],
                         });
+                        logoutCleanup();
                       } else {
                         showToast(t(Constant.LOGOUT_FAIL), 'error');
                       }

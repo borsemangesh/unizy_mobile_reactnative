@@ -59,6 +59,8 @@ import AnimatedReanimated, {
   interpolate,
   interpolateColor,
   useDerivedValue,
+  useAnimatedRef,
+  useScrollViewOffset,
 } from 'react-native-reanimated';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
@@ -133,7 +135,12 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
 
-  const scrollY = useSharedValue(0);
+  //const scrollY = useSharedValue(0);
+const scrollRef = useAnimatedRef<any>();
+const scrollY = useScrollViewOffset(scrollRef);
+
+  const AnimatedNestableScroll =
+  Animated.createAnimatedComponent(NestableScrollContainer);
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: event => {
@@ -1476,7 +1483,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             style={{ flex: 1 }}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           >
-            <NestableScrollContainer
+            <AnimatedNestableScroll
+            nestedScrollEnabled
+            ref={scrollRef}
             scrollEventThrottle={16}
             onScroll={scrollHandler}
             contentContainerStyle={[
@@ -1609,7 +1618,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 
                 {featuredField && <View>{renderField(featuredField)}</View>}
               {/* </AnimatedReanimated.ScrollView> */}
-            </NestableScrollContainer>
+            </AnimatedNestableScroll>
           </KeyboardAvoidingView>
         )}
         <Button title={t('preview_details')} onPress={() => handlePreview()} />

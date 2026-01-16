@@ -140,68 +140,130 @@ type AddScreenContentProps = {
 const AddScreenContent: React.FC<AddScreenContentProps> = ({ navigation, products, onSetActiveTab }) => {
   const [isOnboardingComplete, setIsOnboardingComplete] = useState<boolean | null>(null);
   const [showOnboardingPopup, setShowOnboardingPopup] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const checkOnboardingStatus = async () => {
-      try {
-        const token = await AsyncStorage.getItem('userToken');
-        if (!token) {
-          setLoading(false);
-          return;
-        }
+  // useEffect(() => {
+  //   const checkOnboardingStatus = async () => {
+  //     try {
+  //       const token = await AsyncStorage.getItem('userToken');
+  //       if (!token) {
+  //         setLoading(false);
+  //         return;
+  //       }
 
-        const url = `${MAIN_URL.baseUrl}transaction/account-detail`;
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: 'application/json',
+  //       const url = `${MAIN_URL.baseUrl}transaction/account-detail`;
+  //       const response = await fetch(url, {
+  //         method: 'GET',
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //           Accept: 'application/json',
 
-          },
-        });
+  //         },
+  //       });
 
-        const result = await response.json();
+  //       const result = await response.json();
 
-        if (response.ok && result.statusCode === 200) {
-          const isComplete = result.data?.stripeAccount?.isboardcomplete === true;
-          setIsOnboardingComplete(isComplete);
-        } else {
-          // If API fails, assume not complete
-          setIsOnboardingComplete(false);
-        }
-      } catch (error) {
-        console.error('Error checking onboarding status:', error);
-        setIsOnboardingComplete(false);
-      } finally {
-        setLoading(false);
-      }
-    };
+  //       if (response.ok && result.statusCode === 200) {
+  //         const isComplete = result.data?.stripeAccount?.isboardcomplete === true;
+  //         setIsOnboardingComplete(isComplete);
+  //       } else {
+  //         // If API fails, assume not complete
+  //         setIsOnboardingComplete(false);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error checking onboarding status:', error);
+  //       setIsOnboardingComplete(false);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    checkOnboardingStatus();
-  }, []);
+  //   checkOnboardingStatus();
+  // }, []);
 
   const { t } = useTranslation();
 
-  const handleProductPress = (item: any) => {
+  // const handleProductPress = (item: any) => {
 
-    navigation.replace('AddScreen', {
+  //   if (isOnboardingComplete === false) {
+
+  //     setShowOnboardingPopup(true);
+  //   } else if (isOnboardingComplete === true) {
+
+  //     navigation.replace('AddScreen', {
+  //       productId: item.id,
+  //       productName: item.name,
+  //     }, { animation: 'none' });
+  //   }
+
+  // };
+
+  const checkOnboardingStatus = async () => {
+  const token = await AsyncStorage.getItem('userToken');
+  if (!token) return false;
+
+  try {
+    const response = await fetch(
+      `${MAIN_URL.baseUrl}transaction/account-detail`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    if (response.ok && result?.statusCode === 200) {
+      return result.data?.stripeAccount?.isboardcomplete === true;
+    }
+
+    return false;
+  } catch (error) {
+    console.error('Onboarding check failed:', error);
+    return false;
+  }
+};
+
+const handleProductPress = async (item: any) => {
+  
+    navigation.replace(
+      'AddScreen',
+      {
         productId: item.id,
         productName: item.name,
-      }, { animation: 'none' });
+      },
+      { animation: 'none' }
+    );
+ 
+  // try {
+  //   setLoading(true); // optional loader
 
-    // if (isOnboardingComplete === false) {
+  //   const isComplete = await checkOnboardingStatus();
 
-    //   setShowOnboardingPopup(true);
-    // } else if (isOnboardingComplete === true) {
+  //   if (!isComplete) {
+  //     setShowOnboardingPopup(true);
+  //     return;
+  //   }
 
-    //   navigation.replace('AddScreen', {
-    //     productId: item.id,
-    //     productName: item.name,
-    //   }, { animation: 'none' });
-    // }
-
-  };
+  //   navigation.replace(
+  //     'AddScreen',
+  //     {
+  //       productId: item.id,
+  //       productName: item.name,
+  //     },
+  //     { animation: 'none' }
+  //   );
+  // } 
+  // catch (e) {
+  //   console.error('Product press error:', e);
+  //   setShowOnboardingPopup(true); // safe fallback
+  // } finally {
+  //   setLoading(false);
+  // }
+};
 
   const handleGoToPayment = () => {
     setShowOnboardingPopup(false);

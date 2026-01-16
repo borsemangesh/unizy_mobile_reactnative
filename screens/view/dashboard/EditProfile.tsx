@@ -342,12 +342,12 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
     ) {
       errors.push(t('student_req'));
     }
-    if (!userMeta.city || userMeta.city.trim() === '') {
-      errors.push(t('city_req'));
-    }
-    if (!userMeta.postal_code || userMeta.postal_code.trim() === '') {
-      errors.push(t('postal_code_req'));
-    }
+    // if (!userMeta.city || userMeta.city.trim() === '') {
+    //   errors.push(t('city_req'));
+    // }
+    // if (!userMeta.postal_code || userMeta.postal_code.trim() === '') {
+    //   errors.push(t('postal_code_req'));
+    // }
     return errors;
   };
 
@@ -919,7 +919,7 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
             <View style={styles.profileavatarContainer}>
               <View style={styles.profilebigCircle}>
                 <TouchableOpacity>
-                  <TouchableOpacity
+                  {/* <TouchableOpacity
                     style={styles.profiledeleteButton}
                     onPress={() => setShowDeleteModal(true)}
                   >
@@ -928,7 +928,20 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
                       style={styles.profiledeletecameraIcon}
                       resizeMode="contain"
                     />
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
+
+                    {photo && (
+                    <TouchableOpacity
+                      style={styles.profiledeleteButton}
+                      onPress={() => setShowDeleteModal(true)}
+                    >
+                      <Image
+                        source={require('../../../assets/images/delprofile.png')}
+                        style={styles.profiledeletecameraIcon}
+                        resizeMode="contain"
+                      />
+                    </TouchableOpacity>
+                  )}
 
 
                   {photo ? (
@@ -967,6 +980,7 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
                   {t('first_name')}
                 </Text>
                 <TextInput
+                cursorColor='#fff'
                   value={userMeta.firstname || ''}
                   onChangeText={text =>
                     setUserMeta(prev => ({ ...prev, firstname: text }))
@@ -983,6 +997,7 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
                   {t('last_name')}
                 </Text>
                 <TextInput
+                cursorColor='#fff'
                   value={userMeta.lastname || ''}
                   onChangeText={text =>
                     setUserMeta(prev => ({ ...prev, lastname: text }))
@@ -1008,6 +1023,7 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
                   }}
                 >
                   <TextInput
+                  cursorColor='#fff'
                     style={{
                       flex: 1,
                       color: '#fff',
@@ -1086,7 +1102,7 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
 
               <View style={styles.inputGroup}>
                 <Text style={styles.label} allowFontScaling={false}>
-                  {t('student_email_id')}
+                  {t('university_email_id')}
                 </Text>
                 <View
                   style={{
@@ -1099,6 +1115,7 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
                   }}
                 >
                   <TextInput
+                  cursorColor='#fff'
                     style={{
                       flex: 1,
                       color: '#fff',
@@ -1179,6 +1196,7 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
                   {t('postal_code')}
                 </Text>
                 <TextInput
+                cursorColor='#fff'
                   value={userMeta.postal_code || ''}
                   onChangeText={text => {
                     const filteredText = text.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
@@ -1211,6 +1229,7 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
                   {t('city')}
                 </Text>
                 <TextInput
+                cursorColor='#fff'
                   allowFontScaling={false}
                   value={userMeta.city || ''}
                   onChangeText={text =>
@@ -1237,6 +1256,7 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
               onPress={() => navigation.navigate('ChangePassword')}
             >
               <Text
+              allowFontScaling={false}
                 style={{
                   color: '#FFFFFF7A',
                   fontSize: 17,
@@ -1310,6 +1330,7 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
                 <View style={styles.otpContainer}>
                   {[0, 1, 2, 3].map((_, index) => (
                     <TextInput
+                    cursorColor='#fff'
                       allowFontScaling={false}
                       key={index}
                       ref={ref => {
