@@ -1691,6 +1691,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           value={tempDate}
           mode="date"
           display="spinner"
+          themeVariant='light'
           minimumDate={
             activeDateField.type === 'end'
               ? formValues[activeDateField.param.id]?.value?.startDate ??
