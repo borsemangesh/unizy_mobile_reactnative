@@ -9,6 +9,7 @@ import {
   ScrollView,
   Platform,
   TouchableWithoutFeedback,
+  Dimensions,
 } from 'react-native';
 import React, {  useEffect, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
@@ -195,6 +196,7 @@ const FilterBottomSheet = ({
     onClose();
   };
 
+  const SCREEN_WIDTH = Dimensions.get('window').width;
   const renderRightContent = () => {
     const currentFilter = filters.find(f => f.field_name === selectedTab);
     if (!currentFilter) return null;
@@ -261,14 +263,15 @@ const FilterBottomSheet = ({
             {t('range')}: {sliderLow} - {sliderHigh}
           </Text>
 
-          <View style={{ paddingHorizontal: 20, paddingTop: 30, paddingBottom: 20 }}>
+          <View style={{  paddingTop: 30, paddingBottom: 20,paddingLeft: 10}}>
             <MultiSlider
               values={[sliderLow, sliderHigh]}
-              sliderLength={150}
+              sliderLength={SCREEN_WIDTH/2 - 10}
 
               min={currentFilter?.minvalue ?? 0}
               max={currentFilter?.maxvalue ?? 100}
               step={1}
+              
               onValuesChange={(values) => {
                 const [low, high] = values;
                 setSliderLow(low);
