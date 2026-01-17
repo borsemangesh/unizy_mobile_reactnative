@@ -11,7 +11,6 @@ import {
   TextInput,
   Switch,
   Alert,
-  KeyboardAvoidingView,
   Modal,
   Animated,
   Dimensions,
@@ -142,12 +141,12 @@ const scrollY = useScrollViewOffset(scrollRef);
   const AnimatedNestableScroll =
   Animated.createAnimatedComponent(NestableScrollContainer);
 
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: event => {
-      'worklet';
-      scrollY.value = event.contentOffset.y;
-    },
-  });
+  // const scrollHandler = useAnimatedScrollHandler({
+  //   onScroll: event => {
+  //     'worklet';
+  //     scrollY.value = event.contentOffset.y;
+  //   },
+  // });
 
   const animatedBlurStyle = useAnimatedStyle(() => {
     'worklet';
@@ -405,6 +404,8 @@ const scrollY = useScrollViewOffset(scrollRef);
 
   const [expanded, setExpanded] = useState(false);
   const animatedHeight = useRef(new Animated.Value(0)).current;
+  // const AnimatedNestableScrollContainer =
+  // Animated.createAnimatedComponent(NestableScrollContainer);
 
   useEffect(() => {
     if (expanded) {
@@ -1479,15 +1480,15 @@ const scrollY = useScrollViewOffset(scrollRef);
             <Loader containerStyle={styles.loaderContainer} />
           </View>
         ) : (
-          <KeyboardAvoidingView
+          <View
             style={{ flex: 1 }}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            //behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           >
-            <AnimatedNestableScroll
+            <NestableScrollContainer
             nestedScrollEnabled
             ref={scrollRef}
             scrollEventThrottle={16}
-            onScroll={scrollHandler}
+            // onScroll={scrollHandler}
             contentContainerStyle={[
               styles.scrollContainer,
               { paddingBottom: height * 0.1 }, // 0.05% of screen height
@@ -1618,8 +1619,8 @@ const scrollY = useScrollViewOffset(scrollRef);
                 
                 {featuredField && <View>{renderField(featuredField)}</View>}
               {/* </AnimatedReanimated.ScrollView> */}
-            </AnimatedNestableScroll>
-          </KeyboardAvoidingView>
+            </NestableScrollContainer>
+          </View>
         )}
         <Button title={t('preview_details')} onPress={() => handlePreview()} />
       </View>

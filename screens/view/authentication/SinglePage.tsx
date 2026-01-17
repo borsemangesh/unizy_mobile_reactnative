@@ -17,7 +17,7 @@ import {
   Modal,
   Alert,
   PermissionsAndroid,
-  Platform,
+  Platform,InteractionManager,
   KeyboardAvoidingView,
   Keyboard,
 } from 'react-native';
@@ -41,6 +41,9 @@ import {
   showToast,
 } from '../../utils/component/NewCustomToastManager';
 import { check, openSettings, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
+import { resetTwilioClient } from '../emoji/twilioService';
+import { clearTwilioCache } from '../dashboard/MessageIndividualScreen';
+import DeviceInfo from 'react-native-device-info';
 
 const { height } = Dimensions.get('window');
 
@@ -80,6 +83,67 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   const [loading, setLoading] = useState(false);
   const route = useRoute<SinglePageRouteProp>();
 
+
+  const logoutCleanup = async () => {
+
+    try {
+      // Clear AsyncStorage in ONE call (much faster)
+
+
+      const deviceId = await DeviceInfo.getUniqueId();
+      const user_id = await AsyncStorage.getItem('userId'); 
+  
+      const body = {
+        device_type: (Platform.OS === 'ios') ? 'ios' : 'android',
+        device_id: deviceId,
+        user_id: Number(user_id),
+      };
+  
+      const response = await fetch(`${MAIN_URL.baseUrl}user/delete-fcm-token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+  
+      const apiData = await response.json();
+  
+  
+  
+      if (apiData?.statusCode === 200) {
+        
+      } else {
+        showToast(t(Constant.LOGOUT_FAIL), 'error');
+      }
+  
+  
+
+      await AsyncStorage.multiSet([
+        ['userToken', ''],
+        ['userData', ''],
+        ['userId', ''],
+        ['twilio_convo_', ''],
+        ['twilio_msg_', ''],
+        ['ISLOGIN', 'false'],
+      ]);
+  
+      // Twilio cleanup (don’t block UI)
+      resetTwilioClient()?.catch(() => {});
+      clearTwilioCache()?.catch(() => {});
+  
+      // FCM token delete (optional but safe)
+      try {
+        const messaging = require('@react-native-firebase/messaging').default;
+        await messaging().deleteToken();
+      } catch (e) {
+        console.warn('⚠️ FCM delete failed:', e);
+      }
+    } catch (e) {
+      console.warn('⚠️ Logout cleanup error:', e);
+    }
+  };
+
   useEffect(() => {
     if (route.params?.resetToLogin) {
       loginOpacity.setValue(1);
@@ -87,6 +151,9 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       setCurrentScreen('login');
       setcurrentScreenIninner('login');
       showToast(t(route.params?.logoutMessage), 'success')
+      InteractionManager.runAfterInteractions(() => {
+        logoutCleanup();
+      });
     }
 
     if (route.params?.forgotPassword) {

@@ -9,7 +9,6 @@ import {
   ScrollView,
   TextInput,
   Alert,
-  KeyboardAvoidingView,
   Animated,
   Dimensions,
   StatusBar,
@@ -157,17 +156,17 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
   const MAX_IMAGES = 5;
   const [slideUp1] = useState(new Animated.Value(0));
 
-    const AnimatedNestableScroll =
-    Animated.createAnimatedComponent(NestableScrollContainer);
+    // const AnimatedNestableScroll =
+    // Animated.createAnimatedComponent(NestableScrollContainer);
   
   //const scrollY = useSharedValue(0);
 
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: event => {
-      'worklet';
-      scrollY.value = event.contentOffset.y;
-    },
-  });
+  // const scrollHandler = useAnimatedScrollHandler({
+  //   onScroll: event => {
+  //     'worklet';
+  //     scrollY.value = event.contentOffset.y;
+  //   },
+  // });
 
   const animatedBlurStyle = useAnimatedStyle(() => {
     'worklet';
@@ -379,20 +378,6 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
               } else {
                 finalValue = param.param_value ?? '';
               }
-
-              // if (fieldType === "dropdown") {
-              //   if (Array.isArray(finalValue)) {
-              //     initialValues[param.id] = {
-              //       ...baseField,
-              //       value: finalValue.map((v: any) => Number(v)),
-              //     };
-              //   } else {
-              //     initialValues[param.id] = {
-              //       ...baseField,
-              //       value: finalValue ? Number(finalValue) : null,
-              //     };
-              //   }
-              // }
 
               if (fieldType === 'dropdown') {
                 const selectedOption = param.options?.find(
@@ -1335,74 +1320,6 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           </View>
         );
       }
-
-      // case 'date': {
-      //   const { param } = field;
-      //   const { field_name } = param;
-
-      //   const value = formValues[param.id]?.value;
-      //   const startDate = value?.startDate;
-      //   const endDate = value?.endDate;
-
-      //   return (
-      //     <View key={field.id} style={styles.productTextView}>
-      //       {renderLabel(field_name, field.mandatory)}
-
-      //       <View style={{ flexDirection: 'row', gap: 12 }}>
-      //         {/* FROM DATE */}
-      //         <TouchableOpacity
-      //           style={[styles.pickerContainer, styles.dateBox]}
-      //           onPress={() => {
-      //             setActiveDateField({ param, type: 'start' });
-      //             setDatePickerVisible(true);
-      //           }}
-      //         >
-      //           <Text
-      //             style={[
-      //               styles.dropdowntext,
-      //               { color: startDate ? '#fff' : 'rgba(255,255,255,0.6)' },
-      //             ]}
-      //           >
-      //             {startDate
-      //               ? dayjs(startDate).format('DD-MM-YYYY')
-      //               : t('start_date')}
-      //           </Text>
-
-      //           <Image
-      //             source={require('../../../assets/images/calendar_icon.png')}
-      //             style={styles.calendarIcon}
-      //           />
-      //         </TouchableOpacity>
-
-      //         {/* TO DATE */}
-      //         <TouchableOpacity
-      //           style={[styles.pickerContainer, styles.dateBox]}
-      //           onPress={() => {
-      //             setActiveDateField({ param, type: 'end' });
-      //             setDatePickerVisible(true);
-      //           }}
-      //         >
-      //           <Text
-      //             style={[
-      //               styles.dropdowntext,
-      //               { color: endDate ? '#fff' : 'rgba(255,255,255,0.6)' },
-      //             ]}
-      //           >
-      //             {endDate
-      //               ? dayjs(endDate).format('DD-MM-YYYY')
-      //               : t('end_date')}
-      //           </Text>
-
-      //           <Image
-      //             source={require('../../../assets/images/calendar_icon.png')}
-      //             style={styles.calendarIcon}
-      //           />
-      //         </TouchableOpacity>
-      //       </View>
-      //     </View>
-      //   );
-      // }
-
       case 'date': {
         const { param } = field;
         const { field_name } = param;
@@ -1720,20 +1637,20 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           //       ]}
           // >
 
-          <AnimatedNestableScroll
+          <NestableScrollContainer
             nestedScrollEnabled
             ref={scrollRef}
             scrollEventThrottle={16}
-            onScroll={scrollHandler}
+            // onScroll={scrollHandler}
             contentContainerStyle={[
               styles.scrollContainer,
               { paddingBottom: height * 0.1 }, // 0.05% of screen height
             ]}>
 
            
-            <KeyboardAvoidingView
+            <View
               style={{ flex: 1 }}
-              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             >
               {/* <AnimatedReanimated.ScrollView
                 scrollEventThrottle={16}
@@ -1862,8 +1779,8 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                 </View>
                 {featuredField && <View>{renderField(featuredField)}</View>}
               {/* </AnimatedReanimated.ScrollView> */}
-            </KeyboardAvoidingView>
-          </AnimatedNestableScroll>
+            </View>
+          </NestableScrollContainer>
         )}
         <Button
           title={t('preview_details')}
