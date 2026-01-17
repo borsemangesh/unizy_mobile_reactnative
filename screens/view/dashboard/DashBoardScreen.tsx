@@ -40,6 +40,9 @@ import { MAIN_URL } from '../../utils/APIConstant';
 import TutitionCard from '../../utils/TutitionCard';
 import ProfileCard from './ProfileCard';
 import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
+
+import { ShortCustomToastContainer,shortshowToast } from '../../utils/component/ShortCustomToastManager';
+
 import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import MessagesScreen from './MessageScreen';
@@ -48,6 +51,7 @@ import TransactionHistoryScreen from './TransactionHistoryScreen';
 import { BlurView } from '@react-native-community/blur';
 import DeviceInfo from 'react-native-device-info';
 import Loader from '../../utils/component/Loader';
+import NewCustomToast from '../../utils/component/NewCustomToast';
 
 const mylistings = require('../../../assets/images/mylistingicon.png');
 const mylistings1 = require('../../../assets/images/favourite.png');
@@ -930,7 +934,8 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
       const data = await response.json();
 
       if (data?.message) {
-        showToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
+        //showToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
+        shortshowToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
       }
 
       let updatedBookmarks;
@@ -1410,6 +1415,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
           ))}
         </Animated.View>
       </View>
+       <ShortCustomToastContainer />
       <NewCustomToastContainer />
     </ImageBackground>
   );

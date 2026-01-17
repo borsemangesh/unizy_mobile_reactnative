@@ -16,7 +16,7 @@ export const OnboardingData = [
         id: 2,
         s1header:"info_title2",
         s1text1: "info_subtitle2", 
-        image1: require("../../../assets/images/s1_img2.png"),
+        image1: require("../../../assets/images/s1_img3.png"),
         s1header2:"info_content2",
         s1text2: "info_subcontent2",
         image2: require("../../../assets/images/s2_img2.png"),

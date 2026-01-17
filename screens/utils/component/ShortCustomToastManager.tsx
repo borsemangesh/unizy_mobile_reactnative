@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, StyleSheet } from "react-native";
-import CustomToast from "./CustomToast";
+import NewCustomToast from "./NewCustomToast";
 
-let showToastFunc: ((text: string, type?: "success" | "error" | "info") => void) | null = null;
+let shortshowToastFunc: ((text: string, type?: "success" | "error" | "info") => void) | null = null;
 
-export const NewCustomToastContainer: React.FC = () => {
+export const ShortCustomToastContainer: React.FC = () => {
 
   const [toasts, setToasts] = useState<{
     id: number;
@@ -14,7 +14,7 @@ export const NewCustomToastContainer: React.FC = () => {
   
   const [isToastVisible, setIsToastVisible] = useState(false);
 
-  showToastFunc = (text: string, type?: "success" | "error" | "info") => {
+  shortshowToastFunc = (text: string, type?: "success" | "error" | "info") => {
     if (isToastVisible) {
       return;
     }
@@ -23,7 +23,6 @@ export const NewCustomToastContainer: React.FC = () => {
     setIsToastVisible(true);
     setToasts((prev) => [...prev, { id, text, type }]);
   };
-
   const removeToast = (id: number) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
     setIsToastVisible(false); 
@@ -32,7 +31,7 @@ export const NewCustomToastContainer: React.FC = () => {
   return (
     <View style={styles.container} pointerEvents="box-none">
       {toasts.map((toast) => (
-        <CustomToast
+        <NewCustomToast
           key={toast.id}
           text={toast.text}
           type={toast.type}
@@ -43,8 +42,8 @@ export const NewCustomToastContainer: React.FC = () => {
   );
 };
 
-export const showToast = (text: string, type?: "success" | "error" | "info") => {
-  showToastFunc?.(text, type);
+export const shortshowToast = (text: string, type?: "success" | "error" | "info") => {
+  shortshowToastFunc?.(text, type);
 };
 
 const styles = StyleSheet.create({

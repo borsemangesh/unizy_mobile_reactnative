@@ -798,7 +798,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
             },
           ]}
         >
-          <View style={{ marginTop: 12 }}>
+          <View style={{ marginTop: 0 }}>
             {renderImage()}
 
             <View style={{ flex: 1, padding: 16 }}>

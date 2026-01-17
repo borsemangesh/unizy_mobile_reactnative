@@ -109,8 +109,8 @@ const OnboardingScreen = ({ navigation }: OnBoardingProps) => {
                 {/* Arrow only for Next */}
                 {!isLast && (
                   <Image
-                    source={require('../../../assets/images/arrowrightsm.png')}
-                    style={{ width: 20, height: 20, marginLeft: 8 }}
+                    source={require('../../../assets/images/arrowrightsm1.png')}
+                    style={{ width: 24, height: 24, marginLeft: 8 }}
                   />
                 )}
               </TouchableOpacity>
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   skip: {
     color: '#FFFFFF',
     opacity: 0.7,
-    fontFamily: 'Urbanist-Medium',
+    fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
     letterSpacing: 1,
     fontWeight: '600',
@@ -184,5 +184,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-Medium',
     fontSize: 17,
     letterSpacing: 1,
+    color:"#002050"
   },
 });

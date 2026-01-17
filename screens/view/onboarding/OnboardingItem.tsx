@@ -11,7 +11,7 @@ const OnboardingItem = ({ item }: any) => {
 
       <Text allowFontScaling = {false} style={styles.title}>{t(item.s1header)}</Text>
       <Text allowFontScaling = {false} style={styles.subtitle}>{t(item.s1text1)}</Text>
-      <Image source={item.image1} style={styles.image} resizeMode="contain" />
+      <Image source={item.image1} style={styles.image1} resizeMode="contain" />
       <Text allowFontScaling = {false} style={styles.title}>{t(item.s1header2)}</Text>
       <Text allowFontScaling = {false} style={styles.subtitle}>{t(item.s1text2)}</Text>
       <Image source={item.image2} style={[styles.image,{marginTop: 15}]} resizeMode="contain" />
@@ -33,6 +33,12 @@ const styles = StyleSheet.create({
   image: {
     width: '90%',
     height: 200,
+    // marginBottom: 30,
+  },
+  image1: {
+    width: '90%',
+    height: 200,
+    marginVertical:20
     // marginBottom: 30,
   },
   title: {
