@@ -1686,13 +1686,14 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                       [0, 1],
                       'clamp',
                     ),
-                  })),
+                  })),{display: 'none'}
                 ]}
               >
                 <BlurView
                   style={StyleSheet.absoluteFill}
                   blurType="light"
                   blurAmount={10}
+                  pointerEvents='none'
                   reducedTransparencyFallbackColor="transparent"
                 />
               </AnimatedReanimated.View>
@@ -1869,59 +1870,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           onPress={() => handlePreview(formValues)}
         />
       </View>
-      {/* <DatePicker
-        modal
-        mode="date"
-        open={datePickerVisible}
-        date={new Date()}
-        minimumDate={
-          activeDateField?.type === 'end'
-            ? getSafeDate(
-                formValues[activeDateField?.param?.id]?.value?.startDate,
-              )
-            : new Date()
-        }
-        onConfirm={date => {
-          if (!activeDateField) return;
-
-          const currentValue =
-            formValues[activeDateField.param.id]?.value || {};
-
-          if (activeDateField.type === 'start') {
-            handleValueChange(
-              activeDateField.param.id,
-              activeDateField.param.alias_name ??
-                activeDateField.param.field_name,
-              {
-                startDate: date,
-                endDate:
-                  currentValue.endDate &&
-                  dayjs(currentValue.endDate).isBefore(date)
-                    ? null
-                    : currentValue.endDate,
-              },
-            );
-          } else {
-            handleValueChange(
-              activeDateField.param.id,
-              activeDateField.param.alias_name ??
-                activeDateField.param.field_name,
-              {
-                startDate: currentValue.startDate,
-                endDate: date,
-              },
-            );
-          }
-
-          setDatePickerVisible(false);
-          setActiveDateField(null);
-        }}
-        onCancel={() => {
-          setDatePickerVisible(false);
-          setActiveDateField(null);
-        }}
-      /> */}
-
+      
 
       {Platform.OS === 'ios' && datePickerVisible && activeDateField && (
         <Modal transparent animationType="slide">

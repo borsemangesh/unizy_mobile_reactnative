@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   },
   skip: {
     color: '#FFFFFF',
-    opacity: 0.7,
+    // opacity: 0.7,
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
     letterSpacing: 1,
