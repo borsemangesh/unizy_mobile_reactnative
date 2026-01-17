@@ -43,6 +43,7 @@ import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import FilterAndroid from '../../utils/component/FilterAndroid';
+import {ShortCustomToastContainer, shortshowToast } from '../../utils/component/ShortCustomToastManager';
 type CreatedBy = {
   id: number;
   firstname: string;
@@ -325,7 +326,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
 
       const data = await response.json();
 
-      showToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
+      shortshowToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
 
     } catch (error) {
       console.error('Bookmark error:', error);
@@ -700,7 +701,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
           onEndReached={handleEndReached}
           onEndReachedThreshold={0.5}
           ListHeaderComponent={
-            <View style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 8 }}>
+            <View style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 8 ,marginTop:Platform.OS=='ios'? 0:4}}>
               <Pressable
                 style={styles.search_container}
                 onPress={() => inputRef.current?.focus()}
@@ -800,7 +801,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
           to={0}
         />
       )}
-
+      <ShortCustomToastContainer/>
       <NewCustomToastContainer />
     </ImageBackground>
   );
@@ -893,7 +894,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    // paddingHorizontal: 10,
+    marginTop: (Platform.OS === 'ios' ? 0 : 16),
+    marginBottom:16
   },
 
   emptyContainer: {
@@ -908,13 +910,13 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   emptyImage: {
-    width: 50,
-    height: 50,
-    marginBottom: 20,
+    width: 64,
+    height: 64,
+    marginBottom: 0,
   },
   emptyText: {
     fontSize: 20,
-    color: '#fff',
+    color: 'rgba(255, 255, 255, 0.8)',
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600
@@ -949,12 +951,10 @@ const styles = StyleSheet.create({
     //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     paddingVertical: 4,
     padding: (Platform.OS === 'ios' ? 12 : 0),
-    marginTop: (Platform.OS === 'ios' ? 5 : 20),
+    marginTop: (Platform.OS === 'ios' ? 5 : 0),
     height: 50,
     gap: (Platform.OS === 'ios' ? 8 : 0),
     width: '84%',
-
-
     borderColor: '#ffffff11',
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     backgroundColor:
@@ -1029,7 +1029,8 @@ const styles = StyleSheet.create({
     // borderLeftColor: '#ffffff5d',
     // borderRightColor: '#ffffff36',
     // borderWidth: 0.3,
-    marginTop: (Platform.OS === 'ios' ? 6 : 20),
+    //marginTop: (Platform.OS === 'ios' ? 6 : 20),
+    marginTop: (Platform.OS === 'ios' ? 6 : 0),
 
     borderWidth: 0.3,
     borderColor: '#ffffff11',

@@ -28,6 +28,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Button from '../../utils/component/Button';
 import PayButton from '../../utils/component/PayButton';
 import LinearGradient from 'react-native-linear-gradient';
+import { ShortCustomToastContainer,shortshowToast } from '../../utils/component/ShortCustomToastManager';
+
 
 import AnimatedReanimated, {
   useSharedValue,
@@ -473,7 +475,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
       const data = await response.json();
 
       if (data?.message) {
-        showToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
+        shortshowToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
       }
 
       let updatedBookmarks;
@@ -1481,6 +1483,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
           <Loader />
         </View>
       )}
+      <ShortCustomToastContainer/>
       <NewCustomToastContainer />
     </ImageBackground>
   );

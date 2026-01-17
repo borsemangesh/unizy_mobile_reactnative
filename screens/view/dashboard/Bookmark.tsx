@@ -42,6 +42,8 @@ import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import Loader from '../../utils/component/Loader';
+import { ShortCustomToastContainer,shortshowToast } from '../../utils/component/ShortCustomToastManager';
+
 
 type CreatedBy = {
   id: number;
@@ -367,7 +369,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
       const data = await response.json();
 
       if (data?.message) {
-        showToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
+        shortshowToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
       }
 
       displayListOfProduct(selectedCategory?.id ?? null, 1);
@@ -753,6 +755,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
           }
         />
       </View>
+      <ShortCustomToastContainer/>
       <NewCustomToastContainer />
     </ImageBackground>
   );

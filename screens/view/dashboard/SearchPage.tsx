@@ -624,7 +624,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
             return index.toString();
           }}
           ListHeaderComponent={
-            <View style={{ flexDirection: 'row', gap: 8}}>
+            <View style={{ flexDirection: 'row', gap: 8,marginTop:Platform.OS=='ios'? 0:4}}>
               <View style={styles.search_container}>
                 <Image source={searchIcon} style={styles.searchIcon} />
                 <TextInput
@@ -805,6 +805,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     marginTop: 16,
+    marginBottom:16
   },
 
   emptyContainer: {
@@ -819,13 +820,13 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   emptyImage: {
-    width: 50,
-    height: 50,
-    marginBottom: 20,
+    width: 64,
+    height: 64,
+    marginBottom: 0,
   },
   emptyText: {
     fontSize: 20,
-    color: '#fff',
+    color: 'rgba(255, 255, 255, 0.8)',
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600
@@ -870,7 +871,7 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff11',
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.17) 0%, rgba(255, 255, 255, 0.10) 100%)',
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
 

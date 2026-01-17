@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
   tag: {
     position: 'absolute',
     bottom: 10,
-    right: 20,
+    right: 22,
     borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 4,
