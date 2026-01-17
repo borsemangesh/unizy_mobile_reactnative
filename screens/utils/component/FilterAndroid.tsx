@@ -54,6 +54,7 @@ const FilterAndroid = ({
   const [sliderLow, setSliderLow] = useState(priceRange.min);
   const [sliderHigh, setSliderHigh] = useState(priceRange.max);
   const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(null);
+    const SCREEN_WIDTH = Dimensions.get('window').width;
 
 
   const fetchFilters = async () => {
@@ -254,26 +255,69 @@ const FilterAndroid = ({
 
     else if (currentFilter.alias_name === 'price') {
       return (
+        // <View style={{ zIndex: 999, position: 'relative' }}>
+        //   <Text allowFontScaling={false} style={{ color: 'white', marginBottom: 10 }}>
+        //     {t('range')}: {sliderLow} - {sliderHigh}
+        //   </Text>
+
+        //   <View style={{ paddingHorizontal: 20, paddingTop: 30, paddingBottom: 20 }}>
+        //     <MultiSlider
+        //       values={[sliderLow, sliderHigh]}
+        //       sliderLength={150}
+
+        //       min={currentFilter?.minvalue ?? 0}
+        //       max={currentFilter?.maxvalue ?? 100}
+        //       step={1}
+        //       onValuesChange={(values) => {
+        //         const [low, high] = values;
+        //         setSliderLow(low);
+        //         setSliderHigh(high);
+        //         setPriceRange({ min: low, max: high })
+        //       }}
+
+        //       selectedStyle={{
+        //         backgroundColor: '#fff',
+        //       }}
+        //       unselectedStyle={{
+        //         backgroundColor: '#888',
+        //       }}
+        //       containerStyle={{
+        //         height: 'auto',
+        //       }}
+        //       trackStyle={{
+        //         height: 4,
+        //         borderRadius: 2,
+        //       }}
+        //       markerStyle={{
+        //         height: 20,
+        //         width: 20,
+        //         borderRadius: 10,
+        //         backgroundColor: '#fff',
+        //       }}
+        //     />
+        //   </View>
+        // </View>
         <View style={{ zIndex: 999, position: 'relative' }}>
           <Text allowFontScaling={false} style={{ color: 'white', marginBottom: 10 }}>
             {t('range')}: {sliderLow} - {sliderHigh}
           </Text>
-
-          <View style={{ paddingHorizontal: 20, paddingTop: 30, paddingBottom: 20 }}>
+ 
+          <View style={{  paddingTop: 30, paddingBottom: 20,paddingLeft: 10}}>
             <MultiSlider
               values={[sliderLow, sliderHigh]}
-              sliderLength={150}
-
+              sliderLength={SCREEN_WIDTH/2 - 10}
+ 
               min={currentFilter?.minvalue ?? 0}
               max={currentFilter?.maxvalue ?? 100}
               step={1}
+              
               onValuesChange={(values) => {
                 const [low, high] = values;
                 setSliderLow(low);
                 setSliderHigh(high);
                 setPriceRange({ min: low, max: high })
               }}
-
+ 
               selectedStyle={{
                 backgroundColor: '#fff',
               }}

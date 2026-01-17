@@ -73,7 +73,7 @@ interface UserMeta {
 
 const EditProfile = ({ navigation }: EditProfileProps) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
+  const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
 
   const [photo, setPhoto] = useState<string | null>(null);
   const [newphoto, setNewPhoto] = useState<string | null>(null);
@@ -328,20 +328,44 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
     if (!userMeta.lastname || userMeta.lastname.trim() === '') {
       errors.push(t('last_name_req'));
     }
-    if (
-      !userMeta.email?.trim() ||
-      !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(userMeta.email.trim())
-    ) {
+    // if (
+    //   !userMeta.email?.trim() ||
+    //   !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(userMeta.email.trim())
+    // ) {
+    //   errors.push(t('personal_req'));
+    // }
+    // if (
+    //   !userMeta.student_email?.trim() ||
+    //   !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+    //     userMeta.student_email.trim(),
+    //   )
+    // ) {
+    //   errors.push(t('student_req'));
+    // }
+
+
+    if (!userMeta.email?.trim()) {
       errors.push(t('personal_req'));
-    }
-    if (
-      !userMeta.student_email?.trim() ||
+    } else if (
       !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
-        userMeta.student_email.trim(),
+        userMeta.email.trim()
       )
     ) {
-      errors.push(t('student_req'));
+      errors.push(t('invalid_email'));
     }
+
+
+    if (!userMeta.student_email?.trim()) {
+      errors.push(t('student_req'));
+    } else if (
+      !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+        userMeta.student_email.trim()
+      )
+    ) {
+      errors.push(t('invalid_email'));
+    }
+
+
     // if (!userMeta.city || userMeta.city.trim() === '') {
     //   errors.push(t('city_req'));
     // }
@@ -379,7 +403,7 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
       // if (newphoto !== null) {
       //   const uploadSuccess = await handleUploadImage(newphoto);
 
-      
+
 
       //   showToast(Constant.IMAGE_UPLOAD, 'success');
       //   await new Promise((resolve: any) => {
@@ -396,24 +420,24 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
       //   });
       // }
 
-    if (newphoto) {
-      const uploadSuccess = await handleUploadImage(newphoto);
+      if (newphoto) {
+        const uploadSuccess = await handleUploadImage(newphoto);
 
-      if (!uploadSuccess) {
-        setLoading(false);
-        return;
+        if (!uploadSuccess) {
+          setLoading(false);
+          return;
+        }
+
+        showToast(t(Constant.IMAGE_UPLOAD), 'success');
       }
 
-      showToast(t(Constant.IMAGE_UPLOAD), 'success');
-    }
-
-    // 2️⃣ Delete image ONLY if user REMOVED existing image
-    else if (photo === null && originalPhoto !== null) {
-      await handleDeleteImage();
-    }
+      // 2️⃣ Delete image ONLY if user REMOVED existing image
+      else if (photo === null && originalPhoto !== null) {
+        await handleDeleteImage();
+      }
 
       const url = `${MAIN_URL.baseUrl}user/profile-edit`;
- 
+
 
       const body = {
         firstname: userMeta.firstname?.trim(),
@@ -468,7 +492,7 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
     }
   };
 
-  
+
   const handleUploadImage = async (imageUri: string | null) => {
     try {
       if (!imageUri) return true; // No new image, treat as success
@@ -930,7 +954,7 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
                     />
                   </TouchableOpacity> */}
 
-                    {photo && (
+                  {photo && (
                     <TouchableOpacity
                       style={styles.profiledeleteButton}
                       onPress={() => setShowDeleteModal(true)}
@@ -980,7 +1004,7 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
                   {t('first_name')}
                 </Text>
                 <TextInput
-                cursorColor='#fff'
+                  cursorColor='#fff'
                   value={userMeta.firstname || ''}
                   onChangeText={text =>
                     setUserMeta(prev => ({ ...prev, firstname: text }))
@@ -997,7 +1021,7 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
                   {t('last_name')}
                 </Text>
                 <TextInput
-                cursorColor='#fff'
+                  cursorColor='#fff'
                   value={userMeta.lastname || ''}
                   onChangeText={text =>
                     setUserMeta(prev => ({ ...prev, lastname: text }))
@@ -1023,7 +1047,7 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
                   }}
                 >
                   <TextInput
-                  cursorColor='#fff'
+                    cursorColor='#fff'
                     style={{
                       flex: 1,
                       color: '#fff',
@@ -1041,14 +1065,14 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
                     onChangeText={text => {
                       setUserMeta(prev => ({ ...prev, email: text.trim() }));
                       if (text.trim() === initialPersonalEmail) {
- 
+
                         setIsUpdateDisabled_personal(true);
                       } else {
-   
+
                         setIsUpdateDisabled_personal(false);
                       }
 
-              
+
                     }}
                     keyboardType="email-address"
                     placeholder={t('enter_personal_email_id')}
@@ -1115,7 +1139,7 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
                   }}
                 >
                   <TextInput
-                  cursorColor='#fff'
+                    cursorColor='#fff'
                     style={{
                       flex: 1,
                       color: '#fff',
@@ -1137,12 +1161,12 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
 
                         setIsUpdateDisabled(true);
                       } else {
- 
+
                         setIsUpdateDisabled(false);
                       }
-                      if (text.length > 0 && !validateStudentEmail(text)) {
-                        showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
-                      }
+                      // if (text.length > 0 && !validateStudentEmail(text)) {
+                      //   showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
+                      // }
                     }}
                     keyboardType="email-address"
                     placeholder={t('enter_student_email_id')}
@@ -1196,7 +1220,7 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
                   {t('postal_code')}
                 </Text>
                 <TextInput
-                cursorColor='#fff'
+                  cursorColor='#fff'
                   value={userMeta.postal_code || ''}
                   onChangeText={text => {
                     const filteredText = text.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
@@ -1229,7 +1253,7 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
                   {t('city')}
                 </Text>
                 <TextInput
-                cursorColor='#fff'
+                  cursorColor='#fff'
                   allowFontScaling={false}
                   value={userMeta.city || ''}
                   onChangeText={text =>
@@ -1256,7 +1280,7 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
               onPress={() => navigation.navigate('ChangePassword')}
             >
               <Text
-              allowFontScaling={false}
+                allowFontScaling={false}
                 style={{
                   color: '#FFFFFF7A',
                   fontSize: 17,
@@ -1330,7 +1354,7 @@ const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
                 <View style={styles.otpContainer}>
                   {[0, 1, 2, 3].map((_, index) => (
                     <TextInput
-                    cursorColor='#fff'
+                      cursorColor='#fff'
                       allowFontScaling={false}
                       key={index}
                       ref={ref => {
