@@ -233,6 +233,25 @@ const AddScreenContent: React.FC<AddScreenContentProps> = ({ navigation, product
 
 const handleProductPress = async (item: any) => {
   
+    // navigation.replace(
+    //   'AddScreen',
+    //   {
+    //     productId: item.id,
+    //     productName: item.name,
+    //   },
+    //   { animation: 'none' }
+    // );
+ 
+  try {
+    setLoading(true); // optional loader
+
+    const isComplete = await checkOnboardingStatus();
+
+    if (!isComplete) {
+      setShowOnboardingPopup(true);
+      return;
+    }
+
     navigation.replace(
       'AddScreen',
       {
@@ -241,32 +260,13 @@ const handleProductPress = async (item: any) => {
       },
       { animation: 'none' }
     );
- 
-  // try {
-  //   setLoading(true); // optional loader
-
-  //   const isComplete = await checkOnboardingStatus();
-
-  //   if (!isComplete) {
-  //     setShowOnboardingPopup(true);
-  //     return;
-  //   }
-
-  //   navigation.replace(
-  //     'AddScreen',
-  //     {
-  //       productId: item.id,
-  //       productName: item.name,
-  //     },
-  //     { animation: 'none' }
-  //   );
-  // } 
-  // catch (e) {
-  //   console.error('Product press error:', e);
-  //   setShowOnboardingPopup(true); // safe fallback
-  // } finally {
-  //   setLoading(false);
-  // }
+  } 
+  catch (e) {
+    console.error('Product press error:', e);
+    setShowOnboardingPopup(true); // safe fallback
+  } finally {
+    setLoading(false);
+  }
 };
 
   const handleGoToPayment = () => {
