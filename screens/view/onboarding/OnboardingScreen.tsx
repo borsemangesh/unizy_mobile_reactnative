@@ -35,7 +35,7 @@ const OnboardingScreen = ({ navigation }: OnBoardingProps) => {
 
       navigation.replace('Dashboard', {
         AddScreenBackactiveTab: 'Home',
-        isNavigate: false,
+        isNavigate: true,
       });
     }
   };
@@ -45,7 +45,7 @@ const OnboardingScreen = ({ navigation }: OnBoardingProps) => {
 
     navigation.replace('Dashboard', {
       AddScreenBackactiveTab: 'Home',
-      isNavigate: false,
+      isNavigate: true,
     });
   };
 

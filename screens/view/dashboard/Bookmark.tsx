@@ -865,17 +865,17 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     overflow: 'hidden',
   },
-  emptyImage: {
-    width: 50,
-    height: 50,
-    marginBottom: 10,
+   emptyImage: {
+    width: 64,
+    height: 64,
+    marginBottom: 0,
   },
   emptyText: {
     fontSize: 20,
-    color: '#fff',
+    color: 'rgba(255, 255, 255, 0.8)',
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
-    fontWeight: 600,
+    fontWeight: 600
   },
   tabcard: {
 
