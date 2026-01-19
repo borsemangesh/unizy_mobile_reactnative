@@ -154,6 +154,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
+        setLoading(true)
         const token = await AsyncStorage.getItem('userToken');
         const userId = await AsyncStorage.getItem('userId');
 
@@ -177,11 +178,13 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         const data = await response.json();
         if (response.status === 401 || response.status === 403) {
           handleForceLogout();
+           setLoading(false)
           return;
         }
 
         if (data.statusCode === 401 || data.statusCode === 403) {
           handleForceLogout();
+           setLoading(false)
           return;
         }
 
@@ -208,6 +211,9 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         }
       } catch (error) {
         console.error('Error fetching user profile:', error);
+      }
+      finally{
+         setLoading(false)
       }
     };
     const handleForceLogout = async () => {
@@ -943,17 +949,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             <View style={styles.profileavatarContainer}>
               <View style={styles.profilebigCircle}>
                 <TouchableOpacity>
-                  {/* <TouchableOpacity
-                    style={styles.profiledeleteButton}
-                    onPress={() => setShowDeleteModal(true)}
-                  >
-                    <Image
-                      source={require('../../../assets/images/delprofile.png')}
-                      style={styles.profiledeletecameraIcon}
-                      resizeMode="contain"
-                    />
-                  </TouchableOpacity> */}
-
+                
                   {photo && (
                     <TouchableOpacity
                       style={styles.profiledeleteButton}
@@ -968,7 +964,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   )}
 
 
-                  {photo ? (
+                  {/* {photo ? (
                     <Image source={{ uri: photo }} style={styles.profilelogo} />
                   ) : (
                     <View style={styles.initialsCircle}>
@@ -979,7 +975,23 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                         )}
                       </Text>
                     </View>
-                  )}
+                  )} */}
+                  {loading ? (
+                  <View style={styles.initialsCircle}>
+                    {/* empty placeholder to avoid flicker */}
+                  </View>
+                ) : photo ? (
+                  <Image source={{ uri: photo }} style={styles.profilelogo} />
+                ) : (
+                  <View style={styles.initialsCircle}>
+                    <Text allowFontScaling={false} style={styles.initialsText}>
+                      {getInitials(
+                        userMeta?.firstname ?? 'A',
+                        userMeta?.lastname ?? 'W',
+                      )}
+                    </Text>
+                  </View>
+                )}
                 </TouchableOpacity>
 
                 <TouchableOpacity
