@@ -162,7 +162,7 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
           >
 
             <Text allowFontScaling={false} style={styles.mainlabel1}>
-              {t('Report Title')}
+              {t('report_title')}{'*'}
             </Text>
             <View style={styles.login_container1}>
 
@@ -181,7 +181,7 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
 
             <View style={styles.innercontainer}>
               <Text allowFontScaling={false} style={styles.mainlabel1}>
-                {t('tell_us_more')}{' '}
+                {t('tell_us_more')}{'*'}
               </Text>
 
               <View style={styles.login_container}>

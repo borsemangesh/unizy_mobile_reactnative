@@ -706,7 +706,8 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
-            onPress={() => navigation.replace('PreviewThumbnail')}
+            //onPress={() => navigation.replace('PreviewThumbnail')}
+            onPress={() => { navigation.goBack(); }}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >

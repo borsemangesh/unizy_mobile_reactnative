@@ -156,9 +156,9 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
   const MAX_IMAGES = 5;
   const [slideUp1] = useState(new Animated.Value(0));
 
-    // const AnimatedNestableScroll =
-    // Animated.createAnimatedComponent(NestableScrollContainer);
-  
+  // const AnimatedNestableScroll =
+  // Animated.createAnimatedComponent(NestableScrollContainer);
+
   //const scrollY = useSharedValue(0);
 
   // const scrollHandler = useAnimatedScrollHandler({
@@ -1038,7 +1038,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
     switch (fieldType) {
       case 'text': {
         const { param } = field;
-        const { field_name, keyboardtype, alias_name,placeholder } = param;
+        const { field_name, keyboardtype, alias_name, placeholder } = param;
 
         const rawValue =
           formValues[param.id]?.value ??
@@ -1242,13 +1242,27 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                       });
                     }}
                   >
-                    <Text allowFontScaling={false} style={styles.categoryTag}>
+                    {/* <Text allowFontScaling={false} style={styles.categoryTag}>
                       {opt.option_name}
                       {formValues[id]?.other_text
                         ? `: ${formValues[id].other_text}`
                         : ''}{' '}
                       ✕
-                    </Text>
+                    </Text> */}
+
+                    <View style={styles.categoryTagContainer}>
+                      <Text allowFontScaling={false} style={styles.categoryTagText}>
+                        {opt.option_name}
+                        {formValues[id]?.other_text
+                          ? `: ${formValues[id].other_text}`
+                          : ''}{' '}
+                      </Text>
+
+                      <Image
+                        source={require('../../../assets/images/new_cross.png')}
+                        style={styles.crossIcon}
+                      />
+                    </View>
                   </TouchableOpacity>
                 </View>
               ))}
@@ -1408,7 +1422,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
 
               <ToggleButton
                 value={toggleValue}
-                disabled={toggleValue === true}
+                disabled={featureitem === true}
                 onValueChange={val => {
                   handleValueChange(id, alias_name, val);
                 }}
@@ -1603,7 +1617,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                       [0, 1],
                       'clamp',
                     ),
-                  })),{display: 'none'}
+                  })), { display: 'none' }
                 ]}
               >
                 <BlurView
@@ -1647,10 +1661,10 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
               { paddingBottom: height * 0.1 }, // 0.05% of screen height
             ]}>
 
-           
+
             <View
               style={{ flex: 1 }}
-              // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             >
               {/* <AnimatedReanimated.ScrollView
                 scrollEventThrottle={16}
@@ -1660,124 +1674,124 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                   { paddingBottom: height * 0.1 },
                 ]}
               > */}
-                <View style={styles.userRow}>
+              <View style={styles.userRow}>
+                <View
+                  style={{
+                    width: '20%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {userMeta?.profile ? (
+                    <Image
+                      source={{ uri: userMeta.profile }}
+                      style={styles.avatar}
+                    />
+                  ) : (
+                    <View style={styles.initialsCircle}>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.initialsText}
+                      >
+                        {getInitials(
+                          userMeta?.firstname ?? 'Alan',
+                          userMeta?.lastname ?? 'Walker',
+                        )}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+
+                <View style={{ width: '80%' }}>
+                  <Text allowFontScaling={false} style={styles.userName}>
+                    {userMeta
+                      ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''
+                        }`.trim()
+                      : 'Alan Walker'}
+                  </Text>
+
                   <View
                     style={{
-                      width: '20%',
-                      alignItems: 'center',
-                      justifyContent: 'center',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      display: 'flex',
+                      alignItems: 'stretch',
                     }}
                   >
-                    {userMeta?.profile ? (
-                      <Image
-                        source={{ uri: userMeta.profile }}
-                        style={styles.avatar}
-                      />
-                    ) : (
-                      <View style={styles.initialsCircle}>
-                        <Text
-                          allowFontScaling={false}
-                          style={styles.initialsText}
-                        >
-                          {getInitials(
-                            userMeta?.firstname ?? 'Alan',
-                            userMeta?.lastname ?? 'Walker',
-                          )}
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-
-                  <View style={{ width: '80%' }}>
-                    <Text allowFontScaling={false} style={styles.userName}>
-                      {userMeta
-                        ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''
-                          }`.trim()
-                        : 'Alan Walker'}
+                    <Text allowFontScaling={false} style={styles.userSub}>
+                      {userMeta?.university_name || 'University of Warwick,'}
                     </Text>
-
                     <View
                       style={{
-                        flexDirection: 'column',
+                        flexDirection: 'row',
                         justifyContent: 'space-between',
-                        display: 'flex',
-                        alignItems: 'stretch',
                       }}
                     >
-                      <Text allowFontScaling={false} style={styles.userSub}>
-                        {userMeta?.university_name || 'University of Warwick,'}
+                      <Text allowFontScaling={false} style={styles.userSub2}>
+                        {userMeta?.city || ''}
                       </Text>
                       <View
                         style={{
                           flexDirection: 'row',
-                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          gap: 3,
                         }}
                       >
-                        <Text allowFontScaling={false} style={styles.userSub2}>
-                          {userMeta?.city || ''}
-                        </Text>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            gap: 3,
-                          }}
+                        <Image
+                          source={require('../../../assets/images/calendar_icon1.png')}
+                          style={{ height: 20, width: 20 }}
+                        />
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.dateText}
                         >
-                          <Image
-                            source={require('../../../assets/images/calendar_icon1.png')}
-                            style={{ height: 20, width: 20 }}
-                          />
-                          <Text
-                            allowFontScaling={false}
-                            style={styles.dateText}
-                          >
-                            {formatDateWithDash(newdate, t)}
-                          </Text>
-                        </View>
+                          {formatDateWithDash(newdate, t)}
+                        </Text>
                       </View>
                     </View>
                   </View>
                 </View>
+              </View>
 
-                <View style={styles.productdetails}>
-                  <Animated.View
-                    style={{
-                      transform: [{ translateY: slideUp1 }],
-                      opacity: slideUp1.interpolate({
-                        inputRange: [-screenHeight, 0],
-                        outputRange: [0, 1],
-                      }),
-                    }}
+              <View style={styles.productdetails}>
+                <Animated.View
+                  style={{
+                    transform: [{ translateY: slideUp1 }],
+                    opacity: slideUp1.interpolate({
+                      inputRange: [-screenHeight, 0],
+                      outputRange: [0, 1],
+                    }),
+                  }}
+                >
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.productdetailstext}
                   >
-                    <Text
-                      allowFontScaling={false}
-                      style={styles.productdetailstext}
-                    >
-                      {(() => {
-                        switch (productId) {
-                          case 2:
-                            return t('tutoring_service_details');
-                          case 3:
-                            return t('dish_details');
-                          case 4:
-                            return t('rental_details');
-                          case 5:
-                            return t('housekeeping_details');
-                          default:
-                            return t('product_details');
-                        }
-                      })()}
-                    </Text>
+                    {(() => {
+                      switch (productId) {
+                        case 2:
+                          return t('tutoring_service_details');
+                        case 3:
+                          return t('dish_details');
+                        case 4:
+                          return t('rental_details');
+                        case 5:
+                          return t('housekeeping_details');
+                        default:
+                          return t('product_details');
+                      }
+                    })()}
+                  </Text>
 
-                    {fields
-                      .filter(
-                        (f: any) =>
-                          f?.param?.field_type?.toLowerCase() !== 'boolean',
-                      )
-                      .map((field: any) => renderField(field))}
-                  </Animated.View>
-                </View>
-                {featuredField && <View>{renderField(featuredField)}</View>}
+                  {fields
+                    .filter(
+                      (f: any) =>
+                        f?.param?.field_type?.toLowerCase() !== 'boolean',
+                    )
+                    .map((field: any) => renderField(field))}
+                </Animated.View>
+              </View>
+              {featuredField && <View>{renderField(featuredField)}</View>}
               {/* </AnimatedReanimated.ScrollView> */}
             </View>
           </NestableScrollContainer>
@@ -1787,7 +1801,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           onPress={() => handlePreview(formValues)}
         />
       </View>
-      
+
 
       {Platform.OS === 'ios' && datePickerVisible && activeDateField && (
         <Modal transparent animationType="slide">
@@ -2065,6 +2079,36 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
 export default EditListScreen;
 
 const styles = StyleSheet.create({
+
+  categoryTagContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    borderWidth: 0.9,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderBlockEndColor: 'rgba(255, 255, 255, 0.08)',
+    color: '#fff',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 9,
+    marginRight: 4,
+    marginBottom: 4,
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.23)',
+  },
+
+  categoryTagText: {
+    color: '#fff',
+    fontSize: 14,
+    fontFamily: 'Urbanist-Medium',
+    fontWeight: 500
+  },
+  crossIcon: {
+    width: 16,
+    height: 16,
+    marginLeft: 6,
+  },
+
   dateBox: {
     flex: 1,
     flexDirection: 'row',

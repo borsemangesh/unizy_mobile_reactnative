@@ -1047,30 +1047,7 @@ const scrollY = useScrollViewOffset(scrollRef);
                 .map((opt: any) => (
                   <View key={opt.id} style={styles.categoryTagWrapper}>
                     <TouchableOpacity
-                      // onPress={() => {
-                      //   setFormValues((prev: any) => {
-                      //     const currentValue = prev[id]?.value;
-                      //     let updatedValue;
 
-                      //     if (Array.isArray(currentValue)) {
-                      //       updatedValue = currentValue.filter(
-                      //         (v: number) => v !== opt.id
-                      //       );
-                      //     } else {
-                      //       updatedValue = null;
-                      //     }
-
-                      //     return {
-                      //       ...prev,
-                      //       [id]: {
-                      //         ...prev[id],
-                      //         value: updatedValue,
-                      //         // clear otherText only when removing "Other"
-                      //         otherText: opt.is_other ? undefined : prev[id]?.otherText,
-                      //       },
-                      //     };
-                      //   });
-                      // }}
                       onPress={() => {
                         setFormValues((prev: any) => {
                           const currentValue = prev[id]?.value;
@@ -1099,13 +1076,20 @@ const scrollY = useScrollViewOffset(scrollRef);
                         });
                       }}
                     >
-                      <Text allowFontScaling={false} style={styles.categoryTag}>
-                        {opt.option_name}
-                        {opt.is_other && formValues[id]?.otherText
-                          ? `: ${formValues[id].otherText}`
-                          : ''}{' '}
-                        ✕
-                      </Text>
+                    
+                       <View style={styles.categoryTagContainer}>
+                        <Text allowFontScaling={false} style={styles.categoryTagText}>
+                          {opt.option_name}
+                          {opt.is_other && formValues[id]?.otherText
+                            ? `: ${formValues[id].otherText}`
+                            : ''}
+                        </Text>
+
+                        <Image
+                          source={require('../../../assets/images/new_cross.png')}
+                          style={styles.crossIcon}
+                        />
+                      </View>
                     </TouchableOpacity>
                   </View>
                 ))}
@@ -1908,6 +1892,34 @@ export default AddScreen;
 
 const styles = StyleSheet.create({
 
+  categoryTagContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    borderWidth: 0.9,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderBlockEndColor: 'rgba(255, 255, 255, 0.08)',
+    color: '#fff',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 9,
+    marginRight: 4,
+    marginBottom: 4,
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.23)',
+},
+
+categoryTagText: {
+  color: '#fff',
+  fontSize:14,
+  fontFamily: 'Urbanist-Medium',
+  fontWeight:500
+},
+crossIcon: {
+  width: 16,
+  height: 16,
+  marginLeft: 6,
+},
 
   // imageListWrapper: {
   //   marginTop: 10,

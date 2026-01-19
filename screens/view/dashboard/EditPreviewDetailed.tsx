@@ -39,7 +39,7 @@ import i18n from '../../../localization/i18n';
 import Loader from '../../utils/component/Loader';
 import dayjs from 'dayjs';
 
-type previewDetailsProps = {
+type EditPreviewDetailedProps = {
   navigation: any;
 };
 
@@ -65,7 +65,7 @@ interface FormField {
 }
 
 
-const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
+const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
   const [showPopup, setShowPopup] = useState(false);
   const closePopup = () => setShowPopup(false);
   const scrollY1 = new Animated.Value(0);
@@ -749,7 +749,8 @@ const EditPreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
-            onPress={() => navigation.replace('EditPreviewThumbnail')}
+            //onPress={() => navigation.replace('EditPreviewThumbnail')}
+            onPress={() => { navigation.goBack(); }}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
