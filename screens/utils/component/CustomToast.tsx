@@ -13,7 +13,7 @@ const CustomToast: React.FC<CustomToastProps> = ({
   text,
   type = "info",
   onHide,
-  duration = 5000,
+  duration = 2500,
 }) => {
   const progress = useRef(new Animated.Value(1)).current;
 
