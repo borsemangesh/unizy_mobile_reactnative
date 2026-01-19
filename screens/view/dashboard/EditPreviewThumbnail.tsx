@@ -147,7 +147,7 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
           setfeatureitem(false);
         }
         const storedData = await AsyncStorage.getItem('formData1');
-        console.log('DATA',storedData)
+        console.log('DATA', storedData)
         if (storedData) {
           const parsedData = JSON.parse(storedData);
           console.log(parsedData)
@@ -188,7 +188,7 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
             // console.log('No category in userMeta');
           }
         } else {
-     
+
         }
       } catch (error) {
         // console.log('Error reading stored data: ', error);
@@ -224,6 +224,10 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
     return null;
   };
 
+  const isFeatured =
+    storedForm?.[13]?.value === true ||
+    storedForm?.[13]?.value === 'true';
+
   const titleValue = getValueByAlias(storedForm, 'title') || 'No Title';
   const imageArray = storedForm?.[6]?.value || [];
   const raw = getValueByAlias(storedForm, 'price') ?? '0';
@@ -254,17 +258,324 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
     maxAllowedPrice1,
   ).toFixed(2);
 
-   const priceText =
-  categoryId === 2
-    ? `£${commissionPrice}/${t('hr')}`
-    : categoryId === 4
-    ? `£${commissionPrice}/${t('week')}`
-    : categoryId === 5 ? `£${commissionPrice}/${t('session')}` 
-    : `£${commissionPrice}`;
+  const priceText =
+    categoryId === 2
+      ? `£${commissionPrice}/${t('hr')}`
+      : categoryId === 4
+        ? `£${commissionPrice}/${t('week')}`
+        : categoryId === 5 ? `£${commissionPrice}/${t('session')}`
+          : `£${commissionPrice}`;
 
-    const commission = parseFloat(categoryDetails?.commission ?? '0');
-    const maxCapPound = parseFloat(categoryDetails?.max_cappund ?? '0');
+  const commission = parseFloat(categoryDetails?.commission ?? '0');
+  const maxCapPound = parseFloat(categoryDetails?.max_cappund ?? '0');
 
+  if (isFeatured) {
+    return (
+      <ImageBackground
+        source={require('../../../assets/images/backimg.png')}
+        style={{ width: '100%', height: '100%' }}
+        resizeMode="cover"
+      >
+        <View style={styles.fullScreenContainer}>
+          <StatusBar
+            translucent
+            backgroundColor="transparent"
+            barStyle="light-content"
+          />
+
+          {/* Header with Blur only at top */}
+          <AnimatedReanimated.View
+            style={[styles.headerWrapper, animatedBlurStyle]}
+            pointerEvents="none"
+          >
+            {/* Blur layer only at top with gradient fade */}
+            <MaskedView
+              style={StyleSheet.absoluteFill}
+              maskElement={
+                <LinearGradient
+                  colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                  locations={[0, 0.8]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 0, y: 1 }}
+                  style={StyleSheet.absoluteFill}
+                />
+              }
+            >
+              <BlurView
+                style={StyleSheet.absoluteFill}
+                blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+                blurAmount={Platform.OS === 'ios' ? 45 : 45}
+                // overlayColor="rgba(255,255,255,0.05)"
+                reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+              />
+              <LinearGradient
+                colors={[
+                  'rgba(255, 255, 255, 0.45)',
+                  'rgba(255, 255, 255, 0.02)',
+                  'rgba(255, 255, 255, 0.02)',
+                ]}
+                style={StyleSheet.absoluteFill}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+              />
+            </MaskedView>
+          </AnimatedReanimated.View>
+
+          {/* Header Content */}
+          <View style={styles.headerContent} pointerEvents="box-none">
+            <TouchableOpacity
+              onPress={() => { navigation.goBack(); }}
+              style={styles.backButtonContainer}
+              activeOpacity={0.7}
+            >
+              <AnimatedReanimated.View
+                style={[styles.blurButtonWrapper, animatedButtonStyle]}
+              >
+                {/* Static background (visible when scrollY = 0) */}
+                <AnimatedReanimated.View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    useAnimatedStyle(() => ({
+                      opacity: interpolate(
+                        scrollY.value,
+                        [0, 30],
+                        [1, 0],
+                        'clamp',
+                      ),
+                      backgroundColor: 'rgba(255,255,255,0.1)',
+                      borderRadius: 40,
+                    })),
+                  ]}
+                />
+
+                {/* Blur view fades in as scroll increases */}
+                <AnimatedReanimated.View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    useAnimatedStyle(() => ({
+                      opacity: interpolate(
+                        scrollY.value,
+                        [0, 50],
+                        [0, 1],
+                        'clamp',
+                      ),
+                    })),
+                  ]}
+                >
+                  <BlurView
+                    style={StyleSheet.absoluteFill}
+                    blurType="light"
+                    blurAmount={10}
+                    reducedTransparencyFallbackColor="transparent"
+                  />
+                </AnimatedReanimated.View>
+
+                {/* Back Icon */}
+                <AnimatedReanimated.Image
+                  source={require('../../../assets/images/back.png')}
+                  style={[{ height: 24, width: 24 }, animatedIconStyle]}
+                />
+              </AnimatedReanimated.View>
+            </TouchableOpacity>
+
+            <Text allowFontScaling={false} style={styles.unizyText}>
+              {t('preview_thumbnail')}
+            </Text>
+          </View>
+
+
+          <AnimatedReanimated.ScrollView
+            scrollEventThrottle={16}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{
+              flexGrow: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingTop: Platform.OS === 'ios' ? 100 : 100,
+              paddingBottom: Platform.OS === 'ios' ? 140 : 130
+            }}
+            onScroll={scrollHandler}
+          >
+            <View style={styles.productCarddisplay}>
+              {storedForm ? (
+                <>
+                  {categoryId === 2 || categoryId === 5 ? (
+                    storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
+                      <>
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.newtext}
+                        >
+                          {t('preview_featured_listing')}
+                        </Text>
+                        <Text allowFontScaling={false} style={styles.previewDesc}>
+                          {t('feature_note')}
+                        </Text>
+                        <NewTutitionCard
+                          tag={uniname}
+                          title={titleValue}
+                          infoTitle={fullName}
+                          inforTitlePrice={priceText}
+                          rating={storedForm[12]?.value || '4.5'}
+                          productImage={{ uri: profile }}
+                          isBookmarked={false}
+                        />
+
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.newtext1}
+                        >
+                          {t('preview_regular_listing')}
+                        </Text>
+                        <Text allowFontScaling={false} style={styles.previewDesc}>
+                          {t('normal_note')}
+                        </Text>
+                        <SeperateTutionCard
+                          tag={uniname}
+                          infoTitle={titleValue}
+                          rating={storedForm[12]?.value || '4.5'}
+                          inforTitlePrice={priceText}
+                          productImage={{ uri: profile }}
+                          bookmark={false}
+                          showInitials={!profile || profile === null || profile.trim() === ''}
+                          isfeature={true} initialsName={initials} />
+                      </>
+                    ) : (
+                      <><Text
+                        allowFontScaling={false}
+                        style={styles.newtext1}
+                      >
+                        {t('preview_regular_listing')}
+                      </Text><Text allowFontScaling={false} style={styles.previewDesc}>
+                          {t('normal_note')}
+                        </Text>
+                        <SeperateTutionCard
+                          tag={uniname}
+                          infoTitle={titleValue}
+                          rating={storedForm[12]?.value || '4.5'}
+                          inforTitlePrice={priceText}
+                          productImage={profile ? { uri: profile } : undefined}
+                          bookmark={false}
+                          showInitials={!profile || profile === null || profile.trim() === ''}
+                          isfeature={false} initialsName={initials} /></>
+                    )
+                  )
+                    : storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
+                      <>
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.newtext}
+                        >
+                          {t('preview_featured_listing')}
+                        </Text>
+                        <Text allowFontScaling={false} style={styles.previewDesc}>
+                          {t('feature_note')}
+                        </Text>
+                        <PreviewCard
+                          tag={uniname}
+                          infoTitle={titleValue}
+                          inforTitlePrice={priceText}
+                          rating={storedForm[12]?.value || '4.5'}
+                          productImage={
+                            imageArray.length > 0
+                              ? { uri: imageArray[0].uri }
+                              : require('../../../assets/images/drone.png')
+                          }
+                        />
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.newtext1}
+                        >
+                          {t('preview_regular_listing')}
+                        </Text>
+                        <Text allowFontScaling={false} style={styles.previewDesc}>
+                          {t('normal_note')}
+                        </Text>
+                        <NewFeatureCard
+                          tag={uniname}
+                          infoTitle={titleValue}
+                          inforTitlePrice={priceText}
+                          rating={storedForm[12]?.value || '4.5'}
+                          productImage={
+                            imageArray.length > 0
+                              ? { uri: imageArray[0].uri }
+                              : require('../../../assets/images/drone.png')
+                          }
+                        />
+                      </>
+                    ) : (
+                      <><Text
+                        allowFontScaling={false}
+                        style={styles.newtext1}
+                      >
+                        {t('preview_regular_listing')}
+                      </Text><Text allowFontScaling={false} style={styles.previewDesc}>
+                          {t('normal_note')}
+                        </Text>
+                        <NewProductCard
+                          tag={uniname}
+                          infoTitle={titleValue}
+                          inforTitlePrice={priceText}
+                          rating={storedForm[12]?.value || '4.5'}
+                          productImage={imageArray.length > 0
+                            ? { uri: imageArray[0].uri }
+                            : require('../../../assets/images/drone.png')} /></>
+                    )}
+                </>
+              ) : (
+                <Text
+                  allowFontScaling={false}
+                  style={{ color: '#fff', textAlign: 'center' }}
+                >
+                  {t('loading')}
+                </Text>
+              )}
+            </View>
+
+            {categoryId !== 4 && (
+              <View style={[styles.textbg]}>
+                <Image
+                  source={require('../../../assets/images/info_icon.png')}
+                  style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+                />
+                <View style={{ flex: 1 }}>
+                  <Text allowFontScaling={false} style={styles.importantText1}>
+                    {t('important')}
+                  </Text>
+                  <Text allowFontScaling={false} style={styles.importantText}>
+                    {t('a')}
+                    <Text allowFontScaling={false} style={styles.importantText1}>
+                      {' '}
+                      {Math.trunc(commission)}%
+                    </Text>{' '}
+                    {t('commission_or_maximum')}{' '}
+                    <Text allowFontScaling={false} style={styles.importantText}>(</Text>
+                    <Text allowFontScaling={false} style={styles.importantText}>
+                      {t('capped')}{' '}
+                    </Text>
+                    <Text allowFontScaling={false} style={styles.importantText1}>
+                      £{Math.trunc(maxCapPound)}
+                    </Text>
+                    <Text allowFontScaling={false} style={styles.importantText}>)</Text>
+
+                    {' '}{t('whichever_lower')}
+                  </Text>
+                </View>
+              </View>
+            )}
+          </AnimatedReanimated.ScrollView >
+
+          <View style={styles.bottomFixed}>
+            <Button
+              title={t('next')}
+              onPress={() => navigation.navigate('EditPreviewDetailed')}
+            />
+          </View>
+        </View>
+        <NewCustomToastContainer />
+      </ImageBackground>
+    );
+  }
   return (
     <ImageBackground
       source={require('../../../assets/images/backimg.png')}
@@ -391,181 +702,176 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
           }}
           onScroll={scrollHandler}
         >
+          <View style={styles.productCarddisplay}>
+            {storedForm ? (
+              <>
+                {categoryId === 2 || categoryId === 5 ? (
+                  storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
+                    <>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.newtext}
+                      >
+                        {t('preview_featured_listing')}
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.previewDesc}>
+                        {t('feature_note')}
+                      </Text>
+                      <NewTutitionCard
+                        tag={uniname}
+                        title={titleValue}
+                        infoTitle={fullName}
+                        inforTitlePrice={priceText}
+                        rating={storedForm[12]?.value || '4.5'}
+                        productImage={{ uri: profile }}
+                        isBookmarked={false}
+                      />
 
-         
-           <View style={styles.productCarddisplay}>
-                      {storedForm ? (
-                        <>
-                          {categoryId === 2 || categoryId === 5 ? (
-                            storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
-                              <>
-                                <Text
-                                  allowFontScaling={false}
-                                  style={styles.newtext}
-                                >
-                                  {t('preview_featured_listing')}
-                                </Text>
-                                <Text allowFontScaling={false} style={styles.previewDesc}>
-                                  {t('feature_note')}
-                                </Text>
-                                <NewTutitionCard
-                                  tag={uniname}
-                                  title={titleValue}
-                                  infoTitle={fullName}
-                                  inforTitlePrice={priceText}
-                                  rating={storedForm[12]?.value || '4.5'}
-                                  productImage={{ uri: profile }}
-                                  isBookmarked={false}
-                                />
-          
-                                <Text
-                                  allowFontScaling={false}
-                                  style={styles.newtext1}
-                                >
-                                  {t('preview_regular_listing')}
-                                </Text>
-                                <Text allowFontScaling={false} style={styles.previewDesc}>
-                                  {t('normal_note')}
-                                </Text>
-                                <SeperateTutionCard
-                                  tag={uniname}
-                                  infoTitle={titleValue}
-                                  rating={storedForm[12]?.value || '4.5'}
-                                  inforTitlePrice={priceText}
-                                  productImage={{ uri: profile }}
-                                  bookmark={false}
-                                  showInitials={!profile || profile === null || profile.trim() === ''}
-                                  isfeature={true} initialsName={initials} />
-                              </>
-                            ) : (
-                              <><Text
-                                  allowFontScaling={false}
-                                  style={styles.newtext1}
-                                >
-                                  {t('preview_regular_listing')}
-                                </Text><Text allowFontScaling={false} style={styles.previewDesc}>
-                                    {t('normal_note')}
-                                  </Text>
-                                  <SeperateTutionCard
-                                    tag={uniname}
-                                    infoTitle={titleValue}
-                                    rating={storedForm[12]?.value || '4.5'}
-                                    inforTitlePrice={priceText}
-                                    productImage={profile ? { uri: profile } : undefined}
-                                    bookmark={false}
-                                    showInitials={!profile || profile === null || profile.trim() === ''}
-                                    isfeature={false} initialsName={initials} /></>
-                            )
-                          ) 
-                          : storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
-                            <>
-                              <Text
-                                  allowFontScaling={false}
-                                  style={styles.newtext}
-                                >
-                                  {t('preview_featured_listing')}
-                                </Text>
-                                <Text allowFontScaling={false} style={styles.previewDesc}>
-                                  {t('feature_note')}
-                                </Text>
-                              <PreviewCard
-                                tag={uniname}
-                                infoTitle={titleValue}
-                                inforTitlePrice={priceText}
-                                rating={storedForm[12]?.value || '4.5'}
-                                productImage={
-                                  imageArray.length > 0
-                                    ? { uri: imageArray[0].uri }
-                                    : require('../../../assets/images/drone.png')
-                                }
-                              />
-                              <Text
-                                  allowFontScaling={false}
-                                  style={styles.newtext1}
-                                >
-                                  {t('preview_regular_listing')}
-                                </Text>
-                                <Text allowFontScaling={false} style={styles.previewDesc}>
-                                  {t('normal_note')}
-                                </Text>
-                              <NewFeatureCard
-                                tag={uniname}
-                                infoTitle={titleValue}
-                                inforTitlePrice={priceText}
-                                rating={storedForm[12]?.value || '4.5'}
-                                productImage={
-                                  imageArray.length > 0
-                                    ? { uri: imageArray[0].uri }
-                                    : require('../../../assets/images/drone.png')
-                                }
-                              />
-                            </>
-                          ) : (
-                            <><Text
-                                  allowFontScaling={false}
-                                  style={styles.newtext1}
-                                >
-                                  {t('preview_regular_listing')}
-                                </Text><Text allowFontScaling={false} style={styles.previewDesc}>
-                                    {t('normal_note')}
-                                  </Text>
-                                  <NewProductCard
-                                    tag={uniname}
-                                    infoTitle={titleValue}
-                                    inforTitlePrice={priceText}
-                                    rating={storedForm[12]?.value || '4.5'}
-                                    productImage={imageArray.length > 0
-                                      ? { uri: imageArray[0].uri }
-                                      : require('../../../assets/images/drone.png')} /></>
-                          )}
-                        </>
-                      ) : (
-                        <Text
-                          allowFontScaling={false}
-                          style={{ color: '#fff', textAlign: 'center' }}
-                        >
-                          {t('loading')}
-                        </Text>
-                      )}
-            </View>
-
-
-            {categoryId !== 4 && (
-            <View style={styles.textbg}>
-              <Image
-                source={require('../../../assets/images/info_icon.png')}
-                style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
-              />
-              <View style={{ flex: 1 }}>
-                <Text allowFontScaling={false} style={styles.importantText1}>
-                  {t('important')}
-                </Text>
-                <Text allowFontScaling={false} style={styles.importantText}>
-                  {t('a')}
-                  <Text allowFontScaling={false} style={styles.importantText1}>
-                    {' '}
-                    {Math.trunc(commission)}%
-                  </Text>{' '}
-                  {t('commission_or_maximum')}
-                    <Text allowFontScaling={false} style={styles.importantText}>(</Text>
-                    <Text allowFontScaling={false} style={styles.importantText}>
-                      {t('capped')}{' '}
-                    </Text>
-                    <Text allowFontScaling={false} style={styles.importantText1}>
-                      £{Math.trunc(maxCapPound)}
-                    </Text>
-                    <Text allowFontScaling={false} style={styles.importantText}>)</Text>
- 
-                  {' '}{t('whichever_lower')}
-                </Text>
-              </View>
-            </View>
-          )}
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.newtext1}
+                      >
+                        {t('preview_regular_listing')}
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.previewDesc}>
+                        {t('normal_note')}
+                      </Text>
+                      <SeperateTutionCard
+                        tag={uniname}
+                        infoTitle={titleValue}
+                        rating={storedForm[12]?.value || '4.5'}
+                        inforTitlePrice={priceText}
+                        productImage={{ uri: profile }}
+                        bookmark={false}
+                        showInitials={!profile || profile === null || profile.trim() === ''}
+                        isfeature={true} initialsName={initials} />
+                    </>
+                  ) : (
+                    <><Text
+                      allowFontScaling={false}
+                      style={styles.newtext1}
+                    >
+                      {t('preview_regular_listing')}
+                    </Text><Text allowFontScaling={false} style={styles.previewDesc}>
+                        {t('normal_note')}
+                      </Text>
+                      <SeperateTutionCard
+                        tag={uniname}
+                        infoTitle={titleValue}
+                        rating={storedForm[12]?.value || '4.5'}
+                        inforTitlePrice={priceText}
+                        productImage={profile ? { uri: profile } : undefined}
+                        bookmark={false}
+                        showInitials={!profile || profile === null || profile.trim() === ''}
+                        isfeature={false} initialsName={initials} /></>
+                  )
+                )
+                  : storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
+                    <>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.newtext}
+                      >
+                        {t('preview_featured_listing')}
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.previewDesc}>
+                        {t('feature_note')}
+                      </Text>
+                      <PreviewCard
+                        tag={uniname}
+                        infoTitle={titleValue}
+                        inforTitlePrice={priceText}
+                        rating={storedForm[12]?.value || '4.5'}
+                        productImage={
+                          imageArray.length > 0
+                            ? { uri: imageArray[0].uri }
+                            : require('../../../assets/images/drone.png')
+                        }
+                      />
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.newtext1}
+                      >
+                        {t('preview_regular_listing')}
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.previewDesc}>
+                        {t('normal_note')}
+                      </Text>
+                      <NewFeatureCard
+                        tag={uniname}
+                        infoTitle={titleValue}
+                        inforTitlePrice={priceText}
+                        rating={storedForm[12]?.value || '4.5'}
+                        productImage={
+                          imageArray.length > 0
+                            ? { uri: imageArray[0].uri }
+                            : require('../../../assets/images/drone.png')
+                        }
+                      />
+                    </>
+                  ) : (
+                    <><Text
+                      allowFontScaling={false}
+                      style={styles.newtext1}
+                    >
+                      {t('preview_regular_listing')}
+                    </Text><Text allowFontScaling={false} style={styles.previewDesc}>
+                        {t('normal_note')}
+                      </Text>
+                      <NewProductCard
+                        tag={uniname}
+                        infoTitle={titleValue}
+                        inforTitlePrice={priceText}
+                        rating={storedForm[12]?.value || '4.5'}
+                        productImage={imageArray.length > 0
+                          ? { uri: imageArray[0].uri }
+                          : require('../../../assets/images/drone.png')} /></>
+                  )}
+              </>
+            ) : (
+              <Text
+                allowFontScaling={false}
+                style={{ color: '#fff', textAlign: 'center' }}
+              >
+                {t('loading')}
+              </Text>
+            )}
+          </View>
         </AnimatedReanimated.ScrollView >
 
+        {categoryId !== 4 && (
+          <View style={[styles.textbg,{marginBottom:100}]}>
+            <Image
+              source={require('../../../assets/images/info_icon.png')}
+              style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+            />
+            <View style={{ flex: 1 }}>
+              <Text allowFontScaling={false} style={styles.importantText1}>
+                {t('important')}
+              </Text>
+              <Text allowFontScaling={false} style={styles.importantText}>
+                {t('a')}
+                <Text allowFontScaling={false} style={styles.importantText1}>
+                  {' '}
+                  {Math.trunc(commission)}%
+                </Text>{' '}
+                {t('commission_or_maximum')}{' '}
+                <Text allowFontScaling={false} style={styles.importantText}>(</Text>
+                <Text allowFontScaling={false} style={styles.importantText}>
+                  {t('capped')}{' '}
+                </Text>
+                <Text allowFontScaling={false} style={styles.importantText1}>
+                  £{Math.trunc(maxCapPound)}
+                </Text>
+                <Text allowFontScaling={false} style={styles.importantText}>)</Text>
+
+                {' '}{t('whichever_lower')}
+              </Text>
+            </View>
+          </View>
+        )}
+
         <View style={styles.bottomFixed}>
-
-
           <Button
             title={t('next')}
             onPress={() => navigation.navigate('EditPreviewDetailed')}
@@ -575,6 +881,7 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
       <NewCustomToastContainer />
     </ImageBackground>
   );
+
 };
 
 const styles = StyleSheet.create({
@@ -584,7 +891,7 @@ const styles = StyleSheet.create({
     zIndex: 11,
     //top: 7,
   },
-    previewDesc: {
+  previewDesc: {
     marginTop: 2,
     marginBottom: 8,
     color: '#ccc',
@@ -592,7 +899,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-Medium',
     fontWeight: 500,
   },
-   blurButtonWrapper: {
+  blurButtonWrapper: {
     width: 48,
     height: 48,
     borderRadius: 40,
@@ -693,9 +1000,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ffffff31',
     borderLeftColor: '#ffffff31',
     borderRightColor: '#ffffff31',
-    marginTop: 16,
-
-
+    marginTop: 12,
 
   },
 

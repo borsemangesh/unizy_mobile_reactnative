@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
@@ -19,6 +18,7 @@ import {
   TouchableWithoutFeedback,
   StatusBar,
   BackHandler,
+  KeyboardAvoidingView,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImageResizer from 'react-native-image-resizer';
@@ -1483,6 +1483,11 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             style={{ flex: 1 }}
           //behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           >
+              <KeyboardAvoidingView
+    style={{ flex: 1 }}
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+  >
             <NestableScrollContainer
               nestedScrollEnabled
               ref={scrollRef}
@@ -1490,7 +1495,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               // onScroll={scrollHandler}
               contentContainerStyle={[
                 styles.scrollContainer,
-                { paddingBottom: height * 0.1 }, // 0.05% of screen height
+                { paddingBottom: Platform.OS === 'ios' ? height * 0.1 : height * 0.1 }, // 0.05% of screen height
               ]}>
               {/* <AnimatedReanimated.ScrollView
                 scrollEventThrottle={16}
@@ -1619,6 +1624,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               {featuredField && <View>{renderField(featuredField)}</View>}
               {/* </AnimatedReanimated.ScrollView> */}
             </NestableScrollContainer>
+            </KeyboardAvoidingView>
           </View>
         )}
         <Button title={t('preview_details')} onPress={() => handlePreview()} />
@@ -1955,29 +1961,6 @@ const styles = StyleSheet.create({
     height: 16,
     marginLeft: 6,
   },
-
-  // imageListWrapper: {
-  //   marginTop: 10,
-  //   borderRadius: 12,
-  //   backgroundColor: 'rgba(255,255,255,0.08)',
-  //   borderWidth: 1,
-  //   borderColor: 'rgba(255,255,255,0.2)',
-  // },
-
-
-  // imageRow: {
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   gap: 10,
-  // },
-
-  // thumb: {
-  //   width: 40,
-  //   height: 40,
-  //   borderRadius: 6,
-  // },
-
-
   dateBox: {
     flex: 1,
     flexDirection: 'row',
@@ -2235,7 +2218,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     paddingHorizontal: 16,
-    paddingBottom: 80,
+    // paddingBottom: 80,
     paddingTop: Platform.OS === 'ios' ? 120 : 100,
   },
   userRow: {
@@ -2306,7 +2289,7 @@ const styles = StyleSheet.create({
   },
   uploadButton: {
     height: 44,
-    gap: 10,
+    gap: 2,
     marginTop: 2,
     alignSelf: 'stretch',
     borderRadius: 12,

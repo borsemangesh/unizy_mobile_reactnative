@@ -37,7 +37,7 @@ type PreviewThumbnailProps = {
   navigation: any;
 };
 type CategoryDetailsType = {
-  commission: string;     
+  commission: string;
   max_cappund: string;
   feature_fee: string,
   max_feature_cap: string
@@ -107,7 +107,7 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
       backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
     };
   });
-  
+
 
   const animatedIconStyle = useAnimatedStyle(() => {
     'worklet';
@@ -132,11 +132,11 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
     const fetchStoredData = async () => {
       try {
         const storedData = await AsyncStorage.getItem('formData');
-          console.log(' storedData:', storedData);
+        console.log(' storedData:', storedData);
 
         if (storedData) {
           const parsedData = JSON.parse(storedData);
-           console.log('parsedDataData:', parsedData);
+          console.log('parsedDataData:', parsedData);
           setStoredForm(parsedData);
         } else {
           // console.log('No form data found');
@@ -193,8 +193,11 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
 
     return entry ? entry.value : null;
   };
-    const { t } = useTranslation();
+  const { t } = useTranslation();
 
+  const isFeatured =
+    storedForm?.[13]?.value === true ||
+    storedForm?.[13]?.value === 'true';
 
   const titleValue = getValueByAlias(storedForm, 'title') || 'No Title';
   const imageArray = storedForm?.[6]?.value || [];
@@ -226,14 +229,14 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
   const maxCapPound = parseFloat(categoryDetails?.max_cappund ?? '0');
 
   const priceText =
-  categoryId === 2
-    ? `£${commissionPrice}/${t('hr')}`
-    : categoryId === 4
-    ? `£${commissionPrice}/${t('week')}`
-    : categoryId === 5 ? `£${commissionPrice}/${t('session')}` 
-    : `£${commissionPrice}`;
+    categoryId === 2
+      ? `£${commissionPrice}/${t('hr')}`
+      : categoryId === 4
+        ? `£${commissionPrice}/${t('week')}`
+        : categoryId === 5 ? `£${commissionPrice}/${t('session')}`
+          : `£${commissionPrice}`;
 
-
+if (isFeatured) {
   return (
     <ImageBackground
       source={require('../../../assets/images/backimg.png')}
@@ -349,7 +352,7 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
             alignItems: 'center',
             justifyContent: 'center',
             paddingTop: Platform.OS === 'ios' ? 100 : 100,
-            paddingBottom: 100,
+            paddingBottom: Platform.OS === 'ios' ? 100 : 100,
           }}
           onScroll={scrollHandler}
         >
@@ -358,7 +361,7 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
               <>
                 {categoryId === 2 || categoryId === 5 ? (
                   storedForm[13]?.value === true ||
-                  storedForm[13]?.value === 'true' ? (
+                    storedForm[13]?.value === 'true' ? (
                     <>
                       <Text allowFontScaling={false} style={styles.newtext}>
                         {t('preview_featured_listing')}
@@ -488,36 +491,36 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
               </Text>
             )}
 
-{categoryId !== 4 && (
-            <View style={styles.textbg}>
-              <Image
-                source={require('../../../assets/images/info_icon.png')}
-                style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
-              />
-              <View style={{ flex: 1 }}>
-                <Text allowFontScaling={false} style={styles.importantText1}>
-                  {t('important')}
-                </Text>
-                <Text allowFontScaling={false} style={styles.importantText}>
-                  {t('a')}
+            {categoryId !== 4 && (
+              <View style={styles.textbg}>
+                <Image
+                  source={require('../../../assets/images/info_icon.png')}
+                  style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+                />
+                <View style={{ flex: 1 }}>
                   <Text allowFontScaling={false} style={styles.importantText1}>
-                    {' '}
-                    {Math.trunc(commission)}%
-                  </Text>{' '}
-                  {t('commission_or_maximum')}
-                  <Text allowFontScaling={false} style={styles.importantText}>(</Text>
+                    {t('important')}
+                  </Text>
                   <Text allowFontScaling={false} style={styles.importantText}>
-                    {' '}{t('capped')}{' '}
+                    {t('a')}
+                    <Text allowFontScaling={false} style={styles.importantText1}>
+                      {' '}
+                      {Math.trunc(commission)}%
+                    </Text>{' '}
+                    {t('commission_or_maximum')}
+                    <Text allowFontScaling={false} style={styles.importantText}>(</Text>
+                    <Text allowFontScaling={false} style={styles.importantText}>
+                      {' '}{t('capped')}{' '}
+                    </Text>
+                    <Text allowFontScaling={false} style={styles.importantText1}>
+                      £{Math.trunc(maxCapPound)}
+                    </Text>
+                    <Text allowFontScaling={false} style={styles.importantText}>)</Text>
+                    {' '}{t('whichever_lower')}
                   </Text>
-                  <Text allowFontScaling={false} style={styles.importantText1}>
-                    £{Math.trunc(maxCapPound)}
-                  </Text>
-                  <Text allowFontScaling={false} style={styles.importantText}>)</Text>
-                  {' '}{t('whichever_lower')}
-                </Text>
+                </View>
               </View>
-            </View>
-          )}
+            )}
           </View>
         </AnimatedReanimated.ScrollView>
 
@@ -532,18 +535,321 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
       <NewCustomToastContainer />
     </ImageBackground>
   );
+}
+
+return (
+  <ImageBackground
+    source={require('../../../assets/images/backimg.png')}
+    style={{ width: '100%', height: '100%' }}
+    resizeMode="cover"
+  >
+     <View style={styles.fullScreenContainer}>
+        <StatusBar
+          translucent
+          backgroundColor="transparent"
+          barStyle="light-content"
+        />
+        <AnimatedReanimated.View
+          style={[styles.headerWrapper, animatedBlurStyle]}
+          pointerEvents="none"
+        >
+          <MaskedView
+            style={StyleSheet.absoluteFill}
+            maskElement={
+              <LinearGradient
+                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                locations={[0, 0.8]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            }
+          >
+            <BlurView
+              style={StyleSheet.absoluteFill}
+              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+              blurAmount={Platform.OS === 'ios' ? 45 : 45}
+              // overlayColor="rgba(255,255,255,0.05)"
+              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+            />
+            <LinearGradient
+              colors={[
+                'rgba(255, 255, 255, 0.45)',
+                'rgba(255, 255, 255, 0.02)',
+                'rgba(255, 255, 255, 0.02)',
+              ]}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+            />
+          </MaskedView>
+        </AnimatedReanimated.View>
+
+        {/* Header Content */}
+        <View style={styles.headerContent} pointerEvents="box-none">
+          <TouchableOpacity
+            onPress={() => {
+              navigation.goBack();
+            }}
+            style={styles.backButtonContainer}
+            activeOpacity={0.7}
+          >
+            <AnimatedReanimated.View
+              style={[styles.blurButtonWrapper, animatedButtonStyle]}
+            >
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 30],
+                      [1, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 40,
+                  })),
+                ]}
+              />
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 50],
+                      [0, 1],
+                      'clamp',
+                    ),
+                  })),
+                ]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
+                />
+              </AnimatedReanimated.View>
+
+              <AnimatedReanimated.Image
+                source={require('../../../assets/images/back.png')}
+                style={[{ height: 24, width: 24 }, animatedIconStyle]}
+              />
+            </AnimatedReanimated.View>
+          </TouchableOpacity>
+
+          <Text allowFontScaling={false} style={styles.unizyText}>
+            {t('preview_thumbnail')}
+          </Text>
+        </View>
+        <AnimatedReanimated.ScrollView
+          scrollEventThrottle={16}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            flexGrow: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingTop: Platform.OS === 'ios' ? 100 : 100,
+            paddingBottom: 100,
+          }}
+          onScroll={scrollHandler}
+        >
+          <View style={styles.productCarddisplay}>
+            {storedForm ? (
+              <>
+                {categoryId === 2 || categoryId === 5 ? (
+                  storedForm[13]?.value === true ||
+                    storedForm[13]?.value === 'true' ? (
+                    <>
+                      <Text allowFontScaling={false} style={styles.newtext}>
+                        {t('preview_featured_listing')}
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.previewDesc}>
+                        {t('feature_note')}
+                      </Text>
+                      <NewTutitionCard
+                        tag={uniname}
+                        title={titleValue}
+                        infoTitle={fullName}
+                        inforTitlePrice={priceText}
+                        rating={storedForm[12]?.value || '4.5'}
+                        productImage={{ uri: profile }}
+                        isBookmarked={false}
+                      />
+
+                      <Text allowFontScaling={false} style={styles.newtext1}>
+                        {t('preview_regular_listing')}
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.previewDesc}>
+                        {t('normal_note')}
+                      </Text>
+                      <SeperateTutionCard
+                        tag={uniname}
+                        infoTitle={titleValue}
+                        rating={storedForm[12]?.value || '4.5'}
+                        inforTitlePrice={priceText}
+                        productImage={{ uri: profile }}
+                        bookmark={false}
+                        showInitials={
+                          !profile || profile === null || profile.trim() === ''
+                        }
+                        isfeature={true}
+                        initialsName={initials}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <Text allowFontScaling={false} style={styles.newtext1}>
+                        {t('preview_regular_listing')}
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.previewDesc}>
+                        {t('normal_note')}
+                      </Text>
+                      <SeperateTutionCard
+                        tag={uniname}
+                        infoTitle={titleValue}
+                        rating={storedForm[12]?.value || '4.5'}
+                        inforTitlePrice={priceText}
+                        productImage={profile ? { uri: profile } : undefined}
+                        bookmark={false}
+                        showInitials={
+                          !profile || profile === null || profile.trim() === ''
+                        }
+                        isfeature={false}
+                        initialsName={initials}
+                      />
+                    </>
+                  )
+                ) : storedForm[13]?.value === true ||
+                  storedForm[13]?.value === 'true' ? (
+                  <>
+                    <Text allowFontScaling={false} style={styles.newtext}>
+                      {t('preview_featured_listing')}
+                    </Text>
+                    <Text allowFontScaling={false} style={styles.previewDesc}>
+                      {t('feature_note')}
+                    </Text>
+                    <PreviewCard
+                      tag={uniname}
+                      infoTitle={titleValue}
+                      inforTitlePrice={priceText}
+                      rating={storedForm[12]?.value || '4.5'}
+                      productImage={
+                        imageArray.length > 0
+                          ? { uri: imageArray[0].uri }
+                          : require('../../../assets/images/drone.png')
+                      }
+                    />
+                    <Text allowFontScaling={false} style={styles.newtext1}>
+                      {t('preview_regular_listing')}
+                    </Text>
+                    <Text allowFontScaling={false} style={styles.previewDesc}>
+                      {t('normal_note')}
+                    </Text>
+                    <NewFeatureCard
+                      tag={uniname}
+                      infoTitle={titleValue}
+                      inforTitlePrice={priceText}
+                      rating={storedForm[12]?.value || '4.5'}
+                      productImage={
+                        imageArray.length > 0
+                          ? { uri: imageArray[0].uri }
+                          : require('../../../assets/images/drone.png')
+                      }
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Text allowFontScaling={false} style={styles.newtext1}>
+                      {t('preview_regular_listing')}
+                    </Text>
+                    <Text allowFontScaling={false} style={styles.previewDesc}>
+                      {t('normal_note')}
+                    </Text>
+                    <NewProductCard
+                      tag={uniname}
+                      infoTitle={titleValue}
+                      inforTitlePrice={priceText}
+                      rating={storedForm[12]?.value || '4.5'}
+                      productImage={
+                        imageArray.length > 0
+                          ? { uri: imageArray[0].uri }
+                          : require('../../../assets/images/drone.png')
+                      }
+                    />
+                  </>
+                )}
+              </>
+            ) : (
+              <Text
+                allowFontScaling={false}
+                style={{ color: '#fff', textAlign: 'center' }}
+              >
+                {t('loading')}
+              </Text>
+            )}
+
+           
+          </View>
+        </AnimatedReanimated.ScrollView>
+
+         {categoryId !== 4 && (
+              <View style={[styles.textbg,{marginBottom:100}]}>
+                <Image
+                  source={require('../../../assets/images/info_icon.png')}
+                  style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+                />
+                <View style={{ flex: 1 }}>
+                  <Text allowFontScaling={false} style={styles.importantText1}>
+                    {t('important')}
+                  </Text>
+                  <Text allowFontScaling={false} style={styles.importantText}>
+                    {t('a')}
+                    <Text allowFontScaling={false} style={styles.importantText1}>
+                      {' '}
+                      {Math.trunc(commission)}%
+                    </Text>{' '}
+                    {t('commission_or_maximum')}
+                    <Text allowFontScaling={false} style={styles.importantText}>(</Text>
+                    <Text allowFontScaling={false} style={styles.importantText}>
+                      {' '}{t('capped')}{' '}
+                    </Text>
+                    <Text allowFontScaling={false} style={styles.importantText1}>
+                      £{Math.trunc(maxCapPound)}
+                    </Text>
+                    <Text allowFontScaling={false} style={styles.importantText}>)</Text>
+                    {' '}{t('whichever_lower')}
+                  </Text>
+                </View>
+              </View>
+            )}
+
+        <View style={styles.bottomFixed}>
+          <Button
+            title={t('next')}
+            onPress={() => navigation.navigate('PreviewDetailed')}
+          />
+        </View>
+      </View>
+
+    <NewCustomToastContainer />
+  </ImageBackground>
+);
+
 };
 
 const styles = StyleSheet.create({
 
   previewDesc: {
-  marginTop: 2,
-  marginBottom: 8,
-  color: '#ccc',
-  fontSize: 12,
-  fontFamily: 'Urbanist-Medium',
-  fontWeight: 500,
-},
+    marginTop: 2,
+    marginBottom: 8,
+    color: '#ccc',
+    fontSize: 12,
+    fontFamily: 'Urbanist-Medium',
+    fontWeight: 500,
+  },
   backButtonContainer: {
     position: 'absolute',
     left: 16,
@@ -561,7 +867,7 @@ const styles = StyleSheet.create({
   //   backgroundColor: 'rgba(255, 255, 255, 0.1)',
   // },
 
-   blurButtonWrapper: {
+  blurButtonWrapper: {
     width: 48,
     height: 48,
     borderRadius: 40,

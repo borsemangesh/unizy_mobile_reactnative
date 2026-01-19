@@ -379,18 +379,33 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                 finalValue = param.param_value ?? '';
               }
 
+              // if (fieldType === 'dropdown') {
+              //   const selectedOption = param.options?.find(
+              //     (opt: any) =>
+              //       Number(opt.option_id ?? opt.id) === Number(finalValue),
+              //   );
+
+              //   initialValues[param.id] = {
+              //     ...baseField,
+              //     value: finalValue ? Number(finalValue) : null,
+              //     other_text: selectedOption?.other_text ?? null,
+              //   };
+              // }
+
               if (fieldType === 'dropdown') {
-                const selectedOption = param.options?.find(
-                  (opt: any) =>
-                    Number(opt.option_id ?? opt.id) === Number(finalValue),
-                );
+                const isMulti = Array.isArray(finalValue);
 
                 initialValues[param.id] = {
                   ...baseField,
-                  value: finalValue ? Number(finalValue) : null,
-                  other_text: selectedOption?.other_text ?? null,
+                  value: isMulti
+                    ? finalValue.map(Number)        // ✅ keep array
+                    : finalValue
+                      ? Number(finalValue)
+                      : null,
+                  other_text: null,
                 };
-              } else {
+              }
+              else {
                 initialValues[param.id] = {
                   ...baseField,
                   value: finalValue,
@@ -2513,7 +2528,7 @@ const styles = StyleSheet.create({
   },
   uploadButton: {
     height: 44,
-    gap: 10,
+    gap: 2,
     marginTop: 2,
     alignSelf: 'stretch',
     borderRadius: 12,
