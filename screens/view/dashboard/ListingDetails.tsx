@@ -263,6 +263,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
       } else {
         setLoading(false);
         setShowPopup1(false);
+        setOtp(['', '', '', '', '', '']); 
 
         showToast(t(data?.message), 'error');
       }
@@ -551,7 +552,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     }
                   })()}
                   <View style={{ marginLeft: 10, gap: 8 }}>
-                    <View style={{width: '88%'}}>
+                    <View style={{ width: '88%' }}>
                       <Text
                         numberOfLines={2}
                         allowFontScaling={false}
@@ -780,6 +781,10 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                           onPress={() => {
                             setSelectedOrderId(buyer.orderid);
                             setprice(buyer.originalprice);
+                            setOtp(['', '', '', '', '', '']);   // 🔥 clear previous OTP
+                            setTimeout(() => {
+                              inputs.current[0]?.focus();       // optional: auto focus first box
+                            }, 200);
                             setShowPopup1(true);
                           }}
                         >
@@ -1047,7 +1052,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                   <View style={styles.otpContainer}>
                     {[0, 1, 2, 3, 4, 5].map((_, index) => (
                       <TextInput
-                      cursorColor='#fff'
+                        cursorColor='#fff'
                         value={otp[index]}
                         key={index}
                         ref={ref => {
@@ -1258,7 +1263,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 
 const styles = StyleSheet.create({
 
-   reportButtonCard: {
+  reportButtonCard: {
     flexDirection: 'row',
     marginBottom: 6,
     borderRadius: 12,
