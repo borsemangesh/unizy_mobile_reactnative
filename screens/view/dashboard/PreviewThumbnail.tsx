@@ -4,7 +4,6 @@ import {
   Image,
   ImageBackground,
   Platform,
-  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
@@ -69,7 +68,7 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
 
   const [storedForm, setStoredForm] = useState<any | null>(null);
   const [categoryDetails, setCategoryDetails] = useState<CategoryDetailsType | null>(null);
-  const [uniname, setUniname] = useState<string>(''); // initialize with empty string
+  const [uniname, setUniname] = useState<string>('');
   const [categoryId, setCategoryId] = useState<number | null>(null);
 
   const [fullName, setFullName] = useState('');
@@ -77,7 +76,6 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
   const [profile, setProfile] = useState('');
 
   const { height } = Dimensions.get('window');
-  const bottomPadding = height * 0.0005;
 
   const [slideUp1] = useState(new Animated.Value(0));
 
@@ -92,7 +90,7 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
 
   const animatedBlurStyle = useAnimatedStyle(() => {
     'worklet';
-    const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+    const opacity = interpolate(scrollY.value, [0, 14], [0, 1], 'clamp');
     return { opacity };
   });
 
@@ -100,23 +98,24 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
     'worklet';
     const borderColor = interpolateColor(
       scrollY.value,
-      [0, 300],
-      ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+      [0, 14],
+      ['rgba(255, 255, 255, 0.02)', 'rgba(255, 255, 255, 0.56)'],
     );
-    const redOpacity = interpolate(scrollY.value, [0, 100], [0, 0.15], 'clamp');
+    const redOpacity = interpolate(scrollY.value, [0, 2], [0, 0.05], 'clamp');
     return {
       borderColor,
       backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
     };
   });
+  
 
   const animatedIconStyle = useAnimatedStyle(() => {
     'worklet';
     const opacity = interpolate(scrollY.value, [0, 100], [0.8, 1], 'clamp');
     const tintColor = interpolateColor(
       scrollY.value,
-      [0, 150],
-      ['#FFFFFF', '#002050'],
+      [0, 10],
+      ['rgba(255, 255, 255, 0.82)', '#002050'],
     );
     return {
       opacity,
@@ -284,7 +283,9 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
         {/* Header Content */}
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
-            onPress={() => { navigation.goBack(); }}
+            onPress={() => {
+              navigation.goBack();
+            }}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
@@ -346,27 +347,23 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
             alignItems: 'center',
             justifyContent: 'center',
             paddingTop: Platform.OS === 'ios' ? 100 : 100,
-            paddingBottom: 180,
+            paddingBottom: 100,
           }}
           onScroll={scrollHandler}
-
         >
-
           <View style={styles.productCarddisplay}>
             {storedForm ? (
               <>
                 {categoryId === 2 || categoryId === 5 ? (
-                  storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
+                  storedForm[13]?.value === true ||
+                  storedForm[13]?.value === 'true' ? (
                     <>
-                      <Text
-                        allowFontScaling={false}
-                        style={styles.newtext}
-                      >
+                      <Text allowFontScaling={false} style={styles.newtext}>
                         {t('preview_featured_listing')}
                       </Text>
-                      {/* <Text allowFontScaling={false} style={styles.previewDesc}>
+                      <Text allowFontScaling={false} style={styles.previewDesc}>
                         {t('feature_note')}
-                      </Text> */}
+                      </Text>
                       <NewTutitionCard
                         tag={uniname}
                         title={titleValue}
@@ -377,15 +374,12 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                         isBookmarked={false}
                       />
 
-                      <Text
-                        allowFontScaling={false}
-                        style={styles.newtext1}
-                      >
+                      <Text allowFontScaling={false} style={styles.newtext1}>
                         {t('preview_regular_listing')}
                       </Text>
-                      {/* <Text allowFontScaling={false} style={styles.previewDesc}>
+                      <Text allowFontScaling={false} style={styles.previewDesc}>
                         {t('normal_note')}
-                      </Text> */}
+                      </Text>
                       <SeperateTutionCard
                         tag={uniname}
                         infoTitle={titleValue}
@@ -393,42 +387,45 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                         inforTitlePrice={priceText}
                         productImage={{ uri: profile }}
                         bookmark={false}
-                        showInitials={!profile || profile === null || profile.trim() === ''}
-                        isfeature={true} initialsName={initials} />
+                        showInitials={
+                          !profile || profile === null || profile.trim() === ''
+                        }
+                        isfeature={true}
+                        initialsName={initials}
+                      />
                     </>
                   ) : (
-                    <><Text
-                        allowFontScaling={false}
-                        style={styles.newtext1}
-                      >
+                    <>
+                      <Text allowFontScaling={false} style={styles.newtext1}>
                         {t('preview_regular_listing')}
-
                       </Text>
-                      {/* <Text allowFontScaling={false} style={styles.previewDesc}>
-                          {t('normal_note')}
-                        </Text> */}
-                        <SeperateTutionCard
-                          tag={uniname}
-                          infoTitle={titleValue}
-                          rating={storedForm[12]?.value || '4.5'}
-                          inforTitlePrice={priceText}
-                          productImage={profile ? { uri: profile } : undefined}
-                          bookmark={false}
-                          showInitials={!profile || profile === null || profile.trim() === ''}
-                          isfeature={false} initialsName={initials} /></>
+                      <Text allowFontScaling={false} style={styles.previewDesc}>
+                        {t('normal_note')}
+                      </Text>
+                      <SeperateTutionCard
+                        tag={uniname}
+                        infoTitle={titleValue}
+                        rating={storedForm[12]?.value || '4.5'}
+                        inforTitlePrice={priceText}
+                        productImage={profile ? { uri: profile } : undefined}
+                        bookmark={false}
+                        showInitials={
+                          !profile || profile === null || profile.trim() === ''
+                        }
+                        isfeature={false}
+                        initialsName={initials}
+                      />
+                    </>
                   )
-                ) 
-                : storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
+                ) : storedForm[13]?.value === true ||
+                  storedForm[13]?.value === 'true' ? (
                   <>
-                    <Text
-                        allowFontScaling={false}
-                        style={styles.newtext}
-                      >
-                        {t('preview_featured_listing')}
-                      </Text>
-                      {/* <Text allowFontScaling={false} style={styles.previewDesc}>
-                        {t('feature_note')}
-                      </Text> */}
+                    <Text allowFontScaling={false} style={styles.newtext}>
+                      {t('preview_featured_listing')}
+                    </Text>
+                    <Text allowFontScaling={false} style={styles.previewDesc}>
+                      {t('feature_note')}
+                    </Text>
                     <PreviewCard
                       tag={uniname}
                       infoTitle={titleValue}
@@ -440,15 +437,12 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                           : require('../../../assets/images/drone.png')
                       }
                     />
-                    <Text
-                        allowFontScaling={false}
-                        style={styles.newtext1}
-                      >
-                        {t('preview_regular_listing')}
-                      </Text>
-                      {/* <Text allowFontScaling={false} style={styles.previewDesc}>
-                        {t('normal_note')}
-                      </Text> */}
+                    <Text allowFontScaling={false} style={styles.newtext1}>
+                      {t('preview_regular_listing')}
+                    </Text>
+                    <Text allowFontScaling={false} style={styles.previewDesc}>
+                      {t('normal_note')}
+                    </Text>
                     <NewFeatureCard
                       tag={uniname}
                       infoTitle={titleValue}
@@ -462,22 +456,25 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                     />
                   </>
                 ) : (
-                  <><Text
-                        allowFontScaling={false}
-                        style={styles.newtext1}
-                      >
-                        {t('preview_regular_listing')}
-                      {/* </Text><Text allowFontScaling={false} style={styles.previewDesc}>
-                          {t('normal_note')} */}
-                        </Text>
-                        <NewProductCard
-                          tag={uniname}
-                          infoTitle={titleValue}
-                          inforTitlePrice={priceText}
-                          rating={storedForm[12]?.value || '4.5'}
-                          productImage={imageArray.length > 0
-                            ? { uri: imageArray[0].uri }
-                            : require('../../../assets/images/drone.png')} /></>
+                  <>
+                    <Text allowFontScaling={false} style={styles.newtext1}>
+                      {t('preview_regular_listing')}
+                    </Text>
+                    <Text allowFontScaling={false} style={styles.previewDesc}>
+                      {t('normal_note')}
+                    </Text>
+                    <NewProductCard
+                      tag={uniname}
+                      infoTitle={titleValue}
+                      inforTitlePrice={priceText}
+                      rating={storedForm[12]?.value || '4.5'}
+                      productImage={
+                        imageArray.length > 0
+                          ? { uri: imageArray[0].uri }
+                          : require('../../../assets/images/drone.png')
+                      }
+                    />
+                  </>
                 )}
               </>
             ) : (
@@ -488,46 +485,53 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                 {t('loading')}
               </Text>
             )}
+
+            {categoryId !== 4 && (
+              <View style={styles.textbg}>
+                <Image
+                  source={require('../../../assets/images/info_icon.png')}
+                  style={{
+                    width: 16,
+                    height: 16,
+                    marginRight: 8,
+                    marginTop: 2,
+                  }}
+                />
+                <View style={{ flex: 1 }}>
+                  <Text allowFontScaling={false} style={styles.importantText1}>
+                    {t('important')}
+                  </Text>
+                  <Text allowFontScaling={false} style={styles.importantText}>
+                    {t('a')}
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.importantText1}
+                    >
+                      {' '}
+                      {categoryDetails?.commission ?? '0'}%
+                    </Text>{' '}
+                    {t('commission_or_maximum')}
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.importantText1}
+                    >
+                      {' '}
+                      £{categoryDetails?.max_cappund ?? '0'}{' '}
+                    </Text>
+                    {t('whichever_lower')}
+                  </Text>
+                </View>
+              </View>
+            )}
           </View>
-          
         </AnimatedReanimated.ScrollView>
 
-   
         <View style={styles.bottomFixed}>
-
- {categoryId !== 4 && (
-          <View style={styles.textbg}>
-            <Image
-              source={require('../../../assets/images/info_icon.png')}
-              style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
-            />
-            <View style={{ flex: 1 }}>
-              <Text allowFontScaling={false} style={styles.importantText1}>
-                {t('important')}
-              </Text>
-              <Text allowFontScaling={false} style={styles.importantText}>
-                {t('a')}
-                <Text allowFontScaling={false} style={styles.importantText1}>
-                  {' '}
-                  {categoryDetails?.commission ?? '0'}%
-                </Text>{' '}
-                {t('commission_or_maximum')}
-                <Text allowFontScaling={false} style={styles.importantText1}>
-                  {' '}
-                  £{categoryDetails?.max_cappund ?? '0'}{' '}
-                </Text>
-                {t('whichever_lower')}
-              </Text>
-            </View>
-          </View>
-           )}
-
           <Button
             title={t('next')}
             onPress={() => navigation.navigate('PreviewDetailed')}
           />
         </View>
-       
       </View>
 
       <NewCustomToastContainer />
@@ -700,7 +704,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ffffff31',
     borderLeftColor: '#ffffff31',
     borderRightColor: '#ffffff31',
-    marginBottom: 80,
+    marginTop: 12
   },
   importantText: {
     color: '#ccc',

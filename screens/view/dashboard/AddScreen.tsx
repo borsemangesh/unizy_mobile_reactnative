@@ -117,6 +117,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     ismultilple: boolean;
     fieldId?: number;
     fieldLabel?: string;
+    placeholder?:string;
   }>({ visible: false, ismultilple: false });
 
   type UploadedImage = {
@@ -986,6 +987,7 @@ const scrollY = useScrollViewOffset(scrollRef);
                   ismultilple: !!field.param.ismultilple,
                   fieldId: id,
                   fieldLabel: field.param.field_name,
+                  placeholder: field.param.placeholder,
                 });
                 setMultiSelectOptions(options);
               }}
@@ -1021,7 +1023,6 @@ const scrollY = useScrollViewOffset(scrollRef);
                         {selectedCount > 0
                         ? `${selectedCount} ${t('selected')}`
                         : `${placeholder}` }
-                        
                     </Text>
                   );
                 })()}
@@ -1206,7 +1207,7 @@ const scrollY = useScrollViewOffset(scrollRef);
                 }}
               >
                 <Text
-                allowFontScaling ={false}
+                  allowFontScaling ={false}
                   style={[
                     styles.dropdowntext,
                     { color: endDate ? '#fff' : 'rgba(255,255,255,0.6)' },
@@ -1821,15 +1822,24 @@ const scrollY = useScrollViewOffset(scrollRef);
             options={multiSelectOptions}
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
-            title={`${t('select')} ${t(
-              multiSelectModal?.fieldLabel || 'category',
-            )}`}
+            // title={`${t('select')} ${t(
+            //   multiSelectModal?.fieldLabel || 'category',
+            // )}`}
+            title={multiSelectModal.placeholder}
+            // subtitle={
+            //   multiSelectModal?.ismultilple
+            //     ? `${t('pick_all')} ${pluralizeLabel(
+            //       multiSelectModal?.fieldLabel || 'category',
+            //     )} ${t('best_describe')}`
+            //     : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'
+            //     } ${t('that_fit_your_listing')}`
+            // }
             subtitle={
               multiSelectModal?.ismultilple
                 ? `${t('pick_all')} ${pluralizeLabel(
                   multiSelectModal?.fieldLabel || 'category',
                 )} ${t('best_describe')}`
-                : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'
+                : ` ${multiSelectModal?.placeholder || 'category'
                 } ${t('that_fit_your_listing')}`
             }
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
@@ -1854,15 +1864,26 @@ const scrollY = useScrollViewOffset(scrollRef);
             options={multiSelectOptions}
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
-            title={`${t('select')} ${t(
-              multiSelectModal?.fieldLabel || 'category',
-            )}`}
+            // title={`${t('select')} ${t(
+            //   multiSelectModal?.fieldLabel || 'category',
+            // )}`}
+
+            title={multiSelectModal.placeholder}
+            // subtitle={
+            //   multiSelectModal?.ismultilple
+            //     ? `${t('pick_all')} ${pluralizeLabel(
+            //       multiSelectModal?.fieldLabel || 'category',
+            //     )} ${t('best_describe')}`
+            //     : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'
+            //     } ${t('that_fit_your_listing')}`
+            // }
+
             subtitle={
               multiSelectModal?.ismultilple
                 ? `${t('pick_all')} ${pluralizeLabel(
                   multiSelectModal?.fieldLabel || 'category',
                 )} ${t('best_describe')}`
-                : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'
+                : ` ${multiSelectModal?.placeholder || 'category'
                 } ${t('that_fit_your_listing')}`
             }
             selectedValues={formValues[multiSelectModal.fieldId!]?.value}
@@ -2125,6 +2146,7 @@ crossIcon: {
     fontStyle: 'normal',
     color: 'rgba(255, 255, 255, 0.48)',
     includeFontPadding: false,
+    flexShrink: 1, 
   },
 
   eyeIcon1: {
@@ -2523,6 +2545,7 @@ crossIcon: {
     padding: 12,
     height: 44,
     textAlign: 'center',
+    flex: 1,
   },
 
   pickerStyle: {

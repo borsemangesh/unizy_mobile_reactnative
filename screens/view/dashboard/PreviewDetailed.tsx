@@ -180,7 +180,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
   const animatedBlurStyle = useAnimatedStyle(() => {
     'worklet';
-    const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+    const opacity = interpolate(scrollY.value, [0, 90], [0, 1], 'clamp');
     return { opacity };
   });
 

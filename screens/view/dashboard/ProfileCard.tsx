@@ -462,56 +462,56 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                 <TouchableOpacity
                   style={styles.loginButton}
                   onPress={async () => {
-                    try {
-                      // const deviceId = await DeviceInfo.getUniqueId();
-                      // const user_id = await AsyncStorage.getItem('userId'); 
+                    // try {
+                    //   const deviceId = await DeviceInfo.getUniqueId();
+                    //   const user_id = await AsyncStorage.getItem('userId'); 
 
-                      // const body = {
-                      //   device_type: (Platform.OS === 'ios') ? 'ios' : 'android',
-                      //   device_id: deviceId,
-                      //   user_id: Number(user_id),
-                      // };
+                    //   const body = {
+                    //     device_type: (Platform.OS === 'ios') ? 'ios' : 'android',
+                    //     device_id: deviceId,
+                    //     user_id: Number(user_id),
+                    //   };
 
-                      // const response = await fetch(`${MAIN_URL.baseUrl}user/delete-fcm-token`, {
-                      //   method: 'POST',
-                      //   headers: {
-                      //     'Content-Type': 'application/json',
-                      //   },
-                      //   body: JSON.stringify(body),
-                      // });
+                    //   const response = await fetch(`${MAIN_URL.baseUrl}user/delete-fcm-token`, {
+                    //     method: 'POST',
+                    //     headers: {
+                    //       'Content-Type': 'application/json',
+                    //     },
+                    //     body: JSON.stringify(body),
+                    //   });
 
-                      // const apiData = await response.json();
+                    //   const apiData = await response.json();
 
  
 
-                      // if (apiData?.statusCode === 200) {
-                      //   // await AsyncStorage.setItem('userToken', '');
-                      //   // await AsyncStorage.setItem('userData', '');
-                      //   // await AsyncStorage.setItem('userId', '');
-                      //   // await AsyncStorage.setItem('twilio_convo_', '');
-                      //   // await AsyncStorage.setItem('twilio_msg_', '');
+                    //   if (apiData?.statusCode === 200) {
+                    //     await AsyncStorage.setItem('userToken', '');
+                    //     await AsyncStorage.setItem('userData', '');
+                    //     await AsyncStorage.setItem('userId', '');
+                    //     await AsyncStorage.setItem('twilio_convo_', '');
+                    //     await AsyncStorage.setItem('twilio_msg_', '');
                         
-                      //   // try {
-                      //   //   await resetTwilioClient();
-                      //   //   await clearTwilioCache();
-                      //   //   try {
-                      //   //     const messaging = require('@react-native-firebase/messaging').default;
-                      //   //     await messaging().deleteToken();
-                      //   //     if (__DEV__) {
+                    //     try {
+                    //       await resetTwilioClient();
+                    //       await clearTwilioCache();
+                    //       try {
+                    //         const messaging = require('@react-native-firebase/messaging').default;
+                    //         await messaging().deleteToken();
+                    //         if (__DEV__) {
 
-                      //   //     }
-                      //   //   } catch (fcmError) {
-                      //   //     console.warn('⚠️ Error deleting FCM token:', fcmError);
-                      //   //   }
+                    //         }
+                    //       } catch (fcmError) {
+                    //         console.warn('⚠️ Error deleting FCM token:', fcmError);
+                    //       }
 
-                      //   //   if (__DEV__) {
+                    //       if (__DEV__) {
    
-                      //   //   }
-                      //   // } catch (clearError) {
-                      //   //   console.warn('⚠️ Error clearing Twilio data on logout:', clearError);
-                      //   // }
+                    //       }
+                    //     } catch (clearError) {
+                    //       console.warn('⚠️ Error clearing Twilio data on logout:', clearError);
+                    //     }
 
-                      //   // await AsyncStorage.setItem('ISLOGIN', 'false');
+                    //     await AsyncStorage.setItem('ISLOGIN', 'false');
 
                       //   navigation.reset({
                       //     index: 0,
@@ -544,9 +544,9 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                           },
                         ],
                       });
-                    } catch (error) {
-                      console.log("Something went wrong. Try again!");
-                    }
+                    // } catch (error) {
+                    //   console.log("Something went wrong. Try again!");
+                    // }
                   }}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>

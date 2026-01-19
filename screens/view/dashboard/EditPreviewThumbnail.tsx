@@ -100,7 +100,7 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
 
   const animatedBlurStyle = useAnimatedStyle(() => {
     'worklet';
-    const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+    const opacity = interpolate(scrollY.value, [0, 900], [0, 1], 'clamp');
     return { opacity };
   });
 
@@ -108,7 +108,7 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
     'worklet';
     const borderColor = interpolateColor(
       scrollY.value,
-      [0, 300],
+      [0, 900],
       ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
     );
     const redOpacity = interpolate(scrollY.value, [0, 100], [0, 0.15], 'clamp');
@@ -380,13 +380,18 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
 
         <AnimatedReanimated.ScrollView
           scrollEventThrottle={16}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            flexGrow: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingTop: Platform.OS === 'ios' ? 100 : 100,
+            paddingBottom: 100,
+          }}
           onScroll={scrollHandler}
-          contentContainerStyle={[
-            styles.scrollContainer,
-            { paddingBottom: (Platform.OS === 'ios' ? 170 : height * 0.1) },
-          ]}>
+        >
 
-          <View style={styles.productCarddisplay}>
+          {/* <View style={styles.productCarddisplay}>
             {storedForm ? (
               <>
                 {categoryId === 2 || categoryId === 5 ? (
@@ -495,9 +500,9 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                 {t('loading')}
               </Text>
             )}
-          </View>
+          </View> */}
 
-           {/* <View style={styles.productCarddisplay}>
+           <View style={styles.productCarddisplay}>
                       {storedForm ? (
                         <>
                           {categoryId === 2 || categoryId === 5 ? (
@@ -631,13 +636,11 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                           {t('loading')}
                         </Text>
                       )}
-            </View> */}
+            </View>
 
-        </AnimatedReanimated.ScrollView >
 
-        <View style={styles.bottomFixed}>
 
- {categoryId !== 4 && (
+            {categoryId !== 4 && (
           <View style={styles.textbg}>
             <Image
               source={require('../../../assets/images/info_icon.png')}
@@ -663,6 +666,10 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
             </View>
           </View>
            )}
+        </AnimatedReanimated.ScrollView >
+
+        <View style={styles.bottomFixed}>
+
 
           <Button
             title={t('next')}
@@ -683,24 +690,13 @@ const styles = StyleSheet.create({
     //top: 7,
   },
     previewDesc: {
-  marginTop: 2,
-  marginBottom: 8,
-  color: '#ccc',
-  fontSize: 12,
-  fontFamily: 'Urbanist-Medium',
-  fontWeight: 500,
-},
-  // blurButtonWrapper: {
-  //   width: 48,
-  //   height: 48,
-  //   borderRadius: 40,
-  //   overflow: 'hidden',
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   borderWidth: 0.4,
-  //   borderColor: '#ffffff2c',
-  //   backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
-  // },
+    marginTop: 2,
+    marginBottom: 8,
+    color: '#ccc',
+    fontSize: 12,
+    fontFamily: 'Urbanist-Medium',
+    fontWeight: 500,
+  },
    blurButtonWrapper: {
     width: 48,
     height: 48,
@@ -802,7 +798,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ffffff31',
     borderLeftColor: '#ffffff31',
     borderRightColor: '#ffffff31',
-    marginBottom: 80,
+    marginTop: 16,
 
 
 

@@ -290,6 +290,7 @@ const MessagesIndividualScreen = ({
     (async () => {
       try {
         const token = await AsyncStorage.getItem("userToken");
+        console.log("TWILIO TOKEN:", token);
         if (!token) {
           console.warn('Twilio init: No token available');
           return;
@@ -308,6 +309,7 @@ const MessagesIndividualScreen = ({
         }
 
         const data = await response.json();
+        console.log("Twilio token responseDATA:", data);
 
         if (!data?.data?.token) {
           throw new Error('Invalid token response from server');
@@ -315,7 +317,7 @@ const MessagesIndividualScreen = ({
 
         const twilio = await new TwilioChatClient(data.data.token);
 
-
+        console.log('Twilio client initialized: ',twilio);
 
         if (!twilio) {
           throw new Error('Failed to initialize Twilio client');
