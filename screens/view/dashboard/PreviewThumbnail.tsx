@@ -222,6 +222,8 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
   const maxAllowedPrice1 = priceValue1 + maxCap1;
   const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2);
 
+  const commission = parseFloat(categoryDetails?.commission ?? '0');
+  const maxCapPound = parseFloat(categoryDetails?.max_cappund ?? '0');
 
   const priceText =
   categoryId === 2
@@ -486,43 +488,36 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
               </Text>
             )}
 
-            {categoryId !== 4 && (
-              <View style={styles.textbg}>
-                <Image
-                  source={require('../../../assets/images/info_icon.png')}
-                  style={{
-                    width: 16,
-                    height: 16,
-                    marginRight: 8,
-                    marginTop: 2,
-                  }}
-                />
-                <View style={{ flex: 1 }}>
+{categoryId !== 4 && (
+            <View style={styles.textbg}>
+              <Image
+                source={require('../../../assets/images/info_icon.png')}
+                style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+              />
+              <View style={{ flex: 1 }}>
+                <Text allowFontScaling={false} style={styles.importantText1}>
+                  {t('important')}
+                </Text>
+                <Text allowFontScaling={false} style={styles.importantText}>
+                  {t('a')}
                   <Text allowFontScaling={false} style={styles.importantText1}>
-                    {t('important')}
-                  </Text>
+                    {' '}
+                    {Math.trunc(commission)}%
+                  </Text>{' '}
+                  {t('commission_or_maximum')}
+                  <Text allowFontScaling={false} style={styles.importantText}>(</Text>
                   <Text allowFontScaling={false} style={styles.importantText}>
-                    {t('a')}
-                    <Text
-                      allowFontScaling={false}
-                      style={styles.importantText1}
-                    >
-                      {' '}
-                      {categoryDetails?.commission ?? '0'}%
-                    </Text>{' '}
-                    {t('commission_or_maximum')}
-                    <Text
-                      allowFontScaling={false}
-                      style={styles.importantText1}
-                    >
-                      {' '}
-                      £{categoryDetails?.max_cappund ?? '0'}{' '}
-                    </Text>
-                    {t('whichever_lower')}
+                    {' '}{t('capped')}{' '}
                   </Text>
-                </View>
+                  <Text allowFontScaling={false} style={styles.importantText1}>
+                    £{Math.trunc(maxCapPound)}
+                  </Text>
+                  <Text allowFontScaling={false} style={styles.importantText}>)</Text>
+                  {' '}{t('whichever_lower')}
+                </Text>
               </View>
-            )}
+            </View>
+          )}
           </View>
         </AnimatedReanimated.ScrollView>
 

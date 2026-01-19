@@ -237,8 +237,8 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
 
         if (json?.metadata) {
           if (json.metadata.category) {
-            setFeatureFee(json.metadata.category.feature_fee ?? '0'),
-              setMaxFeatureCap(json.metadata.category.max_feature_cap ?? '0');
+            setFeatureFee(Number(json.metadata.category.feature_fee ?? '0'));
+            setMaxFeatureCap(Number(json.metadata.category.max_feature_cap ?? '0'));
           }
           setUserMeta({
             firstname: json.metadata.firstname ?? null,
@@ -1436,6 +1436,23 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                 style={{ width: 13, height: 13, marginRight: 8, marginTop: 2 }}
               />
 
+              {/* <View style={{ flex: 1 }}>
+                <Text allowFontScaling={false} style={styles.importantText1}>
+                  {t('important')}
+                </Text>
+                <Text allowFontScaling={false} style={styles.importantText}>
+                  {t('featured_listing_note_1')}{' '}
+                  <Text allowFontScaling={false} style={styles.importantText1}>
+                    {Math.trunc(featureFee)}%
+                  </Text>{' '}
+                  {t('featured_listing_fee_percentage')}{' '}
+                  <Text allowFontScaling={false} style={styles.importantText1}>
+                    £{Math.trunc(maxFeatureCap)} {''}
+                  </Text>
+                  {''}
+                  {t('featured_listing_fee_cap')}
+                </Text>
+              </View> */}
               <View style={{ flex: 1 }}>
                 <Text allowFontScaling={false} style={styles.importantText1}>
                   {t('important')}
@@ -1443,13 +1460,18 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                 <Text allowFontScaling={false} style={styles.importantText}>
                   {t('featured_listing_note_1')}{' '}
                   <Text allowFontScaling={false} style={styles.importantText1}>
-                    {featureFee}%
+                    {Math.trunc(featureFee)}%
                   </Text>{' '}
                   {t('featured_listing_fee_percentage')}{' '}
-                  <Text allowFontScaling={false} style={styles.importantText1}>
-                    £{maxFeatureCap}{' '}
+                  <Text allowFontScaling={false} style={styles.importantText}>(</Text>
+                  <Text allowFontScaling={false} style={styles.importantText}>
+                    {t('capped')}{' '}
                   </Text>
-                  {''}
+                  <Text allowFontScaling={false} style={styles.importantText1}>
+                    £{Math.trunc(maxFeatureCap)}
+                  </Text>
+                  <Text allowFontScaling={false} style={styles.importantText}>)</Text>
+                  {' '}
                   {t('featured_listing_fee_cap')}
                 </Text>
               </View>

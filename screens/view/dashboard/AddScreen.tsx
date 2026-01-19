@@ -136,11 +136,11 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const [slideUp1] = useState(new Animated.Value(0));
 
   //const scrollY = useSharedValue(0);
-const scrollRef = useAnimatedRef<any>();
-const scrollY = useScrollViewOffset(scrollRef);
+  const scrollRef = useAnimatedRef<any>();
+  const scrollY = useScrollViewOffset(scrollRef);
 
   const AnimatedNestableScroll =
-  Animated.createAnimatedComponent(NestableScrollContainer);
+    Animated.createAnimatedComponent(NestableScrollContainer);
 
   // const scrollHandler = useAnimatedScrollHandler({
   //   onScroll: event => {
@@ -340,8 +340,8 @@ const scrollY = useScrollViewOffset(scrollRef);
         if (json?.metadata) {
           if (json.metadata.category) {
             // Convert null or undefined to 0
-            setFeatureFee(json.metadata.category.feature_fee ?? '0');
-            setMaxFeatureCap(json.metadata.category.max_feature_cap ?? '0');
+            setFeatureFee(Number(json.metadata.category.feature_fee ?? '0'));
+            setMaxFeatureCap(Number(json.metadata.category.max_feature_cap ?? '0'));
           }
           setUserMeta({
             firstname: json.metadata.firstname ?? null,
@@ -748,7 +748,7 @@ const scrollY = useScrollViewOffset(scrollRef);
           text: 'Gallery',
           onPress: () => {
             const remainingSlots = MAX_IMAGES - uploadedImages.length;
-        
+
             if (remainingSlots <= 0) {
               showToast(
                 `${t(Constant.MAXIMUM)} ${MAX_IMAGES} ${t(Constant.IMAGE_ALLOWED)}`,
@@ -756,7 +756,7 @@ const scrollY = useScrollViewOffset(scrollRef);
               );
               return;
             }
-        
+
             launchImageLibrary(
               {
                 mediaType: 'photo',
@@ -766,7 +766,7 @@ const scrollY = useScrollViewOffset(scrollRef);
               response => {
                 if (response.didCancel) return;
                 if (!response.assets) return;
-        
+
                 // Safety check (Android sometimes ignores selectionLimit)
                 if (response.assets.length > remainingSlots) {
                   showToast(
@@ -775,13 +775,13 @@ const scrollY = useScrollViewOffset(scrollRef);
                   );
                   return;
                 }
-        
+
                 const images = response.assets.map(asset => ({
                   id: `${Date.now()}-${Math.random()}`,
                   uri: asset.uri!,
                   name: asset.fileName || 'Image',
                 }));
-        
+
                 setUploadedImages(prev => [...prev, ...images]);
               },
             );
@@ -830,7 +830,7 @@ const scrollY = useScrollViewOffset(scrollRef);
     switch (fieldType) {
       case 'text': {
         const { param } = field;
-        const { field_name, keyboardtype, alias_name,placeholder } = param;
+        const { field_name, keyboardtype, alias_name, placeholder } = param;
 
         const rawValue = formValues[param.id]?.value || '';
 
@@ -842,7 +842,7 @@ const scrollY = useScrollViewOffset(scrollRef);
         //     : `${t('enter')} ${field_name}`;
 
         const placeholderText = placeholder ? placeholder : `${t('enter')} ${field_name}`;
-          
+
 
         let rnKeyboardType:
           | 'default'
@@ -913,7 +913,7 @@ const scrollY = useScrollViewOffset(scrollRef);
 
       case 'multi-line-text': {
         const { param } = field;
-        const { field_name, keyboardtype, alias_name,placeholder } = param;
+        const { field_name, keyboardtype, alias_name, placeholder } = param;
         // const placeholderText =
         //   alias_name?.toLowerCase() === 'price'
         //     ? `£ ${t('enter')} ${field_name}`
@@ -1008,8 +1008,8 @@ const scrollY = useScrollViewOffset(scrollRef);
                   const selectedCount = Array.isArray(selectedValue)
                     ? selectedValue.length
                     : selectedValue != null
-                    ? 1
-                    : 0;
+                      ? 1
+                      : 0;
 
                   return (
                     <Text
@@ -1020,7 +1020,7 @@ const scrollY = useScrollViewOffset(scrollRef);
                       {/* {selectedCount > 0
                         ? `${selectedCount} ${t('selected')}`
                         : `${t('select')} ${field_name}`} */}
-                        {selectedCount > 0
+                      {selectedCount > 0
                         ? `${selectedCount} ${t('selected')}`
                         : `${placeholder}` }
                     </Text>
@@ -1077,8 +1077,8 @@ const scrollY = useScrollViewOffset(scrollRef);
                         });
                       }}
                     >
-                    
-                       <View style={styles.categoryTagContainer}>
+
+                      <View style={styles.categoryTagContainer}>
                         <Text allowFontScaling={false} style={styles.categoryTagText}>
                           {opt.option_name}
                           {opt.is_other && formValues[id]?.otherText
@@ -1142,9 +1142,9 @@ const scrollY = useScrollViewOffset(scrollRef);
                   autoscrollSpeed={30}
                   onDragEnd={({ data }) => setUploadedImages(data)}
                   contentContainerStyle={{
-                      flexGrow: 1,
-                      justifyContent: 'center',
-                    }}
+                    flexGrow: 1,
+                    justifyContent: 'center',
+                  }}
                   containerStyle={{
                     minHeight: Platform.select({
                       ios: 60,
@@ -1258,16 +1258,30 @@ const scrollY = useScrollViewOffset(scrollRef);
                 <Text allowFontScaling={false} style={styles.importantText}>
                   {t('featured_listing_note_1')}{' '}
                   <Text allowFontScaling={false} style={styles.importantText1}>
-                    {featureFee}%
+                    {Math.trunc(featureFee)}%
                   </Text>{' '}
                   {t('featured_listing_fee_percentage')}{' '}
-                  <Text allowFontScaling={false} style={styles.importantText1}>
-                    £{maxFeatureCap} {''}
+
+                  {/* <Text allowFontScaling={false} style={styles.importantText1}>
+                    {'('}
+                    <Text style={styles.importantText}>{t('capped')} </Text>
+                    £{Math.trunc(maxFeatureCap)}
+                    {')'}
+                  </Text> */}
+
+                  <Text allowFontScaling={false} style={styles.importantText}>(</Text>
+                  <Text allowFontScaling={false} style={styles.importantText}>
+                    {t('capped')}{' '}
                   </Text>
-                  {''}
+                  <Text allowFontScaling={false} style={styles.importantText1}>
+                    £{Math.trunc(maxFeatureCap)}
+                  </Text>
+                  <Text allowFontScaling={false} style={styles.importantText}>)</Text>
+                  {' '}
                   {t('featured_listing_fee_cap')}
                 </Text>
               </View>
+
             </View>
           </View>
         );
@@ -1467,17 +1481,17 @@ const scrollY = useScrollViewOffset(scrollRef);
         ) : (
           <View
             style={{ flex: 1 }}
-            //behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          //behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           >
             <NestableScrollContainer
-            nestedScrollEnabled
-            ref={scrollRef}
-            scrollEventThrottle={16}
-            // onScroll={scrollHandler}
-            contentContainerStyle={[
-              styles.scrollContainer,
-              { paddingBottom: height * 0.1 }, // 0.05% of screen height
-            ]}>
+              nestedScrollEnabled
+              ref={scrollRef}
+              scrollEventThrottle={16}
+              // onScroll={scrollHandler}
+              contentContainerStyle={[
+                styles.scrollContainer,
+                { paddingBottom: height * 0.1 }, // 0.05% of screen height
+              ]}>
               {/* <AnimatedReanimated.ScrollView
                 scrollEventThrottle={16}
                 onScroll={scrollHandler}
@@ -1486,123 +1500,123 @@ const scrollY = useScrollViewOffset(scrollRef);
                   { paddingBottom: height * 0.1 }, // 0.05% of screen height
                 ]}
               > */}
-                <View style={styles.userRow}>
+              <View style={styles.userRow}>
+                <View
+                  style={{
+                    width: '20%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {userMeta?.profile ? (
+                    <Image
+                      source={{ uri: userMeta.profile }}
+                      style={styles.avatar}
+                    />
+                  ) : (
+                    <View style={styles.initialsCircle}>
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.initialsText}
+                      >
+                        {getInitials(
+                          userMeta?.firstname ?? 'Alan',
+                          userMeta?.lastname ?? 'Walker',
+                        )}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+
+                <View style={{ width: '80%' }}>
+                  <Text allowFontScaling={false} style={styles.userName}>
+                    {userMeta
+                      ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''
+                        }`.trim()
+                      : 'Alan Walker'}
+                  </Text>
+
                   <View
                     style={{
-                      width: '20%',
-                      alignItems: 'center',
-                      justifyContent: 'center',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      display: 'flex',
+                      alignItems: 'stretch',
                     }}
                   >
-                    {userMeta?.profile ? (
-                      <Image
-                        source={{ uri: userMeta.profile }}
-                        style={styles.avatar}
-                      />
-                    ) : (
-                      <View style={styles.initialsCircle}>
-                        <Text
-                          allowFontScaling={false}
-                          style={styles.initialsText}
-                        >
-                          {getInitials(
-                            userMeta?.firstname ?? 'Alan',
-                            userMeta?.lastname ?? 'Walker',
-                          )}
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-
-                  <View style={{ width: '80%' }}>
-                    <Text allowFontScaling={false} style={styles.userName}>
-                      {userMeta
-                        ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''
-                          }`.trim()
-                        : 'Alan Walker'}
+                    <Text allowFontScaling={false} style={styles.userSub}>
+                      {userMeta?.university_name || 'University of Warwick,'}
                     </Text>
-
                     <View
                       style={{
-                        flexDirection: 'column',
+                        flexDirection: 'row',
                         justifyContent: 'space-between',
-                        display: 'flex',
-                        alignItems: 'stretch',
                       }}
                     >
-                      <Text allowFontScaling={false} style={styles.userSub}>
-                        {userMeta?.university_name || 'University of Warwick,'}
+                      <Text allowFontScaling={false} style={styles.userSub2}>
+                        {userMeta?.city || 'Coventry'}
                       </Text>
                       <View
                         style={{
                           flexDirection: 'row',
-                          justifyContent: 'space-between',
+                          alignItems
+                            : 'center',
+                          gap: 3,
                         }}
                       >
-                        <Text allowFontScaling={false} style={styles.userSub2}>
-                          {userMeta?.city || 'Coventry'}
+                        <Image
+                          source={require('../../../assets/images/calendar_icon1.png')}
+                          style={{ height: 20, width: 20 }}
+                        />
+                        <Text allowFontScaling={false} style={styles.dateText}>
+                          {getCurrentDate(t)}
                         </Text>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            alignItems
-                              : 'center',
-                            gap: 3,
-                          }}
-                        >
-                          <Image
-                            source={require('../../../assets/images/calendar_icon1.png')}
-                            style={{ height: 20, width: 20 }}
-                          />
-                          <Text allowFontScaling={false} style={styles.dateText}>
-                            {getCurrentDate(t)}
-                          </Text>
-                        </View>
                       </View>
                     </View>
                   </View>
                 </View>
+              </View>
 
-                <View style={styles.productdetails}>
-                  <Animated.View
-                    style={{
-                      transform: [{ translateY: slideUp1 }],
-                      opacity: slideUp1.interpolate({
-                        inputRange: [-screenHeight, 0],
-                        outputRange: [0, 1],
-                      }),
-                    }}
+              <View style={styles.productdetails}>
+                <Animated.View
+                  style={{
+                    transform: [{ translateY: slideUp1 }],
+                    opacity: slideUp1.interpolate({
+                      inputRange: [-screenHeight, 0],
+                      outputRange: [0, 1],
+                    }),
+                  }}
+                >
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.productdetailstext}
                   >
-                    <Text
-                      allowFontScaling={false}
-                      style={styles.productdetailstext}
-                    >
-                      {(() => {
-                        switch (productId) {
-                          case 2:
-                            return t('tutoring_service_details');
-                          case 3:
-                            return t('dish_details');
-                          case 4:
-                            return t('rental_details');
-                          case 5:
-                            return t('housekeeping_details');
-                          default:
-                            return t('product_details');
-                        }
-                      })()}
-                    </Text>
+                    {(() => {
+                      switch (productId) {
+                        case 2:
+                          return t('tutoring_service_details');
+                        case 3:
+                          return t('dish_details');
+                        case 4:
+                          return t('rental_details');
+                        case 5:
+                          return t('housekeeping_details');
+                        default:
+                          return t('product_details');
+                      }
+                    })()}
+                  </Text>
 
-                    {fields
-                      .filter(
-                        (f: any) =>
-                          f?.param?.field_type?.toLowerCase() !== 'boolean',
-                      )
-                      .map((field: any) => renderField(field))}
-                  </Animated.View>
-                </View>
-                
-                {featuredField && <View>{renderField(featuredField)}</View>}
+                  {fields
+                    .filter(
+                      (f: any) =>
+                        f?.param?.field_type?.toLowerCase() !== 'boolean',
+                    )
+                    .map((field: any) => renderField(field))}
+                </Animated.View>
+              </View>
+
+              {featuredField && <View>{renderField(featuredField)}</View>}
               {/* </AnimatedReanimated.ScrollView> */}
             </NestableScrollContainer>
           </View>
@@ -1610,40 +1624,119 @@ const scrollY = useScrollViewOffset(scrollRef);
         <Button title={t('preview_details')} onPress={() => handlePreview()} />
       </View>
 
-     {Platform.OS === 'ios' && datePickerVisible && activeDateField && (
-  <Modal transparent animationType="slide">
-    <View style={{ flex: 1, backgroundColor: '#00000066' }}>
-      <TouchableWithoutFeedback
-        onPress={() => {
-          setDatePickerVisible(false);
-          setActiveDateField(null);
-        }}
-      >
-        <View style={{ flex: 1 }} />
-      </TouchableWithoutFeedback>
+      {Platform.OS === 'ios' && datePickerVisible && activeDateField && (
+        <Modal transparent animationType="slide">
+          <View style={{ flex: 1, backgroundColor: '#00000066' }}>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                setDatePickerVisible(false);
+                setActiveDateField(null);
+              }}
+            >
+              <View style={{ flex: 1 }} />
+            </TouchableWithoutFeedback>
 
-      <View style={{ backgroundColor: '#fff' }}>
-        {/* HEADER */}
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            padding: 12,
-            borderBottomWidth: 0.5,
-            borderColor: '#ddd',
-          }}
-        >
-          <TouchableOpacity
-            onPress={() => {
+            <View style={{ backgroundColor: '#fff' }}>
+              {/* HEADER */}
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  padding: 12,
+                  borderBottomWidth: 0.5,
+                  borderColor: '#ddd',
+                }}
+              >
+                <TouchableOpacity
+                  onPress={() => {
+                    setDatePickerVisible(false);
+                    setActiveDateField(null);
+                  }}
+                >
+                  <Text allowFontScaling={false} style={{ color: '#999', fontSize: 16 }}>Cancel</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    const currentValue =
+                      formValues[activeDateField.param.id]?.value || {};
+
+                    if (activeDateField.type === 'start') {
+                      handleValueChange(
+                        activeDateField.param.id,
+                        activeDateField.param.alias_name ??
+                        activeDateField.param.field_name,
+                        {
+                          startDate: tempDate,
+                          endDate:
+                            currentValue.endDate &&
+                              dayjs(currentValue.endDate).isBefore(tempDate)
+                              ? null
+                              : currentValue.endDate,
+                        },
+                      );
+                    } else {
+                      handleValueChange(
+                        activeDateField.param.id,
+                        activeDateField.param.alias_name ??
+                        activeDateField.param.field_name,
+                        {
+                          startDate: currentValue.startDate,
+                          endDate: tempDate,
+                        },
+                      );
+                    }
+
+                    setDatePickerVisible(false);
+                    setActiveDateField(null);
+                  }}
+                >
+                  <Text allowFontScaling={false} style={{ color: '#007AFF', fontSize: 16 }}>Done</Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* DATE PICKER */}
+              <DateTimePicker
+                value={tempDate}
+                mode="date"
+                display="spinner"
+                themeVariant='light'
+                minimumDate={
+                  activeDateField.type === 'end'
+                    ? formValues[activeDateField.param.id]?.value?.startDate ??
+                    new Date()
+                    : new Date()
+                }
+                onChange={(event, selectedDate) => {
+                  if (selectedDate) {
+                    setTempDate(selectedDate);
+                  }
+                }}
+              />
+            </View>
+          </View>
+        </Modal>
+      )}
+
+      {Platform.OS === 'android' && datePickerVisible && activeDateField && (
+        <DateTimePicker
+          value={tempDate}
+          mode="date"
+          display="calendar"
+          minimumDate={
+            activeDateField.type === 'end'
+              ? formValues[activeDateField.param.id]?.value?.startDate ??
+              new Date()
+              : new Date()
+          }
+          onChange={(event, selectedDate) => {
+            if (event.type === 'dismissed') {
               setDatePickerVisible(false);
               setActiveDateField(null);
-            }}
-          >
-            <Text allowFontScaling ={false} style={{ color: '#999', fontSize: 16 }}>Cancel</Text>
-          </TouchableOpacity>
+              return;
+            }
 
-          <TouchableOpacity
-            onPress={() => {
+            if (selectedDate) {
               const currentValue =
                 formValues[activeDateField.param.id]?.value || {};
 
@@ -1651,12 +1744,12 @@ const scrollY = useScrollViewOffset(scrollRef);
                 handleValueChange(
                   activeDateField.param.id,
                   activeDateField.param.alias_name ??
-                    activeDateField.param.field_name,
+                  activeDateField.param.field_name,
                   {
-                    startDate: tempDate,
+                    startDate: selectedDate,
                     endDate:
                       currentValue.endDate &&
-                      dayjs(currentValue.endDate).isBefore(tempDate)
+                        dayjs(currentValue.endDate).isBefore(selectedDate)
                         ? null
                         : currentValue.endDate,
                   },
@@ -1665,99 +1758,20 @@ const scrollY = useScrollViewOffset(scrollRef);
                 handleValueChange(
                   activeDateField.param.id,
                   activeDateField.param.alias_name ??
-                    activeDateField.param.field_name,
+                  activeDateField.param.field_name,
                   {
                     startDate: currentValue.startDate,
-                    endDate: tempDate,
+                    endDate: selectedDate,
                   },
                 );
               }
-
-              setDatePickerVisible(false);
-              setActiveDateField(null);
-            }}
-          >
-            <Text allowFontScaling ={false} style={{ color: '#007AFF', fontSize: 16 }}>Done</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* DATE PICKER */}
-        <DateTimePicker
-          value={tempDate}
-          mode="date"
-          display="spinner"
-          themeVariant='light'
-          minimumDate={
-            activeDateField.type === 'end'
-              ? formValues[activeDateField.param.id]?.value?.startDate ??
-                new Date()
-              : new Date()
-          }
-          onChange={(event, selectedDate) => {
-            if (selectedDate) {
-              setTempDate(selectedDate);
             }
+
+            setDatePickerVisible(false);
+            setActiveDateField(null);
           }}
         />
-      </View>
-    </View>
-  </Modal>
-)}
-
-{Platform.OS === 'android' && datePickerVisible && activeDateField && (
-  <DateTimePicker
-    value={tempDate}
-    mode="date"
-    display="calendar"
-    minimumDate={
-      activeDateField.type === 'end'
-        ? formValues[activeDateField.param.id]?.value?.startDate ??
-          new Date()
-        : new Date()
-    }
-    onChange={(event, selectedDate) => {
-      if (event.type === 'dismissed') {
-        setDatePickerVisible(false);
-        setActiveDateField(null);
-        return;
-      }
-
-      if (selectedDate) {
-        const currentValue =
-          formValues[activeDateField.param.id]?.value || {};
-
-        if (activeDateField.type === 'start') {
-          handleValueChange(
-            activeDateField.param.id,
-            activeDateField.param.alias_name ??
-              activeDateField.param.field_name,
-            {
-              startDate: selectedDate,
-              endDate:
-                currentValue.endDate &&
-                dayjs(currentValue.endDate).isBefore(selectedDate)
-                  ? null
-                  : currentValue.endDate,
-            },
-          );
-        } else {
-          handleValueChange(
-            activeDateField.param.id,
-            activeDateField.param.alias_name ??
-              activeDateField.param.field_name,
-            {
-              startDate: currentValue.startDate,
-              endDate: selectedDate,
-            },
-          );
-        }
-      }
-
-      setDatePickerVisible(false);
-      setActiveDateField(null);
-    }}
-  />
-)}
+      )}
 
 
 
@@ -1914,9 +1928,9 @@ export default AddScreen;
 const styles = StyleSheet.create({
 
   categoryTagContainer: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  backgroundColor:
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderWidth: 0.9,
     borderColor: 'rgba(255, 255, 255, 0.08)',
@@ -1928,19 +1942,19 @@ const styles = StyleSheet.create({
     marginRight: 4,
     marginBottom: 4,
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.23)',
-},
+  },
 
-categoryTagText: {
-  color: '#fff',
-  fontSize:14,
-  fontFamily: 'Urbanist-Medium',
-  fontWeight:500
-},
-crossIcon: {
-  width: 16,
-  height: 16,
-  marginLeft: 6,
-},
+  categoryTagText: {
+    color: '#fff',
+    fontSize: 14,
+    fontFamily: 'Urbanist-Medium',
+    fontWeight: 500
+  },
+  crossIcon: {
+    width: 16,
+    height: 16,
+    marginLeft: 6,
+  },
 
   // imageListWrapper: {
   //   marginTop: 10,
