@@ -386,7 +386,7 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
             { paddingBottom: (Platform.OS === 'ios' ? 170 : height * 0.1) },
           ]}>
 
-          {/* <View style={styles.productCarddisplay}>
+          <View style={styles.productCarddisplay}>
             {storedForm ? (
               <>
                 {categoryId === 2 || categoryId === 5 ? (
@@ -495,9 +495,9 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                 {t('loading')}
               </Text>
             )}
-          </View> */}
+          </View>
 
-           <View style={styles.productCarddisplay}>
+           {/* <View style={styles.productCarddisplay}>
                       {storedForm ? (
                         <>
                           {categoryId === 2 || categoryId === 5 ? (
@@ -631,7 +631,7 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                           {t('loading')}
                         </Text>
                       )}
-                    </View>
+            </View> */}
 
         </AnimatedReanimated.ScrollView >
 

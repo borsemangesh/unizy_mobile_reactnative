@@ -364,9 +364,9 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                       >
                         {t('preview_featured_listing')}
                       </Text>
-                      <Text allowFontScaling={false} style={styles.previewDesc}>
+                      {/* <Text allowFontScaling={false} style={styles.previewDesc}>
                         {t('feature_note')}
-                      </Text>
+                      </Text> */}
                       <NewTutitionCard
                         tag={uniname}
                         title={titleValue}
@@ -383,9 +383,9 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                       >
                         {t('preview_regular_listing')}
                       </Text>
-                      <Text allowFontScaling={false} style={styles.previewDesc}>
+                      {/* <Text allowFontScaling={false} style={styles.previewDesc}>
                         {t('normal_note')}
-                      </Text>
+                      </Text> */}
                       <SeperateTutionCard
                         tag={uniname}
                         infoTitle={titleValue}
@@ -402,9 +402,11 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                         style={styles.newtext1}
                       >
                         {t('preview_regular_listing')}
-                      </Text><Text allowFontScaling={false} style={styles.previewDesc}>
+
+                      </Text>
+                      {/* <Text allowFontScaling={false} style={styles.previewDesc}>
                           {t('normal_note')}
-                        </Text>
+                        </Text> */}
                         <SeperateTutionCard
                           tag={uniname}
                           infoTitle={titleValue}
@@ -424,9 +426,9 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                       >
                         {t('preview_featured_listing')}
                       </Text>
-                      <Text allowFontScaling={false} style={styles.previewDesc}>
+                      {/* <Text allowFontScaling={false} style={styles.previewDesc}>
                         {t('feature_note')}
-                      </Text>
+                      </Text> */}
                     <PreviewCard
                       tag={uniname}
                       infoTitle={titleValue}
@@ -444,9 +446,9 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                       >
                         {t('preview_regular_listing')}
                       </Text>
-                      <Text allowFontScaling={false} style={styles.previewDesc}>
+                      {/* <Text allowFontScaling={false} style={styles.previewDesc}>
                         {t('normal_note')}
-                      </Text>
+                      </Text> */}
                     <NewFeatureCard
                       tag={uniname}
                       infoTitle={titleValue}
@@ -465,8 +467,8 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                         style={styles.newtext1}
                       >
                         {t('preview_regular_listing')}
-                      </Text><Text allowFontScaling={false} style={styles.previewDesc}>
-                          {t('normal_note')}
+                      {/* </Text><Text allowFontScaling={false} style={styles.previewDesc}>
+                          {t('normal_note')} */}
                         </Text>
                         <NewProductCard
                           tag={uniname}
@@ -487,6 +489,7 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
               </Text>
             )}
           </View>
+          
         </AnimatedReanimated.ScrollView>
 
    
