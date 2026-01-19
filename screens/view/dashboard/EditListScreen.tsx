@@ -382,10 +382,10 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
               }
 
               // if (fieldType === 'dropdown') {
-              //   const selectedOption = param.options?.find(
-              //     (opt: any) =>
-              //       Number(opt.option_id ?? opt.id) === Number(finalValue),
-              //   );
+                // const selectedOption = param.options?.find(
+                //   (opt: any) =>
+                //     Number(opt.option_id ?? opt.id) === Number(finalValue),
+                // );
 
               //   initialValues[param.id] = {
               //     ...baseField,
@@ -394,17 +394,36 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
               //   };
               // }
 
+              // if (fieldType === 'dropdown') {
+              //   const isMulti = Array.isArray(finalValue);
+
+              //   initialValues[param.id] = {
+              //     ...baseField,
+              //     value: isMulti
+              //       ? finalValue.map(Number)        // ✅ keep array
+              //       : finalValue
+              //         ? Number(finalValue)
+              //         : null,
+              //     other_text: param.other_text ?? null,
+              //   };
+              // }
               if (fieldType === 'dropdown') {
+                   const selectedOption = param.options?.find(
+                  (opt: any) =>
+                    Number(opt.option_id ?? opt.id) === Number(finalValue),
+                );
                 const isMulti = Array.isArray(finalValue);
 
                 initialValues[param.id] = {
                   ...baseField,
                   value: isMulti
-                    ? finalValue.map(Number)        // ✅ keep array
+                    ? finalValue.map(Number)
                     : finalValue
                       ? Number(finalValue)
                       : null,
-                  other_text: null,
+
+                  // ✅ IMPORTANT: hydrate other_text
+                  other_text: selectedOption?.other_text ?? null,
                 };
               }
               else {
