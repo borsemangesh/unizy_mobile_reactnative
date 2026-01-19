@@ -284,26 +284,26 @@ const SellerInfo = ({ navigation }: SellerInfoProps) => {
               flexGrow: 1,
             },
           ]}
-          ListFooterComponent={<View style={{ height: 100 }} />} 
+          ListFooterComponent={ <View style={styles.textbg}>
+          <Image
+            source={require('../../../assets/images/info_icon.png')}
+            style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+          />
+          <View style={{ flex: 1 }}>
+            <Text allowFontScaling={false} style={styles.importantText1}>
+              {t('important')}
+            </Text>
+            <Text allowFontScaling={false} style={styles.importantText}>
+              {t('sell_note')}
+            </Text>
+          </View>
+        </View>} 
           onScroll={scrollHandler}
           scrollEventThrottle={16}
         />
 
         <View style={styles.bottomFixed}>
-          <View style={styles.textbg}>
-            <Image
-              source={require('../../../assets/images/info_icon.png')}
-              style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
-            />
-            <View style={{ flex: 1 }}>
-              <Text allowFontScaling={false} style={styles.importantText1}>
-                {t('important')}
-              </Text>
-              <Text allowFontScaling={false} style={styles.importantText}>
-                {t('sell_note')}
-              </Text>
-            </View>
-          </View>
+         
 
           <Button
             title={t('sell_button')}
@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ffffff31',
     borderLeftColor: '#ffffff31',
     borderRightColor: '#ffffff31',
-    marginBottom: 80,
+    marginTop: 20,
   },
   importantText: {
     color: '#ccc',

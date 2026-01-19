@@ -14,6 +14,7 @@ import {
   StatusBar,
   Modal,
   TouchableWithoutFeedback,
+  KeyboardAvoidingView,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ImageResizer from 'react-native-image-resizer';
@@ -112,6 +113,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
     ismultilple: boolean;
     fieldId?: number;
     fieldLabel?: string;
+    placeholder?:string;
   }>({ visible: false, ismultilple: false });
 
   const [multiSelectOptions, setMultiSelectOptions] = useState<any[]>([]);
@@ -574,99 +576,6 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
     return true;
   };
 
-  // const handlePreview = async (latestFormValues: any) => {
-  //   try {
-  //     for (const field of fields) {
-  //       const param = field.param || field;
-  //       const { id, field_type, field_name, alias_name, mandatory } = param;
-  //       const fieldId = String(id);
-
-  //       const nameToShow = alias_name || field_name || 'Unnamed Field';
-
-  //       let value =
-  //         latestFormValues[fieldId]?.value ??
-  //         latestFormValues[alias_name]?.value ??
-  //         '';
-
-  //       if (field_type?.toLowerCase() === 'image') {
-  //         value = uploadedImages;
-  //       }
-
-  //       if (mandatory) {
-  //         const isEmpty =
-  //           value === undefined ||
-  //           value === null ||
-  //           (typeof value === 'string' && value.trim() === '') ||
-  //           (Array.isArray(value) && value.length === 0);
-
-  //         if (isEmpty) {
-  //           showToast(`${nameToShow} ${t(Constant.IS_MAN)}`, 'error');
-  //           return;
-  //         }
-  //       }
-  //     }
-  //     let computedPrice: number | null = null;
-
-  //     if (productId === 2 || productId === 5) {
-  //       let priceFieldId: number | null = null;
-  //       let durationFieldId: number | null = null;
-
-  //       fields.forEach(f => {
-  //         const param = f.param || f;
-  //         if (param.alias_name === 'price') priceFieldId = param.id;
-  //         if (param.alias_name === 'service_duration') durationFieldId = param.id;
-  //       });
-
-  //       if (priceFieldId !== null && durationFieldId !== null) {
-  //         const rawPrice =
-  //           Number(latestFormValues[String(priceFieldId)]?.value) ||
-  //           Number(latestFormValues['price']?.value) ||
-  //           0;
-
-  //         const rawDuration = Number(latestFormValues[String(durationFieldId)]?.value) || Number(latestFormValues['service_duration']?.value) || 1;
-  //         computedPrice = rawPrice * rawDuration;
-  //       }
-  //     }
-
-  //     const dataToStore: any = { ...latestFormValues };
-
-  //     if (computedPrice !== null) {
-  //       fields.forEach(f => {
-  //         const param = f.param || f;
-  //         if (param.alias_name === 'price') {
-  //           dataToStore[String(param.id)] = {
-  //             value: computedPrice.toString(),
-  //             alias_name: 'price',
-  //           };
-  //         }
-  //       });
-  //     }
-  //     fields.forEach(field => {
-  //       const param = field.param || field;
-  //       const fieldType = param.field_type?.toLowerCase();
-
-  //       if (fieldType === 'image') {
-  //         const uploadedForField = uploadedImages.map(img => ({
-  //           id: img.id,
-  //           uri: img.uri,
-  //           name: img.name,
-  //         }));
-
-  //         dataToStore[String(param.id)] = {
-  //           value: uploadedForField,
-  //           alias_name: param.alias_name ?? null,
-  //         };
-  //       }
-  //     });
-
-  //     await AsyncStorage.setItem('formData1', JSON.stringify(dataToStore));
-
-  //     navigation.navigate('EditPreviewThumbnail');
-  //   } catch (error) {
-  //     // console.log('Error:', error);
-  //     showToast(t(Constant.DATA_NOT_SAVE), 'error');
-  //   }
-  // };
 
   const handlePreview = async (latestFormValues: any) => {
     try {
@@ -687,15 +596,53 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           value = uploadedImages;
         }
 
-        if (mandatory) {
-          const isEmpty =
+        // if (mandatory) {
+        //   const isEmpty =
+        //     value === undefined ||
+        //     value === null ||
+        //     (typeof value === 'string' && value.trim() === '') ||
+        //     (Array.isArray(value) && value.length === 0);
+
+        //   if (isEmpty) {
+        //     showToast(`${nameToShow} ${t(Constant.IS_MAN)}`, 'error');
+        //     return;
+        //   }
+        // }
+
+
+        if (field.mandatory) {
+
+          if (field_type.toLowerCase() === 'date') {
+            const startDate = value?.startDate;
+            const endDate = value?.endDate;
+
+            if (!startDate || !endDate) {
+              showToast(
+                t('select_both_dates'),
+                'error',
+              );
+              return;
+            }
+          }
+
+
+          else if (
             value === undefined ||
             value === null ||
             (typeof value === 'string' && value.trim() === '') ||
-            (Array.isArray(value) && value.length === 0);
-
-          if (isEmpty) {
-            showToast(`${nameToShow} ${t(Constant.IS_MAN)}`, 'error');
+            (Array.isArray(value) && value.length === 0)
+          ) {
+            if (field_type.toLowerCase() === 'image') {
+              showToast(
+                `${field.param.field_name} ${t(Constant.ARE_MAN)}`,
+                'error',
+              );
+            } else {
+              showToast(
+                `${field.param.field_name} ${t(Constant.IS_MAN)}`,
+                'error',
+              );
+            }
             return;
           }
         }
@@ -1325,6 +1272,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                   marginTop: 10,
                 }}
               >
+                
                 <NestableDraggableFlatList
                   data={uploadedImages}
                   keyExtractor={item => item.id}
@@ -1687,7 +1635,11 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           //         { paddingBottom: height * 0.1 },
           //       ]}
           // >
-
+          <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+          >
           <NestableScrollContainer
             nestedScrollEnabled
             ref={scrollRef}
@@ -1832,6 +1784,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
               {/* </AnimatedReanimated.ScrollView> */}
             </View>
           </NestableScrollContainer>
+          </KeyboardAvoidingView>
         )}
         <Button
           title={t('preview_details')}
@@ -2045,7 +1998,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
         </TouchableWithoutFeedback>
       </Modal>
 
-      {Platform.OS === 'android' ? (
+      {/* {Platform.OS === 'android' ? (
         <>
           <SelectCatagoryDropdown
             options={multiSelectOptions}
@@ -2102,6 +2055,94 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                 [multiSelectModal.fieldId!]: {
                   value: data.selected,
                   other_text: data.text || null,
+                },
+              }));
+            }}
+          />
+        </>
+      )} */}
+
+{Platform.OS === 'android' ? (
+        <>
+          <SelectCatagoryDropdown
+            options={multiSelectOptions}
+            visible={multiSelectModal.visible}
+            ismultilple={multiSelectModal?.ismultilple}
+            // title={`${t('select')} ${t(
+            //   multiSelectModal?.fieldLabel || 'category',
+            // )}`}
+            title={multiSelectModal.placeholder}
+            // subtitle={
+            //   multiSelectModal?.ismultilple
+            //     ? `${t('pick_all')} ${pluralizeLabel(
+            //       multiSelectModal?.fieldLabel || 'category',
+            //     )} ${t('best_describe')}`
+            //     : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'
+            //     } ${t('that_fit_your_listing')}`
+            // }
+            subtitle={
+              multiSelectModal?.ismultilple
+                ? `${t('pick_all')} ${pluralizeLabel(
+                  multiSelectModal?.fieldLabel || 'category',
+                )} ${t('best_describe')}`
+                : ` ${multiSelectModal?.placeholder || 'category'
+                } ${t('that_fit_your_listing')}`
+            }
+            selectedValues={formValues[multiSelectModal.fieldId!]?.value}
+            onClose={() =>
+              setMultiSelectModal(prev => ({ ...prev, visible: false }))
+            }
+
+            onSelect={(data: any) => {
+              setFormValues((prev: any) => ({
+                ...prev,
+                [multiSelectModal.fieldId!]: {
+                  value: data.selected,
+                  otherText: data.text,
+                },
+              }));
+            }}
+          />
+        </>
+      ) : (
+        <>
+          <SelectCatagoryDropdown_IOS
+            options={multiSelectOptions}
+            visible={multiSelectModal.visible}
+            ismultilple={multiSelectModal?.ismultilple}
+            // title={`${t('select')} ${t(
+            //   multiSelectModal?.fieldLabel || 'category',
+            // )}`}
+
+            title={multiSelectModal.placeholder}
+            // subtitle={
+            //   multiSelectModal?.ismultilple
+            //     ? `${t('pick_all')} ${pluralizeLabel(
+            //       multiSelectModal?.fieldLabel || 'category',
+            //     )} ${t('best_describe')}`
+            //     : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'
+            //     } ${t('that_fit_your_listing')}`
+            // }
+
+            subtitle={
+              multiSelectModal?.ismultilple
+                ? `${t('pick_all')} ${pluralizeLabel(
+                  multiSelectModal?.fieldLabel || 'category',
+                )} ${t('best_describe')}`
+                : ` ${multiSelectModal?.placeholder || 'category'
+                } ${t('that_fit_your_listing')}`
+            }
+            selectedValues={formValues[multiSelectModal.fieldId!]?.value}
+            onClose={() =>
+              setMultiSelectModal(prev => ({ ...prev, visible: false }))
+            }
+
+            onSelect={(data: any) => {
+              setFormValues((prev: any) => ({
+                ...prev,
+                [multiSelectModal.fieldId!]: {
+                  value: data.selected,
+                  otherText: data.text,
                 },
               }));
             }}
@@ -2497,13 +2538,13 @@ const styles = StyleSheet.create({
 
   scrollContainer: {
     paddingHorizontal: 16,
-    paddingBottom: 80,
+    // paddingBottom: 80,
     paddingTop: Platform.OS === 'ios' ? 120 : 100,
   },
   userRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 6,
+    // marginBottom: 6,
     padding: 12,
     borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',

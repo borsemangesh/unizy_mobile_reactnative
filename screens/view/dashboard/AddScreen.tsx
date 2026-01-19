@@ -1496,6 +1496,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               contentContainerStyle={[
                 styles.scrollContainer,
                 { paddingBottom: Platform.OS === 'ios' ? height * 0.1 : height * 0.1 }, // 0.05% of screen height
+                { paddingBottom: Platform.OS === 'ios' ? height * 0.1 : height * 0.1 }, // 0.05% of screen height
               ]}>
               {/* <AnimatedReanimated.ScrollView
                 scrollEventThrottle={16}
@@ -2040,21 +2041,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   backButtonContainer: {
-    // position: 'absolute',
-    // left: 16,
     zIndex: 11,
   },
-  // blurButtonWrapper: {
-  //   width: 48,
-  //   height: 48,
-  //   borderRadius: 40,
-  //   overflow: 'hidden',
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   borderWidth: 0.4,
-  //   borderColor: '#ffffff2c',
-  //   backgroundColor: 'rgba(255, 255, 255, 0.1)'
-  // },
   blurButtonWrapper: {
     width: 48,
     height: 48,
@@ -2062,10 +2050,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    // borderWidth: 0.4,
-    // borderColor: '#ffffff2c',
-    // backgroundColor: 'rgba(255, 255, 255, 0.1)',
-
     borderWidth: 0.3,
     borderColor: '#ffffff11',
 
@@ -2124,11 +2108,6 @@ const styles = StyleSheet.create({
     height: 20,
     tintColor: '#FFF',
   },
-  // dropdowncard: {
-  //   minHeight: 40,
-  //   alignItems: 'flex-start',
-  //   justifyContent: 'center',
-  // },
   dropdowncard: {
     flex: 1, // ⬅️ Add this
     minHeight: 40,
@@ -2218,6 +2197,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     paddingHorizontal: 16,
+    // paddingBottom: 80,
     // paddingBottom: 80,
     paddingTop: Platform.OS === 'ios' ? 120 : 100,
   },

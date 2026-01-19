@@ -282,11 +282,8 @@ const BuyerInfo = ({ navigation }: BuyerInfoProps) => {
           ]}
           onScroll={scrollHandler}
           scrollEventThrottle={16}
-          ListFooterComponent={<View style={{ height: 80 }} />} 
-        />
-
-        <View style={styles.bottomFixed}>
-          <View style={styles.textbg}>
+          ListFooterComponent={
+            <View style={styles.textbg}>
             <Image
               source={require('../../../assets/images/purchase_info.png')}
               style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
@@ -304,6 +301,11 @@ const BuyerInfo = ({ navigation }: BuyerInfoProps) => {
               </Text>
             </View>
           </View>
+          } 
+        />
+
+        <View style={styles.bottomFixed}>
+         
 
           <Button
             title={t('buy_button')}
@@ -451,7 +453,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ffffff31',
     borderLeftColor: '#ffffff31',
     borderRightColor: '#ffffff31',
-    marginBottom: 80,
+    marginBottom: 16,
   },
   importantText: {
     color: '#ccc',
