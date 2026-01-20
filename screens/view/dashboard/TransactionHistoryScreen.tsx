@@ -649,7 +649,7 @@ export default function TransactionHistoryScreen(
                     padding: 1,
                   }}
                 >
-                  <View style={{ width: 120 }}>
+                  <View >
                     <Text
                       allowFontScaling={false}
                       numberOfLines={2}
@@ -758,7 +758,7 @@ export default function TransactionHistoryScreen(
                           fontSize: 12,
                         }}
                       >
-                        {t('total_earnings')}: {item.total_earning}
+                        {t('total_earnings')}: £{item.total_earning}
                       </Text>
                     </View>
                   </View>

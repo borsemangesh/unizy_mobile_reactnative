@@ -594,50 +594,112 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
       }
 
 
+      let deletedIds: string[] = [];
+      const storedDeletedIds = await AsyncStorage.getItem('deletedImageIds');
+      console.log('Stored deleted image IDs from AsyncStorage:', storedDeletedIds);
+
+      if (storedDeletedIds) {
+        deletedIds = JSON.parse(storedDeletedIds);
+      }
+
+
+      const isLocalImage = (uri: string) =>
+        uri.startsWith('file://') || uri.startsWith('content://');
+
+
+
+      // for (const [param_id, images] of imageFields) {
+      //   // ✅ only upload NEW local images
+      //   const newImages = images.filter(
+      //     img => img?.uri && isLocalImage(img.uri)
+      //   );
+
+      //   if (newImages.length === 0) continue;
+
+      //   const form = new FormData();
+
+      //   for (const image of newImages) {
+      //     form.append("files", {
+      //       uri: image.uri,
+      //       type: image.type || "image/jpeg",
+      //       name: image.name || `image_${Date.now()}.jpg`,
+      //     } as any);
+      //   }
+
+      //   form.append("feature_id", String(feature_id));
+      //   form.append("param_id", String(param_id));
+
+      //   const uploadRes = await fetch(
+      //     `${MAIN_URL.baseUrl}category/featurelist/image-update`,
+      //     {
+      //       method: "POST",
+      //       headers: {
+      //         Authorization: `Bearer ${token}`,
+      //       },
+      //       body: form,
+      //     }
+      //   );
+
+      //   const uploadJson = await uploadRes.json();
+
+      //   const isSuccess = uploadRes.ok;
+
+      //   showToast(
+      //     t(uploadJson?.message || "Image upload failed"),
+      //     isSuccess ? "success" : "error"
+      //   );
+
+      //   if (!isSuccess) return;
+      // }
+
 
       for (const [param_id, images] of imageFields) {
+        const newImages = images.filter(img => img?.uri && isLocalImage(img.uri));
 
-        for (const image of images) {
-          if (!image || !image.uri) continue;
+        if (newImages.length === 0 && deletedIds.length === 0) continue;
 
+        const form = new FormData();
 
-
-          const form = new FormData();
-          form.append("files", {
+        // append new images
+        for (const image of newImages) {
+          form.append('files', {
             uri: image.uri,
-            type: image.type || "image/jpeg",
-            name: image.name,
+            type: image.type || 'image/jpeg',
+            name: image.name || `image_${Date.now()}.jpg`,
           } as any);
-          form.append("feature_id", feature_id);
-          form.append("param_id", param_id);
+        }
 
-          console.log('IMAGE URI:', image.uri);
-          console.log('IMAGE TYPE:', image.type);
-          console.log('IMAGE NAME:', image.name);
-          console.log('FEATURE ID:', feature_id);
-          console.log('PARAM ID:', param_id);
+        form.append('feature_id', String(feature_id));
+        form.append('param_id', String(param_id));
 
-          console.log('FormData parts:', (form as any)?._parts);
+        // append deleted image IDs
+        form.append('deleted_image_ids', JSON.stringify(deletedIds));
 
-          const uploadRes = await fetch(`${MAIN_URL.baseUrl}category/featurelist/image-update`, {
-            method: "POST",
+        // send API request
+        const uploadRes = await fetch(
+          `${MAIN_URL.baseUrl}category/featurelist/image-update`,
+          {
+            method: 'POST',
             headers: { Authorization: `Bearer ${token}` },
             body: form,
-          });
+          }
+        );
 
-          const uploadJson = await uploadRes.json();
+        const uploadJson = await uploadRes.json();
+        const isSuccess = uploadRes.ok;
 
+        showToast(
+          t(uploadJson?.message || 'Image upload failed'),
+          isSuccess ? 'success' : 'error'
+        );
 
-          const isSuccess = [200, 201].includes(uploadRes.status);
-          showToast(
-            t(uploadJson?.message || "Image upload failed"),
-            isSuccess ? "success" : "error"
-          );
-
-          if (!isSuccess) return;
-        }
+        if (!isSuccess) return;
       }
-      //showToast(t(Constant.DATA_UPLOAD), "success");
+
+      // 3️⃣ Clear deleted IDs after successful upload
+      await AsyncStorage.removeItem('deletedImageIds');
+      //setDeletedImageIds([]);
+
       setShowPopup(true);
 
       await AsyncStorage.removeItem("formData1");

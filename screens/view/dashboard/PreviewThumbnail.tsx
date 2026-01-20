@@ -850,6 +850,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Urbanist-Medium',
     fontWeight: 500,
+    textAlign:'center'
   },
 
   backButtonContainer: {

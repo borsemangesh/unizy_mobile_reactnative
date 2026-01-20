@@ -615,19 +615,6 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           value = uploadedImages;
         }
 
-        // if (mandatory) {
-        //   const isEmpty =
-        //     value === undefined ||
-        //     value === null ||
-        //     (typeof value === 'string' && value.trim() === '') ||
-        //     (Array.isArray(value) && value.length === 0);
-
-        //   if (isEmpty) {
-        //     showToast(`${nameToShow} ${t(Constant.IS_MAN)}`, 'error');
-        //     return;
-        //   }
-        // }
-
 
         if (field.mandatory) {
 
@@ -748,6 +735,11 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           };
         }
       });
+
+      await AsyncStorage.setItem(
+        'deletedImageIds',
+        JSON.stringify(deletedImageIds)
+      );
 
       // 7️⃣ Save for preview
       await AsyncStorage.setItem('formData1', JSON.stringify(dataToStore));
@@ -932,11 +924,26 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
             </View>
 
             <TouchableOpacity
-              onPress={() =>
-                setUploadedImages(prev =>
-                  prev.filter(img => img.id !== item.id),
-                )
-              }
+              // onPress={() =>
+              //   setUploadedImages(prev =>
+              //     prev.filter(img => img.id !== item.id),
+              //   )
+              // }
+               onPress={() => {
+    // ✅ if image already exists on backend (S3)
+                  if (item?.id) {
+                    setDeletedImageIds(prev =>
+                      prev.includes(String(item.id))
+                        ? prev
+                        : [...prev, String(item.id)]
+                    );
+                  }
+
+                  // ✅ remove image from UI list
+                  setUploadedImages(prev =>
+                    prev.filter(img => img !== item)
+                  );
+                }}
             >
               <Image
                 source={deleteIcon}

@@ -1509,7 +1509,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     borderRadius: 12,
     padding: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    backgroundColor: 'rgba(236, 154, 154, 0.2)',
     marginTop: 6,
     alignItems: 'center',
     justifyContent: 'center',

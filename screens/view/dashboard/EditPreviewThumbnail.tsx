@@ -898,6 +898,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Urbanist-Medium',
     fontWeight: 500,
+    textAlign: 'center',
+    //alignSelf: 'center',
+    //maxWidth:'75%'
+    
   },
   blurButtonWrapper: {
     width: 48,

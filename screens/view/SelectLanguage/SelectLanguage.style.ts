@@ -92,7 +92,7 @@ export const selectlang_styles = StyleSheet.create({
   },
   flag: {
     marginRight: 12,
-    resizeMode: 'cover',
+    resizeMode: 'contain',
     borderRadius: 2,
     width: 34,
     height: 24,
