@@ -191,6 +191,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
       } else {
         url1 = `${MAIN_URL.baseUrl}category/users/reviews/${selectedCategory.id}`;
       }
+      console.log(url1)
 
 
 

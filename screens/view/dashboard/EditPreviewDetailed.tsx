@@ -278,7 +278,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
         const token = await AsyncStorage.getItem('userToken');
         const productId1 = await AsyncStorage.getItem('selectedProductId');
         setcategoryid(Number(productId1))
-   
+
 
         const url = `${MAIN_URL.baseUrl}category/listparams/user/${productId1}`;
 
@@ -578,7 +578,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
       });
 
       const createJson = await createRes.json();
-   
+
 
       if (![200, 201].includes(createRes.status)) {
         showToast(t(createJson?.message || "Error"), "error");
@@ -610,6 +610,14 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
           } as any);
           form.append("feature_id", feature_id);
           form.append("param_id", param_id);
+
+          console.log('IMAGE URI:', image.uri);
+          console.log('IMAGE TYPE:', image.type);
+          console.log('IMAGE NAME:', image.name);
+          console.log('FEATURE ID:', feature_id);
+          console.log('PARAM ID:', param_id);
+
+          console.log('FormData parts:', (form as any)?._parts);
 
           const uploadRes = await fetch(`${MAIN_URL.baseUrl}category/featurelist/image-update`, {
             method: "POST",
@@ -687,14 +695,14 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
     maxAllowedPrice1,
   ).toFixed(2);
   const diff1 = commissionPrice1 - priceValue1;
-  
+
   const priceText =
-  userMeta?.category?.id === 2
-    ? `£${commissionPrice}/${t('hr')}`
-    : userMeta?.category?.id === 4
-    ? `£${commissionPrice}/${t('week')}`
-    : userMeta?.category?.id === 5 ? `£${commissionPrice}/${t('session')}` 
-    : `£${commissionPrice}`;
+    userMeta?.category?.id === 2
+      ? `£${commissionPrice}/${t('hr')}`
+      : userMeta?.category?.id === 4
+        ? `£${commissionPrice}/${t('week')}`
+        : userMeta?.category?.id === 5 ? `£${commissionPrice}/${t('session')}`
+          : `£${commissionPrice}`;
 
   return (
     <ImageBackground
@@ -952,7 +960,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
                 }}
               >
                 <Text allowFontScaling={false} style={styles.productDesHeding}>
-                 {t('des')}
+                  {t('des')}
                 </Text>
                 <Text allowFontScaling={false} style={styles.productDesc}>
                   {descriptionvalue}
@@ -980,7 +988,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
                   {(() => {
                     switch (userMeta?.category?.id) {
                       case 2:
-                       return t('tutoring_service_details');
+                        return t('tutoring_service_details');
                       case 3:
                         return t('dish_details');
                       case 4:
@@ -1044,7 +1052,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
                     else if (field.param.field_type === 'date') {
                       const startDate = storedValue?.startDate;
                       const endDate = storedValue?.endDate;
-  
+
                       if (startDate && endDate) {
                         displayValues = [
                           `${dayjs(startDate).format('DD-MM-YYYY')} - ${dayjs(endDate).format(
@@ -1055,8 +1063,8 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
                         displayValues = [];
                       }
                     }
-  
-                    
+
+
                     else if (Array.isArray(storedValue)) {
                       displayValues = storedValue.map(String);
                     } else {
@@ -1251,7 +1259,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
                     }
                   }}
                 >
-                  <Text  allowFontScaling={false} style={styles.loginText}>
+                  <Text allowFontScaling={false} style={styles.loginText}>
                     {t('return_choose_category')}
                   </Text>
                 </TouchableOpacity>
@@ -1273,16 +1281,16 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
 const styles = StyleSheet.create({
 
   loaderOverlay: {
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  backgroundColor: 'rgba(0,0,0,0.4)',
-  justifyContent: 'center',
-  alignItems: 'center',
-  zIndex: 9999,
-},
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+  },
 
   datetext1: {
     color: '#9CD6FF',
@@ -1361,7 +1369,7 @@ const styles = StyleSheet.create({
   //   backgroundColor: 'rgba(255, 255, 255, 0.1)',
   // },
 
-   blurButtonWrapper: {
+  blurButtonWrapper: {
     width: 48,
     height: 48,
     borderRadius: 40,
@@ -1626,9 +1634,9 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     letterSpacing: 1,
     flexWrap: 'wrap',
-  alignSelf: 'center',
-  maxWidth: '96%',  // ensures wrapping into 2 lines
-  width: '100%'
+    alignSelf: 'center',
+    maxWidth: '96%',  // ensures wrapping into 2 lines
+    width: '100%'
   },
 
   loginButton: {

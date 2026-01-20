@@ -167,6 +167,8 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
             <View style={styles.login_container1}>
 
               <TextInput
+                cursorColor='#fff'
+                selectionColor='#fff'
                 allowFontScaling={false}
                 style={[styles.personalEmailID_TextInput1]}
                 placeholder={t('enter_report_title')}
@@ -186,6 +188,8 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
 
               <View style={styles.login_container}>
                 <TextInput
+                cursorColor='#fff'
+                selectionColor='#fff'
                   allowFontScaling={false}
                   style={[
                     styles.personalEmailID_TextInput,

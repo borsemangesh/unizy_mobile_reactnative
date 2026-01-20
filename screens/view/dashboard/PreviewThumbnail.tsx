@@ -133,9 +133,11 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
       try {
         const storedData = await AsyncStorage.getItem('formData');
         console.log(' storedData:', storedData);
+        console.log(' storedData:', storedData);
 
         if (storedData) {
           const parsedData = JSON.parse(storedData);
+          console.log('parsedDataData:', parsedData);
           console.log('parsedDataData:', parsedData);
           setStoredForm(parsedData);
         } else {
@@ -224,7 +226,6 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
   const calculatedPrice1 = priceValue1 + commissionAmount1;
   const maxAllowedPrice1 = priceValue1 + maxCap1;
   const commissionPrice1 = +Math.min(calculatedPrice1, maxAllowedPrice1).toFixed(2);
-
   const commission = parseFloat(categoryDetails?.commission ?? '0');
   const maxCapPound = parseFloat(categoryDetails?.max_cappund ?? '0');
 
@@ -850,23 +851,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-Medium',
     fontWeight: 500,
   },
+
   backButtonContainer: {
     position: 'absolute',
     left: 16,
     zIndex: 11,
   },
-  // blurButtonWrapper: {
-  //   width: 48,
-  //   height: 48,
-  //   borderRadius: 40,
-  //   overflow: 'hidden',
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   borderWidth: 0.4,
-  //   borderColor: '#ffffff2c',
-  //   backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  // },
-
+ 
   blurButtonWrapper: {
     width: 48,
     height: 48,

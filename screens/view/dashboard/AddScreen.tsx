@@ -342,6 +342,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             // Convert null or undefined to 0
             setFeatureFee(Number(json.metadata.category.feature_fee ?? '0'));
             setMaxFeatureCap(Number(json.metadata.category.max_feature_cap ?? '0'));
+            setFeatureFee(Number(json.metadata.category.feature_fee ?? '0'));
+            setMaxFeatureCap(Number(json.metadata.category.max_feature_cap ?? '0'));
           }
           setUserMeta({
             firstname: json.metadata.firstname ?? null,
@@ -890,7 +892,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               keyboardType={rnKeyboardType}
               selectionColor={'#FFFFFF'}
-              selectionColor="#FFFFFF"
+              cursorColor="#FFFFFF"
               value={isPriceField && rawValue ? `£ ${rawValue}` : rawValue}
               onChangeText={text => {
                 let value = text;
@@ -961,7 +963,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               placeholder={placeholderText}
               multiline={true}
               selectionColor={'#FFFFFF'}
-              selectionColor="#FFFFFF"
+              cursorColor="#FFFFFF"
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               keyboardType={rnKeyboardType}
               value={formValues[param.id]?.value || ''}

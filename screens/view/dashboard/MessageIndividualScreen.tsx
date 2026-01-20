@@ -284,6 +284,7 @@ const MessagesIndividualScreen = ({
     // const filteredText = filterNumbersAndNumberWords(text);
     setMessageText(text);
   };
+  
   useEffect(() => {
     let isMounted = true;
 

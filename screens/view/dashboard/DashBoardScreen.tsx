@@ -1162,7 +1162,8 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
             >
               <Image source={searchIcon} style={styles.searchIcon} />
               <TextInput
-              selectionColor={'#FFFFFF'}
+              selectionColor='#fff'
+                  cursorColor='#fff'
                 style={styles.searchBar}
                 placeholder={t('search')}
                 placeholderTextColor="#ccc"

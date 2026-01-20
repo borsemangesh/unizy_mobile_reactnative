@@ -1053,6 +1053,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     {[0, 1, 2, 3, 4, 5].map((_, index) => (
                       <TextInput
                         selectionColor={'#FFFFFF'}
+                        cursorColor='#fff'
                         value={otp[index]}
                         key={index}
                         ref={ref => {

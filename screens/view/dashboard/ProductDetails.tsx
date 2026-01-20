@@ -708,11 +708,11 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
               >
                 <Image source={searchIcon} style={styles.searchIcon} />
                 <TextInput
-                selectionColor={'#FFFFFF'}
+                  selectionColor='#fff'
+                  cursorColor='#fff'
                   ref={inputRef}
                   allowFontScaling={false}
                   style={styles.searchBar}
-                  selectionColor="white"
                   placeholder={t('search')}
                   placeholderTextColor="#ccc"
                   onChangeText={text => {

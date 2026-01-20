@@ -1016,8 +1016,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   {t('first_name')}
                 </Text>
                 <TextInput
-                  selectionColor={'#FFFFFF'}
-                  selectionColor={'#FFFFFF'}
+                  selectionColor='#fff'
+                  cursorColor='#fff'
                   value={userMeta.firstname || ''}
                   onChangeText={text =>
                     setUserMeta(prev => ({ ...prev, firstname: text }))
@@ -1034,7 +1034,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   {t('last_name')}
                 </Text>
                 <TextInput
-                  selectionColor={'#FFFFFF'}
+                  selectionColor='#fff'
+                  cursorColor='#fff'
                   value={userMeta.lastname || ''}
                   onChangeText={text =>
                     setUserMeta(prev => ({ ...prev, lastname: text }))
@@ -1060,7 +1061,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   }}
                 >
                   <TextInput
-                    selectionColor={'#FFFFFF'}
+                    selectionColor="#fff"
+                    cursorColor="#fff"
                     style={{
                       flex: 1,
                       color: '#fff',
@@ -1152,7 +1154,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   }}
                 >
                   <TextInput
-                    selectionColor={'#FFFFFF'}
+                    selectionColor="#fff"
+                    cursorColor="#fff" 
                     style={{
                       flex: 1,
                       color: '#fff',
@@ -1233,7 +1236,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   {t('postal_code')}
                 </Text>
                 <TextInput
-                  selectionColor={'#FFFFFF'}
+                  selectionColor="#fff"
+                    cursorColor="#fff" 
                   value={userMeta.postal_code || ''}
                   onChangeText={text => {
                     const filteredText = text.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
@@ -1266,7 +1270,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   {t('city')}
                 </Text>
                 <TextInput
-                  selectionColor={'#FFFFFF'}
+                  selectionColor="#fff"
+                    cursorColor="#fff" 
                   allowFontScaling={false}
                   value={userMeta.city || ''}
                   onChangeText={text =>
@@ -1367,7 +1372,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 <View style={styles.otpContainer}>
                   {[0, 1, 2, 3].map((_, index) => (
                     <TextInput
-                      selectionColor={'#FFFFFF'}
+                      selectionColor="#fff"
+                    cursorColor="#fff" 
                       allowFontScaling={false}
                       key={index}
                       ref={ref => {

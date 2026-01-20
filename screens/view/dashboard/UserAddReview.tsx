@@ -187,7 +187,8 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
 
               <View style={styles.login_container}>
                 <TextInput
-                selectionColor={'#FFFFFF'}
+                  selectionColor='#fff'
+                  cursorColor='#fff'
                   allowFontScaling={false}
                   style={[styles.personalEmailID_TextInput, { textAlignVertical: 'top', paddingTop: 10 }]}
                   placeholder={t('tell')}

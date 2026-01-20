@@ -628,7 +628,6 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
               <View style={styles.search_container}>
                 <Image source={searchIcon} style={styles.searchIcon} />
                 <TextInput
-                selectionColor={'#FFFFFF'}
                   allowFontScaling={false}
                   style={styles.searchBar}
                   placeholder={t('search')}
@@ -636,7 +635,8 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
                   value={search}
                   onChangeText={handleSearchChange}
                   returnKeyType="search"
-                  selectionColor="white"
+                  selectionColor='#fff'
+                  cursorColor='#fff'
                   autoFocus={true}
                   onSubmitEditing={() => {
                     if (search.trim().length > 0) {

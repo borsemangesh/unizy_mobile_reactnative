@@ -217,6 +217,8 @@ const MyListing = ({ navigation }: MyListingProps) => {
         url += `&category_id=${categoryId}`;
       }
 
+      console.log(url)
+
       const token = await AsyncStorage.getItem('userToken');
       const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
 
