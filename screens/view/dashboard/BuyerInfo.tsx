@@ -431,6 +431,8 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   textbg: {
+    position:'absolute',
+    top:Platform.OS === 'ios' ? 30 : 80,
     overflow: 'hidden',
     alignContent: 'center',
     alignSelf: 'center',
@@ -532,7 +534,7 @@ const styles = StyleSheet.create({
   hederRowContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 12,
   },
   itemContainer: {
     paddingTop: 20,

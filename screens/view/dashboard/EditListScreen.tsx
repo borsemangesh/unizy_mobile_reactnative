@@ -113,7 +113,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
     ismultilple: boolean;
     fieldId?: number;
     fieldLabel?: string;
-    placeholder?:string;
+    placeholder?: string;
   }>({ visible: false, ismultilple: false });
 
   const [multiSelectOptions, setMultiSelectOptions] = useState<any[]>([]);
@@ -382,10 +382,10 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
               }
 
               // if (fieldType === 'dropdown') {
-                // const selectedOption = param.options?.find(
-                //   (opt: any) =>
-                //     Number(opt.option_id ?? opt.id) === Number(finalValue),
-                // );
+              // const selectedOption = param.options?.find(
+              //   (opt: any) =>
+              //     Number(opt.option_id ?? opt.id) === Number(finalValue),
+              // );
 
               //   initialValues[param.id] = {
               //     ...baseField,
@@ -408,7 +408,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
               //   };
               // }
               if (fieldType === 'dropdown') {
-                   const selectedOption = param.options?.find(
+                const selectedOption = param.options?.find(
                   (opt: any) =>
                     Number(opt.option_id ?? opt.id) === Number(finalValue),
                 );
@@ -929,21 +929,21 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
               //     prev.filter(img => img.id !== item.id),
               //   )
               // }
-               onPress={() => {
-    // ✅ if image already exists on backend (S3)
-                  if (item?.id) {
-                    setDeletedImageIds(prev =>
-                      prev.includes(String(item.id))
-                        ? prev
-                        : [...prev, String(item.id)]
-                    );
-                  }
-
-                  // ✅ remove image from UI list
-                  setUploadedImages(prev =>
-                    prev.filter(img => img !== item)
+              onPress={() => {
+                // ✅ if image already exists on backend (S3)
+                if (item?.id) {
+                  setDeletedImageIds(prev =>
+                    prev.includes(String(item.id))
+                      ? prev
+                      : [...prev, String(item.id)]
                   );
-                }}
+                }
+
+                // ✅ remove image from UI list
+                setUploadedImages(prev =>
+                  prev.filter(img => img !== item)
+                );
+              }}
             >
               <Image
                 source={deleteIcon}
@@ -1193,6 +1193,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                   ismultilple: !!field.param.ismultilple,
                   fieldId: id,
                   fieldLabel: field.param.field_name,
+                  placeholder: field.param.placeholder,
                 });
                 setMultiSelectOptions(options);
               }}
@@ -1239,12 +1240,23 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                     </Text> */}
 
                     <View style={styles.categoryTagContainer}>
-                      <Text allowFontScaling={false} style={styles.categoryTagText}>
+                      {/* <Text allowFontScaling={false} style={styles.categoryTagText}>
                         {opt.option_name}
                         {formValues[id]?.other_text
                           ? `: ${formValues[id].other_text}`
                           : ''}{' '}
+                       
+                      </Text> */}
+
+                      <Text allowFontScaling={false} style={styles.categoryTagText}>
+                        {opt.option_name}
+                        {opt.is_other && formValues[id]?.other_text
+                          ? `: ${formValues[id].other_text}`
+                          : ''}
                       </Text>
+
+
+
 
                       <Image
                         source={require('../../../assets/images/new_cross.png')}
@@ -1298,7 +1310,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                   marginTop: 10,
                 }}
               >
-                
+
                 <NestableDraggableFlatList
                   data={uploadedImages}
                   keyExtractor={item => item.id}
@@ -1666,22 +1678,22 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
           >
-          <NestableScrollContainer
-            nestedScrollEnabled
-            ref={scrollRef}
-            scrollEventThrottle={16}
-            // onScroll={scrollHandler}
-            contentContainerStyle={[
-              styles.scrollContainer,
-              { paddingBottom: height * 0.1 }, // 0.05% of screen height
-            ]}>
+            <NestableScrollContainer
+              nestedScrollEnabled
+              ref={scrollRef}
+              scrollEventThrottle={16}
+              // onScroll={scrollHandler}
+              contentContainerStyle={[
+                styles.scrollContainer,
+                { paddingBottom: height * 0.1 }, // 0.05% of screen height
+              ]}>
 
 
-            <View
-              style={{ flex: 1 }}
-            // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            >
-              {/* <AnimatedReanimated.ScrollView
+              <View
+                style={{ flex: 1 }}
+              // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              >
+                {/* <AnimatedReanimated.ScrollView
                 scrollEventThrottle={16}
                 onScroll={scrollHandler}
                 contentContainerStyle={[
@@ -1689,127 +1701,127 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                   { paddingBottom: height * 0.1 },
                 ]}
               > */}
-              <View style={styles.userRow}>
-                <View
-                  style={{
-                    width: '20%',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {userMeta?.profile ? (
-                    <Image
-                      source={{ uri: userMeta.profile }}
-                      style={styles.avatar}
-                    />
-                  ) : (
-                    <View style={styles.initialsCircle}>
-                      <Text
-                        allowFontScaling={false}
-                        style={styles.initialsText}
-                      >
-                        {getInitials(
-                          userMeta?.firstname ?? 'Alan',
-                          userMeta?.lastname ?? 'Walker',
-                        )}
-                      </Text>
-                    </View>
-                  )}
-                </View>
-
-                <View style={{ width: '80%' }}>
-                  <Text allowFontScaling={false} style={styles.userName}>
-                    {userMeta
-                      ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''
-                        }`.trim()
-                      : 'Alan Walker'}
-                  </Text>
-
+                <View style={styles.userRow}>
                   <View
                     style={{
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                      display: 'flex',
-                      alignItems: 'stretch',
+                      width: '20%',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                     }}
                   >
-                    <Text allowFontScaling={false} style={styles.userSub}>
-                      {userMeta?.university_name || 'University of Warwick,'}
+                    {userMeta?.profile ? (
+                      <Image
+                        source={{ uri: userMeta.profile }}
+                        style={styles.avatar}
+                      />
+                    ) : (
+                      <View style={styles.initialsCircle}>
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.initialsText}
+                        >
+                          {getInitials(
+                            userMeta?.firstname ?? 'Alan',
+                            userMeta?.lastname ?? 'Walker',
+                          )}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+
+                  <View style={{ width: '80%' }}>
+                    <Text allowFontScaling={false} style={styles.userName}>
+                      {userMeta
+                        ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''
+                          }`.trim()
+                        : 'Alan Walker'}
                     </Text>
+
                     <View
                       style={{
-                        flexDirection: 'row',
+                        flexDirection: 'column',
                         justifyContent: 'space-between',
+                        display: 'flex',
+                        alignItems: 'stretch',
                       }}
                     >
-                      <Text allowFontScaling={false} style={styles.userSub2}>
-                        {userMeta?.city || ''}
+                      <Text allowFontScaling={false} style={styles.userSub}>
+                        {userMeta?.university_name || 'University of Warwick,'}
                       </Text>
                       <View
                         style={{
                           flexDirection: 'row',
-                          alignItems: 'center',
-                          gap: 3,
+                          justifyContent: 'space-between',
                         }}
                       >
-                        <Image
-                          source={require('../../../assets/images/calendar_icon1.png')}
-                          style={{ height: 20, width: 20 }}
-                        />
-                        <Text
-                          allowFontScaling={false}
-                          style={styles.dateText}
-                        >
-                          {formatDateWithDash(newdate, t)}
+                        <Text allowFontScaling={false} style={styles.userSub2}>
+                          {userMeta?.city || ''}
                         </Text>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: 3,
+                          }}
+                        >
+                          <Image
+                            source={require('../../../assets/images/calendar_icon1.png')}
+                            style={{ height: 20, width: 20 }}
+                          />
+                          <Text
+                            allowFontScaling={false}
+                            style={styles.dateText}
+                          >
+                            {formatDateWithDash(newdate, t)}
+                          </Text>
+                        </View>
                       </View>
                     </View>
                   </View>
                 </View>
-              </View>
 
-              <View style={styles.productdetails}>
-                <Animated.View
-                  style={{
-                    transform: [{ translateY: slideUp1 }],
-                    opacity: slideUp1.interpolate({
-                      inputRange: [-screenHeight, 0],
-                      outputRange: [0, 1],
-                    }),
-                  }}
-                >
-                  <Text
-                    allowFontScaling={false}
-                    style={styles.productdetailstext}
+                <View style={styles.productdetails}>
+                  <Animated.View
+                    style={{
+                      transform: [{ translateY: slideUp1 }],
+                      opacity: slideUp1.interpolate({
+                        inputRange: [-screenHeight, 0],
+                        outputRange: [0, 1],
+                      }),
+                    }}
                   >
-                    {(() => {
-                      switch (productId) {
-                        case 2:
-                          return t('tutoring_service_details');
-                        case 3:
-                          return t('dish_details');
-                        case 4:
-                          return t('rental_details');
-                        case 5:
-                          return t('housekeeping_details');
-                        default:
-                          return t('product_details');
-                      }
-                    })()}
-                  </Text>
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.productdetailstext}
+                    >
+                      {(() => {
+                        switch (productId) {
+                          case 2:
+                            return t('tutoring_service_details');
+                          case 3:
+                            return t('dish_details');
+                          case 4:
+                            return t('rental_details');
+                          case 5:
+                            return t('housekeeping_details');
+                          default:
+                            return t('product_details');
+                        }
+                      })()}
+                    </Text>
 
-                  {fields
-                    .filter(
-                      (f: any) =>
-                        f?.param?.field_type?.toLowerCase() !== 'boolean',
-                    )
-                    .map((field: any) => renderField(field))}
-                </Animated.View>
+                    {fields
+                      .filter(
+                        (f: any) =>
+                          f?.param?.field_type?.toLowerCase() !== 'boolean',
+                      )
+                      .map((field: any) => renderField(field))}
+                  </Animated.View>
+                </View>
+                {featuredField && <View>{renderField(featuredField)}</View>}
+                {/* </AnimatedReanimated.ScrollView> */}
               </View>
-              {featuredField && <View>{renderField(featuredField)}</View>}
-              {/* </AnimatedReanimated.ScrollView> */}
-            </View>
-          </NestableScrollContainer>
+            </NestableScrollContainer>
           </KeyboardAvoidingView>
         )}
         <Button
@@ -2088,24 +2100,13 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
         </>
       )} */}
 
-{Platform.OS === 'android' ? (
+      {Platform.OS === 'android' ? (
         <>
           <SelectCatagoryDropdown
             options={multiSelectOptions}
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
-            // title={`${t('select')} ${t(
-            //   multiSelectModal?.fieldLabel || 'category',
-            // )}`}
             title={multiSelectModal.placeholder}
-            // subtitle={
-            //   multiSelectModal?.ismultilple
-            //     ? `${t('pick_all')} ${pluralizeLabel(
-            //       multiSelectModal?.fieldLabel || 'category',
-            //     )} ${t('best_describe')}`
-            //     : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'
-            //     } ${t('that_fit_your_listing')}`
-            // }
             subtitle={
               multiSelectModal?.ismultilple
                 ? `${t('pick_all')} ${pluralizeLabel(
@@ -2124,7 +2125,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                 ...prev,
                 [multiSelectModal.fieldId!]: {
                   value: data.selected,
-                  otherText: data.text,
+                  other_text: data.text,
                 },
               }));
             }}
@@ -2168,7 +2169,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                 ...prev,
                 [multiSelectModal.fieldId!]: {
                   value: data.selected,
-                  otherText: data.text,
+                  other_text: data.text,
                 },
               }));
             }}

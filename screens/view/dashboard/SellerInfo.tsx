@@ -274,7 +274,7 @@ const SellerInfo = ({ navigation }: SellerInfoProps) => {
             styles.listContainer,
             {
               paddingTop: Platform.OS === 'ios' ? 70 : 70,
-              paddingBottom: 100,
+              paddingBottom: Platform.OS === 'ios' ? 100 : 100,
               // paddingBottom: isEmpty
               //   ? 10
               //   : Platform.select({
@@ -421,6 +421,8 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   textbg: {
+    position:'absolute',
+    top:Platform.OS === 'ios' ? 0 : 80,
     overflow: 'hidden',
     alignContent: 'center',
     alignSelf: 'center',
@@ -443,7 +445,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ffffff31',
     borderLeftColor: '#ffffff31',
     borderRightColor: '#ffffff31',
-    marginTop: 20,
+    marginTop: Platform.OS === 'ios' ? 20 : 20,
   },
   importantText: {
     color: '#ccc',
@@ -522,7 +524,7 @@ const styles = StyleSheet.create({
   hederRowContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 12,
   },
   itemContainer: {
     paddingTop: 20,
