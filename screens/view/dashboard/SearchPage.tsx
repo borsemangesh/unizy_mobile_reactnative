@@ -628,7 +628,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
               <View style={styles.search_container}>
                 <Image source={searchIcon} style={styles.searchIcon} />
                 <TextInput
-                cursorColor='#fff'
+                selectionColor={'#FFFFFF'}
                   allowFontScaling={false}
                   style={styles.searchBar}
                   placeholder={t('search')}

@@ -708,7 +708,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
               >
                 <Image source={searchIcon} style={styles.searchIcon} />
                 <TextInput
-                cursorColor='#fff'
+                selectionColor={'#FFFFFF'}
                   ref={inputRef}
                   allowFontScaling={false}
                   style={styles.searchBar}

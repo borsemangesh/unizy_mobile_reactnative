@@ -889,7 +889,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               multiline={false}
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               keyboardType={rnKeyboardType}
-              cursorColor='#fff'
+              selectionColor={'#FFFFFF'}
               selectionColor="#FFFFFF"
               value={isPriceField && rawValue ? `£ ${rawValue}` : rawValue}
               onChangeText={text => {
@@ -960,7 +960,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               ]}
               placeholder={placeholderText}
               multiline={true}
-              cursorColor='#fff'
+              selectionColor={'#FFFFFF'}
               selectionColor="#FFFFFF"
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               keyboardType={rnKeyboardType}
