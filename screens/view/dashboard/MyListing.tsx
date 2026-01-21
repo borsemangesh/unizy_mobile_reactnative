@@ -156,11 +156,11 @@ const MyListing = ({ navigation }: MyListingProps) => {
   // }, [selectedCategory]);
 
   useFocusEffect(
-  useCallback(() => {
-    setPage(1);
-    displayListOfProduct(selectedCategory?.id ?? null, 1, false);
-  }, [selectedCategory])
-);
+    useCallback(() => {
+      setPage(1);
+      displayListOfProduct(selectedCategory?.id ?? null, 1, false);
+    }, [selectedCategory])
+  );
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -673,8 +673,15 @@ export default MyListing;
 
 const styles = StyleSheet.create({
 
-  categoryTabsContainer: { width: '105%', paddingBottom: 16, paddingTop: 8},
-  categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' },
+  categoryTabsContainer: {
+     width: '105%', 
+     paddingBottom: 16, 
+     paddingTop: 8 
+    },
+  categoryTabsScrollContent: { 
+    flexDirection: 'row', 
+    alignItems: 'center'
+   },
   blurButtonWrapper_none: {
 
     width: 48,
@@ -707,18 +714,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
 
   },
-  // emptyImage: {
-  //   width: 50,
-  //   height: 50,
-  //   marginBottom: 20,
-  // },
-  // emptyText: {
-  //   fontSize: 20,
-  //   color: '#fff',
-  //   textAlign: 'center',
-  //   fontFamily: 'Urbanist-SemiBold',
-  //   fontWeight: 600
-  // },
+
   emptyImage: {
     width: 64,
     height: 64,
@@ -740,22 +736,13 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    // borderWidth: 0.4,
-    // borderColor: '#ffffff2c',
-    // backgroundColor: 'rgba(255, 255, 255, 0.1)',
-
-
-
     borderWidth: 0.3,
     borderColor: '#ffffff11',
-
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
-
     borderTopColor: '#ffffff2e',
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
@@ -858,7 +845,6 @@ const styles = StyleSheet.create({
       'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
     boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
     borderWidth: 0.4,
-
     borderColor: '#ffffff2c',
   },
   unizyText: {
@@ -915,27 +901,8 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderRadius: 10,
-    // boxShadow:
-    //   'rgba(255, 255, 255, 0.02)inset 0.1px 0.1px 1px 0px,',
-
-
-
-
-  // borderWidth: 0.3,
-  // borderColor: '#ffffff11',
-
-  boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
-  // backgroundColor:
-  //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-  // borderBlockStartColor: '#ffffff2e',
-  // borderBlockColor: '#ffffff2e',
-
-  // borderTopColor: '#ffffff2e',
-  // borderBottomColor: '#ffffff2e',
-  // borderLeftColor: '#ffffff2e',
-  // borderRightColor: '#ffffff2e',
-  // boxSizing: 'border-box',
+    boxSizing: 'border-box'
+    // boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
 
 
   },
@@ -943,8 +910,8 @@ const styles = StyleSheet.create({
     minHeight: 38,
     borderWidth: 0.4,
     borderColor: '#ffffff11',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    // backgroundColor:
+    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderEndEndRadius: 10,
     borderStartEndRadius: 10,
     borderTopLeftRadius: 10,
@@ -956,12 +923,11 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
-    boxSizing: 'border-box',
+   // boxSizing: 'border-box',
     paddingVertical: 10,
     paddingHorizontal: 16,
     marginRight: 8,
-  boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-
+    //boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
   },
 
 

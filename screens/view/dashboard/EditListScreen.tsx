@@ -382,37 +382,51 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
               }
 
               // if (fieldType === 'dropdown') {
-              // const selectedOption = param.options?.find(
-              //   (opt: any) =>
-              //     Number(opt.option_id ?? opt.id) === Number(finalValue),
-              // );
-
-              //   initialValues[param.id] = {
-              //     ...baseField,
-              //     value: finalValue ? Number(finalValue) : null,
-              //     other_text: selectedOption?.other_text ?? null,
-              //   };
-              // }
-
-              // if (fieldType === 'dropdown') {
+              //   const selectedOption = param.options?.find(
+              //     (opt: any) =>
+              //       Number(opt.option_id ?? opt.id) === Number(finalValue),
+              //   );
               //   const isMulti = Array.isArray(finalValue);
 
               //   initialValues[param.id] = {
               //     ...baseField,
               //     value: isMulti
-              //       ? finalValue.map(Number)        // ✅ keep array
+              //       ? finalValue.map(Number)
               //       : finalValue
               //         ? Number(finalValue)
               //         : null,
-              //     other_text: param.other_text ?? null,
+
+              //     // ✅ IMPORTANT: hydrate other_text
+              //     other_text: selectedOption?.other_text ?? null,
               //   };
               // }
               if (fieldType === 'dropdown') {
-                const selectedOption = param.options?.find(
-                  (opt: any) =>
-                    Number(opt.option_id ?? opt.id) === Number(finalValue),
-                );
                 const isMulti = Array.isArray(finalValue);
+
+                const isOtherOption = (opt: any) =>
+                  String(opt.option_name).toLowerCase() === 'other';
+
+                let otherText: string | null = null;
+
+                if (isMulti) {
+                  const otherOption = param.options?.find(
+                    (opt: any) =>
+                      isOtherOption(opt) &&
+                      finalValue.map(Number).includes(Number(opt.option_id ?? opt.id))
+                  );
+
+                  otherText = otherOption?.other_text ?? null;
+                } else {
+                  const selectedOption = param.options?.find(
+                    (opt: any) =>
+                      Number(opt.option_id ?? opt.id) === Number(finalValue)
+                  );
+
+                  otherText =
+                    selectedOption && isOtherOption(selectedOption)
+                      ? selectedOption.other_text ?? null
+                      : null;
+                }
 
                 initialValues[param.id] = {
                   ...baseField,
@@ -421,11 +435,12 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                     : finalValue
                       ? Number(finalValue)
                       : null,
-
-                  // ✅ IMPORTANT: hydrate other_text
-                  other_text: selectedOption?.other_text ?? null,
+                  other_text: otherText,
                 };
               }
+
+
+
               else {
                 initialValues[param.id] = {
                   ...baseField,
@@ -1335,6 +1350,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           </View>
         );
       }
+
       case 'date': {
         const { param } = field;
         const { field_name } = param;
@@ -2036,69 +2052,6 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
         </TouchableWithoutFeedback>
       </Modal>
 
-      {/* {Platform.OS === 'android' ? (
-        <>
-          <SelectCatagoryDropdown
-            options={multiSelectOptions}
-            visible={multiSelectModal.visible}
-            ismultilple={multiSelectModal?.ismultilple}
-            title={`${t('select')} ${multiSelectModal?.fieldLabel || 'Category'
-              }`}
-            subtitle={
-              multiSelectModal?.ismultilple
-                ? `${t('pick_all')} ${pluralizeLabel(
-                  multiSelectModal?.fieldLabel || 'category',
-                )} ${t('best_describe')}`
-                : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'
-                } ${t('that_fit_your_listing')}`
-            }
-            selectedValues={formValues[multiSelectModal.fieldId!]?.value}
-            onClose={() =>
-              setMultiSelectModal(prev => ({ ...prev, visible: false }))
-            }
-            onSelect={(data: any) => {
-              setFormValues((prev: any) => ({
-                ...prev,
-                [multiSelectModal.fieldId!]: {
-                  value: data.selected,
-                  other_text: data.text || null,
-                },
-              }));
-            }}
-          />
-        </>
-      ) : (
-        <>
-          <SelectCatagoryDropdown_IOS
-            options={multiSelectOptions}
-            visible={multiSelectModal.visible}
-            ismultilple={multiSelectModal?.ismultilple}
-            title={`${t('select')} ${multiSelectModal?.fieldLabel || 'Category'
-              }`}
-            subtitle={
-              multiSelectModal?.ismultilple
-                ? `${t('pick_all')} ${pluralizeLabel(
-                  multiSelectModal?.fieldLabel || 'category',
-                )} ${t('best_describe')}`
-                : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'
-                } ${t('that_fit_your_listing')}`
-            }
-            selectedValues={formValues[multiSelectModal.fieldId!]?.value}
-            onClose={() =>
-              setMultiSelectModal(prev => ({ ...prev, visible: false }))
-            }
-            onSelect={(data: any) => {
-              setFormValues((prev: any) => ({
-                ...prev,
-                [multiSelectModal.fieldId!]: {
-                  value: data.selected,
-                  other_text: data.text || null,
-                },
-              }));
-            }}
-          />
-        </>
-      )} */}
 
       {Platform.OS === 'android' ? (
         <>
@@ -2119,16 +2072,36 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
             onClose={() =>
               setMultiSelectModal(prev => ({ ...prev, visible: false }))
             }
+            otherTextValue={formValues[multiSelectModal.fieldId!]?.other_text}
+
+            // onSelect={(data: any) => {
+            //   setFormValues((prev: any) => ({
+            //     ...prev,
+            //     [multiSelectModal.fieldId!]: {
+            //       value: data.selected,
+            //       other_text: data.text,
+            //     },
+            //   }));
+            // }}
 
             onSelect={(data: any) => {
-              setFormValues((prev: any) => ({
-                ...prev,
-                [multiSelectModal.fieldId!]: {
-                  value: data.selected,
-                  other_text: data.text,
-                },
-              }));
+              setFormValues((prev: any) => {
+                const fieldId = multiSelectModal.fieldId!;
+                const prevOtherText = prev[fieldId]?.other_text;
+
+                return {
+                  ...prev,
+                  [fieldId]: {
+                    value: data.selected,
+                    other_text:
+                      data.text !== undefined && data.text !== ''
+                        ? data.text
+                        : prevOtherText ?? null,
+                  },
+                };
+              });
             }}
+
           />
         </>
       ) : (
@@ -2137,20 +2110,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
             options={multiSelectOptions}
             visible={multiSelectModal.visible}
             ismultilple={multiSelectModal?.ismultilple}
-            // title={`${t('select')} ${t(
-            //   multiSelectModal?.fieldLabel || 'category',
-            // )}`}
-
             title={multiSelectModal.placeholder}
-            // subtitle={
-            //   multiSelectModal?.ismultilple
-            //     ? `${t('pick_all')} ${pluralizeLabel(
-            //       multiSelectModal?.fieldLabel || 'category',
-            //     )} ${t('best_describe')}`
-            //     : `${t('select_the')} ${multiSelectModal?.fieldLabel || 'category'
-            //     } ${t('that_fit_your_listing')}`
-            // }
-
             subtitle={
               multiSelectModal?.ismultilple
                 ? `${t('pick_all')} ${pluralizeLabel(
@@ -2163,16 +2123,36 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
             onClose={() =>
               setMultiSelectModal(prev => ({ ...prev, visible: false }))
             }
+            otherTextValue={formValues[multiSelectModal.fieldId!]?.other_text}
+
+            // onSelect={(data: any) => {
+            //   setFormValues((prev: any) => ({
+            //     ...prev,
+            //     [multiSelectModal.fieldId!]: {
+            //       value: data.selected,
+            //       other_text: data.text,
+            //     },
+            //   }));
+            // }}
 
             onSelect={(data: any) => {
-              setFormValues((prev: any) => ({
-                ...prev,
-                [multiSelectModal.fieldId!]: {
-                  value: data.selected,
-                  other_text: data.text,
-                },
-              }));
+              setFormValues((prev: any) => {
+                const fieldId = multiSelectModal.fieldId!;
+                const prevOtherText = prev[fieldId]?.other_text;
+
+                return {
+                  ...prev,
+                  [fieldId]: {
+                    value: data.selected,
+                    other_text:
+                      data.text !== undefined && data.text !== ''
+                        ? data.text
+                        : prevOtherText ?? null,
+                  },
+                };
+              });
             }}
+
           />
         </>
       )}

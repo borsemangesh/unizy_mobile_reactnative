@@ -35,6 +35,7 @@ interface SelectCatagoryDropdownProps {
     | { selected: number | number[]; text?: string }
 ) => void;
   selectedValues?: number | number[];
+  otherTextValue?: string; 
 }
 const SelectCatagoryDropdown = ({
   options,
@@ -44,7 +45,8 @@ const SelectCatagoryDropdown = ({
   subtitle,
   onClose,
   onSelect,
-  selectedValues
+  selectedValues,
+  otherTextValue
 }: SelectCatagoryDropdownProps) => {
   const [selectedCheckboxes, setSelectedCheckboxes] = useState<number[]>([]);
   const [selectedRadio, setSelectedRadio] = useState<number | null>(null);
@@ -55,19 +57,34 @@ const SelectCatagoryDropdown = ({
   const [tempSelectedCheckboxes, setTempSelectedCheckboxes] = useState<number[]>([]);
   const [tempSelectedRadio, setTempSelectedRadio] = useState<number | null>(null);
 
+  // useEffect(() => {
+  //   if (visible) {
+  //     setOtherText('')
+  //     if (Array.isArray(selectedValues)) {
+  //       setTempSelectedCheckboxes(selectedValues);
+  //     } else if (selectedValues) {
+  //       setTempSelectedRadio(selectedValues);
+  //     } else {
+  //       setTempSelectedCheckboxes([]);
+  //       setTempSelectedRadio(null);
+  //     }
+  //   }
+  // }, [visible, selectedValues]);
+
   useEffect(() => {
-    if (visible) {
-      setOtherText('')
-      if (Array.isArray(selectedValues)) {
-        setTempSelectedCheckboxes(selectedValues);
-      } else if (selectedValues) {
-        setTempSelectedRadio(selectedValues);
-      } else {
-        setTempSelectedCheckboxes([]);
-        setTempSelectedRadio(null);
-      }
+  if (visible) {
+    if (Array.isArray(selectedValues)) {
+      setTempSelectedCheckboxes(selectedValues);
+    } else if (selectedValues) {
+      setTempSelectedRadio(selectedValues);
+    } else {
+      setTempSelectedCheckboxes([]);
+      setTempSelectedRadio(null);
     }
-  }, [visible, selectedValues]);
+
+    setOtherText(otherTextValue ?? ''); // ✅ RESTORE
+  }
+}, [visible, selectedValues, otherTextValue]);
 
   const toggleCheckbox = (id: number) => {
     setTempSelectedCheckboxes(prev =>
@@ -344,9 +361,10 @@ const SelectCatagoryDropdown = ({
                               value={otherText}
                               onChangeText={setOtherText}
                               allowFontScaling={false}
+                              cursorColor="#fff"
+                              selectionColor="#fff"
                               placeholder={`${t('please_specify')}*`}
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                              cursorColor="#fff"
                               style={{
                                 borderWidth: 1,
                                 borderColor: '#ffffff4e',

@@ -48,6 +48,7 @@ interface SelectCatagoryDropdownProps {
       | { selected: number | number[]; text?: string },
   ) => void;
   selectedValues?: number | number[];
+  otherTextValue?: string; 
 }
 
 const SelectCatagoryDropdown = ({
@@ -59,6 +60,7 @@ const SelectCatagoryDropdown = ({
   onClose,
   onSelect,
   selectedValues,
+  otherTextValue
 }: SelectCatagoryDropdownProps) => {
   const [selectedCheckboxes, setSelectedCheckboxes] = useState<number[]>([]);
   const [selectedRadio, setSelectedRadio] = useState<number | null>(null);
@@ -71,19 +73,36 @@ const SelectCatagoryDropdown = ({
     null,
   );
 
-  useEffect(() => {
-    if (visible) {
-      setOtherText('');
-      if (Array.isArray(selectedValues)) {
-        setTempSelectedCheckboxes(selectedValues);
-      } else if (selectedValues) {
-        setTempSelectedRadio(selectedValues);
-      } else {
-        setTempSelectedCheckboxes([]);
-        setTempSelectedRadio(null);
-      }
+  // useEffect(() => {
+  //   if (visible) {
+  //     setOtherText('');
+  //     if (Array.isArray(selectedValues)) {
+  //       setTempSelectedCheckboxes(selectedValues);
+  //     } else if (selectedValues) {
+  //       setTempSelectedRadio(selectedValues);
+  //     } else {
+  //       setTempSelectedCheckboxes([]);
+  //       setTempSelectedRadio(null);
+  //     }
+  //   }
+  // }, [visible, selectedValues]);
+
+ useEffect(() => {
+  if (visible) {
+    if (Array.isArray(selectedValues)) {
+      setTempSelectedCheckboxes(selectedValues);
+    } else if (selectedValues) {
+      setTempSelectedRadio(selectedValues);
+    } else {
+      setTempSelectedCheckboxes([]);
+      setTempSelectedRadio(null);
     }
-  }, [visible, selectedValues]);
+
+    setOtherText(otherTextValue ?? ''); // ✅ RESTORE
+  }
+}, [visible, selectedValues, otherTextValue]);
+
+
 
   const toggleCheckbox = (id: number) => {
     setTempSelectedCheckboxes(prev =>
@@ -339,6 +358,7 @@ const SelectCatagoryDropdown = ({
                               placeholder={`${t('please_specify')}*`}
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
                               cursorColor="#fff"
+                              selectionColor="#fff"
                               style={{
                                 borderWidth: 1,
                                 borderColor: '#ffffff4e',

@@ -994,15 +994,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 setMultiSelectOptions(options);
               }}
             >
-              {/* <View style={styles.dropdowncard}>
-                <Text numberOfLines={2} allowFontScaling={false} style={styles.dropdowntext}>
-                  {Array.isArray(formValues[id]?.value) && formValues[id]?.value.length > 0
-                    ? `${formValues[id]?.value.length} ${t('selected')}`
-                    : formValues[id]?.value
-                      ? `1 ${t('selected')}`
-                      : `${t('select')} ${field_name}`}
-                </Text>
-              </View> */}
+              
               <View style={styles.dropdowncard}>
                 {(() => {
                   const selectedValue = formValues[id]?.value;
@@ -1019,9 +1011,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                       allowFontScaling={false}
                       style={styles.dropdowntext}
                     >
-                      {/* {selectedCount > 0
-                        ? `${selectedCount} ${t('selected')}`
-                        : `${t('select')} ${field_name}`} */}
+                     
                       {selectedCount > 0
                         ? `${selectedCount} ${t('selected')}`
                         : `${placeholder}` }
@@ -1869,6 +1859,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             onClose={() =>
               setMultiSelectModal(prev => ({ ...prev, visible: false }))
             }
+            otherTextValue={formValues[multiSelectModal.fieldId!]?.otherText}
 
             onSelect={(data: any) => {
               setFormValues((prev: any) => ({
@@ -1913,6 +1904,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             onClose={() =>
               setMultiSelectModal(prev => ({ ...prev, visible: false }))
             }
+            otherTextValue={formValues[multiSelectModal.fieldId!]?.otherText}
 
             onSelect={(data: any) => {
               setFormValues((prev: any) => ({

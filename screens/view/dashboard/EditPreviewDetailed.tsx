@@ -553,19 +553,61 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
         }
       });
 
+      // const dataArray = nonImageFields
+      //   .filter(([key]) => !isNaN(Number(key)))
+      //   .map(([key, obj]) => ({
+      //     id: Number(key),
+      //     param_value: obj.value !== undefined && obj.value !== null && obj.value !== "" ? obj.value : null,
+      //   }))
+      //   .filter(i => i.param_value !== null);
+
       const dataArray = nonImageFields
-        .filter(([key]) => !isNaN(Number(key)))
-        .map(([key, obj]) => ({
-          id: Number(key),
-          param_value: obj.value !== undefined && obj.value !== null && obj.value !== "" ? obj.value : null,
-        }))
-        .filter(i => i.param_value !== null);
+        .map(([key, obj]: any) => {
+          const value = obj.value;
+          const id = Number(key);
+
+          // ❌ skip invalid ids early
+          if (!id) return null;
+
+          // ✅ DATE FIELD HANDLING
+          if (
+            value &&
+            typeof value === 'object' &&
+            !Array.isArray(value) &&
+            value.startDate &&
+            value.endDate
+          ) {
+            return {
+              id,
+              param_value: null,
+              startDate: value.startDate,
+              endDate: value.endDate,
+            };
+          }
+
+          // ✅ NORMAL FIELD
+          const payload: any = {
+            id,
+            param_value: value,
+          };
+
+          // 👇 include other_text only if present
+          if (obj.other_text && String(obj.other_text).trim() !== '') {
+            payload.other_text = obj.other_text;
+          }
+
+          return payload;
+        })
+        // ✅ REMOVE null / invalid id entries
+        .filter(Boolean);
+
 
       const createPayload = {
         category_id: productId,
         data: dataArray,
       };
 
+      console.log(createPayload)
 
 
       const createRes = await fetch(`${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`, {
@@ -1085,6 +1127,20 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
                       const storedValue = storedField?.value;
                       const otherText = storedField?.other_text ?? null;
 
+                      // if (Array.isArray(storedValue)) {
+                      //   displayValues = storedValue
+                      //     .map((id: number) => {
+                      //       const opt = field.param.options.find(
+                      //         (o: any) => Number(o.id) === Number(id)
+                      //       );
+                      //       if (!opt) return null;
+
+                      //       return otherText
+                      //         ? `${opt.option_name} (${otherText})`
+                      //         : opt.option_name;
+                      //     })
+                      //     .filter(Boolean) as string[];
+                      // } 
                       if (Array.isArray(storedValue)) {
                         displayValues = storedValue
                           .map((id: number) => {
@@ -1093,12 +1149,17 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
                             );
                             if (!opt) return null;
 
-                            return otherText
-                              ? `${opt.option_name} (${otherText})`
-                              : opt.option_name;
+                            // ✅ apply text ONLY for "Other"
+                            if (opt.is_other && otherText) {
+                              return `${opt.option_name} (${otherText})`;
+                            }
+
+                            return opt.option_name;
                           })
                           .filter(Boolean) as string[];
-                      } else {
+                      }
+
+                      else {
                         const opt = field.param.options.find(
                           (o: any) => Number(o.id) === Number(storedValue)
                         );
