@@ -384,7 +384,7 @@ const UserListing = ({ navigation }: UserListingProps) => {
           styles.itemContainer,
           {
             flex: isLastOddItem ? 0.5 : 0.5,
-            marginRight: isLastOddItem ? 0.5 : 0.5,
+            marginRight: isLastOddItem ? 0.6 : 0.6,
           },
         ]}
       >
@@ -697,9 +697,9 @@ export default UserListing;
 const styles = StyleSheet.create({
 
   categoryTabsContainer: {
-    width: '105%',paddingBottom: 16,paddingTop: 8 
+   paddingTop: 8 
   },
-  categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' },
+  categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' ,paddingHorizontal: 16, padding: 8,},
 
   tabcard: {
     minHeight: 38,
@@ -711,8 +711,9 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderRadius: 10,
-    boxShadow:
-      'rgba(255, 255, 255, 0.02)inset 0.1px 0.1px 1px 0px,',
+    // boxShadow:
+    //   'rgba(255, 255, 255, 0.02)inset 0.1px 0.1px 1px 0px,',
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.25)'
   },
   tabcard1: {
     minHeight: 38,
@@ -835,8 +836,9 @@ headerContent: {
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    // paddingHorizontal: 10,
+    paddingHorizontal: 16,
     // marginTop: -5
+    paddingTop: 10
   },
 
 
@@ -938,8 +940,8 @@ headerContent: {
     width: '85%',
   },
   listContainer: {
-    paddingHorizontal: 16,
-    width: '100%',
+    // paddingHorizontal: 16,
+    // width: '100%',
   },
   row1: {
   },
@@ -947,7 +949,7 @@ headerContent: {
     // flex: 1,
     // marginHorizontal: 4,
     flex: 1,
-    marginHorizontal: 4,
+    marginHorizontal: 12,
     paddingVertical: 6
   },
 });

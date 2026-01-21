@@ -658,9 +658,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
 
-  categoryTabsContainer: {paddingBottom: 16,paddingTop: 8 },
+  categoryTabsContainer: { },
   categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center'
-  ,paddingHorizontal: 16,},
+  ,paddingHorizontal: 16,padding: 8},
  tabcard: {  
     minHeight: 38,
     paddingVertical: 10,
@@ -671,8 +671,7 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderRadius: 10,
-    boxShadow:
-    'rgba(255, 255, 255, 0.02)inset 0.1px 0.1px 1px 0px,',
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.25)',
   },
   tabcard1: {
     minHeight: 38,
@@ -743,7 +742,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
+    paddingTop: 10
     
   },
 

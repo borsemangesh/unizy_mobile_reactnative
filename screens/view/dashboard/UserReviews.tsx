@@ -571,9 +571,17 @@ const UserReviews = ({ navigation }: UserReviewsProps) => {
           }}
           ListHeaderComponent={
             <View
-              style={styles.categoryTabsContainer}
-              pointerEvents="box-none"
-            >
+            style={[
+              styles.categoryTabsContainer,
+              {
+                marginHorizontal: -30, 
+                paddingHorizontal: 30, 
+                overflow: 'visible',
+              },
+            ]}
+            pointerEvents="box-none"
+           
+          >
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -686,8 +694,8 @@ export default UserReviews;
 
 const styles = StyleSheet.create({
 
-  categoryTabsContainer: {width: '105%',paddingBottom: 16,paddingTop: 8,paddingLeft: 10 },
-  categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' },
+  categoryTabsContainer: {paddingTop: 8 },
+  categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center'  ,paddingHorizontal: 16,padding: 8 },
   blurButtonWrapper_none: {
 
     width: 48,
@@ -763,6 +771,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     paddingHorizontal: 9,
+    paddingTop: 10
   },
 
 
@@ -813,7 +822,7 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderRadius: 10,
-    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.25)',
   },
   tabcard1: {
     minHeight: 38,
@@ -902,8 +911,8 @@ const styles = StyleSheet.create({
     width: '85%',
   },
   listContainer: {
-    marginLeft: 10,
-    marginRight: 10,
+    // marginLeft: 10,
+    // marginRight: 10,
     paddingTop: 10,
     paddingBottom: 10,
   },
@@ -912,5 +921,6 @@ const styles = StyleSheet.create({
   itemContainer: {
     flex: 1,
     marginHorizontal: 4,
+    paddingHorizontal: 16
   },
 });
