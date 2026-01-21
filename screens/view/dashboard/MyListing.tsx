@@ -548,10 +548,19 @@ const MyListing = ({ navigation }: MyListingProps) => {
             renderItem={renderItem}
             keyExtractor={item => item.id.toString()}
             ListHeaderComponent={
+            
               <View
-                style={styles.categoryTabsContainer}
-                pointerEvents="box-none"
-              >
+              style={[
+                styles.categoryTabsContainer,
+                {
+                  marginHorizontal: -30, 
+                  paddingHorizontal: 30, 
+                  overflow: 'visible',
+                },
+              ]}
+              pointerEvents="box-none"
+             
+            >
                 <ScrollView
                   horizontal
                   showsHorizontalScrollIndicator={false}
@@ -591,19 +600,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
                 </ScrollView>
               </View>
             }
-            // contentContainerStyle={[
-            //   styles.listContainer,
-            //   {
-            //     paddingTop: Platform.OS === 'ios' ? 114 : 100,
-            //     paddingBottom: isEmpty
-            //       ? 10                      
-            //       : Platform.select({
-            //         ios: height * 0.01,  
-            //         android: height * 0.04,
-            //       }),
-            //     flexGrow: 1,
-            //   },
-            // ]}
             contentContainerStyle={[
               styles.listContainer,
               {
@@ -611,7 +607,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
                 paddingBottom: isEmpty
                   ? 10
                   : Platform.select({
-                    ios: height * 0.01,   // ⬅ apply padding when list has data
+                    ios: height * 0.01, 
                     android: height * 0.04,
                   }),
                 flexGrow: 1,
@@ -674,13 +670,12 @@ export default MyListing;
 const styles = StyleSheet.create({
 
   categoryTabsContainer: {
-     width: '105%', 
      paddingBottom: 16, 
-     paddingTop: 8 
     },
   categoryTabsScrollContent: { 
     flexDirection: 'row', 
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingHorizontal: 16,
    },
   blurButtonWrapper_none: {
 
@@ -699,6 +694,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
+    paddingHorizontal: 16,
     marginBottom: Platform.OS === "ios" ? 20 : 10,
   },
 
@@ -877,7 +873,7 @@ const styles = StyleSheet.create({
     width: '85%',
   },
   listContainer: {
-    paddingHorizontal: 16,
+    // paddingHorizontal: 16,
     width: '100%',
   },
 
@@ -933,6 +929,7 @@ const styles = StyleSheet.create({
 
 
   itemContainer: {
-    width: '100%'
+    width: '100%',
+    paddingHorizontal: 16,
   },
 });

@@ -620,8 +620,16 @@ const formatDate = (dateString?: string, t?: any) => {
           }}
           ListHeaderComponent={
             <View
-              style={styles.categoryTabsContainer}
+              style={[
+                styles.categoryTabsContainer,
+                {
+                  marginHorizontal: -30, 
+                  paddingHorizontal: 30, 
+                  overflow: 'visible',
+                },
+              ]}
               pointerEvents="box-none"
+             
             >
               <ScrollView
                 horizontal
@@ -717,8 +725,12 @@ export default MyOrders;
 
 const styles = StyleSheet.create({
 
-  categoryTabsContainer: {width: '105%',paddingBottom: 16,paddingTop: 8 },
-  categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' },
+  categoryTabsContainer: { paddingBottom: 16,  },
+  categoryTabsScrollContent: { 
+    flexDirection: 'row', 
+    alignItems: 'center',
+    paddingHorizontal: 16,
+  },
   blurButtonWrapper_none: {
 
     width: 48,
@@ -881,7 +893,8 @@ boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 25
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    width: '100%'
+    width: '100%',
+    paddingHorizontal: 16,
   },
 
 
@@ -1000,7 +1013,6 @@ boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 25
     width: '85%',
   },
   listContainer: {
-    paddingHorizontal: 16,
     width: '100%',
   },
   row1: {
@@ -1008,6 +1020,7 @@ boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 25
   itemContainer: {
     flex: 1,
     marginTop: 8,
+    paddingHorizontal: 16,
 
   },
 });

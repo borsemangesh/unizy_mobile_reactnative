@@ -658,7 +658,18 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
           numColumns={2}
           renderItem={renderItem}
           ListHeaderComponent={
-            <View style={styles.categoryTabsContainer} pointerEvents="box-none">
+            <View
+              style={[
+                styles.categoryTabsContainer,
+                {
+                  marginHorizontal: -30, 
+                  paddingHorizontal: 30, 
+                  overflow: 'visible',
+                },
+              ]}
+              pointerEvents="box-none"
+             
+            >
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -765,13 +776,13 @@ export default Bookmark;
 
 const styles = StyleSheet.create({
   categoryTabsContainer: {
-    width: '105%', paddingBottom: 16, paddingTop: 8
+    paddingBottom: 16, paddingTop: 8
   },
 
   categoryTabsScrollContent: {
     flexDirection: 'row',
     alignItems: 'center',
-
+    paddingHorizontal: 16
   },
 
   blurButtonWrapper: {
@@ -850,7 +861,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    // paddingHorizontal: 10,
+    paddingHorizontal: 16,
     marginBottom: Platform.OS === "ios" ? 20 : 10,
   },
 
@@ -1004,7 +1015,6 @@ const styles = StyleSheet.create({
     width: '85%',
   },
   listContainer: {
-    paddingHorizontal: 16,
     width: '100%',
   },
   row1: {
@@ -1012,6 +1022,7 @@ const styles = StyleSheet.create({
   itemContainer: {
     flex: 1,
     marginHorizontal: 4,
-    paddingBottom: 10
+    paddingBottom: 10,
+    paddingHorizontal: 16
   },
 });

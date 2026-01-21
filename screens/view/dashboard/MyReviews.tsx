@@ -484,9 +484,17 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
           }}
           ListHeaderComponent={
             <View
-              style={styles.categoryTabsContainer}
-              pointerEvents="box-none"
-            >
+            style={[
+              styles.categoryTabsContainer,
+              {
+                marginHorizontal: -30, 
+                paddingHorizontal: 30, 
+                overflow: 'visible',
+              },
+            ]}
+            pointerEvents="box-none"
+           
+          >
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -650,9 +658,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
 
-  categoryTabsContainer: {width: '105%',paddingBottom: 16,paddingTop: 8 },
-  categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center'},
-
+  categoryTabsContainer: {paddingBottom: 16,paddingTop: 8 },
+  categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center'
+  ,paddingHorizontal: 16,},
  tabcard: {  
     minHeight: 38,
     paddingVertical: 10,
@@ -734,7 +742,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    width: '100%'
+    width: '100%',
+    paddingHorizontal: 16
     
   },
 
@@ -825,7 +834,6 @@ const styles = StyleSheet.create({
   },
   
   listContainer: {
-    paddingHorizontal: 16,
     width: '100%',
   },
   row1: {
@@ -834,5 +842,6 @@ const styles = StyleSheet.create({
   itemContainer: {
     flex: 1,
     marginHorizontal: 4,
+    paddingHorizontal: 16
   },
 });

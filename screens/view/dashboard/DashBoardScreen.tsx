@@ -1003,7 +1003,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
             ) : (
               <ScrollView
                 directionalLockEnabled
-                style={{ paddingHorizontal: 0, marginLeft: 8 }}
+                style={{ paddingHorizontal: 0, marginLeft: 0 }}
                 horizontal
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}

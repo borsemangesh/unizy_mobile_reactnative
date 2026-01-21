@@ -82,10 +82,10 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   const [languages, setLanguages] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const route = useRoute<SinglePageRouteProp>();
-
+  const [isLogout,setIsLogout]= useState(false)
 
   const logoutCleanup = async () => {
-
+    
     try {
       // Clear AsyncStorage in ONE call (much faster)
 
@@ -146,11 +146,14 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
   useEffect(() => {
     if (route.params?.resetToLogin) {
+      
+      showToast(t(route.params?.logoutMessage), 'success')
+      setIsLogout(true);
       loginOpacity.setValue(1);
       loginTranslateY.setValue(0);
       setCurrentScreen('login');
       setcurrentScreenIninner('login');
-      showToast(t(route.params?.logoutMessage), 'success')
+      
       InteractionManager.runAfterInteractions(() => {
         logoutCleanup();
       });
@@ -731,6 +734,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
     setLoading(true);
 
     try {
+      console.log("LOGINUSR: ",MAIN_URL.baseUrl + 'user/login');
       const response = await fetch(MAIN_URL.baseUrl + 'user/login', {
         method: 'POST',
         headers: {
@@ -741,6 +745,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
           password: password,
         }),
       });
+
 
       let result;
       try {
@@ -1326,92 +1331,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   //profile
 
 
-  // const requestCameraPermission = async () => {
-  //   try {
-  //     if (Platform.OS === 'android') {
-  //       try {
-  //         // Request CAMERA
-  //         const cameraGranted = await PermissionsAndroid.request(
-  //           PermissionsAndroid.PERMISSIONS.CAMERA,
-  //           {
-  //             title: 'Camera Permission',
-  //             message: 'App needs access to your camera',
-  //             buttonNeutral: 'Ask Me Later',
-  //             buttonNegative: 'Cancel',
-  //             buttonPositive: 'OK',
-  //           }
-  //         );
 
-  //         // Request Gallery Permission (Android 13+)
-  //         const readImagesGranted = await PermissionsAndroid.request(
-  //           PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
-  //           {
-  //             title: 'Gallery Permission',
-  //             message: 'App needs access to your photos',
-  //             buttonNeutral: 'Ask Me Later',
-  //             buttonNegative: 'Cancel',
-  //             buttonPositive: 'OK',
-  //           }
-  //         ).catch(() => null);
-
-  //         // Request for Android 12 and below
-  //         const readStorageGranted = await PermissionsAndroid.request(
-  //           PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-  //           {
-  //             title: 'Storage Permission',
-  //             message: 'App needs access to your gallery photos',
-  //             buttonNeutral: 'Ask Me Later',
-  //             buttonNegative: 'Cancel',
-  //             buttonPositive: 'OK',
-  //           }
-  //         ).catch(() => null);
-
-  //         // Final permission result
-  //         const galleryGranted =
-  //           readImagesGranted === PermissionsAndroid.RESULTS.GRANTED ||
-  //           readStorageGranted === PermissionsAndroid.RESULTS.GRANTED;
-
-  //         return (
-  //           cameraGranted === PermissionsAndroid.RESULTS.GRANTED &&
-  //           galleryGranted
-  //         );
-  //       } catch (err) {
-  //         console.warn(err);
-  //         return false;
-  //       }
-  //     } else {
-  //       // iOS Permissions
-  //       const permissionsToCheck = [
-  //         PERMISSIONS.IOS.CAMERA,
-  //         PERMISSIONS.IOS.PHOTO_LIBRARY,
-  //       ];
-
-  //       const results = await Promise.all(
-  //         permissionsToCheck.map(async (perm) => {
-  //           const status = await check(perm);
-  //           if (status === RESULTS.GRANTED) return true;
-  //           if (status === RESULTS.BLOCKED) {
-  //             console.warn(`${perm} is blocked. Enable it in Settings.`);
-  //             return false;
-  //           }
-  //           const req = await request(perm);
-  //           return req === RESULTS.GRANTED;
-  //         }),
-  //       );
-
-  //       if (results.every((r) => r === true)) {
-  //         //Alert.alert('Success', 'Camera and gallery permissions granted');
-  //         return true;
-  //       } else {
-  //         Alert.alert('Permission Denied', 'Camera or gallery permission denied');
-  //         return false;
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.warn('Permission Error:', error);
-  //     return false;
-  //   }
-  // };
   const requestCameraPermission = async () => {
     // ANDROID
     if (Platform.OS === 'android') {
@@ -1733,6 +1653,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
   const signupOpacity = useRef(new Animated.Value(0)).current;
   const loginOpacity = useRef(new Animated.Value(0)).current;
+  const isFocused = useIsFocused();
   return (
     <ImageBackground
       source={require('../../../assets/images/bganimationscreen.png')}
@@ -1745,20 +1666,24 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         </>
       ) : (
         <>
-          <View style={[StyleSheet.absoluteFill, { opacity: 0.4 }]}>
+          {/* {!isLogout &&(
+            <View style={[StyleSheet.absoluteFill, { opacity: isLogout?  0 : 0.4 }]}>
             <LottieView
               source={require('../../../assets/animations/backgroundanimation3.json')}
-              autoPlay
+              autoPlay={isLogout ? false : true}  
               loop
               resizeMode="cover"
               style={StyleSheet.absoluteFillObject}
             />
             <BlurView
-              style={[StyleSheet.absoluteFill]}
-              blurType="light" // "light", "dark", "xlight"
-              blurAmount={30} // adjust intensity
+              style={StyleSheet.absoluteFill}
+              blurType="light"
+              blurAmount={isLogout ? 0 : 30}
             />
+            
           </View>
+        )} */}
+          
         </>
       )}
       <View
@@ -1911,6 +1836,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                       style={selectlang_styles.searchBar}
                       placeholder="Search"
                       selectionColor="white"
+                      cursorColor={'#FFFFFF'}
                       //placeholderTextColor="#ccc"
                       placeholderTextColor="rgba(255, 255, 255, 0.72)"
                       onChangeText={setSearch}
@@ -2101,6 +2027,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                 }
                                 autoCapitalize="none"
                                 autoCorrect={false}
+                                cursorColor={'#FFFFFF'}
                                 selectionColor="white"
                                 autoComplete={
                                   Platform.OS === 'ios' ? 'email' : 'username'
@@ -2128,6 +2055,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                 value={password}
                                 maxLength={20}
                                 selectionColor="white"
+                                cursorColor={'#FFFFFF'}
                                 secureTextEntry={!isPasswordVisible}
                                 onChangeText={passwordText =>
                                   setPassword(passwordText)
@@ -2312,6 +2240,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                   value={username1}
                                   maxLength={50}
                                   selectionColor="white"
+                                  cursorColor={'#FFFFFF'}
                                   keyboardType={
                                     Platform.OS === 'ios'
                                       ? 'default'
@@ -2479,6 +2408,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                     setFirstName(text)
                                   }
                                   maxLength={20}
+                                  cursorColor={'#FFFFFF'}
                                   autoComplete="name-given"
                                   textContentType="givenName"
                                   autoCapitalize="words"
@@ -2495,6 +2425,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                   placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                   value={lastName}
                                   selectionColor="white"
+                                  cursorColor={'#FFFFFF'}
                                   maxLength={20}
                                   autoComplete="name-family"
                                   textContentType="familyName"
@@ -2521,6 +2452,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                     { paddingTop: 10 },
                                   ]}
                                   placeholder="Postal Code"
+                                  cursorColor={'#FFFFFF'}
                                   placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                   value={postalCode}
                                   maxLength={7}
@@ -2553,6 +2485,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                 value={signUpusername}
                                 maxLength={50}
+                                cursorColor={'#FFFFFF'}
                                 keyboardType="email-address"
                                 autoCapitalize="none"
                                 selectionColor="white"
@@ -2608,7 +2541,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                 value={signUppassword}
                                 maxLength={20}
-                                selectionColor="white"
+                                selectionColor="white" 
+                                cursorColor={'#FFFFFF'} 
                                 onChangeText={setsignUpPassword}
                                 secureTextEntry={!issignUpPasswordVisible}
                               />
@@ -2651,7 +2585,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                 placeholder={t('confirm_password')}
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                 value={confirmPassword}
-                                maxLength={20}
+                                maxLength={20} 
+                                cursorColor={'#FFFFFF'}
                                 selectionColor="white"
                                 onChangeText={setConfirmPassword}
                                 secureTextEntry={!isConfirmPasswordVisible}
@@ -2795,6 +2730,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                       keyboardType="number-pad"
                                       maxLength={1}
                                       selectionColor="white"
+                                      cursorColor={'#FFFFFF'}
                                       onChangeText={text => {
                                         const digit = text.replace(/[^0-9]/g, '');
                                         handleChange(digit, index);
@@ -2955,6 +2891,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                     keyboardType="email-address"
                                     autoCapitalize="none"
                                     selectionColor="white"
+                                    cursorColor={'#FFFFFF'}
                                     autoCorrect={false}
                                     autoComplete="email"
                                     textContentType="emailAddress"
@@ -3411,66 +3348,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                         : {},
                     ]}
                   >
-                    {/* <View style={Styles.teamsandConditionContainer}>
-                      <Text
-                        allowFontScaling={false}
-                        style={Styles.bycountuningAgreementText}
-                      >
-
-                        {t('by_continuing_agree')}
-                      </Text>
-                      <TouchableOpacity onPress={() => navigation.navigate('TeamsAndCondition')}>
-                        <View style={{ alignSelf: 'flex-start' }}>
-                          <Text
-                            allowFontScaling={false}
-                            style={Styles.teamsandConditionText}
-                          >
-
-                            {t('terms_and_conditions')}
-                          </Text>
-                          <View
-                            style={{
-                              marginLeft: 5,
-                              height: 1.2,
-                              backgroundColor: 'rgba(124, 234, 255, 0.9)',
-                              marginTop: 0,
-                            }}
-                          />
-                        </View>
-                      </TouchableOpacity>
-                    </View>
-
-                    <View
-                      style={[
-                        Styles.teamsandConditionContainer,
-                        { marginTop: 3, paddingBottom: 10 },
-                      ]}
-                    >
-                      <Text
-                        allowFontScaling={false}
-                        style={Styles.bycountuningAgreementText}
-                      >
-                        {t('and')}
-                      </Text>
-                      <TouchableOpacity onPress={() => navigation.navigate('PrivacyAndPolicy')}>
-                        <View style={{ alignSelf: 'flex-start' }}>
-                          <Text
-                            allowFontScaling={false}
-                            style={Styles.teamsandConditionText}
-                          >
-                            {t('privacy_policy')}
-                          </Text>
-                          <View
-                            style={{
-                              marginLeft: 5,
-                              height: 1.2,
-                              backgroundColor: 'rgba(124, 234, 255, 0.9)',
-                              marginTop: 0,
-                            }}
-                          />
-                        </View>
-                      </TouchableOpacity>
-                    </View> */}
                     <View
                       style={{
                         paddingHorizontal: 16,

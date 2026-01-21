@@ -185,8 +185,8 @@ const styles = StyleSheet.create({
   },
   bookmark: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? 20 : 20,
-    right: Platform.OS === 'ios' ? 20 : 20,
+    top: Platform.OS === 'ios' ? 24 : 24,
+    right: Platform.OS === 'ios' ? 24 : 24,
     width: 44,
     height: 44,
     justifyContent: 'center',
