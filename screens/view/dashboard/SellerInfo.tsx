@@ -274,7 +274,7 @@ const SellerInfo = ({ navigation }: SellerInfoProps) => {
             styles.listContainer,
             {
               paddingTop: Platform.OS === 'ios' ? 70 : 70,
-              paddingBottom: Platform.OS === 'ios' ? 100 : 100,
+              paddingBottom: Platform.OS === 'ios' ? 200 : 100,
               // paddingBottom: isEmpty
               //   ? 10
               //   : Platform.select({
@@ -537,7 +537,7 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     // width: '86%'
-    paddingLeft: 48,
+    paddingLeft: Platform.OS === 'ios' ? 54 : 48,
     marginTop: -12,
   },
   title: {
