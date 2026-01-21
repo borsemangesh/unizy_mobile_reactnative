@@ -2165,7 +2165,8 @@ export default EditListScreen;
 
 const styles = StyleSheet.create({
 
-  categoryTagContainer: {
+  
+    categoryTagContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor:
@@ -2180,13 +2181,16 @@ const styles = StyleSheet.create({
     marginRight: 4,
     marginBottom: 4,
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.23)',
+    maxWidth:'100%'
   },
 
   categoryTagText: {
     color: '#fff',
     fontSize: 14,
     fontFamily: 'Urbanist-Medium',
-    fontWeight: 500
+    fontWeight: 500,
+    flexShrink: 1,      // 🔥 allows text to shrink
+  maxWidth: '90%',
   },
   crossIcon: {
     width: 16,
