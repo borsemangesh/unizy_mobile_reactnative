@@ -742,6 +742,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
 
       } else {
+        setShowPopup1(false);
         showToast(t(data?.message), 'error');
       }
     } catch (err) {
