@@ -699,7 +699,8 @@ const MessagesIndividualScreen = ({
       }
     };
 
-
+ conversation.addListener('messageAdded', handleNewMessage);
+ 
 
     return () => {
 
@@ -711,8 +712,9 @@ const MessagesIndividualScreen = ({
   // ----------------------------------------------------------
   const handleSendMessage = async () => {
     // Apply filter ONLY on send
-    const filteredMessage = filterNumbersAndNumberWords(messageText.trim());
   
+    const filteredMessage = filterNumbersAndNumberWords(messageText.trim());
+
     if (!filteredMessage) {
       setMessageText('');
       return;
@@ -726,8 +728,8 @@ const MessagesIndividualScreen = ({
       const [token, userId] = await Promise.all([
         AsyncStorage.getItem('userToken'),
         AsyncStorage.getItem('userId'),
-      ]);
-  
+      ]);      
+   
       // CASE 1: Conversation already exists
       if (conversation) {
         await conversation.sendMessage(filteredMessage);
@@ -750,15 +752,18 @@ const MessagesIndividualScreen = ({
           },
           body: JSON.stringify({ feature_id: sellerData.featureId }),
         }
-      );
+      );     
   
       const createData = await createResponse.json();
+
+      console.log("createData", createData);
+      
   
       if (!createResponse.ok || !createData?.data?.conv_name) {
         console.error('Conversation creation failed:', createData.message);
         return;
       }
-  
+    
       const convName = createData.data.conv_name;
       const apiUserId = createData.data.current_user_id;
   
@@ -767,14 +772,14 @@ const MessagesIndividualScreen = ({
       if (userId) {
         setCurrentUserId(String(userId));
       }
-  
+    
       let convo;
       try {
         convo = await chatClient.getConversationByUniqueName(convName);
       } catch {
         convo = await chatClient.createConversation({ uniqueName: convName });
       }
-  
+   
       try {
         await convo.join();
       } catch (err: any) {
@@ -782,7 +787,7 @@ const MessagesIndividualScreen = ({
           console.error('Join error:', err);
         }
       }
-  
+    
       setConversation(convo);
   
       await new Promise(resolve => setTimeout(resolve, 50));

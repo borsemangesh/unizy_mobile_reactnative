@@ -31,6 +31,9 @@ import Loader from '../../utils/component/Loader';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 
+import { Client as TwilioChatClient } from '@twilio/conversations';
+ 
+
 type MessageScreenProps = {
   navigation: any;
 };
@@ -44,6 +47,8 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
   const insets = useSafeAreaInsets();
   const SCREEN_HEIGHT = height;
   const INNER_SCREEN_HEIGHT = height - insets.top - insets.bottom;
+
+  const [chatClient, setChatClient] = useState<any>(null);
 
   // Animated hooks for blur effect
   const scrollY = useSharedValue(0);
@@ -59,7 +64,6 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       const userId = await AsyncStorage.getItem('userId');
-      console.log(token)
 
       if (!token || !userId) {
         console.warn('Missing token or userId');
@@ -119,6 +123,52 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
     }
 
   };
+
+   useEffect(() => {
+    let isMounted = true;
+    const initTwilioStr = async () => {
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) return;
+ 
+        const response = await fetch(
+          `${MAIN_URL.baseUrl}twilio/auth-token`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+ 
+        if (!response.ok) return;
+        const data = await response.json();
+        if (data?.data?.token) {
+          const client = await new TwilioChatClient(data.data.token);
+          if (isMounted) {
+            setChatClient(client);
+          }
+        }
+      } catch (err) {
+        console.warn('Twilio init failed on MessageScreen:', err);
+      }
+    };
+    initTwilioStr();
+    return () => { isMounted = false; };
+  }, []);
+ 
+  useEffect(() => {
+    if (!chatClient) return;
+ 
+    const handleMessageAdded = (msg: any) => {
+      // Refresh list when a new message arrives
+      console.log('Message received in list view, refreshing...');
+      fetchUserChatData(search, false);
+    };
+ 
+    chatClient.on('messageAdded', handleMessageAdded);
+ 
+    return () => {
+      chatClient.off('messageAdded', handleMessageAdded);
+    };
+  }, [chatClient, search]);
 
   useEffect(() => {
     fetchUserChatData('', true);
