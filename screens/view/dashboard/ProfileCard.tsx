@@ -445,7 +445,130 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                 ]}
               />
 
-              <View style={styles.popupContainer}>
+<View style={styles.popupContainer}>
+                <Image
+                  source={require('../../../assets/images/alert_logout.png')}
+                  style={styles.logo}
+                  resizeMode="contain"
+                />
+                <Text allowFontScaling={false} style={styles.mainheader}>
+                  {t('confirm_logout')}
+                </Text>
+                <Text allowFontScaling={false} style={styles.subheader}>
+                  {t('logout_message')}
+                </Text>
+ 
+ 
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  onPress={async () => {
+                    try {
+                      setLoading(true)
+                      const deviceId = await DeviceInfo.getUniqueId();
+                      const user_id = await AsyncStorage.getItem('userId');
+ 
+                      const body = {
+                        device_type: (Platform.OS === 'ios') ? 'ios' : 'android',
+                        device_id: deviceId,
+                        user_id: Number(user_id),
+                      };
+ 
+                      const response = await fetch(`${MAIN_URL.baseUrl}user/delete-fcm-token`, {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(body),
+                      });
+ 
+                      const apiData = await response.json();
+ 
+ 
+ 
+                      if (apiData?.statusCode === 200) {
+                        await AsyncStorage.setItem('userToken', '');
+                        await AsyncStorage.setItem('userData', '');
+                        await AsyncStorage.setItem('userId', '');
+                        await AsyncStorage.setItem('twilio_convo_', '');
+                        await AsyncStorage.setItem('twilio_msg_', '');
+                       
+                        try {
+                          await resetTwilioClient();
+                          await clearTwilioCache();
+                          try {
+                            const messaging = require('@react-native-firebase/messaging').default;
+                            await messaging().deleteToken();
+                            if (__DEV__) {
+ 
+                            }
+                          } catch (fcmError) {
+                            console.warn('⚠️ Error deleting FCM token:', fcmError);
+                          }
+ 
+                          if (__DEV__) {
+   
+                          }
+                        } catch (clearError) {
+                          console.warn('⚠️ Error clearing Twilio data on logout:', clearError);
+                        }
+ 
+                        await AsyncStorage.setItem('ISLOGIN', 'false');
+ 
+                        navigation.reset({
+                          index: 0,
+                          routes: [
+                            {
+                              name: 'SinglePage',
+                              params: {
+                                resetToLogin: true,
+                                logoutMessage: t(Constant.USER_LOGOUT),
+                              },
+                            },
+                          ],
+                        });
+                        setShowConfirm(false);
+                        // logoutCleanup();
+                      } else {
+                        showToast(t(Constant.LOGOUT_FAIL), 'error');
+                      }
+                     
+ 
+ 
+                      // navigation.reset({
+                      //   index: 0,
+                      //   routes: [
+                      //     {
+                      //       name: 'SinglePage',
+                      //       params: {
+                      //         resetToLogin: true,
+                      //         logoutMessage: t(Constant.USER_LOGOUT),
+                      //       },
+                      //     },
+                      //   ],
+                      // });
+                    } catch (error) {
+                      console.log("Something went wrong. Try again!");
+                    }
+                    finally {
+                      setLoading(false);
+                    }
+                  }}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText}>
+                    {t('logout')}
+                  </Text>
+                </TouchableOpacity>
+ 
+                <TouchableOpacity
+                  style={styles.loginButton1}
+                  onPress={() => setShowConfirm(false)}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText1}>
+                    {t('cancel')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              {/* <View style={styles.popupContainer}>
                 <Image
                   source={require('../../../assets/images/alert_logout.png')}
                   style={styles.logo}
@@ -462,74 +585,74 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                 <TouchableOpacity
                   style={styles.loginButton}
                   onPress={async () => {
-                    // try {
-                    //   const deviceId = await DeviceInfo.getUniqueId();
-                    //   const user_id = await AsyncStorage.getItem('userId'); 
+                    try {
+                      const deviceId = await DeviceInfo.getUniqueId();
+                      const user_id = await AsyncStorage.getItem('userId'); 
 
-                    //   const body = {
-                    //     device_type: (Platform.OS === 'ios') ? 'ios' : 'android',
-                    //     device_id: deviceId,
-                    //     user_id: Number(user_id),
-                    //   };
+                      const body = {
+                        device_type: (Platform.OS === 'ios') ? 'ios' : 'android',
+                        device_id: deviceId,
+                        user_id: Number(user_id),
+                      };
 
-                    //   const response = await fetch(`${MAIN_URL.baseUrl}user/delete-fcm-token`, {
-                    //     method: 'POST',
-                    //     headers: {
-                    //       'Content-Type': 'application/json',
-                    //     },
-                    //     body: JSON.stringify(body),
-                    //   });
+                      const response = await fetch(`${MAIN_URL.baseUrl}user/delete-fcm-token`, {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(body),
+                      });
 
-                    //   const apiData = await response.json();
+                      const apiData = await response.json();
 
  
 
-                    //   if (apiData?.statusCode === 200) {
-                    //     await AsyncStorage.setItem('userToken', '');
-                    //     await AsyncStorage.setItem('userData', '');
-                    //     await AsyncStorage.setItem('userId', '');
-                    //     await AsyncStorage.setItem('twilio_convo_', '');
-                    //     await AsyncStorage.setItem('twilio_msg_', '');
+                      if (apiData?.statusCode === 200) {
+                        await AsyncStorage.setItem('userToken', '');
+                        await AsyncStorage.setItem('userData', '');
+                        await AsyncStorage.setItem('userId', '');
+                        await AsyncStorage.setItem('twilio_convo_', '');
+                        await AsyncStorage.setItem('twilio_msg_', '');
                         
-                    //     try {
-                    //       await resetTwilioClient();
-                    //       await clearTwilioCache();
-                    //       try {
-                    //         const messaging = require('@react-native-firebase/messaging').default;
-                    //         await messaging().deleteToken();
-                    //         if (__DEV__) {
+                        try {
+                          await resetTwilioClient();
+                          await clearTwilioCache();
+                          try {
+                            const messaging = require('@react-native-firebase/messaging').default;
+                            await messaging().deleteToken();
+                            if (__DEV__) {
 
-                    //         }
-                    //       } catch (fcmError) {
-                    //         console.warn('⚠️ Error deleting FCM token:', fcmError);
-                    //       }
+                            }
+                          } catch (fcmError) {
+                            console.warn('⚠️ Error deleting FCM token:', fcmError);
+                          }
 
-                    //       if (__DEV__) {
+                          if (__DEV__) {
    
-                    //       }
-                    //     } catch (clearError) {
-                    //       console.warn('⚠️ Error clearing Twilio data on logout:', clearError);
-                    //     }
+                          }
+                        } catch (clearError) {
+                          console.warn('⚠️ Error clearing Twilio data on logout:', clearError);
+                        }
 
-                    //     await AsyncStorage.setItem('ISLOGIN', 'false');
+                        await AsyncStorage.setItem('ISLOGIN', 'false');
 
-                      //   navigation.reset({
-                      //     index: 0,
-                      //     routes: [
-                      //       {
-                      //         name: 'SinglePage',
-                      //         params: {
-                      //           resetToLogin: true,
-                      //           logoutMessage: t(Constant.USER_LOGOUT),
-                      //         },
-                      //       },
-                      //     ],
-                      //   });
-                      //   setShowConfirm(false);
-                      //   // logoutCleanup();
-                      // } else {
-                      //   showToast(t(Constant.LOGOUT_FAIL), 'error');
-                      // }
+                        navigation.reset({
+                          index: 0,
+                          routes: [
+                            {
+                              name: 'SinglePage',
+                              params: {
+                                resetToLogin: true,
+                                logoutMessage: t(Constant.USER_LOGOUT),
+                              },
+                            },
+                          ],
+                        });
+                        setShowConfirm(false);
+                        // logoutCleanup();
+                      } else {
+                        showToast(t(Constant.LOGOUT_FAIL), 'error');
+                      }
 
 
                       navigation.reset({
@@ -544,9 +667,9 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                           },
                         ],
                       });
-                    // } catch (error) {
-                    //   console.log("Something went wrong. Try again!");
-                    // }
+                    } catch (error) {
+                      console.log("Something went wrong. Try again!");
+                    }
                   }}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>
@@ -562,7 +685,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                     {t('cancel')}
                   </Text>
                 </TouchableOpacity>
-              </View>
+              </View> */}
             </BlurView>
           </View>
         </TouchableWithoutFeedback>

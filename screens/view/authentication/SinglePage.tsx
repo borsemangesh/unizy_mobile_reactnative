@@ -147,16 +147,19 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   useEffect(() => {
     if (route.params?.resetToLogin) {
       
-      showToast(t(route.params?.logoutMessage), 'success')
-      setIsLogout(true);
+      
+      setIsLogout(false);
       loginOpacity.setValue(1);
       loginTranslateY.setValue(0);
       setCurrentScreen('login');
       setcurrentScreenIninner('login');
+      setTimeout(() => {
+        showToast(t(route.params?.logoutMessage), 'success')
+      },500)
       
-      InteractionManager.runAfterInteractions(() => {
-        logoutCleanup();
-      });
+      // InteractionManager.runAfterInteractions(() => {
+      //   logoutCleanup();
+      // });
     }
 
     if (route.params?.forgotPassword) {
@@ -1666,11 +1669,11 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         </>
       ) : (
         <>
-          {/* {!isLogout &&(
-            <View style={[StyleSheet.absoluteFill, { opacity: isLogout?  0 : 0.4 }]}>
+          {/* {!isLogout &&( */}
+            <View style={[StyleSheet.absoluteFill, { opacity:  0.4 }]}>
             <LottieView
               source={require('../../../assets/animations/backgroundanimation3.json')}
-              autoPlay={isLogout ? false : true}  
+              autoPlay
               loop
               resizeMode="cover"
               style={StyleSheet.absoluteFillObject}
@@ -1678,11 +1681,11 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
             <BlurView
               style={StyleSheet.absoluteFill}
               blurType="light"
-              blurAmount={isLogout ? 0 : 30}
+              blurAmount={ 30}
             />
             
           </View>
-        )} */}
+        {/* )} */}
           
         </>
       )}
