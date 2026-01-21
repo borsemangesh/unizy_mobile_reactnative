@@ -1,4 +1,4 @@
-import React, { useEffect ,useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { LogBox, StatusBar, View, StyleSheet, ImageBackground, Platform, PermissionsAndroid, Alert } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Navigation } from "./screens/view/Navigation";
@@ -16,34 +16,42 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 function App() {
   LogBox.ignoreAllLogs();
   enableScreens();
-   const [ready, setReady] = useState(false)
+  const [ready, setReady] = useState(false)
+  const [stripeReady, setStripeReady] = useState(false);
+
+  const stripeKeyRef = useRef(Constant.PUBLIC_KEY_Test);
+
+  const [stripeKey, setStripeKey] = useState<string>(
+    Constant.PUBLIC_KEY_Test
+  );
   async function requestUserPermission() {
     const authStatus = await messaging().requestPermission();
     const enabled =
       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-  
+
     if (enabled) {
       // console.log('Authorization status:', authStatus);
     }
   }
 
-    useEffect(() => {
+  useEffect(() => {
     const initialize = async () => {
       await initI18n();   // WAIT for i18n
       setReady(true);
     };
     initialize();
   }, []);
-  
+
+
 
   useEffect(() => {
     let unsubscribe: (() => void) | null = null;
     let unsubscribeForeground: (() => void) | null = null;
-  
+
     const initializeNotifications = async () => {
       try {
-        
+
         if (Platform.OS === "ios") {
           const notifeeSettings = await notifee.requestPermission({
             sound: true,
@@ -62,7 +70,7 @@ function App() {
             authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
             authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-            const notifeeSettings = await notifee.requestPermission();
+          const notifeeSettings = await notifee.requestPermission();
 
 
           if (enabled) {
@@ -73,7 +81,7 @@ function App() {
             // console.log("❌ Notification permission denied");
           }
         }
-      
+
         if (Platform.OS === 'android') {
           await notifee.createChannel({
             id: 'default',
@@ -102,7 +110,7 @@ function App() {
           try {
             const title = remoteMessage.notification?.title || remoteMessage.data?.title || "Notification";
             const body = remoteMessage.notification?.body || "";
-            
+
             let rawNotificationData: Record<string, any> = {};
             if (remoteMessage.data?.data) {
               try {
@@ -141,7 +149,7 @@ function App() {
             if (Platform.OS === 'android') {
               notificationConfig.android = {
                 channelId: 'default',
-                pressAction: { 
+                pressAction: {
                   id: 'default',
                 },
                 importance: AndroidImportance.HIGH,
@@ -157,12 +165,12 @@ function App() {
             console.error("❌ Error displaying notification:", error);
           }
         });
-       
+
 
         unsubscribeForeground = notifee.onForegroundEvent(async ({ type, detail }) => {
           if (type === EventType.PRESS) {
 
-            
+
             // 🔒 SECURITY: Check if user is logged in before handling notification tap
             try {
               const isLogin = await AsyncStorage.getItem('ISLOGIN');
@@ -174,7 +182,7 @@ function App() {
               console.warn('⚠️ Error checking login status:', err);
               return;
             }
-            
+
             const notificationData = detail.notification?.data;
             handleNotification(notificationData, false);
           }
@@ -185,7 +193,7 @@ function App() {
         messaging().getInitialNotification().then(async (remoteMessage) => {
           if (remoteMessage) {
 
-            
+
             // 🔒 SECURITY: Check if user is logged in
             try {
               const isLogin = await AsyncStorage.getItem('ISLOGIN');
@@ -197,20 +205,20 @@ function App() {
               console.warn('⚠️ Error checking login status:', err);
               return;
             }
-            
+
             // Wait for navigation to be ready
             let attempts = 0;
             while (!navigationReady.isReady && attempts < 20) {
               await new Promise(r => setTimeout(r, 100));
               attempts++;
             }
-            
+
             // Extract notification data
             let notificationData: any = {};
             if (remoteMessage.data?.data) {
               try {
-                notificationData = typeof remoteMessage.data.data === 'string' 
-                  ? JSON.parse(remoteMessage.data.data) 
+                notificationData = typeof remoteMessage.data.data === 'string'
+                  ? JSON.parse(remoteMessage.data.data)
                   : remoteMessage.data.data;
               } catch {
                 notificationData = remoteMessage.data || {};
@@ -218,7 +226,7 @@ function App() {
             } else {
               notificationData = remoteMessage.data || {};
             }
-            
+
             // Handle navigation after a short delay to ensure app is fully loaded
             setTimeout(() => {
               handleNotification(notificationData, true);
@@ -229,7 +237,7 @@ function App() {
         // 🔔 Handle notification when app is opened from background state
         messaging().onNotificationOpenedApp(async (remoteMessage) => {
 
-          
+
           // 🔒 SECURITY: Check if user is logged in
           try {
             const isLogin = await AsyncStorage.getItem('ISLOGIN');
@@ -241,13 +249,13 @@ function App() {
             console.warn('⚠️ Error checking login status:', err);
             return;
           }
-          
+
           // Extract notification data
           let notificationData: any = {};
           if (remoteMessage.data?.data) {
             try {
-              notificationData = typeof remoteMessage.data.data === 'string' 
-                ? JSON.parse(remoteMessage.data.data) 
+              notificationData = typeof remoteMessage.data.data === 'string'
+                ? JSON.parse(remoteMessage.data.data)
                 : remoteMessage.data.data;
             } catch {
               notificationData = remoteMessage.data || {};
@@ -255,12 +263,12 @@ function App() {
           } else {
             notificationData = remoteMessage.data || {};
           }
-          
+
           // Handle navigation
           handleNotification(notificationData, true);
         });
 
-      } 
+      }
       catch (error) {
         console.error("❌ Error initializing notifications:", error);
       }
@@ -268,38 +276,74 @@ function App() {
 
     initializeNotifications();
 
-    
+
 
     return () => {
       if (unsubscribe) unsubscribe();
       if (unsubscribeForeground) unsubscribeForeground();
-      
+
     };
+  }, []);
+
+  // useEffect(() => {
+  //   const initStripeKey = async () => {
+  //     try {
+  //       const isLive = await AsyncStorage.getItem('STRIPE_LIVE');
+
+  //       const key =
+  //         isLive === 'true'
+  //           ? Constant.PUBLIC_KEY_Live
+  //           : Constant.PUBLIC_KEY_Test;
+
+  //       setStripeKey(key);
+  //       setStripeReady(true);
+  //     } catch (e) {
+  //       console.error('❌ Failed to load Stripe key', e);
+  //       // fallback to test
+  //       setStripeKey(Constant.PUBLIC_KEY_Test);
+  //     }
+  //   };
+
+  //   initStripeKey();
+  // }, []);
+
+
+  useEffect(() => {
+    const init = async () => {
+      const isLive = await AsyncStorage.getItem('STRIPE_LIVE');
+      stripeKeyRef.current =
+        isLive === 'true'
+          ? Constant.PUBLIC_KEY_Live
+          : Constant.PUBLIC_KEY_Test;
+
+      setStripeReady(true);
+    };
+    init();
   }, []);
 
   return (
 
     <GestureHandlerRootView style={{ flex: 1 }}>
-    
-    <StripeProvider publishableKey={Constant.PUBLIC_KEY}>
-      
-      <ImageBackground
-        source={require('../unizy_mobile_reactnative/assets/images/bganimationscreen.png')}
-        style={{ flex: 1, width: '100%', height: '100%'}}
-        resizeMode="cover"
-      >
-    <SafeAreaProvider>
-      <StatusBar
-        barStyle="light-content"
-        translucent
-        backgroundColor="transparent"
-      />
-      <Navigation />
-    </SafeAreaProvider>
-    </ImageBackground>
-    </StripeProvider>
+
+      <StripeProvider publishableKey={stripeKeyRef.current}>
+
+        <ImageBackground
+          source={require('../unizy_mobile_reactnative/assets/images/bganimationscreen.png')}
+          style={{ flex: 1, width: '100%', height: '100%' }}
+          resizeMode="cover"
+        >
+          <SafeAreaProvider>
+            <StatusBar
+              barStyle="light-content"
+              translucent
+              backgroundColor="transparent"
+            />
+            <Navigation />
+          </SafeAreaProvider>
+        </ImageBackground>
+      </StripeProvider>
     </GestureHandlerRootView>
-    
+
   );
 }
 

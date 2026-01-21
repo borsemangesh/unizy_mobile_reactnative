@@ -17,7 +17,7 @@ import {
   Modal,
   Alert,
   PermissionsAndroid,
-  Platform,InteractionManager,
+  Platform, InteractionManager,
   KeyboardAvoidingView,
   Keyboard,
 } from 'react-native';
@@ -91,14 +91,14 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
 
       const deviceId = await DeviceInfo.getUniqueId();
-      const user_id = await AsyncStorage.getItem('userId'); 
-  
+      const user_id = await AsyncStorage.getItem('userId');
+
       const body = {
         device_type: (Platform.OS === 'ios') ? 'ios' : 'android',
         device_id: deviceId,
         user_id: Number(user_id),
       };
-  
+
       const response = await fetch(`${MAIN_URL.baseUrl}user/delete-fcm-token`, {
         method: 'POST',
         headers: {
@@ -106,18 +106,18 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         },
         body: JSON.stringify(body),
       });
-  
+
       const apiData = await response.json();
-  
-  
-  
+
+
+
       if (apiData?.statusCode === 200) {
-        
+
       } else {
         showToast(t(Constant.LOGOUT_FAIL), 'error');
       }
-  
-  
+
+
 
       await AsyncStorage.multiSet([
         ['userToken', ''],
@@ -127,11 +127,11 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         ['twilio_msg_', ''],
         ['ISLOGIN', 'false'],
       ]);
-  
+
       // Twilio cleanup (don’t block UI)
-      resetTwilioClient()?.catch(() => {});
-      clearTwilioCache()?.catch(() => {});
-  
+      resetTwilioClient()?.catch(() => { });
+      clearTwilioCache()?.catch(() => { });
+
       // FCM token delete (optional but safe)
       try {
         const messaging = require('@react-native-firebase/messaging').default;
@@ -625,29 +625,29 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
 
   useEffect(() => {
-  if (currentScreenIninner === 'sendOTP') {
-    // Small delay ensures animation + render is complete
-    const timer = setTimeout(() => {
-      inputs.current[0]?.focus();
-    }, 300);
+    if (currentScreenIninner === 'sendOTP') {
+      // Small delay ensures animation + render is complete
+      const timer = setTimeout(() => {
+        inputs.current[0]?.focus();
+      }, 300);
 
-    return () => clearTimeout(timer);
-  }
-}, [currentScreenIninner]);
+      return () => clearTimeout(timer);
+    }
+  }, [currentScreenIninner]);
 
-useEffect(() => {
-  if (
-    currentScreenIninner === 'verify' &&
-    showOtp &&
-    verifyimageLoaded
-  ) {
-    const timer = setTimeout(() => {
-      verifyinputs.current[0]?.focus();
-    }, 300); // wait for animation + render
+  useEffect(() => {
+    if (
+      currentScreenIninner === 'verify' &&
+      showOtp &&
+      verifyimageLoaded
+    ) {
+      const timer = setTimeout(() => {
+        verifyinputs.current[0]?.focus();
+      }, 300); // wait for animation + render
 
-    return () => clearTimeout(timer);
-  }
-}, [currentScreenIninner, showOtp, verifyimageLoaded]);
+      return () => clearTimeout(timer);
+    }
+  }, [currentScreenIninner, showOtp, verifyimageLoaded]);
 
 
   const stepIndex = (() => {
@@ -764,9 +764,16 @@ useEffect(() => {
 
       const token = result?.data?.token;
       const user = result?.data?.user;
+      const stripelivekey = result?.data?.stripelivekey;
+
+      console.log(response)
 
       if (token && user) {
         setLoading(false);
+        await AsyncStorage.setItem(
+          'STRIPE_LIVE',
+          stripelivekey ? 'true' : 'false'
+        );
         await AsyncStorage.setItem('userToken', token);
         await AsyncStorage.setItem('userData', JSON.stringify(user));
         await AsyncStorage.setItem('userId', String(user.id));
@@ -825,12 +832,12 @@ useEffect(() => {
 
   };
 
-// const handleSendOTP = async () => {
-//  clickOnSendOTP(() => {
-//           setCurrentScreen('login');
-//           setcurrentScreenIninner('sendOTP');
-//         })
-// }
+  // const handleSendOTP = async () => {
+  //  clickOnSendOTP(() => {
+  //           setCurrentScreen('login');
+  //           setcurrentScreenIninner('sendOTP');
+  //         })
+  // }
 
 
 
@@ -917,11 +924,11 @@ useEffect(() => {
     }
   };
 
-  
-  
+
+
   const [otp, setOtp] = useState(['', '', '', '']);
   const inputs = useRef<(TextInput | null)[]>([]);
- 
+
   const handleChange = (text: string, index: number) => {
     const newOtp = [...otp];
     newOtp[index] = text;
@@ -3472,7 +3479,7 @@ useEffect(() => {
                       }}
                     >
                       <Text
-                      allowFontScaling={false}
+                        allowFontScaling={false}
                         style={[
                           Styles.bycountuningAgreementText,
                           { textAlign: 'center' }, // center the entire text
@@ -3480,7 +3487,7 @@ useEffect(() => {
                       >
                         {t('by_continuing_agree') + ' '}
                         <Text
-                        allowFontScaling={false}
+                          allowFontScaling={false}
                           style={[
                             Styles.teamsandConditionText,
                             { textDecorationLine: 'underline' }, // underline T&C

@@ -62,7 +62,7 @@
   "TempUserVerified": "Temporary user is verified.",
   "InvalidTempUser": "Invalid temporary user.",
   "InvalidUniversityDomain": "Please provide a valid university domain.",
-  "OtpSentToStudentEmial": "OTP has been sent to the student email.",
+  "OtpSentToStudentEmial": "OTP has been sent to the university email.",
   "AccountNotVerified": "Account not verified. Please complete registration first.",
   "ResetPasswordLink": "Password reset link sent to personal email.",
   "NoUpdateDataRequest": "No update data request received.",
@@ -764,4 +764,5 @@
   "buy_subheader": "Your payment is securely held until delivery is completed.",
   "buy_note": "Never share the OTP before you’ve received the item or service.",
   "capped":"capped at"
+  
 }
