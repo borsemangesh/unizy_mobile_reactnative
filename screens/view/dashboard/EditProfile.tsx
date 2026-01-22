@@ -1,3 +1,5 @@
+
+
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Image,
@@ -1156,6 +1158,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 >
                   <TextInput
                     selectionColor="#fff"
+                    editable={false}
                     cursorColor="#fff" 
                     style={{
                       flex: 1,
@@ -1189,6 +1192,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     placeholder={t('enter_student_email_id')}
                     placeholderTextColor="#ccc"
                   />
+                  {false && 
                   <TouchableOpacity
                     style={{
                       width: 32,
@@ -1207,11 +1211,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                       opacity: isUpdateDisabled ? 0.5 : 1,
                     }}
                     disabled={isUpdateDisabled}
-                    // onPress={() => (
-                    //   setShowPopup1(true),
-                    //   sendOtp('studentEmail'),
-                    //   setEmailName('studentEmail')
-                    // )}
                     onPress={() => {
                       const email1 = userMeta.student_email || '';
                       if (!validateStudentEmail(email1.trim())) {
@@ -1230,6 +1229,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                       resizeMode="contain"
                     />
                   </TouchableOpacity>
+                  }
                 </View>
               </View>
               <View style={styles.inputGroup}>
@@ -1275,6 +1275,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     cursorColor="#fff" 
                   allowFontScaling={false}
                   value={userMeta.city || ''}
+                  editable={false}
+                  selectTextOnFocus={false}
                   onChangeText={text =>
                     setUserMeta(prev => ({ ...prev, city: text }))
                   }
