@@ -1111,7 +1111,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
     const emailParts = verifyusername.split('@');
     if (emailParts.length !== 2) {
-      showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
+      showToast(t(Constant.VALID_UNIVERSITY_EMAIL_ADDRESS), 'error');
       return;
     }
 
