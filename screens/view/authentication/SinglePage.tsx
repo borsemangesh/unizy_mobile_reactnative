@@ -885,6 +885,11 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       return;
     }
 
+    if(!isChecked){
+      showToast(t(Constant.PLEASE_ACCEPT_TERMS_AND_PRIVACY_POLICY), 'error');
+      return;
+    }
+
     try {
       const body = {
         firstname: firstName,
@@ -3340,7 +3345,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                   )}
               </View>
 
-             {((currentScreen === 'login' &&
+              {/* {((currentScreen === 'login' &&
   currentScreenIninner === 'login') ||
   currentScreenIninner === 'signup') && (
   <Animated.View
@@ -3420,6 +3425,92 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
           {t('privacy_policy')}
         </Text>
       </Text>
+    </View>
+  </Animated.View>
+)} */}
+
+{((currentScreen === 'login' &&
+  currentScreenIninner === 'login') ||
+  currentScreenIninner === 'signup') && (
+  <Animated.View
+    style={[
+      Styles.mainTemsAndConditions,
+      (currentScreenIninner === 'login' ||
+        currentScreenIninner === 'signup') && {
+        transform: [{ translateY: slideUp }],
+      },
+    ]}
+  >
+    <View
+      style={{
+        paddingHorizontal: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexWrap: 'nowrap'
+      }}
+    >
+      <View
+        style={{
+          flexDirection: 'row',  
+        }}
+      >
+        {/* ✅ Checkbox */}
+        {currentScreenIninner === 'signup' && (
+          <CheckBox
+            value={isChecked}
+            onValueChange={setIsChecked}
+            tintColors={{
+              true: '#FFFFFF',
+              false: '#FFFFFF',
+            }}
+            onCheckColor="#FFFFFF"
+            onTintColor="#FFFFFF"
+            boxType="circle"
+            style={{
+              height: 20,
+              width: 20,
+              marginRight: 6,
+              ...(Platform.OS === 'android' && {
+                tintColor: '#FFFFFF',
+              }),
+            }}
+          />
+        )}
+
+        {/* ✅ Centered text */}
+        <Text
+          allowFontScaling={false}
+          style={[
+            Styles.bycountuningAgreementText,
+            { textAlign: 'center' },
+          ]}
+        >
+          {t('by_continuing_agree') + ' '}
+          <Text
+            allowFontScaling={false}
+            style={[
+              Styles.teamsandConditionText,
+              { textDecorationLine: 'underline' },
+            ]}
+            onPress={() => navigation.navigate('TeamsAndCondition')}
+          >
+            {t('terms_and_conditions')}
+          </Text>
+
+          {` ${t('and')} `}
+
+          <Text
+            allowFontScaling={false}
+            style={[
+              Styles.teamsandConditionText,
+              { textDecorationLine: 'underline' },
+            ]}
+            onPress={() => navigation.navigate('PrivacyAndPolicy')}
+          >
+            {t('privacy_policy')}
+          </Text>
+        </Text>
+      </View>
     </View>
   </Animated.View>
 )}

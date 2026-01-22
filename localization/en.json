@@ -765,6 +765,7 @@
   "sell_note": "Payment is held in escrow after purchase initiation and released once the OTP is verified. (Settlement time may vary depending on your bank.)",
   "buy_subheader": "Your payment is securely held until delivery is completed.",
   "buy_note": "Never share the OTP before you’ve received the item or service.",
-  "capped":"capped at"
+  "capped":"capped at",
+  "PLEASE_ACCEPT_TERMS_AND_PRIVACY_POLICY": "Please accept the Terms & Conditions and Privacy Policy to continue."
   
 }
