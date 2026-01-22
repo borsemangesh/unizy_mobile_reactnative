@@ -698,6 +698,17 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
       for (const [param_id, images] of imageFields) {
         const newImages = images.filter(img => img?.uri && isLocalImage(img.uri));
 
+        //need to maintain the sequence  of images and send to server with same sequence
+        const seqimage = images.map((e,index)=>{
+          return {
+            // uri: e.uri,
+            type: e.type || "image/jpeg",
+            name: e.name || `image_${Date.now()}.jpg`,
+            seqno:  index+1
+          }
+        })
+        console.log('seqimage',seqimage)
+
         if (newImages.length === 0 && deletedIds.length === 0) continue;
 
         const form = new FormData();
@@ -711,8 +722,11 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
           } as any);
         }
 
+        console.log('newImages:', JSON.stringify(newImages, null, 2));
+
         form.append('feature_id', String(feature_id));
         form.append('param_id', String(param_id));
+        form.append('file_seq', JSON.stringify(seqimage));
 
         // append deleted image IDs
         form.append('deleted_image_ids', JSON.stringify(deletedIds));

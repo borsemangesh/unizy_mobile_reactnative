@@ -1887,14 +1887,14 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                   minHeight: 30,
                                 }}
                               >
-                                <Image
+                                {/* <Image
                                   source={
                                     typeof item.flag === 'string'
                                       ? { uri: item.flag }
                                       : item.flag
                                   } // handle URI or require
                                   style={selectlang_styles.flag}
-                                />
+                                /> */}
                                 <Text
                                   allowFontScaling={false}
                                   style={selectlang_styles.languageText}

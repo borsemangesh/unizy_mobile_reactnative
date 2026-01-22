@@ -843,7 +843,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 500,
     marginLeft: 16,
-    marginTop: 8
+    //marginTop: 8,
+    paddingTop:12
   },
 
   loaderWrapper: {

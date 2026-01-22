@@ -103,6 +103,7 @@ export const selectlang_styles = StyleSheet.create({
     fontFamily: 'Urbanist-Medium',
     fontWeight: '500',
     mixBlendMode: 'normal',
+    marginLeft:26
    
   },
   radioButton_round: {

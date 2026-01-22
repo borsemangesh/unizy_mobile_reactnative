@@ -492,7 +492,7 @@ export default function TransactionHistoryScreen(
               {section.items.map((item, i) => (
                 <View key={i} style={styles.card}>
                   <View style={styles.row}>
-                    <View style={{ flexDirection: 'row',alignItems:'center',gap:12 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                       {/* <View
                         style={{
                           flexDirection: 'row',
@@ -500,42 +500,42 @@ export default function TransactionHistoryScreen(
                           alignItems: 'center',
                         }}
                       > */}
-                        <View>
-                          <Image
-                            source={background}
-                            style={styles.imgcontainer}
-                            resizeMode="cover"
-                          />
-                          <Image
-                            source={{ uri: item.category_logo }}
-                            style={styles.image}
-                            resizeMode="cover"
-                          />
+                      <View>
+                        <Image
+                          source={background}
+                          style={styles.imgcontainer}
+                          resizeMode="cover"
+                        />
+                        <Image
+                          source={{ uri: item.category_logo }}
+                          style={styles.image}
+                          resizeMode="cover"
+                        />
+                      </View>
+                      <View style={{ gap: 4 }}>
+                        <View style={{ width: '90%' }}>
+                          <Text
+                            numberOfLines={2}
+                            allowFontScaling={false}
+                            style={styles.itemTitle}
+                          >
+                            {item.title}
+                          </Text>
                         </View>
-                        <View style={{ gap: 4 }}>
-                          <View style={{  width: '90%' }}>
-                            <Text
-                              numberOfLines={2}
-                              allowFontScaling={false}
-                              style={styles.itemTitle}
-                            >
-                              {item.title}
-                            </Text>
-                          </View>
-                          <View
-                            style={{
-                              flexDirection: 'row',
+                        <View
+                          style={{
+                            flexDirection: 'row',
                             gap: 4,
                             width: '89.2%',
-                              justifyContent: 'space-between',
-                            }}
-                          >
-                            <Text allowFontScaling={false} style={styles.price}>
-                              {item.price}
-                            </Text>
-                            {(item?.category_id === 3 ||
-                              item?.category_id === 2 ||
-                              item?.category_id === 5) && (
+                            justifyContent: 'space-between',
+                          }}
+                        >
+                          <Text allowFontScaling={false} style={styles.price}>
+                            {item.price}
+                          </Text>
+                          {(item?.category_id === 3 ||
+                            item?.category_id === 2 ||
+                            item?.category_id === 5) && (
                               <View style={styles.statusBox}>
                                 <Text
                                   allowFontScaling={false}
@@ -546,7 +546,7 @@ export default function TransactionHistoryScreen(
                                     fontFamily: 'Urbanist-SemiBold',
                                   }}
                                 >
-                                  {item?.category_id === 3
+                                  {/* {item?.category_id === 3
                                     ? `${item?.purchased_quantity ?? 1} ${
                                         (item?.purchased_quantity ?? 1) > 1
                                           ? t('units')
@@ -559,12 +559,31 @@ export default function TransactionHistoryScreen(
                                           ? t('hours')
                                           : t('hour')
                                       }`
-                                    : ''}
+                                    : ''} */}
+
+                                  {
+                                    item?.category_id === 3
+                                      ? `${item?.purchased_quantity ?? 1} ${(item?.purchased_quantity ?? 1) > 1
+                                        ? t('units')
+                                        : t('unit')
+                                      }`
+                                      : item?.category_id === 2
+                                        ? `${item?.hours ?? 1} ${(item?.hours ?? 1) > 1
+                                          ? t('hours')
+                                          : t('hour')
+                                        }`
+                                        : item?.category_id === 5
+                                          ? `${item?.hours ?? 1} ${(item?.hours ?? 1) > 1
+                                            ? t('sessions')
+                                            : t('session')
+                                          }`
+                                          : ''
+                                  }
                                 </Text>
                               </View>
                             )}
-                          </View>
                         </View>
+                      </View>
                       {/* </View> */}
                     </View>
                   </View>
@@ -886,21 +905,21 @@ const styles = StyleSheet.create({
   },
 
   emptyWrapper: {
-  flex: 1,
-  justifyContent: 'center',
-  alignItems: 'center',
-  width: '100%',
-},
-emptyContainer: {
-  width: '100%',
-  justifyContent: 'center',
-  alignItems: 'center',
-  backgroundColor: 'rgba(255, 255, 255, 0.06)',
-  borderWidth: 0.3,
-  borderColor: 'rgba(255, 255, 255, 0.08)',
-  borderRadius: 24,
-  paddingVertical: 40,
-},
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+  },
+  emptyContainer: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderWidth: 0.3,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 24,
+    paddingVertical: 40,
+  },
   // emptyWrapper: {
   //   flex: 1,
   //   justifyContent: 'center',
@@ -934,7 +953,7 @@ emptyContainer: {
   //   fontFamily: 'Urbanist-SemiBold',
   //   fontWeight: 600
   // },
-   emptyImage: {
+  emptyImage: {
     width: 64,
     height: 64,
     marginBottom: 0,
@@ -946,7 +965,7 @@ emptyContainer: {
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600
   },
- 
+
   cardconstinerdivider: {
     display: 'flex',
     flexDirection: 'row',
@@ -1239,7 +1258,7 @@ emptyContainer: {
   },
 
   tabItem: {
-   
+
   },
   iconWrapper: {
     height: 50, //
