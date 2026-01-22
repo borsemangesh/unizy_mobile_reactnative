@@ -2,7 +2,6 @@ import { BlurView } from '@react-native-community/blur';
 import { RouteProp, useFocusEffect, useIsFocused, useRoute } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from "react-i18next";
-import CheckBox from '@react-native-community/checkbox';
 
 import {
   View,
@@ -843,15 +842,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
     });
 
   };
-
-  // const handleSendOTP = async () => {
-  //  clickOnSendOTP(() => {
-  //           setCurrentScreen('login');
-  //           setcurrentScreenIninner('sendOTP');
-  //         })
-  // }
-
-
 
   const handleSendOTP = async () => {
 
@@ -2179,6 +2169,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                       useNativeDriver: true,
                                     }),
                                   ]).start(() => {
+                                    setIsChecked(!isChecked);
                                     setTextandBackIcon(false);
                                     setUsername('');
                                     setPassword('');
@@ -3345,90 +3336,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                   )}
               </View>
 
-              {/* {((currentScreen === 'login' &&
-  currentScreenIninner === 'login') ||
-  currentScreenIninner === 'signup') && (
-  <Animated.View
-    style={[
-      Styles.mainTemsAndConditions,
-      (currentScreenIninner === 'login' ||
-        currentScreenIninner === 'signup') && {
-        transform: [{ translateY: slideUp }],
-      },
-    ]}
-  >
-    <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center', // ✅ left align
-        paddingHorizontal: 16,
-      }}
-    >
-      {currentScreenIninner === 'signup' && (
-        <CheckBox
-          value={isChecked}
-          onValueChange={setIsChecked}
-          tintColors={{
-            true: '#FFFFFF',
-            false: '#FFFFFF',
-          }}
-          onCheckColor="#FFFFFF"
-          onTintColor="#FFFFFF"
-          boxType="circle"
-          style={{
-            height: 20,
-            width: 20,
-            marginRight: 8,
-            ...(Platform.OS === 'android' && {
-              tintColor: '#FFFFFF',
-            }),
-          }}
-        />
-      )}
-
-      <Text
-        allowFontScaling={false}
-        style={[
-          Styles.bycountuningAgreementText,
-          { color: '#FFFFFF', flexShrink: 1 },
-        ]}
-      >
-        {t('by_continuing_agree') + ' '}
-        <Text
-          allowFontScaling={false}
-          style={[
-            Styles.teamsandConditionText,
-            {
-              textDecorationLine: 'underline',
-              color: '#FFFFFF',
-            },
-          ]}
-          onPress={() => navigation.navigate('TeamsAndCondition')}
-        >
-          {t('terms_and_conditions')}
-        </Text>
-
-        {` ${t('and')} `}
-
-        <Text
-          allowFontScaling={false}
-          style={[
-            Styles.teamsandConditionText,
-            {
-              textDecorationLine: 'underline',
-              color: '#FFFFFF',
-            },
-          ]}
-          onPress={() => navigation.navigate('PrivacyAndPolicy')}
-        >
-          {t('privacy_policy')}
-        </Text>
-      </Text>
-    </View>
-  </Animated.View>
-)} */}
-
 {((currentScreen === 'login' &&
   currentScreenIninner === 'login') ||
   currentScreenIninner === 'signup') && (
@@ -3454,27 +3361,55 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
           flexDirection: 'row',  
         }}
       >
-        {/* ✅ Checkbox */}
         {currentScreenIninner === 'signup' && (
-          <CheckBox
-            value={isChecked}
-            onValueChange={setIsChecked}
-            tintColors={{
-              true: '#FFFFFF',
-              false: '#FFFFFF',
-            }}
-            onCheckColor="#FFFFFF"
-            onTintColor="#FFFFFF"
-            boxType="circle"
-            style={{
-              height: 20,
-              width: 20,
-              marginRight: 6,
-              ...(Platform.OS === 'android' && {
-                tintColor: '#FFFFFF',
-              }),
-            }}
-          />
+          // <CheckBox
+          //   value={isChecked}
+          //   onValueChange={setIsChecked}
+          //   tintColors={{
+          //     true: '#FFFFFF',
+          //     false: '#FFFFFF',
+          //   }}
+          //   onCheckColor="#FFFFFF"
+          //   onTintColor="#FFFFFF"
+          //   boxType="square"
+          //   style={{
+          //     height: 20,
+          //     width: 20,
+          //     ...(Platform.OS === 'android' && {
+          //       tintColor: '#FFFFFF',
+          //       transform: [{ scale: 0.8 }],
+          //     }),
+          //   }}
+          // />
+          <>
+          {isChecked ? (
+            <TouchableOpacity
+            onPress={() => setIsChecked(!isChecked)}
+            > 
+            <Image
+              source={require('../../../assets/images/tickicon.png')}
+              style={{ height: 20,marginRight:5,
+                width: 20,}}
+              resizeMode="contain"
+            />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={() => setIsChecked(!isChecked)}
+              > 
+            <View style={{ height: 20,
+            width: 20,
+            
+            marginRight:5,
+            borderRadius: 5,
+            borderWidth: 1,
+            borderColor: '#fff',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'transparent',}} />
+            </TouchableOpacity>
+          )}
+          </>
         )}
 
         {/* ✅ Centered text */}
