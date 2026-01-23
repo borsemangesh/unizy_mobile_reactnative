@@ -1354,9 +1354,9 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
                     lineHeight: 28,
                   }}
                 >
-                  {t('product_listed_success')}!
+                  {t('product_update_success')}!
                 </Text>
-                <Text
+                {/* <Text
                   allowFontScaling={false}
                   style={{
                     color: 'rgba(255, 255, 255, 0.48)',
@@ -1370,7 +1370,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
                   }}
                 >
                   {t('product_listed_message')}
-                </Text>
+                </Text> */}
 
                 <TouchableOpacity
                   style={[styles.loginButton]}

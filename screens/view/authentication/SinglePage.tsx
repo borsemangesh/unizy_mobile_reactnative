@@ -41,6 +41,7 @@ import {
   NewCustomToastContainer,
   showToast,
 } from '../../utils/component/NewCustomToastManager';
+import { PassToastContainer,passshowToast } from '../../utils/component/PassToastManager';
 import { check, openSettings, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import { resetTwilioClient } from '../emoji/twilioService';
 import { clearTwilioCache } from '../dashboard/MessageIndividualScreen';
@@ -867,7 +868,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
     // const passwordRegex =/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]|:;"'<>,.?/]).{8,}$/;
     if (!passwordRegex.test(signUppassword.trim())) {
-      showToast(t(Constant.PASSWORD_VALID), 'error');
+     // showToast(t(Constant.PASSWORD_VALID), 'error');
+     passshowToast(t(Constant.PASSWORD_VALID), 'error');
       return;
     }
     if (signUppassword.trim() !== confirmPassword.trim()) {
@@ -3438,7 +3440,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
           )}
         </KeyboardAvoidingView>
       </View>
-
+      <PassToastContainer/>
       <NewCustomToastContainer />
     </ImageBackground>
   );

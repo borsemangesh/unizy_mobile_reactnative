@@ -571,7 +571,6 @@
   "hr": "hr",
   "week": "week",
   "session": "session",
-  "sessions":"sessions",
   "please_specify": "Please specify",
   "start_date": "Start Date",
   "end_date": "End Date",
@@ -720,8 +719,6 @@
   "postal_code_req": "Please enter postal code.",
   "student_req": "University Email ID is invalid.",
   "personal_req": "Personal Email ID is invalid.",
-
-
   "logout_message": "Are you sure you want to log out of your account?",
   "deactivate_listing": "Are you sure you want to deactivate this listing?",
   "action": "Are you sure you want to continue? You’ll be logged out of your account.",
@@ -765,7 +762,11 @@
   "sell_note": "Payment is held in escrow after purchase initiation and released once the OTP is verified. (Settlement time may vary depending on your bank.)",
   "buy_subheader": "Your payment is securely held until delivery is completed.",
   "buy_note": "Never share the OTP before you’ve received the item or service.",
-  "capped":"capped at",
-  "PLEASE_ACCEPT_TERMS_AND_PRIVACY_POLICY": "Please accept the Terms & Conditions and Privacy Policy to continue."
-  
+  "capped": "capped at",
+  "sessions": "sessions",
+  "PLEASE_ACCEPT_TERMS_AND_PRIVACY_POLICY": "Please accept the Terms & Conditions and Privacy Policy to continue.",
+  "product_update_success": "Listing Updated Successfully",
+  "update_personal_email": "Update Personal Email",
+  "update_email_info": "Enter your new personal email address. We’ll use this for account updates and important notifications.",
+  "enter_password":"Enter password*"
 }

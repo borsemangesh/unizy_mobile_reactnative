@@ -58,6 +58,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../utils/component/Loader';
+import SaveButton from '../../utils/component/SaveButton';
 
 type EditProfileProps = {
   navigation: any;
@@ -76,7 +77,7 @@ interface UserMeta {
 const EditProfile = ({ navigation }: EditProfileProps) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
-
+  const [username1, setUsername1] = useState<string>('');
   const [photo, setPhoto] = useState<string | null>(null);
   const [newphoto, setNewPhoto] = useState<string | null>(null);
   const [userMeta, setUserMeta] = useState<UserMeta>({
@@ -89,13 +90,19 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     // profile:''
   });
 
+  const [initialProfile, setInitialProfile] = useState<UserMeta | null>(null);
+
   const [showPopup1, setShowPopup1] = useState(false);
   const closePopup1 = () => setShowPopup1(false);
+
+  const [showPopup2, setShowPopup2] = useState(false);
+  const closePopup2 = () => setShowPopup2(false);
+
   const [emailName, setEmailName] = useState('');
   const inputs = useRef<Array<TextInput | null>>([]);
   const [isUpdateDisabled_personal, setIsUpdateDisabled_personal] =
     useState(true);
-  const [isUpdateDisabled, setIsUpdateDisabled] = useState(true);
+  // const [isUpdateDisabled, setIsUpdateDisabled] = useState(true);
   const [updateText, setUpdateText] = useState('Update');
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
@@ -180,13 +187,13 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         const data = await response.json();
         if (response.status === 401 || response.status === 403) {
           handleForceLogout();
-           setLoading(false)
+          setLoading(false)
           return;
         }
 
         if (data.statusCode === 401 || data.statusCode === 403) {
           handleForceLogout();
-           setLoading(false)
+          setLoading(false)
           return;
         }
 
@@ -201,6 +208,19 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             city: user.city ?? null,
             postal_code: user.postal_code ?? null,
           });
+
+          const profileSnapshot: UserMeta = {
+            firstname: user.firstname ?? '',
+            lastname: user.lastname ?? '',
+            email: user.email ?? '',
+            student_email: user.student_email ?? '',
+            city: user.city ?? '',
+            postal_code: user.postal_code ?? '',
+          };
+          setUserMeta(profileSnapshot);
+          setInitialProfile(profileSnapshot);
+
+
           setPhoto(user.profile);
           setOriginalPhoto(user.profile);
           setInitialEmail(user.student_email ?? '');
@@ -214,8 +234,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       } catch (error) {
         console.error('Error fetching user profile:', error);
       }
-      finally{
-         setLoading(false)
+      finally {
+        setLoading(false)
       }
     };
     const handleForceLogout = async () => {
@@ -253,6 +273,29 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   }, []);
 
 
+  useEffect(() => {
+    if (showPopup2) {
+      const timer = setTimeout(() => {
+        inputs.current[0]?.focus();
+      }, 300);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showPopup2]);
+
+  const isProfileChanged = () => {
+    if (!initialProfile) return false;
+
+    return (
+      userMeta.firstname !== initialProfile.firstname ||
+      userMeta.lastname !== initialProfile.lastname ||
+      userMeta.email !== initialProfile.email ||
+      userMeta.student_email !== initialProfile.student_email ||
+      userMeta.city !== initialProfile.city ||
+      userMeta.postal_code !== initialProfile.postal_code ||
+      photo !== originalPhoto
+    );
+  };
 
   const requestCameraPermission = async () => {
     // ANDROID
@@ -363,17 +406,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     }
 
 
-    if (!userMeta.student_email?.trim()) {
-      errors.push(t('student_req'));
-    } else if (
-      !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
-        userMeta.student_email.trim()
-      )
-    ) {
-      errors.push(t('invalid_email'));
-    }
-
-
     // if (!userMeta.city || userMeta.city.trim() === '') {
     //   errors.push(t('city_req'));
     // }
@@ -386,17 +418,23 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   // ---------------------  Update data method call -----------------//
 
   const handleSaveProfile = async () => {
+
+    if (!isProfileChanged()) {
+      showToast(t('no_changes_detected'), 'info');
+      return;
+    }
     const errors = validateForm();
     if (errors.length > 0) {
       showToast(errors[0], 'error');
       return;
-    } else if (!isUpdateDisabled_personal) {
-      showToast(t(Constant.VERIFY_PERSONAL_MAIL), 'error');
-      return;
-    } else if (!isUpdateDisabled) {
-      showToast(t(Constant.VERIFY_STUDENT_MAIL), 'error');
-      return;
     }
+    // else if (!isUpdateDisabled_personal) {
+    //   showToast(t(Constant.VERIFY_PERSONAL_MAIL), 'error');
+    //   return;
+    // } else if (!isUpdateDisabled) {
+    //   showToast(t(Constant.VERIFY_STUDENT_MAIL), 'error');
+    //   return;
+    // }
 
     try {
       setLoading(true)
@@ -407,27 +445,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         showToast(t(Constant.USER_NOT_AUTH), 'error');
         return;
       }
-
-      // if (newphoto !== null) {
-      //   const uploadSuccess = await handleUploadImage(newphoto);
-
-
-
-      //   showToast(Constant.IMAGE_UPLOAD, 'success');
-      //   await new Promise((resolve: any) => {
-      //     setTimeout(resolve, 2000);
-      //   });
-      // }
-
-
-      // if (photo == null) {
-
-      //   await handleDeleteImage();
-      //   await new Promise((resolve: any) => {
-      //     setTimeout(resolve, 2000);
-      //   });
-      // }
-
       if (newphoto) {
         const uploadSuccess = await handleUploadImage(newphoto);
 
@@ -450,8 +467,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       const body = {
         firstname: userMeta.firstname?.trim(),
         lastname: userMeta.lastname?.trim(),
-        email: userMeta.email?.trim(),
-        student_email: userMeta.student_email?.trim(),
+        //email: userMeta.email?.trim(),
+        //student_email: userMeta.student_email?.trim(),
         city: userMeta.city?.trim(),
         postal_code: userMeta.postal_code,
       };
@@ -658,30 +675,63 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
   const [save_otp, setSaveOtp] = useState(0);
 
-  const sendOtp = async (res?: any) => {
-    let flag = res;
+  // const sendOtp = async (res?: any) => {
+  //   let flag = res;
+
+  //   try {
+  //     const token = await AsyncStorage.getItem('userToken');
+  //     if (!token) {
+
+  //       return;
+  //     }
+
+  //     const url = MAIN_URL.baseUrl + 'user/update-email';
+  //     let createPayload;
+
+  //     createPayload = {
+  //       email: userMeta.email?.trim(),
+  //     };
+
+  //     const res = await fetch(url, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //       body: JSON.stringify(createPayload),
+  //     });
+
+  //     const data = await res.json();
 
 
+  //     if (data?.statusCode === 200) {
+  //       setSaveOtp(data.data.otp_id);
+  //       setShowPopup2(true)
+  //     } else {
+  //       showToast(t(data?.message), 'error');
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+  const sendOtp = async (email?: string) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      if (!token) {
+      if (!token) return;
 
+      const finalEmail = email?.trim();
+
+      if (!finalEmail || !isValidEmail(finalEmail)) {
+        showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
+        setShowPopup1(false)
         return;
       }
 
       const url = MAIN_URL.baseUrl + 'user/update-email';
-      let createPayload;
-      if (flag == 'studentEmail') {
-        createPayload = {
-          student_email: userMeta.student_email?.trim(),
-        };
-      } else if (flag == 'personalEmail') {
-        createPayload = {
-          email: userMeta.email?.trim(),
-        };
-      }
 
-
+      const createPayload = {
+        email: finalEmail,
+      };
 
       const res = await fetch(url, {
         method: 'POST',
@@ -694,16 +744,19 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
       const data = await res.json();
 
-
       if (data?.statusCode === 200) {
         setSaveOtp(data.data.otp_id);
+        setShowPopup1(false);
+        setShowPopup2(true);
       } else {
-        showToast(t(data?.message), 'error');
+        showToast(t(data?.message || 'Something went wrong'), 'error');
       }
     } catch (err) {
-      console.error(err);
+      console.error('sendOtp error:', err);
     }
   };
+
+
 
   const otpverify = async () => {
     Keyboard.dismiss();
@@ -715,9 +768,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         return;
       }
       const otpValue = otp.join('');
-
-
-
       const url = MAIN_URL.baseUrl + 'user/verify-update';
       const createPayload = {
         otp: otpValue,
@@ -735,16 +785,16 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
       const data = await res.json();
 
-
+      console.log('data', data);
       if (data?.statusCode === 200) {
         showToast(t(data?.message), 'success');
-        setShowPopup1(false);
-        setIsUpdateDisabled(true)
-        setIsUpdateDisabled_personal(true)
+        setShowPopup2(false);
+        //setIsUpdateDisabled(true)
+        //setIsUpdateDisabled_personal(true)
 
 
       } else {
-        setShowPopup1(false);
+        setShowPopup2(false);
         showToast(t(data?.message), 'error');
       }
     } catch (err) {
@@ -952,7 +1002,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             <View style={styles.profileavatarContainer}>
               <View style={styles.profilebigCircle}>
                 <TouchableOpacity>
-                
+
                   {photo && (
                     <TouchableOpacity
                       style={styles.profiledeleteButton}
@@ -980,21 +1030,21 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     </View>
                   )} */}
                   {loading ? (
-                  <View style={styles.initialsCircle}>
-                    {/* empty placeholder to avoid flicker */}
-                  </View>
-                ) : photo ? (
-                  <Image source={{ uri: photo }} style={styles.profilelogo} />
-                ) : (
-                  <View style={styles.initialsCircle}>
-                    <Text allowFontScaling={false} style={styles.initialsText}>
-                      {getInitials(
-                        userMeta?.firstname ?? 'A',
-                        userMeta?.lastname ?? 'W',
-                      )}
-                    </Text>
-                  </View>
-                )}
+                    <View style={styles.initialsCircle}>
+                      {/* empty placeholder to avoid flicker */}
+                    </View>
+                  ) : photo ? (
+                    <Image source={{ uri: photo }} style={styles.profilelogo} />
+                  ) : (
+                    <View style={styles.initialsCircle}>
+                      <Text allowFontScaling={false} style={styles.initialsText}>
+                        {getInitials(
+                          userMeta?.firstname ?? 'A',
+                          userMeta?.lastname ?? 'W',
+                        )}
+                      </Text>
+                    </View>
+                  )}
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -1100,26 +1150,15 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     style={{
                       width: 32,
                       height: 32,
-
-                      backgroundColor: isUpdateDisabled_personal
-                        ? '#99999980'
-                        : 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
-                      boxShadow: isUpdateDisabled_personal
-                        ? ''
-                        : 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
-                      borderColor: isUpdateDisabled_personal ? '' : '#ffffff11',
+                      backgroundColor: 'rgba(255,255,255,0.08)',
+                      boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+                      borderColor: '',
                       borderRadius: 10,
                       justifyContent: 'center',
                       alignItems: 'center',
                       marginEnd: 8,
-                      opacity: isUpdateDisabled_personal ? 0.5 : 1,
+                      // opacity: 0.5 
                     }}
-                    disabled={isUpdateDisabled_personal}
-                    // onPress={() => (
-                    //   setShowPopup1(true),
-                    //   sendOtp('personalEmail'),
-                    //   setEmailName('personalEmail')
-                    // )}
 
                     onPress={() => {
                       const email = userMeta.email || '';
@@ -1129,7 +1168,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                         return;
                       }
                       setShowPopup1(true);
-                      sendOtp('personalEmail');
+                      setUsername1('')
+                      //sendOtp('personalEmail');
                       setEmailName('personalEmail');
                     }}
                   >
@@ -1159,7 +1199,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   <TextInput
                     selectionColor="#fff"
                     editable={false}
-                    cursorColor="#fff" 
+                    cursorColor="#fff"
                     style={{
                       flex: 1,
                       color: '#fff',
@@ -1176,60 +1216,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     value={userMeta.student_email || ''}
                     onChangeText={text => {
                       setUserMeta(prev => ({ ...prev, student_email: text.trim() }));
-
-                      if (text.trim() === initialEmail) {
-
-                        setIsUpdateDisabled(true);
-                      } else {
-
-                        setIsUpdateDisabled(false);
-                      }
-                      // if (text.length > 0 && !validateStudentEmail(text)) {
-                      //   showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
-                      // }
                     }}
                     keyboardType="email-address"
                     placeholder={t('enter_student_email_id')}
                     placeholderTextColor="#ccc"
                   />
-                  {false && 
-                  <TouchableOpacity
-                    style={{
-                      width: 32,
-                      height: 32,
-                      backgroundColor: isUpdateDisabled
-                        ? '#99999980'
-                        : 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
-                      boxShadow: isUpdateDisabled
-                        ? ''
-                        : 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
-                      borderColor: isUpdateDisabled ? '' : '#ffffff11',
-                      borderRadius: 10,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      marginEnd: 4,
-                      opacity: isUpdateDisabled ? 0.5 : 1,
-                    }}
-                    disabled={isUpdateDisabled}
-                    onPress={() => {
-                      const email1 = userMeta.student_email || '';
-                      if (!validateStudentEmail(email1.trim())) {
-                        showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
-                        return;
-                      }
-
-                      setShowPopup1(true);
-                      sendOtp('studentEmail');
-                      setEmailName('studentEmail');
-                    }}
-                  >
-                    <Image
-                      source={require('../../../assets/images/editcontained.png')}
-                      style={styles.updateIcon}
-                      resizeMode="contain"
-                    />
-                  </TouchableOpacity>
-                  }
                 </View>
               </View>
               <View style={styles.inputGroup}>
@@ -1238,7 +1229,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 </Text>
                 <TextInput
                   selectionColor="#fff"
-                    cursorColor="#fff" 
+                  cursorColor="#fff"
                   value={userMeta.postal_code || ''}
                   onChangeText={text => {
                     const filteredText = text.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
@@ -1272,7 +1263,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 </Text>
                 <TextInput
                   selectionColor="#fff"
-                    cursorColor="#fff" 
+                  cursorColor="#fff"
                   allowFontScaling={false}
                   value={userMeta.city || ''}
                   editable={false}
@@ -1315,14 +1306,22 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           </AnimatedReanimated.ScrollView>
         </KeyboardAvoidingView>
 
-        <Button
+        {/* <Button
           title={t('save_details')}
           onPress={() => {
             handleSaveProfile();
           }}
+          
+        /> */}
+
+        <SaveButton
+          title={t('save_details')}
+          onPress={handleSaveProfile}
+          disabled={!isProfileChanged()}
+
         />
       </View>
-
+      {/* 
       <Modal
         visible={showPopup1}
         transparent={true}
@@ -1352,9 +1351,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
               <View style={styles.popupContainer}>
                 <Text allowFontScaling={false} style={styles.mainheader}>
-                  {emailName === 'personalEmail'
-                    ? t('verify_personal_email')
-                    : t('verify_student_email_id')}
+                  {t('verify_personal_email')}
                 </Text>
 
                 <Text allowFontScaling={false} style={styles.subheader}>
@@ -1366,9 +1363,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                       fontWeight: '400',
                     }}
                   >
-                    {emailName === 'personalEmail'
-                      ? userMeta.email
-                      : userMeta.student_email}
+                    {userMeta.email}
+                    
                   </Text>
                 </Text>
 
@@ -1417,6 +1413,227 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     onPress={() => sendOtp(emailName)}
                   >
                     {t('resend_code')}
+                  </Text>
+                </Text>
+              </View>
+            </BlurView>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal> */}
+
+      <Modal
+        visible={showPopup1}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => { }}
+      >
+        <TouchableWithoutFeedback onPress={closePopup1}>
+          <View style={styles.overlay}>
+            <BlurView
+              style={{
+                flex: 1,
+                alignContent: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                alignItems: 'center',
+              }}
+              blurType="light"
+              blurAmount={10}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            >
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
+                ]}
+              />
+
+              <View style={styles.popupContainer}>
+                <Text allowFontScaling={false} style={styles.mainheader}>
+                  {t('update_personal_email')}
+                </Text>
+
+                <Text allowFontScaling={false} style={styles.notheader}>
+                  {t('update_email_info')}
+                </Text>
+
+                <View style={[styles.login_container]}>
+                  <TextInput
+                    allowFontScaling={false}
+                    style={[
+                      styles.personalEmailID_TextInput,
+                      { color: '#fff' },
+                    ]}
+                    placeholder={t('personal_email_id')}
+                    placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                    value={username1}
+                    maxLength={50}
+                    selectionColor="white"
+                    cursorColor={'#FFFFFF'}
+                    keyboardType={
+                      Platform.OS === 'ios'
+                        ? 'default'
+                        : 'email-address'
+                    }
+                    autoCapitalize="none"
+                    autoComplete={
+                      Platform.OS === 'ios' ? 'email' : 'username'
+                    }
+                    textContentType={
+                      Platform.OS === 'ios'
+                        ? 'emailAddress'
+                        : 'username'
+                    }
+                    importantForAutofill="yes"
+                    autoCorrect={false}
+                    onChangeText={usernameText =>
+                      setUsername1(usernameText)
+                    }
+                  />
+                </View>
+
+
+                <TouchableOpacity
+                  style={styles.newloginButton}
+                  onPress={() => {
+                    //setShowPopup2(true)
+                    sendOtp(username1)
+                  }
+                  }
+                >
+                  <Text allowFontScaling={false} style={styles.loginText}>
+                    {t('send_otp')}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.newloginButton1}
+                  onPress={() => {
+                    setShowPopup1(false)
+                  }
+                  }
+                >
+                  <Text allowFontScaling={false} style={styles.loginText1}>
+                    {t('cancel')}
+                  </Text>
+                </TouchableOpacity>
+
+              </View>
+            </BlurView>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+
+
+      <Modal
+        visible={showPopup2}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => { }}
+      >
+        <TouchableWithoutFeedback onPress={closePopup2}>
+          <View style={styles.overlay}>
+            <BlurView
+              style={{
+                flex: 1,
+                alignContent: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                alignItems: 'center',
+              }}
+              blurType="light"
+              blurAmount={10}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            >
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
+                ]}
+              />
+
+              <View style={styles.popupContainer}>
+                <Text allowFontScaling={false} style={styles.mainheader}>
+                  {t('verify_personal_email')}
+                </Text>
+
+                <Text allowFontScaling={false} style={styles.notheader}>
+                  {t('we_sent_code_to')}{' '}
+                  <Text
+                    allowFontScaling={false}
+                    style={{
+                      color: '#fff',
+                      fontFamily: 'Urbanist-SemiBold',
+                      fontWeight: '400',
+                    }}
+                  >
+                    {username1}
+                  </Text>
+                </Text>
+
+                <View style={styles.otpContainer}>
+                  {[0, 1, 2, 3].map((_, index) => (
+                    <TextInput
+                      selectionColor="#fff"
+                      cursorColor="#fff"
+                      allowFontScaling={false}
+                      key={index}
+                      ref={ref => {
+                        inputs.current[index] = ref;
+                      }}
+                      style={styles.otpBox}
+                      keyboardType="number-pad"
+                      maxLength={1}
+                      onChangeText={text => {
+                        const digit = text.replace(/[^0-9]/g, '');
+                        handleChange(digit, index);
+                      }}
+                      returnKeyType="next"
+                      textAlign="center"
+                      secureTextEntry={true}
+                    />
+                  ))}
+                </View>
+
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  onPress={otpverify}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText}>
+                    {t('verify')}
+                  </Text>
+                </TouchableOpacity>
+
+
+                <Text
+                  allowFontScaling={false}
+                  style={[styles.notheader, { marginBottom: 6 }]}
+                >
+                  {t('didnt_receive_code')}{' '}
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.notheader1}
+                    onPress={() => sendOtp(username1)}
+                  >
+                    {t('resend_code')}
+                  </Text>
+                </Text>
+
+                <Text
+                  allowFontScaling={false}
+                  style={[styles.notheader, { marginBottom: 6 }]}
+                >
+                  {t('entered_wrong_email')}{' '}
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.notheader1}
+                    onPress={() => {
+                      setShowPopup2(false)
+                      setShowPopup1(true)
+                    }
+                    }
+                  >
+                    {t('go_back')}
                   </Text>
                 </Text>
               </View>
@@ -1483,7 +1700,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={styles.loginButton1}
+                  style={[styles.newloginButton1, { marginTop: 8 }]}
                   onPress={() => {
                     setShowDeleteModal(false);
                   }}
@@ -1510,6 +1727,74 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 export default EditProfile;
 
 const styles = StyleSheet.create({
+
+
+
+  newloginButton: {
+    display: 'flex',
+    width: '100%',
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 100,
+    paddingTop: 6,
+    paddingBottom: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.56)',
+    marginTop: 20,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+  },
+
+  newloginButton1: {
+    display: 'flex',
+    width: '100%',
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 100,
+    paddingTop: 6,
+    paddingBottom: 6,
+    backgroundColor: 'rgba(145, 142, 163, 0.56)',
+    marginTop: 12,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+
+
+  },
+
+
+
+  login_container: {
+    marginTop: 16,
+    display: 'flex',
+    width: '100%',
+    height: 44,
+    gap: (Platform.OS === 'ios' ? 10 : 10),
+    alignSelf: 'stretch',
+    borderRadius: 12,
+    borderWidth: 0.6,
+    borderColor: '#ffffff2c',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+  },
+  personalEmailID_TextInput: {
+    width: '93%',
+    //padding:12,
+    fontFamily: 'Urbanist-Regular',
+    fontWeight: '400',
+    fontSize: 17,
+    lineHeight: 22,
+    fontStyle: 'normal',
+    color: "#fff",
+
+  },
   loaderOverlay: {
     position: 'absolute',
     top: 0,
@@ -1941,6 +2226,7 @@ const styles = StyleSheet.create({
   updateIcon: {
     width: 16,
     height: 16,
+    tintColor: '#fff'
   },
 
   inputEmail: {
@@ -2024,6 +2310,24 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
   },
+  notheader: {
+    color: 'rgba(255, 255, 255, 0.48)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+
+  notheader1: {
+    color: 'rgba(255, 255, 255, 0.48)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+
 
   subheader: {
     color: 'rgba(255, 255, 255, 0.80)',

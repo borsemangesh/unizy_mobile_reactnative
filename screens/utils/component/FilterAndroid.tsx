@@ -146,16 +146,39 @@ const FilterAndroid = ({
     setSelectedTab(tabName);
   };
 
-  const toggleDropdownOption = (fieldId: number, optionId: number) => {
-    setDropdownSelections(prev => {
-      const current = prev[fieldId] || [];
+  // const toggleDropdownOption = (fieldId: number, optionId: number) => {
+  //   setDropdownSelections(prev => {
+  //     const current = prev[fieldId] || [];
+  //     if (current.includes(optionId)) {
+  //       return { ...prev, [fieldId]: current.filter(id => id !== optionId) };
+  //     } else {
+  //       return { ...prev, [fieldId]: [...current, optionId] };
+  //     }
+  //   });
+  // };
+
+
+  const toggleDropdownOption = (
+  fieldId: number,
+  optionId: number,
+  isMultiple: boolean,
+) => {
+  setDropdownSelections(prev => {
+    const current = prev[fieldId] || [];
+
+    if (isMultiple) {
+      // MULTI SELECT (checkbox)
       if (current.includes(optionId)) {
         return { ...prev, [fieldId]: current.filter(id => id !== optionId) };
       } else {
         return { ...prev, [fieldId]: [...current, optionId] };
       }
-    });
-  };
+    } else {
+      // SINGLE SELECT (radio)
+      return { ...prev, [fieldId]: [optionId] };
+    }
+  });
+};
 
 
   const handleClearFilters = () => {
@@ -199,104 +222,157 @@ const FilterAndroid = ({
     const currentFilter = filters.find(f => f.field_name === selectedTab);
     if (!currentFilter) return null;
 
+    // if (currentFilter.field_type === 'dropdown') {
+    //   return (
+    //     <ScrollView
+
+    //       style={{ flexGrow: 0, paddingTop: 10 }}
+    //       showsVerticalScrollIndicator={false}
+    //     >
+    //       {currentFilter.options.map((opt: any) => (
+    //         <TouchableOpacity
+    //           key={opt.id}
+    //           style={{
+    //             flexDirection: 'row',
+    //             alignItems: 'center',
+    //             paddingVertical: 12,
+    //             flexWrap: 'nowrap',
+    //           }}
+    //           onPress={() => toggleDropdownOption(currentFilter.id, opt.id)}
+    //         >
+    //           <View
+    //             style={{
+    //               width: 20,
+    //               height: 20,
+    //               borderRadius: 4,
+    //               borderWidth: 1,
+    //               borderColor: '#fff',
+    //               justifyContent: 'center',
+    //               alignItems: 'center',
+    //               marginRight: 10,
+    //             }}
+    //           >
+    //             {dropdownSelections[currentFilter.id]?.includes(opt.id) && (
+    //               <Image
+    //                 source={require('../../../assets/images/tickicon.png')}
+    //                 style={styles.tickImage}
+    //                 resizeMode="contain" />)}
+    //           </View>
+    //           <Text
+    //             allowFontScaling={false}
+    //             numberOfLines={3}
+    //             style={[styles.filtertitleFilteryBy, {
+    //               flexShrink: 1,
+    //               flexGrow: 1,
+    //             }]}
+    //           >
+    //             {opt.option_name || opt.name}
+
+    //           </Text>
+
+    //         </TouchableOpacity>
+    //       ))}
+    //     </ScrollView>
+    //   );
+    // }
+
     if (currentFilter.field_type === 'dropdown') {
-      return (
-        <ScrollView
+  return (
+    <ScrollView style={{ flexGrow: 0, paddingTop: 10 }}>
+      {currentFilter.options.map((opt: any) => {
+  const isMultiple = currentFilter.ismultilple;
+  const selectedValues = dropdownSelections[currentFilter.id] || [];
 
-          style={{ flexGrow: 0, paddingTop: 10 }}
-          showsVerticalScrollIndicator={false}
+  const isSelectedCheckbox = selectedValues.includes(opt.id);
+  const isSelectedRadio = selectedValues[0] === opt.id;
+
+  return (
+    <TouchableOpacity
+      key={opt.id}
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 12,
+        flexWrap: 'nowrap',
+      }}
+      onPress={() =>
+        toggleDropdownOption(
+          currentFilter.id,
+          opt.id,
+          isMultiple
+        )
+      }
+    >
+      {/* ICON UI ONLY CHANGED */}
+      {isMultiple ? (
+        <View
+          style={{
+            width: 20,
+            height: 20,
+            borderRadius: 4,
+            borderWidth: 1,
+            borderColor: '#fff',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginRight: 10,
+          }}
         >
-          {currentFilter.options.map((opt: any) => (
-            <TouchableOpacity
-              key={opt.id}
+          {isSelectedCheckbox && (
+            <Image
+              source={require('../../../assets/images/tickicon.png')}
+              style={styles.tickImage}
+              resizeMode="contain"
+            />
+          )}
+        </View>
+      ) : (
+        <View
+          style={{
+            width: 20,
+            height: 20,
+            borderRadius: 10,
+            borderWidth: 1.5,
+            borderColor: '#fff',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginRight: 10,
+          }}
+        >
+          {isSelectedRadio && (
+            <View
               style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                paddingVertical: 12,
-                flexWrap: 'nowrap',
+                width: 10,
+                height: 10,
+                borderRadius: 5,
+                backgroundColor: '#fff',
               }}
-              onPress={() => toggleDropdownOption(currentFilter.id, opt.id)}
-            >
-              <View
-                style={{
-                  width: 20,
-                  height: 20,
-                  borderRadius: 4,
-                  borderWidth: 1,
-                  borderColor: '#fff',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginRight: 10,
-                }}
-              >
-                {dropdownSelections[currentFilter.id]?.includes(opt.id) && (
-                  <Image
-                    source={require('../../../assets/images/tickicon.png')}
-                    style={styles.tickImage}
-                    resizeMode="contain" />)}
-              </View>
-              <Text
-                allowFontScaling={false}
-                numberOfLines={3}
-                style={[styles.filtertitleFilteryBy, {
-                  flexShrink: 1,
-                  flexGrow: 1,
-                }]}
-              >
-                {opt.option_name || opt.name}
+            />
+          )}
+        </View>
+      )}
 
-              </Text>
+      <Text
+        allowFontScaling={false}
+        numberOfLines={3}
+        style={[styles.filtertitleFilteryBy, {
+          flexShrink: 1,
+          flexGrow: 1,
+        }]}
+      >
+        {opt.option_name || opt.name}
+      </Text>
+    </TouchableOpacity>
+  );
+})}
 
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      );
-    }
+
+    </ScrollView>
+  );
+}
+
 
     else if (currentFilter.alias_name === 'price') {
       return (
-        // <View style={{ zIndex: 999, position: 'relative' }}>
-        //   <Text allowFontScaling={false} style={{ color: 'white', marginBottom: 10 }}>
-        //     {t('range')}: {sliderLow} - {sliderHigh}
-        //   </Text>
-
-        //   <View style={{ paddingHorizontal: 20, paddingTop: 30, paddingBottom: 20 }}>
-        //     <MultiSlider
-        //       values={[sliderLow, sliderHigh]}
-        //       sliderLength={150}
-
-        //       min={currentFilter?.minvalue ?? 0}
-        //       max={currentFilter?.maxvalue ?? 100}
-        //       step={1}
-        //       onValuesChange={(values) => {
-        //         const [low, high] = values;
-        //         setSliderLow(low);
-        //         setSliderHigh(high);
-        //         setPriceRange({ min: low, max: high })
-        //       }}
-
-        //       selectedStyle={{
-        //         backgroundColor: '#fff',
-        //       }}
-        //       unselectedStyle={{
-        //         backgroundColor: '#888',
-        //       }}
-        //       containerStyle={{
-        //         height: 'auto',
-        //       }}
-        //       trackStyle={{
-        //         height: 4,
-        //         borderRadius: 2,
-        //       }}
-        //       markerStyle={{
-        //         height: 20,
-        //         width: 20,
-        //         borderRadius: 10,
-        //         backgroundColor: '#fff',
-        //       }}
-        //     />
-        //   </View>
-        // </View>
         <View style={{ zIndex: 999, position: 'relative' }}>
           <Text allowFontScaling={false} style={{ color: 'white', marginBottom: 10 }}>
             {t('range')}: {sliderLow} - {sliderHigh}

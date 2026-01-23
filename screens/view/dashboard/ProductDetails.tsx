@@ -449,6 +449,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
         search: search,
       };
 
+      console.log('newFilterBody', newFilterBody);
 
 
       setAppliedFilter(newFilterBody);
