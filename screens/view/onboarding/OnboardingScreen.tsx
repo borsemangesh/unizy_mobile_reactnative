@@ -10,7 +10,6 @@ import {
   Image,
   ScrollView
 } from 'react-native';
-import OnboardingItem from './OnboardingItem';
 import Pagination from './Pagination';
 import { OnboardingData } from './OnboardingData';
 import { useTranslation } from 'react-i18next';
@@ -29,10 +28,10 @@ const OnboardingScreen = ({ navigation }: OnBoardingProps) => {
     if (index < OnboardingData.length - 1) {
       ref.current?.scrollToOffset({
         offset: (index + 1) * width,
+        animated: true,
       });
     } else {
       await AsyncStorage.setItem('ISONBOARDING', 'true');
-
       navigation.replace('Dashboard', {
         AddScreenBackactiveTab: 'Home',
         isNavigate: true,
@@ -64,24 +63,36 @@ const OnboardingScreen = ({ navigation }: OnBoardingProps) => {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 60 }}
         >
-        <FlatList
-          ref={ref}
-          data={OnboardingData}
-          renderItem={({ item }) => <OnboardingItem item={item} />}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          onScroll={e => {
-            const i = Math.round(e.nativeEvent.contentOffset.x / width);
-            setIndex(i);
-          }}
-        />
+      
+
+<FlatList
+  ref={ref}
+  data={OnboardingData}
+  keyExtractor={(item) => item.id}
+  horizontal
+  pagingEnabled
+  showsHorizontalScrollIndicator={false}
+  onMomentumScrollEnd={(e) => {
+    const newIndex = Math.round(
+      e.nativeEvent.contentOffset.x / width
+    );
+    setIndex(newIndex);
+  }}
+  renderItem={({ item }) => {
+    const ScreenComponent = item.component;
+    return (
+      <View style={{ width }}>
+        <ScreenComponent />
+      </View>
+    );
+  }}
+/>
+       
 
       </ScrollView>
         <Pagination data={OnboardingData} index={index} />
 
         <View style={styles.bottomRow}>
-          {/* Next / Finish button */}
           {isLast ? (
             <>
               <TouchableOpacity
@@ -106,7 +117,6 @@ const OnboardingScreen = ({ navigation }: OnBoardingProps) => {
                   {isLast ? t('info_finish') : t('info_next')}
                 </Text>
 
-                {/* Arrow only for Next */}
                 {!isLast && (
                   <Image
                     source={require('../../../assets/images/arrowrightsm1.png')}
