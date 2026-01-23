@@ -240,7 +240,8 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
           if (isLogout) {
             setShowConfirm(true);
           } else if (isDelete) {
-
+            setIsPasswordVisible(false)
+            setPassword('')
             setShowConfirm1(true);
           }
           else if (item.titleKey === 'my_orders') {
@@ -792,7 +793,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                         device_type: (Platform.OS === 'ios') ? 'ios' : 'android',
                         device_id: deviceId,
                         user_id: Number(user_id),
-                        //user_password: password
+                        password: password
                       };
 
                       const response = await fetch(`${MAIN_URL.baseUrl}user/account-delete`, {
@@ -806,7 +807,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
 
                       const apiData = await response.json();
 
-                      console.log("Logout API Response:", apiData);
+                      console.log("delete API Response:", apiData);
 
                       if (apiData?.statusCode === 200) {
                         await AsyncStorage.setItem('userToken', '');
@@ -853,7 +854,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                         });
                       } else {
                         setShowConfirm1(false);
-                        showToast(t(Constant.LOGOUT_FAIL), 'error');
+                        showToast(t(apiData?.message), 'error');
                       }
 
                     } catch (error) {
