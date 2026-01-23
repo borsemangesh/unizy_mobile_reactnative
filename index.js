@@ -49,6 +49,28 @@ if (isFCMAutoNotification) {
   return;
 }
 
+if (Platform.OS === 'ios') {
+  try {
+    const currentBadge = await notifee.getBadgeCount();
+    await notifee.setBadgeCount(currentBadge + 1);
+  } catch (err) {
+    console.warn("⚠️ Failed to update iOS badge", err);
+  }
+}
+
+  // await notifee.displayNotification({
+  //   title,
+  //   body,
+  //   data: remoteMessage.data,
+  //   android: {
+  //     channelId: 'default',
+  //     sound: 'default',
+  //     pressAction: { id: 'default' }
+  //   },
+  //   ios: {
+  //     sound: 'default'
+  //   }
+  // });
   await notifee.displayNotification({
     title,
     body,
@@ -61,6 +83,16 @@ if (isFCMAutoNotification) {
     ios: {
       sound: 'default'
     }
+  });
+
+  await incrementBadge();
+
+  await notifee.displayNotification({
+    title: remoteMessage.notification?.title || 'Notification',
+    body: remoteMessage.notification?.body || '',
+    android: { channelId: 'default', pressAction: { id: 'default' }, sound: 'default' },
+    ios: { sound: 'default' },
+    data: remoteMessage.data,
   });
 });
 

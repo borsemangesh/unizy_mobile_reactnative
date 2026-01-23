@@ -879,7 +879,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
-      <NewCustomToastContainer />
+      {/* <NewCustomToastContainer /> */}
     </View>
   );
 };

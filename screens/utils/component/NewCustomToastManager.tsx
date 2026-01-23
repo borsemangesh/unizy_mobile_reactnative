@@ -53,7 +53,8 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 40,
-    zIndex: 9999,
+    zIndex: 99999,        // iOS
+    elevation: 99999,    // Android 🔥 REQUIRED
     width: "100%",
     pointerEvents: "box-none",
   },

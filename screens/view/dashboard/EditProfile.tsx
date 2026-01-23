@@ -675,45 +675,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
   const [save_otp, setSaveOtp] = useState(0);
 
-  // const sendOtp = async (res?: any) => {
-  //   let flag = res;
-
-  //   try {
-  //     const token = await AsyncStorage.getItem('userToken');
-  //     if (!token) {
-
-  //       return;
-  //     }
-
-  //     const url = MAIN_URL.baseUrl + 'user/update-email';
-  //     let createPayload;
-
-  //     createPayload = {
-  //       email: userMeta.email?.trim(),
-  //     };
-
-  //     const res = await fetch(url, {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //       body: JSON.stringify(createPayload),
-  //     });
-
-  //     const data = await res.json();
-
-
-  //     if (data?.statusCode === 200) {
-  //       setSaveOtp(data.data.otp_id);
-  //       setShowPopup2(true)
-  //     } else {
-  //       showToast(t(data?.message), 'error');
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
   const sendOtp = async (email?: string) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -1016,19 +977,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     </TouchableOpacity>
                   )}
 
-
-                  {/* {photo ? (
-                    <Image source={{ uri: photo }} style={styles.profilelogo} />
-                  ) : (
-                    <View style={styles.initialsCircle}>
-                      <Text allowFontScaling={false} style={styles.initialsText}>
-                        {getInitials(
-                          userMeta?.firstname ?? 'A',
-                          userMeta?.lastname ?? 'W',
-                        )}
-                      </Text>
-                    </View>
-                  )} */}
                   {loading ? (
                     <View style={styles.initialsCircle}>
                       {/* empty placeholder to avoid flicker */}
@@ -1306,13 +1254,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           </AnimatedReanimated.ScrollView>
         </KeyboardAvoidingView>
 
-        {/* <Button
-          title={t('save_details')}
-          onPress={() => {
-            handleSaveProfile();
-          }}
-          
-        /> */}
 
         <SaveButton
           title={t('save_details')}
@@ -1321,106 +1262,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
         />
       </View>
-      {/* 
-      <Modal
-        visible={showPopup1}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => { }}
-      >
-        <TouchableWithoutFeedback onPress={closePopup1}>
-          <View style={styles.overlay}>
-            <BlurView
-              style={{
-                flex: 1,
-                alignContent: 'center',
-                justifyContent: 'center',
-                width: '100%',
-                alignItems: 'center',
-              }}
-              blurType="light"
-              blurAmount={10}
-              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-            >
-              <View
-                style={[
-                  StyleSheet.absoluteFill,
-                  { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
-                ]}
-              />
-
-              <View style={styles.popupContainer}>
-                <Text allowFontScaling={false} style={styles.mainheader}>
-                  {t('verify_personal_email')}
-                </Text>
-
-                <Text allowFontScaling={false} style={styles.subheader}>
-                  {t('we_sent_code_to')}{' '}
-                  <Text
-                    allowFontScaling={false}
-                    style={{
-                      fontFamily: 'Urbanist-SemiBold',
-                      fontWeight: '400',
-                    }}
-                  >
-                    {userMeta.email}
-                    
-                  </Text>
-                </Text>
-
-                <View style={styles.otpContainer}>
-                  {[0, 1, 2, 3].map((_, index) => (
-                    <TextInput
-                      selectionColor="#fff"
-                    cursorColor="#fff" 
-                      allowFontScaling={false}
-                      key={index}
-                      ref={ref => {
-                        inputs.current[index] = ref;
-                      }}
-                      style={styles.otpBox}
-                      keyboardType="number-pad"
-                      maxLength={1}
-                      onChangeText={text => {
-                        const digit = text.replace(/[^0-9]/g, '');
-                        handleChange(digit, index);
-                      }}
-                      returnKeyType="next"
-                      textAlign="center"
-                      secureTextEntry={true}
-                    />
-                  ))}
-                </View>
-
-                <TouchableOpacity
-                  style={styles.loginButton}
-                  onPress={otpverify}
-                >
-                  <Text allowFontScaling={false} style={styles.loginText}>
-                    {t('verify')}
-                  </Text>
-                </TouchableOpacity>
-
-
-                <Text
-                  allowFontScaling={false}
-                  style={[styles.subheader, { marginBottom: 6 }]}
-                >
-                  {t('didnt_receive_code')}{' '}
-                  <Text
-                    allowFontScaling={false}
-                    style={{ color: '#FFFFFF7A' }}
-                    onPress={() => sendOtp(emailName)}
-                  >
-                    {t('resend_code')}
-                  </Text>
-                </Text>
-              </View>
-            </BlurView>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal> */}
-
+     
       <Modal
         visible={showPopup1}
         transparent={true}

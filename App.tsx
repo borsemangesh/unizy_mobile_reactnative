@@ -12,6 +12,7 @@ import { handleNotification, navigationReady } from "./screens/utils/Notificatio
 import { initI18n } from "./localization/i18n";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { incrementBadge } from "./screens/utils/BadgeManager";
 
 function App() {
   LogBox.ignoreAllLogs();
@@ -40,6 +41,19 @@ function App() {
       await initI18n();   // WAIT for i18n
       setReady(true);
     };
+    const requestPermissions = async () => {
+      if (Platform.OS === 'ios') {
+        await notifee.requestPermission({
+          alert: true,
+          badge: true,
+          sound: true,
+        });
+      }
+    };
+    requestPermissions();
+    if (Platform.OS === 'ios') {
+      notifee.setBadgeCount(0);
+    }
     initialize();
   }, []);
 
@@ -161,6 +175,23 @@ function App() {
               };
             }
             await notifee.displayNotification(notificationConfig);
+            if (Platform.OS === 'ios') {
+              const currentBadge = await notifee.getBadgeCount();
+              await notifee.setBadgeCount(currentBadge + 1);
+            }
+            
+            await incrementBadge();
+
+  await notifee.displayNotification({
+    title: remoteMessage.notification?.title || 'Notification',
+    body: remoteMessage.notification?.body || '',
+    android: {
+      channelId: 'default',
+      pressAction: { id: 'default' },
+      sound: 'default',
+    },
+    ios: { sound: 'default' },
+  });
           } catch (error) {
             console.error("❌ Error displaying notification:", error);
           }
