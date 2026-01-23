@@ -470,7 +470,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
             }}
           >
             <View style={[styles.card, { marginTop: (Platform.OS === 'ios' ? 6 : 10) }]}>
-              <View style={{ flexDirection: 'row'}}>
+              <View style={{ flexDirection: 'row' }}>
                 {(() => {
                   const categoryName = data?.list?.category?.id || 0;
                   const isProfileCategory = categoryName === 2 || categoryName === 5;
@@ -588,167 +588,169 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
             )}
 
             {Array.isArray(data?.buyers) &&
-              data.buyers.map((buyer: any, index: number) => (
-                <View key={index} style={styles.card}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      gap: 4,
-                      justifyContent: buyer.otpverified
-                        ? 'space-between'
-                        : 'flex-start',
-                    }}
-                  >
+              data.buyers
+                .filter((buyer: any) => buyer?.otpverified === true)
+                .map((buyer: any, index: number) => (
+                  <View key={index} style={styles.card}>
                     <View
                       style={{
                         flexDirection: 'row',
                         alignItems: 'center',
                         gap: 4,
+                        justifyContent: buyer.otpverified
+                          ? 'space-between'
+                          : 'flex-start',
                       }}
                     >
-                      <Image
-                        source={require('../../../assets/images/sellerfile.png')}
-                        style={{ width: 24, height: 24 }}
-                        resizeMode="cover"
-                      />
-                      <Text
-                        allowFontScaling={false}
-                        style={styles.sellerHeaderlable}
-                      >
-                        {t('Sale_Details')}
-                      </Text>
-                    </View>
-
-                    {buyer.otpverified && (
                       <View
                         style={{
                           flexDirection: 'row',
                           alignItems: 'center',
-                          backgroundColor: 'rgba(255, 255, 255, 0.18)',
-                          paddingHorizontal: 6,
-                          paddingVertical: 4,
-                          borderRadius: 6,
                           gap: 4,
                         }}
                       >
-                        <Text
-                          allowFontScaling={false}
-                          style={{
-                            color: 'rgba(255, 255, 255, 0.88)',
-                            fontFamily: 'Urbanist-Regular',
-                            fontSize: 12,
-                            fontWeight: '600',
-                          }}
-                        >
-                          {t('completed')}
-                        </Text>
                         <Image
-                          source={require('../../../assets/images/tick.png')}
-                          style={{ width: 12, height: 12 }}
+                          source={require('../../../assets/images/sellerfile.png')}
+                          style={{ width: 24, height: 24 }}
                           resizeMode="cover"
                         />
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.sellerHeaderlable}
+                        >
+                          {t('Sale_Details')}
+                        </Text>
                       </View>
-                    )}
-                  </View>
 
-                  <View style={styles.cardconstinerdivider} />
+                      {buyer.otpverified && (
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            backgroundColor: 'rgba(255, 255, 255, 0.18)',
+                            paddingHorizontal: 6,
+                            paddingVertical: 4,
+                            borderRadius: 6,
+                            gap: 4,
+                          }}
+                        >
+                          <Text
+                            allowFontScaling={false}
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.88)',
+                              fontFamily: 'Urbanist-Regular',
+                              fontSize: 12,
+                              fontWeight: '600',
+                            }}
+                          >
+                            {t('completed')}
+                          </Text>
+                          <Image
+                            source={require('../../../assets/images/tick.png')}
+                            style={{ width: 12, height: 12 }}
+                            resizeMode="cover"
+                          />
+                        </View>
+                      )}
+                    </View>
 
-                  <View style={styles.listingtyperow}>
-                    <Text allowFontScaling={false} style={styles.lebleHeader}>
-                      {t('buyer_name')}
-                    </Text>
-                    <Text allowFontScaling={false} style={styles.status}>
-                      {buyer.firstname} {buyer.lastname}
-                    </Text>
-                  </View>
-                  <View style={styles.listingtyperow1}>
-                    <Text allowFontScaling={false} style={styles.lebleHeader}>
-                      {t('buyer_university')}:
-                    </Text>
-                    <Text allowFontScaling={false} numberOfLines={0} style={styles.unistatus}>
-                      {buyer.university_name}
-                    </Text>
-                  </View>
+                    <View style={styles.cardconstinerdivider} />
 
-                  <View style={styles.listingtyperow}>
-                    <Text allowFontScaling={false} style={styles.lebleHeader}>
-                      {t('city')}:
-                    </Text>
-                    <Text allowFontScaling={false} style={styles.status}>
-                      {buyer.city}
-                    </Text>
-                  </View>
-
-                  <View style={styles.listingtyperow}>
-                    <Text allowFontScaling={false} style={styles.lebleHeader}>
-                      {t('sold_on')}:
-                    </Text>
-                    <Text allowFontScaling={false} style={styles.status}>
-                      {new Date(buyer.date).toLocaleString('en-GB', {
-                        month: 'short',
-                        day: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: true,
-                      })}
-                    </Text>
-                  </View>
-
-                  {data?.list?.category_id === 3 && (
                     <View style={styles.listingtyperow}>
                       <Text allowFontScaling={false} style={styles.lebleHeader}>
-                        {t('Units_Purchased')}:
+                        {t('buyer_name')}
                       </Text>
-
                       <Text allowFontScaling={false} style={styles.status}>
-                        {buyer?.purchased_quantity ?? 1}
+                        {buyer.firstname} {buyer.lastname}
                       </Text>
                     </View>
-                  )}
+                    <View style={styles.listingtyperow1}>
+                      <Text allowFontScaling={false} style={styles.lebleHeader}>
+                        {t('buyer_university')}:
+                      </Text>
+                      <Text allowFontScaling={false} numberOfLines={0} style={styles.unistatus}>
+                        {buyer.university_name}
+                      </Text>
+                    </View>
 
-                  <View style={styles.listingtyperow}>
-                    <Text allowFontScaling={false} style={styles.lebleHeader}>
-                      {t('sold_for')}:
-                    </Text>
-                    <Text allowFontScaling={false} style={styles.status}>
-                      £{buyer.price}
-                    </Text>
-                  </View>
+                    <View style={styles.listingtyperow}>
+                      <Text allowFontScaling={false} style={styles.lebleHeader}>
+                        {t('city')}:
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.status}>
+                        {buyer.city}
+                      </Text>
+                    </View>
 
-                  {!buyer.otpverified && (
-                    <View style={styles.cardconstinerdivider} />
-                  )}
+                    <View style={styles.listingtyperow}>
+                      <Text allowFontScaling={false} style={styles.lebleHeader}>
+                        {t('sold_on')}:
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.status}>
+                        {new Date(buyer.date).toLocaleString('en-GB', {
+                          month: 'short',
+                          day: '2-digit',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: true,
+                        })}
+                      </Text>
+                    </View>
 
-                  {!buyer.otpverified && (
-                    <View
-                      style={{
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <TouchableOpacity
+                    {data?.list?.category_id === 3 && (
+                      <View style={styles.listingtyperow}>
+                        <Text allowFontScaling={false} style={styles.lebleHeader}>
+                          {t('Units_Purchased')}:
+                        </Text>
+
+                        <Text allowFontScaling={false} style={styles.status}>
+                          {buyer?.purchased_quantity ?? 1}
+                        </Text>
+                      </View>
+                    )}
+
+                    <View style={styles.listingtyperow}>
+                      <Text allowFontScaling={false} style={styles.lebleHeader}>
+                        {t('sold_for')}:
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.status}>
+                        £{buyer.price}
+                      </Text>
+                    </View>
+
+                    {!buyer.otpverified && (
+                      <View style={styles.cardconstinerdivider} />
+                    )}
+
+                    {!buyer.otpverified && (
+                      <View
                         style={{
-                          width: '100%',
                           justifyContent: 'center',
                           alignItems: 'center',
                         }}
-                        //onPress={() => setShowPopup1(true)}
-                        onPress={() => {
-                          setSelectedOrderId(buyer.orderid);
-                          setprice(buyer.originalprice)
-                          setShowPopup1(true);
-                        }}
                       >
-                        <Text allowFontScaling={false} style={styles.status1}>
-                          {t('enter_otp')}
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                </View>
-              ))}
+                        <TouchableOpacity
+                          style={{
+                            width: '100%',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          }}
+                          //onPress={() => setShowPopup1(true)}
+                          onPress={() => {
+                            setSelectedOrderId(buyer.orderid);
+                            setprice(buyer.originalprice)
+                            setShowPopup1(true);
+                          }}
+                        >
+                          <Text allowFontScaling={false} style={styles.status1}>
+                            {t('enter_otp')}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
+                  </View>
+                ))}
           </View>
         </AnimatedReanimated.ScrollView>
 
@@ -797,8 +799,8 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                   <View style={styles.otpContainer}>
                     {[0, 1, 2, 3, 4, 5].map((_, index) => (
                       <TextInput
-                      selectionColor='#fff'
-                  cursorColor='#fff'
+                        selectionColor='#fff'
+                        cursorColor='#fff'
                         key={index}
                         ref={ref => {
                           inputs.current[index] = ref;

@@ -53,6 +53,8 @@ const SalesAllDetailsDropdown = ({
       // Construct the URL
       const url = `${MAIN_URL.baseUrl}transaction/sales-history?feature_id=${catagory_id}`;
 
+      console.log(url)
+
       // Make the API call
       const response = await fetch(url, {
         method: 'GET',

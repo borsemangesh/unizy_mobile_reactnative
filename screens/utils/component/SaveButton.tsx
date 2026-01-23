@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   },
 
   disabledButton: {
-    opacity: 0.45,
+    opacity: 0.4,
   },
 
   buttonText: {
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
   },
 
   disabledText: {
-    opacity: 0.6,
+    opacity:1,
   },
 });
 

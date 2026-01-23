@@ -225,8 +225,13 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
   };
 
   const isFeatured =
-    storedForm?.[13]?.value === true ||
-    storedForm?.[13]?.value === 'true';
+    (storedForm || {})[13]?.value === true ||
+    (storedForm || {})[13]?.value === 'true' ||
+    storedForm?.isfeatured?.value === true ||
+    storedForm?.isfeatured?.value === 'true';
+
+
+  // const isFeatured =   storedForm?.[13]?.value === true ||storedForm?.[13]?.value === 'true';
 
   const titleValue = getValueByAlias(storedForm, 'title') || 'No Title';
   const imageArray = storedForm?.[6]?.value || [];
@@ -400,7 +405,10 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
               {storedForm ? (
                 <>
                   {categoryId === 2 || categoryId === 5 ? (
-                    storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
+                    storedForm[13]?.value === true ||
+                      storedForm[13]?.value === 'true' ||
+                      storedForm?.isfeatured?.value === true ||
+                      storedForm?.isfeatured?.value === 'true' ? (
                       <>
                         <Text
                           allowFontScaling={false}
@@ -460,7 +468,10 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                           isfeature={false} initialsName={initials} /></>
                     )
                   )
-                    : storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
+                    : storedForm[13]?.value === true ||
+                      storedForm[13]?.value === 'true' ||
+                      storedForm?.isfeatured?.value === true ||
+                      storedForm?.isfeatured?.value === 'true' ? (
                       <>
                         <Text
                           allowFontScaling={false}
@@ -706,7 +717,10 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
             {storedForm ? (
               <>
                 {categoryId === 2 || categoryId === 5 ? (
-                  storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
+                  storedForm[13]?.value === true ||
+                    storedForm[13]?.value === 'true' ||
+                    storedForm?.isfeatured?.value === true ||
+                    storedForm?.isfeatured?.value === 'true' ? (
                     <>
                       <Text
                         allowFontScaling={false}
@@ -766,7 +780,10 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
                         isfeature={false} initialsName={initials} /></>
                   )
                 )
-                  : storedForm[13]?.value === true || storedForm[13]?.value === 'true' ? (
+                  : storedForm[13]?.value === true ||
+                    storedForm[13]?.value === 'true' ||
+                    storedForm?.isfeatured?.value === true ||
+                    storedForm?.isfeatured?.value === 'true' ? (
                     <>
                       <Text
                         allowFontScaling={false}
@@ -840,7 +857,7 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
         </AnimatedReanimated.ScrollView >
 
         {categoryId !== 4 && (
-          <View style={[styles.textbg,{marginBottom:100}]}>
+          <View style={[styles.textbg, { marginBottom: 100 }]}>
             <Image
               source={require('../../../assets/images/info_icon.png')}
               style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
@@ -901,7 +918,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     //alignSelf: 'center',
     //maxWidth:'75%'
-    
+
   },
   blurButtonWrapper: {
     width: 48,
