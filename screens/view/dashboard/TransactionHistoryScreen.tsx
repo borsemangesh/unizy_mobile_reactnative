@@ -512,8 +512,8 @@ export default function TransactionHistoryScreen(
                           resizeMode="cover"
                         />
                       </View>
-                      <View style={{ gap: 4 }}>
-                        <View style={{ width: '90%' }}>
+                      <View style={{ flex: 1,gap: 4 }}>
+                        <View style={{width: '100%' }}>
                           <Text
                             numberOfLines={2}
                             allowFontScaling={false}
@@ -526,7 +526,7 @@ export default function TransactionHistoryScreen(
                           style={{
                             flexDirection: 'row',
                             gap: 4,
-                            width: '89.2%',
+                            width: '100%',
                             justifyContent: 'space-between',
                           }}
                         >

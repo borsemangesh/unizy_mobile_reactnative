@@ -502,10 +502,18 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
           ]}
           ListHeaderComponent={
             <>
-              <View
-                style={styles.categoryTabsContainer}
-                pointerEvents="box-none"
-              >
+               <View
+              style={[
+                styles.categoryTabsContainer,
+                {
+                  marginHorizontal: -30, 
+                  paddingHorizontal: 30, 
+                  overflow: 'visible',
+                },
+              ]}
+              pointerEvents="box-none"
+             
+            >
                 <ScrollView
                   horizontal
                   showsHorizontalScrollIndicator={false}
@@ -623,12 +631,13 @@ export default ReviewDetails;
 
 const styles = StyleSheet.create({
   listContainer: {
-    paddingHorizontal: 16,
+    // paddingHorizontal: 16,
     width: '100%',
   },
 
-  categoryTabsContainer: { width: '105%', paddingBottom: 16, paddingTop: 8 },
-  categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' },
+  categoryTabsContainer: {   },
+  categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center',paddingHorizontal: 16,
+  padding: 8 },
 
   tabcard: {
     minHeight: 38,
@@ -640,8 +649,7 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderRadius: 10,
-    boxShadow:
-      'rgba(255, 255, 255, 0.02)inset 0.1px 0.1px 1px 0px,',
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.25)',
   },
   tabcard1: {
     minHeight: 38,
@@ -826,6 +834,7 @@ const styles = StyleSheet.create({
   itemContainer: {
     flex: 1,
     // marginHorizontal: 4,
+    paddingHorizontal: 10,
   },
 
   subrating: {
@@ -849,7 +858,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-Medium',
   },
   innercontainer: {
-    // paddingHorizontal: 16,
+    paddingHorizontal: 16,
     // marginBottom: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',

@@ -2030,7 +2030,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                 autoCapitalize="none"
                                 autoCorrect={false}
                                 cursorColor={'#FFFFFF'}
-                                selectionColor="white"
+                                selectionColor="#FFFFFF"
                                 autoComplete={
                                   Platform.OS === 'ios' ? 'email' : 'username'
                                 }
