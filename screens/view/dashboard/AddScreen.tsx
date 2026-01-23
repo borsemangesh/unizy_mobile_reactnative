@@ -703,97 +703,171 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     }
   };
 
-  const handleSelectImage = async () => {
-    const hasPermission = await requestCameraPermission();
-    if (!hasPermission) return;
-
-    Alert.alert(
-      'Select Option',
-      'Choose a source',
-      [
-        {
-          text: 'Camera',
-          onPress: () => {
-            launchCamera(
-              { mediaType: 'photo', cameraType: 'front', quality: 1 },
-              async response => {
-                if (response.didCancel) return;
-                if (response.assets && response.assets[0].uri) {
+  const resizeIfNeeded = async (asset: any) => {
+    const MAX_SIZE = MAX_SIZE_MB * 1024 * 1024;
+  
+    // Sometimes fileSize is missing → resize anyway
+    const shouldResize = !asset.fileSize || asset.fileSize > MAX_SIZE;
+  
+    if (!shouldResize) {
+      return {
+        uri: asset.uri,
+        name: asset.fileName || 'image.jpg',
+      };
+    }
+  
+    const resized = await ImageResizer.createResizedImage(
+      asset.uri,
+      1280,
+      1280,
+      'JPEG',
+      70,
+    );
+  
+    return {
+      uri: resized.uri,
+      name: resized.name || asset.fileName || 'image.jpg',
+    };
+  };
+  
+    const handleSelectImage = async () => {
+      const hasPermission = await requestCameraPermission();
+      if (!hasPermission) return;
+  
+      Alert.alert(
+        'Select Option',
+        'Choose a source',
+        [
+          {
+            text: 'Camera',
+            onPress: () => {
+              // launchCamera(
+              //   { mediaType: 'photo', cameraType: 'front', quality: 1 },
+              //   async response => {
+              //     if (response.didCancel) return;
+              //     if (response.assets && response.assets[0].uri) {
+              //       const asset = response.assets[0];
+              //       let uri = asset.uri!;
+              //       let name = asset.fileName || 'Image';
+              //       if (
+              //         asset.fileSize &&
+              //         asset.fileSize > MAX_SIZE_MB * 1024 * 1024
+              //       ) {
+              //         const compressed = await ImageResizer.createResizedImage(
+              //           uri,
+              //           800,
+              //           800,
+              //           'JPEG',
+              //           80,
+              //         );
+              //         uri = compressed.uri;
+              //         name = compressed.name || name;
+              //       }
+  
+              //       setUploadedImages(prev => [
+              //         ...prev,
+              //         { id: Date.now().toString(), uri, name },
+              //       ]);
+              //     }
+              //   },
+              // );
+              launchCamera(
+                { mediaType: 'photo', cameraType: 'front', quality: 1 },
+                async response => {
+                  if (response.didCancel || !response.assets?.length) return;
+  
                   const asset = response.assets[0];
-                  let uri = asset.uri!;
-                  let name = asset.fileName || 'Image';
-                  if (
-                    asset.fileSize &&
-                    asset.fileSize > MAX_SIZE_MB * 1024 * 1024
-                  ) {
-                    const compressed = await ImageResizer.createResizedImage(
-                      uri,
-                      800,
-                      800,
-                      'JPEG',
-                      80,
-                    );
-                    uri = compressed.uri;
-                    name = compressed.name || name;
-                  }
-
+                  const image = await resizeIfNeeded(asset);
+  
                   setUploadedImages(prev => [
                     ...prev,
-                    { id: Date.now().toString(), uri, name },
+                    { id: Date.now().toString(), ...image },
                   ]);
-                }
-              },
-            );
-          },
-        },
-        {
-          text: 'Gallery',
-          onPress: () => {
-            const remainingSlots = MAX_IMAGES - uploadedImages.length;
-
-            if (remainingSlots <= 0) {
-              showToast(
-                `${t(Constant.MAXIMUM)} ${MAX_IMAGES} ${t(Constant.IMAGE_ALLOWED)}`,
-                'error',
+                },
               );
-              return;
-            }
-
-            launchImageLibrary(
-              {
-                mediaType: 'photo',
-                quality: 1,
-                selectionLimit: remainingSlots, // ✅ KEY FIX
-              },
-              response => {
-                if (response.didCancel) return;
-                if (!response.assets) return;
-
-                // Safety check (Android sometimes ignores selectionLimit)
-                if (response.assets.length > remainingSlots) {
-                  showToast(
-                    `${t('you_can_select_only')} ${remainingSlots} ${t('more_images')}`,
-                    'error',
-                  );
-                  return;
-                }
-
-                const images = response.assets.map(asset => ({
-                  id: `${Date.now()}-${Math.random()}`,
-                  uri: asset.uri!,
-                  name: asset.fileName || 'Image',
-                }));
-
-                setUploadedImages(prev => [...prev, ...images]);
-              },
-            );
+            },
           },
-        },
-        { text: 'Cancel', style: 'cancel' },
-      ],
-      { cancelable: true },
-    );
-  };
+          {
+            text: 'Gallery',
+            onPress: () => {
+              const remainingSlots = MAX_IMAGES - uploadedImages.length;
+  
+              if (remainingSlots <= 0) {
+                showToast(
+                  `${t(Constant.MAXIMUM)} ${MAX_IMAGES} ${t(Constant.IMAGE_ALLOWED)}`,
+                  'error',
+                );
+                return;
+              }
+  
+              // launchImageLibrary(
+              //   {
+              //     mediaType: 'photo',
+              //     quality: 1,
+              //     selectionLimit: remainingSlots, // ✅ KEY FIX
+              //   },
+              //   response => {
+              //     if (response.didCancel) return;
+              //     if (!response.assets) return;
+  
+              //     // Safety check (Android sometimes ignores selectionLimit)
+              //     if (response.assets.length > remainingSlots) {
+              //       showToast(
+              //         `${t('you_can_select_only')} ${remainingSlots} ${t('more_images')}`,
+              //         'error',
+              //       );
+              //       return;
+              //     }
+  
+              //     const images = response.assets.map(asset => ({
+              //       id: `${Date.now()}-${Math.random()}`,
+              //       uri: asset.uri!,
+              //       name: asset.fileName || 'Image',
+              //     }));
+  
+              //     setUploadedImages(prev => [...prev, ...images]);
+              //   },
+              // );
+              launchImageLibrary(
+                {
+                  mediaType: 'photo',
+                  quality: 1,
+                  selectionLimit: remainingSlots,
+                },
+                async response => {
+                  if (response.didCancel || !response.assets) return;
+  
+                  if (response.assets.length > remainingSlots) {
+                    showToast(
+                      `${t('you_can_select_only')} ${remainingSlots} ${t(
+                        'more_images',
+                      )}`,
+                      'error',
+                    );
+                    return;
+                  }
+  
+                  const processedImages = await Promise.all(
+                    response.assets.map(asset => resizeIfNeeded(asset)),
+                  );
+  
+                  setUploadedImages(prev => [
+                    ...prev,
+                    ...processedImages.map(img => ({
+                      id: `${Date.now()}-${Math.random()}`,
+                      ...img,
+                    })),
+                  ]);
+                },
+              );
+  
+            },
+          },
+          { text: 'Cancel', style: 'cancel' },
+        ],
+        { cancelable: true },
+      );
+    };
   const getInitials = (firstName = '', lastName = '') => {
     const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
     const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';

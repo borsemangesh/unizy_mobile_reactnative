@@ -5,17 +5,12 @@ import {
   Image,
   ImageBackground,
   Text,
-  TextInput,
   View,
   TouchableOpacity,
-  FlatList,
   Platform,
   StyleSheet,
   StatusBar,
   ScrollView,
-  ActivityIndicator,
-  ImageSourcePropType,
-  ListRenderItem,
   Dimensions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -329,7 +324,6 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
               style={StyleSheet.absoluteFill}
               blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
               blurAmount={Platform.OS === 'ios' ? 45 : 45}
-              //  overlayColor="rgba(255,255,255,0.05)"
               reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
             />
             <LinearGradient
@@ -399,11 +393,6 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
             </Animated.View>
           </TouchableOpacity>
           <View style={{ width: 250 }}>
-            {/* <Text allowFontScaling={false} style={styles.unizyText}>
-            {selectedCategory?.name === 'All'
-              ? t('reviews')
-              : `${selectedCategory?.name} ${t('reviews')}`}
-          </Text> */}
             <Text allowFontScaling={false} style={styles.unizyText}>
               {(() => {
                 if (selectedCategory?.name === 'All') {
@@ -494,7 +483,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
               paddingBottom: isEmpty
                 ? 10
                 : Platform.select({
-                  ios: height * 0.01,   // ⬅ apply padding when list has data
+                  ios: height * 0.01,
                   android: height * 0.04,
                 }),
               flexGrow: 1,
@@ -691,21 +680,8 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.08)',
     borderRadius: 24,
     overflow: 'hidden',
-    // minHeight: '80%',
     marginTop: 10,
   },
-  // emptyImage: {
-  //   width: 50,
-  //   height: 50,
-  //   marginBottom: 20,
-  // },
-  // emptyText: {
-  //   fontSize: 20,
-  //   color: '#fff',
-  //   textAlign: 'center',
-  //   fontFamily: 'Urbanist-SemiBold',
-  //   fontWeight: 600
-  // },
 
    emptyImage: {
     width: 64,
@@ -765,18 +741,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'none',
   },
-  // headerContent: {
-  //   position: 'absolute',
-  //   top: Platform.OS === 'ios' ? '6%' : 40,
-  //   width: Platform.OS === 'ios' ? '100%' : '100%',
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  //   paddingHorizontal: 16,
-  //   zIndex: 11,
-  //   alignSelf: 'center',
-  //   pointerEvents: 'box-none',
-  // },
   headerContent: {
     position: 'absolute',
     top: (Platform.OS === 'ios' ? 60 : 40),

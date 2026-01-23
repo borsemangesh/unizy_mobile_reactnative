@@ -765,6 +765,33 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
     }
   };
 
+  const resizeIfNeeded = async (asset: any) => {
+    const MAX_SIZE = MAX_SIZE_MB * 1024 * 1024;
+
+    // Sometimes fileSize is missing → resize anyway
+    const shouldResize = !asset.fileSize || asset.fileSize > MAX_SIZE;
+
+    if (!shouldResize) {
+      return {
+        uri: asset.uri,
+        name: asset.fileName || 'image.jpg',
+      };
+    }
+
+    const resized = await ImageResizer.createResizedImage(
+      asset.uri,
+      1280,
+      1280,
+      'JPEG',
+      70,
+    );
+
+    return {
+      uri: resized.uri,
+      name: resized.name || asset.fileName || 'image.jpg',
+    };
+  };
+
   const handleSelectImage = async () => {
     const hasPermission = await requestCameraPermission();
     if (!hasPermission) return;
@@ -776,37 +803,51 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
         {
           text: 'Camera',
           onPress: () => {
+            // launchCamera(
+            //   { mediaType: 'photo', cameraType: 'front', quality: 1 },
+            //   async response => {
+            //     if (response.didCancel) return;
+            //     if (response.assets && response.assets[0].uri) {
+            //       const asset = response.assets[0];
+            //       let uri = asset.uri!;
+            //       let name = asset.fileName || 'Image';
+            //       if (
+            //         asset.fileSize &&
+            //         asset.fileSize > MAX_SIZE_MB * 1024 * 1024
+            //       ) {
+            //         const compressed = await ImageResizer.createResizedImage(
+            //           uri,
+            //           800,
+            //           800,
+            //           'JPEG',
+            //           80,
+            //         );
+            //         uri = compressed.uri;
+            //         name = compressed.name || name;
+            //       }
+            //       const newImage = {
+            //         id: Date.now().toString(),
+            //         uri,
+            //         name,
+            //         status: 'new',
+            //       };
+
+            //       setUploadedImages(prev => [...prev, newImage]);
+            //     }
+            //   },
+            // );
             launchCamera(
               { mediaType: 'photo', cameraType: 'front', quality: 1 },
               async response => {
-                if (response.didCancel) return;
-                if (response.assets && response.assets[0].uri) {
-                  const asset = response.assets[0];
-                  let uri = asset.uri!;
-                  let name = asset.fileName || 'Image';
-                  if (
-                    asset.fileSize &&
-                    asset.fileSize > MAX_SIZE_MB * 1024 * 1024
-                  ) {
-                    const compressed = await ImageResizer.createResizedImage(
-                      uri,
-                      800,
-                      800,
-                      'JPEG',
-                      80,
-                    );
-                    uri = compressed.uri;
-                    name = compressed.name || name;
-                  }
-                  const newImage = {
-                    id: Date.now().toString(),
-                    uri,
-                    name,
-                    status: 'new',
-                  };
+                if (response.didCancel || !response.assets?.length) return;
 
-                  setUploadedImages(prev => [...prev, newImage]);
-                }
+                const asset = response.assets[0];
+                const image = await resizeIfNeeded(asset);
+
+                setUploadedImages(prev => [
+                  ...prev,
+                  { id: Date.now().toString(), ...image },
+                ]);
               },
             );
           },
@@ -818,7 +859,9 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
 
             if (remainingSlots <= 0) {
               showToast(
-                `${t(Constant.MAXIMUM)} ${MAX_IMAGES} ${t(Constant.IMAGE_ALLOWED)}`,
+                `${t(Constant.MAXIMUM)} ${MAX_IMAGES} ${t(
+                  Constant.IMAGE_ALLOWED,
+                )}`,
                 'error',
               );
               return;
@@ -828,28 +871,32 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
               {
                 mediaType: 'photo',
                 quality: 1,
-                selectionLimit: remainingSlots, // ✅ KEY FIX
+                selectionLimit: remainingSlots,
               },
-              response => {
-                if (response.didCancel) return;
-                if (!response.assets) return;
+              async response => {
+                if (response.didCancel || !response.assets) return;
 
-                // Safety check (Android sometimes ignores selectionLimit)
                 if (response.assets.length > remainingSlots) {
                   showToast(
-                    `${t('you_can_select_only')} ${remainingSlots} ${t('more_images')}`,
+                    `${t('you_can_select_only')} ${remainingSlots} ${t(
+                      'more_images',
+                    )}`,
                     'error',
                   );
                   return;
                 }
 
-                const images = response.assets.map(asset => ({
-                  id: `${Date.now()}-${Math.random()}`,
-                  uri: asset.uri!,
-                  name: asset.fileName || 'Image',
-                }));
+                const processedImages = await Promise.all(
+                  response.assets.map(asset => resizeIfNeeded(asset)),
+                );
 
-                setUploadedImages(prev => [...prev, ...images]);
+                setUploadedImages(prev => [
+                  ...prev,
+                  ...processedImages.map(img => ({
+                    id: `${Date.now()}-${Math.random()}`,
+                    ...img,
+                  })),
+                ]);
               },
             );
           },
