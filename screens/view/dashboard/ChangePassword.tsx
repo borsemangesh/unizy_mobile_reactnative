@@ -173,17 +173,17 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
         data = {};
       }
 
-   
+
       if (response.ok) {
         showToast(t(data?.message) || 'Password updated successfully', 'success');
-          await new Promise((resolve: any) => {
-            setTimeout(resolve, 2000);
-          });
-          setUserMeta({
-            current_password: '',
-            new_password: '',
-            confirm_password: '',
-          });
+        await new Promise((resolve: any) => {
+          setTimeout(resolve, 2000);
+        });
+        setUserMeta({
+          current_password: '',
+          new_password: '',
+          confirm_password: '',
+        });
       } else {
         showToast(t(data?.message) || 'Failed to update password', 'error');
       }
@@ -224,7 +224,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
         </View> */}
 
 
-<View style={styles.headerContent} pointerEvents="box-none">
+        <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
               navigation.goBack()
@@ -285,7 +285,27 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
           </Text>
           <TouchableOpacity
             onPress={() => {
-              navigation.goBack()
+              // navigation.goBack()
+              if (Platform.OS === 'ios') {
+                if (navigation.canGoBack()) {
+                  navigation.goBack()
+                } else {
+                  navigation.reset({
+                    index: 0,
+                    routes: [
+                      {
+                        name: 'Dashboard',
+                        params: {
+                          AddScreenBackactiveTab: 'Profile',
+                          isNavigate: false,
+                        },
+                      },
+                    ],
+                  });
+                }
+              } else {
+                navigation.goBack()
+              }
             }}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
@@ -305,7 +325,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                     ),
                     backgroundColor: 'rgba(255,255,255,0.1)',
                     borderRadius: 40,
-                  })),{display: 'none'}
+                  })), { display: 'none' }
                 ]}
               />
 
@@ -319,7 +339,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                       [0, 1],
                       'clamp',
                     ),
-                  })),{display: 'none'}
+                  })), { display: 'none' }
                 ]}
               >
                 <BlurView
@@ -333,7 +353,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
               {/* Back Icon */}
               <AnimatedReanimated.Image
                 source={require('../../../assets/images/back.png')}
-                style={[{ height: 24, width: 24 , display: 'none'}]}
+                style={[{ height: 24, width: 24, display: 'none' }]}
               />
             </AnimatedReanimated.View>
           </TouchableOpacity>
@@ -351,7 +371,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
 
               <View style={{ position: 'relative' }}>
                 <TextInput
-                selectionColor='#fff'
+                  selectionColor='#fff'
                   cursorColor='#fff'
                   value={userMeta.current_password || ''}
                   secureTextEntry={!showCurrent}
@@ -386,7 +406,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
 
               <View style={{ position: 'relative' }}>
                 <TextInput
-                selectionColor='#fff'
+                  selectionColor='#fff'
                   cursorColor='#fff'
                   value={userMeta.new_password || ''}
                   secureTextEntry={!showNew}
@@ -696,7 +716,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   tabtext: {
-    color: '#fff', 
+    color: '#fff',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14,
@@ -1009,7 +1029,7 @@ const styles = StyleSheet.create({
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.08)', 
+    backgroundColor: 'rgba(255,255,255,0.08)',
     borderRadius: 14,
   },
 
@@ -1024,7 +1044,7 @@ const styles = StyleSheet.create({
 
   updateButton: {
     marginLeft: 38,
-    backgroundColor: '#FFFFFF8F', 
+    backgroundColor: '#FFFFFF8F',
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
@@ -1142,7 +1162,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignSelf: 'center',
-    gap: 8, 
+    gap: 8,
     marginTop: 16,
     paddingHorizontal: 20,
   },
