@@ -227,7 +227,42 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
-              navigation.goBack()
+              console.log('navigation.goBack()');
+              // navigation.goBack()
+              if (Platform.OS === 'ios') {
+                if (navigation.canGoBack()) {
+                
+                  navigation.goBack()
+                 
+                } else {
+                  navigation.reset({
+                    index: 0,
+                    routes: [
+                      {
+                        name: 'Dashboard',
+                        params: {
+                          AddScreenBackactiveTab: 'Profile',
+                          isNavigate: false,
+                        },
+                      },
+                    ],
+                  });
+                }
+              } else {
+                navigation.goBack()
+              }
+              // navigation.reset({
+              //   index: 0,
+              //   routes: [
+              //     {
+              //       name: 'Dashboard',
+              //       params: {
+              //         AddScreenBackactiveTab: 'Profile',
+              //         isNavigate: false,
+              //       },
+              //     },
+              //   ],
+              // });
             }}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
@@ -285,11 +320,10 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
           </Text>
           <TouchableOpacity
             onPress={() => {
+              console.log('navigation.goBack()');
               // navigation.goBack()
-              if (Platform.OS === 'ios') {
-                if (navigation.canGoBack()) {
-                  navigation.goBack()
-                } else {
+              // if (Platform.OS === 'ios') {
+              //   if (navigation.canGoBack()) {
                   navigation.reset({
                     index: 0,
                     routes: [
@@ -302,10 +336,25 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                       },
                     ],
                   });
-                }
-              } else {
-                navigation.goBack()
-              }
+                //   navigation.goBack()
+                 
+                // } else {
+                //   navigation.reset({
+                //     index: 0,
+                //     routes: [
+                //       {
+                //         name: 'Dashboard',
+                //         params: {
+                //           AddScreenBackactiveTab: 'Profile',
+                //           isNavigate: false,
+                //         },
+                //       },
+                //     ],
+                //   });
+                // }
+              // } else {
+              //   navigation.goBack()
+              // }
             }}
             style={styles.backButtonContainer}
             activeOpacity={0.7}

@@ -1,3 +1,8 @@
+
+
+
+
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect, useRef } from 'react';
 import {
@@ -163,8 +168,6 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
 
     if (isLoadingRef.current) return;
     isLoadingRef.current = true;
-    if (isLoadingRef.current) return;
-    isLoadingRef.current = true;
     //setLoading(true);
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -172,9 +175,6 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
 
       console.log('API URL:', url);
       console.log('Token:', token);
-      console.log('API URL:', url);
-      console.log('Token:', token);
-
 
       const response = await fetch(url, {
         method: 'GET',
@@ -186,11 +186,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
 
       console.log('Response status:', response.status);
       console.log('Response ok:', response.ok);
-      console.log('Response status:', response.status);
-      console.log('Response ok:', response.ok);
 
-      //const responseText = await response.text(); // use text() first
-      //console.log('Raw response:', responseText);
       //const responseText = await response.text(); // use text() first
       //console.log('Raw response:', responseText);
 
@@ -222,7 +218,6 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
       else {
         console.log(json?.message)
         showToast(t(json?.message) || t(Constant.SOMTHING_WENT_WRONG), 'error',);
-        showToast(t(json?.message) || t(Constant.SOMTHING_WENT_WRONG), 'error',);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -232,9 +227,6 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
       }
     }
     finally {
-      isLoadingRef.current = false;
-      //setLoading(false);
-    }
       isLoadingRef.current = false;
       //setLoading(false);
     }
@@ -473,7 +465,6 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
               />
 
               <View style={styles.popupContainer}>
-              <View style={styles.popupContainer}>
                 <Image
                   source={require('../../../assets/images/alert_logout.png')}
                   style={styles.logo}
@@ -487,8 +478,6 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                 </Text>
 
 
-
-
                 <TouchableOpacity
                   style={styles.loginButton}
                   onPress={async () => {
@@ -497,13 +486,11 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                       const deviceId = await DeviceInfo.getUniqueId();
                       const user_id = await AsyncStorage.getItem('userId');
 
-
                       const body = {
                         device_type: (Platform.OS === 'ios') ? 'ios' : 'android',
                         device_id: deviceId,
                         user_id: Number(user_id),
                       };
-
 
                       const response = await fetch(`${MAIN_URL.baseUrl}user/delete-fcm-token`, {
                         method: 'POST',
@@ -513,11 +500,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                         body: JSON.stringify(body),
                       });
 
-
                       const apiData = await response.json();
-
-
-
 
 
 
@@ -528,7 +511,6 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                         await AsyncStorage.setItem('twilio_convo_', '');
                         await AsyncStorage.setItem('twilio_msg_', '');
 
-
                         try {
                           await resetTwilioClient();
                           await clearTwilioCache();
@@ -537,24 +519,19 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                             await messaging().deleteToken();
                             if (__DEV__) {
 
-
                             }
                           } catch (fcmError) {
                             console.warn('⚠️ Error deleting FCM token:', fcmError);
                           }
 
-
                           if (__DEV__) {
-
 
                           }
                         } catch (clearError) {
                           console.warn('⚠️ Error clearing Twilio data on logout:', clearError);
                         }
 
-
                         await AsyncStorage.setItem('ISLOGIN', 'false');
-
 
                         navigation.reset({
                           index: 0,
@@ -573,9 +550,6 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                       } else {
                         showToast(t(Constant.LOGOUT_FAIL), 'error');
                       }
-
-
-
 
 
 
@@ -603,7 +577,6 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                     {t('logout')}
                   </Text>
                 </TouchableOpacity>
-
 
                 <TouchableOpacity
                   style={styles.loginButton1}
@@ -817,55 +790,9 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                 </View>
 
 
-
-
-                <View style={styles.password_container}>
-                  <TextInput
-                    allowFontScaling={false}
-                    style={styles.password_TextInput}
-                    placeholder={t('enter_password')}
-                    placeholderTextColor={
-                      'rgba(255, 255, 255, 0.48)'
-                    }
-                    value={password}
-                    maxLength={20}
-                    selectionColor="#fff"
-                    cursorColor={'#FFFFFF'}
-                    secureTextEntry={!isPasswordVisible}
-                    onChangeText={passwordText =>
-                      setPassword(passwordText)
-                    }
-                  />
-                  <TouchableOpacity
-                    onPress={() =>
-                      setIsPasswordVisible(!isPasswordVisible)
-                    }
-                  >
-                    <Image
-                      source={
-                        isPasswordVisible
-                          ? require('../../../assets/images/eyeopen.png')
-                          : require('../../../assets/images/eyecross1.png')
-                      }
-                      style={[
-                        styles.eyeIcon,
-                        isPasswordVisible
-                          ? styles.eyeIcon
-                          : styles.eyeCross,
-                      ]}
-                    />
-                  </TouchableOpacity>
-                </View>
-
-
                 <TouchableOpacity
                   style={styles.loginButton}
                   onPress={async () => {
-                    if (!password?.trim()) {
-                      setShowConfirm1(false);
-                      showToast(t('PLEASE_FILL_ALL_REQUIRED_FIELDS'), 'error');
-                      return; 
-                    }
                     if (!password?.trim()) {
                       setShowConfirm1(false);
                       showToast(t('PLEASE_FILL_ALL_REQUIRED_FIELDS'), 'error');
@@ -975,46 +902,6 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
 export default ProfileCard;
 
 const styles = StyleSheet.create({
-
-  eyeIcon: {
-    width: 24,
-    height: 24,
-    resizeMode: 'contain'
-    // paddingRight: 16,
-  },
-  eyeCross: {
-    width: 24,
-    height: 24,
-    resizeMode: 'contain'
-  },
-
-  password_container: {
-    display: 'flex',
-    width: '100%',
-    height: 44,
-    alignSelf: 'stretch',
-    borderRadius: 12,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignContent: 'center',
-    alignItems: 'center',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-
-    borderWidth: 0.6,
-    borderColor: '#ffffff2c',
-    marginTop: (Platform.OS === 'ios' ? 0 : 12),
-  },
-  password_TextInput: {
-    width: '88%',
-    paddingLeft: 4,
-    fontFamily: 'Urbanist-Regular',
-    fontWeight: '400',
-    fontSize: 17,
-    lineHeight: 22,
-    color: '#fff'
-  },
 
   eyeIcon: {
     width: 24,
@@ -1197,7 +1084,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 4,
     width: '100%',
-    paddingHorizontal: 10,
     paddingHorizontal: 10,
   },
 
