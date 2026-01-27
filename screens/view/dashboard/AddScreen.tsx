@@ -117,7 +117,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     ismultilple: boolean;
     fieldId?: number;
     fieldLabel?: string;
-    placeholder?:string;
+    placeholder?: string;
   }>({ visible: false, ismultilple: false });
 
   type UploadedImage = {
@@ -214,6 +214,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
   const [maxFeatureCap, setMaxFeatureCap] = useState(0);
   const route = useRoute<AddScreenRouteProp>();
   const { productId, productName } = route.params;
+  const [accommodation_amount, setaccommodation_amount] = useState(0);
+
 
   const { height } = Dimensions.get('window');
   const bottomPadding = height * 0.0005;
@@ -344,6 +346,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             setMaxFeatureCap(Number(json.metadata.category.max_feature_cap ?? '0'));
             setFeatureFee(Number(json.metadata.category.feature_fee ?? '0'));
             setMaxFeatureCap(Number(json.metadata.category.max_feature_cap ?? '0'));
+            setaccommodation_amount(Number(json.metadata.category.accommodation_amount ?? '0'));
           }
           setUserMeta({
             firstname: json.metadata.firstname ?? null,
@@ -705,17 +708,17 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
   const resizeIfNeeded = async (asset: any) => {
     const MAX_SIZE = MAX_SIZE_MB * 1024 * 1024;
-  
+
     // Sometimes fileSize is missing → resize anyway
     const shouldResize = !asset.fileSize || asset.fileSize > MAX_SIZE;
-  
+
     if (!shouldResize) {
       return {
         uri: asset.uri,
         name: asset.fileName || 'image.jpg',
       };
     }
-  
+
     const resized = await ImageResizer.createResizedImage(
       asset.uri,
       1280,
@@ -723,151 +726,151 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
       'JPEG',
       70,
     );
-  
+
     return {
       uri: resized.uri,
       name: resized.name || asset.fileName || 'image.jpg',
     };
   };
-  
-    const handleSelectImage = async () => {
-      const hasPermission = await requestCameraPermission();
-      if (!hasPermission) return;
-  
-      Alert.alert(
-        'Select Option',
-        'Choose a source',
-        [
-          {
-            text: 'Camera',
-            onPress: () => {
-              // launchCamera(
-              //   { mediaType: 'photo', cameraType: 'front', quality: 1 },
-              //   async response => {
-              //     if (response.didCancel) return;
-              //     if (response.assets && response.assets[0].uri) {
-              //       const asset = response.assets[0];
-              //       let uri = asset.uri!;
-              //       let name = asset.fileName || 'Image';
-              //       if (
-              //         asset.fileSize &&
-              //         asset.fileSize > MAX_SIZE_MB * 1024 * 1024
-              //       ) {
-              //         const compressed = await ImageResizer.createResizedImage(
-              //           uri,
-              //           800,
-              //           800,
-              //           'JPEG',
-              //           80,
-              //         );
-              //         uri = compressed.uri;
-              //         name = compressed.name || name;
-              //       }
-  
-              //       setUploadedImages(prev => [
-              //         ...prev,
-              //         { id: Date.now().toString(), uri, name },
-              //       ]);
-              //     }
-              //   },
-              // );
-              launchCamera(
-                { mediaType: 'photo', cameraType: 'front', quality: 1 },
-                async response => {
-                  if (response.didCancel || !response.assets?.length) return;
-  
-                  const asset = response.assets[0];
-                  const image = await resizeIfNeeded(asset);
-  
-                  setUploadedImages(prev => [
-                    ...prev,
-                    { id: Date.now().toString(), ...image },
-                  ]);
-                },
-              );
-            },
+
+  const handleSelectImage = async () => {
+    const hasPermission = await requestCameraPermission();
+    if (!hasPermission) return;
+
+    Alert.alert(
+      'Select Option',
+      'Choose a source',
+      [
+        {
+          text: 'Camera',
+          onPress: () => {
+            // launchCamera(
+            //   { mediaType: 'photo', cameraType: 'front', quality: 1 },
+            //   async response => {
+            //     if (response.didCancel) return;
+            //     if (response.assets && response.assets[0].uri) {
+            //       const asset = response.assets[0];
+            //       let uri = asset.uri!;
+            //       let name = asset.fileName || 'Image';
+            //       if (
+            //         asset.fileSize &&
+            //         asset.fileSize > MAX_SIZE_MB * 1024 * 1024
+            //       ) {
+            //         const compressed = await ImageResizer.createResizedImage(
+            //           uri,
+            //           800,
+            //           800,
+            //           'JPEG',
+            //           80,
+            //         );
+            //         uri = compressed.uri;
+            //         name = compressed.name || name;
+            //       }
+
+            //       setUploadedImages(prev => [
+            //         ...prev,
+            //         { id: Date.now().toString(), uri, name },
+            //       ]);
+            //     }
+            //   },
+            // );
+            launchCamera(
+              { mediaType: 'photo', cameraType: 'front', quality: 1 },
+              async response => {
+                if (response.didCancel || !response.assets?.length) return;
+
+                const asset = response.assets[0];
+                const image = await resizeIfNeeded(asset);
+
+                setUploadedImages(prev => [
+                  ...prev,
+                  { id: Date.now().toString(), ...image },
+                ]);
+              },
+            );
           },
-          {
-            text: 'Gallery',
-            onPress: () => {
-              const remainingSlots = MAX_IMAGES - uploadedImages.length;
-  
-              if (remainingSlots <= 0) {
-                showToast(
-                  `${t(Constant.MAXIMUM)} ${MAX_IMAGES} ${t(Constant.IMAGE_ALLOWED)}`,
-                  'error',
-                );
-                return;
-              }
-  
-              // launchImageLibrary(
-              //   {
-              //     mediaType: 'photo',
-              //     quality: 1,
-              //     selectionLimit: remainingSlots, // ✅ KEY FIX
-              //   },
-              //   response => {
-              //     if (response.didCancel) return;
-              //     if (!response.assets) return;
-  
-              //     // Safety check (Android sometimes ignores selectionLimit)
-              //     if (response.assets.length > remainingSlots) {
-              //       showToast(
-              //         `${t('you_can_select_only')} ${remainingSlots} ${t('more_images')}`,
-              //         'error',
-              //       );
-              //       return;
-              //     }
-  
-              //     const images = response.assets.map(asset => ({
-              //       id: `${Date.now()}-${Math.random()}`,
-              //       uri: asset.uri!,
-              //       name: asset.fileName || 'Image',
-              //     }));
-  
-              //     setUploadedImages(prev => [...prev, ...images]);
-              //   },
-              // );
-              launchImageLibrary(
-                {
-                  mediaType: 'photo',
-                  quality: 1,
-                  selectionLimit: remainingSlots,
-                },
-                async response => {
-                  if (response.didCancel || !response.assets) return;
-  
-                  if (response.assets.length > remainingSlots) {
-                    showToast(
-                      `${t('you_can_select_only')} ${remainingSlots} ${t(
-                        'more_images',
-                      )}`,
-                      'error',
-                    );
-                    return;
-                  }
-  
-                  const processedImages = await Promise.all(
-                    response.assets.map(asset => resizeIfNeeded(asset)),
+        },
+        {
+          text: 'Gallery',
+          onPress: () => {
+            const remainingSlots = MAX_IMAGES - uploadedImages.length;
+
+            if (remainingSlots <= 0) {
+              showToast(
+                `${t(Constant.MAXIMUM)} ${MAX_IMAGES} ${t(Constant.IMAGE_ALLOWED)}`,
+                'error',
+              );
+              return;
+            }
+
+            // launchImageLibrary(
+            //   {
+            //     mediaType: 'photo',
+            //     quality: 1,
+            //     selectionLimit: remainingSlots, // ✅ KEY FIX
+            //   },
+            //   response => {
+            //     if (response.didCancel) return;
+            //     if (!response.assets) return;
+
+            //     // Safety check (Android sometimes ignores selectionLimit)
+            //     if (response.assets.length > remainingSlots) {
+            //       showToast(
+            //         `${t('you_can_select_only')} ${remainingSlots} ${t('more_images')}`,
+            //         'error',
+            //       );
+            //       return;
+            //     }
+
+            //     const images = response.assets.map(asset => ({
+            //       id: `${Date.now()}-${Math.random()}`,
+            //       uri: asset.uri!,
+            //       name: asset.fileName || 'Image',
+            //     }));
+
+            //     setUploadedImages(prev => [...prev, ...images]);
+            //   },
+            // );
+            launchImageLibrary(
+              {
+                mediaType: 'photo',
+                quality: 1,
+                selectionLimit: remainingSlots,
+              },
+              async response => {
+                if (response.didCancel || !response.assets) return;
+
+                if (response.assets.length > remainingSlots) {
+                  showToast(
+                    `${t('you_can_select_only')} ${remainingSlots} ${t(
+                      'more_images',
+                    )}`,
+                    'error',
                   );
-  
-                  setUploadedImages(prev => [
-                    ...prev,
-                    ...processedImages.map(img => ({
-                      id: `${Date.now()}-${Math.random()}`,
-                      ...img,
-                    })),
-                  ]);
-                },
-              );
-  
-            },
+                  return;
+                }
+
+                const processedImages = await Promise.all(
+                  response.assets.map(asset => resizeIfNeeded(asset)),
+                );
+
+                setUploadedImages(prev => [
+                  ...prev,
+                  ...processedImages.map(img => ({
+                    id: `${Date.now()}-${Math.random()}`,
+                    ...img,
+                  })),
+                ]);
+              },
+            );
+
           },
-          { text: 'Cancel', style: 'cancel' },
-        ],
-        { cancelable: true },
-      );
-    };
+        },
+        { text: 'Cancel', style: 'cancel' },
+      ],
+      { cancelable: true },
+    );
+  };
   const getInitials = (firstName = '', lastName = '') => {
     const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
     const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
@@ -1068,7 +1071,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 setMultiSelectOptions(options);
               }}
             >
-              
+
               <View style={styles.dropdowncard}>
                 {(() => {
                   const selectedValue = formValues[id]?.value;
@@ -1085,10 +1088,10 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                       allowFontScaling={false}
                       style={styles.dropdowntext}
                     >
-                     
+
                       {selectedCount > 0
                         ? `${selectedCount} ${t('selected')}`
-                        : `${placeholder}` }
+                        : `${placeholder}`}
                     </Text>
                   );
                 })()}
@@ -1273,7 +1276,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 }}
               >
                 <Text
-                  allowFontScaling ={false}
+                  allowFontScaling={false}
                   style={[
                     styles.dropdowntext,
                     { color: endDate ? '#fff' : 'rgba(255,255,255,0.6)' },
@@ -1317,7 +1320,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               />
 
 
-              <View style={{ flex: 1 }}>
+              {/* <View style={{ flex: 1 }}>
                 <Text allowFontScaling={false} style={styles.importantText1}>
                   {t('important')}
                 </Text>
@@ -1327,13 +1330,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                     {Math.trunc(featureFee)}%
                   </Text>{' '}
                   {t('featured_listing_fee_percentage')}{' '}
-
-                  {/* <Text allowFontScaling={false} style={styles.importantText1}>
-                    {'('}
-                    <Text style={styles.importantText}>{t('capped')} </Text>
-                    £{Math.trunc(maxFeatureCap)}
-                    {')'}
-                  </Text> */}
 
                   <Text allowFontScaling={false} style={styles.importantText}>(</Text>
                   <Text allowFontScaling={false} style={styles.importantText}>
@@ -1346,6 +1342,57 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                   {' '}
                   {t('featured_listing_fee_cap')}
                 </Text>
+              </View> */}
+
+              <View style={{ flex: 1 }}>
+                {productId !== 4 ? (
+                  <>
+                    <Text allowFontScaling={false} style={styles.importantText1}>
+                      {t('important')}
+                    </Text>
+
+                    <Text allowFontScaling={false} style={styles.importantText}>
+                      {t('featured_listing_note_1')}{' '}
+                      <Text allowFontScaling={false} style={styles.importantText1}>
+                        {Math.trunc(featureFee)}%
+                      </Text>{' '}
+                      {t('featured_listing_fee_percentage')}{' '}
+
+                      <Text allowFontScaling={false} style={styles.importantText}>(</Text>
+                      <Text allowFontScaling={false} style={styles.importantText}>
+                        {t('capped')}{' '}
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.importantText1}>
+                        £{Math.trunc(maxFeatureCap)}
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.importantText}>)</Text>{' '}
+                      {t('featured_listing_fee_cap')}
+                    </Text>
+                  </>
+                ) : (
+                  <View>
+                    <Text allowFontScaling={false} style={styles.importantText1}>
+                      {t('important')}
+                    </Text>
+
+                    <Text allowFontScaling={false} style={styles.importantText}>
+                      {t('fixed_commission')}{' '}
+                      <Text allowFontScaling={false} style={styles.importantText1}>
+                        £{Math.trunc(accommodation_amount)}
+                      </Text>{' '}
+                      {t('featured_listing_fee_percentage')}
+
+                      <Text allowFontScaling={false} style={styles.importantText}></Text>
+                      <Text allowFontScaling={false} style={styles.importantText}>
+                       
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.importantText1}/>
+
+                      <Text allowFontScaling={false} style={styles.importantText}></Text>{' '}
+                      {t('featured_listing_fee_cap')}
+                    </Text>
+                  </View>
+                )}
               </View>
 
             </View>
@@ -1549,22 +1596,22 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             style={{ flex: 1 }}
           //behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           >
-              <KeyboardAvoidingView
-    style={{ flex: 1 }}
-    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-  >
-            <NestableScrollContainer
-              nestedScrollEnabled
-              ref={scrollRef}
-              scrollEventThrottle={16}
-              // onScroll={scrollHandler}
-              contentContainerStyle={[
-                styles.scrollContainer,
-                { paddingBottom: Platform.OS === 'ios' ? height * 0.1 : height * 0.1 }, // 0.05% of screen height
-                { paddingBottom: Platform.OS === 'ios' ? height * 0.1 : height * 0.1 }, // 0.05% of screen height
-              ]}>
-              {/* <AnimatedReanimated.ScrollView
+            <KeyboardAvoidingView
+              style={{ flex: 1 }}
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+            >
+              <NestableScrollContainer
+                nestedScrollEnabled
+                ref={scrollRef}
+                scrollEventThrottle={16}
+                // onScroll={scrollHandler}
+                contentContainerStyle={[
+                  styles.scrollContainer,
+                  { paddingBottom: Platform.OS === 'ios' ? height * 0.1 : height * 0.1 }, // 0.05% of screen height
+                  { paddingBottom: Platform.OS === 'ios' ? height * 0.1 : height * 0.1 }, // 0.05% of screen height
+                ]}>
+                {/* <AnimatedReanimated.ScrollView
                 scrollEventThrottle={16}
                 onScroll={scrollHandler}
                 contentContainerStyle={[
@@ -1572,125 +1619,125 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                   { paddingBottom: height * 0.1 }, // 0.05% of screen height
                 ]}
               > */}
-              <View style={styles.userRow}>
-                <View
-                  style={{
-                    width: '20%',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {userMeta?.profile ? (
-                    <Image
-                      source={{ uri: userMeta.profile }}
-                      style={styles.avatar}
-                    />
-                  ) : (
-                    <View style={styles.initialsCircle}>
-                      <Text
-                        allowFontScaling={false}
-                        style={styles.initialsText}
-                      >
-                        {getInitials(
-                          userMeta?.firstname ?? 'Alan',
-                          userMeta?.lastname ?? 'Walker',
-                        )}
-                      </Text>
-                    </View>
-                  )}
-                </View>
-
-                <View style={{ width: '80%' }}>
-                  <Text allowFontScaling={false} style={styles.userName}>
-                    {userMeta
-                      ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''
-                        }`.trim()
-                      : 'Alan Walker'}
-                  </Text>
-
+                <View style={styles.userRow}>
                   <View
                     style={{
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                      display: 'flex',
-                      alignItems: 'stretch',
+                      width: '20%',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                     }}
                   >
-                    <Text allowFontScaling={false} style={styles.userSub}>
-                      {userMeta?.university_name || 'University of Warwick,'}
+                    {userMeta?.profile ? (
+                      <Image
+                        source={{ uri: userMeta.profile }}
+                        style={styles.avatar}
+                      />
+                    ) : (
+                      <View style={styles.initialsCircle}>
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.initialsText}
+                        >
+                          {getInitials(
+                            userMeta?.firstname ?? 'Alan',
+                            userMeta?.lastname ?? 'Walker',
+                          )}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+
+                  <View style={{ width: '80%' }}>
+                    <Text allowFontScaling={false} style={styles.userName}>
+                      {userMeta
+                        ? `${userMeta.firstname ?? ''} ${userMeta.lastname ?? ''
+                          }`.trim()
+                        : 'Alan Walker'}
                     </Text>
+
                     <View
                       style={{
-                        flexDirection: 'row',
+                        flexDirection: 'column',
                         justifyContent: 'space-between',
+                        display: 'flex',
+                        alignItems: 'stretch',
                       }}
                     >
-                      <Text allowFontScaling={false} style={styles.userSub2}>
-                        {userMeta?.city || 'Coventry'}
+                      <Text allowFontScaling={false} style={styles.userSub}>
+                        {userMeta?.university_name || 'University of Warwick,'}
                       </Text>
                       <View
                         style={{
                           flexDirection: 'row',
-                          alignItems
-                            : 'center',
-                          gap: 3,
+                          justifyContent: 'space-between',
                         }}
                       >
-                        <Image
-                          source={require('../../../assets/images/calendar_icon1.png')}
-                          style={{ height: 20, width: 20 }}
-                        />
-                        <Text allowFontScaling={false} style={styles.dateText}>
-                          {getCurrentDate(t)}
+                        <Text allowFontScaling={false} style={styles.userSub2}>
+                          {userMeta?.city || 'Coventry'}
                         </Text>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems
+                              : 'center',
+                            gap: 3,
+                          }}
+                        >
+                          <Image
+                            source={require('../../../assets/images/calendar_icon1.png')}
+                            style={{ height: 20, width: 20 }}
+                          />
+                          <Text allowFontScaling={false} style={styles.dateText}>
+                            {getCurrentDate(t)}
+                          </Text>
+                        </View>
                       </View>
                     </View>
                   </View>
                 </View>
-              </View>
 
-              <View style={styles.productdetails}>
-                <Animated.View
-                  style={{
-                    transform: [{ translateY: slideUp1 }],
-                    opacity: slideUp1.interpolate({
-                      inputRange: [-screenHeight, 0],
-                      outputRange: [0, 1],
-                    }),
-                  }}
-                >
-                  <Text
-                    allowFontScaling={false}
-                    style={styles.productdetailstext}
+                <View style={styles.productdetails}>
+                  <Animated.View
+                    style={{
+                      transform: [{ translateY: slideUp1 }],
+                      opacity: slideUp1.interpolate({
+                        inputRange: [-screenHeight, 0],
+                        outputRange: [0, 1],
+                      }),
+                    }}
                   >
-                    {(() => {
-                      switch (productId) {
-                        case 2:
-                          return t('tutoring_service_details');
-                        case 3:
-                          return t('dish_details');
-                        case 4:
-                          return t('rental_details');
-                        case 5:
-                          return t('housekeeping_details');
-                        default:
-                          return t('product_details');
-                      }
-                    })()}
-                  </Text>
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.productdetailstext}
+                    >
+                      {(() => {
+                        switch (productId) {
+                          case 2:
+                            return t('tutoring_service_details');
+                          case 3:
+                            return t('dish_details');
+                          case 4:
+                            return t('rental_details');
+                          case 5:
+                            return t('housekeeping_details');
+                          default:
+                            return t('product_details');
+                        }
+                      })()}
+                    </Text>
 
-                  {fields
-                    .filter(
-                      (f: any) =>
-                        f?.param?.field_type?.toLowerCase() !== 'boolean',
-                    )
-                    .map((field: any) => renderField(field))}
-                </Animated.View>
-              </View>
+                    {fields
+                      .filter(
+                        (f: any) =>
+                          f?.param?.field_type?.toLowerCase() !== 'boolean',
+                      )
+                      .map((field: any) => renderField(field))}
+                  </Animated.View>
+                </View>
 
-              {featuredField && <View>{renderField(featuredField)}</View>}
-              {/* </AnimatedReanimated.ScrollView> */}
-            </NestableScrollContainer>
+                {featuredField && <View>{renderField(featuredField)}</View>}
+                {/* </AnimatedReanimated.ScrollView> */}
+              </NestableScrollContainer>
             </KeyboardAvoidingView>
           </View>
         )}
@@ -2017,7 +2064,7 @@ const styles = StyleSheet.create({
     marginRight: 4,
     marginBottom: 4,
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.23)',
-    maxWidth:'100%'
+    maxWidth: '100%'
   },
 
   categoryTagText: {
@@ -2026,7 +2073,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-Medium',
     fontWeight: 500,
     flexShrink: 1,      // 🔥 allows text to shrink
-  maxWidth: '90%',
+    maxWidth: '90%',
   },
   crossIcon: {
     width: 16,
@@ -2193,7 +2240,7 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     color: 'rgba(255, 255, 255, 0.48)',
     includeFontPadding: false,
-    flexShrink: 1, 
+    flexShrink: 1,
   },
 
   eyeIcon1: {

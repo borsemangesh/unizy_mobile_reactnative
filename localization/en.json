@@ -768,5 +768,10 @@
   "info_subcontent3": "Create a product or service listing with price, details and a category.",
   "info_bottom_subheader3": "Manage your active, sold or completed listings from one place.",
   "info_subcontent4": "Connect with seller after purchase to delivery or service details.",
-  "info_bottom_subheader4": "Payments are held securely and released after OTP confirmation."
+  "info_bottom_subheader4": "Payments are held securely and released after OTP confirmation.",
+
+  "update_university_email": "Update University Email",
+  "update_email_info1": "Enter your new university email address. We’ll use this for account updates and important notifications.",
+
+  "fixed_commission": "A fixed commission of"
 }

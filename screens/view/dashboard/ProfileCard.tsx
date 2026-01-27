@@ -1,4 +1,3 @@
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect, useRef } from 'react';
 import {
@@ -32,10 +31,11 @@ const cardData = [
   { id: '2', titleKey: 'my_orders', image: require('../../../assets/images/cart.png') },
   { id: '3', titleKey: 'my_reviews', image: require('../../../assets/images/ok.png') },
   { id: '4', titleKey: 'notifications', image: require('../../../assets/images/notify.png') },
-  { id: '5', titleKey: 'delete_account', image: require('../../../assets/images/delete_new.png') },
-  { id: '6', titleKey: 'help_support', image: require('../../../assets/images/helpicon.png') },
-  { id: '7', titleKey: 'logout', image: require('../../../assets/images/logout.png') },
-  { id: '8', titleKey: 'app_version', image: require('../../../assets/images/versionicon.png') },
+  { id: '5', titleKey: 'change_password', image: require('../../../assets/images/notify.png') },
+  { id: '6', titleKey: 'delete_account', image: require('../../../assets/images/delete_new.png') },
+  { id: '7', titleKey: 'help_support', image: require('../../../assets/images/helpicon.png') },
+  { id: '8', titleKey: 'logout', image: require('../../../assets/images/logout.png') },
+  { id: '9', titleKey: 'app_version', image: require('../../../assets/images/versionicon.png') },
 ];
 
 const arrowIcon = require('../../../assets/images/nextarrow.png');
@@ -273,6 +273,15 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
           }
           else if (item.titleKey === 'payment_methods') {
             openStripeOnboarding();
+          }
+          else if (item.titleKey === 'change_password') {
+            if(Platform.OS === 'ios'){
+            navigation.replace('ChangePassword');
+            }
+            else{
+            navigation.navigate('ChangePassword');
+            }
+            
           }
           else {
 

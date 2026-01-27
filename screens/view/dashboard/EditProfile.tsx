@@ -78,6 +78,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
   const [username1, setUsername1] = useState<string>('');
+  const [username2, setUsername2] = useState<string>('');
   const [photo, setPhoto] = useState<string | null>(null);
   const [newphoto, setNewPhoto] = useState<string | null>(null);
   const [userMeta, setUserMeta] = useState<UserMeta>({
@@ -98,10 +99,23 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   const [showPopup2, setShowPopup2] = useState(false);
   const closePopup2 = () => setShowPopup2(false);
 
+
+  const [showPopup3, setShowPopup3] = useState(false);
+  const closePopup3 = () => setShowPopup3(false);
+
+  const [showPopup4, setShowPopup4] = useState(false);
+  const closePopup4 = () => setShowPopup4(false);
+
+
   const [emailName, setEmailName] = useState('');
   const inputs = useRef<Array<TextInput | null>>([]);
+  const inputs1 = useRef<Array<TextInput | null>>([]);
   const [isUpdateDisabled_personal, setIsUpdateDisabled_personal] =
     useState(true);
+
+  const [isUpdateDisabled_student, setIsUpdateDisabled_student] =
+    useState(true);
+
   // const [isUpdateDisabled, setIsUpdateDisabled] = useState(true);
   const [updateText, setUpdateText] = useState('Update');
   const { t } = useTranslation();
@@ -282,6 +296,16 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       return () => clearTimeout(timer);
     }
   }, [showPopup2]);
+
+   useEffect(() => {
+    if (showPopup4) {
+      const timer = setTimeout(() => {
+        inputs1.current[0]?.focus();
+      }, 300);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showPopup4]);
 
   const isProfileChanged = () => {
     if (!initialProfile) return false;
@@ -675,6 +699,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
   const [save_otp, setSaveOtp] = useState(0);
 
+  const [otp1, setOtp1] = useState(['', '', '', '']);
+
+  const [save_otp1, setSaveOtp1] = useState(0);
+
   const sendOtp = async (email?: string) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -682,7 +710,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
       const finalEmail = email?.trim();
 
-      if (!finalEmail || !isValidEmail(finalEmail)) {
+      if (!finalEmail || !validateStudentEmail(finalEmail)) {
         showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
         setShowPopup1(false)
         return;
@@ -709,6 +737,48 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         setSaveOtp(data.data.otp_id);
         setShowPopup1(false);
         setShowPopup2(true);
+      } else {
+        showToast(t(data?.message || 'Something went wrong'), 'error');
+      }
+    } catch (err) {
+      console.error('sendOtp error:', err);
+    }
+  };
+
+  const sendOtp1 = async (email?: string) => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) return;
+
+      const finalEmail = email?.trim();
+
+      if (!finalEmail || !isValidEmail(finalEmail)) {
+        showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
+        setShowPopup3(false)
+        return;
+      }
+
+      const url = MAIN_URL.baseUrl + 'user/update-email';
+
+      const createPayload = {
+        email: finalEmail,
+      };
+
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(createPayload),
+      });
+
+      const data = await res.json();
+
+      if (data?.statusCode === 200) {
+        setSaveOtp1(data.data.otp_id);
+        setShowPopup3(false);
+        setShowPopup4(true);
       } else {
         showToast(t(data?.message || 'Something went wrong'), 'error');
       }
@@ -764,6 +834,53 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     }
   };
 
+
+  const otpverify1 = async () => {
+    Keyboard.dismiss();
+
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+
+        return;
+      }
+      const otpValue = otp1.join('');
+      const url = MAIN_URL.baseUrl + 'user/verify-update';
+      const createPayload = {
+        otp: otpValue,
+        otp_id: save_otp1,
+      };
+
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(createPayload),
+      });
+
+      const data = await res.json();
+
+      console.log('data', data);
+      if (data?.statusCode === 200) {
+        showToast(t(data?.message), 'success');
+        setShowPopup4(false);
+        //setIsUpdateDisabled(true)
+        //setIsUpdateDisabled_personal(true)
+
+
+      } else {
+        setShowPopup4(false);
+        showToast(t(data?.message), 'error');
+      }
+    } catch (err) {
+      console.error(err);
+
+    }
+  };
+
+
   const handleChange = (text: string, index: number) => {
     const newOtp = [...otp];
     newOtp[index] = text;
@@ -775,6 +892,19 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       inputs.current[index - 1]?.focus();
     }
   };
+
+    const handleChange1 = (text: string, index: number) => {
+    const newOtp = [...otp1];
+    newOtp[index] = text;
+    setOtp1(newOtp);
+
+    if (text && index < inputs1.current.length - 1) {
+      inputs1.current[index + 1]?.focus();
+    } else if (!text && index > 0) {
+      inputs1.current[index - 1]?.focus();
+    }
+  };
+
 
 
 
@@ -1140,6 +1270,88 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     alignItems: 'center',
                     backgroundColor: 'rgba(255,255,255,0.08)',
                     borderRadius: 12,
+                    minHeight: 44,
+                  }}
+                >
+                  <TextInput
+                    selectionColor="#fff"
+                    cursorColor="#fff"
+                    style={{
+                      flex: 1,
+                      color: '#fff',
+                      backgroundColor: 'transparent',
+                      borderWidth: 0,
+                      borderRadius: 10,
+                      paddingVertical: 10,
+                      paddingHorizontal: 12,
+                      fontFamily: 'Urbanist-Regular',
+                      fontSize: 16,
+                      fontWeight: 400,
+                    }}
+                    allowFontScaling={false}
+                    value={userMeta.student_email || ''}
+                    onChangeText={text => {
+                      setUserMeta(prev => ({ ...prev, email: text.trim() }));
+                      if (text.trim() === initialEmail) {
+
+                        setIsUpdateDisabled_student(true);
+                      } else {
+
+                        setIsUpdateDisabled_student(false);
+                      }
+
+
+                    }}
+                    keyboardType="email-address"
+                    placeholder={t('enter_student_email_id')}
+                    placeholderTextColor="#ccc"
+                  />
+                  <TouchableOpacity
+                    style={{
+                      width: 32,
+                      height: 32,
+                      backgroundColor: 'rgba(255,255,255,0.08)',
+                      boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
+                      borderColor: '',
+                      borderRadius: 10,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginEnd: 8,
+                      // opacity: 0.5 
+                    }}
+
+                    onPress={() => {
+                      const email = userMeta.student_email || '';
+
+                      if (!isValidEmail(email.trim())) {
+                        showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
+                        return;
+                      }
+                      setShowPopup3(true);
+                      setUsername2('')
+                      //sendOtp('personalEmail');
+                      setEmailName('personalEmail');
+                    }}
+                  >
+                    <Image
+                      source={require('../../../assets/images/editcontained.png')}
+                      style={styles.updateIcon}
+                      resizeMode="contain"
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {/* <View style={styles.inputGroup}>
+                <Text style={styles.label} allowFontScaling={false}>
+                  {t('university_email_id')}
+                </Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(255,255,255,0.08)',
+                    borderRadius: 12,
                     paddingHorizontal: 4,
                     minHeight: 44,
                   }}
@@ -1170,7 +1382,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     placeholderTextColor="#ccc"
                   />
                 </View>
-              </View>
+              </View> */}
+
               <View style={styles.inputGroup}>
                 <Text style={styles.label} allowFontScaling={false}>
                   {t('postal_code')}
@@ -1228,6 +1441,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
             <TouchableOpacity
               style={{
+                opacity:0,
                 top: 16,
                 marginBottom: 16,
                 height: 48,
@@ -1251,6 +1465,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 {t('change_password')}
               </Text>
             </TouchableOpacity>
+            
           </AnimatedReanimated.ScrollView>
         </KeyboardAvoidingView>
 
@@ -1262,7 +1477,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
         />
       </View>
-     
+
       <Modal
         visible={showPopup1}
         transparent={true}
@@ -1483,6 +1698,230 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
+
+
+      <Modal
+        visible={showPopup3}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => { }}
+      >
+        <TouchableWithoutFeedback onPress={closePopup3}>
+          <View style={styles.overlay}>
+            <BlurView
+              style={{
+                flex: 1,
+                alignContent: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                alignItems: 'center',
+              }}
+              blurType="light"
+              blurAmount={10}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            >
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
+                ]}
+              />
+
+              <View style={styles.popupContainer}>
+                <Text allowFontScaling={false} style={styles.mainheader}>
+                  {t('update_university_email')}
+                </Text>
+
+                <Text allowFontScaling={false} style={styles.notheader}>
+                  {t('update_email_info1')}
+                </Text>
+
+                <View style={[styles.login_container]}>
+                  <TextInput
+                    allowFontScaling={false}
+                    style={[
+                      styles.personalEmailID_TextInput,
+                      { color: '#fff' },
+                    ]}
+                    placeholder={t('university_email_id')}
+                    placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                    value={username2}
+                    maxLength={50}
+                    selectionColor="white"
+                    cursorColor={'#FFFFFF'}
+                    keyboardType={
+                      Platform.OS === 'ios'
+                        ? 'default'
+                        : 'email-address'
+                    }
+                    autoCapitalize="none"
+                    autoComplete={
+                      Platform.OS === 'ios' ? 'email' : 'username'
+                    }
+                    textContentType={
+                      Platform.OS === 'ios'
+                        ? 'emailAddress'
+                        : 'username'
+                    }
+                    importantForAutofill="yes"
+                    autoCorrect={false}
+                    onChangeText={usernameText =>
+                      setUsername2(usernameText)
+                    }
+                  />
+                </View>
+
+
+                <TouchableOpacity
+                  style={styles.newloginButton}
+                  onPress={() => {
+                    //setShowPopup2(true)
+                    sendOtp1(username2)
+                  }
+                  }
+                >
+                  <Text allowFontScaling={false} style={styles.loginText}>
+                    {t('send_otp')}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.newloginButton1}
+                  onPress={() => {
+                    setShowPopup3(false)
+                  }
+                  }
+                >
+                  <Text allowFontScaling={false} style={styles.loginText1}>
+                    {t('cancel')}
+                  </Text>
+                </TouchableOpacity>
+
+              </View>
+            </BlurView>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+
+
+      <Modal
+        visible={showPopup4}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => { }}
+      >
+        <TouchableWithoutFeedback onPress={closePopup4}>
+          <View style={styles.overlay}>
+            <BlurView
+              style={{
+                flex: 1,
+                alignContent: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                alignItems: 'center',
+              }}
+              blurType="light"
+              blurAmount={10}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            >
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
+                ]}
+              />
+
+              <View style={styles.popupContainer}>
+                <Text allowFontScaling={false} style={styles.mainheader}>
+                  {t('verify_personal_email')}
+                </Text>
+
+                <Text allowFontScaling={false} style={styles.notheader}>
+                  {t('we_sent_code_to')}{' '}
+                  <Text
+                    allowFontScaling={false}
+                    style={{
+                      color: '#fff',
+                      fontFamily: 'Urbanist-SemiBold',
+                      fontWeight: '400',
+                    }}
+                  >
+                    {username2}
+                  </Text>
+                </Text>
+
+                <View style={styles.otpContainer}>
+                  {[0, 1, 2, 3].map((_, index) => (
+                    <TextInput
+                      selectionColor="#fff"
+                      cursorColor="#fff"
+                      allowFontScaling={false}
+                      key={index}
+                      ref={ref => {
+                        inputs1.current[index] = ref;
+                      }}
+                      style={styles.otpBox}
+                      keyboardType="number-pad"
+                      maxLength={1}
+                      onChangeText={text => {
+                        const digit = text.replace(/[^0-9]/g, '');
+                        handleChange1(digit, index);
+                      }}
+                      returnKeyType="next"
+                      textAlign="center"
+                      secureTextEntry={true}
+                    />
+                  ))}
+                </View>
+
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  onPress={otpverify1}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText}>
+                    {t('verify')}
+                  </Text>
+                </TouchableOpacity>
+
+
+                <Text
+                  allowFontScaling={false}
+                  style={[styles.notheader, { marginBottom: 6 }]}
+                >
+                  {t('didnt_receive_code')}{' '}
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.notheader1}
+                    onPress={() => sendOtp1(username2)}
+                  >
+                    {t('resend_code')}
+                  </Text>
+                </Text>
+
+                <Text
+                  allowFontScaling={false}
+                  style={[styles.notheader, { marginBottom: 6 }]}
+                >
+                  {t('entered_wrong_email')}{' '}
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.notheader1}
+                    onPress={() => {
+                      setShowPopup4(false)
+                      setShowPopup3(true)
+                    }
+                    }
+                  >
+                    {t('go_back')}
+                  </Text>
+                </Text>
+              </View>
+            </BlurView>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+
+
 
       <Modal
         visible={showDeleteModal}

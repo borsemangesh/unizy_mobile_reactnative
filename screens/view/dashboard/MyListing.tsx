@@ -222,6 +222,8 @@ const MyListing = ({ navigation }: MyListingProps) => {
       const token = await AsyncStorage.getItem('userToken');
       const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
 
+      console.log(token)
+
       if (!token) {
         if (isInitialLoad) {
           await new Promise(r => setTimeout(r, 1000));

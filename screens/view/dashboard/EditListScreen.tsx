@@ -92,7 +92,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
   const [newdate, setnewdate] = useState('');
   const [category, setcategory] = useState('');
   const [featureitem, setfeatureitem] = useState(false);
-
+const [accommodation_amount, setaccommodation_amount] = useState(0);
   const [dateStep, setDateStep] = useState<'start' | 'end'>('start');
   const [tempStartDate, setTempStartDate] = useState<Date | undefined>(
     undefined,
@@ -241,6 +241,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
           if (json.metadata.category) {
             setFeatureFee(Number(json.metadata.category.feature_fee ?? '0'));
             setMaxFeatureCap(Number(json.metadata.category.max_feature_cap ?? '0'));
+            setaccommodation_amount(Number(json.metadata.category.accommodation_amount ?? '0'));
           }
           setUserMeta({
             firstname: json.metadata.firstname ?? null,
@@ -1500,24 +1501,8 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                 style={{ width: 13, height: 13, marginRight: 8, marginTop: 2 }}
               />
 
+             
               {/* <View style={{ flex: 1 }}>
-                <Text allowFontScaling={false} style={styles.importantText1}>
-                  {t('important')}
-                </Text>
-                <Text allowFontScaling={false} style={styles.importantText}>
-                  {t('featured_listing_note_1')}{' '}
-                  <Text allowFontScaling={false} style={styles.importantText1}>
-                    {Math.trunc(featureFee)}%
-                  </Text>{' '}
-                  {t('featured_listing_fee_percentage')}{' '}
-                  <Text allowFontScaling={false} style={styles.importantText1}>
-                    £{Math.trunc(maxFeatureCap)} {''}
-                  </Text>
-                  {''}
-                  {t('featured_listing_fee_cap')}
-                </Text>
-              </View> */}
-              <View style={{ flex: 1 }}>
                 <Text allowFontScaling={false} style={styles.importantText1}>
                   {t('important')}
                 </Text>
@@ -1538,7 +1523,59 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                   {' '}
                   {t('featured_listing_fee_cap')}
                 </Text>
-              </View>
+              </View> */}
+
+               <View style={{ flex: 1 }}>
+                              {productId !== 4 ? (
+                                <>
+                                  <Text allowFontScaling={false} style={styles.importantText1}>
+                                    {t('important')}
+                                  </Text>
+              
+                                  <Text allowFontScaling={false} style={styles.importantText}>
+                                    {t('featured_listing_note_1')}{' '}
+                                    <Text allowFontScaling={false} style={styles.importantText1}>
+                                      {Math.trunc(featureFee)}%
+                                    </Text>{' '}
+                                    {t('featured_listing_fee_percentage')}{' '}
+              
+                                    <Text allowFontScaling={false} style={styles.importantText}>(</Text>
+                                    <Text allowFontScaling={false} style={styles.importantText}>
+                                      {t('capped')}{' '}
+                                    </Text>
+                                    <Text allowFontScaling={false} style={styles.importantText1}>
+                                      £{Math.trunc(maxFeatureCap)}
+                                    </Text>
+                                    <Text allowFontScaling={false} style={styles.importantText}>)</Text>{' '}
+                                    {t('featured_listing_fee_cap')}
+                                  </Text>
+                                </>
+                              ) : (
+                                <View>
+                                  <Text allowFontScaling={false} style={styles.importantText1}>
+                                    {t('important')}
+                                  </Text>
+              
+                                  <Text allowFontScaling={false} style={styles.importantText}>
+                                    {t('fixed_commission')}{' '}
+                                    <Text allowFontScaling={false} style={styles.importantText1}>
+                                      £{Math.trunc(accommodation_amount)}
+                                    </Text>{' '}
+                                    {t('featured_listing_fee_percentage')}
+              
+                                    <Text allowFontScaling={false} style={styles.importantText}></Text>
+                                    <Text allowFontScaling={false} style={styles.importantText}>
+                                     
+                                    </Text>
+                                    <Text allowFontScaling={false} style={styles.importantText1}/>
+              
+                                    <Text allowFontScaling={false} style={styles.importantText}></Text>{' '}
+                                    {t('featured_listing_fee_cap')}
+                                  </Text>
+                                </View>
+                              )}
+                            </View>
+
             </View>
           </View>
         );

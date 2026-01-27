@@ -530,6 +530,8 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
 
           const url1 = MAIN_URL.baseUrl + 'category/feature-list';
 
+          console.log(url1)
+
           const res = await fetch(url1, {
             headers: {
               Authorization: `Bearer ${token}`,
