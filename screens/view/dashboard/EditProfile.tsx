@@ -59,6 +59,7 @@ import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../utils/component/Loader';
 import SaveButton from '../../utils/component/SaveButton';
+import { getCityFromPostalCode } from '../../utils/geocoding';
 
 type EditProfileProps = {
   navigation: any;
@@ -710,7 +711,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
       const finalEmail = email?.trim();
 
-      if (!finalEmail || !validateStudentEmail(finalEmail)) {
+      if (!finalEmail || !isValidEmail(finalEmail)) {
         showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
         setShowPopup1(false)
         return;
@@ -738,6 +739,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         setShowPopup1(false);
         setShowPopup2(true);
       } else {
+        setShowPopup1(false);
         showToast(t(data?.message || 'Something went wrong'), 'error');
       }
     } catch (err) {
@@ -752,8 +754,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
       const finalEmail = email?.trim();
 
-      if (!finalEmail || !isValidEmail(finalEmail)) {
-        showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
+      if (!finalEmail || !validateStudentEmail(finalEmail)) {
+        showToast(t(Constant.VALID_UNIVERSITY_EMAIL_ADDRESS), 'error');
         setShowPopup3(false)
         return;
       }
@@ -780,6 +782,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         setShowPopup3(false);
         setShowPopup4(true);
       } else {
+        setShowPopup3(false);
         showToast(t(data?.message || 'Something went wrong'), 'error');
       }
     } catch (err) {
@@ -822,7 +825,20 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         setShowPopup2(false);
         //setIsUpdateDisabled(true)
         //setIsUpdateDisabled_personal(true)
-
+        setTimeout(() => {
+          navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: 'Dashboard',
+                params: {
+                  AddScreenBackactiveTab: 'Profile',
+                  isNavigate: false,
+                },
+              },
+            ],
+          });
+        }, 3000);
 
       } else {
         setShowPopup2(false);
@@ -868,7 +884,20 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         setShowPopup4(false);
         //setIsUpdateDisabled(true)
         //setIsUpdateDisabled_personal(true)
-
+        setTimeout(() => {
+          navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: 'Dashboard',
+                params: {
+                  AddScreenBackactiveTab: 'Profile',
+                  isNavigate: false,
+                },
+              },
+            ],
+          });
+        }, 3000);
 
       } else {
         setShowPopup4(false);
@@ -907,44 +936,75 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
 
 
+  
 
 
-  const ClickPostalCode = async (postalCode: any) => {
+  // const ClickPostalCode = async (postalCode: any) => {
+  //   const cityName = await getCityFromPostalCode(postalCode);
+
+  //   setUserMeta(prev => ({
+  //     ...prev,
+  //     city: cityName, // Only set city
+  //   }));
+  // };
+
+  // const getCityFromPostalCode = async (postalCode: string) => {
+  //   try {
+  //     const response = await fetch(
+  //       `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
+  //       {
+  //         headers: {
+  //           "User-Agent": "MyAndroidApp/1.0 (contact@myapp.com)",
+  //           "Accept-Language": "en-US",
+  //         },
+  //       }
+  //     );
+
+  //     const data = await response.json();
+
+  //     if (!data || data.length === 0) return null;
+
+  //     return (
+  //       data[0].address.city ||
+  //       data[0].address.town ||
+  //       data[0].address.village ||
+  //       null
+  //     );
+  //   } catch (error) {
+
+  //     return null;
+  //   }
+  // };
+
+  const ClickPostalCode = async (postalCode: string) => {
     const cityName = await getCityFromPostalCode(postalCode);
-
+  
+    if (!cityName) {
+      showToast('City not found', 'error');
+      return;
+    }
+  
     setUserMeta(prev => ({
       ...prev,
-      city: cityName, // Only set city
+      city: cityName,
     }));
   };
-
-  const getCityFromPostalCode = async (postalCode: string) => {
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
-        {
-          headers: {
-            "User-Agent": "MyAndroidApp/1.0 (contact@myapp.com)",
-            "Accept-Language": "en-US",
-          },
-        }
-      );
-
-      const data = await response.json();
-
-      if (!data || data.length === 0) return null;
-
-      return (
-        data[0].address.city ||
-        data[0].address.town ||
-        data[0].address.village ||
-        null
-      );
-    } catch (error) {
-
-      return null;
-    }
+  
+  const extractAddress = (components: any[]) => {
+    const get = (type: string) =>
+      components.find(c => c.types.includes(type))?.long_name || null;
+  
+    return {
+      city:
+        get('locality') ||
+        get('administrative_area_level_3') ||
+        get('administrative_area_level_2'),
+      state: get('administrative_area_level_1'),
+      country: get('country'),
+      postalCode: get('postal_code'),
+    };
   };
+  
 
 
   const getInitials = (firstName = '', lastName = '') => {
@@ -1833,7 +1893,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
               <View style={styles.popupContainer}>
                 <Text allowFontScaling={false} style={styles.mainheader}>
-                  {t('verify_personal_email')}
+                  {t('verify_university_email')}
                 </Text>
 
                 <Text allowFontScaling={false} style={styles.notheader}>
