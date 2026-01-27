@@ -11,33 +11,35 @@ import {
 import { BlurView } from '@react-native-community/blur';
 
 type ButtonProps = {
-  onPress: () => void;
+  // onPress: () => void;
   title?: ReactNode;
   buttonStyle?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
 };
 
 const MessageHeaderButton = ({
-  onPress,
+  // onPress,
   title = 'Click',
   buttonStyle,
   textStyle,
 }: ButtonProps) => {
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      activeOpacity={0.7}
+    <View
+      // onPress={onPress}
+      // activeOpacity={0.7}
       style={[styles.buttonContainer, buttonStyle]}
     >
       <View
         style={{
           justifyContent: 'center',
-          height: 48,
+          // height: 48,
           alignItems: 'center',
           borderRadius: 100,
           overflow: 'hidden',
           alignSelf: 'center',
-          paddingHorizontal: 18,
+          paddingHorizontal: 16,
+          paddingVertical: 12,
+
 
           backgroundColor: 'rgba(255, 255, 255, 0.56)',
         }}
@@ -53,7 +55,7 @@ const MessageHeaderButton = ({
           {title}
         </Text>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 
@@ -71,10 +73,11 @@ const styles = StyleSheet.create({
     color: 'rgba(0, 32, 80, 1)',
     textAlign: 'center',
     fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
+    fontSize: 14,
     fontWeight: '500',
     letterSpacing: 1,
     opacity: 0.9,
+    lineHeight: 20,
   },
 });
 

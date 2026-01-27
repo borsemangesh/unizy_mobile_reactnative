@@ -844,10 +844,11 @@ return (
 const styles = StyleSheet.create({
 
   previewDesc: {
-    marginTop: 2,
-    marginBottom: 8,
+    // marginTop: 2,
+    marginBottom: 10,
     color: '#ccc',
-    fontSize: 12,
+    fontSize: 14,
+    lineHeight: 18,
     fontFamily: 'Urbanist-Medium',
     fontWeight: 500,
     textAlign:'center'
@@ -962,7 +963,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     marginHorizontal: 6,
-    marginVertical: 16,
+    marginVertical: 6,
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600,
   },
@@ -972,8 +973,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600,
     marginHorizontal: 6,
-    marginTop: 24,
-    marginBottom: 16
+    marginTop: 48,
+    marginBottom: 6
   },
   textbg: {
     overflow: 'hidden',
@@ -997,7 +998,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ffffff31',
     borderLeftColor: '#ffffff31',
     borderRightColor: '#ffffff31',
-    marginTop: 12
+    marginTop: 48
   },
   importantText: {
     color: '#ccc',
@@ -1032,6 +1033,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 24
   },
 
   previewThumbnail: {

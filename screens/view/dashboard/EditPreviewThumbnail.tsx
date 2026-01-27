@@ -902,24 +902,283 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
 };
 
 const styles = StyleSheet.create({
+  // backButtonContainer: {
+  //   position: 'absolute',
+  //   left: 16,
+  //   zIndex: 11,
+  //   //top: 7,
+  // },
+  // previewDesc: {
+  //   marginTop: 2,
+  //   marginBottom: 8,
+  //   color: '#ccc',
+  //   fontSize: 12,
+  //   fontFamily: 'Urbanist-Medium',
+  //   fontWeight: 500,
+  //   textAlign: 'center',
+  //   //alignSelf: 'center',
+  //   //maxWidth:'75%'
+
+  // },
+  // blurButtonWrapper: {
+  //   width: 48,
+  //   height: 48,
+  //   borderRadius: 40,
+  //   overflow: 'hidden',
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   // borderWidth: 0.4,
+  //   // borderColor: '#ffffff2c',
+  //   // backgroundColor: 'rgba(255, 255, 255, 0.1)',
+
+  //   borderWidth: 0.3,
+  //   borderColor: '#ffffff11',
+
+  //   boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
+  //   backgroundColor:
+  //     'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
+
+  //   borderBlockStartColor: '#ffffff2e',
+  //   borderBlockColor: '#ffffff2e',
+
+  //   borderTopColor: '#ffffff2e',
+  //   borderBottomColor: '#ffffff2e',
+  //   borderLeftColor: '#ffffff2e',
+  //   borderRightColor: '#ffffff2e',
+  //   boxSizing: 'border-box',
+  // },
+  // headerWrapper: {
+  //   position: 'absolute',
+  //   top: 0,
+  //   width: Platform.OS === 'ios' ? '100%' : '100%',
+  //   height: Platform.OS === 'ios' ? 180 : 180,
+  //   zIndex: 10,
+  //   overflow: 'hidden',
+  //   alignSelf: 'center',
+  //   pointerEvents: 'none',
+  // },
+  // headerContent: {
+  //   position: 'absolute',
+  //   top: Platform.OS === 'ios' ? '8.5%' : 60,
+  //   width: Platform.OS === 'ios' ? '100%' : '100%',
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  //   paddingHorizontal: 16,
+  //   zIndex: 11,
+  //   alignSelf: 'center',
+  //   pointerEvents: 'box-none',
+
+  //   marginTop: (Platform.OS === 'ios' ? 0 : 0),
+  //   marginLeft: 1
+  // },
+  // scrollContainer: {
+  //   paddingHorizontal: 16,
+  //   paddingBottom: 80,
+  //   paddingTop: Platform.OS === 'ios' ? 110 : 100,
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  // },
+
+  // newtext: {
+  //   color: '#fff',
+  //   fontSize: 16,
+  //   marginHorizontal: 6,
+  //   marginVertical: 16,
+  //   fontFamily: 'Urbanist-SemiBold',
+  //   fontWeight: 600,
+  // },
+  // newtext1: {
+  //   color: '#fff',
+  //   fontSize: 16,
+  //   fontFamily: 'Urbanist-SemiBold',
+  //   fontWeight: 600,
+  //   marginHorizontal: 6,
+  //   marginTop: 24,
+  //   marginBottom: 16
+
+  // },
+  // textbg: {
+  //   overflow: 'hidden',
+
+  //   alignContent: 'center',
+  //   alignSelf: 'center',
+  //   width: '90%',
+  //   flexDirection: 'row',
+  //   alignItems: 'flex-start',
+  //   backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
+  //   boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+  //   padding: 6,
+  //   borderWidth: 0.5,
+  //   borderEndEndRadius: 12,
+  //   borderStartEndRadius: 12,
+  //   borderTopLeftRadius: 12,
+  //   borderTopRightRadius: 12,
+  //   borderBottomStartRadius: 12,
+  //   borderBlockStartColor: '#ffffff31',
+  //   borderBlockColor: '#ffffff31',
+  //   borderTopColor: '#ffffff31',
+  //   borderBottomColor: '#ffffff31',
+  //   borderLeftColor: '#ffffff31',
+  //   borderRightColor: '#ffffff31',
+  //   marginTop: 12,
+
+  // },
+
+  // bottomFixed: {
+  //   position: 'absolute',
+  //   bottom: 0,
+  //   left: 0,
+  //   right: 0,
+
+  //   paddingVertical: 10,
+  //   //paddingHorizontal: 16,
+  //   //borderTopWidth: 0.5,
+  //   // borderTopColor: '#444',
+  // },
+  // header: {
+  //   paddingTop: Platform.OS === 'ios' ? 50 : 50,
+  //   paddingBottom: 12,
+  //   paddingHorizontal: 16,
+  // },
+  // fullScreenContainer: {
+  //   flex: 1,
+  //   //marginTop: 30,
+  // },
+  // headerRow: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  // },
+  // backIconRow: {
+  //   padding: 12,
+  //   borderRadius: 40,
+
+  //   display: 'flex',
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   backgroundColor:
+  //     'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+  //   //boxShadow: 'rgba(255, 255, 255, 0.12)  inset -1px 0px 5px 1px inset ',
+
+  //   boxShadow:
+  //     '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
+  //   borderWidth: 0.4,
+  //   borderColor: '#ffffff2c',
+  //   height: 48,
+  //   width: 48,
+  // },
+  // unizyText: {
+  //   color: '#FFFFFF',
+  //   fontSize: 20,
+  //   flex: 1,
+  //   textAlign: 'center',
+  //   fontWeight: '600',
+  //   fontFamily: 'Urbanist-SemiBold',
+  // },
+
+
+  // importantText: {
+  //   color: '#ccc',
+  //   fontSize: 12,
+  //   marginBottom: 6,
+  //   fontFamily: 'Urbanist-Medium',
+  //   fontWeight: 500,
+  // },
+  // importantText1: {
+  //   color: '#ccc',
+  //   fontSize: 12,
+  //   fontFamily: 'Urbanist-SemiBold',
+  //   fontWeight: 500,
+  // },
+
+  // h24_w24: {
+  //   width: 24,
+  //   height: 24,
+  // },
+  // importantNotice: {
+  //   flexDirection: 'row',
+  //   height: 'auto',
+  //   backgroundColor:
+  //     'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.09) 100%)',
+  //   boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
+  //   borderRadius: 8,
+  //   padding: 8,
+  // },
+  // productCarddisplay: {
+  //   display: 'flex',
+  //   height: '100%',
+  //   alignContent: 'center',
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  // },
+  // previewThumbnail: {
+  //   color: '#FFF',
+  //   textAlign: 'center',
+  //   fontFamily: 'Urbanist-SemiBold',
+  //   fontSize: 20,
+  //   fontWeight: '600',
+  //   letterSpacing: -0.4,
+  // },
+  // infoContainer: {
+  //   flexDirection: 'row',
+  //   marginTop: 8,
+  //   paddingLeft: 6,
+  //   paddingRight: 6,
+  // },
+  // infoText: {
+  //   color: 'rgba(255, 255, 255, 0.64)',
+  //   fontFamily: 'Urbanist-Medium',
+  //   fontWeight: '600',
+  //   fontStyle: 'normal',
+  //   fontSize: 14,
+  // },
+  // note: {
+  //   color: 'rgba(255, 255, 255, 0.64)',
+  //   fontFamily: 'Urbanist-Medium',
+  //   fontSize: 14,
+  // },
+  // nextButton: {
+  //   display: 'flex',
+  //   width: '100%',
+  //   height: 48,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   gap: 4,
+  //   borderRadius: 100,
+  //   paddingTop: 6,
+  //   paddingBottom: 12,
+  //   backgroundColor: 'rgba(255, 255, 255, 0.56)',
+  //   borderWidth: 0.5,
+  //   borderColor: '#ffffff2c',
+  //   marginTop: 10,
+  // },
+  // nextText: {
+  //   color: '#002050',
+  //   textAlign: 'center',
+  //   fontFamily: 'Urbanist-Medium',
+  //   fontSize: 17,
+  //   fontWeight: 500,
+  //   letterSpacing: 1,
+  //   width: '100%',
+  // },
+
+  previewDesc: {
+    // marginTop: 2,
+    marginBottom: 10,
+    color: '#ccc',
+    fontSize: 14,
+    lineHeight: 18,
+    fontFamily: 'Urbanist-Medium',
+    fontWeight: 500,
+    textAlign:'center'
+  },
+
   backButtonContainer: {
     position: 'absolute',
     left: 16,
     zIndex: 11,
-    //top: 7,
   },
-  previewDesc: {
-    marginTop: 2,
-    marginBottom: 8,
-    color: '#ccc',
-    fontSize: 12,
-    fontFamily: 'Urbanist-Medium',
-    fontWeight: 500,
-    textAlign: 'center',
-    //alignSelf: 'center',
-    //maxWidth:'75%'
-
-  },
+ 
   blurButtonWrapper: {
     width: 48,
     height: 48,
@@ -968,23 +1227,62 @@ const styles = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-
     marginTop: (Platform.OS === 'ios' ? 0 : 0),
     marginLeft: 1
   },
   scrollContainer: {
     paddingHorizontal: 16,
     paddingBottom: 80,
-    paddingTop: Platform.OS === 'ios' ? 110 : 100,
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop: Platform.OS === 'ios' ? 120 : 100,
   },
 
+  bottomFixed: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingVertical: 10,
+  },
+  header: {
+    paddingTop: Platform.OS === 'ios' ? '15%' : 50,
+    paddingBottom: 12,
+    paddingHorizontal: 16,
+  },
+  fullScreenContainer: {
+    flex: 1,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backIconRow: {
+    padding: 12,
+    borderRadius: 40,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:
+      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
+    boxShadow:
+      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
+    borderWidth: 0.4,
+    borderColor: '#ffffff2c',
+    height: 48,
+    width: 48,
+  },
+  unizyText: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    flex: 1,
+    textAlign: 'center',
+    fontWeight: '600',
+    fontFamily: 'Urbanist-SemiBold',
+  },
   newtext: {
     color: '#fff',
     fontSize: 16,
     marginHorizontal: 6,
-    marginVertical: 16,
+    marginVertical: 6,
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600,
   },
@@ -994,13 +1292,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600,
     marginHorizontal: 6,
-    marginTop: 24,
-    marginBottom: 16
-
+    marginTop: 48,
+    marginBottom: 6
   },
   textbg: {
     overflow: 'hidden',
-
     alignContent: 'center',
     alignSelf: 'center',
     width: '90%',
@@ -1021,62 +1317,8 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ffffff31',
     borderLeftColor: '#ffffff31',
     borderRightColor: '#ffffff31',
-    marginTop: 12,
-
+    marginTop: 0
   },
-
-  bottomFixed: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-
-    paddingVertical: 10,
-    //paddingHorizontal: 16,
-    //borderTopWidth: 0.5,
-    // borderTopColor: '#444',
-  },
-  header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 50,
-    paddingBottom: 12,
-    paddingHorizontal: 16,
-  },
-  fullScreenContainer: {
-    flex: 1,
-    //marginTop: 30,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backIconRow: {
-    padding: 12,
-    borderRadius: 40,
-
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    //boxShadow: 'rgba(255, 255, 255, 0.12)  inset -1px 0px 5px 1px inset ',
-
-    boxShadow:
-      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
-  },
-  unizyText: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    flex: 1,
-    textAlign: 'center',
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
-  },
-
-
   importantText: {
     color: '#ccc',
     fontSize: 12,
@@ -1085,7 +1327,7 @@ const styles = StyleSheet.create({
     fontWeight: 500,
   },
   importantText1: {
-    color: '#ccc',
+    color: '#fff',
     fontSize: 12,
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 500,
@@ -1110,7 +1352,9 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 24
   },
+
   previewThumbnail: {
     color: '#FFF',
     textAlign: 'center',

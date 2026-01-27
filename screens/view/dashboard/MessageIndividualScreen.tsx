@@ -1284,13 +1284,13 @@ const MessagesIndividualScreen = ({
                 }}
               >
                 <MessageHeaderButton  title={<Text allowFontScaling={false} style={styles.studentName}>
-                      {source === 'chatList'
-                        ? members?.firstname
-                        : sellerData.firstname}{' '}
-                      {source === 'chatList'
-                        ? members?.lastname
-                        : sellerData.lastname}
-                    </Text>} onPress={() => {}} />
+                  {source === 'chatList'
+                    ? members?.firstname
+                    : sellerData.firstname}{' '}
+                  {source === 'chatList'
+                    ? members?.lastname
+                    : sellerData.lastname}
+                </Text>}  />
               </View>
               <TouchableOpacity
                   onPress={() => {
@@ -1301,7 +1301,11 @@ const MessagesIndividualScreen = ({
                   }}
                   >
 
-              {source == 'chatList' ? (
+   <ImageBackground source={require('../../../assets/images/profilebutton.png')} style={{
+    height:48,width: 48
+   }} >
+
+   {source == 'chatList' ? (
                     members?.profile ? (
                       <Image
                         source={{ uri: members?.profile }}
@@ -1339,6 +1343,7 @@ const MessagesIndividualScreen = ({
                     </View>
                   )}
 
+</ImageBackground>
                 </TouchableOpacity>
             </View>
             <View style={styles.headerSpacer} />
@@ -2026,7 +2031,7 @@ const styles = StyleSheet.create({
     color: 'rgba(0, 30, 80, 1)',
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: '600',
-    fontSize: 16,
+    fontSize: 14,
     // marginBottom: 2,
     // paddingLeft: 16,
     // paddingRight: 16
@@ -2052,8 +2057,9 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === 'ios' ? 205 : 155,
   },
   profileImage: {
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
+    margin: 4,
     borderRadius: 100,
   },
   chatContainer: {
@@ -2108,8 +2114,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#8390D4',
     alignItems: 'center',
     justifyContent: 'center',
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
+    margin: 4,
     borderRadius: 25,
   },
   initialsText: {
