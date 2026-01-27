@@ -939,56 +939,56 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   
 
 
-  // const ClickPostalCode = async (postalCode: any) => {
-  //   const cityName = await getCityFromPostalCode(postalCode);
-
-  //   setUserMeta(prev => ({
-  //     ...prev,
-  //     city: cityName, // Only set city
-  //   }));
-  // };
-
-  // const getCityFromPostalCode = async (postalCode: string) => {
-  //   try {
-  //     const response = await fetch(
-  //       `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
-  //       {
-  //         headers: {
-  //           "User-Agent": "MyAndroidApp/1.0 (contact@myapp.com)",
-  //           "Accept-Language": "en-US",
-  //         },
-  //       }
-  //     );
-
-  //     const data = await response.json();
-
-  //     if (!data || data.length === 0) return null;
-
-  //     return (
-  //       data[0].address.city ||
-  //       data[0].address.town ||
-  //       data[0].address.village ||
-  //       null
-  //     );
-  //   } catch (error) {
-
-  //     return null;
-  //   }
-  // };
-
-  const ClickPostalCode = async (postalCode: string) => {
+  const ClickPostalCode = async (postalCode: any) => {
     const cityName = await getCityFromPostalCode(postalCode);
-  
-    if (!cityName) {
-      showToast('City not found', 'error');
-      return;
-    }
-  
+
     setUserMeta(prev => ({
       ...prev,
-      city: cityName,
+      city: cityName, // Only set city
     }));
   };
+
+  const getCityFromPostalCode = async (postalCode: string) => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
+        {
+          headers: {
+            "User-Agent": "MyAndroidApp/1.0 (contact@myapp.com)",
+            "Accept-Language": "en-US",
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!data || data.length === 0) return null;
+
+      return (
+        data[0].address.city ||
+        data[0].address.town ||
+        data[0].address.village ||
+        null
+      );
+    } catch (error) {
+
+      return null;
+    }
+  };
+
+  // const ClickPostalCode = async (postalCode: string) => {
+  //   const cityName = await getCityFromPostalCode(postalCode);
+  
+  //   if (!cityName) {
+  //     showToast('City not found', 'error');
+  //     return;
+  //   }
+  
+  //   setUserMeta(prev => ({
+  //     ...prev,
+  //     city: cityName,
+  //   }));
+  // };
   
   const extractAddress = (components: any[]) => {
     const get = (type: string) =>
