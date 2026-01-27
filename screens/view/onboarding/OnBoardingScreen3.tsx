@@ -15,27 +15,23 @@ const OnboardingScreen3 = () => {
       <Text allowFontScaling={false} style={styles.title1}>
         {t('info_title3')}
       </Text>
-      <Text allowFontScaling={false} style={{fontSize: 16,
+      {/* <Text allowFontScaling={false} style={{fontSize: 16,
         color: 'rgba(255,255,255,0.7)',
         marginTop:4,
         textAlign: 'center',}}>
         {t('info_subtitle3')}
-      </Text>
-      <View style={{ width: '100%', alignItems: 'center', gap: 72,marginTop: 40 }}>
+      </Text> */}
+      <View style={{ width: '100%', alignItems: 'center', gap: 72 ,marginTop: 64 }}>
         <View style={{ width: '100%', alignItems: 'center' }}>
-          <Image
-            source={require('../../../assets/images/s3_img1.png')}
-            style={[styles.image1, { marginTop: 0 }]}
-            resizeMode="contain"
-          />
-          <View style={{ marginTop: -16 }}>
+          
+          <View style={{  }}>
           <Text
                 allowFontScaling={false}
                 style={{fontFamily: "Urbanist-Medium",
                 fontWeight: '600',
                 fontSize: 20,
                 color: '#fff',
-                textAlign: 'center', marginTop: -10 }}
+                textAlign: 'center'}}
               >
               {t('info_content3')}
             </Text>
@@ -51,13 +47,14 @@ const OnboardingScreen3 = () => {
               {t('info_subcontent3')}
             </Text>
           </View>
-        </View>
-        <View style={{ width: '100%', alignItems: 'center' }}>
           <Image
-            source={require('../../../assets/images/s3_img2.png')}
-            style={[styles.image, { marginTop: 15 }]}
+            source={require('../../../assets/images/s3_img1.png')}
+            style={[styles.image1, {marginTop: -20}]}
             resizeMode="contain"
           />
+        </View>
+        <View style={{ width: '100%', alignItems: 'center' }}>
+          
           <Text
               allowFontScaling={false}
                 style={{fontFamily: "Urbanist-Medium",
@@ -79,6 +76,11 @@ const OnboardingScreen3 = () => {
             >
             {t('info_bottom_subheader3')}
           </Text>
+          <Image
+            source={require('../../../assets/images/s3_img2.png')}
+            style={[styles.image, { marginTop: 15 }]}
+            resizeMode="contain"
+          />
         </View>
       </View>
     </View>
@@ -100,7 +102,6 @@ const styles = StyleSheet.create({
   image1: {
     width: '90%',
     height: 160,
-    marginTop:20,
   },
   title1: {
     fontFamily: 'Urbanist-Bold',

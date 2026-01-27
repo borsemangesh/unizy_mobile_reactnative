@@ -15,27 +15,23 @@ const OnboardingScreen2 = () => {
       <Text allowFontScaling={false} style={styles.title1}>
         {t('info_title2')}
       </Text>
-      <Text allowFontScaling={false} style={styles.subtitle1}>
+      {/* <Text allowFontScaling={false} style={styles.subtitle1}>
         {t('info_subtitle2')}
-      </Text>
+      </Text> */}
 
 
-      <View style={{ width: '100%', alignItems: 'center', gap: 84,marginTop: 4 }}>
+      <View style={{ width: '100%', alignItems: 'center', gap: 72,marginTop: 64 }}>
 
         <View style={{ width: '100%', alignItems: 'center' }}>
-          <Image
-            source={require('../../../assets/images/s1_img3.png')}
-            style={[styles.image1, { marginTop: 25 }]}
-            resizeMode="contain"
-          />
-          <View style={{ marginTop: 25 }}>
+          
+          <View style={{ }}>
           <Text
                 allowFontScaling={false}
                 style={{fontFamily: "Urbanist-Medium",
                 fontWeight: '600',
                 fontSize: 20,
                 color: '#fff',
-                textAlign: 'center', marginTop: -16 }}
+                textAlign: 'center' }}
               >
               {t('info_content2')}
             </Text>
@@ -51,23 +47,21 @@ const OnboardingScreen2 = () => {
               {t('info_subcontent2')}
             </Text>
           </View>
-        </View>
-        <View style={{ width: '100%', alignItems: 'center' }}>
           <Image
-            source={require('../../../assets/images/s2_img2.png')}
-            style={ {
-                width: '90%',
-                height: 138,
-            }}
+            source={require('../../../assets/images/s1_img3.png')}
+            style={[styles.image1]}
             resizeMode="contain"
           />
+        </View>
+        <View style={{ width: '100%', alignItems: 'center' }}>
+          
           <Text
               allowFontScaling={false}
                 style={{fontFamily: "Urbanist-Medium",
                 fontWeight: '600',
                 fontSize: 20,
                 color: '#fff',
-                textAlign: 'center' ,marginTop: 16}}
+                textAlign: 'center'}}
             >
             {t('info_bottom_header2')}
           </Text>
@@ -82,6 +76,15 @@ const OnboardingScreen2 = () => {
             >
             {t('info_bottom_subheader2')}
           </Text>
+          <Image
+            source={require('../../../assets/images/s2_img2.png')}
+            style={ {
+                width: '90%',
+                height: 138,
+                marginTop: 8
+            }}
+            resizeMode="contain"
+          />
         </View>
       </View>
     </View>
@@ -103,7 +106,7 @@ const styles = StyleSheet.create({
   image1: {
     width: '90%',
     height: 200,
-    marginTop: 20,
+    marginTop: 8
   },
   title1: {
     fontFamily: 'Urbanist-Bold',

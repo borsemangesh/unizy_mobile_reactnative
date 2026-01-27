@@ -757,6 +757,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       let result;
       try {
         result = await response.json();
+        console.log("LoginResponse: ",result);
       } catch (err) {
         setLoading(false);
         showToast(t(Constant.INVALID_SERVER_RESPONSE), 'error');

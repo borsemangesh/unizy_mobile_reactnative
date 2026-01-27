@@ -37,6 +37,9 @@ import Loader from '../../utils/component/Loader';
 
 import { useTranslation } from "react-i18next";
 import i18n from '../../../localization/i18n';
+import Button from '../../utils/component/Button';
+import ButtonNew from '../../utils/component/ButtonNew';
+import MessageHeaderButton from '../../utils/component/MessageHeaderButton';
 
 
 const bgImage = require('../../../assets/images/backimg.png');
@@ -1280,33 +1283,25 @@ const MessagesIndividualScreen = ({
                   position: 'relative',
                 }}
               >
-                <BlurView
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    borderRadius: 30,
-                  }}
-                  blurType="light"
-                  blurAmount={5}
-                  reducedTransparencyFallbackColor="#ffffff34"
-                />
-                <TouchableOpacity
-                  style={{
-                    flexDirection: 'row',
-                    gap: 10,
-                    alignItems: 'center',
-                  }}
+                <MessageHeaderButton  title={<Text allowFontScaling={false} style={styles.studentName}>
+                      {source === 'chatList'
+                        ? members?.firstname
+                        : sellerData.firstname}{' '}
+                      {source === 'chatList'
+                        ? members?.lastname
+                        : sellerData.lastname}
+                    </Text>} onPress={() => {}} />
+              </View>
+              <TouchableOpacity
                   onPress={() => {
                     navigation.navigate('UserProfileScreen', {
                       animation: 'none',
                       members: source == 'chatList' ? members : sellerData,
                     });
                   }}
-                >
-                  {source == 'chatList' ? (
+                  >
+
+              {source == 'chatList' ? (
                     members?.profile ? (
                       <Image
                         source={{ uri: members?.profile }}
@@ -1344,27 +1339,7 @@ const MessagesIndividualScreen = ({
                     </View>
                   )}
 
-                  <View>
-                    <Text allowFontScaling={false} style={styles.studentName}>
-                      {source === 'chatList'
-                        ? members?.firstname
-                        : sellerData.firstname}{' '}
-                      {source === 'chatList'
-                        ? members?.lastname
-                        : sellerData.lastname}
-                    </Text>
-                    <Text
-                      allowFontScaling={false}
-                      style={styles.universityName}
-                      numberOfLines={0}
-                    >
-                      {source == 'chatList'
-                        ? members?.university.name
-                        : sellerData?.universityName.name}
-                    </Text>
-                  </View>
                 </TouchableOpacity>
-              </View>
             </View>
             <View style={styles.headerSpacer} />
           </View>
@@ -2048,11 +2023,13 @@ const styles = StyleSheet.create({
     height: 30,
   },
   studentName: {
-    color: '#FFFFFFE0',
+    color: 'rgba(0, 30, 80, 1)',
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: '600',
     fontSize: 16,
-    marginBottom: 2,
+    // marginBottom: 2,
+    // paddingLeft: 16,
+    // paddingRight: 16
   },
   messageHeader: {
     position: 'absolute',
