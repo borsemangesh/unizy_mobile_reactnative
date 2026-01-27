@@ -59,7 +59,7 @@ import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../utils/component/Loader';
 import SaveButton from '../../utils/component/SaveButton';
-import { getCityFromPostalCode } from '../../utils/geocoding';
+// import { getCityFromPostalCode } from '../../utils/geocoding';
 
 type EditProfileProps = {
   navigation: any;
@@ -721,6 +721,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
       const createPayload = {
         email: finalEmail,
+        email_type: 'personal',
       };
 
       const res = await fetch(url, {
@@ -764,6 +765,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
       const createPayload = {
         email: finalEmail,
+        email_type: 'university',
       };
 
       const res = await fetch(url, {
