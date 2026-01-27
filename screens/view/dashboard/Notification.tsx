@@ -162,6 +162,8 @@ const Notification = ({ navigation }: NotificationProps) => {
       const pagesize = 10;
       let url = `${MAIN_URL.baseUrl}user/mynotification?page=${pageNum}&pagesize=${pagesize}`;
 
+      console.log(url)
+
 
 
       const token = await AsyncStorage.getItem('userToken');
@@ -352,6 +354,7 @@ const Notification = ({ navigation }: NotificationProps) => {
           typename={featureTitle}
           templateName={templateName}
           categoryid={category_id}
+          user_id={item.user_id}
         />
       </View>
     );

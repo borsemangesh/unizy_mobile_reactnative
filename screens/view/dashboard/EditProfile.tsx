@@ -764,8 +764,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       const url = MAIN_URL.baseUrl + 'user/update-email';
 
       const createPayload = {
-        email: finalEmail,
-        email_type: 'university',
+        student_email: finalEmail,
+        //email_type: 'university',
       };
 
       const res = await fetch(url, {

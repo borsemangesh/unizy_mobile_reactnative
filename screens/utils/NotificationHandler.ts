@@ -117,12 +117,14 @@ export const handleNotification = async (
           category_id: notificationData?.category_id,
           id: featureId,
           purchase: false,
+          seller_id: notificationData?.seller_id || 64
         });
       } else {
         navigate('ReviewDetails', {
           category_id: notificationData?.category_id,
           id: featureId,
           purchase: false,
+          seller_id: notificationData?.seller_id || 64
         });
       }
 

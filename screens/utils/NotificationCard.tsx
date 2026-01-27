@@ -21,6 +21,7 @@ type NotificationCardProps = {
   typename: string;
   templateName?: string;
   categoryid: number
+  user_id:number
 };
 
 const NotificationCard: React.FC<NotificationCardProps> = ({
@@ -31,6 +32,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
   typeid,
   typename,
   categoryid,
+  user_id,
   templateName = '',
 }) => {
   const fullStar = require('../../assets/images/starfill.png'); 
@@ -75,13 +77,15 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
         navigation.navigate('ReviewDetails', {
           catagory_id: categoryid,
           id: typeid,
-          purchase: false
+          purchase: false,
+          seller_id: user_id ?? 1,
         });
       } else {
         navigation.navigate('ReviewDetails', {
           catagory_id: categoryid,
           id: typeid,
-          purchase: false
+          purchase: false,
+          seller_id: user_id ?? 1,
         });
       }
     }
