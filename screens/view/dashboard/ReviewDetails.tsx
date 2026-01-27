@@ -44,7 +44,7 @@ type ReviewDetailsProps = {
 };
 
 type RootStackParamList = {
-  ReviewDetails: { category_id: number; id: number; purchase: boolean };
+  ReviewDetails: { seller_id: number,category_id: number; id: number; purchase: boolean };
 };
 
 type ReviewDetailsRouteProp = RouteProp<RootStackParamList, 'ReviewDetails'>;
@@ -61,6 +61,8 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
   const [totalReviews, setTotalReviews] = useState(0);
   const [averageRating, setAverageRating] = useState(0);
   const { height } = Dimensions.get('window');
+
+  const seller_id = route.params?.seller_id || 64;
 
   const scrollY = useSharedValue(0);
 
@@ -181,11 +183,17 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
       //const url1 = `${MAIN_URL.baseUrl}category/users/10/reviews`;
       let url1 = '';
 
+      // if (selectedCategory?.id === null) {
+      //   url1 = `${MAIN_URL.baseUrl}category/users/reviews`;
+      // } else {
+      //   url1 = `${MAIN_URL.baseUrl}category/users/reviews/${selectedCategory.id}`;
+      // }
       if (selectedCategory?.id === null) {
-        url1 = `${MAIN_URL.baseUrl}category/users/reviews`;
+        url1 = `${MAIN_URL.baseUrl}category/users/reviews/${seller_id}`;
       } else {
         url1 = `${MAIN_URL.baseUrl}category/users/reviews/${selectedCategory.id}`;
       }
+      if (seller_id) url1 += `?seller_id=${seller_id}`
       console.log(url1)
 
 
@@ -667,6 +675,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
+    paddingHorizontal: 16,
+    paddingBottom: 18
     // height: '100%',
   },
 

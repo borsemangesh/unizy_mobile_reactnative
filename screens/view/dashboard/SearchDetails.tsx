@@ -1094,6 +1094,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                             category_id: detail?.category_id,
                             id: detail?.id,
                             purchase: detail?.ispurchased,
+                            seller_id: detail?.createdby?.id ?? 1,
                           });
                         }}
                         style={{
