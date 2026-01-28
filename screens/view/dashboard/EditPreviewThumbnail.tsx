@@ -100,7 +100,7 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
 
   const animatedBlurStyle = useAnimatedStyle(() => {
     'worklet';
-    const opacity = interpolate(scrollY.value, [0, 900], [0, 1], 'clamp');
+    const opacity = interpolate(scrollY.value, [0, 14], [0, 1], 'clamp');
     return { opacity };
   });
 
@@ -108,15 +108,16 @@ const EditPreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
     'worklet';
     const borderColor = interpolateColor(
       scrollY.value,
-      [0, 900],
-      ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
+      [0, 14],
+      ['rgba(255, 255, 255, 0.02)', 'rgba(255, 255, 255, 0.56)'],
     );
-    const redOpacity = interpolate(scrollY.value, [0, 100], [0, 0.15], 'clamp');
+    const redOpacity = interpolate(scrollY.value, [0, 2], [0, 0.05], 'clamp');
     return {
       borderColor,
       backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
     };
   });
+
 
   const animatedIconStyle = useAnimatedStyle(() => {
     'worklet';

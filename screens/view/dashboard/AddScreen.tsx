@@ -1608,8 +1608,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 // onScroll={scrollHandler}
                 contentContainerStyle={[
                   styles.scrollContainer,
-                  { paddingBottom: Platform.OS === 'ios' ? height * 0.1 : height * 0.1 }, // 0.05% of screen height
-                  { paddingBottom: Platform.OS === 'ios' ? height * 0.1 : height * 0.1 }, // 0.05% of screen height
+                  { paddingBottom: Platform.OS === 'ios' ? height * 0.11 : height * 0.11 }, // 0.05% of screen height
+                  { paddingBottom: Platform.OS === 'ios' ? height * 0.11 : height * 0.11 }, // 0.05% of screen height
                 ]}>
                 {/* <AnimatedReanimated.ScrollView
                 scrollEventThrottle={16}

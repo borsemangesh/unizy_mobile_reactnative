@@ -2749,7 +2749,7 @@ PODS:
     - Yoga
   - RNDeviceInfo (15.0.1):
     - React-Core
-  - RNFBApp (23.8.3):
+  - RNFBApp (23.8.4):
     - boost
     - DoubleConversion
     - fast_float
@@ -2778,7 +2778,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - RNFBCrashlytics (23.8.3):
+  - RNFBCrashlytics (23.8.4):
     - boost
     - DoubleConversion
     - fast_float
@@ -2809,7 +2809,7 @@ PODS:
     - RNFBApp
     - SocketRocket
     - Yoga
-  - RNFBMessaging (23.8.3):
+  - RNFBMessaging (23.8.4):
     - boost
     - DoubleConversion
     - fast_float
@@ -3794,9 +3794,9 @@ SPEC CHECKSUMS:
   RNCPicker: bf95ec4b2483e2ab256047130bc536b437cd916c
   RNDateTimePicker: 97a86d7c8b51f2d51f694a9dddfe5996dfd9a407
   RNDeviceInfo: 36d7f232bfe7c9b5c494cb7793230424ed32c388
-  RNFBApp: b094e527070715680bf25d019ac853d1f22d92df
-  RNFBCrashlytics: 9855f0e35a60e5c062132a59b790275f54ce5008
-  RNFBMessaging: 853b4e8f0a07240e25fea4acc53b600967925b8a
+  RNFBApp: 155b1db3b49c9a73d24b310a68d027beab145b33
+  RNFBCrashlytics: c32e219510f458e57c3df89d8714934baa069d1a
+  RNFBMessaging: 3fdbd083af3f8da15bff1261b19e170882017171
   RNGestureHandler: e37bdb684df1ac17c7e1d8f71a3311b2793c186b
   RNLocalize: 23e6689ec46c6cba49eb8cde959e30e49160a35b
   RNNotifee: 5e3b271e8ea7456a36eec994085543c9adca9168
