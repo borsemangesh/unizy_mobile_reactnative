@@ -2016,12 +2016,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               />
 
               <View style={styles.popupContainer}>
-
-                {/* <Image
-                  source={require('../../../assets/images/alerticon.png')}
-                  style={styles.logo}
-                  resizeMode="contain"
-                /> */}
                 <Text allowFontScaling={false} style={styles.popupMainHeader}>
                   {popupData.title}
                 </Text>
