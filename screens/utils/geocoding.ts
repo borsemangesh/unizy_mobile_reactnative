@@ -1,12 +1,13 @@
 import { Platform } from 'react-native';
-// import {
-//   GOOGLE_GEOCODING_KEY_ANDROID,
-//   GOOGLE_GEOCODING_KEY_IOS,
-// } from '@env';
+import {
+  GOOGLE_GEOCODING_KEY_ANDROID,
+  GOOGLE_GEOCODING_KEY_IOS,
+} from '@env';
+
 
 const GOOGLE_API_KEY = Platform.select({
-  android: 'AIzaSyC8EP_Qz96rPsFOEraE574LN_udW07lcDI',
-  ios: 'AIzaSyCJrwxlJNYilNOESwOSQjLTK74b42ch8z0',
+  android: GOOGLE_GEOCODING_KEY_ANDROID,
+  ios: GOOGLE_GEOCODING_KEY_IOS,
 });
 
 /**
