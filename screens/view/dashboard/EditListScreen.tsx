@@ -99,6 +99,11 @@ const [accommodation_amount, setaccommodation_amount] = useState(0);
   );
   const [tempDate, setTempDate] = useState<Date>(new Date());
 
+  const [showpopup, setshowpopup] = useState(false);
+   const [popupData, setPopupData] = useState({
+      title: '',
+      message: '',
+    });
   const scrollRef = useAnimatedRef<any>();
   const scrollY = useScrollViewOffset(scrollRef);
 
@@ -1132,37 +1137,99 @@ const [accommodation_amount, setaccommodation_amount] = useState(0);
             rnKeyboardType = 'default';
         }
 
-        return (
-          <View key={field.id} style={styles.productTextView}>
-            {renderLabel(field_name, field.mandatory)}
-            <TextInput
-              allowFontScaling={false}
-              style={[
-                styles.personalEmailID_TextInput,
-                styles.login_container,
-                {
-                  textAlignVertical: 'center',
-                  paddingVertical: 0,
-                },
-              ]}
-              placeholder={placeholderText}
-              multiline={false}
-              cursorColor="#fff"
-              selectionColor="#FFFFFF"
-              placeholderTextColor="rgba(255, 255, 255, 0.48)"
-              keyboardType={rnKeyboardType}
-              value={isPriceField ? `£ ${finalValue}` : finalValue}
-              onChangeText={text => {
-                if (isPriceField) {
-                  const cleaned = text.replace(/£\s?/g, '');
-                  handleValueChange(param.id, alias_name, cleaned);
-                } else {
-                  handleValueChange(param.id, alias_name, text);
-                }
-              }}
-            />
-          </View>
-        );
+        // return (
+        //   <View key={field.id} style={styles.productTextView}>
+        //     {renderLabel(field_name, field.mandatory)}
+        //     <TextInput
+        //       allowFontScaling={false}
+        //       style={[
+        //         styles.personalEmailID_TextInput,
+        //         styles.login_container,
+        //         {
+        //           textAlignVertical: 'center',
+        //           paddingVertical: 0,
+        //         },
+        //       ]}
+        //       placeholder={placeholderText}
+        //       multiline={false}
+        //       cursorColor="#fff"
+        //       selectionColor="#FFFFFF"
+        //       placeholderTextColor="rgba(255, 255, 255, 0.48)"
+        //       keyboardType={rnKeyboardType}
+        //       value={isPriceField ? `£ ${finalValue}` : finalValue}
+        //       onChangeText={text => {
+        //         if (isPriceField) {
+        //           const cleaned = text.replace(/£\s?/g, '');
+        //           handleValueChange(param.id, alias_name, cleaned);
+        //         } else {
+        //           handleValueChange(param.id, alias_name, text);
+        //         }
+        //       }}
+        //     />
+        //   </View>
+        // );
+      
+       return (
+                <View key={field.id} style={styles.productTextView}>
+                  {renderLabel(field_name, field.mandatory)}
+      
+                  <View style={styles.inputWrapper}>
+                    <TextInput
+                      allowFontScaling={false}
+                      style={[
+                        styles.personalEmailID_TextInput,
+                        styles.login_container,
+                        styles.inputWithIcon, // padding for icon space
+                        {
+                          height: 44,
+                          textAlignVertical: 'center',
+                          paddingVertical: 0,
+                        },
+                      ]}
+                      placeholder={placeholderText}
+                      multiline={false}
+                      placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                      keyboardType={rnKeyboardType}
+                      selectionColor={'#FFFFFF'}
+                      cursorColor="#FFFFFF"
+                      value={isPriceField && rawValue ? `£ ${rawValue}` : rawValue}
+                      onChangeText={text => {
+                        let value = text;
+      
+                        if (alias_name?.toLowerCase() === 'quantity') {
+                          if (value === '0') return;
+                        }
+      
+                        if (isPriceField) {
+                          const cleaned = text.replace(/£\s?/g, '');
+                          handleValueChange(param.id, alias_name, cleaned);
+                        } else {
+                          handleValueChange(param.id, alias_name, text);
+                        }
+                      }}
+                    />
+      
+                    {field?.info_icon && (
+                      <TouchableOpacity
+                        style={styles.iconWrapper}
+                        activeOpacity={0.7}
+                        onPress={() => {
+                          setPopupData({
+                            title: field_name,
+                            message: field?.info_text || '',
+                          });
+                          setshowpopup(true);
+                        }}
+                      >
+                        <Image
+                          source={require('../../../assets/images/info_icon.png')}
+                          style={styles.infoIcon}
+                        />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                </View>
+              );
       }
 
       case 'multi-line-text': {
@@ -2081,6 +2148,59 @@ const [accommodation_amount, setaccommodation_amount] = useState(0);
       )}
 
 
+        <Modal
+              visible={showpopup}
+              transparent
+              animationType="fade"
+              onRequestClose={() => setshowpopup(false)}
+            >
+              <TouchableWithoutFeedback onPress={() => setshowpopup(false)}>
+                <View style={styles.overlay}>
+                  <BlurView
+                    style={{
+                      flex: 1,
+                      alignContent: 'center',
+                      justifyContent: 'center',
+                      width: '100%',
+                      alignItems: 'center',
+                    }}
+                    blurType="light"
+                    blurAmount={10}
+                    reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+                  >
+                    <View
+                      style={[
+                        StyleSheet.absoluteFill,
+                        { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                      ]}
+                    />
+      
+                    <View style={styles.popupContainer}>
+                      <Text allowFontScaling={false} style={styles.popupMainHeader}>
+                        {popupData.title}
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.popupSubHeader}>
+                        {popupData.message}
+                      </Text>
+      
+                      <TouchableOpacity
+                        style={styles.loginButton}
+                        onPress={() => {
+                          setshowpopup(false);
+                        }}
+                      >
+                        <Text allowFontScaling={false} style={styles.loginText}>
+                          {t('close')}
+                        </Text>
+                      </TouchableOpacity>
+      
+                    </View>
+                  </BlurView>
+                </View>
+              </TouchableWithoutFeedback>
+            </Modal>
+
+
       <Modal
         visible={showThumnail}
         transparent={true}
@@ -2250,6 +2370,117 @@ export default EditListScreen;
 const styles = StyleSheet.create({
 
   
+   inputWrapper: {
+  position: 'relative',
+  justifyContent: 'center',
+},
+
+inputWithIcon: {
+  paddingRight: 40, // space for icon inside input
+},
+
+iconWrapper: {
+  position: 'absolute',
+  right: 12,
+  height: '100%',
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+
+infoIcon: {
+  width: 24,
+  height: 24,
+},
+
+
+  labelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
+
+  //  popupContainer: {
+  //   width: '85%',
+  //   padding: 20,
+  //   borderRadius: 24,
+  //   borderWidth: 1,
+  //   borderColor: 'rgba(255, 255, 255, 0.1)',
+  //   alignItems: 'center',
+  //   overflow: 'hidden',
+  //   backgroundColor: 'rgba(255, 255, 255, 0.04)',
+  // },
+  popupLogo: {
+    width: 64,
+    height: 64,
+    marginBottom: 20,
+  },
+  popupMainHeader: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 20,
+    fontWeight: '600',
+    letterSpacing: -0.4,
+    lineHeight: 28,
+    textAlign: 'center',
+  },
+  popupSubHeader: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginTop: 6,
+  },
+  popupButton: {
+    display: 'flex',
+    width: '100%',
+    height: 55,
+    maxHeight: 55,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 100,
+    paddingTop: 6,
+    paddingBottom: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.56)',
+    marginTop: 20,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+  },
+  popupButtonText: {
+    color: '#002050',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: 500,
+    letterSpacing: 1,
+    width: '100%',
+  },
+  popupButtonCancel: {
+    display: 'flex',
+    width: '100%',
+    height: 52,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 100,
+    paddingTop: 6,
+    paddingBottom: 6,
+    backgroundColor: 'rgba(170, 169, 176, 0.56)',
+    marginTop: 8,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+  },
+  popupButtonTextCancel: {
+    color: '#FFFFFF7A',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: 500,
+    letterSpacing: 1,
+    width: '100%',
+  },
     categoryTagContainer: {
     flexDirection: 'row',
     alignItems: 'center',
