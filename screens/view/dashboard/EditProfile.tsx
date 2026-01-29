@@ -1538,33 +1538,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
               </View>
             </View>
 
-            <TouchableOpacity
-              style={{
-                opacity:0,
-                top: 16,
-                marginBottom: 16,
-                height: 48,
-                borderRadius: 30,
-                backgroundColor: 'rgba(255,255,255,0.12)',
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderColor: '#ffffff22',
-              }}
-              onPress={() => navigation.navigate('ChangePassword')}
-            >
-              <Text
-                allowFontScaling={false}
-                style={{
-                  color: '#FFFFFF7A',
-                  fontSize: 17,
-                  fontWeight: '500',
-                  fontFamily: 'Urbanist-Medium',
-                }}
-              >
-                {t('change_password')}
-              </Text>
-            </TouchableOpacity>
-            
+           
           </AnimatedReanimated.ScrollView>
         </KeyboardAvoidingView>
 
