@@ -1123,7 +1123,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
 
     if (!universityDomains.includes(domain)) {
-      showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
+      showToast(t(Constant.VALID_UNIVERSITY_EMAIL_ADDRESS), 'error');
       return;
     }
 

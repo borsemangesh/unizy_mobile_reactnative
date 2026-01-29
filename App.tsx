@@ -12,6 +12,8 @@ import { handleNotification, navigationReady } from "./screens/utils/Notificatio
 import { initI18n } from "./localization/i18n";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { incrementBadge } from "./screens/utils/BadgeManager";
+import { decrementBadge, resetBadge } from "./screens/utils/badgeHelper";
 
 function App() {
   LogBox.ignoreAllLogs();
@@ -41,6 +43,7 @@ function App() {
       setReady(true);
     };
     initialize();
+    resetBadge();
   }, []);
 
 
@@ -160,6 +163,8 @@ function App() {
                 sound: 'default',
               };
             }
+
+            await incrementBadge();
             await notifee.displayNotification(notificationConfig);
           } catch (error) {
             console.error("❌ Error displaying notification:", error);
@@ -182,7 +187,7 @@ function App() {
               console.warn('⚠️ Error checking login status:', err);
               return;
             }
-
+            await decrementBadge(); 
             const notificationData = detail.notification?.data;
             handleNotification(notificationData, false);
           }
@@ -191,6 +196,8 @@ function App() {
         // 🔔 Handle notification when app is opened from closed/background state
         // This handles when user taps notification while app is closed
         messaging().getInitialNotification().then(async (remoteMessage) => {
+          await decrementBadge();
+
           if (remoteMessage) {
 
 

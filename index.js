@@ -11,6 +11,9 @@ import { navigate } from './screens/view/NavigationService';
 import { handleNotification } from './screens/utils/NotificationHandler';
 import { setupCrashlytics } from "./screens/utils/crashalaytics/setupCrashlytics";
 
+import { incrementBadge } from './screens/utils/badgeHelper';
+import { decrementBadge } from './screens/utils/badgeHelper';
+
 
 setupCrashlytics();
 // 1️⃣ Background FCM handler
@@ -49,6 +52,7 @@ if (isFCMAutoNotification) {
   return;
 }
 
+  await incrementBadge();
   await notifee.displayNotification({
     title,
     body,
@@ -66,7 +70,7 @@ if (isFCMAutoNotification) {
 
 notifee.onBackgroundEvent(async ({ type, detail }) => {
   if (type === EventType.PRESS) {
-
+    await decrementBadge();
     // 🔒 SECURITY: Check if user is logged in before handling notification tap
     const AsyncStorage = require('@react-native-async-storage/async-storage').default;
     try {
