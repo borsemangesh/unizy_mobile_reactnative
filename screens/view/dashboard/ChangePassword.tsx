@@ -43,6 +43,11 @@ import {
 } from 'react-native-permissions';
 import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
+import { resetTwilioClient } from '../../view/emoji/twilioService';
+import { clearTwilioCache } from '../dashboard/MessageIndividualScreen';
+
+import DeviceInfo from 'react-native-device-info';
+import Loader from '../../utils/component/Loader';
 
 type changePasswordProps = {
   navigation: any;
@@ -68,6 +73,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
   const { t } = useTranslation();
 
   const scrollY = useSharedValue(0);
+  const [loading, setLoading] = useState(false);
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: event => {
@@ -194,14 +200,101 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
   };
 
   const handleForceLogout = async () => {
+    setShowDeleteModal(false);
+    try {
+      setLoading(true)
+      const deviceId = await DeviceInfo.getUniqueId();
+      const user_id = await AsyncStorage.getItem('userId');
 
-    // setLoading(false);
-    await AsyncStorage.clear();
-    navigation.reset({
+      const body = {
+        device_type: (Platform.OS === 'ios') ? 'ios' : 'android',
+        device_id: deviceId,
+        user_id: Number(user_id),
+      };
+
+      const response = await fetch(`${MAIN_URL.baseUrl}user/delete-fcm-token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+
+      const apiData = await response.json();
+
+
+
+      if (apiData?.statusCode === 200) {
+        await AsyncStorage.setItem('userToken', '');
+        await AsyncStorage.setItem('userData', '');
+        await AsyncStorage.setItem('userId', '');
+        await AsyncStorage.setItem('twilio_convo_', '');
+        await AsyncStorage.setItem('twilio_msg_', '');
+
+        try {
+          await resetTwilioClient();
+          await clearTwilioCache();
+          try {
+            const messaging = require('@react-native-firebase/messaging').default;
+            await messaging().deleteToken();
+            if (__DEV__) {
+
+            }
+          } catch (fcmError) {
+            console.warn('⚠️ Error deleting FCM token:', fcmError);
+          }
+
+          if (__DEV__) {
+
+          }
+        } catch (clearError) {
+          console.warn('⚠️ Error clearing Twilio data on logout:', clearError);
+        }
+
+        await AsyncStorage.setItem('ISLOGIN', 'false');
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'SinglePage',
+              params: {
+                forgotPassword: true,
+                resetToLogin: false,
+                currentScreen: 'login',
+                currentScreenIninner: 'forgotpassword',
+              },
+            },
+          ],
+        });
+        setShowConfirm(false);
+        // logoutCleanup();
+      } else {
+        showToast(t(Constant.LOGOUT_FAIL), 'error');
+      }
+      navigation.reset({
       index: 0,
       routes: [{ name: 'SinglePage', params: { forgotPassword: true, resetToLogin: false, currentScreen: 'login', currentScreenIninner: 'forgotpassword' } }],
     });
+    } catch (error) {
+      console.log("Something went wrong. Try again!");
+    }
+    finally {
+      setLoading(false);
+    }
+    // await AsyncStorage.clear();
+    // navigation.reset({
+    //   index: 0,
+    //   routes: [{ name: 'SinglePage', params: { forgotPassword: true, resetToLogin: false, currentScreen: 'login', currentScreenIninner: 'forgotpassword' } }],
+    // });
   };
+
+  // if (loading) {
+  //   return (
+  //     <View style={{ flex: 1 }}>
+  //       <Loader />
+  //     </View>
+  //   );
+  // }
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -601,7 +694,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
 
                 <TouchableOpacity
                   style={styles.loginButton}
-                  onPress={async () => {
+                  onPress={ () => {
                     handleForceLogout();
                   }}
                 >
@@ -625,7 +718,11 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
-
+      {loading && (
+          <View style={styles.fullLoader}>
+            <Loader />
+          </View>
+        )}
       <NewCustomToastContainer />
     </ImageBackground>
   );
@@ -633,6 +730,17 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
 export default ChangePassword;
 
 const styles = StyleSheet.create({
+  fullLoader: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    height: "100%",
+    width: "100%",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999,  
+  },
   blurButtonWrapper_none: {
 
     width: 48,
