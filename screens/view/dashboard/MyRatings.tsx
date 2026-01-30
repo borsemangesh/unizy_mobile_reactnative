@@ -38,6 +38,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
+import { useRoute } from '@react-navigation/native';
 
 type CreatedBy = {
   id: number;
@@ -92,6 +93,7 @@ type MyRatingsProps = {
 
 
 const MyRatings = ({ navigation }: MyRatingsProps) => {
+  const route = useRoute();
   const [featurelist, setFeaturelist] = useState<Feature[]>([]);
   const [search, setSearch] = useState<string>('');
   const [page, setPage] = useState(1);
@@ -105,6 +107,8 @@ const MyRatings = ({ navigation }: MyRatingsProps) => {
   const { t } = useTranslation();
   const { height } = Dimensions.get('window');
   const isEmpty = featurelist.length === 0;
+  const { shareid = 0 } = (route.params as { shareid?: number }) || {};
+  
 
   type Category = {
     id: number | null;

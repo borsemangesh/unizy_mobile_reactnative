@@ -26,6 +26,7 @@ type MyListingCardProps = {
   profilePhoto?: string | null;
   firstName?: string | null;
   lastName?: string | null;
+  reviews?: string| null;
 };
 
 const MyListingCard: React.FC<MyListingCardProps> = ({
@@ -45,6 +46,7 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
   profilePhoto = null,
   firstName = null,
   lastName = null,
+  reviews = null,
 }) => {
   const isProfileCategory = catagory_id === 2 || catagory_id === 5;
   const { t } = useTranslation();
@@ -65,6 +67,7 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
           shareid,
           catagory_id,
           catagory_name,
+          reviews,
           key: String(Math.random()),
         });
       }}
@@ -164,6 +167,39 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
             <Text allowFontScaling={false} style={styles.tag} numberOfLines={2}>
               {tag}
             </Text>
+            <View style={styles.statusContainer}>
+                <View
+                  style={[
+                    styles.topRightBadge,
+                    {
+                      backgroundColor: isactive
+                        ? 'rgba(97, 179, 255, 0.2)'
+                        : 'rgba(134, 140, 213, 0.2)',
+                    },
+                  ]}
+                >
+                  <Image
+                      source={require('../../assets/images/staricon.png')}
+                      style={{
+                        width: 10,
+                        height: 10,
+                        marginRight: 4,
+                        tintColor: 'rgba(140, 225, 255, 0.9)',
+                      }}
+                    />
+                  <Text
+                    allowFontScaling={false}
+                    style={[
+                      styles.topRightText,
+                      {
+                        color: '#b4e6ff' ,
+                      },
+                    ]}
+                  >
+                    {reviews}
+                  </Text>
+                </View>
+            </View>
           </View>
         </View>
       </View>
@@ -246,7 +282,7 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.7)',
     fontWeight: '500',
     fontFamily: 'Urbanist-Medium',
-    maxWidth: '88%'
+    maxWidth: '80%',
 
   },
   ratingWrap: {
@@ -272,12 +308,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'flex-start',
     marginTop: 0,
+    flexDirection: 'row'
   },
 
   topRightText: {
     color: '#fff',
     fontSize: 11,
-    fontWeight: '500',
+    fontWeight: '600',
     fontFamily: 'Urbanist-Medium',
   },
   featureBadge: {

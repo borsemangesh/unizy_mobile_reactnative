@@ -737,7 +737,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                 ]}
               />
 
-              <View style={styles.popupContainer}>
+              <View style={styles.popupContainer1}>
                 <Image
                   source={require('../../../assets/images/profile_delete.png')}
                   style={styles.logo}
@@ -882,7 +882,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={styles.loginButton1}
+                  style={[styles.loginButton1,{marginTop: Platform.OS === 'ios'? 10: 0}]}
                   onPress={() => setShowConfirm1(false)}
                 >
                   <Text allowFontScaling={false} style={styles.loginText1}>
@@ -931,7 +931,7 @@ const styles = StyleSheet.create({
 
     borderWidth: 0.6,
     borderColor: '#ffffff2c',
-    marginTop: (Platform.OS === 'ios' ? 0 : 12),
+    marginTop: (Platform.OS === 'ios' ? 12 : 12),
   },
   password_TextInput: {
     width: '88%',
@@ -946,12 +946,22 @@ const styles = StyleSheet.create({
   logo: {
     width: 64,
     height: 64,
-    marginBottom: 20,
+    marginBottom: 0,
   },
 
   popupContainer: {
     width: '85%',
     padding: 20,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'center',
+    overflow: 'hidden',
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+  },
+  popupContainer1: {
+    width: '85%',
+    padding: 16,
     borderRadius: 24,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.1)',
@@ -1008,7 +1018,7 @@ const styles = StyleSheet.create({
     paddingTop: 6,
     paddingBottom: 6,
     backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    marginTop: 20,
+    marginTop: 12,
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
   },

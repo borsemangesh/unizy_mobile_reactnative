@@ -832,11 +832,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-Medium',
   },
   innercontainer: {
-    paddingHorizontal: 16,
-    // marginBottom: 8,
+    paddingHorizontal: 24,
+    marginBottom: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '95%',
+    width: '100%',
   },
   payText: {
     color: '#002050',

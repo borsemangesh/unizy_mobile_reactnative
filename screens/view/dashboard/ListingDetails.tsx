@@ -60,6 +60,8 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
   //const { shareid } = route.params as { shareid: number };
   const { shareid = 1 } = (route.params as { shareid?: number }) || {};
   const { catagory_id = 0 } = (route.params as { catagory_id?: number }) || {};
+  const { reviews = '' } = (route.params as { reviews?: string }) || '4.5';
+  
   const { catagory_name = '' } =
     (route.params as { catagory_name?: string }) || {};
 
@@ -408,13 +410,82 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
           </Text>
           <TouchableOpacity
             onPress={() => {
-              // navigation.goBack();
+              navigation.navigate('MyRatings',{
+                shareid
+              });
             }}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
             <AnimatedReanimated.View
-              style={[styles.blurButtonWrapper_none]}
+              style={[styles.blurButtonWrapper, animatedButtonStyle]}
+            >
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 30],
+                      [1, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 40,
+                  })),
+                ]}
+              />
+
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 50],
+                      [0, 1],
+                      'clamp',
+                    ),
+                  })),
+                ]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
+                />
+              </AnimatedReanimated.View>
+
+              {/* Back Icon */}
+              <AnimatedReanimated.Image
+                source={require('../../../assets/images/staricon.png')}
+                style={[{
+                  width: 10,
+                  height: 10,
+                  tintColor: 'rgba(140, 225, 255, 0.9)', }, animatedIconStyle]}
+              />
+              <Text
+                    allowFontScaling={false}
+                    style={[
+                      styles.topRightText,
+                      {
+                        color: '#b4e6ff' ,
+                      },
+                    ]}
+                  >
+                  {reviews}
+                  </Text>
+            </AnimatedReanimated.View>
+          </TouchableOpacity>
+          {/* <TouchableOpacity
+            onPress={() => {
+            }}
+            style={styles.backButtonContainer}
+            activeOpacity={0.7}
+          >
+            <AnimatedReanimated.View
+             style={[styles.blurButtonWrapper, animatedButtonStyle]}
             >
               <AnimatedReanimated.View
                 style={[
@@ -453,13 +524,12 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                 />
               </AnimatedReanimated.View>
 
-              {/* Back Icon */}
               <AnimatedReanimated.Image
                 source={require('../../../assets/images/back.png')}
                 style={[{ height: 24, width: 24, display: 'none' }]}
               />
             </AnimatedReanimated.View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         <AnimatedReanimated.ScrollView
@@ -1263,6 +1333,13 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 };
 
 const styles = StyleSheet.create({
+  topRightText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '600',
+    fontFamily: 'Urbanist-Medium',
+    marginTop: 2,
+  },
 
   reportButtonCard: {
     flexDirection: 'row',

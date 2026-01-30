@@ -334,6 +334,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
             profilePhoto={item.createdby?.profile || null}
             firstName={item.createdby?.firstname || null}
             lastName={item.createdby?.lastname || null}
+            reviews={'4.5'}
           />
         </View>
       );
