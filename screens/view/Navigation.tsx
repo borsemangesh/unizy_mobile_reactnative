@@ -45,6 +45,7 @@ import ReportProduct from './dashboard/ReportProduct';
 import SellerInfo from './dashboard/SellerInfo';
 import BuyerInfo from './dashboard/BuyerInfo';
 import OnboardingScreen from './onboarding/OnboardingScreen';
+import MyRatings from './dashboard/MyRatings';
 
 const Stack = createNativeStackNavigator();
 
@@ -250,6 +251,14 @@ export const Navigation = () => {
         <Stack.Screen
           name="MyReviews"
           component={MyReviews}
+          options={{
+            headerShown: false,
+            presentation: 'fullScreenModal',
+          }}
+        />
+         <Stack.Screen
+          name="MyRatings"
+          component={MyRatings}
           options={{
             headerShown: false,
             presentation: 'fullScreenModal',
