@@ -43,6 +43,7 @@ import i18n from '../../../localization/i18n';
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 type Feature = {
+  avg_rating: string | null | undefined;
   id: number;
   created_by: number;
   category_id: number;
@@ -334,7 +335,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
             profilePhoto={item.createdby?.profile || null}
             firstName={item.createdby?.firstname || null}
             lastName={item.createdby?.lastname || null}
-            reviews={'4.5'}
+            reviews={item.avg_rating}
           />
         </View>
       );
