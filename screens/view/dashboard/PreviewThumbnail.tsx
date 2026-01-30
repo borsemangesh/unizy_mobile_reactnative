@@ -812,10 +812,10 @@ return (
                       {' '}
                       {Math.trunc(commission)}%
                     </Text>{' '}
-                    {t('commission_or_maximum')}
+                    {t('commission_or_maximum')}{' '}
                     <Text allowFontScaling={false} style={styles.importantText}>(</Text>
                     <Text allowFontScaling={false} style={styles.importantText}>
-                      {' '}{t('capped')}{' '}
+                      {t('capped')}{' '}
                     </Text>
                     <Text allowFontScaling={false} style={styles.importantText1}>
                       £{Math.trunc(maxCapPound)}
