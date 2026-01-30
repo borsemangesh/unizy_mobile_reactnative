@@ -417,13 +417,19 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
     }
 
     return (
+      // <View
+      //   style={[
+      //     styles.itemContainer,
+      //     {
+      //       flex: isLastOddItem ? 0.5 : 0.5,
+      //       marginRight: isLastOddItem ? 0.5 : 0.5,
+      //     },
+      //   ]}
+      // >
       <View
         style={[
           styles.itemContainer,
-          {
-            flex: isLastOddItem ? 0.5 : 0.5,
-            marginRight: isLastOddItem ? 0.5 : 0.5,
-          },
+          { flex: isLastOddItem ? 0.5 : 0.5, marginRight: isLastOddItem ? 0.5 : 0.5 },
         ]}
       >
         <TouchableOpacity
@@ -1030,9 +1036,11 @@ const styles = StyleSheet.create({
   row1: {
   },
   itemContainer: {
-    flex: 1,
-    marginHorizontal: 4,
-    paddingBottom: 10,
-    paddingHorizontal: 16
+    // flex: 1,
+    // marginHorizontal: 4,
+    paddingBottom: 8,
+    paddingLeft: 16,
+    // paddingHorizontal: 16
+    marginTop: 12
   },
 });
