@@ -462,38 +462,79 @@ const styles = StyleSheet.create({
     bottom: 10,
   },
 
+  // tabcard: {
+  //   paddingVertical: 8,
+  //   paddingHorizontal: 16,
+  //   marginRight: 8,
+  //   borderWidth: 0.4,
+  //   borderColor: '#ffffff11',
+
+  //   boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
+  //   backgroundColor:
+  //     'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
+
+  //   borderEndEndRadius: 10,
+  //   borderStartEndRadius: 10,
+  //   borderTopLeftRadius: 10,
+  //   borderTopRightRadius: 10,
+  //   borderBottomStartRadius: 10,
+  //   borderBlockStartColor: '#ffffff2e',
+  //   borderBlockColor: '#ffffff2e',
+  //   borderTopColor: '#ffffff2e',
+  //   borderBottomColor: '#ffffff2e',
+  //   borderLeftColor: '#ffffff2e',
+  //   borderRightColor: '#ffffff2e',
+  //   boxSizing: 'border-box',
+  // },
+  // tabcard1: {
+  //   borderWidth: 0.4,
+  //   borderColor: '#ffffff11',
+
+  //   boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
+  //   backgroundColor:
+  //     'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
+
+  //   borderEndEndRadius: 10,
+  //   borderStartEndRadius: 10,
+  //   borderTopLeftRadius: 10,
+  //   borderTopRightRadius: 10,
+  //   borderBottomStartRadius: 10,
+  //   borderBlockStartColor: '#ffffff2e',
+  //   borderBlockColor: '#ffffff2e',
+
+  //   borderTopColor: '#ffffff2e',
+  //   borderBottomColor: '#ffffff2e',
+  //   borderLeftColor: '#ffffff2e',
+  //   borderRightColor: '#ffffff2e',
+
+  //   boxSizing: 'border-box',
+  //   paddingVertical: 8,
+  //   paddingHorizontal: 16,
+  //   marginRight: 8,
+  // },
   tabcard: {
-    paddingVertical: 8,
+    minHeight: 38,
+    paddingVertical: 10,
     paddingHorizontal: 16,
     marginRight: 8,
     borderWidth: 0.4,
-    borderColor: '#ffffff11',
-
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
+    borderColor: 'rgba(255, 255, 255, 0)',
     backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-    borderEndEndRadius: 10,
-    borderStartEndRadius: 10,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    borderBottomStartRadius: 10,
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    borderRadius: 10,
     boxSizing: 'border-box',
+    // boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.25)',
+
   },
+  
+  
   tabcard1: {
+    minHeight: 38,
     borderWidth: 0.4,
     borderColor: '#ffffff11',
-
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
+    // backgroundColor:
+    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderEndEndRadius: 10,
     borderStartEndRadius: 10,
     borderTopLeftRadius: 10,
@@ -501,16 +542,15 @@ const styles = StyleSheet.create({
     borderBottomStartRadius: 10,
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
-
     borderTopColor: '#ffffff2e',
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
-
-    boxSizing: 'border-box',
-    paddingVertical: 8,
+   // boxSizing: 'border-box',
+    paddingVertical: 10,
     paddingHorizontal: 16,
     marginRight: 8,
+    //boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
   },
   tabtext: {
     color: '#fff', 

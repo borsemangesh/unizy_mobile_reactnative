@@ -1266,6 +1266,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 <TextInput
                   selectionColor='#fff'
                   cursorColor='#fff'
+                  
                   value={userMeta.lastname || ''}
                   onChangeText={text =>
                     setUserMeta(prev => ({ ...prev, lastname: text }))
@@ -1293,6 +1294,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   <TextInput
                     selectionColor="#fff"
                     cursorColor="#fff"
+                    editable={false}
                     style={{
                       flex: 1,
                       color: '#fff',
@@ -1375,6 +1377,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   <TextInput
                     selectionColor="#fff"
                     cursorColor="#fff"
+                    editable={false}
                     style={{
                       flex: 1,
                       color: '#fff',
@@ -1388,6 +1391,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                       fontWeight: 400,
                     }}
                     allowFontScaling={false}
+
                     value={userMeta.student_email || ''}
                     onChangeText={text => {
                       setUserMeta(prev => ({ ...prev, email: text.trim() }));
