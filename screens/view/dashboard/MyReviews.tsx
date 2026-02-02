@@ -484,14 +484,7 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
           }}
           ListHeaderComponent={
             <View
-            style={[
-              styles.categoryTabsContainer,
-              {
-                marginHorizontal: -30, 
-                paddingHorizontal: 30, 
-                overflow: 'visible',
-              },
-            ]}
+            style={styles.categoryTabsContainer}
             pointerEvents="box-none"
            
           >
@@ -658,7 +651,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
 
-  categoryTabsContainer: { },
+  categoryTabsContainer: { 
+
+    marginHorizontal: -30, 
+    paddingHorizontal: 30, 
+    overflow: 'visible',
+  },
   categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center'
   ,paddingHorizontal: 16,padding: 8},
 //  tabcard: {
@@ -882,6 +880,6 @@ const styles = StyleSheet.create({
   itemContainer: {
     flex: 1,
     marginHorizontal: 4,
-    paddingHorizontal: 16
+    paddingHorizontal: 12
   },
 });

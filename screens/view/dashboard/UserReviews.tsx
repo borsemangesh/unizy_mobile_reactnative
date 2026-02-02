@@ -565,6 +565,8 @@ const UserReviews = ({ navigation }: UserReviewsProps) => {
         <Animated.FlatList
           data={featureList}
           renderItem={renderItem}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
           keyExtractor={(item, index) => {
             'worklet';
             return index.toString();
@@ -621,10 +623,6 @@ const UserReviews = ({ navigation }: UserReviewsProps) => {
               </ScrollView>
             </View>
           }
-          // contentContainerStyle={[
-          //   styles.listContainer,
-          //   { paddingTop: Platform.OS === 'ios' ? 125 : 100, flexGrow: 1 },
-          // ]}
           contentContainerStyle={[
             styles.listContainer,
             {
@@ -632,7 +630,7 @@ const UserReviews = ({ navigation }: UserReviewsProps) => {
               paddingBottom: isEmpty
                 ? 10                      
                 : Platform.select({
-                  ios: screenHeight * 0.01,   // ⬅ apply padding when list has data
+                  ios: screenHeight * 0.01,
                   android: screenHeight * 0.04,
                 }),
               flexGrow: 0.97,
@@ -743,11 +741,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    // borderWidth: 0.4,
-    // borderColor: '#ffffff2c',
-    // backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
-
-
     borderWidth: 0.3,
     borderColor: '#ffffff11',
 

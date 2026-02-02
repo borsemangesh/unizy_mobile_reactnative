@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    // paddingBottom: 6
+    paddingBottom: 4
   },
   image: {
     width: 70,
