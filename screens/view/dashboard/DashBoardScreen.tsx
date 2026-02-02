@@ -1212,7 +1212,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                     top: 0,
                     left: 0,
                     right: 0,
-                    height: Platform.OS === 'ios' ? 120 : 120,
+                    height: Platform.OS === 'ios' ? 150 : 120,
                     zIndex: 0,
                   },
                   animatedBlurStyle,
