@@ -5,16 +5,12 @@ import {
   Image,
   ImageBackground,
   Text,
-  TextInput,
   View,
   TouchableOpacity,
-  FlatList,
   Platform,
   StyleSheet,
-  StyleSheet as RNStyleSheet,
   StatusBar,
   ScrollView,
-  ActivityIndicator,
   Dimensions,
   BackHandler,
 } from 'react-native';
@@ -40,7 +36,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import Loader from '../../utils/component/Loader';
 import i18n from '../../../localization/i18n';
-const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 type Feature = {
   avg_rating: string | null | undefined;
@@ -74,19 +69,11 @@ type MyListingProps = {
 const MyListing = ({ navigation }: MyListingProps) => {
   const { t } = useTranslation();
   const [featurelist, setFeaturelist] = useState<Feature[]>([]);
-  const [search, setSearch] = useState<string>('');
   const [page, setPage] = useState(1);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const pagesize = 10;
   const [featureList, setFeatureList] = useState<any[]>([]);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-    null,
-  );
   const [isLoading, setIsLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
-  const isInitialMount = useRef(true);
-  const insets = useSafeAreaInsets();
-  const { height: screenHeight } = Dimensions.get('window');
   const { height } = Dimensions.get('window');
 
   type Category = {
@@ -139,9 +126,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
     };
   });
 
-  const blurAmount = useDerivedValue(() =>
-    interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
-  );
   const [categories, setCategories] = useState<Category[]>([
     { id: null, name: t('all') },
   ]);
@@ -149,12 +133,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
     id: null,
     name: t('all'),
   });
-
-
-  // useEffect(() => {
-  //   setPage(1);
-  //   displayListOfProduct(selectedCategory?.id ?? null, 1, false);
-  // }, [selectedCategory]);
 
   useFocusEffect(
     useCallback(() => {
@@ -301,7 +279,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
   };
 
   const renderItem = useCallback(
-    ({ item, index }: { item: Feature; index: number }) => {
+    ({ item }: { item: Feature; index: number }) => {
       const displayDate = formatDate(item.created_at, t);
       const displayTitle =
         item.title && item.title.trim() !== '' ? item.title : 'Title';
@@ -351,7 +329,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
 
     const day = date.getDate();
     const year = date.getFullYear();
-    const lang = i18n.language; // detect current language
+    const lang = i18n.language;
 
     // ---------- Suffix only for English ----------
     let suffix = "";
@@ -412,7 +390,6 @@ const MyListing = ({ navigation }: MyListingProps) => {
               style={StyleSheet.absoluteFill}
               blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
               blurAmount={Platform.OS === 'ios' ? 45 : 45}
-              // overlayColor="rgba(255,255,255,0.05)"
               reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
             />
             <LinearGradient

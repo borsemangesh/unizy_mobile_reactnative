@@ -700,6 +700,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
           renderItem={renderItem}
           numColumns={2}
           onEndReached={handleEndReached}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
           onEndReachedThreshold={0.5}
           ListHeaderComponent={
             <View style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 8 ,marginTop:Platform.OS=='ios'? 0:4}}>

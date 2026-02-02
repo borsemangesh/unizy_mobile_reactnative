@@ -1647,6 +1647,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 nestedScrollEnabled
                 ref={scrollRef}
                 scrollEventThrottle={16}
+                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
                 // onScroll={scrollHandler}
                 contentContainerStyle={[
                   styles.scrollContainer,

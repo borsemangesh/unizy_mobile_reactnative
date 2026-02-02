@@ -1832,14 +1832,6 @@ const [accommodation_amount, setaccommodation_amount] = useState(0);
             <Loader containerStyle={styles.loaderContainer} />
           </View>
         ) : (
-          // <NestableScrollContainer
-          // scrollEventThrottle={16}
-          //       onScroll={scrollHandler}
-          //       contentContainerStyle={[
-          //         styles.scrollContainer,
-          //         { paddingBottom: height * 0.1 },
-          //       ]}
-          // >
           <KeyboardAvoidingView
             style={{ flex: 1 }}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -1848,6 +1840,8 @@ const [accommodation_amount, setaccommodation_amount] = useState(0);
             <NestableScrollContainer
               nestedScrollEnabled
               ref={scrollRef}
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
               scrollEventThrottle={16}
               // onScroll={scrollHandler}
               contentContainerStyle={[

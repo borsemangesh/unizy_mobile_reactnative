@@ -610,7 +610,6 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
           </Text>
           <TouchableOpacity
             style={[styles.backButtonContainer]}
-          // activeOpacity={0}
           >
             <Animated.View
               style={[styles.blurButtonWrapper_none]}
@@ -632,7 +631,6 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
                 ]}
               />
 
-              {/* Blur view fades in as scroll increases */}
               <Animated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -799,21 +797,11 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    // borderWidth: 0.4,
-    // borderColor: '#ffffff2c',
-    // backgroundColor: 'rgba(255, 255, 255, 0.1)',
-
-
-
-
-
     borderWidth: 0.3,
     borderColor: '#ffffff11',
-
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
 
@@ -858,7 +846,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    // borderWidth: 0.4,
     borderColor: 'transparent',
     backgroundColor: 'transparent',
   },
@@ -896,42 +883,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600
   },
-  // tabcard: {
-
-  //   minHeight: 38,
-  //   paddingVertical: 10,
-  //   paddingHorizontal: 16,
-  //   marginRight: 8,
-  //   borderWidth: 0.4,
-  //   borderColor: 'rgba(255, 255, 255, 0)',
-  //   backgroundColor:
-  //     'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  //   borderRadius: 10,
-  //   boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.25)',
-  // },
-  // tabcard1: {
-  //   minHeight: 38,
-  //   borderWidth: 0.4,
-  //   borderColor: '#ffffff11',
-  //   backgroundColor:
-  //     'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  //   borderEndEndRadius: 10,
-  //   borderStartEndRadius: 10,
-  //   borderTopLeftRadius: 10,
-  //   borderTopRightRadius: 10,
-  //   borderBottomStartRadius: 10,
-  //   borderBlockStartColor: '#ffffff2e',
-  //   borderBlockColor: '#ffffff2e',
-  //   borderTopColor: '#ffffff2e',
-  //   borderBottomColor: '#ffffff2e',
-  //   borderLeftColor: '#ffffff2e',
-  //   borderRightColor: '#ffffff2e',
-  //   boxSizing: 'border-box',
-  //   paddingVertical: 10,
-  //   paddingHorizontal: 16,
-  //   marginRight: 8,
-  //   boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-  // },
 
   tabcard: {
     minHeight: 38,
@@ -944,7 +895,6 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderRadius: 10,
     boxSizing: 'border-box',
-    // boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.25)',
 
   },
@@ -954,8 +904,6 @@ const styles = StyleSheet.create({
     minHeight: 38,
     borderWidth: 0.4,
     borderColor: '#ffffff11',
-    // backgroundColor:
-    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderEndEndRadius: 10,
     borderStartEndRadius: 10,
     borderTopLeftRadius: 10,
@@ -967,11 +915,9 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
-   // boxSizing: 'border-box',
     paddingVertical: 10,
     paddingHorizontal: 16,
     marginRight: 8,
-    //boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
   },
   tabtext: {
     color: '#fff',
@@ -1036,11 +982,8 @@ const styles = StyleSheet.create({
   row1: {
   },
   itemContainer: {
-    // flex: 1,
-    // marginHorizontal: 4,
     paddingBottom: 8,
     paddingLeft: 16,
-    // paddingHorizontal: 16
     marginTop: 12
   },
 });
