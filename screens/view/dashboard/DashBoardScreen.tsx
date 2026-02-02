@@ -1105,7 +1105,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
 
   const animatedBlurStyle = useAnimatedStyle(() => {
     'worklet';
-    const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
+    const opacity = interpolate(scrollY.value, [0, 300], [0, 9], 'clamp');
     return { opacity };
   });
 
@@ -1212,7 +1212,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                     top: 0,
                     left: 0,
                     right: 0,
-                    height: Platform.OS === 'ios' ? 100 : 120,
+                    height: Platform.OS === 'ios' ? 120 : 120,
                     zIndex: 0,
                   },
                   animatedBlurStyle,
