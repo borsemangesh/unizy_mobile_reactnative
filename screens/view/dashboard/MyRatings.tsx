@@ -58,6 +58,16 @@ type CreatedBy = {
   role_id: number;
 };
 
+type ReviewItem = {
+  id: number;
+  rating: number;
+  review: string;
+  created_at: string;
+  feature_name: string;
+  price: number;
+  thumbnail: string;
+};
+
 
 type Feature = {
   id: number;
@@ -108,12 +118,8 @@ const MyRatings = ({ navigation }: MyRatingsProps) => {
   const { height } = Dimensions.get('window');
   const isEmpty = featurelist.length === 0;
   const { shareid = 0 } = (route.params as { shareid?: number }) || {};
-  
 
-  type Category = {
-    id: number | null;
-    name: string;
-  };
+  const [reviews, setReviews] = useState<ReviewItem[]>([]);
 
   const scrollY = useSharedValue(0);
 
@@ -164,86 +170,101 @@ const MyRatings = ({ navigation }: MyRatingsProps) => {
     interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
   );
 
-  const [categories, setCategories] = useState<Category[]>([
-    { id: null, name: t('all') },
-  ]);
-  const [selectedCategory, setSelectedCategory] = useState<Category>({
-    id: null,
-    name: t('all'),
-  });
 
+  const selectedCategory = shareid;
 
-  useEffect(() => {
-    const loadCategories = async () => {
-      const stored = await AsyncStorage.getItem('categories');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        const catObjects = [
-          { id: null, name: t('all') },
-          ...parsed.map((cat: any) => ({ id: cat.id, name: cat.name })),
-        ];
-        setCategories(catObjects);
-        setSelectedCategory(catObjects[0]);
-      }
-    };
-    loadCategories();
-  }, [t]);
+  // useEffect(() => {
+  //   setPage(1);
+  //   displayListOfProduct(selectedCategory ?? null, 1);
+  // }, [selectedCategory]);
 
   useEffect(() => {
-    setPage(1);
-    displayListOfProduct(selectedCategory?.id ?? null, 1);
-  }, [selectedCategory]);
+    if (shareid) {
+      displayListOfProduct(shareid);
+    }
+  }, [shareid]);
+  
 
+  const filteredReviews = reviews.filter(item =>
+    item.feature_name.toLowerCase().includes(search.toLowerCase())
+  );
+  
 
-  const displayListOfProduct = async (categoryId: number | null, pageNum: number) => {
+  const displayListOfProduct = async (featureId: number) => {
     try {
-      if (pageNum === 1) {
-        setIsLoading(true);
-      }
-      const pagesize = 10;
-      let url = `${MAIN_URL.baseUrl}category/myreview?page=${pageNum}&pagesize=${pagesize}`;
-      if (categoryId) {
-        url += `&category_id=${categoryId}`;
-      }
-
-
-
-
+      setIsLoading(true);
+  
       const token = await AsyncStorage.getItem('userToken');
-      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
-      if (!token) return;
-
+      const language_code =
+        (await AsyncStorage.getItem('selectedLanguage')) || 'en';
+  
+      if (!token || !featureId) return;
+  
+      const url = `${MAIN_URL.baseUrl}category/review/${featureId}`;
+      console.log('RATING URL:', url);
+  
       const response = await fetch(url, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
-          languagecode: language_code
+          languagecode: language_code,
         },
       });
-
+  
       const jsonResponse = await response.json();
-
-      const reviews = jsonResponse.data ?? [];
+      console.log('RATING RESPONSE:', jsonResponse);
+  
       if (jsonResponse.statusCode === 200) {
-        setIsLoading(false);
-        setFeatureList(reviews);
-      } else if (jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403) {
-        setIsLoading(false);
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
-        });
-      }
-
-      else {
-        setIsLoading(false);
+        setReviews(jsonResponse.data.reviews || []);
       }
     } catch (err) {
+      console.error('Review fetch error:', err);
+    } finally {
       setIsLoading(false);
-
     }
   };
+  
+
+  // const displayListOfProduct = async (categoryId: number | null, pageNum: number) => {
+  //   try {
+  //     if (pageNum === 1) setIsLoading(true);
+  
+  //     // let url = `${MAIN_URL.baseUrl}category/review?page=${pageNum}&pagesize=10`;
+  //     let url = `${MAIN_URL.baseUrl}category/review/${categoryId}`;
+  //     console.log("RATINGUR:",url);
+  //     // if (categoryId) url += `&category_id=${categoryId}`;
+  
+  //     const token = await AsyncStorage.getItem('userToken');
+  //     const language_code = (await AsyncStorage.getItem('selectedLanguage')) || 'en';
+  //     if (!token) return;
+  
+  //     const response = await fetch(url, {
+  //       method: 'GET',
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         'Content-Type': 'application/json',
+  //         languagecode: language_code,
+  //       },
+  //     });
+  
+  //     const jsonResponse = await response.json();
+  //     console.log("RATINGUR_RESPONSE:",jsonResponse);
+  //     if (jsonResponse.statusCode === 200) {
+  //       setReviews(jsonResponse.data.reviews || []);
+  //     } else if (jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403) {
+  //       navigation.reset({
+  //         index: 0,
+  //         routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
+  //       });
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+  
 
   const filteredFeatures: Feature[] = featurelist.filter(item =>
     (item.featurelist?.title ?? '').toLowerCase().includes(search.toLowerCase())
@@ -282,49 +303,75 @@ const MyRatings = ({ navigation }: MyRatingsProps) => {
   return `${day}${suffix} ${monthShort} ${year}`;
 };
 
-  const renderItem = ({ item, index }: { item: any; index: number }) => {
-    const isLastOddItem =
-      filteredFeatures.length % 2 !== 0 &&
-      index === filteredFeatures.length - 1;
+const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
+  const displayDate = formatDate(item.created_at, t);
 
-    const feature = item?.feature;
-    const displayDate = formatDate(item?.created_at,t);
+  const productImage = item.thumbnail
+    ? { uri: item.thumbnail }
+    : require('../../../assets/images/drone.png');
 
-    const productImage = feature?.thumbnail
-      ? { uri: feature.thumbnail }
-      : require('../../../assets/images/drone.png');
+  return (
+    <View style={styles.itemContainer}>
+      <MyReviewCard
+        infoTitle={item.feature_name}
+        inforTitlePrice={item.price}
+        rating={item.rating.toString()}
+        reviewText={item.review}
+        productImage={productImage}
+        shareid={item.id}
+        date={displayDate}
+        createdby={null}
+        profileshowinview={false}
+      />
+    </View>
+  );
+};
 
-    const displayPrice = feature.price
-    const displayTitle = feature?.title ?? 'Title';
-    const rating = item?.rating?.toString() ?? '0';
-    const comment = item?.comment ?? '';
 
-    const createdby = feature?.createdby ?? null;
-    const profileshowinview =
-      feature?.category_id === 2 || feature?.category_id === 5 ? true : false;
 
-    return (
-      <View
-        style={[
-          styles.itemContainer,
-          isLastOddItem && { marginRight: 'auto' },
-        ]}
-      >
-        <MyReviewCard
-          infoTitle={displayTitle}
-          inforTitlePrice={displayPrice}
-          rating={rating}
-          productImage={productImage}
-          reviewText={comment}
-          shareid={item.id}
-          date={displayDate}
-          createdby={createdby}
-          profileshowinview={profileshowinview}
+  // const renderItem = ({ item, index }: { item: any; index: number }) => {
+  //   const isLastOddItem =
+  //     filteredFeatures.length % 2 !== 0 &&
+  //     index === filteredFeatures.length - 1;
 
-        />
-      </View>
-    );
-  };
+  //   const feature = item?.feature;
+  //   const displayDate = formatDate(item?.created_at,t);
+
+  //   const productImage = feature?.thumbnail
+  //     ? { uri: feature.thumbnail }
+  //     : require('../../../assets/images/drone.png');
+
+  //   const displayPrice = feature.price
+  //   const displayTitle = feature?.title ?? 'Title';
+  //   const rating = item?.rating?.toString() ?? '0';
+  //   const comment = item?.comment ?? '';
+
+  //   const createdby = feature?.createdby ?? null;
+  //   const profileshowinview =
+  //     feature?.category_id === 2 || feature?.category_id === 5 ? true : false;
+
+  //   return (
+  //     <View
+  //       style={[
+  //         styles.itemContainer,
+  //         isLastOddItem && { marginRight: 'auto' },
+  //       ]}
+  //     >
+  //       <MyReviewCard
+  //         infoTitle={displayTitle}
+  //         inforTitlePrice={displayPrice}
+  //         rating={rating}
+  //         productImage={productImage}
+  //         reviewText={comment}
+  //         shareid={item.id}
+  //         date={displayDate}
+  //         createdby={createdby}
+  //         profileshowinview={profileshowinview}
+
+  //       />
+  //     </View>
+  //   );
+  // };
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -480,7 +527,7 @@ const MyRatings = ({ navigation }: MyRatingsProps) => {
         </View>
 
         <Animated.FlatList
-          data={featureList}
+          data={filteredReviews}
           renderItem={renderItem}
           keyExtractor={(item, index) => {
             'worklet';
@@ -499,45 +546,7 @@ const MyRatings = ({ navigation }: MyRatingsProps) => {
             pointerEvents="box-none"
            
           >
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.categoryTabsScrollContent}
-                nestedScrollEnabled={true}
-              >
-                {/* {categories.map((cat, index) => {
-                  const isSelected = selectedCategory.name === cat.name;
-                  return (
-                    <TouchableOpacity
-                      key={index}
-                      onPress={() => setSelectedCategory(cat)}
-                      activeOpacity={0.7}
-                    >
-
-                      <SquircleView
-                        style={isSelected ? styles.tabcard : styles.tabcard1}
-                        squircleParams={{
-                          cornerSmoothing: 1,
-                          cornerRadius: 10,
-                          fillColor: isSelected
-                            ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)'
-                            : 'rgba(255, 255, 255, 0.06)',
-                        }}
-                      >
-                        <Text
-                          allowFontScaling={false}
-                          style={
-                            isSelected ? styles.tabtext : styles.othertext
-                          }
-                        >
-                          {cat.name}
-                        </Text>
-                      </SquircleView>
-                    </TouchableOpacity>
-                  );
-                })} */}
-                
-              </ScrollView>
+             
             </View>
           }
           contentContainerStyle={[
@@ -558,8 +567,8 @@ const MyRatings = ({ navigation }: MyRatingsProps) => {
           onEndReachedThreshold={0.5}
           onEndReached={() => {
             const nextPage = page + 1;
-            setPage(nextPage);
-            displayListOfProduct(selectedCategory?.id ?? null, nextPage);
+            // setPage(nextPage);
+            // displayListOfProduct(selectedCategory?? null, nextPage);
           }}
           ListFooterComponent={
             isLoadingMore ? (

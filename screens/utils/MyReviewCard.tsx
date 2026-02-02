@@ -44,7 +44,7 @@ type MyReviewCardProps = {
   shareid: number;
   date: string
   profileshowinview: boolean
-  createdby: CreatedBy,
+  createdby?: CreatedBy | null;
 };
 
 const MyReviewCard: React.FC<MyReviewCardProps> = ({
