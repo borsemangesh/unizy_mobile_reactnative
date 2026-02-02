@@ -10,6 +10,7 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Dimensions,
+  TextInput,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
@@ -485,6 +486,7 @@ const FilterBottomSheet = ({
     onClose();
   };
 
+  const [search = '', setSearch] = useState('');
   return (
     <View
       style={[
@@ -611,8 +613,19 @@ const FilterBottomSheet = ({
                   showsVerticalScrollIndicator={false}
                 >
                   <Text allowFontScaling={false} style={styles.filterHeadTitle}>
-                    {selectedTab}
+                    {selectedTab} 
                   </Text>
+                  {/* {selectedTab === 'University Name' && (
+                    <>
+                      <TextInput
+                        allowFontScaling={false}
+                        style={{width: '100%',height:30,backgroundColor: '#FFFFFF',borderRadius: 5,padding: 4,borderColor: '#FFFFFF'}}
+                        placeholder={t('search')}
+                        value={search}
+                        onChangeText={(value) => setSearch(value)}
+                        />
+                    </>
+                  )} */}
                   {renderRightContent()}
                 </ScrollView>
               </View>
