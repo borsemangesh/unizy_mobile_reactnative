@@ -21,7 +21,8 @@ type NotificationCardProps = {
   typename: string;
   templateName?: string;
   categoryid: number
-  user_id:number
+  user_id:number;
+  reviews?: string;
 };
 
 const NotificationCard: React.FC<NotificationCardProps> = ({
@@ -34,6 +35,8 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
   categoryid,
   user_id,
   templateName = '',
+  reviews = "0.0",
+
 }) => {
   const fullStar = require('../../assets/images/starfill.png'); 
   const emptyStar = require('../../assets/images/starempty.png'); 
@@ -50,7 +53,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
         shareid: typeid,
         catagory_id: categoryid,
         catagory_name: typename,
-        reviews: '0.0'
+        reviews: reviews
       });
     }
     else if (templateName === 'OrderOTP') {

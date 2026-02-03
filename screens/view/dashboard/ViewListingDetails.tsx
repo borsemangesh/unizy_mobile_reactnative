@@ -141,6 +141,9 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
 
       const result = await response.json();
 
+      console.log('VIEWLISTING: ',url);
+      console.log('VIEWLISTING_RESPONSE: ',result)
+
       if (response.ok) {
         setData(result.data);
       } else {
@@ -386,7 +389,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
             </AnimatedReanimated.View>
           </TouchableOpacity>
 
-          <View style={{ width: 280 }}>
+          <View style={{ width: 200 }}>
             <Text numberOfLines={2} allowFontScaling={false} style={styles.unizyText}>
               {t('listing_details')}
             </Text>
@@ -394,7 +397,76 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
           </View>
           <TouchableOpacity
             onPress={() => {
-              // navigation.goBack();
+              navigation.navigate('MyRatings',{
+                shareid
+              });
+            }}
+            style={styles.backButtonContainer}
+            activeOpacity={0.7}
+          >
+            <AnimatedReanimated.View
+              style={[styles.blurButtonWrapper, animatedButtonStyle]}
+            >
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 30],
+                      [1, 0],
+                      'clamp',
+                    ),
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 40,
+                  })),
+                ]}
+              />
+
+              <AnimatedReanimated.View
+                style={[
+                  StyleSheet.absoluteFill,
+                  useAnimatedStyle(() => ({
+                    opacity: interpolate(
+                      scrollY.value,
+                      [0, 50],
+                      [0, 1],
+                      'clamp',
+                    ),
+                  })),
+                ]}
+              >
+                <BlurView
+                  style={StyleSheet.absoluteFill}
+                  blurType="light"
+                  blurAmount={10}
+                  reducedTransparencyFallbackColor="transparent"
+                />
+              </AnimatedReanimated.View>
+
+              {/* Back Icon */}
+              <AnimatedReanimated.Image
+                source={require('../../../assets/images/staricon.png')}
+                style={[{
+                  width: 10,
+                  height: 10,
+                  tintColor: 'rgba(140, 225, 255, 0.9)', }, animatedIconStyle]}
+              />
+              <Text
+                    allowFontScaling={false}
+                    style={[
+                      styles.topRightText,
+                      {
+                        color: '#b4e6ff' ,
+                      },
+                    ]}
+                  >
+                  {data?.list?.avg_rating || '0.0'}
+                  </Text>
+            </AnimatedReanimated.View>
+          </TouchableOpacity>
+          {/* <TouchableOpacity
+            onPress={() => {
             }}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
@@ -438,14 +510,12 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                   reducedTransparencyFallbackColor="transparent"
                 />
               </AnimatedReanimated.View>
-
-              {/* Back Icon */}
               <AnimatedReanimated.Image
                 source={require('../../../assets/images/back.png')}
                 style={[{ height: 24, width: 24, display: 'none' }]}
               />
             </AnimatedReanimated.View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         <AnimatedReanimated.ScrollView
@@ -977,6 +1047,13 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
 
 
 const styles = StyleSheet.create({
+  topRightText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '600',
+    fontFamily: 'Urbanist-Medium',
+    marginTop: 2,
+  },
   blurButtonWrapper_none: {
 
     width: 48,

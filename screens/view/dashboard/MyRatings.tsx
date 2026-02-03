@@ -1,17 +1,14 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Image,
   ImageBackground,
   Text,
-  TextInput,
   View,
   TouchableOpacity,
-  FlatList,
   Platform,
   StyleSheet,
   StatusBar,
-  ScrollView,
   ActivityIndicator,
   Dimensions,
 
@@ -22,7 +19,6 @@ const bgImage = require('../../../assets/images/backimg.png');
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 import MyReviewCard from '../../utils/MyReviewCard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { SquircleView } from 'react-native-figma-squircle';
 import Loader from '../../utils/component/Loader';
 
 import Animated, {
@@ -38,7 +34,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
-import { useRoute } from '@react-navigation/native';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 
 type CreatedBy = {
   id: number;
@@ -173,16 +169,23 @@ const MyRatings = ({ navigation }: MyRatingsProps) => {
 
   const selectedCategory = shareid;
 
-  // useEffect(() => {
-  //   setPage(1);
-  //   displayListOfProduct(selectedCategory ?? null, 1);
-  // }, [selectedCategory]);
 
-  useEffect(() => {
-    if (shareid) {
-      displayListOfProduct(shareid);
-    }
-  }, [shareid]);
+  // useEffect(() => {
+  //   if (shareid) {
+  //     setPage(1);
+  //     displayListOfProduct(shareid ?? null, 1);
+  //   }
+  // }, [shareid]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setPage(1);
+      setReviews([]);
+      if (shareid) {
+        displayListOfProduct(shareid, 1);
+      }
+    }, [shareid])
+  );
   
 
   const filteredReviews = reviews.filter(item =>
@@ -190,9 +193,9 @@ const MyRatings = ({ navigation }: MyRatingsProps) => {
   );
   
 
-  const displayListOfProduct = async (featureId: number) => {
+  const displayListOfProduct = async (featureId: number | null, pageNum: number) => {
     try {
-      setIsLoading(true);
+      if (pageNum === 1) setIsLoading(true);
   
       const token = await AsyncStorage.getItem('userToken');
       const language_code =
@@ -200,7 +203,7 @@ const MyRatings = ({ navigation }: MyRatingsProps) => {
   
       if (!token || !featureId) return;
   
-      const url = `${MAIN_URL.baseUrl}category/review/${featureId}`;
+      const url = `${MAIN_URL.baseUrl}category/review/${featureId}?page=${pageNum}&pagesize=10`;
       console.log('RATING URL:', url);
   
       const response = await fetch(url, {
@@ -216,7 +219,12 @@ const MyRatings = ({ navigation }: MyRatingsProps) => {
       console.log('RATING RESPONSE:', jsonResponse);
   
       if (jsonResponse.statusCode === 200) {
-        setReviews(jsonResponse.data.reviews || []);
+        // setReviews(jsonResponse.data.reviews || []);
+        if (pageNum === 1) {
+          setReviews(jsonResponse.data.reviews || []);
+        } else {
+          setReviews(prev => [...prev, ...(jsonResponse.data.reviews || [])]);
+        }
       }
     } catch (err) {
       console.error('Review fetch error:', err);
@@ -224,46 +232,6 @@ const MyRatings = ({ navigation }: MyRatingsProps) => {
       setIsLoading(false);
     }
   };
-  
-
-  // const displayListOfProduct = async (categoryId: number | null, pageNum: number) => {
-  //   try {
-  //     if (pageNum === 1) setIsLoading(true);
-  
-  //     // let url = `${MAIN_URL.baseUrl}category/review?page=${pageNum}&pagesize=10`;
-  //     let url = `${MAIN_URL.baseUrl}category/review/${categoryId}`;
-  //     console.log("RATINGUR:",url);
-  //     // if (categoryId) url += `&category_id=${categoryId}`;
-  
-  //     const token = await AsyncStorage.getItem('userToken');
-  //     const language_code = (await AsyncStorage.getItem('selectedLanguage')) || 'en';
-  //     if (!token) return;
-  
-  //     const response = await fetch(url, {
-  //       method: 'GET',
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //         'Content-Type': 'application/json',
-  //         languagecode: language_code,
-  //       },
-  //     });
-  
-  //     const jsonResponse = await response.json();
-  //     console.log("RATINGUR_RESPONSE:",jsonResponse);
-  //     if (jsonResponse.statusCode === 200) {
-  //       setReviews(jsonResponse.data.reviews || []);
-  //     } else if (jsonResponse.statusCode === 401 || jsonResponse.statusCode === 403) {
-  //       navigation.reset({
-  //         index: 0,
-  //         routes: [{ name: 'SinglePage', params: { resetToLogin: true } }],
-  //       });
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
   
 
   const filteredFeatures: Feature[] = featurelist.filter(item =>
@@ -326,52 +294,6 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
     </View>
   );
 };
-
-
-
-  // const renderItem = ({ item, index }: { item: any; index: number }) => {
-  //   const isLastOddItem =
-  //     filteredFeatures.length % 2 !== 0 &&
-  //     index === filteredFeatures.length - 1;
-
-  //   const feature = item?.feature;
-  //   const displayDate = formatDate(item?.created_at,t);
-
-  //   const productImage = feature?.thumbnail
-  //     ? { uri: feature.thumbnail }
-  //     : require('../../../assets/images/drone.png');
-
-  //   const displayPrice = feature.price
-  //   const displayTitle = feature?.title ?? 'Title';
-  //   const rating = item?.rating?.toString() ?? '0';
-  //   const comment = item?.comment ?? '';
-
-  //   const createdby = feature?.createdby ?? null;
-  //   const profileshowinview =
-  //     feature?.category_id === 2 || feature?.category_id === 5 ? true : false;
-
-  //   return (
-  //     <View
-  //       style={[
-  //         styles.itemContainer,
-  //         isLastOddItem && { marginRight: 'auto' },
-  //       ]}
-  //     >
-  //       <MyReviewCard
-  //         infoTitle={displayTitle}
-  //         inforTitlePrice={displayPrice}
-  //         rating={rating}
-  //         productImage={productImage}
-  //         reviewText={comment}
-  //         shareid={item.id}
-  //         date={displayDate}
-  //         createdby={createdby}
-  //         profileshowinview={profileshowinview}
-
-  //       />
-  //     </View>
-  //   );
-  // };
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -566,9 +488,14 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
           scrollEventThrottle={16}
           onEndReachedThreshold={0.5}
           onEndReached={() => {
-            const nextPage = page + 1;
+            // const nextPage = page + 1;
             // setPage(nextPage);
-            // displayListOfProduct(selectedCategory?? null, nextPage);
+            // displayListOfProduct(shareid?? null, nextPage);
+            setPage(prev => {
+              const nextPage = prev + 1;
+              displayListOfProduct(shareid ?? null, nextPage);
+              return nextPage;
+            });
           }}
           ListFooterComponent={
             isLoadingMore ? (

@@ -325,6 +325,10 @@ const Notification = ({ navigation }: NotificationProps) => {
       return { text: part, bold: isBold };
     });
 
+    const match = item.content.match(/(\d+(\.\d+)?)\s*★/);
+
+    const rating = match ? Number(match[1]) : '0.0';
+    const ratingString = rating.toString();
 
 
     const productImage = require('../../../assets/images/bellicon.png');
@@ -355,6 +359,7 @@ const Notification = ({ navigation }: NotificationProps) => {
           templateName={templateName}
           categoryid={category_id}
           user_id={item.user_id}
+          reviews={ratingString}
         />
       </View>
     );

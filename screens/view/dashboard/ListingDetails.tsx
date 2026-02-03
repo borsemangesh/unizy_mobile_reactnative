@@ -474,7 +474,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                       },
                     ]}
                   >
-                  {reviews}
+                  {data?.list?.avg_rating || '0.0'}
                   </Text>
             </AnimatedReanimated.View>
           </TouchableOpacity>
