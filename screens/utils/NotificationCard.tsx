@@ -50,6 +50,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
         shareid: typeid,
         catagory_id: categoryid,
         catagory_name: typename,
+        reviews: '0.0'
       });
     }
     else if (templateName === 'OrderOTP') {

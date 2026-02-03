@@ -167,8 +167,8 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
 
               <View style={styles.login_container}>
                 <TextInput
-                selectionColor={'#FFFFFF'}
-                cursorColor='#fff'
+                  selectionColor="#FFFFFF"   // ANDROID cursor color
+                  cursorColor="#FFFFFF"    // iOS cursor color
                   allowFontScaling={false}
                   style={[
                     styles.personalEmailID_TextInput,
@@ -408,21 +408,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
   },
 
-  login_container: {
-    display: 'flex',
-    width: '100%',
-    minHeight: 160,
-    gap: 10,
-    alignSelf: 'stretch',
-    borderRadius: 12,
-    borderWidth: 0.6,
-    borderColor: '#ffffff2c',
-    flex: 1,
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-    marginTop: 6,
-  },
   personalEmailID_TextInput: {
     width: '98%',
     fontFamily: 'Urbanist-Regular',
@@ -433,6 +418,24 @@ const styles = StyleSheet.create({
     color: '#fff',
     paddingLeft: 12,
     height: '100%',
+    backgroundColor: 'red'
+  },
+  login_container: {
+    display: 'flex',
+    height: 40,
+    gap: 10,
+    alignSelf: 'stretch',
+    borderRadius: 12,
+    borderWidth: 0.6,
+    borderColor: '#ffffff2c',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+    paddingLeft: 12,
   },
   payText: {
     color: '#002050',
