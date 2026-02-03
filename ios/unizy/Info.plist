@@ -6,24 +6,34 @@
 	<array>
 		<string>com.unizyapp.background.processing</string>
 	</array>
+
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+
 	<key>CFBundleDisplayName</key>
 	<string>UniZy</string>
+
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
+
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>
+
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
+
 	<key>CFBundleSignature</key>
 	<string>????</string>
+
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -33,17 +43,21 @@
 			</array>
 		</dict>
 	</array>
+
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<true/>
+
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
 		<dict>
-			<key>api.unizy.app</key>
+			<key>13.233.238.97</key>
 			<dict>
 				<key>NSIncludesSubdomains</key>
 				<true/>
@@ -54,18 +68,29 @@
 			</dict>
 		</dict>
 	</dict>
+
 	<key>NSCameraUsageDescription</key>
 	<string>Allows you to take photos to upload to your profile or include in posts, listings, or issue reports.</string>
+
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>This app may access your location to support certain features even when the app is not actively in use.</string>
+
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app uses your location only while you are using the app to support location-based features if needed.</string>
+
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Allows you to select existing photos to upload to your profile or include in posts, listings, or issue reports.</string>
+
 	<key>NSRemoteNotificationUsageDescription</key>
 	<string>This app uses notifications to alert you about important updates such as new chats, post/activity updates, reminders, and status changes related to your account.</string>
+
 	<key>RCTNewArchEnabled</key>
 	<true/>
+
+	<!-- ✅ FORCE LIGHT MODE (FIXES iOS CURSOR COLOR ISSUE) -->
+	<key>UIUserInterfaceStyle</key>
+	<string>Light</string>
+
 	<key>UIAppFonts</key>
 	<array>
 		<string>MonumentExtended-Regular.otf</string>
@@ -89,27 +114,33 @@
 		<string>Urbanist-Thin.ttf</string>
 		<string>Urbanist-ThinItalic.ttf</string>
 	</array>
+
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
 		<string>processing</string>
 	</array>
+
 	<key>UILaunchStoryboardName</key>
 	<string></string>
+
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>arm64</string>
 	</array>
+
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>
