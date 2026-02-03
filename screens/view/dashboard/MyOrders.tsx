@@ -734,7 +734,6 @@ const styles = StyleSheet.create({
     padding: 6,
     paddingHorizontal: 16,},
   blurButtonWrapper_none: {
-
     width: 48,
     height: 48,
     borderRadius: 40,
@@ -764,8 +763,6 @@ const styles = StyleSheet.create({
     minHeight: 38,
     borderWidth: 0.4,
     borderColor: '#ffffff11',
-    // backgroundColor:
-    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderEndEndRadius: 10,
     borderStartEndRadius: 10,
     borderTopLeftRadius: 10,
@@ -777,11 +774,9 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
-   // boxSizing: 'border-box',
     paddingVertical: 10,
     paddingHorizontal: 16,
     marginRight: 8,
-    //boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
   },
 
   blurButtonWrapper: {
@@ -791,22 +786,13 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    // borderWidth: 0.4,
-    // borderColor: '#ffffff2c',
-    // backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
-
-
-
     borderWidth: 0.3,
     borderColor: '#ffffff11',
-
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
-
     borderTopColor: '#ffffff2e',
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
@@ -846,7 +832,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 500,
     marginLeft: 16,
-    //marginTop: 8,
     paddingTop:12
   },
 
@@ -884,18 +869,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
 
   },
-  // emptyImage: {
-  //   width: 50,
-  //   height: 50,
-  //   marginBottom: 20,
-  // },
-  // emptyText: {
-  //   fontSize: 20,
-  //   color: '#fff',
-  //   textAlign: 'center',
-  //   fontFamily: 'Urbanist-SemiBold',
-  //   fontWeight: 600
-  // },
  emptyImage: {
     width: 64,
     height: 64,
@@ -908,18 +881,15 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600
   },
-
-
-
   tabtext: {
-    color: '#fff',   // selected tab text color
+    color: '#fff', 
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14
 
   },
   othertext: {
-    color: '#ABC7FF',   // unselected tab text color
+    color: '#ABC7FF',
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14
@@ -932,7 +902,6 @@ const styles = StyleSheet.create({
   },
   fullScreenContainer: {
     flex: 1,
-    //  marginTop:10
   },
   headerRow: {
     flexDirection: 'row',
@@ -953,14 +922,6 @@ const styles = StyleSheet.create({
     height: 48,
     width: 48,
   },
-  // unizyText: {
-  //   color: '#FFFFFF',
-  //   fontSize: 20,
-  //   flex: 1,
-  //   textAlign: 'center',
-  //   fontWeight: '600',
-  //    fontFamily: 'Urbanist-SemiBold',
-  // },
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
@@ -968,7 +929,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     width: '100%',
-    // marginTop: 17,
   },
   search_container: {
     flexDirection: 'row',
