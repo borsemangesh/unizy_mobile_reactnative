@@ -613,6 +613,8 @@ const formatDate = (dateString?: string, t?: any) => {
 
         <Animated.FlatList
           data={groupedOrders}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
           renderItem={renderItem}
           keyExtractor={(item, index) => {
             'worklet';
