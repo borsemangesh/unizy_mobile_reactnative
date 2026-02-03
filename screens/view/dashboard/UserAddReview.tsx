@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Image,
   ImageBackground,
@@ -60,6 +60,16 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
   const { width } = Dimensions.get('window');
   const { t } = useTranslation();
   const scrollY = useSharedValue(0);
+  const inputRef = useRef<TextInput>(null);
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.setNativeProps({
+        selectionColor: '#FFFFFF',
+        cursorColor: '#FFFFFF',
+      });
+    }
+  }, []);
+
   const animatedIconStyle = useAnimatedStyle(() => {
     'worklet';
 
@@ -154,20 +164,17 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
             <View style={{ width: 300 }}>
               <Text numberOfLines={2} allowFontScaling={false} style={styles.unizyText}>{t('write_a_review')}</Text>
             </View>
-            <TouchableOpacity onPress={() => {
-
-            }}>
               <View style={[styles.backIconRow, { display: 'none' }]}>
                 <Image
                   source={require('../../../assets/images/back.png')}
                   style={{ height: 24, width: 24, display: 'none' }}
                 />
               </View>
-            </TouchableOpacity>
           </View>
         </View>
 
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <KeyboardAvoidingView style={{flex:1}}>
+        <TouchableWithoutFeedback  onPress={Keyboard.dismiss} accessible={false}>
           <View style={{
             flex: 1,
             paddingTop: Platform.OS === 'ios' ? 120 : 120,
@@ -184,13 +191,11 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
 
             <View style={styles.innercontainer}>
               <Text allowFontScaling={false} style={styles.mainlabel1}>{t('tell_us_more')} </Text>
-
-              <View style={styles.login_container}>
                 <TextInput
-                  selectionColor='#fff'
-                  cursorColor='#fff'
+                 cursorColor="#F5F5F5"
+                 selectionColor="#F5F5F5"
                   allowFontScaling={false}
-                  style={[styles.personalEmailID_TextInput, { textAlignVertical: 'top', paddingTop: 10 }]}
+                  style={[styles.personalEmailID_TextInput,styles.login_container, { textAlignVertical: 'top', paddingTop: 10}]}
                   placeholder={t('tell')}
                   placeholderTextColor={'rgba(255, 255, 255, 0.48)'}
                   multiline={true}
@@ -198,10 +203,10 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
                   onChangeText={usernameText => setUsername(usernameText)}
                   onSubmitEditing={Keyboard.dismiss}
                 />
-              </View>
             </View>
           </View>
         </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
         <Button title={t('submit_review')} onPress={() => handleSubmit()} />
 
         <Modal
@@ -463,6 +468,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     width: '100%',
     minHeight: 160,
+    height: 160,
     gap: 10,
     alignSelf: 'stretch',
     borderRadius: 12,
@@ -472,7 +478,8 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-    marginTop: 6
+    marginTop: 6,
+
   },
   personalEmailID_TextInput: {
     width: '98%',
@@ -483,10 +490,9 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     color: "#fff",
     paddingLeft: 12,
-    height: '100%'
-
 
   },
+  
   payText: {
     color: '#002050',
     fontFamily: 'Urbanist-Medium',

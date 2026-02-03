@@ -2057,8 +2057,10 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                 }
                                 value={password}
                                 maxLength={20}
-                                selectionColor="white"
-                                cursorColor={'#FFFFFF'}
+                                // selectionColor="white"
+                                // cursorColor={'#FFFFFF'}
+                                cursorColor="#F5F5F5"
+                                selectionColor="#F5F5F5"
                                 secureTextEntry={!isPasswordVisible}
                                 onChangeText={passwordText =>
                                   setPassword(passwordText)
@@ -2428,8 +2430,10 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                 placeholder={t('last_name')}
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                 value={lastName}
-                                selectionColor="white"
-                                cursorColor={'#FFFFFF'}
+                                // selectionColor="white"
+                                // cursorColor={'#FFFFFF'}
+                                cursorColor="#F5F5F5"
+                                selectionColor="#F5F5F5"
                                 maxLength={20}
                                 autoComplete="name-family"
                                 textContentType="familyName"
