@@ -247,11 +247,14 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
           },
         });
 
+        
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const json = await response.json();
+        console.log("category/listparams/user/", url)
+        console.log("category/listparams/user/ :", json)
 
         if (json?.metadata) {
           setUserMeta({
@@ -480,6 +483,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
       };
 
       console.log('Create Feature Payload:',JSON.stringify(createPayload, null, 2));
+      
 
 
       const createRes = await fetch(
@@ -496,6 +500,8 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
 
       const createJson = await createRes.json();
+      console.log(":category/featurelistv2/create`",`${MAIN_URL.baseUrl}category/featurelistv2/create`)
+      console.log(":category/featurelistv2/create: `",createJson)
       const apiMessage = createJson?.message || createJson?.error || "Something went wrong";
       const isSuccess = createRes.status === 200 || createRes.status === 201;
       console.log("isSuccess: ",isSuccess, apiMessage);
