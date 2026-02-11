@@ -1397,7 +1397,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
                   }}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>
-                    {t('return_choose_category')}
+                    {t('return_my_listings')}
                   </Text>
                 </TouchableOpacity>
               </View>

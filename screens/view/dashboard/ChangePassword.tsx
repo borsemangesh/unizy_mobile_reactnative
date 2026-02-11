@@ -513,8 +513,8 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
 
               <View style={{ position: 'relative' }}>
                 <TextInput
-                  selectionColor='#fff'
-                  cursorColor='#fff'
+                  cursorColor="#F5F5F5"
+                  selectionColor="#F5F5F5"
                   value={userMeta.current_password || ''}
                   secureTextEntry={!showCurrent}
                   onChangeText={text =>
@@ -548,8 +548,8 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
 
               <View style={{ position: 'relative' }}>
                 <TextInput
-                  selectionColor='#fff'
-                  cursorColor='#fff'
+                  cursorColor="#F5F5F5"
+                  selectionColor="#F5F5F5"
                   value={userMeta.new_password || ''}
                   secureTextEntry={!showNew}
                   onChangeText={text =>
@@ -582,8 +582,8 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
               </Text>
               <View style={{ position: 'relative' }}>
                 <TextInput
-                  selectionColor='#fff'
-                  cursorColor='#fff'
+                  cursorColor="#F5F5F5"
+                  selectionColor="#F5F5F5"
                   value={userMeta.confirm_password || ''}
                   secureTextEntry={!showConfirm}
                   onChangeText={text =>
