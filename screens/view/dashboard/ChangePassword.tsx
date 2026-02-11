@@ -511,7 +511,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                 {t('current_password')}
               </Text>
 
-              <View style={{ position: 'relative' }}>
+              <View style={styles.login_container}>
                 <TextInput
                   cursorColor="#F5F5F5"
                   selectionColor="#F5F5F5"
@@ -546,7 +546,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                 {t('new_password')}
               </Text>
 
-              <View style={{ position: 'relative' }}>
+              <View style={styles.login_container}>
                 <TextInput
                   cursorColor="#F5F5F5"
                   selectionColor="#F5F5F5"
@@ -580,7 +580,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
               <Text style={styles.label} allowFontScaling={false}>
                 {t('confirm_password')}
               </Text>
-              <View style={{ position: 'relative' }}>
+              <View style={[styles.login_container]}>
                 <TextInput
                   cursorColor="#F5F5F5"
                   selectionColor="#F5F5F5"
@@ -730,6 +730,23 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
 export default ChangePassword;
 
 const styles = StyleSheet.create({
+  login_container: {
+    display: 'flex',
+    width: '100%',
+    height: 44,
+    gap: (Platform.OS === 'ios' ? 10 : 10),
+    alignSelf: 'stretch',
+    borderRadius: 12,
+    borderWidth: 0.6,
+    borderColor: '#ffffff2c',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+  },
   fullLoader: {
     position: "absolute",
     top: 0,
@@ -1060,20 +1077,15 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     fontFamily: 'Urbanist-Regular',
     fontWeight: 400,
-    // marginLeft:10
   },
   input: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    color: '#fff',
-    height: 44,
+    width: '93%',
     fontFamily: 'Urbanist-Regular',
-    fontSize: 16,
-    fontWeight: 400,
-
-    // width:329
+    fontWeight: '400',
+    fontSize: 17,
+    lineHeight: 22,
+    fontStyle: 'normal',
+    color:"#fff",
   },
   saveButton: {
     backgroundColor: '#B4C8FF',
