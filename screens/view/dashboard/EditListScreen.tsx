@@ -978,7 +978,8 @@ const [accommodation_amount, setaccommodation_amount] = useState(0);
                 style={styles.threedots}
               />
               <Image
-                source={fileIcon}
+                //source={fileIcon}
+                source={{ uri: item.uri }}
                 style={{ width: 32, height: 32, marginRight: 5 }}
               />
               <Text

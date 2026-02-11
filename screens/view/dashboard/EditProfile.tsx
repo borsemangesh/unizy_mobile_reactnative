@@ -1426,8 +1426,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     onPress={() => {
                       const email = userMeta.student_email || '';
 
-                      if (!isValidEmail(email.trim())) {
-                        showToast(t(Constant.VALID_EMAIL_ADDRESS), 'error');
+                      if (!validateStudentEmail(email.trim())) {
+                        showToast(t(Constant.VALID_UNIVERSITY_EMAIL_ADDRESS), 'error');
                         return;
                       }
                       setShowPopup3(true);

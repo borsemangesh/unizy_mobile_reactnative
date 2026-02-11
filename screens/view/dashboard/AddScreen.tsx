@@ -270,7 +270,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 style={styles.threedots}
               />{' '}
               <Image
-                source={fileIcon}
+                //source={fileIcon}
+                source={{ uri: item.uri }}
                 style={{ width: 32, height: 32, marginRight: 5 }}
               />{' '}
               <Text
