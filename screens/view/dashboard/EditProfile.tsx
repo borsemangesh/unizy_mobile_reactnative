@@ -384,7 +384,9 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   };
 
   const isValidEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+   // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+   const emailRegex =
+      /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;
     return emailRegex.test(email.trim());
   };
 
