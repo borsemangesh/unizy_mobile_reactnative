@@ -48,7 +48,7 @@ interface SelectCatagoryDropdownProps {
       | { selected: number | number[]; text?: string },
   ) => void;
   selectedValues?: number | number[];
-  otherTextValue?: string; 
+  otherTextValue?: string;
 }
 
 const SelectCatagoryDropdown = ({
@@ -87,20 +87,20 @@ const SelectCatagoryDropdown = ({
   //   }
   // }, [visible, selectedValues]);
 
- useEffect(() => {
-  if (visible) {
-    if (Array.isArray(selectedValues)) {
-      setTempSelectedCheckboxes(selectedValues);
-    } else if (selectedValues) {
-      setTempSelectedRadio(selectedValues);
-    } else {
-      setTempSelectedCheckboxes([]);
-      setTempSelectedRadio(null);
-    }
+  useEffect(() => {
+    if (visible) {
+      if (Array.isArray(selectedValues)) {
+        setTempSelectedCheckboxes(selectedValues);
+      } else if (selectedValues) {
+        setTempSelectedRadio(selectedValues);
+      } else {
+        setTempSelectedCheckboxes([]);
+        setTempSelectedRadio(null);
+      }
 
-    setOtherText(otherTextValue ?? ''); // ✅ RESTORE
-  }
-}, [visible, selectedValues, otherTextValue]);
+      setOtherText(otherTextValue ?? ''); // ✅ RESTORE
+    }
+  }, [visible, selectedValues, otherTextValue]);
 
 
 
@@ -131,9 +131,11 @@ const SelectCatagoryDropdown = ({
           ? tempSelectedCheckboxes.includes(opt.id)
           : tempSelectedRadio === opt.id),
     );
-
     if (hasTextOption && (!otherText || otherText.trim() === '')) {
-      showToast('Please add description', 'error');
+      onClose();
+      setTimeout(() => {
+        showToast('Please add description', 'error');
+      }, 100);
       return;
     }
 

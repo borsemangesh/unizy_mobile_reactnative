@@ -827,7 +827,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
       console.log('data', data);
       if (data?.statusCode === 200) {
+        
         showToast(t(data?.message), 'success');
+         setUserMeta(prev => ({ ...prev, email: username1 }))
+        
         setShowPopup2(false);
         //setIsUpdateDisabled(true)
         //setIsUpdateDisabled_personal(true)
@@ -887,6 +890,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       console.log('data', data);
       if (data?.statusCode === 200) {
         showToast(t(data?.message), 'success');
+        setUserMeta(prev => ({ ...prev, student_email: username2 }))
         setShowPopup4(false);
         //setIsUpdateDisabled(true)
         //setIsUpdateDisabled_personal(true)

@@ -20,8 +20,8 @@ import { NewCustomToastContainer, showToast } from './NewCustomToastManager';
 
 interface SelectCatagoryDropdownProps {
   options: {
-    is_other: boolean; id: number; option_name: string 
-}[];
+    is_other: boolean; id: number; option_name: string
+  }[];
   visible: boolean;
   ismultilple: boolean;
   title?: string;
@@ -29,13 +29,13 @@ interface SelectCatagoryDropdownProps {
   onClose: () => void;
   //onSelect: (selectedId: number | number[]) => void;
   onSelect: (
-  selected:
-    | number
-    | number[]
-    | { selected: number | number[]; text?: string }
-) => void;
+    selected:
+      | number
+      | number[]
+      | { selected: number | number[]; text?: string }
+  ) => void;
   selectedValues?: number | number[];
-  otherTextValue?: string; 
+  otherTextValue?: string;
 }
 const SelectCatagoryDropdown = ({
   options,
@@ -72,19 +72,19 @@ const SelectCatagoryDropdown = ({
   // }, [visible, selectedValues]);
 
   useEffect(() => {
-  if (visible) {
-    if (Array.isArray(selectedValues)) {
-      setTempSelectedCheckboxes(selectedValues);
-    } else if (selectedValues) {
-      setTempSelectedRadio(selectedValues);
-    } else {
-      setTempSelectedCheckboxes([]);
-      setTempSelectedRadio(null);
-    }
+    if (visible) {
+      if (Array.isArray(selectedValues)) {
+        setTempSelectedCheckboxes(selectedValues);
+      } else if (selectedValues) {
+        setTempSelectedRadio(selectedValues);
+      } else {
+        setTempSelectedCheckboxes([]);
+        setTempSelectedRadio(null);
+      }
 
-    setOtherText(otherTextValue ?? ''); // ✅ RESTORE
-  }
-}, [visible, selectedValues, otherTextValue]);
+      setOtherText(otherTextValue ?? ''); // ✅ RESTORE
+    }
+  }, [visible, selectedValues, otherTextValue]);
 
   const toggleCheckbox = (id: number) => {
     setTempSelectedCheckboxes(prev =>
@@ -100,34 +100,36 @@ const SelectCatagoryDropdown = ({
 
 
   const handleApply = () => {
-  const hasTextOption = options.some(
-    opt => opt.is_other && (
-      ismultilple
-        ? tempSelectedCheckboxes.includes(opt.id)
-        : tempSelectedRadio === opt.id
-    )
-  );
+    const hasTextOption = options.some(
+      opt => opt.is_other && (
+        ismultilple
+          ? tempSelectedCheckboxes.includes(opt.id)
+          : tempSelectedRadio === opt.id
+      )
+    );
 
-  if (hasTextOption && (!otherText || otherText.trim() === '')) {
-  
-    showToast("Please add description","error")
-    return; // stop apply
-  }
+    if (hasTextOption && (!otherText || otherText.trim() === '')) {
+      onClose();
+      setTimeout(() => {
+        showToast('Please add description', 'error');
+      }, 100);
+     return;
+    }
 
-  if (ismultilple) {
-    onSelect({
-      selected: tempSelectedCheckboxes,
-      text: hasTextOption ? otherText : undefined,
-    });
-  } else if (tempSelectedRadio != null) {
-    onSelect({
-      selected: tempSelectedRadio,
-      text: hasTextOption ? otherText : undefined,
-    });
-  }
+    if (ismultilple) {
+      onSelect({
+        selected: tempSelectedCheckboxes,
+        text: hasTextOption ? otherText : undefined,
+      });
+    } else if (tempSelectedRadio != null) {
+      onSelect({
+        selected: tempSelectedRadio,
+        text: hasTextOption ? otherText : undefined,
+      });
+    }
 
-  onClose();
-};
+    onClose();
+  };
 
   const handleCancel = () => {
     onClose();
@@ -373,7 +375,7 @@ const SelectCatagoryDropdown = ({
                                 paddingVertical: 16,
                                 color: '#fff',
                                 fontSize: 16,
-                                
+
                               }}
                             />
                           </View>
@@ -389,12 +391,12 @@ const SelectCatagoryDropdown = ({
               <View style={styles.bottomview}>
 
                 <TouchableOpacity style={styles.cancelBtn} onPress={handleCancel}>
-                  <Text  allowFontScaling={false} style={styles.cancelText}> {t('cancel')}</Text>
+                  <Text allowFontScaling={false} style={styles.cancelText}> {t('cancel')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.cancelBtn, { backgroundColor: '#ffffff4e' }]}
                   onPress={handleApply}>
-                  <Text  allowFontScaling={false} style={[styles.cancelText, { color: '#000000' }]}>
+                  <Text allowFontScaling={false} style={[styles.cancelText, { color: '#000000' }]}>
                     {t('apply')}
                   </Text>
                 </TouchableOpacity>
