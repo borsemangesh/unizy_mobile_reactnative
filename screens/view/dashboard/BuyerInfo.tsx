@@ -546,8 +546,8 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   textContainer: {
-    // width: '86%'
-    paddingLeft: Platform.OS === 'ios' ? 54 : 48,
+    // width: '86%',
+    paddingLeft: Platform.OS === 'ios' ? 54 : 54,
     marginTop: -12,
   },
   title: {

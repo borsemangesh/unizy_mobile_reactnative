@@ -6,7 +6,6 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
   Animated,
   Modal,
   Dimensions,
@@ -14,8 +13,9 @@ import {
   StatusBar,
   TouchableWithoutFeedback,
   BackHandler,
+  ScrollView,
 } from 'react-native';
-import { Key, useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import { useRoute } from '@react-navigation/native';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -25,11 +25,10 @@ import {
   showToast,
 } from '../../utils/component/NewCustomToastManager';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Button from '../../utils/component/Button';
 import PayButton from '../../utils/component/PayButton';
 import LinearGradient from 'react-native-linear-gradient';
 import { ShortCustomToastContainer,shortshowToast } from '../../utils/component/ShortCustomToastManager';
-
+import ImageViewing from "react-native-image-viewing";
 
 import AnimatedReanimated, {
   useSharedValue,
@@ -54,8 +53,6 @@ type SearchDetailsProps = {
 
 const { width } = Dimensions.get('window');
 
-const profileImg = require('../../../assets/images/user.jpg');
-const mylistings1 = require('../../../assets/images/favourite.png');
 
 type ParamOption = {
   other_text: any;
@@ -63,14 +60,6 @@ type ParamOption = {
   option_id: number;
   option_name: string;
 };
-
-// type Param = {
-//   id: number;
-//   name: string;
-//   options: ParamOption[];
-//   field_type: string;
-//   param_value: string;
-// };
 
 type DateRangeValue = {
   startDate?: string;
@@ -97,7 +86,6 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
   const [showPopup1, setShowPopup1] = useState(false);
   const closePopup = () => setShowPopup(false);
   const closePopup1 = () => setShowPopup1(false);
-  const scrollY1 = new Animated.Value(0);
   const route = useRoute();
   const { id } = route.params as { id: number };
   const { name } = route.params as { name: string };
@@ -106,19 +94,22 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
   const [formValues, setFormValues] = useState<any>({});
   const screenWidth = Dimensions.get('window').width;
   const { t } = useTranslation();
-
   const [imageUri, setImageUri] = useState<string | null>(null);
-
-  const insets = useSafeAreaInsets(); // Safe area insets
-
   const [famount, setfamout] = useState(0);
   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
-
   const { height } = Dimensions.get('window');
-  const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
-
   const scrollY = useSharedValue(0);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const flatListRef = useRef<FlatList>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+
+  const [isImageViewVisible, setImageViewVisible] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [loadingImage, setLoadingImage] = useState(false);
+
+ 
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: event => {
@@ -161,9 +152,6 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     };
   });
 
-  const blurAmount = useDerivedValue(() =>
-    interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
-  );
 
   const [multiSelectModal, setMultiSelectModal] = useState<{
     visible: boolean;
@@ -230,11 +218,6 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
 
 
-
-  const [isBookmarked, setIsBookmarked] = useState(false);
-
-  const flatListRef = useRef<FlatList>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
 
   const images =
     detail?.files?.map((file: any) => ({
@@ -323,22 +306,11 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     });
   };
 
-  const handlePayConfirmed = (amount: number) => {
-    navigation.navigate('PaymentScreen', {
-      amount: amount.toFixed(2),
-      feature_id: id,
-      nav: 'purchase',
-      onSuccess: async () => {
-        await purchaseProduct();
-      },
-    });
-  };
 
   const renderImage = () => {
     const fallbackImage = require('../../../assets/images/drone.png');
 
     if (detail?.profileshowinview) {
-      const profileUri = detail?.createdby?.profile || null;
       const initials = `${detail?.createdby?.firstname?.[0] ?? ''}${detail?.createdby?.lastname?.[0] ?? ''
         }`.toUpperCase();
 
@@ -415,13 +387,50 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
             keyExtractor={(_, index) => index.toString()}
             onScroll={onScroll}
             scrollEventThrottle={16}
-            renderItem={({ item }) => (
-              <Image
-                source={item.uri ? { uri: item.uri } : fallbackImage}
-                style={{ width: screenWidth, height: 270 }}
-                resizeMode="cover"
-              />
-            )}
+  //           renderItem={({ item,index }) => (
+  //             // <Image
+  //             //   source={item.uri ? { uri: item.uri } : fallbackImage}
+  //             //   style={{ width: screenWidth, height: 270 }}
+  //             //   resizeMode="cover"
+  //             // />
+  //              <TouchableOpacity
+  //   activeOpacity={0.9}
+  //   onPress={() => {
+  //     setCurrentImageIndex(index);
+  //     setImageViewVisible(true);
+  //   }}
+  // >
+  //   <Image
+  //     source={item.uri ? { uri: item.uri } : fallbackImage}
+  //     style={{ width: screenWidth, height: 270 }}
+  //     resizeMode="cover"
+  //   />
+  // </TouchableOpacity>
+            //           )}
+        
+renderItem={({ item, index }) => {
+  const imageSource = item?.uri
+    ? { uri: item.uri }
+    : fallbackImage;
+
+  return (
+    <TouchableOpacity
+      activeOpacity={0.9}
+      disabled={images.length === 0}   // Prevent click if no image
+      onPress={() => {
+        console.log("index: ", index);
+  setCurrentImageIndex(index || 0);
+  setImageViewVisible(true);
+}}
+    >
+      <Image
+        source={imageSource}
+        style={{ width: screenWidth, height: 270 }}
+        resizeMode="cover"
+      />
+    </TouchableOpacity>
+  );
+}}
           />
           <View style={styles.stepIndicatorContainer}>
             {images.map((_: any, index: number) => (
@@ -439,11 +448,19 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
       );
     }
     return (
+  <TouchableOpacity
+    activeOpacity={0.9}
+    onPress={() => {
+      setCurrentImageIndex(0);
+      setImageViewVisible(true);
+    }}
+  >
       <Image
         source={images[0]?.uri ? { uri: images[0].uri } : fallbackImage}
         style={{ width: screenWidth, height: 270 }}
         resizeMode="cover"
-      />
+          />
+          </TouchableOpacity>
     );
   };
 
@@ -583,10 +600,22 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     }
   };
 
-  function isDateRangeValue(value: ParamValue): value is DateRangeValue {
-    return typeof value === 'object' && value !== null && ('startDate' in value || 'endDate' in value);
+
+  const previewImages = useMemo(() => {
+  if (detail?.files?.length > 0) {
+    return detail.files.map((file: any) => ({
+      uri: file.signedurl,
+    }));
   }
 
+  return [
+    {
+      uri: Image.resolveAssetSource(
+        require('../../../assets/images/drone.png')
+      ).uri,
+    },
+  ];
+}, [detail]);
   return (
     <ImageBackground
       source={require('../../../assets/images/backimg.png')}
@@ -708,7 +737,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
             {(() => {
               switch (detail?.category?.id) {
                 case 2:
-                  return t('tutoring_service_details')
+                  return t('tutoring_service_details');
                 case 3:
                   return `${t('food')} ${t('details')}`;
                 case 4:
@@ -720,7 +749,6 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
               }
             })()}
           </Text>
-
 
           <TouchableOpacity
             onPress={() => {
@@ -795,12 +823,12 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     ? 20
                     : height * 0.01
                   : Platform.OS === 'ios'
-                    ? 75
-                    : height * 0.07,
+                  ? 75
+                  : height * 0.07,
             },
           ]}
         >
-          <View style={{ marginTop: (Platform.OS === 'ios' ? 10 : 0) }}>
+          <View style={{ marginTop: Platform.OS === 'ios' ? 10 : 0 }}>
             {renderImage()}
 
             <View style={{ flex: 1, padding: 16 }}>
@@ -813,12 +841,18 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       </Text>
                       <Text allowFontScaling={false} style={styles.priceText}>
                         {detail?.category?.id === 2
-                          ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t('hr')}`
+                          ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t(
+                              'hr',
+                            )}`
                           : detail?.category?.id === 4
-                            ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t('week')}`
-                            : detail?.category?.id === 5
-                              ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t('session')}`
-                              : `£${Number(detail?.price ?? 0).toFixed(2)}`}
+                          ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t(
+                              'week',
+                            )}`
+                          : detail?.category?.id === 5
+                          ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t(
+                              'session',
+                            )}`
+                          : `£${Number(detail?.price ?? 0).toFixed(2)}`}
                       </Text>
                     </>
                   )}
@@ -832,8 +866,9 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                         {t('service_duration')}:{' '}
                         <Text style={styles.durationValue}>
                           {detail?.hours
-                            ? `${detail.hours} ${detail.hours > 1 ? t('hours') : t('hour')
-                            }`
+                            ? `${detail.hours} ${
+                                detail.hours > 1 ? t('hours') : t('hour')
+                              }`
                             : `1 ${t('hour')}`}
                         </Text>
                       </Text>
@@ -855,7 +890,6 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     style={styles.productDesHeding}
                   >
                     {t('des')}
-
                   </Text>
 
                   {/* <Text allowFontScaling={false} style={styles.productDeatilsHeading}>
@@ -903,7 +937,10 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                         : ''}
                   </Text> */}
 
-                  <Text allowFontScaling={false} style={styles.productDeatilsHeading1}>
+                  <Text
+                    allowFontScaling={false}
+                    style={styles.productDeatilsHeading1}
+                  >
                     {(() => {
                       switch (detail?.category?.id) {
                         case 2:
@@ -984,8 +1021,14 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                   ))} */}
 
                   {detail?.params?.map((param: Param) => (
-                    <View key={param.id} style={{ marginTop: 4, marginBottom: 0 }}>
-                      <Text allowFontScaling={false} style={styles.itemcondition}>
+                    <View
+                      key={param.id}
+                      style={{ marginTop: 4, marginBottom: 0 }}
+                    >
+                      <Text
+                        allowFontScaling={false}
+                        style={styles.itemcondition}
+                      >
                         {param.name}
                       </Text>
 
@@ -997,11 +1040,16 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                                 .toString()
                                 .split(',')
                                 .map(v => v.trim());
-                              return selectedValues.includes((opt.option_id ?? '').toString());
+                              return selectedValues.includes(
+                                (opt.option_id ?? '').toString(),
+                              );
                             })
                             .map((opt: ParamOption) => (
                               <View key={opt.id} style={styles.categoryTag}>
-                                <Text allowFontScaling={false} style={styles.catagoryText}>
+                                <Text
+                                  allowFontScaling={false}
+                                  style={styles.catagoryText}
+                                >
                                   {opt.other_text
                                     ? `${opt.option_name} (${opt.other_text})`
                                     : opt.option_name}
@@ -1014,21 +1062,29 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                         param.param_value !== null &&
                         'startDate' in param.param_value &&
                         'endDate' in param.param_value ? (
-                        <Text allowFontScaling={false} style={[styles.new, { marginTop: 0 }]}>
-                          {param.param_value.startDate && param.param_value.endDate
-                            ? `${dayjs(param.param_value.startDate).format('DD-MM-YYYY')} - ${dayjs(
-                              param.param_value.endDate,
-                            ).format('DD-MM-YYYY')}`
+                        <Text
+                          allowFontScaling={false}
+                          style={[styles.new, { marginTop: 0 }]}
+                        >
+                          {param.param_value.startDate &&
+                          param.param_value.endDate
+                            ? `${dayjs(param.param_value.startDate).format(
+                                'DD-MM-YYYY',
+                              )} - ${dayjs(param.param_value.endDate).format(
+                                'DD-MM-YYYY',
+                              )}`
                             : '—'}
                         </Text>
                       ) : (
-                        <Text allowFontScaling={false} style={[styles.new, { marginTop: 0 }]}>
+                        <Text
+                          allowFontScaling={false}
+                          style={[styles.new, { marginTop: 0 }]}
+                        >
                           {String(param.param_value ?? '—')}
                         </Text>
                       )}
                     </View>
                   ))}
-
                 </View>
               </View>
 
@@ -1064,8 +1120,9 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     <View style={{ width: '80%', gap: 0 }}>
                       <Text allowFontScaling={false} style={styles.userName}>
                         {detail?.createdby
-                          ? `${detail.createdby.firstname || ''} ${detail.createdby.lastname || ''
-                          }`
+                          ? `${detail.createdby.firstname || ''} ${
+                              detail.createdby.lastname || ''
+                            }`
                           : 'Unknown User'}
                       </Text>
 
@@ -1140,7 +1197,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                               universityName: detail.university,
                               id: detail.createdby.id,
                               isblocked: detail.blocked_you,
-                              blocked_you: detail.blocked_by
+                              blocked_you: detail.blocked_by,
                             },
                             source: 'sellerPage',
                           });
@@ -1186,12 +1243,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                 </TouchableOpacity>
               )}
 
-
               {detail?.isreported && (
-                <TouchableOpacity
-                  onPress={() => {
-                  }}
-                >
+                <TouchableOpacity onPress={() => {}}>
                   <View style={styles.reportButtonCard}>
                     <Image
                       source={require('../../../assets/images/report.png')}
@@ -1417,14 +1470,13 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                         fontWeight: '600',
                         letterSpacing: -0.4,
                         textAlign: 'center',
-                        lineHeight: 28
+                        lineHeight: 28,
                       }}
-                    > {t('order_placed_success')}!
+                    >
+                      {' '}
+                      {t('order_placed_success')}!
                     </Text>
-
                   </View>
-
-
 
                   <TouchableOpacity
                     style={styles.loginButton}
@@ -1462,7 +1514,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                           universityName: detail.university,
                           id: detail.createdby.id,
                           isblocked: detail.blocked_you,
-                          blocked_you: detail.blocked_by
+                          blocked_you: detail.blocked_by,
                         },
                         source: 'sellerPage',
                       });
@@ -1484,8 +1536,88 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
           <Loader />
         </View>
       )}
-      <ShortCustomToastContainer/>
+      <ShortCustomToastContainer />
       <NewCustomToastContainer />
+      <ImageViewing
+        images={previewImages}
+        imageIndex={currentImageIndex}
+        visible={isImageViewVisible}
+        swipeToCloseEnabled
+        doubleTapToZoomEnabled
+        onRequestClose={() => setImageViewVisible(false)}
+        onImageIndexChange={index => {
+          setCurrentImageIndex(index);
+        }}
+        FooterComponent={({ imageIndex }) => (
+          <View
+            style={{
+              position: 'absolute',
+              bottom: 30,
+              width: '100%',
+              alignItems: 'center',
+            }}
+          >
+            {/* 🔵 Indicator Dots */}
+            <View
+              style={{
+                flexDirection: 'row',
+                marginBottom: 15,
+              }}
+            >
+              {images.map((_:any, index:any) => (
+                <View
+                  key={index}
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: 4,
+                    marginHorizontal: 4,
+                    backgroundColor:
+                      index === imageIndex
+                        ? '#FFFFFF'
+                        : 'rgba(255,255,255,0.4)',
+                  }}
+                />
+              ))}
+            </View>
+
+            {/* 🖼 Thumbnail Strip */}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{
+                paddingHorizontal: 10,
+              }}
+            >
+              {images.map((item:any, index:any) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => setCurrentImageIndex(index)}
+                  style={{
+                    marginHorizontal: 5,
+                    borderWidth: index === imageIndex ? 2 : 1,
+                    borderColor:
+                      index === imageIndex
+                        ? '#FFFFFF'
+                        : 'rgba(255,255,255,0.3)',
+                    borderRadius: 6,
+                  }}
+                >
+                  <Image
+                    source={{ uri: item.uri }}
+                    style={{
+                      width: 60,
+                      height: 60,
+                      borderRadius: 6,
+                    }}
+                    resizeMode="cover"
+                  />
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        )}
+      />
     </ImageBackground>
   );
 };
