@@ -61,6 +61,7 @@ import Loader from '../../utils/component/Loader';
 import SaveButton from '../../utils/component/SaveButton';
 import { getCityFromPostalCode } from '../../utils/geocoding';
 // import { getCityFromPostalCode } from '../../utils/geocoding';
+import ImagePicker from 'react-native-image-crop-picker';
 
 type EditProfileProps = {
   navigation: any;
@@ -600,59 +601,59 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   };
 
 
-  const handleSelectImage = async () => {
+  // const handleSelectImage = async () => {
 
-    const hasPermission = await requestCameraPermission();
-    if (!hasPermission) return;
-    Alert.alert(
-      'Select Option',
-      "Choose a source",
-      [
-        {
-          text: 'Camera',
-          onPress: () => {
-            launchCamera(
-              {
-                mediaType: 'photo',
-                cameraType: 'front',
-                quality: 0.8,
-              },
-              response => {
-                if (response.didCancel) return;
-                if (response.assets && response.assets[0].uri) {
-                  setPhoto(response.assets[0].uri);
-                  setNewPhoto(response.assets[0].uri);
-                }
-              },
-            );
-          },
-        },
-        {
-          text: "Gallery",
-          onPress: () => {
-            launchImageLibrary(
-              {
-                mediaType: 'photo',
-                quality: 0.8,
-              },
-              response => {
-                if (response.didCancel) return;
-                if (response.assets && response.assets[0].uri) {
-                  setPhoto(response.assets[0].uri);
-                  setNewPhoto(response.assets[0].uri);
-                }
-              },
-            );
-          },
-        },
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-      ],
-      { cancelable: true },
-    );
-  };
+  //   const hasPermission = await requestCameraPermission();
+  //   if (!hasPermission) return;
+  //   Alert.alert(
+  //     'Select Option',
+  //     "Choose a source",
+  //     [
+  //       {
+  //         text: 'Camera',
+  //         onPress: () => {
+  //           launchCamera(
+  //             {
+  //               mediaType: 'photo',
+  //               cameraType: 'front',
+  //               quality: 0.8,
+  //             },
+  //             response => {
+  //               if (response.didCancel) return;
+  //               if (response.assets && response.assets[0].uri) {
+  //                 setPhoto(response.assets[0].uri);
+  //                 setNewPhoto(response.assets[0].uri);
+  //               }
+  //             },
+  //           );
+  //         },
+  //       },
+  //       {
+  //         text: "Gallery",
+  //         onPress: () => {
+  //           launchImageLibrary(
+  //             {
+  //               mediaType: 'photo',
+  //               quality: 0.8,
+  //             },
+  //             response => {
+  //               if (response.didCancel) return;
+  //               if (response.assets && response.assets[0].uri) {
+  //                 setPhoto(response.assets[0].uri);
+  //                 setNewPhoto(response.assets[0].uri);
+  //               }
+  //             },
+  //           );
+  //         },
+  //       },
+  //       {
+  //         text: 'Cancel',
+  //         style: 'cancel',
+  //       },
+  //     ],
+  //     { cancelable: true },
+  //   );
+  // };
 
 
   const handleDeleteImage = async () => {
@@ -1057,6 +1058,81 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
   const [typingTimeout, setTypingTimeout] = useState<any>(null);
 
+  const handleSelectImage = () => {
+    Alert.alert(
+      'Select Option',
+      'Choose a source',
+      [
+        {
+          text: 'Camera',
+          onPress: () => openCamera(),
+        },
+        {
+          text: 'Gallery',
+          onPress: () => openGallery(),
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+      ],
+      { cancelable: true },
+    );
+  };
+
+  const openCamera = () => {
+    ImagePicker.openCamera({
+      width: 300,
+      height: 300,
+      cropping: true,
+      cropperCircleOverlay: true,
+      compressImageQuality: 0.8,
+      mediaType: 'photo',
+    })
+      .then(image => {
+        console.log('CROPPED IMAGE:', image);
+        console.log('IMAGE PATH:', image.path);
+
+        const imageUri =
+          Platform.OS === 'android'
+            ? image.path
+            : image.path.replace('file://', '');
+
+        setPhoto(imageUri);
+        setNewPhoto(imageUri);
+      })
+      .catch(error => {
+        console.log('Camera Error:', error);
+      });
+  };
+
+  const openGallery = () => {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 300,
+      cropping: true,
+      cropperCircleOverlay: true,
+      compressImageQuality: 0.8,
+      mediaType: 'photo',
+    })
+      .then(image => {
+        console.log('CROPPED IMAGE:', image);
+        console.log('IMAGE PATH:', image.path);
+
+        const imageUri =
+          Platform.OS === 'android'
+            ? image.path
+            : image.path.replace('file://', '');
+
+        setPhoto(imageUri);
+        setNewPhoto(imageUri);
+      })
+      .catch(error => {
+        console.log('Gallery Error:', error);
+      });
+  };
+
+
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
@@ -1446,48 +1522,6 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   </TouchableOpacity>
                 </View>
               </View>
-
-              {/* <View style={styles.inputGroup}>
-                <Text style={styles.label} allowFontScaling={false}>
-                  {t('university_email_id')}
-                </Text>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    backgroundColor: 'rgba(255,255,255,0.08)',
-                    borderRadius: 12,
-                    paddingHorizontal: 4,
-                    minHeight: 44,
-                  }}
-                >
-                  <TextInput
-                    selectionColor="#fff"
-                    editable={false}
-                    cursorColor="#fff"
-                    style={{
-                      flex: 1,
-                      color: '#fff',
-                      backgroundColor: 'transparent',
-                      borderWidth: 0,
-                      borderRadius: 10,
-                      paddingVertical: 10,
-                      paddingHorizontal: 10,
-                      fontFamily: 'Urbanist-Regular',
-                      fontSize: 16,
-                      fontWeight: 400,
-                    }}
-                    allowFontScaling={false}
-                    value={userMeta.student_email || ''}
-                    onChangeText={text => {
-                      setUserMeta(prev => ({ ...prev, student_email: text.trim() }));
-                    }}
-                    keyboardType="email-address"
-                    placeholder={t('enter_student_email_id')}
-                    placeholderTextColor="#ccc"
-                  />
-                </View>
-              </View> */}
 
               <View style={styles.inputGroup}>
                 <Text style={styles.label} allowFontScaling={false}>
@@ -2052,6 +2086,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   onPress={async () => {
                     setShowDeleteModal(false);
                     setPhoto(null);
+                    setNewPhoto(null);
                   }}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>
