@@ -248,6 +248,24 @@ const MessagesIndividualScreen = ({
     return () => subscription?.remove();
   }, []);
 
+  const filterEmailAndLinks = (text: string): string => {
+  let filtered = text;
+  const emailRegex =
+    /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+  filtered = filtered.replace(emailRegex, "");
+
+
+  const urlRegex =
+    /((https?:\/\/|www\.)[^\s]+)/gi;
+  filtered = filtered.replace(urlRegex, "");
+
+  const domainRegex =
+    /\b[a-zA-Z0-9-]+\.(com|net|org|in|co|io|gov|edu|info|biz|me|app|dev|ai|uk|us|ca|au|de|fr|jp|cn)\b/gi;
+  filtered = filtered.replace(domainRegex, "");
+
+  return filtered;
+};
+
   const filterNumbersAndNumberWords = (text: string): string => {
     let digitCount = 0;
   
@@ -280,7 +298,21 @@ const MessagesIndividualScreen = ({
   
     return filtered;
   };
-  
+  const applyChatRestrictions = (text: string): string => {
+  let filtered = text;
+
+  // 1) Block numbers
+  filtered = filterNumbersAndNumberWords(filtered);
+
+  // 2) Block emails + links
+  filtered = filterEmailAndLinks(filtered);
+
+  // Normalize spaces
+  //filtered = filtered.replace(/\s{2,}/g, " ").trim();
+
+  return filtered;
+};
+
   
 
   const handleTextChange = (text: string) => {
@@ -716,7 +748,9 @@ const MessagesIndividualScreen = ({
   const handleSendMessage = async () => {
     // Apply filter ONLY on send
   
-    const filteredMessage = filterNumbersAndNumberWords(messageText.trim());
+    //const filteredMessage = filterNumbersAndNumberWords(messageText.trim());
+        const filteredMessage = applyChatRestrictions(messageText.trim());
+
 
     if (!filteredMessage) {
       setMessageText('');
