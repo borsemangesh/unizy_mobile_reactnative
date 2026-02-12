@@ -1375,12 +1375,12 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     editable={false}
                     style={{
                       flex: 1,
-                      color: '#fff',
                       backgroundColor: 'transparent',
                       borderWidth: 0,
                       borderRadius: 10,
                       paddingVertical: 10,
                       paddingHorizontal: 12,
+                      color: 'rgba(255, 255, 255, 0.58)',
                       fontFamily: 'Urbanist-Regular',
                       fontSize: 16,
                       fontWeight: 400,
@@ -1458,7 +1458,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     editable={false}
                     style={{
                       flex: 1,
-                      color: '#fff',
+                      color: 'rgba(255, 255, 255, 0.58)',
                       backgroundColor: 'transparent',
                       borderWidth: 0,
                       borderRadius: 10,
@@ -1571,9 +1571,10 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   onChangeText={text =>
                     setUserMeta(prev => ({ ...prev, city: text }))
                   }
-                  style={styles.input}
+                  style={[styles.input, { color: 'rgba(255, 255, 255, 0.58)' }]}
                   placeholder={t('enter_city')}
                   placeholderTextColor="#ccc"
+
                 />
               </View>
             </View>

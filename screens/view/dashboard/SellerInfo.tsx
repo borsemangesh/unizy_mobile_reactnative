@@ -422,7 +422,7 @@ const styles = StyleSheet.create({
   },
   textbg: {
     position:'absolute',
-    top:Platform.OS === 'ios' ? 0 : 80,
+    top:Platform.OS === 'ios' ? 0 : 70,
     overflow: 'hidden',
     alignContent: 'center',
     alignSelf: 'center',
@@ -536,8 +536,8 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   textContainer: {
-    // width: '86%'
-    paddingLeft: Platform.OS === 'ios' ? 54 : 48,
+    width: '100%',
+    paddingLeft: Platform.OS === 'ios' ? 54 : 54,
     marginTop: -12,
   },
   title: {
