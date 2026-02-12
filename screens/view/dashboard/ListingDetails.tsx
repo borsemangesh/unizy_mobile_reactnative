@@ -61,7 +61,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
   const { shareid = 1 } = (route.params as { shareid?: number }) || {};
   const { catagory_id = 0 } = (route.params as { catagory_id?: number }) || {};
   const { reviews = '' } = (route.params as { reviews?: string }) || '4.5';
-  
+
   const { catagory_name = '' } =
     (route.params as { catagory_name?: string }) || {};
 
@@ -265,7 +265,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
       } else {
         setLoading(false);
         setShowPopup1(false);
-        setOtp(['', '', '', '', '', '']); 
+        setOtp(['', '', '', '', '', '']);
 
         showToast(t(data?.message), 'error');
       }
@@ -410,7 +410,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
           </Text>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('MyRatings',{
+              navigation.navigate('MyRatings', {
                 shareid
               });
             }}
@@ -463,19 +463,20 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                 style={[{
                   width: 10,
                   height: 10,
-                  tintColor: 'rgba(140, 225, 255, 0.9)', }, animatedIconStyle]}
+                  tintColor: 'rgba(140, 225, 255, 0.9)',
+                }, animatedIconStyle]}
               />
               <Text
-                    allowFontScaling={false}
-                    style={[
-                      styles.topRightText,
-                      {
-                        color: '#b4e6ff' ,
-                      },
-                    ]}
-                  >
-                  {data?.list?.avg_rating || '0.0'}
-                  </Text>
+                allowFontScaling={false}
+                style={[
+                  styles.topRightText,
+                  {
+                    color: '#b4e6ff',
+                  },
+                ]}
+              >
+                {data?.list?.avg_rating || '0.0'}
+              </Text>
             </AnimatedReanimated.View>
           </TouchableOpacity>
           {/* <TouchableOpacity
@@ -559,7 +560,12 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                 width: '100%',
               }}
             >
-              {/* Card */}
+
+
+
+
+
+
               <View
                 style={[
                   styles.card,
@@ -622,6 +628,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     }
                   })()}
                   <View style={{ marginLeft: 10, gap: 8 }}>
+
                     <View style={{ width: '88%' }}>
                       <Text
                         numberOfLines={2}
@@ -631,6 +638,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                         {data?.list?.title}
                       </Text>
                     </View>
+
                     <View style={styles.rightSection}>
                       <Text
                         allowFontScaling={false}
@@ -653,6 +661,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                     </View>
                   </View>
                 </View>
+
                 <View style={styles.cardconstinerdivider} />
                 <View style={styles.listingtyperow}>
                   <Text allowFontScaling={false} style={styles.lebleHeader}>
@@ -682,7 +691,31 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                       {data?.list?.remaining_quantity}
                     </Text>
                   </View>
+
                 )}
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('MyListingDetails', {
+                      id: shareid,
+                    });
+                  }}
+                  style={{ alignContent: 'center', alignSelf: 'center', justifyContent: 'center',display:'none' }}
+                >
+                  <Text
+                    allowFontScaling={false}
+                    style={{
+                      color: '#ffffffff',
+                      fontFamily: 'Urbanist-SemiBold',
+                      fontSize: 12,
+                      marginTop: 0,
+                      alignContent: "center",
+                      textDecorationLine: 'underline',
+                    }}
+                  >
+                    {t('view_listing')}
+                  </Text>
+                </TouchableOpacity>
+
               </View>
 
               {/* <View style={styles.carddivider} /> */}

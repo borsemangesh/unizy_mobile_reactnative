@@ -46,6 +46,7 @@ import SellerInfo from './dashboard/SellerInfo';
 import BuyerInfo from './dashboard/BuyerInfo';
 import OnboardingScreen from './onboarding/OnboardingScreen';
 import MyRatings from './dashboard/MyRatings';
+import MyListingDetails from './dashboard/MyListingDetails';
 
 const Stack = createNativeStackNavigator();
 
@@ -68,16 +69,16 @@ export const Navigation = () => {
   enableScreens();
   return (
     <NavigationContainer ref={navigationRef} linking={linking}
-    
-    onReady={() => {
-    navigationReady.isReady = true;
-  }}
+
+      onReady={() => {
+        navigationReady.isReady = true;
+      }}
     >
       <Stack.Navigator
         initialRouteName="SinglePage"
         screenOptions={{ headerShown: false, animation: 'none' }}
       >
-       
+
         <Stack.Screen
           name="SinglePage"
           component={SinglePage}
@@ -97,7 +98,7 @@ export const Navigation = () => {
             presentation: 'fullScreenModal',
           }}
         />
-       
+
 
         <Stack.Screen
           name="AddScreen"
@@ -175,7 +176,7 @@ export const Navigation = () => {
             presentation: 'fullScreenModal',
           }}
         />
-        
+
         <Stack.Screen
           name="MessagesIndividualScreen"
           component={MessagesIndividualScreen}
@@ -190,7 +191,7 @@ export const Navigation = () => {
           component={RevarifyStudentStatus}
           options={{ headerShown: false }}
         />
-        
+
         <Stack.Screen
           name="Bookmark"
           component={Bookmark}
@@ -256,7 +257,7 @@ export const Navigation = () => {
             presentation: 'fullScreenModal',
           }}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="MyRatings"
           component={MyRatings}
           options={{
@@ -274,7 +275,16 @@ export const Navigation = () => {
           }}
         />
 
-         <Stack.Screen
+        <Stack.Screen
+          name="MyListingDetails"
+          component={MyListingDetails}
+          options={{
+            headerShown: false,
+            presentation: 'fullScreenModal',
+          }}
+        />
+
+        <Stack.Screen
           name="UserAddReview"
           component={UserAddReview}
           options={{
@@ -350,56 +360,56 @@ export const Navigation = () => {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-              name="UserReviews"
-              component={UserReviews}
-              options={{
-                headerShown: false,
-                presentation: 'fullScreenModal',
-              }}
-            />
-             <Stack.Screen
-              name="UserListing"
-              component={UserListing}
-              options={{
-                headerShown: false,
-                presentation: 'fullScreenModal',
-              }}
-            />
+          name="UserReviews"
+          component={UserReviews}
+          options={{
+            headerShown: false,
+            presentation: 'fullScreenModal',
+          }}
+        />
+        <Stack.Screen
+          name="UserListing"
+          component={UserListing}
+          options={{
+            headerShown: false,
+            presentation: 'fullScreenModal',
+          }}
+        />
 
-              <Stack.Screen
-              name="ChangePassword"
-              component={ChangePassword}
-              options={{
-                headerShown: false,
-                presentation: 'fullScreenModal',
-              }}
-            />
+        <Stack.Screen
+          name="ChangePassword"
+          component={ChangePassword}
+          options={{
+            headerShown: false,
+            presentation: 'fullScreenModal',
+          }}
+        />
 
-              <Stack.Screen
-              name="SellerInfo"
-              component={SellerInfo}
-              options={{
-                headerShown: false,
-                presentation: 'fullScreenModal',
-              }}
-            />
+        <Stack.Screen
+          name="SellerInfo"
+          component={SellerInfo}
+          options={{
+            headerShown: false,
+            presentation: 'fullScreenModal',
+          }}
+        />
 
-              <Stack.Screen
-              name="BuyerInfo"
-              component={BuyerInfo}
-              options={{
-                headerShown: false,
-                presentation: 'fullScreenModal',
-              }}
-            />
-            <Stack.Screen
-              name="OnboardingScreen"
-              component={OnboardingScreen}
-              options={{
-                headerShown: false,
-                presentation: 'fullScreenModal',
-              }}
-              />
+        <Stack.Screen
+          name="BuyerInfo"
+          component={BuyerInfo}
+          options={{
+            headerShown: false,
+            presentation: 'fullScreenModal',
+          }}
+        />
+        <Stack.Screen
+          name="OnboardingScreen"
+          component={OnboardingScreen}
+          options={{
+            headerShown: false,
+            presentation: 'fullScreenModal',
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
