@@ -1,5 +1,5 @@
 import { BlurView } from '@react-native-community/blur';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Dimensions,
@@ -131,6 +131,27 @@ const SelectCatagoryDropdown = ({
     onClose();
   };
 
+  const inputRef = useRef<TextInput>(null);
+
+  useEffect(() => {
+  if (visible) {
+    const otherOptionSelected = options.some(
+      opt =>
+        opt.is_other &&
+        (ismultilple
+          ? tempSelectedCheckboxes.includes(opt.id)
+          : tempSelectedRadio === opt.id)
+    );
+
+    if (otherOptionSelected) {
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 300);
+    }
+  }
+}, [tempSelectedCheckboxes, tempSelectedRadio]);
+
+
   const handleCancel = () => {
     onClose();
   };
@@ -211,77 +232,13 @@ const SelectCatagoryDropdown = ({
                   paddingHorizontal: 10,
                 }}
               >
-                {/* <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 16 }}>
-                  {options.map((option, index) => {
-
-                    const isSelectedRadio = tempSelectedRadio === option.id;
-                    const isSelectedCheckbox = tempSelectedCheckboxes.includes(option.id);
-                    return (
-                      <View
-                        style={{
-                          paddingHorizontal: 10,
-                          marginTop: 10,
-                        }}
-                        key={index}>
-
-                        <TouchableOpacity
-                          onPress={() => {
-                            ismultilple
-                              ? toggleCheckbox(option.id)
-                              : handleRadioButton(option.id)
-                          }
-                          }
-                          style={styles.radioButtonContainer}
-                        >
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              alignItems: 'center',
-                              paddingHorizontal: 10,
-                              justifyContent: 'flex-start',
-                            }}
-                          >
-                            {ismultilple ? (
-                              <View style={styles.checkboxWrapper}>
-                                {isSelectedCheckbox ? (
-                                  <Image
-                                    source={require('../../../assets/images/tickicon.png')}
-                                    style={styles.tickImage}
-                                    resizeMode="contain"
-                                  />
-                                ) : (
-                                  <View style={styles.checkboxContainer} />
-                                )}
-                              </View>
-                            ) : (
-                              <View style={[styles.radioButton, isSelectedRadio && styles.selectedRadio]}>
-                                {isSelectedRadio && <View style={styles.radioDot} />}
-                              </View>
-                            )}
-                            <Text allowFontScaling={false}
-                              style={{
-                                color: '#FFF',
-                                fontSize: 16,
-                                marginLeft: 10,
-                                fontWeight: '600',
-                                lineHeight: 22,
-                                letterSpacing: -0.28,
-                                fontFamily: 'Urbanist-SemiBold',
-
-                              }}
-                            >
-                              {option.option_name}
-                            </Text>
-                          </View>
-                        </TouchableOpacity>
-                      </View>
-                    );
-                  })}
-                </ScrollView> */}
 
                 <ScrollView
                   showsVerticalScrollIndicator={false}
-                  contentContainerStyle={{ paddingBottom: 16 }}
+                  contentContainerStyle={{ paddingBottom: 40 }}
+                  keyboardShouldPersistTaps="handled"
+                  keyboardDismissMode="on-drag"
+
                 >
                   {options.map((option, index) => {
                     const isSelectedRadio = tempSelectedRadio === option.id;
@@ -361,6 +318,8 @@ const SelectCatagoryDropdown = ({
                           <View style={{ marginLeft: 8, marginTop: 8 }}>
                             <TextInput
                               value={otherText}
+                              ref={inputRef}
+                              autoFocus
                               onChangeText={setOtherText}
                               allowFontScaling={false}
                               cursorColor="#fff"
