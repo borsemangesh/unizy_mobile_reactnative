@@ -1,5 +1,5 @@
 import { BlurView } from '@react-native-community/blur';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Dimensions,
@@ -18,17 +18,6 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { NewCustomToastContainer, showToast } from './NewCustomToastManager';
-
-// interface SelectCatagoryDropdownProps {
-//   options: { id: number; option_name: string }[];
-//   visible: boolean;
-//   ismultilple: boolean;
-//   title?: string;
-//   subtitle?: string;
-//   onClose: () => void;
-//   onSelect: (selectedId: number | number[]) => void;
-//   selectedValues?: number | number[];
-// }
 
 interface SelectCatagoryDropdownProps {
   options: {
@@ -60,7 +49,7 @@ const SelectCatagoryDropdown = ({
   onClose,
   onSelect,
   selectedValues,
-  otherTextValue
+  otherTextValue,
 }: SelectCatagoryDropdownProps) => {
   const [selectedCheckboxes, setSelectedCheckboxes] = useState<number[]>([]);
   const [selectedRadio, setSelectedRadio] = useState<number | null>(null);
@@ -72,20 +61,6 @@ const SelectCatagoryDropdown = ({
   const [tempSelectedRadio, setTempSelectedRadio] = useState<number | null>(
     null,
   );
-
-  // useEffect(() => {
-  //   if (visible) {
-  //     setOtherText('');
-  //     if (Array.isArray(selectedValues)) {
-  //       setTempSelectedCheckboxes(selectedValues);
-  //     } else if (selectedValues) {
-  //       setTempSelectedRadio(selectedValues);
-  //     } else {
-  //       setTempSelectedCheckboxes([]);
-  //       setTempSelectedRadio(null);
-  //     }
-  //   }
-  // }, [visible, selectedValues]);
 
   useEffect(() => {
     if (visible) {
@@ -102,8 +77,6 @@ const SelectCatagoryDropdown = ({
     }
   }, [visible, selectedValues, otherTextValue]);
 
-
-
   const toggleCheckbox = (id: number) => {
     setTempSelectedCheckboxes(prev =>
       prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id],
@@ -113,15 +86,6 @@ const SelectCatagoryDropdown = ({
   const handleRadioButton = (id: number) => {
     setTempSelectedRadio(id);
   };
-
-  // const handleApply = () => {
-  //   if (ismultilple) {
-  //     onSelect(tempSelectedCheckboxes);
-  //   } else if (tempSelectedRadio != null) {
-  //     onSelect(tempSelectedRadio);
-  //   }
-  //   onClose();
-  // };
 
   const handleApply = () => {
     const hasTextOption = options.some(
@@ -158,6 +122,8 @@ const SelectCatagoryDropdown = ({
     onClose();
   };
   const { t } = useTranslation();
+
+  const scrollRef = useRef<ScrollView>(null);
 
   return (
     <View
@@ -269,9 +235,10 @@ const SelectCatagoryDropdown = ({
                 }}
               >
                 <ScrollView
+                  ref={scrollRef}
                   showsVerticalScrollIndicator={false}
                   keyboardShouldPersistTaps="handled"
-                  contentContainerStyle={{ paddingBottom: 16 }}
+                  contentContainerStyle={{ paddingBottom: 20 }}
                 >
                   {options.map((option, index) => {
                     const isSelectedRadio = tempSelectedRadio === option.id;
@@ -354,6 +321,7 @@ const SelectCatagoryDropdown = ({
                         {showOtherInput && (
                           <View style={{ marginLeft: 8, marginTop: 8 }}>
                             <TextInput
+                              autoFocus
                               allowFontScaling={false}
                               value={otherText}
                               onChangeText={setOtherText}
@@ -369,6 +337,13 @@ const SelectCatagoryDropdown = ({
                                 paddingVertical: 16,
                                 color: '#fff',
                                 fontSize: 16,
+                              }}
+                              onFocus={() => {
+                                setTimeout(() => {
+                                  scrollRef.current?.scrollToEnd({
+                                    animated: true,
+                                  });
+                                }, 300); // important for iOS
                               }}
                             />
                           </View>
