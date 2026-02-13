@@ -773,5 +773,12 @@
   "update_email_info1": "Enter your new university email address. We’ll use this for account updates and important notifications.",
   "fixed_commission": "A fixed commission of",
   "ratings":"Ratings",
-  "return_my_listings": "Return to My Listings"
+  "return_my_listings": "Return to My Listings",
+  "add_new_card":"Add New Card",
+  "delete_card":"Delete Card",
+  "delete_message_card": "This action is permanent. Your saved card details will be deleted and cannot be recovered.",
+  "expiry":"Expiry",
+  "my":"My",
+  "card":"Card",
+  "no_cards_found":"No Cards Found"
 }

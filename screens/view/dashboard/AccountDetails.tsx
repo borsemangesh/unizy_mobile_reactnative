@@ -13,6 +13,8 @@ import {
   TextInput,
   Keyboard,
   Alert,
+  Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -21,6 +23,7 @@ import Animated, {
   interpolate,
   interpolateColor,
   useDerivedValue,
+  withSpring,
 } from 'react-native-reanimated';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -28,7 +31,7 @@ import { useRoute, useFocusEffect } from '@react-navigation/native';
 import { SquircleView } from 'react-native-figma-squircle';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, act } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import { Constant } from '../../utils/Constant';
 import Button from '../../utils/component/Button';
@@ -38,6 +41,7 @@ import {
 } from '../../utils/component/NewCustomToastManager';
 import Loader from '../../utils/component/Loader';
 import { useTranslation } from 'react-i18next';
+import { initPaymentSheet, presentPaymentSheet } from '@stripe/stripe-react-native';
 
 type AccountDetailsProps = {
   navigation: any;
@@ -113,20 +117,31 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
   const route = useRoute();
   const routeParams = route.params as { showSuccess?: boolean } | undefined;
   const { showSuccess = false } = routeParams || {};
-
+  const [showConfirm1, setShowConfirm1] = useState(false);
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const isFromOnboarding = useRef(false);
+  const [savedCards, setSavedCards] = useState<any[]>([]);
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  const { height } = Dimensions.get('window');
+  const { t } = useTranslation();
+  const tabs = ['Bank', 'Cards'];
+  const screenWidth = Dimensions.get('window').width;
+  const tabWidth = (screenWidth * 0.9) / tabs.length;
+
+  const [selectedTab, setSelectedTab] = useState<'Bank' | 'Cards'>('Bank');
+  const bubbleTranslateX = useSharedValue(0);
 
   useEffect(() => {
-
-  }, [routeParams, showSuccess]);
+    if (selectedTab !== 'Bank') return;
+  }, [selectedTab, routeParams, showSuccess]);
 
   useEffect(() => {
+    if (selectedTab !== 'Bank') return;
 
-  }, [showSuccessPopup]);
+  }, [selectedTab, showSuccessPopup]);
 
   const fetchAccountDetails = useCallback(async () => {
     try {
@@ -136,8 +151,6 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
         return;
       }
       const url = `${MAIN_URL.baseUrl}transaction/account-detail`;
-
-
       const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -172,7 +185,6 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
     fetchAccountDetails();
   }, [fetchAccountDetails]);
 
-  // Reset onboarding flag when screen loses focus
   useFocusEffect(
     useCallback(() => {
       return () => {
@@ -181,23 +193,36 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
     }, []),
   );
 
-   const { t } = useTranslation();
+
+  useEffect(() => {
+    const index = tabs.indexOf(selectedTab);
+    bubbleTranslateX.value = withSpring(index * tabWidth, {
+      damping: 150,
+      stiffness: 320,
+    });
+  }, [selectedTab]);
+
+  const bubbleAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: bubbleTranslateX.value }],
+    };
+  });
 
   const hasBankData = () => {
     if (!data?.stripeAccount?.merchant) {
       return false;
     }
-    
+
     const merchants = Array.isArray(data.stripeAccount.merchant)
       ? data.stripeAccount.merchant
       : [data.stripeAccount.merchant];
-  
+
     const hasActualBankData = merchants.some(
       (bank: any) =>
         bank &&
         (bank.bank_name || bank.last4 || bank.routing_number || bank.account_number),
     );
-    
+
     return hasActualBankData;
   };
 
@@ -232,6 +257,46 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
 
     return () => clearTimeout(timer);
   }, [showSuccess, data, loading]);
+
+
+
+
+  const fetchSavedCards = useCallback(async () => {
+    try {
+      setLoading(true);
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      const url = MAIN_URL.baseUrl + 'transaction/mysaved-cards';
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const json = await res.json();
+
+      if (json?.statusCode === 200) {
+        setSavedCards(json?.data || []);
+      } else {
+        setSavedCards([]);
+        showToast(json?.message || 'Failed to fetch cards', 'error');
+      }
+    } catch (e: any) {
+      showToast(e?.message || 'Something went wrong', 'error');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  useEffect(() => {
+    if (selectedTab !== 'Cards') return;
+    fetchSavedCards();
+  }, [selectedTab, fetchSavedCards]);
 
   const maskAccountNumber = (last4: string) => {
     if (!last4) return '****';
@@ -283,7 +348,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
       });
 
       const result = await response.json();
-;
+      ;
 
       if (response.ok && result.statusCode === 200) {
         const accountLinkUrl = result.data?.url;
@@ -313,6 +378,207 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
       setButtonLoading(false);
     }
   }, [navigation]);
+
+
+  const handleAddCard = async () => {
+    try {
+      setButtonLoading(true);
+      const token = await AsyncStorage.getItem('userToken');
+      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+      if (!token) {
+        setButtonLoading(false);
+        return;
+      }
+
+      const url1 = MAIN_URL.baseUrl + 'transaction/create-setup-intent'
+      console.log('➡️ [Create Setup Intent] URL:', url1);
+
+      const res = await fetch(url1, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          languagecode: language_code
+        },
+      });
+
+      const data = await res.json();
+      const apiData = data?.data;
+      if (!apiData?.client_secret || !apiData?.ephemeralKey || !apiData?.customer_id) {
+        throw new Error("SetupIntent details missing from backend response");
+      }
+
+      const setupIntentClientSecret = apiData.client_secret;
+      const ephemeralKey = apiData.ephemeralKey;
+      const customerId = apiData.customer_id;
+
+
+      console.log('✅ SetupIntent fields received:', {
+        customerId,
+        ephemeralKey: ephemeralKey ? 'present' : 'missing',
+        setupIntentClientSecret: setupIntentClientSecret ? 'present' : 'missing',
+      });
+
+      const { error: initError } = await initPaymentSheet({
+        merchantDisplayName: "Your Company",
+        customerId,
+        customerEphemeralKeySecret: ephemeralKey,
+        setupIntentClientSecret,
+      });
+
+
+      if (initError) {
+        showToast(initError.message, "error");
+        console.log('❌ initPaymentSheet error:', initError);
+        return;
+      }
+      const { error: presentError } = await presentPaymentSheet();
+
+      if (presentError) {
+        if (presentError.code === "Canceled") return;
+        showToast(presentError.message, "error");
+        return;
+      }
+      showToast("Card added successfully ✅", "success");
+
+      navigation.goBack();
+    } catch (error: any) {
+      showToast(error?.message || "Something went wrong", "error");
+    } finally {
+      setButtonLoading(false);
+    }
+  }
+  const CardTile = ({ card, onDelete }: any) => {
+    const brand = card.brand?.toUpperCase() || '';
+
+    return (
+      <View
+        style={{
+          borderRadius: 22,
+          padding: 18,
+          marginBottom: 12,
+          backgroundColor: 'rgba(255,255,255,0.07)',
+          borderWidth: 1,
+         boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.25)',
+          borderColor: 'rgba(255,255,255,0.12)',
+          overflow: 'hidden',
+        }}
+      >
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}
+          >
+            {/* Chip */}
+            <Image
+              source={require('../../../assets/images/chip.png')}
+              style={{
+                width: 34,
+                height: 26,
+                resizeMode: 'contain',
+                opacity: 0.95,
+                marginRight: 10,
+              }}
+            />
+
+            {/* Brand */}
+            <Text
+              style={{
+                color: '#fff',
+                fontSize: 15,
+                fontFamily: 'Urbanist-SemiBold',
+                lineHeight: 18, // ✅ keeps text centered
+              }}
+            >
+              {brand}
+            </Text>
+          </View>
+
+          {/* RIGHT */}
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            {card.isDefault ? (
+              <View
+                style={{
+                  paddingHorizontal: 12,
+                  paddingVertical: 6,
+                  borderRadius: 20,
+                  backgroundColor: 'rgba(0,255,153,0.14)',
+                  borderWidth: 1,
+                  borderColor: 'rgba(0,255,153,0.22)',
+                  marginRight: 10, // ✅ space before delete
+                }}
+              >
+                <Text style={{ color: '#00ff99', fontSize: 12, fontFamily: 'Urbanist-SemiBold' }}>
+                  {t('default')}
+                </Text>
+              </View>
+            ) : null}
+
+            {/* Delete */}
+            <TouchableOpacity
+              onPress={() => onDelete(card.id)}
+              activeOpacity={0.7}
+              style={{
+                height: 36,
+                width: 36,
+                borderRadius: 12,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: 'rgba(255,255,255,0.06)',
+                borderWidth: 1,
+                borderColor: 'rgba(255,255,255,0.08)',
+              }}
+            >
+              <Image
+                source={require('../../../assets/images/delete_new.png')}
+                style={{ width: 18, height: 18, resizeMode: 'contain', opacity: 0.9 }}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+
+        {/* Chip + Number */}
+        <View style={{ marginTop: 0 }}>
+
+          <Text
+            style={{
+              fontSize: 22,
+              letterSpacing: 2.2,
+              color: '#fff',
+              fontFamily: 'Urbanist-Bold',
+            }}
+          >
+            •••• •••• •••• {card.last4}
+          </Text>
+        </View>
+
+        {/* Bottom Row */}
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'flex-end',
+            marginTop: 6,
+          }}
+        >
+          <View>
+            <Text style={{ color: 'rgba(255,255,255,0.55)', fontSize: 12, fontFamily: 'Urbanist-Regular' }}>
+              {t('expiry')}
+            </Text>
+
+            <Text style={{ color: '#fff', fontSize: 15, marginTop: 3, fontFamily: 'Urbanist-SemiBold' }}>
+              {card.exp_month}/{card.exp_year}
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -412,15 +678,15 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
             </Animated.View>
           </TouchableOpacity>
 
-            <View style={{width: 280}}>
-          <Text allowFontScaling={false} style={styles.unizyText}>
-            {t('bank_details')}
-          </Text>
+          <View style={{ width: 280 }}>
+            <Text allowFontScaling={false} style={styles.unizyText}>
+              {t('payment_methods')}
+            </Text>
           </View>
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => {
-             
+
             }}
             style={styles.backButtonContainer}
           >
@@ -428,7 +694,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
               style={[styles.blurButtonWrapper_none]}
             >
               <Animated.View
-                style={[StyleSheet.absoluteFill,{display: 'none'}]}
+                style={[StyleSheet.absoluteFill, { display: 'none' }]}
               >
                 <BlurView
                   style={StyleSheet.absoluteFill}
@@ -441,11 +707,49 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
               {/* Back Icon */}
               <Animated.Image
                 source={require('../../../assets/images/back.png')}
-                style={[{ height: 24, width: 24 ,display: 'none'}]}
+                style={[{ height: 24, width: 24, display: 'none' }]}
               />
             </Animated.View>
           </TouchableOpacity>
         </View>
+
+        {/* ===== Tabs ===== */}
+        <View style={styles.bottomTabContainer}>
+          <View style={{ height: 38 }}>
+            <Animated.View
+              style={[
+                styles.bubble,
+                {
+                  width: tabWidth - 2,
+                },
+                bubbleAnimatedStyle,
+              ]}
+            />
+          </View>
+
+          {tabs.map((tab) => (
+            <TouchableOpacity
+              key={tab}
+              style={[styles.tabItem, { width: tabWidth }]}
+              activeOpacity={0.7}
+              onPress={() => setSelectedTab(tab as any)}
+            >
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontFamily: 'Urbanist-SemiBold',
+                  color: selectedTab === tab ? '#FFFFFF' : '#89C7FF',
+                  textAlign: 'center',
+                }}
+              >
+                {tab}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+
+
 
         {loading ? (
           <Loader
@@ -457,309 +761,379 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
             }}
           />
         ) : (
-          <View>
-            <Animated.ScrollView
-            contentContainerStyle={styles.scrollContainer}
-            onScroll={scrollHandler}
-            scrollEventThrottle={16}
-          >
-            <View
-              style={{
-                gap: 16,
-                justifyContent: 'center',
-                alignItems: 'center',
-                width: '100%',
-              }}
-            >
-              {/* Profile Details Card */}
-              <SquircleView
-                style={styles.card}
-                squircleParams={{
-                  cornerSmoothing: 1,
-                  cornerRadius: 24,
-                  fillColor: 'rgba(255, 255, 255, 0.06)',
-                }}
+
+          <View style={{ flex: 1 }}>
+
+            {selectedTab === 'Bank' && (
+              <Animated.ScrollView
+                contentContainerStyle={styles.scrollContainer}
+                onScroll={scrollHandler}
+                scrollEventThrottle={16}
               >
+                {/* 🔥 KEEP YOUR EXISTING BANK VIEW CODE HERE 🔥 */}
+
                 <View
                   style={{
-                    flexDirection: 'row',
+                    justifyContent: 'center',
                     alignItems: 'center',
-                    gap: 4,
+                    width: '100%',
                   }}
                 >
-                  <Image
-                    source={require('../../../assets/images/sellerfile.png')}
-                    style={{ width: 24, height: 24 }}
-                    resizeMode="cover"
-                  />
-                  <Text
-                    allowFontScaling={false}
-                    style={styles.sellerHeaderlable}
-                  >
-                    {t('profile_details')}
-                  </Text>
-                </View>
-
-                <View style={styles.cardconstinerdivider} />
-
-                <View style={styles.listingtyperow}>
-                  <Text allowFontScaling={false} style={styles.lebleHeader}>
-                    {t('name')}:
-                  </Text>
-                  <Text allowFontScaling={false} style={styles.status}>
-                    {(() => {
-                      const merchants = data?.stripeAccount?.merchant;
-                      if (Array.isArray(merchants) && merchants.length > 0) {
-                        return merchants[0]?.name || 'N/A';
-                      }
-                      return merchants?.name || 'N/A';
-                    })()}
-                  </Text>
-                </View>
-
-                <View style={styles.listingtyperow}>
-                  <Text allowFontScaling={false} style={styles.lebleHeader}>
-                    {t('email')}:
-                  </Text>
-                  <Text allowFontScaling={false} style={styles.status}>
-                    {(() => {
-                      const merchants = data?.stripeAccount?.merchant;
-                      if (Array.isArray(merchants) && merchants.length > 0) {
-                        return merchants[0]?.email || 'N/A';
-                      }
-                      return merchants?.email || 'N/A';
-                    })()}
-                  </Text>
-                </View>
-              </SquircleView>
-
-              <View style={styles.carddivider} />
-
-              {/* Primary Bank Section */}
-              {getPrimaryBanks().length > 0 && (
-                <>
-                  {getPrimaryBanks().map((bank: any, index: number) => (
-                    <View
-                      
-                      style={{ width: '100%', gap: 16 }}
-                      key={`primary-${index}`}
+                  <View>
+                    <Animated.ScrollView
+                      contentContainerStyle={styles.scrollContainer}
+                      onScroll={scrollHandler}
+                      scrollEventThrottle={16}
                     >
-                      <SquircleView
-                        style={styles.card}
-                        squircleParams={{
-                          cornerSmoothing: 1,
-                          cornerRadius: 24,
-                          fillColor: 'rgba(255, 255, 255, 0.06)',
+                      <View
+                        style={{
+                          gap: 16,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          width: '100%',
                         }}
                       >
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            gap: 4,
+
+                        <SquircleView
+                          style={styles.card}
+                          squircleParams={{
+                            cornerSmoothing: 1,
+                            cornerRadius: 24,
+                            fillColor: 'rgba(255, 255, 255, 0.06)',
                           }}
                         >
-                          <Image
-                            source={require('../../../assets/images/sellerfile.png')}
-                            style={{ width: 24, height: 24 }}
-                            resizeMode="cover"
-                          />
-                          <Text
-                            allowFontScaling={false}
-                            style={styles.sellerHeaderlable}
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              gap: 4,
+                            }}
                           >
-                            {t('bank_details')}
-                          </Text>
-                        </View>
+                            <Image
+                              source={require('../../../assets/images/sellerfile.png')}
+                              style={{ width: 24, height: 24 }}
+                              resizeMode="cover"
+                            />
+                            <Text
+                              allowFontScaling={false}
+                              style={styles.sellerHeaderlable}
+                            >
+                              {t('profile_details')}
+                            </Text>
+                          </View>
 
-                        <View style={styles.cardconstinerdivider} />
+                          <View style={styles.cardconstinerdivider} />
 
-                        <View style={styles.listingtyperow}>
-                          <Text
-                            allowFontScaling={false}
-                            style={styles.lebleHeader}
-                          >
-                            {t('bank_name')}:
-                          </Text>
-                          <Text allowFontScaling={false} style={styles.status}>
-                            {bank.bank_name || 'N/A'}
-                          </Text>
-                        </View>
+                          <View style={styles.listingtyperow}>
+                            <Text allowFontScaling={false} style={styles.lebleHeader}>
+                              {t('name')}:
+                            </Text>
+                            <Text allowFontScaling={false} style={styles.status}>
+                              {(() => {
+                                const merchants = data?.stripeAccount?.merchant;
+                                if (Array.isArray(merchants) && merchants.length > 0) {
+                                  return merchants[0]?.name || 'N/A';
+                                }
+                                return merchants?.name || 'N/A';
+                              })()}
+                            </Text>
+                          </View>
 
-                        <View style={styles.listingtyperow}>
-                          <Text
-                            allowFontScaling={false}
-                            style={styles.lebleHeader}
-                          >
-                            {t('acc_number')}:
-                          </Text>
-                          <Text allowFontScaling={false} style={styles.status}>
-                            {bank.last4 ? maskAccountNumber(bank.last4) : 'N/A'}
-                          </Text>
-                        </View>
+                          <View style={styles.listingtyperow}>
+                            <Text allowFontScaling={false} style={styles.lebleHeader}>
+                              {t('email')}:
+                            </Text>
+                            <Text allowFontScaling={false} style={styles.status}>
+                              {(() => {
+                                const merchants = data?.stripeAccount?.merchant;
+                                if (Array.isArray(merchants) && merchants.length > 0) {
+                                  return merchants[0]?.email || 'N/A';
+                                }
+                                return merchants?.email || 'N/A';
+                              })()}
+                            </Text>
+                          </View>
+                        </SquircleView>
 
-                        <View style={styles.listingtyperow}>
-                          <Text
-                            allowFontScaling={false}
-                            style={styles.lebleHeader}
-                          >
-                           {t('sort_code')}:
-                          </Text>
-                          <Text allowFontScaling={false} style={styles.status}>
-                            {bank.routing_number || 'N/A'}
-                          </Text>
-                        </View>
-                      </SquircleView>
-                      {index < getPrimaryBanks().length - 1}
-                    </View>
-                  ))}
-                </>
-              )}
-
-              {/* Other Banks Section */}
-              {getOtherBanks().length > 0 && (
-                <>
-                  {getPrimaryBanks().length > 0 && (
-                    <View style={styles.carddivider} />
-                  )}
-
-                  {getOtherBanks().map((bank: any, index: number) => (
-                    <View key={index} style={{ width: '100%', gap: 16 }}>
-                      <SquircleView
-                        style={styles.card}
-                        squircleParams={{
-                          cornerSmoothing: 1,
-                          cornerRadius: 24,
-                          fillColor: 'rgba(255, 255, 255, 0.06)',
-                        }}
-                      >
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            gap: 4,
-                          }}
-                        >
-                          <Image
-                            source={require('../../../assets/images/sellerfile.png')}
-                            style={{ width: 24, height: 24 }}
-                            resizeMode="cover"
-                          />
-                          <Text
-                            allowFontScaling={false}
-                            style={styles.sellerHeaderlable}
-                          >
-                            {t('bank_details')}
-                          </Text>
-                        </View>
-
-                        <View style={styles.cardconstinerdivider} />
-
-                        <View style={styles.listingtyperow}>
-                          <Text
-                            allowFontScaling={false}
-                            style={styles.lebleHeader}
-                          >
-                            {t('bank_name')}:
-                          </Text>
-                          <Text allowFontScaling={false} style={styles.status}>
-                            {bank.bank_name || 'N/A'}
-                          </Text>
-                        </View>
-
-                        <View style={styles.listingtyperow}>
-                          <Text
-                            allowFontScaling={false}
-                            style={styles.lebleHeader}
-                          >
-                            {t('acc_number')}:
-                          </Text>
-                          <Text allowFontScaling={false} style={styles.status}>
-                            {bank.last4 ? maskAccountNumber(bank.last4) : 'N/A'}
-                          </Text>
-                        </View>
-
-                        <View style={styles.listingtyperow}>
-                          <Text
-                            allowFontScaling={false}
-                            style={styles.lebleHeader}
-                          >
-                            {t('sort_code')}:
-                          </Text>
-                          <Text allowFontScaling={false} style={styles.status}>
-                            {bank.routing_number || 'N/A'}
-                          </Text>
-                        </View>
-                      </SquircleView>
-                      {index < getOtherBanks().length - 1 && (
                         <View style={styles.carddivider} />
-                      )}
-                    </View>
-                  ))}
-                </>
-              )}
-              
 
-              {/* No Bank Details Message */}
-              {getPrimaryBanks().length === 0 &&
-                getOtherBanks().length === 0 && (
-                  <SquircleView
-                    style={styles.card}
-                    squircleParams={{
-                      cornerSmoothing: 1,
-                      cornerRadius: 24,
-                      fillColor: 'rgba(255, 255, 255, 0.06)',
-                    }}
-                  >
+                        {getPrimaryBanks().length > 0 && (
+                          <>
+                            {getPrimaryBanks().map((bank: any, index: number) => (
+                              <View
+
+                                style={{ width: '100%', gap: 16 }}
+                                key={`primary-${index}`}
+                              >
+                                <SquircleView
+                                  style={styles.card}
+                                  squircleParams={{
+                                    cornerSmoothing: 1,
+                                    cornerRadius: 24,
+                                    fillColor: 'rgba(255, 255, 255, 0.06)',
+                                  }}
+                                >
+                                  <View
+                                    style={{
+                                      flexDirection: 'row',
+                                      alignItems: 'center',
+                                      gap: 4,
+                                    }}
+                                  >
+                                    <Image
+                                      source={require('../../../assets/images/sellerfile.png')}
+                                      style={{ width: 24, height: 24 }}
+                                      resizeMode="cover"
+                                    />
+                                    <Text
+                                      allowFontScaling={false}
+                                      style={styles.sellerHeaderlable}
+                                    >
+                                      {t('bank_details')}
+                                    </Text>
+                                  </View>
+
+                                  <View style={styles.cardconstinerdivider} />
+
+                                  <View style={styles.listingtyperow}>
+                                    <Text
+                                      allowFontScaling={false}
+                                      style={styles.lebleHeader}
+                                    >
+                                      {t('bank_name')}:
+                                    </Text>
+                                    <Text allowFontScaling={false} style={styles.status}>
+                                      {bank.bank_name || 'N/A'}
+                                    </Text>
+                                  </View>
+
+                                  <View style={styles.listingtyperow}>
+                                    <Text
+                                      allowFontScaling={false}
+                                      style={styles.lebleHeader}
+                                    >
+                                      {t('acc_number')}:
+                                    </Text>
+                                    <Text allowFontScaling={false} style={styles.status}>
+                                      {bank.last4 ? maskAccountNumber(bank.last4) : 'N/A'}
+                                    </Text>
+                                  </View>
+
+                                  <View style={styles.listingtyperow}>
+                                    <Text
+                                      allowFontScaling={false}
+                                      style={styles.lebleHeader}
+                                    >
+                                      {t('sort_code')}:
+                                    </Text>
+                                    <Text allowFontScaling={false} style={styles.status}>
+                                      {bank.routing_number || 'N/A'}
+                                    </Text>
+                                  </View>
+                                </SquircleView>
+                                {index < getPrimaryBanks().length - 1}
+                              </View>
+                            ))}
+                          </>
+                        )}
+
+                        {getOtherBanks().length > 0 && (
+                          <>
+                            {getPrimaryBanks().length > 0 && (
+                              <View style={styles.carddivider} />
+                            )}
+
+                            {getOtherBanks().map((bank: any, index: number) => (
+                              <View key={index} style={{ width: '100%', gap: 16 }}>
+                                <SquircleView
+                                  style={styles.card}
+                                  squircleParams={{
+                                    cornerSmoothing: 1,
+                                    cornerRadius: 24,
+                                    fillColor: 'rgba(255, 255, 255, 0.06)',
+                                  }}
+                                >
+                                  <View
+                                    style={{
+                                      flexDirection: 'row',
+                                      alignItems: 'center',
+                                      gap: 4,
+                                    }}
+                                  >
+                                    <Image
+                                      source={require('../../../assets/images/sellerfile.png')}
+                                      style={{ width: 24, height: 24 }}
+                                      resizeMode="cover"
+                                    />
+                                    <Text
+                                      allowFontScaling={false}
+                                      style={styles.sellerHeaderlable}
+                                    >
+                                      {t('bank_details')}
+                                    </Text>
+                                  </View>
+
+                                  <View style={styles.cardconstinerdivider} />
+
+                                  <View style={styles.listingtyperow}>
+                                    <Text
+                                      allowFontScaling={false}
+                                      style={styles.lebleHeader}
+                                    >
+                                      {t('bank_name')}:
+                                    </Text>
+                                    <Text allowFontScaling={false} style={styles.status}>
+                                      {bank.bank_name || 'N/A'}
+                                    </Text>
+                                  </View>
+
+                                  <View style={styles.listingtyperow}>
+                                    <Text
+                                      allowFontScaling={false}
+                                      style={styles.lebleHeader}
+                                    >
+                                      {t('acc_number')}:
+                                    </Text>
+                                    <Text allowFontScaling={false} style={styles.status}>
+                                      {bank.last4 ? maskAccountNumber(bank.last4) : 'N/A'}
+                                    </Text>
+                                  </View>
+
+                                  <View style={styles.listingtyperow}>
+                                    <Text
+                                      allowFontScaling={false}
+                                      style={styles.lebleHeader}
+                                    >
+                                      {t('sort_code')}:
+                                    </Text>
+                                    <Text allowFontScaling={false} style={styles.status}>
+                                      {bank.routing_number || 'N/A'}
+                                    </Text>
+                                  </View>
+                                </SquircleView>
+                                {index < getOtherBanks().length - 1 && (
+                                  <View style={styles.carddivider} />
+                                )}
+                              </View>
+                            ))}
+                          </>
+                        )}
+
+
+                        {getPrimaryBanks().length === 0 &&
+                          getOtherBanks().length === 0 && (
+                            <SquircleView
+                              style={styles.card}
+                              squircleParams={{
+                                cornerSmoothing: 1,
+                                cornerRadius: 24,
+                                fillColor: 'rgba(255, 255, 255, 0.06)',
+                              }}
+                            >
+                              <View
+                                style={{
+                                  flexDirection: 'row',
+                                  alignItems: 'center',
+                                  gap: 4,
+                                }}
+                              >
+                                <Image
+                                  source={require('../../../assets/images/sellerfile.png')}
+                                  style={{ width: 24, height: 24 }}
+                                  resizeMode="cover"
+                                />
+                                <Text
+                                  allowFontScaling={false}
+                                  style={styles.sellerHeaderlable}
+                                >
+                                  {t('bank_details')}
+                                </Text>
+                              </View>
+
+                              <View style={styles.cardconstinerdivider} />
+
+                              <View style={styles.listingtyperow}>
+                                <Text allowFontScaling={false} style={styles.status}>
+                                  {t('no_bank')}
+                                </Text>
+                              </View>
+                            </SquircleView>
+                          )}
+                      </View>
+                    </Animated.ScrollView>
+                  </View>
+                </View>
+
+              </Animated.ScrollView>
+            )}
+
+
+            {selectedTab === "Cards" && (
+              <View style={{ flex: 1, padding: 16 }}>
+                {loading ? (
+                  <ActivityIndicator size="large" color="#fff" />
+                ) : savedCards.length === 0 ? (
+                  <View style={styles.emptyWrapper}>
                     <View
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 4,
-                      }}
+                      style={[
+                        styles.emptyContainer,
+                        {
+                          height: '90%',
+                          paddingBottom: Platform.OS === 'ios' ? 80 : 80
+
+                        }
+                      ]}
                     >
                       <Image
-                        source={require('../../../assets/images/sellerfile.png')}
-                        style={{ width: 24, height: 24 }}
-                        resizeMode="cover"
+                        source={require('../../../assets/images/noproduct.png')}
+                        style={styles.emptyImage}
+                        resizeMode="contain"
                       />
-                      <Text
-                        allowFontScaling={false}
-                        style={styles.sellerHeaderlable}
-                      >
-                        {t('bank_details')}
+                      <Text allowFontScaling={false} style={styles.emptyText}>
+                        {t('no_cards_found')}
                       </Text>
                     </View>
-
-                    <View style={styles.cardconstinerdivider} />
-
-                    <View style={styles.listingtyperow}>
-                      <Text allowFontScaling={false} style={styles.status}>
-                        {t('no_bank')}
-                      </Text>
-                    </View>
-                  </SquircleView>
+                  </View>
+                ) : (
+                  savedCards.map((card) => (
+                    <CardTile
+                      key={card.id}
+                      card={card}
+                      onDelete={() => {
+                        setSelectedCardId(card.id);
+                        setShowConfirm1(true);
+                      }} />
+                  ))
                 )}
-            </View>
-          </Animated.ScrollView>
+              </View>
+            )}
+
           </View>
         )}
 
-        {/* Fixed Bottom Button */}
+
         {!loading && (
           <View style={styles.bottomButtonContainer}>
-          <Button
-            title={
-              buttonLoading
-                ? t('loading')
-                : data?.stripeAccount?.isboardcomplete
-                ? t('edit_bank_details')
-                : t('add_bank_details')
-            }
-            onPress={buttonLoading ? () => {} : handleAddBank}
-          />
+            {selectedTab === 'Bank' ? (
+              <Button
+                title={
+                  buttonLoading
+                    ? t('loading')
+                    : data?.stripeAccount?.isboardcomplete
+                      ? t('edit_bank_details')
+                      : t('add_bank_details')
+                }
+                onPress={buttonLoading ? () => { } : handleAddBank}
+              />
+            ) : (
+              <Button
+                title={buttonLoading ? t('loading') : t('add_new_card')}
+                onPress={buttonLoading ? () => { } : handleAddCard}
+              />
+            )}
           </View>
         )}
+
       </View>
 
       {/* Success Popup Modal */}
@@ -770,50 +1144,137 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
         onRequestClose={() => setShowSuccessPopup(false)}
       >
         <TouchableWithoutFeedback onPress={() => setShowSuccessPopup(false)}>
-        <View style={styles.overlay}>
-          <BlurView
-            style={StyleSheet.absoluteFill}
-            blurType="light"
-            blurAmount={10}
-            reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-          >
-            <View
-              style={[
-                StyleSheet.absoluteFill,
-                { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
-              ]}
-            />
-          </BlurView>
-
-          <View style={styles.popupContainer}>
-            <Image
-              source={require('../../../assets/images/success_icon.png')}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-            <Text allowFontScaling={false} style={styles.mainheader}>
-              {t('account_setup_success')}!
-            </Text>
-            <Text allowFontScaling={false} style={styles.subheader1}>
-              {t('account_verified')}
-            </Text>
-            <TouchableOpacity
-              style={styles.loginButton}
-              onPress={async () => {
-                setShowSuccessPopup(false);
-                // Ensure it's marked as shown
-                await AsyncStorage.setItem(
-                  'onboardingSuccessPopupShown',
-                  'true',
-                );
-              }}
+          <View style={styles.overlay}>
+            <BlurView
+              style={StyleSheet.absoluteFill}
+              blurType="light"
+              blurAmount={10}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
             >
-              <Text allowFontScaling={false} style={styles.loginText}>
-                {t('ok')}
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
+                ]}
+              />
+            </BlurView>
+
+            <View style={styles.popupContainer}>
+              <Image
+                source={require('../../../assets/images/success_icon.png')}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+              <Text allowFontScaling={false} style={styles.mainheader}>
+                {t('account_setup_success')}!
               </Text>
-            </TouchableOpacity>
+              <Text allowFontScaling={false} style={styles.subheader1}>
+                {t('account_verified')}
+              </Text>
+              <TouchableOpacity
+                style={styles.loginButton}
+                onPress={async () => {
+                  setShowSuccessPopup(false);
+                  // Ensure it's marked as shown
+                  await AsyncStorage.setItem(
+                    'onboardingSuccessPopupShown',
+                    'true',
+                  );
+                }}
+              >
+                <Text allowFontScaling={false} style={styles.loginText}>
+                  {t('ok')}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+
+      <Modal
+        visible={showConfirm1}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowConfirm1(false)}
+      >
+        <TouchableWithoutFeedback onPress={() => setShowConfirm1(false)}>
+          <View style={styles.overlay}>
+            <BlurView
+              style={{
+                flex: 1,
+                alignContent: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                alignItems: 'center',
+              }}
+              blurType="light"
+              blurAmount={10}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            >
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                ]}
+              />
+
+              <View style={styles.popupContainer1}>
+                <Image
+                  source={require('../../../assets/images/profile_delete.png')}
+                  style={styles.logo}
+                  resizeMode="contain"
+                />
+                <Text allowFontScaling={false} style={styles.mainheader}>
+                  {t('delete_card')}
+                </Text>
+                <Text allowFontScaling={false} style={styles.subheader}>
+                  {t('delete_message_card')}
+                </Text>
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  onPress={async () => {
+                    try {
+                      if (!selectedCardId) return;
+                      const token = await AsyncStorage.getItem('userToken');
+                      const body = {
+                        payment_method_id: selectedCardId,
+                      };
+
+                      const response = await fetch(`${MAIN_URL.baseUrl}transaction/delete-card`, {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                          Authorization: `Bearer ${token}`
+                        },
+                        body: JSON.stringify(body),
+                      });
+
+                      setShowConfirm1(false);
+                      setSelectedCardId(null);
+
+
+                      fetchSavedCards();
+                    } catch (error) {
+                      console.log('Delete card failed', error);
+                    }
+                  }}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText}>
+                    {t('yes_delete')}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.loginButton1, { marginTop: Platform.OS === 'ios' ? 10 : 10 }]}
+                  onPress={() => setShowConfirm1(false)}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText1}>
+                    {t('cancel')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </BlurView>
+          </View>
         </TouchableWithoutFeedback>
       </Modal>
 
@@ -822,7 +1283,146 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
   );
 };
 export default AccountDetails;
+
 const styles = StyleSheet.create({
+
+  emptyWrapper: {
+    flex: 1,
+    //justifyContent: 'center',
+    //alignItems: 'center',
+    width: '100%',
+  },
+  emptyContainer: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderWidth: 0.3,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 24,
+    // paddingVertical: 40,
+  },
+
+  emptyImage: {
+    width: 64,
+    height: 64,
+    marginBottom: 0,
+  },
+  emptyText: {
+    fontSize: 20,
+    color: 'rgba(255, 255, 255, 0.8)',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-SemiBold',
+    fontWeight: 600
+  },
+
+  subheader: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginTop: 6,
+  },
+
+  loginText1: {
+    color: '#FFFFFF7A',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: 500,
+    letterSpacing: 1,
+    width: '100%',
+  },
+
+  popupContainer1: {
+    width: '85%',
+    padding: 16,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'center',
+    overflow: 'hidden',
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+  },
+
+  loginButton1: {
+    display: 'flex',
+    width: '100%',
+    height: 52,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 100,
+    paddingTop: 6,
+    paddingBottom: 6,
+    backgroundColor: 'rgba(170, 169, 176, 0.56)',
+    marginTop: 8,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+  },
+
+  bottomTabContainer: {
+
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 42,
+    marginBottom: Platform.OS === 'ios' ? 15 : 15,
+    borderRadius: 50,
+    alignSelf: 'center',
+    borderWidth: 0.4,
+    borderColor: 'transparent',
+    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23), -0.90px -0.80px 1px 0px rgba(255, 255, 255, 0.19)inset, 0.90px 0.80px 0.90px 0px rgba(255, 255, 255, 0.19)inset',
+    backgroundColor: 'rgba(40, 55, 149, 0.12)',
+    borderEndEndRadius: 50,
+    borderStartEndRadius: 50,
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
+    borderBottomStartRadius: 50,
+    boxSizing: 'border-box',
+    zIndex: 100,
+    marginTop: 120,
+  },
+  bubble: {
+
+    height: 38,
+    backgroundColor: 'rgba(255, 255, 255, 0.16)',
+    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.18)',
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 0.5,
+    borderColor: '#ffffff2e',
+    borderTopLeftRadius: 50,
+    borderBottomLeftRadius: 50,
+    borderTopRightRadius: 50,
+    borderBottomRightRadius: 50,
+    borderBlockStartColor: '#ffffff2e',
+    borderBlockColor: '#ffffff2e',
+    borderTopColor: '#ffffff2e',
+    borderBottomColor: '#ffffff2e',
+    borderLeftColor: '#ffffff2e',
+    borderRightColor: '#ffffff2e',
+    marginLeft: 2,
+
+  },
+
+  tabItem: {
+
+  },
+  iconWrapper: {
+    height: 50, //
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  tabIcon: {
+    width: 28,
+    height: 28,
+    resizeMode: 'contain',
+  },
   addButton: {
     height: 52,
     borderRadius: 100,
@@ -999,15 +1599,15 @@ const styles = StyleSheet.create({
     // borderBottomWidth: 1,
     // borderBottomColor: '#4169B8',
     display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  width: '100%',
-  height: (Platform.OS==='ios'? 2:1.5),
-  borderStyle: 'dashed',
-  borderBottomWidth:(Platform.OS==='ios'? 0.9:1),
-  // backgroundColor: 'rgba(169, 211, 255, 0.08)',
-  borderColor: (Platform.OS==='ios'?  'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)':'#4169B8'),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    height: (Platform.OS === 'ios' ? 2 : 1.5),
+    borderStyle: 'dashed',
+    borderBottomWidth: (Platform.OS === 'ios' ? 0.9 : 1),
+    // backgroundColor: 'rgba(169, 211, 255, 0.08)',
+    borderColor: (Platform.OS === 'ios' ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)' : '#4169B8'),
   },
   sellerHeaderlable: {
     color: 'rgba(255, 255, 255, 0.88)',
@@ -1019,7 +1619,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     paddingBottom: 100,
-    paddingTop: Platform.OS === 'ios' ? 110 : 90,
+    paddingTop: Platform.OS === 'ios' ? 0 : 0,
     paddingHorizontal: 16,
     width: Platform.OS === 'ios' ? '100%' : '100%',
     alignSelf: 'center',
