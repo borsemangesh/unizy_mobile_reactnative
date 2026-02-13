@@ -6,13 +6,9 @@ import {
   Image,
   StyleSheet,
   Platform,
-  ScrollView,
   StatusBar,
   Modal,
   TouchableWithoutFeedback,
-  TextInput,
-  Keyboard,
-  Alert,
   Dimensions,
   ActivityIndicator,
 } from 'react-native';
@@ -754,7 +750,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
         {loading ? (
           <Loader
             containerStyle={{
-              flex: 1,
+              // flex: 1,
               justifyContent: 'center',
               alignItems: 'center',
               paddingTop: Platform.OS === 'ios' ? 120 : 100,
@@ -770,21 +766,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                 onScroll={scrollHandler}
                 scrollEventThrottle={16}
               >
-                {/* 🔥 KEEP YOUR EXISTING BANK VIEW CODE HERE 🔥 */}
-
-                <View
-                  style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: '100%',
-                  }}
-                >
-                  <View>
-                    <Animated.ScrollView
-                      contentContainerStyle={styles.scrollContainer}
-                      onScroll={scrollHandler}
-                      scrollEventThrottle={16}
-                    >
+               
                       <View
                         style={{
                           gap: 16,
@@ -1060,16 +1042,14 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                             </SquircleView>
                           )}
                       </View>
-                    </Animated.ScrollView>
-                  </View>
-                </View>
+                    {/* </Animated.ScrollView> */}
 
               </Animated.ScrollView>
             )}
 
 
             {selectedTab === "Cards" && (
-              <View style={{ flex: 1, padding: 16 }}>
+              <View style={{ flex: 1, paddingHorizontal: 16,paddingVertical:10 }}>
                 {loading ? (
                   <ActivityIndicator size="large" color="#fff" />
                 ) : savedCards.length === 0 ? (
@@ -1623,7 +1603,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     width: Platform.OS === 'ios' ? '100%' : '100%',
     alignSelf: 'center',
-    marginTop: 20,
+    marginTop: 6,
   },
   bottomButtonContainer: {
     position: 'absolute',
