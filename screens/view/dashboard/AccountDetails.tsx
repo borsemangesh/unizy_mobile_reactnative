@@ -1554,10 +1554,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '90%',
     height: 1.5,
-    borderStyle: 'dashed',
-    borderBottomWidth: 1,
-    borderBottomColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+    borderStyle: Platform.OS ==='ios' ? 'solid' : 'dashed',
+    borderBottomWidth: Platform.OS ==='ios' ? 2 : 1,
+    borderColor: (Platform.OS === 'ios' ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)' : '#4169B8'),
+
   },
   cardconstinerdivider: {
     // display: 'flex',
