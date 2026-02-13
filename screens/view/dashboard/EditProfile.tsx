@@ -1121,7 +1121,13 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
       cropping: true,
       cropperCircleOverlay: true,
       compressImageQuality: 0.8,
+      compressImageMaxWidth: 1000,
+  compressImageMaxHeight: 1000,
       mediaType: 'photo',
+                // 🔥 IMPORTANT
+      includeExif: false,
+      includeBase64: false,
+       forceJpg: true,
     })
       .then(image => {
         console.log('CROPPED IMAGE:', image);

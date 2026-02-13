@@ -47,9 +47,9 @@ import { resetTwilioClient } from '../emoji/twilioService';
 import { clearTwilioCache } from '../dashboard/MessageIndividualScreen';
 import DeviceInfo from 'react-native-device-info';
 
+import ImagePicker from 'react-native-image-crop-picker';
+
 const { height } = Dimensions.get('window');
-
-
 
 
 type SinglePageProps = {
@@ -1505,56 +1505,138 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
     }).start();
   };
 
-  const handleSelectImage = async () => {
-    const hasPermission = await requestCameraPermission();
-    if (!hasPermission) return;
+  // const handleSelectImage = async () => {
+  //   const hasPermission = await requestCameraPermission();
+  //   if (!hasPermission) return;
 
-    const handleResponse = async (response: any) => {
-      if (response.didCancel) return;
-      if (response.assets && response.assets[0].uri) {
-        const uri = response.assets[0].uri;
-        setPhoto(uri);
-        await uploadImage(uri);
-      }
-    };
+  //   const handleResponse = async (response: any) => {
+  //     if (response.didCancel) return;
+  //     if (response.assets && response.assets[0].uri) {
+  //       const uri = response.assets[0].uri;
+  //       setPhoto(uri);
+  //       await uploadImage(uri);
+  //     }
+  //   };
 
-    Alert.alert(
-      'Select Option',
-      "Choose a source",
-      [
-        {
-          text: 'Camera',
-          onPress: () => {
-            launchCamera(
-              {
-                mediaType: 'photo',
-                cameraType: 'front',
-                quality: 0.8,
-              },
-              handleResponse,
-            );
-          },
-        },
-        {
-          text: 'Gallery',
-          onPress: () => {
-            launchImageLibrary(
-              {
-                mediaType: 'photo',
-                quality: 0.8,
-              },
-              handleResponse,
-            );
-          },
-        },
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-      ],
-      { cancelable: true },
-    );
-  };
+  //   Alert.alert(
+  //     'Select Option',
+  //     "Choose a source",
+  //     [
+  //       {
+  //         text: 'Camera',
+  //         onPress: () => {
+  //           launchCamera(
+  //             {
+  //               mediaType: 'photo',
+  //               cameraType: 'front',
+  //               quality: 0.8,
+  //             },
+  //             handleResponse,
+  //           );
+  //         },
+  //       },
+  //       {
+  //         text: 'Gallery',
+  //         onPress: () => {
+  //           launchImageLibrary(
+  //             {
+  //               mediaType: 'photo',
+  //               quality: 0.8,
+  //             },
+  //             handleResponse,
+  //           );
+  //         },
+  //       },
+  //       {
+  //         text: 'Cancel',
+  //         style: 'cancel',
+  //       },
+  //     ],
+  //     { cancelable: true },
+  //   );
+  // };
+
+
+const handleSelectImage = async () => {
+  const hasPermission = await requestCameraPermission();
+  if (!hasPermission) return;
+
+  Alert.alert(
+    'Select Option',
+    'Choose a source',
+    [
+      {
+        text: 'Camera',
+        onPress: () => openCamera(),
+      },
+      {
+        text: 'Gallery',
+        onPress: () => openGallery(),
+      },
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+    ],
+    { cancelable: true },
+  );
+};
+
+const openCamera = async () => {
+  try {
+    const image = await ImagePicker.openCamera({
+      width: 300,
+      height: 300,
+      cropping: true,
+      cropperCircleOverlay: true,
+      compressImageQuality: 0.8,
+      mediaType: 'photo',
+    });
+
+    const imageUri =
+      Platform.OS === 'android'
+        ? image.path
+        : image.path.replace('file://', '');
+
+    setPhoto(imageUri);
+
+    // ✅ Upload immediately like your original version
+    await uploadImage(imageUri);
+
+  } catch (error) {
+    console.log('Camera Error:', error);
+  }
+};
+
+const openGallery = async () => {
+  try {
+    const image = await ImagePicker.openPicker({
+      width: 300,
+      height: 300,
+      cropping: true,
+      cropperCircleOverlay: true,
+      compressImageQuality: 0.8,
+      mediaType: 'photo',
+      forceJpg: true, 
+      includeExif: false,
+      includeBase64: false,
+    });
+
+    const imageUri =
+      Platform.OS === 'android'
+        ? image.path
+        : image.path.replace('file://', '');
+
+    setPhoto(imageUri);
+
+    // ✅ Upload immediately like your original version
+    await uploadImage(imageUri);
+
+  } catch (error) {
+    console.log('Gallery Error:', error);
+  }
+};
+
 
   const insets = useSafeAreaInsets();
 
