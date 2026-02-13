@@ -495,25 +495,6 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
 
           {/* RIGHT */}
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            {card.isDefault ? (
-              <View
-                style={{
-                  paddingHorizontal: 12,
-                  paddingVertical: 6,
-                  borderRadius: 20,
-                  backgroundColor: 'rgba(0,255,153,0.14)',
-                  borderWidth: 1,
-                  borderColor: 'rgba(0,255,153,0.22)',
-                  marginRight: 10, // ✅ space before delete
-                }}
-              >
-                <Text style={{ color: '#00ff99', fontSize: 12, fontFamily: 'Urbanist-SemiBold' }}>
-                  {t('default')}
-                </Text>
-              </View>
-            ) : null}
-
-            {/* Delete */}
             <TouchableOpacity
               onPress={() => onDelete(card.id)}
               activeOpacity={0.7}
@@ -575,6 +556,15 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
     );
   };
 
+const dummyCards =
+  savedCards?.length > 0
+    ? Array.from({ length: 8 }, (_, i) => ({
+        ...savedCards[0],
+        id: `${savedCards[0].id}_${i}`,
+        last4: `${1000 + i}`,
+        isDefault: i === 0,
+      }))
+    : [];
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -1075,15 +1065,16 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                     </View>
                   </View>
                 ) : (
-                  savedCards.map((card) => (
+                  dummyCards.map((card) => (
                     <CardTile
                       key={card.id}
                       card={card}
                       onDelete={() => {
                         setSelectedCardId(card.id);
                         setShowConfirm1(true);
-                      }} />
+                      }} />      
                   ))
+                  
                 )}
               </View>
             )}
