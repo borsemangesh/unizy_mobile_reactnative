@@ -1062,7 +1062,11 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
   const [typingTimeout, setTypingTimeout] = useState<any>(null);
 
-  const handleSelectImage = () => {
+  const handleSelectImage = async() => {
+      const hasPermission = await requestCameraPermission();
+    if (!hasPermission) return;
+
+   
     Alert.alert(
       'Select Option',
       'Choose a source',
