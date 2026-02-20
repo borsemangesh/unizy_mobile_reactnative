@@ -322,8 +322,8 @@ const SelectCatagoryDropdown = ({
                               autoFocus
                               onChangeText={setOtherText}
                               allowFontScaling={false}
-                              cursorColor="#fff"
-                              selectionColor="#fff"
+                              cursorColor="#F5F5F5"
+                              selectionColor="#F5F5F5"
                               placeholder={`${t('please_specify')}*`}
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
                               style={{

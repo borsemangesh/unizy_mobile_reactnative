@@ -761,8 +761,8 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                     }
                     value={password}
                     maxLength={20}
-                    selectionColor="#fff"
-                    cursorColor={'#FFFFFF'}
+                    selectionColor="#F5F5F5"
+                    cursorColor={'#F5F5F5'}
                     secureTextEntry={!isPasswordVisible}
                     onChangeText={passwordText =>
                       setPassword(passwordText)

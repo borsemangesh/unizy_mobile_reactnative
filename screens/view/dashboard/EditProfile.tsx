@@ -1338,8 +1338,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   {t('first_name')}
                 </Text>
                 <TextInput
-                  selectionColor='#fff'
-                  cursorColor='#fff'
+                  selectionColor='#F5F5F5'
+                  cursorColor='#F5F5F5'
                   value={userMeta.firstname || ''}
                   onChangeText={text =>
                     setUserMeta(prev => ({ ...prev, firstname: text }))
@@ -1356,8 +1356,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   {t('last_name')}
                 </Text>
                 <TextInput
-                  selectionColor='#fff'
-                  cursorColor='#fff'
+                  selectionColor='#F5F5F5'
+                  cursorColor='#F5F5F5'
                   
                   value={userMeta.lastname || ''}
                   onChangeText={text =>
@@ -1384,8 +1384,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   }}
                 >
                   <TextInput
-                    selectionColor="#fff"
-                    cursorColor="#fff"
+                    selectionColor="#F5F5F5"
+                    cursorColor="#F5F5F5"
                     editable={false}
                     style={{
                       flex: 1,
@@ -1467,8 +1467,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   }}
                 >
                   <TextInput
-                    selectionColor="#fff"
-                    cursorColor="#fff"
+                    selectionColor="#F5F5F5"
+                    cursorColor="#F5F5F5"
                     editable={false}
                     style={{
                       flex: 1,
@@ -1542,8 +1542,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   {t('postal_code')}
                 </Text>
                 <TextInput
-                  selectionColor="#fff"
-                  cursorColor="#fff"
+                  selectionColor="#F5F5F5"
+                  cursorColor="#F5F5F5"
                   value={userMeta.postal_code || ''}
                   onChangeText={text => {
                     const filteredText = text.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
@@ -1576,8 +1576,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   {t('city')}
                 </Text>
                 <TextInput
-                  selectionColor="#fff"
-                  cursorColor="#fff"
+                  selectionColor="#F5F5F5"
+                  cursorColor="#F5F5F5"
                   allowFontScaling={false}
                   value={userMeta.city || ''}
                   editable={false}
@@ -1653,8 +1653,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     placeholderTextColor="rgba(255, 255, 255, 0.48)"
                     value={username1}
                     maxLength={50}
-                    selectionColor="white"
-                    cursorColor={'#FFFFFF'}
+                    selectionColor="#F5F5F5"
+                    cursorColor={'#F5F5F5'}
                     keyboardType={
                       Platform.OS === 'ios'
                         ? 'default'
@@ -1759,8 +1759,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 <View style={styles.otpContainer}>
                   {[0, 1, 2, 3].map((_, index) => (
                     <TextInput
-                      selectionColor="#fff"
-                      cursorColor="#fff"
+                      selectionColor="#F5F5F5"
+                      cursorColor="#F5F5F5"
                       allowFontScaling={false}
                       key={index}
                       ref={ref => {
@@ -1875,8 +1875,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     placeholderTextColor="rgba(255, 255, 255, 0.48)"
                     value={username2}
                     maxLength={50}
-                    selectionColor="white"
-                    cursorColor={'#FFFFFF'}
+                    selectionColor="#F5F5F5"
+                    cursorColor={'#F5F5F5'}
                     keyboardType={
                       Platform.OS === 'ios'
                         ? 'default'
@@ -1981,8 +1981,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                 <View style={styles.otpContainer}>
                   {[0, 1, 2, 3].map((_, index) => (
                     <TextInput
-                      selectionColor="#fff"
-                      cursorColor="#fff"
+                      selectionColor="#F5F5F5"
+                      cursorColor="#F5F5F5"
                       allowFontScaling={false}
                       key={index}
                       ref={ref => {

@@ -280,8 +280,8 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
           <View style={styles.search_container}>
             <Image source={searchIcon} style={styles.searchIcon} />
             <TextInput
-            selectionColor='#fff'
-              cursorColor='#fff'
+            selectionColor='#F5F5F5'
+              cursorColor='#F5F5F5'
               allowFontScaling={false}
               style={styles.searchBar}
               placeholder={t('search')}

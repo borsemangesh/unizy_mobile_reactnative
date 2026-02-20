@@ -1191,8 +1191,8 @@ const [accommodation_amount, setaccommodation_amount] = useState(0);
                       multiline={false}
                       placeholderTextColor="rgba(255, 255, 255, 0.48)"
                       keyboardType={rnKeyboardType}
-                      selectionColor={'#FFFFFF'}
-                      cursorColor="#FFFFFF"
+                      selectionColor={'#F5F5F5'}
+                      cursorColor="#F5F5F5"
                       value={isPriceField && rawValue ? `£ ${rawValue}` : rawValue}
                       onChangeText={text => {
                         let value = text;
@@ -1288,8 +1288,8 @@ const [accommodation_amount, setaccommodation_amount] = useState(0);
               ]}
               placeholder={placeholderText}
               multiline={true}
-              cursorColor="#fff"
-              selectionColor="#FFFFFF"
+              cursorColor="#F5F5F5"
+              selectionColor="#F5F5F5"
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               keyboardType={rnKeyboardType}
               value={rawValue}

@@ -1839,8 +1839,8 @@ const MessagesIndividualScreen = ({
                       placeholderTextColor="#ccc"
                       onChangeText={handleTextChange}
                       value={messageText}
-                      cursorColor='#fff'
-                      selectionColor='#fff'
+                      cursorColor='#F5F5F5'
+                      selectionColor='#F5F5F5'
                     />
                   </View>
 

@@ -869,8 +869,8 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                   <View style={styles.otpContainer}>
                     {[0, 1, 2, 3, 4, 5].map((_, index) => (
                       <TextInput
-                        selectionColor='#fff'
-                        cursorColor='#fff'
+                        selectionColor='#F5F5F5'
+                        cursorColor='#F5F5F5'
                         key={index}
                         ref={ref => {
                           inputs.current[index] = ref;

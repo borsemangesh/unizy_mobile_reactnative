@@ -1920,8 +1920,8 @@ const openGallery = async () => {
                       allowFontScaling={false}
                       style={selectlang_styles.searchBar}
                       placeholder="Search"
-                      selectionColor="white"
-                      cursorColor={'#FFFFFF'}
+                      selectionColor="#F5F5F5"
+                      cursorColor={'#F5F5F5'}
                       //placeholderTextColor="#ccc"
                       placeholderTextColor="rgba(255, 255, 255, 0.72)"
                       onChangeText={setSearch}
@@ -2112,8 +2112,8 @@ const openGallery = async () => {
                                 }
                                 autoCapitalize="none"
                                 autoCorrect={false}
-                                cursorColor={'#FFFFFF'}
-                                selectionColor="#FFFFFF"
+                                cursorColor={'#F5F5F5'}
+                                selectionColor="#F5F5F5"
                                 autoComplete={
                                   Platform.OS === 'ios' ? 'email' : 'username'
                                 }
@@ -2327,8 +2327,8 @@ const openGallery = async () => {
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                 value={username1}
                                 maxLength={50}
-                                selectionColor="white"
-                                cursorColor={'#FFFFFF'}
+                                selectionColor="#F5F5F5"
+                                cursorColor={'#F5F5F5'}
                                 keyboardType={
                                   Platform.OS === 'ios'
                                     ? 'default'
@@ -2496,12 +2496,12 @@ const openGallery = async () => {
                                   setFirstName(text)
                                 }
                                 maxLength={20}
-                                cursorColor={'#FFFFFF'}
+                                cursorColor={'#F5F5F5'}
                                 autoComplete="name-given"
                                 textContentType="givenName"
                                 autoCapitalize="words"
                                 importantForAutofill="yes"
-                                selectionColor="white"
+                                selectionColor="#F5F5F5"
                               />
                             </View>
 
@@ -2542,7 +2542,7 @@ const openGallery = async () => {
                                   { paddingTop: 10 },
                                 ]}
                                 placeholder="Postal Code"
-                                cursorColor={'#FFFFFF'}
+                                cursorColor={'#F5F5F5'}
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                 value={postalCode}
                                 maxLength={7}
@@ -2575,7 +2575,7 @@ const openGallery = async () => {
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
                               value={signUpusername}
                               maxLength={50}
-                              cursorColor={'#FFFFFF'}
+                              cursorColor={'#F5F5F5'}
                               keyboardType="email-address"
                               autoCapitalize="none"
                               selectionColor="white"
@@ -2632,7 +2632,7 @@ const openGallery = async () => {
                               value={signUppassword}
                               maxLength={20}
                               selectionColor="white"
-                              cursorColor={'#FFFFFF'}
+                              cursorColor={'#F5F5F5'}
                               onChangeText={setsignUpPassword}
                               secureTextEntry={!issignUpPasswordVisible}
                             />
@@ -2676,7 +2676,7 @@ const openGallery = async () => {
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
                               value={confirmPassword}
                               maxLength={20}
-                              cursorColor={'#FFFFFF'}
+                              cursorColor={'#F5F5F5'}
                               selectionColor="white"
                               onChangeText={setConfirmPassword}
                               secureTextEntry={!isConfirmPasswordVisible}
@@ -2819,8 +2819,8 @@ const openGallery = async () => {
                                     style={Styles.sendOtpotpBox}
                                     keyboardType="number-pad"
                                     maxLength={1}
-                                    selectionColor="white"
-                                    cursorColor={'#FFFFFF'}
+                                    selectionColor="#F5F5F5"
+                                    cursorColor={'#F5F5F5'}
                                     onChangeText={text => {
                                       const digit = text.replace(/[^0-9]/g, '');
                                       handleChange(digit, index);
@@ -2980,8 +2980,8 @@ const openGallery = async () => {
                                   maxLength={50}
                                   keyboardType="email-address"
                                   autoCapitalize="none"
-                                  selectionColor="white"
-                                  cursorColor={'#FFFFFF'}
+                                  selectionColor="#F5F5F5"
+                                  cursorColor={'#F5F5F5'}
                                   autoCorrect={false}
                                   autoComplete="email"
                                   textContentType="emailAddress"
@@ -3062,7 +3062,8 @@ const openGallery = async () => {
                                     value={otp1[index]}
                                     returnKeyType="next"
                                     textAlign="center"
-                                    selectionColor="white"
+                                    selectionColor="#F5F5F5"
+                                    cursorColor={'#F5F5F5'}
                                     secureTextEntry={true}
                                     onKeyPress={({ nativeEvent }) => {
                                       if (

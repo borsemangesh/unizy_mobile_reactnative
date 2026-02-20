@@ -635,8 +635,8 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
                   value={search}
                   onChangeText={handleSearchChange}
                   returnKeyType="search"
-                  selectionColor='#fff'
-                  cursorColor='#fff'
+                  selectionColor='#F5F5F5'
+                  cursorColor='#F5F5F5'
                   autoFocus={true}
                   onSubmitEditing={() => {
                     if (search.trim().length > 0) {

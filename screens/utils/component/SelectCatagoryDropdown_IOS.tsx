@@ -327,8 +327,8 @@ const SelectCatagoryDropdown = ({
                               onChangeText={setOtherText}
                               placeholder={`${t('please_specify')}*`}
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                              cursorColor="#fff"
-                              selectionColor="#fff"
+                              cursorColor="#F5F5F5"
+                              selectionColor="#F5F5F5"
                               style={{
                                 borderWidth: 1,
                                 borderColor: '#ffffff4e',
