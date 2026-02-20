@@ -13,6 +13,7 @@ import { setupCrashlytics } from "./screens/utils/crashalaytics/setupCrashlytics
 
 import { incrementBadge } from './screens/utils/badgeHelper';
 import { decrementBadge } from './screens/utils/badgeHelper';
+import 'react-native-get-random-values';
 
 
 setupCrashlytics();

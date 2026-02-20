@@ -3956,12 +3956,33 @@ if (String(messageAuthor) !== String(currentUserId)) {
                               {item?.data?.state?.body || item?.data?.body}
                               </Text>
                               {isMyMessage && (
-                            <View style={styles.tickContainer}>
-                              <MessageStatusTicks message={item.data} />
-                            </View>
-                          )}
+                                <View style={styles.tickContainer}>
+                                  <MessageStatusTicks message={item.data} />
+                                </View>
+                              )}
                           </View>
-                          
+
+                          {isMyMessage && (
+
+                            <>                           
+                              <View
+                                style={{
+                                  width: 0,
+                                  height: 0,
+                                  borderTopWidth: 8,
+                                  borderTopColor: 'transparent',
+                                  borderLeftWidth: 9,
+                                  borderLeftColor: '#0000001F',
+                                  borderBottomWidth: 8,
+                                  borderBottomColor: 'transparent',
+                                  alignSelf: 'flex-start',
+                                  marginLeft: 0,
+                                  marginTop: 4,
+                                }}
+                              />
+                            </>
+                          )
+                          }
                         </View>
                       </View>
                     )}

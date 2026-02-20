@@ -14,6 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { incrementBadge } from "./screens/utils/BadgeManager";
 import { decrementBadge, resetBadge } from "./screens/utils/badgeHelper";
+import 'react-native-get-random-values';
 
 function App() {
   LogBox.ignoreAllLogs();
