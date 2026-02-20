@@ -15,7 +15,7 @@ import {
   TouchableWithoutFeedback,
   BackHandler,
 } from 'react-native';
-import { Key, useEffect, useRef, useState } from 'react';
+import { Key, useEffect,useMemo, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import { useRoute } from '@react-navigation/native';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -47,6 +47,7 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import Loader from '../../utils/component/Loader';
 import dayjs from 'dayjs';
+import ImageViewing from 'react-native-image-viewing';
 
 type MyListingDetailsProps = {
   navigation: any;
@@ -117,6 +118,10 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
   const { height } = Dimensions.get('window');
   const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
+
+    const [isImageViewVisible, setImageViewVisible] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [loadingImage, setLoadingImage] = useState(false);
 
   const scrollY = useSharedValue(0);
 
@@ -229,7 +234,21 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
   }, [id]);
 
 
+  const previewImages = useMemo(() => {
+  if (detail?.files?.length > 0) {
+    return detail.files.map((file: any) => ({
+      uri: file.signedurl,
+    }));
+  }
 
+  return [
+    {
+      uri: Image.resolveAssetSource(
+        require('../../../assets/images/drone.png')
+      ).uri,
+    },
+  ];
+}, [detail]);
 
   const [isBookmarked, setIsBookmarked] = useState(false);
 
@@ -334,118 +353,162 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
     });
   };
 
-  const renderImage = () => {
-    const fallbackImage = require('../../../assets/images/drone.png');
-
-    if (detail?.profileshowinview) {
-      const profileUri = detail?.createdby?.profile || null;
-      const initials = `${detail?.createdby?.firstname?.[0] ?? ''}${detail?.createdby?.lastname?.[0] ?? ''
-        }`.toUpperCase();
-
-      return (
-        <ImageBackground
-          source={require('../../../assets/images/featurebg.png')}
-          style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: 270,
-            width: '100%',
-          }}
-        >
-          <View
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              //paddingVertical: 20,
-            }}
-          >
-            {detail?.createdby?.profile ? (
-              <Image
-                source={{ uri: detail?.createdby?.profile }}
-                style={{
-                  width: 180,
-                  height: 180,
-                  borderRadius: 90,
-                }}
-                resizeMode="cover"
-                onError={() => {
-
-                  setImageUri(null);
-                }}
-              />
-            ) : (
-              <View
-                style={{
-                  width: 180,
-                  height: 180,
-                  borderRadius: 90,
-                  backgroundColor: '#8390D4',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Text
-                  allowFontScaling={false}
-                  style={{
-                    fontSize: 80,
-                    color: '#FFF',
-                    fontWeight: 600,
-                    textAlign: 'center',
-                    fontFamily: 'Urbanist-SemiBold',
-                  }}
-                >
-                  {initials || 'NA'}
-                </Text>
-              </View>
-            )}
-          </View>
-        </ImageBackground>
-      );
-    }
-
-    if (images.length > 1) {
-      return (
-        <View>
-          <FlatList
-            ref={flatListRef}
-            data={images}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            keyExtractor={(_, index) => index.toString()}
-            onScroll={onScroll}
-            scrollEventThrottle={16}
-            renderItem={({ item }) => (
-              <Image
-                source={item.uri ? { uri: item.uri } : fallbackImage}
-                style={{ width: screenWidth, height: 270 }}
-                resizeMode="cover"
-              />
-            )}
-          />
-          <View style={styles.stepIndicatorContainer}>
-            {images.map((_: any, index: number) => (
-              <View
-                key={index}
-                style={
-                  index === activeIndex
-                    ? styles.activeStepCircle
-                    : styles.inactiveStepCircle
-                }
-              />
-            ))}
-          </View>
-        </View>
-      );
-    }
-    return (
-      <Image
-        source={images[0]?.uri ? { uri: images[0].uri } : fallbackImage}
-        style={{ width: screenWidth, height: 270 }}
-        resizeMode="cover"
-      />
-    );
-  };
+   const renderImage = () => {
+     const fallbackImage = require('../../../assets/images/drone.png');
+ 
+     if (detail?.profileshowinview) {
+       const initials = `${detail?.createdby?.firstname?.[0] ?? ''}${detail?.createdby?.lastname?.[0] ?? ''
+         }`.toUpperCase();
+ 
+       return (
+         <ImageBackground
+           source={require('../../../assets/images/featurebg.png')}
+           style={{
+             alignItems: 'center',
+             justifyContent: 'center',
+             height: 270,
+             width: '100%',
+           }}
+         >
+           <View
+             style={{
+               alignItems: 'center',
+               justifyContent: 'center',
+               //paddingVertical: 20,
+             }}
+           >
+             {detail?.createdby?.profile ? (
+               <Image
+                 source={{ uri: detail?.createdby?.profile }}
+                 style={{
+                   width: 180,
+                   height: 180,
+                   borderRadius: 90,
+                 }}
+                 resizeMode="cover"
+                 onError={() => {
+ 
+                   setImageUri(null);
+                 }}
+               />
+             ) : (
+               <View
+                 style={{
+                   width: 180,
+                   height: 180,
+                   borderRadius: 90,
+                   backgroundColor: '#8390D4',
+                   alignItems: 'center',
+                   justifyContent: 'center',
+                 }}
+               >
+                 <Text
+                   allowFontScaling={false}
+                   style={{
+                     fontSize: 80,
+                     color: '#FFF',
+                     fontWeight: 600,
+                     textAlign: 'center',
+                     fontFamily: 'Urbanist-SemiBold',
+                   }}
+                 >
+                   {initials || 'NA'}
+                 </Text>
+               </View>
+             )}
+           </View>
+         </ImageBackground>
+       );
+     }
+ 
+     if (images.length > 1) {
+       return (
+         <View>
+           <FlatList
+             ref={flatListRef}
+             data={images}
+             horizontal
+             pagingEnabled
+             showsHorizontalScrollIndicator={false}
+             keyExtractor={(_, index) => index.toString()}
+             onScroll={onScroll}
+             scrollEventThrottle={16}
+   //           renderItem={({ item,index }) => (
+   //             // <Image
+   //             //   source={item.uri ? { uri: item.uri } : fallbackImage}
+   //             //   style={{ width: screenWidth, height: 270 }}
+   //             //   resizeMode="cover"
+   //             // />
+   //              <TouchableOpacity
+   //   activeOpacity={0.9}
+   //   onPress={() => {
+   //     setCurrentImageIndex(index);
+   //     setImageViewVisible(true);
+   //   }}
+   // >
+   //   <Image
+   //     source={item.uri ? { uri: item.uri } : fallbackImage}
+   //     style={{ width: screenWidth, height: 270 }}
+   //     resizeMode="cover"
+   //   />
+   // </TouchableOpacity>
+             //           )}
+         
+ renderItem={({ item, index }) => {
+   const imageSource = item?.uri
+     ? { uri: item.uri }
+     : fallbackImage;
+ 
+   return (
+     <TouchableOpacity
+       activeOpacity={0.9}
+       disabled={images.length === 0}   // Prevent click if no image
+       onPress={() => {
+         console.log("index: ", index);
+   setCurrentImageIndex(index || 0);
+   setImageViewVisible(true);
+ }}
+     >
+       <Image
+         source={imageSource}
+         style={{ width: screenWidth, height: 270 }}
+         resizeMode="cover"
+       />
+     </TouchableOpacity>
+   );
+ }}
+           />
+           <View style={styles.stepIndicatorContainer}>
+             {images.map((_: any, index: number) => (
+               <View
+                 key={index}
+                 style={
+                   index === activeIndex
+                     ? styles.activeStepCircle
+                     : styles.inactiveStepCircle
+                 }
+               />
+             ))}
+           </View>
+         </View>
+       );
+     }
+     return (
+   <TouchableOpacity
+     activeOpacity={0.9}
+     onPress={() => {
+       setCurrentImageIndex(0);
+       setImageViewVisible(true);
+     }}
+   >
+       <Image
+         source={images[0]?.uri ? { uri: images[0].uri } : fallbackImage}
+         style={{ width: screenWidth, height: 270 }}
+         resizeMode="cover"
+           />
+           </TouchableOpacity>
+     );
+   };
 
   const handleBookmarkPress = async (productId: number) => {
     try {
@@ -896,6 +959,86 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
       )}
       <ShortCustomToastContainer/>
       <NewCustomToastContainer />
+      <ImageViewing
+              images={previewImages}
+              imageIndex={currentImageIndex}
+              visible={isImageViewVisible}
+              swipeToCloseEnabled
+              doubleTapToZoomEnabled
+              onRequestClose={() => setImageViewVisible(false)}
+              onImageIndexChange={index => {
+                setCurrentImageIndex(index);
+              }}
+              FooterComponent={({ imageIndex }) => (
+                <View
+                  style={{
+                    position: 'absolute',
+                    bottom: 30,
+                    width: '100%',
+                    alignItems: 'center',
+                  }}
+                >
+                  {/* 🔵 Indicator Dots */}
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      marginBottom: 15,
+                    }}
+                  >
+                    {images.map((_:any, index:any) => (
+                      <View
+                        key={index}
+                        style={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: 4,
+                          marginHorizontal: 4,
+                          backgroundColor:
+                            index === imageIndex
+                              ? '#FFFFFF'
+                              : 'rgba(255,255,255,0.4)',
+                        }}
+                      />
+                    ))}
+                  </View>
+      
+                  {/* 🖼 Thumbnail Strip */}
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{
+                      paddingHorizontal: 10,
+                    }}
+                  >
+                    {images.map((item:any, index:any) => (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => setCurrentImageIndex(index)}
+                        style={{
+                          marginHorizontal: 5,
+                          borderWidth: index === imageIndex ? 2 : 1,
+                          borderColor:
+                            index === imageIndex
+                              ? '#FFFFFF'
+                              : 'rgba(255,255,255,0.3)',
+                          borderRadius: 6,
+                        }}
+                      >
+                        <Image
+                          source={{ uri: item.uri }}
+                          style={{
+                            width: 60,
+                            height: 60,
+                            borderRadius: 6,
+                          }}
+                          resizeMode="cover"
+                        />
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </View>
+              )}
+            />
     </ImageBackground>
   );
 };
