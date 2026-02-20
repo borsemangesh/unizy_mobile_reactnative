@@ -1586,7 +1586,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     setUserMeta(prev => ({ ...prev, city: text }))
                   }
                   style={[styles.input, { color: 'rgba(255, 255, 255, 0.58)' }]}
-                  placeholder={t('enter_city')}
+                  placeholder={t('city')}
                   placeholderTextColor="#ccc"
 
                 />

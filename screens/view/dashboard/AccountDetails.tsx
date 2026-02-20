@@ -556,15 +556,15 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
     );
   };
 
-const dummyCards =
-  savedCards?.length > 0
-    ? Array.from({ length: 8 }, (_, i) => ({
-        ...savedCards[0],
-        id: `${savedCards[0].id}_${i}`,
-        last4: `${1000 + i}`,
-        isDefault: i === 0,
-      }))
-    : [];
+// const dummyCards =
+//   savedCards?.length > 0
+//     ? Array.from({ length: 8 }, (_, i) => ({
+//         ...savedCards[0],
+//         id: `${savedCards[0].id}_${i}`,
+//         last4: `${1000 + i}`,
+//         isDefault: i === 0,
+//       }))
+//     : [];
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -1065,7 +1065,7 @@ const dummyCards =
                     </View>
                   </View>
                 ) : (
-                  dummyCards.map((card) => (
+                  savedCards.map((card) => (
                     <CardTile
                       key={card.id}
                       card={card}
