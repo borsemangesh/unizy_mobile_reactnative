@@ -67,6 +67,7 @@ import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { getCityFromPostalCode } from '../../utils/geocoding';
 
 const bgImage = require('../../../assets/images/backimg.png');
 const profileImg = require('../../../assets/images/user.jpg');
@@ -900,6 +901,39 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
   const [isCheckbox, setCheckBox] = useState(false);
 
+  const getCityFromPostalCode = async (postalCode: string) => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
+        {
+          headers: {
+            "User-Agent": "MyAndroidApp/1.0 (contact@myapp.com)",
+            "Accept-Language": "en-US",
+          },
+        }
+      );
+
+      const data = await response.json();
+      console.log("location data:", data);
+
+      if (!data || data.length === 0) return null;
+
+      const address = data[0].address;
+
+      return (
+        address.city ||            // US, some countries
+        address.town ||            // smaller towns
+        address.village ||         // villages
+        address.county ||          // India, UK (like Pune City)
+        address.state_district ||  // fallback
+        null
+      );
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  };
+
   const renderField = (field: any) => {
     const param = field?.param;
     if (!param) return null;
@@ -923,7 +957,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
         const isPriceField = alias_name?.toLowerCase() === 'price';
 
         const placeholderText = placeholder ? placeholder : `${t('enter')} ${field_name}`;
-
+        const isPostcodeField = alias_name?.toLowerCase() === 'postcode';
 
         let rnKeyboardType:
           | 'default'
@@ -951,45 +985,64 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             rnKeyboardType = 'default';
         }
 
-        // return (
-        //   <View key={field.id} style={styles.productTextView}>
-        //     {/* <Text style={styles.textstyle}>{field_name}</Text> */}
-        //     {renderLabel(field_name, field.mandatory)}
-        //     <TextInput
-        //       allowFontScaling={false}
-        //       style={[
-        //         styles.personalEmailID_TextInput,
-        //         styles.login_container,
-        //         {
-        //           height: 44,
-        //           textAlignVertical: 'center',
-        //           paddingVertical: 0,
-        //         },
-        //       ]}
-        //       placeholder={placeholderText}
-        //       multiline={false}
-        //       placeholderTextColor="rgba(255, 255, 255, 0.48)"
-        //       keyboardType={rnKeyboardType}
-        //       selectionColor={'#FFFFFF'}
-        //       cursorColor="#FFFFFF"
-        //       value={isPriceField && rawValue ? `£ ${rawValue}` : rawValue}
-        //       onChangeText={text => {
-        //         let value = text;
-        //         if (alias_name?.toLowerCase() === 'quantity') {
-        //           if (value === '0') {
-        //             return;
-        //           }
-        //         }
-        //         if (isPriceField) {
-        //           const cleaned = text.replace(/£\s?/g, '');
-        //           handleValueChange(param.id, alias_name, cleaned);
-        //         } else {
-        //           handleValueChange(param.id, alias_name, text);
-        //         }
-        //       }}
-        //     />
-        //   </View>
-        // );
+
+        let typingTimeout: NodeJS.Timeout;
+
+
+        const handlePostalCodeChange = (text: string) => {
+          // Always update the postcode field value first
+          handleValueChange(param.id, alias_name, text);
+
+          const cityField = fields?.find(
+            (f: any) => f.param?.alias_name?.toLowerCase() === 'city'
+          );
+
+          if (!cityField) return;
+
+          // If postcode is cleared, remove auto-selected city
+          const stripped = text.replace(/\s/g, '');
+          if (stripped.length === 0) {
+            setFormValues((prev: any) => ({
+              ...prev,
+              [cityField.param.id]: {
+                ...prev[cityField.param.id],
+                value: null,
+              },
+            }));
+            return;
+          }
+
+          if (isPostcodeField) {
+            if (typingTimeout) clearTimeout(typingTimeout);
+
+            if (stripped.length < 5) return; // too short to be a valid postcode
+
+            typingTimeout = setTimeout(async () => {
+              const cityName = await getCityFromPostalCode(text);
+
+              if (cityName) {
+                const cityOptions = cityField.param?.options || [];
+                const matchedOption = cityOptions.find(
+                  (opt: any) =>
+                    opt.option_name?.toLowerCase() === cityName?.toLowerCase()
+                );
+
+                if (matchedOption) {
+                  // ✅ City found — auto-select silently
+                  setFormValues((prev: any) => ({
+                    ...prev,
+                    [cityField.param.id]: {
+                      ...prev[cityField.param.id],
+                      value: matchedOption.id,
+                    },
+                  }));
+                }
+              }
+            }, 1000);
+          }
+        };
+
+        
 
         return (
           <View key={field.id} style={styles.productTextView}>
@@ -1026,8 +1079,16 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                     const cleaned = text.replace(/£\s?/g, '');
                     handleValueChange(param.id, alias_name, cleaned);
                   } else {
+                    //handleValueChange(param.id, alias_name, text);
+
                     handleValueChange(param.id, alias_name, text);
+
+                    // Only call postal code handler if this is the postcode field
+                    if (field_name.toLowerCase().includes('postcode')) {
+                      handlePostalCodeChange(text);
+                    }
                   }
+
                 }}
               />
 
@@ -2143,26 +2204,26 @@ export default AddScreen;
 const styles = StyleSheet.create({
 
   inputWrapper: {
-  position: 'relative',
-  justifyContent: 'center',
-},
+    position: 'relative',
+    justifyContent: 'center',
+  },
 
-inputWithIcon: {
-  paddingRight: 40, // space for icon inside input
-},
+  inputWithIcon: {
+    paddingRight: 40, // space for icon inside input
+  },
 
-iconWrapper: {
-  position: 'absolute',
-  right: 12,
-  height: '100%',
-  justifyContent: 'center',
-  alignItems: 'center',
-},
+  iconWrapper: {
+    position: 'absolute',
+    right: 12,
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 
-infoIcon: {
-  width: 24,
-  height: 24,
-},
+  infoIcon: {
+    width: 24,
+    height: 24,
+  },
 
 
   labelRow: {

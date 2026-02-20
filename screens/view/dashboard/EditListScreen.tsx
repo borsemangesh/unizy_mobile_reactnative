@@ -92,7 +92,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
   const [newdate, setnewdate] = useState('');
   const [category, setcategory] = useState('');
   const [featureitem, setfeatureitem] = useState(false);
-const [accommodation_amount, setaccommodation_amount] = useState(0);
+  const [accommodation_amount, setaccommodation_amount] = useState(0);
   const [dateStep, setDateStep] = useState<'start' | 'end'>('start');
   const [tempStartDate, setTempStartDate] = useState<Date | undefined>(
     undefined,
@@ -100,10 +100,10 @@ const [accommodation_amount, setaccommodation_amount] = useState(0);
   const [tempDate, setTempDate] = useState<Date>(new Date());
 
   const [showpopup, setshowpopup] = useState(false);
-   const [popupData, setPopupData] = useState({
-      title: '',
-      message: '',
-    });
+  const [popupData, setPopupData] = useState({
+    title: '',
+    message: '',
+  });
   const scrollRef = useAnimatedRef<any>();
   const scrollY = useScrollViewOffset(scrollRef);
 
@@ -1077,6 +1077,38 @@ const [accommodation_amount, setaccommodation_amount] = useState(0);
 
     return `${day}${suffix} ${monthShort} ${year}`;
   };
+  const getCityFromPostalCode = async (postalCode: string) => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
+        {
+          headers: {
+            "User-Agent": "MyAndroidApp/1.0 (contact@myapp.com)",
+            "Accept-Language": "en-US",
+          },
+        }
+      );
+
+      const data = await response.json();
+      console.log("location data:", data);
+
+      if (!data || data.length === 0) return null;
+
+      const address = data[0].address;
+
+      return (
+        address.city ||            // US, some countries
+        address.town ||            // smaller towns
+        address.village ||         // villages
+        address.county ||          // India, UK (like Pune City)
+        address.state_district ||  // fallback
+        null
+      );
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  };
 
   const renderField = (field: any) => {
     const param = field?.param;
@@ -1111,6 +1143,7 @@ const [accommodation_amount, setaccommodation_amount] = useState(0);
         //     : `${t('enter')} ${field_name}`;
 
         const placeholderText = placeholder ? placeholder : `${t('enter')} ${field_name}`;
+        const isPostcodeField = alias_name?.toLowerCase() === 'postcode';
 
         let rnKeyboardType:
           | 'default'
@@ -1138,99 +1171,142 @@ const [accommodation_amount, setaccommodation_amount] = useState(0);
             rnKeyboardType = 'default';
         }
 
-        // return (
-        //   <View key={field.id} style={styles.productTextView}>
-        //     {renderLabel(field_name, field.mandatory)}
-        //     <TextInput
-        //       allowFontScaling={false}
-        //       style={[
-        //         styles.personalEmailID_TextInput,
-        //         styles.login_container,
-        //         {
-        //           textAlignVertical: 'center',
-        //           paddingVertical: 0,
-        //         },
-        //       ]}
-        //       placeholder={placeholderText}
-        //       multiline={false}
-        //       cursorColor="#fff"
-        //       selectionColor="#FFFFFF"
-        //       placeholderTextColor="rgba(255, 255, 255, 0.48)"
-        //       keyboardType={rnKeyboardType}
-        //       value={isPriceField ? `£ ${finalValue}` : finalValue}
-        //       onChangeText={text => {
-        //         if (isPriceField) {
-        //           const cleaned = text.replace(/£\s?/g, '');
-        //           handleValueChange(param.id, alias_name, cleaned);
-        //         } else {
-        //           handleValueChange(param.id, alias_name, text);
-        //         }
-        //       }}
-        //     />
-        //   </View>
-        // );
-      
-       return (
-                <View key={field.id} style={styles.productTextView}>
-                  {renderLabel(field_name, field.mandatory)}
-      
-                  <View style={styles.inputWrapper}>
-                    <TextInput
-                      allowFontScaling={false}
-                      style={[
-                        styles.personalEmailID_TextInput,
-                        styles.login_container,
-                        styles.inputWithIcon, // padding for icon space
-                        {
-                          height: 44,
-                          textAlignVertical: 'center',
-                          paddingVertical: 0,
-                        },
-                      ]}
-                      placeholder={placeholderText}
-                      multiline={false}
-                      placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                      keyboardType={rnKeyboardType}
-                      selectionColor={'#F5F5F5'}
-                      cursorColor="#F5F5F5"
-                      value={isPriceField && rawValue ? `£ ${rawValue}` : rawValue}
-                      onChangeText={text => {
-                        let value = text;
-      
-                        if (alias_name?.toLowerCase() === 'quantity') {
-                          if (value === '0') return;
-                        }
-      
-                        if (isPriceField) {
-                          const cleaned = text.replace(/£\s?/g, '');
-                          handleValueChange(param.id, alias_name, cleaned);
-                        } else {
-                          handleValueChange(param.id, alias_name, text);
-                        }
-                      }}
-                    />
-      
-                    {field?.info_icon && (
-                      <TouchableOpacity
-                        style={styles.iconWrapper}
-                        activeOpacity={0.7}
-                        onPress={() => {
-                          setPopupData({
-                            title: field_name,
-                            message: field?.info_text || '',
-                          });
-                          setshowpopup(true);
-                        }}
-                      >
-                        <Image
-                          source={require('../../../assets/images/info_icon.png')}
-                          style={styles.infoIcon}
-                        />
-                      </TouchableOpacity>
-                    )}
-                  </View>
-                </View>
-              );
+        let typingTimeout: NodeJS.Timeout;
+
+
+        const handlePostalCodeChange = (text: string) => {
+          // Always update the postcode field value first
+          handleValueChange(param.id, alias_name, text);
+
+          const cityField = fields?.find(
+            (f: any) => f.param?.alias_name?.toLowerCase() === 'city'
+          );
+
+          if (!cityField) return;
+
+          // If postcode is cleared, remove auto-selected city
+          const stripped = text.replace(/\s/g, '');
+          if (stripped.length === 0) {
+            setFormValues((prev: any) => ({
+              ...prev,
+              [cityField.param.id]: {
+                ...prev[cityField.param.id],
+                value: null,
+              },
+            }));
+            return;
+          }
+
+          if (isPostcodeField) {
+            if (typingTimeout) clearTimeout(typingTimeout);
+
+            if (stripped.length < 5) return; // too short to be a valid postcode
+
+            typingTimeout = setTimeout(async () => {
+              const cityName = await getCityFromPostalCode(text);
+
+              if (cityName) {
+                const cityOptions = cityField.param?.options || [];
+                const matchedOption = cityOptions.find(
+                  (opt: any) =>
+                    opt.option_name?.toLowerCase() === cityName?.toLowerCase()
+                );
+
+                if (matchedOption) {
+                  // ✅ City found — auto-select silently
+                  setFormValues((prev: any) => ({
+                    ...prev,
+                    [cityField.param.id]: {
+                      ...prev[cityField.param.id],
+                      value: matchedOption.id,
+                    },
+                  }));
+                }
+              }
+            }, 1000);
+          }
+        };
+        return (
+          <View key={field.id} style={styles.productTextView}>
+            {renderLabel(field_name, field.mandatory)}
+
+            <View style={styles.inputWrapper}>
+              <TextInput
+                allowFontScaling={false}
+                style={[
+                  styles.personalEmailID_TextInput,
+                  styles.login_container,
+                  styles.inputWithIcon, // padding for icon space
+                  {
+                    height: 44,
+                    textAlignVertical: 'center',
+                    paddingVertical: 0,
+                  },
+                ]}
+                placeholder={placeholderText}
+                multiline={false}
+                placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                keyboardType={rnKeyboardType}
+                selectionColor={'#F5F5F5'}
+                cursorColor="#F5F5F5"
+                value={isPriceField && rawValue ? `£ ${rawValue}` : rawValue}
+
+                // onChangeText={text => {
+                //   let value = text;
+
+                //   if (alias_name?.toLowerCase() === 'quantity') {
+                //     if (value === '0') return;
+                //   }
+
+                //   if (isPriceField) {
+                //     const cleaned = text.replace(/£\s?/g, '');
+                //     handleValueChange(param.id, alias_name, cleaned);
+                //   } else {
+                //     handleValueChange(param.id, alias_name, text);
+                //   }
+                // }}
+
+                onChangeText={text => {
+                  let value = text;
+
+                  if (alias_name?.toLowerCase() === 'quantity') {
+                    if (value === '0') return;
+                  }
+
+                  if (isPriceField) {
+                    const cleaned = text.replace(/£\s?/g, '');
+                    handleValueChange(param.id, alias_name, cleaned);
+                  } else {
+                    handleValueChange(param.id, alias_name, text);
+                    if (field_name.toLowerCase().includes('postcode')) {
+                      handlePostalCodeChange(text);
+                    }
+                  }
+
+                }}
+              />
+
+              {field?.info_icon && (
+                <TouchableOpacity
+                  style={styles.iconWrapper}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    setPopupData({
+                      title: field_name,
+                      message: field?.info_text || '',
+                    });
+                    setshowpopup(true);
+                  }}
+                >
+                  <Image
+                    source={require('../../../assets/images/info_icon.png')}
+                    style={styles.infoIcon}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+        );
       }
 
       case 'multi-line-text': {
@@ -1569,7 +1645,7 @@ const [accommodation_amount, setaccommodation_amount] = useState(0);
                 style={{ width: 13, height: 13, marginRight: 8, marginTop: 2 }}
               />
 
-             
+
               {/* <View style={{ flex: 1 }}>
                 <Text allowFontScaling={false} style={styles.importantText1}>
                   {t('important')}
@@ -1593,56 +1669,56 @@ const [accommodation_amount, setaccommodation_amount] = useState(0);
                 </Text>
               </View> */}
 
-               <View style={{ flex: 1 }}>
-                              {productId !== 4 ? (
-                                <>
-                                  <Text allowFontScaling={false} style={styles.importantText1}>
-                                    {t('important')}
-                                  </Text>
-              
-                                  <Text allowFontScaling={false} style={styles.importantText}>
-                                    {t('featured_listing_note_1')}{' '}
-                                    <Text allowFontScaling={false} style={styles.importantText1}>
-                                      {Math.trunc(featureFee)}%
-                                    </Text>{' '}
-                                    {t('featured_listing_fee_percentage')}{' '}
-              
-                                    <Text allowFontScaling={false} style={styles.importantText}>(</Text>
-                                    <Text allowFontScaling={false} style={styles.importantText}>
-                                      {t('capped')}{' '}
-                                    </Text>
-                                    <Text allowFontScaling={false} style={styles.importantText1}>
-                                      £{Math.trunc(maxFeatureCap)}
-                                    </Text>
-                                    <Text allowFontScaling={false} style={styles.importantText}>)</Text>{' '}
-                                    {t('featured_listing_fee_cap')}
-                                  </Text>
-                                </>
-                              ) : (
-                                <View>
-                                  <Text allowFontScaling={false} style={styles.importantText1}>
-                                    {t('important')}
-                                  </Text>
-              
-                                  <Text allowFontScaling={false} style={styles.importantText}>
-                                    {t('fixed_commission')}{' '}
-                                    <Text allowFontScaling={false} style={styles.importantText1}>
-                                      £{Math.trunc(accommodation_amount)}
-                                    </Text>{' '}
-                                    {t('featured_listing_fee_percentage')}
-              
-                                    <Text allowFontScaling={false} style={styles.importantText}></Text>
-                                    <Text allowFontScaling={false} style={styles.importantText}>
-                                     
-                                    </Text>
-                                    <Text allowFontScaling={false} style={styles.importantText1}/>
-              
-                                    <Text allowFontScaling={false} style={styles.importantText}></Text>{' '}
-                                    {t('featured_listing_fee_cap')}
-                                  </Text>
-                                </View>
-                              )}
-                            </View>
+              <View style={{ flex: 1 }}>
+                {productId !== 4 ? (
+                  <>
+                    <Text allowFontScaling={false} style={styles.importantText1}>
+                      {t('important')}
+                    </Text>
+
+                    <Text allowFontScaling={false} style={styles.importantText}>
+                      {t('featured_listing_note_1')}{' '}
+                      <Text allowFontScaling={false} style={styles.importantText1}>
+                        {Math.trunc(featureFee)}%
+                      </Text>{' '}
+                      {t('featured_listing_fee_percentage')}{' '}
+
+                      <Text allowFontScaling={false} style={styles.importantText}>(</Text>
+                      <Text allowFontScaling={false} style={styles.importantText}>
+                        {t('capped')}{' '}
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.importantText1}>
+                        £{Math.trunc(maxFeatureCap)}
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.importantText}>)</Text>{' '}
+                      {t('featured_listing_fee_cap')}
+                    </Text>
+                  </>
+                ) : (
+                  <View>
+                    <Text allowFontScaling={false} style={styles.importantText1}>
+                      {t('important')}
+                    </Text>
+
+                    <Text allowFontScaling={false} style={styles.importantText}>
+                      {t('fixed_commission')}{' '}
+                      <Text allowFontScaling={false} style={styles.importantText1}>
+                        £{Math.trunc(accommodation_amount)}
+                      </Text>{' '}
+                      {t('featured_listing_fee_percentage')}
+
+                      <Text allowFontScaling={false} style={styles.importantText}></Text>
+                      <Text allowFontScaling={false} style={styles.importantText}>
+
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.importantText1} />
+
+                      <Text allowFontScaling={false} style={styles.importantText}></Text>{' '}
+                      {t('featured_listing_fee_cap')}
+                    </Text>
+                  </View>
+                )}
+              </View>
 
             </View>
           </View>
@@ -2143,57 +2219,57 @@ const [accommodation_amount, setaccommodation_amount] = useState(0);
       )}
 
 
-        <Modal
-              visible={showpopup}
-              transparent
-              animationType="fade"
-              onRequestClose={() => setshowpopup(false)}
+      <Modal
+        visible={showpopup}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setshowpopup(false)}
+      >
+        <TouchableWithoutFeedback onPress={() => setshowpopup(false)}>
+          <View style={styles.overlay}>
+            <BlurView
+              style={{
+                flex: 1,
+                alignContent: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                alignItems: 'center',
+              }}
+              blurType="light"
+              blurAmount={10}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
             >
-              <TouchableWithoutFeedback onPress={() => setshowpopup(false)}>
-                <View style={styles.overlay}>
-                  <BlurView
-                    style={{
-                      flex: 1,
-                      alignContent: 'center',
-                      justifyContent: 'center',
-                      width: '100%',
-                      alignItems: 'center',
-                    }}
-                    blurType="light"
-                    blurAmount={10}
-                    reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
-                  >
-                    <View
-                      style={[
-                        StyleSheet.absoluteFill,
-                        { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
-                      ]}
-                    />
-      
-                    <View style={styles.popupContainer}>
-                      <Text allowFontScaling={false} style={styles.popupMainHeader}>
-                        {popupData.title}
-                      </Text>
-                      <Text allowFontScaling={false} style={styles.popupSubHeader}>
-                        {popupData.message}
-                      </Text>
-      
-                      <TouchableOpacity
-                        style={styles.loginButton}
-                        onPress={() => {
-                          setshowpopup(false);
-                        }}
-                      >
-                        <Text allowFontScaling={false} style={styles.loginText}>
-                          {t('close')}
-                        </Text>
-                      </TouchableOpacity>
-      
-                    </View>
-                  </BlurView>
-                </View>
-              </TouchableWithoutFeedback>
-            </Modal>
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                ]}
+              />
+
+              <View style={styles.popupContainer}>
+                <Text allowFontScaling={false} style={styles.popupMainHeader}>
+                  {popupData.title}
+                </Text>
+                <Text allowFontScaling={false} style={styles.popupSubHeader}>
+                  {popupData.message}
+                </Text>
+
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  onPress={() => {
+                    setshowpopup(false);
+                  }}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText}>
+                    {t('close')}
+                  </Text>
+                </TouchableOpacity>
+
+              </View>
+            </BlurView>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
 
 
       <Modal
@@ -2364,28 +2440,28 @@ export default EditListScreen;
 
 const styles = StyleSheet.create({
 
-  
-   inputWrapper: {
-  position: 'relative',
-  justifyContent: 'center',
-},
 
-inputWithIcon: {
-  paddingRight: 40, // space for icon inside input
-},
+  inputWrapper: {
+    position: 'relative',
+    justifyContent: 'center',
+  },
 
-iconWrapper: {
-  position: 'absolute',
-  right: 12,
-  height: '100%',
-  justifyContent: 'center',
-  alignItems: 'center',
-},
+  inputWithIcon: {
+    paddingRight: 40, // space for icon inside input
+  },
 
-infoIcon: {
-  width: 24,
-  height: 24,
-},
+  iconWrapper: {
+    position: 'absolute',
+    right: 12,
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  infoIcon: {
+    width: 24,
+    height: 24,
+  },
 
 
   labelRow: {
@@ -2476,7 +2552,7 @@ infoIcon: {
     letterSpacing: 1,
     width: '100%',
   },
-    categoryTagContainer: {
+  categoryTagContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor:
@@ -2491,7 +2567,7 @@ infoIcon: {
     marginRight: 4,
     marginBottom: 4,
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.23)',
-    maxWidth:'100%'
+    maxWidth: '100%'
   },
 
   categoryTagText: {
@@ -2500,7 +2576,7 @@ infoIcon: {
     fontFamily: 'Urbanist-Medium',
     fontWeight: 500,
     flexShrink: 1,      // 🔥 allows text to shrink
-  maxWidth: '90%',
+    maxWidth: '90%',
   },
   crossIcon: {
     width: 16,
