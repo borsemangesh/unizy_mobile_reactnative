@@ -55,6 +55,7 @@ type Feature = {
     profile?: string | null;
     firstname?: string | null;
     lastname?: string | null;
+    university_name?: string | null;
   };
 };
 type university = {
@@ -297,7 +298,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
       return (
         <View style={[styles.itemContainer]}>
           <MyListingCard
-            tag={item.university?.name || 'University of Warwick'}
+            tag={item.createdby?.university_name || 'University of Warwick'}
             infoTitle={displayTitle}
             inforTitlePrice={`£ ${displayPrice}`}
             rating={displayDate}

@@ -41,6 +41,7 @@ const cardData = [
   { id: '7', titleKey: 'help_support', image: require('../../../assets/images/helpicon.png') },
   { id: '8', titleKey: 'logout', image: require('../../../assets/images/logout.png') },
   { id: '9', titleKey: 'app_version', image: require('../../../assets/images/versionicon.png') },
+  
 ];
 
 const arrowIcon = require('../../../assets/images/nextarrow.png');
@@ -96,14 +97,10 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
         const userId = await AsyncStorage.getItem('userId');
         const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
 
-
-
         if (!token || !userId) {
           console.warn('Missing token or user ID in AsyncStorage');
           return;
         }
-
-
 
         const url = `${MAIN_URL.baseUrl}user/user-profile/${userId}`;
         const response = await fetch(url, {
@@ -280,13 +277,13 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
             openStripeOnboarding();
           }
           else if (item.titleKey === 'change_password') {
-            if(Platform.OS === 'ios'){
-            navigation.replace('ChangePassword');
+            if (Platform.OS === 'ios') {
+              navigation.replace('ChangePassword');
             }
-            else{
-            navigation.navigate('ChangePassword');
+            else {
+              navigation.navigate('ChangePassword');
             }
-            
+
           }
           else {
 
@@ -552,19 +549,6 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                       }
 
 
-
-                      // navigation.reset({
-                      //   index: 0,
-                      //   routes: [
-                      //     {
-                      //       name: 'SinglePage',
-                      //       params: {
-                      //         resetToLogin: true,
-                      //         logoutMessage: t(Constant.USER_LOGOUT),
-                      //       },
-                      //     },
-                      //   ],
-                      // });
                     } catch (error) {
                       console.log("Something went wrong. Try again!");
                     }
@@ -587,124 +571,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                   </Text>
                 </TouchableOpacity>
               </View>
-              {/* <View style={styles.popupContainer}>
-                <Image
-                  source={require('../../../assets/images/alert_logout.png')}
-                  style={styles.logo}
-                  resizeMode="contain"
-                />
-                <Text allowFontScaling={false} style={styles.mainheader}>
-                  {t('confirm_logout')}
-                </Text>
-                <Text allowFontScaling={false} style={styles.subheader}>
-                  {t('logout_message')}
-                </Text>
 
-
-                <TouchableOpacity
-                  style={styles.loginButton}
-                  onPress={async () => {
-                    try {
-                      const deviceId = await DeviceInfo.getUniqueId();
-                      const user_id = await AsyncStorage.getItem('userId'); 
-
-                      const body = {
-                        device_type: (Platform.OS === 'ios') ? 'ios' : 'android',
-                        device_id: deviceId,
-                        user_id: Number(user_id),
-                      };
-
-                      const response = await fetch(`${MAIN_URL.baseUrl}user/delete-fcm-token`, {
-                        method: 'POST',
-                        headers: {
-                          'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(body),
-                      });
-
-                      const apiData = await response.json();
-
- 
-
-                      if (apiData?.statusCode === 200) {
-                        await AsyncStorage.setItem('userToken', '');
-                        await AsyncStorage.setItem('userData', '');
-                        await AsyncStorage.setItem('userId', '');
-                        await AsyncStorage.setItem('twilio_convo_', '');
-                        await AsyncStorage.setItem('twilio_msg_', '');
-                        
-                        try {
-                          await resetTwilioClient();
-                          await clearTwilioCache();
-                          try {
-                            const messaging = require('@react-native-firebase/messaging').default;
-                            await messaging().deleteToken();
-                            if (__DEV__) {
-
-                            }
-                          } catch (fcmError) {
-                            console.warn('⚠️ Error deleting FCM token:', fcmError);
-                          }
-
-                          if (__DEV__) {
-   
-                          }
-                        } catch (clearError) {
-                          console.warn('⚠️ Error clearing Twilio data on logout:', clearError);
-                        }
-
-                        await AsyncStorage.setItem('ISLOGIN', 'false');
-
-                        navigation.reset({
-                          index: 0,
-                          routes: [
-                            {
-                              name: 'SinglePage',
-                              params: {
-                                resetToLogin: true,
-                                logoutMessage: t(Constant.USER_LOGOUT),
-                              },
-                            },
-                          ],
-                        });
-                        setShowConfirm(false);
-                        // logoutCleanup();
-                      } else {
-                        showToast(t(Constant.LOGOUT_FAIL), 'error');
-                      }
-
-
-                      navigation.reset({
-                        index: 0,
-                        routes: [
-                          {
-                            name: 'SinglePage',
-                            params: {
-                              resetToLogin: true,
-                              logoutMessage: t(Constant.USER_LOGOUT),
-                            },
-                          },
-                        ],
-                      });
-                    } catch (error) {
-                      console.log("Something went wrong. Try again!");
-                    }
-                  }}
-                >
-                  <Text allowFontScaling={false} style={styles.loginText}>
-                    {t('logout')}
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.loginButton1}
-                  onPress={() => setShowConfirm(false)}
-                >
-                  <Text allowFontScaling={false} style={styles.loginText1}>
-                    {t('cancel')}
-                  </Text>
-                </TouchableOpacity>
-              </View> */}
             </BlurView>
           </View>
         </TouchableWithoutFeedback>
@@ -796,9 +663,10 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                     if (!password?.trim()) {
                       setShowConfirm1(false);
                       showToast(t('PLEASE_FILL_ALL_REQUIRED_FIELDS'), 'error');
-                      return; 
+                      return;
                     }
                     try {
+                      setLoading(true)
                       const token = await AsyncStorage.getItem('userToken');
                       const deviceId = await DeviceInfo.getUniqueId();
                       const user_id = await AsyncStorage.getItem('userId');
@@ -874,6 +742,9 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                     } catch (error) {
                       // console.log("Something went wrong. Try again!");
                     }
+                    finally {
+                      setLoading(false);
+                    }
                   }}
                 >
                   <Text allowFontScaling={false} style={styles.loginText}>
@@ -882,7 +753,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={[styles.loginButton1,{marginTop: Platform.OS === 'ios'? 10: 0}]}
+                  style={[styles.loginButton1, { marginTop: Platform.OS === 'ios' ? 10 : 10 }]}
                   onPress={() => setShowConfirm1(false)}
                 >
                   <Text allowFontScaling={false} style={styles.loginText1}>
