@@ -699,7 +699,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                       id: shareid,
                     });
                   }}
-                  style={{ alignContent: 'center', alignSelf: 'center', justifyContent: 'center',display:'none' }}
+                  style={{ alignContent: 'center', alignSelf: 'center', justifyContent: 'center' }}
                 >
                   <Text
                     allowFontScaling={false}
