@@ -11,6 +11,7 @@ import {
   TouchableWithoutFeedback,
   Dimensions,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -556,15 +557,15 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
     );
   };
 
-// const dummyCards =
-//   savedCards?.length > 0
-//     ? Array.from({ length: 8 }, (_, i) => ({
-//         ...savedCards[0],
-//         id: `${savedCards[0].id}_${i}`,
-//         last4: `${1000 + i}`,
-//         isDefault: i === 0,
-//       }))
-//     : [];
+  // const dummyCards =
+  // savedCards?.length > 0
+  //   ? Array.from({ length: 8 }, (_, i) => ({
+  //       ...savedCards[0],
+  //       id: `${savedCards[0].id}_${i}`,
+  //       last4: `${1000 + i}`,
+  //       isDefault: i === 0,
+  //     }))
+  //   : [];
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -700,6 +701,14 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
         </View>
 
         {/* ===== Tabs ===== */}
+         <Animated.ScrollView
+              contentContainerStyle={{
+               paddingBottom: 100, // space for bottom button
+                 }}
+                 onScroll={scrollHandler}
+                     scrollEventThrottle={16}
+                 showsVerticalScrollIndicator={false}
+                 >
         <View style={styles.bottomTabContainer}>
           <View style={{ height: 38 }}>
             <Animated.View
@@ -748,7 +757,9 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
           />
         ) : (
 
-          <View style={{ flex: 1 }}>
+            
+            <View style={{ flex: 1 }}>
+             
 
             {selectedTab === 'Bank' && (
               <Animated.ScrollView
@@ -1039,7 +1050,17 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
 
 
             {selectedTab === "Cards" && (
-              <View style={{ flex: 1, paddingHorizontal: 16,paddingVertical:10 }}>
+                <View style={{ flex: 1, paddingHorizontal: 16,paddingVertical:10 }}>
+  {/*              <Animated.ScrollView 
+     contentContainerStyle={{
+      paddingHorizontal: 16,
+       paddingVertical: 10,
+       paddingBottom: 120, 
+     }}
+     onScroll={scrollHandler} 
+     scrollEventThrottle={16}
+     showsVerticalScrollIndicator={false}
+  >*/}
                 {loading ? (
                   <ActivityIndicator size="large" color="#fff" />
                 ) : savedCards.length === 0 ? (
@@ -1074,15 +1095,19 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                         setShowConfirm1(true);
                       }} />      
                   ))
-                  
+                 
                 )}
-              </View>
+                   </View> 
+                  // </Animated.ScrollView>
             )}
-
-          </View>
+        
+              </View>
         )}
 
 
+        
+
+        </Animated.ScrollView>
         {!loading && (
           <View style={styles.bottomButtonContainer}>
             {selectedTab === 'Bank' ? (
@@ -1104,7 +1129,6 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
             )}
           </View>
         )}
-
       </View>
 
       {/* Success Popup Modal */}
@@ -1256,11 +1280,15 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
 export default AccountDetails;
 
 const styles = StyleSheet.create({
+   categoryTabsScrollContent: { 
+    flexDirection: 'row', 
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    padding: 8
+   },
 
   emptyWrapper: {
     flex: 1,
-    //justifyContent: 'center',
-    //alignItems: 'center',
     width: '100%',
   },
   emptyContainer: {
@@ -1271,7 +1299,6 @@ const styles = StyleSheet.create({
     borderWidth: 0.3,
     borderColor: 'rgba(255, 255, 255, 0.08)',
     borderRadius: 24,
-    // paddingVertical: 40,
   },
 
   emptyImage: {
@@ -1383,7 +1410,7 @@ const styles = StyleSheet.create({
 
   },
   iconWrapper: {
-    height: 50, //
+    height: 50,
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
@@ -1419,24 +1446,10 @@ const styles = StyleSheet.create({
     pointerEvents: 'none',
   },
   backButtonContainer: {
-    // position: 'absolute',
-    // left: 16,
     zIndex: 11,
   },
   headerContent: {
-    // position: 'absolute',
-    // top: Platform.OS === 'ios' ? '8.5%' : 60,
-    // width: Platform.OS === 'ios' ? '100%' : '100%',
-    // flexDirection: 'row',
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    // paddingHorizontal: 16,
-    // zIndex: 11,
-    // alignSelf: 'center',
-    // pointerEvents: 'box-none',
-    // marginTop: Platform.OS === 'ios' ? 0 : 0,
-    // marginLeft: 1,
-
+ 
     position: 'absolute',
     top: (Platform.OS === 'ios' ? 60 : 40),
     width: '100%',
@@ -1455,10 +1468,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    // borderWidth: 0.4,
-    // borderColor: '#ffffff2c',
-    // backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
-
 
     borderWidth: 0.3,
     borderColor: '#ffffff11',
@@ -1489,8 +1498,6 @@ const styles = StyleSheet.create({
   },
   background: {
     flex: 1,
-    // width: '100%',
-    // height: '100%',
   },
   unizyText: {
     color: '#FFFFFF',
@@ -1560,15 +1567,6 @@ const styles = StyleSheet.create({
 
   },
   cardconstinerdivider: {
-    // display: 'flex',
-    // flexDirection: 'row',
-    // justifyContent: 'space-between',
-    // alignItems: 'center',
-    // width: '100%',
-    // height: 1.5,
-    // borderStyle: 'dashed',
-    // borderBottomWidth: 1,
-    // borderBottomColor: '#4169B8',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -1577,7 +1575,6 @@ const styles = StyleSheet.create({
     height: (Platform.OS === 'ios' ? 2 : 1.5),
     borderStyle: 'dashed',
     borderBottomWidth: (Platform.OS === 'ios' ? 0.9 : 1),
-    // backgroundColor: 'rgba(169, 211, 255, 0.08)',
     borderColor: (Platform.OS === 'ios' ? 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(186, 218, 255, 0.43) 0%, rgba(255, 255, 255, 0.10) 100%)' : '#4169B8'),
   },
   sellerHeaderlable: {
