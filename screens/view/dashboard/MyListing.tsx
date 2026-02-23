@@ -731,7 +731,7 @@ const styles = StyleSheet.create({
   headerWrapper: {
     position: 'absolute',
     top: 0,
-    width: Platform.OS === 'ios' ? 393 : '100%',
+    width: Platform.OS === 'ios' ? '100%' : '100%',
     height: Platform.OS === 'ios' ? 180 : 180,
     zIndex: 10,
     overflow: 'hidden',
