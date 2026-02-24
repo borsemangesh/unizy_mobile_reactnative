@@ -779,6 +779,8 @@
   "delete_message_card": "This action is permanent. Your saved card details will be deleted and cannot be recovered.",
   "expiry":"Expiry",
   "my":"My",
-  "card":"Card",
-  "no_cards_found":"No Cards Found"
+  "Cards":"Cards",
+  "Bank":"Bank",
+  "no_cards_found":"No Cards Found",
+  "acc_message":"will be charged for listing this accomodation availability."
 }

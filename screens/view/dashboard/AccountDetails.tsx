@@ -557,15 +557,15 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
     );
   };
 
-  // const dummyCards =
-  // savedCards?.length > 0
-  //   ? Array.from({ length: 8 }, (_, i) => ({
-  //       ...savedCards[0],
-  //       id: `${savedCards[0].id}_${i}`,
-  //       last4: `${1000 + i}`,
-  //       isDefault: i === 0,
-  //     }))
-  //   : [];
+  const dummyCards =
+  savedCards?.length > 0
+    ? Array.from({ length: 8 }, (_, i) => ({
+        ...savedCards[0],
+        id: `${savedCards[0].id}_${i}`,
+        last4: `${1000 + i}`,
+        isDefault: i === 0,
+      }))
+    : [];
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -737,7 +737,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                   textAlign: 'center',
                 }}
               >
-                {tab}
+                {t(tab)}
               </Text>
             </TouchableOpacity>
           ))}
@@ -1051,16 +1051,6 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
 
             {selectedTab === "Cards" && (
                 <View style={{ flex: 1, paddingHorizontal: 16,paddingVertical:10 }}>
-  {/*              <Animated.ScrollView 
-     contentContainerStyle={{
-      paddingHorizontal: 16,
-       paddingVertical: 10,
-       paddingBottom: 120, 
-     }}
-     onScroll={scrollHandler} 
-     scrollEventThrottle={16}
-     showsVerticalScrollIndicator={false}
-  >*/}
                 {loading ? (
                   <ActivityIndicator size="large" color="#fff" />
                 ) : savedCards.length === 0 ? (
@@ -1069,7 +1059,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                       style={[
                         styles.emptyContainer,
                         {
-                          height: '90%',
+                          //height: '90%',
                           paddingBottom: Platform.OS === 'ios' ? 80 : 80
 
                         }
@@ -1292,6 +1282,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   emptyContainer: {
+    flex: 1,
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',

@@ -1638,36 +1638,12 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
               />
             </View>
 
-            {/* Info section */}
-            <View style={styles.textbg}>
+
+            {/* <View style={styles.textbg}>
               <Image
                 source={require('../../../assets/images/info_icon.png')}
                 style={{ width: 13, height: 13, marginRight: 8, marginTop: 2 }}
               />
-
-
-              {/* <View style={{ flex: 1 }}>
-                <Text allowFontScaling={false} style={styles.importantText1}>
-                  {t('important')}
-                </Text>
-                <Text allowFontScaling={false} style={styles.importantText}>
-                  {t('featured_listing_note_1')}{' '}
-                  <Text allowFontScaling={false} style={styles.importantText1}>
-                    {Math.trunc(featureFee)}%
-                  </Text>{' '}
-                  {t('featured_listing_fee_percentage')}{' '}
-                  <Text allowFontScaling={false} style={styles.importantText}>(</Text>
-                  <Text allowFontScaling={false} style={styles.importantText}>
-                    {t('capped')}{' '}
-                  </Text>
-                  <Text allowFontScaling={false} style={styles.importantText1}>
-                    £{Math.trunc(maxFeatureCap)}
-                  </Text>
-                  <Text allowFontScaling={false} style={styles.importantText}>)</Text>
-                  {' '}
-                  {t('featured_listing_fee_cap')}
-                </Text>
-              </View> */}
 
               <View style={{ flex: 1 }}>
                 {productId !== 4 ? (
@@ -1720,7 +1696,35 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                 )}
               </View>
 
-            </View>
+            </View> */}
+
+            {productId !== 4 && (
+              <View style={styles.textbg}>
+                <Image
+                  source={require('../../../assets/images/info_icon.png')}
+                  style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+                />
+                <View style={{ flex: 1 }}>
+                  <Text allowFontScaling={false} style={styles.importantText1}>
+                    {t('important')}
+                  </Text>
+
+                  <Text allowFontScaling={false} style={styles.importantText}>
+                    {t('featured_listing_note_1')}{' '}
+                    <Text style={styles.importantText1}>
+                      {Math.trunc(featureFee)}%
+                    </Text>{' '}
+                    {t('featured_listing_fee_percentage')} ({t('capped')}{' '}
+                    <Text style={styles.importantText1}>
+                      £{Math.trunc(maxFeatureCap)}
+                    </Text>
+                    ) {t('featured_listing_fee_cap')}
+                  </Text>
+                </View>
+              </View>
+            )}
+
+
           </View>
         );
       }
@@ -2049,14 +2053,44 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                     </Text>
 
                     {fields
-                      .filter(
-                        (f: any) =>
-                          f?.param?.field_type?.toLowerCase() !== 'boolean',
-                      )
+                      .filter((f: any) => {
+                        const isBoolean =
+                          f?.param?.field_type?.toLowerCase() === 'boolean';
+                        if (productId === 4) return true;
+                        return !isBoolean;
+                      })
                       .map((field: any) => renderField(field))}
+
+
                   </Animated.View>
                 </View>
-                {featuredField && <View>{renderField(featuredField)}</View>}
+                {productId !== 4 && featuredField && (
+                  <View>{renderField(featuredField)}</View>
+                )}
+
+                {productId === 4 && (
+                  <View style={[styles.textbg, { marginTop: 12 }]}>
+                    <Image
+                      source={require('../../../assets/images/info_icon.png')}
+                      style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
+                    />
+                    <View style={{ flex: 1 }}>
+                      <Text allowFontScaling={false} style={styles.importantText1}>
+                        {t('important')}
+                      </Text>
+
+                      <Text allowFontScaling={false} style={styles.importantText}>
+                        {t('fixed_commission')}{' '}
+                        <Text style={styles.importantText1}>
+                          £{Math.trunc(accommodation_amount)}
+                        </Text>{' '}
+                        {t('acc_message')}
+                      </Text>
+                    </View>
+                  </View>
+                )}
+
+
                 {/* </AnimatedReanimated.ScrollView> */}
               </View>
             </NestableScrollContainer>
