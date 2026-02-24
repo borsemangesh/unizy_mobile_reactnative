@@ -1,5 +1,3 @@
-
-
 //The below code is the msg read and unread notification functionality to be implemented
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -218,6 +216,7 @@ const MessagesIndividualScreen = ({
   const scrollY = useSharedValue(0);
   const { t } = useTranslation();
 
+  const [otherLastReadIndex, setOtherLastReadIndex] = useState<number | null>(null);
 
   const updateBlurState = () => {
     if (contentHeightRef.current > 0 && viewportHeightRef.current > 0) {
@@ -700,11 +699,21 @@ const MessagesIndividualScreen = ({
     );
   };
 
-  const handleParticipantUpdated = async () => {
-    // Trigger re-render so read receipts refresh
-    setMessages(prev => [...prev]);
-  };
+const handleParticipantUpdated = async () => {
+  try {
+    const participants = await conversation.getParticipants();
+    const other = participants.find(
+      (p: any) => String(p.identity) !== String(currentUserId)
+    );
 
+    if (other) {
+      setOtherLastReadIndex(other.lastReadMessageIndex ?? null);
+    }
+  } catch (e) {
+    console.warn("Failed to get participant read index");
+  }
+};
+    handleParticipantUpdated();
   conversation.on('messageUpdated', handleMessageUpdated);
   conversation.on('participantUpdated', handleParticipantUpdated);
 
@@ -790,46 +799,68 @@ if (String(messageAuthor) !== String(currentUserId)) {
   // STEP 4: Send Message
   // ----------------------------------------------------------
 
-  const getMessageStatus = async (msg:any) => {
-  if (!conversation || !msg) return 'sent';
+//   const getMessageStatus = async (msg:any) => {
+//   if (!conversation || !msg) return 'sent';
 
-  // Only check for my messages
-  const author = msg.author || msg.state?.author || msg.attributes?.author;
+//   // Only check for my messages
+//   const author = msg.author || msg.state?.author || msg.attributes?.author;
+//   if (String(author) !== String(currentUserId)) {
+//     return null;
+//   }
+
+//   try {
+//     const participants = await conversation.getParticipants();
+//     const otherParticipant = participants.find(
+//       (p:any) => String(p.identity) !== String(currentUserId)
+//     );
+
+//     if (!otherParticipant) return 'sent';
+
+//     const lastReadIndex = otherParticipant.lastReadMessageIndex;
+
+//     if (
+//       lastReadIndex !== null &&
+//       msg.index !== null &&
+//       msg.index <= lastReadIndex
+//     ) {
+//       return 'read';
+//     }
+
+//     // Delivery check
+//     const delivery = msg.state?.delivery?.[otherParticipant.sid];
+
+//     if (delivery?.status === 'delivered') {
+//       return 'delivered';
+//     }
+
+//     return 'sent';
+//   } catch {
+//     return 'sent';
+//   }
+// };
+
+  const getMessageStatus = (msg: any) => {
+  if (!msg || msg.index == null) return 'sent';
+
+  const author =
+    msg.author ||
+    msg.state?.author ||
+    msg.attributes?.author;
+
+  // Only show ticks for my messages
   if (String(author) !== String(currentUserId)) {
     return null;
   }
 
-  try {
-    const participants = await conversation.getParticipants();
-    const otherParticipant = participants.find(
-      (p:any) => String(p.identity) !== String(currentUserId)
-    );
-
-    if (!otherParticipant) return 'sent';
-
-    const lastReadIndex = otherParticipant.lastReadMessageIndex;
-
-    if (
-      lastReadIndex !== null &&
-      msg.index !== null &&
-      msg.index <= lastReadIndex
-    ) {
-      return 'read';
-    }
-
-    // Delivery check
-    const delivery = msg.state?.delivery?.[otherParticipant.sid];
-
-    if (delivery?.status === 'delivered') {
-      return 'delivered';
-    }
-
-    return 'sent';
-  } catch {
-    return 'sent';
+  if (
+    otherLastReadIndex !== null &&
+    msg.index <= otherLastReadIndex
+  ) {
+    return 'read';
   }
-};
 
+  return 'sent';
+};
   const handleSendMessage = async () => {
     // Apply filter ONLY on send
   
@@ -1235,23 +1266,56 @@ if (String(messageAuthor) !== String(currentUserId)) {
     };
   }, []);
 
-  const MessageStatusTicks = ({ message }:any) => {
-  const [status, setStatus] = React.useState('sent');
+//   const MessageStatusTicks = ({ message }:any) => {
+//   const [status, setStatus] = React.useState('sent');
 
-  React.useEffect(() => {
-    let mounted = true;
+//   React.useEffect(() => {
+//     let mounted = true;
 
-    const resolveStatus = async () => {
-      const s = await getMessageStatus(message);
-      if (mounted && s) setStatus(s);
-    };
+//     const resolveStatus = async () => {
+//       const s = await getMessageStatus(message);
+//       if (mounted && s) setStatus(s);
+//     };
 
-    resolveStatus();
+//     resolveStatus();
 
-    return () => {
-      mounted = false;
-    };
-  }, [message]);
+//     return () => {
+//       mounted = false;
+//     };
+//   }, [message]);
+
+//   if (status === 'sent') {
+//     return (
+//       <Image
+//         source={require('../../../assets/images/single_tick.png')}
+//         style={[styles.tickIcon, { tintColor: '#999' }]}
+//       />
+//     );
+//   }
+
+//   if (status === 'delivered') {
+//     return (
+//       <Image
+//         source={require('../../../assets/images/double_tick.png')}
+//         style={[styles.tickIcon, { tintColor: '#999' }]}
+//       />
+//     );
+//   }
+
+//   if (status === 'read') {
+//     return (
+//       <Image
+//         source={require('../../../assets/images/double_tick.png')}
+//         style={[styles.tickIcon, { tintColor: '#4FC3F7' }]} // Blue/White
+//       />
+//     );
+//   }
+
+//   return null;
+// };
+
+  const MessageStatusTicks = React.memo(({ message }: any) => {
+  const status = getMessageStatus(message);
 
   if (status === 'sent') {
     return (
@@ -1262,28 +1326,145 @@ if (String(messageAuthor) !== String(currentUserId)) {
     );
   }
 
-  if (status === 'delivered') {
-    return (
-      <Image
-        source={require('../../../assets/images/double_tick.png')}
-        style={[styles.tickIcon, { tintColor: '#999' }]}
-      />
-    );
-  }
-
   if (status === 'read') {
     return (
       <Image
         source={require('../../../assets/images/double_tick.png')}
-        style={[styles.tickIcon, { tintColor: '#4FC3F7' }]} // Blue/White
+        style={[styles.tickIcon, { tintColor: '#4FC3F7' }]}
       />
     );
   }
 
   return null;
-};
+  });
+  
+const renderItem = React.useCallback(({ item, index }: { item: any, index: number }) => {
 
+    
+                const isFromCurrentUser = (msg: any) => {
+                  if (!msg || !msg.data) return false;
+                  const author =
+                    msg.data.author ||
+                    msg.data.state?.author ||
+                    msg.data.attributes?.author;
+                  const authorStr = String(author || '');
+                  const checkUserStr = String(checkUser || '');
+                  const currentUserIdStr = String(currentUserId || '');
+                  return (
+                    authorStr === checkUserStr || authorStr === currentUserIdStr
+                  );
+                };
 
+                const isLastMessage = index === lastMessageIndex;
+                const isMyMessage = isFromCurrentUser(item);
+                const BASE_SPACING = 0;
+                const bottomPadding = BASE_SPACING;
+
+                return (
+                  <>
+                    {item?.type === 'date' ? (
+                      <View
+                        style={{ alignItems: 'center', marginVertical: 10 }}
+                      >
+                        <Text
+                          style={{
+                            color: '#FFFFFF7A',
+                            backgroundColor: '#00000029',
+                            paddingHorizontal: 8,
+                            paddingVertical: 4,
+                            borderRadius: 6,
+                            fontSize: 12,
+                            fontFamily: 'Urbanist-Medium',
+                            marginVertical: 10,
+                          }}
+                        >
+                          {loadingOlderMessages && index === oldestDateIndex
+                            ? t('loading')
+                            : item?.date}
+                        </Text>
+                      </View>
+                    ) : (
+                      <View
+                        style={[
+                          styles.messageContainer,
+                          isMyMessage ? styles.rightAlign : styles.leftAlign,
+                          isLastMessage && { marginBottom: bottomPadding },
+                        ]}
+                      >
+                        <View
+                          style={
+                            isMyMessage
+                              ? styles.rightBubbleWrapper
+                              : styles.leftBubbleWrapper
+                          }
+                        >
+                          {!isMyMessage && (
+                            <View
+                              style={{
+                                width: 0,
+                                height: 0,
+                                borderTopWidth: 8,
+                                borderTopColor: 'transparent',
+                                borderRightWidth: 9,
+                                borderRightColor: '#2466c75e',
+                                borderBottomWidth: 8,
+                                borderBottomColor: 'transparent',
+                                alignSelf: 'flex-start',
+                                marginRight: 0,
+                                marginTop: 4,
+                              }}
+                            />
+                          )}
+                          <View
+                            style={[
+                              styles.bubble,
+                              isMyMessage
+                                ? styles.rightBubble
+                                : styles.leftBubble,
+                            ]}
+                          >
+                            <Text
+                              allowFontScaling={false}
+                              style={styles.messageText}
+                            >
+                              {item?.data?.state?.body || item?.data?.body}
+                              </Text>
+                              {isMyMessage && (
+                                <View style={styles.tickContainer}>
+                                  <MessageStatusTicks message={item.data} />
+                                </View>
+                              )}
+                          </View>
+
+                          {isMyMessage && (
+
+                            <>                           
+                              <View
+                                style={{
+                                  width: 0,
+                                  height: 0,
+                                  borderTopWidth: 8,
+                                  borderTopColor: 'transparent',
+                                  borderLeftWidth: 9,
+                                  borderLeftColor: '#0000001F',
+                                  borderBottomWidth: 8,
+                                  borderBottomColor: 'transparent',
+                                  alignSelf: 'flex-start',
+                                  marginLeft: 0,
+                                  marginTop: 4,
+                                }}
+                              />
+                            </>
+                          )
+                          }
+                        </View>
+                      </View>
+                    )}
+                  </>
+                );
+    
+
+  }, [checkUser, currentUserId, lastMessageIndex, otherLastReadIndex]);
   return (
     <ImageBackground source={bgImage} style={{ flex: 1 }} resizeMode="cover">
       <View style={{ flex: 1 }}>
@@ -1600,129 +1781,7 @@ if (String(messageAuthor) !== String(currentUserId)) {
                   flatListRef.current?.scrollToEnd({ animated: false });
                 }, 100);
               }}
-              renderItem={({ item, index }) => {
-                const isFromCurrentUser = (msg: any) => {
-                  if (!msg || !msg.data) return false;
-                  const author =
-                    msg.data.author ||
-                    msg.data.state?.author ||
-                    msg.data.attributes?.author;
-                  const authorStr = String(author || '');
-                  const checkUserStr = String(checkUser || '');
-                  const currentUserIdStr = String(currentUserId || '');
-                  return (
-                    authorStr === checkUserStr || authorStr === currentUserIdStr
-                  );
-                };
-
-                const isLastMessage = index === lastMessageIndex;
-                const isMyMessage = isFromCurrentUser(item);
-                const BASE_SPACING = 0;
-                const bottomPadding = BASE_SPACING;
-
-                return (
-                  <>
-                    {item?.type === 'date' ? (
-                      <View
-                        style={{ alignItems: 'center', marginVertical: 10 }}
-                      >
-                        <Text
-                          style={{
-                            color: '#FFFFFF7A',
-                            backgroundColor: '#00000029',
-                            paddingHorizontal: 8,
-                            paddingVertical: 4,
-                            borderRadius: 6,
-                            fontSize: 12,
-                            fontFamily: 'Urbanist-Medium',
-                            marginVertical: 10,
-                          }}
-                        >
-                          {loadingOlderMessages && index === oldestDateIndex
-                            ? t('loading')
-                            : item?.date}
-                        </Text>
-                      </View>
-                    ) : (
-                      <View
-                        style={[
-                          styles.messageContainer,
-                          isMyMessage ? styles.rightAlign : styles.leftAlign,
-                          isLastMessage && { marginBottom: bottomPadding },
-                        ]}
-                      >
-                        <View
-                          style={
-                            isMyMessage
-                              ? styles.rightBubbleWrapper
-                              : styles.leftBubbleWrapper
-                          }
-                        >
-                          {!isMyMessage && (
-                            <View
-                              style={{
-                                width: 0,
-                                height: 0,
-                                borderTopWidth: 8,
-                                borderTopColor: 'transparent',
-                                borderRightWidth: 9,
-                                borderRightColor: '#2466c75e',
-                                borderBottomWidth: 8,
-                                borderBottomColor: 'transparent',
-                                alignSelf: 'flex-start',
-                                marginRight: 0,
-                                marginTop: 4,
-                              }}
-                            />
-                          )}
-                          <View
-                            style={[
-                              styles.bubble,
-                              isMyMessage
-                                ? styles.rightBubble
-                                : styles.leftBubble,
-                            ]}
-                          >
-                            <Text
-                              allowFontScaling={false}
-                              style={styles.messageText}
-                            >
-                              {item?.data?.state?.body || item?.data?.body}
-                              </Text>
-                              {isMyMessage && (
-                                <View style={styles.tickContainer}>
-                                  <MessageStatusTicks message={item.data} />
-                                </View>
-                              )}
-                          </View>
-
-                          {isMyMessage && (
-
-                            <>                           
-                              <View
-                                style={{
-                                  width: 0,
-                                  height: 0,
-                                  borderTopWidth: 8,
-                                  borderTopColor: 'transparent',
-                                  borderLeftWidth: 9,
-                                  borderLeftColor: '#0000001F',
-                                  borderBottomWidth: 8,
-                                  borderBottomColor: 'transparent',
-                                  alignSelf: 'flex-start',
-                                  marginLeft: 0,
-                                  marginTop: 4,
-                                }}
-                              />
-                            </>
-                          )
-                          }
-                        </View>
-                      </View>
-                    )}
-                  </>
-                );
-              }}
+              renderItem={renderItem}
               ref={flatListRef}
               keyboardShouldPersistTaps="handled"
               onContentSizeChange={(width, height) => {
@@ -4603,5 +4662,3 @@ tickIcon: {
 //     fontFamily: 'Urbanist-SemiBold',
 //   },
 // });
-
-

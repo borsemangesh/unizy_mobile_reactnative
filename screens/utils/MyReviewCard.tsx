@@ -114,17 +114,18 @@ const MyReviewCard: React.FC<MyReviewCardProps> = ({
 
   return (
 
-    <TouchableOpacity
-      activeOpacity={0.8}
-    >
+    // <TouchableOpacity
+    //   activeOpacity={0.8}
+    // >
 
-      <SquircleView
-        style={styles.card}
-        squircleParams={{
-          cornerSmoothing: 1,
-          cornerRadius: 18,
-          fillColor: 'rgba(255, 255, 255, 0.08)',
-        }}>
+      // <SquircleView
+      //   style={styles.card}
+      //   squircleParams={{
+      //     cornerSmoothing: 1,
+      //     cornerRadius: 18,
+      //     fillColor: 'rgba(255, 255, 255, 0.08)',
+      //   }}>
+      <View style={styles.card}>
 
         <View style={styles.row}>
 
@@ -155,9 +156,7 @@ const MyReviewCard: React.FC<MyReviewCardProps> = ({
             </Text>
           ) : null}
         </View>
-      </SquircleView>
-
-    </TouchableOpacity>
+     </View>
   );
 };
 
@@ -208,7 +207,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    paddingBottom: 4
+    paddingBottom: 6,
   },
   image: {
     width: 70,
