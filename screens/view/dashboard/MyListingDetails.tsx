@@ -14,8 +14,10 @@ import {
   StatusBar,
   TouchableWithoutFeedback,
   BackHandler,
+  ActivityIndicator,
+  ImageSourcePropType,
 } from 'react-native';
-import { Key, useEffect,useMemo, useRef, useState } from 'react';
+import { Key, useEffect, useMemo, useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import { useRoute } from '@react-navigation/native';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -28,8 +30,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Button from '../../utils/component/Button';
 import PayButton from '../../utils/component/PayButton';
 import LinearGradient from 'react-native-linear-gradient';
-import { ShortCustomToastContainer,shortshowToast } from '../../utils/component/ShortCustomToastManager';
-
+import {
+  ShortCustomToastContainer,
+  shortshowToast,
+} from '../../utils/component/ShortCustomToastManager';
 
 import AnimatedReanimated, {
   useSharedValue,
@@ -48,6 +52,8 @@ import i18n from '../../../localization/i18n';
 import Loader from '../../utils/component/Loader';
 import dayjs from 'dayjs';
 import ImageViewing from 'react-native-image-viewing';
+import React from 'react';
+import FastImage from 'react-native-fast-image';
 
 type MyListingDetailsProps = {
   navigation: any;
@@ -65,25 +71,12 @@ type ParamOption = {
   option_name: string;
 };
 
-// type Param = {
-//   id: number;
-//   name: string;
-//   options: ParamOption[];
-//   field_type: string;
-//   param_value: string;
-// };
-
 type DateRangeValue = {
   startDate?: string;
   endDate?: string;
 };
 
-type ParamValue =
-  | string
-  | number
-  | number[]
-  | DateRangeValue
-  | null;
+type ParamValue = string | number | number[] | DateRangeValue | null;
 
 type Param = {
   id: number;
@@ -119,9 +112,14 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
   const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
 
-    const [isImageViewVisible, setImageViewVisible] = useState(false);
+  const [isImageViewVisible, setImageViewVisible] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loadingImage, setLoadingImage] = useState(false);
+
+  const [viewerState, setViewerState] = useState({
+    visible: false,
+    index: 0,
+  });
 
   const scrollY = useSharedValue(0);
 
@@ -183,27 +181,25 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
     const fetchDetails = async () => {
       try {
         setLoading(true);
-        const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+        const language_code =
+          (await AsyncStorage.getItem('selectedLanguage')) || 'en';
 
         const token = await AsyncStorage.getItem('userToken');
-        console.log(token)
+        console.log(token);
 
         if (!token) return;
         const url1 = `${MAIN_URL.baseUrl}category/feature-detail/${id}`;
 
-        console.log(url1)
-
+        console.log(url1);
 
         const res = await fetch(url1, {
           headers: {
             Authorization: `Bearer ${token}`,
-            languagecode: language_code
+            languagecode: language_code,
           },
-
         });
         const json = await res.json();
         setDetail(json.data);
-
 
         if (res.status === 401 || res.status === 403) {
           handleForceLogout();
@@ -223,7 +219,6 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
     };
 
     const handleForceLogout = async () => {
-      ;
       await AsyncStorage.clear();
       navigation.reset({
         index: 0,
@@ -233,22 +228,21 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
     fetchDetails();
   }, [id]);
 
-
   const previewImages = useMemo(() => {
-  if (detail?.files?.length > 0) {
-    return detail.files.map((file: any) => ({
-      uri: file.signedurl,
-    }));
-  }
+    if (detail?.files?.length > 0) {
+      return detail.files.map((file: any) => ({
+        uri: file.signedurl,
+      }));
+    }
 
-  return [
-    {
-      uri: Image.resolveAssetSource(
-        require('../../../assets/images/drone.png')
-      ).uri,
-    },
-  ];
-}, [detail]);
+    return [
+      {
+        uri: Image.resolveAssetSource(
+          require('../../../assets/images/drone.png'),
+        ).uri,
+      },
+    ];
+  }, [detail]);
 
   const [isBookmarked, setIsBookmarked] = useState(false);
 
@@ -293,30 +287,38 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
     option_name: String(i + 1),
   }));
 
-
-
   const formatDate = (dateString?: string, t?: any) => {
-    if (!dateString) return "";
+    if (!dateString) return '';
 
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "";
+    if (isNaN(date.getTime())) return '';
 
     const day = date.getDate();
     const year = date.getFullYear();
     const lang = i18n.language;
 
-    let suffix = "";
-    if (lang === "en") {
-      if (day % 10 === 1 && day !== 11) suffix = "st";
-      else if (day % 10 === 2 && day !== 12) suffix = "nd";
-      else if (day % 10 === 3 && day !== 13) suffix = "rd";
-      else suffix = "th";
+    let suffix = '';
+    if (lang === 'en') {
+      if (day % 10 === 1 && day !== 11) suffix = 'st';
+      else if (day % 10 === 2 && day !== 12) suffix = 'nd';
+      else if (day % 10 === 3 && day !== 13) suffix = 'rd';
+      else suffix = 'th';
     }
 
     const monthIndex = date.getMonth();
     const monthKeys = [
-      "jan", "feb", "mar", "apr", "may", "jun",
-      "jul", "aug", "sep", "oct", "nov", "dec"
+      'jan',
+      'feb',
+      'mar',
+      'apr',
+      'may',
+      'jun',
+      'jul',
+      'aug',
+      'sep',
+      'oct',
+      'nov',
+      'dec',
     ];
 
     const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
@@ -353,171 +355,154 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
     });
   };
 
-   const renderImage = () => {
-     const fallbackImage = require('../../../assets/images/drone.png');
- 
-     if (detail?.profileshowinview) {
-       const initials = `${detail?.createdby?.firstname?.[0] ?? ''}${detail?.createdby?.lastname?.[0] ?? ''
-         }`.toUpperCase();
- 
-       return (
-         <ImageBackground
-           source={require('../../../assets/images/featurebg.png')}
-           style={{
-             alignItems: 'center',
-             justifyContent: 'center',
-             height: 270,
-             width: '100%',
-           }}
-         >
-           <View
-             style={{
-               alignItems: 'center',
-               justifyContent: 'center',
-               //paddingVertical: 20,
-             }}
-           >
-             {detail?.createdby?.profile ? (
-               <Image
-                 source={{ uri: detail?.createdby?.profile }}
-                 style={{
-                   width: 180,
-                   height: 180,
-                   borderRadius: 90,
-                 }}
-                 resizeMode="cover"
-                 onError={() => {
- 
-                   setImageUri(null);
-                 }}
-               />
-             ) : (
-               <View
-                 style={{
-                   width: 180,
-                   height: 180,
-                   borderRadius: 90,
-                   backgroundColor: '#8390D4',
-                   alignItems: 'center',
-                   justifyContent: 'center',
-                 }}
-               >
-                 <Text
-                   allowFontScaling={false}
-                   style={{
-                     fontSize: 80,
-                     color: '#FFF',
-                     fontWeight: 600,
-                     textAlign: 'center',
-                     fontFamily: 'Urbanist-SemiBold',
-                   }}
-                 >
-                   {initials || 'NA'}
-                 </Text>
-               </View>
-             )}
-           </View>
-         </ImageBackground>
-       );
-     }
- 
-     if (images.length > 1) {
-       return (
-         <View>
-           <FlatList
-             ref={flatListRef}
-             data={images}
-             horizontal
-             pagingEnabled
-             showsHorizontalScrollIndicator={false}
-             keyExtractor={(_, index) => index.toString()}
-             onScroll={onScroll}
-             scrollEventThrottle={16}
-   //           renderItem={({ item,index }) => (
-   //             // <Image
-   //             //   source={item.uri ? { uri: item.uri } : fallbackImage}
-   //             //   style={{ width: screenWidth, height: 270 }}
-   //             //   resizeMode="cover"
-   //             // />
-   //              <TouchableOpacity
-   //   activeOpacity={0.9}
-   //   onPress={() => {
-   //     setCurrentImageIndex(index);
-   //     setImageViewVisible(true);
-   //   }}
-   // >
-   //   <Image
-   //     source={item.uri ? { uri: item.uri } : fallbackImage}
-   //     style={{ width: screenWidth, height: 270 }}
-   //     resizeMode="cover"
-   //   />
-   // </TouchableOpacity>
-             //           )}
-         
- renderItem={({ item, index }) => {
-   const imageSource = item?.uri
-     ? { uri: item.uri }
-     : fallbackImage;
- 
-   return (
-     <TouchableOpacity
-       activeOpacity={0.9}
-       disabled={images.length === 0}   // Prevent click if no image
-       onPress={() => {
-         console.log("index: ", index);
-   setCurrentImageIndex(index || 0);
-   setImageViewVisible(true);
- }}
-     >
-       <Image
-         source={imageSource}
-         style={{ width: screenWidth, height: 270 }}
-         resizeMode="cover"
-       />
-     </TouchableOpacity>
-   );
- }}
-           />
-           <View style={styles.stepIndicatorContainer}>
-             {images.map((_: any, index: number) => (
-               <View
-                 key={index}
-                 style={
-                   index === activeIndex
-                     ? styles.activeStepCircle
-                     : styles.inactiveStepCircle
-                 }
-               />
-             ))}
-           </View>
-         </View>
-       );
-     }
-     return (
-   <TouchableOpacity
-     activeOpacity={0.9}
-     onPress={() => {
-       setCurrentImageIndex(0);
-       setImageViewVisible(true);
-     }}
-   >
-       <Image
-         source={images[0]?.uri ? { uri: images[0].uri } : fallbackImage}
-         style={{ width: screenWidth, height: 270 }}
-         resizeMode="cover"
-           />
-           </TouchableOpacity>
-     );
-   };
+  const renderImage = () => {
+    const fallbackImage = require('../../../assets/images/drone.png');
 
+    if (detail?.profileshowinview) {
+      const initials = `${detail?.createdby?.firstname?.[0] ?? ''}${
+        detail?.createdby?.lastname?.[0] ?? ''
+      }`.toUpperCase();
+
+      return (
+        <ImageBackground
+          source={require('../../../assets/images/featurebg.png')}
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: 270,
+            width: '100%',
+          }}
+        >
+          <View
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              //paddingVertical: 20,
+            }}
+          >
+            {detail?.createdby?.profile ? (
+              <Image
+                source={{ uri: detail?.createdby?.profile }}
+                style={{
+                  width: 180,
+                  height: 180,
+                  borderRadius: 90,
+                }}
+                resizeMode="cover"
+                onError={() => {
+                  setImageUri(null);
+                }}
+              />
+            ) : (
+              <View
+                style={{
+                  width: 180,
+                  height: 180,
+                  borderRadius: 90,
+                  backgroundColor: '#8390D4',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Text
+                  allowFontScaling={false}
+                  style={{
+                    fontSize: 80,
+                    color: '#FFF',
+                    fontWeight: 600,
+                    textAlign: 'center',
+                    fontFamily: 'Urbanist-SemiBold',
+                  }}
+                >
+                  {initials || 'NA'}
+                </Text>
+              </View>
+            )}
+          </View>
+        </ImageBackground>
+      );
+    }
+
+    if (previewImages.length > 1) {
+      return (
+        <View>
+          <FlatList
+            ref={flatListRef}
+            data={previewImages}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(_, index) => index.toString()}
+            onScroll={onScroll}
+            scrollEventThrottle={16}
+            renderItem={({ item, index }) => {
+              const imageSource = item?.uri ? { uri: item.uri } : fallbackImage;
+
+              return (
+                <TouchableOpacity
+                  activeOpacity={0.9}
+                  disabled={previewImages.length === 0} // Prevent click if no image
+                  onPress={() => {
+                    console.log('index: ', index);
+                    setViewerState({
+                      visible: true,
+                      index: index,
+                    });
+                  }}
+                >
+                  <Image
+                    source={imageSource}
+                    style={{ width: screenWidth, height: 270 }}
+                    resizeMode="cover"
+                  />
+                </TouchableOpacity>
+              );
+            }}
+          />
+          <View style={styles.stepIndicatorContainer}>
+            {previewImages.map((_: any, index: number) => (
+              <View
+                key={index}
+                style={
+                  index === activeIndex
+                    ? styles.activeStepCircle
+                    : styles.inactiveStepCircle
+                }
+              />
+            ))}
+          </View>
+        </View>
+      );
+    }
+    return (
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={() => {
+          setViewerState({
+            visible: true,
+            index: 0,
+          });
+        }}
+      >
+        <Image
+          source={
+            previewImages[0]?.uri
+              ? { uri: previewImages[0].uri }
+              : fallbackImage
+          }
+          style={{ width: screenWidth, height: 270 }}
+          resizeMode="cover"
+        />
+      </TouchableOpacity>
+    );
+  };
   const handleBookmarkPress = async (productId: number) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) return;
 
-      setDetail(
-        (prev: any) =>
-          prev ? { ...prev, isbookmarked: !prev.isbookmarked } : prev,
+      setDetail((prev: any) =>
+        prev ? { ...prev, isbookmarked: !prev.isbookmarked } : prev,
       );
 
       const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
@@ -538,7 +523,10 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
       const data = await response.json();
 
       if (data?.message) {
-        shortshowToast(t(data.message), data.statusCode === 200 ? 'success' : 'error');
+        shortshowToast(
+          t(data.message),
+          data.statusCode === 200 ? 'success' : 'error',
+        );
       }
 
       let updatedBookmarks;
@@ -556,9 +544,8 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
     } catch (error) {
       console.error('Bookmark error:', error);
 
-      setDetail(
-        (prev: any) =>
-          prev ? { ...prev, isbookmarked: !prev.isbookmarked } : prev,
+      setDetail((prev: any) =>
+        prev ? { ...prev, isbookmarked: !prev.isbookmarked } : prev,
       );
     }
   };
@@ -572,14 +559,11 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
   const purchaseProduct = async () => {
     const token = await AsyncStorage.getItem('userToken');
     if (!token) {
-
       return;
     }
     const finalamount = await AsyncStorage.getItem('finalamount');
     const paymentintent_id = await AsyncStorage.getItem('paymentintent_id');
     const quantity = await AsyncStorage.getItem('quantitycount');
-
-
 
     try {
       const createPayload = {
@@ -591,8 +575,6 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
 
       const url = `${MAIN_URL.baseUrl}transaction/post-order-complete`;
 
-
-
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -602,7 +584,6 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
         body: JSON.stringify(createPayload),
       });
       const data = await response.json();
-
 
       if (response.ok && data?.statusCode === 200) {
         await AsyncStorage.removeItem('finalamount');
@@ -630,7 +611,6 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
         setTimeout(() => {
           navigation.navigate('BuyerInfo');
         }, 2000);
-
       } else {
         showToast(
           t(data?.message) || 'Something went wrong.Please try again',
@@ -647,414 +627,444 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
   };
 
   function isDateRangeValue(value: ParamValue): value is DateRangeValue {
-    return typeof value === 'object' && value !== null && ('startDate' in value || 'endDate' in value);
+    return (
+      typeof value === 'object' &&
+      value !== null &&
+      ('startDate' in value || 'endDate' in value)
+    );
   }
 
-  return (
-    <ImageBackground
-      source={require('../../../assets/images/backimg.png')}
-      style={{ width: '100%', height: '100%' }}
-      resizeMode="cover"
-    >
-      <View style={styles.fullScreenContainer}>
-        <StatusBar
-          translucent
-          backgroundColor="transparent"
-          barStyle="light-content"
-        />
+  useEffect(() => {
+    previewImages.forEach((image: any) => {
+      FastImage.preload([{ uri: image.uri }]);
+    });
+  }, [previewImages]);
 
-        <AnimatedReanimated.View
-          style={[styles.headerWrapper, animatedBlurStyle]}
-          pointerEvents="none"
-        >
-          <MaskedView
-            style={StyleSheet.absoluteFill}
-            maskElement={
+  return (
+    <>
+      <ImageViewerModal
+        visible={viewerState.visible}
+        index={viewerState.index}
+        images={previewImages}
+        onClose={() => setViewerState(prev => ({ ...prev, visible: false }))}
+        onChangeIndex={(i: any) =>
+          setViewerState(prev => ({ ...prev, index: i }))
+        }
+      />
+      <ImageBackground
+        source={require('../../../assets/images/backimg.png')}
+        style={{ width: '100%', height: '100%' }}
+        resizeMode="cover"
+      >
+        <View style={styles.fullScreenContainer}>
+          <StatusBar
+            translucent
+            backgroundColor="transparent"
+            barStyle="light-content"
+          />
+
+          <AnimatedReanimated.View
+            style={[styles.headerWrapper, animatedBlurStyle]}
+            pointerEvents="none"
+          >
+            <MaskedView
+              style={StyleSheet.absoluteFill}
+              maskElement={
+                <LinearGradient
+                  colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
+                  locations={[0, 0.8]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 0, y: 1 }}
+                  style={StyleSheet.absoluteFill}
+                />
+              }
+            >
+              <BlurView
+                style={StyleSheet.absoluteFill}
+                blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
+                blurAmount={Platform.OS === 'ios' ? 45 : 45}
+                // overlayColor="rgba(255,255,255,0.05)"
+                reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
+              />
               <LinearGradient
-                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0)']}
-                locations={[0, 0.8]}
+                colors={[
+                  'rgba(255, 255, 255, 0.45)',
+                  'rgba(255, 255, 255, 0.02)',
+                  'rgba(255, 255, 255, 0.02)',
+                ]}
+                style={StyleSheet.absoluteFill}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
-                style={StyleSheet.absoluteFill}
               />
-            }
-          >
-            <BlurView
-              style={StyleSheet.absoluteFill}
-              blurType={Platform.OS === 'ios' ? 'prominent' : 'light'}
-              blurAmount={Platform.OS === 'ios' ? 45 : 45}
-              // overlayColor="rgba(255,255,255,0.05)"
-              reducedTransparencyFallbackColor="rgba(255,255,255,0.05)"
-            />
-            <LinearGradient
-              colors={[
-                'rgba(255, 255, 255, 0.45)',
-                'rgba(255, 255, 255, 0.02)',
-                'rgba(255, 255, 255, 0.02)',
-              ]}
-              style={StyleSheet.absoluteFill}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 0, y: 1 }}
-            />
-          </MaskedView>
-        </AnimatedReanimated.View>
+            </MaskedView>
+          </AnimatedReanimated.View>
 
-        <View style={styles.headerContent} pointerEvents="box-none">
-          <TouchableOpacity
-            onPress={() => {
-              if (navigation.canGoBack()) {
-                navigation.goBack();
-              } else {
-                navigation.replace('Dashboard', {
-                  AddScreenBackactiveTab: 'Home',
-                  isNavigate: false,
-                });
-              }
-            }}
-            style={styles.backButtonContainer}
-            activeOpacity={0.7}
-          >
-            <AnimatedReanimated.View
-              style={[styles.blurButtonWrapper, animatedButtonStyle]}
+          <View style={styles.headerContent} pointerEvents="box-none">
+            <TouchableOpacity
+              onPress={() => {
+                if (navigation.canGoBack()) {
+                  navigation.goBack();
+                } else {
+                  navigation.replace('Dashboard', {
+                    AddScreenBackactiveTab: 'Home',
+                    isNavigate: false,
+                  });
+                }
+              }}
+              style={styles.backButtonContainer}
+              activeOpacity={0.7}
             >
               <AnimatedReanimated.View
-                style={[
-                  StyleSheet.absoluteFill,
-                  useAnimatedStyle(() => ({
-                    opacity: interpolate(
-                      scrollY.value,
-                      [0, 30],
-                      [1, 0],
-                      'clamp',
-                    ),
-                    backgroundColor: 'rgba(255,255,255,0.1)',
-                    borderRadius: 40,
-                  })),
-                ]}
-              />
-
-              <AnimatedReanimated.View
-                style={[
-                  StyleSheet.absoluteFill,
-                  useAnimatedStyle(() => ({
-                    opacity: interpolate(
-                      scrollY.value,
-                      [0, 50],
-                      [0, 1],
-                      'clamp',
-                    ),
-                  })),
-                ]}
+                style={[styles.blurButtonWrapper, animatedButtonStyle]}
               >
-                <BlurView
-                  style={StyleSheet.absoluteFill}
-                  blurType="light"
-                  blurAmount={10}
-                  reducedTransparencyFallbackColor="transparent"
+                <AnimatedReanimated.View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    useAnimatedStyle(() => ({
+                      opacity: interpolate(
+                        scrollY.value,
+                        [0, 30],
+                        [1, 0],
+                        'clamp',
+                      ),
+                      backgroundColor: 'rgba(255,255,255,0.1)',
+                      borderRadius: 40,
+                    })),
+                  ]}
+                />
+
+                <AnimatedReanimated.View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    useAnimatedStyle(() => ({
+                      opacity: interpolate(
+                        scrollY.value,
+                        [0, 50],
+                        [0, 1],
+                        'clamp',
+                      ),
+                    })),
+                  ]}
+                >
+                  <BlurView
+                    style={StyleSheet.absoluteFill}
+                    blurType="light"
+                    blurAmount={10}
+                    reducedTransparencyFallbackColor="transparent"
+                  />
+                </AnimatedReanimated.View>
+
+                <AnimatedReanimated.Image
+                  source={require('../../../assets/images/back.png')}
+                  style={[{ height: 24, width: 24 }, animatedIconStyle]}
                 />
               </AnimatedReanimated.View>
+            </TouchableOpacity>
 
-              <AnimatedReanimated.Image
-                source={require('../../../assets/images/back.png')}
-                style={[{ height: 24, width: 24 }, animatedIconStyle]}
-              />
-            </AnimatedReanimated.View>
-          </TouchableOpacity>
+            <Text allowFontScaling={false} style={styles.unizyText}>
+              {(() => {
+                switch (detail?.category?.id) {
+                  case 2:
+                    return t('tutoring_service_details');
+                  case 3:
+                    return `${t('food')} ${t('details')}`;
+                  case 4:
+                    return `${t('Accomodation')} ${t('details')}`;
+                  case 5:
+                    return `${t('housekeeping')} ${t('details')}`;
+                  default:
+                    return `${t('Product')} ${t('details')}`;
+                }
+              })()}
+            </Text>
+          </View>
 
-          {/* <Text allowFontScaling={false} style={styles.unizyText}>
-            {detail?.category?.name
-              ? `${detail.category.name} ${t('details')}`
-              : ''}
-          </Text> */}
-
-          <Text allowFontScaling={false} style={styles.unizyText}>
-            {(() => {
-              switch (detail?.category?.id) {
-                case 2:
-                  return t('tutoring_service_details')
-                case 3:
-                  return `${t('food')} ${t('details')}`;
-                case 4:
-                  return `${t('Accomodation')} ${t('details')}`;
-                case 5:
-                  return `${t('housekeeping')} ${t('details')}`;
-                default:
-                  return `${t('Product')} ${t('details')}`;
-              }
-            })()}
-          </Text>
-
-
-         
-        </View>
-
-        <AnimatedReanimated.ScrollView
-          scrollEventThrottle={16}
-          showsVerticalScrollIndicator={false}
-          onScroll={scrollHandler}
-          contentContainerStyle={[
-            styles.scrollContainer,
-            {
-              paddingBottom:
-                detail?.category?.id === 4
-                  ? Platform.OS === 'ios'
-                    ? 20
-                    : height * 0.01
-                  : Platform.OS === 'ios'
+          <AnimatedReanimated.ScrollView
+            scrollEventThrottle={16}
+            showsVerticalScrollIndicator={false}
+            onScroll={scrollHandler}
+            contentContainerStyle={[
+              styles.scrollContainer,
+              {
+                paddingBottom:
+                  detail?.category?.id === 4
+                    ? Platform.OS === 'ios'
+                      ? 20
+                      : height * 0.01
+                    : Platform.OS === 'ios'
                     ? 75
                     : height * 0.07,
-            },
-          ]}
-        >
-          <View style={{ marginTop: (Platform.OS === 'ios' ? 10 : 0) }}>
-            {renderImage()}
+              },
+            ]}
+          >
+            <View style={{ marginTop: Platform.OS === 'ios' ? 10 : 0 }}>
+              {renderImage()}
 
-            <View style={{ flex: 1, padding: 16 }}>
-              <View style={styles.card}>
-                <View style={{}}>
-                  {detail && (
-                    <>
-                      <Text allowFontScaling={false} style={styles.QuaddText}>
-                        {detail.title}
-                      </Text>
-                      <Text allowFontScaling={false} style={styles.priceText}>
-                        {detail?.category?.id === 2
-                          ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t('hr')}`
-                          : detail?.category?.id === 4
-                            ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t('week')}`
+              <View style={{ flex: 1, padding: 16 }}>
+                <View style={styles.card}>
+                  <View style={{}}>
+                    {detail && (
+                      <>
+                        <Text allowFontScaling={false} style={styles.QuaddText}>
+                          {detail.title}
+                        </Text>
+                        <Text allowFontScaling={false} style={styles.priceText}>
+                          {detail?.category?.id === 2
+                            ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t(
+                                'hr',
+                              )}`
+                            : detail?.category?.id === 4
+                            ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t(
+                                'week',
+                              )}`
                             : detail?.category?.id === 5
-                              ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t('session')}`
-                              : `£${Number(detail?.price ?? 0).toFixed(2)}`}
-                      </Text>
-                    </>
-                  )}
-                  {(detail?.category_id === 2 || detail?.category_id === 5) && (
-                    <View style={styles.datePosted1}>
-                      <Image
-                        source={require('../../../assets/images/duration_info.png')}
-                        style={{ height: 16, width: 16 }}
-                      />
-                      <Text allowFontScaling={false} style={styles.datetext1}>
-                        {t('service_duration')}:{' '}
-                        <Text style={styles.durationValue}>
-                          {detail?.hours
-                            ? `${detail.hours} ${detail.hours > 1 ? t('hours') : t('hour')
-                            }`
-                            : `1 ${t('hour')}`}
+                            ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t(
+                                'session',
+                              )}`
+                            : `£${Number(detail?.price ?? 0).toFixed(2)}`}
                         </Text>
-                      </Text>
-                    </View>
-                  )}
-                </View>
-
-                <View
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-start',
-                    gap: 2,
-                    alignSelf: 'stretch',
-                  }}
-                >
-                  <Text
-                    allowFontScaling={false}
-                    style={styles.productDesHeding}
-                  >
-                    {t('des')}
-
-                  </Text>
-                  <Text allowFontScaling={false} style={styles.productDesc}>
-                    {detail?.description || t('no_description_available')}
-                  </Text>
-
-                  <View style={styles.datePosted}>
-                    <Image
-                      source={require('../../../assets/images/calendar_icon1.png')}
-                      style={{ height: 16, width: 16 }}
-                    />
-                    <Text allowFontScaling={false} style={styles.datetext}>
-                      {t('date_posted')}: {formatDate(detail?.created_at, t)}
-                    </Text>
+                      </>
+                    )}
+                    {(detail?.category_id === 2 ||
+                      detail?.category_id === 5) && (
+                      <View style={styles.datePosted1}>
+                        <Image
+                          source={require('../../../assets/images/duration_info.png')}
+                          style={{ height: 16, width: 16 }}
+                        />
+                        <Text allowFontScaling={false} style={styles.datetext1}>
+                          {t('service_duration')}:{' '}
+                          <Text style={styles.durationValue}>
+                            {detail?.hours
+                              ? `${detail.hours} ${
+                                  detail.hours > 1 ? t('hours') : t('hour')
+                                }`
+                              : `1 ${t('hour')}`}
+                          </Text>
+                        </Text>
+                      </View>
+                    )}
                   </View>
-                </View>
-              </View>
 
-              <View style={styles.card}>
-                <View style={styles.gap12}>
-
-                  <Text allowFontScaling={false} style={styles.productDeatilsHeading1}>
-                    {(() => {
-                      switch (detail?.category?.id) {
-                        case 2:
-                          return t('tutoring_service_details');
-                        case 3:
-                          return t('dish_details');
-                        case 4:
-                          return t('rental_details');
-                        case 5:
-                          return t('housekeeping_details');
-                        default:
-                          return t('product_details');
-                      }
-                    })()}
-                  </Text>
-
-                  {detail?.params?.map((param: Param) => (
-                    <View key={param.id} style={{ marginTop: 4, marginBottom: 0 }}>
-                      <Text allowFontScaling={false} style={styles.itemcondition}>
-                        {param.name}
-                      </Text>
-
-                      {param.options && param.options.length > 0 ? (
-                        <View style={styles.categoryContainer}>
-                          {param.options
-                            .filter(opt => {
-                              const selectedValues = (param.param_value || '')
-                                .toString()
-                                .split(',')
-                                .map(v => v.trim());
-                              return selectedValues.includes((opt.option_id ?? '').toString());
-                            })
-                            .map((opt: ParamOption) => (
-                              <View key={opt.id} style={styles.categoryTag}>
-                                <Text allowFontScaling={false} style={styles.catagoryText}>
-                                  {opt.other_text
-                                    ? `${opt.option_name} (${opt.other_text})`
-                                    : opt.option_name}
-                                </Text>
-                              </View>
-                            ))}
-                        </View>
-                      ) : param.field_type === 'date' &&
-                        typeof param.param_value === 'object' &&
-                        param.param_value !== null &&
-                        'startDate' in param.param_value &&
-                        'endDate' in param.param_value ? (
-                        <Text allowFontScaling={false} style={[styles.new, { marginTop: 0 }]}>
-                          {param.param_value.startDate && param.param_value.endDate
-                            ? `${dayjs(param.param_value.startDate).format('DD-MM-YYYY')} - ${dayjs(
-                              param.param_value.endDate,
-                            ).format('DD-MM-YYYY')}`
-                            : '—'}
-                        </Text>
-                      ) : (
-                        <Text allowFontScaling={false} style={[styles.new, { marginTop: 0 }]}>
-                          {String(param.param_value ?? '—')}
-                        </Text>
-                      )}
-                    </View>
-                  ))}
-
-                </View>
-              </View>
-
-            </View>
-          </View>
-        </AnimatedReanimated.ScrollView>
-      </View>
-      {loading && (
-        <View style={styles.fullLoader}>
-          <Loader />
-        </View>
-      )}
-      <ShortCustomToastContainer/>
-      <NewCustomToastContainer />
-      <ImageViewing
-              images={previewImages}
-              imageIndex={currentImageIndex}
-              visible={isImageViewVisible}
-              swipeToCloseEnabled
-              doubleTapToZoomEnabled
-              onRequestClose={() => setImageViewVisible(false)}
-              onImageIndexChange={index => {
-                setCurrentImageIndex(index);
-              }}
-              FooterComponent={({ imageIndex }) => (
-                <View
-                  style={{
-                    position: 'absolute',
-                    bottom: 30,
-                    width: '100%',
-                    alignItems: 'center',
-                  }}
-                >
-                  {/* 🔵 Indicator Dots */}
                   <View
                     style={{
-                      flexDirection: 'row',
-                      marginBottom: 15,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                      gap: 2,
+                      alignSelf: 'stretch',
                     }}
                   >
-                    {images.map((_:any, index:any) => (
-                      <View
-                        key={index}
-                        style={{
-                          width: 8,
-                          height: 8,
-                          borderRadius: 4,
-                          marginHorizontal: 4,
-                          backgroundColor:
-                            index === imageIndex
-                              ? '#FFFFFF'
-                              : 'rgba(255,255,255,0.4)',
-                        }}
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.productDesHeding}
+                    >
+                      {t('des')}
+                    </Text>
+                    <Text allowFontScaling={false} style={styles.productDesc}>
+                      {detail?.description || t('no_description_available')}
+                    </Text>
+
+                    <View style={styles.datePosted}>
+                      <Image
+                        source={require('../../../assets/images/calendar_icon1.png')}
+                        style={{ height: 16, width: 16 }}
                       />
+                      <Text allowFontScaling={false} style={styles.datetext}>
+                        {t('date_posted')}: {formatDate(detail?.created_at, t)}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+
+                <View style={styles.card}>
+                  <View style={styles.gap12}>
+                    <Text
+                      allowFontScaling={false}
+                      style={styles.productDeatilsHeading1}
+                    >
+                      {(() => {
+                        switch (detail?.category?.id) {
+                          case 2:
+                            return t('tutoring_service_details');
+                          case 3:
+                            return t('dish_details');
+                          case 4:
+                            return t('rental_details');
+                          case 5:
+                            return t('housekeeping_details');
+                          default:
+                            return t('product_details');
+                        }
+                      })()}
+                    </Text>
+
+                    {detail?.params?.map((param: Param) => (
+                      <View
+                        key={param.id}
+                        style={{ marginTop: 4, marginBottom: 0 }}
+                      >
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.itemcondition}
+                        >
+                          {param.name}
+                        </Text>
+
+                        {param.options && param.options.length > 0 ? (
+                          <View style={styles.categoryContainer}>
+                            {param.options
+                              .filter(opt => {
+                                const selectedValues = (param.param_value || '')
+                                  .toString()
+                                  .split(',')
+                                  .map(v => v.trim());
+                                return selectedValues.includes(
+                                  (opt.option_id ?? '').toString(),
+                                );
+                              })
+                              .map((opt: ParamOption) => (
+                                <View key={opt.id} style={styles.categoryTag}>
+                                  <Text
+                                    allowFontScaling={false}
+                                    style={styles.catagoryText}
+                                  >
+                                    {opt.other_text
+                                      ? `${opt.option_name} (${opt.other_text})`
+                                      : opt.option_name}
+                                  </Text>
+                                </View>
+                              ))}
+                          </View>
+                        ) : param.field_type === 'date' &&
+                          typeof param.param_value === 'object' &&
+                          param.param_value !== null &&
+                          'startDate' in param.param_value &&
+                          'endDate' in param.param_value ? (
+                          <Text
+                            allowFontScaling={false}
+                            style={[styles.new, { marginTop: 0 }]}
+                          >
+                            {param.param_value.startDate &&
+                            param.param_value.endDate
+                              ? `${dayjs(param.param_value.startDate).format(
+                                  'DD-MM-YYYY',
+                                )} - ${dayjs(param.param_value.endDate).format(
+                                  'DD-MM-YYYY',
+                                )}`
+                              : '—'}
+                          </Text>
+                        ) : (
+                          <Text
+                            allowFontScaling={false}
+                            style={[styles.new, { marginTop: 0 }]}
+                          >
+                            {String(param.param_value ?? '—')}
+                          </Text>
+                        )}
+                      </View>
                     ))}
                   </View>
-      
-                  {/* 🖼 Thumbnail Strip */}
-                  <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={{
-                      paddingHorizontal: 10,
-                    }}
-                  >
-                    {images.map((item:any, index:any) => (
-                      <TouchableOpacity
-                        key={index}
-                        onPress={() => setCurrentImageIndex(index)}
-                        style={{
-                          marginHorizontal: 5,
-                          borderWidth: index === imageIndex ? 2 : 1,
-                          borderColor:
-                            index === imageIndex
-                              ? '#FFFFFF'
-                              : 'rgba(255,255,255,0.3)',
-                          borderRadius: 6,
-                        }}
-                      >
-                        <Image
-                          source={{ uri: item.uri }}
-                          style={{
-                            width: 60,
-                            height: 60,
-                            borderRadius: 6,
-                          }}
-                          resizeMode="cover"
-                        />
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
                 </View>
-              )}
-            />
-    </ImageBackground>
+              </View>
+            </View>
+          </AnimatedReanimated.ScrollView>
+        </View>
+        {loading && (
+          <View style={styles.fullLoader}>
+            <Loader />
+          </View>
+        )}
+        <ShortCustomToastContainer />
+        <NewCustomToastContainer />
+      </ImageBackground>
+    </>
   );
 };
+interface ImageViewerModalProps {
+  visible: boolean;
+  index: number;
+  images: any[];
+  onClose: () => void;
+  onChangeIndex: (index: number) => void;
+}
 
+const ImageViewerModal = React.memo(
+  ({
+    visible,
+    index,
+    images,
+    onClose,
+    onChangeIndex,
+  }: ImageViewerModalProps) => {
+    return (
+      <ImageViewing
+        images={images}
+        imageIndex={index} // only initial index
+        visible={visible}
+        backgroundColor="black"
+        animationType="fade"
+        swipeToCloseEnabled
+        doubleTapToZoomEnabled
+        onRequestClose={onClose}
+        renderImage={({
+          source,
+          style,
+        }: {
+          source: ImageSourcePropType;
+          style: any;
+        }) => (
+          <FastImage
+            source={{
+              uri: source.uri,
+              priority: FastImage.priority.high,
+              cache: FastImage.cacheControl.immutable,
+            }}
+            style={style}
+            resizeMode={FastImage.resizeMode.contain}
+          />
+        )}
+        FooterComponent={({ imageIndex }) => (
+          <View
+            style={{
+              position: 'absolute',
+              bottom: 30,
+              width: '100%',
+              alignItems: 'center',
+            }}
+          >
+            {/* DOT INDICATOR */}
+            <View style={{ flexDirection: 'row', marginBottom: 15 }}>
+              {images.map((_: any, i: any) => (
+                <View
+                  key={i}
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: 4,
+                    marginHorizontal: 4,
+                    backgroundColor:
+                      i === imageIndex ? '#FFFFFF' : 'rgba(255,255,255,0.4)',
+                  }}
+                />
+              ))}
+            </View>
+          </View>
+        )}
+      />
+    );
+  },
+);
 const styles = StyleSheet.create({
-
-
   fullLoader: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 0,
-    height: "100%",
-    width: "100%",
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "center",
-    alignItems: "center",
+    height: '100%',
+    width: '100%',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
     zIndex: 999,
   },
 
@@ -1091,7 +1101,7 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     position: 'absolute',
-    top: (Platform.OS === 'ios' ? 60 : 40),
+    top: Platform.OS === 'ios' ? 60 : 40,
     width: Platform.OS === 'ios' ? '100%' : '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -1125,7 +1135,8 @@ const styles = StyleSheet.create({
     borderWidth: 0.3,
     borderColor: '#ffffff11',
 
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
+    boxShadow:
+      '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
 

@@ -37,6 +37,7 @@
     "react-native-device-info": "^15.0.1",
     "react-native-dotenv": "^3.4.11",
     "react-native-draggable-flatlist": "^4.0.3",
+    "react-native-fast-image": "^8.6.3",
     "react-native-figma-squircle": "^0.4.0",
     "react-native-gesture-handler": "^2.30.0",
     "react-native-get-random-values": "^2.0.0",
