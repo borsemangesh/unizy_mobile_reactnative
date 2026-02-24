@@ -1,12 +1,6 @@
-//The below code is the msg read and unread notification functionality to be implemented
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
   Dimensions,
@@ -34,24 +28,21 @@ import Animated, {
   useAnimatedStyle,
   interpolate,
 } from 'react-native-reanimated';
-import { waitForTwilioReady } from "../../view/emoji/twilioService";
+import { waitForTwilioReady } from '../../view/emoji/twilioService';
 import Loader from '../../utils/component/Loader';
 
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import Button from '../../utils/component/Button';
 import ButtonNew from '../../utils/component/ButtonNew';
 import MessageHeaderButton from '../../utils/component/MessageHeaderButton';
 
-
 const bgImage = require('../../../assets/images/backimg.png');
 const back = require('../../../assets/images/back.png');
-
 
 type MessagesIndividualScreenProps = {
   navigation: any;
 };
-
 
 type RouteParams = {
   source?: 'chatList' | 'sellerPage';
@@ -60,8 +51,8 @@ type RouteParams = {
     lastname: string;
     id: number;
     profile: string | null;
-    isblocked: boolean,
-    blocked_you: boolean
+    isblocked: boolean;
+    blocked_you: boolean;
     university: { id: number; name: string };
   };
   userConvName: string;
@@ -74,34 +65,35 @@ type RouteParams = {
     profile: string | null;
     universityName: { id: number; name: string };
     id: number;
-    isblocked: boolean,
-    blocked_you: boolean
+    isblocked: boolean;
+    blocked_you: boolean;
   };
   conversationSid: string;
 };
 
-
-
 const conversationCache: any = {};
 const messageCache: any = {};
 
-const CACHE_KEY_CONVO_PREFIX = "twilio_convo_";
-const CACHE_KEY_MSG_PREFIX = "twilio_msg_";
+const CACHE_KEY_CONVO_PREFIX = 'twilio_convo_';
+const CACHE_KEY_MSG_PREFIX = 'twilio_msg_';
 
 const activeTwilioClients = new Set();
 export const clearTwilioCache = async () => {
   try {
-    Object.keys(conversationCache).forEach(key => delete conversationCache[key]);
+    Object.keys(conversationCache).forEach(
+      key => delete conversationCache[key],
+    );
     Object.keys(messageCache).forEach(key => delete messageCache[key]);
     const allKeys = await AsyncStorage.getAllKeys();
-    const twilioKeys = allKeys.filter(key =>
-      key.startsWith(CACHE_KEY_CONVO_PREFIX) || key.startsWith(CACHE_KEY_MSG_PREFIX)
+    const twilioKeys = allKeys.filter(
+      key =>
+        key.startsWith(CACHE_KEY_CONVO_PREFIX) ||
+        key.startsWith(CACHE_KEY_MSG_PREFIX),
     );
 
     if (twilioKeys.length > 0) {
       await AsyncStorage.multiRemove(twilioKeys);
       if (__DEV__) {
-
       }
     }
     activeTwilioClients.forEach((client: any) => {
@@ -110,14 +102,13 @@ export const clearTwilioCache = async () => {
           client.removeAllListeners();
         }
         if (client && typeof client.shutdown === 'function') {
-          client.shutdown().catch(() => { });
+          client.shutdown().catch(() => {});
         }
       } catch (err) {
         console.warn('Error resetting Twilio client:', err);
       }
     });
     activeTwilioClients.clear();
-
   } catch (err) {
     console.warn('⚠️ Error clearing Twilio cache:', err);
   }
@@ -148,9 +139,8 @@ const loadJSON = async (key: any) => {
 const fetchWithTimeout = async (
   url: string,
   options: RequestInit = {},
-  timeoutMs: number = 15000
+  timeoutMs: number = 15000,
 ): Promise<Response> => {
-
   if (typeof AbortController === 'undefined') {
     throw new Error('AbortController not available');
   }
@@ -178,11 +168,17 @@ const MessagesIndividualScreen = ({
   navigation,
 }: MessagesIndividualScreenProps) => {
   const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
-  const { members, sellerData, userConvName, currentUserIdList, source, conversationSid } =
-    route.params;
+  const {
+    members,
+    sellerData,
+    userConvName,
+    currentUserIdList,
+    source,
+    conversationSid,
+  } = route.params;
 
-  const chatUser =source === 'sellerPage'? sellerData: members;
-  const [isblock, setisblock] = useState(true)
+  const chatUser = source === 'sellerPage' ? sellerData : members;
+  const [isblock, setisblock] = useState(true);
   const [chatClient, setChatClient] = useState<any>(null);
   const chatClientRef = useRef<any>(null); // Track client for cleanup
 
@@ -216,7 +212,9 @@ const MessagesIndividualScreen = ({
   const scrollY = useSharedValue(0);
   const { t } = useTranslation();
 
-  const [otherLastReadIndex, setOtherLastReadIndex] = useState<number | null>(null);
+  const [otherLastReadIndex, setOtherLastReadIndex] = useState<number | null>(
+    null,
+  );
 
   const updateBlurState = () => {
     if (contentHeightRef.current > 0 && viewportHeightRef.current > 0) {
@@ -225,17 +223,11 @@ const MessagesIndividualScreen = ({
     }
   };
 
-
   const animatedBlurStyle = useAnimatedStyle(() => {
     'worklet';
     const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
     return { opacity };
   });
-
-
-
-
-
 
   const INPUT_BAR_HEIGHT = Platform.OS === 'ios' ? 70 : 64;
 
@@ -252,84 +244,96 @@ const MessagesIndividualScreen = ({
   }, []);
 
   const filterEmailAndLinks = (text: string): string => {
-  let filtered = text;
-  const emailRegex =
-    /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
-  filtered = filtered.replace(emailRegex, "");
+    let filtered = text;
+    const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+    filtered = filtered.replace(emailRegex, '');
 
+    const urlRegex = /((https?:\/\/|www\.)[^\s]+)/gi;
+    filtered = filtered.replace(urlRegex, '');
 
-  const urlRegex =
-    /((https?:\/\/|www\.)[^\s]+)/gi;
-  filtered = filtered.replace(urlRegex, "");
+    const domainRegex =
+      /\b[a-zA-Z0-9-]+\.(com|net|org|in|co|io|gov|edu|info|biz|me|app|dev|ai|uk|us|ca|au|de|fr|jp|cn)\b/gi;
+    filtered = filtered.replace(domainRegex, '');
 
-  const domainRegex =
-    /\b[a-zA-Z0-9-]+\.(com|net|org|in|co|io|gov|edu|info|biz|me|app|dev|ai|uk|us|ca|au|de|fr|jp|cn)\b/gi;
-  filtered = filtered.replace(domainRegex, "");
-
-  return filtered;
-};
+    return filtered;
+  };
 
   const filterNumbersAndNumberWords = (text: string): string => {
     let digitCount = 0;
-  
-    // Mask digits after first 3
-    let filtered = text.replace(/\d/g, (digit) => {
+
+    let filtered = text.replace(/\d/g, digit => {
       digitCount++;
       return digitCount <= 3 ? digit : '*';
     });
-  
-    // Remove number words
+
     const numberWords = [
-      'zero', 'one', 'two', 'three', 'four', 'five',
-      'six', 'seven', 'eight', 'nine', 'ten',
-      'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen',
-      'sixteen', 'seventeen', 'eighteen', 'nineteen',
-      'twenty', 'thirty', 'forty', 'fifty',
-      'sixty', 'seventy', 'eighty', 'ninety',
-      'hundred', 'thousand', 'million', 'billion', 'trillion',
+      'zero',
+      'one',
+      'two',
+      'three',
+      'four',
+      'five',
+      'six',
+      'seven',
+      'eight',
+      'nine',
+      'ten',
+      'eleven',
+      'twelve',
+      'thirteen',
+      'fourteen',
+      'fifteen',
+      'sixteen',
+      'seventeen',
+      'eighteen',
+      'nineteen',
+      'twenty',
+      'thirty',
+      'forty',
+      'fifty',
+      'sixty',
+      'seventy',
+      'eighty',
+      'ninety',
+      'hundred',
+      'thousand',
+      'million',
+      'billion',
+      'trillion',
     ];
-  
+
     const numberWordsPattern = new RegExp(
       `\\b(${numberWords.join('|')})\\b`,
-      'gi'
+      'gi',
     );
-  
+
     filtered = filtered.replace(numberWordsPattern, '');
-  
-    // Normalize spaces
+
     filtered = filtered.replace(/\s{2,}/g, ' ').trim();
-  
+
     return filtered;
   };
   const applyChatRestrictions = (text: string): string => {
-  let filtered = text;
+    let filtered = text;
 
-  // 1) Block numbers
-  filtered = filterNumbersAndNumberWords(filtered);
+    filtered = filterNumbersAndNumberWords(filtered);
 
-  // 2) Block emails + links
-  filtered = filterEmailAndLinks(filtered);
+    filtered = filterEmailAndLinks(filtered);
 
-  // Normalize spaces
-  //filtered = filtered.replace(/\s{2,}/g, " ").trim();
-
-  return filtered;
-};
-
-  
+    return filtered;
+  };
 
   const handleTextChange = (text: string) => {
-    // const filteredText = filterNumbersAndNumberWords(text);
     setMessageText(text);
   };
-  
+
   useEffect(() => {
     let isMounted = true;
 
     (async () => {
       try {
-        const token = await AsyncStorage.getItem("userToken");
-        console.log("TWILIO TOKEN:", token);
+        const token = await AsyncStorage.getItem('userToken');
+        console.log('TWILIO TOKEN:', token);
         if (!token) {
           console.warn('Twilio init: No token available');
           return;
@@ -339,7 +343,7 @@ const MessagesIndividualScreen = ({
           {
             headers: { Authorization: `Bearer ${token}` },
           },
-          15000
+          15000,
         );
 
         if (!response.ok) {
@@ -348,7 +352,7 @@ const MessagesIndividualScreen = ({
         }
 
         const data = await response.json();
-        console.log("Twilio token responseDATA:", data);
+        console.log('Twilio token responseDATA:', data);
 
         if (!data?.data?.token) {
           throw new Error('Invalid token response from server');
@@ -356,7 +360,7 @@ const MessagesIndividualScreen = ({
 
         const twilio = await new TwilioChatClient(data.data.token);
 
-        console.log('Twilio client initialized: ',twilio);
+        console.log('Twilio client initialized: ', twilio);
 
         if (!twilio) {
           throw new Error('Failed to initialize Twilio client');
@@ -370,7 +374,8 @@ const MessagesIndividualScreen = ({
 
         setTimeout(() => {
           if (twilio && isMounted) {
-            twilio.getSubscribedConversations()
+            twilio
+              .getSubscribedConversations()
               .then((list: any) => {
                 if (list?.items && isMounted) {
                   list.items.forEach((c: any) => {
@@ -400,7 +405,6 @@ const MessagesIndividualScreen = ({
     };
   }, []);
 
-
   useEffect(() => {
     if (!chatClient) return;
 
@@ -410,35 +414,35 @@ const MessagesIndividualScreen = ({
       try {
         setInitialLoading(true);
 
-        const token = await AsyncStorage.getItem("userToken");
-        const userId = await AsyncStorage.getItem("userId");
+        const token = await AsyncStorage.getItem('userToken');
+        const userId = await AsyncStorage.getItem('userId');
 
         if (!chatClient) {
-          throw new Error("Twilio client not initialized");
+          throw new Error('Twilio client not initialized');
         }
         try {
           await waitForTwilioReady(chatClient, 15000);
         } catch (readyErr: any) {
-          console.error("Twilio connection failed:", readyErr.message);
+          console.error('Twilio connection failed:', readyErr.message);
           throw new Error(`Twilio connection failed: ${readyErr.message}`);
         }
 
         let convName = userConvName;
         let apiData = null;
 
-        if (source === "sellerPage") {
+        if (source === 'sellerPage') {
           try {
             const res = await fetchWithTimeout(
               `${MAIN_URL.baseUrl}twilio/conversation-fetch`,
               {
-                method: "POST",
+                method: 'POST',
                 headers: {
                   Authorization: `Bearer ${token}`,
-                  "Content-Type": "application/json",
+                  'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ feature_id: sellerData.featureId }),
               },
-              15000
+              15000,
             );
 
             if (!res.ok) {
@@ -447,24 +451,29 @@ const MessagesIndividualScreen = ({
             }
 
             apiData = await res.json();
-            if (res.ok && apiData.data?.conv_name) convName = apiData.data.conv_name;
+            if (res.ok && apiData.data?.conv_name)
+              convName = apiData.data.conv_name;
 
             if (!apiData.data) {
-              // console.warn("Conversation not available for sellerPage");
               setInitialLoading(false);
               return;
             }
           } catch (error: any) {
-            console.error("Failed to fetch conversation for sellerPage:", error.message);
+            console.error(
+              'Failed to fetch conversation for sellerPage:',
+              error.message,
+            );
             if (error.name === 'AbortError') {
-              console.error("Request timed out");
+              console.error('Request timed out');
             }
             setInitialLoading(false);
             return;
           }
         }
 
-        const persistedConvo = await loadJSON(CACHE_KEY_CONVO_PREFIX + convName);
+        const persistedConvo = await loadJSON(
+          CACHE_KEY_CONVO_PREFIX + convName,
+        );
         const persistedMsgs = await loadJSON(CACHE_KEY_MSG_PREFIX + convName);
 
         if (persistedConvo && persistedMsgs) {
@@ -474,17 +483,19 @@ const MessagesIndividualScreen = ({
           setConversation(persistedConvo);
           setCheckUser(
             String(
-              source === "chatList"
+              source === 'chatList'
                 ? currentUserIdList
-                : apiData?.data?.current_user_id || userId
-            )
+                : apiData?.data?.current_user_id || userId,
+            ),
           );
           setCurrentUserId(String(userId));
 
           setMessages(
-            [...(persistedMsgs || [])].sort((a, b) => (
-              new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
-            ))
+            [...(persistedMsgs || [])].sort(
+              (a, b) =>
+                new Date(b.dateCreated).getTime() -
+                new Date(a.dateCreated).getTime(),
+            ),
           );
 
           setInitialLoading(false);
@@ -496,47 +507,53 @@ const MessagesIndividualScreen = ({
           if (!convo && conversationSid) {
             try {
               convo = await chatClient.getConversation(conversationSid);
-              //console.log("Loaded conversation by SID:", conversationSid);
-            } catch (err: any) {
-              //console.warn("Failed to get conversation by SID:", err.message);
-            }
+            } catch (err: any) {}
           }
           if (!convo) {
             try {
               convo = await chatClient.getConversationByUniqueName(convName);
-              //console.log("Loaded conversation by uniqueName:", convName);
             } catch (err: any) {
-              //console.warn("Failed to get conversation by uniqueName, creating new:", err.message);
               try {
-                convo = await chatClient.createConversation({ uniqueName: convName });
+                convo = await chatClient.createConversation({
+                  uniqueName: convName,
+                });
                 // console.log("Created new conversation:", convName);
               } catch (createErr: any) {
-                throw new Error(`Failed to create conversation: ${createErr.message}`);
+                throw new Error(
+                  `Failed to create conversation: ${createErr.message}`,
+                );
               }
             }
           }
 
           if (!convo) {
-            throw new Error("Failed to get or create conversation");
+            throw new Error('Failed to get or create conversation');
           }
 
           conversationCache[convName] = convo;
           try {
             await saveJSON(CACHE_KEY_CONVO_PREFIX + convName, convo);
           } catch (cacheErr: any) {
-            console.warn("Failed to save conversation to cache:", cacheErr.message);
+            console.warn(
+              'Failed to save conversation to cache:',
+              cacheErr.message,
+            );
           }
 
           try {
             const participants = await convo.getParticipants();
-            const alreadyJoined = participants.some((p: any) => p.identity === userId);
+            const alreadyJoined = participants.some(
+              (p: any) => p.identity === userId,
+            );
             if (!alreadyJoined) {
               await convo.join();
-
             }
           } catch (joinErr: any) {
-            if (!joinErr.message?.includes("Conflict") && !joinErr.message?.includes("already")) {
-              console.warn("Failed to join conversation:", joinErr.message);
+            if (
+              !joinErr.message?.includes('Conflict') &&
+              !joinErr.message?.includes('already')
+            ) {
+              console.warn('Failed to join conversation:', joinErr.message);
             }
           }
 
@@ -544,10 +561,10 @@ const MessagesIndividualScreen = ({
           setConversation(convo);
           setCheckUser(
             String(
-              source === "chatList"
+              source === 'chatList'
                 ? currentUserIdList
-                : apiData?.data?.current_user_id || userId
-            )
+                : apiData?.data?.current_user_id || userId,
+            ),
           );
           setCurrentUserId(String(userId));
           let page;
@@ -569,24 +586,26 @@ const MessagesIndividualScreen = ({
               }
             }
           } catch (msgErr: any) {
-            console.error("Failed to load messages:", msgErr.message);
+            console.error('Failed to load messages:', msgErr.message);
             throw new Error(`Failed to load messages: ${msgErr.message}`);
           }
-          markAsRead(convo).catch((err) => {
-            console.warn("markAsRead failed:", err.message);
+          markAsRead(convo).catch(err => {
+            console.warn('markAsRead failed:', err.message);
           });
 
           messageCache[convName] = items;
           try {
             await saveJSON(CACHE_KEY_MSG_PREFIX + convName, items);
           } catch (cacheErr: any) {
-            console.warn("Failed to save messages to cache:", cacheErr.message);
+            console.warn('Failed to save messages to cache:', cacheErr.message);
           }
 
           setMessages(
-            [...items].sort((a, b) => (
-              new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
-            ))
+            [...items].sort(
+              (a, b) =>
+                new Date(b.dateCreated).getTime() -
+                new Date(a.dateCreated).getTime(),
+            ),
           );
 
           setHasMoreMessages(page.hasPrevPage);
@@ -594,11 +613,10 @@ const MessagesIndividualScreen = ({
         };
 
         await fetchTwilioFresh();
-        
       } catch (err: any) {
-        console.error("Conversation load failed:", err?.message || err);
+        console.error('Conversation load failed:', err?.message || err);
         if (err?.message) {
-          console.error("Error details:", {
+          console.error('Error details:', {
             message: err.message,
             name: err.name,
             stack: err.stack?.substring(0, 200),
@@ -606,7 +624,6 @@ const MessagesIndividualScreen = ({
         }
 
         setInitialLoading(false);
-
       }
     };
 
@@ -622,9 +639,10 @@ const MessagesIndividualScreen = ({
         console.warn('markAsRead: No token available');
         return;
       }
-      const sid = typeof conversation === 'string'
-        ? conversation
-        : conversation?.sid || conversationSid;
+      const sid =
+        typeof conversation === 'string'
+          ? conversation
+          : conversation?.sid || conversationSid;
 
       if (!sid) {
         console.warn('markAsRead: No conversation SID available');
@@ -645,12 +663,15 @@ const MessagesIndividualScreen = ({
             twilio_conversation_sid: sid,
           }),
         },
-        10000
+        10000,
       );
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-        console.warn('markAsRead API failed:', errorData.message || res.statusText);
+        console.warn(
+          'markAsRead API failed:',
+          errorData.message || res.statusText,
+        );
       }
     } catch (error: any) {
       if (error.name !== 'AbortError') {
@@ -658,7 +679,6 @@ const MessagesIndividualScreen = ({
       }
     }
   };
-
 
   const loadOlderMessages = useCallback(async () => {
     if (!messagesPageRef.current?.hasPrevPage) return;
@@ -673,10 +693,11 @@ const MessagesIndividualScreen = ({
       setMessages(prev => {
         const existing = new Set(prev.map(m => m.sid));
         const fresh = prevPage.items.filter((m: any) => !existing.has(m.sid));
-        return [...prev, ...fresh].sort((a, b) => (
-          new Date(b.dateCreated).getTime() -
-          new Date(a.dateCreated).getTime()
-        ));
+        return [...prev, ...fresh].sort(
+          (a, b) =>
+            new Date(b.dateCreated).getTime() -
+            new Date(a.dateCreated).getTime(),
+        );
       });
     } catch (error) {
       console.error('Failed to load older messages:', error);
@@ -688,35 +709,30 @@ const MessagesIndividualScreen = ({
     }
   }, [loadingOlderMessages]);
 
-
-
   useEffect(() => {
     if (!conversation) return;
 
-      const handleMessageUpdated = ({ message }:any) => {
-    setMessages(prev =>
-      prev.map(m => (m.sid === message.sid ? message : m))
-    );
-  };
+    const handleMessageUpdated = ({ message }: any) => {
+      setMessages(prev => prev.map(m => (m.sid === message.sid ? message : m)));
+    };
 
-const handleParticipantUpdated = async () => {
-  try {
-    const participants = await conversation.getParticipants();
-    const other = participants.find(
-      (p: any) => String(p.identity) !== String(currentUserId)
-    );
+    const handleParticipantUpdated = async () => {
+      try {
+        const participants = await conversation.getParticipants();
+        const other = participants.find(
+          (p: any) => String(p.identity) !== String(currentUserId),
+        );
 
-    if (other) {
-      setOtherLastReadIndex(other.lastReadMessageIndex ?? null);
-    }
-  } catch (e) {
-    console.warn("Failed to get participant read index");
-  }
-};
+        if (other) {
+          setOtherLastReadIndex(other.lastReadMessageIndex ?? null);
+        }
+      } catch (e) {
+        console.warn('Failed to get participant read index');
+      }
+    };
     handleParticipantUpdated();
-  conversation.on('messageUpdated', handleMessageUpdated);
-  conversation.on('participantUpdated', handleParticipantUpdated);
-
+    conversation.on('messageUpdated', handleMessageUpdated);
+    conversation.on('participantUpdated', handleParticipantUpdated);
 
     const handleNewMessage = async (m: any) => {
       const userId = await AsyncStorage.getItem('userId');
@@ -746,14 +762,20 @@ const handleParticipantUpdated = async () => {
         return updated;
       });
 
-      if (isFromMe && !(Platform.OS === 'ios' && isShortContentLockedRef.current)) {
+      if (
+        isFromMe &&
+        !(Platform.OS === 'ios' && isShortContentLockedRef.current)
+      ) {
         shouldAutoScrollRef.current = true;
 
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             InteractionManager.runAfterInteractions(() => {
               setTimeout(() => {
-                if (flatListRef.current && !(Platform.OS === 'ios' && isShortContentLockedRef.current)) {
+                if (
+                  flatListRef.current &&
+                  !(Platform.OS === 'ios' && isShortContentLockedRef.current)
+                ) {
                   try {
                     flatListRef.current.scrollToOffset({
                       offset: 0,
@@ -774,127 +796,82 @@ const handleParticipantUpdated = async () => {
       }
       // If message is from other user → mark as read
 
-if (String(messageAuthor) !== String(currentUserId)) {
-  try {
-    await conversation.advanceLastReadMessageIndex(m.index);
-  } catch (err) {
-    console.log("Failed to advance read index:", err);
-  }
-}
-
+      if (String(messageAuthor) !== String(currentUserId)) {
+        try {
+          await conversation.advanceLastReadMessageIndex(m.index);
+        } catch (err) {
+          console.log('Failed to advance read index:', err);
+        }
+      }
     };
 
- conversation.addListener('messageAdded', handleNewMessage);
- 
+    conversation.addListener('messageAdded', handleNewMessage);
 
     return () => {
-
       conversation.removeListener('messageAdded', handleNewMessage);
-    conversation.removeListener('messageUpdated', handleMessageUpdated);
-    conversation.removeListener('participantUpdated', handleParticipantUpdated);
+      conversation.removeListener('messageUpdated', handleMessageUpdated);
+      conversation.removeListener(
+        'participantUpdated',
+        handleParticipantUpdated,
+      );
       conversation.removeListener('messageAdded', handleNewMessage);
     };
   }, [conversation, checkUser, currentUserId]);
-  // ----------------------------------------------------------
-  // STEP 4: Send Message
-  // ----------------------------------------------------------
-
-//   const getMessageStatus = async (msg:any) => {
-//   if (!conversation || !msg) return 'sent';
-
-//   // Only check for my messages
-//   const author = msg.author || msg.state?.author || msg.attributes?.author;
-//   if (String(author) !== String(currentUserId)) {
-//     return null;
-//   }
-
-//   try {
-//     const participants = await conversation.getParticipants();
-//     const otherParticipant = participants.find(
-//       (p:any) => String(p.identity) !== String(currentUserId)
-//     );
-
-//     if (!otherParticipant) return 'sent';
-
-//     const lastReadIndex = otherParticipant.lastReadMessageIndex;
-
-//     if (
-//       lastReadIndex !== null &&
-//       msg.index !== null &&
-//       msg.index <= lastReadIndex
-//     ) {
-//       return 'read';
-//     }
-
-//     // Delivery check
-//     const delivery = msg.state?.delivery?.[otherParticipant.sid];
-
-//     if (delivery?.status === 'delivered') {
-//       return 'delivered';
-//     }
-
-//     return 'sent';
-//   } catch {
-//     return 'sent';
-//   }
-// };
 
   const getMessageStatus = (msg: any) => {
-  if (!msg || msg.index == null) return 'sent';
+    if (!msg || msg.index == null) return 'sent';
 
-  const author =
-    msg.author ||
-    msg.state?.author ||
-    msg.attributes?.author;
+    const author = msg.author || msg.state?.author || msg.attributes?.author;
 
-  // Only show ticks for my messages
-  if (String(author) !== String(currentUserId)) {
-    return null;
-  }
+    // Only show ticks for my messages
+    if (String(author) !== String(currentUserId)) {
+      return null;
+    }
 
-  if (
-    otherLastReadIndex !== null &&
-    msg.index <= otherLastReadIndex
-  ) {
-    return 'read';
-  }
+    if (otherLastReadIndex !== null && msg.index <= otherLastReadIndex) {
+      return 'read';
+    }
 
-  return 'sent';
-};
+    return 'sent';
+  };
   const handleSendMessage = async () => {
-    // Apply filter ONLY on send
-  
-    //const filteredMessage = filterNumbersAndNumberWords(messageText.trim());
-        const filteredMessage = applyChatRestrictions(messageText.trim());
-
+    const trimmed = messageText.trim();
+    // const filteredMessage = applyChatRestrictions(messageText.trim());
+    const filteredMessage = applyChatRestrictions(trimmed);
+   
+  if (!trimmed) {
+    textInputRef.current?.focus();  
+    return;
+  }
 
     if (!filteredMessage) {
       setMessageText('');
+      textInputRef.current?.focus();
       return;
     }
-  
+
     // Clear input immediately
     setMessageText('');
     shouldAutoScrollRef.current = true;
-  
+
     try {
       const [token, userId] = await Promise.all([
         AsyncStorage.getItem('userToken'),
         AsyncStorage.getItem('userId'),
-      ]);      
-   
+      ]);
+
       // CASE 1: Conversation already exists
       if (conversation) {
         await conversation.sendMessage(filteredMessage);
         return;
       }
-  
+
       // CASE 2: Create conversation first
       if (!sellerData?.featureId) {
         console.error('Missing featureId');
         return;
       }
-  
+
       const createResponse = await fetch(
         `${MAIN_URL.baseUrl}twilio/conversation-create`,
         {
@@ -904,35 +881,34 @@ if (String(messageAuthor) !== String(currentUserId)) {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ feature_id: sellerData.featureId }),
-        }
-      );     
-  
+        },
+      );
+
       const createData = await createResponse.json();
 
-      console.log("createData", createData);
-      
-  
+      console.log('createData', createData);
+
       if (!createResponse.ok || !createData?.data?.conv_name) {
         console.error('Conversation creation failed:', createData.message);
         return;
       }
-    
+
       const convName = createData.data.conv_name;
       const apiUserId = createData.data.current_user_id;
-  
+
       setCheckUser(String(apiUserId));
-  
+
       if (userId) {
         setCurrentUserId(String(userId));
       }
-    
+
       let convo;
       try {
         convo = await chatClient.getConversationByUniqueName(convName);
       } catch {
         convo = await chatClient.createConversation({ uniqueName: convName });
       }
-   
+
       try {
         await convo.join();
       } catch (err: any) {
@@ -940,17 +916,15 @@ if (String(messageAuthor) !== String(currentUserId)) {
           console.error('Join error:', err);
         }
       }
-    
+
       setConversation(convo);
-  
+
       await new Promise(resolve => setTimeout(resolve, 50));
       await convo.sendMessage(filteredMessage);
-  
     } catch (error) {
       console.error('Message send failed:', error);
     }
   };
-  
 
   const getInitials = (firstName = '', lastName = '') =>
     (firstName?.[0] || '') + (lastName?.[0] || '');
@@ -973,7 +947,10 @@ if (String(messageAuthor) !== String(currentUserId)) {
           windowHeightRef.current = currentWindowHeight;
         }
         if (Platform.OS === 'ios') {
-          if (!keyboardHeightSetRef.current || (h > 0 && Math.abs(h - keyboardHeightRef.current) > 20)) {
+          if (
+            !keyboardHeightSetRef.current ||
+            (h > 0 && Math.abs(h - keyboardHeightRef.current) > 20)
+          ) {
             keyboardHeightRef.current = h;
             setKeyboardHeight(h);
             keyboardHeightSetRef.current = true;
@@ -982,7 +959,6 @@ if (String(messageAuthor) !== String(currentUserId)) {
           keyboardHeightRef.current = h;
           setKeyboardHeight(h);
         }
-
       },
     );
     const hideSub = Keyboard.addListener(
@@ -1019,7 +995,6 @@ if (String(messageAuthor) !== String(currentUserId)) {
 
   const [extraPadding] = useState(48);
   const formatMessageDate = (date: Date) => {
-
     const d = new Date(date);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -1031,34 +1006,41 @@ if (String(messageAuthor) !== String(currentUserId)) {
     if (messageDate.getTime() === today.getTime()) {
       // return "Today";
       return t('today');
-
     }
     if (messageDate.getTime() === yesterday.getTime()) {
       return t('yesterday');
     }
     const day = d.getDate();
     const getSuffix = (n: number) => {
-
-      if (n > 3 && n < 21) return "th";
+      if (n > 3 && n < 21) return 'th';
       switch (n % 10) {
         case 1:
-          return "st";
+          return 'st';
         case 2:
-          return "nd";
+          return 'nd';
         case 3:
           return 'rd';
         default:
-          return "th";
+          return 'th';
       }
-
     };
     const lang = i18n.language;
-    const suffix = lang == "en" ? getSuffix(day) : "";
+    const suffix = lang == 'en' ? getSuffix(day) : '';
 
     const monthIndex = d.getMonth(); // 0–11
     const monthKeys = [
-      "jan", "feb", "mar", "apr", "may", "jun",
-      "jul", "aug", "sep", "oct", "nov", "dec"
+      'jan',
+      'feb',
+      'mar',
+      'apr',
+      'may',
+      'jun',
+      'jul',
+      'aug',
+      'sep',
+      'oct',
+      'nov',
+      'dec',
     ];
 
     const monthShort = t ? t(monthKeys[monthIndex]) : monthKeys[monthIndex];
@@ -1066,9 +1048,7 @@ if (String(messageAuthor) !== String(currentUserId)) {
     return `${day}${suffix} ${monthShort} ${year}`;
   };
 
-
   const buildMessageList = (messages: any[]) => {
-
     if (messages.length === 0) return [];
     const sortedMessages = [...messages].sort((a, b) => {
       const timeA = new Date(a.dateCreated || a.timestamp).getTime();
@@ -1136,9 +1116,15 @@ if (String(messageAuthor) !== String(currentUserId)) {
   }, [messages.length === 0 ? null : messages[0]?.sid]);
 
   useEffect(() => {
-    if (messages.length > prevMessagesLengthRef.current && messages.length > 0) {
+    if (
+      messages.length > prevMessagesLengthRef.current &&
+      messages.length > 0
+    ) {
       const lastMessage = messages[0];
-      const messageAuthor = lastMessage?.author || lastMessage?.state?.author || lastMessage?.attributes?.author;
+      const messageAuthor =
+        lastMessage?.author ||
+        lastMessage?.state?.author ||
+        lastMessage?.attributes?.author;
       const isFromMe =
         String(messageAuthor) === String(checkUser) ||
         String(messageAuthor) === String(currentUserId);
@@ -1193,9 +1179,17 @@ if (String(messageAuthor) !== String(currentUserId)) {
   }, [messages, checkUser, currentUserId, keyboardVisible, lastMessageIndex]);
 
   useEffect(() => {
-    if (!initialLoading && messages.length > 0 && flatListRef.current && !(Platform.OS === 'ios' && isShortContentLockedRef.current)) {
+    if (
+      !initialLoading &&
+      messages.length > 0 &&
+      flatListRef.current &&
+      !(Platform.OS === 'ios' && isShortContentLockedRef.current)
+    ) {
       setTimeout(() => {
-        if (flatListRef.current && !(Platform.OS === 'ios' && isShortContentLockedRef.current)) {
+        if (
+          flatListRef.current &&
+          !(Platform.OS === 'ios' && isShortContentLockedRef.current)
+        ) {
           try {
             flatListRef.current.scrollToOffset({
               offset: 0,
@@ -1204,8 +1198,7 @@ if (String(messageAuthor) !== String(currentUserId)) {
           } catch (err) {
             try {
               flatListRef.current.scrollToEnd({ animated: false });
-            } catch (e) {
-            }
+            } catch (e) {}
           }
         }
       }, 100);
@@ -1228,11 +1221,23 @@ if (String(messageAuthor) !== String(currentUserId)) {
     return 0;
   }, [Platform.OS, isContentShort, keyboardVisible, keyboardHeight]);
   useEffect(() => {
-    if (Platform.OS === 'ios' && isContentShort && keyboardVisible && flatListRef.current && messages.length > 0 && !scrollToShortContentRef.current) {
+    if (
+      Platform.OS === 'ios' &&
+      isContentShort &&
+      keyboardVisible &&
+      flatListRef.current &&
+      messages.length > 0 &&
+      !scrollToShortContentRef.current
+    ) {
       scrollToShortContentRef.current = true;
       isShortContentLockedRef.current = true;
       const timeoutId = setTimeout(() => {
-        if (flatListRef.current && keyboardVisible && isContentShort && isShortContentLockedRef.current) {
+        if (
+          flatListRef.current &&
+          keyboardVisible &&
+          isContentShort &&
+          isShortContentLockedRef.current
+        ) {
           try {
             flatListRef.current.scrollToOffset({
               offset: 0,
@@ -1241,8 +1246,7 @@ if (String(messageAuthor) !== String(currentUserId)) {
           } catch (err) {
             try {
               flatListRef.current.scrollToEnd({ animated: false });
-            } catch (e) {
-            }
+            } catch (e) {}
           }
         }
       }, 500);
@@ -1266,205 +1270,145 @@ if (String(messageAuthor) !== String(currentUserId)) {
     };
   }, []);
 
-//   const MessageStatusTicks = ({ message }:any) => {
-//   const [status, setStatus] = React.useState('sent');
-
-//   React.useEffect(() => {
-//     let mounted = true;
-
-//     const resolveStatus = async () => {
-//       const s = await getMessageStatus(message);
-//       if (mounted && s) setStatus(s);
-//     };
-
-//     resolveStatus();
-
-//     return () => {
-//       mounted = false;
-//     };
-//   }, [message]);
-
-//   if (status === 'sent') {
-//     return (
-//       <Image
-//         source={require('../../../assets/images/single_tick.png')}
-//         style={[styles.tickIcon, { tintColor: '#999' }]}
-//       />
-//     );
-//   }
-
-//   if (status === 'delivered') {
-//     return (
-//       <Image
-//         source={require('../../../assets/images/double_tick.png')}
-//         style={[styles.tickIcon, { tintColor: '#999' }]}
-//       />
-//     );
-//   }
-
-//   if (status === 'read') {
-//     return (
-//       <Image
-//         source={require('../../../assets/images/double_tick.png')}
-//         style={[styles.tickIcon, { tintColor: '#4FC3F7' }]} // Blue/White
-//       />
-//     );
-//   }
-
-//   return null;
-// };
-
   const MessageStatusTicks = React.memo(({ message }: any) => {
-  const status = getMessageStatus(message);
+    const status = getMessageStatus(message);
 
-  if (status === 'sent') {
-    return (
-      <Image
-        source={require('../../../assets/images/single_tick.png')}
-        style={[styles.tickIcon, { tintColor: '#999' }]}
-      />
-    );
-  }
+    if (status === 'sent') {
+      return (
+        <Image
+          source={require('../../../assets/images/single_tick.png')}
+          style={[styles.tickIcon, { tintColor: '#999' }]}
+        />
+      );
+    }
 
-  if (status === 'read') {
-    return (
-      <Image
-        source={require('../../../assets/images/double_tick.png')}
-        style={[styles.tickIcon, { tintColor: '#4FC3F7' }]}
-      />
-    );
-  }
+    if (status === 'read') {
+      return (
+        <Image
+          source={require('../../../assets/images/double_tick.png')}
+          style={[styles.tickIcon, { tintColor: '#4FC3F7' }]}
+        />
+      );
+    }
 
-  return null;
+    return null;
   });
-  
-const renderItem = React.useCallback(({ item, index }: { item: any, index: number }) => {
 
-    
-                const isFromCurrentUser = (msg: any) => {
-                  if (!msg || !msg.data) return false;
-                  const author =
-                    msg.data.author ||
-                    msg.data.state?.author ||
-                    msg.data.attributes?.author;
-                  const authorStr = String(author || '');
-                  const checkUserStr = String(checkUser || '');
-                  const currentUserIdStr = String(currentUserId || '');
-                  return (
-                    authorStr === checkUserStr || authorStr === currentUserIdStr
-                  );
-                };
+  const renderItem = React.useCallback(
+    ({ item, index }: { item: any; index: number }) => {
+      const isFromCurrentUser = (msg: any) => {
+        if (!msg || !msg.data) return false;
+        const author =
+          msg.data.author ||
+          msg.data.state?.author ||
+          msg.data.attributes?.author;
+        const authorStr = String(author || '');
+        const checkUserStr = String(checkUser || '');
+        const currentUserIdStr = String(currentUserId || '');
+        return authorStr === checkUserStr || authorStr === currentUserIdStr;
+      };
 
-                const isLastMessage = index === lastMessageIndex;
-                const isMyMessage = isFromCurrentUser(item);
-                const BASE_SPACING = 0;
-                const bottomPadding = BASE_SPACING;
+      const isLastMessage = index === lastMessageIndex;
+      const isMyMessage = isFromCurrentUser(item);
+      const BASE_SPACING = 0;
+      const bottomPadding = BASE_SPACING;
 
-                return (
+      return (
+        <>
+          {item?.type === 'date' ? (
+            <View style={{ alignItems: 'center', marginVertical: 10 }}>
+              <Text
+                style={{
+                  color: '#FFFFFF7A',
+                  backgroundColor: '#00000029',
+                  paddingHorizontal: 8,
+                  paddingVertical: 4,
+                  borderRadius: 6,
+                  fontSize: 12,
+                  fontFamily: 'Urbanist-Medium',
+                  marginVertical: 10,
+                }}
+              >
+                {loadingOlderMessages && index === oldestDateIndex
+                  ? t('loading')
+                  : item?.date}
+              </Text>
+            </View>
+          ) : (
+            <View
+              style={[
+                styles.messageContainer,
+                isMyMessage ? styles.rightAlign : styles.leftAlign,
+                isLastMessage && { marginBottom: bottomPadding },
+              ]}
+            >
+              <View
+                style={
+                  isMyMessage
+                    ? styles.rightBubbleWrapper
+                    : styles.leftBubbleWrapper
+                }
+              >
+                {!isMyMessage && (
+                  <View
+                    style={{
+                      width: 0,
+                      height: 0,
+                      borderTopWidth: 8,
+                      borderTopColor: 'transparent',
+                      borderRightWidth: 9,
+                      borderRightColor: '#2466c75e',
+                      borderBottomWidth: 8,
+                      borderBottomColor: 'transparent',
+                      alignSelf: 'flex-start',
+                      marginRight: 0,
+                      marginTop: 4,
+                    }}
+                  />
+                )}
+                <View
+                  style={[
+                    styles.bubble,
+                    isMyMessage ? styles.rightBubble : styles.leftBubble,
+                  ]}
+                >
+                  <Text allowFontScaling={false} style={styles.messageText}>
+                    {item?.data?.state?.body || item?.data?.body}
+                  </Text>
+                  {isMyMessage && (
+                    <View style={styles.tickContainer}>
+                      <MessageStatusTicks message={item.data} />
+                    </View>
+                  )}
+                </View>
+
+                {isMyMessage && (
                   <>
-                    {item?.type === 'date' ? (
-                      <View
-                        style={{ alignItems: 'center', marginVertical: 10 }}
-                      >
-                        <Text
-                          style={{
-                            color: '#FFFFFF7A',
-                            backgroundColor: '#00000029',
-                            paddingHorizontal: 8,
-                            paddingVertical: 4,
-                            borderRadius: 6,
-                            fontSize: 12,
-                            fontFamily: 'Urbanist-Medium',
-                            marginVertical: 10,
-                          }}
-                        >
-                          {loadingOlderMessages && index === oldestDateIndex
-                            ? t('loading')
-                            : item?.date}
-                        </Text>
-                      </View>
-                    ) : (
-                      <View
-                        style={[
-                          styles.messageContainer,
-                          isMyMessage ? styles.rightAlign : styles.leftAlign,
-                          isLastMessage && { marginBottom: bottomPadding },
-                        ]}
-                      >
-                        <View
-                          style={
-                            isMyMessage
-                              ? styles.rightBubbleWrapper
-                              : styles.leftBubbleWrapper
-                          }
-                        >
-                          {!isMyMessage && (
-                            <View
-                              style={{
-                                width: 0,
-                                height: 0,
-                                borderTopWidth: 8,
-                                borderTopColor: 'transparent',
-                                borderRightWidth: 9,
-                                borderRightColor: '#2466c75e',
-                                borderBottomWidth: 8,
-                                borderBottomColor: 'transparent',
-                                alignSelf: 'flex-start',
-                                marginRight: 0,
-                                marginTop: 4,
-                              }}
-                            />
-                          )}
-                          <View
-                            style={[
-                              styles.bubble,
-                              isMyMessage
-                                ? styles.rightBubble
-                                : styles.leftBubble,
-                            ]}
-                          >
-                            <Text
-                              allowFontScaling={false}
-                              style={styles.messageText}
-                            >
-                              {item?.data?.state?.body || item?.data?.body}
-                              </Text>
-                              {isMyMessage && (
-                                <View style={styles.tickContainer}>
-                                  <MessageStatusTicks message={item.data} />
-                                </View>
-                              )}
-                          </View>
-
-                          {isMyMessage && (
-
-                            <>                           
-                              <View
-                                style={{
-                                  width: 0,
-                                  height: 0,
-                                  borderTopWidth: 8,
-                                  borderTopColor: 'transparent',
-                                  borderLeftWidth: 9,
-                                  borderLeftColor: '#0000001F',
-                                  borderBottomWidth: 8,
-                                  borderBottomColor: 'transparent',
-                                  alignSelf: 'flex-start',
-                                  marginLeft: 0,
-                                  marginTop: 4,
-                                }}
-                              />
-                            </>
-                          )
-                          }
-                        </View>
-                      </View>
-                    )}
+                    <View
+                      style={{
+                        width: 0,
+                        height: 0,
+                        borderTopWidth: 8,
+                        borderTopColor: 'transparent',
+                        borderLeftWidth: 9,
+                        borderLeftColor: '#0000001F',
+                        borderBottomWidth: 8,
+                        borderBottomColor: 'transparent',
+                        alignSelf: 'flex-start',
+                        marginLeft: 0,
+                        marginTop: 4,
+                      }}
+                    />
                   </>
-                );
-    
-
-  }, [checkUser, currentUserId, lastMessageIndex, otherLastReadIndex]);
+                )}
+              </View>
+            </View>
+          )}
+        </>
+      );
+    },
+    [checkUser, currentUserId, lastMessageIndex, otherLastReadIndex],
+  );
   return (
     <ImageBackground source={bgImage} style={{ flex: 1 }} resizeMode="cover">
       <View style={{ flex: 1 }}>
@@ -1553,10 +1497,8 @@ const renderItem = React.useCallback(({ item, index }: { item: any, index: numbe
                 paddingTop: Platform.OS === 'ios' ? 0 : 0,
               }}
             >
-
               <TouchableOpacity
                 onPress={() => {
-
                   if (Platform.OS === 'ios') {
                     if (navigation.canGoBack()) {
                       navigation.goBack();
@@ -1564,25 +1506,24 @@ const renderItem = React.useCallback(({ item, index }: { item: any, index: numbe
                       if (source === 'chatList') {
                         navigation.reset({
                           index: 0,
-                          routes: [{
-                            name: 'Dashboard', params: {
-                              resetToLogin: true, AddScreenBackactiveTab: 'Bookmark',
-                              isNavigate: false,
-                            }
-                          }],
+                          routes: [
+                            {
+                              name: 'Dashboard',
+                              params: {
+                                resetToLogin: true,
+                                AddScreenBackactiveTab: 'Bookmark',
+                                isNavigate: false,
+                              },
+                            },
+                          ],
                         });
-
                       }
                       navigation.goBack();
-
                     }
-
                   } else {
-
                     if (source === 'sellerPage') {
                       navigation.goBack();
-                    }
-                    else {
+                    } else {
                       navigation.replace('Dashboard', {
                         AddScreenBackactiveTab: 'Bookmark',
                         isNavigate: false,
@@ -1632,29 +1573,35 @@ const renderItem = React.useCallback(({ item, index }: { item: any, index: numbe
                   position: 'relative',
                 }}
               >
-                <MessageHeaderButton  title={<Text allowFontScaling={false} style={styles.studentName}>
-                  {source === 'chatList'
-                    ? members?.firstname
-                    : sellerData.firstname}{' '}
-                  {source === 'chatList'
-                    ? members?.lastname
-                    : sellerData.lastname}
-                </Text>}  />
+                <MessageHeaderButton
+                  title={
+                    <Text allowFontScaling={false} style={styles.studentName}>
+                      {source === 'chatList'
+                        ? members?.firstname
+                        : sellerData.firstname}{' '}
+                      {source === 'chatList'
+                        ? members?.lastname
+                        : sellerData.lastname}
+                    </Text>
+                  }
+                />
               </View>
               <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate('UserProfileScreen', {
-                      animation: 'none',
-                      members: source == 'chatList' ? members : sellerData,
-                    });
+                onPress={() => {
+                  navigation.navigate('UserProfileScreen', {
+                    animation: 'none',
+                    members: source == 'chatList' ? members : sellerData,
+                  });
+                }}
+              >
+                <ImageBackground
+                  source={require('../../../assets/images/profilebutton.png')}
+                  style={{
+                    height: 48,
+                    width: 48,
                   }}
-                  >
-
-   <ImageBackground source={require('../../../assets/images/profilebutton.png')} style={{
-    height:48,width: 48
-   }} >
-
-   {source == 'chatList' ? (
+                >
+                  {source == 'chatList' ? (
                     members?.profile ? (
                       <Image
                         source={{ uri: members?.profile }}
@@ -1691,9 +1638,8 @@ const renderItem = React.useCallback(({ item, index }: { item: any, index: numbe
                       </Text>
                     </View>
                   )}
-
-</ImageBackground>
-                </TouchableOpacity>
+                </ImageBackground>
+              </TouchableOpacity>
             </View>
             <View style={styles.headerSpacer} />
           </View>
@@ -1704,7 +1650,8 @@ const renderItem = React.useCallback(({ item, index }: { item: any, index: numbe
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 5 : 0}
-          enabled={Platform.OS === 'ios' ? !isContentShort : true}>
+          enabled={Platform.OS === 'ios' ? !isContentShort : true}
+        >
           <View
             style={{ flex: 1 }}
             onLayout={() => {
@@ -1718,14 +1665,27 @@ const renderItem = React.useCallback(({ item, index }: { item: any, index: numbe
             <Animated.FlatList
               data={groupedMessages}
               inverted
-              removeClippedSubviews={Platform.OS === 'ios' && isContentShort && keyboardVisible ? false : true} // Disable clipping when short to prevent layout shifts
+              removeClippedSubviews={
+                Platform.OS === 'ios' && isContentShort && keyboardVisible
+                  ? false
+                  : true
+              } // Disable clipping when short to prevent layout shifts
               extraData={React.useMemo(() => {
-
                 if (Platform.OS === 'ios' && isShortContentLockedRef.current) {
                   return [keyboardVisible, lastMessageIndex];
                 }
-                return [keyboardVisible, lastMessageIndex, loadingOlderMessages, isContentShort];
-              }, [keyboardVisible, lastMessageIndex, loadingOlderMessages, isContentShort])} // Memoize to prevent unnecessary re-renders
+                return [
+                  keyboardVisible,
+                  lastMessageIndex,
+                  loadingOlderMessages,
+                  isContentShort,
+                ];
+              }, [
+                keyboardVisible,
+                lastMessageIndex,
+                loadingOlderMessages,
+                isContentShort,
+              ])} // Memoize to prevent unnecessary re-renders
               keyExtractor={(item, index) =>
                 item.sid || item.data?.sid || `item-${index}`
               }
@@ -1733,21 +1693,21 @@ const renderItem = React.useCallback(({ item, index }: { item: any, index: numbe
                 Platform.OS === 'ios' && isContentShort
                   ? undefined
                   : {
-                    minIndexForVisible: 1,
-                  }
+                      minIndexForVisible: 1,
+                    }
               }
               onScroll={event => {
                 const offsetY = event.nativeEvent.contentOffset.y;
-                 const isAtBottom = offsetY <= 10;
+                const isAtBottom = offsetY <= 10;
 
-                 if (isAtBottom && messages.length > 0 && conversation) {
-                   const newestMessage = messages[0]; // because list is inverted
-                   if (newestMessage?.index != null) {
-                     conversation
-                       .advanceLastReadMessageIndex(newestMessage.index)
-                       .catch(() => {});
-                   }
-                 }
+                if (isAtBottom && messages.length > 0 && conversation) {
+                  const newestMessage = messages[0]; // because list is inverted
+                  if (newestMessage?.index != null) {
+                    conversation
+                      .advanceLastReadMessageIndex(newestMessage.index)
+                      .catch(() => {});
+                  }
+                }
 
                 const contentHeight = event.nativeEvent.contentSize.height;
                 const viewportHeight =
@@ -1799,11 +1759,12 @@ const renderItem = React.useCallback(({ item, index }: { item: any, index: numbe
                   contentSizeChangeTimeoutRef.current = setTimeout(() => {
                     if (isShortContentLockedRef.current) return;
 
-                    const screenHeight = Dimensions.get("window").height;
+                    const screenHeight = Dimensions.get('window').height;
                     const newIsContentShort = height < screenHeight * 0.7;
                     if (newIsContentShort !== prevIsContentShortRef.current) {
                       prevIsContentShortRef.current = newIsContentShort;
-                      isShortContentLockedRef.current = newIsContentShort && keyboardVisible;
+                      isShortContentLockedRef.current =
+                        newIsContentShort && keyboardVisible;
                       requestAnimationFrame(() => {
                         requestAnimationFrame(() => {
                           setIsContentShort(newIsContentShort);
@@ -1814,8 +1775,13 @@ const renderItem = React.useCallback(({ item, index }: { item: any, index: numbe
                     }
                   }, 200);
                 }
-                if (loadingFromScrollRef.current || loadingOlderMessages || (Platform.OS === 'ios' && isShortContentLockedRef.current))
-                  return; if (
+                if (
+                  loadingFromScrollRef.current ||
+                  loadingOlderMessages ||
+                  (Platform.OS === 'ios' && isShortContentLockedRef.current)
+                )
+                  return;
+                if (
                   height > prevHeight &&
                   prevHeight > 0 &&
                   flatListRef.current
@@ -1836,14 +1802,25 @@ const renderItem = React.useCallback(({ item, index }: { item: any, index: numbe
                     String(messageAuthor) === String(checkUser) ||
                     String(messageAuthor) === String(currentUserId);
 
-                  if (!(Platform.OS === 'ios' && isShortContentLockedRef.current) && (isFromMe || shouldAutoScrollRef.current)) {
+                  if (
+                    !(
+                      Platform.OS === 'ios' && isShortContentLockedRef.current
+                    ) &&
+                    (isFromMe || shouldAutoScrollRef.current)
+                  ) {
                     if (isFromMe) {
                       shouldAutoScrollRef.current = true;
                     }
                     InteractionManager.runAfterInteractions(() => {
                       setTimeout(
                         () => {
-                          if (flatListRef.current && !(Platform.OS === 'ios' && isShortContentLockedRef.current)) {
+                          if (
+                            flatListRef.current &&
+                            !(
+                              Platform.OS === 'ios' &&
+                              isShortContentLockedRef.current
+                            )
+                          ) {
                             try {
                               flatListRef.current.scrollToOffset({
                                 offset: 0,
@@ -1866,7 +1843,6 @@ const renderItem = React.useCallback(({ item, index }: { item: any, index: numbe
                   }
                 }
               }}
-
               onLayout={event => {
                 if (Platform.OS === 'ios' && isShortContentLockedRef.current) {
                   return;
@@ -1876,7 +1852,12 @@ const renderItem = React.useCallback(({ item, index }: { item: any, index: numbe
                 updateBlurState();
               }}
               contentContainerStyle={React.useMemo(() => {
-                if (Platform.OS === 'ios' && isContentShort && keyboardVisible && isShortContentLockedRef.current) {
+                if (
+                  Platform.OS === 'ios' &&
+                  isContentShort &&
+                  keyboardVisible &&
+                  isShortContentLockedRef.current
+                ) {
                   return {
                     paddingTop: 80,
                     paddingBottom: 120,
@@ -1887,36 +1868,47 @@ const renderItem = React.useCallback(({ item, index }: { item: any, index: numbe
 
                 return {
                   ...contentContainerStyle,
-                  paddingBottom: isContentShort && Platform.OS === 'ios' && keyboardVisible
-                    ? (keyboardHeightRef.current || keyboardHeight) + INPUT_BAR_HEIGHT + 10
-                    : 120,
+                  paddingBottom:
+                    isContentShort && Platform.OS === 'ios' && keyboardVisible
+                      ? (keyboardHeightRef.current || keyboardHeight) +
+                        INPUT_BAR_HEIGHT +
+                        10
+                      : 120,
                   paddingTop: keyboardVisible ? 80 : 105,
                   justifyContent: 'flex-end',
                 };
-              }, [contentContainerStyle, isContentShort, keyboardVisible, keyboardHeight])}
+              }, [
+                contentContainerStyle,
+                isContentShort,
+                keyboardVisible,
+                keyboardHeight,
+              ])}
               showsVerticalScrollIndicator={false}
             />
             <View
-              style={React.useMemo(() => ({
-                position: 'absolute',
-                left: 0,
-                right: 0,
-                bottom: inputBarBottom,
-                paddingHorizontal: 16,
-                paddingTop: Platform.OS === 'ios' ? 0 : 8,
-                paddingBottom:
-                  Platform.OS === 'ios'
-                    ? isContentShort && keyboardVisible
-                      ? 0
-                      : keyboardVisible
+              style={React.useMemo(
+                () => ({
+                  position: 'absolute',
+                  left: 0,
+                  right: 0,
+                  bottom: inputBarBottom,
+                  paddingHorizontal: 16,
+                  paddingTop: Platform.OS === 'ios' ? 0 : 8,
+                  paddingBottom:
+                    Platform.OS === 'ios'
+                      ? isContentShort && keyboardVisible
+                        ? 0
+                        : keyboardVisible
                         ? 0
                         : 30
-                    : keyboardVisible
+                      : keyboardVisible
                       ? 8
                       : 34,
-                backgroundColor: 'transparent',
-                zIndex: 1000,
-              }), [inputBarBottom, isContentShort, keyboardVisible])}
+                  backgroundColor: 'transparent',
+                  zIndex: 1000,
+                }),
+                [inputBarBottom, isContentShort, keyboardVisible],
+              )}
             >
               {chatUser?.blocked_you ? (
                 <View style={styles.blockBanner}>
@@ -1924,22 +1916,16 @@ const renderItem = React.useCallback(({ item, index }: { item: any, index: numbe
                     source={require('../../../assets/images/block_triangle.png')}
                     style={styles.blockIcon}
                   />
-                  <Text style={styles.blockText}>
-                    {t('block_info_user')}
-                  </Text>
+                  <Text style={styles.blockText}>{t('block_info_user')}</Text>
                 </View>
-
               ) : chatUser?.isblocked ? (
                 <View style={styles.blockBanner}>
                   <Image
                     source={require('../../../assets/images/block_triangle.png')}
                     style={styles.blockIcon}
                   />
-                  <Text style={styles.blockText}>
-                    {t('block_info')}
-                  </Text>
+                  <Text style={styles.blockText}>{t('block_info')}</Text>
                 </View>
-
               ) : (
                 <View style={styles.inputRow}>
                   <View style={styles.inputContainer}>
@@ -1958,8 +1944,8 @@ const renderItem = React.useCallback(({ item, index }: { item: any, index: numbe
                       placeholderTextColor="#F5F5F5"
                       onChangeText={handleTextChange}
                       value={messageText}
-                      cursorColor='#F5F5F5'
-                      selectionColor='#F5F5F5'
+                      cursorColor="#F5F5F5"
+                      selectionColor="#F5F5F5"
                     />
                   </View>
 
@@ -1967,7 +1953,10 @@ const renderItem = React.useCallback(({ item, index }: { item: any, index: numbe
                     onPress={handleSendMessage}
                     disabled={isSendDisabled}
                     hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-                    style={[styles.sendButton, { opacity: isSendDisabled ? 0.5 : 1 }]}
+                    style={[
+                      styles.sendButton,
+                      { opacity: isSendDisabled ? 0.5 : 1 },
+                    ]}
                   >
                     <BlurView
                       style={styles.sendButtonBlur}
@@ -1998,24 +1987,22 @@ const renderItem = React.useCallback(({ item, index }: { item: any, index: numbe
   );
 };
 
-
 export default MessagesIndividualScreen;
 
 const styles = StyleSheet.create({
   tickContainer: {
-  flexDirection: 'row',
-  justifyContent: 'flex-end',
-  marginTop: 4,
-},
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginTop: 4,
+  },
 
-tickIcon: {
-  width: 10,
-  height: 10,
-  resizeMode: 'contain',
-  marginLeft: 5,
-   marginTop: 5,
-},
-
+  tickIcon: {
+    width: 10,
+    height: 10,
+    resizeMode: 'contain',
+    marginLeft: 5,
+    marginTop: 5,
+  },
 
   inputRow: {
     flexDirection: 'row',
@@ -2072,8 +2059,6 @@ tickIcon: {
     borderRadius: 24,
   },
 
-
-
   /* ===== Blocked Banner ===== */
   blockBanner: {
     flexDirection: 'row',
@@ -2094,7 +2079,7 @@ tickIcon: {
     height: 20,
     tintColor: '#fff',
     zIndex: 1,
-    marginLeft: 8
+    marginLeft: 8,
   },
 
   blockText: {
@@ -2103,7 +2088,7 @@ tickIcon: {
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: '600',
     opacity: 0.8,
-    paddingLeft: 8
+    paddingLeft: 8,
   },
 
   leftBubbleWrapper: {
@@ -2188,7 +2173,6 @@ tickIcon: {
     marginTop: 2,
     minWidth: '70%',
     maxWidth: '86%',
-
   },
   backIconStyle: {
     width: 30,
@@ -2275,7 +2259,6 @@ tickIcon: {
     letterSpacing: 0,
     textAlignVertical: 'center',
     includeFontPadding: false,
-
   },
 
   initialsCircle: {
@@ -2441,15 +2424,12 @@ tickIcon: {
 // import ButtonNew from '../../utils/component/ButtonNew';
 // import MessageHeaderButton from '../../utils/component/MessageHeaderButton';
 
-
 // const bgImage = require('../../../assets/images/backimg.png');
 // const back = require('../../../assets/images/back.png');
-
 
 // type MessagesIndividualScreenProps = {
 //   navigation: any;
 // };
-
 
 // type RouteParams = {
 //   source?: 'chatList' | 'sellerPage';
@@ -2477,8 +2457,6 @@ tickIcon: {
 //   };
 //   conversationSid: string;
 // };
-
-
 
 // const conversationCache: any = {};
 // const messageCache: any = {};
@@ -2614,7 +2592,6 @@ tickIcon: {
 //   const scrollY = useSharedValue(0);
 //   const { t } = useTranslation();
 
-
 //   const updateBlurState = () => {
 //     if (contentHeightRef.current > 0 && viewportHeightRef.current > 0) {
 //       hasScrollableContent.value =
@@ -2622,17 +2599,11 @@ tickIcon: {
 //     }
 //   };
 
-
 //   const animatedBlurStyle = useAnimatedStyle(() => {
 //     'worklet';
 //     const opacity = interpolate(scrollY.value, [0, 300], [0, 1], 'clamp');
 //     return { opacity };
 //   });
-
-
-
-
-
 
 //   const INPUT_BAR_HEIGHT = Platform.OS === 'ios' ? 70 : 64;
 
@@ -2654,7 +2625,6 @@ tickIcon: {
 //     /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
 //   filtered = filtered.replace(emailRegex, "");
 
-
 //   const urlRegex =
 //     /((https?:\/\/|www\.)[^\s]+)/gi;
 //   filtered = filtered.replace(urlRegex, "");
@@ -2668,13 +2638,13 @@ tickIcon: {
 
 //   const filterNumbersAndNumberWords = (text: string): string => {
 //     let digitCount = 0;
-  
+
 //     // Mask digits after first 3
 //     let filtered = text.replace(/\d/g, (digit) => {
 //       digitCount++;
 //       return digitCount <= 3 ? digit : '*';
 //     });
-  
+
 //     // Remove number words
 //     const numberWords = [
 //       'zero', 'one', 'two', 'three', 'four', 'five',
@@ -2685,17 +2655,17 @@ tickIcon: {
 //       'sixty', 'seventy', 'eighty', 'ninety',
 //       'hundred', 'thousand', 'million', 'billion', 'trillion',
 //     ];
-  
+
 //     const numberWordsPattern = new RegExp(
 //       `\\b(${numberWords.join('|')})\\b`,
 //       'gi'
 //     );
-  
+
 //     filtered = filtered.replace(numberWordsPattern, '');
-  
+
 //     // Normalize spaces
 //     filtered = filtered.replace(/\s{2,}/g, ' ').trim();
-  
+
 //     return filtered;
 //   };
 //   const applyChatRestrictions = (text: string): string => {
@@ -2713,13 +2683,11 @@ tickIcon: {
 //   return filtered;
 // };
 
-  
-
 //   const handleTextChange = (text: string) => {
 //     // const filteredText = filterNumbersAndNumberWords(text);
 //     setMessageText(text);
 //   };
-  
+
 //   useEffect(() => {
 //     let isMounted = true;
 
@@ -2796,7 +2764,6 @@ tickIcon: {
 //       isMounted = false;
 //     };
 //   }, []);
-
 
 //   useEffect(() => {
 //     if (!chatClient) return;
@@ -3044,7 +3011,6 @@ tickIcon: {
 //     }
 //   };
 
-
 //   const loadOlderMessages = useCallback(async () => {
 //     if (!messagesPageRef.current?.hasPrevPage) return;
 //     if (loadingOlderMessages) return;
@@ -3072,8 +3038,6 @@ tickIcon: {
 //       }, 200);
 //     }
 //   }, [loadingOlderMessages]);
-
-
 
 //   useEffect(() => {
 //     if (!conversation) return;
@@ -3135,7 +3099,6 @@ tickIcon: {
 //     };
 
 //  conversation.addListener('messageAdded', handleNewMessage);
- 
 
 //     return () => {
 
@@ -3147,38 +3110,37 @@ tickIcon: {
 //   // ----------------------------------------------------------
 //   const handleSendMessage = async () => {
 //     // Apply filter ONLY on send
-  
+
 //     //const filteredMessage = filterNumbersAndNumberWords(messageText.trim());
 //         const filteredMessage = applyChatRestrictions(messageText.trim());
-
 
 //     if (!filteredMessage) {
 //       setMessageText('');
 //       return;
 //     }
-  
+
 //     // Clear input immediately
 //     setMessageText('');
 //     shouldAutoScrollRef.current = true;
-  
+
 //     try {
 //       const [token, userId] = await Promise.all([
 //         AsyncStorage.getItem('userToken'),
 //         AsyncStorage.getItem('userId'),
-//       ]);      
-   
+//       ]);
+
 //       // CASE 1: Conversation already exists
 //       if (conversation) {
 //         await conversation.sendMessage(filteredMessage);
 //         return;
 //       }
-  
+
 //       // CASE 2: Create conversation first
 //       if (!sellerData?.featureId) {
 //         console.error('Missing featureId');
 //         return;
 //       }
-  
+
 //       const createResponse = await fetch(
 //         `${MAIN_URL.baseUrl}twilio/conversation-create`,
 //         {
@@ -3189,34 +3151,33 @@ tickIcon: {
 //           },
 //           body: JSON.stringify({ feature_id: sellerData.featureId }),
 //         }
-//       );     
-  
+//       );
+
 //       const createData = await createResponse.json();
 
 //       console.log("createData", createData);
-      
-  
+
 //       if (!createResponse.ok || !createData?.data?.conv_name) {
 //         console.error('Conversation creation failed:', createData.message);
 //         return;
 //       }
-    
+
 //       const convName = createData.data.conv_name;
 //       const apiUserId = createData.data.current_user_id;
-  
+
 //       setCheckUser(String(apiUserId));
-  
+
 //       if (userId) {
 //         setCurrentUserId(String(userId));
 //       }
-    
+
 //       let convo;
 //       try {
 //         convo = await chatClient.getConversationByUniqueName(convName);
 //       } catch {
 //         convo = await chatClient.createConversation({ uniqueName: convName });
 //       }
-   
+
 //       try {
 //         await convo.join();
 //       } catch (err: any) {
@@ -3224,17 +3185,16 @@ tickIcon: {
 //           console.error('Join error:', err);
 //         }
 //       }
-    
+
 //       setConversation(convo);
-  
+
 //       await new Promise(resolve => setTimeout(resolve, 50));
 //       await convo.sendMessage(filteredMessage);
-  
+
 //     } catch (error) {
 //       console.error('Message send failed:', error);
 //     }
 //   };
-  
 
 //   const getInitials = (firstName = '', lastName = '') =>
 //     (firstName?.[0] || '') + (lastName?.[0] || '');
@@ -3349,7 +3309,6 @@ tickIcon: {
 //     const year = d.getFullYear();
 //     return `${day}${suffix} ${monthShort} ${year}`;
 //   };
-
 
 //   const buildMessageList = (messages: any[]) => {
 
@@ -4197,8 +4156,6 @@ tickIcon: {
 //                 </TouchableOpacity>
 //               </View> */}
 
-
-
 //               {chatUser?.blocked_you ? (
 //                 <View style={styles.blockBanner}>
 //                   <Image
@@ -4279,7 +4236,6 @@ tickIcon: {
 //   );
 // };
 
-
 // export default MessagesIndividualScreen;
 
 // const styles = StyleSheet.create({
@@ -4338,8 +4294,6 @@ tickIcon: {
 //     bottom: 0,
 //     borderRadius: 24,
 //   },
-
-
 
 //   /* ===== Blocked Banner ===== */
 //   blockBanner: {
