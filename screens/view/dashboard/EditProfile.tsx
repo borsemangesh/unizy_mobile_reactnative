@@ -94,6 +94,9 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     // profile:''
   });
 
+  const [intialfirstname,setintialfirstname]=useState('');
+  const [intiallastname,setinitiallastname]=useState('');
+
   const [initialProfile, setInitialProfile] = useState<UserMeta | null>(null);
 
   const [showPopup1, setShowPopup1] = useState(false);
@@ -216,6 +219,9 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
         if (response.ok) {
           const user = data.data;
+
+          setintialfirstname(user.firstname ?? '');
+          setinitiallastname(user.lastname ?? '');
 
           setUserMeta({
             firstname: user.firstname ?? null,
@@ -530,7 +536,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
               },
             ],
           });
-        }, 3000);
+        }, 2500);
       } else {
         showToast(
           t(data?.message) || 'Failed to update profile.Please try again',
@@ -1308,8 +1314,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                     <View style={styles.initialsCircle}>
                       <Text allowFontScaling={false} style={styles.initialsText}>
                         {getInitials(
-                          userMeta?.firstname ?? 'A',
-                          userMeta?.lastname ?? 'W',
+                          intialfirstname ?? 'A',
+                          intiallastname ?? 'A',
                         )}
                       </Text>
                     </View>

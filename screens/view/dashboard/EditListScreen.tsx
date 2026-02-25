@@ -357,10 +357,10 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
             value: data.description || '',
             alias_name: 'description',
           };
-          initialValues.quantity = {
-            value: data.remaining_quantity ?? '',
-            alias_name: 'quantity',
-          };
+          // initialValues.quantity = {
+          //   value: data.remaining_quantity ?? '',
+          //   alias_name: 'quantity',
+          // };
           (initialValues.service_duration = {
             value: data.hours ?? '',
             alias_name: 'service_duration',
@@ -1249,23 +1249,12 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                 keyboardType={rnKeyboardType}
                 selectionColor={'#F5F5F5'}
                 cursorColor="#F5F5F5"
-                value={isPriceField && rawValue ? `£ ${rawValue}` : rawValue}
-
-                // onChangeText={text => {
-                //   let value = text;
-
-                //   if (alias_name?.toLowerCase() === 'quantity') {
-                //     if (value === '0') return;
-                //   }
-
-                //   if (isPriceField) {
-                //     const cleaned = text.replace(/£\s?/g, '');
-                //     handleValueChange(param.id, alias_name, cleaned);
-                //   } else {
-                //     handleValueChange(param.id, alias_name, text);
-                //   }
-                // }}
-
+                //value={isPriceField && rawValue ? `£ ${rawValue}` : rawValue}
+                value={
+                  isPriceField && rawValue
+                    ? `£ ${String(rawValue)}`
+                    : String(rawValue ?? '')
+                }
                 onChangeText={text => {
                   let value = text;
 
