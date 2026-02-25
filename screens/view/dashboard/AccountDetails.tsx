@@ -1050,7 +1050,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
 
 
             {selectedTab === "Cards" && (
-                <View style={{ flex: 1, paddingHorizontal: 16,paddingVertical:10 }}>
+                <View style={{ flex: 1, paddingHorizontal: 16,paddingVertical:10 ,height: 900,maxHeight: 900}}>
                 {loading ? (
                   <ActivityIndicator size="large" color="#fff" />
                 ) : savedCards.length === 0 ? (
@@ -1058,11 +1058,6 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                     <View
                       style={[
                         styles.emptyContainer,
-                        {
-                          //height: '90%',
-                          paddingBottom: Platform.OS === 'ios' ? 80 : 80
-
-                        }
                       ]}
                     >
                       <Image
@@ -1278,11 +1273,12 @@ const styles = StyleSheet.create({
    },
 
   emptyWrapper: {
-    flex: 1,
+    // flex: 1,
     width: '100%',
+    height: Platform.OS === 'ios' ? '70%' : '75%'
   },
   emptyContainer: {
-    flex: 1,
+    // flex: 1,
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
@@ -1290,6 +1286,9 @@ const styles = StyleSheet.create({
     borderWidth: 0.3,
     borderColor: 'rgba(255, 255, 255, 0.08)',
     borderRadius: 24,
+    paddingBottom: Platform.OS === 'ios' ? 10 : 80,
+    
+    height: '97%'
   },
 
   emptyImage: {
