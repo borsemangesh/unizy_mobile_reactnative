@@ -53,7 +53,6 @@ import Loader from '../../utils/component/Loader';
 import dayjs from 'dayjs';
 import ImageViewing from 'react-native-image-viewing';
 import React from 'react';
-import FastImage from 'react-native-fast-image';
 
 type MyListingDetailsProps = {
   navigation: any;
@@ -634,12 +633,6 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
     );
   }
 
-  useEffect(() => {
-    previewImages.forEach((image: any) => {
-      FastImage.preload([{ uri: image.uri }]);
-    });
-  }, [previewImages]);
-
   return (
     <>
       <ImageViewerModal
@@ -1014,15 +1007,11 @@ const ImageViewerModal = React.memo(
           source: ImageSourcePropType;
           style: any;
         }) => (
-          <FastImage
-            source={{
-              uri: source.uri,
-              priority: FastImage.priority.high,
-              cache: FastImage.cacheControl.immutable,
-            }}
-            style={style}
-            resizeMode={FastImage.resizeMode.contain}
-          />
+           <Image
+                      source={source}
+                      style={style}
+                      resizeMode="contain"
+                    />
         )}
         FooterComponent={({ imageIndex }) => (
           <View

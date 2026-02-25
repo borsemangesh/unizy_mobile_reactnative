@@ -103,6 +103,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
         }
 
         const url = `${MAIN_URL.baseUrl}user/user-profile/${userId}`;
+        console.log(url)
         const response = await fetch(url, {
           method: 'GET',
           headers: {

@@ -31,7 +31,7 @@ import {
   shortshowToast,
 } from '../../utils/component/ShortCustomToastManager';
 import ImageViewing from 'react-native-image-viewing';
-import FastImage from 'react-native-fast-image';
+// import FastImage from 'react-native-fast-image';
 
 import AnimatedReanimated, {
   useSharedValue,
@@ -583,11 +583,11 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     ];
   }, [detail]);
 
-  useEffect(() => {
-    previewImages.forEach((image: any) => {
-      FastImage.preload([{ uri: image.uri }]);
-    });
-  }, [previewImages]);
+  // useEffect(() => {
+  //   previewImages.forEach((image: any) => {
+  //     FastImage.preload([{ uri: image.uri }]);
+  //   });
+  // }, [previewImages]);
 
   return (
     <>
@@ -1463,14 +1463,10 @@ const ImageViewerModal = React.memo(
           source: ImageSourcePropType;
           style: any;
         }) => (
-          <FastImage
-            source={{
-              uri: source.uri,
-              priority: FastImage.priority.high,
-              cache: FastImage.cacheControl.immutable,
-            }}
+           <Image
+            source={source}
             style={style}
-            resizeMode={FastImage.resizeMode.contain}
+            resizeMode="contain"
           />
         )}
         FooterComponent={({ imageIndex }) => (

@@ -268,6 +268,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
       }
 
       const url = MAIN_URL.baseUrl + 'transaction/mysaved-cards';
+      console.log(url)
       const res = await fetch(url, {
         method: 'GET',
         headers: {
