@@ -991,28 +991,66 @@ const ImageViewerModal = React.memo(
     onChangeIndex,
   }: ImageViewerModalProps) => {
     return (
-      <ImageViewing
+      
+      // <ImageViewing
+      //   images={images}
+      //   imageIndex={index} // only initial index
+      //   visible={visible}
+      //   backgroundColor="black"
+      //   animationType="fade"
+      //   swipeToCloseEnabled
+      //   doubleTapToZoomEnabled
+      //   onRequestClose={onClose}
+      //   renderImage={({
+      //     source,
+      //     style,
+      //   }: {
+      //     source: ImageSourcePropType;
+      //     style: any;
+      //   }) => (
+      //      <Image
+      //                 source={source}
+      //                 style={style}
+      //                 resizeMode="contain"
+      //               />
+      //   )}
+      //   FooterComponent={({ imageIndex }) => (
+      //     <View
+      //       style={{
+      //         position: 'absolute',
+      //         bottom: 30,
+      //         width: '100%',
+      //         alignItems: 'center',
+      //       }}
+      //     >
+      //       {/* DOT INDICATOR */}
+      //       <View style={{ flexDirection: 'row', marginBottom: 15 }}>
+      //         {images.map((_: any, i: any) => (
+      //           <View
+      //             key={i}
+      //             style={{
+      //               width: 8,
+      //               height: 8,
+      //               borderRadius: 4,
+      //               marginHorizontal: 4,
+      //               backgroundColor:
+      //                 i === imageIndex ? '#FFFFFF' : 'rgba(255,255,255,0.4)',
+      //             }}
+      //           />
+      //         ))}
+      //       </View>
+      //     </View>
+      //   )}
+      // />
+       <ImageViewing
         images={images}
-        imageIndex={index} // only initial index
+        imageIndex={index}
         visible={visible}
         backgroundColor="black"
         animationType="fade"
         swipeToCloseEnabled
         doubleTapToZoomEnabled
         onRequestClose={onClose}
-        renderImage={({
-          source,
-          style,
-        }: {
-          source: ImageSourcePropType;
-          style: any;
-        }) => (
-           <Image
-                      source={source}
-                      style={style}
-                      resizeMode="contain"
-                    />
-        )}
         FooterComponent={({ imageIndex }) => (
           <View
             style={{
@@ -1022,9 +1060,8 @@ const ImageViewerModal = React.memo(
               alignItems: 'center',
             }}
           >
-            {/* DOT INDICATOR */}
             <View style={{ flexDirection: 'row', marginBottom: 15 }}>
-              {images.map((_: any, i: any) => (
+              {images.map((_, i) => (
                 <View
                   key={i}
                   style={{
@@ -1033,7 +1070,9 @@ const ImageViewerModal = React.memo(
                     borderRadius: 4,
                     marginHorizontal: 4,
                     backgroundColor:
-                      i === imageIndex ? '#FFFFFF' : 'rgba(255,255,255,0.4)',
+                      i === imageIndex
+                        ? '#FFFFFF'
+                        : 'rgba(255,255,255,0.4)',
                   }}
                 />
               ))}

@@ -302,9 +302,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
     const fallbackImage = require('../../../assets/images/drone.png');
 
     if (detail?.profileshowinview) {
-      const initials = `${detail?.createdby?.firstname?.[0] ?? ''}${
-        detail?.createdby?.lastname?.[0] ?? ''
-      }`.toUpperCase();
+      const initials = `${detail?.createdby?.firstname?.[0] ?? ''}${detail?.createdby?.lastname?.[0] ?? ''
+        }`.toUpperCase();
 
       return (
         <ImageBackground
@@ -383,7 +382,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
               return (
                 <TouchableOpacity
                   activeOpacity={0.9}
-                  disabled={previewImages.length === 0} 
+                  disabled={previewImages.length === 0}
                   onPress={() => {
                     console.log('index: ', index);
                     setViewerState({
@@ -534,7 +533,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
         await AsyncStorage.removeItem('finalamount');
         await AsyncStorage.removeItem('quantitycount');
-      
+
         await AsyncStorage.setItem(
           'last_order_id',
           data.data?.orderid?.toString() || '',
@@ -799,8 +798,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       ? 20
                       : height * 0.01
                     : Platform.OS === 'ios'
-                    ? 75
-                    : height * 0.07,
+                      ? 75
+                      : height * 0.07,
               },
             ]}
           >
@@ -818,39 +817,38 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                         <Text allowFontScaling={false} style={styles.priceText}>
                           {detail?.category?.id === 2
                             ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t(
-                                'hr',
-                              )}`
+                              'hr',
+                            )}`
                             : detail?.category?.id === 4
-                            ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t(
+                              ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t(
                                 'week',
                               )}`
-                            : detail?.category?.id === 5
-                            ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t(
-                                'session',
-                              )}`
-                            : `£${Number(detail?.price ?? 0).toFixed(2)}`}
+                              : detail?.category?.id === 5
+                                ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t(
+                                  'session',
+                                )}`
+                                : `£${Number(detail?.price ?? 0).toFixed(2)}`}
                         </Text>
                       </>
                     )}
                     {(detail?.category_id === 2 ||
                       detail?.category_id === 5) && (
-                      <View style={styles.datePosted1}>
-                        <Image
-                          source={require('../../../assets/images/duration_info.png')}
-                          style={{ height: 16, width: 16 }}
-                        />
-                        <Text allowFontScaling={false} style={styles.datetext1}>
-                          {t('service_duration')}:{' '}
-                          <Text style={styles.durationValue}>
-                            {detail?.hours
-                              ? `${detail.hours} ${
-                                  detail.hours > 1 ? t('hours') : t('hour')
+                        <View style={styles.datePosted1}>
+                          <Image
+                            source={require('../../../assets/images/duration_info.png')}
+                            style={{ height: 16, width: 16 }}
+                          />
+                          <Text allowFontScaling={false} style={styles.datetext1}>
+                            {t('service_duration')}:{' '}
+                            <Text style={styles.durationValue}>
+                              {detail?.hours
+                                ? `${detail.hours} ${detail.hours > 1 ? t('hours') : t('hour')
                                 }`
-                              : `1 ${t('hour')}`}
+                                : `1 ${t('hour')}`}
+                            </Text>
                           </Text>
-                        </Text>
-                      </View>
-                    )}
+                        </View>
+                      )}
                   </View>
 
                   <View
@@ -954,12 +952,12 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                             style={[styles.new, { marginTop: 0 }]}
                           >
                             {param.param_value.startDate &&
-                            param.param_value.endDate
+                              param.param_value.endDate
                               ? `${dayjs(param.param_value.startDate).format(
-                                  'DD-MM-YYYY',
-                                )} - ${dayjs(param.param_value.endDate).format(
-                                  'DD-MM-YYYY',
-                                )}`
+                                'DD-MM-YYYY',
+                              )} - ${dayjs(param.param_value.endDate).format(
+                                'DD-MM-YYYY',
+                              )}`
                               : '—'}
                           </Text>
                         ) : (
@@ -1007,9 +1005,8 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       <View style={{ width: '80%', gap: 0 }}>
                         <Text allowFontScaling={false} style={styles.userName}>
                           {detail?.createdby
-                            ? `${detail.createdby.firstname || ''} ${
-                                detail.createdby.lastname || ''
-                              }`
+                            ? `${detail.createdby.firstname || ''} ${detail.createdby.lastname || ''
+                            }`
                             : 'Unknown User'}
                         </Text>
 
@@ -1130,7 +1127,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                 )}
 
                 {detail?.isreported && (
-                  <TouchableOpacity onPress={() => {}}>
+                  <TouchableOpacity onPress={() => { }}>
                     <View style={styles.reportButtonCard}>
                       <Image
                         source={require('../../../assets/images/report.png')}
@@ -1447,28 +1444,65 @@ const ImageViewerModal = React.memo(
     onChangeIndex,
   }: ImageViewerModalProps) => {
     return (
+
+      // <ImageViewing
+      //   images={images}
+      //   imageIndex={index} 
+      //   visible={visible}
+      //   backgroundColor="black"
+      //   animationType="fade"
+      //   swipeToCloseEnabled
+      //   doubleTapToZoomEnabled
+      //   onRequestClose={onClose}
+      //   renderImage={({
+      //     source,
+      //     style,
+      //   }: {
+      //     source: ImageSourcePropType;
+      //     style: any;
+      //   }) => (
+      //      <Image
+      //       source={source}
+      //       style={style}
+      //       resizeMode="contain"
+      //     />
+      //   )}
+      //   FooterComponent={({ imageIndex }) => (
+      //     <View
+      //       style={{
+      //         position: 'absolute',
+      //         bottom: 30,
+      //         width: '100%',
+      //         alignItems: 'center',
+      //       }}
+      //     >
+      //       <View style={{ flexDirection: 'row', marginBottom: 15 }}>
+      //         {images.map((_: any, i: any) => (
+      //           <View
+      //             key={i}
+      //             style={{
+      //               width: 8,
+      //               height: 8,
+      //               borderRadius: 4,
+      //               marginHorizontal: 4,
+      //               backgroundColor:
+      //                 i === imageIndex ? '#FFFFFF' : 'rgba(255,255,255,0.4)',
+      //             }}
+      //           />
+      //         ))}
+      //       </View>
+      //     </View>
+      //   )}
+      // />
       <ImageViewing
         images={images}
-        imageIndex={index} 
+        imageIndex={index}
         visible={visible}
         backgroundColor="black"
         animationType="fade"
         swipeToCloseEnabled
         doubleTapToZoomEnabled
         onRequestClose={onClose}
-        renderImage={({
-          source,
-          style,
-        }: {
-          source: ImageSourcePropType;
-          style: any;
-        }) => (
-           <Image
-            source={source}
-            style={style}
-            resizeMode="contain"
-          />
-        )}
         FooterComponent={({ imageIndex }) => (
           <View
             style={{
@@ -1479,7 +1513,7 @@ const ImageViewerModal = React.memo(
             }}
           >
             <View style={{ flexDirection: 'row', marginBottom: 15 }}>
-              {images.map((_: any, i: any) => (
+              {images.map((_, i) => (
                 <View
                   key={i}
                   style={{
@@ -1488,7 +1522,9 @@ const ImageViewerModal = React.memo(
                     borderRadius: 4,
                     marginHorizontal: 4,
                     backgroundColor:
-                      i === imageIndex ? '#FFFFFF' : 'rgba(255,255,255,0.4)',
+                      i === imageIndex
+                        ? '#FFFFFF'
+                        : 'rgba(255,255,255,0.4)',
                   }}
                 />
               ))}
@@ -1496,6 +1532,7 @@ const ImageViewerModal = React.memo(
           </View>
         )}
       />
+
     );
   },
 );
