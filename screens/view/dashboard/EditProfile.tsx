@@ -1353,7 +1353,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   allowFontScaling={false}
                   style={styles.input}
                   placeholder={t('enter_first_name')}
-                  placeholderTextColor="#ccc"
+                  placeholderTextColor="rgba(255, 255, 255, 0.48)"
                 />
               </View>
 
@@ -1372,7 +1372,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   allowFontScaling={false}
                   style={styles.input}
                   placeholder={t('enter_last_name')}
-                  placeholderTextColor="#ccc"
+                  placeholderTextColor="rgba(255, 255, 255, 0.48)"
                 />
               </View>
 
@@ -1573,7 +1573,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
                   style={styles.input}
                   keyboardType="default"
                   placeholder={t('enter_postal_code')}
-                  placeholderTextColor="#ccc"
+                  placeholderTextColor="rgba(255, 255, 255, 0.48)"
                 />
               </View>
 

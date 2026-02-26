@@ -522,7 +522,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                   }
                   style={styles.input}
                   placeholder={t('enter_current_password')}
-                  placeholderTextColor="#ccc"
+                  placeholderTextColor="rgba(255, 255, 255, 0.48)"
                 />
 
                 <TouchableOpacity
@@ -557,7 +557,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                   }
                   style={styles.input}
                   placeholder={t('enter_new_password')}
-                  placeholderTextColor="#ccc"
+                  placeholderTextColor="rgba(255, 255, 255, 0.48)"
                 />
 
                 <TouchableOpacity
@@ -591,7 +591,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
                   }
                   style={styles.input}
                   placeholder={t('enter_confirm_password')}
-                  placeholderTextColor="#ccc"
+                  placeholderTextColor="rgba(255, 255, 255, 0.48)"
                 />
 
                 <TouchableOpacity
