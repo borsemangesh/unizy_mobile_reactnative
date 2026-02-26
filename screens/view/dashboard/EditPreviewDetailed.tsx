@@ -518,8 +518,6 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
 
 
   const handleListPress = async () => {
-
-
     setIsLoading(true)
     try {
 
@@ -553,23 +551,13 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
         }
       });
 
-      // const dataArray = nonImageFields
-      //   .filter(([key]) => !isNaN(Number(key)))
-      //   .map(([key, obj]) => ({
-      //     id: Number(key),
-      //     param_value: obj.value !== undefined && obj.value !== null && obj.value !== "" ? obj.value : null,
-      //   }))
-      //   .filter(i => i.param_value !== null);
-
       const dataArray = nonImageFields
         .map(([key, obj]: any) => {
           const value = obj.value;
           const id = Number(key);
 
-          // ❌ skip invalid ids early
           if (!id) return null;
 
-          // ✅ DATE FIELD HANDLING
           if (
             value &&
             typeof value === 'object' &&
@@ -585,22 +573,18 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
             };
           }
 
-          // ✅ NORMAL FIELD
           const payload: any = {
             id,
             param_value: value,
           };
 
-          // 👇 include other_text only if present
           if (obj.other_text && String(obj.other_text).trim() !== '') {
             payload.other_text = obj.other_text;
           }
 
           return payload;
         })
-        // ✅ REMOVE null / invalid id entries
         .filter(Boolean);
-
 
       const createPayload = {
         category_id: productId,
@@ -647,52 +631,6 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
 
       const isLocalImage = (uri: string) =>
         uri.startsWith('file://') || uri.startsWith('content://');
-
-
-
-      // for (const [param_id, images] of imageFields) {
-      //   // ✅ only upload NEW local images
-      //   const newImages = images.filter(
-      //     img => img?.uri && isLocalImage(img.uri)
-      //   );
-
-      //   if (newImages.length === 0) continue;
-
-      //   const form = new FormData();
-
-      //   for (const image of newImages) {
-      //     form.append("files", {
-      //       uri: image.uri,
-      //       type: image.type || "image/jpeg",
-      //       name: image.name || `image_${Date.now()}.jpg`,
-      //     } as any);
-      //   }
-
-      //   form.append("feature_id", String(feature_id));
-      //   form.append("param_id", String(param_id));
-
-      //   const uploadRes = await fetch(
-      //     `${MAIN_URL.baseUrl}category/featurelist/image-update`,
-      //     {
-      //       method: "POST",
-      //       headers: {
-      //         Authorization: `Bearer ${token}`,
-      //       },
-      //       body: form,
-      //     }
-      //   );
-
-      //   const uploadJson = await uploadRes.json();
-
-      //   const isSuccess = uploadRes.ok;
-
-      //   showToast(
-      //     t(uploadJson?.message || "Image upload failed"),
-      //     isSuccess ? "success" : "error"
-      //   );
-
-      //   if (!isSuccess) return;
-      // }
 
 
       for (const [param_id, images] of imageFields) {
@@ -752,9 +690,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
         if (!isSuccess) return;
       }
 
-      // 3️⃣ Clear deleted IDs after successful upload
       await AsyncStorage.removeItem('deletedImageIds');
-      //setDeletedImageIds([]);
 
       setShowPopup(true);
 
@@ -1300,7 +1236,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
             try {
               const form = typeof storedForm === 'string' ? JSON.parse(storedForm) : storedForm;
               const isFeatured = form?.["13"]?.value === true || form?.["13"]?.value === 'true';
-              if (categoryid === Number(4)) {
+              if (categoryid === Number(4) && accomodation_amount >0) {
                 return `${t('update')} for £${accomodation_amount.toFixed(2)}`;
               }
               return t('update');
