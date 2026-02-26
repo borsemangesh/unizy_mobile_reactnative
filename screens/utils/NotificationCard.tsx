@@ -43,10 +43,11 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
 
   const handleNavigation = () => {
     if (templateName === 'ItemSold') {
-      navigation.navigate('ViewListingDetails', {
+      navigation.navigate('ListingDetails', {
         shareid: typeid,
         catagory_id: categoryid,
         catagory_name: typename,
+        reviews: reviews
       });
     } else if (templateName === 'FeatureListed') {
       navigation.navigate('ListingDetails', {
