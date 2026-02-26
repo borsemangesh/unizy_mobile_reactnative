@@ -782,5 +782,6 @@
   "Cards":"Cards",
   "Bank":"Bank",
   "no_cards_found":"No Cards Found",
-  "acc_message":"will be charged for listing this accomodation availability."
+  "acc_message":"will be charged for listing this accomodation availability.",
+  "email_error":"You are not allowed to include URLs or email addresses in the message."
 }
