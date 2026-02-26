@@ -8,6 +8,7 @@ import { showToast } from './component/NewCustomToastManager';
 import Loader from './component/Loader';
 import { Constant } from './Constant';
 import { useTranslation } from 'react-i18next';
+import { isPlatformPaySupported, PlatformPay } from '@stripe/stripe-react-native';
 
 
 type RootStackParamList = {
@@ -60,7 +61,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation }) => {
         };
       }
 
-
+      console.log('URL:', url);
 
       const response = await fetch(url, {
         method: 'POST',
@@ -73,6 +74,8 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation }) => {
 
 
       const responseJson = await response.json();
+          console.log('responseJson:', JSON.stringify(responseJson));
+
 
       const clientSecret = responseJson.data;
       const ephemeralKey = responseJson.metadata?.ephemeralKey;
@@ -82,7 +85,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation }) => {
 
 
       if (clientSecret) {
-     
+
         await AsyncStorage.setItem("finalamount", String(famount));
 
         await AsyncStorage.setItem("paymentintent_id", paymentintent_id);
@@ -94,6 +97,9 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation }) => {
         };
 
       }
+      else {
+      console.log('No clientSecret in response');
+    }
     } catch (err) {
       Alert.alert('Payment error', (err as Error).message);
     } finally {
@@ -103,118 +109,100 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation }) => {
 
   const [processing, setProcessing] = useState(true);
 
-  // const initializePaymentSheet = async () => {
-  //   setProcessing(true);
-    
-  //   const result = await handlePayPress();
-  //   if (!result) {
-  //     setProcessing(false);
-  //     return;
-  //   }
-
-  //   const { clientSecret, ephemeralKey, customerId } = result;
-
-  //   const { error } = await initPaymentSheet({
-  //     customerId: customerId,
-  //     customerEphemeralKeySecret: ephemeralKey,
-  //     paymentIntentClientSecret: clientSecret,
-  //     merchantDisplayName: "Your Company",
-  //     allowsDelayedPaymentMethods: true,
-  //   });
-
-
-  //   if (!error) {
-  //     setLoading(false);
-  //     openSheet();
-  //   } else {
-  //     setLoading(false);
-  //     showToast(Constant.PAYMENT_FAIL, "error");
-  //   }
-  // };
+  useEffect(() => {
+    const check = async () => {
+      const supported = await isPlatformPaySupported({
+        googlePay: {
+          testEnv: true,
+          // merchantCountryCode: 'GB',
+          // currencyCode: 'GBP',
+        }
+      });
+      console.log('GPay supported on this device:', supported);
+    };
+    check();
+  }, []);
 
   const initializePaymentSheet = async () => {
     setProcessing(true);
-  
+
     const result = await handlePayPress();
     if (!result) {
+      console.log('No result from handlePayPress');
       setProcessing(false);
       return;
     }
-  
+    console.log('handlePayPress result:', JSON.stringify(result));
+
+
     const { clientSecret, ephemeralKey, customerId } = result;
-  
+
+    console.log('customerId:', customerId);
+    console.log('ephemeralKey:', ephemeralKey);
+    console.log('clientSecret:', clientSecret);
+
     const { error } = await initPaymentSheet({
       customerId,
       customerEphemeralKeySecret: ephemeralKey,
       paymentIntentClientSecret: clientSecret,
       merchantDisplayName: "Your Company",
       allowsDelayedPaymentMethods: true,
+      // returnURL: 'unizy://stripe-redirect',
+
+
+      applePay: {
+        merchantCountryCode: 'GB', 
+        //merchantCountryCode: 'IN',
+      },
+
+      googlePay: {
+         merchantCountryCode: 'GB',
+         currencyCode: "GBP",
+        //merchantCountryCode: 'IN',
+        //currencyCode: "INR",
+        testEnv: __DEV__,
+      },
     });
-  
+    console.log('initPaymentSheet error:', JSON.stringify(error));
+
     if (!error) {
       openSheet();
     } else {
       setProcessing(false);
       showToast(Constant.PAYMENT_FAIL, "error");
+      console.log('initPaymentSheet error:', JSON.stringify(error));
     }
   };
-  
 
-
-  // const openSheet = async () => {
-  //   try {
-  //     const { error } = await presentPaymentSheet();
-
-  //     if (error) {
-  //       if (error.code === 'Canceled') {
- 
-  //         navigation.goBack();
-  //         return;
-  //       }
-
-
-  //       showToast(t(Constant.PAYMENT_FAIL), 'error');
-  //       return;
-  //     }
-
-  //     showToast(t(Constant.PAYMENT_COMPLETE), 'success');
-  //     if (onSuccess) await onSuccess();
-  //     navigation.goBack();
-
-  //   } catch (e) {
-  //     console.error('Unexpected error during payment:', e);
-  //     showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
-  //   }
-  // };
 
   const openSheet = async () => {
     try {
       const { error } = await presentPaymentSheet();
-  
+
       if (error) {
         setProcessing(false);
-  
+
         if (error.code === 'Canceled') {
           navigation.goBack();
           return;
         }
-  
+
         showToast(t(Constant.PAYMENT_FAIL), 'error');
         return;
       }
-  
+
       // ✅ Keep loader ON until navigation finishes
       showToast(t(Constant.PAYMENT_COMPLETE), 'success');
-  
+
       if (onSuccess) await onSuccess();
-  
+
       navigation.goBack();
     } catch (e) {
       setProcessing(false);
       showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
     }
   };
-  
+
 
   useEffect(() => {
     initializePaymentSheet();
@@ -231,15 +219,15 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation }) => {
     //   {/* <View /> */}
     // </ImageBackground>
     <ImageBackground
-    source={require("../../assets/images/backimg.png")}
-    style={styles.bg}
-  >
-    {processing && <Loader />}
+      source={require("../../assets/images/backimg.png")}
+      style={styles.bg}
+    >
+      {processing && <Loader />}
 
-    {!processing && (
-      <Loader/>
-    )}
-  </ImageBackground>
+      {!processing && (
+        <Loader />
+      )}
+    </ImageBackground>
   );
 
 };
