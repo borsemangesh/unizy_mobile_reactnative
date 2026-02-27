@@ -189,7 +189,7 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
               <View style={styles.login_container}>
                 <TextInput
                 cursorColor='#FFFFFF'
-                selectionColor='#FFFFFFS'
+                selectionColor='#FFFFFF'
                   allowFontScaling={false}
                   style={[
                     styles.personalEmailID_TextInput,

@@ -1166,8 +1166,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               ]}
               placeholder={placeholderText}
               multiline={true}
-              selectionColor={'#FFFFFF'}
-              cursorColor="#FFFFFF"
+              selectionColor={'#F5F5F5F5'}
+              cursorColor="#F5F5F5F5"
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               keyboardType={rnKeyboardType}
               value={formValues[param.id]?.value || ''}
