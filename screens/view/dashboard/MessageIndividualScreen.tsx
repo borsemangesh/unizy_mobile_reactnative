@@ -70,6 +70,7 @@ type RouteParams = {
     blocked_you: boolean;
   };
   conversationSid: string;
+  unreadCount: number,
 };
 
 const conversationCache: any = {};
@@ -176,6 +177,7 @@ const MessagesIndividualScreen = ({
     currentUserIdList,
     source,
     conversationSid,
+    unreadCount,
   } = route.params;
 
   const chatUser = source === 'sellerPage' ? sellerData : members;
@@ -281,6 +283,7 @@ const MessagesIndividualScreen = ({
     urlRegex.test(filtered) ||
     domainRegex.test(filtered)
   ) {
+    Keyboard.dismiss();
     showToast(t('email_error'), 'error');
   }
 
@@ -489,6 +492,7 @@ const MessagesIndividualScreen = ({
               },
               15000,
             );
+            console.log("converstionFetect: ",JSON.stringify({ feature_id: sellerData.featureId,unreadcount: unreadCount }));
 
             if (!res.ok) {
               const errorData = await res.json().catch(() => ({}));
@@ -696,6 +700,11 @@ const MessagesIndividualScreen = ({
 
       const url = `${MAIN_URL.baseUrl}twilio/convo-read-update`;
 
+      console.log("convo-read-update: ",url,JSON.stringify({
+        twilio_conversation_sid: sid,
+        unreadcount: unreadCount
+      }));
+
       const res = await fetchWithTimeout(
         url,
         {
@@ -706,6 +715,7 @@ const MessagesIndividualScreen = ({
           },
           body: JSON.stringify({
             twilio_conversation_sid: sid,
+            unreadcount: unreadCount
           }),
         },
         10000,

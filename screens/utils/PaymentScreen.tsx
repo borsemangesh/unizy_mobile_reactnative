@@ -150,10 +150,10 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation }) => {
       // returnURL: 'unizy://stripe-redirect',
 
 
-      applePay: {
-        merchantCountryCode: 'GB', 
-        //merchantCountryCode: 'IN',
-      },
+      // applePay: {
+      //   merchantCountryCode: 'GB', 
+      //   //merchantCountryCode: 'IN',
+      // },
 
       googlePay: {
          merchantCountryCode: 'GB',

@@ -124,7 +124,14 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
 
   };
 
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchUserChatData();
+    }, [])
+  );
+
    useEffect(() => {
+
     let isMounted = true;
     const initTwilioStr = async () => {
       try {
@@ -164,7 +171,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
     };
  
     chatClient.on('messageAdded', handleMessageAdded);
- 
+    fetchUserChatData();
     return () => {
       chatClient.off('messageAdded', handleMessageAdded);
     };
@@ -310,6 +317,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
                 currentUserIdList: chat.current_user_id,
                 conversationSid: chat.twilio_conversation_sid,
                 source: 'chatList',
+                unreadCount: chat.unreadcount, 
               });
             }}
           >
