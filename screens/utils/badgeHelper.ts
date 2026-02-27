@@ -30,6 +30,7 @@ export async function updateBadgeFromFCM(remoteMessage: any) {
   if (Platform.OS === 'ios') {
     const badgeCount =
       Number(remoteMessage?.apns?.payload?.aps?.badge || 0);
+      notifee.setBadgeCount(0)
     await notifee.setBadgeCount(badgeCount);
   }
 }

@@ -19,6 +19,7 @@ import {
   StatusBar,
   Modal,
   TouchableWithoutFeedback,
+  useWindowDimensions,
 } from 'react-native';
 
 
@@ -462,7 +463,6 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
       try {
         const token = await AsyncStorage.getItem('userToken');
         if (!token) return;
-
         const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
  
 
@@ -729,7 +729,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
         rows.push(
           <Animated.View
             style={[
-              { transform: [{ translateY: categorytranslateY }] },{paddingTop: 4},
+              { transform: [{ translateY: categorytranslateY }] },{paddingTop: 2},
             ]}
             key={products[0].id}
           >
@@ -749,7 +749,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
               <Animated.View
                 key={item.id}
                 style={{
-                  flex: 1,paddingTop: 4,
+                  flex: 1,paddingTop: 2,
                   transform: [
                     {
                       translateX:
@@ -972,7 +972,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
             <Animated.View
               style={[{
                 transform: [{ translateY: cardSlideupAnimation }],
-              }, { paddingHorizontal: 20, paddingTop: 10, paddingBottom: 14 }]}
+              }, { paddingHorizontal: 20, paddingTop: 4, paddingBottom: 4 }]}
             >
               <Text allowFontScaling={false} style={styles.featuredText}>
                 {t('Featured_Listings')}
@@ -1005,7 +1005,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
             ) : (
               <ScrollView
                 directionalLockEnabled
-                style={{ paddingHorizontal: 10, paddingTop: 1, paddingBottom: 20,height: 380}}
+                style={{ paddingHorizontal:  10, paddingTop: 6, paddingBottom: 20,height: 380}}
                 horizontal
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}
@@ -1111,9 +1111,9 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
 
 
 
-
-
   const { t } = useTranslation();
+
+  
 
   return (
     <ImageBackground source={bgImage} style={styles.background}>
@@ -1301,14 +1301,16 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
               </AnimatedReanimated.ScrollView>
             </View>
           ) : (
-            <ScrollView
-              style={{ flex: 1}}
-              contentContainerStyle={{ paddingBottom: 20 }} 
-              showsVerticalScrollIndicator={false}
+            // <ScrollView
+            //   style={{ flex: 1}}
+            //   contentContainerStyle={{ paddingBottom: 20 }} 
+            //   showsVerticalScrollIndicator={false}
              
-            >
+            // >
+            <>
               {renderActiveTabContent()}
-            </ScrollView> 
+              </>
+            // </ScrollView> 
           )}
         </KeyboardAvoidingView>
 

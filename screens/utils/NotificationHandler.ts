@@ -1,6 +1,7 @@
 import { Platform } from 'react-native';
 import { navigate, resetNavigation } from '../view/NavigationService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MAIN_URL } from './APIConstant';
 export const navigationReady = { isReady: false };
 
 export const handleNotification = async (
@@ -54,7 +55,7 @@ export const handleNotification = async (
         notificationData?.feature_id ||
         notificationData?.data?.feature_id ||
         null;
-  
+        readUnRead();
       if (Platform.OS === 'ios') {
         resetNavigation('ViewListingDetails', {
           shareid: featureId,
@@ -77,7 +78,7 @@ export const handleNotification = async (
         notificationData?.feature_id ||
         notificationData?.data?.feature_id ||
         null;
-
+        readUnRead();
       if (Platform.OS === 'ios') {
         resetNavigation('ListingDetails', {
           shareid: featureId,
@@ -99,6 +100,7 @@ export const handleNotification = async (
         notificationData?.feature_id ||
         notificationData?.data?.feature_id ||
         null;
+        readUnRead();
       if (Platform.OS === 'ios') {
         resetNavigation('MyOrders', {});
       } else {
@@ -112,6 +114,7 @@ export const handleNotification = async (
         notificationData?.feature_id ||
         notificationData?.data?.feature_id ||
         null;
+        readUnRead();
       if (Platform.OS === 'ios') {
         resetNavigation('ReviewDetails', {
           category_id: notificationData?.category_id,
@@ -132,6 +135,7 @@ export const handleNotification = async (
     }
 
     if (title == 'payout') {
+      readUnRead();
       if (Platform.OS === 'ios') {
         resetNavigation('Dashboard', {
           AddScreenBackactiveTab: 'Search',
@@ -148,6 +152,7 @@ export const handleNotification = async (
     }
 
     if (title == 'orderotp') {
+      readUnRead();
       if (Platform.OS === 'ios') {
         resetNavigation('Dashboard', {
           AddScreenBackactiveTab: 'Search',
@@ -248,6 +253,7 @@ export const handleNotification = async (
 
       setTimeout(
         () => {
+          readUnRead();
           if (Platform.OS === 'ios') {
             resetNavigation('MessagesIndividualScreen', params);
           } else {
@@ -277,3 +283,24 @@ export const handleNotification = async (
     console.error('Error handling notification:', error);
   }
 };
+
+const readUnRead= async() => {
+  const url = MAIN_URL.baseUrl + 'user/update-fcmbadge-count';
+  console.log("ReadUnRead: ",url);
+  const token = await AsyncStorage.getItem('userToken');
+  if (!token) return;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ unreadcount: 1 }),
+  });
+
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  
+}

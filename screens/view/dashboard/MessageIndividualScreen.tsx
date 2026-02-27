@@ -1,6 +1,7 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import notifee from '@notifee/react-native';
 
 import {
   Dimensions,
@@ -37,6 +38,8 @@ import Button from '../../utils/component/Button';
 import ButtonNew from '../../utils/component/ButtonNew';
 import MessageHeaderButton from '../../utils/component/MessageHeaderButton';
 import { NewCustomToastContainer,showToast } from '../../utils/component/NewCustomToastManager';
+import { updateBadgeFromFCM } from '../../utils/badgeHelper';
+import { getBadgeCount } from '../../utils/BadgeManager';
 
 const bgImage = require('../../../assets/images/backimg.png');
 const back = require('../../../assets/images/back.png');
@@ -715,7 +718,7 @@ const MessagesIndividualScreen = ({
           },
           body: JSON.stringify({
             twilio_conversation_sid: sid,
-            unreadcount: unreadCount
+            unreadcount: unreadCount !=0  ? unreadCount : 1
           }),
         },
         10000,
@@ -728,6 +731,13 @@ const MessagesIndividualScreen = ({
           errorData.message || res.statusText,
         );
       }
+
+      let badge = await getBadgeCount();
+      if(badge !=0){
+        badge = badge - unreadCount
+      }
+      console.log("badge: ",badge);
+      await notifee.setBadgeCount(badge);
     } catch (error: any) {
       if (error.name !== 'AbortError') {
         console.warn('markAsRead error:', error.message);

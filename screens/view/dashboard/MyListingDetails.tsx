@@ -892,7 +892,9 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
                       })()}
                     </Text>
 
-                    {detail?.params?.map((param: Param) => (
+                    {detail?.params
+                      ?.filter((param: Param) => param.field_type !== 'boolean')
+                      .map((param: Param) => (
                       <View
                         key={param.id}
                         style={{ marginTop: 4, marginBottom: 0 }}
@@ -948,6 +950,7 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
                               : '—'}
                           </Text>
                         ) : (
+                         
                           <Text
                             allowFontScaling={false}
                             style={[styles.new, { marginTop: 0 }]}
@@ -957,6 +960,12 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
                         )}
                       </View>
                     ))}
+
+
+                  
+
+
+
                   </View>
                 </View>
               </View>

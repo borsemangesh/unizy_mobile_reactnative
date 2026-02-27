@@ -34,17 +34,16 @@ function App() {
       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
     if (enabled) {
-      // console.log('Authorization status:', authStatus);
+     
     }
   }
 
   useEffect(() => {
     const initialize = async () => {
-      await initI18n();   // WAIT for i18n
+      await initI18n(); 
       setReady(true);
     };
     initialize();
-    // resetBadge();
   }, []);
 
 
@@ -82,7 +81,7 @@ function App() {
             const token = await messaging().getToken();
 
           } else {
-            // console.log("❌ Notification permission denied");
+            
           }
         }
 
@@ -143,8 +142,6 @@ function App() {
               }
             });
 
-
-
             const notificationConfig: any = {
               title,
               body,
@@ -170,6 +167,9 @@ function App() {
               const badgeCount = Number(remoteMessage.apns?.payload?.aps?.badge || 0);
               await notifee.setBadgeCount(badgeCount);
             }
+            if (Platform.OS === 'android') {
+              await notifee.displayNotification(notificationConfig);
+            }
           } catch (error) {
             console.error("❌ Error displaying notification:", error);
           }
@@ -179,13 +179,11 @@ function App() {
         unsubscribeForeground = notifee.onForegroundEvent(async ({ type, detail }) => {
           if (type === EventType.PRESS) {
 
-
-            // 🔒 SECURITY: Check if user is logged in before handling notification tap
             try {
               const isLogin = await AsyncStorage.getItem('ISLOGIN');
               if (isLogin !== 'true') {
 
-                return; // Don't navigate if user is logged out
+                return;
               }
             } catch (err) {
               console.warn('⚠️ Error checking login status:', err);

@@ -905,7 +905,9 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                       })()}
                     </Text>
 
-                    {detail?.params?.map((param: Param) => (
+                    {detail?.params
+                      ?.filter((param: Param) => param.field_type !== 'boolean')
+                      .map((param: Param) => (
                       <View
                         key={param.id}
                         style={{ marginTop: 4, marginBottom: 0 }}

@@ -124,11 +124,11 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
 
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchUserChatData();
-    }, [])
-  );
+  useEffect(() => {
+    fetchUserChatData();
+  }, []);
+
+  const isFirstRun = React.useRef(true);
 
    useEffect(() => {
 
