@@ -161,21 +161,68 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
     return () => { isMounted = false; };
   }, []);
  
+  // useEffect(() => {
+  //   if (!chatClient) return;
+ 
+  //   const handleMessageAdded = (msg: any) => {
+  //     // Refresh list when a new message arrives
+  //     console.log('Message received in list view, refreshing...');
+  //     fetchUserChatData(search, false);
+  //   };
+ 
+  //   chatClient.on('messageAdded', handleMessageAdded);
+  //   fetchUserChatData();
+  //   return () => {
+  //     chatClient.off('messageAdded', handleMessageAdded);
+  //   };
+  // }, [chatClient, search]);
+
   useEffect(() => {
     if (!chatClient) return;
- 
-    const handleMessageAdded = (msg: any) => {
-      // Refresh list when a new message arrives
-      console.log('Message received in list view, refreshing...');
-      fetchUserChatData(search, false);
+  
+    const handleMessageAdded = (message: any) => {
+      const conversationSid = message.conversation?.sid;
+      const messageBody = message.body;
+      const dateCreated = message.dateCreated;
+  
+      setStudentList((prevList: any[]) => {
+        if (!prevList) return prevList;
+  
+        const index = prevList.findIndex(
+          item => item.twilio_conversation_sid === conversationSid
+        );
+  
+        if (index === -1) return prevList;
+  
+        const updatedChat = { ...prevList[index] };
+  
+        // Update last message
+        updatedChat.last_message = {
+          body: messageBody,
+          dateCreated: dateCreated,
+        };
+  
+        // Increase unread count ONLY if not current user
+        if (message.author !== updatedChat.current_user_id) {
+          updatedChat.unreadcount =
+            (updatedChat.unreadcount || 0) + 1;
+        }
+  
+        // Remove from old position
+        const newList = [...prevList];
+        newList.splice(index, 1);
+  
+        // Add to top
+        return [updatedChat, ...newList];
+      });
     };
- 
+  
     chatClient.on('messageAdded', handleMessageAdded);
-    fetchUserChatData();
+  
     return () => {
       chatClient.off('messageAdded', handleMessageAdded);
     };
-  }, [chatClient, search]);
+  }, [chatClient]);
 
   useEffect(() => {
     fetchUserChatData('', true);

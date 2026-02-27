@@ -35,7 +35,9 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
 if (Platform.OS === 'ios') {
   // await incrementBadge();
 }
-
+if (Platform.OS === 'android') {
+  await incrementBadge();
+}
 
 if (Platform.OS === 'android' && !remoteMessage.notification) {
   await notifee.displayNotification({
