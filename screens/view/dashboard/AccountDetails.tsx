@@ -437,7 +437,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
         return;
       }
       showToast("Card added successfully ✅", "success");
-
+      fetchSavedCards();
       navigation.goBack();
     } catch (error: any) {
       showToast(error?.message || "Something went wrong", "error");
@@ -726,7 +726,8 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
           {tabs.map((tab) => (
             <TouchableOpacity
               key={tab}
-              style={[styles.tabItem, { width: tabWidth }]}
+              style={[styles.tabItem, { width: tabWidth,
+                 }]}
               activeOpacity={0.7}
               onPress={() => setSelectedTab(tab as any)}
             >
@@ -1408,7 +1409,9 @@ const styles = StyleSheet.create({
   },
 
   tabItem: {
-
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   iconWrapper: {
     height: 50,
