@@ -1247,15 +1247,15 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
                 multiline={false}
                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                 keyboardType={rnKeyboardType}
-                selectionColor={'#F5F5F5'}
-                cursorColor="#F5F5F5"
+                selectionColor={'#FFFFFF'}
+                cursorColor="#FFFFFF"
                 //value={isPriceField && rawValue ? `£ ${rawValue}` : rawValue}
                 value={
                   isPriceField && rawValue
                     ? `£ ${String(rawValue)}`
                     : String(rawValue ?? '')
                 }
-                onChangeText={text => {
+                onChangeText={(text: any) => {
                   let value = text;
 
                   if (alias_name?.toLowerCase() === 'quantity') {
@@ -1353,8 +1353,8 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
               ]}
               placeholder={placeholderText}
               multiline={true}
-              cursorColor="#F5F5F5"
-              selectionColor="#F5F5F5"
+              selectionColor={'#F5F5F5F5'}
+              cursorColor="#F5F5F5F5"
               placeholderTextColor="rgba(255, 255, 255, 0.48)"
               keyboardType={rnKeyboardType}
               value={rawValue}

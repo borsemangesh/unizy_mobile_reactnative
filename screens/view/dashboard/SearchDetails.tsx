@@ -282,7 +282,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
   const handlePay = (overrideAmount?: number) => {
     if (detail?.category?.id === 3 && overrideAmount === undefined) {
-      setMultiSelectModal(prev => ({ ...prev, visible: true }));
+      setMultiSelectModal((prev:any) => ({ ...prev, visible: true }));
       return;
     }
 
@@ -373,7 +373,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
-            keyExtractor={(_, index) => index.toString()}
+            keyExtractor={(_:any, index:any) => index.toString()}
             onScroll={onScroll}
             scrollEventThrottle={16}
             renderItem={({ item, index }) => {
@@ -473,7 +473,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
 
       let updatedBookmarks;
       if (isCurrentlyBookmarked) {
-        updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
+        updatedBookmarks = bookmarkedIds.filter((id: number )=> id !== productId);
       } else {
         updatedBookmarks = [...bookmarkedIds, productId];
       }
@@ -1202,11 +1202,11 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
               subtitle={t('select_units')}
               selectedValues={formValues[multiSelectModal.fieldId!]?.value}
               onClose={() =>
-                setMultiSelectModal(prev => ({ ...prev, visible: false }))
+                setMultiSelectModal((prev: any) => ({ ...prev, visible: false }))
               }
               continueToPay={amount => {
                 handlePay(amount);
-                setMultiSelectModal(prev => ({ ...prev, visible: false }));
+                setMultiSelectModal((prev: any) => ({ ...prev, visible: false }));
               }}
               onSelect={selectedIds => {
                 const quantity = Array.isArray(selectedIds)
@@ -1505,7 +1505,7 @@ const ImageViewerModal = React.memo(
         swipeToCloseEnabled
         doubleTapToZoomEnabled
         onRequestClose={onClose}
-        FooterComponent={({ imageIndex }) => (
+        FooterComponent={({ imageIndex }: { imageIndex: number }) => (
           <View
             style={{
               position: 'absolute',
