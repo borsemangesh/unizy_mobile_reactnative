@@ -647,7 +647,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
         })
         console.log('seqimage',seqimage)
 
-        if (newImages.length === 0 && deletedIds.length === 0) continue;
+        // if (newImages.length === 0 && deletedIds.length === 0) continue;
 
         const form = new FormData();
 
@@ -678,6 +678,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
             body: form,
           }
         );
+        console.log("IMAGE_RESPONSE: ", uploadRes);
 
         const uploadJson = await uploadRes.json();
         const isSuccess = uploadRes.ok;
