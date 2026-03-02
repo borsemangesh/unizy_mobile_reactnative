@@ -437,7 +437,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
         return;
       }
       showToast("Card added successfully ✅", "success");
-
+      fetchSavedCards();
       navigation.goBack();
     } catch (error: any) {
       showToast(error?.message || "Something went wrong", "error");
