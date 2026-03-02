@@ -726,7 +726,8 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
           {tabs.map((tab) => (
             <TouchableOpacity
               key={tab}
-              style={[styles.tabItem, { width: tabWidth }]}
+              style={[styles.tabItem, { width: tabWidth,
+                 }]}
               activeOpacity={0.7}
               onPress={() => setSelectedTab(tab as any)}
             >
@@ -1408,7 +1409,9 @@ const styles = StyleSheet.create({
   },
 
   tabItem: {
-
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   iconWrapper: {
     height: 50,
