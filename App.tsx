@@ -311,7 +311,8 @@ function App() {
 
     <GestureHandlerRootView style={{ flex: 1 }}>
 
-      <StripeProvider publishableKey={stripeKeyRef.current}>
+      <StripeProvider publishableKey={stripeKeyRef.current}
+       merchantIdentifier="merchant.com.org.unizy">
 
         <ImageBackground
           source={require('../unizy_mobile_reactnative/assets/images/bganimationscreen.png')}
