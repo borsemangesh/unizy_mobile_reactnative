@@ -37,7 +37,7 @@ import Loader from '../../utils/component/Loader';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 
-
+import notifee from '@notifee/react-native';
 type NotificationProps = {
   navigation: any;
 };
@@ -192,7 +192,7 @@ const Notification = ({ navigation }: NotificationProps) => {
         const newData = jsonResponse?.data?.notifications ?? [];
 
 
-
+          await notifee.setBadgeCount(0);
 
         if (pageNum === 1) {
           setNotificationList(newData);
