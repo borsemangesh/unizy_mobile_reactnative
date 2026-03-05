@@ -183,8 +183,23 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
       if (response.ok) {
         showToast(t(data?.message) || 'Password updated successfully', 'success');
         await new Promise((resolve: any) => {
+          
           setTimeout(resolve, 2000);
         });
+        setTimeout(() => {
+          navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: 'Dashboard',
+                params: {
+                  AddScreenBackactiveTab: 'Profile',
+                  isNavigate: false,
+                },
+              },
+            ],
+          });
+        }, 1500);
         setUserMeta({
           current_password: '',
           new_password: '',
