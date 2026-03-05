@@ -118,6 +118,8 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
       setIsLoading(false);
     }
   };
+
+  const inputCursorColor = "#FFFFFF";
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
@@ -167,14 +169,16 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
             <View style={styles.login_container1}>
 
               <TextInput
-                cursorColor='#F5F5F5'
-                selectionColor='#F5F5F5'
+                // cursorColor={inputCursorColor}
+                // selectionColor={inputCursorColor}
                 allowFontScaling={false}
                 style={[styles.personalEmailID_TextInput1]}
                 placeholder={t('enter_report_title')}
                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                 value={title}
                 maxLength={50}
+                cursorColor="#FFFFFF"
+                selectionColor="#FFFFFF"
                 onChangeText={text => {
                   settitle(text);
                 }}
@@ -188,8 +192,8 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
 
               <View style={styles.login_container}>
                 <TextInput
-                cursorColor='#FFFFFF'
-                selectionColor='#FFFFFF'
+                // cursorColor='#FFFFFF'
+                // selectionColor='#FFFFFF'
                   allowFontScaling={false}
                   style={[
                     styles.personalEmailID_TextInput,
@@ -201,6 +205,8 @@ const ReportProduct = ({ navigation }: ReportProductProps) => {
                   value={desc}
                   onChangeText={de => setDesc(de)}
                   onSubmitEditing={Keyboard.dismiss}
+                  cursorColor="#FFFFFF"
+                  selectionColor="#FFFFFF"
                 />
               </View>
             </View>
