@@ -783,6 +783,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
       if (token && user) {
         setLoading(false);
+        await AsyncStorage.setItem('STRIPE_KEY', "");
         await AsyncStorage.setItem(
           'STRIPE_LIVE',
           stripelivekey ? 'true' : 'false'

@@ -22,10 +22,10 @@ function App() {
   const [ready, setReady] = useState(false)
   const [stripeReady, setStripeReady] = useState(false);
 
-  const stripeKeyRef = useRef(Constant.PUBLIC_KEY_Test);
+  const stripeKeyRef = useRef(Constant.PUBLIC_KEY_Live);
 
   const [stripeKey, setStripeKey] = useState<string>(
-    Constant.PUBLIC_KEY_Test
+    Constant.PUBLIC_KEY_Live
   );
   async function requestUserPermission() {
     const authStatus = await messaging().requestPermission();
@@ -294,16 +294,40 @@ function App() {
     };
   }, []);
 
+  // useEffect(() => {
+  //   const init = async () => {
+  //     console.log('init: ', await AsyncStorage.getItem('STRIPE_LIVE'));
+  //     const isLive = await AsyncStorage.getItem('STRIPE_LIVE');
+  //     stripeKeyRef.current =
+  //       isLive === 'true'
+  //         ? Constant.PUBLIC_KEY_Live
+  //         : Constant.PUBLIC_KEY_Test;
+
+  //     setStripeReady(true);
+  //   };
+  //   init();
+  // }, []);
+
   useEffect(() => {
     const init = async () => {
-      const isLive = await AsyncStorage.getItem('STRIPE_LIVE');
+      let isLive = await AsyncStorage.getItem('STRIPE_LIVE');
+  
+      // ✅ if not set yet, default to 'true' (Live) or whatever you want
+      if (isLive === null) {
+        isLive = 'true'; // default to live key
+        await AsyncStorage.setItem('STRIPE_LIVE', isLive);
+      }
+  
       stripeKeyRef.current =
         isLive === 'true'
           ? Constant.PUBLIC_KEY_Live
           : Constant.PUBLIC_KEY_Test;
-
+  
+      console.log('Stripe key being used:', stripeKeyRef.current);
+  
       setStripeReady(true);
     };
+  
     init();
   }, []);
 

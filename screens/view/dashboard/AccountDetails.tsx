@@ -393,6 +393,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
 
       const res = await fetch(url1, {
         headers: {
+          method: "POST",
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
           languagecode: language_code
