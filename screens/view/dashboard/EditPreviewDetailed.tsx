@@ -591,7 +591,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
         data: dataArray,
       };
 
-      console.log(createPayload)
+      console.log("Payload: ",createPayload);
 
 
       const createRes = await fetch(`${MAIN_URL.baseUrl}category/featurelist-update/${shareid}`, {
