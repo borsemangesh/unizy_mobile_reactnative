@@ -12,14 +12,13 @@ import { handleNotification, navigationReady } from "./screens/utils/Notificatio
 import { initI18n } from "./localization/i18n";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-// import { incrementBadge } from "./screens/utils/BadgeManager";
-import { incrementBadge,decrementBadge, resetBadge, updateBadgeFromFCM } from "./screens/utils/badgeHelper";
+import { incrementBadge, decrementBadge, resetBadge, updateBadgeFromFCM } from "./screens/utils/badgeHelper";
 import 'react-native-get-random-values';
 
 function App() {
   LogBox.ignoreAllLogs();
   enableScreens();
-  const [ready, setReady] = useState(false)
+  const [ready, setReady] = useState(false);
   const [stripeReady, setStripeReady] = useState(false);
 
   const stripeKeyRef = useRef(Constant.PUBLIC_KEY_Live);
@@ -27,26 +26,14 @@ function App() {
   const [stripeKey, setStripeKey] = useState<string>(
     Constant.PUBLIC_KEY_Live
   );
-  async function requestUserPermission() {
-    const authStatus = await messaging().requestPermission();
-    const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-    if (enabled) {
-     
-    }
-  }
 
   useEffect(() => {
     const initialize = async () => {
-      await initI18n(); 
+      await initI18n(); // WAIT for i18n
       setReady(true);
     };
     initialize();
   }, []);
-
-
 
   useEffect(() => {
     let unsubscribe: (() => void) | null = null;
@@ -56,35 +43,30 @@ function App() {
       try {
 
         if (Platform.OS === "ios") {
-          const notifeeSettings = await notifee.requestPermission({
+          await notifee.requestPermission({
             sound: true,
             alert: true,
             badge: true,
           });
 
+          await messaging().getToken();
 
-          const token = await messaging().getToken();
-
-        }
-
-        else {
+        } else {
           const authStatus = await messaging().requestPermission();
           const enabled =
             authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
             authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-          const notifeeSettings = await notifee.requestPermission();
-
+          await notifee.requestPermission();
 
           if (enabled) {
-
-            const token = await messaging().getToken();
-
+            await messaging().getToken();
           } else {
-            
+            console.log("❌ Notification permission denied");
           }
         }
 
+        // ✅ Always create Android channel
         if (Platform.OS === 'android') {
           await notifee.createChannel({
             id: 'default',
@@ -92,29 +74,31 @@ function App() {
             importance: AndroidImportance.HIGH,
             sound: 'default',
           });
-
         }
 
+        // ✅ FOREGROUND message handler
         unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
+          // Update badge count (iOS only via notifee)
           await updateBadgeFromFCM(remoteMessage);
 
           console.log('A new FCM message arrived!', remoteMessage);
+
           // 🔒 SECURITY: Check if user is logged in before processing notifications
           try {
             const isLogin = await AsyncStorage.getItem('ISLOGIN');
             if (isLogin !== 'true') {
-
               return; // Don't show notifications if user is logged out
             }
           } catch (err) {
             console.warn('⚠️ Error checking login status:', err);
-            return; // Don't show notification if we can't verify login
+            return;
           }
 
           try {
             const title = remoteMessage.notification?.title || remoteMessage.data?.title || "Notification";
-            const body = remoteMessage.notification?.body || "";
+            const body = remoteMessage.notification?.body || remoteMessage.data?.body || "";
 
+            // Parse nested data if present
             let rawNotificationData: Record<string, any> = {};
             if (remoteMessage.data?.data) {
               try {
@@ -124,24 +108,24 @@ function App() {
                   rawNotificationData = remoteMessage.data.data;
                 }
               } catch (e) {
-
                 rawNotificationData = remoteMessage.data.data;
               }
             } else {
               rawNotificationData = remoteMessage.data || {};
             }
+
+            // Flatten all values to strings (notifee requires Record<string, string>)
             const notificationData: { [key: string]: string } = {};
             Object.keys(rawNotificationData).forEach((key) => {
               const value = rawNotificationData[key];
               if (value !== null && value !== undefined) {
-                if (typeof value === 'object') {
-                  notificationData[key] = JSON.stringify(value);
-                } else {
-                  notificationData[key] = String(value);
-                }
+                notificationData[key] = typeof value === 'object'
+                  ? JSON.stringify(value)
+                  : String(value);
               }
             });
 
+            // Build notification config
             const notificationConfig: any = {
               title,
               body,
@@ -163,51 +147,56 @@ function App() {
               };
             }
 
+            // ✅ FIX: Actually display the notification (was missing before!)
+            await notifee.displayNotification(notificationConfig);
+
+            // ✅ iOS: Set badge from APNs payload if available
             if (Platform.OS === 'ios') {
-              const badgeCount = Number(remoteMessage.apns?.payload?.aps?.badge || 0);
-              await notifee.setBadgeCount(badgeCount);
+              const badgeCount = Number(remoteMessage.apns?.payload?.aps?.badge ?? 0);
+              if (badgeCount > 0) {
+                await notifee.setBadgeCount(badgeCount);
+              } else {
+                await notifee.incrementBadgeCount();
+              }
             }
-            if (Platform.OS === 'android') {
-              await notifee.displayNotification(notificationConfig);
-            }
+
           } catch (error) {
             console.error("❌ Error displaying notification:", error);
           }
         });
 
-
+        // ✅ FOREGROUND tap handler
         unsubscribeForeground = notifee.onForegroundEvent(async ({ type, detail }) => {
           if (type === EventType.PRESS) {
 
+            // 🔒 SECURITY: Check if user is logged in before handling notification tap
             try {
               const isLogin = await AsyncStorage.getItem('ISLOGIN');
               if (isLogin !== 'true') {
-
                 return;
               }
             } catch (err) {
               console.warn('⚠️ Error checking login status:', err);
               return;
             }
-            // await notifee.decrementBadgeCount(); 
+
             const notificationData = detail.notification?.data;
             handleNotification(notificationData, false);
           }
         });
 
-        // 🔔 Handle notification when app is opened from closed/background state
-        // This handles when user taps notification while app is closed
+        // 🔔 Handle notification when app is opened from CLOSED state
         messaging().getInitialNotification().then(async (remoteMessage) => {
-          await notifee.decrementBadgeCount();
+          if (Platform.OS === 'ios') {
+            await notifee.decrementBadgeCount();
+          }
 
           if (remoteMessage) {
-
 
             // 🔒 SECURITY: Check if user is logged in
             try {
               const isLogin = await AsyncStorage.getItem('ISLOGIN');
               if (isLogin !== 'true') {
-
                 return;
               }
             } catch (err) {
@@ -236,22 +225,23 @@ function App() {
               notificationData = remoteMessage.data || {};
             }
 
-            // Handle navigation after a short delay to ensure app is fully loaded
             setTimeout(() => {
               handleNotification(notificationData, true);
             }, 1000);
           }
         });
 
-        // 🔔 Handle notification when app is opened from background state
+        // 🔔 Handle notification when app is opened from BACKGROUND state
         messaging().onNotificationOpenedApp(async (remoteMessage) => {
 
+          if (Platform.OS === 'ios') {
+            await notifee.decrementBadgeCount();
+          }
 
           // 🔒 SECURITY: Check if user is logged in
           try {
             const isLogin = await AsyncStorage.getItem('ISLOGIN');
             if (isLogin !== 'true') {
-
               return;
             }
           } catch (err) {
@@ -273,24 +263,19 @@ function App() {
             notificationData = remoteMessage.data || {};
           }
 
-          // Handle navigation
           handleNotification(notificationData, true);
         });
 
-      }
-      catch (error) {
+      } catch (error) {
         console.error("❌ Error initializing notifications:", error);
       }
     };
 
     initializeNotifications();
 
-
-
     return () => {
       if (unsubscribe) unsubscribe();
       if (unsubscribeForeground) unsubscribeForeground();
-
     };
   }, []);
 
@@ -332,12 +317,8 @@ function App() {
   }, []);
 
   return (
-
     <GestureHandlerRootView style={{ flex: 1 }}>
-
-      <StripeProvider publishableKey={stripeKeyRef.current}
-       merchantIdentifier="merchant.com.org.unizy">
-
+      <StripeProvider publishableKey={stripeKeyRef.current}>
         <ImageBackground
           source={require('../unizy_mobile_reactnative/assets/images/bganimationscreen.png')}
           style={{ flex: 1, width: '100%', height: '100%' }}
@@ -354,7 +335,6 @@ function App() {
         </ImageBackground>
       </StripeProvider>
     </GestureHandlerRootView>
-
   );
 }
 
@@ -367,7 +347,7 @@ const styles = StyleSheet.create({
 
 export default App;
 
-//Old Code
+// Old Code
 // import React, { useEffect, useRef, useState } from "react";
 // import { LogBox, StatusBar, View, StyleSheet, ImageBackground, Platform, PermissionsAndroid, Alert } from "react-native";
 // import { SafeAreaProvider } from "react-native-safe-area-context";

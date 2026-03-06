@@ -440,6 +440,8 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
         console.log('❌ initPaymentSheet error:', initError);
         return;
       }
+      //await new Promise(resolve => setTimeout(resolve, 500));
+
       const { error: presentError } = await presentPaymentSheet();
 
       if (presentError) {
