@@ -418,6 +418,9 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
 
       const url = `${MAIN_URL.baseUrl}category/filter-apply`;
       const body = { ...filterBody, page: pageNum, pagesize: 20 };
+      console.log("Token: ",token);
+      console.log("URL : ",url);
+      console.log("BODY : ",JSON.stringify(body));
 
       const response = await fetch(url, {
         method: 'POST',

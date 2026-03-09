@@ -439,6 +439,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
       setFeaturelist([]);
       const token = await AsyncStorage.getItem('userToken');
       const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+      console.log("Token: ",token);
 
       if (!token) return;
 
@@ -455,7 +456,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
       setAppliedFilter(newFilterBody);
 
       const url = `${MAIN_URL.baseUrl}category/filter-apply`;
-
+      console.log("url1: ",url);
 
 
       const response = await fetch(url, {
