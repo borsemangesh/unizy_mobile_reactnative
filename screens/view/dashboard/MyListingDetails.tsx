@@ -803,18 +803,18 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
                         </Text>
                         <Text allowFontScaling={false} style={styles.priceText}>
                           {detail?.category?.id === 2
-                            ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t(
+                            ? `£${Number(detail?.originalprice ?? 0).toFixed(2)}/${t(
                                 'hr',
                               )}`
                             : detail?.category?.id === 4
-                            ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t(
+                            ? `£${Number(detail?.originalprice ?? 0).toFixed(2)}/${t(
                                 'week',
                               )}`
                             : detail?.category?.id === 5
-                            ? `£${Number(detail?.price ?? 0).toFixed(2)}/${t(
+                            ? `£${Number(detail?.originalprice ?? 0).toFixed(2)}/${t(
                                 'session',
                               )}`
-                            : `£${Number(detail?.price ?? 0).toFixed(2)}`}
+                            : `£${Number(detail?.originalprice ?? 0).toFixed(2)}`}
                         </Text>
                       </>
                     )}
