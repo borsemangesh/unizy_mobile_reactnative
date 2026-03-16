@@ -283,7 +283,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
+			shellScript = "set -e\n\nexport NVM_NODE_PATH=\"/Users/admin/.nvm/versions/node/v20.20.1/bin\"\nexport PATH=\"$NVM_NODE_PATH:$PATH\"\nexport NODE_BINARY=\"$NVM_NODE_PATH/node\"\n\necho \"Using NODE before environment:\"\nwhich node\nnode -v\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n# Load RN environment\n/bin/sh -c \"$WITH_ENVIRONMENT\"\n\n# Force Node again after environment load\nexport PATH=\"$NVM_NODE_PATH:$PATH\"\nexport NODE_BINARY=\"$NVM_NODE_PATH/node\"\n\necho \"Using NODE after environment:\"\nwhich node\nnode -v\n\n# Run React Native bundling\n/bin/sh -c \"$REACT_NATIVE_XCODE\"\n";
 		};
 		174A5C738C13AD8BE9A666A2 /* [CP-User] [RNFB] Core Configuration */ = {
 			isa = PBXShellScriptBuildPhase;
