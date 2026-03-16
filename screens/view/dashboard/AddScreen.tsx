@@ -595,125 +595,247 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
     return true;
   };
 
+  // const handlePreview = async () => {
+  //   try {
+  //     for (const field of fields) {
+  //       const { id, field_type } = field.param;
+  //       let value = formValues[id]?.value;
+
+  //       if (field_type.toLowerCase() === 'image') {
+  //         value = uploadedImages;
+  //       }
+
+  //       if (field.mandatory) {
+
+  //         if (field_type.toLowerCase() === 'date') {
+  //           const startDate = value?.startDate;
+  //           const endDate = value?.endDate;
+
+  //           if (!startDate || !endDate) {
+  //             showToast(
+  //               t('select_both_dates'),
+  //               'error',
+  //             );
+  //             return;
+  //           }
+  //         }
+
+
+  //         else if (
+  //           value === undefined ||
+  //           value === null ||
+  //           (typeof value === 'string' && value.trim() === '') ||
+  //           (Array.isArray(value) && value.length === 0)
+  //         ) {
+  //           if (field_type.toLowerCase() === 'image') {
+  //             showToast(
+  //               `${field.param.field_name} ${t(Constant.ARE_MAN)}`,
+  //               'error',
+  //             );
+  //           } else {
+  //             showToast(
+  //               `${field.param.field_name} ${t(Constant.IS_MAN)}`,
+  //               'error',
+  //             );
+  //           }
+  //           return;
+  //         }
+  //       }
+  //     }
+
+  //     let computedPrice: number | null = null;
+
+  //     if (productId === 2 || productId === 5) {
+  //       let priceFieldId: number | null = null;
+  //       let durationFieldId: number | null = null;
+
+  //       for (const f of fields) {
+  //         if (f.param.alias_name === 'price') priceFieldId = f.param.id;
+  //         if (f.param.alias_name === 'service_duration')
+  //           durationFieldId = f.param.id;
+  //       }
+
+  //       if (priceFieldId !== null && durationFieldId !== null) {
+  //         let rawPrice = formValues[priceFieldId]?.value || '0';
+
+  //         rawPrice = String(rawPrice).replace(/[^\d.-]/g, '');
+
+  //         const priceNumber = parseFloat(rawPrice);
+
+  //         if (isNaN(priceNumber) || priceNumber > 99999) {
+  //           showToast(`${t('price_limit')} £99,999`, 'error');
+  //           return;
+  //         }
+
+  //         const rawDuration = Number(formValues[durationFieldId]?.value || 1);
+
+  //         computedPrice = priceNumber * rawDuration;
+  //       }
+  //     }
+
+  //     const dataToStore: any = { ...formValues };
+  //     if (computedPrice !== null) {
+  //       for (const f of fields) {
+  //         if (f.param.alias_name === 'price') {
+  //           dataToStore[f.param.id] = {
+  //             value: computedPrice.toString(),
+  //             alias_name: 'price',
+  //           };
+  //         }
+  //       }
+  //     }
+
+  //     for (const field of fields) {
+  //       if (field.param.field_type.toLowerCase() === 'image') {
+  //         const uploadedForField = uploadedImages.map(img => ({
+  //           id: img.id,
+  //           uri: img.uri,
+  //           name: img.name,
+  //         }));
+
+  //         dataToStore[field.param.id] = {
+  //           value: uploadedForField,
+  //           alias_name: field.param.alias_name ?? null,
+  //         };
+  //       }
+
+  //       if (field.param.alias_name === 'price') {
+  //         const priceValue = parseFloat(dataToStore[field.param.id]?.value);
+  //         if (priceValue > 99999) {
+  //           showToast(`${t('price_limit')} £99,999`, 'error');
+  //           return;
+  //         }
+  //       }
+  //     }
+  //     await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
+  //     navigation.navigate('PreviewThumbnail');
+  //   } catch (error) {
+  //     showToast(t(Constant.DATA_NOT_SAVE), 'error');
+  //   }
+  // };
+
+
   const handlePreview = async () => {
-    try {
-      for (const field of fields) {
-        const { id, field_type } = field.param;
-        let value = formValues[id]?.value;
+  try {
+    for (const field of fields) {
+      const { id, field_type } = field.param;
+      let value = formValues[id]?.value;
 
-        if (field_type.toLowerCase() === 'image') {
-          value = uploadedImages;
-        }
+      if (field_type.toLowerCase() === 'image') {
+        value = uploadedImages;
+      }
 
-        if (field.mandatory) {
+      if (field.mandatory) {
 
-          if (field_type.toLowerCase() === 'date') {
-            const startDate = value?.startDate;
-            const endDate = value?.endDate;
+        if (field_type.toLowerCase() === 'date') {
+          const startDate = value?.startDate;
+          const endDate = value?.endDate;
 
-            if (!startDate || !endDate) {
-              showToast(
-                t('select_both_dates'),
-                'error',
-              );
-              return;
-            }
-          }
-
-
-          else if (
-            value === undefined ||
-            value === null ||
-            (typeof value === 'string' && value.trim() === '') ||
-            (Array.isArray(value) && value.length === 0)
-          ) {
-            if (field_type.toLowerCase() === 'image') {
-              showToast(
-                `${field.param.field_name} ${t(Constant.ARE_MAN)}`,
-                'error',
-              );
-            } else {
-              showToast(
-                `${field.param.field_name} ${t(Constant.IS_MAN)}`,
-                'error',
-              );
-            }
+          if (!startDate || !endDate) {
+            showToast(t('select_both_dates'), 'error');
             return;
           }
         }
-      }
 
-      let computedPrice: number | null = null;
-
-      if (productId === 2 || productId === 5) {
-        let priceFieldId: number | null = null;
-        let durationFieldId: number | null = null;
-
-        for (const f of fields) {
-          if (f.param.alias_name === 'price') priceFieldId = f.param.id;
-          if (f.param.alias_name === 'service_duration')
-            durationFieldId = f.param.id;
-        }
-
-        if (priceFieldId !== null && durationFieldId !== null) {
-          let rawPrice = formValues[priceFieldId]?.value || '0';
-
-          rawPrice = String(rawPrice).replace(/[^\d.-]/g, '');
-
-          const priceNumber = parseFloat(rawPrice);
-
-          if (isNaN(priceNumber) || priceNumber > 99999) {
-            showToast(`${t('price_limit')} £99,999`, 'error');
-            return;
+        // Check for empty or invalid values
+        else if (
+          value === undefined ||
+          value === null ||
+          (typeof value === 'string' && value.trim() === '') ||
+          (Array.isArray(value) && value.length === 0)
+        ) {
+          if (field_type.toLowerCase() === 'image') {
+            showToast(`${field.param.field_name} ${t(Constant.ARE_MAN)}`, 'error');
+          } else {
+            showToast(`${field.param.field_name} ${t(Constant.IS_MAN)}`, 'error');
           }
+          return;
+        }
 
-          const rawDuration = Number(formValues[durationFieldId]?.value || 1);
-
-          computedPrice = priceNumber * rawDuration;
+        // Additional validation for 0 values
+        else if (value === 0 || (typeof value === 'string' && value.trim() === '0')) {
+          showToast(`${field.param.field_name} ${t('cannot_be_zero')}`, 'error');
+          return;
         }
       }
+    }
 
-      const dataToStore: any = { ...formValues };
-      if (computedPrice !== null) {
-        for (const f of fields) {
-          if (f.param.alias_name === 'price') {
-            dataToStore[f.param.id] = {
-              value: computedPrice.toString(),
-              alias_name: 'price',
-            };
-          }
-        }
+    let computedPrice: number | null = null;
+
+    if (productId === 2 || productId === 5) {
+      let priceFieldId: number | null = null;
+      let durationFieldId: number | null = null;
+
+      for (const f of fields) {
+        if (f.param.alias_name === 'price') priceFieldId = f.param.id;
+        if (f.param.alias_name === 'service_duration') durationFieldId = f.param.id;
       }
 
-      for (const field of fields) {
-        if (field.param.field_type.toLowerCase() === 'image') {
-          const uploadedForField = uploadedImages.map(img => ({
-            id: img.id,
-            uri: img.uri,
-            name: img.name,
-          }));
+      if (priceFieldId !== null && durationFieldId !== null) {
+        let rawPrice = formValues[priceFieldId]?.value || '0';
 
-          dataToStore[field.param.id] = {
-            value: uploadedForField,
-            alias_name: field.param.alias_name ?? null,
+        rawPrice = String(rawPrice).replace(/[^\d.-]/g, '');
+
+        const priceNumber = parseFloat(rawPrice);
+
+        if (isNaN(priceNumber) || priceNumber > 99999 || priceNumber === 0) {
+          showToast(`${t('price_limit')} £99,999`, 'error');
+          return;
+        }
+
+        const rawDuration = Number(formValues[durationFieldId]?.value || 1);
+
+        computedPrice = priceNumber * rawDuration;
+
+        // Check if the computed price is zero
+        if (computedPrice === 0) {
+          showToast(t('price_cannot_be_zero'), 'error');
+          return;
+        }
+      }
+    }
+
+    const dataToStore: any = { ...formValues };
+    if (computedPrice !== null) {
+      for (const f of fields) {
+        if (f.param.alias_name === 'price') {
+          dataToStore[f.param.id] = {
+            value: computedPrice.toString(),
+            alias_name: 'price',
           };
         }
+      }
+    }
 
-        if (field.param.alias_name === 'price') {
-          const priceValue = parseFloat(dataToStore[field.param.id]?.value);
-          if (priceValue > 99999) {
-            showToast(`${t('price_limit')} £99,999`, 'error');
-            return;
-          }
+    for (const field of fields) {
+      if (field.param.field_type.toLowerCase() === 'image') {
+        const uploadedForField = uploadedImages.map(img => ({
+          id: img.id,
+          uri: img.uri,
+          name: img.name,
+        }));
+
+        dataToStore[field.param.id] = {
+          value: uploadedForField,
+          alias_name: field.param.alias_name ?? null,
+        };
+      }
+
+      if (field.param.alias_name === 'price') {
+        const priceValue = parseFloat(dataToStore[field.param.id]?.value);
+        if (priceValue > 99999 || priceValue === 0) {
+          showToast(`${t('price_limit')} £99,999`, 'error');
+          return;
         }
       }
-      await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
-      navigation.navigate('PreviewThumbnail');
-    } catch (error) {
-      showToast(t(Constant.DATA_NOT_SAVE), 'error');
     }
-  };
 
+    await AsyncStorage.setItem('formData', JSON.stringify(dataToStore));
+    navigation.navigate('PreviewThumbnail');
+  } catch (error) {
+    showToast(t(Constant.DATA_NOT_SAVE), 'error');
+  }
+};
   const resizeIfNeeded = async (asset: any) => {
     const MAX_SIZE = MAX_SIZE_MB * 1024 * 1024;
 
