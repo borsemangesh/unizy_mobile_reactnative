@@ -754,7 +754,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
         // Additional validation for 0 values
         else if (value === 0 || (typeof value === 'string' && value.trim() === '0')) {
-          showToast(`${field.param.field_name} ${t('cannot_be_zero')}`, 'error');
+          showToast(`${t('price_cannot_be_zero')} ${field.param.field_name} `, 'error');
           return;
         }
       }

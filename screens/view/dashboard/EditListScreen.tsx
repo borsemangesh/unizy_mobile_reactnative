@@ -672,6 +672,11 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
             }
             return;
           }
+          else if (value === 0 || (typeof value === 'string' && value.trim() === '0')) {
+
+            showToast(`${t('price_cannot_be_zero')} ${field.param.field_name} `, 'error');
+              return;
+          }
         }
       }
 

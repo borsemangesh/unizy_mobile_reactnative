@@ -784,5 +784,5 @@
   "no_cards_found":"No Cards Found",
   "acc_message":"will be charged for listing this accomodation availability.",
   "email_error":"You are not allowed to include URLs or email addresses in the message.",
-  "price_cannot_be_zero":"Please enter a valid price."
+  "price_cannot_be_zero":"Incorrect input. Please enter a valid"
 }
