@@ -906,7 +906,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                     </Text>
 
                     {detail?.params
-                      ?.filter((param: Param) => param.field_type !== 'boolean')
+                          ?.filter((param: Param) => param.field_type !== 'boolean' && param.id !== 8 && param.id !== 22 && param.id !== 15 && param.id !==32 && param.id !== 58)
                       .map((param: Param) => (
                       <View
                         key={param.id}
