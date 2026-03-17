@@ -25,7 +25,8 @@ target 'unizy' do
   # pod 'notifee_react-native', :path => '../node_modules/@notifee/react-native'
   use_react_native!(
     :path => config[:reactNativePath],
-    :app_path => "#{Pod::Config.instance.installation_root}/.."
+    :app_path => "#{Pod::Config.instance.installation_root}/..",
+    :hermes_enabled => false
   )
 
   setup_permissions([

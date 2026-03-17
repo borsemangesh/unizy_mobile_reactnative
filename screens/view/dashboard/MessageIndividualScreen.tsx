@@ -32,7 +32,7 @@ import Animated, {
 import { waitForTwilioReady } from '../../view/emoji/twilioService';
 import Loader from '../../utils/component/Loader';
 
-import { useTranslation } from 'react-i18next';
+import { TransWithoutContext, useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import Button from '../../utils/component/Button';
 import ButtonNew from '../../utils/component/ButtonNew';
@@ -378,83 +378,165 @@ const MessagesIndividualScreen = ({
     setMessageText(text);
   };
 
+  // useEffect(() => {
+  //   let isMounted = true;
+
+  //   (async () => {
+  //     try {
+  //       const token = await AsyncStorage.getItem('userToken');
+  //       console.log('TWILIO TOKEN:', token);
+  //       if (!token) {
+  //         console.warn('Twilio init: No token available');
+  //         return;
+  //       }
+  //       const response = await fetchWithTimeout(
+  //         `${MAIN_URL.baseUrl}twilio/auth-token`,
+  //         {
+  //           headers: { Authorization: `Bearer ${token}` },
+  //         },
+  //         15000,
+  //       );
+
+  //       if (!response.ok) {
+  //         const errorData = await response.json().catch(() => ({}));
+  //         throw new Error(errorData.message || `HTTP ${response.status}`);
+  //       }
+
+  //       const data = await response.json();
+  //       console.log('Twilio token responseDATA:', data);
+
+  //       if (!data?.data?.token) {
+  //         throw new Error('Invalid token response from server');
+  //       }
+
+  //       if (!client) {
+  //       const twilio = await new TwilioChatClient(data.data.token);
+
+  //       console.log('Twilio client initialized: ', twilio);
+
+  //       if (!twilio) {
+  //         throw new Error('Failed to initialize Twilio client');
+  //       }
+
+  //       if (!isMounted) return;
+
+  //       setChatClient(twilio);
+  //       chatClientRef.current = twilio;
+  //       activeTwilioClients.add(twilio);
+
+  //       setTimeout(() => {
+  //         if (twilio && isMounted) {
+  //           twilio
+  //             .getSubscribedConversations()
+  //             .then((list: any) => {
+  //               if (list?.items && isMounted) {
+  //                 list.items.forEach((c: any) => {
+  //                   if (c?.uniqueName) {
+  //                     conversationCache[c.uniqueName] = c;
+  //                   }
+  //                 });
+  //               }
+  //             })
+  //             .catch((err: any) => {
+  //               console.warn('Preload conversations failed:', err.message);
+  //             });
+  //         }
+  //       }, 500);
+  //     } catch (error: any) {
+  //       console.error('Twilio initialization failed:', error.message);
+  //       if (error.name === 'AbortError') {
+  //         console.error('Twilio token request timed out');
+  //       }
+  //       if (isMounted) {
+  //       }
+  //     }
+  //   })();
+
+  //   return () => {
+  //     isMounted = false;
+  //   };
+  // }, []);
+
+
+
+  let globalChatClient: TwilioChatClient | null = null;  // ✅ singleton
+  let isInitializing = false;
+
+
+
   useEffect(() => {
     let isMounted = true;
-
-    (async () => {
+  
+    const initTwilioStr = async () => {
       try {
-        const token = await AsyncStorage.getItem('userToken');
-        console.log('TWILIO TOKEN:', token);
-        if (!token) {
-          console.warn('Twilio init: No token available');
-          return;
-        }
-        const response = await fetchWithTimeout(
+        const token = await AsyncStorage.getItem("userToken");
+        if (!token) return;
+  
+        const response = await fetch(
           `${MAIN_URL.baseUrl}twilio/auth-token`,
           {
             headers: { Authorization: `Bearer ${token}` },
-          },
-          15000,
-        );
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.message || `HTTP ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log('Twilio token responseDATA:', data);
-
-        if (!data?.data?.token) {
-          throw new Error('Invalid token response from server');
-        }
-
-        const twilio = await new TwilioChatClient(data.data.token);
-
-        console.log('Twilio client initialized: ', twilio);
-
-        if (!twilio) {
-          throw new Error('Failed to initialize Twilio client');
-        }
-
-        if (!isMounted) return;
-
-        setChatClient(twilio);
-        chatClientRef.current = twilio;
-        activeTwilioClients.add(twilio);
-
-        setTimeout(() => {
-          if (twilio && isMounted) {
-            twilio
-              .getSubscribedConversations()
-              .then((list: any) => {
-                if (list?.items && isMounted) {
-                  list.items.forEach((c: any) => {
-                    if (c?.uniqueName) {
-                      conversationCache[c.uniqueName] = c;
-                    }
-                  });
-                }
-              })
-              .catch((err: any) => {
-                console.warn('Preload conversations failed:', err.message);
-              });
           }
-        }, 500);
-      } catch (error: any) {
-        console.error('Twilio initialization failed:', error.message);
-        if (error.name === 'AbortError') {
-          console.error('Twilio token request timed out');
+        );
+  
+        if (!response.ok) return;
+  
+        const data = await response.json();
+        if (!data?.data?.token) return;
+  
+        let client;
+  
+        // ✅ SINGLETON LOGIC
+        if (globalChatClient) {
+          client = globalChatClient;
+        } else if (!isInitializing) {
+          isInitializing = true;
+  
+          try {
+            const newClient = await new TwilioChatClient(data.data.token);
+            client = newClient;
+            console.log("Twilio client initialized (singleton)");
+            if(globalChatClient !== null) {
+              globalChatClient.current = client;
+            }
+          } catch (err) {
+            console.log("Twilio init error:", err);
+            isInitializing = false;
+            throw err;
+          }
+  
+          isInitializing = false;
+        } else {
+          // ⏳ wait if already initializing
+          const waitForClient = () =>
+            new Promise((resolve) => {
+              const interval = setInterval(() => {
+                if (globalChatClient) {
+                  clearInterval(interval);
+                  resolve(globalChatClient);
+                }
+              }, 100);
+            });
+  
+          client = await waitForClient();
         }
-        if (isMounted) {
-        }
+  
+        if (!isMounted) return;
+  
+        setChatClient(client);
+  
+      } catch (err) {
+        console.warn("Twilio init failed on MessageScreen:", err);
       }
-    })();
-
+    };
+  
+    initTwilioStr();
+  
     return () => {
       isMounted = false;
     };
   }, []);
+
 
   useEffect(() => {
     if (!chatClient) return;

@@ -31,7 +31,7 @@ import Loader from '../../utils/component/Loader';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 
-import { Client as TwilioChatClient } from '@twilio/conversations';
+import {  Client as TwilioChatClient } from '@twilio/conversations';
  
 
 type MessageScreenProps = {
@@ -82,6 +82,7 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
       const url = `${MAIN_URL.baseUrl}twilio/mychats?search=${query}&_t=${timestamp}`;
 
       console.log(url)
+      console.log(token);
 
 
       const response = await fetch(url, {
@@ -130,36 +131,127 @@ const MessagesScreen = ({ navigation }: MessageScreenProps) => {
 
   const isFirstRun = React.useRef(true);
 
-   useEffect(() => {
+  let globalTwilioClient: any = null;
+  let isInitializing = false;
 
+
+  useEffect(() => {
     let isMounted = true;
+  
     const initTwilioStr = async () => {
       try {
         const token = await AsyncStorage.getItem("userToken");
         if (!token) return;
- 
-        const response = await fetch(
-          `${MAIN_URL.baseUrl}twilio/auth-token`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
- 
+  
+        const response = await fetch(`${MAIN_URL.baseUrl}twilio/auth-token`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+  
         if (!response.ok) return;
+  
         const data = await response.json();
-        if (data?.data?.token) {
-          const client = await new TwilioChatClient(data.data.token);
-          if (isMounted) {
-            setChatClient(client);
+        if (!data?.data?.token) return;
+  
+        let client;
+  
+        // ✅ SINGLETON LOGIC
+        if (globalTwilioClient) {
+          client = globalTwilioClient;
+        } else if (!isInitializing) {
+          isInitializing = true;
+          try {
+            // Use the correct SDK: TwilioChatClient (old) or ConversationsClient (new)
+            client = await new TwilioChatClient(data.data.token); // Replace if needed
+            globalTwilioClient = client;
+            console.log("Twilio initialized (singleton)");
+          } catch (err) {
+            console.log("Twilio init error:", err);
+            isInitializing = false;
+            throw err;
           }
+          isInitializing = false;
+        } else {
+          // ⏳ Wait if already initializing
+          const waitForClient = () =>
+            new Promise((resolve) => {
+              const interval = setInterval(() => {
+                if (globalTwilioClient) {
+                  clearInterval(interval);
+                  resolve(globalTwilioClient);
+                }
+              }, 100);
+            });
+  
+          client = await waitForClient();
         }
+  
+        if (!isMounted) return;
+  
+        setChatClient(client);
+  
+        // ✅ Token refresh
+        client.on("tokenAboutToExpire", async () => {
+          try {
+            const newRes = await fetch(`${MAIN_URL.baseUrl}twilio/auth-token`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            const newData = await newRes.json();
+            if (newData?.data?.token) {
+              await client.updateToken(newData.data.token);
+              console.log("Token refreshed");
+            }
+          } catch (err) {
+            console.log("Token refresh error:", err);
+          }
+        });
+  
+        // ✅ Debug connection state
+        client.on("connectionStateChanged", (state:any) => {
+          console.log("Twilio state:", state);
+        });
+  
       } catch (err) {
-        console.warn('Twilio init failed on MessageScreen:', err);
+        console.warn("Twilio init failed on MessageScreen:", err);
       }
     };
+  
     initTwilioStr();
-    return () => { isMounted = false; };
+  
+    return () => {
+      isMounted = false;
+    };
   }, []);
+
+  //  useEffect(() => {
+
+  //   let isMounted = true;
+  //   const initTwilioStr = async () => {
+  //     try {
+  //       const token = await AsyncStorage.getItem("userToken");
+  //       if (!token) return;
+ 
+  //       const response = await fetch(
+  //         `${MAIN_URL.baseUrl}twilio/auth-token`,
+  //         {
+  //           headers: { Authorization: `Bearer ${token}` },
+  //         }
+  //       );
+ 
+  //       if (!response.ok) return;
+  //       const data = await response.json();
+  //       if (data?.data?.token) {
+  //         const client = await new TwilioChatClient(data.data.token);
+  //         if (isMounted) {
+  //           setChatClient(client);
+  //         }
+  //       }
+  //     } catch (err) {
+  //       console.warn('Twilio init failed on MessageScreen:', err);
+  //     }
+  //   };
+  //   initTwilioStr();
+  //   return () => { isMounted = false; };
+  // }, []);
  
   // useEffect(() => {
   //   if (!chatClient) return;
