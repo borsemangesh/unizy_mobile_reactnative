@@ -22,7 +22,7 @@ import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import FilterButton from './FilterButton';
 import FilterButtonApply from './FilterButtonApply';
 import { useTranslation } from 'react-i18next';
-
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 interface FilterAndroidProps {
   catagory_id: number;
@@ -53,8 +53,12 @@ const FilterAndroid = ({
   const [defaultPriceRange, setDefaultPriceRange] = useState({ min: 0, max: 10000 });
   const [sliderLow, setSliderLow] = useState(priceRange.min);
   const [sliderHigh, setSliderHigh] = useState(priceRange.max);
-  const [lastAppliedPriceRange, setLastAppliedPriceRange] = useState<PriceRange>(null);
-    const SCREEN_WIDTH = Dimensions.get('window').width;
+  const [lastAppliedPriceRange, setLastAppliedPriceRange] =
+        useState<PriceRange>(null);
+    
+    const [postcode, setPostcode] = useState<string>('');
+     const [lastAppliedPostcode, setLastAppliedPostcode] = useState<string | null>(null);
+  const SCREEN_WIDTH = Dimensions.get('window').width;
 
 
   const fetchFilters = async () => {
@@ -66,7 +70,8 @@ const FilterAndroid = ({
       const body = { category_id: catagory_id };
       const url = MAIN_URL.baseUrl + 'category/feature/filter';
 
-
+      console.log('URL: ', url);
+      console.log('FIlterBody:', body);
 
       const res = await fetch(url, {
         method: 'POST',
@@ -80,15 +85,18 @@ const FilterAndroid = ({
       });
 
       const data = await res.json();
+      console.log('FIlterResponse:', data);
       if (data.statusCode === 200) {
         const dynamicFilters = data.data.filter(
           (item: any) =>
             item.field_type?.toLowerCase() === 'dropdown' ||
-            item.alias_name?.toLowerCase() === 'price',
+                item.alias_name?.toLowerCase() === 'price' || 
+                item.field_type?.toLowerCase() === 'date' ||
+                item.field_type?.toLowerCase() === 'text',
         );
         setFilters(dynamicFilters);
         const priceFilter = dynamicFilters.find(
-          (item: any) => item.alias_name?.toLowerCase() === 'price'
+          (item: any) => item.alias_name?.toLowerCase() === 'price',
         );
 
         if (priceFilter) {
@@ -146,47 +154,36 @@ const FilterAndroid = ({
     setSelectedTab(tabName);
   };
 
-  // const toggleDropdownOption = (fieldId: number, optionId: number) => {
-  //   setDropdownSelections(prev => {
-  //     const current = prev[fieldId] || [];
-  //     if (current.includes(optionId)) {
-  //       return { ...prev, [fieldId]: current.filter(id => id !== optionId) };
-  //     } else {
-  //       return { ...prev, [fieldId]: [...current, optionId] };
-  //     }
-  //   });
-  // };
-
-
   const toggleDropdownOption = (
-  fieldId: number,
-  optionId: number,
-  isMultiple: boolean,
-) => {
-  setDropdownSelections(prev => {
-    const current = prev[fieldId] || [];
+    fieldId: number,
+    optionId: number,
+    isMultiple: boolean,
+  ) => {
+    setDropdownSelections(prev => {
+      const current = prev[fieldId] || [];
 
-    if (isMultiple) {
-      // MULTI SELECT (checkbox)
-      if (current.includes(optionId)) {
-        return { ...prev, [fieldId]: current.filter(id => id !== optionId) };
+      if (isMultiple) {
+        // MULTI SELECT (checkbox)
+        if (current.includes(optionId)) {
+          return { ...prev, [fieldId]: current.filter(id => id !== optionId) };
+        } else {
+          return { ...prev, [fieldId]: [...current, optionId] };
+        }
       } else {
-        return { ...prev, [fieldId]: [...current, optionId] };
+        // SINGLE SELECT (radio)
+        return { ...prev, [fieldId]: [optionId] };
       }
-    } else {
-      // SINGLE SELECT (radio)
-      return { ...prev, [fieldId]: [optionId] };
-    }
-  });
-};
+    });
+  };
 
 
   const handleClearFilters = () => {
     setDropdownSelections({});
     setPriceRange(defaultPriceRange);
     setSliderLow(defaultPriceRange.min);
-    setSliderHigh(defaultPriceRange.max);
-    
+      setSliderHigh(defaultPriceRange.max);
+      setDateSelections({});
+      setPostcode('');
   };
 
   const handleClose = () => {
@@ -209,177 +206,137 @@ const FilterAndroid = ({
       setDropdownSelections(savedDropdowns);
     } else {
       setDropdownSelections({});
-      setPriceRange(defaultPriceRange); 
+      setPriceRange(defaultPriceRange);
       setSliderLow(defaultPriceRange.min);
-      setSliderHigh(defaultPriceRange.max);
+        setSliderHigh(defaultPriceRange.max);
+        setPostcode('');
     }
 
-    onClose(); 
+    onClose();
   };
 
+    
+const [showDatePicker, setShowDatePicker] = useState(false);
 
+const [activeDateField, setActiveDateField] = useState<{
+  param: any;
+  type: 'start' | 'end';
+} | null>(null);
+
+    const [tempDate, setTempDate] = useState(new Date());
+    
+    
+
+const [dateSelections, setDateSelections] = useState<
+  Record<number, { startDate?: Date; endDate?: Date }>
+>({});
+    
   const renderRightContent = () => {
     const currentFilter = filters.find(f => f.field_name === selectedTab);
     if (!currentFilter) return null;
-
-    // if (currentFilter.field_type === 'dropdown') {
-    //   return (
-    //     <ScrollView
-
-    //       style={{ flexGrow: 0, paddingTop: 10 }}
-    //       showsVerticalScrollIndicator={false}
-    //     >
-    //       {currentFilter.options.map((opt: any) => (
-    //         <TouchableOpacity
-    //           key={opt.id}
-    //           style={{
-    //             flexDirection: 'row',
-    //             alignItems: 'center',
-    //             paddingVertical: 12,
-    //             flexWrap: 'nowrap',
-    //           }}
-    //           onPress={() => toggleDropdownOption(currentFilter.id, opt.id)}
-    //         >
-    //           <View
-    //             style={{
-    //               width: 20,
-    //               height: 20,
-    //               borderRadius: 4,
-    //               borderWidth: 1,
-    //               borderColor: '#fff',
-    //               justifyContent: 'center',
-    //               alignItems: 'center',
-    //               marginRight: 10,
-    //             }}
-    //           >
-    //             {dropdownSelections[currentFilter.id]?.includes(opt.id) && (
-    //               <Image
-    //                 source={require('../../../assets/images/tickicon.png')}
-    //                 style={styles.tickImage}
-    //                 resizeMode="contain" />)}
-    //           </View>
-    //           <Text
-    //             allowFontScaling={false}
-    //             numberOfLines={3}
-    //             style={[styles.filtertitleFilteryBy, {
-    //               flexShrink: 1,
-    //               flexGrow: 1,
-    //             }]}
-    //           >
-    //             {opt.option_name || opt.name}
-
-    //           </Text>
-
-    //         </TouchableOpacity>
-    //       ))}
-    //     </ScrollView>
-    //   );
-    // }
-
     if (currentFilter.field_type === 'dropdown') {
-  return (
-    <ScrollView style={{ flexGrow: 0, paddingTop: 10 }}>
-      {currentFilter.options.map((opt: any) => {
-  const isMultiple = currentFilter.ismultilple;
-  const selectedValues = dropdownSelections[currentFilter.id] || [];
+      return (
+        <ScrollView style={{ flexGrow: 0, paddingTop: 10 }}>
+          {currentFilter.options.map((opt: any) => {
+            const isMultiple = currentFilter.ismultilple;
+            const selectedValues = dropdownSelections[currentFilter.id] || [];
 
-  const isSelectedCheckbox = selectedValues.includes(opt.id);
-  const isSelectedRadio = selectedValues[0] === opt.id;
+            const isSelectedCheckbox = selectedValues.includes(opt.id);
+            const isSelectedRadio = selectedValues[0] === opt.id;
 
-  return (
-    <TouchableOpacity
-      key={opt.id}
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 12,
-        flexWrap: 'nowrap',
-      }}
-      onPress={() =>
+            return (
+              <TouchableOpacity
+                key={opt.id}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingVertical: 12,
+                  flexWrap: 'nowrap',
+                }}
+                onPress={() =>
         toggleDropdownOption(
           currentFilter.id,
           opt.id,
           isMultiple
         )
-      }
-    >
-      {/* ICON UI ONLY CHANGED */}
-      {isMultiple ? (
-        <View
-          style={{
-            width: 20,
-            height: 20,
-            borderRadius: 4,
-            borderWidth: 1,
-            borderColor: '#fff',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginRight: 10,
-          }}
-        >
-          {isSelectedCheckbox && (
-            <Image
-              source={require('../../../assets/images/tickicon.png')}
-              style={styles.tickImage}
-              resizeMode="contain"
-            />
-          )}
-        </View>
-      ) : (
-        <View
-          style={{
-            width: 20,
-            height: 20,
-            borderRadius: 10,
-            borderWidth: 1.5,
-            borderColor: '#fff',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginRight: 10,
-          }}
-        >
-          {isSelectedRadio && (
-            <View
-              style={{
-                width: 10,
-                height: 10,
-                borderRadius: 5,
-                backgroundColor: '#fff',
-              }}
-            />
-          )}
-        </View>
-      )}
+                }
+              >
+                {/* ICON UI ONLY CHANGED */}
+                {isMultiple ? (
+                  <View
+                    style={{
+                      width: 20,
+                      height: 20,
+                      borderRadius: 4,
+                      borderWidth: 1,
+                      borderColor: '#fff',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginRight: 10,
+                    }}
+                  >
+                    {isSelectedCheckbox && (
+                      <Image
+                        source={require('../../../assets/images/tickicon.png')}
+                        style={styles.tickImage}
+                        resizeMode="contain"
+                      />
+                    )}
+                  </View>
+                ) : (
+                  <View
+                    style={{
+                      width: 20,
+                      height: 20,
+                      borderRadius: 10,
+                      borderWidth: 1.5,
+                      borderColor: '#fff',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginRight: 10,
+                    }}
+                  >
+                    {isSelectedRadio && (
+                      <View
+                        style={{
+                          width: 10,
+                          height: 10,
+                          borderRadius: 5,
+                          backgroundColor: '#fff',
+                        }}
+                      />
+                    )}
+                  </View>
+                )}
 
-      <Text
-        allowFontScaling={false}
-        numberOfLines={3}
+                <Text
+                  allowFontScaling={false}
+                  numberOfLines={3}
         style={[styles.filtertitleFilteryBy, {
-          flexShrink: 1,
-          flexGrow: 1,
+                      flexShrink: 1,
+                      flexGrow: 1,
         }]}
-      >
-        {opt.option_name || opt.name}
-      </Text>
-    </TouchableOpacity>
-  );
-})}
+                >
+                  {opt.option_name || opt.name}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
 
 
-    </ScrollView>
-  );
-}
-
-
+        </ScrollView>
+      );
+    }  
+      
     else if (currentFilter.alias_name === 'price') {
       return (
         <View style={{ zIndex: 999, position: 'relative' }}>
-          <Text allowFontScaling={false} style={{ color: 'white', marginBottom: 10 }}>
+          <Text allowFontScaling={false}  style={{ color: 'white', marginBottom: 10 }}>
             {t('range')}: {sliderLow} - {sliderHigh}
           </Text>
- 
-          <View style={{  paddingTop: 30, paddingBottom: 20,paddingLeft: 10}}>
-            <MultiSlider
+
+          <View style={{ paddingTop: 10, paddingBottom: 20, paddingLeft: 0 }}>
+            {/* <MultiSlider
               values={[sliderLow, sliderHigh]}
               sliderLength={SCREEN_WIDTH/2 - 10}
  
@@ -413,19 +370,167 @@ const FilterAndroid = ({
                 borderRadius: 10,
                 backgroundColor: '#fff',
               }}
-            />
+                  /> 
+                  */}
+            <View
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}
+            >
+              {/* MIN INPUT */}
+              <TextInput
+                style={[
+                  styles.login_container,
+                  styles.personalEmailID_TextInput,
+                ]}
+                keyboardType="numeric"
+                placeholder="Min"
+                placeholderTextColor="#aaa"
+                selectionColor={'#FFFFFF'}
+                cursorColor={'#FFFFFF'}
+                value={String(sliderLow)}
+                onChangeText={text => {
+                  let value = parseInt(text) || 0;
+
+                  if (value > sliderHigh) return;
+
+                  setSliderLow(value);
+                  setPriceRange({ min: value, max: sliderHigh });
+                }}
+              />
+
+              {/* MAX INPUT */}
+              <TextInput
+                style={[
+                  styles.login_container,
+                  styles.personalEmailID_TextInput,
+                ]}
+                keyboardType="numeric"
+                placeholder="Max"
+                selectionColor={'#FFFFFF'}
+                cursorColor={'#FFFFFF'}
+                placeholderTextColor="#aaa"
+                value={String(sliderHigh)}
+                onChangeText={text => {
+                  let value = parseInt(text);
+
+                  if (isNaN(value)) {
+                    setSliderHigh(0);
+                    return;
+                  }
+
+                  // Clamp within allowed range
+                  const minLimit = sliderLow;
+                  const maxLimit = currentFilter?.maxvalue ?? 100;
+
+                  let finalValue = Math.min(
+                    Math.max(value, minLimit),
+                    maxLimit,
+                  );
+
+                  setSliderHigh(finalValue);
+                  setPriceRange({ min: sliderLow, max: finalValue });
+                }}
+              />
+            </View>
           </View>
+        </View>
+      );
+    } else if (currentFilter.field_type?.toLowerCase() === 'date') {
+      const selected = dateSelections[currentFilter.id] || {};
+
+      return (
+        <View style={{ paddingTop: 10 }}>
+         
+
+          {/* START DATE */}
+          <TouchableOpacity
+            style={[
+              styles.login_container,
+              styles.personalEmailID_TextInput,
+              { width: '100%' ,marginTop: 10},
+            ]}
+            onPress={() => {
+              setActiveDateField({ param: currentFilter, type: 'start' });
+              setTempDate(selected.startDate || new Date());
+              setShowDatePicker(true);
+            }}
+          >
+            <Text style={{ color: '#fff' }}>
+              {selected.startDate
+                ? formatDate(selected.startDate)
+                : 'Select Start Date'}
+            </Text>
+          </TouchableOpacity>
+
+          {/* END DATE */}
+          <TouchableOpacity
+            style={[
+              styles.login_container,
+              styles.personalEmailID_TextInput,
+              { marginTop: 10, width: '100%' },
+            ]}
+            onPress={() => {
+              setActiveDateField({ param: currentFilter, type: 'end' });
+              setTempDate(selected.endDate || new Date());
+              setShowDatePicker(true);
+            }}
+          >
+            <Text style={{ color: '#fff' }}>
+              {selected.endDate
+                ? formatDate(selected.endDate)
+                : 'Select End Date'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      );
+    } else if (
+      currentFilter.field_type?.toLowerCase() === 'text' &&
+      currentFilter.field_name?.toLowerCase().includes('postcode')
+    ) {
+      return (
+        <View style={{ paddingTop: 10 }}>
+          <Text style={{ color: 'white', marginBottom: 10 }}>
+            Enter Postcode
+          </Text>
+
+          <TextInput
+            style={[
+              styles.login_container,
+              styles.personalEmailID_TextInput,
+              { width: '100%' },
+            ]}
+            keyboardType="default"
+            placeholder="Enter Postcode"
+            placeholderTextColor="#aaa"
+            value={postcode}
+            onChangeText={text => {
+              const filteredText = text
+                .replace(/[^a-zA-Z0-9]/g, '')
+                .toUpperCase();
+              if (filteredText.length > 7) return;
+              setPostcode(filteredText);
+            }}
+          />
         </View>
       );
     }
 
-
     return null;
   };
+    
+const formatDate = (date: Date) => {
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = String(date.getFullYear()).slice(-2); // last 2 digits
 
+  return `${day}-${month}-${year}`;
+};
+    
+    const uniqueFilters = Array.from(
+  new Map(filters.map(f => [f.id, f])).values()
+);
 
   const handleApply = () => {
-    const selectedFilters = filters
+    const selectedFilters = uniqueFilters
       .map(f => {
         if (f.field_type === 'dropdown' && dropdownSelections[f.id]?.length) {
           return {
@@ -435,36 +540,43 @@ const FilterAndroid = ({
             alias_name: f.alias_name,
             options: dropdownSelections[f.id],
           };
-        }
-        else if (f.alias_name?.toLowerCase() === 'price') {
-          const defaultMin = f.minvalue ?? 0;
-          const defaultMax = f.maxvalue ?? 10000;
-
-          const prevMin = lastAppliedPriceRange?.min ?? defaultMin;
-          const prevMax = lastAppliedPriceRange?.max ?? defaultMax;
-
-          if (priceRange.min !== prevMin || priceRange.max !== prevMax) {
+        } else if (f.alias_name?.toLowerCase() === 'price') {
+          return {
+            id: f.id,
+            field_name: f.field_name,
+            field_type: f.field_type,
+            alias_name: f.alias_name,
+            options: [priceRange.min, priceRange.max],
+          };
+        } else if (f.field_type?.toLowerCase() === 'date') {
+          const selected = dateSelections[f.id];
+          if (selected?.startDate && selected?.endDate) {
             return {
               id: f.id,
               field_name: f.field_name,
               field_type: f.field_type,
               alias_name: f.alias_name,
-              options: [priceRange.min, priceRange.max],
+              options: [
+                formatDate(selected.startDate),
+                formatDate(selected.endDate),
+              ],
             };
           }
-
-          if (lastAppliedPriceRange) {
+        } else if (
+          f.field_type?.toLowerCase() === 'text' &&
+          f.field_name?.toLowerCase().includes('postcode')
+        ) {
+          if (postcode) {
             return {
               id: f.id,
               field_name: f.field_name,
               field_type: f.field_type,
               alias_name: f.alias_name,
-              options: [lastAppliedPriceRange.min, lastAppliedPriceRange.max],
+              options: [postcode],
             };
           }
-
-          return null;
         }
+
         return null;
       })
       .filter(Boolean);
@@ -477,7 +589,6 @@ const FilterAndroid = ({
       category_id: catagory_id,
     };
 
-
     onApply(filterBody);
 
     // ✅ Save current applied range for next reopen
@@ -486,11 +597,13 @@ const FilterAndroid = ({
     onClose();
   };
 
-
   return (
-
-
-    <View style={[StyleSheet.absoluteFillObject, { zIndex: 999, display: visible ? 'flex' : 'none' }]}>
+    <View
+      style={[
+        StyleSheet.absoluteFillObject,
+        { zIndex: 999, display: visible ? 'flex' : 'none' },
+      ]}
+    >
       <BlurView
         style={[StyleSheet.absoluteFillObject]}
         blurType="dark"
@@ -549,9 +662,9 @@ const FilterAndroid = ({
                 />
 
                 <View style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
                   paddingTop: 16
                 }}>
                   <Text allowFontScaling={false} style={styles.modelTextHeader}>{t('filters')}</Text>
@@ -622,33 +735,101 @@ const FilterAndroid = ({
               </View>
 
               <View style={styles.bottomview}>
-                <TouchableOpacity style={styles.cancelBtn} onPress={handleClose}>
-                  <Text allowFontScaling={false} style={styles.cancelText}>{t('cancel')}</Text>
+                <TouchableOpacity
+                  style={styles.cancelBtn}
+                  onPress={handleClose}
+                >
+                  <Text allowFontScaling={false} style={styles.cancelText}>
+                    {t('cancel')}
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.loginButton, {}]}
-                  onPress={handleApply} >
-                  <Text allowFontScaling={false} style={[styles.sendText]}>{t('apply')}</Text>
+                  onPress={handleApply}
+                >
+                  <Text allowFontScaling={false} style={[styles.sendText]}>
+                    {t('apply')}
+                  </Text>
                 </TouchableOpacity>
               </View>
-
             </View>
+                  </View>
+                  
+                  {showDatePicker && activeDateField && (
+  <DateTimePicker
+  value={tempDate}
+  mode="date"
+  display={Platform.OS === 'ios' ? 'inline' : 'calendar'} // ✅ FIX
+  themeVariant="light"
+  minimumDate={
+    activeDateField.type === 'end'
+      ? dateSelections[activeDateField.param.id]?.startDate ?? new Date()
+      : new Date()
+  }
+  onChange={(event, selectedDate) => {
+    if (event.type === 'set' && selectedDate) {
+      const fieldId = activeDateField.param.id;
 
-          </View>
+      setDateSelections(prev => {
+        const existing = prev[fieldId] || {};
+
+        return {
+          ...prev,
+          [fieldId]: {
+            ...existing,
+            [activeDateField.type === 'start' ? 'startDate' : 'endDate']:
+              selectedDate,
+          },
+        };
+      });
+    }
+
+    setShowDatePicker(false);
+  }}
+/>
+)}
         </View>
-
       </Modal>
+      
     </View>
-
   );
 };
 
 const styles = StyleSheet.create({
+  login_container: {
+    width: '45%',
+    height: 44,
+    display: 'flex',
+    gap: 10,
+    alignSelf: 'stretch',
+    borderRadius: 12,
+    borderWidth: 0.6,
+    borderColor: '#ffffff2c',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
+
+    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
+    paddingLeft: 12,
+  },
+  personalEmailID_TextInput: {
+    width: '45%',
+    fontFamily: 'Urbanist-Regular',
+    fontWeight: '400',
+    fontSize: 17,
+    lineHeight: 22,
+    fontStyle: 'normal',
+    color: '#fff',
+    minHeight: 44,
+  },
 
   filtertitle: {
     textAlign: 'center',
     flexWrap: 'wrap',
-    width: '100%',         // ensures wrapping within tab width
+    width: '100%', // ensures wrapping within tab width
     lineHeight: 18,
   },
   activeTabText: {
@@ -657,7 +838,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     fontStyle: 'normal',
-
   },
   inactiveTabText: {
     color: 'rgba(255, 255, 255, 0.64)',
@@ -668,12 +848,12 @@ const styles = StyleSheet.create({
   },
   tickImage: {
     height: 24,
-    width: 24
+    width: 24,
   },
   filterLogo: {
-    width: 20,        // adjust as needed
-    height: 20,       // adjust as needed
-    marginTop: 4,     // small spacing below text
+    width: 20,
+    height: 20, 
+    marginTop: 4,
   },
 
   modeltitleContainer: {
@@ -692,7 +872,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.07)',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-
   },
   broderTopLeftRightRadius_30: {
     borderTopLeftRadius: 30,
@@ -708,8 +887,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     alignItems: 'center',
     opacity: 0.9,
-    overflow: 'hidden'
-
+    overflow: 'hidden',
   },
   bottomview: {
     padding: 10,
@@ -718,7 +896,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingBottom: 20,
+    paddingBottom: 60,
     backgroundColor: 'rgba(0, 0, 0, 0.001)',
   },
   radioButtonSelected: {
@@ -777,7 +955,6 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     justifyContent: 'flex-end',
-
   },
 
   filterHeadTitle: {
@@ -814,7 +991,6 @@ const styles = StyleSheet.create({
     height: '100%',
     padding: 16,
     backgroundColor: 'rgba(0, 0, 0, 0.07)',
-
   },
   modelTextHeader: {
     color: 'rgba(255, 255, 255, 0.88)',
@@ -867,38 +1043,6 @@ const styles = StyleSheet.create({
     fontWeight: 500,
   },
 
-  // inactiveTab: {
-  //   display: 'flex',
-  //   alignItems: 'center',
-  //   borderRadius: 14,
-  //   justifyContent: 'center',
-  //   padding: 16,
-  //   gap: 4,
-  //   marginBottom: 5,
-  //   minHeight:90,
-  //    flexShrink: 1,          // allow layout to shrink with longer text
-  // flexWrap: 'wrap',   
-
-  // },
-  // activeTab: {
-  //   display: 'flex',
-  //   alignItems: 'center',
-  //   backgroundColor:
-  //     'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(151, 151, 151, 0.4) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  //   borderRadius: 12,
-  //   borderWidth: 0.5,
-  //   borderColor: '#ffffff0e',
-  //   justifyContent: 'center',
-  //   padding: 16,
-  //   gap: 4,
-  //   marginBottom: 5,
-  //   boxShadow: 'rgba(255, 255, 255, 0.16) inset -1px 0px 4px 2px',
-  //   minHeight:90,
-  //    flexShrink: 1,          // allow layout to shrink with longer text
-  // flexWrap: 'wrap',   
-  // },
-
-
   inactiveTab: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -931,14 +1075,6 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     width: '100%',
   },
-
-
-
 });
 
 export default FilterAndroid;
-
-function crashlytics() {
-  throw new Error('Function not implemented.');
-}
-
