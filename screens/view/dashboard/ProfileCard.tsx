@@ -60,6 +60,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
     student_email: string | null;
     email?: string | null;
     university_name?: string | null;
+    city?: string | null;
   }
 
   const [userMeta, setUserMeta] = useState<UserMeta | null>(null);
@@ -132,6 +133,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
             student_email: user.student_email ?? null,
             email: user.email ?? null,
             university_name: user.university_name ?? null,
+            city: user.city ?? null,
           });
 
         } else {
@@ -404,6 +406,22 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                 />
                 <Text allowFontScaling={false} style={styles.userSub}>
                   {userMeta?.student_email || 'studentname@university.ac.uk'}
+                </Text>
+              </View>
+
+              <View
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
+              >
+                <Image
+                  source={require('../../../assets/images/buildings.png')}
+                  style={{ width: 16, height: 16 }}
+                />
+                <Text allowFontScaling={false} style={styles.userSub}>
+                  {userMeta?.city
+                    ? userMeta.city.length > 21
+                      ? userMeta.city.slice(0, 21) + '…'
+                      : userMeta.city
+                    : 'University Name'}
                 </Text>
               </View>
             </View>
