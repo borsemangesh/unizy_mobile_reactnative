@@ -517,6 +517,8 @@ const FilterBottomSheet = ({
                     keyboardType="default"
                     placeholder="Enter Postcode"
                     placeholderTextColor="#aaa"
+                    selectionColor={'#FFFFFF'}
+                     cursorColor={'#FFFFFF'}
                     value={postcode}
                     onChangeText={text => {
                       const filteredText = text
