@@ -11,6 +11,8 @@ import {
   StatusBar,
   ScrollView,
   Dimensions,
+  Modal,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
@@ -237,7 +239,10 @@ const MyOrders = ({ navigation }: MyOrdersProps) => {
         },
       });
 
+
       const jsonResponse = await response.json();
+      console.log("MyOrderUrl", url);
+      console.log("MyOrderRes: ",  jsonResponse);
 
       if (jsonResponse.statusCode === 200) {
 
@@ -270,6 +275,8 @@ const MyOrders = ({ navigation }: MyOrdersProps) => {
   const filteredFeatures: Feature[] = featurelist.filter(item =>
     (item.featurelist?.title ?? '').toLowerCase().includes(search.toLowerCase())
   );
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
 const formatDate = (dateString?: string, t?: any) => {
   if (!dateString) return "";
@@ -429,9 +436,78 @@ const formatDate = (dateString?: string, t?: any) => {
           profileshowinview={item?.featurelist?.profileshowinview}
           createdby={item?.featurelist?.createdby}
           isreviewadded={item?.featurelist?.isReviewGiven}
+          onCancel={cancelbody => cancelOreder(cancelbody)}
+          cardId={item?.id}
+          orederStatus={item?.order_status }
         />
       </View>
     );
+  };
+
+  const [orederId, setOrederId] = useState(0);
+  const cancelOreder = (cancelbody: any) => {
+    setOrederId(cancelbody?.orderid);
+    setShowDeleteModal(true);
+  }
+
+    const [loading, setLoading] = useState<boolean>(false);
+    const renderRightContent = () => {
+    if (loading) {
+      return (
+        <Text style={{ color: 'white', textAlign: 'center', padding: 20 }}>Loading...</Text>
+      );
+    }
+    }
+  
+  const handleCancelOrder = async (id: number) => {
+    setShowDeleteModal(false);
+    let orderId = id;
+    console.log('OrederID: ', orderId);
+
+    try {
+      // Get user token
+      setLoading(true);
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        console.log('No token found');
+        return;
+      }
+
+      // Construct the URL
+      const url = `${MAIN_URL.baseUrl}transaction/post-order-cancel`;
+
+      const body = { orderid: orderId };
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+      const json = await response.json();
+
+      console.log('CanelUrl: ', url);
+      console.log('Caneljson: ', json);
+
+      // Handle response status codes
+      if (response.status === 200) {
+        setLoading(false);
+         displayListOfProduct(selectedCategory?.id ?? null, 1);
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      if (json.statusCode === 401 || json.statusCode === 403) {
+        // handleForceLogout();
+        return;
+      }
+    } catch (err) {
+      console.log('Error fetching sales history:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
 
@@ -440,7 +516,6 @@ const formatDate = (dateString?: string, t?: any) => {
   return (
     <ImageBackground source={bgImage} style={styles.background}>
       <View style={styles.fullScreenContainer}>
-
         <StatusBar
           translucent
           backgroundColor="transparent"
@@ -486,10 +561,10 @@ const formatDate = (dateString?: string, t?: any) => {
         <View style={styles.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
-              if(Platform.OS === 'ios'){
-                if(navigation.canGoBack()){
-                  navigation.goBack()
-                }else  {
+              if (Platform.OS === 'ios') {
+                if (navigation.canGoBack()) {
+                  navigation.goBack();
+                } else {
                   navigation.reset({
                     index: 0,
                     routes: [
@@ -504,9 +579,8 @@ const formatDate = (dateString?: string, t?: any) => {
                   });
                 }
               } else {
-                navigation.goBack()
+                navigation.goBack();
               }
-              
             }}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
@@ -556,19 +630,20 @@ const formatDate = (dateString?: string, t?: any) => {
               />
             </Animated.View>
           </TouchableOpacity>
-          <View style={{width: 280}}>
-          <Text numberOfLines={2} allowFontScaling={false} style={styles.unizyText}>
-             {t('my_orders')}
-          </Text>
+          <View style={{ width: 280 }}>
+            <Text
+              numberOfLines={2}
+              allowFontScaling={false}
+              style={styles.unizyText}
+            >
+              {t('my_orders')}
+            </Text>
           </View>
           <TouchableOpacity
             style={[styles.backButtonContainer]}
             // activeOpacity={0}
           >
-            <Animated.View
-              style={[styles.blurButtonWrapper_none]}
-            >
-
+            <Animated.View style={[styles.blurButtonWrapper_none]}>
               <Animated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -581,7 +656,8 @@ const formatDate = (dateString?: string, t?: any) => {
                     ),
                     backgroundColor: 'transparent',
                     borderRadius: 40,
-                  })),{display: 'none'}
+                  })),
+                  { display: 'none' },
                 ]}
               />
 
@@ -596,16 +672,15 @@ const formatDate = (dateString?: string, t?: any) => {
                       [0, 0],
                       'clamp',
                     ),
-                  })),{display: 'none'}
+                  })),
+                  { display: 'none' },
                 ]}
-              >
-                
-              </Animated.View>
+              ></Animated.View>
 
               {/* Back Icon */}
               <Animated.Image
                 source={require('../../../assets/images/back.png')}
-                style={[{ height: 25, width: 25,display: 'none' }]}
+                style={[{ height: 25, width: 25, display: 'none' }]}
               />
             </Animated.View>
           </TouchableOpacity>
@@ -625,13 +700,12 @@ const formatDate = (dateString?: string, t?: any) => {
               style={[
                 styles.categoryTabsContainer,
                 {
-                  marginHorizontal: -30, 
-                  paddingHorizontal: 30, 
+                  marginHorizontal: -30,
+                  paddingHorizontal: 30,
                   overflow: 'visible',
                 },
               ]}
               pointerEvents="box-none"
-             
             >
               <ScrollView
                 horizontal
@@ -647,7 +721,6 @@ const formatDate = (dateString?: string, t?: any) => {
                       onPress={() => setSelectedCategory(cat)}
                       activeOpacity={0.7}
                     >
-
                       <SquircleView
                         style={isSelected ? styles.tabcard : styles.tabcard1}
                         squircleParams={{
@@ -660,9 +733,7 @@ const formatDate = (dateString?: string, t?: any) => {
                       >
                         <Text
                           allowFontScaling={false}
-                          style={
-                            isSelected ? styles.tabtext : styles.othertext
-                          }
+                          style={isSelected ? styles.tabtext : styles.othertext}
                         >
                           {cat.name}
                         </Text>
@@ -676,13 +747,13 @@ const formatDate = (dateString?: string, t?: any) => {
           contentContainerStyle={[
             styles.listContainer,
             {
-              paddingTop: (Platform.OS === 'ios'? 120 : 100),
+              paddingTop: Platform.OS === 'ios' ? 120 : 100,
               paddingBottom: isEmpty
-                ? 10                      
+                ? 10
                 : Platform.select({
-                  ios: height * 0.01,   // ⬅ apply padding when list has data
-                  android: height * 0.04,
-                }),
+                    ios: height * 0.01, // ⬅ apply padding when list has data
+                    android: height * 0.04,
+                  }),
               flexGrow: 1,
             },
           ]}
@@ -715,10 +786,85 @@ const formatDate = (dateString?: string, t?: any) => {
             )
           }
         />
-
-
       </View>
+
+      <Modal
+        visible={showDeleteModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowDeleteModal(false)}
+      >
+        <TouchableWithoutFeedback
+          onPress={() => {
+            navigation.replace('EditProfile');
+          }}
+        >
+          <View style={styles.overlay}>
+            <BlurView
+              style={{
+                flex: 1,
+                alignContent: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                alignItems: 'center',
+                backgroundColor: 'rgba(0, 0, 0, 0.30)',
+              }}
+              blurType="light"
+              blurAmount={2}
+              reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+            >
+              <View
+                style={[
+                  StyleSheet.absoluteFill,
+                  { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                ]}
+              />
+
+              <View style={styles.popupContainer}>
+                <Image
+                  source={require('../../../assets/images/alerticon.png')}
+                  style={styles.logo}
+                  resizeMode="contain"
+                />
+                <Text allowFontScaling={false} style={styles.mainheader1}>
+                  {t('confirm_action')}
+                </Text>
+                <Text
+                  allowFontScaling={false}
+                  style={[styles.mainheader, { marginTop: 10 }]}
+                >
+                  {t('cancel_order_message_action')}
+                </Text>
+
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  onPress={() => {
+                    handleCancelOrder(orederId);
+                  }}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText}>
+                    {t('yes_cancel')}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.loginButton1}
+                  onPress={() => {
+                    setShowDeleteModal(false);
+                  }}
+                >
+                  <Text allowFontScaling={false} style={styles.loginText1}>
+                    {t('cancel')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </BlurView>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+
       <NewCustomToastContainer />
+      {renderRightContent()}
     </ImageBackground>
   );
 };
@@ -726,6 +872,117 @@ const formatDate = (dateString?: string, t?: any) => {
 export default MyOrders;
 
 const styles = StyleSheet.create({
+    logo: {
+    width: 64,
+    height: 64,
+    borderRadius: 60,
+  },
+
+    mainheader1: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 20,
+    fontWeight: '600',
+    letterSpacing: -0.4,
+    lineHeight: 28,
+  },
+  
+  popupContainer: {
+    width: '90%',
+    padding: 20,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'center',
+    overflow: 'hidden',
+
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+  },
+
+  mainheader: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 16,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginTop: 6,
+  },
+
+  subheader: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+
+  subheader1: {
+    color: 'rgba(255, 255, 255, 0.48)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginTop: 6,
+  },
+
+  loginButton1: {
+    display: 'flex',
+    width: '100%',
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 100,
+    paddingTop: 6,
+    paddingBottom: 6,
+    backgroundColor: 'rgba(170, 169, 176, 0.56)',
+    marginTop: 16,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+  },
+
+  loginText: {
+    color: '#002050',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: 500,
+    letterSpacing: 1,
+    width: '100%',
+  },
+  loginText1: {
+    color: '#FFFFFF7A',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: 500,
+    letterSpacing: 1,
+    width: '100%',
+  },
+
+  loginButton: {
+    display: 'flex',
+    width: '100%',
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 100,
+    paddingTop: 6,
+    paddingBottom: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.56)',
+    marginTop: 16,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+  },
+
+    overlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
 
   categoryTabsContainer: { },
   categoryTabsScrollContent: { 

@@ -11,6 +11,8 @@ import {
   Dimensions,
   Animated,
   Easing,
+  TouchableWithoutFeedback,
+  Modal,
 } from 'react-native';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -19,6 +21,7 @@ import SalesAllDetailsDropdown_IOS from '../../utils/component/SalesAllDetailsDr
 import Loader from '../../utils/component/Loader';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
+import { BlurView } from '@react-native-community/blur';
 
 type TransactionPropos = {
   navigation: any;
@@ -42,7 +45,8 @@ interface TransactionItem {
   amount: string;
   purchased_quantity?: number
   category_id: number;
-  hours?: number
+    hours?: number;
+    order_id?: number;
 }
 
 interface TransactionSection {
@@ -143,9 +147,7 @@ export default function TransactionHistoryScreen(
       useNativeDriver: true,
     }).start();
   }, [activeTab, bubbleX, tabWidth]);
-
-  useEffect(() => {
-    const fetchTransactions = async () => {
+      const fetchTransactions = async () => {
       try {
         setLoading(true);
         const token = await AsyncStorage.getItem('userToken');
@@ -183,6 +185,9 @@ export default function TransactionHistoryScreen(
         }
 
         const json = await response.json();
+        console.log("TransactionURL GET: ", url);
+        console.log("TransactionResponse: ", json);
+        console.log("token: ",  token);
 
         if (json.statusCode === 401 || json.statusCode === 403) {
           handleForceLogout();
@@ -206,7 +211,9 @@ export default function TransactionHistoryScreen(
               category_logo: item.category_logo,
               purchased_quantity: item.purchased_quantity ?? 0,
               category_id: item.category_id,
-              hours: item.hours ?? 0
+                hours: item.hours ?? 0,
+                order_id: item.order_id,
+              
             })),
           }));
 
@@ -257,11 +264,15 @@ export default function TransactionHistoryScreen(
         setLoading(false);
       }
     };
-
-    const handleForceLogout = async () => {
+      const handleForceLogout = async () => {
 
       await AsyncStorage.clear();
     };
+
+  useEffect(() => {
+  
+
+  
 
     setLoading(true);
     fetchTransactions();
@@ -359,6 +370,61 @@ export default function TransactionHistoryScreen(
 
 
   const [isSelected, setIsSelected] = useState(false);
+
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [orderId, setOrderId] = useState(0);
+    const handleCancelOrder = async (id: number) => {
+      setShowDeleteModal(false);
+      let orderId = id;
+      console.log('OrederID: ', orderId);
+  
+      try {
+        // Get user token
+        setLoading(true);
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) {
+          console.log('No token found');
+          return;
+        }
+  
+        // Construct the URL
+        const url = `${MAIN_URL.baseUrl}transaction/post-order-cancel`;
+  
+        const body = { orderid: orderId };
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body),
+        });
+        const json = await response.json();
+  
+        console.log('CanelUrl: ', url);
+        console.log('Caneljson: ', json);
+  
+        // Handle response status codes
+        if (response.status === 200) {
+          setLoading(false);
+           fetchTransactions();
+        }
+  
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        if (json.statusCode === 401 || json.statusCode === 403) {
+          // handleForceLogout();
+          return;
+        }
+      } catch (err) {
+        console.log('Error fetching sales history:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
 
 
   return (
@@ -513,14 +579,27 @@ export default function TransactionHistoryScreen(
                         />
                       </View>
                       <View style={{ flex: 1,gap: 4 }}>
-                        <View style={{width: '100%' }}>
+                        <View style={{width: '100%' ,flexDirection: 'row', justifyContent: 'space-between'}}>
                           <Text
                             numberOfLines={2}
                             allowFontScaling={false}
                             style={styles.itemTitle}
                           >
-                            {item.title}
+                            {item.title} 
                           </Text>
+                          {item?.status === 'Awaiting Delivery' && (
+                              <TouchableOpacity
+                                              onPress={() => {
+                                           setOrderId(item?.order_id ?? 0);
+                              setShowDeleteModal(true);
+                          }}>
+                          <Image
+                            source={require('../../../assets/images/ic_cancel.png')}
+                            style={{width: 30,height:30}}
+                            />
+                            </TouchableOpacity>
+                          )}
+                        
                         </View>
                         <View
                           style={{
@@ -546,20 +625,6 @@ export default function TransactionHistoryScreen(
                                     fontFamily: 'Urbanist-SemiBold',
                                   }}
                                 >
-                                  {/* {item?.category_id === 3
-                                    ? `${item?.purchased_quantity ?? 1} ${
-                                        (item?.purchased_quantity ?? 1) > 1
-                                          ? t('units')
-                                          : t('unit')
-                                      }`
-                                    : item?.category_id === 2 ||
-                                      item?.category_id === 5
-                                    ? `${item?.hours ?? 1} ${
-                                        (item?.hours ?? 1) > 1
-                                          ? t('hours')
-                                          : t('hour')
-                                      }`
-                                    : ''} */}
 
                                   {
                                     item?.category_id === 3
@@ -594,6 +659,7 @@ export default function TransactionHistoryScreen(
                         {item.status}
                       </Text>
                     </View>
+
                     <View
                       style={[
                         styles.codeBox,
@@ -863,6 +929,84 @@ export default function TransactionHistoryScreen(
         )}
       </ScrollView>
 
+
+            <Modal
+              visible={showDeleteModal}
+              transparent
+              animationType="fade"
+              onRequestClose={() => setShowDeleteModal(false)}
+            >
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  // navigation.replace('EditProfile');
+                }}
+              >
+                <View style={styles.overlay}>
+                  <BlurView
+                    style={{
+                      flex: 1,
+                      alignContent: 'center',
+                      justifyContent: 'center',
+                      width: '100%',
+                      alignItems: 'center',
+                      backgroundColor: 'rgba(0, 0, 0, 0.30)',
+                    }}
+                    blurType="light"
+                    blurAmount={2}
+                    reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+                  >
+                    <View
+                      style={[
+                        StyleSheet.absoluteFill,
+                        { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                      ]}
+                    />
+      
+                    <View style={styles.popupContainer}>
+                      <Image
+                        source={require('../../../assets/images/alerticon.png')}
+                        style={styles.logo}
+                        resizeMode="contain"
+                      />
+                      <Text allowFontScaling={false} style={styles.mainheader1}>
+                        {t('confirm_action')}
+                      </Text>
+                      <Text
+                        allowFontScaling={false}
+                        style={[styles.mainheader, { marginTop: 10 }]}
+                      >
+                        {t('cancel_order_message_action')}
+                      </Text>
+      
+                      <TouchableOpacity
+                        style={styles.loginButton}
+                        onPress={() => {
+                            setShowDeleteModal(false);
+                            handleCancelOrder(orderId);
+                        }}
+                      >
+                        <Text allowFontScaling={false} style={styles.loginText}>
+                          {t('yes_cancel')}
+                        </Text>
+                      </TouchableOpacity>
+      
+                      <TouchableOpacity
+                        style={styles.loginButton1}
+                        onPress={() => {
+                          setShowDeleteModal(false);
+                        }}
+                      >
+                        <Text allowFontScaling={false} style={styles.loginText1}>
+                          {t('cancel')}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </BlurView>
+                </View>
+              </TouchableWithoutFeedback>
+            </Modal>
+      
+
       {Platform.OS === 'android' ? (
         <>
           <SalesAllDetailsDropdown
@@ -891,6 +1035,118 @@ export default function TransactionHistoryScreen(
 }
 
 const styles = StyleSheet.create({
+    logo: {
+    width: 64,
+    height: 64,
+    borderRadius: 60,
+  },
+
+    mainheader1: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-SemiBold',
+    fontSize: 20,
+    fontWeight: '600',
+    letterSpacing: -0.4,
+    lineHeight: 28,
+  },
+  
+  popupContainer: {
+    width: '90%',
+    padding: 20,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'center',
+    overflow: 'hidden',
+
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+  },
+
+  mainheader: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 16,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginTop: 6,
+  },
+
+  subheader: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+
+  subheader1: {
+    color: 'rgba(255, 255, 255, 0.48)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginTop: 6,
+  },
+
+  loginButton1: {
+    display: 'flex',
+    width: '100%',
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 100,
+    paddingTop: 6,
+    paddingBottom: 6,
+    backgroundColor: 'rgba(170, 169, 176, 0.56)',
+    marginTop: 16,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+  },
+
+  loginText: {
+    color: '#002050',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: 500,
+    letterSpacing: 1,
+    width: '100%',
+  },
+  loginText1: {
+    color: '#FFFFFF7A',
+    textAlign: 'center',
+    fontFamily: 'Urbanist-Medium',
+    fontSize: 17,
+    fontWeight: 500,
+    letterSpacing: 1,
+    width: '100%',
+  },
+
+  loginButton: {
+    display: 'flex',
+    width: '100%',
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 100,
+    paddingTop: 6,
+    paddingBottom: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.56)',
+    marginTop: 16,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
+  },
+
+    overlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+
   loaderWrapper: {
     flex: 1,
     justifyContent: 'center',

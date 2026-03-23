@@ -39,7 +39,10 @@ type MyOrderCardProps = {
   ispurchase: boolean;
   profileshowinview: boolean
   createdby: CreatedBy,
-  isreviewadded: boolean
+    isreviewadded: boolean
+    onCancel: (filters: any) => void; 
+    cardId: number;
+    orederStatus: string;
 };
 
 const MyOrderCard: React.FC<MyOrderCardProps> = ({
@@ -53,7 +56,10 @@ const MyOrderCard: React.FC<MyOrderCardProps> = ({
   category_id,
   profileshowinview,
   createdby,
-  isreviewadded,
+    isreviewadded,
+    onCancel,
+    cardId,
+    orederStatus
 
 }) => {
 
@@ -108,7 +114,14 @@ const MyOrderCard: React.FC<MyOrderCardProps> = ({
 
   const handleWriteReview = () => {
     navigation.navigate('UserAddReview', { category_id: category_id, feature_id: shareid });
-  };
+    };
+
+    const handleCancelOrder = () => {
+        onCancel({ orderid: cardId });
+        
+
+      };
+    const isCancelled = orederStatus === 'Cancelled';
 
   return (
     <TouchableOpacity style={styles.card} activeOpacity={0.8}>
@@ -123,7 +136,13 @@ const MyOrderCard: React.FC<MyOrderCardProps> = ({
             {inforTitlePrice}
           </Text>
 
-          {ispurchase ? (
+          {isCancelled ? (
+  <View style={styles.statusTag}>
+    <Text allowFontScaling={false} style={[styles.statusText,]}>
+      {t('cancelled')}
+    </Text>
+  </View>
+) : ispurchase ? (
             <View style={styles.statusTag}>
               <Text allowFontScaling={false} style={styles.statusText}>
                 {t('fulfilled_on')}: {date}
@@ -139,7 +158,49 @@ const MyOrderCard: React.FC<MyOrderCardProps> = ({
         </View>
       </View>
       <View style={styles.cardconstinerdivider} />
-      {ispurchase && !isreviewadded ? (
+      <View style={styles.buttonRow}>
+        {/* ALWAYS visible */}
+        <TouchableOpacity
+          style={styles.primaryButton}
+          activeOpacity={0.7}
+          onPress={handleViewTransaction}
+        >
+          <Text allowFontScaling={false} style={styles.btnText}>
+            {t('view_in_transactions')}
+          </Text>
+        </TouchableOpacity>
+
+              {/* ✅ Case 1: Completed + No Review */}
+              {!isCancelled && (
+              <>
+        {ispurchase && !isreviewadded && (
+          <TouchableOpacity
+            style={styles.secondaryButton}
+            activeOpacity={0.7}
+            onPress={handleWriteReview}
+          >
+            <Text allowFontScaling={false} style={styles.btnTextSecondary}>
+              {t('write_a_review')}
+            </Text>
+          </TouchableOpacity>
+                      )}
+                      </>
+                )}
+
+        {/* ✅ Case 2: Awaiting Delivery */}
+        {!ispurchase && (
+          <TouchableOpacity
+            style={styles.secondaryButton}
+            activeOpacity={0.7}
+            onPress={handleCancelOrder}
+          >
+            <Text allowFontScaling={false} style={styles.btnTextSecondary}>
+              {t('cancel_order')}
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
+      {/* {ispurchase && !isreviewadded ? (
         <View style={styles.buttonRow}>
           <TouchableOpacity
             style={styles.primaryButton}
@@ -168,7 +229,7 @@ const MyOrderCard: React.FC<MyOrderCardProps> = ({
             {t('view_in_transactions')}
           </Text>
         </TouchableOpacity>
-      )}
+      )} */}
     </TouchableOpacity>
   );
 };
