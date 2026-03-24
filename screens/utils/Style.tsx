@@ -17,10 +17,10 @@ export const IMAGE_URLS = {
     addIcon3: require('../../assets/images/filled3.png'),
     bookmarkIcon4: require('../../assets/images/filled4.png'),
     profileIcon5: require('../../assets/images/filled5.png'),
-    CARDBACKGROUD_ICON: require('./../assets/images/cardbg.png'),
+    CARDBACKGROUD_ICON: require('../../assets/images/cardbg.png'),
 
     //Account Details
-    PROFILE_DELETE_ICON: require('../../../assets/images/profile_delete.png'),
+    PROFILE_DELETE_ICON: require('../../assets/images/profile_delete.png'),
     SUCCESS_ICON: require('../../assets/images/success_icon.png'),
     SELLECTFILE_ICON: require('../../assets/images/sellerfile.png'),
     NOPRODUCT_ICON: require('../../assets/images/noproduct.png'),
