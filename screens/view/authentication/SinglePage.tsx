@@ -60,6 +60,14 @@ type RootStackParamList = {
 };
 type SinglePageRouteProp = RouteProp<RootStackParamList, 'SinglePage'>;
 
+
+  interface UserMeta {
+  city: string | null;
+  postal_code: string | null;
+  lat: number ;
+   lon: number;
+  // profile:string | null;
+}
 const SinglePage = ({ navigation }: SinglePageProps) => {
   const [currentScreen, setCurrentScreen] = useState<
     'hello' | 'language' | 'login' | 'splashScreen'
@@ -855,10 +863,15 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       !lastName.trim() ||
       !signUpusername.trim() ||
       !signUppassword.trim() ||
-      !confirmPassword.trim()
+      !confirmPassword.trim() ||
+      !userMeta.postal_code?.trim()
     ) {
       showToast(t(Constant.REQUIRED_ALL_FIELDS), 'error');
       return;
+    }
+
+       if (!userMeta.postal_code || userMeta.postal_code.trim() === '') {
+      showToast(t('postal_code_req'));
     }
     const emailRegex =
       /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;
@@ -888,10 +901,13 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       const body = {
         firstname: firstName,
         lastname: lastName,
-        postal_code: '',
+        postal_code: userMeta.postal_code,
         email: signUpusername,
         password: signUppassword,
         confirmPassword: confirmPassword,
+        city: userMeta.city,
+        latitude: userMeta.lat,
+         longitude: userMeta.lon
       };
 
 
@@ -906,7 +922,11 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         body: JSON.stringify(body),
       });
 
+
       const data = await response.json();
+      console.log("SignupUrl: ",url);
+      console.log("SignupResponse: ",data);
+      console.log("SignUpBody:", JSON.stringify(body));
 
 
       if (response.status === 201) {
@@ -1742,6 +1762,105 @@ const openGallery = async () => {
   const signupOpacity = useRef(new Animated.Value(0)).current;
   const loginOpacity = useRef(new Animated.Value(0)).current;
   const isFocused = useIsFocused();
+
+
+
+    const [typingTimeout, setTypingTimeout] = useState<any>(null);
+    const [userMeta, setUserMeta] = useState<UserMeta>({
+      city: '',
+      postal_code: '',
+      lon: 0,
+      lat:0
+    });
+
+const ClickPostalCode = async (postalCode: any) => {
+  const location = await getCityFromPostalCode(postalCode);
+
+  if (!location) return;
+
+  setUserMeta(prev => ({
+    ...prev,
+    city: location.city || '',
+    lat: location.lat,
+    lon: location.lon,
+  }));
+};
+const getCityFromPostalCode = async (postalCode: string) => {
+  try {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
+      {
+        headers: {
+          "User-Agent": "MyAndroidApp/1.0 (contact@myapp.com)",
+          "Accept-Language": "en-US",
+        },
+      }
+    );
+
+    const data = await response.json();
+    console.log("location data:", data);
+
+    if (!data || data.length === 0) return null;
+
+    const result = data[0];
+    const address = result.address;
+
+    const city =
+      address.city ||
+      address.town ||
+      address.village ||
+      address.county ||
+      address.state_district ||
+      null;
+
+    return {
+      city,
+      lat: parseFloat(result.lat),   // ✅ FIX
+      lon: parseFloat(result.lon),   // ✅ FIX
+    };
+
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+//   const getCityFromPostalCode = async (postalCode: string) => {
+//     try {
+//       const response = await fetch(
+//         `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
+//         {
+//           headers: {
+//             "User-Agent": "MyAndroidApp/1.0 (contact@myapp.com)",
+//             "Accept-Language": "en-US",
+//           },
+//         }
+//       );
+
+//       const data = await response.json();
+//       console.log("location data:", data);
+//       const result = data[0];
+
+//       if (!data || data.length === 0) return null;
+
+//       const address = data[0].address;
+
+//       return (
+//         address.city ||            // US, some countries
+//         address.town ||            // smaller towns
+//         address.village ||         // villages
+//         address.county ||          // India, UK (like Pune City)
+//         address.state_district ||  // fallback
+//         parseFloat(result.lat) || // ✅ FIX
+//       parseFloat(result.lon)||  // ✅ FIX
+//       null
+//     );
+
+
+//   } catch (error) {
+//     console.error(error);
+//     return null;
+//   }
+// };
   return (
     <ImageBackground
       source={require('../../../assets/images/bganimationscreen.png')}
@@ -2529,11 +2648,11 @@ const openGallery = async () => {
                             </View>
                           </View>
 
-                          <View style={{ display: 'none' }}>
+             
                             <View
                               style={[
                                 Styles.login_container,
-                                { display: 'none' },
+                                  { marginTop: Platform.OS === 'ios' ? 12 : 0 ,marginBottom:Platform.OS === 'ios' ? 12 : 10},
                               ]}
                             >
                               <TextInput
@@ -2542,26 +2661,36 @@ const openGallery = async () => {
                                   Styles.personalEmailID_TextInput,
                                   { paddingTop: 10 },
                                 ]}
-                                placeholder="Postal Code"
+                                placeholder="Postal Code*"
                                 cursorColor={'#F5F5F5'}
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                 value={postalCode}
                                 maxLength={7}
-                                //keyboardType="numeric"
-                                onChangeText={text => {
-                                  const alphanumericText = text.replace(
-                                    /[^a-zA-Z0-9]/g,
-                                    '',
-                                  );
-                                  const limitedText = alphanumericText.slice(
-                                    0,
-                                    7,
-                                  );
-                                  setPostalCode(limitedText);
-                                }}
+                           
+
+                                 onChangeText={text => {
+                    const filteredText = text.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                    if (filteredText.length > 7) return;
+                    setUserMeta(prev => ({
+                      ...prev,
+                      postal_code: filteredText,
+                    }));
+                    setPostalCode(filteredText);
+                    if (typingTimeout) {
+                      clearTimeout(typingTimeout);
+                    }
+                    const timeout = setTimeout(() => {
+                      if (filteredText.length > 0) {
+
+                        ClickPostalCode(filteredText);
+                      }
+                    }, 1000);
+
+                    setTypingTimeout(timeout);
+                  }}
                               />
                             </View>
-                          </View>
+                 
 
                           <View
                             style={[

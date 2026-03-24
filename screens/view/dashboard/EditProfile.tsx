@@ -74,6 +74,8 @@ interface UserMeta {
   student_email: string | null;
   city: string | null;
   postal_code: string | null;
+  latitude: number;
+  longitudes: number;
   // profile:string | null;
 }
 
@@ -91,6 +93,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     student_email: '',
     city: '',
     postal_code: '',
+      latitude: 0 ,
+   longitudes: 0
     // profile:''
   });
 
@@ -230,6 +234,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             student_email: user.student_email ?? null,
             city: user.city ?? null,
             postal_code: user.postal_code ?? null,
+           latitude: userMeta.latitude??null ,
+           longitudes: userMeta.longitudes,
           });
 
           const profileSnapshot: UserMeta = {
@@ -239,6 +245,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             student_email: user.student_email ?? '',
             city: user.city ?? '',
             postal_code: user.postal_code ?? '',
+            latitude: userMeta.latitude??null ,
+           longitudes: userMeta.longitudes,
           };
           setUserMeta(profileSnapshot);
           setInitialProfile(profileSnapshot);
@@ -444,9 +452,9 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     // if (!userMeta.city || userMeta.city.trim() === '') {
     //   errors.push(t('city_req'));
     // }
-    // if (!userMeta.postal_code || userMeta.postal_code.trim() === '') {
-    //   errors.push(t('postal_code_req'));
-    // }
+    if (!userMeta.postal_code || userMeta.postal_code.trim() === '') {
+      errors.push(t('postal_code_req'));
+    }
     return errors;
   };
 
@@ -506,6 +514,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         //student_email: userMeta.student_email?.trim(),
         city: userMeta.city?.trim(),
         postal_code: userMeta.postal_code,
+        latitude: userMeta.latitude,
+        longitudes: userMeta.longitudes,
       };
 
 
@@ -520,6 +530,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
       const data = await response.json();
 
+      
 
       if (data.statusCode === 200) {
         showToast(t(data?.message) || 'Profile updated successfully', 'success');
@@ -955,14 +966,14 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   
 
 
-  const ClickPostalCode = async (postalCode: any) => {
-    const cityName = await getCityFromPostalCode(postalCode);
+  // const ClickPostalCode = async (postalCode: any) => {
+  //   const cityName = await getCityFromPostalCode(postalCode);
 
-    setUserMeta(prev => ({
-      ...prev,
-      city: cityName, // Only set city
-    }));
-  };
+  //   setUserMeta(prev => ({
+  //     ...prev,
+  //     city: cityName, // Only set city
+  //   }));
+  // };
 
   // const getCityFromPostalCode = async (postalCode: string) => {
   //   try {
@@ -1008,7 +1019,53 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   // };
 
 
-  const getCityFromPostalCode = async (postalCode: string) => {
+//   const getCityFromPostalCode = async (postalCode: string) => {
+//   try {
+//     const response = await fetch(
+//       `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
+//       {
+//         headers: {
+//           "User-Agent": "MyAndroidApp/1.0 (contact@myapp.com)",
+//           "Accept-Language": "en-US",
+//         },
+//       }
+//     );
+
+//     const data = await response.json();
+//     console.log("location data:", data);
+
+//     if (!data || data.length === 0) return null;
+
+//     const address = data[0].address;
+
+//     return (
+//       address.city ||            // US, some countries
+//       address.town ||            // smaller towns
+//       address.village ||         // villages
+//       address.county ||          // India, UK (like Pune City)
+//       address.state_district ||  // fallback
+//       null
+//     );
+//   } catch (error) {
+//     console.error(error);
+//     return null;
+//   }
+  // };
+  
+
+  const ClickPostalCode = async (postalCode: any) => {
+  const location = await getCityFromPostalCode(postalCode);
+
+  if (!location) return;
+
+  setUserMeta(prev => ({
+    ...prev,
+    city: location.city || '',
+    lat: location.lat,
+    lon: location.lon,
+  }));
+};
+const getCityFromPostalCode = async (postalCode: string) => {
   try {
     const response = await fetch(
       `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
@@ -1025,16 +1082,23 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
     if (!data || data.length === 0) return null;
 
-    const address = data[0].address;
+    const result = data[0];
+    const address = result.address;
 
-    return (
-      address.city ||            // US, some countries
-      address.town ||            // smaller towns
-      address.village ||         // villages
-      address.county ||          // India, UK (like Pune City)
-      address.state_district ||  // fallback
-      null
-    );
+    const city =
+      address.city ||
+      address.town ||
+      address.village ||
+      address.county ||
+      address.state_district ||
+      null;
+
+    return {
+      city,
+      lat: parseFloat(result.lat),   // ✅ FIX
+      lon: parseFloat(result.lon),   // ✅ FIX
+    };
+
   } catch (error) {
     console.error(error);
     return null;
@@ -1545,7 +1609,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
               <View style={styles.inputGroup}>
                 <Text style={styles.label} allowFontScaling={false}>
-                  {t('postal_code')}
+                  {t('postal_code')}*
                 </Text>
                 <TextInput
                   selectionColor="#F5F5F5"
