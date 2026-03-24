@@ -48,6 +48,7 @@ import { clearTwilioCache } from '../dashboard/MessageIndividualScreen';
 import DeviceInfo from 'react-native-device-info';
 
 import ImagePicker from 'react-native-image-crop-picker';
+import { IMAGE_URLS } from '../../utils/Style';
 
 const { height } = Dimensions.get('window');
 
@@ -1863,7 +1864,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
 // };
   return (
     <ImageBackground
-      source={require('../../../assets/images/bganimationscreen.png')}
+      source={IMAGE_URLS.BACKGOUND_ANIMATION_ICON}
       style={{ width: '100%', height: '100%' }}
       resizeMode="cover"
     >
@@ -2033,7 +2034,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
 
                   <View style={selectlang_styles.search_container}>
                     <Image
-                      source={require('../../../assets/images/searchicon.png')}
+                      source={IMAGE_URLS.SEARCH_ICON}
                       style={selectlang_styles.searchIcon}
                     />
                     <TextInput

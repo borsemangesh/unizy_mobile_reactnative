@@ -28,7 +28,6 @@ import AnimatedReanimated, {
   useAnimatedStyle,
   interpolate,
 } from 'react-native-reanimated';
-// import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { useTranslation } from "react-i18next";
 const bgImage = require('../../../assets/images/backimg.png');
@@ -52,26 +51,9 @@ import TransactionHistoryScreen from './TransactionHistoryScreen';
 import { BlurView } from '@react-native-community/blur';
 import DeviceInfo from 'react-native-device-info';
 import Loader from '../../utils/component/Loader';
-import NewCustomToast from '../../utils/component/NewCustomToast';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { IMAGE_URLS } from '../../utils/Style';
 
-const mylistings = require('../../../assets/images/mylistingicon.png');
-const mylistings1 = require('../../../assets/images/favourite.png');
-
-const searchIcon = require('../../../assets/images/searchicon.png');
-
-// Bottom tab icons
-const homeIcon = require('../../../assets/images/tab1.png');
-const searchTabIcon = require('../../../assets/images/tab2.png');
-const addIcon = require('../../../assets/images/tab3.png');
-const bookmarkIcon = require('../../../assets/images/tab4.png');
-const profileIcon = require('../../../assets/images/tab5.png');
-
-const homeIcon1 = require('../../../assets/images/filled1.png');
-const searchTabIcon2 = require('../../../assets/images/filled2.png');
-const addIcon3 = require('../../../assets/images/filled3.png');
-const bookmarkIcon4 = require('../../../assets/images/filled4.png');
-const profileIcon5 = require('../../../assets/images/filled5.png');
 
 type Product = {
   id: number;
@@ -311,7 +293,7 @@ const handleProductPress = async (item: any) => {
 
 
                 <ImageBackground
-                  source={require('../../../assets/images/cardbg.png')}
+                  source={IMAGE_URLS.CARDBACKGROUD_ICON}
                   style={styles.iconBackground}>
 
                   <Image source={item.icon} style={styles.cardIcon1} />
@@ -1077,11 +1059,11 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   };
 
   const tabs = [
-    { key: 'Home', icon: homeIcon, activeIcon: homeIcon1 },
-    { key: 'Search', icon: searchTabIcon, activeIcon: searchTabIcon2 },
-    { key: 'Add', icon: addIcon, activeIcon: addIcon3 },
-    { key: 'Bookmark', icon: bookmarkIcon, activeIcon: bookmarkIcon4 },
-    { key: 'Profile', icon: profileIcon, activeIcon: profileIcon5 },
+    { key: 'Home', icon: IMAGE_URLS.HOME_ICON, activeIcon: IMAGE_URLS.homeIcon1 },
+    { key: 'Search', icon: IMAGE_URLS.SEARCJTABICON_ICON, activeIcon: IMAGE_URLS.searchTabIcon2 },
+    { key: 'Add', icon: IMAGE_URLS.ADD_ICON, activeIcon: IMAGE_URLS.addIcon3 },
+    { key: 'Bookmark', icon: IMAGE_URLS.BOOLMARK_ICON, activeIcon: IMAGE_URLS.bookmarkIcon4 },
+    { key: 'Profile', icon: IMAGE_URLS.PROFILE_ICON, activeIcon: IMAGE_URLS.profileIcon5 },
   ];
 
   const clickbookmark = () => {
@@ -1144,7 +1126,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                 }}
               >
                 <View style={styles.MylistingsBackground}>
-                  <Image source={mylistings} style={styles.iconSmall} />
+                  <Image source={IMAGE_URLS.MY_LISTING_ICON} style={styles.iconSmall} />
                 </View>
               </TouchableOpacity>
 
@@ -1154,7 +1136,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
 
               <TouchableOpacity onPress={clickbookmark}>
                 <View style={styles.MylistingsBackground}>
-                  <Image source={mylistings1} style={styles.iconSmall} />
+                  <Image source={IMAGE_URLS.FAVOURTE_ICON} style={styles.iconSmall} />
                 </View>
               </TouchableOpacity>
             </Animated.View>
@@ -1165,7 +1147,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                 { transform: [{ translateY: searchBartranslateY }] },
               ]}
             >
-              <Image source={searchIcon} style={styles.searchIcon} />
+              <Image source={IMAGE_URLS.SEARCH_ICON} style={styles.searchIcon} />
               <TextInput
               selectionColor='#fff'
                   cursorColor='#fff'
@@ -1433,16 +1415,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
 export default DashBoardScreen;
 
 const styles = StyleSheet.create({
-  headerWrapper: {
-    position: 'absolute',
-    top: 0,
-    width: Platform.OS === 'ios' ? '100%' : '100%',
-    height: Platform.OS === 'ios' ? 180 : 180,
-    zIndex: 10,
-    overflow: 'hidden',
-    alignSelf: 'center',
-    pointerEvents: 'none',
-  },
+  
   headerContent: {
     position: 'absolute',
     top: Platform.OS === 'ios' ? 70 : 60,
@@ -1632,16 +1605,13 @@ const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
     flexDirection: 'column',
-    // gap: 12,
   },
 
   header: {
     flexDirection: 'column',
     alignItems: 'center',
-    // paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 6
-    // marginVertical:6
   },
   headerRow: {
     flexDirection: 'row',
@@ -1704,12 +1674,12 @@ const styles = StyleSheet.create({
 
   cardContainer: {
     // height: 64,
-    height: Dimensions.get("window").height /13.5,
+    height: Dimensions.get("window").height /13.4,
     flexDirection: 'row',
     borderRadius: 10,
     paddingHorizontal: 12,
     alignItems: 'center',
-    marginVertical: (Platform.OS === 'ios' ? 5 : 5.5),
+    marginVertical: (Platform.OS === 'ios' ? Dimensions.get("window").width :  Dimensions.get("window").width/3 * 0.04),
     marginHorizontal: (Platform.OS === 'ios' ? 5 : 5.5),
     borderWidth: 0.4,
     borderColor: '#ffffff11',
@@ -1843,7 +1813,6 @@ const styles = StyleSheet.create({
 
 
   emptyContainer: {
-    //flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
@@ -1853,21 +1822,9 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.08)',
     borderRadius: 24,
     overflow: 'hidden',
-    //minHeight:'80%',
     marginBottom: 20,
   },
-  // emptyImage: {
-  //   width: 50,
-  //   height: 50,
-  //   marginBottom: 20,
-  // },
-  // emptyText: {
-  //   fontSize: 20,
-  //   color: '#fff',
-  //   textAlign: 'center',
-  //   fontFamily: 'Urbanist-SemiBold',
-  //   fontWeight: 600
-  // },
+
    emptyImage: {
     width: 64,
     height: 64,
