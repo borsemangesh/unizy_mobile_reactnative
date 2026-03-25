@@ -583,9 +583,9 @@ export default function TransactionHistoryScreen(
                           <Text
                             numberOfLines={2}
                             allowFontScaling={false}
-                            style={styles.itemTitle}
+                            style={[styles.itemTitle, { width: '72%'}]}
                           >
-                            {item.title} 
+                            {item.title}
                           </Text>
                           {item?.status === 'Awaiting Delivery' && (
                               <TouchableOpacity
@@ -593,10 +593,15 @@ export default function TransactionHistoryScreen(
                                            setOrderId(item?.order_id ?? 0);
                               setShowDeleteModal(true);
                           }}>
-                          <Image
+                          {/* <Image
                             source={require('../../../assets/images/ic_cancel.png')}
                             style={{width: 30,height:30}}
-                            />
+                            /> */}
+                            <View style={{borderColor: 'rgba(255, 255, 255, 0.34)',paddingVertical: 5}}>
+                            <Text allowFontScaling={false} style={[styles.price,{  color: '#ff9c9c',textDecorationLine: 'underline'}]}>
+                             {t('cancel_order')}
+                          </Text>
+                          </View>
                             </TouchableOpacity>
                           )}
                         
