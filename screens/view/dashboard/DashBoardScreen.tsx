@@ -1679,7 +1679,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 12,
     alignItems: 'center',
-    marginVertical: (Platform.OS === 'ios' ? Dimensions.get("window").width :  Dimensions.get("window").width/3 * 0.04),
+    marginVertical:(Platform.OS === 'ios' ? 5 : 5.5),
     marginHorizontal: (Platform.OS === 'ios' ? 5 : 5.5),
     borderWidth: 0.4,
     borderColor: '#ffffff11',
