@@ -57,7 +57,7 @@
 	<dict>
 		<key>NSExceptionDomains</key>
 		<dict>
-			<key>13.233.207.199</key>
+			<key>api.unizy.app</key>
 			<dict>
 				<key>NSIncludesSubdomains</key>
 				<true/>
