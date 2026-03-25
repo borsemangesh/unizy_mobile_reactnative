@@ -558,7 +558,7 @@ export default function TransactionHistoryScreen(
               {section.items.map((item, i) => (
                 <View key={i} style={styles.card}>
                   <View style={styles.row}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <View style={{ flexDirection: 'row', gap: 12 }}>
                       {/* <View
                         style={{
                           flexDirection: 'row',
