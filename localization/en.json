@@ -785,7 +785,7 @@
   "acc_message":"will be charged for listing this accomodation availability.",
   "email_error":"You are not allowed to include URLs or email addresses in the message.",
   "price_cannot_be_zero":"Incorrect input. Please enter a valid",
-  "cancel_order": "Cancel order",
+  "cancel_order": "Cancel Order",
   "cancelled": "Cancelled",
   "cancel_order_message_action": "Are you sure you want to continue? Your order will be cancelled.",
    "yes_cancel": "Yes, Cancel order"
