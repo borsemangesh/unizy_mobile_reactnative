@@ -598,7 +598,7 @@ export default function TransactionHistoryScreen(
                             style={{width: 30,height:30}}
                             /> */}
                             <View style={{borderColor: 'rgba(255, 255, 255, 0.34)',paddingVertical: 5}}>
-                            <Text allowFontScaling={false} style={[styles.price,{  color: '#ff9c9c',textDecorationLine: 'underline'}]}>
+                            <Text allowFontScaling={false} style={[styles.price,{  color: '#ff9c9c'}]}>
                              {t('cancel_order')}
                           </Text>
                           </View>

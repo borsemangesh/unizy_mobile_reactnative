@@ -82,7 +82,7 @@ const OnboardingScreen1 =()=>{
             </Text>
           <Image
               source={require('../../../assets/images/s1_img2.png')}
-              style={[styles.image]}
+              style={[styles.image,{paddingTop: 12}]}
               resizeMode="contain"
             />
           </View>
