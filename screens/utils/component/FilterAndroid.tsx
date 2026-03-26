@@ -90,7 +90,7 @@ const FilterAndroid = ({
         const dynamicFilters = data.data.filter(
           (item: any) =>
             item.field_type?.toLowerCase() === 'dropdown' ||
-                item.alias_name?.toLowerCase() === 'price' || 
+                item.alias_name?.toLowerCase() === 'price' ||
                 item.field_type?.toLowerCase() === 'date' ||
                 item.field_type?.toLowerCase() === 'text',
         );
@@ -116,7 +116,7 @@ const FilterAndroid = ({
         }
       }
     } catch (err) {
-      // console.log('Error fetching filters:', err);
+      console.log('Error fetching filters:', err);
     }
   };
 
@@ -384,8 +384,8 @@ const [dateSelections, setDateSelections] = useState<
                 keyboardType="numeric"
                 placeholder="Min"
                 placeholderTextColor="#aaa"
-                selectionColor={'#FFFFFF'}
-                cursorColor={'#FFFFFF'}
+                selectionColor={'#F5F5F5'}
+                cursorColor={'#F5F5F5'}
                 value={String(sliderLow)}
                 onChangeText={text => {
                   let value = parseInt(text) || 0;

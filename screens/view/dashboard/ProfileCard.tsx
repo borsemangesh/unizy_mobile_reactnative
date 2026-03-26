@@ -23,24 +23,22 @@ import { Constant } from '../../utils/Constant';
 import { resetTwilioClient } from '../../view/emoji/twilioService';
 import { clearTwilioCache } from '../dashboard/MessageIndividualScreen';
 import { useTranslation } from "react-i18next";
+import { IMAGE_URLS } from '../../utils/Style';
 
 
 
 const cardData = [
-  { id: '1', titleKey: 'payment_methods', image: require('../../../assets/images/payment.png') },
-  { id: '2', titleKey: 'my_orders', image: require('../../../assets/images/cart.png') },
-  { id: '3', titleKey: 'my_reviews', image: require('../../../assets/images/ok.png') },
-  { id: '4', titleKey: 'notifications', image: require('../../../assets/images/notify.png') },
-  { id: '5', titleKey: 'change_password', image: require('../../../assets/images/change_password.png') },
-  { id: '6', titleKey: 'delete_account', image: require('../../../assets/images/delete_new.png') },
-  { id: '7', titleKey: 'help_support', image: require('../../../assets/images/helpicon.png') },
-  { id: '8', titleKey: 'logout', image: require('../../../assets/images/logout.png') },
-  { id: '9', titleKey: 'app_version', image: require('../../../assets/images/versionicon.png') },
+  { id: '1', titleKey: 'payment_methods', image: IMAGE_URLS.PAYMENT_ICON },
+  { id: '2', titleKey: 'my_orders', image: IMAGE_URLS.CART_ICON },
+  { id: '3', titleKey: 'my_reviews', image: IMAGE_URLS.OK_ICON },
+  { id: '4', titleKey: 'notifications', image: IMAGE_URLS.NOTIFY_ICON},
+  { id: '5', titleKey: 'change_password', image: IMAGE_URLS.CHANGEPASSWORD_ICON },
+  { id: '6', titleKey: 'delete_account', image: IMAGE_URLS.DELETENEW_ICON },
+  { id: '7', titleKey: 'help_support', image: IMAGE_URLS.HELP_ICON},
+  { id: '8', titleKey: 'logout', image: IMAGE_URLS.LOGOUT_ICON},
+  { id: '9', titleKey: 'app_version', image: IMAGE_URLS.VERSION_ICON },
   
 ];
-
-const arrowIcon = require('../../../assets/images/nextarrow.png');
-
 
 type ProfileCardContentProps = {
   navigation: any;
@@ -233,6 +231,14 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
     // }
   };
 
+  const navigateToScreen = (screenName: string) => {
+    if (Platform.OS === 'ios') {
+      navigation.replace(screenName);
+    } else {
+      navigation.navigate(screenName);
+    }
+  }
+
   const renderItem = ({ item }: any) => {
     const isLogout = item.titleKey === 'logout';
     const isDelete = item.titleKey === 'delete_account';
@@ -251,43 +257,23 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
             setShowConfirm1(true);
           }
           else if (item.titleKey === 'my_orders') {
-            if (Platform.OS === 'ios') {
-              navigation.replace('MyOrders');
-            } else {
-              navigation.navigate('MyOrders');
-            }
-
+              navigateToScreen('MyOrders');
           }
           else if (item.titleKey === 'my_reviews') {
-            if (Platform.OS === 'ios') {
-              navigation.replace('MyReviews');
-            } else {
-              navigation.navigate('MyReviews');
-            }
+            navigateToScreen('MyReviews');
           }
           else if (item.titleKey === 'help_support') {
             navigation.navigate('HelpSupport');
           }
 
           else if (item.titleKey === 'notifications') {
-            if (Platform.OS === 'ios') {
-              navigation.replace('Notification');
-            } else {
-              navigation.navigate('Notification');
-            }
-
+              navigateToScreen('Notification');
           }
           else if (item.titleKey === 'payment_methods') {
             openStripeOnboarding();
           }
           else if (item.titleKey === 'change_password') {
-            if (Platform.OS === 'ios') {
-              navigation.replace('ChangePassword');
-            }
-            else {
-              navigation.navigate('ChangePassword');
-            }
-
+            navigateToScreen('ChangePassword');
           }
           else {
 
@@ -306,7 +292,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
         {isVersion ? (
           <Text allowFontScaling={false} style={styles.versionText}>{APP_VERSION}</Text>
         ) : !isLogout || isDelete && (
-          <Image source={arrowIcon} style={styles.cardArrow} />
+          <Image source={IMAGE_URLS.NEXTARROW_ICON} style={styles.cardArrow} />
         )}
       </TouchableOpacity>
     );
@@ -374,7 +360,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
               >
                 <Image
-                  source={require('../../../assets/images/buildings.png')}
+                  source={IMAGE_URLS.BUILDING_ICON}
                   style={{ width: 16, height: 16 }}
                 />
                 <Text allowFontScaling={false} style={styles.userSub}>
@@ -389,7 +375,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
               <View
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                 <Image
-                  source={require('../../../assets/images/sms.png')}
+                  source={IMAGE_URLS.SMS_ICON}
                   style={{ width: 16, height: 16 }}
                 />
                 <Text allowFontScaling={false} style={styles.userSub}>
@@ -401,7 +387,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
               >
                 <Image
-                  source={require('../../../assets/images/sms.png')}
+                  source={IMAGE_URLS.SMS_ICON}
                   style={{ width: 16, height: 16 }}
                 />
                 <Text allowFontScaling={false} style={styles.userSub}>
@@ -413,7 +399,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
               >
                 <Image
-                  source={require('../../../assets/images/buildings.png')}
+                  source={IMAGE_URLS.CITY_ICON}
                   style={{ width: 16, height: 16 }}
                 />
                 <Text allowFontScaling={false} style={styles.userSub}>

@@ -26,6 +26,21 @@ export const IMAGE_URLS = {
     NOPRODUCT_ICON: require('../../assets/images/noproduct.png'),
     CHIP_ICON: require('../../assets/images/chip.png'),
     DELETENEW_ICON: require('../../assets/images/delete_new.png'),
-    BACKICON_ICON: require('../../assets/images/back.png')
+    BACKICON_ICON: require('../../assets/images/back.png'),
+
+    //Profile 
+    CITY_ICON: require('../../assets/images/ic_city.png'),
+    BUILDING_ICON: require('../../assets/images/buildings.png'),
+    SMS_ICON: require('../../assets/images/sms.png'),
+    PAYMENT_ICON: require('../../assets/images/payment.png'),
+    CART_ICON: require('../../assets/images/cart.png'),
+    OK_ICON: require('../../assets/images/ok.png'),
+    NOTIFY_ICON: require('../../assets/images/notify.png'),
+    CHANGEPASSWORD_ICON: require('../../assets/images/change_password.png'),
+    HELP_ICON: require('../../assets/images/helpicon.png'),
+    LOGOUT_ICON: require('../../assets/images/logout.png'),
+    VERSION_ICON: require('../../assets/images/versionicon.png'),
+    NEXTARROW_ICON:require('../../assets/images/nextarrow.png'),
+    
   
 };
