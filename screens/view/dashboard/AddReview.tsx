@@ -29,6 +29,7 @@ import Button from '../../utils/component/Button';
 import Loader from '../../utils/component/Loader';
 import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
+import { IMAGE_URLS } from '../../utils/Style';
 
 type AddReviewProps = {
   navigation: any;
@@ -124,7 +125,7 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
             >
               <View style={styles.backIconRow}>
                 <Image
-                  source={require('../../../assets/images/back.png')}
+                  source={IMAGE_URLS.BACKICON_ICON}
                   style={{ height: 24, width: 24 }}
                 />
               </View>

@@ -577,7 +577,7 @@ export default function TransactionHistoryScreen(
                           <Text
                             numberOfLines={2}
                             allowFontScaling={false}
-                            style={[styles.itemTitle, { width: '70%'}]}
+                            style={[styles.itemTitle, { width: '60%'}]}
                           >
                             {item.title}
                           </Text>

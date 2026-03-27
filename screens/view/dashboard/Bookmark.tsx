@@ -19,7 +19,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { useTranslation } from "react-i18next";
-const bgImage = require('../../../assets/images/backimg.png');
+// const bgImage = require('../../../assets/images/backimg.png');
 import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import SearchListProductCard from '../../utils/SearchListProductCard';
 import SearchTutionCard from '../../utils/SearchTutionCard';
@@ -43,6 +43,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import Loader from '../../utils/component/Loader';
 import { ShortCustomToastContainer,shortshowToast } from '../../utils/component/ShortCustomToastManager';
+import { IMAGE_URLS } from '../../utils/Style';
 
 
 type CreatedBy = {
@@ -486,7 +487,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
               }
               rating={feature.isfeatured ? '4.5' : '4.5'}
               productImage={
-                productImage ?? require('../../../assets/images/drone.png')
+                productImage ?? IMAGE_URLS.DRONE_ICON
               }
               bookmark={feature.isbookmarked}
               //bookmark={bookmarkedIds.includes(item.id)}
@@ -500,7 +501,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
   };
 
   return (
-    <ImageBackground source={bgImage} style={styles.background}>
+    <ImageBackground source={IMAGE_URLS.BACK_ICON} style={styles.background}>
       <StatusBar
         translucent
         backgroundColor="transparent"
@@ -599,7 +600,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
 
               {/* Back Icon */}
               <Animated.Image
-                source={require('../../../assets/images/back.png')}
+                source={IMAGE_URLS.BACKICON_ICON}
                 style={[{ height: 24, width: 24 }, animatedIconStyle]}
               />
             </Animated.View>
@@ -649,7 +650,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
 
               {/* Back Icon */}
               <Animated.Image
-                source={require('../../../assets/images/back.png')}
+                source={IMAGE_URLS.BACKICON_ICON}
                 style={[{ height: 25, width: 25, display: 'none' }]}
               />
             </Animated.View>
@@ -757,7 +758,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
               <View style={[styles.emptyWrapper, { justifyContent: 'center', alignItems: 'center', flex: 1 }]}>
                 <View style={styles.emptyContainer}>
                   <Image
-                    source={require('../../../assets/images/noproduct.png')}
+                    source={IMAGE_URLS.NOPRODUCT_ICON}
                     style={styles.emptyImage}
                     resizeMode="contain"
                   />

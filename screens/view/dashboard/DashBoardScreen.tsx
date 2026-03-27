@@ -264,7 +264,7 @@ const handleProductPress = async (item: any) => {
     return (
       <View style={[styles.tabContent3]}>
 
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height: '100%', paddingTop: 300 }}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height: '100%',  }}>
           <Loader
             containerStyle={{
               width: 50,
@@ -959,7 +959,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
             <Animated.View
               style={[{
                 transform: [{ translateY: cardSlideupAnimation }],
-              }, { paddingHorizontal: 20, paddingTop: width*0.01, paddingBottom: width*0.02 }]}
+              }, { paddingHorizontal: 20, paddingTop: Dimensions.get('window').width *0.01, paddingBottom: Dimensions.get('window').width * 0.01 }]}
             >
               <Text allowFontScaling={false} style={styles.featuredText}>
                 {t('Featured_Listings')}
@@ -1000,7 +1000,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                 {features.map(item => (
                   <Animated.View
                     key={item.id}
-                    style={[{ transform: [{ translateY: cardSlideupAnimation }] },{paddingBottom: 10}]}
+                    style={[{ transform: [{ translateY: cardSlideupAnimation }] },{paddingBottom: 12}]}
                   >
                     {item.profileshowinview ? (
                       <TutitionCard

@@ -68,13 +68,8 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { getCityFromPostalCode } from '../../utils/geocoding';
+import { IMAGE_URLS } from '../../utils/Style';
 
-const bgImage = require('../../../assets/images/backimg.png');
-const profileImg = require('../../../assets/images/user.jpg');
-const uploadIcon = require('../../../assets/images/upload.png');
-const fileIcon = require('../../../assets/images/file.png');
-const deleteIcon = require('../../../assets/images/delete.png');
-const uploadIcon1 = require('../../../assets/images/fileupload.png');
 
 type AddScreenContentProps = {
   navigation: any;
@@ -271,7 +266,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 style={styles.threedots}
               />{' '}
               <Image
-                //source={fileIcon}
                 source={{ uri: item.uri }}
                 style={{ width: 32, height: 32, marginRight: 5 }}
               />{' '}
@@ -294,7 +288,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             >
               {' '}
               <Image
-                source={deleteIcon}
+                source={IMAGE_URLS.DELETE_ICON}
                 style={{ width: 38, height: 38, resizeMode: 'contain' }}
               />{' '}
             </TouchableOpacity>{' '}
@@ -1438,7 +1432,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
               style={styles.uploadButton}
               onPress={handleImageSelect}
             >
-              <Image source={uploadIcon1} style={styles.uploadIcon} />
+              <Image source={IMAGE_URLS.FILEUPLOAD_ICON} style={styles.uploadIcon} />
               <Text allowFontScaling={false} style={styles.uploadText}>
                 {t('upload_images')}
               </Text>
@@ -1679,7 +1673,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
 
   return (
-    <ImageBackground source={bgImage} style={styles.background}>
+    <ImageBackground source={IMAGE_URLS.BACK_ICON} style={styles.background}>
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -2021,7 +2015,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 {productId === 4 && (
                       <View style={[styles.textbg, { marginTop: 12 }]}>
                         <Image
-                          source={require('../../../assets/images/info_icon.png')}
+                          source={IMAGE_URLS.INFO_ICON}
                           style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
                         />
                         <View style={{ flex: 1 }}>
@@ -2212,13 +2206,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
         <TouchableWithoutFeedback>
           <View style={styles.overlay}>
             <BlurView
-              style={{
-                flex: 1,
-                alignContent: 'center',
-                justifyContent: 'center',
-                width: '100%',
-                alignItems: 'center',
-              }}
+              style={styles.blurStyle}
               blurType="light"
               blurAmount={10}
               reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
@@ -2409,6 +2397,13 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 export default AddScreen;
 
 const styles = StyleSheet.create({
+  blurStyle: {
+    flex: 1,
+    alignContent: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    alignItems: 'center',
+  },
 
   inputWrapper: {
     position: 'relative',
@@ -2431,7 +2426,6 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
   },
-
 
   labelRow: {
     flexDirection: 'row',
@@ -2527,7 +2521,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 
-
   categoryTagContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -2543,7 +2536,7 @@ const styles = StyleSheet.create({
     marginRight: 4,
     marginBottom: 4,
     boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.23)',
-    maxWidth: '100%'
+    maxWidth: '100%',
   },
 
   categoryTagText: {
@@ -2551,7 +2544,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Urbanist-Medium',
     fontWeight: 500,
-    flexShrink: 1,      // 🔥 allows text to shrink
+    flexShrink: 1, // 🔥 allows text to shrink
     maxWidth: '90%',
   },
   crossIcon: {
@@ -3164,7 +3157,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    //height: Platform.OS === 'ios' ? 547 : 300,
+    // height: Platform.OS === 'ios' ? 547 : 300,
     paddingVertical: Platform.OS === 'ios' ? 0 : 40,
   },
 });

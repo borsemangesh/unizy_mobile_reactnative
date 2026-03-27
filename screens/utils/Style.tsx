@@ -3,6 +3,7 @@ import { Platform } from "react-native";
 export const IMAGE_URLS = {
     BACKGOUND_ANIMATION_ICON: require('../../assets/images/bganimationscreen.png'),
     BACK_ICON: require('../../assets/images/backimg.png'),
+    DRONE_ICON: require('../../assets/images/fileupload.png'),
 
     MY_LISTING_ICON: require('../../assets/images/mylistingicon.png'),
     FAVOURTE_ICON: require('../../assets/images/favourite.png'),
@@ -45,6 +46,12 @@ export const IMAGE_URLS = {
 
     //Transaction Screen 
     TOTALEARNING_ICON: require('../../assets/images/totalearnings.png'),
+
+
+    //Add Listing Page
+    INFO_ICON: require('../../assets/images/info_icon.png'),
+    DELETE_ICON: require('../../assets/images/delete.png'),
+    FILEUPLOAD_ICON: require('../../assets/images/fileupload.png'),
     
   
 };
