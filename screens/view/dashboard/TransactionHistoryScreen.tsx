@@ -22,6 +22,7 @@ import Loader from '../../utils/component/Loader';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import { BlurView } from '@react-native-community/blur';
+import { IMAGE_URLS } from '../../utils/Style';
 
 type TransactionPropos = {
   navigation: any;
@@ -55,8 +56,7 @@ interface TransactionSection {
   items: TransactionItem[];
 }
 
-const productImage = require('../../../assets/images/producticon.png');
-const totalEaning = require('../../../assets/images/totalearnings.png');
+
 export default function TransactionHistoryScreen(
   navigation: TransactionPropos,
 
@@ -559,13 +559,7 @@ export default function TransactionHistoryScreen(
                 <View key={i} style={styles.card}>
                   <View style={styles.row}>
                     <View style={{ flexDirection: 'row', gap: 12 }}>
-                      {/* <View
-                        style={{
-                          flexDirection: 'row',
-                          gap: 12,
-                          alignItems: 'center',
-                        }}
-                      > */}
+                      
                       <View>
                         <Image
                           source={background}
@@ -583,7 +577,7 @@ export default function TransactionHistoryScreen(
                           <Text
                             numberOfLines={2}
                             allowFontScaling={false}
-                            style={[styles.itemTitle, { width: '72%'}]}
+                            style={[styles.itemTitle, { width: '70%'}]}
                           >
                             {item.title}
                           </Text>
@@ -724,7 +718,7 @@ export default function TransactionHistoryScreen(
                     resizeMode="cover"
                   />
                   <Image
-                    source={totalEaning}
+                    source={IMAGE_URLS.TOTALEARNING_ICON}
                     style={styles.image}
                     resizeMode="cover"
                   />

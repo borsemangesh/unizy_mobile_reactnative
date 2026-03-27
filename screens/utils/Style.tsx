@@ -40,7 +40,11 @@ export const IMAGE_URLS = {
     HELP_ICON: require('../../assets/images/helpicon.png'),
     LOGOUT_ICON: require('../../assets/images/logout.png'),
     VERSION_ICON: require('../../assets/images/versionicon.png'),
-    NEXTARROW_ICON:require('../../assets/images/nextarrow.png'),
+    NEXTARROW_ICON: require('../../assets/images/nextarrow.png'),
+    
+
+    //Transaction Screen 
+    TOTALEARNING_ICON: require('../../assets/images/totalearnings.png'),
     
   
 };
