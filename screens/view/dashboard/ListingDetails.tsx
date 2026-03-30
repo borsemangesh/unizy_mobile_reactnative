@@ -930,7 +930,8 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
               />
             </View>
           ) : (
-            (!data?.list?.ispurchased ||
+                (!data?.list?.ispurchased ||
+                  data?.list?.isactive ||
               data?.list?.category_id === 2 ||
               data?.list?.category_id === 5) && (
               <View style={styles.bottomview}>
