@@ -625,6 +625,14 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
     }
   };
 
+  const formatPrice = (price: any) => {
+  return new Intl.NumberFormat('en-GB', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(Number(price ?? 0));
+  };
+
+
   function isDateRangeValue(value: ParamValue): value is DateRangeValue {
     return (
       typeof value === 'object' &&
@@ -803,18 +811,20 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
                         </Text>
                         <Text allowFontScaling={false} style={styles.priceText}>
                           {detail?.category?.id === 2
-                            ? `£${Number(detail?.originalprice ?? 0).toFixed(2)}/${t(
-                                'hr',
-                              )}`
+                            ? `£${Number(detail?.originalprice ?? 0).toFixed(
+                                2,
+                              )}/${t('hr')}`
                             : detail?.category?.id === 4
-                            ? `£${Number(detail?.originalprice ?? 0).toFixed(2)}/${t(
-                                'week',
-                              )}`
+                            ? `£${Number(detail?.originalprice ?? 0).toFixed(
+                                2,
+                              )}/${t('week')}`
                             : detail?.category?.id === 5
-                            ? `£${Number(detail?.originalprice ?? 0).toFixed(2)}/${t(
-                                'session',
-                              )}`
-                            : `£${Number(detail?.originalprice ?? 0).toFixed(2)}`}
+                            ? `£${Number(detail?.originalprice ?? 0).toFixed(
+                                2,
+                              )}/${t('session')}`
+                            : `£${Number(detail?.originalprice ?? 0).toFixed(
+                                2,
+                              )}`}
                         </Text>
                       </>
                     )}
@@ -895,77 +905,88 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
                     {detail?.params
                       ?.filter((param: Param) => param.field_type !== 'boolean')
                       .map((param: Param) => (
-                      <View
-                        key={param.id}
-                        style={{ marginTop: 4, marginBottom: 0 }}
-                      >
-                        <Text
-                          allowFontScaling={false}
-                          style={styles.itemcondition}
+                        <View
+                          key={param.id}
+                          style={{ marginTop: 4, marginBottom: 0 }}
                         >
-                          {param.name}
-                        </Text>
-
-                        {param.options && param.options.length > 0 ? (
-                          <View style={styles.categoryContainer}>
-                            {param.options
-                              .filter(opt => {
-                                const selectedValues = (param.param_value || '')
-                                  .toString()
-                                  .split(',')
-                                  .map(v => v.trim());
-                                return selectedValues.includes(
-                                  (opt.option_id ?? '').toString(),
-                                );
-                              })
-                              .map((opt: ParamOption) => (
-                                <View key={opt.id} style={styles.categoryTag}>
-                                  <Text
-                                    allowFontScaling={false}
-                                    style={styles.catagoryText}
-                                  >
-                                    {opt.other_text
-                                      ? `${opt.option_name} (${opt.other_text})`
-                                      : opt.option_name}
-                                  </Text>
-                                </View>
-                              ))}
-                          </View>
-                        ) : param.field_type === 'date' &&
-                          typeof param.param_value === 'object' &&
-                          param.param_value !== null &&
-                          'startDate' in param.param_value &&
-                          'endDate' in param.param_value ? (
                           <Text
                             allowFontScaling={false}
-                            style={[styles.new, { marginTop: 0 }]}
+                            style={styles.itemcondition}
                           >
-                            {param.param_value.startDate &&
-                            param.param_value.endDate
-                              ? `${dayjs(param.param_value.startDate).format(
-                                  'DD-MM-YYYY',
-                                )} - ${dayjs(param.param_value.endDate).format(
-                                  'DD-MM-YYYY',
-                                )}`
-                              : '—'}
+                            {param.name}
                           </Text>
-                        ) : (
-                         
-                          <Text
-                            allowFontScaling={false}
-                            style={[styles.new, { marginTop: 0 }]}
-                          >
-                            {String(param.param_value ?? '—')}
-                          </Text>
-                        )}
-                      </View>
-                    ))}
 
+                          {param.options && param.options.length > 0 ? (
+                            <View style={styles.categoryContainer}>
+                              {param.options
+                                .filter(opt => {
+                                  const selectedValues = (
+                                    param.param_value || ''
+                                  )
+                                    .toString()
+                                    .split(',')
+                                    .map(v => v.trim());
+                                  return selectedValues.includes(
+                                    (opt.option_id ?? '').toString(),
+                                  );
+                                })
+                                .map((opt: ParamOption) => (
+                                  <View key={opt.id} style={styles.categoryTag}>
+                                    <Text
+                                      allowFontScaling={false}
+                                      style={styles.catagoryText}
+                                    >
+                                      {opt.other_text
+                                        ? `${opt.option_name} (${opt.other_text})`
+                                        : opt.option_name}
+                                    </Text>
+                                  </View>
+                                ))}
+                            </View>
+                          ) : param.field_type === 'date' &&
+                            typeof param.param_value === 'object' &&
+                            param.param_value !== null &&
+                            'startDate' in param.param_value &&
+                            'endDate' in param.param_value ? (
+                            <Text
+                              allowFontScaling={false}
+                              style={[styles.new, { marginTop: 0 }]}
+                            >
+                              {/* To set the price  */}
 
-                  
+                              {param.param_value.startDate &&
+                              param.param_value.endDate
+                                ? `${dayjs(param.param_value.startDate).format(
+                                    'DD-MM-YYYY',
+                                  )} - ${dayjs(
+                                    param.param_value.endDate,
+                                  ).format('DD-MM-YYYY')}`
+                                : '—'}
+                            </Text>
+                          ) : (
+                            <Text
+                              allowFontScaling={false}
+                              style={[styles.new, { marginTop: 0 }]}
+                            >
+                              {(() => {
+                                const value = param.param_value;
 
-
-
+                                const isNumber =
+                                  value !== null &&
+                                  value !== '' &&
+                                  !isNaN(Number(value));
+                                if (
+                                  param.name?.toLowerCase().includes('price') &&
+                                  isNumber
+                                ) {
+                                  return `£${formatPrice(value)}`;
+                                }
+                                return String(value ?? '—');
+                              })()}
+                            </Text>
+                          )}
+                        </View>
+                      ))}
                   </View>
                 </View>
               </View>
@@ -1000,57 +1021,6 @@ const ImageViewerModal = React.memo(
     onChangeIndex,
   }: ImageViewerModalProps) => {
     return (
-      
-      // <ImageViewing
-      //   images={images}
-      //   imageIndex={index} // only initial index
-      //   visible={visible}
-      //   backgroundColor="black"
-      //   animationType="fade"
-      //   swipeToCloseEnabled
-      //   doubleTapToZoomEnabled
-      //   onRequestClose={onClose}
-      //   renderImage={({
-      //     source,
-      //     style,
-      //   }: {
-      //     source: ImageSourcePropType;
-      //     style: any;
-      //   }) => (
-      //      <Image
-      //                 source={source}
-      //                 style={style}
-      //                 resizeMode="contain"
-      //               />
-      //   )}
-      //   FooterComponent={({ imageIndex }) => (
-      //     <View
-      //       style={{
-      //         position: 'absolute',
-      //         bottom: 30,
-      //         width: '100%',
-      //         alignItems: 'center',
-      //       }}
-      //     >
-      //       {/* DOT INDICATOR */}
-      //       <View style={{ flexDirection: 'row', marginBottom: 15 }}>
-      //         {images.map((_: any, i: any) => (
-      //           <View
-      //             key={i}
-      //             style={{
-      //               width: 8,
-      //               height: 8,
-      //               borderRadius: 4,
-      //               marginHorizontal: 4,
-      //               backgroundColor:
-      //                 i === imageIndex ? '#FFFFFF' : 'rgba(255,255,255,0.4)',
-      //             }}
-      //           />
-      //         ))}
-      //       </View>
-      //     </View>
-      //   )}
-      // />
        <ImageViewing
         images={images}
         imageIndex={index}
