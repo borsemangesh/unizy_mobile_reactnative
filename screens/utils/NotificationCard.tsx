@@ -49,7 +49,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
         catagory_name: typename,
         reviews: reviews
       });
-    } else if (templateName === 'FeatureListed') {
+    } else if (templateName === 'FeatureListed' || templateName === 'ItemCancelled') {
       navigation.navigate('ListingDetails', {
         shareid: typeid,
         catagory_id: categoryid,

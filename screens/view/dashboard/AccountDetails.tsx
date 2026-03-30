@@ -50,7 +50,7 @@ import {
   initPaymentSheet,
   presentPaymentSheet,
 } from '@stripe/stripe-react-native';
-import { IMAGE_URLS } from '../../utils/Style';
+import { IMAGE_URLS, STYLES } from '../../utils/Style';
 
 type AccountDetailsProps = {
   navigation: any;
@@ -638,7 +638,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
           </MaskedView>
         </Animated.View>
 
-        <View style={styles.headerContent} pointerEvents="box-none">
+        <View style={STYLES.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => {
@@ -1462,18 +1462,7 @@ const styles = StyleSheet.create({
   backButtonContainer: {
     zIndex: 11,
   },
-  headerContent: {
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? 60 : 40,
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    zIndex: 11,
-    alignSelf: 'center',
-    pointerEvents: 'box-none',
-    justifyContent: 'space-between',
-  },
+
   blurButtonWrapper: {
     width: 48,
     height: 48,

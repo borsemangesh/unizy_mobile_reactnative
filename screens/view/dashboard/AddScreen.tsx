@@ -68,7 +68,7 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { getCityFromPostalCode } from '../../utils/geocoding';
-import { IMAGE_URLS } from '../../utils/Style';
+import { IMAGE_URLS, STYLES } from '../../utils/Style';
 
 
 type AddScreenContentProps = {
@@ -1716,7 +1716,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
           </MaskedView>
         </AnimatedReanimated.View>
 
-        <View style={styles.headerContent} pointerEvents="box-none">
+        <View style={STYLES.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
               navigation.replace('Dashboard', {
@@ -1728,7 +1728,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             activeOpacity={0.7}
           >
             <AnimatedReanimated.View
-              style={[styles.blurButtonWrapper, animatedButtonStyle]}
+              style={[STYLES.blurButtonWrapper, animatedButtonStyle]}
             >
               <AnimatedReanimated.View
                 style={[
@@ -2618,45 +2618,10 @@ const styles = StyleSheet.create({
     pointerEvents: 'none',
   },
 
-  headerContent: {
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? 60 : 40,
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    zIndex: 11,
-    alignSelf: 'center',
-    pointerEvents: 'box-none',
-    justifyContent: 'space-between',
-  },
   backButtonContainer: {
     zIndex: 11,
   },
-  blurButtonWrapper: {
-    width: 48,
-    height: 48,
-    borderRadius: 40,
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 0.3,
-    borderColor: '#ffffff11',
-
-    boxShadow:
-      '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-    boxSizing: 'border-box',
-  },
+ 
   blurButtonWrapper_none: {
     width: 48,
     height: 48,

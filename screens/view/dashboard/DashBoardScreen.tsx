@@ -1416,18 +1416,6 @@ export default DashBoardScreen;
 
 const styles = StyleSheet.create({
   
-  headerContent: {
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? 70 : 60,
-    width: Platform.OS === 'ios' ? '100%' : '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-    zIndex: 11,
-    alignSelf: 'center',
-    pointerEvents: 'box-none',
-  },
   backButtonContainer: {
     position: 'absolute',
     left: 16,
