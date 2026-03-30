@@ -13,6 +13,7 @@ import {
   Easing,
   TouchableWithoutFeedback,
   Modal,
+  SectionList,
 } from 'react-native';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -665,9 +666,10 @@ export default function TransactionHistoryScreen(
                         {
                           height: 28,
                           backgroundColor:
-                            item.status !== 'Completed'
+                            item.status !== 'Fulfilled' &&  item.status !== 'Cancelled'
                               ? 'rgba(255, 255, 255, 0.06)'
                               : 'rgba(255,255,255,0.15)',
+                           
                         },
                       ]}
                     >
@@ -677,7 +679,7 @@ export default function TransactionHistoryScreen(
                           styles.codeText,
                           {
                             color:
-                              item.status !== 'Completed'
+                              item.status !== 'Fulfilled' &&  item.status !== 'Cancelled'
                                 ? '#9CD6FF'
                                 : 'rgba(255,255,255,0.15)',
                           },

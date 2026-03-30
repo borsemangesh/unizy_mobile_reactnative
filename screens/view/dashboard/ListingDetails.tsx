@@ -149,6 +149,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
 
       const result = await response.json();
 
+      console.log("RESULT: ", result);
       if (response.ok) {
         setData(result.data);
       } else {
@@ -677,7 +678,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                         flexDirection: 'row',
                         alignItems: 'center',
                         gap: 4,
-                        justifyContent: buyer.otpverified
+                        justifyContent: buyer.otpverified || buyer.is_cancelled
                           ? 'space-between'
                           : 'flex-start',
                       }}
@@ -731,6 +732,32 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                             style={{ width: 12, height: 12 }}
                             resizeMode="cover"
                           />
+                        </View>
+                      )}
+
+                      {buyer.is_cancelled && (
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            backgroundColor: 'rgba(255, 255, 255, 0.18)',
+                            paddingHorizontal: 6,
+                            paddingVertical: 4,
+                            borderRadius: 6,
+                            gap: 4,
+                          }}
+                        >
+                          <Text
+                            allowFontScaling={false}
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.88)',
+                              fontFamily: 'Urbanist-Regular',
+                              fontSize: 12,
+                              fontWeight: '600',
+                            }}
+                          >
+                            {t('cancel')}
+                          </Text>
                         </View>
                       )}
                     </View>
@@ -808,11 +835,11 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                       </Text>
                     </View>
 
-                    {!buyer.otpverified && (
+                    {!buyer.otpverified && !buyer.is_cancelled && (
                       <View style={styles.cardconstinerdivider} />
                     )}
 
-                    {!buyer.otpverified && (
+                    {!buyer.otpverified && !buyer.is_cancelled && (
                       <View
                         style={{
                           justifyContent: 'center',
@@ -842,6 +869,8 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
                         </TouchableOpacity>
                       </View>
                     )}
+
+                  
                   </View>
                 ))}
             </View>
