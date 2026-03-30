@@ -53,6 +53,7 @@ import Loader from '../../utils/component/Loader';
 import dayjs from 'dayjs';
 import ImageViewing from 'react-native-image-viewing';
 import React from 'react';
+import { STYLES } from '../../utils/Style';
 
 type MyListingDetailsProps = {
   navigation: any;
@@ -700,7 +701,7 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
             </MaskedView>
           </AnimatedReanimated.View>
 
-          <View style={styles.headerContent} pointerEvents="box-none">
+          <View style={STYLES.headerContent} pointerEvents="box-none">
             <TouchableOpacity
               onPress={() => {
                 if (navigation.canGoBack()) {
@@ -716,7 +717,7 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
               activeOpacity={0.7}
             >
               <AnimatedReanimated.View
-                style={[styles.blurButtonWrapper, animatedButtonStyle]}
+                style={[STYLES.blurButtonWrapper, animatedButtonStyle]}
               >
                 <AnimatedReanimated.View
                   style={[
@@ -1106,18 +1107,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'none',
   },
-  headerContent: {
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? 60 : 40,
-    width: Platform.OS === 'ios' ? '100%' : '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-    zIndex: 11,
-    alignSelf: 'center',
-    pointerEvents: 'box-none',
-  },
   backButtonContainer: {
     // position: 'absolute',
     // left: Platform.OS === 'ios' ? 16.2 : 16,
@@ -1127,34 +1116,6 @@ const styles = StyleSheet.create({
     // position: 'absolute',
     // right: Platform.OS === 'ios' ? 17.7 : 16,
     zIndex: 11,
-  },
-  blurButtonWrapper: {
-    width: 48,
-    height: 48,
-    borderRadius: 40,
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
-    // borderWidth: 0.4,
-    // borderColor: '#ffffff2c',
-    // backgroundColor: 'rgba(255, 255, 255, 0.1)',
-
-    borderWidth: 0.3,
-    borderColor: '#ffffff11',
-
-    boxShadow:
-      '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-    boxSizing: 'border-box',
   },
 
   fullScreenContainer: {

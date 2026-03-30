@@ -44,6 +44,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import FilterAndroid from '../../utils/component/FilterAndroid';
 import {ShortCustomToastContainer, shortshowToast } from '../../utils/component/ShortCustomToastManager';
+import { STYLES } from '../../utils/Style';
 type CreatedBy = {
   id: number;
   firstname: string;
@@ -589,14 +590,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
           </MaskedView>
         </Animated.View>
 
-        <View style={styles.headerContent} pointerEvents="box-none">
+        <View style={STYLES.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => navigation.replace('Dashboard', { AddScreenBackactiveTab: 'Home', isNavigate: false })}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
             <Animated.View
-              style={[styles.blurButtonWrapper, animatedButtonStyle]}
+              style={[STYLES.blurButtonWrapper, animatedButtonStyle]}
             >
               <Animated.View
                 style={[
@@ -840,18 +841,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'none',
   },
-  headerContent: {
-    position: 'absolute',
-    top:(Platform.OS === 'ios' ? 60 : 40 ),
-    width: Platform.OS === 'ios' ? '100%' : '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    zIndex: 11,
-    alignSelf: 'center',
-    pointerEvents: 'box-none',
-  },
+
 
   categoryTabsContainer: {
     width: '100%',
@@ -865,33 +855,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingRight: 16,
   },
-  blurButtonWrapper: {
-    width: 48,
-    height: 48,
-    borderRadius: 40,
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
-    // borderWidth: 0.4,
-    // borderColor: '#ffffff2c',
-    // backgroundColor: 'rgba(255, 255, 255, 0.1)',
 
-    borderWidth: 0.3,
-    borderColor: '#ffffff11',
-
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-    boxSizing: 'border-box',
-  },
 
   emptyWrapper: {
     flex: 1,

@@ -38,6 +38,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
+import { STYLES } from '../../utils/Style';
 
 type CreatedBy = {
   id: number;
@@ -367,14 +368,14 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
           </MaskedView>
         </Animated.View>
 
-        <View style={styles.headerContent} pointerEvents="box-none">
+        <View style={STYLES.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => navigation.replace('Dashboard', { AddScreenBackactiveTab: 'Profile', isNavigate: false })}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
             <Animated.View
-              style={[styles.blurButtonWrapper, animatedButtonStyle]}
+              style={[STYLES.blurButtonWrapper, animatedButtonStyle]}
             >
               <Animated.View
                 style={[
@@ -638,18 +639,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'none',
   },
-  headerContent: {
-    position: 'absolute',
-    top: (Platform.OS === 'ios' ? 60 : 40),
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    zIndex: 11,
-    alignSelf: 'center',
-    pointerEvents: 'box-none',
-    justifyContent: 'space-between',
-  },
+
 
   categoryTabsContainer: { 
 
@@ -659,40 +649,7 @@ const styles = StyleSheet.create({
   },
   categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center'
   ,paddingHorizontal: 16,padding: 8},
-//  tabcard: {
-//     minHeight: 38,
-//     paddingVertical: 10,
-//     paddingHorizontal: 16,
-//     marginRight: 8,
-//     borderWidth: 0.4,
-//     borderColor: '#ffffff11',
-//     backgroundColor:
-//       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
-//     borderRadius: 10,
-//     boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.25)',
-//   },
-//   tabcard1: {
-//     minHeight: 38,
-//     borderWidth: 0.4,
-//     borderColor: '#ffffff11',
-//     backgroundColor:
-//       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-//     borderEndEndRadius: 10,
-//     borderStartEndRadius: 10,
-//     borderTopLeftRadius: 10,
-//     borderTopRightRadius: 10,
-//     borderBottomStartRadius: 10,
-//     borderBlockStartColor: '#ffffff2e',
-//     borderBlockColor: '#ffffff2e',
-//     borderTopColor: '#ffffff2e',
-//     borderBottomColor: '#ffffff2e',
-//     borderLeftColor: '#ffffff2e',
-//     borderRightColor: '#ffffff2e',
-//     boxSizing: 'border-box',
-//     paddingVertical: 10,
-//     paddingHorizontal: 16,
-//     marginRight: 8,
-//   },
+
 
   tabcard: {
     minHeight: 38,
@@ -734,35 +691,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
     //boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
   },
-  blurButtonWrapper: {
-    width: 48,
-    height: 48,
-    borderRadius: 40,
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
-    // borderWidth: 0.4,
-    // borderColor: '#ffffff2c',
-    // backgroundColor: 'rgba(255, 255, 255, 0.1)',
-
-
-
-    borderWidth: 0.3,
-    borderColor: '#ffffff11',
-
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-    boxSizing: 'border-box',
-  },
+ 
   loaderWrapper: {
     flex: 1,
     justifyContent: 'center',

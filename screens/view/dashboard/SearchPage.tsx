@@ -41,6 +41,7 @@ import SearchTutionCard from '../../utils/SearchTutionCard';
 import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
 import FilterAndroid from '../../utils/component/FilterAndroid';
 import { useTranslation } from 'react-i18next';
+import { STYLES } from '../../utils/Style';
 type CreatedBy = {
   id: number;
   firstname: string;
@@ -501,7 +502,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
       <View style={styles.fullScreenContainer}>
        
 
-        <View style={styles.headerContent} pointerEvents="box-none">
+        <View style={STYLES.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
               navigation.replace('Dashboard', {
@@ -514,7 +515,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
             activeOpacity={0.7}
           >
             <Animated.View
-              style={[styles.blurButtonWrapper, animatedButtonStyle]}
+              style={[STYLES.blurButtonWrapper, animatedButtonStyle]}
             >
               <Animated.View
                 style={[
@@ -751,18 +752,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'none',
   },
-  headerContent: {
-    position: 'absolute',
-    top: (Platform.OS === 'ios' ? 60 : 40),
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    zIndex: 11,
-    alignSelf: 'center',
-    pointerEvents: 'box-none',
-    justifyContent: 'space-between',
-  },
+
 
   dateHeading: {
     color: '#fff',
@@ -771,26 +761,6 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     marginLeft: 12,
     marginTop: 16
-  },
-  blurButtonWrapper: {
-    width: 46,
-    height: 46,
-    borderRadius: 40,
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 0.3,
-    borderColor: '#ffffff11',
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-    boxSizing: 'border-box',
   },
 
   background: { 
