@@ -42,6 +42,7 @@ import ButtonNew from '../../utils/component/ButtonNew';
 import Loader from '../../utils/component/Loader';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
+import { STYLES } from '../../utils/Style';
 
 type ListingDetailsProps = {
   navigation: any;
@@ -338,13 +339,13 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
             />
           </MaskedView>
         </AnimatedReanimated.View>
-        <View style={styles.headerContent} pointerEvents="box-none">
+        <View style={STYLES.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => { navigation.goBack(); }}
             style={styles.backButtonContainer}
             activeOpacity={0.7} >
             <AnimatedReanimated.View
-              style={[styles.blurButtonWrapper, animatedButtonStyle]}>
+              style={[STYLES.blurButtonWrapper, animatedButtonStyle]}>
               <AnimatedReanimated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -405,7 +406,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
             activeOpacity={0.7}
           >
             <AnimatedReanimated.View
-              style={[styles.blurButtonWrapper, animatedButtonStyle]}
+              style={[STYLES.blurButtonWrapper, animatedButtonStyle]}
             >
               <AnimatedReanimated.View
                 style={[
@@ -465,57 +466,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                   </Text>
             </AnimatedReanimated.View>
           </TouchableOpacity>
-          {/* <TouchableOpacity
-            onPress={() => {
-            }}
-            style={styles.backButtonContainer}
-            activeOpacity={0.7}
-          >
-            <AnimatedReanimated.View
-              style={[styles.blurButtonWrapper_none]}
-            >
-              <AnimatedReanimated.View
-                style={[
-                  StyleSheet.absoluteFill,
-                  useAnimatedStyle(() => ({
-                    opacity: interpolate(
-                      scrollY.value,
-                      [0, 30],
-                      [1, 0],
-                      'clamp',
-                    ),
-                    backgroundColor: 'rgba(255,255,255,0.1)',
-                    borderRadius: 40,
-                  })), { display: 'none' }
-                ]}
-              />
-
-              <AnimatedReanimated.View
-                style={[
-                  StyleSheet.absoluteFill,
-                  useAnimatedStyle(() => ({
-                    opacity: interpolate(
-                      scrollY.value,
-                      [0, 50],
-                      [0, 1],
-                      'clamp',
-                    ),
-                  })), { display: 'none' }
-                ]}
-              >
-                <BlurView
-                  style={StyleSheet.absoluteFill}
-                  blurType="light"
-                  blurAmount={10}
-                  reducedTransparencyFallbackColor="transparent"
-                />
-              </AnimatedReanimated.View>
-              <AnimatedReanimated.Image
-                source={require('../../../assets/images/back.png')}
-                style={[{ height: 24, width: 24, display: 'none' }]}
-              />
-            </AnimatedReanimated.View>
-          </TouchableOpacity> */}
+          
         </View>
 
         <AnimatedReanimated.ScrollView
@@ -1137,63 +1088,12 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'none',
   },
-  headerContent: {
-    // position: 'absolute',
-    // top: Platform.OS === 'ios' ? '8.5%' : 60,
-    // width: Platform.OS === 'ios' ? '100%' : '100%',
-    // flexDirection: 'row',
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    // paddingHorizontal: 16,
-    // zIndex: 11,
-    // alignSelf: 'center',
-    // pointerEvents: 'box-none',
-    // marginTop: Platform.OS === 'ios' ? 0 : 0,
-    // marginLeft: 1,
-
-    position: 'absolute',
-    top: (Platform.OS === 'ios' ? 60 : 40),
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    zIndex: 11,
-    alignSelf: 'center',
-    pointerEvents: 'box-none',
-    justifyContent: 'space-between',
-  },
   backButtonContainer: {
     // position: 'absolute',
     // left: 16,
     zIndex: 11,
   },
-  blurButtonWrapper: {
-    width: 48,
-    height: 48,
-    borderRadius: 40,
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
-    // borderWidth: 0.4,
-    // borderColor: '#ffffff2c',
-    // backgroundColor: 'rgba(255, 255, 255, 0.1)', 
 
-    borderWidth: 0.3,
-    borderColor: '#ffffff11',
-
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-    boxSizing: 'border-box',
-  },
 
   initialsCircle: {
     backgroundColor: '#8390D4',

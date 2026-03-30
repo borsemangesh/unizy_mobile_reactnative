@@ -2,7 +2,7 @@ import { Platform, StyleSheet } from "react-native";
 
 
 export const STYLES = StyleSheet.create({
-    headerContent: {
+  headerContent: {
     position: 'absolute',
     top: Platform.OS === 'ios' ? 60 : 40,
     width: '100%',
@@ -13,10 +13,9 @@ export const STYLES = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'box-none',
         justifyContent: 'space-between',
-
     },
     
-    blurButtonWrapper: {
+  blurButtonWrapper: {
     width: 48,
     height: 48,
     borderRadius: 40,

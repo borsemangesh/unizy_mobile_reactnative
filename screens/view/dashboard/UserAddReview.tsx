@@ -320,18 +320,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     zIndex: 999,
   },
-  headerContent: {
-    position: 'absolute',
-    top: (Platform.OS === 'ios' ? 60 : 40),
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    zIndex: 11,
-    alignSelf: 'center',
-    pointerEvents: 'box-none',
-    justifyContent: 'space-between',
-  },
+
   backButtonContainer: {
     zIndex: 11,
   },

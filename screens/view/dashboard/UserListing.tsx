@@ -39,6 +39,7 @@ import { BlurView } from '@react-native-community/blur';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { useTranslation } from 'react-i18next';
+import { STYLES } from '../../utils/Style';
 
 
 type CreatedBy = {
@@ -474,14 +475,14 @@ const UserListing = ({ navigation }: UserListingProps) => {
           </MaskedView>
         </Animated.View>
 
-        <View style={styles.headerContent} pointerEvents="box-none">
+        <View style={STYLES.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => { navigation.goBack(); }}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
             <Animated.View
-              style={[styles.blurButtonWrapper, animatedButtonStyle]}
+              style={[STYLES.blurButtonWrapper, animatedButtonStyle]}
             >
               <Animated.View
                 style={[
@@ -701,43 +702,6 @@ const styles = StyleSheet.create({
   },
   categoryTabsScrollContent: { flexDirection: 'row', alignItems: 'center' ,paddingHorizontal: 16, padding: 8,},
 
-  // tabcard: {
-  //   minHeight: 38,
-  //   paddingVertical: 10,
-  //   paddingHorizontal: 16,
-  //   marginRight: 8,
-  //   borderWidth: 0.4,
-  //   borderColor: '#ffffff11',
-  //   backgroundColor:
-  //     'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  //   borderRadius: 10,
-  //   // boxShadow:
-  //   //   'rgba(255, 255, 255, 0.02)inset 0.1px 0.1px 1px 0px,',
-  //   boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.25)'
-  // },
-  // tabcard1: {
-  //   minHeight: 38,
-  //   borderWidth: 0.4,
-  //   borderColor: '#ffffff11',
-  //   backgroundColor:
-  //     'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  //   borderEndEndRadius: 10,
-  //   borderStartEndRadius: 10,
-  //   borderTopLeftRadius: 10,
-  //   borderTopRightRadius: 10,
-  //   borderBottomStartRadius: 10,
-  //   borderBlockStartColor: '#ffffff2e',
-  //   borderBlockColor: '#ffffff2e',
-  //   borderTopColor: '#ffffff2e',
-  //   borderBottomColor: '#ffffff2e',
-  //   borderLeftColor: '#ffffff2e',
-  //   borderRightColor: '#ffffff2e',
-  //   boxSizing: 'border-box',
-  //   paddingVertical: 10,
-  //   paddingHorizontal: 16,
-  //   marginRight: 8,
-  // },
-
   tabcard: {
     minHeight: 38,
     paddingVertical: 10,
@@ -749,7 +713,6 @@ const styles = StyleSheet.create({
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderRadius: 10,
     boxSizing: 'border-box',
-    // boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.25)',
 
   },
@@ -759,8 +722,6 @@ const styles = StyleSheet.create({
     minHeight: 38,
     borderWidth: 0.4,
     borderColor: '#ffffff11',
-    // backgroundColor:
-    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderEndEndRadius: 10,
     borderStartEndRadius: 10,
     borderTopLeftRadius: 10,
@@ -772,44 +733,10 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
-   // boxSizing: 'border-box',
     paddingVertical: 10,
     paddingHorizontal: 16,
     marginRight: 8,
-    //boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
   },
-
-  blurButtonWrapper: {
-    width: 48,
-    height: 48,
-    borderRadius: 40,
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
-    // borderWidth: 0.4,
-    // borderColor: '#ffffff2c',
-    // backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
-
-
-
-
-    borderWidth: 0.3,
-    borderColor: '#ffffff11',
-
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-    boxSizing: 'border-box',
-  },
-
   blurButtonWrapper_none: {
     width: 48,
     height: 48,
@@ -821,26 +748,7 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
     backgroundColor: 'transparent', // fallback tint
   },
-header: {
-  position: 'absolute',
-  top: 0,
-  width: Platform.OS === 'ios' ? '100%' : '100%',
-  zIndex: 20,
-  paddingTop: Platform.OS === 'ios' ? 50 : 40,
-  paddingBottom: Platform.OS === 'ios' ? 16 : 12,
-  paddingHorizontal: 16,
-  justifyContent: 'center',
-  overflow: 'hidden', // IMPORTANT for MaskedView
-  flexDirection: 'row',
-  alignItems: 'center',
-  elevation: 0,
-  backgroundColor: 'transparent',
-  borderBottomWidth: 0,
-  shadowOpacity: 0,
-  shadowColor: 'transparent',
-  alignSelf: 'center',
-  minHeight: Platform.OS === 'ios' ? 80 : 88,
-},
+
 backButtonContainer: {
   // position: 'absolute',
   // left: 16,
@@ -857,18 +765,6 @@ backButtonContainer: {
   overflow: 'hidden',
   alignSelf: 'center',
   pointerEvents: 'none',
-},
-headerContent: {
-  position: 'absolute',
-  top: (Platform.OS === 'ios' ? 60 : 40),
-  width: '100%',
-  flexDirection: 'row',
-  alignItems: 'center',
-  paddingHorizontal: 16,
-  zIndex: 11,
-  alignSelf: 'center',
-  pointerEvents: 'box-none',
-  justifyContent: 'space-between',
 },
 
 
@@ -893,22 +789,7 @@ headerContent: {
     borderColor: 'rgba(255, 255, 255, 0.08)',
     borderRadius: 24,
     overflow: 'hidden',
-
-    //  marginBottom:20,
   },
-  // emptyImage: {
-  //   width: 50,
-  //   height: 50,
-  //   marginBottom: 20,
-  // },
-  // emptyText: {
-  //   fontSize: 20,
-  //   color: '#fff',
-  //   textAlign: 'center',
-  //   fontFamily: 'Urbanist-SemiBold',
-  //   fontWeight: 600
-  // },
-
    emptyImage: {
     width: 64,
     height: 64,
