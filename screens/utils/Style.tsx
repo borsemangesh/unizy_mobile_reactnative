@@ -12,7 +12,7 @@ export const STYLES = StyleSheet.create({
     zIndex: 11,
     alignSelf: 'center',
     pointerEvents: 'box-none',
-        justifyContent: 'space-between',
+    justifyContent: 'space-between',
     },
     
   blurButtonWrapper: {

@@ -148,14 +148,14 @@ const UserReviews = ({ navigation }: UserReviewsProps) => {
     return { opacity };
   });
 
-  const animatedButtonStyle = useAnimatedStyle(() => {
+ const animatedButtonStyle = useAnimatedStyle(() => {
     'worklet';
     const borderColor = interpolateColor(
       scrollY.value,
       [0, 300],
       ['rgba(255, 255, 255, 0.56)', 'rgba(255, 255, 255, 0.56)'],
     );
-    const redOpacity = interpolate(scrollY.value, [0, 300], [0, 0.15], 'clamp');
+    const redOpacity = interpolate(scrollY.value, [0, 100], [0, 0.15], 'clamp');
     return {
       borderColor,
       backgroundColor: `rgba(255, 255, 255, ${redOpacity})`,
@@ -745,19 +745,6 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     overflow: 'hidden',
   },
-  // emptyImage: {
-  //   width: 50,
-  //   height: 50,
-  //   marginBottom: 20,
-  // },
-  // emptyText: {
-  //   fontSize: 20,
-  //   color: '#fff',
-  //   textAlign: 'center',
-  //   fontFamily: 'Urbanist-SemiBold',
-  //   fontWeight: 600
-  // },
-
    emptyImage: {
     width: 64,
     height: 64,
