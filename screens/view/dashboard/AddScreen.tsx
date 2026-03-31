@@ -1138,10 +1138,16 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
               if (cityName) {
                 const cityOptions = cityField.param?.options || [];
-                const matchedOption = cityOptions.find(
-                  (opt: any) =>
-                    opt.option_name?.toLowerCase() === cityName?.toLowerCase()
-                );
+                // const matchedOption = cityOptions.find(
+                //   (opt: any) =>
+                //     opt.option_name?.toLowerCase() === cityName?.toLowerCase()
+                // );
+                const matchedOption = cityOptions.find((opt: any) => {
+                  const option = opt.option_name?.toLowerCase() || '';
+                  const input = cityName.toLowerCase();
+
+                  return option.includes(input) || input.includes(option);
+                });
 
                 if (matchedOption) {
                   // ✅ City found — auto-select silently
