@@ -162,18 +162,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
   },
 
-  dashedLine: {
-    borderBottomWidth: 1,
-    borderColor: '#6592D4',
-    borderStyle: 'dashed',
-    width: '100%',
-    opacity: 0,
-
-  },
-
-  dashedLine1: {
-  },
-
   topRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',

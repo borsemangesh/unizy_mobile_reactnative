@@ -23,20 +23,7 @@ const Header = () => {
 };
 
 const styles = StyleSheet.create({
-  buttonContainer: {
-    width: '100%',
-    height: 100,
-    justifyContent: 'center',
-    alignItems: 'center',    
-    overflow: 'hidden',
-    backgroundColor: 'transparent',
-    borderWidth: 0.5,
-    borderColor: 'transparent',
-    alignSelf: 'center',
-    marginBottom: 10,
-    position: 'absolute',
-    top: 0
-  },
+
   buttonText: {
     // color: '#000',
     // fontSize: 16,

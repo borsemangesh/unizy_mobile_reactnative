@@ -794,22 +794,6 @@ const styles = StyleSheet.create({
     letterSpacing: -0.4,
     lineHeight: 28,
   },
-  scrollContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 80,
-    paddingTop: Platform.OS === 'ios' ? 120 : 100,
-  },
-
-  headerWrapper: {
-    position: 'absolute',
-    top: 0,
-    width: Platform.OS === 'ios' ? '100%' : '100%',
-    height: Platform.OS === 'ios' ? 180 : 180,
-    zIndex: 10,
-    overflow: 'hidden',
-    alignSelf: 'center',
-    pointerEvents: 'none',
-  },
  
   backButtonContainer: {
     // position: 'absolute',
@@ -817,66 +801,6 @@ const styles = StyleSheet.create({
     zIndex: 11,
   },
 
-  tabcard: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginRight: 8,
-    borderWidth: 0.4,
-    borderColor: '#ffffff11',
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    borderEndEndRadius: 10,
-    borderStartEndRadius: 10,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    borderBottomStartRadius: 10,
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-    boxSizing: 'border-box',
-  },
-  tabcard1: {
-    borderWidth: 0.4,
-    borderColor: '#ffffff11',
-
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-    borderEndEndRadius: 10,
-    borderStartEndRadius: 10,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    borderBottomStartRadius: 10,
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-
-    boxSizing: 'border-box',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginRight: 8,
-  },
-  tabtext: {
-    color: '#fff',
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14,
-  },
-  othertext: {
-    color: '#FFFFFF7A',
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14,
-  },
 
   background: {
     flex: 1,
@@ -884,55 +808,7 @@ const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
   },
-  header: {
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? '7.1%' : 50,
-    width: Platform.OS === 'ios' ? '100%' : '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-    zIndex: 11,
-    alignSelf: 'center',
-    pointerEvents: 'box-none',
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backIconRow: {
-    padding: 12,
-    borderRadius: 40,
-
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    // backgroundColor:
-    //   'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    // boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-    // borderWidth: 0.4,
-    // borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
-
-
-
-    borderWidth: 0.3,
-    borderColor: '#ffffff11',
-
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-    boxSizing: 'border-box',
-  },
+  
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
@@ -944,96 +820,7 @@ const styles = StyleSheet.create({
     height: 28,
     opacity: 1,
   },
-  search_container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 16,
-    marginRight: 16,
-    borderRadius: 40,
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  },
-  searchIcon: {
-    margin: 10,
-    height: 24,
-    width: 24,
-  },
-  searchBar: {
-    fontSize: 17,
-    color: '#fff',
-    width: '85%',
-  },
-  listContainer: {
-    marginLeft: 10,
-    marginRight: 10,
-    paddingTop: 10,
-  },
-  row1: {
-  },
-  itemContainer: {
-    flex: 1,
-    marginHorizontal: 4,
-  },
-
-  container: {
-    flex: 1,
-    resizeMode: 'cover',
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    paddingHorizontal: 20,
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backButton: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
-  },
-  headerTitle: {
-    color: '#fff',
-    fontSize: 22,
-    fontWeight: '600',
-  },
-  profileContainer: {
-    alignItems: 'center',
-    marginVertical: 20,
-  },
-  profileImageWrapper: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    overflow: 'hidden',
-    borderWidth: 3,
-    borderColor: 'rgba(255,255,255,0.4)',
-  },
-  profileImage: {
-    width: '100%',
-    height: '100%',
-  },
-  cameraIconContainer: {
-    position: 'absolute',
-    bottom: 5,
-    right: 5,
-    backgroundColor: '#4A80F0',
-    padding: 6,
-    borderRadius: 18,
-  },
-  cameraIcon: {
-    width: 16,
-    height: 16,
-    tintColor: '#fff',
-  },
-  imageSizeText: {
-    color: '#A9C1FF',
-    fontSize: 12,
-    marginTop: 5,
-  },
+  
   blurCard: {
     marginHorizontal: 16,
     marginTop: 16,
@@ -1063,148 +850,13 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     color:"#fff",
   },
-  saveButton: {
-    backgroundColor: '#B4C8FF',
-    borderRadius: 25,
-    marginTop: 28,
-    alignItems: 'center',
-    paddingVertical: 14,
-  },
-  saveText: {
-    color: '#1E2A78',
-    fontWeight: '700',
-    fontSize: 16,
-  },
-
-  cameraButton: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  bigCircle: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 0px 15px 1px',
-    borderWidth: 1,
-    borderColor: '#ffffff2c',
-  },
-
-  avatarContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 12,
-  },
+  
   logo: {
     width: 64,
     height: 64,
     borderRadius: 60,
   },
 
-  profileavatarContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 12,
-  },
-
-  profilebigCircle: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 0px 15px 1px',
-    borderWidth: 1,
-    borderColor: '#ffffff2c',
-  },
-
-  profilelogo: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-  },
-
-  profilecameraButton: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 30,
-    height: 30,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.6) 100%)',
-  },
-  profilecameraIcon: {
-    width: 40,
-    height: 40,
-    marginLeft: -1,
-    marginTop: 3,
-  },
-
-  updateIcon: {
-    width: 16,
-    height: 16,
-  },
-
-  inputEmail: {
-    flex: 1,
-    color: '#fff',
-    fontSize: 16,
-    backgroundColor: 'transparent',
-    borderWidth: 0,
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    minWidth: 0,
-    height: 44,
-  },
-
-  inputRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.08)',
-    borderRadius: 14,
-  },
-
-  inputWithUpdate: {
-    backgroundColor: 'transparent',
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    color: '#fff',
-    height: 44,
-  },
-
-  updateButton: {
-    marginLeft: 38,
-    backgroundColor: '#FFFFFF8F',
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#222',
-    shadowOpacity: 0.17,
-    shadowRadius: 5,
-    elevation: 2,
-    width: 90,
-    height: 34,
-  },
-  updateButtonText: {
-    color: '#002050',
-    fontSize: 14,
-    fontFamily: 'Urbanist-SemiBold',
-  },
 
   overlay: {
     flex: 1,
@@ -1229,24 +881,6 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-Regular',
     fontSize: 16,
-    fontWeight: '400',
-    textAlign: 'center',
-    marginTop: 6,
-  },
-
-  subheader: {
-    color: 'rgba(255, 255, 255, 0.80)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 14,
-    fontWeight: '400',
-    textAlign: 'center',
-    marginTop: 20,
-  },
-
-  subheader1: {
-    color: 'rgba(255, 255, 255, 0.48)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 14,
     fontWeight: '400',
     textAlign: 'center',
     marginTop: 6,
@@ -1303,60 +937,6 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
   },
 
-  otpContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignSelf: 'center',
-    gap: 8,
-    marginTop: 16,
-    paddingHorizontal: 20,
-  },
-
-  otpBox: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    paddingTop: 8,
-    paddingRight: 12,
-    paddingBottom: 8,
-    paddingLeft: 12,
-    textAlign: 'center',
-    fontSize: 18,
-    color: '#fff',
-    fontWeight: '600',
-    borderWidth: 1,
-    borderColor: '#ffffff2c',
-    elevation: 0,
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.29) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 0px 15px 1px',
-  },
-
-  editcard: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginRight: 8,
-    borderColor: '#ffffff11',
-    borderRadius: 10,
-    boxSizing: 'border-box',
-    gap: 10,
-    width: '20%',
-
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
-    boxShadow:
-      'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
-  },
-
-  edittext: {
-    color: '#fff',
-    textAlign: 'center',
-  },
-  tabContent: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
 
   buttonContainer: {
     width: Platform.OS === 'ios' ? '100%' : '100%',

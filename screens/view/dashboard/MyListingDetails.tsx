@@ -1076,17 +1076,6 @@ const styles = StyleSheet.create({
     zIndex: 999,
   },
 
-  reportButtonCard: {
-    flexDirection: 'row',
-    marginBottom: 6,
-    borderRadius: 12,
-    padding: 12,
-    backgroundColor: 'rgba(236, 154, 154, 0.2)',
-    marginTop: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-  },
   durationValue: {
     color: '#FFF',
     fontFamily: 'Urbanist-SemiBold',
@@ -1108,45 +1097,13 @@ const styles = StyleSheet.create({
     pointerEvents: 'none',
   },
   backButtonContainer: {
-    // position: 'absolute',
-    // left: Platform.OS === 'ios' ? 16.2 : 16,
-    zIndex: 11,
-  },
-  rightButtoContainer: {
-    // position: 'absolute',
-    // right: Platform.OS === 'ios' ? 17.7 : 16,
     zIndex: 11,
   },
 
   fullScreenContainer: {
     flex: 1,
   },
-  header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 50,
-    paddingBottom: 12,
-    paddingHorizontal: 16,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backIconRow: {
-    padding: 12,
-    borderRadius: 40,
-
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-
-    boxShadow:
-      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
-  },
+  
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
@@ -1154,75 +1111,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
-  },
-
-  chattext: {
-    color: 'rgba(255, 255, 255, 0.48)',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14,
-    fontWeight: '600',
-    fontStyle: 'normal',
-    letterSpacing: -0.28,
-  },
-  chatcard: {
-    borderRadius: 10,
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 4,
-    flex: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    height: 'auto',
-  },
-
-  bottombutton: {
-    borderRadius: 10,
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 4,
-    padding: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-
-
-  initialsText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 600,
-    textAlign: 'center',
-    fontFamily: 'Urbanist-SemiBold',
-  },
-
-  MylistingsBackground: {
-    height: 48,
-    width: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 100,
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(97, 179, 255, 0.2) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow:
-      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
-    borderTopColor: '#ffffff5d',
-    borderBottomColor: '#ffffff36',
-    borderLeftColor: '#ffffff5d',
-    borderRightColor: '#ffffff36',
-    borderWidth: 0.3,
-  },
-  iconSmall: {
-    width: 24,
-    height: 24,
   },
 
   stepIndicatorContainer: {
@@ -1234,13 +1122,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
     zIndex: 10,
-  },
-
-  stepCircle: {
-    width: 12,
-    height: 12,
-    borderRadius: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
   },
 
   activeStepCircle: {
@@ -1273,130 +1154,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.33,
     elevation: 2,
-  },
-
-  backBtn: {
-    width: 48,
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  loginText: {
-    color: '#002050',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: 500,
-    letterSpacing: 1,
-    width: '100%',
-  },
-  loginText1: {
-    color: '#FFFFFF7A',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: 500,
-    letterSpacing: 1,
-    width: '100%',
-  },
-
-  loginButton: {
-    display: 'flex',
-    width: '100%',
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 4,
-    borderRadius: 100,
-    paddingTop: 6,
-    paddingBottom: 6,
-    backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    marginTop: 16,
-    borderWidth: 0.5,
-    borderColor: '#ffffff2c',
-  },
-
-  loginButton1: {
-    display: 'flex',
-    width: '100%',
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 4,
-    borderRadius: 100,
-    paddingTop: 6,
-    paddingBottom: 6,
-    backgroundColor: 'rgba(170, 169, 176, 0.56)',
-    marginTop: 16,
-    borderWidth: 0.5,
-    borderColor: '#ffffff2c',
-  },
-  termsText1: {
-    color: 'rgba(255,255,255,0.48)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 14,
-    textAlign: 'center',
-    lineHeight: 20,
-    paddingHorizontal: 10,
-    marginBottom: 12,
-  },
-  logo: {
-    width: 64,
-    height: 64,
-    marginBottom: 20,
-  },
-
-  popupContainer: {
-    width: width * 0.85,
-    padding: 20,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-    alignItems: 'center',
-    overflow: 'hidden',
-
-    backgroundColor: 'rgba(255,255,255,0.15)',
-  },
-  overlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-
-  previewText: {
-    color: '#002050',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: 500,
-    letterSpacing: 1,
-  },
-  payText: {
-    color: '#002050',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: '600',
-    letterSpacing: 1,
-  },
-  previewBtn: {
-    display: 'flex',
-    width: '90%',
-    alignSelf: 'center',
-    alignContent: 'center',
-    paddingHorizontal: 20,
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 100,
-    backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    marginBottom: 10,
-    borderWidth: 0.5,
-    borderColor: '#ffffff2c',
-
-    position: 'absolute',
-    bottom: 10,
   },
 
   scrollContainer: {
@@ -1433,15 +1190,6 @@ const styles = StyleSheet.create({
     width: 'auto',
     alignSelf: 'flex-start',
   },
-
-  userSub: {
-    color: 'rgba(255, 255, 255, 0.48)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 12,
-    fontWeight: '500',
-    lineHeight: 16,
-    letterSpacing: -0.24,
-  },
   datetext: {
     color: '#9CD6FF',
     fontFamily: 'Urbanist-Medium',
@@ -1461,44 +1209,10 @@ const styles = StyleSheet.create({
     paddingLeft: 4,
   },
 
-  univeritytext: {
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 12,
-    fontWeight: '500',
-    marginTop: 4,
-    lineHeight: 14,
-  },
-  userName: {
-    position: 'relative',
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 16,
-    fontWeight: '600',
-    lineHeight: 20,
-    letterSpacing: -0.32,
-  },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 12,
-    resizeMode: 'cover',
-  },
   gap12: {
     gap: 8,
   },
-  gap4: {
-    gap: 4,
-  },
-  catagory: {
-    color: 'rgba(255, 255, 255, 0.72)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 16,
-    fontWeight: '600',
-    fontStyle: 'normal',
-    lineHeight: 22,
-  },
+
   new: {
     color: 'rgba(255, 255, 255, 0.64)',
     fontFamily: 'Urbanist-Regular',
@@ -1528,14 +1242,6 @@ const styles = StyleSheet.create({
     letterSpacing: -0.24,
   },
 
-  catagoryText1: {
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 12,
-    fontWeight: '500',
-    fontStyle: 'normal',
-    lineHeight: 1.3,
-    color: '#9CD6FF',
-  },
   categoryTag: {
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.10) 100%)',
@@ -1563,16 +1269,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     lineHeight: 18,
   },
-  productDeatilsHeading: {
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 18,
-    fontWeight: '600',
-    fontStyle: 'normal',
-    lineHeight: 22,
-    letterSpacing: -0.36,
-  },
-
+  
   productDeatilsHeading1: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-SemiBold',
@@ -1598,14 +1295,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.1,
     paddingTop: 8,
   },
-  priceText1: {
-    color: '#002050',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 17,
-    fontWeight: 700,
-    letterSpacing: 1,
-  },
-
+  
   card: {
     flexDirection: 'column',
     marginBottom: 6,
@@ -1615,19 +1305,7 @@ const styles = StyleSheet.create({
     gap: 12,
     marginTop: 6,
   },
-  h24_w24: {
-    width: 24,
-    height: 24,
-  },
-
-  previewThumbnail: {
-    color: '#FFF',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 20,
-    fontWeight: '600',
-    letterSpacing: -0.4,
-  },
+  
 });
 
 export default MyListingDetails;

@@ -1595,32 +1595,7 @@ const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
   },
-  header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 50,
-    paddingBottom: 12,
-    paddingHorizontal: 16,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backIconRow: {
-    padding: 12,
-    borderRadius: 40,
-
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-
-    boxShadow:
-      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
-  },
+ 
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
@@ -1677,22 +1652,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
   },
 
-  MylistingsBackground: {
-    height: 48,
-    width: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 100,
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(97, 179, 255, 0.2) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow:
-      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
-    borderTopColor: '#ffffff5d',
-    borderBottomColor: '#ffffff36',
-    borderLeftColor: '#ffffff5d',
-    borderRightColor: '#ffffff36',
-    borderWidth: 0.3,
-  },
   iconSmall: {
     width: 24,
     height: 24,
@@ -1709,12 +1668,6 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
 
-  stepCircle: {
-    width: 12,
-    height: 12,
-    borderRadius: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-  },
 
   activeStepCircle: {
     width: 12,
@@ -1746,13 +1699,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.33,
     elevation: 2,
-  },
-
-  backBtn: {
-    width: 48,
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 
   loginText: {
@@ -1805,15 +1751,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
   },
-  termsText1: {
-    color: 'rgba(255,255,255,0.48)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 14,
-    textAlign: 'center',
-    lineHeight: 20,
-    paddingHorizontal: 10,
-    marginBottom: 12,
-  },
+  
   logo: {
     width: 64,
     height: 64,
@@ -1837,41 +1775,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
-
-  previewText: {
-    color: '#002050',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: 500,
-    letterSpacing: 1,
-  },
-  payText: {
-    color: '#002050',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: '600',
-    letterSpacing: 1,
-  },
-  previewBtn: {
-    display: 'flex',
-    width: '90%',
-    alignSelf: 'center',
-    alignContent: 'center',
-    paddingHorizontal: 20,
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 100,
-    backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    marginBottom: 10,
-    borderWidth: 0.5,
-    borderColor: '#ffffff2c',
-
-    position: 'absolute',
-    bottom: 10,
-  },
-
   scrollContainer: {
     paddingBottom: 80,
     paddingTop: Platform.OS === 'ios' ? 110 : 100,
@@ -1907,14 +1810,6 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
 
-  userSub: {
-    color: 'rgba(255, 255, 255, 0.48)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 12,
-    fontWeight: '500',
-    lineHeight: 16,
-    letterSpacing: -0.24,
-  },
   datetext: {
     color: '#9CD6FF',
     fontFamily: 'Urbanist-Medium',
@@ -1961,17 +1856,7 @@ const styles = StyleSheet.create({
   gap12: {
     gap: 8,
   },
-  gap4: {
-    gap: 4,
-  },
-  catagory: {
-    color: 'rgba(255, 255, 255, 0.72)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 16,
-    fontWeight: '600',
-    fontStyle: 'normal',
-    lineHeight: 22,
-  },
+
   new: {
     color: 'rgba(255, 255, 255, 0.64)',
     fontFamily: 'Urbanist-Regular',
@@ -2001,14 +1886,6 @@ const styles = StyleSheet.create({
     letterSpacing: -0.24,
   },
 
-  catagoryText1: {
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 12,
-    fontWeight: '500',
-    fontStyle: 'normal',
-    lineHeight: 1.3,
-    color: '#9CD6FF',
-  },
   categoryTag: {
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.10) 100%)',
@@ -2071,13 +1948,6 @@ const styles = StyleSheet.create({
     letterSpacing: -0.1,
     paddingTop: 8,
   },
-  priceText1: {
-    color: '#002050',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 17,
-    fontWeight: 700,
-    letterSpacing: 1,
-  },
 
   card: {
     flexDirection: 'column',
@@ -2088,19 +1958,7 @@ const styles = StyleSheet.create({
     gap: 12,
     marginTop: 6,
   },
-  h24_w24: {
-    width: 24,
-    height: 24,
-  },
-
-  previewThumbnail: {
-    color: '#FFF',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 20,
-    fontWeight: '600',
-    letterSpacing: -0.4,
-  },
+  
 });
 
 export default SearchDetails;

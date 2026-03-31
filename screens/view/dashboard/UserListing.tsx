@@ -824,20 +824,6 @@ backButtonContainer: {
     flex: 1
   },
 
-  backIconRow: {
-    padding: 12,
-    borderRadius: 40,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
-  },
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
@@ -845,28 +831,12 @@ backButtonContainer: {
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
   },
-  search_container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 16,
-    marginRight: 16,
-    borderRadius: 40,
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  },
-  searchIcon: { margin: 10, height: 24, width: 24 },
-  searchBar: {
-    fontSize: 17,
-    color: '#fff',
-    width: '85%',
-  },
+ 
   listContainer: {
     // paddingHorizontal: 16,
     // width: '100%',
   },
-  row1: {
-  },
+
   itemContainer: {
     // flex: 1,
     // marginHorizontal: 4,

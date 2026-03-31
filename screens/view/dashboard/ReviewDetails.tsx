@@ -715,26 +715,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
   },
 
-  header: {
-    position: 'absolute',
-    top: 0,
-    width: Platform.OS === 'ios' ? '100%' : '100%',
-    zIndex: 20,
-    paddingTop: Platform.OS === 'ios' ? 50 : 40,
-    paddingBottom: Platform.OS === 'ios' ? 16 : 12,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-    overflow: 'hidden',
-    flexDirection: 'row',
-    alignItems: 'center',
-    elevation: 0,
-    backgroundColor: 'transparent',
-    borderBottomWidth: 0,
-    shadowOpacity: 0,
-    shadowColor: 'transparent',
-    alignSelf: 'center',
-    minHeight: Platform.OS === 'ios' ? 80 : 88,
-  },
   backButtonContainer: {
     // position: 'absolute',
     // left: 16,
@@ -783,12 +763,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
   },
 
-  sublabel: {
-    color: '#FFFFFFA3',
-    fontSize: 14,
-    fontWeight: '600',
-    fontFamily: 'Urbanist-Medium',
-  },
   innercontainer: {
     paddingHorizontal: 24,
     marginBottom: 8,
@@ -796,32 +770,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
   },
-  payText: {
-    color: '#002050',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: '500',
-    letterSpacing: 1,
-    textAlign: 'center',
-  },
-
-  previewBtn: {
-    display: 'flex',
-    width: '90%',
-    alignSelf: 'center',
-    alignContent: 'center',
-    paddingHorizontal: 20,
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 100,
-    backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    marginBottom: 10,
-    borderWidth: 0.5,
-    borderColor: '#ffffff2c',
-    position: 'absolute',
-    bottom: 10,
-  },
+  
 
   reviewcount: {
     paddingHorizontal: 16,
@@ -833,78 +782,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 
-  bottomText: {
-    marginTop: 4,
-    fontSize: 14,
-    color: '#FFFFFFA3',
-    fontFamily: 'Urbanist-Medium',
-    fontWeight: 500,
-  },
-
-  ratingText: {
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14,
-    fontWeight: '600',
-    fontStyle: 'normal',
-    letterSpacing: -0.28,
-    color: 'rgba(140, 225, 255, 0.9)',
-  },
-  initialsText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 600,
-    textAlign: 'center',
-    fontFamily: 'Urbanist-SemiBold',
-  },
-
-  userRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 6,
-    padding: 12,
-    borderRadius: 24,
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    margin: 12,
-  },
-  productdetails: {
-    marginTop: 10,
-    padding: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    borderRadius: 24,
-    overflow: 'hidden',
-  },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 12,
-  },
-  userName: {
-    position: 'relative',
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 16,
-    fontWeight: '600',
-    lineHeight: 24,
-    letterSpacing: -0.32,
-  },
-  userSub: {
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 12,
-    fontWeight: '500',
-    lineHeight: 16,
-    marginTop: 4,
-  },
-  userSub1: {
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 12,
-    fontWeight: '500',
-    lineHeight: 16,
-    marginTop: 1,
-  },
-
+ 
+  
 
   tabtext: {
     color: '#fff',
@@ -927,23 +806,5 @@ const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
   },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backIconRow: {
-    padding: 12,
-    borderRadius: 40,
-
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
-  },
+ 
 });

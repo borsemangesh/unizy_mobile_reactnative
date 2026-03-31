@@ -579,12 +579,6 @@ const styles = StyleSheet.create({
     paddingTop: 120,
   },
 
-  headerText: {
-    fontSize: 22,
-    color: '#fff',
-    fontWeight: '600',
-    marginBottom: 40,
-  },
   profileContainer: {
     alignItems: 'center',
     // marginBottom: 50,
@@ -610,29 +604,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     fontFamily: 'Urbanist-Medium',
     fontWeight: 500
-  },
-  buttonsContainer: {
-    width: '100%',
-    paddingHorizontal: 16,
-  },
-  button: {
-    flexDirection: 'row',
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    borderRadius: 12,
-    paddingVertical: 18,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 15,
-  },
-  buttonText: {
-    flex: 1,
-    color: '#fff',
-    fontSize: 16,
-    marginLeft: 10,
-  },
-  icon: {
-    marginRight: 10,
   },
 
   cardContainer: {

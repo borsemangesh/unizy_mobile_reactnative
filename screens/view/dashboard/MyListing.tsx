@@ -741,47 +741,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  header: {
-    position: 'absolute',
-    top: 0,
-    width: Platform.OS === 'ios' ? 393 : '100%',
-    zIndex: 20,
-    paddingTop: Platform.OS === 'ios' ? 50 : 40,
-    paddingBottom: Platform.OS === 'ios' ? 16 : 12,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-    overflow: 'hidden',
-    flexDirection: 'row',
-    alignItems: 'center',
-    elevation: 0,
-    backgroundColor: 'transparent',
-    borderBottomWidth: 0,
-    shadowOpacity: 0,
-    shadowColor: 'transparent',
-    alignSelf: 'center',
-    minHeight: Platform.OS === 'ios' ? 80 : 88,
-  },
   backButtonContainer: {
     zIndex: 11,
   },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backIconRow: {
-    width: 48,
-    height: 48,
-    borderRadius: 40,
-    padding: 12,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-  },
+  
   unizyText: {
 
     color: '#FFFFFF',
@@ -791,26 +754,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     width: '100%',
   },
-  search_container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 16,
-    marginRight: 16,
-    borderRadius: 40,
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  },
-  searchIcon: {
-    margin: 10,
-    height: 24,
-    width: 24,
-  },
-  searchBar: {
-    fontSize: 17,
-    color: '#fff',
-    width: '85%',
-  },
+  
   listContainer: {
     width: '100%',
   },

@@ -1266,48 +1266,6 @@ const styles = StyleSheet.create({
     gap: 10,
   },
 
-  blockBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
-    padding: 12,
-    borderWidth: 0.5,
-    borderRadius: 12,
-    borderColor: '#ffffff31',
-    justifyContent: 'center',
-  },
-
-  blockIcon: {
-    width: 20,
-    height: 20,
-    tintColor: '#fff',
-    zIndex: 1,
-    marginLeft: 8
-  },
-
-  blockText: {
-    color: '#fff',
-    fontSize: 16,
-    fontFamily: 'Urbanist-SemiBold',
-    fontWeight: '600',
-    opacity: 0.8,
-    paddingLeft: 8
-  },
-
-  blurButtonWrapper_none: {
-
-    width: 48,
-    height: 48,
-    borderRadius: 40,
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderColor: 'transparent',
-    backgroundColor: 'transparent',
-  },
   fullLoader: {
     position: 'absolute',
     top: 0,
@@ -1555,30 +1513,7 @@ const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
   },
-  header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 50,
-    paddingBottom: 12,
-    paddingHorizontal: 16,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backIconRow: {
-    padding: 12,
-    borderRadius: 40,
-
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
-  },
+ 
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
@@ -1642,17 +1577,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     // paddingTop: 10,
   },
-
-  dottext: {
-    marginLeft: 10,
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontSize: 12,
-    fontWeight: '500',
-    letterSpacing: -0.24,
-    lineHeight: 16,
-    fontFamily: 'Urbanist-Medium',
-    alignSelf: 'center',
-  },
   carddivider: {
     display: 'flex',
     flexDirection: 'row',
@@ -1711,25 +1635,6 @@ const styles = StyleSheet.create({
     zIndex: 10,
     bottom: Platform.select({ ios: 10, android: -10 }),
     marginBottom: Platform.OS === 'ios' ? 10 : 20,
-  },
-  cancelBtn: {
-    flex: 1,
-    marginRight: 8,
-    padding: 12,
-    borderRadius: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    borderBlockStartColor: '#ffffff47',
-    borderBlockColor: '#ffffff47',
-    borderTopColor: '#ffffff47',
-    borderBottomColor: '#ffffff47',
-    borderLeftColor: '#ffffff47',
-    borderRightColor: '#ffffff47',
-
-    boxSizing: 'border-box',
   },
   cancelText: {
     color: 'rgba(255, 255, 255, 0.48)',

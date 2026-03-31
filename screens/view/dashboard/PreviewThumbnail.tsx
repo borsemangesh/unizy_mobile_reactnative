@@ -911,12 +911,6 @@ const styles = StyleSheet.create({
     marginTop: (Platform.OS === 'ios' ? 0 : 0),
     marginLeft: 1
   },
-  scrollContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 80,
-    paddingTop: Platform.OS === 'ios' ? 120 : 100,
-  },
-
   bottomFixed: {
     position: 'absolute',
     bottom: 0,
@@ -924,33 +918,10 @@ const styles = StyleSheet.create({
     right: 0,
     paddingVertical: 10,
   },
-  header: {
-    paddingTop: Platform.OS === 'ios' ? '15%' : 50,
-    paddingBottom: 12,
-    paddingHorizontal: 16,
-  },
   fullScreenContainer: {
     flex: 1,
   },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backIconRow: {
-    padding: 12,
-    borderRadius: 40,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow:
-      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
-  },
+ 
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
@@ -1014,19 +985,6 @@ const styles = StyleSheet.create({
     fontWeight: 500,
   },
 
-  h24_w24: {
-    width: 24,
-    height: 24,
-  },
-  importantNotice: {
-    flexDirection: 'row',
-    height: 'auto',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.09) 100%)',
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    borderRadius: 8,
-    padding: 8,
-  },
   productCarddisplay: {
     display: 'flex',
     height: '100%',
@@ -1034,57 +992,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 24
-  },
-
-  previewThumbnail: {
-    color: '#FFF',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 20,
-    fontWeight: '600',
-    letterSpacing: -0.4,
-  },
-  infoContainer: {
-    flexDirection: 'row',
-    marginTop: 8,
-    paddingLeft: 6,
-    paddingRight: 6,
-  },
-  infoText: {
-    color: 'rgba(255, 255, 255, 0.64)',
-    fontFamily: 'Urbanist-Medium',
-    fontWeight: '600',
-    fontStyle: 'normal',
-    fontSize: 14,
-  },
-  note: {
-    color: 'rgba(255, 255, 255, 0.64)',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 14,
-  },
-  nextButton: {
-    display: 'flex',
-    width: '100%',
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 4,
-    borderRadius: 100,
-    paddingTop: 6,
-    paddingBottom: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    borderWidth: 0.5,
-    borderColor: '#ffffff2c',
-    marginTop: 10,
-  },
-  nextText: {
-    color: '#002050',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: 500,
-    letterSpacing: 1,
-    width: '100%',
   },
 });
 

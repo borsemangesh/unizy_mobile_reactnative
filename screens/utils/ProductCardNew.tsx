@@ -87,15 +87,8 @@ const styles = StyleSheet.create({
     top: 5,
     right: 5,
     borderRadius: 20,
+  },
 
-  },
-  bookmark: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    borderRadius: 20,
-    padding: 6,
-  },
   tag: {
     position: 'absolute',
     bottom: 5,
@@ -125,13 +118,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#fff',
     fontFamily: 'Urbanist-SemiBold',
-  },
-  title1: {
-    fontSize: 12,
-    fontWeight: '400',
-    color: '#000',
-    fontFamily: 'Urbanist-Regular',
-    marginBottom: 2,
   },
   price: {
     fontSize: 12,

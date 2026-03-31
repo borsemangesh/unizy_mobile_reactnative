@@ -375,16 +375,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     width: '100%',
   },
-  loginText1: {
-    color: '#FFFFFF7A',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: 500,
-    letterSpacing: 1,
-    width: '100%',
-  },
-
+  
   loginButton: {
     display: 'flex',
     width: '100%',
@@ -401,37 +392,6 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff2c',
   },
 
-  loginButton1: {
-    display: 'flex',
-    width: '100%',
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 4,
-    borderRadius: 100,
-    paddingTop: 6,
-    paddingBottom: 6,
-    backgroundColor: 'rgba(170, 169, 176, 0.56)',
-    marginTop: 16,
-    borderWidth: 0.5,
-    borderColor: '#ffffff2c',
-  },
-
-  mainlabel: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
-    marginTop: 8,
-  },
-
-  sublabel: {
-    color: '#FFFFFFA3',
-    fontSize: 14,
-    fontWeight: '600',
-    fontFamily: 'Urbanist-Medium',
-    marginTop: 4,
-  },
   innercontainer: {
     marginBottom: 8,
     flexDirection: 'column',
@@ -499,96 +459,7 @@ const styles = StyleSheet.create({
     color: "#fff",
 
   },
-  payText: {
-    color: '#002050',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: '500',
-    letterSpacing: 1,
-    textAlign: 'center',
-  },
-
-  previewBtn: {
-    display: 'flex',
-    width: '90%',
-    alignSelf: 'center',
-    alignContent: 'center',
-    paddingHorizontal: 20,
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 100,
-    backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    marginBottom: 10,
-    borderWidth: 0.5,
-    borderColor: '#ffffff2c',
-
-    position: 'absolute',
-    bottom: 10,
-  },
-
-  tabcard: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginRight: 8,
-    borderWidth: 0.4,
-    borderColor: '#ffffff11',
-
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-    borderEndEndRadius: 10,
-    borderStartEndRadius: 10,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    borderBottomStartRadius: 10,
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-    boxSizing: 'border-box',
-  },
-  tabcard1: {
-    borderWidth: 0.4,
-    borderColor: '#ffffff11',
-
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-    borderEndEndRadius: 10,
-    borderStartEndRadius: 10,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    borderBottomStartRadius: 10,
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-
-    boxSizing: 'border-box',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginRight: 8,
-  },
-  tabtext: {
-    color: '#fff',
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14,
-  },
-  othertext: {
-    color: '#FFFFFF7A',
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14,
-  },
+ 
 
   background: {
     flex: 1,
@@ -599,18 +470,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    // position: 'absolute',
-    // top: Platform.OS === 'ios' ? '6.7%' : 60,
-    // width: Platform.OS === 'ios' ? '100%' : '100%',
-    // flexDirection: 'row',
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    // paddingHorizontal: 16,
-    // zIndex: 11,
-    // alignSelf: 'center',
-    // pointerEvents: 'box-none',
-    // marginTop: Platform.OS === 'ios' ? 0 : 0,
-    // marginLeft: 1,
     position: 'absolute',
     top: (Platform.OS === 'ios' ? 60 : 40),
     width: Platform.OS === 'ios' ? '100%' : '100%',
@@ -633,11 +492,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    // backgroundColor:
-    //   'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    // boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-    // borderWidth: 0.4,
-    // borderColor: '#ffffff2c',
     height: 48,
     width: 48,
 

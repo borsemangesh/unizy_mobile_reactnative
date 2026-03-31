@@ -254,10 +254,7 @@ const SelectFoodQuantity = ({
 };
 
 const styles = StyleSheet.create({
-  tickImage: {
-    height: 24,
-    width: 24
-  },
+
   cardconstinerdivider: {
     display: 'flex',
     flexDirection: 'row',
@@ -270,53 +267,11 @@ const styles = StyleSheet.create({
     borderColor: '#52577cff',
     marginTop: 24
   },
-  checkedBox: {
-  },
-  tickMark: {
-    color: '#260426ff',
-    fontSize: 10,
-    textAlign: 'center',
-    fontWeight: '600',
-    lineHeight: 10, 
-  },
-
+  
   radioButtonContainer: {
     marginTop: 10,
   },
-  radioButton: {
-    width: 19,
-    height: 19,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  selectedRadio: {
-    backgroundColor: 'rgba(0, 0, 255, 0)',
-  },
-  radioDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 7,
-    backgroundColor: '#fff',
-  },
-  checkboxWrapper: {
-    width: 19,
-    height: 19,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  checkboxContainer: {
-    height: '100%',
-    width: '100%',
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-  },
+ 
   orderandTotalEarings: {
     color: '#FFFFFF',
     fontFamily: 'Urbanist-SemiBold',
@@ -360,10 +315,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
   },
-  broderTopLeftRightRadius_30: {
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-  },
+ 
   modelcontainer: {
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(0, 60, 163, 0.05) 0%, rgba(255, 255, 255, 0.03) 100%)',
@@ -376,86 +328,11 @@ const styles = StyleSheet.create({
     overflow: 'hidden'
   },
 
-  radioButtonSelected: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#ffffff2d',
-    boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
-  },
-  radioButton_round: {
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    width: 15,
-    height: 15,
-    flexShrink: 0,
-    borderColor: '#ffffff4e',
-
-    alignItems: 'center',
-    borderRadius: 50,
-    justifyContent: 'center',
-    boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
-    shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25',
-  },
-  cancelBtn: {
-    minHeight: 48,
-    flex: 1,
-    padding: 12,
-    borderRadius: 50,
-    backgroundColor: '#ffffff1b',
-    alignItems: 'center',
-    justifyContent: 'center',
-    boxShadow: '0 2px 8px 0 rgba(75, 75, 75, 0.19)',
-  },
   overlay: {
     flex: 1,
     justifyContent: 'flex-end',
   },
-  filtertitle: {
-    color: 'rgba(255, 255, 255, 0.64)',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 16,
-    fontWeight: '600',
-    fontStyle: 'normal',
-    width: '100%',
-  },
-  filterHeadTitle: {
-    color: 'rgba(255, 255, 255, 0.64)',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 16,
-    fontWeight: '600',
-    fontStyle: 'normal',
-    letterSpacing: 0.32,
-    lineHeight: 19.6,
-  },
-  filtertitleFilteryBy: {
-    color: 'rgba(255, 255, 255, 0.64)',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 14,
-    fontWeight: '500',
-    fontStyle: 'normal',
-  },
-  filtertype: {
-    display: 'flex',
-    alignItems: 'center',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    borderRadius: 14,
-    boxShadow:
-      '0 2px 8px 0 rgba(0, 0, 0, 0.25)inset 0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-
-    justifyContent: 'center',
-    padding: 16,
-    gap: 4,
-    marginBottom: 5,
-  },
-
-  modelLeftSideContainer: {
-    width: '40%',
-    height: '100%',
-    padding: 16,
-    backgroundColor: '#5d5c5c0b',
-  },
+  
   modelTextHeader: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-SemiBold',
@@ -465,76 +342,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.34,
     lineHeight: 19.6,
   },
-  clearAll: {
-    color: 'rgba(255, 255, 255, 0.54)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 17,
-    fontWeight: '600',
-    fontStyle: 'normal',
-    letterSpacing: -0.34,
-    lineHeight: 19.6,
-  },
-  addButton: {
-    position: 'absolute',
-    zIndex: 11,
-    right: 20,
-    bottom: 90,
-    backgroundColor: '#98B3B7',
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 8,
-  },
-
-  addButtonText: {
-    color: '#fff',
-    fontSize: 18,
-  },
-  cancelText: {
-    color: 'rgba(255, 255, 255, 0.48)',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 20,
-    fontWeight: '500',
-    letterSpacing: 0.17,
-  },
-
-  inactiveTab: {
-    display: 'flex',
-    alignItems: 'center',
-    borderRadius: 14,
-    justifyContent: 'center',
-    padding: 16,
-    gap: 4,
-    marginBottom: 5,
-  },
-  activeTab: {
-    display: 'flex',
-    alignItems: 'center',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(151, 151, 151, 0.4) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    borderRadius: 12,
-    borderWidth: 0.5,
-    borderColor: '#ffffff0e',
-    justifyContent: 'center',
-    padding: 16,
-    gap: 4,
-    marginBottom: 5,
-    boxShadow: 'rgba(255, 255, 255, 0.16) inset -1px 0px 4px 2px',
-  },
-
-  filterTypeTab: {
-    display: 'flex',
-    alignItems: 'center',
-    borderRadius: 14,
-    boxShadow:
-      '0 2px 8px 0 rgba(0, 0, 0, 0.25)inset 0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    justifyContent: 'center',
-    gap: 4,
-    marginBottom: 5,
-    textAlign: 'center',
-  },
+ 
 });
 export default SelectFoodQuantity;
 

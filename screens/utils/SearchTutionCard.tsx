@@ -304,13 +304,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     width: '90%',
   },
-  title1: {
-    fontSize: 12,
-    fontWeight: '400',
-    color: '#000',
-    fontFamily: 'Urbanist-Regular',
-    marginBottom: 2,
-  },
   price: {
     fontSize: 12,
     fontWeight: '600',
@@ -324,15 +317,5 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontFamily: 'Urbanist-SemiBold',
     marginLeft: 4,
-  },
-  ratingAbsolute: {
-    position: 'absolute',
-    bottom: 10,
-    right: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
   },
 });

@@ -95,12 +95,6 @@ export default function StripeOnboardingScreen({ route, navigation }: any) {
 }
 
 const styles = StyleSheet.create({
-  webViewContainer: {
-    flex: 1,
-    backgroundColor: '#0C56C4',
-    width: '100%',
-    height: '100%',
-  },
   webView: {
     flex: 1,
     backgroundColor: '#0C56C4',

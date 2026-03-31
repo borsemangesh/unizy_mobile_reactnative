@@ -177,24 +177,6 @@ const styles = StyleSheet.create({
     marginVertical: 6,
   },
 
-  dashedLine: {
-    borderBottomWidth: 1,
-    borderColor: '#6592D4',
-    borderStyle: 'dashed',
-    width: '100%',
-    opacity: 0,
-
-  },
-
-  dashedLine1: {
-    borderBottomWidth: 1,
-    borderColor: '#5b70abff',
-    borderStyle: 'dashed',
-    marginVertical: 6,
-    width: '100%',
-
-  },
-
   bottomContent: {
   },
   card: {

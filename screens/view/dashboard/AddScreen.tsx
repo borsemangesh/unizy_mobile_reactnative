@@ -2440,29 +2440,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
   },
-
-  labelRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 6,
-  },
-
-  //  popupContainer: {
-  //   width: '85%',
-  //   padding: 20,
-  //   borderRadius: 24,
-  //   borderWidth: 1,
-  //   borderColor: 'rgba(255, 255, 255, 0.1)',
-  //   alignItems: 'center',
-  //   overflow: 'hidden',
-  //   backgroundColor: 'rgba(255, 255, 255, 0.04)',
-  // },
-  popupLogo: {
-    width: 64,
-    height: 64,
-    marginBottom: 20,
-  },
+ 
   popupMainHeader: {
     color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-SemiBold',
@@ -2480,60 +2458,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 6,
   },
-  popupButton: {
-    display: 'flex',
-    width: '100%',
-    height: 55,
-    maxHeight: 55,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 4,
-    borderRadius: 100,
-    paddingTop: 6,
-    paddingBottom: 6,
-    backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    marginTop: 20,
-    borderWidth: 0.5,
-    borderColor: '#ffffff2c',
-  },
-  popupButtonText: {
-    color: '#002050',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: 500,
-    letterSpacing: 1,
-    width: '100%',
-  },
-  popupButtonCancel: {
-    display: 'flex',
-    width: '100%',
-    height: 52,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 4,
-    borderRadius: 100,
-    paddingTop: 6,
-    paddingBottom: 6,
-    backgroundColor: 'rgba(170, 169, 176, 0.56)',
-    marginTop: 8,
-    borderWidth: 0.5,
-    borderColor: '#ffffff2c',
-  },
-  popupButtonTextCancel: {
-    color: '#FFFFFF7A',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: 500,
-    letterSpacing: 1,
-    width: '100%',
-  },
-  logo: {
-    width: 64,
-    height: 64,
-    marginBottom: 20,
-  },
+
 
   categoryTagContainer: {
     flexDirection: 'row',
@@ -2685,24 +2610,6 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
 
-  eyeIcon1: {
-    width: 19,
-    height: 19,
-  },
-
-  headerContainer: {
-    height: 80,
-    width: '100%',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    zIndex: 10,
-    justifyContent: 'center',
-  },
-  headerBlur: {
-    ...StyleSheet.absoluteFillObject,
-  },
-
   background: {
     flex: 1,
     width: '100%',
@@ -2710,31 +2617,6 @@ const styles = StyleSheet.create({
   },
   fullScreenContainer: {
     flex: 1,
-  },
-  header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 50,
-    paddingBottom: 12,
-    paddingHorizontal: 16,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backIconRow: {
-    padding: 12,
-    borderRadius: 40,
-
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow:
-      '0 2px 8px 0 rgba(255, 255, 255, 0.2)inset 0 2px 8px 0 rgba(0, 0, 0, 0.2)',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
   },
   unizyText: {
     color: '#FFFFFF',
@@ -2746,15 +2628,7 @@ const styles = StyleSheet.create({
     width: '70%',
     alignSelf: 'center',
   },
-  backBtn: {
-    width: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backArrow: {
-    fontSize: 26,
-    color: '#fff',
-  },
+
   scrollContainer: {
     paddingHorizontal: 16,
     // paddingBottom: 80,
@@ -2803,14 +2677,6 @@ const styles = StyleSheet.create({
   },
   userSub2: {
     color: 'rgba(255, 255, 255, 0.88)',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 12,
-    fontWeight: '500',
-    lineHeight: 16,
-    marginTop: 1,
-  },
-  userSub1: {
-    color: 'rgba(255, 255, 255, 0.48)',
     fontFamily: 'Urbanist-Medium',
     fontSize: 12,
     fontWeight: '500',
@@ -2876,24 +2742,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-Medium',
     fontWeight: 500,
   },
-  divider: {
-    height: 1,
-    backgroundColor: '#ccc',
-    marginVertical: 4,
-  },
 
-  filecard: {
-    marginTop: 20,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-  },
-
-  fileIcon: {
-    width: 30,
-    height: 30,
-    resizeMode: 'contain',
-    marginRight: 8,
-  },
   fileName: {
     color: 'rgba(255, 255, 255, 0.88)',
     fontFamily: 'Urbanist-SemiBold',
@@ -2903,17 +2752,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.32,
     lineHeight: 24,
   },
-  deleteBtn: {
-    width: 32,
-    height: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  deleteIcon: {
-    width: 44,
-    height: 44,
-    resizeMode: 'center',
-  },
+
   threedots: {
     width: 20,
     height: 20,
@@ -2940,32 +2779,11 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
 
-  input: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    color: '#fff',
-    marginBottom: 12,
-  },
   categoryContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
-  categoryTag: {
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    borderWidth: 0.9,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
-    borderBlockEndColor: 'rgba(255, 255, 255, 0.08)',
-    color: '#fff',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 9,
-    marginRight: 4,
-    marginBottom: 4,
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.23)',
-  },
+
   featuredRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -2974,12 +2792,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     width: '100%',
   },
-  featuredLabel: {
-    color: '#FFFFFFE0',
-    fontSize: 14,
-    fontFamily: 'Urbanist-Medium',
-    fontWeight: 500,
-  },
+
   textbg: {
     flexDirection: 'row',
     alignItems: 'flex-start',
@@ -3013,33 +2826,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-Medium',
     fontWeight: 500,
   },
-
-  previewBtn: {
-    display: 'flex',
-    width: '90%',
-    alignSelf: 'center',
-    alignContent: 'center',
-    paddingHorizontal: 20,
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 100,
-    backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    marginBottom: 10,
-    borderWidth: 0.5,
-    borderColor: '#ffffff2c',
-    position: 'absolute',
-    bottom: 10,
-  },
-  previewText: {
-    color: '#002050',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: 500,
-    letterSpacing: 1,
-  },
-
+  
   login_container: {
     display: 'flex',
     height: 40,
@@ -3084,40 +2871,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     flex: 1,
   },
-
-  pickerStyle: {
-    color: '#fff',
-    width: '100%',
-  },
-
   categoryTagWrapper: {
     borderRadius: 12,
     paddingHorizontal: 4,
     paddingVertical: 4,
   },
 
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    justifyContent: 'center',
-    padding: 16,
-  },
-
-  modalOption: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 10,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#555',
-  },
-
-  modalCloseBtn: {
-    backgroundColor: '#3b82f6',
-    borderRadius: 12,
-    padding: 10,
-    marginTop: 16,
-    alignItems: 'center',
-  },
   loaderContainer: {
     width: 100,
     height: 100,

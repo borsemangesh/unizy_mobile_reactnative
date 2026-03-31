@@ -1005,18 +1005,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-Medium',
     marginTop: 2,
   },
-  blurButtonWrapper_none: {
-
-    width: 48,
-    height: 48,
-    borderRadius: 40,
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderColor: 'transparent',
-    backgroundColor: 'transparent',
-  },
-
   fullLoader: {
     position: "absolute",
     top: 0,
@@ -1251,30 +1239,7 @@ const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
   },
-  header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 50,
-    paddingBottom: 12,
-    paddingHorizontal: 16,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backIconRow: {
-    padding: 12,
-    borderRadius: 40,
 
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
-  },
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
@@ -1335,20 +1300,8 @@ const styles = StyleSheet.create({
     letterSpacing: -0.24,
     lineHeight: 16,
     fontFamily: 'Urbanist-SemiBold',
-    //paddingTop: 10,
-    //maxWidth:'95%'
   },
 
-  dottext: {
-    marginLeft: 10,
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontSize: 12,
-    fontWeight: '500',
-    letterSpacing: -0.24,
-    lineHeight: 16,
-    fontFamily: 'Urbanist-Medium',
-    alignSelf: 'center'
-  },
   carddivider: {
     display: 'flex',
     flexDirection: 'row',
@@ -1388,50 +1341,6 @@ const styles = StyleSheet.create({
     paddingBottom: 80,
     paddingTop: Platform.OS === 'ios' ? 120 : 100,
     paddingHorizontal: 16,
-  },
-  bottomview: {
-    position: 'absolute',
-    padding: 6,
-    width: '95%',
-    height: 60,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    alignContent: 'center',
-    alignSelf: 'center',
-    backgroundColor: '#5d5c5c14',
-    zIndex: 10,
-    bottom: (Platform.select({ ios: 10, android: -10 })),
-    marginBottom: Platform.OS === 'ios' ? 10 : 20,
-
-  },
-  cancelBtn: {
-    flex: 1,
-    marginRight: 8,
-    padding: 12,
-    borderRadius: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    borderBlockStartColor: '#ffffff47',
-    borderBlockColor: '#ffffff47',
-    borderTopColor: '#ffffff47',
-    borderBottomColor: '#ffffff47',
-    borderLeftColor: '#ffffff47',
-    borderRightColor: '#ffffff47',
-    boxSizing: 'border-box',
-  },
-  cancelText: {
-    color: 'rgba(255, 255, 255, 0.48)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 16,
-    fontWeight: '500',
-    fontStyle: 'normal',
-    letterSpacing: 0.17,
-    lineHeight: 22,
   },
 });
 

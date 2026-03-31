@@ -1071,25 +1071,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 6,
   },
-
-  subheader: {
-    color: 'rgba(255, 255, 255, 0.80)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 14,
-    fontWeight: '400',
-    textAlign: 'center',
-    marginTop: 20,
-  },
-
-  subheader1: {
-    color: 'rgba(255, 255, 255, 0.48)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 14,
-    fontWeight: '400',
-    textAlign: 'center',
-    marginTop: 6,
-  },
-
   loginButton1: {
     display: 'flex',
     width: '100%',
@@ -1260,21 +1241,7 @@ const styles = StyleSheet.create({
     bottom: 10,
     left: 10
   },
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    paddingHorizontal: 15,
-  },
-  activeTabButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.16)',
-    boxShadow:
-      '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25),rgba(76, 112, 242, 0.18) inset 0px -1.761px 0px 100px',
-  },
-
-  _section: {
-    marginBottom: 8,
-    marginTop: 0,
-  },
+ 
   get section() {
     return this._section;
   },
@@ -1320,16 +1287,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
   },
-  unitsBox: {
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    borderRadius: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-  },
-  unitsText: {
-    color: '#fff',
-    fontSize: 12,
-  },
+ 
   statusRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -1337,26 +1295,6 @@ const styles = StyleSheet.create({
     gap: 2
   },
 
-  header: {
-    paddingTop: Platform.OS === 'ios' ? '19.5%' : 50,
-    paddingBottom: 12,
-    paddingHorizontal: 16,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-
-  unizyText: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    flex: 1,
-    textAlign: 'center',
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
-    width: '100%',
-
-  },
   statusBox: {
     backgroundColor: 'rgba(255, 255, 255, 0.08)',
     paddingTop: 2,
@@ -1406,13 +1344,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
   },
-  sellerText_New: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
-  },
-
   salesCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     padding: 12,
@@ -1522,11 +1453,5 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-
-  tabIcon: {
-    width: 28,
-    height: 28,
-    resizeMode: 'contain',
   },
 });

@@ -784,12 +784,6 @@ const styles = StyleSheet.create({
     marginTop: 12,
     gap: 6,
   },
-  stepCircle: {
-    width: 12,
-    height: 12,
-    borderRadius: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-  },
   activeStepCircle: {
     width: 12,
     height: 12,
@@ -910,15 +904,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#ffffff2c',
   },
-     termsText1: {
-    color: 'rgba(255,255,255,0.48)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 14,
-    textAlign: 'center',
-    lineHeight: 20,
-    paddingHorizontal: 10,
-    marginBottom: 12,
-  },
+
       logo: {
     width: 64,
     height: 64,
@@ -942,15 +928,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
- 
-  previewText: {
-    color: '#002050',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: 500,
-    letterSpacing: 1,
-  },
+
   payText: {
   color: '#002050',
   fontFamily: 'Urbanist-Medium',
@@ -1030,17 +1008,7 @@ const styles = StyleSheet.create({
   gap12: {
     gap: 12,
   },
-  gap4: {
-    gap: 4,
-  },
-  catagory: {
-    color: 'rgba(255, 255, 255, 0.72)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 16,
-    fontWeight: '600',
-    fontStyle: 'normal',
-    lineHeight: 22,
-  },
+
   new: {
     color: 'rgba(255, 255, 255, 0.64)',
     fontFamily: 'Urbanist-Regular',
@@ -1126,14 +1094,6 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     letterSpacing: 1,
   },
-    priceText1: {
-    color: '#002050',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 17,
-    fontWeight: 700,
-    letterSpacing: 1,
-  },
-
 
   card: {
     flexDirection: 'column',
@@ -1142,10 +1102,6 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
     gap: 12,
-  },
-  h24_w24: {
-    width: 24,
-    height: 24,
   },
   backIconRow: {
     //padding: 12,
@@ -1162,14 +1118,6 @@ const styles = StyleSheet.create({
    
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  previewThumbnail: {
-    color: '#FFF',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 20,
-    fontWeight: '600',
-    letterSpacing: -0.4,
   },
 });
 

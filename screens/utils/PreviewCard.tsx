@@ -146,14 +146,6 @@ const styles = StyleSheet.create({
 
 
   },
-  bookmark: {
-    position: 'absolute',
-    top: (Platform.OS === 'ios' ? 2 : 10),
-    right: (Platform.OS === 'ios' ? 2 : 10),
-    borderRadius: 20,
-    padding: 6,
-  },
- 
   tag: {
     position: 'absolute',
     bottom: (Platform.OS === 'ios' ? 16 : 16),
@@ -201,13 +193,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
     width: '90%'
   },
-  title1: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: '#000',
-    fontFamily: 'Urbanist-Regular',
-    marginBottom: 2,
-  },
+ 
   price: {
     fontSize: 17,
     fontWeight: '600',
@@ -221,15 +207,5 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontFamily: 'Urbanist-SemiBold',
     marginLeft: 4,
-  },
-  ratingAbsolute: {
-    position: 'absolute',
-    bottom: 10,
-    right: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
   },
 });

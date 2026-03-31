@@ -1289,12 +1289,6 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
 export default AccountDetails;
 
 const styles = StyleSheet.create({
-  categoryTabsScrollContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    padding: 8,
-  },
 
   emptyWrapper: {
     // flex: 1,
@@ -1423,32 +1417,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  iconWrapper: {
-    height: 50,
-    borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  tabIcon: {
-    width: 28,
-    height: 28,
-    resizeMode: 'contain',
-  },
-  addButton: {
-    height: 52,
-    borderRadius: 100,
-    backgroundColor: 'rgba(255,255,255,0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 0.5,
-    borderColor: '#ffffff3a',
-  },
-  addButtonText: {
-    color: '#002050',
-    fontSize: 17,
-    fontFamily: 'Urbanist-Bold',
-  },
+  
   headerWrapper: {
     position: 'absolute',
     top: 0,
@@ -1509,20 +1478,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     width: '100%',
   },
-  backIconRow: {
-    width: 48,
-    height: 48,
-    borderRadius: 40,
-    padding: 12,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-  },
+  
   fullScreenContainer: {
     flex: 1,
   },
@@ -1675,18 +1631,5 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     letterSpacing: 1,
     width: '100%',
-  },
-  sectionHeader: {
-    width: '100%',
-    paddingVertical: 12,
-    paddingHorizontal: 4,
-    marginTop: 8,
-  },
-  sectionHeaderText: {
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontSize: 16,
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
-    letterSpacing: -0.32,
   },
 });

@@ -321,32 +321,6 @@ const styles = StyleSheet.create({
     zIndex: 999,
   },
 
-  backButtonContainer: {
-    zIndex: 11,
-  },
-  blurButtonWrapper: {
-    width: 48,
-    height: 48,
-    borderRadius: 40,
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // fallback tint
-  },
-  blurButtonWrapper_none: {
-
-    width: 48,
-    height: 48,
-    borderRadius: 40,
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderColor: 'transparent',
-    backgroundColor: 'transparent',
-  },
-
   overlay: {
     flex: 1,
     justifyContent: 'center',
@@ -482,101 +456,6 @@ const styles = StyleSheet.create({
 
   },
   
-  payText: {
-    color: '#002050',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: '500',
-    letterSpacing: 1,
-    textAlign: 'center'
-  },
-
-  previewBtn: {
-    display: 'flex',
-    width: '90%',
-    alignSelf: 'center',
-    alignContent: 'center',
-    paddingHorizontal: 20,
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 100,
-    backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    marginBottom: 10,
-    borderWidth: 0.5,
-    borderColor: '#ffffff2c',
-
-    position: 'absolute',
-    bottom: 10,
-  },
-
-
-  tabcard: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginRight: 8,
-    borderWidth: 0.4,
-    borderColor: '#ffffff11',
-
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-    borderEndEndRadius: 10,
-    borderStartEndRadius: 10,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    borderBottomStartRadius: 10,
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-
-    boxSizing: 'border-box',
-  },
-  tabcard1: {
-    borderWidth: 0.4,
-    borderColor: '#ffffff11',
-
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-    borderEndEndRadius: 10,
-    borderStartEndRadius: 10,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    borderBottomStartRadius: 10,
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-
-    boxSizing: 'border-box',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginRight: 8,
-  },
-  tabtext: {
-    color: '#fff',   // selected tab text color
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14
-
-  },
-  othertext: {
-    color: '#FFFFFF7A',   // unselected tab text color
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14
-  },
-
   background: {
     flex: 1,
   },
@@ -607,11 +486,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    // backgroundColor:
-    //   'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    // boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-    // borderWidth: 0.4,
-    // borderColor: '#ffffff2c',
     height: 48,
     width: 48,
 

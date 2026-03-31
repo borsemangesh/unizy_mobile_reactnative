@@ -550,18 +550,7 @@ const Notification = ({ navigation }: NotificationProps) => {
 export default Notification;
 
 const styles = StyleSheet.create({
-  loaderWrapper: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    minHeight: Platform.OS === 'ios' ? 400 : 300,
-    paddingVertical: 40,
-  },
-  loaderContainer: {
-    width: 100,
-    height: 100,
-  },
+ 
   emptyWrapper: {
     flex: 1,
     justifyContent: 'center',
@@ -608,12 +597,6 @@ const styles = StyleSheet.create({
     fontWeight: 600
   },
 
-  backButtonContainer: {
-    width: 48,
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
 
   dateHeading: {
     color: '#fff',
@@ -632,21 +615,7 @@ const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
   },
-  backIconRow: {
-    padding: 12,
-    borderRadius: 40,
-
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
-  },
+  
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
@@ -654,17 +623,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
   },
-  search_container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 16,
-    marginRight: 16,
-    borderRadius: 40,
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  },
-
+ 
   listContainer: {
     marginLeft: (Platform.OS === 'ios' ? 15 : 10),
     marginRight: (Platform.OS === 'ios' ? 15 : 10),

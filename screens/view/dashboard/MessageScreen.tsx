@@ -668,84 +668,7 @@ const styles = StyleSheet.create({
     height: 24,
     width: 24,
   },
-  text: {
-    color: 'black',
-    fontSize: 20,
-    fontWeight: '600',
-  },
-  scrollContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 80,
-    paddingTop: 0,
-  },
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
-  fullScreenContainer: {
-    flex: 1,
-    marginTop: 10,
-  },
-  headerWrapper: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    width: Platform.OS === 'ios' ? '100%' : '100%',
-    height: Platform.OS === 'ios' ? 150 : 150,
-    zIndex: 10,
-    overflow: 'hidden',
-    alignSelf: 'center',
-    pointerEvents: 'none',
-  },
-  header: {
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? 50 : 40,
-    left: 0,
-    right: 0,
-    height: 100,
-    justifyContent: 'center',
-    zIndex: 11,
-    pointerEvents: 'box-none',
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backBtn: {
-    width: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backIconRow: {
-    padding: 12,
-    borderRadius: 40,
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backArrow: {
-    fontSize: 26,
-    color: '#fff',
-  },
-  unizyText: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    flex: 1,
-    fontWeight: '600',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-SemiBold',
-  },
+  
   emptyWrapper: {
     flex: 1,
     justifyContent: 'center',
@@ -764,19 +687,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     overflow: 'hidden',
   },
-  // emptyImage: {
-  //   width: 50,
-  //   height: 50,
-  //   marginBottom: 20,
-  // },
-  // emptyText: {
-  //   fontSize: 20,
-  //   color: '#fff',
-  //   textAlign: 'center',
-  //   fontFamily: 'Urbanist-SemiBold',
-  //   fontWeight: 600,
-  // },
-
+  
    emptyImage: {
     width: 64,
     height: 64,

@@ -1162,15 +1162,6 @@ const styles = StyleSheet.create({
     width: 24,
   },
 
-  modeltitleContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    padding: 26,
-    backgroundColor: 'rgba(0, 0, 0, 0.07)',
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-  },
   modeltitleContainer1: {
     width: '100%',
     paddingHorizontal: 26,
@@ -1180,10 +1171,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
   },
-  broderTopLeftRightRadius_30: {
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-  },
+ 
   modelcontainer: {
     height: '80%',
     marginTop: 'auto',
@@ -1205,62 +1193,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
   },
-  radioButtonSelected: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#ffffff4e',
-    boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
-  },
-  radioButton: {
-    width: 8,
-    height: 8,
-    borderRadius: 10,
-  },
-  radioButton_round: {
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    width: 15,
-    height: 15,
-    flexShrink: 0,
-    borderColor: '#ffffff4e',
 
-    alignItems: 'center',
-    borderRadius: 50,
-    justifyContent: 'center',
-    boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
-    shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25',
-  },
-  cancelBtn: {
-    minHeight: 48,
-    flex: 1,
-    marginRight: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 40,
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(197, 196, 196, 0.49) 0%, rgba(255, 255, 255, 0.32) 100%)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    boxShadow: '0 2px 8px 0 rgba(75, 75, 75, 0.19)',
-  },
-
-  loginButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    borderColor: '#ffffff2c',
-    minHeight: 48,
-    flex: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 50,
-  },
-
-  overlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
   filterHeadTitle: {
     color: 'rgba(255, 255, 255, 0.64)',
     fontFamily: 'Urbanist-SemiBold',
@@ -1276,18 +1209,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     fontStyle: 'normal',
-  },
-  filtertype: {
-    display: 'flex',
-    alignItems: 'center',
-    borderRadius: 14,
-    boxShadow:
-      '0 2px 8px 0 rgba(0, 0, 0, 0.25)inset 0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-
-    justifyContent: 'center',
-    padding: 16,
-    gap: 4,
-    marginBottom: 5,
   },
 
   modelLeftSideContainer: {
@@ -1313,53 +1234,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.34,
     lineHeight: 19.6,
   },
-  addButton: {
-    position: 'absolute',
-    zIndex: 11,
-    right: 20,
-    bottom: 90,
-    backgroundColor: '#98B3B7',
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 8,
-  },
 
-  addButtonText: {
-    color: '#fff',
-    fontSize: 18,
-  },
-  cancelText: {
-    color: 'rgba(255, 255, 255, 0.48)',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: '500',
-    letterSpacing: 0.17,
-    lineHeight: 19.6,
-  },
-
-  sendText: {
-    color: '#000016',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: 500,
-  },
-
-
-  filterTypeTab: {
-    display: 'flex',
-    alignItems: 'center',
-    borderRadius: 14,
-    boxShadow:
-      '0 2px 8px 0 rgba(0, 0, 0, 0.25)inset 0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    justifyContent: 'center',
-    gap: 4,
-    marginBottom: 5,
-    textAlign: 'center',
-  },
 });
 
 export default FilterBottomSheet;

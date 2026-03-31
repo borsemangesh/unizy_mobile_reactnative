@@ -2257,78 +2257,12 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     marginVertical: 4,
   },
-  leftTailContainer: {
-    position: 'absolute',
-    left: -8,
-    bottom: 0,
-  },
-  rightTailContainer: {
-    position: 'absolute',
-    right: -8,
-    bottom: 0,
-  },
 
-  sendIconContainer: {
-    padding: 12,
-    borderRadius: 40,
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.21) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.21) inset -1px 0px 5px 1px',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1000,
-  },
   sendIcon: {
     width: 20,
     height: 20,
   },
-  bottomContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: Platform.OS === 'ios' ? 10 : 8,
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    borderTopWidth: 0.5,
-    borderTopColor: '#ffffff3a',
-  },
-  search_container: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'stretch',
-    borderRadius: 50,
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    paddingVertical: 4,
-  },
-  searchIcon: {
-    padding: Platform.OS === 'ios' ? 0 : 5,
-    margin: 10,
-    height: 24,
-    width: 24,
-  },
-  searchBar: {
-    fontFamily: 'Urbanist-Medium',
-    marginLeft: 5,
-    fontWeight: '500',
-    fontSize: 17,
-    color: '#fff',
-    width: '70%',
-  },
-  universityName: {
-    fontSize: 12,
-    fontFamily: 'Urbanist-Medium',
-    fontWeight: '500',
-    color: '#FFFFFFE0',
-    marginTop: 2,
-    minWidth: '70%',
-    maxWidth: '86%',
-  },
+ 
   backIconStyle: {
     width: 30,
     height: 30,
@@ -2342,35 +2276,14 @@ const styles = StyleSheet.create({
     // paddingLeft: 16,
     // paddingRight: 16
   },
-  messageHeader: {
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? 50 : 40,
-    left: 0,
-    right: 0,
-    height: 100,
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    paddingHorizontal: 12,
-    gap: 10,
-    zIndex: 11,
-    pointerEvents: 'box-none',
-  },
-  messageViewContainer: {
-    paddingHorizontal: 16,
-    width: '100%',
-    height: '100%',
-    paddingBottom: Platform.OS === 'ios' ? 205 : 155,
-  },
+  
   profileImage: {
     width: 40,
     height: 40,
     margin: 4,
     borderRadius: 100,
   },
-  chatContainer: {
-    justifyContent: 'flex-start',
-  },
+
   messageContainer: {
     paddingHorizontal: 6,
   },
@@ -2433,48 +2346,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
   },
 
-  container: {
-    flex: 1,
-    backgroundColor: '#1E2B63',
-    paddingTop: 50,
-    alignItems: 'center',
-  },
-  headerText: {
-    color: '#FFF',
-    fontSize: 18,
-    marginBottom: 10,
-  },
-  selectedText: {
-    color: '#FFD700',
-    fontSize: 30,
-    marginBottom: 20,
-  },
-  divider: {
-    height: 1,
-    width: '80%',
-    backgroundColor: '#ffffff5f',
-    marginBottom: 20,
-  },
-
-  emojiItem: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 8,
-  },
-  row: {
-    justifyContent: 'space-around',
-  },
-  emojiButton: {
-    paddingHorizontal: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100%',
-  },
-  mainContainer: {
-    width: '100%',
-    position: 'absolute',
-  },
   headerWrapper: {
     position: 'absolute',
     top: 0,
@@ -2484,25 +2355,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     alignSelf: 'center',
     pointerEvents: 'none',
-  },
-
-  backButtonContainer: {
-    width: 48,
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  blurButtonWrapper: {
-    width: 48,
-    height: 48,
-    borderRadius: 40,
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
 
   header: {
@@ -2523,15 +2375,6 @@ const styles = StyleSheet.create({
   headerSpacer: {
     width: 48,
     height: 48,
-  },
-
-  unizyText: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    flex: 1,
-    textAlign: 'center',
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
   },
 });
 

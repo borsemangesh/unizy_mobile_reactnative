@@ -234,7 +234,6 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation }) => {
 };
 const styles = StyleSheet.create({
   bg: { flex: 1, justifyContent: "center", alignItems: "center" },
-  loader: { position: "absolute" }
 });
 
 export default PaymentScreen;

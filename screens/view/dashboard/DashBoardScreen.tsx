@@ -1416,22 +1416,7 @@ export default DashBoardScreen;
 
 const styles = StyleSheet.create({
   
-  backButtonContainer: {
-    position: 'absolute',
-    left: 16,
-    zIndex: 11,
-  },
-  blurButtonWrapper: {
-    width: 48,
-    height: 48,
-    borderRadius: 40,
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  },
+  
   stepCircle: {
     width: 12,
     height: 12,
@@ -1439,18 +1424,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
   },
 
-  activeStepCircle: {
-    backgroundColor: '#FFFFFF',
-    width: 12,
-    height: 12,
-    flexShrink: 0,
-    borderColor: '#ffffff4e',
-    alignItems: 'center',
-    borderRadius: 40,
-    justifyContent: 'center',
-    boxShadow: '0 0.833px 3.333px 0 rgba(0, 0, 0, 0.25);',
-    shadowColor: '0 0.833px 3.333px rgba(0, 0, 0, 0.25)',
-  },
 
   stepIndicatorContainer: {
     flexDirection: 'row',
@@ -1641,7 +1614,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
 
   },
-  emptyView: {},
+
 
   productsWrapper: {
     flexDirection: 'column',
@@ -1654,10 +1627,6 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     width: '100%',
-  },
-  row1: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
   },
 
   cardContainer: {
@@ -1692,11 +1661,6 @@ const styles = StyleSheet.create({
 
   },
 
-  fullWidth: {
-  },
-  halfWidth: {
-
-  },
   cardIcon: {
     width: 24,
     height: 24,
@@ -1715,14 +1679,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  tabContent: {
-    flex: 1,
 
-  },
-  tabContentText: {
-    color: '#fff',
-    fontSize: 20,
-  },
 
   tabContent3: {
     flex: 1,
@@ -1841,11 +1798,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: 'rgba(255, 255, 255, 0.04)',
   },
-  popupLogo: {
-    width: 64,
-    height: 64,
-    marginBottom: 20,
-  },
+
   popupMainHeader: {
     color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-SemiBold',
@@ -1881,30 +1834,6 @@ const styles = StyleSheet.create({
   },
   popupButtonText: {
     color: '#002050',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: 500,
-    letterSpacing: 1,
-    width: '100%',
-  },
-  popupButtonCancel: {
-    display: 'flex',
-    width: '100%',
-    height: 52,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 4,
-    borderRadius: 100,
-    paddingTop: 6,
-    paddingBottom: 6,
-    backgroundColor: 'rgba(170, 169, 176, 0.56)',
-    marginTop: 8,
-    borderWidth: 0.5,
-    borderColor: '#ffffff2c',
-  },
-  popupButtonTextCancel: {
-    color: '#FFFFFF7A',
     textAlign: 'center',
     fontFamily: 'Urbanist-Medium',
     fontSize: 17,

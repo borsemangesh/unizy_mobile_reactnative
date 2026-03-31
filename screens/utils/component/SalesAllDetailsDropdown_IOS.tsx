@@ -473,10 +473,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     overflow: 'hidden',
   },
-  overlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
+
   filterHeadTitle: {
     color: 'rgba(255, 255, 255, 0.64)',
     fontFamily: 'Urbanist-SemiBold',

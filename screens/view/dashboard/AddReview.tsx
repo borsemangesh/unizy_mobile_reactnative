@@ -436,137 +436,9 @@ const styles = StyleSheet.create({
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
     marginTop: 6,
   },
-  payText: {
-    color: '#002050',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: '500',
-    letterSpacing: 1,
-    textAlign: 'center',
-  },
-
-  previewBtn: {
-    display: 'flex',
-    width: '90%',
-    alignSelf: 'center',
-    alignContent: 'center',
-    paddingHorizontal: 20,
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 100,
-    backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    marginBottom: 10,
-    borderWidth: 0.5,
-    borderColor: '#ffffff2c',
-
-    position: 'absolute',
-    bottom: 10,
-  },
-
-  // tabcard: {
-  //   paddingVertical: 8,
-  //   paddingHorizontal: 16,
-  //   marginRight: 8,
-  //   borderWidth: 0.4,
-  //   borderColor: '#ffffff11',
-
-  //   boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-  //   backgroundColor:
-  //     'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-  //   borderEndEndRadius: 10,
-  //   borderStartEndRadius: 10,
-  //   borderTopLeftRadius: 10,
-  //   borderTopRightRadius: 10,
-  //   borderBottomStartRadius: 10,
-  //   borderBlockStartColor: '#ffffff2e',
-  //   borderBlockColor: '#ffffff2e',
-  //   borderTopColor: '#ffffff2e',
-  //   borderBottomColor: '#ffffff2e',
-  //   borderLeftColor: '#ffffff2e',
-  //   borderRightColor: '#ffffff2e',
-  //   boxSizing: 'border-box',
-  // },
-  // tabcard1: {
-  //   borderWidth: 0.4,
-  //   borderColor: '#ffffff11',
-
-  //   boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-  //   backgroundColor:
-  //     'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-  //   borderEndEndRadius: 10,
-  //   borderStartEndRadius: 10,
-  //   borderTopLeftRadius: 10,
-  //   borderTopRightRadius: 10,
-  //   borderBottomStartRadius: 10,
-  //   borderBlockStartColor: '#ffffff2e',
-  //   borderBlockColor: '#ffffff2e',
-
-  //   borderTopColor: '#ffffff2e',
-  //   borderBottomColor: '#ffffff2e',
-  //   borderLeftColor: '#ffffff2e',
-  //   borderRightColor: '#ffffff2e',
-
-  //   boxSizing: 'border-box',
-  //   paddingVertical: 8,
-  //   paddingHorizontal: 16,
-  //   marginRight: 8,
-  // },
-  tabcard: {
-    minHeight: 38,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    marginRight: 8,
-    borderWidth: 0.4,
-    borderColor: 'rgba(255, 255, 255, 0)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    borderRadius: 10,
-    boxSizing: 'border-box',
-    // boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
-    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.25)',
-
-  },
   
-  
-  tabcard1: {
-    minHeight: 38,
-    borderWidth: 0.4,
-    borderColor: '#ffffff11',
-    // backgroundColor:
-    //   'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-    borderEndEndRadius: 10,
-    borderStartEndRadius: 10,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    borderBottomStartRadius: 10,
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-   // boxSizing: 'border-box',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    marginRight: 8,
-    //boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-  },
-  tabtext: {
-    color: '#fff', 
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14,
-  },
-  othertext: {
-    color: '#FFFFFF7A',
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14,
-  },
 
+ 
   background: {
     flex: 1,
     width: '100%',
@@ -576,18 +448,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    // position: 'absolute',
-    // top: Platform.OS === 'ios' ? '6.7%' : 60,
-    // width: Platform.OS === 'ios' ? '100%' : '100%',
-    // flexDirection: 'row',
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    // paddingHorizontal: 16,
-    // zIndex: 11,
-    // alignSelf: 'center',
-    // pointerEvents: 'box-none',
-    // marginTop: Platform.OS === 'ios' ? 0 : 0,
-    // marginLeft: 1,
+   
     position: 'absolute',
     top: (Platform.OS === 'ios' ? 60 : 40),
     width: '100%',

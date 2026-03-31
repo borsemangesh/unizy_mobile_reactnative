@@ -752,17 +752,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'none',
   },
-
-
-  dateHeading: {
-    color: '#fff',
-    fontSize: 12,
-    fontFamily: 'Urbanist-SemiBold',
-    fontWeight: 500,
-    marginLeft: 12,
-    marginTop: 16
-  },
-
   background: { 
     flex: 1, 
     width: '100%',
@@ -804,24 +793,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600
   },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backIconRow: {
-    padding: 12,
-    borderRadius: 40,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
-  },
+ 
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,

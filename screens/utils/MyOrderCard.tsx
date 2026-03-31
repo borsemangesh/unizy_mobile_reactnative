@@ -300,21 +300,7 @@ const styles = StyleSheet.create({
     color: '#ABC7FF',
     fontFamily: 'Urbanist-Medium',
   },
-  dashedLine: {
-    borderBottomWidth: 1,
-    borderColor: '#6592D4',
-    borderStyle: 'dashed',
-    width: '100%',
-    opacity: 0,
-  },
-
-  dashedLine1: {
-    borderBottomWidth: 1,
-    borderColor: '#5b70abff',
-    borderStyle: 'dashed',
-    marginVertical: 6,
-    width: '100%',
-  },
+ 
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -338,21 +324,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
   },
 
-  singleButton: {
-    display: 'flex',
-    width: '100%',
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 4,
-    borderRadius: 100,
-    paddingTop: 6,
-    paddingBottom: 6,
-    backgroundColor: 'rgba(255,255,255,0.12)',
-    marginTop: 6,
-    borderWidth: 0.5,
-    borderColor: '#ffffff2c',
-  },
   primaryButton: {
     backgroundColor: 'rgba(255,255,255,0.12)',
     paddingVertical: 10,

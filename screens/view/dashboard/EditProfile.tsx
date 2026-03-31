@@ -2329,70 +2329,6 @@ const styles = StyleSheet.create({
     //top: 7,
   },
 
-  tabcard: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginRight: 8,
-    borderWidth: 0.4,
-    borderColor: '#ffffff11',
-
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-    borderEndEndRadius: 10,
-    borderStartEndRadius: 10,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    borderBottomStartRadius: 10,
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-
-    boxSizing: 'border-box',
-  },
-  tabcard1: {
-    borderWidth: 0.4,
-    borderColor: '#ffffff11',
-
-    boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-    borderEndEndRadius: 10,
-    borderStartEndRadius: 10,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    borderBottomStartRadius: 10,
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-
-    boxSizing: 'border-box',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginRight: 8,
-  },
-  tabtext: {
-    color: '#fff',
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14,
-  },
-  othertext: {
-    color: '#FFFFFF7A',
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 14,
-  },
 
   background: {
     flex: 1,
@@ -2400,30 +2336,7 @@ const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
   },
-  header: {
-    paddingTop: Platform.OS === 'ios' ? '15.2%' : 50,
-    paddingBottom: 12,
-    paddingHorizontal: 16,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backIconRow: {
-    padding: 12,
-    borderRadius: 40,
-
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor:
-      'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-    borderWidth: 0.4,
-    borderColor: '#ffffff2c',
-    height: 48,
-    width: 48,
-  },
+  
   unizyText: {
     color: '#FFFFFF',
     fontSize: 20,
@@ -2435,96 +2348,7 @@ const styles = StyleSheet.create({
     height: 28,
     opacity: 1,
   },
-  search_container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 16,
-    marginRight: 16,
-    borderRadius: 40,
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-  },
-  searchIcon: {
-    margin: 10,
-    height: 24,
-    width: 24,
-  },
-  searchBar: {
-    fontSize: 17,
-    color: '#fff',
-    width: '85%',
-  },
-  listContainer: {
-    marginLeft: 10,
-    marginRight: 10,
-    paddingTop: 10,
-  },
-  row1: {
-  },
-  itemContainer: {
-    flex: 1,
-    marginHorizontal: 4,
-  },
-
-  container: {
-    flex: 1,
-    resizeMode: 'cover',
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    paddingHorizontal: 20,
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backButton: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
-  },
-  headerTitle: {
-    color: '#fff',
-    fontSize: 22,
-    fontWeight: '600',
-  },
-  profileContainer: {
-    alignItems: 'center',
-    marginVertical: 20,
-  },
-  profileImageWrapper: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    overflow: 'hidden',
-    borderWidth: 3,
-    borderColor: 'rgba(255,255,255,0.4)',
-  },
-  profileImage: {
-    width: '100%',
-    height: '100%',
-  },
-  cameraIconContainer: {
-    position: 'absolute',
-    bottom: 5,
-    right: 5,
-    backgroundColor: '#4A80F0',
-    padding: 6,
-    borderRadius: 18,
-  },
-  cameraIcon: {
-    width: 16,
-    height: 16,
-    tintColor: '#fff',
-  },
-  imageSizeText: {
-    color: '#A9C1FF',
-    fontSize: 12,
-    marginTop: 5,
-  },
+  
   blurCard: {
     marginTop: 16,
     borderRadius: 24,
@@ -2557,47 +2381,7 @@ const styles = StyleSheet.create({
 
     // width:329
   },
-  saveButton: {
-    backgroundColor: '#B4C8FF',
-    borderRadius: 25,
-    marginTop: 28,
-    alignItems: 'center',
-    paddingVertical: 14,
-  },
-  saveText: {
-    color: '#1E2A78',
-    fontWeight: '700',
-    fontSize: 16,
-  },
-
-  cameraButton: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  bigCircle: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 0px 15px 1px',
-    borderWidth: 1,
-    borderColor: '#ffffff2c',
-  },
-
-  avatarContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 12,
-  },
+  
   logo: {
     width: 64,
     height: 64,
@@ -2670,59 +2454,6 @@ const styles = StyleSheet.create({
     tintColor: '#fff'
   },
 
-  inputEmail: {
-    flex: 1,
-    color: '#fff',
-    fontSize: 16,
-    backgroundColor: 'transparent',
-    borderWidth: 0,
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    minWidth: 0, // Prevents unwanted expansion
-    height: 44,
-  },
-
-  inputRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.08)', // matches glass effect
-    borderRadius: 14,
-
-  },
-
-  inputWithUpdate: {
-    backgroundColor: 'transparent',
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    color: '#fff',
-    height: 44,
-  },
-
-
-  updateButton: {
-    marginLeft: 38,
-    backgroundColor: '#FFFFFF8F',
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#222',
-    shadowOpacity: 0.17,
-    shadowRadius: 5,
-    elevation: 2,
-    // width: 70,
-
-    width: 90, // Fixed width
-    height: 34,
-  },
-  updateButtonText: {
-    color: '#002050',
-    fontSize: 14,
-    fontFamily: 'Urbanist-SemiBold',
-  },
-
-
   overlay: {
     flex: 1,
     justifyContent: 'center',
@@ -2767,41 +2498,6 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     textAlign: 'center',
     marginTop: 20,
-  },
-
-
-  subheader: {
-    color: 'rgba(255, 255, 255, 0.80)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 14,
-    fontWeight: '400',
-    textAlign: 'center',
-    marginTop: 20,
-  },
-
-  subheader1: {
-    color: 'rgba(255, 255, 255, 0.48)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 14,
-    fontWeight: '400',
-    textAlign: 'center',
-    marginTop: 6,
-  },
-
-  loginButton1: {
-    display: 'flex',
-    width: '100%',
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 4,
-    borderRadius: 100,
-    paddingTop: 6,
-    paddingBottom: 6,
-    backgroundColor: 'rgba(170, 169, 176, 0.56)',
-    marginTop: 5,
-    borderWidth: 0.5,
-    borderColor: '#ffffff2c',
   },
 
   loginText: {
@@ -2867,32 +2563,6 @@ const styles = StyleSheet.create({
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.29) 100%)',
     boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 0px 15px 1px',
-  },
-
-  editcard: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginRight: 8,
-    borderColor: '#ffffff11',
-    borderRadius: 10,
-    boxSizing: 'border-box',
-    gap: 10,
-    width: '20%',
-
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.14) 100%)',
-    boxShadow:
-      'rgba(255, 255, 255, 0.02)inset -1px 10px 5px 10px,rgba(236, 232, 232, 0.3)inset -0.99px -0.88px 0.90px 0px,rgba(236, 232, 232, 0.3)inset 0.99px 0.88px 0.90px 0px',
-  },
-
-  edittext: {
-    color: '#fff',
-    textAlign: 'center',
-  },
-  tabContent: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 
   initialsCircle: {

@@ -350,12 +350,7 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 20,
   },
-  backButtonContainer: {
-    position: 'absolute',
-    left: 16,
-    zIndex: 11,
-  },
-  
+
   headerWrapper: {
     position: 'absolute',
     top: 0,
@@ -403,23 +398,7 @@ const styles = StyleSheet.create({
     marginTop:8,
     letterSpacing: 0,
   },
-  newtext: {
-    color: '#fff',
-    fontSize: 16,
-    marginHorizontal: 6,
-    marginVertical: 16,
-    fontFamily: 'Urbanist-SemiBold',
-    fontWeight: 600,
-  },
-  newtext1: {
-    color: '#fff',
-    fontSize: 16,
-    fontFamily: 'Urbanist-SemiBold',
-    fontWeight: 600,
-    marginHorizontal: 6,
-    marginTop: 24,
-    marginBottom: 16,
-  },
+ 
   textbg: {
     position:'absolute',
     top:Platform.OS === 'ios' ? 0 : 70,
@@ -460,67 +439,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 500,
   },
-  importantNotice: {
-    flexDirection: 'row',
-    height: 'auto',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.09) 100%)',
-    boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.25)',
-    borderRadius: 8,
-    padding: 8,
-  },
-
-  previewThumbnail: {
-    color: '#FFF',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-SemiBold',
-    fontSize: 20,
-    fontWeight: '600',
-    letterSpacing: -0.4,
-  },
-  infoContainer: {
-    flexDirection: 'row',
-    marginTop: 8,
-    paddingLeft: 6,
-    paddingRight: 6,
-  },
-  infoText: {
-    color: 'rgba(255, 255, 255, 0.64)',
-    fontFamily: 'Urbanist-Medium',
-    fontWeight: '600',
-    fontStyle: 'normal',
-    fontSize: 14,
-  },
-  note: {
-    color: 'rgba(255, 255, 255, 0.64)',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 14,
-  },
-  nextButton: {
-    display: 'flex',
-    width: '100%',
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 4,
-    borderRadius: 100,
-    paddingTop: 6,
-    paddingBottom: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    borderWidth: 0.5,
-    borderColor: '#ffffff2c',
-    marginTop: 10,
-  },
-  nextText: {
-    color: '#002050',
-    textAlign: 'center',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: 500,
-    letterSpacing: 1,
-    width: '100%',
-  },
-
+ 
   hederRowContainer: {
     flexDirection: 'row',
     alignItems: 'center',
