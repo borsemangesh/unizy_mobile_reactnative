@@ -465,7 +465,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
         style={{
           borderRadius: 22,
           padding: 18,
-          //marginBottom: 12,
+          marginBottom: 12,
           backgroundColor: 'rgba(255,255,255,0.07)',
           borderWidth: 1,
           boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.25)',

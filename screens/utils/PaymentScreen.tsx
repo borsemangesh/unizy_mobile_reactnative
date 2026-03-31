@@ -62,6 +62,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ navigation }) => {
       }
 
       console.log('URL:', url);
+      console.log('PAYMENTBODY:', JSON.stringify(body));
 
       const response = await fetch(url, {
         method: 'POST',
