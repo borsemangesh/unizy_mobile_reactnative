@@ -849,16 +849,6 @@ const styles = StyleSheet.create({
     letterSpacing: -0.28,
     color: 'rgba(140, 225, 255, 0.9)',
   },
-
-  initialsCircle: {
-    backgroundColor: '#8390D4',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 12,
-  },
   initialsText: {
     color: '#fff',
     fontSize: 18,

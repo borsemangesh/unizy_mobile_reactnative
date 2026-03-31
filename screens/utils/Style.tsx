@@ -35,6 +35,15 @@ export const STYLES = StyleSheet.create({
     borderRightColor: '#ffffff2e',
     boxSizing: 'border-box',
   },
+  initialsCircle: {
+    backgroundColor: '#8390D4',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 12,
+  },
      
 });
 

@@ -1953,7 +1953,7 @@ const handlePreview = async (latestFormValues: any) => {
                         style={styles.avatar}
                       />
                     ) : (
-                      <View style={styles.initialsCircle}>
+                      <View style={STYLES.initialsCircle}>
                         <Text
                           allowFontScaling={false}
                           style={styles.initialsText}
@@ -2791,15 +2791,7 @@ const styles = StyleSheet.create({
     marginTop: 1,
   },
 
-  initialsCircle: {
-    backgroundColor: '#8390D4',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 12,
-  },
+
   initialsText: {
     color: '#fff',
     fontSize: 18,

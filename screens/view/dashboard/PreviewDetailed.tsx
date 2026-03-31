@@ -39,6 +39,7 @@ import { Ellipse } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import dayjs from 'dayjs';
+import { STYLES } from '../../utils/Style';
 
 
 type previewDetailsProps = {
@@ -1053,7 +1054,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                       style={styles.avatar}
                     />
                   ) : (
-                    <View style={styles.initialsCircle}>
+                    <View style={STYLES.initialsCircle}>
                       <Text allowFontScaling={false} style={styles.initialsText}>
                         {getInitials(
                           userMeta?.firstname ?? 'Alan',
@@ -1381,16 +1382,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
 
-
-  initialsCircle: {
-    backgroundColor: '#8390D4',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 12,
-  },
   initialsText: {
     color: '#fff',
     fontSize: 18,
