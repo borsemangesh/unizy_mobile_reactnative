@@ -1142,7 +1142,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
             if (stripped.length < 5) return; // too short to be a valid postcode
 
             typingTimeout = setTimeout(async () => {
-              const cityName = await getCityFromPostalCode(text);
+              const cityName = await getCityFromPostalCode(text.toLocaleUpperCase());
 
               if (cityName) {
                 const cityOptions = cityField.param?.options || [];

@@ -61,8 +61,6 @@ type MyListingDetailsProps = {
 
 const { width } = Dimensions.get('window');
 
-const profileImg = require('../../../assets/images/user.jpg');
-const mylistings1 = require('../../../assets/images/favourite.png');
 
 type ParamOption = {
   other_text: any;
@@ -89,9 +87,6 @@ type Param = {
 const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
   const [showPopup, setShowPopup] = useState(false);
   const [showPopup1, setShowPopup1] = useState(false);
-  const closePopup = () => setShowPopup(false);
-  const closePopup1 = () => setShowPopup1(false);
-  const scrollY1 = new Animated.Value(0);
   const route = useRoute();
   const { id } = route.params as { id: number };
   const { name } = route.params as { name: string };
@@ -103,13 +98,11 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
 
   const [imageUri, setImageUri] = useState<string | null>(null);
 
-  const insets = useSafeAreaInsets(); // Safe area insets
 
   const [famount, setfamout] = useState(0);
   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
 
   const { height } = Dimensions.get('window');
-  const screenHeight = Dimensions.get('window').height;
   const [slideUp1] = useState(new Animated.Value(0));
 
   const [isImageViewVisible, setImageViewVisible] = useState(false);
@@ -164,9 +157,6 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
     };
   });
 
-  const blurAmount = useDerivedValue(() =>
-    interpolate(scrollY.value, [0, 300], [0, 10], 'clamp'),
-  );
 
   const [multiSelectModal, setMultiSelectModal] = useState<{
     visible: boolean;
@@ -249,10 +239,6 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
   const flatListRef = useRef<FlatList>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const images =
-    detail?.files?.map((file: any) => ({
-      uri: file.signedurl,
-    })) || [];
 
   const onScroll = (event: any) => {
     const index = Math.round(event.nativeEvent.contentOffset.x / screenWidth);
@@ -282,10 +268,6 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
 
   const maxQty = Number(quantityField?.options?.[0]?.option_name) || 1;
 
-  const quantityOptions = Array.from({ length: maxQty }, (_, i) => ({
-    id: i + 1,
-    option_name: String(i + 1),
-  }));
 
   const formatDate = (dateString?: string, t?: any) => {
     if (!dateString) return '';
@@ -326,34 +308,7 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
     return `${day}${suffix} ${monthShort} ${year}`;
   };
 
-  const handlePay = (overrideAmount?: number) => {
-    if (detail?.category?.id === 3 && overrideAmount === undefined) {
-      setMultiSelectModal(prev => ({ ...prev, visible: true }));
-      return;
-    }
 
-    const amountToPay = overrideAmount ?? Number(detail.price).toFixed(2);
-
-    navigation.navigate('PaymentScreen', {
-      amount: amountToPay,
-      feature_id: id,
-      nav: 'purchase',
-      onSuccess: async () => {
-        await purchaseProduct();
-      },
-    });
-  };
-
-  const handlePayConfirmed = (amount: number) => {
-    navigation.navigate('PaymentScreen', {
-      amount: amount.toFixed(2),
-      feature_id: id,
-      nav: 'purchase',
-      onSuccess: async () => {
-        await purchaseProduct();
-      },
-    });
-  };
 
   const renderImage = () => {
     const fallbackImage = require('../../../assets/images/drone.png');
@@ -496,65 +451,7 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
       </TouchableOpacity>
     );
   };
-  const handleBookmarkPress = async (productId: number) => {
-    try {
-      const token = await AsyncStorage.getItem('userToken');
-      if (!token) return;
 
-      setDetail((prev: any) =>
-        prev ? { ...prev, isbookmarked: !prev.isbookmarked } : prev,
-      );
-
-      const isCurrentlyBookmarked = bookmarkedIds.includes(productId);
-      const url = MAIN_URL.baseUrl + 'category/list-bookmark';
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ feature_id: productId }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (data?.message) {
-        shortshowToast(
-          t(data.message),
-          data.statusCode === 200 ? 'success' : 'error',
-        );
-      }
-
-      let updatedBookmarks;
-      if (isCurrentlyBookmarked) {
-        updatedBookmarks = bookmarkedIds.filter(id => id !== productId);
-      } else {
-        updatedBookmarks = [...bookmarkedIds, productId];
-      }
-
-      setBookmarkedIds(updatedBookmarks);
-      await AsyncStorage.setItem(
-        'bookmarkedIds',
-        JSON.stringify(updatedBookmarks),
-      );
-    } catch (error) {
-      console.error('Bookmark error:', error);
-
-      setDetail((prev: any) =>
-        prev ? { ...prev, isbookmarked: !prev.isbookmarked } : prev,
-      );
-    }
-  };
-
-  const getInitials = (firstName = '', lastName = '') => {
-    const f = firstName?.trim()?.charAt(0)?.toUpperCase() || '';
-    const l = lastName?.trim()?.charAt(0)?.toUpperCase() || '';
-    return f + l || '?';
-  };
 
   const purchaseProduct = async () => {
     const token = await AsyncStorage.getItem('userToken');
@@ -634,13 +531,6 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
   };
 
 
-  function isDateRangeValue(value: ParamValue): value is DateRangeValue {
-    return (
-      typeof value === 'object' &&
-      value !== null &&
-      ('startDate' in value || 'endDate' in value)
-    );
-  }
 
   return (
     <>
@@ -779,6 +669,67 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
                 }
               })()}
             </Text>
+              <TouchableOpacity
+              onPress={() => {
+                if (navigation.canGoBack()) {
+                  navigation.goBack();
+                } else {
+                  navigation.replace('Dashboard', {
+                    AddScreenBackactiveTab: 'Home',
+                    isNavigate: false,
+                  });
+                }
+              }}
+              style={styles.backButtonContainer}
+              activeOpacity={0.7}
+            >
+              <AnimatedReanimated.View
+                style={[styles.blurButtonWrapper_none, ]}
+              >
+                <AnimatedReanimated.View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    useAnimatedStyle(() => ({
+                      opacity: interpolate(
+                        scrollY.value,
+                        [0, 30],
+                        [1, 0],
+                        'clamp',
+                      ),
+                      backgroundColor: 'rgba(255,255,255,0.1)',
+                      borderRadius: 40,
+                      display: 'none'
+                    })),
+                  ]}
+                />
+
+                <AnimatedReanimated.View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    useAnimatedStyle(() => ({
+                      opacity: interpolate(
+                        scrollY.value,
+                        [0, 50],
+                        [0, 1],
+                        'clamp',
+                      ),
+                    })), {display: 'none'}
+                  ]}
+                >
+                  <BlurView
+                    style={[StyleSheet.absoluteFill,{display: 'none'}]}
+                    blurType="light"
+                    blurAmount={10}
+                    reducedTransparencyFallbackColor="transparent"
+                  />
+                </AnimatedReanimated.View>
+
+                <AnimatedReanimated.Image
+                  source={require('../../../assets/images/back.png')}
+                  style={[{ height: 24, width: 24 ,display: 'none'}, animatedIconStyle]}
+                />
+              </AnimatedReanimated.View>
+            </TouchableOpacity>
           </View>
 
           <AnimatedReanimated.ScrollView
@@ -1019,7 +970,6 @@ const ImageViewerModal = React.memo(
     index,
     images,
     onClose,
-    onChangeIndex,
   }: ImageViewerModalProps) => {
     return (
        <ImageViewing
@@ -1064,6 +1014,17 @@ const ImageViewerModal = React.memo(
   },
 );
 const styles = StyleSheet.create({
+    blurButtonWrapper_none: {
+
+    width: 48,
+    height: 48,
+    borderRadius: 40,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: 'transparent',
+    backgroundColor: 'transparent',
+  },
   fullLoader: {
     position: 'absolute',
     top: 0,
