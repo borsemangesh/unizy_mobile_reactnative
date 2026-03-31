@@ -56,7 +56,15 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
         catagory_name: typename,
         reviews: reviews
       });
+    } else if (templateName === 'OrderCancelledBuyerInApp') { 
+      navigation.navigate('MyListingDetails', {
+        id: typeid,
+        catagory_id: categoryid,
+        catagory_name: typename,
+        reviews: reviews
+      });
     }
+      
     else if (templateName === 'OrderOTP') {
       if (Platform.OS === 'ios') {
         navigation.reset({

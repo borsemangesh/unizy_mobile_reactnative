@@ -251,6 +251,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
       const token = await AsyncStorage.getItem('userToken');
       const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
 
+      console.log("URL: ", url);
+      console.log("Token: ", token);
+      console.log("Body: ",JSON.stringify(body))
+
       if (!token) {
         if (isInitialLoad) setInitialLoading(false);
         else setIsLoading(false);
