@@ -747,7 +747,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
         }
 
         // Additional validation for 0 values
-        else if (value === 0 || (typeof value === 'string' && value.trim() === '0')) {
+        else if (value === 0 || (typeof value === 'string' && value.trim() === '0' || value < 0.5)) {
           showToast(`${t('price_cannot_be_zero')} ${field.param.field_name} `, 'error');
           return;
         }
@@ -782,7 +782,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
         computedPrice = priceNumber * rawDuration;
 
         // Check if the computed price is zero
-        if (computedPrice === 0) {
+        if (computedPrice === 0 || computedPrice < 0.5) {
           showToast(t('price_cannot_be_zero'), 'error');
           return;
         }

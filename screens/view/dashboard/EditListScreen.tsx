@@ -661,7 +661,7 @@ const handlePreview = async (latestFormValues: any) => {
             showToast(`${field.param.field_name} ${t(Constant.IS_MAN)}`, 'error');
           }
           return;
-        } else if (value === 0 || (typeof value === 'string' && value.trim() === '0')) {
+        } else if (value === 0 || (typeof value === 'string' && value.trim() === '0' || value <0.5)) {
           showToast(`${t('price_cannot_be_zero')} ${field.param.field_name} `, 'error');
           return;
         }
