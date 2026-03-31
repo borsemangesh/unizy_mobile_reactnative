@@ -59,6 +59,7 @@ const FilterAndroid = ({
     const [postcode, setPostcode] = useState<string>('');
      const [lastAppliedPostcode, setLastAppliedPostcode] = useState<string | null>(null);
   const SCREEN_WIDTH = Dimensions.get('window').width;
+  const [otherInputs, setOtherInputs] = useState<Record<number, string>>({});
 
 
   const fetchFilters = async () => {
@@ -154,36 +155,99 @@ const FilterAndroid = ({
     setSelectedTab(tabName);
   };
 
-  const toggleDropdownOption = (
-    fieldId: number,
-    optionId: number,
-    isMultiple: boolean,
-  ) => {
-    setDropdownSelections(prev => {
-      const current = prev[fieldId] || [];
+  // const toggleDropdownOption = (
+  //   fieldId: number,
+  //   optionId: number,
+  //   isMultiple: boolean,
+  // ) => {
+  //   setDropdownSelections(prev => {
+  //     const current = prev[fieldId] || [];
 
-      if (isMultiple) {
-        // MULTI SELECT (checkbox)
-        if (current.includes(optionId)) {
-          return { ...prev, [fieldId]: current.filter(id => id !== optionId) };
-        } else {
-          return { ...prev, [fieldId]: [...current, optionId] };
+  //     if (isMultiple) {
+  //       // MULTI SELECT (checkbox)
+  //       if (current.includes(optionId)) {
+  //         return { ...prev, [fieldId]: current.filter(id => id !== optionId) };
+  //       } else {
+  //         return { ...prev, [fieldId]: [...current, optionId] };
+  //       }
+  //     } else {
+  //       // SINGLE SELECT (radio)
+  //       return { ...prev, [fieldId]: [optionId] };
+  //     }
+  //   });
+  // };
+
+
+const toggleDropdownOption = (
+  fieldId: number,
+  optionId: number,
+  isMultiple: boolean,
+) => {
+  setDropdownSelections(prev => {
+    const current = prev[fieldId] || [];
+
+    // 🔍 Find current filter + option
+    const filter = filters.find(f => f.id === fieldId);
+    const option = filter?.options?.find((o: any) => o.id === optionId);
+
+    const isOtherOption =
+      option?.option_name?.toLowerCase() === 'other' ||
+      option?.name?.toLowerCase() === 'other';
+
+    let updated: number[] = [];
+
+    if (isMultiple) {
+      if (current.includes(optionId)) {
+        // ❌ UNSELECT
+        updated = current.filter(id => id !== optionId);
+
+        // ✅ If "Other" unchecked → remove input
+        if (isOtherOption) {
+          setOtherInputs(prevInputs => {
+            const copy = { ...prevInputs };
+            delete copy[fieldId];
+            return copy;
+          });
         }
       } else {
-        // SINGLE SELECT (radio)
-        return { ...prev, [fieldId]: [optionId] };
+        // ✅ SELECT
+        updated = [...current, optionId];
       }
-    });
-  };
+    } else {
+      // 🔘 SINGLE SELECT (radio)
 
+      // ✅ If switching FROM "Other" → clear old input
+      const previousSelectedId = current[0];
+      const previousOption = filter?.options?.find(
+        (o: any) => o.id === previousSelectedId
+      );
 
+      const wasOther =
+        previousOption?.option_name?.toLowerCase() === 'other' ||
+        previousOption?.name?.toLowerCase() === 'other';
+
+      if (wasOther) {
+        setOtherInputs(prevInputs => {
+          const copy = { ...prevInputs };
+          delete copy[fieldId];
+          return copy;
+        });
+      }
+
+      updated = [optionId];
+    }
+
+    return { ...prev, [fieldId]: updated };
+  });
+};
   const handleClearFilters = () => {
     setDropdownSelections({});
     setPriceRange(defaultPriceRange);
     setSliderLow(defaultPriceRange.min);
       setSliderHigh(defaultPriceRange.max);
       setDateSelections({});
-      setPostcode('');
+    setPostcode('');
+    setOtherInputs({}); 
   };
 
   const handleClose = () => {
@@ -241,97 +305,126 @@ const [dateSelections, setDateSelections] = useState<
             const isMultiple = currentFilter.ismultilple;
             const selectedValues = dropdownSelections[currentFilter.id] || [];
 
+            const isSelected = currentFilter.ismultilple
+              ? selectedValues.includes(opt.id)
+              : selectedValues[0] === opt.id;
+
             const isSelectedCheckbox = selectedValues.includes(opt.id);
             const isSelectedRadio = selectedValues[0] === opt.id;
 
-            return (
-              <TouchableOpacity
-                key={opt.id}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  paddingVertical: 12,
-                  flexWrap: 'nowrap',
-                }}
-                onPress={() =>
-        toggleDropdownOption(
-          currentFilter.id,
-          opt.id,
-          isMultiple
-        )
-                }
-              >
-                {/* ICON UI ONLY CHANGED */}
-                {isMultiple ? (
-                  <View
-                    style={{
-                      width: 20,
-                      height: 20,
-                      borderRadius: 4,
-                      borderWidth: 1,
-                      borderColor: '#fff',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      marginRight: 10,
-                    }}
-                  >
-                    {isSelectedCheckbox && (
-                      <Image
-                        source={require('../../../assets/images/tickicon.png')}
-                        style={styles.tickImage}
-                        resizeMode="contain"
-                      />
-                    )}
-                  </View>
-                ) : (
-                  <View
-                    style={{
-                      width: 20,
-                      height: 20,
-                      borderRadius: 10,
-                      borderWidth: 1.5,
-                      borderColor: '#fff',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      marginRight: 10,
-                    }}
-                  >
-                    {isSelectedRadio && (
-                      <View
-                        style={{
-                          width: 10,
-                          height: 10,
-                          borderRadius: 5,
-                          backgroundColor: '#fff',
-                        }}
-                      />
-                    )}
-                  </View>
-                )}
+            const isOtherOption =
+              opt.option_name?.toLowerCase() === 'other' ||
+              opt.name?.toLowerCase() === 'other';
 
-                <Text
-                  allowFontScaling={false}
-                  numberOfLines={3}
-        style={[styles.filtertitleFilteryBy, {
-                      flexShrink: 1,
-                      flexGrow: 1,
-        }]}
+            return (
+              <View key={opt.id}>
+                <TouchableOpacity
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    paddingVertical: 12,
+                  }}
+                  onPress={() =>
+                    toggleDropdownOption(
+                      currentFilter.id,
+                      opt.id,
+                      currentFilter.ismultilple,
+                    )
+                  }
                 >
-                  {opt.option_name || opt.name}
-                </Text>
-              </TouchableOpacity>
+                  {isMultiple ? (
+                    <View
+                      style={{
+                        width: 20,
+                        height: 20,
+                        borderRadius: 4,
+                        borderWidth: 1,
+                        borderColor: '#fff',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginRight: 10,
+                      }}
+                    >
+                      {isSelectedCheckbox && (
+                        <Image
+                          source={require('../../../assets/images/tickicon.png')}
+                          style={styles.tickImage}
+                          resizeMode="contain"
+                        />
+                      )}
+                    </View>
+                  ) : (
+                    <View
+                      style={{
+                        width: 20,
+                        height: 20,
+                        borderRadius: 10,
+                        borderWidth: 1.5,
+                        borderColor: '#fff',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginRight: 10,
+                      }}
+                    >
+                      {isSelectedRadio && (
+                        <View
+                          style={{
+                            width: 10,
+                            height: 10,
+                            borderRadius: 5,
+                            backgroundColor: '#fff',
+                          }}
+                        />
+                      )}
+                    </View>
+                  )}
+
+                  <Text
+                    allowFontScaling={false}
+                    numberOfLines={3}
+                    style={[
+                      styles.filtertitleFilteryBy,
+                      {
+                        flexShrink: 1,
+                        flexGrow: 1,
+                      },
+                    ]}
+                  >
+                    {opt.option_name || opt.name}
+                  </Text>
+                </TouchableOpacity>
+                {isOtherOption && isSelected && (
+                  <TextInput
+                    style={[
+                      styles.login_container,
+                      styles.personalEmailID_TextInput,
+                      { marginBottom: 10, width: '100%' },
+                    ]}
+                    placeholder="Please specify"
+                    placeholderTextColor="#aaa"
+                    selectionColor={'#FFFFFF'}
+                    cursorColor={'#FFFFFF'}
+                    value={otherInputs[currentFilter.id] || ''}
+                    onChangeText={text => {
+                      setOtherInputs(prev => ({
+                        ...prev,
+                        [currentFilter.id]: text,
+                      }));
+                    }}
+                  />
+                )}
+              </View>
             );
           })}
-
-
         </ScrollView>
       );
-    }  
-      
-    else if (currentFilter.alias_name === 'price') {
+    } else if (currentFilter.alias_name === 'price') {
       return (
         <View style={{ zIndex: 999, position: 'relative' }}>
-          <Text allowFontScaling={false}  style={{ color: 'white', marginBottom: 10 }}>
+          <Text
+            allowFontScaling={false}
+            style={{ color: 'white', marginBottom: 10 }}
+          >
             {t('range')}: {sliderLow} - {sliderHigh}
           </Text>
 
@@ -439,14 +532,12 @@ const [dateSelections, setDateSelections] = useState<
 
       return (
         <View style={{ paddingTop: 10 }}>
-         
-
           {/* START DATE */}
           <TouchableOpacity
             style={[
               styles.login_container,
               styles.personalEmailID_TextInput,
-              { width: '100%' ,marginTop: 10},
+              { width: '100%', marginTop: 10 },
             ]}
             onPress={() => {
               setActiveDateField({ param: currentFilter, type: 'start' });
@@ -533,13 +624,35 @@ const formatDate = (date: Date) => {
     const selectedFilters = uniqueFilters
       .map(f => {
         if (f.field_type === 'dropdown' && dropdownSelections[f.id]?.length) {
-          return {
-            id: f.id,
-            field_name: f.field_name,
-            field_type: f.field_type,
-            alias_name: f.alias_name,
-            options: dropdownSelections[f.id],
-          };
+const selectedIds = dropdownSelections[f.id];
+            const selectedOptions = f.options.filter((opt: any) =>
+    selectedIds.includes(opt.id)
+  );
+
+  const hasOther = selectedOptions.find(
+    (opt: any) =>
+      opt.option_name?.toLowerCase() === 'other' ||
+      opt.name?.toLowerCase() === 'other'
+  );
+
+
+          // return {
+          //   id: f.id,
+          //   field_name: f.field_name,
+          //   field_type: f.field_type,
+          //   alias_name: f.alias_name,
+          //   options: dropdownSelections[f.id],
+          // };
+           return {
+    id: f.id,
+    field_name: f.field_name,
+    field_type: f.field_type,
+    alias_name: f.alias_name,
+    options: selectedIds,
+    ...(hasOther && {
+      other_value: otherInputs[f.id] || '',
+    }),
+  };
         } else if (f.alias_name?.toLowerCase() === 'price') {
           return {
             id: f.id,
