@@ -520,8 +520,7 @@ export default function TransactionHistoryScreen(
       <ScrollView
         style={{
           width: '100%',
-          flex: 1,
-          paddingBottom: Platform.OS === 'ios' ? height * 0.1 : height * 0.2,
+          marginBottom: Platform.OS === 'ios' ? Dimensions.get('window').height * 0.1 :  Dimensions.get('window').height * 0.28,
         }}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ flexGrow: 1 }}
@@ -844,7 +843,7 @@ export default function TransactionHistoryScreen(
                           fontSize: 12,
                         }}
                       >
-                        {t('total_earnings')}: £{item.total_earning}
+                        {t('total_earnings')}: £{Number(item.total_earning).toFixed(2)}
                       </Text>
                     </View>
                   </View>
