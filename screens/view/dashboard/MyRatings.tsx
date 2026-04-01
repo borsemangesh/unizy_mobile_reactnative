@@ -654,11 +654,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600
   },
-
-
-  background: {
-    flex: 1,
-  },
   fullScreenContainer: {
     flex: 1,
   },
