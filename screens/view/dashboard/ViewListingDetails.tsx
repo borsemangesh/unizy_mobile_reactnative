@@ -42,7 +42,7 @@ import ButtonNew from '../../utils/component/ButtonNew';
 import Loader from '../../utils/component/Loader';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
-import { STYLES } from '../../utils/Style';
+import { IMAGE_URLS, STYLES } from '../../utils/Style';
 
 type ListingDetailsProps = {
   navigation: any;
@@ -631,7 +631,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
                         }}
                       >
                         <Image
-                          source={require('../../../assets/images/sellerfile.png')}
+                          source={IMAGE_URLS.SELLECTFILE_ICON}
                           style={{ width: 24, height: 24 }}
                           resizeMode="cover"
                         />
