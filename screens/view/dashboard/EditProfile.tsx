@@ -462,7 +462,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   // ---------------------  Update data method call -----------------//
 
   const handleSaveProfile = async () => {
-
+     Keyboard.dismiss()
     if (!isProfileChanged()) {
       showToast(t('no_changes_detected'), 'info');
       return;
