@@ -50,8 +50,9 @@ import {
   initPaymentSheet,
   presentPaymentSheet,
 } from '@stripe/stripe-react-native';
-import { IMAGE_URLS, STYLES } from '../../utils/Style';
+import { IMAGE_URLS } from '../../utils/Style';
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import COMMONSTYLE from '../../utils/CommonStyle';
 
 type AccountDetailsProps = {
   navigation: any;
@@ -640,7 +641,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
           </MaskedView>
         </Animated.View>
 
-        <View style={STYLES.headerContent} pointerEvents="box-none">
+        <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => {
@@ -671,7 +672,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
             style={styles.backButtonContainer}
           >
             <Animated.View
-              style={[styles.blurButtonWrapper, animatedButtonStyle]}
+              style={[COMMONSTYLE.blurButtonWrapper, animatedButtonStyle]}
             >
               <Animated.View
                 style={[StyleSheet.absoluteFill, animatedStaticBackgroundStyle]}
@@ -696,7 +697,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
           </TouchableOpacity>
 
           <View style={{ width: 280 }}>
-            <Text allowFontScaling={false} style={styles.unizyText}>
+            <Text allowFontScaling={false} style={[COMMONSTYLE.SEMIBOLD,styles.unizyText]}>
               {t('payment_methods')}
             </Text>
           </View>
@@ -1435,31 +1436,6 @@ const styles = StyleSheet.create({
     zIndex: 11,
   },
 
-  blurButtonWrapper: {
-    width: 48,
-    height: 48,
-    borderRadius: 40,
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
-
-    borderWidth: 0.3,
-    borderColor: '#ffffff11',
-
-    boxShadow:
-      '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
-    backgroundColor:
-      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
-    borderBlockStartColor: '#ffffff2e',
-    borderBlockColor: '#ffffff2e',
-
-    borderTopColor: '#ffffff2e',
-    borderBottomColor: '#ffffff2e',
-    borderLeftColor: '#ffffff2e',
-    borderRightColor: '#ffffff2e',
-    boxSizing: 'border-box',
-  },
   blurButtonWrapper_none: {
     width: 48,
     height: 48,

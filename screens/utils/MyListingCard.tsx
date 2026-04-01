@@ -8,6 +8,7 @@ import {
   ImageSourcePropType,
   TouchableOpacity,
 } from 'react-native';
+import COMMONSTYLE from './CommonStyle';
 
 type MyListingCardProps = {
   tag: string;
@@ -104,7 +105,7 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
           >
             <Text
               allowFontScaling={false}
-              style={styles.title}
+              style={[COMMONSTYLE.SEMIBOLD, styles.title]}
               numberOfLines={2}
             >
               {infoTitle}
@@ -141,7 +142,7 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
             <View style={{ flexDirection: 'row' }}>
               <Text
                 allowFontScaling={false}
-                style={styles.price}
+                style={[COMMONSTYLE.SEMIBOLD,styles.price]}
                 numberOfLines={1}
               >
                 {inforTitlePrice}
@@ -261,7 +262,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 14,
     color: '#fff',
-    fontFamily: 'Urbanist-SemiBold',
+
     fontWeight: 600,
     width: '71%',
     maxWidth: '80%',
@@ -285,12 +286,7 @@ const styles = StyleSheet.create({
     maxWidth: '80%',
 
   },
-  ratingWrap: {
-    marginLeft: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
+ 
   ratingText: {
     fontSize: 12,
     color: 'rgba(255, 255, 255, 0.7)',
@@ -332,11 +328,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '500',
     fontFamily: 'Urbanist-Medium',
-  },
-  dot: {
-    color: 'rgba(255, 255, 255, 0.7)',
-    fontSize: 12,
-    marginHorizontal: 1
   },
   initialsCircle: {
     backgroundColor: '#8390D4',

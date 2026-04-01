@@ -39,8 +39,9 @@ import { Ellipse } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import dayjs from 'dayjs';
-import { STYLES } from '../../utils/Style';
+
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import COMMONSTYLE from '../../utils/CommonStyle';
 
 
 type previewDetailsProps = {
@@ -1051,7 +1052,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
                       style={styles.avatar}
                     />
                   ) : (
-                    <View style={STYLES.initialsCircle}>
+                    <View style={COMMONSTYLE.initialsCircle}>
                       <Text allowFontScaling={false} style={styles.initialsText}>
                         {getInitials(
                           userMeta?.firstname ?? 'Alan',

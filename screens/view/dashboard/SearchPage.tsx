@@ -41,8 +41,9 @@ import SearchTutionCard from '../../utils/SearchTutionCard';
 import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
 import FilterAndroid from '../../utils/component/FilterAndroid';
 import { useTranslation } from 'react-i18next';
-import { STYLES } from '../../utils/Style';
+
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import COMMONSTYLE from '../../utils/CommonStyle';
 type CreatedBy = {
   id: number;
   firstname: string;
@@ -503,7 +504,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
       <View style={styles.fullScreenContainer}>
        
 
-        <View style={STYLES.headerContent} pointerEvents="box-none">
+        <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
               navigation.replace('Dashboard', {
@@ -516,7 +517,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
             activeOpacity={0.7}
           >
             <Animated.View
-              style={[STYLES.blurButtonWrapper, animatedButtonStyle]}
+              style={[COMMONSTYLE.blurButtonWrapper, animatedButtonStyle]}
             >
               <Animated.View
                 style={[

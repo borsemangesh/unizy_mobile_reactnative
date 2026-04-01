@@ -36,8 +36,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import Loader from '../../utils/component/Loader';
 import i18n from '../../../localization/i18n';
-import { STYLES } from '../../utils/Style';
+
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import COMMONSTYLE from '../../utils/CommonStyle';
 
 type Feature = {
   avg_rating: string | null | undefined;
@@ -407,7 +408,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
             />
           </MaskedView>
         </Animated.View>
-        <View style={STYLES.headerContent} pointerEvents="box-none">
+        <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
               console.log("MYLISTSTACK", navigation.getState())
@@ -423,7 +424,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
             activeOpacity={0.7}
           >
             <Animated.View
-              style={[STYLES.blurButtonWrapper, animatedButtonStyle]}
+              style={[COMMONSTYLE.blurButtonWrapper, animatedButtonStyle]}
             >
 
               <Animated.View

@@ -38,8 +38,9 @@ import MaskedView from '@react-native-masked-view/masked-view';
 import Loader from '../../utils/component/Loader';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
-import { STYLES } from '../../utils/Style';
+
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import COMMONSTYLE from '../../utils/CommonStyle';
 
 type ReviewDetailsProps = {
   navigation: any;
@@ -349,7 +350,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
           </MaskedView>
         </Animated.View>
 
-        <View style={STYLES.headerContent} pointerEvents="box-none">
+        <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
               navigation.goBack();
@@ -358,7 +359,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
             activeOpacity={0.7}
           >
             <Animated.View
-              style={[STYLES.blurButtonWrapper, animatedButtonStyle]}
+              style={[COMMONSTYLE.blurButtonWrapper, animatedButtonStyle]}
             >
               <Animated.View
                 style={[

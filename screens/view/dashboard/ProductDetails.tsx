@@ -44,8 +44,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import FilterAndroid from '../../utils/component/FilterAndroid';
 import {ShortCustomToastContainer, shortshowToast } from '../../utils/component/ShortCustomToastManager';
-import { STYLES } from '../../utils/Style';
+
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import COMMONSTYLE from '../../utils/CommonStyle';
 type CreatedBy = {
   id: number;
   firstname: string;
@@ -595,14 +596,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
           </MaskedView>
         </Animated.View>
 
-        <View style={STYLES.headerContent} pointerEvents="box-none">
+        <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => navigation.replace('Dashboard', { AddScreenBackactiveTab: 'Home', isNavigate: false })}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
             <Animated.View
-              style={[STYLES.blurButtonWrapper, animatedButtonStyle]}
+              style={[COMMONSTYLE.blurButtonWrapper, animatedButtonStyle]}
             >
               <Animated.View
                 style={[

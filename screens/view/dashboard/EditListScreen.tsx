@@ -63,8 +63,9 @@ import Loader from '../../utils/component/Loader';
 // import DatePicker from 'react-native-date-picker';
 import dayjs from 'dayjs';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { STYLES } from '../../utils/Style';
+
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import COMMONSTYLE from '../../utils/CommonStyle';
 
 
 const bgImage = require('../../../assets/images/backimg.png');
@@ -1777,7 +1778,7 @@ const handlePreview = async (latestFormValues: any) => {
           </MaskedView>
         </AnimatedReanimated.View>
 
-        <View style={STYLES.headerContent} pointerEvents="box-none">
+        <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
               navigation.goBack();
@@ -1786,7 +1787,7 @@ const handlePreview = async (latestFormValues: any) => {
             activeOpacity={0.7}
           >
             <AnimatedReanimated.View
-              style={[STYLES.blurButtonWrapper, animatedButtonStyle]}
+              style={[COMMONSTYLE.blurButtonWrapper, animatedButtonStyle]}
             >
               <AnimatedReanimated.View
                 style={[
@@ -1954,7 +1955,7 @@ const handlePreview = async (latestFormValues: any) => {
                         style={styles.avatar}
                       />
                     ) : (
-                      <View style={STYLES.initialsCircle}>
+                      <View style={COMMONSTYLE.initialsCircle}>
                         <Text
                           allowFontScaling={false}
                           style={styles.initialsText}

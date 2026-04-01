@@ -42,8 +42,9 @@ import ButtonNew from '../../utils/component/ButtonNew';
 import Loader from '../../utils/component/Loader';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
-import { IMAGE_URLS, STYLES } from '../../utils/Style';
+import { IMAGE_URLS } from '../../utils/Style';
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import COMMONSTYLE from '../../utils/CommonStyle';
 
 type ListingDetailsProps = {
   navigation: any;
@@ -339,13 +340,13 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
             />
           </MaskedView>
         </AnimatedReanimated.View>
-        <View style={STYLES.headerContent} pointerEvents="box-none">
+        <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => { navigation.goBack(); }}
             style={styles.backButtonContainer}
             activeOpacity={0.7} >
             <AnimatedReanimated.View
-              style={[STYLES.blurButtonWrapper, animatedButtonStyle]}>
+              style={[COMMONSTYLE.blurButtonWrapper, animatedButtonStyle]}>
               <AnimatedReanimated.View
                 style={[
                   StyleSheet.absoluteFill,
@@ -406,7 +407,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
             activeOpacity={0.7}
           >
             <AnimatedReanimated.View
-              style={[STYLES.blurButtonWrapper, animatedButtonStyle]}
+              style={[COMMONSTYLE.blurButtonWrapper, animatedButtonStyle]}
             >
               <AnimatedReanimated.View
                 style={[

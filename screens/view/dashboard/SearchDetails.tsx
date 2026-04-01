@@ -50,8 +50,9 @@ import i18n from '../../../localization/i18n';
 import Loader from '../../utils/component/Loader';
 import dayjs from 'dayjs';
 import React from 'react';
-import { STYLES } from '../../utils/Style';
+
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import COMMONSTYLE from '../../utils/CommonStyle';
 
 type SearchDetailsProps = {
   navigation: any;
@@ -644,7 +645,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
             </MaskedView>
           </AnimatedReanimated.View>
 
-          <View style={STYLES.headerContent} pointerEvents="box-none">
+          <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
             <TouchableOpacity
               onPress={() => {
                 if (navigation.canGoBack()) {
@@ -660,7 +661,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
               activeOpacity={0.7}
             >
               <AnimatedReanimated.View
-                style={[STYLES.blurButtonWrapper, animatedButtonStyle]}
+                style={[COMMONSTYLE.blurButtonWrapper, animatedButtonStyle]}
               >
                 <AnimatedReanimated.View
                   style={[
@@ -731,7 +732,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
               activeOpacity={0.7}
             >
               <AnimatedReanimated.View
-                style={[STYLES.blurButtonWrapper, animatedButtonStyle]}
+                style={[COMMONSTYLE.blurButtonWrapper, animatedButtonStyle]}
               >
                 <AnimatedReanimated.View
                   style={[
@@ -989,7 +990,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
                           style={styles.avatar}
                         />
                       ) : (
-                        <View style={STYLES.initialsCircle}>
+                        <View style={COMMONSTYLE.initialsCircle}>
                           <Text
                             allowFontScaling={false}
                             style={styles.initialsText}

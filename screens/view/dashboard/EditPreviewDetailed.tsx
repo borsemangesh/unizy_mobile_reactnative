@@ -38,8 +38,9 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import Loader from '../../utils/component/Loader';
 import dayjs from 'dayjs';
-import { STYLES } from '../../utils/Style';
+
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import COMMONSTYLE from '../../utils/CommonStyle';
 
 type EditPreviewDetailedProps = {
   navigation: any;
@@ -1181,7 +1182,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
                       style={styles.avatar}
                     />
                   ) : (
-                    <View style={STYLES.initialsCircle}>
+                    <View style={COMMONSTYLE.initialsCircle}>
                       <Text allowFontScaling={false} style={styles.initialsText}>
                         {getInitials(
                           userMeta?.firstname ?? 'Alan',

@@ -38,8 +38,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
-import { STYLES } from '../../utils/Style';
+
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import COMMONSTYLE from '../../utils/CommonStyle';
 
 type CreatedBy = {
   id: number;
@@ -369,14 +370,14 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
           </MaskedView>
         </Animated.View>
 
-        <View style={STYLES.headerContent} pointerEvents="box-none">
+        <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => navigation.replace('Dashboard', { AddScreenBackactiveTab: 'Profile', isNavigate: false })}
             style={styles.backButtonContainer}
             activeOpacity={0.7}
           >
             <Animated.View
-              style={[STYLES.blurButtonWrapper, animatedButtonStyle]}
+              style={[COMMONSTYLE.blurButtonWrapper, animatedButtonStyle]}
             >
               <Animated.View
                 style={[

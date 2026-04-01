@@ -48,7 +48,7 @@ import { clearTwilioCache } from '../dashboard/MessageIndividualScreen';
 
 import DeviceInfo from 'react-native-device-info';
 import Loader from '../../utils/component/Loader';
-import { STYLES } from '../../utils/Style';
+import COMMONSTYLE from '../../utils/CommonStyle';
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 type changePasswordProps = {
@@ -334,7 +334,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
         </View> */}
 
 
-        <View style={STYLES.headerContent} pointerEvents="box-none">
+        <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
               console.log('navigation.goBack()');
@@ -378,7 +378,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
             activeOpacity={0.7}
           >
             <AnimatedReanimated.View
-              style={[STYLES.blurButtonWrapper]}
+              style={[COMMONSTYLE.blurButtonWrapper]}
             >
               <AnimatedReanimated.View
                 style={[

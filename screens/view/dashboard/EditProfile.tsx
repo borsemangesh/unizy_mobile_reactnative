@@ -62,8 +62,9 @@ import SaveButton from '../../utils/component/SaveButton';
 import { getCityFromPostalCode } from '../../utils/geocoding';
 // import { getCityFromPostalCode } from '../../utils/geocoding';
 import ImagePicker from 'react-native-image-crop-picker';
-import { STYLES } from '../../utils/Style';
+
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import COMMONSTYLE from '../../utils/CommonStyle';
 
 type EditProfileProps = {
   navigation: any;
@@ -1264,7 +1265,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
         </AnimatedReanimated.View>
 
         {/* Header Content */}
-        <View style={STYLES.headerContent} pointerEvents="box-none">
+        <View style={COMMONSTYLE.headerContent} pointerEvents="box-none">
           <TouchableOpacity
             onPress={() => {
               navigation.reset({
@@ -1284,7 +1285,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
             activeOpacity={0.7}
           >
             <AnimatedReanimated.View
-              style={[STYLES.blurButtonWrapper, animatedButtonStyle]}
+              style={[COMMONSTYLE.blurButtonWrapper, animatedButtonStyle]}
             >
               <AnimatedReanimated.View
                 style={[
