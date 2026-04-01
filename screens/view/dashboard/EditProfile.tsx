@@ -63,6 +63,7 @@ import { getCityFromPostalCode } from '../../utils/geocoding';
 // import { getCityFromPostalCode } from '../../utils/geocoding';
 import ImagePicker from 'react-native-image-crop-picker';
 import { STYLES } from '../../utils/Style';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 type EditProfileProps = {
   navigation: any;
@@ -1219,7 +1220,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
 
 
   return (
-    <ImageBackground source={bgImage} style={styles.background}>
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -2201,7 +2202,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
         </View>
       )}
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 
@@ -2329,10 +2330,6 @@ const styles = StyleSheet.create({
     //top: 7,
   },
 
-
-  background: {
-    flex: 1,
-  },
   fullScreenContainer: {
     flex: 1,
   },

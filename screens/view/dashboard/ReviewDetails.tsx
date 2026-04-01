@@ -39,6 +39,7 @@ import Loader from '../../utils/component/Loader';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import { STYLES } from '../../utils/Style';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 type ReviewDetailsProps = {
   navigation: any;
@@ -305,7 +306,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
   };
 
   return (
-    <ImageBackground source={bgImage} style={styles.background}>
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -621,7 +622,7 @@ const ReviewDetails: React.FC<ReviewDetailsProps> = ({ navigation }) => {
         )}
       </View>
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 
@@ -781,10 +782,6 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     fontSize: 16,
   },
-
- 
-  
-
   tabtext: {
     color: '#fff',
     fontWeight: '600',
@@ -798,11 +795,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
   fullScreenContainer: {
     flex: 1,
   },

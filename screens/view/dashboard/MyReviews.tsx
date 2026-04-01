@@ -39,6 +39,7 @@ import MaskedView from '@react-native-masked-view/masked-view';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import { STYLES } from '../../utils/Style';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 type CreatedBy = {
   id: number;
@@ -324,7 +325,7 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
   };
 
   return (
-    <ImageBackground source={bgImage} style={styles.background}>
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -584,7 +585,7 @@ const MyReviews = ({ navigation }: MyReviewsProps) => {
 
       </View>
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 
@@ -744,9 +745,6 @@ const styles = StyleSheet.create({
     fontSize: 14
   },
 
-  background: {
-    flex: 1,
-  },
   fullScreenContainer: {
     flex: 1,
   },

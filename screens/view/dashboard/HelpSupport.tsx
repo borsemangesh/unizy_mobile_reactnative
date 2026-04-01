@@ -20,6 +20,7 @@ import { NewCustomToastContainer } from '../../utils/component/NewCustomToastMan
 import { useTranslation } from 'react-i18next';
 import { WebView } from 'react-native-webview';
 import Loader from '../../utils/component/Loader';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 type HelpSupportProps = {
   navigation: any;
@@ -29,7 +30,7 @@ const HelpSupport = ({ navigation }: HelpSupportProps) => {
   const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
   return (
-    <ImageBackground source={bgImage} style={styles.background}>
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
         {/* Header */}
         <View style={styles.header}>
@@ -74,7 +75,7 @@ const HelpSupport = ({ navigation }: HelpSupportProps) => {
         )}
       </View>
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 
@@ -92,11 +93,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
 
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
   fullScreenContainer: {
     flex: 1,
     marginTop: 10,

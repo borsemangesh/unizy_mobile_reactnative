@@ -44,6 +44,7 @@ import MaskedView from '@react-native-masked-view/masked-view';
 import Loader from '../../utils/component/Loader';
 import { ShortCustomToastContainer,shortshowToast } from '../../utils/component/ShortCustomToastManager';
 import { IMAGE_URLS, STYLES } from '../../utils/Style';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 
 type CreatedBy = {
@@ -501,7 +502,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
   };
 
   return (
-    <ImageBackground source={IMAGE_URLS.BACK_ICON} style={styles.background}>
+    <BackgroundWrapper>
       <StatusBar
         translucent
         backgroundColor="transparent"
@@ -773,7 +774,7 @@ const Bookmark = ({ navigation }: BookmarkProps) => {
       </View>
       <ShortCustomToastContainer/>
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 
@@ -901,9 +902,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 
-  background: {
-    flex: 1,
-  },
   fullScreenContainer: {
     flex: 1,
   },

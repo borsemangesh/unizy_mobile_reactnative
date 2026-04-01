@@ -21,6 +21,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { showToast } from '../../utils/toast';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 type MyProductDetailsProps = {
   navigation: any;
@@ -143,13 +144,7 @@ const renderImage = () => {
     const initials = `${detail?.createdby?.firstname?.[0] ?? ''}${detail?.createdby?.lastname?.[0] ?? ''}`.toUpperCase();
 
     return (
-      <ImageBackground
-        source={require('../../../assets/images/featurebg.png')}
-        style={{
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
+      <BackgroundWrapper>
         <View
           style={{
             alignItems: 'center',
@@ -197,7 +192,7 @@ const renderImage = () => {
             </View>
           )}
         </View>
-      </ImageBackground>
+      </BackgroundWrapper>
     );
   }
 

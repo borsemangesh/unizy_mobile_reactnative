@@ -64,6 +64,7 @@ import Loader from '../../utils/component/Loader';
 import dayjs from 'dayjs';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { STYLES } from '../../utils/Style';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 
 const bgImage = require('../../../assets/images/backimg.png');
@@ -1734,7 +1735,7 @@ const handlePreview = async (latestFormValues: any) => {
   );
 
   return (
-    <ImageBackground source={bgImage} style={styles.background}>
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -2462,7 +2463,7 @@ const handlePreview = async (latestFormValues: any) => {
         </>
       )}
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 
@@ -2721,12 +2722,6 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     color: 'rgba(255, 255, 255, 0.48)',
     includeFontPadding: false,
-  },
-
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
   },
 
   fullScreenContainer: {

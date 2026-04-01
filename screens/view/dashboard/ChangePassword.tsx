@@ -49,6 +49,7 @@ import { clearTwilioCache } from '../dashboard/MessageIndividualScreen';
 import DeviceInfo from 'react-native-device-info';
 import Loader from '../../utils/component/Loader';
 import { STYLES } from '../../utils/Style';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 type changePasswordProps = {
   navigation: any;
@@ -313,7 +314,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
   // }
 
   return (
-    <ImageBackground source={bgImage} style={styles.background}>
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
         {/* <View style={styles.header}>
           <View style={styles.headerRow}>
@@ -740,7 +741,7 @@ const ChangePassword = ({ navigation }: changePasswordProps) => {
           </View>
         )}
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 export default ChangePassword;
@@ -801,10 +802,6 @@ const styles = StyleSheet.create({
     zIndex: 11,
   },
 
-
-  background: {
-    flex: 1,
-  },
   fullScreenContainer: {
     flex: 1,
   },

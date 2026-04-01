@@ -45,6 +45,7 @@ import MaskedView from '@react-native-masked-view/masked-view';
 import FilterAndroid from '../../utils/component/FilterAndroid';
 import {ShortCustomToastContainer, shortshowToast } from '../../utils/component/ShortCustomToastManager';
 import { STYLES } from '../../utils/Style';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 type CreatedBy = {
   id: number;
   firstname: string;
@@ -550,7 +551,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
   const isEmpty = featurelist.length === 0;
 
   return (
-    <ImageBackground source={bgImage} style={styles.background}>
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -812,7 +813,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ navigation }) => {
       )}
       <ShortCustomToastContainer/>
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 
@@ -877,11 +878,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Urbanist-SemiBold',
     fontWeight: 600
-  },
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%'
   },
   fullScreenContainer: {
     flex: 1,

@@ -38,6 +38,7 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 
 import notifee from '@notifee/react-native';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 type NotificationProps = {
   navigation: any;
 };
@@ -366,7 +367,7 @@ const Notification = ({ navigation }: NotificationProps) => {
   };
 
   return (
-    <ImageBackground source={bgImage} style={styles.background}>
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
         {initialLoading && notificationList.length === 0 && (
           <Loader
@@ -543,7 +544,7 @@ const Notification = ({ navigation }: NotificationProps) => {
         />
       </View>
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 
@@ -606,12 +607,6 @@ const styles = StyleSheet.create({
     marginLeft: 6,
     marginBottom: 8
   },
-
-  background: {
-    flex: 1,
-    //  width: '100%',
-    //   height: '100%' 
-    },
   fullScreenContainer: {
     flex: 1,
   },

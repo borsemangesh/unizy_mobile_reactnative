@@ -42,6 +42,7 @@ import { NewCustomToastContainer, showToast } from '../../utils/component/NewCus
 import FilterAndroid from '../../utils/component/FilterAndroid';
 import { useTranslation } from 'react-i18next';
 import { STYLES } from '../../utils/Style';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 type CreatedBy = {
   id: number;
   firstname: string;
@@ -457,7 +458,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
 
 
   return (
-    <ImageBackground source={bgImage} style={styles.background}>
+    <BackgroundWrapper>
        <StatusBar
           translucent
           backgroundColor="transparent"
@@ -718,7 +719,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ navigation }) => {
         />
       )}
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 
@@ -752,11 +753,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     pointerEvents: 'none',
   },
-  background: { 
-    flex: 1, 
-    width: '100%',
-     height: '100%' 
-    },
   fullScreenContainer: { 
     flex: 1 
   },

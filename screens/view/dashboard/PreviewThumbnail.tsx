@@ -32,6 +32,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { BlurView } from '@react-native-community/blur';
 import { useTranslation } from 'react-i18next';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 type PreviewThumbnailProps = {
   navigation: any;
@@ -239,11 +240,7 @@ const PreviewThumbnail = ({ navigation }: PreviewThumbnailProps) => {
 
 if (isFeatured) {
   return (
-    <ImageBackground
-      source={require('../../../assets/images/backimg.png')}
-      style={{ width: '100%', height: '100%' }}
-      resizeMode="cover"
-    >
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -534,16 +531,12 @@ if (isFeatured) {
       </View>
 
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 }
 
 return (
-  <ImageBackground
-    source={require('../../../assets/images/backimg.png')}
-    style={{ width: '100%', height: '100%' }}
-    resizeMode="cover"
-  >
+  <BackgroundWrapper>
      <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -836,7 +829,7 @@ return (
       </View>
 
     <NewCustomToastContainer />
-  </ImageBackground>
+  </BackgroundWrapper>
 );
 
 };

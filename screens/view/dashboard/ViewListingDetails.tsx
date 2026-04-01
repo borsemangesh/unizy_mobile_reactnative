@@ -43,11 +43,11 @@ import Loader from '../../utils/component/Loader';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import { IMAGE_URLS, STYLES } from '../../utils/Style';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 type ListingDetailsProps = {
   navigation: any;
 };
-const bgImage = require('../../../assets/images/backimg.png');
 const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
   const [showPopup1, setShowPopup1] = useState(false);
   const closePopup1 = () => setShowPopup1(false);
@@ -299,7 +299,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
     return `${day}${suffix} ${monthShort} ${year}`;
   };
   return (
-    <ImageBackground source={bgImage} style={styles.background}>
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
         <StatusBar translucent
           backgroundColor="transparent"
@@ -992,7 +992,7 @@ const ViewListingDetails = ({ navigation }: ListingDetailsProps) => {
         </Modal>
       </View>
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 
@@ -1231,11 +1231,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
 
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
   fullScreenContainer: {
     flex: 1,
   },

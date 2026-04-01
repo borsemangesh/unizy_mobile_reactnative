@@ -39,6 +39,7 @@ import i18n from '../../../localization/i18n';
 import Loader from '../../utils/component/Loader';
 import dayjs from 'dayjs';
 import { STYLES } from '../../utils/Style';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 type EditPreviewDetailedProps = {
   navigation: any;
@@ -761,11 +762,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
           : `£${commissionPrice}`;
 
   return (
-    <ImageBackground
-      source={require('../../../assets/images/backimg.png')}
-      style={{ width: '100%', height: '100%' }}
-      resizeMode="cover"
-    >
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
 
 
@@ -1349,7 +1346,7 @@ const EditPreviewDetailed = ({ navigation }: EditPreviewDetailedProps) => {
         </View>
       )}
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 

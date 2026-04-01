@@ -40,6 +40,7 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import dayjs from 'dayjs';
 import { STYLES } from '../../utils/Style';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 
 type previewDetailsProps = {
@@ -663,11 +664,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
 
   return (
-    <ImageBackground
-      source={require('../../../assets/images/backimg.png')}
-      style={{ width: '100%', height: '100%' }}
-      resizeMode="cover"
-    >
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
 
         <StatusBar
@@ -1225,7 +1222,7 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
         </View>
       )}
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 

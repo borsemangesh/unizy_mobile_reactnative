@@ -37,6 +37,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import Loader from '../../utils/component/Loader';
 import i18n from '../../../localization/i18n';
 import { STYLES } from '../../utils/Style';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 type Feature = {
   avg_rating: string | null | undefined;
@@ -356,7 +357,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
   const isEmpty = featureList.length === 0;
 
   return (
-    <ImageBackground source={bgImage} style={styles.background}>
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -644,7 +645,7 @@ const MyListing = ({ navigation }: MyListingProps) => {
         </View>
       </View>
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 
@@ -734,9 +735,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 
-  background: {
-    flex: 1,
-  },
   fullScreenContainer: {
     flex: 1,
   },

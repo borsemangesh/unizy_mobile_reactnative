@@ -51,6 +51,7 @@ import {
   presentPaymentSheet,
 } from '@stripe/stripe-react-native';
 import { IMAGE_URLS, STYLES } from '../../utils/Style';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 type AccountDetailsProps = {
   navigation: any;
@@ -596,7 +597,8 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
       : [];
 
   return (
-    <ImageBackground source={IMAGE_URLS.BACK_ICON} style={styles.background}>
+
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -1283,7 +1285,8 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
       </Modal>
 
       <NewCustomToastContainer />
-    </ImageBackground>
+      
+    </BackgroundWrapper>
   );
 };
 export default AccountDetails;
@@ -1466,9 +1469,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderColor: 'transparent',
     backgroundColor: 'transparent',
-  },
-  background: {
-    flex: 1,
   },
   unizyText: {
     color: '#FFFFFF',

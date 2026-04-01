@@ -51,6 +51,7 @@ import Loader from '../../utils/component/Loader';
 import dayjs from 'dayjs';
 import React from 'react';
 import { STYLES } from '../../utils/Style';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 type SearchDetailsProps = {
   navigation: any;
@@ -600,11 +601,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
           setViewerState(prev => ({ ...prev, index: i }))
         }
       />
-      <ImageBackground
-        source={require('../../../assets/images/backimg.png')}
-        style={{ width: '100%', height: '100%' }}
-        resizeMode="cover"
-      >
+      <BackgroundWrapper>
         <View style={styles.fullScreenContainer}>
           <StatusBar
             translucent
@@ -1426,7 +1423,7 @@ const SearchDetails = ({ navigation }: SearchDetailsProps) => {
         )}
         <ShortCustomToastContainer />
         <NewCustomToastContainer />
-      </ImageBackground>
+      </BackgroundWrapper>
     </>
   );
 };

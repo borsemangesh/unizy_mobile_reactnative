@@ -11,8 +11,9 @@ import { BlurView } from '@react-native-community/blur';
 import { Constant } from '../../utils/Constant';
 import { resetTwilioClient } from '../emoji/twilioService';
 import { clearTwilioCache } from './MessageIndividualScreen';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
-const bgImage = require('../../../assets/images/backimg.png');
+
 const profileImage = require('../../../assets/images/user.jpg');
 const back = require('../../../assets/images/back.png');
 const smileyhappy = require('../../../assets/images/smileyhappy.png');
@@ -170,7 +171,7 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
   return true;
 });
   return (
-    <ImageBackground source={bgImage} style={{ flex: 1 }} resizeMode="cover">
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
         <View style={styles.header}>
           <View style={styles.headerRow}>
@@ -350,7 +351,7 @@ const UserProfileScreen = ({ navigation }: UserProfileScreenProps) => {
         </TouchableWithoutFeedback>
       </Modal>
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 
 };

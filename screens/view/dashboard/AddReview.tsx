@@ -30,6 +30,7 @@ import Loader from '../../utils/component/Loader';
 import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
 import { IMAGE_URLS } from '../../utils/Style';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 type AddReviewProps = {
   navigation: any;
@@ -113,7 +114,7 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
   };
 
   return (
-    <ImageBackground source={bgImage} style={styles.background}>
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
         {/* Header */}
         <View style={styles.header}>
@@ -289,7 +290,7 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
           </View>
         )}
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 
@@ -438,12 +439,6 @@ const styles = StyleSheet.create({
   },
   
 
- 
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
   fullScreenContainer: {
     flex: 1,
   },

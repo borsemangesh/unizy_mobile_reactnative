@@ -54,6 +54,7 @@ import dayjs from 'dayjs';
 import ImageViewing from 'react-native-image-viewing';
 import React from 'react';
 import { STYLES } from '../../utils/Style';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 type MyListingDetailsProps = {
   navigation: any;
@@ -543,11 +544,7 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
           setViewerState(prev => ({ ...prev, index: i }))
         }
       />
-      <ImageBackground
-        source={require('../../../assets/images/backimg.png')}
-        style={{ width: '100%', height: '100%' }}
-        resizeMode="cover"
-      >
+      <BackgroundWrapper>
         <View style={styles.fullScreenContainer}>
           <StatusBar
             translucent
@@ -952,7 +949,7 @@ const MyListingDetails = ({ navigation }: MyListingDetailsProps) => {
         )}
         <ShortCustomToastContainer />
         <NewCustomToastContainer />
-      </ImageBackground>
+      </BackgroundWrapper>
     </>
   );
 };

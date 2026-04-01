@@ -23,8 +23,6 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
-
-const bgImage = require('../../../assets/images/backimg.png');
 import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { NewCustomToastContainer, showToast } from '../../utils/component/NewCustomToastManager';
 import StarRating from '../../utils/StarRating';
@@ -35,6 +33,7 @@ import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
 import { useAnimatedStyle, interpolate, useSharedValue, interpolateColor } from 'react-native-reanimated';
 import Loader from '../../utils/component/Loader';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 type UserAddReviewProps = {
   navigation: any;
@@ -147,7 +146,7 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
   };
 
   return (
-    <ImageBackground source={bgImage} style={styles.background}>
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
         <View style={styles.header}>
           <View style={styles.headerRow}>
@@ -302,7 +301,7 @@ const UserAddReview: React.FC<UserAddReviewProps> = ({ navigation }) => {
         </View>
       )}
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 
@@ -454,10 +453,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     paddingLeft: 12,
 
-  },
-  
-  background: {
-    flex: 1,
   },
   fullScreenContainer: {
     flex: 1,

@@ -69,6 +69,7 @@ import i18n from '../../../localization/i18n';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { getCityFromPostalCode } from '../../utils/geocoding';
 import { IMAGE_URLS, STYLES } from '../../utils/Style';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 
 type AddScreenContentProps = {
@@ -1687,7 +1688,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
 
   return (
-    <ImageBackground source={IMAGE_URLS.BACK_ICON} style={styles.background}>
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -2404,7 +2405,7 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
       )}
 
       <NewCustomToastContainer /> 
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 
@@ -2610,11 +2611,6 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
 
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
   fullScreenContainer: {
     flex: 1,
   },

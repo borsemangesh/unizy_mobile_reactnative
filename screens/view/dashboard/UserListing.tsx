@@ -17,8 +17,6 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
-
-const bgImage = require('../../../assets/images/backimg.png');
 import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import SearchListProductCard from '../../utils/SearchListProductCard';
 import SearchTutionCard from '../../utils/SearchTutionCard';
@@ -40,6 +38,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { useTranslation } from 'react-i18next';
 import { STYLES } from '../../utils/Style';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 
 type CreatedBy = {
@@ -431,7 +430,7 @@ const UserListing = ({ navigation }: UserListingProps) => {
 
 
   return (
-    <ImageBackground source={bgImage} style={styles.background}>
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -689,7 +688,7 @@ const UserListing = ({ navigation }: UserListingProps) => {
         />
       </View>
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 
@@ -815,10 +814,6 @@ backButtonContainer: {
     fontWeight: '600',
     fontFamily: 'Urbanist-SemiBold',
     fontSize: 14
-  },
-
-  background: {
-    flex: 1,
   },
   fullScreenContainer: {
     flex: 1

@@ -40,6 +40,7 @@ import MessageHeaderButton from '../../utils/component/MessageHeaderButton';
 import { NewCustomToastContainer,showToast } from '../../utils/component/NewCustomToastManager';
 import { updateBadgeFromFCM } from '../../utils/badgeHelper';
 import { getBadgeCount } from '../../utils/BadgeManager';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 const bgImage = require('../../../assets/images/backimg.png');
 const back = require('../../../assets/images/back.png');
@@ -1564,7 +1565,7 @@ const MessagesIndividualScreen = ({
     [checkUser, currentUserId, lastMessageIndex, otherLastReadIndex],
   );
   return (
-    <ImageBackground source={bgImage} style={{ flex: 1 }} resizeMode="cover">
+    <BackgroundWrapper>
       <View style={{ flex: 1 }}>
         {initialLoading && (
           <Loader
@@ -2138,7 +2139,7 @@ const MessagesIndividualScreen = ({
         </KeyboardAvoidingView>
       </View>
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 

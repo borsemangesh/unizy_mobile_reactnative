@@ -26,6 +26,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { BlurView } from '@react-native-community/blur';
 import { useTranslation } from 'react-i18next';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 type SellerInfoProps = {
   navigation: any;
@@ -145,8 +146,6 @@ const SellerInfo = ({ navigation }: SellerInfoProps) => {
 
 
   const { t } = useTranslation();
-
-  const bgicon = require('../../../assets/images/backimg.png')
   const data = [
     {
       id: '1',
@@ -197,11 +196,7 @@ const SellerInfo = ({ navigation }: SellerInfoProps) => {
   );
 
   return (
-    <ImageBackground
-      source={bgicon}
-      style={{ width: '100%', height: '100%' }}
-      resizeMode="cover"
-    >
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -317,7 +312,7 @@ const SellerInfo = ({ navigation }: SellerInfoProps) => {
         </View>
       </View>
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 

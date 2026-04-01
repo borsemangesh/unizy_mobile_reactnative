@@ -17,7 +17,6 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
-const bgImage = require('../../../assets/images/backimg.png');
 import { NewCustomToastContainer } from '../../utils/component/NewCustomToastManager';
 import MyReviewCard from '../../utils/MyReviewCard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -39,6 +38,7 @@ import Loader from '../../utils/component/Loader';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import { STYLES } from '../../utils/Style';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 type CreatedBy = {
   id: number;
@@ -394,7 +394,7 @@ const UserReviews = ({ navigation }: UserReviewsProps) => {
 
 
   return (
-    <ImageBackground source={bgImage} style={styles.background}>
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
         {initialLoading && featureList.length === 0 && (
           <Loader
@@ -684,7 +684,7 @@ const UserReviews = ({ navigation }: UserReviewsProps) => {
 
       </View>
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 
 };
@@ -799,11 +799,6 @@ const styles = StyleSheet.create({
     fontSize: 14
   },
 
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%'
-  },
   fullScreenContainer: {
     flex: 1,
     //marginTop: 10

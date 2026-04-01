@@ -30,7 +30,7 @@ import AnimatedReanimated, {
 } from 'react-native-reanimated';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { useTranslation } from "react-i18next";
-const bgImage = require('../../../assets/images/backimg.png');
+
 import ProductCard from '../../utils/ProductCard';
 import messaging from "@react-native-firebase/messaging";
 
@@ -53,6 +53,7 @@ import DeviceInfo from 'react-native-device-info';
 import Loader from '../../utils/component/Loader';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IMAGE_URLS } from '../../utils/Style';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 
 type Product = {
@@ -1101,7 +1102,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
   const { t } = useTranslation();
 
   return (
-    <ImageBackground source={bgImage} style={styles.background}>
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
         {activeTab === 'Home' && (
           <View
@@ -1408,7 +1409,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
       </View>
        <ShortCustomToastContainer />
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 //
@@ -1555,12 +1556,6 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',
     borderRightColor: '#ffffff2e',
-  },
-
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
   },
 
   fullScreenContainer: {

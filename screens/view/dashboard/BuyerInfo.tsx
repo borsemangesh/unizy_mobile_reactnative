@@ -26,6 +26,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { BlurView } from '@react-native-community/blur';
 import { useTranslation } from 'react-i18next';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 type BuyerInfoProps = {
   navigation: any;
@@ -194,11 +195,7 @@ const BuyerInfo = ({ navigation }: BuyerInfoProps) => {
     </View>
   );
   return (
-    <ImageBackground
-      source={require('../../../assets/images/backimg.png')}
-      style={{ width: '100%', height: '100%' }}
-      resizeMode="cover"
-    >
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -327,7 +324,7 @@ const BuyerInfo = ({ navigation }: BuyerInfoProps) => {
         </View>
       </View>
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 

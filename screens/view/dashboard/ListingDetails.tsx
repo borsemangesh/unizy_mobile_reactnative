@@ -43,6 +43,7 @@ import ButtonNew from '../../utils/component/ButtonNew';
 import Loader from '../../utils/component/Loader';
 import i18n from '../../../localization/i18n';
 import { IMAGE_URLS, STYLES } from '../../utils/Style';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 type ListingDetailsProps = {
   navigation: any;
@@ -309,7 +310,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
     return `${day}${suffix} ${monthShort} ${year}`;
   };
   return (
-    <ImageBackground source={bgImage} style={styles.background}>
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -1241,7 +1242,7 @@ const ListingDetails = ({ navigation }: ListingDetailsProps) => {
         </Modal>
       </View>
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 
@@ -1505,11 +1506,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
 
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
   fullScreenContainer: {
     flex: 1,
   },

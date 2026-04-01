@@ -35,6 +35,7 @@ import MaskedView from '@react-native-masked-view/masked-view';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
+import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 
 type CreatedBy = {
   id: number;
@@ -296,7 +297,7 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
 };
 
   return (
-    <ImageBackground source={bgImage} style={styles.background}>
+    <BackgroundWrapper>
       <View style={styles.fullScreenContainer}>
         <StatusBar
           translucent
@@ -530,7 +531,7 @@ const renderItem = ({ item, index }: { item: ReviewItem; index: number }) => {
 
       </View>
       <NewCustomToastContainer />
-    </ImageBackground>
+    </BackgroundWrapper>
   );
 };
 
