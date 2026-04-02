@@ -598,7 +598,7 @@ const toggleDropdownOption = (
               return (
                 <View style={{ paddingTop: 10 }}>
                   <Text style={{ color: 'white', marginBottom: 10 }}>
-                    Enter Postcode
+                    {t('enter_postal_code')}
                   </Text>
         
                   <TextInput
@@ -608,7 +608,7 @@ const toggleDropdownOption = (
                       { width: '100%' },
                     ]}
                     keyboardType="default"
-                    placeholder="Enter Postcode"
+                    placeholder={t('enter_postal_code')}
                     placeholderTextColor="#aaa"
                     selectionColor={'#FFFFFF'}
                      cursorColor={'#FFFFFF'}

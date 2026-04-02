@@ -2662,7 +2662,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
                                   Styles.personalEmailID_TextInput,
                                   { paddingTop: 10 },
                                 ]}
-                                placeholder="Postal Code*"
+                                placeholder={t('postal_code')}
                                 cursorColor={'#F5F5F5'}
                                 placeholderTextColor="rgba(255, 255, 255, 0.48)"
                                 value={postalCode}

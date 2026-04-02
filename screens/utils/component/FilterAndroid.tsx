@@ -580,7 +580,7 @@ const [dateSelections, setDateSelections] = useState<
       return (
         <View style={{ paddingTop: 10 }}>
           <Text style={{ color: 'white', marginBottom: 10 }}>
-            Enter Postcode
+            {t('enter_postal_code')}
           </Text>
 
           <TextInput
@@ -590,7 +590,7 @@ const [dateSelections, setDateSelections] = useState<
               { width: '100%' },
             ]}
             keyboardType="default"
-            placeholder="Enter Postcode"
+            placeholder={t('enter_postal_code')}
             placeholderTextColor="#aaa"
             value={postcode}
             onChangeText={text => {

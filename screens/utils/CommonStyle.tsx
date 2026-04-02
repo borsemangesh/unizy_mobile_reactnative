@@ -3,11 +3,17 @@ import { Platform, StyleSheet } from "react-native";
 
 
 const COMMONSTYLE = StyleSheet.create({
-  MEDIUM: {
+  FONTFAMILY_MEDIUM: {
     fontFamily: 'Urbanist-Medium',
   },
-  SEMIBOLD: {
+  FONTFAMILY_SEMIBOLD: {
     fontFamily: 'Urbanist-SemiBold',
+  },
+  FONTFAMILY_REGULAR: {
+    fontFamily: 'Urbanist-Regular',
+  },
+  FONTWEIGHT_400: {
+    fontWeight: '400'
   },
 
   headerContent: {
