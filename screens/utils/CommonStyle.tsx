@@ -15,6 +15,39 @@ const COMMONSTYLE = StyleSheet.create({
   FONTWEIGHT_400: {
     fontWeight: '400'
   },
+  FONTWEIGHT_500: {
+     fontWeight: 500,
+  },
+  COLOR_FFF: {
+    color: '#fff'
+  },
+
+   FONT_12: {
+    fontSize: 12,
+  },
+  FONT_14: {
+    fontSize: 14,
+  },
+  FONT_16: {
+    fontSize: 16,
+  },
+  FONT_17: {
+    fontSize: 17,
+  },
+  FONT_18: {
+    fontSize: 18,
+  },
+  FONT_20: {
+    fontSize: 20,
+  },
+  FONT_24: {
+    fontSize: 24,
+  },
+
+
+  // AddScreen
+
+  
 
   headerContent: {
     position: 'absolute',

@@ -1330,7 +1330,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 setMultiSelectOptions(options);
               }}
             >
-
               <View style={styles.dropdowncard}>
                 {(() => {
                   const selectedValue = formValues[id]?.value;
@@ -1338,8 +1337,8 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                   const selectedCount = Array.isArray(selectedValue)
                     ? selectedValue.length
                     : selectedValue != null
-                      ? 1
-                      : 0;
+                    ? 1
+                    : 0;
 
                   return (
                     <Text
@@ -1347,7 +1346,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                       allowFontScaling={false}
                       style={styles.dropdowntext}
                     >
-
                       {selectedCount > 0
                         ? `${selectedCount} ${t('selected')}`
                         : `${placeholder}`}
@@ -1376,7 +1374,6 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                 .map((opt: any) => (
                   <View key={opt.id} style={styles.categoryTagWrapper}>
                     <TouchableOpacity
-
                       onPress={() => {
                         setFormValues((prev: any) => {
                           const currentValue = prev[id]?.value;
@@ -1405,9 +1402,11 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                         });
                       }}
                     >
-
                       <View style={styles.categoryTagContainer}>
-                        <Text allowFontScaling={false} style={styles.categoryTagText}>
+                        <Text
+                          allowFontScaling={false}
+                          style={styles.categoryTagText}
+                        >
                           {opt.option_name}
                           {opt.is_other && formValues[id]?.otherText
                             ? `: ${formValues[id].otherText}`
@@ -2455,8 +2454,8 @@ const styles = StyleSheet.create({
   popupSubHeader: {
     color: 'rgba(255, 255, 255, 0.80)',
     fontFamily: 'Urbanist-Regular',
-    fontSize: 14,
-    fontWeight: '400',
+    ...COMMONSTYLE.FONT_14,
+    ...COMMONSTYLE.FONTWEIGHT_400,
     textAlign: 'center',
     marginTop: 6,
   },
@@ -2481,12 +2480,13 @@ const styles = StyleSheet.create({
   },
 
   categoryTagText: {
-    color: '#fff',
-    fontSize: 14,
-    fontFamily: 'Urbanist-Medium',
-    fontWeight: 500,
-    flexShrink: 1, // 🔥 allows text to shrink
+   
+    flexShrink: 1,
     maxWidth: '90%',
+    ...COMMONSTYLE.FONT_14,
+    ...COMMONSTYLE.FONTWEIGHT_500,
+    ...COMMONSTYLE.FONTFAMILY_MEDIUM,
+    ...COMMONSTYLE.COLOR_FFF,
   },
   crossIcon: {
     width: 16,
@@ -2603,9 +2603,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   dropdowntext: {
-    fontFamily: 'Urbanist-Regular',
-    fontWeight: '400',
-    fontSize: 17,
+    ...COMMONSTYLE.FONTFAMILY_REGULAR,
+    ...COMMONSTYLE.FONTWEIGHT_400,
+    ...COMMONSTYLE.FONT_17,
     fontStyle: 'normal',
     color: 'rgba(255, 255, 255, 0.48)',
     includeFontPadding: false,
@@ -2616,12 +2616,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   unizyText: {
+    ...COMMONSTYLE.FONT_20,
     color: '#FFFFFF',
-    fontSize: 20,
     // flex: 1,
     textAlign: 'center',
     fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
+    ...COMMONSTYLE.FONTFAMILY_SEMIBOLD,
     width: '70%',
     alignSelf: 'center',
   },
@@ -2658,7 +2658,7 @@ const styles = StyleSheet.create({
   userName: {
     position: 'relative',
     color: 'rgba(255, 255, 255, 0.88)',
-    fontFamily: 'Urbanist-SemiBold',
+    ...COMMONSTYLE.FONTFAMILY_SEMIBOLD,
     fontSize: 16,
     fontWeight: '600',
     lineHeight: 22,
@@ -2666,9 +2666,9 @@ const styles = StyleSheet.create({
   },
   userSub: {
     color: 'rgba(255, 255, 255, 0.88)',
-    fontFamily: 'Urbanist-Medium',
+    ...COMMONSTYLE.FONTFAMILY_MEDIUM,
+    ...COMMONSTYLE.FONTWEIGHT_500,
     fontSize: 12,
-    fontWeight: '500',
     lineHeight: 14,
     marginTop: 4,
   },
@@ -2682,7 +2682,7 @@ const styles = StyleSheet.create({
   },
 
   dateText: {
-    fontSize: 14,
+    ...COMMONSTYLE.FONT_14,
     fontWeight: '500',
     lineHeight: 16,
     marginTop: 1,
@@ -2734,7 +2734,7 @@ const styles = StyleSheet.create({
   },
   uploadText: {
     color: '#ACE3FF',
-    fontSize: 14,
+    ...COMMONSTYLE.FONT_14,
     mixBlendMode: 'normal',
     fontFamily: 'Urbanist-Medium',
     fontWeight: 500,
@@ -2756,19 +2756,19 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   textstyle: {
+    ...COMMONSTYLE.FONTFAMILY_REGULAR,
+    ...COMMONSTYLE.FONTWEIGHT_400,
+    ...COMMONSTYLE.FONT_14,
     color: 'rgba(255, 255, 255, 0.80)',
-    fontFamily: 'Urbanist-Regular',
-    fontWeight: 400,
     lineHeight: 16,
-    fontSize: 14,
     paddingLeft: 4,
   },
   textstyle1: {
+    ...COMMONSTYLE.FONTFAMILY_MEDIUM,
+    ...COMMONSTYLE.FONTWEIGHT_500,
+    ...COMMONSTYLE.FONT_17,
     color: 'rgba(255, 255, 255, 0.80)',
-    fontFamily: 'Urbanist-Medium',
-    fontWeight: 500,
     lineHeight: 22,
-    fontSize: 17,
     paddingLeft: 4,
   },
   productTextView: {
@@ -2811,17 +2811,17 @@ const styles = StyleSheet.create({
     borderRightColor: '#ffffff31',
   },
   importantText: {
+    ...COMMONSTYLE.FONTFAMILY_REGULAR,
+    ...COMMONSTYLE.FONTWEIGHT_400,
+    ...COMMONSTYLE.FONT_12,
     color: '#FFFFFFCC',
-    fontSize: 12,
     marginBottom: 6,
-    fontFamily: 'Urbanist-Regular',
-    fontWeight: 400,
   },
   importantText1: {
+    ...COMMONSTYLE.FONTFAMILY_MEDIUM,
+    ...COMMONSTYLE.FONT_12,
+    ...COMMONSTYLE.FONTWEIGHT_500,
     color: '#FFFFFF',
-    fontSize: 12,
-    fontFamily: 'Urbanist-Medium',
-    fontWeight: 500,
   },
   
   login_container: {
@@ -2843,9 +2843,9 @@ const styles = StyleSheet.create({
   },
   personalEmailID_TextInput: {
     width: '100%',
-    fontFamily: 'Urbanist-Regular',
-    fontWeight: '400',
-    fontSize: 17,
+    ...COMMONSTYLE.FONTFAMILY_REGULAR,
+    ...COMMONSTYLE.FONTWEIGHT_400,
+    ...COMMONSTYLE.FONT_17,
     lineHeight: 22,
     fontStyle: 'normal',
     color: '#fff',
