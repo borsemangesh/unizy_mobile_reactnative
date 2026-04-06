@@ -32,14 +32,13 @@ interface FilterAndroidProps {
   from: number;
   to: number;
   initialFilters?: any;
-
 }
 const FilterAndroid = ({
   catagory_id,
   visible,
   onClose,
   onApply,
-  initialFilters
+  initialFilters,
 }: FilterAndroidProps) => {
   const [filters, setFilters] = useState<any[]>([]);
   const [selectedTab, setSelectedTab] = useState<string | null>(null);
@@ -50,22 +49,27 @@ const FilterAndroid = ({
   type PriceRange = { min: number; max: number } | null;
 
   const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
-  const [defaultPriceRange, setDefaultPriceRange] = useState({ min: 0, max: 10000 });
+  const [defaultPriceRange, setDefaultPriceRange] = useState({
+    min: 0,
+    max: 10000,
+  });
   const [sliderLow, setSliderLow] = useState(priceRange.min);
   const [sliderHigh, setSliderHigh] = useState(priceRange.max);
   const [lastAppliedPriceRange, setLastAppliedPriceRange] =
-        useState<PriceRange>(null);
-    
-    const [postcode, setPostcode] = useState<string>('');
-     const [lastAppliedPostcode, setLastAppliedPostcode] = useState<string | null>(null);
+    useState<PriceRange>(null);
+
+  const [postcode, setPostcode] = useState<string>('');
+  const [lastAppliedPostcode, setLastAppliedPostcode] = useState<string | null>(
+    null,
+  );
   const SCREEN_WIDTH = Dimensions.get('window').width;
   const [otherInputs, setOtherInputs] = useState<Record<number, string>>({});
-
 
   const fetchFilters = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+      const language_code =
+        (await AsyncStorage.getItem('selectedLanguage')) || 'en';
       if (!token) return;
 
       const body = { category_id: catagory_id };
@@ -79,8 +83,7 @@ const FilterAndroid = ({
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
-          languagecode: language_code
-
+          languagecode: language_code,
         },
         body: JSON.stringify(body),
       });
@@ -91,9 +94,9 @@ const FilterAndroid = ({
         const dynamicFilters = data.data.filter(
           (item: any) =>
             item.field_type?.toLowerCase() === 'dropdown' ||
-                item.alias_name?.toLowerCase() === 'price' ||
-                item.field_type?.toLowerCase() === 'date' ||
-                item.field_type?.toLowerCase() === 'text',
+            item.alias_name?.toLowerCase() === 'price' ||
+            item.field_type?.toLowerCase() === 'date' ||
+            item.field_type?.toLowerCase() === 'text',
         );
         setFilters(dynamicFilters);
         const priceFilter = dynamicFilters.find(
@@ -133,7 +136,10 @@ const FilterAndroid = ({
         if (f.field_type === 'dropdown') {
           savedDropdowns[f.id] = f.options;
         }
-        if (f.alias_name?.toLowerCase() === 'price' && Array.isArray(f.options)) {
+        if (
+          f.alias_name?.toLowerCase() === 'price' &&
+          Array.isArray(f.options)
+        ) {
           const [minVal, maxVal] = f.options;
           setPriceRange({ min: minVal, max: maxVal });
           setSliderLow(minVal);
@@ -149,7 +155,7 @@ const FilterAndroid = ({
   const { t } = useTranslation();
   const modelClose = () => {
     onClose();
-  }
+  };
 
   const handleTabPress = (tabName: string) => {
     setSelectedTab(tabName);
@@ -177,77 +183,76 @@ const FilterAndroid = ({
   //   });
   // };
 
+  const toggleDropdownOption = (
+    fieldId: number,
+    optionId: number,
+    isMultiple: boolean,
+  ) => {
+    setDropdownSelections(prev => {
+      const current = prev[fieldId] || [];
 
-const toggleDropdownOption = (
-  fieldId: number,
-  optionId: number,
-  isMultiple: boolean,
-) => {
-  setDropdownSelections(prev => {
-    const current = prev[fieldId] || [];
+      // 🔍 Find current filter + option
+      const filter = filters.find(f => f.id === fieldId);
+      const option = filter?.options?.find((o: any) => o.id === optionId);
 
-    // 🔍 Find current filter + option
-    const filter = filters.find(f => f.id === fieldId);
-    const option = filter?.options?.find((o: any) => o.id === optionId);
+      const isOtherOption =
+        option?.option_name?.toLowerCase() === 'other' ||
+        option?.name?.toLowerCase() === 'other';
 
-    const isOtherOption =
-      option?.option_name?.toLowerCase() === 'other' ||
-      option?.name?.toLowerCase() === 'other';
+      let updated: number[] = [];
 
-    let updated: number[] = [];
+      if (isMultiple) {
+        if (current.includes(optionId)) {
+          // ❌ UNSELECT
+          updated = current.filter(id => id !== optionId);
 
-    if (isMultiple) {
-      if (current.includes(optionId)) {
-        // ❌ UNSELECT
-        updated = current.filter(id => id !== optionId);
+          // ✅ If "Other" unchecked → remove input
+          if (isOtherOption) {
+            setOtherInputs(prevInputs => {
+              const copy = { ...prevInputs };
+              delete copy[fieldId];
+              return copy;
+            });
+          }
+        } else {
+          // ✅ SELECT
+          updated = [...current, optionId];
+        }
+      } else {
+        // 🔘 SINGLE SELECT (radio)
 
-        // ✅ If "Other" unchecked → remove input
-        if (isOtherOption) {
+        // ✅ If switching FROM "Other" → clear old input
+        const previousSelectedId = current[0];
+        const previousOption = filter?.options?.find(
+          (o: any) => o.id === previousSelectedId,
+        );
+
+        const wasOther =
+          previousOption?.option_name?.toLowerCase() === 'other' ||
+          previousOption?.name?.toLowerCase() === 'other';
+
+        if (wasOther) {
           setOtherInputs(prevInputs => {
             const copy = { ...prevInputs };
             delete copy[fieldId];
             return copy;
           });
         }
-      } else {
-        // ✅ SELECT
-        updated = [...current, optionId];
-      }
-    } else {
-      // 🔘 SINGLE SELECT (radio)
 
-      // ✅ If switching FROM "Other" → clear old input
-      const previousSelectedId = current[0];
-      const previousOption = filter?.options?.find(
-        (o: any) => o.id === previousSelectedId
-      );
-
-      const wasOther =
-        previousOption?.option_name?.toLowerCase() === 'other' ||
-        previousOption?.name?.toLowerCase() === 'other';
-
-      if (wasOther) {
-        setOtherInputs(prevInputs => {
-          const copy = { ...prevInputs };
-          delete copy[fieldId];
-          return copy;
-        });
+        updated = [optionId];
       }
 
-      updated = [optionId];
-    }
-
-    return { ...prev, [fieldId]: updated };
-  });
-};
+      return { ...prev, [fieldId]: updated };
+    });
+  };
   const handleClearFilters = () => {
     setDropdownSelections({});
     setPriceRange(defaultPriceRange);
     setSliderLow(defaultPriceRange.min);
-      setSliderHigh(defaultPriceRange.max);
-      setDateSelections({});
+    setSliderHigh(defaultPriceRange.max);
+    setDateSelections({});
     setPostcode('');
-    setOtherInputs({}); 
+    setOtherInputs({});
   };
 
   const handleClose = () => {
@@ -255,11 +260,14 @@ const toggleDropdownOption = (
       const savedDropdowns: Record<number, number[]> = {};
 
       initialFilters.filters.forEach((f: any) => {
-        if (f.field_type === "dropdown" && Array.isArray(f.options)) {
+        if (f.field_type === 'dropdown' && Array.isArray(f.options)) {
           savedDropdowns[f.id] = f.options;
         }
 
-        if (f.alias_name?.toLowerCase() === "price" && Array.isArray(f.options)) {
+        if (
+          f.alias_name?.toLowerCase() === 'price' &&
+          Array.isArray(f.options)
+        ) {
           const [min, max] = f.options;
           setPriceRange({ min, max });
           setSliderLow(min);
@@ -272,29 +280,26 @@ const toggleDropdownOption = (
       setDropdownSelections({});
       setPriceRange(defaultPriceRange);
       setSliderLow(defaultPriceRange.min);
-        setSliderHigh(defaultPriceRange.max);
-        setPostcode('');
+      setSliderHigh(defaultPriceRange.max);
+      setPostcode('');
     }
 
     onClose();
   };
 
-    
-const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
-const [activeDateField, setActiveDateField] = useState<{
-  param: any;
-  type: 'start' | 'end';
-} | null>(null);
+  const [activeDateField, setActiveDateField] = useState<{
+    param: any;
+    type: 'start' | 'end';
+  } | null>(null);
 
-    const [tempDate, setTempDate] = useState(new Date());
-    
-    
+  const [tempDate, setTempDate] = useState(new Date());
 
-const [dateSelections, setDateSelections] = useState<
-  Record<number, { startDate?: Date; endDate?: Date }>
->({});
-    
+  const [dateSelections, setDateSelections] = useState<
+    Record<number, { startDate?: Date; endDate?: Date }>
+  >({});
+
   const renderRightContent = () => {
     const currentFilter = filters.find(f => f.field_name === selectedTab);
     if (!currentFilter) return null;
@@ -575,8 +580,9 @@ const [dateSelections, setDateSelections] = useState<
       );
     } else if (
       currentFilter.field_type?.toLowerCase() === 'text' &&
-      currentFilter.field_name?.toLowerCase().includes('postcode')
+      currentFilter.alias_name?.toLowerCase().includes('postcode')
     ) {
+      console.log('currentFilter', currentFilter);
       return (
         <View style={{ paddingTop: 10 }}>
           <Text style={{ color: 'white', marginBottom: 10 }}>
@@ -607,34 +613,33 @@ const [dateSelections, setDateSelections] = useState<
 
     return null;
   };
-    
-const formatDate = (date: Date) => {
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = String(date.getFullYear()).slice(-2); // last 2 digits
 
-  return `${day}-${month}-${year}`;
-};
-    
-    const uniqueFilters = Array.from(
-  new Map(filters.map(f => [f.id, f])).values()
-);
+  const formatDate = (date: Date) => {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = String(date.getFullYear()).slice(-2); // last 2 digits
+
+    return `${day}-${month}-${year}`;
+  };
+
+  const uniqueFilters = Array.from(
+    new Map(filters.map(f => [f.id, f])).values(),
+  );
 
   const handleApply = () => {
     const selectedFilters = uniqueFilters
       .map(f => {
         if (f.field_type === 'dropdown' && dropdownSelections[f.id]?.length) {
-const selectedIds = dropdownSelections[f.id];
-            const selectedOptions = f.options.filter((opt: any) =>
-    selectedIds.includes(opt.id)
-  );
+          const selectedIds = dropdownSelections[f.id];
+          const selectedOptions = f.options.filter((opt: any) =>
+            selectedIds.includes(opt.id),
+          );
 
-  const hasOther = selectedOptions.find(
-    (opt: any) =>
-      opt.option_name?.toLowerCase() === 'other' ||
-      opt.name?.toLowerCase() === 'other'
-  );
-
+          const hasOther = selectedOptions.find(
+            (opt: any) =>
+              opt.option_name?.toLowerCase() === 'other' ||
+              opt.name?.toLowerCase() === 'other',
+          );
 
           // return {
           //   id: f.id,
@@ -643,16 +648,16 @@ const selectedIds = dropdownSelections[f.id];
           //   alias_name: f.alias_name,
           //   options: dropdownSelections[f.id],
           // };
-           return {
-    id: f.id,
-    field_name: f.field_name,
-    field_type: f.field_type,
-    alias_name: f.alias_name,
-    options: selectedIds,
-    ...(hasOther && {
-      other_value: otherInputs[f.id] || '',
-    }),
-  };
+          return {
+            id: f.id,
+            field_name: f.field_name,
+            field_type: f.field_type,
+            alias_name: f.alias_name,
+            options: selectedIds,
+            ...(hasOther && {
+              other_value: otherInputs[f.id] || '',
+            }),
+          };
         } else if (f.alias_name?.toLowerCase() === 'price') {
           return {
             id: f.id,
@@ -703,10 +708,7 @@ const selectedIds = dropdownSelections[f.id];
     };
 
     onApply(filterBody);
-
-    // ✅ Save current applied range for next reopen
     setLastAppliedPriceRange(priceRange);
-
     onClose();
   };
 
@@ -729,18 +731,19 @@ const selectedIds = dropdownSelections[f.id];
         transparent
         onRequestClose={modelClose}
       >
-        <View style={{
-          flex: 1, justifyContent: 'flex-end', backgroundColor: 'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(34, 30, 252, 0.08) 0%, rgba(255, 255, 255, 0.10) 100%)'
-        }}>
-
-
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'flex-end',
+            backgroundColor:
+              'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(34, 30, 252, 0.08) 0%, rgba(255, 255, 255, 0.10) 100%)',
+          }}
+        >
           <View style={styles.overlay}>
             <TouchableWithoutFeedback onPress={modelClose}>
               <View style={StyleSheet.absoluteFillObject} />
             </TouchableWithoutFeedback>
             <View style={[styles.modelcontainer]}>
-
-
               <BlurView
                 style={[
                   {
@@ -748,21 +751,17 @@ const selectedIds = dropdownSelections[f.id];
                     top: 0,
                     left: 0,
                     right: 0,
-                    bottom: 0, borderRadius: 30,
+                    bottom: 0,
+                    borderRadius: 30,
                   },
-
                 ]}
                 blurType="dark"
                 blurAmount={100}
-                //blurAmount={Platform.OS === 'ios' ? 100 : 100}
-                pointerEvents='none'
+                pointerEvents="none"
                 reducedTransparencyFallbackColor="white"
               />
 
-
-
               <View style={styles.modeltitleContainer1}>
-
                 <View
                   style={{
                     width: 50,
@@ -770,21 +769,25 @@ const selectedIds = dropdownSelections[f.id];
                     backgroundColor: '#000228',
                     borderRadius: 2,
                     alignSelf: 'center',
-                    marginTop: 8
+                    marginTop: 8,
                   }}
                 />
 
-                <View style={{
+                <View
+                  style={{
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                  paddingTop: 16
-                }}>
-                  <Text allowFontScaling={false} style={styles.modelTextHeader}>{t('filters')}</Text>
-                  <TouchableOpacity
-                    onPress={handleClearFilters}
-                  >
-                    <Text allowFontScaling={false} style={styles.clearAll}>{t('clear_all')}</Text>
+                    paddingTop: 16,
+                  }}
+                >
+                  <Text allowFontScaling={false} style={styles.modelTextHeader}>
+                    {t('filters')}
+                  </Text>
+                  <TouchableOpacity onPress={handleClearFilters}>
+                    <Text allowFontScaling={false} style={styles.clearAll}>
+                      {t('clear_all')}
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -810,7 +813,13 @@ const selectedIds = dropdownSelections[f.id];
                             : styles.inactiveTab
                         }
                       >
-                        <View style={{ alignItems: 'center', width: '100%', gap: 4 }}>
+                        <View
+                          style={{
+                            alignItems: 'center',
+                            width: '100%',
+                            gap: 4,
+                          }}
+                        >
                           {f.logo ? (
                             <Image
                               source={{ uri: f.logo }}
@@ -866,44 +875,44 @@ const selectedIds = dropdownSelections[f.id];
                 </TouchableOpacity>
               </View>
             </View>
-                  </View>
-                  
-                  {showDatePicker && activeDateField && (
-  <DateTimePicker
-  value={tempDate}
-  mode="date"
-  display={Platform.OS === 'ios' ? 'inline' : 'calendar'} // ✅ FIX
-  themeVariant="light"
-  minimumDate={
-    activeDateField.type === 'end'
-      ? dateSelections[activeDateField.param.id]?.startDate ?? new Date()
-      : new Date()
-  }
-  onChange={(event, selectedDate) => {
-    if (event.type === 'set' && selectedDate) {
-      const fieldId = activeDateField.param.id;
+          </View>
 
-      setDateSelections(prev => {
-        const existing = prev[fieldId] || {};
+          {showDatePicker && activeDateField && (
+            <DateTimePicker
+              value={tempDate}
+              mode="date"
+              display={Platform.OS === 'ios' ? 'inline' : 'calendar'}
+              themeVariant="light"
+              minimumDate={
+                activeDateField.type === 'end'
+                  ? dateSelections[activeDateField.param.id]?.startDate ??
+                    new Date()
+                  : new Date()
+              }
+              onChange={(event, selectedDate) => {
+                if (event.type === 'set' && selectedDate) {
+                  const fieldId = activeDateField.param.id;
 
-        return {
-          ...prev,
-          [fieldId]: {
-            ...existing,
-            [activeDateField.type === 'start' ? 'startDate' : 'endDate']:
-              selectedDate,
-          },
-        };
-      });
-    }
+                  setDateSelections(prev => {
+                    const existing = prev[fieldId] || {};
 
-    setShowDatePicker(false);
-  }}
-/>
-)}
+                    return {
+                      ...prev,
+                      [fieldId]: {
+                        ...existing,
+                        [activeDateField.type === 'start'
+                          ? 'startDate'
+                          : 'endDate']: selectedDate,
+                      },
+                    };
+                  });
+                }
+                setShowDatePicker(false);
+              }}
+            />
+          )}
         </View>
       </Modal>
-      
     </View>
   );
 };
@@ -924,7 +933,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
     boxShadow: '0 1.761px 6.897px 0 rgba(0, 0, 0, 0.25)',
     paddingLeft: 12,
   },
@@ -942,7 +950,7 @@ const styles = StyleSheet.create({
   filtertitle: {
     textAlign: 'center',
     flexWrap: 'wrap',
-    width: '100%', // ensures wrapping within tab width
+    width: '100%',
     lineHeight: 18,
   },
   activeTabText: {
@@ -965,7 +973,7 @@ const styles = StyleSheet.create({
   },
   filterLogo: {
     width: 20,
-    height: 20, 
+    height: 20,
     marginTop: 4,
   },
 
@@ -1000,7 +1008,7 @@ const styles = StyleSheet.create({
     paddingBottom: 60,
     backgroundColor: 'rgba(0, 0, 0, 0.001)',
   },
- 
+
   cancelBtn: {
     minHeight: 48,
     flex: 1,
@@ -1008,7 +1016,6 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 40,
-    //backgroundColor: 'rgba(138, 135, 135, 0.63)',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(197, 196, 196, 0.49) 0%, rgba(255, 255, 255, 0.32) 100%)',
     alignItems: 'center',
@@ -1072,7 +1079,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.34,
     lineHeight: 19.6,
   },
- 
+
   cancelText: {
     color: 'rgba(255, 255, 255, 0.48)',
     fontFamily: 'Urbanist-Medium',
@@ -1096,7 +1103,6 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     paddingVertical: 10,
     paddingHorizontal: 12,
-    //marginBottom: 5,
     minHeight: 100,
     flexShrink: 1,
     width: '100%',
@@ -1116,7 +1122,6 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff0e',
     paddingVertical: 10,
     paddingHorizontal: 12,
-    //marginBottom: 5,
     boxShadow: 'rgba(255, 255, 255, 0.16) inset -1px 0px 4px 2px',
     minHeight: 100,
     flexShrink: 1,

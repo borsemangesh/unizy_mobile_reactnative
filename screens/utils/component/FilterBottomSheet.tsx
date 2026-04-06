@@ -593,7 +593,7 @@ const toggleDropdownOption = (
           );
         } else if (
               currentFilter.field_type?.toLowerCase() === 'text' &&
-              currentFilter.field_name?.toLowerCase().includes('postcode')
+              currentFilter.alias_name?.toLowerCase().includes('postcode')
             ) {
               return (
                 <View style={{ paddingTop: 10 }}>
@@ -641,48 +641,6 @@ const toggleDropdownOption = (
 );
 
   const handleApply = () => {
-    // const selectedFilters = filters
-    //   .map(f => {
-    //     if (f.field_type === 'dropdown' && dropdownSelections[f.id]?.length) {
-    //       return {
-    //         id: f.id,
-    //         field_name: f.field_name,
-    //         field_type: f.field_type,
-    //         alias_name: f.alias_name,
-    //         options: dropdownSelections[f.id],
-    //       };
-    //     }
-    //     else if (f.alias_name?.toLowerCase() === 'price') {
-    //       const defaultMin = f.minvalue ?? 0;
-    //       const defaultMax = f.maxvalue ?? 10000;
-
-    //       const prevMin = lastAppliedPriceRange?.min ?? defaultMin;
-    //       const prevMax = lastAppliedPriceRange?.max ?? defaultMax;
-
-    //       if (priceRange.min !== prevMin || priceRange.max !== prevMax) {
-    //         return {
-    //           id: f.id,
-    //           field_name: f.field_name,
-    //           field_type: f.field_type,
-    //           alias_name: f.alias_name,
-    //           options: [priceRange.min, priceRange.max],
-    //         };
-    //       }
-    //       if (lastAppliedPriceRange) {
-    //         return {
-    //           id: f.id,
-    //           field_name: f.field_name,
-    //           field_type: f.field_type,
-    //           alias_name: f.alias_name,
-    //           options: [lastAppliedPriceRange.min, lastAppliedPriceRange.max],
-    //         };
-    //       }
-
-    //       return null;
-    //     }
-    //     return null;
-    //   })
-      //   .filter(Boolean);
       
       const selectedFilters = uniqueFilters
       .map(f => {
@@ -699,13 +657,6 @@ const selectedIds = dropdownSelections[f.id];
   );
 
 
-          // return {
-          //   id: f.id,
-          //   field_name: f.field_name,
-          //   field_type: f.field_type,
-          //   alias_name: f.alias_name,
-          //   options: dropdownSelections[f.id],
-          // };
            return {
     id: f.id,
     field_name: f.field_name,
@@ -798,14 +749,7 @@ const selectedIds = dropdownSelections[f.id];
       ]}
     >
       <BlurView
-        style={{
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          width: '100%',
-          height: '100%',
-        }}
+        style={styles.blurView}
         blurType="dark"
         blurAmount={Platform.OS === 'ios' ? 3 : 4}
         reducedTransparencyFallbackColor="transparent"
@@ -952,15 +896,7 @@ const selectedIds = dropdownSelections[f.id];
               </View>
               {showDatePicker && activeDateField && (
                 <View
-                  style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    width: '100%',
-                    backgroundColor: '#fff',
-                    borderTopLeftRadius: 12,
-                    borderTopRightRadius: 12,
-                    paddingBottom: Platform.OS === 'ios' ? 20 : 0,
-                  }}
+                  style={styles.datePickerContainer}
                 >
                   {/* HEADER */}
                   <View
@@ -1041,6 +977,23 @@ const selectedIds = dropdownSelections[f.id];
 };
 
 const styles = StyleSheet.create({
+  datePickerContainer: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    paddingBottom: Platform.OS === 'ios' ? 20 : 0,
+  },
+  blurView: {
+      top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          width: '100%',
+          height: '100%',
+  },
     login_container: {
     width: '45%',
     height: 44,

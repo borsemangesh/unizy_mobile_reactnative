@@ -1245,7 +1245,7 @@ const handlePreview = async (latestFormValues: any) => {
                 style={[
                   styles.personalEmailID_TextInput,
                   styles.login_container,
-                  styles.inputWithIcon, // padding for icon space
+                  styles.inputWithIcon, 
                   {
                     height: 44,
                     textAlignVertical: 'center',
@@ -1258,7 +1258,7 @@ const handlePreview = async (latestFormValues: any) => {
                 keyboardType={rnKeyboardType}
                 selectionColor={'#FFFFFF'}
                 cursorColor="#FFFFFF"
-                //value={isPriceField && rawValue ? `£ ${rawValue}` : rawValue}
+                
                 value={
                   isPriceField && rawValue
                     ? `£ ${String(rawValue)}`
