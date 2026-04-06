@@ -1,7 +1,12 @@
 import { BlurView } from '@react-native-community/blur';
-import { RouteProp, useFocusEffect, useIsFocused, useRoute } from '@react-navigation/native';
+import {
+  RouteProp,
+  useFocusEffect,
+  useIsFocused,
+  useRoute,
+} from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 import {
   View,
@@ -18,7 +23,8 @@ import {
   Modal,
   Alert,
   PermissionsAndroid,
-  Platform, InteractionManager,
+  Platform,
+  InteractionManager,
   KeyboardAvoidingView,
   Keyboard,
 } from 'react-native';
@@ -29,7 +35,11 @@ import { getRequest } from '../../utils/API';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import i18n, { initI18n, changeAppLanguage, loadLanguageFromServer } from "../../../localization/i18n";
+import i18n, {
+  initI18n,
+  changeAppLanguage,
+  loadLanguageFromServer,
+} from '../../../localization/i18n';
 import BackgroundAnimation from '../Hello/BackgroundAnimation';
 import { Language } from '../../utils/Language';
 import { greetings } from '../../utils/Greetings';
@@ -41,32 +51,47 @@ import {
   NewCustomToastContainer,
   showToast,
 } from '../../utils/component/NewCustomToastManager';
-import { PassToastContainer,passshowToast } from '../../utils/component/PassToastManager';
-import { check, openSettings, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
+import {
+  PassToastContainer,
+  passshowToast,
+} from '../../utils/component/PassToastManager';
+import {
+  check,
+  openSettings,
+  PERMISSIONS,
+  request,
+  RESULTS,
+} from 'react-native-permissions';
 import { resetTwilioClient } from '../emoji/twilioService';
 import { clearTwilioCache } from '../dashboard/MessageIndividualScreen';
 import DeviceInfo from 'react-native-device-info';
 
 import ImagePicker from 'react-native-image-crop-picker';
 import { IMAGE_URLS } from '../../utils/Style';
+import { requestCameraPermission } from '../../utils/COMFUN';
 
 const { height } = Dimensions.get('window');
-
 
 type SinglePageProps = {
   navigation: any;
 };
 type RootStackParamList = {
-  SinglePage: { resetToLogin?: boolean, logoutMessage: string, termandProlicy: boolean, forgotPassword: boolean, currentScreen: string, currentScreenIninner: string };
+  SinglePage: {
+    resetToLogin?: boolean;
+    logoutMessage: string;
+    termandProlicy: boolean;
+    forgotPassword: boolean;
+    currentScreen: string;
+    currentScreenIninner: string;
+  };
 };
 type SinglePageRouteProp = RouteProp<RootStackParamList, 'SinglePage'>;
 
-
-  interface UserMeta {
+interface UserMeta {
   city: string | null;
   postal_code: string | null;
-  lat: number ;
-   lon: number;
+  lat: number;
+  lon: number;
   // profile:string | null;
 }
 const SinglePage = ({ navigation }: SinglePageProps) => {
@@ -93,21 +118,18 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   const [languages, setLanguages] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const route = useRoute<SinglePageRouteProp>();
-  const [isLogout, setIsLogout] = useState(false)
+  const [isLogout, setIsLogout] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
 
-
   const logoutCleanup = async () => {
-    
     try {
       // Clear AsyncStorage in ONE call (much faster)
-
 
       const deviceId = await DeviceInfo.getUniqueId();
       const user_id = await AsyncStorage.getItem('userId');
 
       const body = {
-        device_type: (Platform.OS === 'ios') ? 'ios' : 'android',
+        device_type: Platform.OS === 'ios' ? 'ios' : 'android',
         device_id: deviceId,
         user_id: Number(user_id),
       };
@@ -122,15 +144,10 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
       const apiData = await response.json();
 
-
-
       if (apiData?.statusCode === 200) {
-
       } else {
         showToast(t(Constant.LOGOUT_FAIL), 'error');
       }
-
-
 
       await AsyncStorage.multiSet([
         ['userToken', ''],
@@ -142,8 +159,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       ]);
 
       // Twilio cleanup (don’t block UI)
-      resetTwilioClient()?.catch(() => { });
-      clearTwilioCache()?.catch(() => { });
+      resetTwilioClient()?.catch(() => {});
+      clearTwilioCache()?.catch(() => {});
 
       // FCM token delete (optional but safe)
       try {
@@ -159,17 +176,15 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
   useEffect(() => {
     if (route.params?.resetToLogin) {
-      
-      
       setIsLogout(false);
       loginOpacity.setValue(1);
       loginTranslateY.setValue(0);
       setCurrentScreen('login');
       setcurrentScreenIninner('login');
       setTimeout(() => {
-        showToast(t(route.params?.logoutMessage), 'success')
-      },500)
-      
+        showToast(t(route.params?.logoutMessage), 'success');
+      }, 500);
+
       // InteractionManager.runAfterInteractions(() => {
       //   logoutCleanup();
       // });
@@ -181,7 +196,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       setCurrentScreen('login');
       setcurrentScreenIninner('forgotpassword');
       // showToast(route.params?.logoutMessage,'success')
-
     }
     if (route.params?.termandProlicy) {
       loginOpacity.setValue(1);
@@ -189,11 +203,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       setCurrentScreen('login');
       setcurrentScreenIninner('login');
       // showToast(route.params?.logoutMessage,'success')
-
     }
   }, [route.params]);
-
-
 
   useEffect(() => {
     (async () => {
@@ -212,7 +223,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
     })();
   }, []);
 
-
   const filteredLanguages = languages
     .map(lang => ({
       id: lang.id,
@@ -221,7 +231,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       flag: lang.logo || require('../../../assets/images/english.png'),
     }))
     .filter(lang =>
-      (lang.name || '').toLowerCase().includes(search.toLowerCase())
+      (lang.name || '').toLowerCase().includes(search.toLowerCase()),
     );
 
   useEffect(() => {
@@ -234,13 +244,9 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
     try {
       loginTranslateY.setValue(0);
 
-      await AsyncStorage.setItem(
-        'selectedLanguage',
-        JSON.stringify(item.code),
-      );
+      await AsyncStorage.setItem('selectedLanguage', JSON.stringify(item.code));
 
       await changeAppLanguage(item.code);
-
 
       setSelected(item.code);
 
@@ -271,7 +277,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   const [shrink, setShrink] = useState(false);
   const [showPopup1, setShowPopup1] = useState(false);
   const closePopup1 = () => setShowPopup1(false);
-
 
   const animateGreeting = () => {
     greetingOpacity.setValue(0);
@@ -310,7 +315,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
     ]).start();
   };
 
-
   //   Signup Screen
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -338,8 +342,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
   const [showPopup, setShowPopup] = useState(false);
 
-  const resetPasswordtranslateY = React.useRef(
-    new Animated.Value(0)).current;
+  const resetPasswordtranslateY = React.useRef(new Animated.Value(0)).current;
   const restPasswordAnimatied = React.useRef(0);
   const setOTPTranslatY = React.useRef(new Animated.Value(height)).current;
   const verifyAndContinyTranslateY1 = React.useRef(
@@ -429,7 +432,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       Animated.sequence([
         Animated.spring(loginTranslateY, {
           toValue: 0, // bounce upward
-          friction: 3.5,  // lower = bouncier
+          friction: 3.5, // lower = bouncier
           tension: 0, // controls snap
           useNativeDriver: true,
         }),
@@ -449,12 +452,11 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       Animated.sequence([
         Animated.spring(signupTranslateY, {
           toValue: 0, // bounce upward
-          friction: 3.5,  // lower = bouncier
+          friction: 3.5, // lower = bouncier
           tension: 0, // controls snap
           useNativeDriver: true,
         }),
       ]).start();
-
     }
     if (currentScreenIninner === 'profile') {
       Animated.timing(profileTranslateY, {
@@ -466,11 +468,10 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       Animated.sequence([
         Animated.spring(profileTranslateY, {
           toValue: 0, // bounce upward
-          friction: 3.5,  // lower = bouncier
+          friction: 3.5, // lower = bouncier
           tension: 0, // controls snap
           useNativeDriver: true,
         }),
-
       ]).start();
     }
     if (currentScreenIninner === 'verify') {
@@ -495,7 +496,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       ]).start();
 
       Animated.parallel([
-
         Animated.timing(opacity, {
           toValue: 1,
           duration: 500,
@@ -503,11 +503,10 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         }),
       ]).start();
 
-
       Animated.sequence([
         Animated.spring(verifyAndContinyTranslateY1, {
           toValue: 0, // bounce upward
-          friction: 3.5,  // lower = bouncier
+          friction: 3.5, // lower = bouncier
           tension: 0, // controls snap
           useNativeDriver: true,
         }),
@@ -515,11 +514,10 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       Animated.sequence([
         Animated.spring(verifyAndContinyTranslateY2, {
           toValue: 0, // bounce upward
-          friction: 3.5,  // lower = bouncier
+          friction: 3.5, // lower = bouncier
           tension: 0, // controls snap
           useNativeDriver: true,
         }),
-
       ]).start();
     }
 
@@ -535,7 +533,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       Animated.sequence([
         Animated.spring(setOTPTranslatY, {
           toValue: 0, // bounce upward
-          friction: 3.5,  // lower = bouncier
+          friction: 3.5, // lower = bouncier
           tension: 0, // controls snap
           useNativeDriver: true,
         }),
@@ -554,11 +552,10 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         Animated.sequence([
           Animated.spring(resetPasswordtranslateY, {
             toValue: 0, // bounce upward
-            friction: 3.5,  // lower = bouncier
+            friction: 3.5, // lower = bouncier
             tension: 0, // controls snap
             useNativeDriver: true,
           }),
-
         ]).start();
     }
   }, [currentScreen, currentScreenIninner, photo]);
@@ -642,7 +639,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
     fetchUniversities();
   }, []);
 
-
   useEffect(() => {
     if (currentScreenIninner === 'sendOTP') {
       // Small delay ensures animation + render is complete
@@ -655,11 +651,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   }, [currentScreenIninner]);
 
   useEffect(() => {
-    if (
-      currentScreenIninner === 'verify' &&
-      showOtp &&
-      verifyimageLoaded
-    ) {
+    if (currentScreenIninner === 'verify' && showOtp && verifyimageLoaded) {
       const timer = setTimeout(() => {
         verifyinputs.current[0]?.focus();
       }, 300); // wait for animation + render
@@ -667,7 +659,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       return () => clearTimeout(timer);
     }
   }, [currentScreenIninner, showOtp, verifyimageLoaded]);
-
 
   const stepIndex = (() => {
     switch (currentScreenIninner) {
@@ -712,12 +703,14 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
       const data = await res.json();
 
-
       if (res.ok) {
         // Show toast
         // showToast(t(data.message || Constant.PASSWORD_RESET_LINK_SENT, )'success');
 
-        showToast(t(data?.message) || t(Constant.PASSWORD_RESET_LINK_SENT), 'success');
+        showToast(
+          t(data?.message) || t(Constant.PASSWORD_RESET_LINK_SENT),
+          'success',
+        );
         const toastDuration = 3000;
         setTimeout(() => {
           setShowPopup(true);
@@ -733,7 +726,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   };
 
   const loginapi = async () => {
-    if (loading) return
+    if (loading) return;
     Keyboard.dismiss();
 
     if (!username.trim() || !password.trim()) {
@@ -750,7 +743,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
     setLoading(true);
 
     try {
-      console.log("LOGINUSR: ",MAIN_URL.baseUrl + 'user/login');
+      console.log('LOGINUSR: ', MAIN_URL.baseUrl + 'user/login');
       const response = await fetch(MAIN_URL.baseUrl + 'user/login', {
         method: 'POST',
         headers: {
@@ -762,23 +755,20 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         }),
       });
 
-
       let result;
       try {
         result = await response.json();
-        console.log("LoginResponse: ",result);
+        console.log('LoginResponse: ', result);
       } catch (err) {
         setLoading(false);
         showToast(t(Constant.INVALID_SERVER_RESPONSE), 'error');
         return;
       }
 
-
-
       if (!response.ok || result?.statusCode !== 200) {
         setLoading(false);
-        showToast(t(
-          result?.message) || t(Constant.INVALID_EMAIL_OR_PASSWORD),
+        showToast(
+          t(result?.message) || t(Constant.INVALID_EMAIL_OR_PASSWORD),
           'error',
         );
         return;
@@ -788,20 +778,23 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       const user = result?.data?.user;
       const stripelivekey = result?.data?.stripelivekey;
 
-      console.log(response)
+      console.log(response);
 
       if (token && user) {
         setLoading(false);
-        await AsyncStorage.setItem('STRIPE_KEY', "");
+        await AsyncStorage.setItem('STRIPE_KEY', '');
         await AsyncStorage.setItem(
           'STRIPE_LIVE',
-          stripelivekey ? 'true' : 'false'
+          stripelivekey ? 'true' : 'false',
         );
         await AsyncStorage.setItem('userToken', token);
         await AsyncStorage.setItem('userData', JSON.stringify(user));
         await AsyncStorage.setItem('userId', String(user.id));
 
-        showToast(t(result?.message) || t(Constant.LOGIN_SUCCESSFUL), 'success');
+        showToast(
+          t(result?.message) || t(Constant.LOGIN_SUCCESSFUL),
+          'success',
+        );
 
         setUsername('');
         setPassword('');
@@ -820,7 +813,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         } else {
           navigation.replace('OnboardingScreen');
         }
-
       } else {
         setLoading(false);
         showToast(t(Constant.INVALID_USER_DATA_RECEIVED), 'error');
@@ -835,28 +827,23 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   const clickOnSendOTP = (onFinish?: () => void) => {
     setOTPTranslatY.setValue(-300);
     Animated.timing(signupTranslateY, {
-      toValue: 300,//-Dimensions.get('window').height,
+      toValue: 300, //-Dimensions.get('window').height,
       duration: 300,
       easing: Easing.linear,
       useNativeDriver: true,
     }).start(() => {
-
       if (onFinish) onFinish();
     });
 
     Animated.timing(loginTranslateY, {
-      toValue: -300,//Dimensions.get('window').height,
+      toValue: -300, //Dimensions.get('window').height,
       duration: 80,
       easing: Easing.linear,
       useNativeDriver: true,
-    }).start(() => {
-
-    });
-
+    }).start(() => {});
   };
 
   const handleSendOTP = async () => {
-
     setOtp(['', '', '', '']);
 
     if (
@@ -871,7 +858,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       return;
     }
 
-       if (!userMeta.postal_code || userMeta.postal_code.trim() === '') {
+    if (!userMeta.postal_code || userMeta.postal_code.trim() === '') {
       showToast(t('postal_code_req'));
     }
     const emailRegex =
@@ -882,10 +869,11 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
     }
 
     // const passwordRegex =/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]|:;"'<>,.?/]).{8,}$/;
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]|:;"'<>,.?/]).{8,}$/;
     if (!passwordRegex.test(signUppassword.trim())) {
-     // showToast(t(Constant.PASSWORD_VALID), 'error');
-     passshowToast(t(Constant.PASSWORD_VALID), 'error');
+      // showToast(t(Constant.PASSWORD_VALID), 'error');
+      passshowToast(t(Constant.PASSWORD_VALID), 'error');
       return;
     }
     if (signUppassword.trim() !== confirmPassword.trim()) {
@@ -893,7 +881,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       return;
     }
 
-    if(!isChecked){
+    if (!isChecked) {
       showToast(t(Constant.PLEASE_ACCEPT_TERMS_AND_PRIVACY_POLICY), 'error');
       return;
     }
@@ -908,10 +896,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         confirmPassword: confirmPassword,
         city: userMeta.city,
         latitude: userMeta.lat,
-         longitude: userMeta.lon
+        longitude: userMeta.lon,
       };
-
-
 
       const url = MAIN_URL.baseUrl + 'user/user-signup';
 
@@ -923,12 +909,10 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         body: JSON.stringify(body),
       });
 
-
       const data = await response.json();
-      console.log("SignupUrl: ",url);
-      console.log("SignupResponse: ",data);
-      console.log("SignUpBody:", JSON.stringify(body));
-
+      console.log('SignupUrl: ', url);
+      console.log('SignupResponse: ', data);
+      console.log('SignUpBody:', JSON.stringify(body));
 
       if (response.status === 201) {
         showToast(t(data.message), 'success');
@@ -946,8 +930,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         clickOnSendOTP(() => {
           setCurrentScreen('login');
           setcurrentScreenIninner('sendOTP');
-        })
-
+        });
       } else {
         showToast(t(data.message) || 'Signup failed', 'error');
       }
@@ -955,8 +938,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       showToast(t(Constant.FAIL_TO_SEND_OTP), 'error');
     }
   };
-
-
 
   const [otp, setOtp] = useState(['', '', '', '']);
   const inputs = useRef<(TextInput | null)[]>([]);
@@ -975,26 +956,23 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
   const clickOtpVerify = (onFinish?: () => void) => {
     Animated.timing(setOTPTranslatY, {
-      toValue: 300,//-Dimensions.get('window').height,
+      toValue: 300, //-Dimensions.get('window').height,
       duration: 300,
       easing: Easing.linear,
       useNativeDriver: true,
     }).start(() => {
-
       if (onFinish) onFinish();
     });
 
     Animated.timing(loginTranslateY, {
-      toValue: -300,//Dimensions.get('window').height,
+      toValue: -300, //Dimensions.get('window').height,
       duration: 80,
       easing: Easing.linear,
       useNativeDriver: true,
     }).start();
-
   };
 
   const otpverify = async () => {
-
     Keyboard.dismiss();
 
     setverifyUsername('');
@@ -1027,7 +1005,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
       const data = await res.json();
 
-
       if (data?.statusCode === 200) {
         showToast(t(data.message), 'success');
         await AsyncStorage.setItem(
@@ -1051,7 +1028,10 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
           setverifyimageLoaded(true);
         });
       } else {
-        showToast(t(data?.message) || t(Constant.OPT_VERIFICATION_FAILED), 'error');
+        showToast(
+          t(data?.message) || t(Constant.OPT_VERIFICATION_FAILED),
+          'error',
+        );
       }
     } catch (err) {
       console.error(err);
@@ -1086,7 +1066,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         );
 
         await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
-
 
         setTimeout(() => {
           inputs.current[0]?.focus();
@@ -1124,7 +1103,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   };
 
   const verifyOTP = async () => {
-
     Keyboard.dismiss();
     setOtp1(['', '', '', '']);
 
@@ -1139,10 +1117,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       return;
     }
 
-
     //const domain = '@' + emailParts[1].toLowerCase();
     const domain = '@' + emailParts[1].trim().toLowerCase();
-
 
     if (!universityDomains.includes(domain)) {
       showToast(t(Constant.VALID_UNIVERSITY_EMAIL_ADDRESS), 'error');
@@ -1166,7 +1142,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
       const data = await res.json();
 
-
       if (data?.statusCode === 200) {
         showToast(t(data.message), 'success');
         await AsyncStorage.setItem(
@@ -1176,9 +1151,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         await AsyncStorage.setItem('otp_id', data.data.otp_id.toString());
         await AsyncStorage.setItem('signupUsername', verifyusername);
 
-
         Animated.timing(verifyAndContinyTranslateY1, {
-          toValue: 200,//Dimensions.get('window').height, // move down off screen
+          toValue: 200, //Dimensions.get('window').height, // move down off screen
           duration: 500,
           easing: Easing.in(Easing.ease),
           useNativeDriver: true,
@@ -1193,12 +1167,11 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
           }).start();
           setTimeout(() => {
             verifyinputs.current[0]?.focus();
-
           }, 300);
           Animated.sequence([
             Animated.spring(verifyAndContinyTranslateY2, {
               toValue: 0, // bounce upward
-              friction: 3.5,  // lower = bouncier
+              friction: 3.5, // lower = bouncier
               tension: 0, // controls snap
               useNativeDriver: true,
             }),
@@ -1208,36 +1181,28 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         showToast(t(data?.message) || 'Failed to send OTP', 'error');
       }
     } catch (err) {
-
       showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
     }
   };
 
-
-
-
   const clicksubmitotp = (onFinish?: () => void) => {
     profileTranslateY.setValue(-300);
     Animated.timing(verifyAndContinyTranslateY2, {
-      toValue: 300,//-Dimensions.get('window').height,
+      toValue: 300, //-Dimensions.get('window').height,
       duration: 300,
       easing: Easing.linear,
       useNativeDriver: true,
     }).start(() => {
-
       if (onFinish) onFinish();
     });
 
     Animated.timing(profileTranslateY, {
-      toValue: -300,//Dimensions.get('window').height,
+      toValue: -300, //Dimensions.get('window').height,
       duration: 80,
       easing: Easing.linear,
       useNativeDriver: true,
     }).start();
-
   };
-
-
 
   const submitotp = async () => {
     Keyboard.dismiss();
@@ -1271,7 +1236,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
       const data = await res.json();
 
-
       if (data?.statusCode === 200) {
         showToast(t(data.message), 'success');
 
@@ -1300,8 +1264,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
           setShowPopup1(false);
           setCurrentScreen('login');
           setcurrentScreenIninner('profile');
-        })
-
+        });
       } else {
         showToast(t(data?.message) || 'OTP verification failed', 'error');
       }
@@ -1312,7 +1275,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   };
 
   const resubmitotp = async () => {
-
     try {
       Keyboard.dismiss();
       setOtp1(['', '', '', '']);
@@ -1331,7 +1293,6 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       });
 
       const data = await res.json();
-
 
       if (data?.statusCode === 200) {
         await AsyncStorage.setItem(
@@ -1357,132 +1318,116 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   };
   //profile
 
+  // const requestCameraPermission = async () => {
+  //   // ANDROID
+  //   if (Platform.OS === 'android') {
+  //     try {
+  //       const granted = await PermissionsAndroid.request(
+  //         PermissionsAndroid.PERMISSIONS.CAMERA,
+  //         {
+  //           title: 'Camera Permission',
+  //           message: 'App needs access to your camera',
+  //           buttonNeutral: 'Ask Me Later',
+  //           buttonNegative: 'Cancel',
+  //           buttonPositive: 'OK',
+  //         },
+  //       );
 
+  //       return granted === PermissionsAndroid.RESULTS.GRANTED;
+  //     } catch (err) {
+  //       console.warn(err);
+  //       return false;
+  //     }
+  //   }
 
-  const requestCameraPermission = async () => {
-    // ANDROID
-    if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.CAMERA,
-          {
-            title: 'Camera Permission',
-            message: 'App needs access to your camera',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        );
+  //   // iOS
+  //   if (Platform.OS === 'ios') {
+  //     try {
+  //       const status = await check(PERMISSIONS.IOS.CAMERA);
 
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } catch (err) {
-        console.warn(err);
-        return false;
-      }
-    }
+  //       switch (status) {
+  //         case RESULTS.GRANTED:
+  //           return true;
 
-    // iOS
-    if (Platform.OS === 'ios') {
-      try {
-        const status = await check(PERMISSIONS.IOS.CAMERA);
+  //         case RESULTS.DENIED:
+  //           // User denied previously → we can ask again
+  //           const result = await request(PERMISSIONS.IOS.CAMERA);
+  //           return result === RESULTS.GRANTED;
 
-        switch (status) {
-          case RESULTS.GRANTED:
-            return true;
+  //         case RESULTS.BLOCKED:
+  //           // User selected "Don't Allow" + "Don't ask again"
+  //           Alert.alert(
+  //             'Camera Permission Needed',
+  //             'Camera access is blocked. Please enable it in Settings.',
+  //             [
+  //               { text: 'Open Settings', onPress: () => openSettings() },
+  //               { text: 'Cancel', style: 'cancel' },
+  //             ],
+  //           );
+  //           return false;
 
-          case RESULTS.DENIED:
-            // User denied previously → we can ask again
-            const result = await request(PERMISSIONS.IOS.CAMERA);
-            return result === RESULTS.GRANTED;
+  //         default:
+  //           return false;
+  //       }
+  //     } catch (err) {
+  //       console.warn(err);
+  //       return false;
+  //     }
+  //   }
 
-          case RESULTS.BLOCKED:
-            // User selected "Don't Allow" + "Don't ask again"
-            Alert.alert(
-              'Camera Permission Needed',
-              'Camera access is blocked. Please enable it in Settings.',
-              [
-                { text: 'Open Settings', onPress: () => openSettings() },
-                { text: 'Cancel', style: 'cancel' },
-              ],
-            );
-            return false;
+  //   return true;
+  // };
 
-          default:
-            return false;
-        }
-      } catch (err) {
-        console.warn(err);
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  const loginTranslateY = useRef(
-    new Animated.Value(0),
-  ).current;
+  const loginTranslateY = useRef(new Animated.Value(0)).current;
   const signupTranslateY = useRef(
     new Animated.Value(Dimensions.get('window').height),
   ).current;
 
-
   const ClickFPGoBack_slideOutToTop = (onFinish?: () => void) => {
     Animated.timing(resetPasswordtranslateY, {
-      toValue: -300,//-Dimensions.get('window').height,
+      toValue: -300, //-Dimensions.get('window').height,
       duration: 300,
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
     }).start(() => {
-
       if (onFinish) onFinish();
     });
     Animated.timing(slideUp, {
-      toValue: 50,//-Dimensions.get('window').height,
+      toValue: 50, //-Dimensions.get('window').height,
       duration: 100,
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
-    }).start(() => {
-    });
+    }).start(() => {});
     Animated.timing(loginTranslateY, {
-      toValue: 300,//Dimensions.get('window').height,
+      toValue: 300, //Dimensions.get('window').height,
       duration: 100,
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
     }).start();
-
   };
 
   const goToForgotPassword = (onFinish?: () => void) => {
     Animated.timing(loginTranslateY, {
-      toValue: 300,//-Dimensions.get('window').height,
+      toValue: 300, //-Dimensions.get('window').height,
       duration: 300,
       easing: Easing.linear,
       useNativeDriver: true,
     }).start(() => {
-
       if (onFinish) onFinish();
     });
     Animated.timing(slideUp, {
-      toValue: 300,//-Dimensions.get('window').height,
+      toValue: 300, //-Dimensions.get('window').height,
       duration: 300,
       easing: Easing.linear,
       useNativeDriver: true,
-    }).start(() => {
-
-
-    });
+    }).start(() => {});
     Animated.timing(resetPasswordtranslateY, {
-      toValue: -300,//Dimensions.get('window').height,
+      toValue: -300, //Dimensions.get('window').height,
       duration: 80,
       easing: Easing.linear,
       useNativeDriver: true,
     }).start();
-
   };
-
-
-
 
   const heightAnim = useRef(new Animated.Value(0)).current;
   const [contentHeight, setContentHeight] = useState(
@@ -1511,16 +1456,15 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
   const Click_SENDOTP_TO_SIGNUPSCREEN = (onFinish?: () => void) => {
     Animated.timing(setOTPTranslatY, {
-      toValue: -400,//-Dimensions.get('window').height,
+      toValue: -400, //-Dimensions.get('window').height,
       duration: 350,
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
     }).start(() => {
-
       if (onFinish) onFinish();
     });
     Animated.timing(signupTranslateY, {
-      toValue: 400,//Dimensions.get('window').height,
+      toValue: 400, //Dimensions.get('window').height,
       duration: 250,
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
@@ -1578,87 +1522,83 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   //   );
   // };
 
+  const handleSelectImage = async () => {
+    const hasPermission = await requestCameraPermission();
+    if (!hasPermission) return;
 
-const handleSelectImage = async () => {
-  const hasPermission = await requestCameraPermission();
-  if (!hasPermission) return;
+    Alert.alert(
+      'Select Option',
+      'Choose a source',
+      [
+        {
+          text: 'Camera',
+          onPress: () => openCamera(),
+        },
+        {
+          text: 'Gallery',
+          onPress: () => openGallery(),
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+      ],
+      { cancelable: true },
+    );
+  };
 
-  Alert.alert(
-    'Select Option',
-    'Choose a source',
-    [
-      {
-        text: 'Camera',
-        onPress: () => openCamera(),
-      },
-      {
-        text: 'Gallery',
-        onPress: () => openGallery(),
-      },
-      {
-        text: 'Cancel',
-        style: 'cancel',
-      },
-    ],
-    { cancelable: true },
-  );
-};
+  const openCamera = async () => {
+    try {
+      const image = await ImagePicker.openCamera({
+        width: 300,
+        height: 300,
+        cropping: true,
+        cropperCircleOverlay: true,
+        compressImageQuality: 0.8,
+        mediaType: 'photo',
+      });
 
-const openCamera = async () => {
-  try {
-    const image = await ImagePicker.openCamera({
-      width: 300,
-      height: 300,
-      cropping: true,
-      cropperCircleOverlay: true,
-      compressImageQuality: 0.8,
-      mediaType: 'photo',
-    });
+      const imageUri =
+        Platform.OS === 'android'
+          ? image.path
+          : image.path.replace('file://', '');
 
-    const imageUri =
-      Platform.OS === 'android'
-        ? image.path
-        : image.path.replace('file://', '');
+      setPhoto(imageUri);
 
-    setPhoto(imageUri);
+      // ✅ Upload immediately like your original version
+      await uploadImage(imageUri);
+    } catch (error) {
+      console.log('Camera Error:', error);
+    }
+  };
 
-    // ✅ Upload immediately like your original version
-    await uploadImage(imageUri);
+  const openGallery = async () => {
+    try {
+      const image = await ImagePicker.openPicker({
+        width: 300,
+        height: 300,
+        cropping: true,
+        cropperCircleOverlay: true,
+        compressImageQuality: 0.8,
+        mediaType: 'photo',
+        forceJpg: true,
+        includeExif: false,
+        includeBase64: false,
+      });
 
-  } catch (error) {
-    console.log('Camera Error:', error);
-  }
-};
+      const imageUri =
+        Platform.OS === 'android'
+          ? image.path
+          : image.path.replace('file://', '');
 
-const openGallery = async () => {
-  try {
-    const image = await ImagePicker.openPicker({
-      width: 300,
-      height: 300,
-      cropping: true,
-      cropperCircleOverlay: true,
-      compressImageQuality: 0.8,
-      mediaType: 'photo',
-      forceJpg: true, 
-      includeExif: false,
-      includeBase64: false,
-    });
+      setPhoto(imageUri);
 
-    const imageUri =
-      Platform.OS === 'android'
-        ? image.path
-        : image.path.replace('file://', '');
-
-    setPhoto(imageUri);
-
-    // ✅ Upload immediately like your original version
-    await uploadImage(imageUri);
-
-  } catch (error) {
-    console.log('Gallery Error:', error);
-  }
-};
-
+      // ✅ Upload immediately like your original version
+      await uploadImage(imageUri);
+    } catch (error) {
+      console.log('Gallery Error:', error);
+    }
+  };
 
   const insets = useSafeAreaInsets();
 
@@ -1666,15 +1606,12 @@ const openGallery = async () => {
     setLoading(true);
     try {
       if (!uri) {
-
         Alert.alert(Constant.ALERT_MESSAGE_PLEASE_SELECT_AN_IMAGE_FIRST);
         setLoading(false);
         return;
       }
 
-
       const token = await AsyncStorage.getItem('userToken');
-
 
       const formData = new FormData();
       formData.append('file', {
@@ -1684,7 +1621,6 @@ const openGallery = async () => {
       } as any);
 
       const url = MAIN_URL.baseUrl + 'user/update-profile';
-
 
       const response = await fetch(url, {
         method: 'POST',
@@ -1696,19 +1632,15 @@ const openGallery = async () => {
 
       const result = await response.json();
 
-
       if (response.ok && result?.message) {
-
         showToast(t(result.message), 'success');
 
         // setTimeout(() => {
         //   setShowPopup1(true);
         // }, 2000);
       } else {
-
       }
     } catch (err) {
-
     } finally {
       setLoading(false);
     }
@@ -1725,13 +1657,16 @@ const openGallery = async () => {
       const flag = await AsyncStorage.getItem('ISLOGIN');
       animRef.current?.pause();
       if (flag === 'true') {
-
         navigation.reset({
           index: 0,
           routes: [
             {
               name: 'Dashboard',
-              params: { AddScreenBackactiveTab: 'Home', isNavigate: true, isFirsttimeLogin: false },
+              params: {
+                AddScreenBackactiveTab: 'Home',
+                isNavigate: true,
+                isFirsttimeLogin: false,
+              },
             },
           ],
         });
@@ -1739,7 +1674,6 @@ const openGallery = async () => {
         // User is not logged in → show hello screen
         setCurrentScreen('hello');
         setCurrentGreetingIndex(-1); // set greeting index only for hello screen
-
 
         Animated.timing(unizyTranslateY, {
           toValue: 0,
@@ -1764,104 +1698,100 @@ const openGallery = async () => {
   const loginOpacity = useRef(new Animated.Value(0)).current;
   const isFocused = useIsFocused();
 
+  const [typingTimeout, setTypingTimeout] = useState<any>(null);
+  const [userMeta, setUserMeta] = useState<UserMeta>({
+    city: '',
+    postal_code: '',
+    lon: 0,
+    lat: 0,
+  });
 
+  const ClickPostalCode = async (postalCode: any) => {
+    const location = await getCityFromPostalCode(postalCode);
 
-    const [typingTimeout, setTypingTimeout] = useState<any>(null);
-    const [userMeta, setUserMeta] = useState<UserMeta>({
-      city: '',
-      postal_code: '',
-      lon: 0,
-      lat:0
-    });
+    if (!location) return;
 
-const ClickPostalCode = async (postalCode: any) => {
-  const location = await getCityFromPostalCode(postalCode);
-
-  if (!location) return;
-
-  setUserMeta(prev => ({
-    ...prev,
-    city: location.city || '',
-    lat: location.lat,
-    lon: location.lon,
-  }));
-};
-const getCityFromPostalCode = async (postalCode: string) => {
-  try {
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
-      {
-        headers: {
-          "User-Agent": "MyAndroidApp/1.0 (contact@myapp.com)",
-          "Accept-Language": "en-US",
+    setUserMeta(prev => ({
+      ...prev,
+      city: location.city || '',
+      lat: location.lat,
+      lon: location.lon,
+    }));
+  };
+  const getCityFromPostalCode = async (postalCode: string) => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
+        {
+          headers: {
+            'User-Agent': 'MyAndroidApp/1.0 (contact@myapp.com)',
+            'Accept-Language': 'en-US',
+          },
         },
-      }
-    );
+      );
 
-    const data = await response.json();
-    console.log("location data:", data);
+      const data = await response.json();
+      console.log('location data:', data);
 
-    if (!data || data.length === 0) return null;
+      if (!data || data.length === 0) return null;
 
-    const result = data[0];
-    const address = result.address;
+      const result = data[0];
+      const address = result.address;
 
-    const city =
-      address.city ||
-      address.town ||
-      address.village ||
-      address.county ||
-      address.state_district ||
-      null;
+      const city =
+        address.city ||
+        address.town ||
+        address.village ||
+        address.county ||
+        address.state_district ||
+        null;
 
-    return {
-      city,
-      lat: parseFloat(result.lat),   // ✅ FIX
-      lon: parseFloat(result.lon),   // ✅ FIX
-    };
+      return {
+        city,
+        lat: parseFloat(result.lat), // ✅ FIX
+        lon: parseFloat(result.lon), // ✅ FIX
+      };
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  };
+  //   const getCityFromPostalCode = async (postalCode: string) => {
+  //     try {
+  //       const response = await fetch(
+  //         `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
+  //         {
+  //           headers: {
+  //             "User-Agent": "MyAndroidApp/1.0 (contact@myapp.com)",
+  //             "Accept-Language": "en-US",
+  //           },
+  //         }
+  //       );
 
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-};
-//   const getCityFromPostalCode = async (postalCode: string) => {
-//     try {
-//       const response = await fetch(
-//         `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
-//         {
-//           headers: {
-//             "User-Agent": "MyAndroidApp/1.0 (contact@myapp.com)",
-//             "Accept-Language": "en-US",
-//           },
-//         }
-//       );
+  //       const data = await response.json();
+  //       console.log("location data:", data);
+  //       const result = data[0];
 
-//       const data = await response.json();
-//       console.log("location data:", data);
-//       const result = data[0];
+  //       if (!data || data.length === 0) return null;
 
-//       if (!data || data.length === 0) return null;
+  //       const address = data[0].address;
 
-//       const address = data[0].address;
+  //       return (
+  //         address.city ||            // US, some countries
+  //         address.town ||            // smaller towns
+  //         address.village ||         // villages
+  //         address.county ||          // India, UK (like Pune City)
+  //         address.state_district ||  // fallback
+  //         parseFloat(result.lat) || // ✅ FIX
+  //       parseFloat(result.lon)||  // ✅ FIX
+  //       null
+  //     );
 
-//       return (
-//         address.city ||            // US, some countries
-//         address.town ||            // smaller towns
-//         address.village ||         // villages
-//         address.county ||          // India, UK (like Pune City)
-//         address.state_district ||  // fallback
-//         parseFloat(result.lat) || // ✅ FIX
-//       parseFloat(result.lon)||  // ✅ FIX
-//       null
-//     );
-
-
-//   } catch (error) {
-//     console.error(error);
-//     return null;
-//   }
-// };
+  //   } catch (error) {
+  //     console.error(error);
+  //     return null;
+  //   }
+  // };
   return (
     <ImageBackground
       source={IMAGE_URLS.BACKGOUND_ANIMATION_ICON}
@@ -2649,49 +2579,49 @@ const getCityFromPostalCode = async (postalCode: string) => {
                             </View>
                           </View>
 
-             
-                            <View
+                          <View
+                            style={[
+                              Styles.login_container,
+                              {
+                                marginTop: Platform.OS === 'ios' ? 12 : 0,
+                                marginBottom: Platform.OS === 'ios' ? 12 : 10,
+                              },
+                            ]}
+                          >
+                            <TextInput
+                              allowFontScaling={false}
                               style={[
-                                Styles.login_container,
-                                  { marginTop: Platform.OS === 'ios' ? 12 : 0 ,marginBottom:Platform.OS === 'ios' ? 12 : 10},
+                                Styles.personalEmailID_TextInput,
+                                { paddingTop: 10 },
                               ]}
-                            >
-                              <TextInput
-                                allowFontScaling={false}
-                                style={[
-                                  Styles.personalEmailID_TextInput,
-                                  { paddingTop: 10 },
-                                ]}
-                                placeholder={t('postal_code')}
-                                cursorColor={'#F5F5F5'}
-                                placeholderTextColor="rgba(255, 255, 255, 0.48)"
-                                value={postalCode}
-                                maxLength={7}
-                           
+                              placeholder={t('postal_code')}
+                              cursorColor={'#F5F5F5'}
+                              placeholderTextColor="rgba(255, 255, 255, 0.48)"
+                              value={postalCode}
+                              maxLength={7}
+                              onChangeText={text => {
+                                const filteredText = text
+                                  .replace(/[^a-zA-Z0-9]/g, '')
+                                  .toUpperCase();
+                                if (filteredText.length > 7) return;
+                                setUserMeta(prev => ({
+                                  ...prev,
+                                  postal_code: filteredText,
+                                }));
+                                setPostalCode(filteredText);
+                                if (typingTimeout) {
+                                  clearTimeout(typingTimeout);
+                                }
+                                const timeout = setTimeout(() => {
+                                  if (filteredText.length > 0) {
+                                    ClickPostalCode(filteredText);
+                                  }
+                                }, 1000);
 
-                                 onChangeText={text => {
-                    const filteredText = text.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-                    if (filteredText.length > 7) return;
-                    setUserMeta(prev => ({
-                      ...prev,
-                      postal_code: filteredText,
-                    }));
-                    setPostalCode(filteredText);
-                    if (typingTimeout) {
-                      clearTimeout(typingTimeout);
-                    }
-                    const timeout = setTimeout(() => {
-                      if (filteredText.length > 0) {
-
-                        ClickPostalCode(filteredText);
-                      }
-                    }, 1000);
-
-                    setTypingTimeout(timeout);
-                  }}
-                              />
-                            </View>
-                 
+                                setTypingTimeout(timeout);
+                              }}
+                            />
+                          </View>
 
                           <View
                             style={[
@@ -3659,7 +3589,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
           )}
         </KeyboardAvoidingView>
       </View>
-      <PassToastContainer/>
+      <PassToastContainer />
       <NewCustomToastContainer />
     </ImageBackground>
   );

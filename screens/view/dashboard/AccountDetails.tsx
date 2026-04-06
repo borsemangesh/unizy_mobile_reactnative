@@ -1,7 +1,6 @@
 import {
   View,
   Text,
-  ImageBackground,
   TouchableOpacity,
   Image,
   StyleSheet,
@@ -11,7 +10,6 @@ import {
   TouchableWithoutFeedback,
   Dimensions,
   ActivityIndicator,
-  ScrollView,
   useWindowDimensions,
 } from 'react-native';
 import Animated, {
@@ -34,8 +32,6 @@ import {
   useEffect,
   useRef,
   useCallback,
-  act,
-  useDeferredValue,
 } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import { Constant } from '../../utils/Constant';
@@ -44,7 +40,6 @@ import {
   NewCustomToastContainer,
   showToast,
 } from '../../utils/component/NewCustomToastManager';
-import Loader from '../../utils/component/Loader';
 import { useTranslation } from 'react-i18next';
 import {
   initPaymentSheet,
@@ -1174,7 +1169,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                 {t('account_verified')}
               </Text>
               <TouchableOpacity
-                style={styles.loginButton}
+                style={COMMONSTYLE.loginButton}
                 onPress={async () => {
                   setShowSuccessPopup(false);
                   // Ensure it's marked as shown
@@ -1233,7 +1228,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
                   {t('delete_message_card')}
                 </Text>
                 <TouchableOpacity
-                  style={styles.loginButton}
+                  style={COMMONSTYLE.loginButton}
                   onPress={async () => {
                     try {
                       if (!selectedCardId) return;
@@ -1584,21 +1579,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 6,
   },
-  loginButton: {
-    display: 'flex',
-    width: '100%',
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 4,
-    borderRadius: 100,
-    paddingTop: 6,
-    paddingBottom: 6,
-    backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    marginTop: 16,
-    borderWidth: 0.5,
-    borderColor: '#ffffff2c',
-  },
+
   loginText: {
     color: '#002050',
     textAlign: 'center',

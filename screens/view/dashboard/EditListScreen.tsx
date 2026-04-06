@@ -66,6 +66,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
 import COMMONSTYLE from '../../utils/CommonStyle';
+import { requestCameraPermission } from '../../utils/COMFUN';
+import { IMAGE_URLS } from '../../utils/Style';
 
 
 const bgImage = require('../../../assets/images/backimg.png');
@@ -559,65 +561,7 @@ const EditListScreen = ({ navigation }: EditListScreenContentProps) => {
     return words.join(' ');
   };
 
-  const requestCameraPermission = async () => {
-    // ANDROID
-    if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.CAMERA,
-          {
-            title: 'Camera Permission',
-            message: 'App needs access to your camera',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        );
 
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } catch (err) {
-        console.warn(err);
-        return false;
-      }
-    }
-
-    // iOS
-    if (Platform.OS === 'ios') {
-      try {
-        const status = await check(PERMISSIONS.IOS.CAMERA);
-
-        switch (status) {
-          case RESULTS.GRANTED:
-            return true;
-
-          case RESULTS.DENIED:
-            // User denied previously → we can ask again
-            const result = await request(PERMISSIONS.IOS.CAMERA);
-            return result === RESULTS.GRANTED;
-
-          case RESULTS.BLOCKED:
-            // User selected "Don't Allow" + "Don't ask again"
-            Alert.alert(
-              'Camera Permission Needed',
-              'Camera access is blocked. Please enable it in Settings.',
-              [
-                { text: 'Open Settings', onPress: () => openSettings() },
-                { text: 'Cancel', style: 'cancel' },
-              ],
-            );
-            return false;
-
-          default:
-            return false;
-        }
-      } catch (err) {
-        console.warn(err);
-        return false;
-      }
-    }
-
-    return true;
-  };
 
 
 const handlePreview = async (latestFormValues: any) => {
@@ -818,39 +762,6 @@ const handlePreview = async (latestFormValues: any) => {
         {
           text: 'Camera',
           onPress: () => {
-            // launchCamera(
-            //   { mediaType: 'photo', cameraType: 'front', quality: 1 },
-            //   async response => {
-            //     if (response.didCancel) return;
-            //     if (response.assets && response.assets[0].uri) {
-            //       const asset = response.assets[0];
-            //       let uri = asset.uri!;
-            //       let name = asset.fileName || 'Image';
-            //       if (
-            //         asset.fileSize &&
-            //         asset.fileSize > MAX_SIZE_MB * 1024 * 1024
-            //       ) {
-            //         const compressed = await ImageResizer.createResizedImage(
-            //           uri,
-            //           800,
-            //           800,
-            //           'JPEG',
-            //           80,
-            //         );
-            //         uri = compressed.uri;
-            //         name = compressed.name || name;
-            //       }
-            //       const newImage = {
-            //         id: Date.now().toString(),
-            //         uri,
-            //         name,
-            //         status: 'new',
-            //       };
-
-            //       setUploadedImages(prev => [...prev, newImage]);
-            //     }
-            //   },
-            // );
             launchCamera(
               { mediaType: 'photo', cameraType: 'front', quality: 1 },
               async response => {
@@ -1636,66 +1547,6 @@ const handlePreview = async (latestFormValues: any) => {
               />
             </View>
 
-
-            {/* <View style={styles.textbg}>
-              <Image
-                source={require('../../../assets/images/info_icon.png')}
-                style={{ width: 13, height: 13, marginRight: 8, marginTop: 2 }}
-              />
-
-              <View style={{ flex: 1 }}>
-                {productId !== 4 ? (
-                  <>
-                    <Text allowFontScaling={false} style={styles.importantText1}>
-                      {t('important')}
-                    </Text>
-
-                    <Text allowFontScaling={false} style={styles.importantText}>
-                      {t('featured_listing_note_1')}{' '}
-                      <Text allowFontScaling={false} style={styles.importantText1}>
-                        {Math.trunc(featureFee)}%
-                      </Text>{' '}
-                      {t('featured_listing_fee_percentage')}{' '}
-
-                      <Text allowFontScaling={false} style={styles.importantText}>(</Text>
-                      <Text allowFontScaling={false} style={styles.importantText}>
-                        {t('capped')}{' '}
-                      </Text>
-                      <Text allowFontScaling={false} style={styles.importantText1}>
-                        £{Math.trunc(maxFeatureCap)}
-                      </Text>
-                      <Text allowFontScaling={false} style={styles.importantText}>)</Text>{' '}
-                      {t('featured_listing_fee_cap')}
-                    </Text>
-                  </>
-                ) : (
-                  <View>
-                    <Text allowFontScaling={false} style={styles.importantText1}>
-                      {t('important')}
-                    </Text>
-
-                    <Text allowFontScaling={false} style={styles.importantText}>
-                      {t('fixed_commission')}{' '}
-                      <Text allowFontScaling={false} style={styles.importantText1}>
-                        £{Math.trunc(accommodation_amount)}
-                      </Text>{' '}
-                      {t('featured_listing_fee_percentage')}
-
-                      <Text allowFontScaling={false} style={styles.importantText}></Text>
-                      <Text allowFontScaling={false} style={styles.importantText}>
-
-                      </Text>
-                      <Text allowFontScaling={false} style={styles.importantText1} />
-
-                      <Text allowFontScaling={false} style={styles.importantText}></Text>{' '}
-                      {t('featured_listing_fee_cap')}
-                    </Text>
-                  </View>
-                )}
-              </View>
-
-            </View> */}
-
             {productId !== 4 && (
               <View style={styles.textbg}>
                 <Image
@@ -1721,8 +1572,6 @@ const handlePreview = async (latestFormValues: any) => {
                 </View>
               </View>
             )}
-
-
           </View>
         );
       }
@@ -1922,25 +1771,16 @@ const handlePreview = async (latestFormValues: any) => {
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
               scrollEventThrottle={16}
-              // onScroll={scrollHandler}
               contentContainerStyle={[
                 styles.scrollContainer,
-                { paddingBottom: height * 0.1 }, // 0.05% of screen height
+                { paddingBottom: height * 0.1 },
               ]}>
 
 
               <View
                 style={{ flex: 1 }}
-              // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
               >
-                {/* <AnimatedReanimated.ScrollView
-                scrollEventThrottle={16}
-                onScroll={scrollHandler}
-                contentContainerStyle={[
-                  styles.scrollContainer,
-                  { paddingBottom: height * 0.1 },
-                ]}
-              > */}
+               
                 <View style={styles.userRow}>
                   <View
                     style={{
@@ -2005,7 +1845,7 @@ const handlePreview = async (latestFormValues: any) => {
                           }}
                         >
                           <Image
-                            source={require('../../../assets/images/calendar_icon1.png')}
+                            source={IMAGE_URLS.CALENDER_ICON}
                             style={{ height: 20, width: 20 }}
                           />
                           <Text
@@ -2069,7 +1909,7 @@ const handlePreview = async (latestFormValues: any) => {
                 {productId === 4 && (
                   <View style={[styles.textbg, { marginTop: 12 }]}>
                     <Image
-                      source={require('../../../assets/images/info_icon.png')}
+                      source={IMAGE_URLS.INFO_ICON}
                       style={{ width: 16, height: 16, marginRight: 8, marginTop: 2 }}
                     />
                     <View style={{ flex: 1 }}>
@@ -2087,9 +1927,6 @@ const handlePreview = async (latestFormValues: any) => {
                     </View>
                   </View>
                 )}
-
-
-                {/* </AnimatedReanimated.ScrollView> */}
               </View>
             </NestableScrollContainer>
           </KeyboardAvoidingView>
@@ -2287,7 +2124,7 @@ const handlePreview = async (latestFormValues: any) => {
                 </Text>
 
                 <TouchableOpacity
-                  style={styles.loginButton}
+                  style={COMMONSTYLE.loginButton}
                   onPress={() => {
                     setshowpopup(false);
                   }}
@@ -2344,7 +2181,7 @@ const handlePreview = async (latestFormValues: any) => {
                 />
 
                 <TouchableOpacity
-                  style={styles.loginButton}
+                  style={COMMONSTYLE.loginButton}
                   onPress={() => {
                     setShowThumnail(false);
                   }}
@@ -2380,17 +2217,6 @@ const handlePreview = async (latestFormValues: any) => {
               setMultiSelectModal(prev => ({ ...prev, visible: false }))
             }
             otherTextValue={formValues[multiSelectModal.fieldId!]?.other_text}
-
-            // onSelect={(data: any) => {
-            //   setFormValues((prev: any) => ({
-            //     ...prev,
-            //     [multiSelectModal.fieldId!]: {
-            //       value: data.selected,
-            //       other_text: data.text,
-            //     },
-            //   }));
-            // }}
-
             onSelect={(data: any) => {
               setFormValues((prev: any) => {
                 const fieldId = multiSelectModal.fieldId!;
@@ -2431,17 +2257,6 @@ const handlePreview = async (latestFormValues: any) => {
               setMultiSelectModal(prev => ({ ...prev, visible: false }))
             }
             otherTextValue={formValues[multiSelectModal.fieldId!]?.other_text}
-
-            // onSelect={(data: any) => {
-            //   setFormValues((prev: any) => ({
-            //     ...prev,
-            //     [multiSelectModal.fieldId!]: {
-            //       value: data.selected,
-            //       other_text: data.text,
-            //     },
-            //   }));
-            // }}
-
             onSelect={(data: any) => {
               setFormValues((prev: any) => {
                 const fieldId = multiSelectModal.fieldId!;
@@ -2574,21 +2389,7 @@ const styles = StyleSheet.create({
 
     backgroundColor: 'rgba(255, 255, 255, 0.10)',
   },
-  loginButton: {
-    display: 'flex',
-    width: '100%',
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 4,
-    borderRadius: 100,
-    paddingTop: 6,
-    paddingBottom: 6,
-    backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    marginTop: 16,
-    borderWidth: 0.5,
-    borderColor: '#ffffff2c',
-  },
+  
   loginText: {
     color: '#002050',
     textAlign: 'center',

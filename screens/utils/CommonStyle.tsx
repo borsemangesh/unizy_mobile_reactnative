@@ -18,6 +18,9 @@ const COMMONSTYLE = StyleSheet.create({
   FONTWEIGHT_500: {
      fontWeight: 500,
   },
+  FONTWEIGHT_600: {
+     fontWeight: 600,
+  },
   COLOR_FFF: {
     color: '#fff'
   },
@@ -91,6 +94,22 @@ const COMMONSTYLE = StyleSheet.create({
     height: 50,
     borderRadius: 25,
     marginRight: 12,
+  },
+
+  loginButton: {
+    display: 'flex',
+    width: '100%',
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 100,
+    paddingTop: 6,
+    paddingBottom: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.56)',
+    marginTop: 16,
+    borderWidth: 0.5,
+    borderColor: '#ffffff2c',
   },
 });
 

@@ -43,6 +43,7 @@ export const IMAGE_URLS = {
     LOGOUT_ICON: require('../../assets/images/logout.png'),
     VERSION_ICON: require('../../assets/images/versionicon.png'),
     NEXTARROW_ICON: require('../../assets/images/nextarrow.png'),
+    CALENDER_ICON: require('../../assets/images/calendar_icon1.png'),
     
 
     //Transaction Screen 

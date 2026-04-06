@@ -31,6 +31,7 @@ import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
 import { IMAGE_URLS } from '../../utils/Style';
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
+import COMMONSTYLE from '../../utils/CommonStyle';
 
 type AddReviewProps = {
   navigation: any;
@@ -218,26 +219,19 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
 
                 <View style={styles.popupContainer}>
                   <Image
-                    source={require('../../../assets/images/success_icon.png')}
+                    source={IMAGE_URLS.SUCCESS_ICON}
                     style={styles.logo}
                     resizeMode="contain"
                   />
                   <Text
                     allowFontScaling={false}
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.80)',
-                      fontFamily: 'Urbanist-SemiBold',
-                      fontSize: 20,
-                      fontWeight: '600',
-                      letterSpacing: -0.4,
-                      lineHeight: 28,
-                    }}
+                    style={styles.reviewSubmitedText}
                   >
                     {t('review_submitted_success')}!
                   </Text>
 
                   <TouchableOpacity
-                    style={styles.loginButton}
+                    style={COMMONSTYLE.loginButton}
                     onPress={() => {
                       setShowPopup1(false);
                       navigation.reset({
@@ -297,6 +291,15 @@ const AddReview: React.FC<AddReviewProps> = ({ navigation }) => {
 export default AddReview;
 
 const styles = StyleSheet.create({
+  reviewSubmitedText: {
+    ...COMMONSTYLE.FONTFAMILY_SEMIBOLD,
+    ...COMMONSTYLE.FONT_20,
+    ...COMMONSTYLE.FONTWEIGHT_600,
+    color: 'rgba(255, 255, 255, 0.80)',
+    letterSpacing: -0.4,
+    lineHeight: 28,
+  },
+
   fullLoader: {
     position: "absolute",
     top: 0,
@@ -335,36 +338,20 @@ const styles = StyleSheet.create({
   loginText: {
     color: '#002050',
     textAlign: 'center',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: 500,
+    ...COMMONSTYLE.FONTFAMILY_MEDIUM,
+    ...COMMONSTYLE.FONT_17,
+    ...COMMONSTYLE.FONTWEIGHT_500,
     letterSpacing: 1,
     width: '100%',
   },
   loginText1: {
     color: '#FFFFFF7A',
     textAlign: 'center',
-    fontFamily: 'Urbanist-Medium',
-    fontSize: 17,
-    fontWeight: 500,
+    ...COMMONSTYLE.FONTFAMILY_MEDIUM,
+    ...COMMONSTYLE.FONT_17,
+    ...COMMONSTYLE.FONTWEIGHT_500,
     letterSpacing: 1,
     width: '100%',
-  },
-
-  loginButton: {
-    display: 'flex',
-    width: '100%',
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 4,
-    borderRadius: 100,
-    paddingTop: 6,
-    paddingBottom: 6,
-    backgroundColor: 'rgba(255, 255, 255, 0.56)',
-    marginTop: 16,
-    borderWidth: 0.5,
-    borderColor: '#ffffff2c',
   },
 
   loginButton1: {
@@ -385,17 +372,17 @@ const styles = StyleSheet.create({
 
   mainlabel: {
     color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
     marginTop: 8,
+    ...COMMONSTYLE.FONTFAMILY_SEMIBOLD,
+    ...COMMONSTYLE.FONT_18,
+    ...COMMONSTYLE.FONTWEIGHT_600,
   },
 
   sublabel: {
     color: '#FFFFFFA3',
-    fontSize: 14,
-    fontWeight: '600',
-    fontFamily: 'Urbanist-Medium',
+    ...COMMONSTYLE.FONTFAMILY_MEDIUM,
+    ...COMMONSTYLE.FONT_14,
+    ...COMMONSTYLE.FONTWEIGHT_600,
     marginTop: 4,
   },
   innercontainer: {
@@ -405,16 +392,16 @@ const styles = StyleSheet.create({
   },
   mainlabel1: {
     color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
-    fontFamily: 'Urbanist-SemiBold',
+    ...COMMONSTYLE.FONTFAMILY_SEMIBOLD,
+    ...COMMONSTYLE.FONT_18,
+    ...COMMONSTYLE.FONTWEIGHT_600,
   },
 
   personalEmailID_TextInput: {
     width: '98%',
-    fontFamily: 'Urbanist-Regular',
-    fontWeight: '400',
-    fontSize: 17,
+    ...COMMONSTYLE.FONTFAMILY_REGULAR,
+    ...COMMONSTYLE.FONT_17,
+    ...COMMONSTYLE.FONTWEIGHT_400,
     lineHeight: 22,
     fontStyle: 'normal',
     color: '#fff',
@@ -463,29 +450,18 @@ const styles = StyleSheet.create({
   backIconRow: {
     padding: 12,
     borderRadius: 40,
-
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    // backgroundColor:
-    //   'radial-gradient(189.13% 141.42% at 0% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 50%, rgba(0, 0, 0, 0.10) 100%)',
-    // boxShadow: 'rgba(255, 255, 255, 0.12) inset -1px 0px 5px 1px',
-    // borderWidth: 0.4,
-    // borderColor: '#ffffff2c',
     height: 48,
     width: 48,
-
-
     borderWidth: 0.3,
     borderColor: '#ffffff11',
-
     boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.23),0px 0.90px 0px 0px rgba(255, 255, 255, 0.11) inset, 0px -0.90px 0px 0px rgba(255, 255, 255, 0.11) inset',
     backgroundColor:
       'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.10) 100%)',
-
     borderBlockStartColor: '#ffffff2e',
     borderBlockColor: '#ffffff2e',
-
     borderTopColor: '#ffffff2e',
     borderBottomColor: '#ffffff2e',
     borderLeftColor: '#ffffff2e',

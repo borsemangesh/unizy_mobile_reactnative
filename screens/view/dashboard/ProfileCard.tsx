@@ -307,7 +307,7 @@ const ProfileCard = ({ navigation }: ProfileCardContentProps) => {
 
   if (loading) {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ height: '100%',width:'100%',flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <Loader />
       </View>
     );

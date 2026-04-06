@@ -388,7 +388,7 @@ type ProfileScreenContentProps = {
   navigation: any;
 };
 const ProfileScreenContent = ({ navigation }: ProfileScreenContentProps) => (
-  <View style={{ flex: 1 }}>
+  <View style={{ flex: 1 ,height: '100%'}}>
     <ProfileCard navigation={navigation} />
   </View>
 );
