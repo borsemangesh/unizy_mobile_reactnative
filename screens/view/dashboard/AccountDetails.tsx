@@ -697,7 +697,7 @@ const AccountDetails = ({ navigation }: AccountDetailsProps) => {
           </TouchableOpacity>
 
           <View style={{ width: 280 }}>
-            <Text allowFontScaling={false} style={[COMMONSTYLE.SEMIBOLD,styles.unizyText]}>
+            <Text allowFontScaling={false} style={[COMMONSTYLE.FONTFAMILY_SEMIBOLD,styles.unizyText]}>
               {t('payment_methods')}
             </Text>
           </View>
