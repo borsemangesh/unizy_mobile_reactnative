@@ -1117,6 +1117,9 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
         const handlePostalCodeChange = (text: string) => {
           // Always update the postcode field value first
+          const filteredText = text.replace(/[^a-zA-Z0-9]/g, '').toUpperCase(); // Only allow alphanumeric characters
+
+          if (filteredText.length > 7) return; // Limit the length of the postcode (adjust if necessary)
           handleValueChange(param.id, alias_name, text);
 
           const cityField = fields?.find(
@@ -1215,9 +1218,12 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
 
                     handleValueChange(param.id, alias_name, text);
 
-                    // Only call postal code handler if this is the postcode field
                     if (field_name.toLowerCase().includes('postcode')) {
-                      handlePostalCodeChange(text);
+                      // Remove all special characters and convert to uppercase
+                      value = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase(); // Remove special characters
+                      handlePostalCodeChange(value); // Handle the postcode change logic
+                    } else {
+                      handleValueChange(param.id, alias_name, value); // Otherwise, handle the regular input change
                     }
                   }
 
