@@ -1095,6 +1095,10 @@ const handlePreview = async (latestFormValues: any) => {
 
 
         const handlePostalCodeChange = (text: string) => {
+
+          const filteredText = text.replace(/[^a-zA-Z0-9]/g, '').toUpperCase(); // Only allow alphanumeric characters
+
+          if (filteredText.length > 7) return; // Limit the length of the postcode (adjust if necessary)
           // Always update the postcode field value first
           handleValueChange(param.id, alias_name, text);
 
@@ -1186,9 +1190,12 @@ const handlePreview = async (latestFormValues: any) => {
                     const cleaned = text.replace(/£\s?/g, '');
                     handleValueChange(param.id, alias_name, cleaned);
                   } else {
-                    handleValueChange(param.id, alias_name, text);
                     if (field_name.toLowerCase().includes('postcode')) {
-                      handlePostalCodeChange(text);
+                      // Remove all special characters and convert to uppercase
+                      value = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase(); // Remove special characters
+                      handlePostalCodeChange(value); // Handle the postcode change logic
+                    } else {
+                      handleValueChange(param.id, alias_name, value); // Otherwise, handle the regular input change
                     }
                   }
 
