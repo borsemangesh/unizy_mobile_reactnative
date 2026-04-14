@@ -863,10 +863,9 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       return;
     } 
     if(!userMeta.city || userMeta.city.trim() === '') {
-      showToast(t('valid_city'));
+      showToast(t('valid_city'), 'error');
       return;
     }
-    userMeta.city
     const emailRegex =
       /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;
     if (!emailRegex.test(signUpusername.trim())) {
@@ -1714,8 +1713,15 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
   const ClickPostalCode = async (postalCode: any) => {
     const location = await getCityFromPostalCode(postalCode);
-
-    if (!location) return;
+    if (!location){
+      setUserMeta(prev => ({
+        ...prev,
+        city:   '',
+        lat: 0,
+        lon: 0,
+      }));
+      return;
+    } 
 
     setUserMeta(prev => ({
       ...prev,
@@ -1811,7 +1817,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       ) : (
         <>
           {/* {!isLogout &&( */}
-          <View style={[StyleSheet.absoluteFill, { opacity: 0.4 }]}>
+          {/* <View style={[StyleSheet.absoluteFill, { opacity: 0.4 }]}>
             <LottieView
               source={require('../../../assets/animations/backgroundanimation3.json')}
               autoPlay
@@ -1824,7 +1830,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
               blurType="light"
               blurAmount={30}
             />
-          </View>
+          </View> */}
           {/* )} */}
         </>
       )}
@@ -2585,12 +2591,14 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                             </View>
                           </View>
 
+                          
                           <View
                             style={[
                               Styles.login_container,
                               {
                                 marginTop: Platform.OS === 'ios' ? 12 : 0,
-                                marginBottom: Platform.OS === 'ios' ? 12 : 10,
+                                marginBottom: Platform.OS === 'ios' ? 0: 10,
+                               
                               },
                             ]}
                           >
@@ -2598,10 +2606,11 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                               allowFontScaling={false}
                               style={[
                                 Styles.personalEmailID_TextInput,
-                                { paddingTop: 10 },
+                                { paddingTop: Platform.OS === 'ios' ? 0 : 10 },
                               ]}
                               placeholder={t('postal_code')}
-                              cursorColor={'#F5F5F5'}
+                              cursorColor={'#FFFFFF'}
+                              selectionColor={'#FFFFFF'}
                               placeholderTextColor="rgba(255, 255, 255, 0.48)"
                               value={postalCode}
                               maxLength={7}
@@ -2627,8 +2636,10 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                 setTypingTimeout(timeout);
                               }}
                             />
+                             <Text style={{position: 'absolute', right: 10,color: 'white'}}>{userMeta?.city}</Text>
                           </View>
-
+                         
+                     
                           <View
                             style={[
                               Styles.password_container,
