@@ -105,7 +105,7 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
           >
             <Text
               allowFontScaling={false}
-              style={[COMMONSTYLE.SEMIBOLD, styles.title]}
+              style={[COMMONSTYLE.FONTFAMILY_SEMIBOLD, styles.title]}
               numberOfLines={2}
             >
               {infoTitle}
@@ -142,7 +142,7 @@ const MyListingCard: React.FC<MyListingCardProps> = ({
             <View style={{ flexDirection: 'row' }}>
               <Text
                 allowFontScaling={false}
-                style={[COMMONSTYLE.SEMIBOLD,styles.price]}
+                style={[COMMONSTYLE.FONTFAMILY_SEMIBOLD,styles.price]}
                 numberOfLines={1}
               >
                 {inforTitlePrice}

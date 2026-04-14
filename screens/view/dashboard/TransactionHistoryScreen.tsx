@@ -15,6 +15,8 @@ import {
   Modal,
   SectionList,
   Pressable,
+  TextInput,
+  Keyboard,
 } from 'react-native';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -25,8 +27,15 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../../../localization/i18n';
 import { BlurView } from '@react-native-community/blur';
 import { IMAGE_URLS } from '../../utils/Style';
+import { Constant } from '../../utils/Constant';
+import {
+  NewCustomToastContainer,
+  showToast,
+} from '../../utils/component/NewCustomToastManager';
 
 type TransactionPropos = {
+  replace(arg0: string): unknown;
+  reset(arg0: { index: number; routes: { name: string; }[]; }): unknown;
   navigation: any;
   route: any;
 };
@@ -45,6 +54,10 @@ interface TransactionItem {
   featureId: number;
   category_logo: string;
   feature_idNew: number;
+  otpverified: boolean;
+  is_cancelled: boolean;
+  originalprice: string;
+  orderid: any;
   amount: string;
   purchased_quantity?: number
   category_id: number;
@@ -88,6 +101,8 @@ export default function TransactionHistoryScreen(
 
   const [activeTab, setActiveTab] = useState<string>('Purchases');
   const [overallEarning, setOverallEarning] = useState(0);
+  const [showPopup1, setShowPopup1] = useState(false);
+  const closePopup1 = () => setShowPopup1(false);
 
   const tabs = [{ key: 'Purchases' }, { key: 'Sales' }, { key: 'Charges' }];
   const getTabLabel = (key: string) => {
@@ -425,9 +440,89 @@ export default function TransactionHistoryScreen(
       } finally {
         setLoading(false);
       }
-    };
-  
+  };
 
+   const [otp, setOtp] = useState(['', '', '', '']);
+  const inputs = useRef<Array<TextInput | null>>([]);
+  const [price, setprice] = useState('');
+    const [showPopup2, setShowPopup2] = useState(false);
+  const closePopup2 = () => setShowPopup2(false);
+    const [selectedOrderId, setSelectedOrderId] = useState(null);
+   useEffect(() => {
+    if (showPopup1) {
+      const timer = setTimeout(() => {
+        inputs.current[0]?.focus();
+      }, 300);
+
+      return () => clearTimeout(timer);
+    }
+   }, [showPopup1]);
+  
+    const otpverify = async () => {
+      Keyboard.dismiss();
+      setLoading(true);
+  
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+        if (!token) {
+  
+          setLoading(false);
+          return;
+        }
+        const otpValue = otp.join('');
+        const order_id = await AsyncStorage.getItem('last_order_id');
+  
+        const url = MAIN_URL.baseUrl + 'transaction/verify-post-order-otp';
+  
+        const createPayload = {
+          otp: otpValue,
+          orderid: selectedOrderId,
+        };
+  
+  
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            languagecode: language_code
+          },
+          body: JSON.stringify(createPayload),
+        });
+  
+        const data = await res.json();
+  
+        setShowPopup1(false);
+        if (data?.statusCode === 200) {
+          setLoading(false);
+  
+          showToast(t(data.message), 'success');
+          setShowPopup2(true);
+        } else {
+          setLoading(false);
+          setShowPopup1(false);
+          setOtp(['', '', '', '', '', '']);
+  
+          showToast(t(data?.message), 'error');
+        }
+      } catch (err) {
+        setLoading(false);
+        console.error(err);
+        showToast(t(Constant.SOMTHING_WENT_WRONG), 'error');
+      }
+    };
+  const handleChange = (text: string, index: number) => {
+    const newOtp = [...otp];
+    newOtp[index] = text;
+    setOtp(newOtp);
+
+    if (text && index < inputs.current.length - 1) {
+      inputs.current[index + 1]?.focus();
+    } else if (!text && index > 0) {
+      inputs.current[index - 1]?.focus();
+    }
+  };
 
   return (
     <View
@@ -854,6 +949,41 @@ export default function TransactionHistoryScreen(
                         {t('total_earnings')}: £{Number(item.total_earning).toFixed(2)}
                       </Text>
                     </View>
+
+                    {/* {!item.otpverified && !item.is_cancelled && (
+                      <View style={styles.cardconstinerdivider} />
+                    )} */}
+
+                    {!item.otpverified && !item.is_cancelled && (
+                      <View
+                        style={{
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <TouchableOpacity
+                          style={{
+                            width: '100%',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          }}
+                          
+                          onPress={() => {
+                            setSelectedOrderId(item.orderid);
+                            setprice(item.originalprice);
+                            setOtp(['', '', '', '', '', '']);   
+                            setTimeout(() => {
+                              inputs.current[0]?.focus();
+                            }, 200);
+                            setShowPopup1(true);
+                          }}
+                        >
+                          <Text allowFontScaling={false} style={styles.status1}>
+                            {t('enter_otp')}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
                   </View>
                 ))}
               </View>
@@ -1015,6 +1145,191 @@ export default function TransactionHistoryScreen(
             </Modal>
       
 
+         <Modal
+          visible={showPopup1}
+          transparent
+          animationType="fade"
+          onRequestClose={closePopup1}
+        >
+          <TouchableWithoutFeedback onPress={closePopup1}>
+            <View style={styles.overlay}>
+              <BlurView
+                style={{
+                  flex: 1,
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                  alignItems: 'center',
+                }}
+                blurType="light"
+                blurAmount={10}
+                reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+              >
+                <View
+                  style={[
+                    StyleSheet.absoluteFill,
+                    { backgroundColor: 'rgba(0, 0, 0, 0.47)' },
+                  ]}
+                />
+
+                {loading && (
+                  <View style={styles.fullLoader}>
+                    <Loader />
+                  </View>
+                )}
+
+                <View style={styles.popupContainer}>
+                  <Text allowFontScaling={false} style={styles.mainheader}>
+                    {t('Enter_Delivery_OTP')}
+                  </Text>
+
+                  <Text allowFontScaling={false} style={styles.subheader}>
+                    {t('please_enter_6digit_otp')}
+                  </Text>
+
+                  <View style={styles.otpContainer}>
+                    {[0, 1, 2, 3, 4, 5].map((_, index) => (
+                      <TextInput
+                        selectionColor={'#F5F5F5'}
+                        cursorColor='#F5F5F5'
+                        value={otp[index]}
+                        key={index}
+                        ref={ref => {
+                          inputs.current[index] = ref;
+                        }}
+                        style={styles.otpBox}
+                        keyboardType="number-pad"
+                        maxLength={1}
+                        onChangeText={text => {
+                          const digit = text.replace(/[^0-9]/g, '');
+                          handleChange(digit, index);
+                        }}
+                        returnKeyType="next"
+                        textAlign="center"
+                        secureTextEntry={true}
+                        onKeyPress={({ nativeEvent }) => {
+                          if (nativeEvent.key === 'Backspace') {
+                            // If current box has value, clear it
+                            if (otp[index] !== '') {
+                              const newOtp = [...otp];
+                              newOtp[index] = '';
+                              setOtp(newOtp);
+                              return;
+                            }
+
+                            if (index > 0) {
+                              inputs.current[index - 1]?.focus();
+
+                              const newOtp = [...otp];
+                              newOtp[index - 1] = '';
+                              setOtp(newOtp);
+                            }
+                          }
+                        }}
+                      />
+                    ))}
+                  </View>
+
+                  <TouchableOpacity
+                    style={styles.loginButton}
+                    onPress={otpverify}
+                  >
+                    <Text allowFontScaling={false} style={styles.loginText}>
+                      {t('verify')}
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.loginButton1}
+                    onPress={() => {
+                      setShowPopup1(false);
+                    }}
+                  >
+                    <Text allowFontScaling={false} style={styles.loginText1}>
+                      {t('cancel')}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </BlurView>
+            </View>
+          </TouchableWithoutFeedback>
+      </Modal>
+      
+
+              <Modal
+                visible={showPopup2}
+                transparent
+                animationType="fade"
+                onRequestClose={closePopup2}
+              >
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    navigation.replace('MyListing');
+                  }}
+                >
+                  <View style={styles.overlay}>
+                    <BlurView
+                      style={{
+                        flex: 1,
+                        alignContent: 'center',
+                        justifyContent: 'center',
+                        width: '100%',
+                        alignItems: 'center',
+                      }}
+                      blurType="dark"
+                      blurAmount={1000}
+                      reducedTransparencyFallbackColor="rgba(0, 0, 0, 0.11)"
+                    >
+                      <View
+                        style={[
+                          StyleSheet.absoluteFill,
+                          { backgroundColor: 'rgba(0, 0, 0, 0.32)' },
+                        ]}
+                      />
+      
+                      <View style={styles.popupContainer}>
+                        <Image
+                          source={require('../../../assets/images/success_icon.png')}
+                          style={styles.logo}
+                          resizeMode="contain"
+                        />
+                        <Text allowFontScaling={false} style={styles.mainheader}>
+                          {t('order_fulfilled')}
+                        </Text>
+                        <Text allowFontScaling={false} style={styles.subheader1}>
+                          {t('Delivery_Verified')}
+                        </Text>
+                        <Text
+                          allowFontScaling={false}
+                          style={[styles.subheader1, { marginTop: 0 }]}
+                        >
+                          {t('The_payment_of')} £{price} {t('has_been_transferred_to_your_account')}
+                        </Text>
+                        <TouchableOpacity
+                          style={styles.loginButton}
+                          onPress={() => {
+                            navigation.replace('MyListing');
+      
+                            navigation.reset({
+                              index: 0,
+                              routes: [
+                                {
+                                  name: 'MyListing',
+                                },
+                              ],
+                            });
+                          }}
+                        >
+                          <Text allowFontScaling={false} style={styles.loginText}>
+                            {t('done')}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </BlurView>
+                  </View>
+                </TouchableWithoutFeedback>
+              </Modal>
+
       {Platform.OS === 'android' ? (
         <>
           <SalesAllDetailsDropdown
@@ -1043,6 +1358,71 @@ export default function TransactionHistoryScreen(
 }
 
 const styles = StyleSheet.create({
+    subheader1: {
+    color: 'rgba(255, 255, 255, 0.48)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginTop: 6,
+    letterSpacing: -0.28,
+    lineHeight: 19.6,
+  },
+  otpBox: {
+    width: Platform.OS === 'ios' ? 42 : 48,
+    height: Platform.OS === 'ios' ? 42 : 48,
+    borderRadius: 12,
+    paddingTop: 8,
+    paddingRight: 12,
+    paddingBottom: 8,
+    paddingLeft: 12,
+    textAlign: 'center',
+    fontSize: 18,
+    color: '#fff',
+    fontWeight: '600',
+    borderWidth: 1,
+    borderColor: '#ffffff2c',
+    elevation: 0,
+    backgroundColor:
+      'radial-gradient(109.75% 109.75% at 17.5% 6.25%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.29) 100%)',
+    boxShadow: 'rgba(255, 255, 255, 0.02)inset -1px 0px 15px 1px',
+  },
+    otpContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    width: '100%',
+    alignSelf: 'center',
+    gap: 6,
+    marginTop: 16,
+  },
+    subheader: {
+    color: 'rgba(255, 255, 255, 0.80)',
+    fontFamily: 'Urbanist-Regular',
+    fontSize: 14,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginTop: 6,
+  },
+    fullLoader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    height: '100%',
+    width: '100%',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 999,
+  },
+    status1: {
+    color: 'rgba(255, 255, 255, 0.88)',
+    fontSize: 14,
+    fontWeight: '600',
+    letterSpacing: -0.28,
+    lineHeight: 16,
+    fontFamily: 'Urbanist-SemiBold',
+    padding: 10,
+  },
     logo: {
     width: 64,
     height: 64,
@@ -1165,39 +1545,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     paddingVertical: 40,
   },
-  // emptyWrapper: {
-  //   flex: 1,
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   width: '100%',
-  //   //height: '100%',
-  // },
-  // emptyContainer: {
-  //   //flex: 1,
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   width: '100%',
-  //   //height: (Platform.OS === 'ios' ? 570 : 600),
-  //   backgroundColor: 'rgba(255, 255, 255, 0.06)',
-  //   borderWidth: 0.3,
-  //   borderColor: 'rgba(255, 255, 255, 0.08)',
-  //   borderRadius: 24,
-  //   overflow: 'hidden',
-  // //  minHeight: '100%',
-
-  // },
-  // emptyImage: {
-  //   width: 50,
-  //   height: 50,
-  //   marginBottom: 20,
-  // },
-  // emptyText: {
-  //   fontSize: 20,
-  //   color: '#fff',
-  //   textAlign: 'center',
-  //   fontFamily: 'Urbanist-SemiBold',
-  //   fontWeight: 600
-  // },
+  
   emptyImage: {
     width: 64,
     height: 64,
