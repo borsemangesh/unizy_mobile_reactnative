@@ -14,6 +14,7 @@ import {
   TouchableWithoutFeedback,
   Modal,
   SectionList,
+  Pressable,
 } from 'react-native';
 import { MAIN_URL } from '../../utils/APIConstant';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -582,7 +583,7 @@ export default function TransactionHistoryScreen(
                             {item.title}
                           </Text>
                           {item?.status === 'Awaiting Delivery' && (
-                              <TouchableOpacity
+                              <Pressable
                                               onPress={() => {
                                            setOrderId(item?.order_id ?? 0);
                               setShowDeleteModal(true);
@@ -591,12 +592,19 @@ export default function TransactionHistoryScreen(
                             source={require('../../../assets/images/ic_cancel.png')}
                             style={{width: 30,height:30}}
                             /> */}
-                            <View style={{borderColor: 'rgba(255, 255, 255, 0.34)',paddingVertical: 5}}>
-                            <Text allowFontScaling={false} style={[styles.price,{  color: '#ff9c9c'}]}>
+                              <View style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.09)',
+                                // paddingVertical: 5,
+                               borderColor: '#ffffff25',
+                                borderWidth: 1,
+                                padding: 6,
+                                borderRadius: 8
+                            }}>
+                            <Text allowFontScaling={false} style={[styles.price,{  color: 'rgba(255, 255, 255, 0.7)',fontSize: 12,fontWeight: 500}]}>
                              {t('cancel_order')}
                           </Text>
                           </View>
-                            </TouchableOpacity>
+                            </Pressable>
                           )}
                         
                         </View>
