@@ -565,18 +565,19 @@ const PreviewDetailed = ({ navigation }: previewDetailsProps) => {
 
         setTimeout(() => {
         if (userMeta?.category?.id === 4) {
-           navigation.reset({
-                index: 0,
-                routes: [
-                  {
-                    name: 'Dashboard',
-                    params: {
-                      AddScreenBackactiveTab: 'Add',
-                      isNavigate: false,
-                    },
-                  },
-                ],
-              })
+          //  navigation.reset({
+          //       index: 0,
+          //       routes: [
+          //         {
+          //           name: 'Dashboard',
+          //           params: {
+          //             AddScreenBackactiveTab: 'Add',
+          //             isNavigate: false,
+          //           },
+          //         },
+          //       ],
+          //     })
+          navigation.navigate('SellerInfo');
         } else {
           navigation.navigate('SellerInfo');
         }

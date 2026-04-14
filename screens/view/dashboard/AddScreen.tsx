@@ -1216,11 +1216,12 @@ const AddScreen = ({ navigation }: AddScreenContentProps) => {
                   } else {
                     //handleValueChange(param.id, alias_name, text);
 
-                    handleValueChange(param.id, alias_name, text);
+                    // handleValueChange(param.id, alias_name, text);
 
                     if (field_name.toLowerCase().includes('postcode')) {
                       // Remove all special characters and convert to uppercase
                       value = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase(); // Remove special characters
+                      if (value.length > 7) return; 
                       handlePostalCodeChange(value); // Handle the postcode change logic
                     } else {
                       handleValueChange(param.id, alias_name, value); // Otherwise, handle the regular input change

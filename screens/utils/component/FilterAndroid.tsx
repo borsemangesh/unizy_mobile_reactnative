@@ -298,7 +298,22 @@ const FilterAndroid = ({
 
   const [dateSelections, setDateSelections] = useState<
     Record<number, { startDate?: Date; endDate?: Date }>
-  >({});
+    >({});
+  
+  
+  
+  
+  
+  
+  
+  //   const [sliderLow, setSliderLow] = useState(0);
+  // const [sliderHigh, setSliderHigh] = useState(50);
+  const [isKm, setIsKm] = useState(true);
+
+  // Convert values dynamically
+  const convertValue = (value:any) => {
+    return isKm ? value : (value * 0.621371).toFixed(1);
+  };
 
   const renderRightContent = () => {
     const currentFilter = filters.find(f => f.field_name === selectedTab);
@@ -611,11 +626,71 @@ const FilterAndroid = ({
       console.log('currentFilter', currentFilter);
       return (
         <View style={{ paddingTop: 10 }}>
-          <Text style={{ color: 'white', marginBottom: 10 }}>
-            {t('enter_postal_code')}
-          </Text>
+           <View style={styles.container}>
+            <View style={{flex: 1,flexDirection:'row',justifyContent:'space-between',alignContent:'center'}}>
+            {/* 🔁 KM / Miles Toggle */}
+             <Text style={{ color: 'white', marginBottom: 10 }}>
+            Distance
+              </Text>
+              <View>
+      <View style={styles.toggleContainer}>
+        <TouchableOpacity
+          style={[styles.toggleBtn, isKm && styles.active]}
+          onPress={() => setIsKm(true)}
+        >
+          <Text style={[styles.toggleText,{ color: isKm ? "#FFF" : "#000"}]}>KM</Text>
+        </TouchableOpacity>
 
-          <TextInput
+        <TouchableOpacity
+          style={[styles.toggleBtn, !isKm && styles.active]}
+          onPress={() => setIsKm(false)}
+        >
+          <Text style={[styles.toggleText,{ color: isKm ? "#000" : "#fff"}]}>Miles</Text>
+        </TouchableOpacity>
+              </View>
+              <Text style={styles.rangeText}>
+        {convertValue(sliderLow)} - {convertValue(sliderHigh)} {isKm ? "km" : "mi"}
+                </Text>
+                </View>
+              </View>
+
+      
+      
+
+            {/* 🎚 Multi Slider */}
+     
+      <MultiSlider
+        values={[sliderLow, sliderHigh]}
+         sliderLength={SCREEN_WIDTH/2 - 10}
+        min={currentFilter?.minvalue ?? 0}
+        max={currentFilter?.maxvalue ?? 200}
+        step={1}
+        onValuesChange={(values) => {
+          const [low, high] = values;
+          setSliderLow(low);
+          setSliderHigh(high);
+        }}
+
+       selectedStyle={{
+                backgroundColor: '#fff',
+              }}
+              unselectedStyle={{
+                backgroundColor: '#888',
+              }}
+        trackStyle={{
+                height: 4,
+                borderRadius: 2,
+              }}
+              markerStyle={{
+                					
+					height: 22,
+          borderRadius: 11,
+                backgroundColor: '#fff',
+              }}
+              />
+    </View>
+      
+          {/* <TextInput
             style={[
               styles.login_container,
               styles.personalEmailID_TextInput,
@@ -632,7 +707,7 @@ const FilterAndroid = ({
               if (filteredText.length > 7) return;
               setPostcode(filteredText);
             }}
-          />
+          /> */}
         </View>
       );
     }
@@ -944,6 +1019,41 @@ const FilterAndroid = ({
 };
 
 const styles = StyleSheet.create({
+
+  container: {
+    padding: 16,
+  },
+
+  toggleContainer: {
+    flexDirection: "row",
+    alignSelf: "center",
+    marginBottom: 10,
+    backgroundColor: "#eee",
+    borderRadius: 20,
+  },
+
+  toggleBtn: {
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+  },
+
+  active: {
+    backgroundColor: "#4CAF50",
+  },
+
+  toggleText: {
+   
+    fontWeight: "600",
+  },
+
+  rangeText: {
+    textAlign: "center",
+    marginBottom: 10,
+    fontSize: 16,
+    fontWeight: "bold",
+    color:'#fff'
+  },
   login_container: {
     width: '45%',
     height: 44,
