@@ -1817,7 +1817,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       ) : (
         <>
           {/* {!isLogout &&( */}
-          {/* <View style={[StyleSheet.absoluteFill, { opacity: 0.4 }]}>
+          <View style={[StyleSheet.absoluteFill, { opacity: 0.4 }]}>
             <LottieView
               source={require('../../../assets/animations/backgroundanimation3.json')}
               autoPlay
@@ -1830,7 +1830,7 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
               blurType="light"
               blurAmount={30}
             />
-          </View> */}
+          </View>
           {/* )} */}
         </>
       )}
