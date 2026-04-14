@@ -789,5 +789,6 @@
   "cancelled": "Cancelled",
   "cancel_order_message_action": "Are you sure you want to continue? Your order will be cancelled.",
    "yes_cancel": "Yes, Cancel order",
-   "price_must_be_at_least":"Please enter a price of at least 0.50."
+   "price_must_be_at_least":"Please enter a price of at least 0.50.",
+   "valid_city": "Please enter city."
 }

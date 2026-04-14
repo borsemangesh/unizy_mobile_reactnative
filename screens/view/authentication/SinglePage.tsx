@@ -860,7 +860,13 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
     if (!userMeta.postal_code || userMeta.postal_code.trim() === '') {
       showToast(t('postal_code_req'));
+      return;
+    } 
+    if(!userMeta.city || userMeta.city.trim() === '') {
+      showToast(t('valid_city'));
+      return;
     }
+    userMeta.city
     const emailRegex =
       /^[^\s@]+@(?!(?:[^\s@]+\.)?(?:ac\.uk|edu)$)[^\s@]+\.[^\s@]+$/i;
     if (!emailRegex.test(signUpusername.trim())) {
