@@ -426,12 +426,12 @@ const FilterAndroid = ({
     } else if (currentFilter.alias_name === 'price') {
       return (
         <View style={{ zIndex: 999, position: 'relative' }}>
-          <Text
+          {/* <Text
             allowFontScaling={false}
             style={{ color: 'white', marginBottom: 10 }}
           >
             {t('range')}: {sliderLow} - {sliderHigh}
-          </Text>
+          </Text> */}
 
           <View style={{ paddingTop: 10, paddingBottom: 20, paddingLeft: 0 }}>
             {/* <MultiSlider
@@ -471,19 +471,31 @@ const FilterAndroid = ({
                   /> 
                   */}
             <View
-              style={{ flexDirection: 'row', justifyContent: 'space-between' }}
+              style={{ flexDirection: 'row',flex: 2, justifyContent: 'space-between' }}
             >
-              {/* MIN INPUT */}
+              <View style={{flex: 1}}>
+                {/* MIN INPUT */}
+                <Text
+                  allowFontScaling={false}
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.73)'
+                    ,paddingBottom: 6
+                    ,paddingStart: 10
+                  }}
+                >
+                  {t('min')}
+                </Text>
               <TextInput
                 style={[
                   styles.login_container,
                   styles.personalEmailID_TextInput,
+                  {width: '94%'}
                 ]}
                 keyboardType="numeric"
                 placeholder="Min"
                 placeholderTextColor="#aaa"
-                selectionColor={'#F5F5F5'}
-                cursorColor={'#F5F5F5'}
+                selectionColor={'#FFFFFF'}
+                cursorColor={'#FFFFFF'}
                 value={String(sliderLow)}
                 onChangeText={text => {
                   let value = parseInt(text) || 0;
@@ -494,12 +506,25 @@ const FilterAndroid = ({
                   setPriceRange({ min: value, max: sliderHigh });
                 }}
               />
-
+              </View>
+              
+              <View style={{flex: 1,width: '100%'}}>
+              <Text
+                  allowFontScaling={false}
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.73)'
+                    ,paddingBottom: 6
+                    ,paddingStart: 10
+                  }}
+                >
+                  {t('max')}
+                </Text>
               {/* MAX INPUT */}
               <TextInput
                 style={[
                   styles.login_container,
                   styles.personalEmailID_TextInput,
+                  {width: '98%'}
                 ]}
                 keyboardType="numeric"
                 placeholder="Max"
@@ -528,6 +553,7 @@ const FilterAndroid = ({
                   setPriceRange({ min: sliderLow, max: finalValue });
                 }}
               />
+              </View>
             </View>
           </View>
         </View>

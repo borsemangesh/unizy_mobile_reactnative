@@ -23,13 +23,12 @@ import FilterButtonApply from './FilterButtonApply';
 import { useTranslation } from 'react-i18next';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-
 type PriceRange = { min: number; max: number } | null;
 interface FilterBottomSheetProps {
   catagory_id: number;
   visible: boolean;
   onClose: () => void;
-  onApply: (filters: any) => void; 
+  onApply: (filters: any) => void;
   from: number;
   to: number;
   initialFilters?: any;
@@ -52,26 +51,31 @@ const FilterBottomSheet = ({
   const [sliderLow, setSliderLow] = useState(priceRange.min);
   const [sliderHigh, setSliderHigh] = useState(priceRange.max);
 
-  const [defaultPriceRange, setDefaultPriceRange] = useState({ min: 0, max: 10000 });
+  const [defaultPriceRange, setDefaultPriceRange] = useState({
+    min: 0,
+    max: 10000,
+  });
 
   const [lastAppliedPriceRange, setLastAppliedPriceRange] =
-          useState<PriceRange>(null);
-      
-      const [postcode, setPostcode] = useState<string>('');
-       const [lastAppliedPostcode, setLastAppliedPostcode] = useState<string | null>(null);
+    useState<PriceRange>(null);
+
+  const [postcode, setPostcode] = useState<string>('');
+  const [lastAppliedPostcode, setLastAppliedPostcode] = useState<string | null>(
+    null,
+  );
   const [otherInputs, setOtherInputs] = useState<Record<number, string>>({});
-  
 
   const fetchFilters = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      const language_code = await AsyncStorage.getItem('selectedLanguage') || 'en'
+      const language_code =
+        (await AsyncStorage.getItem('selectedLanguage')) || 'en';
 
       if (!token) return;
 
       const body = { category_id: catagory_id };
       const url = MAIN_URL.baseUrl + 'category/feature/filter';
-            console.log('URL: ', url);
+      console.log('URL: ', url);
       console.log('FIlterBody:', body);
 
       const res = await fetch(url, {
@@ -79,27 +83,26 @@ const FilterBottomSheet = ({
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
-          languagecode: language_code
+          languagecode: language_code,
         },
         body: JSON.stringify(body),
       });
 
       const data = await res.json();
-        console.log('FIlterResponse:', data);
+      console.log('FIlterResponse:', data);
       if (data.statusCode === 200) {
         const dynamicFilters = data.data.filter(
           (item: any) =>
-            item.field_type?.toLowerCase() === 'dropdown' ||           
-              item.alias_name?.toLowerCase() === 'price' || 
-                item.field_type?.toLowerCase() === 'date' ||
-                item.field_type?.toLowerCase() === 'text',
+            item.field_type?.toLowerCase() === 'dropdown' ||
+            item.alias_name?.toLowerCase() === 'price' ||
+            item.field_type?.toLowerCase() === 'date' ||
+            item.field_type?.toLowerCase() === 'text',
         );
 
         setFilters(dynamicFilters);
 
-
         const priceFilter = dynamicFilters.find(
-          (item: any) => item.alias_name?.toLowerCase() === 'price'
+          (item: any) => item.alias_name?.toLowerCase() === 'price',
         );
 
         if (priceFilter) {
@@ -118,9 +121,7 @@ const FilterBottomSheet = ({
           setSelectedTab(dynamicFilters[0].field_name);
         }
       }
-    } catch (err) {
-
-    }
+    } catch (err) {}
   };
 
   useEffect(() => {
@@ -134,11 +135,11 @@ const FilterBottomSheet = ({
       const savedDropdowns: any = {};
 
       initialFilters.filters.forEach((f: any) => {
-        if (f.field_type === "dropdown") {
+        if (f.field_type === 'dropdown') {
           savedDropdowns[f.id] = f.options;
         }
 
-        if (f.alias_name?.toLowerCase() === "price") {
+        if (f.alias_name?.toLowerCase() === 'price') {
           const [min, max] = f.options;
           setPriceRange({ min, max });
           setSliderLow(min);
@@ -152,124 +153,125 @@ const FilterBottomSheet = ({
     }
   }, [visible]);
 
-
   const { t } = useTranslation();
 
   const handleTabPress = (tabName: string) => {
     setSelectedTab(tabName);
   };
 
+  // const toggleDropdownOption = (
+  //   fieldId: number,
+  //   optionId: number,
+  //   isMultiple: boolean,
+  // ) => {
+  //   setDropdownSelections(prev => {
+  //     const current = prev[fieldId] || [];
 
-    // const toggleDropdownOption = (
-    //   fieldId: number,
-    //   optionId: number,
-    //   isMultiple: boolean,
-    // ) => {
-    //   setDropdownSelections(prev => {
-    //     const current = prev[fieldId] || [];
+  //     if (isMultiple) {
+  //       // MULTI SELECT (checkbox)
+  //       if (current.includes(optionId)) {
+  //         return {
+  //           ...prev,
+  //           [fieldId]: current.filter(id => id !== optionId),
+  //         };
+  //       } else {
+  //         return { ...prev, [fieldId]: [...current, optionId] };
+  //       }
+  //     } else {
+  //       // SINGLE SELECT (radio)
+  //       return { ...prev, [fieldId]: [optionId] };
+  //     }
+  //   });
+  // };
+  const toggleDropdownOption = (
+    fieldId: number,
+    optionId: number,
+    isMultiple: boolean,
+  ) => {
+    setDropdownSelections(prev => {
+      const current = prev[fieldId] || [];
 
-    //     if (isMultiple) {
-    //       // MULTI SELECT (checkbox)
-    //       if (current.includes(optionId)) {
-    //         return {
-    //           ...prev,
-    //           [fieldId]: current.filter(id => id !== optionId),
-    //         };
-    //       } else {
-    //         return { ...prev, [fieldId]: [...current, optionId] };
-    //       }
-    //     } else {
-    //       // SINGLE SELECT (radio)
-    //       return { ...prev, [fieldId]: [optionId] };
-    //     }
-    //   });
-    // };
-const toggleDropdownOption = (
-  fieldId: number,
-  optionId: number,
-  isMultiple: boolean,
-) => {
-  setDropdownSelections(prev => {
-    const current = prev[fieldId] || [];
+      // 🔍 Find current filter + option
+      const filter = filters.find(f => f.id === fieldId);
+      const option = filter?.options?.find((o: any) => o.id === optionId);
 
-    // 🔍 Find current filter + option
-    const filter = filters.find(f => f.id === fieldId);
-    const option = filter?.options?.find((o: any) => o.id === optionId);
+      const isOtherOption =
+        option?.option_name?.toLowerCase() === 'other' ||
+        option?.name?.toLowerCase() === 'other';
 
-    const isOtherOption =
-      option?.option_name?.toLowerCase() === 'other' ||
-      option?.name?.toLowerCase() === 'other';
+      let updated: number[] = [];
 
-    let updated: number[] = [];
+      if (isMultiple) {
+        if (current.includes(optionId)) {
+          // ❌ UNSELECT
+          updated = current.filter(id => id !== optionId);
 
-    if (isMultiple) {
-      if (current.includes(optionId)) {
-        // ❌ UNSELECT
-        updated = current.filter(id => id !== optionId);
+          // ✅ If "Other" unchecked → remove input
+          if (isOtherOption) {
+            setOtherInputs(prevInputs => {
+              const copy = { ...prevInputs };
+              delete copy[fieldId];
+              return copy;
+            });
+          }
+        } else {
+          // ✅ SELECT
+          updated = [...current, optionId];
+        }
+      } else {
+        // 🔘 SINGLE SELECT (radio)
 
-        // ✅ If "Other" unchecked → remove input
-        if (isOtherOption) {
+        // ✅ If switching FROM "Other" → clear old input
+        const previousSelectedId = current[0];
+        const previousOption = filter?.options?.find(
+          (o: any) => o.id === previousSelectedId,
+        );
+
+        const wasOther =
+          previousOption?.option_name?.toLowerCase() === 'other' ||
+          previousOption?.name?.toLowerCase() === 'other';
+
+        if (wasOther) {
           setOtherInputs(prevInputs => {
             const copy = { ...prevInputs };
             delete copy[fieldId];
             return copy;
           });
         }
-      } else {
-        // ✅ SELECT
-        updated = [...current, optionId];
-      }
-    } else {
-      // 🔘 SINGLE SELECT (radio)
 
-      // ✅ If switching FROM "Other" → clear old input
-      const previousSelectedId = current[0];
-      const previousOption = filter?.options?.find(
-        (o: any) => o.id === previousSelectedId
-      );
-
-      const wasOther =
-        previousOption?.option_name?.toLowerCase() === 'other' ||
-        previousOption?.name?.toLowerCase() === 'other';
-
-      if (wasOther) {
-        setOtherInputs(prevInputs => {
-          const copy = { ...prevInputs };
-          delete copy[fieldId];
-          return copy;
-        });
+        updated = [optionId];
       }
 
-      updated = [optionId];
-    }
-
-    return { ...prev, [fieldId]: updated };
-  });
-};
+      return { ...prev, [fieldId]: updated };
+    });
+  };
 
   const handleClearFilters = () => {
     setDropdownSelections({});
     setPriceRange(defaultPriceRange);
     setSliderLow(defaultPriceRange.min);
-      setSliderHigh(defaultPriceRange.max);
-      setDateSelections({});
+    setSliderHigh(defaultPriceRange.max);
+    setDateSelections({});
     setPostcode('');
-      setOtherInputs({}); 
+    setOtherInputs({});
   };
 
   const modelClose = () => {
     onClose();
-  }
+  };
 
   const handleClose = () => {
     if (initialFilters?.filters?.length > 0) {
       const savedDropdowns: Record<number, number[]> = {};
       initialFilters.filters.forEach((f: any) => {
-        if (f.field_type === "dropdown" && Array.isArray(f.options)) {
+        if (f.field_type === 'dropdown' && Array.isArray(f.options)) {
           savedDropdowns[f.id] = f.options;
         }
 
-        if (f.alias_name?.toLowerCase() === "price" && Array.isArray(f.options)) {
+        if (
+          f.alias_name?.toLowerCase() === 'price' &&
+          Array.isArray(f.options)
+        ) {
           const [min, max] = f.options;
           setPriceRange({ min, max });
           setSliderLow(min);
@@ -279,32 +281,30 @@ const toggleDropdownOption = (
 
       setDropdownSelections(savedDropdowns);
     } else {
-       setDropdownSelections({});
+      setDropdownSelections({});
       setPriceRange(defaultPriceRange);
       setSliderLow(defaultPriceRange.min);
-        setSliderHigh(defaultPriceRange.max);
-        setPostcode('');
+      setSliderHigh(defaultPriceRange.max);
+      setPostcode('');
     }
     onClose();
   };
 
-    const SCREEN_WIDTH = Dimensions.get('window').width;
-    
-    const [dateSelections, setDateSelections] = useState<
-      Record<number, { startDate?: Date; endDate?: Date }>
-        >({});
-    
-    
-    const [showDatePicker, setShowDatePicker] = useState(false);
-    
-    const [activeDateField, setActiveDateField] = useState<{
-      param: any;
-      type: 'start' | 'end';
-    } | null>(null);
-    
-        const [tempDate, setTempDate] = useState(new Date());
-        
-    
+  const SCREEN_WIDTH = Dimensions.get('window').width;
+
+  const [dateSelections, setDateSelections] = useState<
+    Record<number, { startDate?: Date; endDate?: Date }>
+  >({});
+
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const [activeDateField, setActiveDateField] = useState<{
+    param: any;
+    type: 'start' | 'end';
+  } | null>(null);
+
+  const [tempDate, setTempDate] = useState(new Date());
+
   const renderRightContent = () => {
     const currentFilter = filters.find(f => f.field_name === selectedTab);
     if (!currentFilter) return null;
@@ -320,132 +320,125 @@ const toggleDropdownOption = (
               ? selectedValues.includes(opt.id)
               : selectedValues[0] === opt.id;
 
-
             const isSelectedCheckbox = selectedValues.includes(opt.id);
             const isSelectedRadio = selectedValues[0] === opt.id;
             const isOtherOption =
               opt.option_name?.toLowerCase() === 'other' ||
               opt.name?.toLowerCase() === 'other';
 
-
             return (
               <View key={opt.id}>
-              <TouchableOpacity
-                key={opt.id}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  paddingVertical: 12,
-                  flexWrap: 'nowrap',
-                }}
-                onPress={() =>
-                  toggleDropdownOption(
-                    currentFilter.id,
-                    opt.id,
-                    isMultiple
-                  )
-                }
-              >
-                {/* ICON UI ONLY CHANGED */}
-                {isMultiple ? (
-                  <View
-                    style={{
-                      width: 20,
-                      height: 20,
-                      borderRadius: 4,
-                      borderWidth: 1,
-                      borderColor: '#fff',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      marginRight: 10,
-                    }}
-                  >
-                    {isSelectedCheckbox && (
-                      <Image
-                        source={require('../../../assets/images/tickicon.png')}
-                        style={styles.tickImage}
-                        resizeMode="contain"
-                      />
-                    )}
-                  </View>
-                ) : (
-                  <View
-                    style={{
-                      width: 20,
-                      height: 20,
-                      borderRadius: 10,
-                      borderWidth: 1.5,
-                      borderColor: '#fff',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      marginRight: 10,
-                    }}
-                  >
-                    {isSelectedRadio && (
-                      <View
-                        style={{
-                          width: 10,
-                          height: 10,
-                          borderRadius: 5,
-                          backgroundColor: '#fff',
-                        }}
-                      />
-                    )}
-                  </View>
-                )}
-
-                <Text
-                  allowFontScaling={false}
-                  numberOfLines={3}
-                  style={[styles.filtertitleFilteryBy, {
-                    flexShrink: 1,
-                    flexGrow: 1,
-                  }]}
+                <TouchableOpacity
+                  key={opt.id}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    paddingVertical: 12,
+                    flexWrap: 'nowrap',
+                  }}
+                  onPress={() =>
+                    toggleDropdownOption(currentFilter.id, opt.id, isMultiple)
+                  }
                 >
-                  {opt.option_name || opt.name}
-                </Text>
+                  {/* ICON UI ONLY CHANGED */}
+                  {isMultiple ? (
+                    <View
+                      style={{
+                        width: 20,
+                        height: 20,
+                        borderRadius: 4,
+                        borderWidth: 1,
+                        borderColor: '#fff',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginRight: 10,
+                      }}
+                    >
+                      {isSelectedCheckbox && (
+                        <Image
+                          source={require('../../../assets/images/tickicon.png')}
+                          style={styles.tickImage}
+                          resizeMode="contain"
+                        />
+                      )}
+                    </View>
+                  ) : (
+                    <View
+                      style={{
+                        width: 20,
+                        height: 20,
+                        borderRadius: 10,
+                        borderWidth: 1.5,
+                        borderColor: '#fff',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginRight: 10,
+                      }}
+                    >
+                      {isSelectedRadio && (
+                        <View
+                          style={{
+                            width: 10,
+                            height: 10,
+                            borderRadius: 5,
+                            backgroundColor: '#fff',
+                          }}
+                        />
+                      )}
+                    </View>
+                  )}
+
+                  <Text
+                    allowFontScaling={false}
+                    numberOfLines={3}
+                    style={[
+                      styles.filtertitleFilteryBy,
+                      {
+                        flexShrink: 1,
+                        flexGrow: 1,
+                      },
+                    ]}
+                  >
+                    {opt.option_name || opt.name}
+                  </Text>
                 </TouchableOpacity>
                 {isOtherOption && isSelected && (
-                                  <TextInput
-                                    style={[
-                                      styles.login_container,
-                                      styles.personalEmailID_TextInput,
-                                      { marginBottom: 10, width: '100%' },
-                                    ]}
-                                    placeholder="Please specify"
-                                    placeholderTextColor="#aaa"
-                                    selectionColor={'#FFFFFF'}
-                                    cursorColor={'#FFFFFF'}
-                                    value={otherInputs[currentFilter.id] || ''}
-                                    onChangeText={text => {
-                                      setOtherInputs(prev => ({
-                                        ...prev,
-                                        [currentFilter.id]: text,
-                                      }));
-                                    }}
-                                  />
-                                )}
-                </View>
+                  <TextInput
+                    style={[
+                      styles.login_container,
+                      styles.personalEmailID_TextInput,
+                      { marginBottom: 10, width: '100%' },
+                    ]}
+                    placeholder="Please specify"
+                    placeholderTextColor="#aaa"
+                    selectionColor={'#FFFFFF'}
+                    cursorColor={'#FFFFFF'}
+                    value={otherInputs[currentFilter.id] || ''}
+                    onChangeText={text => {
+                      setOtherInputs(prev => ({
+                        ...prev,
+                        [currentFilter.id]: text,
+                      }));
+                    }}
+                  />
+                )}
+              </View>
             );
           })}
-
-
         </ScrollView>
       );
-    }
-
-
-
-
-    else if (currentFilter.alias_name === 'price') {
+    } else if (currentFilter.alias_name === 'price') {
       return (
         <View style={{ zIndex: 999, position: 'relative' }}>
-          <Text allowFontScaling={false} style={{ color: 'white', marginBottom: 10 }}>
+          {/* <Text
+            allowFontScaling={false}
+            style={{ color: 'white', marginBottom: 10 }}
+          >
             {t('range')}: {sliderLow} - {sliderHigh}
-          </Text>
+          </Text> */}
 
           <View style={{ paddingTop: 10, paddingBottom: 20, paddingLeft: 0 }}>
-                      {/* <MultiSlider
+            {/* <MultiSlider
                         values={[sliderLow, sliderHigh]}
                         sliderLength={SCREEN_WIDTH/2 - 10}
            
@@ -481,192 +474,214 @@ const toggleDropdownOption = (
                         }}
                             /> 
                             */}
-                      <View
-                        style={{ flexDirection: 'row', justifyContent: 'space-between' }}
-                      >
-                        {/* MIN INPUT */}
-                        <TextInput
-                          style={[
-                            styles.login_container,
-                            styles.personalEmailID_TextInput,
-                          ]}
-                          keyboardType="numeric"
-                          placeholder="Min"
-                          placeholderTextColor="#aaa"
-                          selectionColor={'#FFFFFF'}
-                          cursorColor={'#FFFFFF'}
-                          value={String(sliderLow)}
-                          onChangeText={text => {
-                            let value = parseInt(text) || 0;
-          
-                            if (value > sliderHigh) return;
-          
-                            setSliderLow(value);
-                            setPriceRange({ min: value, max: sliderHigh });
-                          }}
-                        />
-          
-                        {/* MAX INPUT */}
-                        <TextInput
-                          style={[
-                            styles.login_container,
-                            styles.personalEmailID_TextInput,
-                          ]}
-                          keyboardType="numeric"
-                          placeholder="Max"
-                          selectionColor={'#FFFFFF'}
-                          cursorColor={'#FFFFFF'}
-                          placeholderTextColor="#aaa"
-                          value={String(sliderHigh)}
-                          onChangeText={text => {
-                            let value = parseInt(text);
-          
-                            if (isNaN(value)) {
-                              setSliderHigh(0);
-                              return;
-                            }
-          
-                            // Clamp within allowed range
-                            const minLimit = sliderLow;
-                            const maxLimit = currentFilter?.maxvalue ?? 100;
-          
-                            let finalValue = Math.min(
-                              Math.max(value, minLimit),
-                              maxLimit,
-                            );
-          
-                            setSliderHigh(finalValue);
-                            setPriceRange({ min: sliderLow, max: finalValue });
-                          }}
-                        />
-                      </View>
-                    </View>
+            <View
+              style={{ flexDirection: 'row',flex: 2, justifyContent: 'space-between' }}
+            >
+              <View style={{flex: 1}}>
+                {/* MIN INPUT */}
+                <Text
+                  allowFontScaling={false}
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.73)'
+                    ,paddingBottom: 6
+                    ,paddingStart: 10
+                  }}
+                >
+                  {t('min')}
+                </Text>
+              <TextInput
+                style={[
+                  styles.login_container,
+                  styles.personalEmailID_TextInput,
+                  {width: '94%'}
+                ]}
+                keyboardType="numeric"
+                placeholder="Min"
+                placeholderTextColor="#aaa"
+                selectionColor={'#FFFFFF'}
+                cursorColor={'#FFFFFF'}
+                value={String(sliderLow)}
+                onChangeText={text => {
+                  let value = parseInt(text) || 0;
+
+                  if (value > sliderHigh) return;
+
+                  setSliderLow(value);
+                  setPriceRange({ min: value, max: sliderHigh });
+                }}
+              />
+              </View>
+              
+              <View style={{flex: 1,width: '100%'}}>
+              <Text
+                  allowFontScaling={false}
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.73)'
+                    ,paddingBottom: 6
+                    ,paddingStart: 10
+                  }}
+                >
+                  {t('max')}
+                </Text>
+              {/* MAX INPUT */}
+              <TextInput
+                style={[
+                  styles.login_container,
+                  styles.personalEmailID_TextInput,
+                  {width: '98%'}
+                ]}
+                keyboardType="numeric"
+                placeholder="Max"
+                selectionColor={'#FFFFFF'}
+                cursorColor={'#FFFFFF'}
+                placeholderTextColor="#aaa"
+                value={String(sliderHigh)}
+                onChangeText={text => {
+                  let value = parseInt(text);
+
+                  if (isNaN(value)) {
+                    setSliderHigh(0);
+                    return;
+                  }
+
+                  // Clamp within allowed range
+                  const minLimit = sliderLow;
+                  const maxLimit = currentFilter?.maxvalue ?? 100;
+
+                  let finalValue = Math.min(
+                    Math.max(value, minLimit),
+                    maxLimit,
+                  );
+
+                  setSliderHigh(finalValue);
+                  setPriceRange({ min: sliderLow, max: finalValue });
+                }}
+              />
+              </View>
+            </View>
+          </View>
         </View>
       );
     } else if (currentFilter.field_type?.toLowerCase() === 'date') {
-          const selected = dateSelections[currentFilter.id] || {};
-    
-          return (
-            <View style={{ paddingTop: 10 }}>
-             
-    
-              {/* START DATE */}
-              <TouchableOpacity
-                style={[
-                  styles.login_container,
-                  styles.personalEmailID_TextInput,
-                  { width: '100%' ,marginTop: 10},
-                ]}
-                onPress={() => {
-                  setActiveDateField({ param: currentFilter, type: 'start' });
-                  setTempDate(selected.startDate || new Date());
-                  setShowDatePicker(true);
-                }}
-              >
-                <Text style={{ color: '#fff' }}>
-                  {selected.startDate
-                    ? formatDate(selected.startDate)
-                    : 'Select Start Date'}
-                </Text>
-              </TouchableOpacity>
-    
-              {/* END DATE */}
-              <TouchableOpacity
-                style={[
-                  styles.login_container,
-                  styles.personalEmailID_TextInput,
-                  { marginTop: 10, width: '100%' },
-                ]}
-                onPress={() => {
-                  setActiveDateField({ param: currentFilter, type: 'end' });
-                  setTempDate(selected.endDate || new Date());
-                  setShowDatePicker(true);
-                }}
-              >
-                <Text style={{ color: '#fff' }}>
-                  {selected.endDate
-                    ? formatDate(selected.endDate)
-                    : 'Select End Date'}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          );
-        } else if (
-              currentFilter.field_type?.toLowerCase() === 'text' &&
-              currentFilter.alias_name?.toLowerCase().includes('postcode')
-            ) {
-              return (
-                <View style={{ paddingTop: 10 }}>
-                  <Text style={{ color: 'white', marginBottom: 10 }}>
-                    {t('enter_postal_code')}
-                  </Text>
-        
-                  <TextInput
-                    style={[
-                      styles.login_container,
-                      styles.personalEmailID_TextInput,
-                      { width: '100%' },
-                    ]}
-                    keyboardType="default"
-                    placeholder={t('enter_postal_code')}
-                    placeholderTextColor="#aaa"
-                    selectionColor={'#FFFFFF'}
-                     cursorColor={'#FFFFFF'}
-                    value={postcode}
-                    onChangeText={text => {
-                      const filteredText = text
-                        .replace(/[^a-zA-Z0-9]/g, '')
-                        .toUpperCase();
-                      if (filteredText.length > 7) return;
-                      setPostcode(filteredText);
-                    }}
-                  />
-                </View>
-              );
-            }
+      const selected = dateSelections[currentFilter.id] || {};
+
+      return (
+        <View style={{ paddingTop: 10 }}>
+          {/* START DATE */}
+          <TouchableOpacity
+            style={[
+              styles.login_container,
+              styles.personalEmailID_TextInput,
+              { width: '100%', marginTop: 10 },
+            ]}
+            onPress={() => {
+              setActiveDateField({ param: currentFilter, type: 'start' });
+              setTempDate(selected.startDate || new Date());
+              setShowDatePicker(true);
+            }}
+          >
+            <Text style={{ color: '#fff' }}>
+              {selected.startDate
+                ? formatDate(selected.startDate)
+                : 'Select Start Date'}
+            </Text>
+          </TouchableOpacity>
+
+          {/* END DATE */}
+          <TouchableOpacity
+            style={[
+              styles.login_container,
+              styles.personalEmailID_TextInput,
+              { marginTop: 10, width: '100%' },
+            ]}
+            onPress={() => {
+              setActiveDateField({ param: currentFilter, type: 'end' });
+              setTempDate(selected.endDate || new Date());
+              setShowDatePicker(true);
+            }}
+          >
+            <Text style={{ color: '#fff' }}>
+              {selected.endDate
+                ? formatDate(selected.endDate)
+                : 'Select End Date'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      );
+    } else if (
+      currentFilter.field_type?.toLowerCase() === 'text' &&
+      currentFilter.alias_name?.toLowerCase().includes('postcode')
+    ) {
+      return (
+        <View style={{ paddingTop: 10 }}>
+          <Text style={{ color: 'white', marginBottom: 10 }}>
+            {t('enter_postal_code')}
+          </Text>
+
+          <TextInput
+            style={[
+              styles.login_container,
+              styles.personalEmailID_TextInput,
+              { width: '100%' },
+            ]}
+            keyboardType="default"
+            placeholder={t('enter_postal_code')}
+            placeholderTextColor="#aaa"
+            selectionColor={'#FFFFFF'}
+            cursorColor={'#FFFFFF'}
+            value={postcode}
+            onChangeText={text => {
+              const filteredText = text
+                .replace(/[^a-zA-Z0-9]/g, '')
+                .toUpperCase();
+              if (filteredText.length > 7) return;
+              setPostcode(filteredText);
+            }}
+          />
+        </View>
+      );
+    }
 
     return null;
   };
 
-    const formatDate = (date: Date) => {
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = String(date.getFullYear()).slice(-2); // last 2 digits
+  const formatDate = (date: Date) => {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = String(date.getFullYear()).slice(-2); // last 2 digits
 
-  return `${day}-${month}-${year}`;
-};
-    
-    const uniqueFilters = Array.from(
-  new Map(filters.map(f => [f.id, f])).values()
-);
+    return `${day}-${month}-${year}`;
+  };
+
+  const uniqueFilters = Array.from(
+    new Map(filters.map(f => [f.id, f])).values(),
+  );
 
   const handleApply = () => {
-      
-      const selectedFilters = uniqueFilters
+    const selectedFilters = uniqueFilters
       .map(f => {
         if (f.field_type === 'dropdown' && dropdownSelections[f.id]?.length) {
-const selectedIds = dropdownSelections[f.id];
-            const selectedOptions = f.options.filter((opt: any) =>
-    selectedIds.includes(opt.id)
-  );
+          const selectedIds = dropdownSelections[f.id];
+          const selectedOptions = f.options.filter((opt: any) =>
+            selectedIds.includes(opt.id),
+          );
 
-  const hasOther = selectedOptions.find(
-    (opt: any) =>
-      opt.option_name?.toLowerCase() === 'other' ||
-      opt.name?.toLowerCase() === 'other'
-  );
+          const hasOther = selectedOptions.find(
+            (opt: any) =>
+              opt.option_name?.toLowerCase() === 'other' ||
+              opt.name?.toLowerCase() === 'other',
+          );
 
-
-           return {
-    id: f.id,
-    field_name: f.field_name,
-    field_type: f.field_type,
-    alias_name: f.alias_name,
-    options: selectedIds,
-    ...(hasOther && {
-      other_value: otherInputs[f.id] || '',
-    }),
-  };
+          return {
+            id: f.id,
+            field_name: f.field_name,
+            field_type: f.field_type,
+            alias_name: f.alias_name,
+            options: selectedIds,
+            ...(hasOther && {
+              other_value: otherInputs[f.id] || '',
+            }),
+          };
           // return {
           //   id: f.id,
           //   field_name: f.field_name,
@@ -714,7 +729,6 @@ const selectedIds = dropdownSelections[f.id];
         return null;
       })
       .filter(Boolean);
-
 
     const filterBody = {
       filters: selectedFilters,
@@ -877,7 +891,7 @@ const selectedIds = dropdownSelections[f.id];
                   <Text allowFontScaling={false} style={styles.filterHeadTitle}>
                     {selectedTab}
                   </Text>
-       
+
                   {renderRightContent()}
                 </ScrollView>
               </View>
@@ -895,9 +909,7 @@ const selectedIds = dropdownSelections[f.id];
                 />
               </View>
               {showDatePicker && activeDateField && (
-                <View
-                  style={styles.datePickerContainer}
-                >
+                <View style={styles.datePickerContainer}>
                   {/* HEADER */}
                   <View
                     style={{
@@ -987,14 +999,14 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === 'ios' ? 20 : 0,
   },
   blurView: {
-      top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          width: '100%',
-          height: '100%',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: '100%',
+    height: '100%',
   },
-    login_container: {
+  login_container: {
     width: '45%',
     height: 44,
     display: 'flex',
@@ -1024,13 +1036,11 @@ const styles = StyleSheet.create({
     minHeight: 44,
   },
   scrollview_style: {
-
     flex: 1,
     backgroundColor:
       Platform.OS === 'ios'
         ? 'rgba(0, 0, 0, 0.30)'
         : 'rgba(255, 255, 255, 0.07)',
-
   },
   FilterButton_apply: {
     minHeight: 48,
@@ -1084,14 +1094,14 @@ const styles = StyleSheet.create({
   },
 
   filterLogo: {
-    width: 20, 
-    height: 20,      
-    marginTop: 4, 
+    width: 20,
+    height: 20,
+    marginTop: 4,
   },
   filtertitle: {
     textAlign: 'center',
     flexWrap: 'wrap',
-    width: '100%', 
+    width: '100%',
     lineHeight: 18,
   },
   activeTabText: {
@@ -1100,7 +1110,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     fontStyle: 'normal',
-
   },
   inactiveTabText: {
     color: 'rgba(255, 255, 255, 0.64)',
@@ -1124,7 +1133,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
   },
- 
+
   modelcontainer: {
     height: '80%',
     marginTop: 'auto',
@@ -1187,7 +1196,6 @@ const styles = StyleSheet.create({
     letterSpacing: -0.34,
     lineHeight: 19.6,
   },
-
 });
 
 export default FilterBottomSheet;

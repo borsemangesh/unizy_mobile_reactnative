@@ -2334,6 +2334,12 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                     setIsConfirmPasswordVisible(false);
                                     setsignUpIsPasswordVisible(false);
                                     setIsChecked(false);
+                                    setUserMeta(prev => ({
+                                      ...prev,
+                                      city:   '',
+                                      lat: 0,
+                                      lon: 0,
+                                    }));
                                   });
                                 }}
                               >
