@@ -954,7 +954,7 @@ export default function TransactionHistoryScreen(
                       <View style={styles.cardconstinerdivider} />
                     )} */}
 
-                    {!item.otpverified && !item.is_cancelled && (
+                    {/* {!item.otpverified && !item.is_cancelled && (
                       <View
                         style={{
                           justifyContent: 'center',
@@ -983,7 +983,7 @@ export default function TransactionHistoryScreen(
                           </Text>
                         </TouchableOpacity>
                       </View>
-                    )}
+                    )} */}
                   </View>
                 ))}
               </View>
