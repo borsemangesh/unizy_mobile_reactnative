@@ -34,8 +34,8 @@ import {
 } from '../../utils/component/NewCustomToastManager';
 
 type TransactionPropos = {
-  replace(arg0: string): unknown;
-  reset(arg0: { index: number; routes: { name: string; }[]; }): unknown;
+  // replace(arg0: string): unknown;
+  // reset(arg0: { index: number; routes: { name: string; }[]; }): unknown;
   navigation: any;
   route: any;
 };
@@ -1256,7 +1256,7 @@ export default function TransactionHistoryScreen(
       </Modal>
       
 
-              <Modal
+              {/* <Modal
                 visible={showPopup2}
                 transparent
                 animationType="fade"
@@ -1328,7 +1328,7 @@ export default function TransactionHistoryScreen(
                     </BlurView>
                   </View>
                 </TouchableWithoutFeedback>
-              </Modal>
+              </Modal> */}
 
       {Platform.OS === 'android' ? (
         <>
@@ -1358,16 +1358,16 @@ export default function TransactionHistoryScreen(
 }
 
 const styles = StyleSheet.create({
-    subheader1: {
-    color: 'rgba(255, 255, 255, 0.48)',
-    fontFamily: 'Urbanist-Regular',
-    fontSize: 14,
-    fontWeight: '400',
-    textAlign: 'center',
-    marginTop: 6,
-    letterSpacing: -0.28,
-    lineHeight: 19.6,
-  },
+  //   subheader1: {
+  //   color: 'rgba(255, 255, 255, 0.48)',
+  //   fontFamily: 'Urbanist-Regular',
+  //   fontSize: 14,
+  //   fontWeight: '400',
+  //   textAlign: 'center',
+  //   marginTop: 6,
+  //   letterSpacing: -0.28,
+  //   lineHeight: 19.6,
+  // },
   otpBox: {
     width: Platform.OS === 'ios' ? 42 : 48,
     height: Platform.OS === 'ios' ? 42 : 48,
@@ -1414,15 +1414,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 999,
   },
-    status1: {
-    color: 'rgba(255, 255, 255, 0.88)',
-    fontSize: 14,
-    fontWeight: '600',
-    letterSpacing: -0.28,
-    lineHeight: 16,
-    fontFamily: 'Urbanist-SemiBold',
-    padding: 10,
-  },
+  //   status1: {
+  //   color: 'rgba(255, 255, 255, 0.88)',
+  //   fontSize: 14,
+  //   fontWeight: '600',
+  //   letterSpacing: -0.28,
+  //   lineHeight: 16,
+  //   fontFamily: 'Urbanist-SemiBold',
+  //   padding: 10,
+  // },
     logo: {
     width: 64,
     height: 64,

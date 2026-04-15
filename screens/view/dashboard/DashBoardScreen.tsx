@@ -113,11 +113,12 @@ const ProductItem: React.FC<ProductItemProps> = ({
 );
 type TransactionScreenProps = {
   navigation: any;
+  route: any;
 };
 
 const SearchScreenContent = ({ navigation }: TransactionScreenProps) => (
   <View style={{ flex: 1 }}>
-    <TransactionHistoryScreen navigation={navigation} route={undefined} />
+    <TransactionHistoryScreen navigation={navigation} route={undefined}/>
   </View>
 );
 type AddScreenContentProps = {
@@ -1047,7 +1048,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
           </>
         );
       case 'Search':
-        return <SearchScreenContent navigation={navigation} />;
+        return <SearchScreenContent navigation={navigation} route={""}/>;
       case 'Add':
         return <AddScreenContent navigation={navigation} products={products} onSetActiveTab={setActiveTab} />;
       case 'Bookmark':
@@ -1278,7 +1279,7 @@ const DashBoardScreen = ({ navigation }: DashBoardScreenProps) => {
                 showsVerticalScrollIndicator={false}
               >
                 {activeTab === 'Search' ? (
-                  <SearchScreenContent navigation={navigation} />
+                  <SearchScreenContent navigation={navigation} route={""} />
                 ) : activeTab === 'Profile' ? (
                   <ProfileScreenContent navigation={navigation} />
                 ) : activeTab === 'Bookmark' ? (
