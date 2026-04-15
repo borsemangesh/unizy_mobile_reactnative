@@ -90,8 +90,8 @@ type SinglePageRouteProp = RouteProp<RootStackParamList, 'SinglePage'>;
 interface UserMeta {
   city: string | null;
   postal_code: string | null;
-  lat: number;
-  lon: number;
+  latitude: number;
+  longitude: number;
   // profile:string | null;
 }
 const SinglePage = ({ navigation }: SinglePageProps) => {
@@ -900,8 +900,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
         password: signUppassword,
         confirmPassword: confirmPassword,
         city: userMeta.city,
-        latitude: userMeta.lat,
-        longitude: userMeta.lon,
+        latitude: userMeta.latitude,
+        longitude: userMeta.longitude,
       };
 
       const url = MAIN_URL.baseUrl + 'user/user-signup';
@@ -1707,8 +1707,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
   const [userMeta, setUserMeta] = useState<UserMeta>({
     city: '',
     postal_code: '',
-    lon: 0,
-    lat: 0,
+    latitude: 0,
+    longitude: 0,
   });
 
   const ClickPostalCode = async (postalCode: any) => {
@@ -1717,8 +1717,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
       setUserMeta(prev => ({
         ...prev,
         city:   '',
-        lat: 0,
-        lon: 0,
+        latitude: 0,
+        longitude: 0,
       }));
       return;
     } 
@@ -1726,8 +1726,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
     setUserMeta(prev => ({
       ...prev,
       city: location.city || '',
-      lat: location.lat,
-      lon: location.lon,
+      latitude: location.latitude,
+      longitude: location.longitude,
     }));
   };
   const getCityFromPostalCode = async (postalCode: string) => {
@@ -1760,8 +1760,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
 
       return {
         city,
-        lat: parseFloat(result.lat), // ✅ FIX
-        lon: parseFloat(result.lon), // ✅ FIX
+        latitude: parseFloat(result.lat), // ✅ FIX
+        longitude: parseFloat(result.lon), // ✅ FIX
       };
     } catch (error) {
       console.error(error);
@@ -2337,8 +2337,8 @@ const SinglePage = ({ navigation }: SinglePageProps) => {
                                     setUserMeta(prev => ({
                                       ...prev,
                                       city:   '',
-                                      lat: 0,
-                                      lon: 0,
+                                      latitude: 0,
+                                      longitude: 0,
                                     }));
                                   });
                                 }}

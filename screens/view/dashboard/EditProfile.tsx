@@ -59,8 +59,6 @@ import { Constant } from '../../utils/Constant';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../utils/component/Loader';
 import SaveButton from '../../utils/component/SaveButton';
-import { getCityFromPostalCode } from '../../utils/geocoding';
-// import { getCityFromPostalCode } from '../../utils/geocoding';
 import ImagePicker from 'react-native-image-crop-picker';
 
 import BackgroundWrapper from '../../utils/component/BackgroundWrapper';
@@ -79,7 +77,7 @@ interface UserMeta {
   city: string | null;
   postal_code: string | null;
   latitude: number;
-  longitudes: number;
+  longitude: number;
   university_name: string | null;
   // profile:string | null;
 }
@@ -99,7 +97,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     city: '',
     postal_code: '',
       latitude: 0 ,
-    longitudes: 0,
+    longitude: 0,
     university_name: '',
     // profile:''
   });
@@ -242,7 +240,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             city: user.city ?? null,
             postal_code: user.postal_code ?? null,
            latitude: userMeta.latitude??null ,
-            longitudes: userMeta.longitudes,
+            longitude: userMeta.longitude,
            university_name: userMeta.university_name,
           });
 
@@ -254,7 +252,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             city: user.city ?? '',
             postal_code: user.postal_code ?? '',
             latitude: userMeta.latitude??null ,
-            longitudes: userMeta.longitudes,
+            longitude: userMeta.longitude,
            university_name: user.university_name??'',
           };
           setUserMeta(profileSnapshot);
@@ -524,7 +522,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         city: userMeta.city?.trim(),
         postal_code: userMeta.postal_code,
         latitude: userMeta.latitude,
-        longitudes: userMeta.longitudes,
+        longitude: userMeta.longitude,
       };
 
 
@@ -537,6 +535,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
         body: JSON.stringify(body),
       });
 
+      console.log("PROFILEURL: ", url,JSON.stringify(body));
       const data = await response.json();
 
       
@@ -1070,12 +1069,16 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
   setUserMeta(prev => ({
     ...prev,
     city: location.city || '',
-    lat: location.lat,
-    lon: location.lon,
+    latitude: location.lat,
+    longitude: location.lon,
   }));
 };
 const getCityFromPostalCode = async (postalCode: string) => {
   try {
+    postalCode = postalCode.replace(/\s+/g, '').toUpperCase();
+    postalCode = postalCode.slice(0, -3) + ' ' + postalCode.slice(-3)
+    console.log("postalCode:", postalCode);
+    console.log("URL: ", `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,);
     const response = await fetch(
       `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&addressdetails=1`,
       {

@@ -704,7 +704,7 @@ const [isDistanceChanged, setIsDistanceChanged] = useState(false);
 
             {/* 🎚 Multi Slider */}
 
-            <MultiSlider
+            {/* <MultiSlider
               sliderLength={SCREEN_WIDTH / 2 - 10}
               min={currentFilter?.minvalue ?? 0}
               max={currentFilter?.maxvalue ?? 200}
@@ -731,7 +731,35 @@ const [isDistanceChanged, setIsDistanceChanged] = useState(false);
                 borderRadius: 11,
                 backgroundColor: '#fff',
               }}
-            />
+            /> */}
+            <MultiSlider
+  sliderLength={SCREEN_WIDTH / 2 - 10}
+  min={0}
+  max={200}
+  step={1}
+
+  values={[0, distanceHigh]} // 👈 FIXED MIN
+
+  onValuesChange={(values) => {
+    const [, high] = values;
+
+    setDistanceLow(0);       // 👈 ALWAYS 0
+    setDistanceHigh(high);   // 👈 ONLY CHANGE MAX
+    setIsDistanceChanged(true);
+  }}
+
+  allowOverlap={false}
+  snapped
+
+  selectedStyle={{ backgroundColor: '#fff' }}
+  unselectedStyle={{ backgroundColor: '#888' }}
+  trackStyle={{ height: 4, borderRadius: 2 }}
+  markerStyle={{
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#fff',
+  }}
+/>
           </View>
 
           {/* <TextInput
