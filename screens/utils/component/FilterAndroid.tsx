@@ -68,6 +68,11 @@ const FilterAndroid = ({
   const [distanceLow, setDistanceLow] = useState(0);
   const [distanceHigh, setDistanceHigh] = useState(200);
 
+
+
+const [isPriceChanged, setIsPriceChanged] = useState(false);
+const [isDistanceChanged, setIsDistanceChanged] = useState(false);
+
   const fetchFilters = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
@@ -258,21 +263,22 @@ const FilterAndroid = ({
   //   setOtherInputs({});
   // };
   const handleClearFilters = () => {
-  // ✅ Dropdowns
   setDropdownSelections({});
 
-  // ✅ Price Reset
   setPriceRange(defaultPriceRange);
   setSliderLow(defaultPriceRange.min);
   setSliderHigh(defaultPriceRange.max);
 
   setDistanceLow(0);
-  setDistanceHigh(200); 
+  setDistanceHigh(200);
+
+  setIsPriceChanged(false);     // ✅ IMPORTANT
+  setIsDistanceChanged(false);  // ✅ IMPORTANT
+
   setIsKm(true);
   setPostcode('');
   setOtherInputs({});
   setDateSelections({});
-
 };
 
   const handleClose = () => {
@@ -539,6 +545,7 @@ const FilterAndroid = ({
 
                   setSliderLow(value);
                   setPriceRange({ min: value, max: sliderHigh });
+                  setIsPriceChanged(true);
                 }}
               />
               </View>
@@ -586,6 +593,7 @@ const FilterAndroid = ({
 
                   setSliderHigh(finalValue);
                   setPriceRange({ min: sliderLow, max: finalValue });
+                  setIsPriceChanged(true);
                 }}
               />
               </View>
@@ -706,6 +714,7 @@ const FilterAndroid = ({
                 const [low, high] = values;
                 setDistanceLow(low);
                 setDistanceHigh(high);
+                setIsDistanceChanged(true);
               }}
               selectedStyle={{
                 backgroundColor: '#fff',
@@ -794,7 +803,7 @@ const FilterAndroid = ({
               other_value: otherInputs[f.id] || '',
             }),
           };
-        } else if (f.alias_name?.toLowerCase() === 'price') {
+        } else if (f.alias_name?.toLowerCase() === 'price' && isPriceChanged) {
           return {
             id: f.id,
             field_name: f.field_name,
@@ -833,7 +842,7 @@ const FilterAndroid = ({
         // }
         else if (
           f.field_type?.toLowerCase() === 'text' &&
-          f.field_name?.toLowerCase().includes('postcode')
+          f.field_name?.toLowerCase().includes('postcode') && isDistanceChanged
         ) {
           if (postcode || distanceLow !== null || distanceHigh !== null) {
             return {
