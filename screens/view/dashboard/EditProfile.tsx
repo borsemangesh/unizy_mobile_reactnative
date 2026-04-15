@@ -79,6 +79,7 @@ interface UserMeta {
   postal_code: string | null;
   latitude: number;
   longitudes: number;
+  university_name: string | null;
   // profile:string | null;
 }
 
@@ -97,7 +98,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
     city: '',
     postal_code: '',
       latitude: 0 ,
-   longitudes: 0
+    longitudes: 0,
+    university_name: '',
     // profile:''
   });
 
@@ -226,6 +228,7 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
 
         if (response.ok) {
           const user = data.data;
+          console.log("user", user);
 
           setintialfirstname(user.firstname ?? '');
           setinitiallastname(user.lastname ?? '');
@@ -238,7 +241,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             city: user.city ?? null,
             postal_code: user.postal_code ?? null,
            latitude: userMeta.latitude??null ,
-           longitudes: userMeta.longitudes,
+            longitudes: userMeta.longitudes,
+           university_name: userMeta.university_name,
           });
 
           const profileSnapshot: UserMeta = {
@@ -249,7 +253,8 @@ const EditProfile = ({ navigation }: EditProfileProps) => {
             city: user.city ?? '',
             postal_code: user.postal_code ?? '',
             latitude: userMeta.latitude??null ,
-           longitudes: userMeta.longitudes,
+            longitudes: userMeta.longitudes,
+           university_name: user.university_name??'',
           };
           setUserMeta(profileSnapshot);
           setInitialProfile(profileSnapshot);
@@ -1467,7 +1472,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
                       borderRadius: 10,
                       paddingVertical: 10,
                       paddingHorizontal: 12,
-                      color: 'rgba(255, 255, 255, 0.58)',
+                      color: 'rgba(255, 255, 255, 0.46)',
                       fontFamily: 'Urbanist-Regular',
                       fontSize: 16,
                       fontWeight: 400,
@@ -1545,7 +1550,7 @@ const getCityFromPostalCode = async (postalCode: string) => {
                     editable={false}
                     style={{
                       flex: 1,
-                      color: 'rgba(255, 255, 255, 0.58)',
+                      color: 'rgba(255, 255, 255, 0.46)',
                       backgroundColor: 'transparent',
                       borderWidth: 0,
                       borderRadius: 10,
@@ -1658,8 +1663,28 @@ const getCityFromPostalCode = async (postalCode: string) => {
                   onChangeText={text =>
                     setUserMeta(prev => ({ ...prev, city: text }))
                   }
-                  style={[styles.input, { color: 'rgba(255, 255, 255, 0.58)' }]}
+                  style={[styles.input, { color: 'rgba(255, 255, 255, 0.46)' }]}
                   placeholder={t('city')}
+                  placeholderTextColor="#ccc"
+
+                />
+              </View>
+              <View style={styles.inputGroup}>
+                <Text style={styles.label} allowFontScaling={false}>
+                  {t('university')}
+                </Text>
+                <TextInput
+                  selectionColor="#F5F5F5"
+                  cursorColor="#F5F5F5"
+                  allowFontScaling={false}
+                  value={userMeta.university_name || ''}
+                  editable={false}
+                  selectTextOnFocus={false}
+                  onChangeText={text =>
+                    setUserMeta(prev => ({ ...prev, city: text }))
+                  }
+                  style={[styles.input, { color: 'rgba(255, 255, 255, 0.46)' }]}
+                  placeholder={t('university')}
                   placeholderTextColor="#ccc"
 
                 />
